@@ -34,7 +34,7 @@ import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.BundleException;
 
-public class ApiFileGenerator extends Task {
+public class ApiFileGeneratorTask extends Task {
 	
 	private static final boolean DEBUG = false;
 

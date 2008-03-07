@@ -21,8 +21,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -35,6 +37,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -242,6 +246,25 @@ public final class Util {
 	public static final String UNKNOWN_KIND = "unknown_kind"; //$NON-NLS-1$
 	
 	public static final IClassFile[] NO_CLASS_FILES = new IClassFile[0];
+
+	// Trace for delete operation
+	/*
+	 * Maximum time wasted repeating delete operations while running JDT/Core tests.
+	 */
+	private static int DELETE_MAX_TIME = 0;
+	/**
+	 * Trace deletion operations while running JDT/Core tests.
+	 */
+	private static boolean DELETE_DEBUG = false;
+	/**
+	 * Maximum of time in ms to wait in deletion operation while running JDT/Core tests.
+	 * Default is 10 seconds. This number cannot exceed 1 minute (ie. 60000).
+	 * <br>
+	 * To avoid too many loops while waiting, the ten first ones are done waiting
+	 * 10ms before repeating, the ten loops after are done waiting 100ms and
+	 * the other loops are done waiting 1s...
+	 */
+	private static int DELETE_MAX_WAIT = 10000;
 
 	static {
 		String property = System.getProperty("DEBUG"); //$NON-NLS-1$
@@ -2012,6 +2035,297 @@ public final class Util {
 			abort("Unable to serialize XML document.", e);   //$NON-NLS-1$
 		} catch (IOException e) {
 			abort("Unable to serialize XML document.",e);  //$NON-NLS-1$
+		}
+		return null;
+	}
+	/**
+	 * Unzip the contents of the given zip in the given directory (create it if it doesn't exist)
+	 */
+	public static void unzip(String zipPath, String destDirPath) throws IOException {
+		InputStream zipIn = new FileInputStream(zipPath);
+		byte[] buf = new byte[8192];
+		File destDir = new File(destDirPath);
+		ZipInputStream zis = new ZipInputStream(zipIn);
+		FileOutputStream fos = null;
+		try {
+			ZipEntry zEntry;
+			while ((zEntry = zis.getNextEntry()) != null) {
+				// if it is empty directory, create it
+				if (zEntry.isDirectory()) {
+					new File(destDir, zEntry.getName()).mkdirs();
+					continue;
+				}
+				// if it is a file, extract it
+				String filePath = zEntry.getName();
+				int lastSeparator = filePath.lastIndexOf("/"); //$NON-NLS-1$
+				String fileDir = ""; //$NON-NLS-1$
+				if (lastSeparator >= 0) {
+					fileDir = filePath.substring(0, lastSeparator);
+				}
+				//create directory for a file
+				new File(destDir, fileDir).mkdirs();
+				//write file
+				File outFile = new File(destDir, filePath);
+				fos = new FileOutputStream(outFile);
+				int n = 0;
+				while ((n = zis.read(buf)) >= 0) {
+					fos.write(buf, 0, n);
+				}
+				fos.close();
+			}
+		} catch (IOException ioe) {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException ioe2) {
+				}
+			}
+		} finally {
+			try {
+				zipIn.close();
+				zis.close();
+			} catch (IOException ioe) {
+			}
+		}
+	}
+	/**
+	 * Gets the .ee file supplied to run tests based on system
+	 * property.
+	 * 
+	 * @return
+	 */
+	public static File getEEDescriptionFile() {
+		// generate a fake 1.5 ee file
+		File fakeEEFile = null;
+		PrintWriter writer = null;
+		try {
+			fakeEEFile = File.createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer = new PrintWriter(new BufferedWriter(new FileWriter(fakeEEFile)));
+			writer.print("-Djava.home="); //$NON-NLS-1$
+			writer.println(System.getProperty("java.home")); //$NON-NLS-1$
+			writer.print("-Dee.bootclasspath="); //$NON-NLS-1$
+			writer.println(getJavaClassLibsAsString());
+			writer.println("-Dee.language.level=1.6"); //$NON-NLS-1$
+			writer.println("-Dee.class.library.level=JavaSE-1.6"); //$NON-NLS-1$
+			writer.flush();
+		} catch (IOException e) {
+			// ignore
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+		return fakeEEFile;
+	}
+
+	public static String getJavaClassLibsAsString() {
+		String[] libs = Util.getJavaClassLibs();
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0, max = libs.length; i < max; i++) {
+			if (i > 0) {
+				buffer.append(File.pathSeparatorChar);
+			}
+			buffer.append(libs[i]);
+		}
+		return String.valueOf(buffer);
+	}
+	public static String[] getJavaClassLibs() {
+		// check bootclasspath properties for Sun, JRockit and Harmony VMs
+		String bootclasspathProperty = System.getProperty("sun.boot.class.path"); //$NON-NLS-1$
+		if ((bootclasspathProperty == null) || (bootclasspathProperty.length() == 0)) {
+			// IBM J9 VMs
+			bootclasspathProperty = System.getProperty("vm.boot.class.path"); //$NON-NLS-1$
+			if ((bootclasspathProperty == null) || (bootclasspathProperty.length() == 0)) {
+				// Harmony using IBM VME
+				bootclasspathProperty = System.getProperty("org.apache.harmony.boot.class.path"); //$NON-NLS-1$
+			}
+		}
+		String[] jars = null;
+		if ((bootclasspathProperty != null) && (bootclasspathProperty.length() != 0)) {
+			StringTokenizer tokenizer = new StringTokenizer(bootclasspathProperty, File.pathSeparator);
+			final int size = tokenizer.countTokens();
+			jars = new String[size];
+			int i = 0;
+			while (tokenizer.hasMoreTokens()) {
+				final String fileName = toNativePath(tokenizer.nextToken());
+				if (new File(fileName).exists()) {
+					jars[i] = fileName;
+					i++;
+				}
+			}
+			if (size != i) {
+				// resize
+				System.arraycopy(jars, 0, (jars = new String[i]), 0, i);
+			}
+		} else {
+			String jreDir = System.getProperty("java.home"); //$NON-NLS-1$
+			final String osName = System.getProperty("os.name"); //$NON-NLS-1$
+			if (jreDir == null) {
+				return new String[] {};
+			}
+			if (osName.startsWith("Mac")) { //$NON-NLS-1$
+				return new String[] {
+						toNativePath(jreDir + "/../Classes/classes.jar") //$NON-NLS-1$
+				};
+			}
+			final String vmName = System.getProperty("java.vm.name"); //$NON-NLS-1$
+			if ("J9".equals(vmName)) { //$NON-NLS-1$
+				return new String[] {
+						toNativePath(jreDir + "/lib/jclMax/classes.zip") //$NON-NLS-1$
+				};
+			}
+			String[] jarsNames = null;
+			ArrayList paths = new ArrayList();
+			if ("DRLVM".equals(vmName)) { //$NON-NLS-1$
+				FilenameFilter jarFilter = new FilenameFilter() {
+					public boolean accept(File dir, String name) {
+						return name.endsWith(".jar") & !name.endsWith("-src.jar");  //$NON-NLS-1$//$NON-NLS-2$
+					}
+				};
+				jarsNames = new File(jreDir + "/lib/boot/").list(jarFilter); //$NON-NLS-1$
+				addJarEntries(jreDir + "/lib/boot/", jarsNames, paths); //$NON-NLS-1$
+			} else {
+				jarsNames = new String[] {
+						"/lib/vm.jar", //$NON-NLS-1$
+						"/lib/rt.jar", //$NON-NLS-1$
+						"/lib/core.jar", //$NON-NLS-1$
+						"/lib/security.jar", //$NON-NLS-1$
+						"/lib/xml.jar", //$NON-NLS-1$
+						"/lib/graphics.jar" //$NON-NLS-1$
+				};
+				addJarEntries(jreDir, jarsNames, paths);
+			}
+			jars = new String[paths.size()];
+			paths.toArray(jars);
+		}
+		return jars;
+	}
+	/**
+	 * Makes the given path a path using native path separators as returned by File.getPath()
+	 * and trimming any extra slash.
+	 */
+	public static String toNativePath(String path) {
+		String nativePath = path.replace('\\', File.separatorChar).replace('/', File.separatorChar);
+		return
+		nativePath.endsWith("/") || nativePath.endsWith("\\") ? //$NON-NLS-1$ //$NON-NLS-2$
+				nativePath.substring(0, nativePath.length() - 1) :
+					nativePath;
+	}
+
+	private static void addJarEntries(String jreDir, String[] jarNames, ArrayList paths) {
+		for (int i = 0, max = jarNames.length; i < max; i++) {
+			final String currentName = jreDir + jarNames[i];
+			File f = new File(currentName);
+			if (f.exists()) {
+				paths.add(toNativePath(currentName));
+			}
+		}
+	}
+	/**
+	 * Delete a file or directory and insure that the file is no longer present
+	 * on file system. In case of directory, delete all the hierarchy underneath.
+	 *
+	 * @param file The file or directory to delete
+	 * @return true iff the file was really delete, false otherwise
+	 */
+	public static boolean delete(File file) {
+		// flush all directory content
+		if (file.isDirectory()) {
+			flushDirectoryContent(file);
+		}
+		// remove file
+		file.delete();
+		if (isFileDeleted(file)) {
+			return true;
+		}
+		return waitUntilFileDeleted(file);
+	}
+	public static void flushDirectoryContent(File dir) {
+		File[] files = dir.listFiles();
+		if (files == null) return;
+		for (int i = 0, max = files.length; i < max; i++) {
+			delete(files[i]);
+		}
+	}
+	/**
+	 * Wait until the file is _really_ deleted on file system.
+	 *
+	 * @param file Deleted file
+	 * @return true if the file was finally deleted, false otherwise
+	 */
+	private static boolean waitUntilFileDeleted(File file) {
+		int count = 0;
+		int delay = 10; // ms
+		int maxRetry = DELETE_MAX_WAIT / delay;
+		int time = 0;
+		while (count < maxRetry) {
+			try {
+				count++;
+				Thread.sleep(delay);
+				time += delay;
+				if (time > DELETE_MAX_TIME) DELETE_MAX_TIME = time;
+				if (DELETE_DEBUG) System.out.print('.');
+				if (file.exists()) {
+					if (file.delete()) {
+						// SUCCESS
+						return true;
+					}
+				}
+				if (isFileDeleted(file)) {
+					// SUCCESS
+					return true;
+				}
+				// Increment waiting delay exponentially
+				if (count >= 10 && delay <= 100) {
+					count = 1;
+					delay *= 10;
+					maxRetry = DELETE_MAX_WAIT / delay;
+					if ((DELETE_MAX_WAIT%delay) != 0) {
+						maxRetry++;
+					}
+				}
+			}
+			catch (InterruptedException ie) {
+				break; // end loop
+			}
+		}
+		System.err.println();
+		System.err.println("	!!! ERROR: "+file+" was never deleted even after having waited "+DELETE_MAX_TIME+"ms!!!"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		System.err.println();
+		return false;
+	}
+	/**
+	 * Returns whether a file is really deleted or not.
+	 * Does not only rely on {@link File#exists()} method but also
+	 * look if it's not in its parent children {@link #getParentChildFile(File)}.
+	 *
+	 * @param file The file to test if deleted
+	 * @return true if the file does not exist and was not found in its parent children.
+	 */
+	public static boolean isFileDeleted(File file) {
+		return !file.exists() && getParentChildFile(file) == null;
+	}
+	/**
+	 * Returns the parent's child file matching the given file or null if not found.
+	 *
+	 * @param file The searched file in parent
+	 * @return The parent's child matching the given file or null if not found.
+	 */
+	private static File getParentChildFile(File file) {
+		File parent = file.getParentFile();
+		if (parent == null || !parent.exists()) return null;
+		File[] files = parent.listFiles();
+		int length = files==null ? 0 : files.length;
+		if (length > 0) {
+			for (int i=0; i<length; i++) {
+				if (files[i] == file) {
+					return files[i];
+				} else if (files[i].equals(file)) {
+					return files[i];
+				} else if (files[i].getPath().equals(file.getPath())) {
+					return files[i];
+				}
+			}
 		}
 		return null;
 	}
