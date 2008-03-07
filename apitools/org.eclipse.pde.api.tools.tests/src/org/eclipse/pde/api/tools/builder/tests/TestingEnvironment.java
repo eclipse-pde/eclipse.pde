@@ -54,7 +54,7 @@ import org.eclipse.jdt.internal.core.ClasspathEntry;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.tests.util.Util;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 public class TestingEnvironment {
 	

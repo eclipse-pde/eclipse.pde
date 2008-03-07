@@ -171,7 +171,7 @@ public class TestSuiteHelper {
 				writer.print("-Djava.home=");
 				writer.println(System.getProperty("java.home"));
 				writer.print("-Dee.bootclasspath=");
-				writer.println(getJavaClassLibsAsString());
+				writer.println(org.eclipse.pde.api.tools.internal.util.Util.getJavaClassLibsAsString());
 				writer.println("-Dee.language.level=1.5");
 				writer.println("-Dee.class.library.level=J2SE-1.5");
 				writer.flush();
@@ -190,19 +190,6 @@ public class TestSuiteHelper {
 		Assert.assertTrue("EE file does not exist: " + eePath, eeFile.exists());
 		return eeFile;
 	}
-
-	private static String getJavaClassLibsAsString() {
-		String[] libs = org.eclipse.pde.api.tools.tests.util.Util.getJavaClassLibs();
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0, max = libs.length; i < max; i++) {
-			if (i > 0) {
-				buffer.append(File.pathSeparatorChar);
-			}
-			buffer.append(libs[i]);
-		}
-		return String.valueOf(buffer);
-	}
-
 	/**
 	 * Returns a file to the root of the specified bundle or <code>null</code>
 	 * if none. Searches for plug-ins based on the "requiredBundles" system

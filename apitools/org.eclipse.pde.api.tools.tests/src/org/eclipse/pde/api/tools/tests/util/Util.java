@@ -118,7 +118,7 @@ public class Util {
                 for (int i=0,l=testDirs.length; i<l; i++) {
                     if (testDirs[i].isDirectory()) {
                         if ((now - testDirs[i].lastModified()) > delay) {
-                            delete(testDirs[i]);
+                            org.eclipse.pde.api.tools.internal.util.Util.delete(testDirs[i]);
                         }
                     }
                 }
@@ -162,7 +162,7 @@ public static void compile(String[] pathsAndContents, Map options, String output
                 false, /* show category */
                 false /* show warning token*/);
 
-        INameEnvironment nameEnvironment = new FileSystem(getJavaClassLibs(), new String[] {}, null);
+        INameEnvironment nameEnvironment = new FileSystem(org.eclipse.pde.api.tools.internal.util.Util.getJavaClassLibs(), new String[] {}, null);
         IErrorHandlingPolicy errorHandlingPolicy =
             new IErrorHandlingPolicy() {
                 public boolean proceedOnErrors() {
@@ -187,7 +187,7 @@ public static void compile(String[] pathsAndContents, Map options, String output
         System.err.print(requestor.problemLog); // problem log empty if no problems
 }
 public static String[] concatWithClassLibs(String[] classpaths, boolean inFront) {
-    String[] classLibs = getJavaClassLibs();
+    String[] classLibs = org.eclipse.pde.api.tools.internal.util.Util.getJavaClassLibs();
     if (classpaths == null) return classLibs;
     final int classLibsLength = classLibs.length;
     final int classpathsLength = classpaths.length;
@@ -208,7 +208,7 @@ public static String[] concatWithClassLibs(String[] classpaths, boolean inFront)
     return defaultClassPaths;
 }
 public static String[] concatWithClassLibs(String classpath, boolean inFront) {
-    String[] classLibs = getJavaClassLibs();
+    String[] classLibs = org.eclipse.pde.api.tools.internal.util.Util.getJavaClassLibs();
     final int length = classLibs.length;
     File dir = new File(classpath);
     if (!dir.exists())
@@ -243,8 +243,8 @@ public static String convertToIndependantLineDelimiter(String source) {
  * Copy the given source (a file or a directory that must exists) to the given destination (a directory that must exists).
  */
 public static void copy(String sourcePath, String destPath) {
-    sourcePath = toNativePath(sourcePath);
-    destPath = toNativePath(destPath);
+    sourcePath = org.eclipse.pde.api.tools.internal.util.Util.toNativePath(sourcePath);
+    destPath = org.eclipse.pde.api.tools.internal.util.Util.toNativePath(destPath);
     File source = new File(sourcePath);
     if (!source.exists()) return;
     File dest = new File(destPath);
@@ -271,7 +271,7 @@ public static void copy(String sourcePath, String destPath) {
             in = new FileInputStream(source);
             File destFile = new File(dest, source.getName());
             if (destFile.exists()) {
-                if (!Util.delete(destFile)) {
+                if (!org.eclipse.pde.api.tools.internal.util.Util.delete(destFile)) {
                     throw new IOException(destFile + " is in use");
                 }
             }
@@ -342,25 +342,6 @@ public static void createSourceZip(String[] pathsAndContents, String zipPath) th
  * Delete a file or directory and insure that the file is no longer present
  * on file system. In case of directory, delete all the hierarchy underneath.
  *
- * @param file The file or directory to delete
- * @return true iff the file was really delete, false otherwise
- */
-public static boolean delete(File file) {
-    // flush all directory content
-    if (file.isDirectory()) {
-        flushDirectoryContent(file);
-    }
-    // remove file
-    file.delete();
-    if (isFileDeleted(file)) {
-        return true;
-    }
-    return waitUntilFileDeleted(file);
-}
-/**
- * Delete a file or directory and insure that the file is no longer present
- * on file system. In case of directory, delete all the hierarchy underneath.
- *
  * @param resource The resource to delete
  * @return true iff the file was really delete, false otherwise
  */
@@ -384,7 +365,7 @@ public static boolean delete(IResource resource) {
  * @return true iff the file was really delete, false otherwise
  */
 public static boolean delete(String path) {
-    return delete(new File(path));
+    return org.eclipse.pde.api.tools.internal.util.Util.delete(new File(path));
 }
 /**
  * Generate a display string from the given String.
@@ -605,7 +586,7 @@ public static void flushDirectoryContent(File dir) {
     File[] files = dir.listFiles();
     if (files == null) return;
     for (int i = 0, max = files.length; i < max; i++) {
-        delete(files[i]);
+    	org.eclipse.pde.api.tools.internal.util.Util.delete(files[i]);
     }
 }
 private static Map getCompileOptions(String compliance) {
@@ -645,111 +626,6 @@ public static int getFreePort() {
     return -1;
 }
 /**
- * Search the user hard-drive for a Java class library.
- * Returns null if none could be found.
- *
- * Example of use: [org.eclipse.jdt.core.tests.util.Util.getJavaClassLib()]
-*/
-public static String[] getJavaClassLibs() {
-	// check bootclasspath properties for Sun, JRockit and Harmony VMs
-	String bootclasspathProperty = System.getProperty("sun.boot.class.path"); //$NON-NLS-1$
-	if ((bootclasspathProperty == null) || (bootclasspathProperty.length() == 0)) {
-		// IBM J9 VMs
-		bootclasspathProperty = System.getProperty("vm.boot.class.path"); //$NON-NLS-1$
-		if ((bootclasspathProperty == null) || (bootclasspathProperty.length() == 0)) {
-			// Harmony using IBM VME
-			bootclasspathProperty = System.getProperty("org.apache.harmony.boot.class.path"); //$NON-NLS-1$
-		}
-	}
-	String[] jars = null;
-	if ((bootclasspathProperty != null) && (bootclasspathProperty.length() != 0)) {
-		StringTokenizer tokenizer = new StringTokenizer(bootclasspathProperty, File.pathSeparator);
-		final int size = tokenizer.countTokens();
-		jars = new String[size];
-		int i = 0;
-		while (tokenizer.hasMoreTokens()) {
-			final String fileName = toNativePath(tokenizer.nextToken());
-			if (new File(fileName).exists()) {
-				jars[i] = fileName;
-				i++;
-			}
-		}
-		if (size != i) {
-			// resize
-			System.arraycopy(jars, 0, (jars = new String[i]), 0, i);
-		}
-	} else {
-		String jreDir = getJREDirectory();
-		final String osName = System.getProperty("os.name");
-		if (jreDir == null) {
-			return new String[] {};
-		}
-		if (osName.startsWith("Mac")) {
-			return new String[] {
-					toNativePath(jreDir + "/../Classes/classes.jar")
-			};
-		}
-		final String vmName = System.getProperty("java.vm.name");
-		if ("J9".equals(vmName)) {
-			return new String[] {
-					toNativePath(jreDir + "/lib/jclMax/classes.zip")
-			};
-		}
-		String[] jarsNames = null;
-		ArrayList paths = new ArrayList();
-		if ("DRLVM".equals(vmName)) {
-			FilenameFilter jarFilter = new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".jar") & !name.endsWith("-src.jar");
-				}
-			};
-			jarsNames = new File(jreDir + "/lib/boot/").list(jarFilter);
-			addJarEntries(jreDir + "/lib/boot/", jarsNames, paths);
-		} else {
-			jarsNames = new String[] {
-					"/lib/vm.jar",
-					"/lib/rt.jar",
-					"/lib/core.jar",
-					"/lib/security.jar",
-					"/lib/xml.jar",
-					"/lib/graphics.jar"
-			};
-			addJarEntries(jreDir, jarsNames, paths);
-		}
-		jars = new String[paths.size()];
-		paths.toArray(jars);
-	}
-	return jars;
-}
-private static void addJarEntries(String jreDir, String[] jarNames, ArrayList paths) {
-	for (int i = 0, max = jarNames.length; i < max; i++) {
-		final String currentName = jreDir + jarNames[i];
-		File f = new File(currentName);
-		if (f.exists()) {
-			paths.add(toNativePath(currentName));
-		}
-	}
-}
-public static String getJavaClassLibsAsString() {
-	String[] classLibs = getJavaClassLibs();
-	StringBuffer buffer = new StringBuffer();
-	for (int i = 0, max = classLibs.length; i < max; i++) {
-		buffer
-		.append(classLibs[i])
-		.append(File.pathSeparatorChar);
-	}
-	return buffer.toString();
-}
-/**
- * Returns the JRE directory this tests are running on.
- * Returns null if none could be found.
- *
- * Example of use: [org.eclipse.jdt.core.tests.util.Util.getJREDirectory()]
- */
-public static String getJREDirectory() {
-    return System.getProperty("java.home");
-}
-/**
  * Search the user hard-drive for a possible output directory.
  * Returns null if none could be found.
  *
@@ -757,30 +633,6 @@ public static String getJREDirectory() {
  */
 public static String getOutputDirectory() {
     return OUTPUT_DIRECTORY;
-}
-/**
- * Returns the parent's child file matching the given file or null if not found.
- *
- * @param file The searched file in parent
- * @return The parent's child matching the given file or null if not found.
- */
-private static File getParentChildFile(File file) {
-    File parent = file.getParentFile();
-    if (parent == null || !parent.exists()) return null;
-    File[] files = parent.listFiles();
-    int length = files==null ? 0 : files.length;
-    if (length > 0) {
-        for (int i=0; i<length; i++) {
-            if (files[i] == file) {
-                return files[i];
-            } else if (files[i].equals(file)) {
-                return files[i];
-            } else if (files[i].getPath().equals(file.getPath())) {
-                return files[i];
-            }
-        }
-    }
-    return null;
 }
 /**
  * Returns parent's child resource matching the given resource or null if not found.
@@ -850,17 +702,6 @@ public static String indentString(String inputString, int indent) {
         }
     }
     return buffer.toString();
-}
-/**
- * Returns whether a file is really deleted or not.
- * Does not only rely on {@link File#exists()} method but also
- * look if it's not in its parent children {@link #getParentChildFile(File)}.
- *
- * @param file The file to test if deleted
- * @return true if the file does not exist and was not found in its parent children.
- */
-public static boolean isFileDeleted(File file) {
-    return !file.exists() && getParentChildFile(file) == null;
 }
 public static boolean isMacOS() {
     return System.getProperty("os.name").indexOf("Mac") != -1;
@@ -978,141 +819,6 @@ private static void printJdtCoreStackTrace(Exception exception, int indent) {
     }
 }
 /**
- * Makes the given path a path using native path separators as returned by File.getPath()
- * and trimming any extra slash.
- */
-public static String toNativePath(String path) {
-    String nativePath = path.replace('\\', File.separatorChar).replace('/', File.separatorChar);
-    return
-        nativePath.endsWith("/") || nativePath.endsWith("\\") ?
-            nativePath.substring(0, nativePath.length() - 1) :
-            nativePath;
-}
-/**
- * Unzip the contents of the given zip in the given directory (create it if it doesn't exist)
- */
-public static void unzip(String zipPath, String destDirPath) throws IOException {
-
-    InputStream zipIn = new FileInputStream(zipPath);
-    byte[] buf = new byte[8192];
-    File destDir = new File(destDirPath);
-    ZipInputStream zis = new ZipInputStream(zipIn);
-    FileOutputStream fos = null;
-    try {
-        ZipEntry zEntry;
-        while ((zEntry = zis.getNextEntry()) != null) {
-            // if it is empty directory, create it
-            if (zEntry.isDirectory()) {
-                new File(destDir, zEntry.getName()).mkdirs();
-                continue;
-            }
-            // if it is a file, extract it
-            String filePath = zEntry.getName();
-            int lastSeparator = filePath.lastIndexOf("/"); //$NON-NLS-1$
-            String fileDir = ""; //$NON-NLS-1$
-            if (lastSeparator >= 0) {
-                fileDir = filePath.substring(0, lastSeparator);
-            }
-            //create directory for a file
-            new File(destDir, fileDir).mkdirs();
-            //write file
-            File outFile = new File(destDir, filePath);
-            fos = new FileOutputStream(outFile);
-            int n = 0;
-            while ((n = zis.read(buf)) >= 0) {
-                fos.write(buf, 0, n);
-            }
-            fos.close();
-        }
-    } catch (IOException ioe) {
-        if (fos != null) {
-            try {
-                fos.close();
-            } catch (IOException ioe2) {
-            }
-        }
-    } finally {
-        try {
-            zipIn.close();
-            if (zis != null)
-                zis.close();
-        } catch (IOException ioe) {
-        }
-    }
-}
-/**
- * Wait until the file is _really_ deleted on file system.
- *
- * @param file Deleted file
- * @return true if the file was finally deleted, false otherwise
- */
-private static boolean waitUntilFileDeleted(File file) {
-    if (DELETE_DEBUG) {
-        System.out.println();
-        System.out.println("WARNING in test: "+getTestName());
-        System.out.println("	- problems occured while deleting "+file);
-        printJdtCoreStackTrace(null, 1);
-        printFileInfo(file.getParentFile(), 1, -1); // display parent with its children
-        System.out.print("	- wait for ("+DELETE_MAX_WAIT+"ms max): ");
-    }
-    int count = 0;
-    int delay = 10; // ms
-    int maxRetry = DELETE_MAX_WAIT / delay;
-    int time = 0;
-    while (count < maxRetry) {
-        try {
-            count++;
-            Thread.sleep(delay);
-            time += delay;
-            if (time > DELETE_MAX_TIME) DELETE_MAX_TIME = time;
-            if (DELETE_DEBUG) System.out.print('.');
-            if (file.exists()) {
-                if (file.delete()) {
-                    // SUCCESS
-                    if (DELETE_DEBUG) {
-                        System.out.println();
-                        System.out.println("	=> file really removed after "+time+"ms (max="+DELETE_MAX_TIME+"ms)");
-                        System.out.println();
-                    }
-                    return true;
-                }
-            }
-            if (isFileDeleted(file)) {
-                // SUCCESS
-                if (DELETE_DEBUG) {
-                    System.out.println();
-                    System.out.println("	=> file disappeared after "+time+"ms (max="+DELETE_MAX_TIME+"ms)");
-                    System.out.println();
-                }
-                return true;
-            }
-            // Increment waiting delay exponentially
-            if (count >= 10 && delay <= 100) {
-                count = 1;
-                delay *= 10;
-                maxRetry = DELETE_MAX_WAIT / delay;
-                if ((DELETE_MAX_WAIT%delay) != 0) {
-                    maxRetry++;
-                }
-            }
-        }
-        catch (InterruptedException ie) {
-            break; // end loop
-        }
-    }
-    if (!DELETE_DEBUG) {
-        System.out.println();
-        System.out.println("WARNING in test: "+getTestName());
-        System.out.println("	- problems occured while deleting "+file);
-        printJdtCoreStackTrace(null, 1);
-        printFileInfo(file.getParentFile(), 1, -1); // display parent with its children
-    }
-    System.out.println();
-    System.out.println("	!!! ERROR: "+file+" was never deleted even after having waited "+DELETE_MAX_TIME+"ms!!!");
-    System.out.println();
-    return false;
-}
-/**
  * Wait until a resource is _really_ deleted on file system.
  *
  * @param resource Deleted resource
@@ -1149,7 +855,8 @@ private static boolean waitUntilResourceDeleted(IResource resource) {
             if (resource.isAccessible()) {
                 try {
                     resource.delete(true, null);
-                    if (isResourceDeleted(resource) && isFileDeleted(file)) {
+                    if (isResourceDeleted(resource) 
+                    		&& org.eclipse.pde.api.tools.internal.util.Util.isFileDeleted(file)) {
                         // SUCCESS
                         if (DELETE_DEBUG) {
                             System.out.println();
@@ -1163,7 +870,8 @@ private static boolean waitUntilResourceDeleted(IResource resource) {
                     //	skip
                 }
             }
-            if (isResourceDeleted(resource) && isFileDeleted(file)) {
+            if (isResourceDeleted(resource) 
+            		&& org.eclipse.pde.api.tools.internal.util.Util.isFileDeleted(file)) {
                 // SUCCESS
                 if (DELETE_DEBUG) {
                     System.out.println();
@@ -1222,7 +930,7 @@ public static void zip(File rootDir, String zipPath) throws IOException {
     ZipOutputStream zip = null;
     try {
         File zipFile = new File(zipPath);
-        if (zipFile.exists()) delete(zipFile);
+        if (zipFile.exists()) org.eclipse.pde.api.tools.internal.util.Util.delete(zipFile);
         zip = new ZipOutputStream(new FileOutputStream(zipFile));
         zip(rootDir, zip, rootDir.getPath().length()+1); // 1 for last slash
     } finally {
