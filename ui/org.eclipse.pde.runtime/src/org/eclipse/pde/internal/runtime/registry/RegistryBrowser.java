@@ -23,10 +23,12 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.DrillDownAdapter;
@@ -54,6 +56,7 @@ public class RegistryBrowser extends ViewPart {
 	private Action fShowAdvancedOperationsAction;
 	private Action fShowExtensionsOnlyAction;
 	private Action fShowDisabledAction;
+	private Action fCopyAction;
 
 	// advanced actions
 	private Action fStartAction;
@@ -61,6 +64,8 @@ public class RegistryBrowser extends ViewPart {
 	private Action fEnableAction;
 	private Action fDisableAction;
 	private Action fDiagnoseAction;
+
+	private Clipboard fClipboard;
 
 	private DrillDownAdapter fDrillDownAdapter;
 	private ViewerFilter fActiveFilter = new ViewerFilter() {
@@ -158,6 +163,7 @@ public class RegistryBrowser extends ViewPart {
 			Platform.getExtensionRegistry().removeRegistryChangeListener(fListener);
 			PDERuntimePlugin.getDefault().getBundleContext().removeBundleListener(fListener);
 		}
+		fClipboard.dispose();
 		super.dispose();
 	}
 
@@ -170,6 +176,7 @@ public class RegistryBrowser extends ViewPart {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		makeActions();
 		createTreeViewer(composite);
+		fClipboard = new Clipboard(fTreeViewer.getTree().getDisplay());
 		fillToolBar();
 
 		PDERuntimePlugin.getDefault().getBundleContext().addBundleListener(fListener);
@@ -243,6 +250,7 @@ public class RegistryBrowser extends ViewPart {
 	private void fillToolBar() {
 		fDrillDownAdapter = new RegistryDrillDownAdapter(fTreeViewer);
 		IActionBars bars = getViewSite().getActionBars();
+		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyAction);
 		IToolBarManager mng = bars.getToolBarManager();
 		fDrillDownAdapter.addNavigationActions(mng);
 		mng.add(fRefreshAction);
@@ -261,6 +269,8 @@ public class RegistryBrowser extends ViewPart {
 
 	public void fillContextMenu(IMenuManager manager) {
 		manager.add(fRefreshAction);
+		manager.add(new Separator());
+		manager.add(fCopyAction);
 		manager.add(new Separator());
 		fDrillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator());
@@ -346,6 +356,22 @@ public class RegistryBrowser extends ViewPart {
 			}
 		};
 		fShowDisabledAction.setChecked(fMemento.getString(SHOW_DISABLED_MODE).equals("true")); //$NON-NLS-1$
+
+		fCopyAction = new Action(PDERuntimeMessages.RegistryBrowser_copy_label) {
+			public void run() {
+				ITreeSelection selection = (ITreeSelection) fFilteredTree.getViewer().getSelection();
+				if (selection.isEmpty()) {
+					return;
+				}
+
+				String textVersion = ((ILabelProvider) fTreeViewer.getLabelProvider()).getText(selection.getFirstElement());
+				if ((textVersion != null) && (textVersion.trim().length() > 0)) {
+					// set the clipboard contents
+					fClipboard.setContents(new Object[] {textVersion}, new Transfer[] {TextTransfer.getInstance()});
+				}
+			}
+		};
+		fCopyAction.setImageDescriptor(PDERuntimePluginImages.COPY_QNAME);
 
 		fShowExtensionsOnlyAction = new Action(PDERuntimeMessages.RegistryBrowser_showExtOnlyLabel) {
 			public void run() {

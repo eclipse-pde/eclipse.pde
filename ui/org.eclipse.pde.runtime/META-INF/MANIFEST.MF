@@ -22,3 +22,4 @@ Export-Package: org.eclipse.pde.internal.runtime;x-internal:=true,
  org.eclipse.pde.internal.runtime.spy.handlers;x-internal:=true,
  org.eclipse.pde.internal.runtime.spy.sections;x-internal:=true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-ActivationPolicy: lazy

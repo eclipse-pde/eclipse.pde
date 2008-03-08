@@ -68,8 +68,10 @@ public class PDERuntimeMessages extends NLS {
 	public static String SpyFormToolkit_saveImageAs_title;
 	public static String SpyFormToolkit_copyQualifiedName;
 
+	public static String RegistryBrowser_copy_label;
 	public static String RegistryBrowser_showExtOnlyLabel;
 	public static String RegistryBrowser_plugins;
+
 	public static String RegistryBrowserLabelProvider_contributedBy;
 
 	static {
