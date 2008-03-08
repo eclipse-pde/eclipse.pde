@@ -60,3 +60,4 @@ Require-Bundle:
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Import-Package: com.ibm.icu.util
+Bundle-ActivationPolicy: lazy
