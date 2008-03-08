@@ -61,7 +61,7 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			IPath old = fJVMWin;
 			fJVMWin = jreContainerPath;
 			if (isEditable())
-				firePropertyChanged(JRE_LIN, old, fJVMLin);
+				firePropertyChanged(JRE_WIN, old, fJVMWin);
 		} else if (Platform.OS_LINUX.equals(os)) {
 			IPath old = fJVMLin;
 			fJVMLin = jreContainerPath;
@@ -71,12 +71,12 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			IPath old = fJVMMac;
 			fJVMMac = jreContainerPath;
 			if (isEditable())
-				firePropertyChanged(JRE_LIN, old, fJVMLin);
+				firePropertyChanged(JRE_MAC, old, fJVMMac);
 		} else if (Platform.OS_SOLARIS.equals(os)) {
 			IPath old = fJVMSol;
 			fJVMSol = jreContainerPath;
 			if (isEditable())
-				firePropertyChanged(JRE_LIN, old, fJVMLin);
+				firePropertyChanged(JRE_SOL, old, fJVMSol);
 		}
 	}
 
