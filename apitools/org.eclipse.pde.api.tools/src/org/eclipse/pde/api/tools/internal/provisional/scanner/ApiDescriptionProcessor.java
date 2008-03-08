@@ -325,36 +325,42 @@ public class ApiDescriptionProcessor {
 		 * @param api
 		 * @param tags
 		 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
-	     * @param member one of <code>METHOD</code> or <code>FIELD</code> or <code>NONE</code>
+		 * @param member one of <code>METHOD</code> or <code>FIELD</code> or <code>NONE</code>
 		 * @return an array of the missing {@link TagElement}s or an empty array, never <code>null</code>
 		 */
 		private String[] collectMissingTags(IApiAnnotations api, List tags, int type, int member) {
 			int res = api.getRestrictions();
 			ArrayList missing = new ArrayList();
 			JavadocTagManager jtm = ApiPlugin.getJavadocTagManager();
-			if(RestrictionModifiers.isImplementRestriction(res)) {
-				if(!containsRestrictionTag(tags, "@noimplement")) { //$NON-NLS-1$
-					IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noimplement"); //$NON-NLS-1$
-					missing.add(tag.getCompleteTag(type, member));
-				}
-			}
-			if(RestrictionModifiers.isInstantiateRestriction(res)) {
-				if(!containsRestrictionTag(tags, "@noinstantiate")) { //$NON-NLS-1$
-					IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noinstantiate"); //$NON-NLS-1$
-					missing.add(tag.getCompleteTag(type, member));
-				}
-			}
-			if(RestrictionModifiers.isReferenceRestriction(res)) {
-				if(!containsRestrictionTag(tags, "@noreference")) { //$NON-NLS-1$
-					IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noreference"); //$NON-NLS-1$
-					missing.add(tag.getCompleteTag(type, member));
-				}
-			}
-			if(RestrictionModifiers.isExtendRestriction(res)) {
-				if(!containsRestrictionTag(tags, "@noextend")) { //$NON-NLS-1$
-					IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noextend"); //$NON-NLS-1$
-					missing.add(tag.getCompleteTag(type, member));
-				}
+			switch(member) {
+				case IApiJavadocTag.MEMBER_METHOD :
+				case IApiJavadocTag.MEMBER_FIELD :
+					if(RestrictionModifiers.isReferenceRestriction(res)) {
+						if(!containsRestrictionTag(tags, "@noreference")) { //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noreference"); //$NON-NLS-1$
+							missing.add(tag.getCompleteTag(type, member));
+						}
+					}
+					break;
+				case IApiJavadocTag.MEMBER_NONE :
+					if(RestrictionModifiers.isImplementRestriction(res)) {
+						if(!containsRestrictionTag(tags, "@noimplement")) { //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noimplement"); //$NON-NLS-1$
+							missing.add(tag.getCompleteTag(type, member));
+						}
+					}
+					if(RestrictionModifiers.isInstantiateRestriction(res)) {
+						if(!containsRestrictionTag(tags, "@noinstantiate")) { //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noinstantiate"); //$NON-NLS-1$
+							missing.add(tag.getCompleteTag(type, member));
+						}
+					}
+					if(RestrictionModifiers.isExtendRestriction(res)) {
+						if(!containsRestrictionTag(tags, "@noextend")) { //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noextend"); //$NON-NLS-1$
+							missing.add(tag.getCompleteTag(type, member));
+						}
+					}
 			}
 			return (String[]) missing.toArray(new String[missing.size()]);
 		}
