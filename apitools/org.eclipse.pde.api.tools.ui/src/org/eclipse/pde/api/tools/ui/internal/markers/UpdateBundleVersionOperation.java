@@ -47,7 +47,7 @@ public class UpdateBundleVersionOperation {
 			}
 			IResource resource = this.fMarker.getResource();
 			IProject project = resource.getProject();
-			if (!project.exists()) {
+			if (!project.isAccessible()) {
 				System.err.println("Project " + project.getName() + " doesn't exist"); //$NON-NLS-1$ //$NON-NLS-2$
 				return Status.OK_STATUS;
 			}
@@ -68,7 +68,7 @@ public class UpdateBundleVersionOperation {
 				};
 				PDEModelUtility.modifyModel(mod, null);
 			}
-			Util.getBuildJob(project).schedule();
+			Util.getBuildJob(new IProject[] {project}).schedule();
 			if (monitor != null) {
 				monitor.worked(1);
 			}

@@ -128,14 +128,6 @@ public final class Util {
 	 */
 	private static final class BuildJob extends Job {
 		private final IProject[] fProjects;
-		/**
-		 * Constructor
-		 * @param name
-		 * @param project
-		 */
-		private BuildJob(String name, IProject project) {
-			this(name, new IProject[] { project });
-		}
 
 		/**
 		 * Constructor
@@ -209,9 +201,6 @@ public final class Util {
 						project.build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, new SubProgressMonitor(monitor,1));
 						monitor.worked(1);
 					}
-				} else {
-					monitor.beginTask(UtilMessages.Util_1, 2); 
-					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new SubProgressMonitor(monitor, 2));
 				}
 			} catch (CoreException e) {
 				return e.getStatus();
@@ -385,6 +374,33 @@ public final class Util {
 		return String.valueOf(buffer);
 	}
 
+	/**
+	 * Returns all of the API projects in the workspace
+	 * @return all of the API projects in the workspace or <code>null</code> if there are none.
+	 */
+	public static IProject[] getApiProjects() {
+		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		ArrayList temp = new ArrayList();
+		IProject project = null;
+		for (int i = 0, max = allProjects.length; i < max; i++) {
+			project = allProjects[i];
+			if (project.isAccessible()) {
+				try {
+					if (project.hasNature(org.eclipse.pde.api.tools.internal.provisional.ApiPlugin.NATURE_ID)) {
+						temp.add(project);
+					}
+				} 
+				catch (CoreException e) {}
+			}
+		}
+		IProject[] projects = null;
+		if (temp.size() != 0) {
+			projects = new IProject[temp.size()];
+			temp.toArray(projects);
+		}
+		return projects;
+	}
+	
 	/**
 	 * Returns if the specified signature is qualified or not.
 	 * Qualification is determined if there is a token in the signature the begins with an 'L'.
@@ -584,18 +600,6 @@ public final class Util {
 
 	/**
 	 * Returns a build job
-	 * @param project The project to build or <code>null</code> to build the workspace.
-	 * @return the build job
-	 */
-	public static Job getBuildJob(final IProject project) {
-		Job buildJob = new BuildJob(UtilMessages.Util_4, project);
-		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
-		buildJob.setUser(true);
-		return buildJob;
-	}
-	
-	/**
-	 * Returns a build job
 	 * @param projects The projects to build or <code>null</code> to build the workspace.
 	 * @return the build job
 	 */
@@ -606,6 +610,13 @@ public final class Util {
 		return buildJob;
 	}
 
+	/**
+	 * Returns the {@link IClassFile} with the given name from the first {@link IApiComponent}
+	 * it is found in, or <code>null</code> if not found
+	 * @param components
+	 * @param typeName
+	 * @return the {@link IClassFile} with the given name or <code>null</code>
+	 */
 	public static IClassFile getClassFile(IApiComponent[] components, String typeName) {
 		if (components == null) return null;
 		for (int i = 0, max = components.length; i < max; i++) {
@@ -624,6 +635,12 @@ public final class Util {
 		return null;
 	}
 
+	/**
+	 * Returns the component with the given type name or <code>null</code> 
+	 * @param components
+	 * @param typeName
+	 * @return the component with the given type name or <code>null</code>
+	 */
 	public static IApiComponent getComponent(IApiComponent[] components, String typeName) {
 		if (components == null) return null;
 		for (int i = 0, max = components.length; i < max; i++) {

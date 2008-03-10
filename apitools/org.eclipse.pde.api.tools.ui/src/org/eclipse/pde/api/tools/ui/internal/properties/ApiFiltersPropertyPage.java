@@ -328,7 +328,7 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 				//TODO we need to incremental build to ensure new filter kinds are enacted and removed kinds show the markers
 				if(MessageDialog.openQuestion(getShell(), PropertiesMessages.ApiFiltersPropertyPage_58, 
 						MessageFormat.format(PropertiesMessages.ApiFiltersPropertyPage_59, new String[] {fProject.getName()}))) {
-					Util.getBuildJob(fProject).schedule();
+					Util.getBuildJob(new IProject[] {fProject}).schedule();
 				}
 			}
 			fChangeset.clear();
