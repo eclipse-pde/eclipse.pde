@@ -52,7 +52,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -100,11 +99,12 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	 */
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
-		Group profileGroup = SWTFactory.createGroup(comp, PreferenceMessages.ApiProfilesConfigurationBlock_profile_group_title, 2, 1, GridData.FILL_BOTH);
-
-		SWTFactory.createWrapLabel(profileGroup, PreferenceMessages.ApiProfilesPreferencePage_0, 2, 200);
-		SWTFactory.createWrapLabel(profileGroup, PreferenceMessages.ApiProfilesPreferencePage_1, 2);
-		Table table = new Table(profileGroup, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK);
+		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiProfilesPreferencePage_0, 2, 200);
+		SWTFactory.createVerticalSpacer(comp, 1);
+		
+		Composite lcomp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH);
+		SWTFactory.createWrapLabel(lcomp, PreferenceMessages.ApiProfilesPreferencePage_1, 2);
+		Table table = new Table(lcomp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tableviewer = new CheckboxTableViewer(table);
 		tableviewer.setLabelProvider(new ProfileLabelProvider());
@@ -148,7 +148,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				tableviewer.setInput(backingcollection);
 			}
 		});
-		Composite bcomp = SWTFactory.createComposite(profileGroup, 1, 1, GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
+		Composite bcomp = SWTFactory.createComposite(lcomp, 1, 1, GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
 		newbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiProfilesPreferencePage_2, null);
 		newbutton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -186,10 +186,11 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		IApiProfile profile = manager.getDefaultApiProfile();
 		origdefault = newdefault = (profile == null ? null : profile.getName());
 		initialize();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(profileGroup, IApiToolsHelpContextIds.APIPROFILES_PREF_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.APIPROFILES_PREF_PAGE);
 
 		block = new ApiProfilesConfigurationBlock((IWorkbenchPreferenceContainer)getContainer());
 		block.createControl(comp, this);
+		SWTFactory.createVerticalSpacer(parent, 1);
 		return comp;
 	}
 	
