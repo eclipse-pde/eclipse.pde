@@ -219,5 +219,5 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 	 */
 	public IMethodDescriptor getMethod(String name, String signature, int modifiers) {
 		return new MethodDescriptorImpl(name, this, signature, modifiers);
-	}	
+	}
 }

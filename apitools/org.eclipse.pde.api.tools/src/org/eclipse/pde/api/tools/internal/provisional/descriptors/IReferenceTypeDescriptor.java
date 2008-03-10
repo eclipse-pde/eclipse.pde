@@ -85,7 +85,7 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor, ITypeDescri
 	 * 
 	 * 
 	 */
-	public IFieldDescriptor getField(String name, int modifiers);	
+	public IFieldDescriptor getField(String name, int modifiers);
 	
 	/**
 	 * Returns a descriptor for a non-synthetic method with the given
@@ -106,7 +106,7 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor, ITypeDescri
 	 * @param modifiers member modifiers
 	 * @return method descriptor
 	 */
-	public IMethodDescriptor getMethod(String name, String signature, int modifiers);		
+	public IMethodDescriptor getMethod(String name, String signature, int modifiers);
 	
 	/**
 	 * Returns an array type descriptor of this type with the specified number
