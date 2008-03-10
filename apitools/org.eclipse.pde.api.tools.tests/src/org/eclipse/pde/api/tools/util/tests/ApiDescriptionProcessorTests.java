@@ -115,7 +115,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				if(signature.equals(sig)) {
 					Javadoc docnode = node.getJavadoc();
 					assertNotNull("the method: "+membername+" ["+signature+"] must have a javadoc node", docnode);
-					assertTrue("the method: "+membername+" ["+signature+"] should conatin all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode.tags()));
+					assertTrue("the method: "+membername+" ["+signature+"] should contain all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode.tags()));
 					processed = true;
 				}
 			}
@@ -133,7 +133,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				if((innertypename == null && name.equals(type)) || name.equals(innertypename)) {
 					Javadoc docnode = node.getJavadoc();
 					assertNotNull("the type: "+name+" must have a javadoc node", docnode);
-					assertTrue("the type: "+name+" should conatin all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode.tags()));
+					assertTrue("the type: "+name+" should contain all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode.tags()));
 					processed = true;
 				}
 			}
