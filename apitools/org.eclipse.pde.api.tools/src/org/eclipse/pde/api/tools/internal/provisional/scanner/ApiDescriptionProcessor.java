@@ -333,11 +333,24 @@ public class ApiDescriptionProcessor {
 			ArrayList missing = new ArrayList();
 			JavadocTagManager jtm = ApiPlugin.getJavadocTagManager();
 			switch(member) {
-				case IApiJavadocTag.MEMBER_METHOD :
 				case IApiJavadocTag.MEMBER_FIELD :
 					if(RestrictionModifiers.isReferenceRestriction(res)) {
 						if(!containsRestrictionTag(tags, "@noreference")) { //$NON-NLS-1$
 							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noreference"); //$NON-NLS-1$
+							missing.add(tag.getCompleteTag(type, member));
+						}
+					}
+					break;
+				case IApiJavadocTag.MEMBER_METHOD :
+					if(RestrictionModifiers.isReferenceRestriction(res)) {
+						if(!containsRestrictionTag(tags, "@noreference")) { //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noreference"); //$NON-NLS-1$
+							missing.add(tag.getCompleteTag(type, member));
+						}
+					}
+					if(RestrictionModifiers.isExtendRestriction(res)) {
+						if(!containsRestrictionTag(tags, "@noextend")) { //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noextend"); //$NON-NLS-1$
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}
