@@ -48,7 +48,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.PropertyChangeEvent;
+import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -74,7 +77,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 1.0
  */
-public class ApiProfile implements IApiProfile {
+public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	/**
 	 * Constant used for controlling tracing in the example class
 	 */
@@ -162,6 +165,12 @@ public class ApiProfile implements IApiProfile {
 	 * Cache of system package names
 	 */
 	private Set fSystemPackageNames = null;
+	
+	/**
+	 * The VM install this profile is bound to for system libraries or <code>null</code>.
+	 * Only used in the IDE when OSGi is running.
+	 */
+	private IVMInstall fVMBinding = null;
 
 	/**
 	 * Constructs a new API profile with the given name.
@@ -422,10 +431,12 @@ public class ApiProfile implements IApiProfile {
 					}
 				}
 				if (systemEE != null) {
-					// only update if different from current
-					if (!systemEE.equals(getExecutionEnvironment())) {
+					// only update if different from current or missing VM binding
+					if (!systemEE.equals(getExecutionEnvironment()) || fVMBinding == null) {
 						try {
-							File file = Util.createEEFile(systemEE);
+							File file = Util.createEEFile(bestFit, systemEE);
+							JavaRuntime.addVMInstallChangedListener(this);
+							fVMBinding = bestFit;
 							initialize(systemEE, file);
 						} catch (CoreException e) {
 							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_2, e);
@@ -778,6 +789,9 @@ public class ApiProfile implements IApiProfile {
 	 * @see IApiProfile#dispose()
 	 */
 	public void dispose() {
+		if (ApiPlugin.isRunningInFramework()) {
+			JavaRuntime.removeVMInstallChangedListener(this);
+		}
 		IApiComponent[] components = getApiComponents();
 		for (int i = 0; i < components.length; i++) {
 			components[i].dispose();
@@ -972,5 +986,51 @@ public class ApiProfile implements IApiProfile {
 	 */
 	public IStatus getExecutionEnvironmentStatus() {
 		return fEEStatus;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
+	 */
+	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
+	 */
+	public void vmAdded(IVMInstall vm) {
+		if (!(vm instanceof VMStandin)) {
+			// there may be a better fit for VMs/EEs
+			rebindVM();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
+	 */
+	public void vmChanged(PropertyChangeEvent event) {
+		if (!(event.getSource() instanceof VMStandin)) {
+			String property = event.getProperty();
+			if (IVMInstallChangedListener.PROPERTY_INSTALL_LOCATION.equals(property) ||
+					IVMInstallChangedListener.PROPERTY_LIBRARY_LOCATIONS.equals(property)) {
+				rebindVM();
+			}
+		}
+	}
+
+	/**
+	 * Re-binds the VM this profile is bound to.
+	 */
+	private void rebindVM() {
+		fVMBinding = null;
+		resolveSystemLibrary();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
+	 */
+	public void vmRemoved(IVMInstall vm) {
+		if (vm.equals(fVMBinding)) {
+			rebindVM();
+		}
 	}
 }

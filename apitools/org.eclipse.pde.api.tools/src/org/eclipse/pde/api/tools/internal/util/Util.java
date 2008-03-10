@@ -485,13 +485,7 @@ public final class Util {
 			if (jre == null) {
 				jre = JavaRuntime.getDefaultVMInstall();
 			}
-			String string = Util.generateEEContents(jre, eeid);
-			File eeFile = File.createTempFile("eed", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
-			eeFile.deleteOnExit();
-			FileOutputStream outputStream = new FileOutputStream(eeFile);
-			outputStream.write(string.getBytes(IApiCoreConstants.UTF_8));
-			outputStream.close();
-			return eeFile;
+			return createEEFile(jre, eeid);
 		} else {
 			String fileName = System.getProperty("ee.file"); //$NON-NLS-1$
 			if (fileName == null) {
@@ -500,6 +494,22 @@ public final class Util {
 			return new File(fileName);
 		}
 	}
+	
+	/**
+	 * Creates an EE file for the given JRE and specified EE id
+	 * @param eeid
+	 * @return
+	 * @throws IOException
+	 */
+	public static File createEEFile(IVMInstall jre, String eeid) throws IOException, CoreException {
+		String string = Util.generateEEContents(jre, eeid);
+		File eeFile = File.createTempFile("eed", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
+		eeFile.deleteOnExit();
+		FileOutputStream outputStream = new FileOutputStream(eeFile);
+		outputStream.write(string.getBytes(IApiCoreConstants.UTF_8));
+		outputStream.close();
+		return eeFile;
+	}	
 
 	/**
 	 * Returns whether the objects are equal, accounting for either one being <code>null</code>.
