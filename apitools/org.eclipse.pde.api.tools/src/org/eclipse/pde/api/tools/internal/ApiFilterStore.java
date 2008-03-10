@@ -484,7 +484,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					}
 				}
 				if(needsbuild) {
-					Util.getBuildJob(fProject.getProject()).schedule();
+					Util.getBuildJob(new IProject[] {fProject.getProject()}).schedule();
 				}
 			}
 		}

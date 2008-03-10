@@ -1303,12 +1303,16 @@ public class ApiErrorsWarningsConfigurationBlock {
 					if(fRebuildcount < 1) {
 						fRebuildcount++;
 						fManager.applyChanges();
+						IProject[] projects = Util.getApiProjects();
 						String message = PreferenceMessages.ApiErrorsWarningsConfigurationBlock_0;
 						if(fProject != null) {
+							projects = new IProject[] {fProject};
 							message = MessageFormat.format(PreferenceMessages.ApiErrorsWarningsConfigurationBlock_1, new String[] {fProject.getName()});
 						}
-						if(MessageDialog.openQuestion(fParent.getShell(), PreferenceMessages.ApiErrorsWarningsConfigurationBlock_2, message)) {
-							Util.getBuildJob(fProject).schedule();
+						if(projects != null) {
+							if(MessageDialog.openQuestion(fParent.getShell(), PreferenceMessages.ApiErrorsWarningsConfigurationBlock_2, message)) {
+								Util.getBuildJob(projects).schedule();
+							}
 						}
 					}
 				}
