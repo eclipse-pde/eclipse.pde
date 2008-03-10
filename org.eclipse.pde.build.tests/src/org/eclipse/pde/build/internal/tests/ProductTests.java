@@ -65,9 +65,14 @@ public class ProductTests extends PDETestCase {
 		//files copied from resources folder
 		IFolder buildFolder = newTest("218878");
 
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "acme.product");
 		properties.put("configs", "win32,win32,x86 & linux, gtk, x86");
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
