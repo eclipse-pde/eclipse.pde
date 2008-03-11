@@ -53,6 +53,11 @@ public interface IApiToolsConstants {
 	public static final String IMG_OBJ_ECLIPSE_PROFILE = "IMG_OBJ_ECLIPSE_PROFILE"; //$NON-NLS-1$
 	
 	/**
+	 * Key for a bundle version image
+	 */
+	public static final String IMG_OBJ_BUNDLE_VERSION = "IMG_OBJ_BUNDLE_VERSION"; //$NON-NLS-1$
+	
+	/**
 	 * Error overlay.
 	 */
 	public static final String IMG_OVR_ERROR = "IMG_OVR_ERROR"; //$NON-NLS-1$

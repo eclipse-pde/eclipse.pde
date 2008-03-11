@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.progress.UIJob;
@@ -52,8 +54,8 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
 	 */
 	public Image getImage() {
-		return null;
-	}
+		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE_VERSION);
+		}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
