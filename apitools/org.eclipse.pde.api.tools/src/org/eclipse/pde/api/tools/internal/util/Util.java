@@ -1991,7 +1991,7 @@ public final class Util {
 	public static Element parseDocument(String document) throws CoreException {
 		Element root = null;
 		InputStream stream = null;
-		try{		
+		try{
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			stream = new ByteArrayInputStream(document.getBytes());
