@@ -517,7 +517,7 @@ public final class Util {
 	 * @return
 	 * @throws IOException
 	 */
-	public static File createEEFile(IVMInstall jre, String eeid) throws IOException, CoreException {
+	public static File createEEFile(IVMInstall jre, String eeid) throws IOException {
 		String string = Util.generateEEContents(jre, eeid);
 		File eeFile = File.createTempFile("eed", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
 		eeFile.deleteOnExit();

@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -53,6 +55,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.search.MethodExtractor;
+import org.eclipse.pde.api.tools.internal.util.HashtableOfInt;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.ClassReader;
 
@@ -309,9 +312,29 @@ public class TagScanner {
 				IClassFile classFile = fContainer.findClassFile(type.getQualifiedName());
 				if(classFile != null) {
 					Map methodMapping = getMethodMapping(classFile);
-					IMethodDescriptor resolved = (IMethodDescriptor) methodMapping.get(descriptor);
-					if (resolved != null) {
-						return resolved;
+					Object object = methodMapping.get(descriptor.getName());
+					if (object == null) {
+						throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
+								MessageFormat.format("Unable to resolve method signature: {0}", new String[]{descriptor.toString()}), null)); //$NON-NLS-1$
+					}
+					if (object instanceof IMethodDescriptor) {
+						return (IMethodDescriptor) object;
+					}
+					if (object instanceof HashtableOfInt) {
+						HashtableOfInt hashtableOfInt = (HashtableOfInt) object;
+						int numberOfParameters = Signature.getParameterCount(descriptor.getSignature());
+						Object object2 = hashtableOfInt.get(numberOfParameters);
+						if (object2 instanceof IMethodDescriptor) {
+							return (IMethodDescriptor) object2;
+						}
+						// this is a list of method descriptors and we need to find the better match
+						List methodList = (List) object2;
+						for (Iterator iterator = methodList.iterator(); iterator.hasNext(); ) {
+							IMethodDescriptor methodDescriptor = (IMethodDescriptor) iterator.next();
+							if (matches(descriptor, methodDescriptor)) {
+								return methodDescriptor;
+							}
+						}
 					}
 				}
 				throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
@@ -320,6 +343,87 @@ public class TagScanner {
 			return descriptor;
 		}
 		
+		private boolean matches(IMethodDescriptor descriptor, IMethodDescriptor methodDescriptor) {
+			String signature = descriptor.getSignature();
+			String signature2 = methodDescriptor.getSignature();
+			if (!matches(Signature.getReturnType(signature), Signature.getReturnType(signature2))) {
+				return false;
+			}
+			String[] parameterTypes = Signature.getParameterTypes(signature);
+			String[] parameterTypes2 = Signature.getParameterTypes(signature2);
+			for (int i = 0, max = parameterTypes.length; i < max; i++) {
+				if (!matches(parameterTypes[i], parameterTypes2[i])) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		private boolean matches(String type, String type2) {
+			if (type.length() == 1) {
+				if (type2.length() != 1) {
+					return false;
+				}
+				return type.charAt(0) == type2.charAt(0);
+			} else if (type2.length() == 1) {
+				return false;
+			}
+			char[] typeChars = type.toCharArray();
+			char[] type2Chars = type2.toCharArray();
+			// return types are reference types
+			if (typeChars[0] == '[') {
+				// array type
+				if (type2Chars[0] != '[') {
+					// not an array type
+					return false;
+				}
+				// check array types
+				// get type1 dimensions
+				int dims1 = getDims(typeChars);
+				if (dims1 != getDims(type2Chars)) {
+					return false;
+				}
+				return matches(CharOperation.subarray(typeChars, dims1, typeChars.length),
+						CharOperation.subarray(type2Chars, dims1, type2Chars.length));
+			}
+			if (type2.charAt(0) == '[') {
+				// an array type
+				return false;
+			}
+			// check reference types
+			return matches(typeChars, type2Chars);
+		}
+
+		private int getDims(char[] typeSignature) {
+			for (int i = 0, max = typeSignature.length; i < max; i++) {
+				if (typeSignature[i] != '[') {
+					return i;
+				}
+			}
+			return 0;
+		}
+		
+		private boolean matches(char[] type, char[] type2) {
+			char[] typeName = Signature.toCharArray(type);
+			char[] typeName2 = Signature.toCharArray(type2);
+			if (CharOperation.lastIndexOf('$', typeName2) == -1) {
+				// no member type
+				int index = CharOperation.indexOf(typeName, typeName2, true);
+				return index != -1 && ((index + typeName.length) == typeName2.length);
+			}
+			// member type
+			int index = CharOperation.indexOf(typeName, typeName2, true);
+			if (index != -1 && ((index + typeName.length) == typeName2.length)) {
+				return true;
+			}
+			int dotIndex = CharOperation.lastIndexOf('.', typeName);
+			if (dotIndex == -1) {
+				return false;
+			}
+			typeName[dotIndex] = '$';
+			index = CharOperation.indexOf(typeName, typeName2, true);
+			return index != -1 && ((index + typeName.length) == typeName2.length);
+		}
 		/**
 		 * Returns resolved method descriptors from the given class file.
 		 * 
@@ -353,45 +457,55 @@ public class TagScanner {
 				IMethodDescriptor[] methods = getMethods(file);
 				for (int i = 0; i < methods.length; i++) {
 					IMethodDescriptor resolved = methods[i];
-					String[] params = Signature.getParameterTypes(resolved.getSignature());
-					String returnType = Signature.getReturnType(resolved.getSignature());
-					for (int j = 0; j < params.length; j++) {
-						params[j] = getUnqualified(params[j]);
+					String selector = resolved.getName();
+					Object methodsCache = mapping.get(selector);
+					if (methodsCache != null) {
+						// already an existing method with the same selector
+						int numberOfParameter = Signature.getParameterCount(resolved.getSignature());
+						if (methodsCache instanceof HashtableOfInt) {
+							HashtableOfInt hashtableOfInt = (HashtableOfInt) methodsCache;
+							Object object = hashtableOfInt.get(numberOfParameter);
+							if (object == null) {
+								// first method with this name and number of parameters
+								hashtableOfInt.put(numberOfParameter, resolved);
+							} else if (object instanceof List) {
+								// already more than one method with this name and number of parameters
+								List existingMethodsList = (List) object;
+								existingMethodsList.add(resolved);
+							} else {
+								// insert the second method with this name and number of parameters
+								List methodsList = new ArrayList();
+								methodsList.add(object);
+								methodsList.add(resolved);
+								hashtableOfInt.put(numberOfParameter, methodsList);
+							}
+						} else {
+							// this is a IMethodDescriptor
+							IMethodDescriptor previousMethod = (IMethodDescriptor) methodsCache;
+							HashtableOfInt hashtableOfInt = new HashtableOfInt();
+							int numberOfParametersForPrevious = Signature.getParameterCount(previousMethod.getSignature());
+							if (numberOfParametersForPrevious != numberOfParameter) {
+								hashtableOfInt.put(numberOfParameter, resolved);
+								hashtableOfInt.put(numberOfParametersForPrevious, previousMethod);
+							} else {
+								List methodsList = new ArrayList();
+								methodsList.add(previousMethod);
+								methodsList.add(resolved);
+								hashtableOfInt.put(numberOfParameter, methodsList);
+							}
+							mapping.put(selector, hashtableOfInt);
+						}
+					} else {
+						// we insert the IMethodDescriptor in the map
+						mapping.put(selector, resolved);
 					}
-					returnType = getUnqualified(returnType);
-					IMethodDescriptor unresolved = resolved.getEnclosingType().getMethod(resolved.getName(), Signature.createMethodSignature(params, returnType));
-					mapping.put(unresolved, resolved);
 				}
 				fMethodMappings.put(file, mapping);
 			}
 			return mapping;
 		}
-		
-		/**
-		 * Returns the unqualified equivalent of the given signature.
-		 * 
-		 * @param signature
-		 * @return unqualified signature
-		 */
-		private String getUnqualified(String signature) {
-			if (!isPrimitive(signature)) {
-				return Signature.createTypeSignature(Signature.getSimpleName(Signature.getSignatureSimpleName(signature).replace('/', '.')), false);
-			}
-			return signature;
-		}
-		
-		/**
-		 * Returns whether the signature is primitive.
-		 * 
-		 * @param signature
-		 * @return whether the signature is primitive 
-		 */
-		private boolean isPrimitive(String signature) {
-			return Signature.getElementType(signature).length() == 1;
-		}
-		
 	}
-	
+
 	/**
 	 * The singleton instance of the scanner
 	 */

@@ -38,7 +38,7 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 	 */
 	MethodDescriptorImpl(String name, IReferenceTypeDescriptor enclosingType, String signature, int modifiers) {
 		super(name, enclosingType, modifiers);
-		fSignature = signature;
+		fSignature = signature.replace('/', '.');
 	}
 	
 	/* (non-Javadoc)

@@ -116,6 +116,14 @@ public class TagScannerTests extends TestCase {
 		assertTrue("There should exist a description for method 'void two(List, Runnable)'", description != null);
 		assertTrue("There should be API visibility for method 'void two(List, Runnable)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two(List, Runnable)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod10", "one", "(Ljava/lang/Object;Ljava/lang/Integer;)V"));
+		assertTrue("There should exist a description for method 'void one(Object, Integer)'", description != null);
+		assertTrue("There should be API visibility for method 'void one(Object, Integer)'", description.getVisibility() == VisibilityModifiers.API);
+		assertTrue("There should be a no reference restriction and no extend restriction on method 'void one(Object, Integer)'", description.getRestrictions() == (RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_REFERENCE));
+		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod10", "one", "([[Ljava/lang/String;Ljava/lang/Integer;)V"));
+		assertTrue("There should exist a description for method 'void one(String[][], Integer)'", description != null);
+		assertTrue("There should be API visibility for method 'void one(String[][], Integer)'", description.getVisibility() == VisibilityModifiers.API);
+		assertTrue("There should be a no extend restriction on method 'void one(String[][], Integer)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
 	}
 	
 	/**

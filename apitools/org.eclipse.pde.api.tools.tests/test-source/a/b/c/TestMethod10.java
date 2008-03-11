@@ -20,12 +20,19 @@ public class TestMethod10 {
 
 	
 	/**
-	 * @noreference
+	 * @noreference This method is not intended to be referenced by clients.
 	 * @param name
 	 * @param number
 	 */
 	public void one(String name, Integer number) {
-		
+	}
+	
+	/**
+	 * @noextend This method is not intended to be extended by clients.
+	 * @param name
+	 * @param number
+	 */
+	public void one(String[][] name, Integer number) {
 	}
 	
 	/**
@@ -34,6 +41,14 @@ public class TestMethod10 {
 	 * @param runnable
 	 */
 	protected void two(List list, Runnable runnable) {
-		
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @noextend This method is not intended to be extended by clients.
+	 * @param name
+	 * @param number
+	 */
+	public void one(Object name, Integer number) {
 	}
 }
