@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,9 @@ import org.eclipse.pde.internal.ui.correction.ResolutionGenerator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.ui.IMarkerResolution2;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 
 public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
@@ -53,8 +55,8 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		}
 
 		public String getAdditionalProposalInfo() {
-			if (fResolution instanceof AbstractPDEMarkerResolution)
-				return ((AbstractPDEMarkerResolution) fResolution).getDescription();
+			if (fResolution instanceof IMarkerResolution2)
+				return ((IMarkerResolution2) fResolution).getDescription();
 			return null;
 		}
 
@@ -72,6 +74,10 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 					case AbstractPDEMarkerResolution.RENAME_TYPE :
 						return fRenameImage;
 				}
+			}
+			if (fResolution instanceof IMarkerResolution2) {
+				IMarkerResolution2 resolution = (IMarkerResolution2) fResolution;
+				return resolution.getImage();
 			}
 			return null;
 		}
@@ -92,14 +98,30 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		}
 
 		public boolean canFix(Annotation annotation) {
-			if (!(annotation instanceof MarkerAnnotation))
+			if (!(annotation instanceof SimpleMarkerAnnotation))
 				return false;
-			IMarker marker = ((MarkerAnnotation) annotation).getMarker();
-			IMarkerResolution[] resolutions = fGenerator.getResolutions(marker);
-			boolean canFix = resolutions.length > 0;
+
+			ArrayList resolutions = new ArrayList(5);
+
+			// grab the local resolutions first
+			IMarker marker = ((SimpleMarkerAnnotation) annotation).getMarker();
+			IMarkerResolution[] localResolutions = fGenerator.getResolutions(marker);
+			resolutions.addAll(Arrays.asList(localResolutions));
+
+			// grab the contributed resolutions
+			IMarkerResolution[] contributedResolutions = IDE.getMarkerHelpRegistry().getResolutions(marker);
+			for (int i = 0; i < contributedResolutions.length; i++) {
+				IMarkerResolution resolution = contributedResolutions[i];
+				// only add contributed marker resolutions if they don't come from PDE
+				if (!(resolution instanceof AbstractPDEMarkerResolution))
+					resolutions.add(contributedResolutions[i]);
+			}
+
+			boolean canFix = resolutions.size() > 0;
 			if (canFix)
 				if (!fResMap.containsKey(marker))
-					fResMap.put(marker, resolutions);
+					fResMap.put(marker, resolutions.toArray(new IMarkerResolution[resolutions.size()]));
+
 			return canFix;
 		}
 
@@ -116,10 +138,10 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			ArrayList list = new ArrayList();
 			while (it.hasNext()) {
 				Object key = it.next();
-				if (!(key instanceof MarkerAnnotation))
+				if (!(key instanceof SimpleMarkerAnnotation))
 					continue;
 
-				MarkerAnnotation annotation = (MarkerAnnotation) key;
+				SimpleMarkerAnnotation annotation = (SimpleMarkerAnnotation) key;
 				IMarker marker = annotation.getMarker();
 
 				IMarkerResolution[] mapping = (IMarkerResolution[]) fResMap.get(marker);
@@ -131,9 +153,11 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 						String delim = doc.getLineDelimiter(line);
 						int delimLength = delim != null ? delim.length() : 0;
 						int end = doc.getLineLength(line) + start - delimLength;
-						if (offset >= start && offset <= end)
-							for (int i = 0; i < mapping.length; i++)
+						if (offset >= start && offset <= end) {
+							for (int i = 0; i < mapping.length; i++) {
 								list.add(new PDECompletionProposal(mapping[i], pos, marker));
+							}
+						}
 					} catch (BadLocationException e) {
 					}
 
