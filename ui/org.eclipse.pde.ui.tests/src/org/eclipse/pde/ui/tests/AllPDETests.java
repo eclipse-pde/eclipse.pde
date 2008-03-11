@@ -12,9 +12,9 @@ package org.eclipse.pde.ui.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.pde.ui.tests.imports.AllImportTests;
 import org.eclipse.pde.ui.tests.model.bundle.AllBundleModelTests;
+import org.eclipse.pde.ui.tests.model.cheatsheet.AllCheatSheetModelTests;
 import org.eclipse.pde.ui.tests.model.xml.AllXMLModelTests;
 import org.eclipse.pde.ui.tests.target.AllTargetTests;
 import org.eclipse.pde.ui.tests.wizards.AllNewProjectTests;
@@ -28,6 +28,7 @@ public class AllPDETests {
 		suite.addTest(AllImportTests.suite());
 		suite.addTest(AllBundleModelTests.suite());
 		suite.addTest(AllXMLModelTests.suite());
+		suite.addTest(AllCheatSheetModelTests.suite());
 		return suite;
 	}
 
