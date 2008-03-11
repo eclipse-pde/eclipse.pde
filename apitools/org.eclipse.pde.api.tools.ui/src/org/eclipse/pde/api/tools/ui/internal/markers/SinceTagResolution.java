@@ -14,6 +14,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -52,7 +54,7 @@ public class SinceTagResolution implements IMarkerResolution2 {
 	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
 	 */
 	public Image getImage() {
-		return null;
+		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_JAVADOCTAG);
 	}
 
 	/* (non-Javadoc)
