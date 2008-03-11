@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - bug 191545
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 221998
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -16,39 +17,20 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.ibundle.IBundleFragmentModel;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -207,20 +189,28 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	private void validateBinIncludes(IBuildEntry binIncludes) {
 		// make sure we have a manifest entry
 		if (fProject.exists(ICoreConstants.MANIFEST_PATH)) {
-			String key = "META-INF/"; //$NON-NLS-1$
-			validateBinIncludes(binIncludes, key);
+			validateBinIncludes(binIncludes, ICoreConstants.MANIFEST_FOLDER_NAME);
+		}
+
+		// if we have an OSGI_INF/ directory, let's do some validation
+		if (fProject.exists(ICoreConstants.OSGI_INF_PATH)) {
+			try {
+				IFolder folder = fProject.getFolder(ICoreConstants.OSGI_INF_PATH);
+				if (folder.members().length > 0) { // only validate if we have something in it
+					validateBinIncludes(binIncludes, ICoreConstants.OSGI_INF_FOLDER_NAME);
+				}
+			} catch (CoreException e) { // do nothing
+			}
 		}
 
 		// make sure if we're a fragment, we have a fragment.xml entry
 		if (fProject.exists(ICoreConstants.FRAGMENT_PATH)) {
-			String key = "fragment.xml"; //$NON-NLS-1$
-			validateBinIncludes(binIncludes, key);
+			validateBinIncludes(binIncludes, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 		}
 
 		// make sure if we're a plugin, we have a plugin.xml entry
 		if (fProject.exists(ICoreConstants.PLUGIN_PATH)) {
-			String key = "plugin.xml"; //$NON-NLS-1$
-			validateBinIncludes(binIncludes, key);
+			validateBinIncludes(binIncludes, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 		}
 
 		// validate for bundle localization

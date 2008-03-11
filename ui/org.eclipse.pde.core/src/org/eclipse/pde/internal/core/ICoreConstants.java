@@ -129,11 +129,16 @@ public interface ICoreConstants {
 	public static final String[] EE_TOKENS = new String[] {"wassim", "zx", "bbauman", "cherie", "jlb" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	};
 
+	// Common folder names
+	public static String MANIFEST_FOLDER_NAME = "META-INF/"; //$NON-NLS-1$
+	public static String OSGI_INF_FOLDER_NAME = "OSGI-INF/"; //$NON-NLS-1$
+
 	// Common paths
-	public static IPath MANIFEST_PATH = new Path("META-INF/MANIFEST.MF"); //$NON-NLS-1$
-	public static IPath PLUGIN_PATH = new Path("plugin.xml"); //$NON-NLS-1$
-	public static IPath FRAGMENT_PATH = new Path("fragment.xml"); //$NON-NLS-1$
-	public static IPath FEATURE_PATH = new Path("feature.xml"); //$NON-NLS-1$
-	public static IPath BUILD_PROPERTIES_PATH = new Path("build.properties"); //$NON-NLS-1$
+	public static IPath MANIFEST_PATH = new Path(BUNDLE_FILENAME_DESCRIPTOR);
+	public static IPath PLUGIN_PATH = new Path(PLUGIN_FILENAME_DESCRIPTOR);
+	public static IPath FRAGMENT_PATH = new Path(FRAGMENT_FILENAME_DESCRIPTOR);
+	public static IPath FEATURE_PATH = new Path(FEATURE_FILENAME_DESCRIPTOR);
+	public static IPath BUILD_PROPERTIES_PATH = new Path(BUILD_FILENAME_DESCRIPTOR);
+	public static IPath OSGI_INF_PATH = new Path(OSGI_INF_FOLDER_NAME);
 
 }
