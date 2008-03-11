@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.target;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.TreeSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
+import org.eclipse.pde.internal.ui.util.LocaleUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.*;
@@ -239,44 +240,13 @@ public class EnvironmentSection extends PDESection {
 	}
 
 	private void initializeAllLocales() {
-		String[] nl = getLocales();
+		String[] nl = LocaleUtil.getLocales();
 		for (int i = 0; i < nl.length; i++)
 			fNLChoices.add(nl[i]);
 		String fileValue = getEnvironment().getNL();
 		if (fileValue != null)
-			fNLChoices.add(expandLocaleName(fileValue));
+			fNLChoices.add(LocaleUtil.expandLocaleName(fileValue));
 		LOCALES_INITIALIZED = true;
-	}
-
-	private static String[] getLocales() {
-		Locale[] locales = Locale.getAvailableLocales();
-		String[] result = new String[locales.length];
-		for (int i = 0; i < locales.length; i++) {
-			Locale locale = locales[i];
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(locale.toString());
-			buffer.append(" - "); //$NON-NLS-1$
-			buffer.append(locale.getDisplayName());
-			result[i] = buffer.toString();
-		}
-		return result;
-	}
-
-	private String expandLocaleName(String name) {
-		String language = ""; //$NON-NLS-1$
-		String country = ""; //$NON-NLS-1$
-		String variant = ""; //$NON-NLS-1$
-
-		StringTokenizer tokenizer = new StringTokenizer(name, "_"); //$NON-NLS-1$
-		if (tokenizer.hasMoreTokens())
-			language = tokenizer.nextToken();
-		if (tokenizer.hasMoreTokens())
-			country = tokenizer.nextToken();
-		if (tokenizer.hasMoreTokens())
-			variant = tokenizer.nextToken();
-
-		Locale locale = new Locale(language, country, variant);
-		return locale.toString() + " - " + locale.getDisplayName(); //$NON-NLS-1$
 	}
 
 	private String getText(ComboPart combo) {
@@ -311,7 +281,7 @@ public class EnvironmentSection extends PDESection {
 		fWSCombo.setText(presetValue);
 		presetValue = (orgEnv.getArch() == null) ? "" : orgEnv.getArch(); //$NON-NLS-1$
 		fArchCombo.setText(presetValue);
-		presetValue = (orgEnv.getNL() == null) ? "" : expandLocaleName(orgEnv.getNL()); //$NON-NLS-1$
+		presetValue = (orgEnv.getNL() == null) ? "" : LocaleUtil.expandLocaleName(orgEnv.getNL()); //$NON-NLS-1$
 		fNLCombo.setText(presetValue);
 
 		super.refresh();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.itarget.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
+import org.eclipse.pde.internal.ui.util.LocaleUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -71,7 +72,7 @@ public class TargetEnvironmentTab {
 		if (LOCALES_INITIALIZED) {
 			initializeAllLocales();
 		} else {
-			fNLChoices.add(expandLocaleName(preferences.getString(ICoreConstants.NL)));
+			fNLChoices.add(LocaleUtil.expandLocaleName(preferences.getString(ICoreConstants.NL)));
 		}
 	}
 
@@ -98,7 +99,7 @@ public class TargetEnvironmentTab {
 	}
 
 	private void initializeAllLocales() {
-		String[] nl = getLocales();
+		String[] nl = LocaleUtil.getLocales();
 		for (int i = 0; i < nl.length; i++)
 			fNLChoices.add(nl[i]);
 		addExtraChoices(fNLChoices, preferences.getString(ICoreConstants.NL_EXTRA));
@@ -192,7 +193,7 @@ public class TargetEnvironmentTab {
 
 		fOSCombo.setText(preferences.getString(ICoreConstants.OS));
 		fWSCombo.setText(preferences.getString(ICoreConstants.WS));
-		fNLCombo.setText(expandLocaleName(preferences.getString(ICoreConstants.NL)));
+		fNLCombo.setText(LocaleUtil.expandLocaleName(preferences.getString(ICoreConstants.NL)));
 		fArchCombo.setText(preferences.getString(ICoreConstants.ARCH));
 	}
 
@@ -208,7 +209,7 @@ public class TargetEnvironmentTab {
 		String ws = info.getDisplayWS();
 		String arch = info.getDisplayArch();
 		String nl = info.getDisplayNL();
-		nl = expandLocaleName(nl);
+		nl = LocaleUtil.expandLocaleName(nl);
 
 		if (!os.equals("")) { //$NON-NLS-1$
 			if (fOSCombo.indexOf(os) == -1)
@@ -246,7 +247,7 @@ public class TargetEnvironmentTab {
 	protected void performDefaults() {
 		fOSCombo.setText(preferences.getDefaultString(ICoreConstants.OS));
 		fWSCombo.setText(preferences.getDefaultString(ICoreConstants.WS));
-		fNLCombo.setText(expandLocaleName(preferences.getDefaultString(ICoreConstants.NL)));
+		fNLCombo.setText(LocaleUtil.expandLocaleName(preferences.getDefaultString(ICoreConstants.NL)));
 		fArchCombo.setText(preferences.getDefaultString(ICoreConstants.ARCH));
 		fJRECombo.setText(VMHelper.getDefaultVMInstallName());
 	}
@@ -341,36 +342,4 @@ public class TargetEnvironmentTab {
 			manager.modelsChanged(new ModelProviderEvent(properties, ICoreConstants.ENVIRONMENT_CHANGED, null, null, null));
 		}
 	}
-
-	private String expandLocaleName(String name) {
-		String language = ""; //$NON-NLS-1$
-		String country = ""; //$NON-NLS-1$
-		String variant = ""; //$NON-NLS-1$
-
-		StringTokenizer tokenizer = new StringTokenizer(name, "_"); //$NON-NLS-1$
-		if (tokenizer.hasMoreTokens())
-			language = tokenizer.nextToken();
-		if (tokenizer.hasMoreTokens())
-			country = tokenizer.nextToken();
-		if (tokenizer.hasMoreTokens())
-			variant = tokenizer.nextToken();
-
-		Locale locale = new Locale(language, country, variant);
-		return locale.toString() + " - " + locale.getDisplayName(); //$NON-NLS-1$
-	}
-
-	private static String[] getLocales() {
-		Locale[] locales = Locale.getAvailableLocales();
-		String[] result = new String[locales.length];
-		for (int i = 0; i < locales.length; i++) {
-			Locale locale = locales[i];
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(locale.toString());
-			buffer.append(" - "); //$NON-NLS-1$
-			buffer.append(locale.getDisplayName());
-			result[i] = buffer.toString();
-		}
-		return result;
-	}
-
 }
