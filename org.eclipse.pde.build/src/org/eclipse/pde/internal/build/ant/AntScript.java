@@ -385,7 +385,8 @@ public class AntScript implements IAntScript {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			for (int i = 0; i < fileSets.length; i++)
-				fileSets[i].print(this);
+				if (fileSets[i] != null)
+					fileSets[i].print(this);
 			indent--;
 			printTab();
 			output.println("</copy>"); //$NON-NLS-1$
@@ -400,7 +401,8 @@ public class AntScript implements IAntScript {
 		output.println(">"); //$NON-NLS-1$
 		indent++;
 		for (int i = 0; i < fileSets.length; i++)
-			fileSets[i].print(this);
+			if (fileSets[i] != null)
+				fileSets[i].print(this);
 		indent--;
 		printTab();
 		output.println("</move>"); //$NON-NLS-1$
@@ -442,7 +444,8 @@ public class AntScript implements IAntScript {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			for (int i = 0; i < fileSets.length; i++)
-				fileSets[i].print(this);
+				if (fileSets[i] != null)
+					fileSets[i].print(this);
 			indent--;
 			printTab();
 			output.println("</delete>"); //$NON-NLS-1$
