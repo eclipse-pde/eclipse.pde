@@ -379,8 +379,8 @@ public class TagScanner {
 				}
 				// check array types
 				// get type1 dimensions
-				int dims1 = getDims(typeChars);
-				if (dims1 != getDims(type2Chars)) {
+				int dims1 = Signature.getArrayCount(typeChars);
+				if (dims1 != Signature.getArrayCount(type2Chars)) {
 					return false;
 				}
 				return matches(CharOperation.subarray(typeChars, dims1, typeChars.length),
@@ -394,15 +394,6 @@ public class TagScanner {
 			return matches(typeChars, type2Chars);
 		}
 
-		private int getDims(char[] typeSignature) {
-			for (int i = 0, max = typeSignature.length; i < max; i++) {
-				if (typeSignature[i] != '[') {
-					return i;
-				}
-			}
-			return 0;
-		}
-		
 		private boolean matches(char[] type, char[] type2) {
 			char[] typeName = Signature.toCharArray(type);
 			char[] typeName2 = Signature.toCharArray(type2);
