@@ -371,9 +371,9 @@ public class TagScanner {
 			char[] typeChars = type.toCharArray();
 			char[] type2Chars = type2.toCharArray();
 			// return types are reference types
-			if (typeChars[0] == '[') {
+			if (typeChars[0] == Signature.C_ARRAY) {
 				// array type
-				if (type2Chars[0] != '[') {
+				if (type2Chars[0] != Signature.C_ARRAY) {
 					// not an array type
 					return false;
 				}
@@ -386,7 +386,7 @@ public class TagScanner {
 				return matches(CharOperation.subarray(typeChars, dims1, typeChars.length),
 						CharOperation.subarray(type2Chars, dims1, type2Chars.length));
 			}
-			if (type2.charAt(0) == '[') {
+			if (type2.charAt(0) == Signature.C_ARRAY) {
 				// an array type
 				return false;
 			}
@@ -397,7 +397,7 @@ public class TagScanner {
 		private boolean matches(char[] type, char[] type2) {
 			char[] typeName = Signature.toCharArray(type);
 			char[] typeName2 = Signature.toCharArray(type2);
-			if (CharOperation.lastIndexOf('$', typeName2) == -1) {
+			if (CharOperation.lastIndexOf(Signature.C_DOLLAR, typeName2) == -1) {
 				// no member type
 				int index = CharOperation.indexOf(typeName, typeName2, true);
 				return index != -1 && ((index + typeName.length) == typeName2.length);
@@ -407,11 +407,11 @@ public class TagScanner {
 			if (index != -1 && ((index + typeName.length) == typeName2.length)) {
 				return true;
 			}
-			int dotIndex = CharOperation.lastIndexOf('.', typeName);
+			int dotIndex = CharOperation.lastIndexOf(Signature.C_DOT, typeName);
 			if (dotIndex == -1) {
 				return false;
 			}
-			typeName[dotIndex] = '$';
+			typeName[dotIndex] = Signature.C_DOLLAR;
 			index = CharOperation.indexOf(typeName, typeName2, true);
 			return index != -1 && ((index + typeName.length) == typeName2.length);
 		}
