@@ -19,8 +19,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -109,6 +108,11 @@ public class LaunchConfigurationHelper {
 		String osgiBundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
 		// if we are launching using P2, write out P2 files (bundles.txt) and add P2 property to config.ini
 		if (osgiBundles != null && osgiBundles.indexOf("org.eclipse.equinox.simpleconfigurator") != -1) { //$NON-NLS-1$
+			if (map.get("org.eclipse.equinox.simpleconfigurator") == null) { //$NON-NLS-1$
+				IPluginModelBase model = PluginRegistry.findModel("org.eclipse.equinox.simpleconfigurator"); //$NON-NLS-1$
+				map.put("org.eclipse.equinox.simpleconfigurator", model); //$NON-NLS-1$
+			}
+
 			URL bundlesTxt = P2Utils.writeBundlesTxt(map.values(), directory);
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
