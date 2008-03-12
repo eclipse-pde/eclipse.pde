@@ -745,11 +745,9 @@ public class ClassFileVisitor extends ClassAdapter {
 	 * @param component the component this scanned class file resides in
 	 * while visiting the class
 	 * @param collector the listing of references to annotate from this pass
-	 * @param includeLocalReferences whether references to elements within the same class file
-	 * 	should be considered
 	 * @param referenceKinds kinds of references to extract as defined by {@link ReferenceModifiers}
 	 */
-	public ClassFileVisitor(IApiComponent component, List collector, boolean includeLocalReferences, int referenceKinds) {
+	public ClassFileVisitor(IApiComponent component, List collector, int referenceKinds) {
 		super(new ClassNode());
 		this.fComponent = component;
 		this.collector = collector;

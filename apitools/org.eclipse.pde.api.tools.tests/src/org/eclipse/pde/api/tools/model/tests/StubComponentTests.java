@@ -31,6 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
+import org.eclipse.pde.api.tools.tests.util.Util;
 
 /**
  * Tests class file stubs.
@@ -97,13 +98,12 @@ public class StubComponentTests extends TestCase {
 				IApiSearchScope scope = Factory.newScope(new IApiComponent[]{component});
 				IApiSearchScope scope2 = Factory.newScope(new IApiComponent[]{component2});
 				IApiSearchCriteria criteria = Factory.newSearchCriteria();
-				criteria.setConsiderComponentLocalReferences(true);
 				criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL);
 				criteria.setReferencedRestrictions(
 						VisibilityModifiers.ALL_VISIBILITIES,
 						RestrictionModifiers.ALL_RESTRICTIONS);
-				IReference[] references = engine.search(scope, new IApiSearchCriteria[]{criteria}, null);
-				IReference[] references2 = engine.search(scope2, new IApiSearchCriteria[]{criteria}, null);
+				IReference[] references = Util.getReferences(engine.search(scope, new IApiSearchCriteria[]{criteria}, null));
+				IReference[] references2 = Util.getReferences(engine.search(scope2, new IApiSearchCriteria[]{criteria}, null));
 				System.out.println(component.getId() + " origRefs: " + references.length + " stubRefs: " + references2.length);
 				Set<IReference> leftOver = new HashSet<IReference>();
 				for (int j = 0; j < references.length; j++) {

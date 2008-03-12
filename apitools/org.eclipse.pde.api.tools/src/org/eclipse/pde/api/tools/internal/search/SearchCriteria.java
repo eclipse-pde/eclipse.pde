@@ -20,7 +20,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -47,12 +49,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * collection for entire component.
 	 */
 	private Map fComponentIds = new HashMap();
-	
-	/**
-	 * Whether to consider component local references
-	 */
-	private boolean fLocalReferences = false;
-	
+		
 	/**
 	 * References kinds with corresponding visibility and usage
 	 * restrictions on the referenced location
@@ -65,6 +62,17 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * Java visibility to consider at the source or -1 if not considered
 	 */
 	private int fSourceModifiers = -1;
+	
+	/**
+	 * Corresponding visibility and usage restrictions on the source location
+	 */
+	private int fSourceVisibility = VisibilityModifiers.ALL_VISIBILITIES;
+	private int fSourceRestriction = RestrictionModifiers.ALL_RESTRICTIONS;	
+	
+	/**
+	 * Component filters for source reference locations or <code>null</code> if none.
+	 */
+	private String fSourceFilter[] = null;
 
 	/**
 	 * Used for pattern matching.
@@ -337,13 +345,6 @@ public class SearchCriteria implements IApiSearchCriteria {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#isConsiderComponentLocalReferences()
-	 */
-	public boolean isConsiderComponentLocalReferences() {
-		return fLocalReferences;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#isMatch(org.eclipse.pde.api.tools.search.IReference)
 	 */
 	public boolean isMatch(IReference reference) {
@@ -426,13 +427,6 @@ public class SearchCriteria implements IApiSearchCriteria {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#setConsiderComponentLocalReferences(boolean)
-	 */
-	public void setConsiderComponentLocalReferences(boolean localRefs) {
-		fLocalReferences = localRefs;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria#setReferencedRestrictions(int, int)
 	 */
 	public void setReferencedRestrictions(int visibilityMask, int restrictionMask) {
@@ -453,9 +447,60 @@ public class SearchCriteria implements IApiSearchCriteria {
 	public boolean isPotentialMatch(IReference reference) {
 		return
 			matchesReferenceKinds(reference) &&
+			!isFilteredSourceLocation(reference.getSourceLocation()) &&
 			matchesSourceModifiers(reference.getSourceLocation()) &&
+			matchesSourceApiRestrictions(reference.getSourceLocation()) &&
 			matchesPatternRestrictions(reference.getReferencedLocation()) &&
 			isPotentialElementMatch(reference.getReferencedLocation());
+	}
+	
+	/**
+	 * Returns whether the location is a filtered source location.
+	 * 
+	 * @param location source location
+	 * @return whether the location (reference) should be filtered (ignored)
+	 */
+	private boolean isFilteredSourceLocation(ILocation location) {
+		if (fSourceFilter == null) {
+			return false;
+		}
+		for (int i = 0; i < fSourceFilter.length; i++) {
+			if (location.getApiComponent().getId().equals(fSourceFilter[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns whether the source location (i.e. location that the reference is made
+	 * from) matches API restrictions for this condition.
+	 *  
+	 * @param location source location
+	 * @return whether restrictions are satisfied
+	 */
+	private boolean matchesSourceApiRestrictions(ILocation location) {
+		if (fSourceVisibility == VisibilityModifiers.ALL_VISIBILITIES && fSourceRestriction == RestrictionModifiers.ALL_RESTRICTIONS) {
+			return true;
+		}
+		IApiComponent apiComponent = location.getApiComponent();
+		try {
+			IApiAnnotations annotations = apiComponent.getApiDescription().resolveAnnotations(apiComponent.getId(), location.getMember());
+			if (annotations != null) {
+				if ((annotations.getVisibility() & fSourceVisibility) > 0) {
+					if (fSourceRestriction == RestrictionModifiers.ALL_RESTRICTIONS || (annotations.getRestrictions() & fRestrictionKinds) > 0) {
+						return true;
+					}
+				}
+			} else {
+				// TODO:
+				return true;
+			}
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	/**
@@ -520,6 +565,29 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 */
 	public void setSourceModifiers(int modifiers) {
 		fSourceModifiers = modifiers;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria#setSourceRestrictions(int, int)
+	 */
+	public void setSourceRestrictions(int visibilityMask, int restrictionMask) {
+		fSourceVisibility = visibilityMask;
+		fSourceRestriction = restrictionMask;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria#addSourceFilter(java.lang.String)
+	 */
+	public void addSourceFilter(String componentId) {
+		if (fSourceFilter == null) {
+			fSourceFilter = new String[]{componentId};
+		} else {
+			String[] temp = new String[fSourceFilter.length + 1];
+			System.arraycopy(fSourceFilter, 0, temp, 0, fSourceFilter.length);
+			temp[fSourceFilter.length] = componentId;
+			fSourceFilter = temp;
+		}
 	}
 
 }

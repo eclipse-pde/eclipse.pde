@@ -36,6 +36,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.eclipse.pde.api.tools.tests.util.Util;
 
 /**
  * Tests for class file stubs.
@@ -106,15 +107,14 @@ public class ClassFileStubTests extends TestCase {
 			IApiComponent component2 = exported.getApiComponent("org.eclipse.pde");
 			IApiSearchEngine engine = Factory.newSearchEngine();
 			IApiSearchCriteria criteria = Factory.newSearchCriteria();
-			criteria.setConsiderComponentLocalReferences(true);
 			criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL);
 			criteria.setReferencedRestrictions(
 					VisibilityModifiers.ALL_VISIBILITIES,
 					RestrictionModifiers.ALL_RESTRICTIONS);
-			IReference[] refs = engine.search(Factory.newScope(
-					new IApiComponent[]{component}), new IApiSearchCriteria[]{criteria}, null);
-			IReference[] refs2 = engine.search(Factory.newScope(
-					new IApiComponent[]{component2}), new IApiSearchCriteria[]{criteria}, null);
+			IReference[] refs = Util.getReferences(engine.search(Factory.newScope(
+					new IApiComponent[]{component}), new IApiSearchCriteria[]{criteria}, null));
+			IReference[] refs2 = Util.getReferences(engine.search(Factory.newScope(
+					new IApiComponent[]{component2}), new IApiSearchCriteria[]{criteria}, null));
 			Set<IReference> set = new HashSet<IReference>();
 			System.out.println("original refs: " + refs.length + " stub refs: " + refs2.length);
 			for (int i = 0; i < refs.length; i++) {

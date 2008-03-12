@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.objectweb.asm.ClassReader;
 
@@ -72,18 +73,16 @@ public class ClassFileScanner {
 	 * Scans the specified {@link IClassFile} and build the set of references
 	 * @param component the component we are scanning the class file from
 	 * @param classfile the class file to scan
-	 * @param includeLocalReferences whether references to elements within the class
-	 *  file should be considered
 	 * @param referenceKinds kinds of references to extract as defined by {@link ReferenceModifiers}
 	 * @throws CoreException 
 	 */
-	public void scan(IApiComponent component, IClassFile classfile, boolean includeLocalReferences, int referenceKinds) throws CoreException {
+	public void scan(IApiComponent component, IClassFile classfile, int referenceKinds) throws CoreException {
 		if (this.references == null || this.references == Collections.EMPTY_LIST) {
 			this.references = new ArrayList(150);
 		} else {
 			references.clear();
 		}
 		ClassReader reader = new ClassReader(classfile.getContents());
-		reader.accept(new ClassFileVisitor(component, references, includeLocalReferences, referenceKinds), ClassReader.SKIP_FRAMES);
+		reader.accept(new ClassFileVisitor(component, references, referenceKinds), ClassReader.SKIP_FRAMES);
 	}
 }

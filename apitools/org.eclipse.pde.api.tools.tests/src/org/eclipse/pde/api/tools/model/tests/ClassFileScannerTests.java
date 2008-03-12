@@ -66,7 +66,7 @@ public class ClassFileScannerTests extends TestCase {
 	protected List getRefSet(String qualifiedname) {
 		try {
 			IClassFile cfile = container.findClassFile(qualifiedname);
-			scanner.scan(component, cfile, false, ReferenceModifiers.MASK_REF_ALL);
+			scanner.scan(component, cfile, ReferenceModifiers.MASK_REF_ALL);
 			return scanner.getReferenceListing();
 		}
 		catch(CoreException ce) {

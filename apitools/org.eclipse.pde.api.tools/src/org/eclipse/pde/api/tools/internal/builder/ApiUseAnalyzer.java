@@ -34,6 +34,7 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
+import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchResult;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
@@ -147,9 +148,41 @@ public class ApiUseAnalyzer {
 		IApiSearchCriteria[] conditions = buildSearchConditions(profile, component);
 		if (conditions.length > 0) {
 			IApiSearchEngine engine = Factory.newSearchEngine();
-			return engine.search(scope, conditions, monitor);
+			return getReferences(engine.search(scope, conditions, monitor));
 		}
 		return EMPTY;
+	}
+	
+	/**
+	 * Returns all references in the given search results.
+	 * 
+	 * TODO: this method will be deleted
+	 * 
+	 * @param results
+	 * @return
+	 * @deprecated to be deleted, and the analyzer will return IApiProblems instead
+	 */
+	private IReference[] getReferences(IApiSearchResult[] results) {
+		if (results.length == 1) {
+			return results[0].getReferences();
+		}
+		if (results.length == 0) {
+			return new IReference[0];
+		}
+		int size = 0;
+		for (int i = 0; i < results.length; i++) {
+			IApiSearchResult result = results[i];
+			size += result.getReferences().length;
+		}
+		IReference[] refs = new IReference[size];
+		int index = 0;
+		for (int i = 0; i < results.length; i++) {
+			IApiSearchResult result = results[i];
+			IReference[] references = result.getReferences();
+			System.arraycopy(references, 0, refs, index, references.length);
+			index = index + references.length;
+		}
+		return refs;
 	}
 	
 	/**
@@ -336,10 +369,9 @@ public class ApiUseAnalyzer {
 		for (int i = 0; i < ids.length; i++) {
 			criteria.addReferencedComponentRestriction(ids[i]);
 		}
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL);
 		criteria.setReferencedRestrictions(VisibilityModifiers.ALL_VISIBILITIES, RestrictionModifiers.ALL_RESTRICTIONS);
-		IReference[] all = engine.search(Factory.newScope(new IApiComponent[]{from}), new IApiSearchCriteria[]{criteria}, monitor);
+		IReference[] all = getReferences(engine.search(Factory.newScope(new IApiComponent[]{from}), new IApiSearchCriteria[]{criteria}, monitor));
 		Map map = new HashMap(ids.length);
 		for (int i = 0; i < all.length; i++) {
 			IReference reference = all[i];
@@ -366,21 +398,25 @@ public class ApiUseAnalyzer {
 	 * @param scope scope within the component to analyze
 	 * @param monitor progress monitor
 	 * @exception CoreException if something goes wrong
+	 * 
+	 * TODO: this will be combined with findIllegalApiUse to do one search that returns problems
 	 */
 	public IReference[] findApiLeaks(IApiProfile profile, IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor)  throws CoreException {
 		IApiSearchCriteria[] conditions = new IApiSearchCriteria[1];
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(true);
 		criteria.setReferenceKinds(
+			ReferenceModifiers.REF_EXTENDS |
+			ReferenceModifiers.REF_IMPLEMENTS |
 			ReferenceModifiers.REF_FIELDDECL |
 			ReferenceModifiers.REF_PARAMETER |
 			ReferenceModifiers.REF_RETURNTYPE );
 		criteria.setReferencedRestrictions(VisibilityModifiers.PRIVATE, RestrictionModifiers.ALL_RESTRICTIONS);
+		criteria.setSourceRestrictions(VisibilityModifiers.API, RestrictionModifiers.ALL_RESTRICTIONS);
 		criteria.setSourceModifiers(Flags.AccPublic | Flags.AccProtected);
 		conditions[0] = criteria;
 		if (conditions.length > 0) {
 			IApiSearchEngine engine = Factory.newSearchEngine();
-			return engine.search(scope, conditions, monitor);
+			return getReferences(engine.search(scope, conditions, monitor));
 		}
 		return EMPTY;
 	}	

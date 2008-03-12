@@ -30,34 +30,6 @@ public interface IApiSearchCriteria {
 	public int getReferenceKinds();
 	
 	/**
-	 * Returns whether references within the same API component should be considered.
-	 * Returns <code>false</code> if only references between API components should be
-	 * considered, otherwise <code>true</code>.
-	 *  
-	 * @return whether references contained within a component should be considered 
-	 */
-	public boolean isConsiderComponentLocalReferences();
-	
-	/**
-	 * Sets whether references within the same API component should be considered.
-	 * Specify <code>false</code> when only references between API components should be
-	 * considered, otherwise <code>true</code>.
-	 * <p>
-	 * When only references between API components are to be considered, the 
-	 * <code>localRefs</code> parameter should be set to <code>false</code>.
-	 * For example, when searching for implementors of an interface
-	 * specified as <code>NO_IMPLMENENT</code>, one usually only wants to consider
-	 * implementors external to the component defining the interface (i.e. the
-	 * component defining the interface provides an expected/legal implementation
-	 * of the interface). If you want to consider references within a component
-	 * as well, <code>includeComponentLocalRefs</code> should be specified as <code>true</code>.
-	 * </p>
-	 *  
-	 * @param localRefs whether references contained within a component should be considered 
-	 */
-	public void setConsiderComponentLocalReferences(boolean localRefs);
-	
-	/**
 	 * Returns whether the given <b>unresolved</b> reference is a potential matches for this
 	 * search criteria. The reference is unresolved. 
 	 * 
@@ -129,4 +101,22 @@ public interface IApiSearchCriteria {
 	 * @param modifiers modifiers as defined by {@link Flags}
 	 */
 	public void setSourceModifiers(int modifiers);
+
+	/**
+	 * Sets the visibility and API use restrictions to consider on source elements.
+	 * By default, all visibilities and restrictions are considered.
+	 * 
+	 * @param visibilityMask bit mask of the visibilities of the source location
+	 * 	to consider as specified by {@link VisibilityModifiers}
+	 * @param restrictionMask bit mask of the API restrictions of the source location
+	 * 	to consider as specified by {@link RestrictionModifiers}
+	 */
+	public void setSourceRestrictions(int visibilityMask, int restrictionMask);	
+	
+	/**
+	 * Filter references originating from the specified component.
+	 * 
+	 * @param componentId API component identifier
+	 */
+	public void addSourceFilter(String componentId);
 }

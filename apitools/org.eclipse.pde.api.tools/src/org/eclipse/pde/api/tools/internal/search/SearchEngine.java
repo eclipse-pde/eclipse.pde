@@ -31,6 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
+import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchResult;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
@@ -58,9 +59,9 @@ public class SearchEngine implements IApiSearchEngine {
 	}
 	
 	/**
-	 * Empty references collection.
+	 * Empty result collection.
 	 */
-	private static final IReference[] EMPTY_REF = new IReference[0];
+	private static final IApiSearchResult[] EMPTY_RESULT = new IApiSearchResult[0];
 	
 	/**
 	 * Visits each class file, extracting references.
@@ -98,7 +99,7 @@ public class SearchEngine implements IApiSearchEngine {
 		public void visit(String packageName, IClassFile classFile) {
 			if (!fMonitor.isCanceled()) {
 				try {
-					fScanner.scan(fCurrentComponent, classFile, fLocalRefs, fAllReferenceKinds);
+					fScanner.scan(fCurrentComponent, classFile, fAllReferenceKinds);
 					List references = fScanner.getReferenceListing();
 					// keep potential matches
 					Iterator iterator = references.iterator();
@@ -150,12 +151,7 @@ public class SearchEngine implements IApiSearchEngine {
 	 * Mask of all reference kinds to consider based on all search conditions.
 	 */
 	private int fAllReferenceKinds = 0;
-	
-	/**
-	 * Whether component local references need to be considered based on all conditions.
-	 */
-	private boolean fLocalRefs = false;
-	
+		
 	/**
 	 * Scans the given scope extracting all reference information.
 	 * 
@@ -335,7 +331,7 @@ public class SearchEngine implements IApiSearchEngine {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.search.IApiSearchEngine#search(org.eclipse.pde.api.tools.search.IApiSearchScope, int[], int[], int[], org.eclipse.pde.api.tools.search.IApiSearchScope, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IReference[] search(IApiSearchScope sourceScope,
+	public IApiSearchResult[] search(IApiSearchScope sourceScope,
 			IApiSearchCriteria[] conditions, IProgressMonitor monitor)
 			throws CoreException {
 		SubMonitor localMonitor = SubMonitor.convert(monitor,SearchMessages.SearchEngine_2, 3);
@@ -344,7 +340,6 @@ public class SearchEngine implements IApiSearchEngine {
 		for (int i = 0; i < conditions.length; i++) {
 			IApiSearchCriteria condition = conditions[i];
 			fAllReferenceKinds |= condition.getReferenceKinds();
-			fLocalRefs = fLocalRefs | condition.isConsiderComponentLocalReferences();
 			fPotentialMatches[i] = new LinkedList();
 		}
 		// 1. extract all references, filtering out kinds we don't care about
@@ -352,14 +347,14 @@ public class SearchEngine implements IApiSearchEngine {
 		extractReferences(sourceScope, localMonitor);
 		localMonitor.worked(1);
 		if (localMonitor.isCanceled()) {
-			return EMPTY_REF;
+			return EMPTY_RESULT;
 		}
 		// 2. resolve the remaining references
 		localMonitor.subTask(SearchMessages.SearchEngine_4);
 		resolveReferences(fPotentialMatches, localMonitor);
 		localMonitor.worked(1);
 		if (localMonitor.isCanceled()) {
-			return EMPTY_REF;
+			return EMPTY_RESULT;
 		}
 		// 3. filter based on search conditions
 		localMonitor.subTask(SearchMessages.SearchEngine_5);
@@ -370,27 +365,19 @@ public class SearchEngine implements IApiSearchEngine {
 				applyConditions(references, condition);
 			}
 			if (localMonitor.isCanceled()) {
-				return EMPTY_REF;
+				return EMPTY_RESULT;
 			}
 		}
-		int size = 0;
-		for (int i = 0; i < fPotentialMatches.length; i++) {
-			size += fPotentialMatches[i].size();
-		}
-		IReference[] refs = new IReference[size];
-		int index = 0;
+		IApiSearchResult[] results = new IApiSearchResult[fPotentialMatches.length];
 		for (int i = 0; i < fPotentialMatches.length; i++) {
 			List references = fPotentialMatches[i];
-			Iterator iterator = references.iterator();
-			while (iterator.hasNext()) {
-				refs[index++] = (IReference) iterator.next();
-			}
+			results[i] = new ApiSearchResult(fConditions[i], (IReference[]) references.toArray(new IReference[references.size()]));
 			references.clear();
 		}
 		fCache.clear();
 		localMonitor.worked(1);
 		localMonitor.done();
-		return refs;
+		return results;
 	}
 	
 	/**
@@ -404,27 +391,7 @@ public class SearchEngine implements IApiSearchEngine {
 		Iterator iterator = references.iterator();
 		while (iterator.hasNext()) {
 			IReference ref = (IReference) iterator.next();
-			ILocation location = ref.getResolvedLocation();
-			boolean consider = true;
-			if (location != null) {
-				if (!fLocalRefs) {
-					if (ref.getSourceLocation().getApiComponent().equals(location.getApiComponent())) {
-						consider = false;
-					}		
-				}
-			}
-			boolean match = false;
-			if (consider) {
-				IApiAnnotations description = ref.getResolvedAnnotations();
-				if (description != null) {
-					if (condition.isMatch(ref)) {
-						match = true;
-					}
-				} else {
-					// TODO: unresolved (note unresolved REF_OVERRIDE's are OK)
-				}
-			}
-			if (!match) {
+			if (!condition.isMatch(ref)) {
 				iterator.remove();
 			}
 		}

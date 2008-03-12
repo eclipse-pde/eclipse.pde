@@ -58,13 +58,12 @@ public class SearchEngineTests extends TestCase {
 		IReferenceTypeDescriptor typeA = pkg.getType("A");
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_EXTENDS);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.ALL_RESTRICTIONS);
 		criteria.addReferencedElementRestriction(componentA.getId(), new IElementDescriptor[]{typeA});
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of extenders", 1, refs.length);
 		assertEquals("Wrong extender", Factory.packageDescriptor("component.b").getType("B"), refs[0].getSourceLocation().getMember());
 	}
@@ -80,13 +79,12 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_EXTENDS);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.ALL_RESTRICTIONS);
 		criteria.addReferencedPatternRestriction("component.a.A", IElementDescriptor.T_REFERENCE_TYPE);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of extenders", 1, refs.length);
 		assertEquals("Wrong extender", Factory.packageDescriptor("component.b").getType("B"), refs[0].getSourceLocation().getMember());
 	}
@@ -102,13 +100,12 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_VIRTUALMETHOD | ReferenceModifiers.REF_SPECIALMETHOD);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.ALL_RESTRICTIONS);
 		criteria.addReferencedPatternRestriction("no.*", IElementDescriptor.T_METHOD);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of callers", 3, refs.length);
 	}	
 	
@@ -123,13 +120,13 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_EXTENDS);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.ALL_RESTRICTIONS);
 		criteria.addReferencedPatternRestriction("component.a", IElementDescriptor.T_PACKAGE);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
+				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of extenders", 4, refs.length);
 		assertEquals("Wrong extender", Factory.packageDescriptor("component.b").getType("B"), refs[0].getSourceLocation().getMember());
 	}	
@@ -154,12 +151,12 @@ public class SearchEngineTests extends TestCase {
 		componentA.getApiDescription().setRestrictions(null, m3, RestrictionModifiers.NO_EXTEND);
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_OVERRIDE);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.NO_EXTEND);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
+				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of overrides", 3, refs.length);
 		Set<String> set = new HashSet<String>();
 		set.add(m1.getName());
@@ -190,12 +187,12 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_INSTANTIATE);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.NO_INSTANTIATE);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
+				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of illegal instantiations", 1, refs.length);
 		assertEquals("Wrong source", Factory.packageDescriptor("e.f.g").getType("TestInstantiate"), refs[0].getSourceLocation().getType());
 	}	
@@ -214,12 +211,12 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_EXTENDS);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.NO_EXTEND);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
+				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of illegal extensions", 1, refs.length);
 		assertEquals("Wrong source", Factory.packageDescriptor("e.f.g").getType("TestSubclass"), refs[0].getSourceLocation().getType());
 	}		
@@ -235,15 +232,15 @@ public class SearchEngineTests extends TestCase {
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("INoImplementInterface");
 		componentA.getApiDescription().setRestrictions(null, noInst, RestrictionModifiers.NO_IMPLEMENT);
-		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentA, componentB});
+		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_IMPLEMENTS);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.NO_IMPLEMENT);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
+				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of illegal implements", 1, refs.length);
 		assertEquals("Wrong source", Factory.packageDescriptor("e.f.g").getType("TestImplement"), refs[0].getSourceLocation().getType());
 	}
@@ -264,18 +261,19 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentA});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(true);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_IMPLEMENTS);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.NO_IMPLEMENT);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
+				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of illegal implements", 1, refs.length);
 		assertEquals("Wrong source", Factory.packageDescriptor("component.a.internal").getType("LegalImplementation"), refs[0].getSourceLocation().getType());
 	}	
 
 	/**
-	 * Searches for an illegal interface implementation
+	 * Searches for an illegal interface implementation. Filters implementors from
+	 * the implementing component.
 	 * 
 	 * @throws CoreException
 	 */
@@ -287,12 +285,13 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentA});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_IMPLEMENTS);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.NO_IMPLEMENT);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		criteria.addSourceFilter("component.a");
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
+				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of illegal implements", 0, refs.length);
 	}
 	
@@ -312,19 +311,18 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria c1 = Factory.newSearchCriteria();
 		IApiSearchCriteria c2 = Factory.newSearchCriteria();
-		c1.setConsiderComponentLocalReferences(false);
 		c1.setReferenceKinds(ReferenceModifiers.REF_EXTENDS);
 		c1.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.NO_EXTEND);
 		c1.addReferencedComponentRestriction(componentA.getId());
-		c2.setConsiderComponentLocalReferences(false);
 		c2.setReferenceKinds(ReferenceModifiers.REF_IMPLEMENTS);
 		c2.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.NO_IMPLEMENT);
 		c2.addReferencedComponentRestriction(componentA.getId());		
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{c1, c2}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
+				engine.search(sourceScope, new IApiSearchCriteria[]{c1, c2}, null));
 		assertTrue("Wrong number of references", refs.length > 0);
 		
 		Document document = XMLFactory.serializeReferences(refs);
@@ -353,12 +351,12 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_SPECIALMETHOD | ReferenceModifiers.REF_STATICMETHOD | ReferenceModifiers.REF_VIRTUALMETHOD);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.NO_REFERENCE);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
+				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of illegal references", 3, refs.length);
 		Set<String> set = new HashSet<String>();
 		for (int i = 0; i < refs.length; i++) {
@@ -387,13 +385,13 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_GETFIELD | ReferenceModifiers.REF_GETSTATIC |
 				ReferenceModifiers.REF_PUTFIELD | ReferenceModifiers.REF_PUTSTATIC);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.NO_REFERENCE);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
+				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of illegal references", 4, refs.length);
 		Set<String> set = new HashSet<String>();
 		for (int i = 0; i < refs.length; i++) {
@@ -420,12 +418,12 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.REF_INTERFACEMETHOD);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.NO_REFERENCE);
-		IReference[] refs = engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
+				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		Set<String> set = new HashSet<String>();
 		for (int i = 0; i < refs.length; i++) {
 			set.add(refs[i].getSourceLocation().getMember().getName());
@@ -443,7 +441,7 @@ public class SearchEngineTests extends TestCase {
 	public void testAPILeaks() throws CoreException {
 		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
-		IApiSearchScope sourceScope = Factory.newScope(componentA, new IElementDescriptor[]{Factory.packageDescriptor("component.a")});
+		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentA});
 		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
 		IReference[] refs = analyzer.findApiLeaks(profile, componentA, sourceScope, null);
 		Set<String> set = new HashSet<String>();

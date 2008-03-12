@@ -12,10 +12,18 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.tests.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.util.*;
-import java.util.zip.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -35,6 +43,8 @@ import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 import org.eclipse.jdt.internal.compiler.problem.ProblemReporter;
 import org.eclipse.pde.api.tools.builder.tests.Requestor;
+import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchResult;
+import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 public class Util {
     // Trace for delete operation
     /*
@@ -1008,4 +1018,34 @@ public static String getProblemLog(CompilationResult compilationResult, boolean 
 	}
 	return buffer.toString();
 }
+
+	/**
+	 * Returns all references in the given search results.
+	 * 
+	 * @param results
+	 * @return
+	 */
+	public static IReference[] getReferences(IApiSearchResult[] results) {
+		if (results.length == 1) {
+			return results[0].getReferences();
+		}
+		if (results.length == 0) {
+			return new IReference[0];
+		}
+		int size = 0;
+		for (int i = 0; i < results.length; i++) {
+			IApiSearchResult result = results[i];
+			size += result.getReferences().length;
+		}
+		IReference[] refs = new IReference[size];
+		int index = 0;
+		for (int i = 0; i < results.length; i++) {
+			IApiSearchResult result = results[i];
+			IReference[] references = result.getReferences();
+			System.arraycopy(references, 0, refs, index, references.length);
+			index = index + references.length;
+		}
+		return refs;
+	}
+
 }

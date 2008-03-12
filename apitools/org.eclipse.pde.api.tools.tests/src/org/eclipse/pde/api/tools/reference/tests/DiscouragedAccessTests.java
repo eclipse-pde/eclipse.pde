@@ -35,6 +35,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.eclipse.pde.api.tools.tests.util.Util;
 
 /**
  * This class tests discouraged access between components.
@@ -60,12 +61,11 @@ public class DiscouragedAccessTests extends TestCase {
 		IApiSearchScope scope = Factory.newScope(new IApiComponent[]{jdtComponent});
 		long start = System.currentTimeMillis();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.ALL_RESTRICTIONS);
-		IReference[] references = engine.search(scope, new IApiSearchCriteria[]{criteria}, null);
+		IReference[] references = Util.getReferences(engine.search(scope, new IApiSearchCriteria[]{criteria}, null));
 		long stop = System.currentTimeMillis();
 		System.out.println("Search time: " + (stop - start) + "ms");
 				

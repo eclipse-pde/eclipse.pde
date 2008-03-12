@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IApiSearchEngine {
 		
 	/**
-	 * Searches for and returns references in the specified scope that meet the
-	 * given conditions. Returns an empty collection if the search (progress monitor)
-	 * is canceled.
+	 * Searches for references in the specified scope that meet the given conditions.
+	 * Returns results that match each condition, or an empty collection if the search
+	 * (progress monitor) is canceled.
 	 * 
 	 * @param sourceScope the scope searched for references
 	 * @param conditions search conditions 
@@ -31,7 +31,7 @@ public interface IApiSearchEngine {
 	 * @return references found, possibly an empty collection
 	 * @throws CoreException
 	 */
-	public IReference[] search(IApiSearchScope sourceScope, IApiSearchCriteria[] conditions, IProgressMonitor monitor) throws CoreException;	
+	public IApiSearchResult[] search(IApiSearchScope sourceScope, IApiSearchCriteria[] conditions, IProgressMonitor monitor) throws CoreException;	
 
 	/**
 	 * Resolves the given references.
