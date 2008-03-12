@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -25,7 +27,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
-import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -68,14 +69,17 @@ public class CreateApiFilterOperation extends UIJob {
 				return Status.CANCEL_STATUS;
 			}
 			IApiFilterStore store = component.getFilterStore();
-			store.addFilters(new IApiProblem[] {ApiProblemFactory.newApiProblem(resource, 
-					fBackingMarker.getAttribute(IMarker.MESSAGE, IApiToolsConstants.EMPTY_STRING),
-					fBackingMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING),
-					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_CATEGORY, 0),
-					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_ELEMENT_KIND, 0),
-					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0), 
-					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FLAGS, 0))});
-			cleanupMarkers(false);
+			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), 
+					getMessageArgumentsFromMarker(), 
+					null,
+					null,
+					fBackingMarker.getAttribute(IMarker.LINE_NUMBER, -1), 
+					fBackingMarker.getAttribute(IMarker.CHAR_START, -1),
+					fBackingMarker.getAttribute(IMarker.CHAR_END, -1), 
+					fBackingMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING), 
+					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
+			store.addFilters(new IApiProblem[] {problem});
+			fBackingMarker.delete();
 			return Status.OK_STATUS;
 		}
 		catch(CoreException ce) {
@@ -85,31 +89,14 @@ public class CreateApiFilterOperation extends UIJob {
 	}
 	
 	/**
-	 * Cleans up all of the marker this operation is acting on, and optionally 
-	 * removes similar markers from the child resources
-	 * @param childmarkers if child markers should also be cleaned 
-	 * @throws CoreException
+	 * @return the listing of message arguments from the marker.
 	 */
-	private void cleanupMarkers(boolean childmarkers) throws CoreException {
-		fBackingMarker.delete();
-		if(childmarkers) {
-			IResource res = fBackingMarker.getResource();
-			int backingkind = fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, -1);
-			if(backingkind == -1) {
-				//nothing we can do if there are no kinds to compare: we don not ever want to just remove all 
-				//markers of the same marker id
-				return;
-			}
-			int backingflag = fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FLAGS, -1);
-			IMarker[] children = res.findMarkers(fBackingMarker.getType(), true, IResource.DEPTH_INFINITE);
-			IMarker marker = null;
-			for(int i = 0; i < children.length; i++) {
-				marker = children[i];
-				if (backingkind == marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, -1) &&
-						backingflag == marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FLAGS, -1)) {
-					marker.delete();
-				}
-			}
+	private String[] getMessageArgumentsFromMarker() {
+		ArrayList args = new ArrayList();
+		String arguments = fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS, null);
+		if(arguments != null) {
+			return arguments.split("#"); //$NON-NLS-1$
 		}
+		return (String[]) args.toArray(new String[args.size()]);
 	}
 }

@@ -104,7 +104,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertNotNull("the resource src/x/y/z/C4.java must exist", resource);
 		IApiProblemFilter[] filters = store.getFilters(resource);
 		assertTrue("There should be 1 filter for src/x/y/z/C4.java", filters.length == 1);
-		IApiProblem problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertTrue("the usage problem for src/x/y/z/C4.java should be filtered", store.isFiltered(problem));
 		
 		//C1
@@ -112,9 +112,9 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertNotNull("the resource src/x/C1.java must exist", resource);
 		filters = store.getFilters(resource);
 		assertTrue("there should be 2 filters for src/x/C1.java", filters.length == 2);
-		problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_BINARY, 4, IDelta.REMOVED, IDelta.FIELD);
+		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_BINARY, 4, IDelta.REMOVED, IDelta.FIELD);
 		assertTrue("the removed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem));
-		problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_INFO, IApiProblem.CATEGORY_BINARY, 4, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY);
+		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_INFO, IApiProblem.CATEGORY_BINARY, 4, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY);
 		assertTrue("the changed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem));
 		
 		//C3
@@ -122,9 +122,9 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertNotNull("the resource src/x/y/C3.java must exist");
 		filters = store.getFilters(resource);
 		assertTrue("there should be 2 filters for src/x/y/C3.java", filters.length == 2);
-		problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_VERSION, 7, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS);
+		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_VERSION, 7, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS);
 		assertTrue("the major version problem for src/x/y/C3.java should be filtered", store.isFiltered(problem));
-		problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_VERSION, 7, IApiProblem.MINOR_VERSION_CHANGE, IApiProblem.NO_FLAGS);
+		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_VERSION, 7, IApiProblem.MINOR_VERSION_CHANGE, IApiProblem.NO_FLAGS);
 		assertTrue("the minor version problem for src/x/y/C3.java should be filtered", store.isFiltered(problem));
 		
 		//MANIFEST.MF
@@ -132,11 +132,11 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertNotNull("the resource META-INF/MANIFEST.MF must exist", resource);
 		filters = store.getFilters(resource);
 		assertTrue("there should be 3 filters for META-INF/MANIFEST.MF", filters.length == 3);
-		problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_SINCETAGS, 7, IApiProblem.SINCE_TAG_MISSING, IApiProblem.NO_FLAGS);
+		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_SINCETAGS, 7, IApiProblem.SINCE_TAG_MISSING, IApiProblem.NO_FLAGS);
 		assertTrue("the missing since tag problem should be filtered for META-INF/MANIFEST.MF", store.isFiltered(problem));
-		problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_SINCETAGS, 7, IApiProblem.SINCE_TAG_MALFORMED, IApiProblem.NO_FLAGS);
+		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_SINCETAGS, 7, IApiProblem.SINCE_TAG_MALFORMED, IApiProblem.NO_FLAGS);
 		assertTrue("the malformed since tag problem should be filtered for META-INF/MANIFEST.MF", store.isFiltered(problem));
-		problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_SINCETAGS, 7, IApiProblem.SINCE_TAG_INVALID, IApiProblem.NO_FLAGS);
+		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_SINCETAGS, 7, IApiProblem.SINCE_TAG_INVALID, IApiProblem.NO_FLAGS);
 		assertTrue("the invalid since tag problem should be filterd for META-INF/MANIFEST.MF", store.isFiltered(problem));
 	}
 	
@@ -166,7 +166,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
 			IResource resource = project.findMember(new Path("src/x/y/z/C4.java"));
 			assertNotNull("the resource src/x/y/z/C4.java must exist", resource);
-			IApiProblem problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_USAGE, 0, IApiProblem.MINOR_VERSION_CHANGE, IDelta.ADDED);
+			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_USAGE, 0, IApiProblem.MINOR_VERSION_CHANGE, IDelta.ADDED);
 			assertFalse("the bogus problem should not be filtered", store.isFiltered(problem));
 		} 
 		catch (CoreException e) {
@@ -184,7 +184,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
 			IResource resource = project.findMember(new Path("src/x/y/z/C4.java"));
 			assertNotNull("the resource src/x/y/z/C4.java must exist", resource);
-			IApiProblem problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
+			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
 			IApiFilterStore store;
 			store = component.getFilterStore();
 			store.removeFilters(new IApiProblemFilter[] {component.newProblemFilter(problem)});
@@ -205,7 +205,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
 			IResource resource = project.findMember(new Path("src/x/y/z/C4.java"));
 			assertNotNull("the resource src/x/y/z/C4.java must exist", resource);
-			IApiProblem problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
+			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
 			IApiFilterStore store;
 			store = component.getFilterStore();
 			store.addFilters(new IApiProblemFilter[] {component.newProblemFilter(problem)});
@@ -228,7 +228,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
 			IResource resource = project.findMember(new Path("src/x/y/z/C4.java"));
 			assertNotNull("the resource src/x/y/z/C4.java must exist", resource);
-			IApiProblem problem = ApiProblemFactory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
+			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
 			IApiFilterStore store;
 			store = component.getFilterStore();
 			store.addFilters(new IApiProblem[] {problem});

@@ -20,36 +20,31 @@ package org.eclipse.pde.api.tools.internal.provisional;
 public interface IApiMarkerConstants {
 
 	/**
-	 * Constant representing the name of the 'category' attribute on api tooling markers.
-	 * Value is: <code>category</code>
+	 * Constant representing the name of the 'problem' attribute on api tooling markers.
+	 * Value is: <code>problemid</code>
 	 */
-	public static final String MARKER_ATTR_CATEGORY = "category"; //$NON-NLS-1$
+	public static final String MARKER_ATTR_PROBLEM_ID = "problemid"; //$NON-NLS-1$
 	/**
 	 * Constant representing the name of the 'kind' attribute on API tooling markers.
 	 * Value is: <code>kind</code>
 	 */
 	public static final String MARKER_ATTR_KIND = "kind"; //$NON-NLS-1$
 	/**
-	 * Constant representing the name of the 'flags' attribute on API tooling markers.
-	 * Value is: <code>flags</code>
-	 */
-	public static final String MARKER_ATTR_FLAGS = "flags"; //$NON-NLS-1$
-	/**
-	 * Constant representing the name of the 'elementkind' attribute on API tooling markers
-	 * Value is: <code>elementkind</code>
-	 */
-	public static final String MARKER_ATTR_ELEMENT_KIND = "elementkind"; //$NON-NLS-1$
-	/**
 	 * Constant representing the handle id attribute of a java element.
 	 * Value is: <code>org.eclipse.jdt.internal.core.JavaModelManager.handleId</code>
 	 */
-	public static final String MARKER_ATT_HANDLE_ID = "org.eclipse.jdt.internal.core.JavaModelManager.handleId" ; //$NON-NLS-1$
+	public static final String MARKER_ATTR_HANDLE_ID = "org.eclipse.jdt.internal.core.JavaModelManager.handleId" ; //$NON-NLS-1$
 	/**
 	 * Constant representing the name of the @since tag version attribute on API tooling markers,
 	 * or the new value for the bundle version.
 	 * Value is: <code>version</code>
 	 */
 	public static final String MARKER_ATTR_VERSION = "version"; //$NON-NLS-1$
+	/**
+	 * Constant representing the name of the message arguments attribute on API tooling markers.
+	 * Value is <code>messagearguments</code>
+	 */
+	public static final String MARKER_ATTR_MESSAGE_ARGUMENTS = "messagearguments"; //$NON-NLS-1$
 	/**
 	 * Constant representing the id for the default API profile problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.api_profile</code>

@@ -48,6 +48,9 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 		fDoc.appendChild(fDeltas);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor#visit(org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta)
+	 */
 	public boolean visit(IDelta delta) {
 		if (delta.getChildren().length == 0) {
 			Element deltaElement = fDoc.createElement(IApiXmlConstants.DELTA_ELEMENT_NAME);
@@ -57,13 +60,15 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_KEY, delta.getKey());
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_TYPE_NAME, delta.getTypeName());
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_BINARY_COMPATIBLE, Boolean.toString(DeltaProcessor.isBinaryCompatible(delta)));
-			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_RESTRICTIONS, Integer.toString(delta.getRestrictions()));
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_MODIFIERS, Integer.toString(delta.getModifiers()));
 			fDeltas.appendChild(deltaElement);
 		}
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor#endVisit(org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta)
+	 */
 	public void endVisit(IDelta delta) {
 		// nothing to do
 	}

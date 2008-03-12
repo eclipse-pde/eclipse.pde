@@ -230,10 +230,10 @@ public final class Util {
 	private static final String JAVA_LANG_RUNTIMEEXCEPTION = "java.lang.RuntimeException"; //$NON-NLS-1$
 	public static final String LINE_DELIMITER = System.getProperty("line.separator"); //$NON-NLS-1$
 	
-	public static final String UNKNOWN_ELEMENT_TYPE = "unknown_element_type"; //$NON-NLS-1$
+	public static final String UNKNOWN_ELEMENT_TYPE = "UNKOWN_ELEMENT_KIND"; //$NON-NLS-1$
 
-	public static final String UNKNOWN_FLAGS = "unknown_flags"; //$NON-NLS-1$
-	public static final String UNKNOWN_KIND = "unknown_kind"; //$NON-NLS-1$
+	public static final String UNKNOWN_FLAGS = "UNKNOWN_FLAGS"; //$NON-NLS-1$
+	public static final String UNKNOWN_KIND = "UNKOWN_KIND"; //$NON-NLS-1$
 	
 	public static final IClassFile[] NO_CLASS_FILES = new IClassFile[0];
 
@@ -818,7 +818,23 @@ public final class Util {
 			case IDelta.VALUE : return "VALUE"; //$NON-NLS-1$
 			case IDelta.VARARGS_TO_ARRAY : return "VARARGS_TO_ARRAY"; //$NON-NLS-1$
 			case IDelta.RESTRICTIONS : return "RESTRICTIONS"; //$NON-NLS-1$
+			case IDelta.STATIC_FIELD : return "STATIC_FIELD"; //$NON-NLS-1$
+			case IDelta.EXTEND_RESTRICTED_FIELD : return "EXTEND_RESTRICTION_FIELD"; //$NON-NLS-1$
+			case IDelta.EXTEND_RESTRICTED_METHOD : return "EXTEND_RESTRICTION_METHOD"; //$NON-NLS-1$
+			case IDelta.EXTEND_RESTRICTED_TYPE_MEMBER : return "EXTEND_RESTRICTION_TYPE_MEMBER"; //$NON-NLS-1$
+			case IDelta.NON_VISIBLE_CHECKED_EXCEPTION : return "NON_VISIBLE_CHECKED_EXCEPTION"; //$NON-NLS-1$
+			case IDelta.NON_VISIBLE_CONSTRUCTOR : return "NON_VISIBLE_CONSTRUCTOR"; //$NON-NLS-1$
+			case IDelta.NON_VISIBLE_FIELD : return "NON_VISIBLE_FIELD"; //$NON-NLS-1$
+			case IDelta.NON_VISIBLE_METHOD : return "NON_VISIBLE_METHOD"; //$NON-NLS-1$
+			case IDelta.NON_VISIBLE_TYPE_MEMBER : return "NON_VISIBLE_TYPE_MEMBER"; //$NON-NLS-1$
+			case IDelta.NON_VISIBLE_TYPE : return "NON_VISIBLE_TYPE"; //$NON-NLS-1$
+			case IDelta.NON_VISIBLE_VALUE : return "NON_VISIBLE_VALUE"; //$NON-NLS-1$
+			case IDelta.IMPLEMENT_RESTRICTED_METHOD : return "IMPLEMENT_RESTRICTION_METHOD"; //$NON-NLS-1$
 			case IApiProblem.NO_FLAGS : return "NO_FLAGS"; //$NON-NLS-1$
+			case IDelta.REFERENCE_RESTRICTED_METHOD : return "REFERENCE_RESTRICTED_METHOD"; //$NON-NLS-1$
+			case IDelta.INSTANTIATE_RESTRICTED_TYPE_MEMBER : return "INSTANTIATE_RESTRICTED_TYPE_MEMBER"; //$NON-NLS-1$
+			case IDelta.IMPLEMENT_RESTRICTED_TYPE_MEMBER : return "IMPLEMENT_RESTRICTED_TYPE_MEMBER"; //$NON-NLS-1$
+			case IDelta.REFERENCE_RESTRICTED_FIELD : return "REFERENCE_RESTRICTED_FIELD"; //$NON-NLS-1$
 		}
 		return UNKNOWN_FLAGS;
 	}
@@ -1334,6 +1350,9 @@ public final class Util {
 		if(category == IApiProblem.CATEGORY_VERSION) {
 			return "VERSION"; //$NON-NLS-1$
 		}
+		if(category == IApiProblem.CATEGORY_API_PROFILE) {
+			return "API_PROFILE"; //$NON-NLS-1$
+		}
 		return "UNKNOWN_CATEGORY"; //$NON-NLS-1$
 	}
 	
@@ -1346,19 +1365,16 @@ public final class Util {
 	 */
 	public static String getProblemElementKind(int category, int kind) {
 		switch(category) {
-		case IApiProblem.CATEGORY_BINARY: {
-			return getDeltaElementType(kind);
+			case IApiProblem.CATEGORY_BINARY:
+			case IApiProblem.CATEGORY_SINCETAGS:{
+				return getDeltaElementType(kind);
+			}
+			case IApiProblem.CATEGORY_USAGE:
+			case IApiProblem.CATEGORY_VERSION:
+			case IApiProblem.CATEGORY_API_PROFILE: {
+				return getDescriptorKind(kind);
+			}
 		}
-		case IApiProblem.CATEGORY_SINCETAGS: {
-			return getDeltaElementType(kind);
-		}
-		case IApiProblem.CATEGORY_USAGE: {
-			return getDescriptorKind(kind);
-		}
-		case IApiProblem.CATEGORY_VERSION: {
-			return getDescriptorKind(kind);
-		}
-	}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$
 	}
 	
@@ -1383,14 +1399,31 @@ public final class Util {
 			case IApiProblem.CATEGORY_VERSION: {
 				return getVersionProblemKindName(kind);
 			}
+			case IApiProblem.CATEGORY_API_PROFILE: {
+				return getApiProfileProblemKindName(kind);
+			}
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$
 	}
 	
 	/**
+	 * Returns the string representation of the API profile problem kind
+	 * @param kind
+	 * @return the string of the API profile problem kind
+	 */
+	public static String getApiProfileProblemKindName(int kind) {
+		switch(kind) {
+			case IApiProblem.API_PROFILE_MISSING: {
+				return "API_PROFILE_MISSING"; //$NON-NLS-1$
+			}
+		}
+		return "UNKOWN_KIND"; //$NON-NLS-1$
+	}
+	
+	/**
 	 * Returns the string representation of the version problem kind.
 	 * @param kind
-	 * @return the string of the version api problem kind
+	 * @return the string of the version API problem kind
 	 */
 	public static String getVersionProblemKindName(int kind) {
 		switch(kind) {
@@ -1399,6 +1432,9 @@ public final class Util {
 			}
 			case IApiProblem.MAJOR_VERSION_CHANGE: {
 				return "MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
+			}
+			case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE: {
+				return "MAJOR_VERSION_CHANGE_NO_BREAKAGE"; //$NON-NLS-1$
 			}
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$
@@ -1423,6 +1459,9 @@ public final class Util {
 			}
 			case IApiProblem.ILLEGAL_REFERENCE: {
 				return "ILLEGAL_REFERENCE"; //$NON-NLS-1$
+			}
+			case IApiProblem.ILLEGAL_OVERRIDE: {
+				return "ILLEGAL_OVERRIDE"; //$NON-NLS-1$
 			}
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$
@@ -1520,7 +1559,7 @@ public final class Util {
 				return "RESOURCE"; //$NON-NLS-1$
 			}
 		}
-		return null;
+		return "UNKOWN_ELEMENT_KIND"; //$NON-NLS-1$
 	}
 	
 	/**

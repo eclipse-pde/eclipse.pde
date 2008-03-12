@@ -21,11 +21,12 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.pde.api.tools.internal.comparator.DeltaMessages;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+
+import com.ibm.icu.text.MessageFormat;
 
 public abstract class DeltaTestSetup extends TestCase {
 	private static final String TESTS_DELTAS_NAME = "tests-deltas";
@@ -168,7 +169,7 @@ public abstract class DeltaTestSetup extends TestCase {
 				return kind - kind2;
 			}
 		});
-		String unknownMessageStart = DeltaMessages.UNKNOWN_MESSAGE.substring(0, DeltaMessages.UNKNOWN_MESSAGE.lastIndexOf(' '));
+		String unknownMessageStart = MessageFormat.format("Message not found for problem id", new String[0]);
 		for (int i = 0, max = result.length; i < max; i++) {
 			IDelta leafDelta = result[i];
 			String message = leafDelta.getMessage();

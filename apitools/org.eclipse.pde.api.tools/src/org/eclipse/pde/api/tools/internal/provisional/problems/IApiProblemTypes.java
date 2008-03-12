@@ -335,4 +335,9 @@ public interface IApiProblemTypes {
 	 * Key for the severity of illegally instantiating a type marked as '@noinstantiate'.
 	 */
 	public static final String ILLEGAL_INSTANTIATE = "ILLEGAL_INSTANTIATE"; //$NON-NLS-1$
+	
+	/**
+	 * Key for the severity of illegally overriding a member marked as '@extend'.
+	 */
+	public static final String ILLEGAL_OVERRIDE = "ILLEGAL_OVERRIDE"; //$NON-NLS-1$
 }

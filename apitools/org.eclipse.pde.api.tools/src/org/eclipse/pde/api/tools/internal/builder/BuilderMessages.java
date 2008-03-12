@@ -14,29 +14,20 @@ import org.eclipse.osgi.util.NLS;
 
 public class BuilderMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.builder.buildermessages"; //$NON-NLS-1$
-	public static String ApiToolBuilder_0;
-	public static String ApiToolBuilder_1;
-	public static String ApiToolBuilder_10;
-	public static String ApiToolBuilder_11;
-	public static String ApiToolBuilder_2;
-	public static String ApiToolBuilder_3;
-	public static String ApiToolBuilder_4;
-	public static String ApiToolBuilder_5;
-	public static String ApiToolBuilder_6;
-	public static String ApiToolBuilder_7;
-	public static String ApiToolBuilder_8;
-	public static String ApiToolBuilder_9;
-	
-	public static String VersionManagementMissingSinceTag;
-	public static String VersionManagementMalformedSinceTag;
-	public static String VersionManagementSinceTagGreaterThanComponentVersion;
-	public static String VersionManagementIncorrectMajorVersionForAPIBreakage;
-	public static String VersionManagementIncorrectMajorVersionForAPIChange;
-	public static String VersionManagementIncorrectMinorVersionForAPIChange;
+	public static String api_analysis_builder;
+	public static String api_analysis_on_0;
+	public static String default_profile_not_set;
+	public static String building_workspace_profile;
+	public static String checking_binary_compat;
+	public static String checking_api_usage;
+	public static String binary_incompat_change_0;
 	
 	public static String ApiAnalyserTaskName;
-	public static String ApiUseAnalyzer_0;
-	public static String ApiUseAnalyzer_2;
+	public static String ApiProblemFactory_problem_message_not_found;
+	public static String ApiProblemReporter_creating_problem_markers;
+	public static String ApiProblemReporter_creating_problem_markers_on_0;
+	public static String Compatibility_Analysis;
+	public static String Analyzing_0_1;
 
 	static {
 		// initialize resource bundle

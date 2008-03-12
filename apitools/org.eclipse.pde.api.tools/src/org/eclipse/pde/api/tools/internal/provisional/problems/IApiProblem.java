@@ -11,7 +11,9 @@
 package org.eclipse.pde.api.tools.internal.provisional.problems;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.core.compiler.CategorizedProblem;
+import org.eclipse.pde.api.tools.internal.builder.ApiProblemReporter;
+import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 /**
@@ -40,6 +42,11 @@ public interface IApiProblem {
 	 * Constant representing the since tag problem category
 	 */
 	public static final int CATEGORY_SINCETAGS = 0x01000000 << 3;
+	
+	/**
+	 * Constant representing the api profile problem category
+	 */
+	public static final int CATEGORY_API_PROFILE = 0x01000000 << 4;
 	
 	/**
 	 * Constant representing the offset of the flags portion of a problem id bit mask.
@@ -98,6 +105,13 @@ public interface IApiProblem {
 	public static final int MINOR_VERSION_CHANGE = 2;
 	
 	/**
+	 * Constant representing the value of the major version change (no API breakage) {@link IApiProblem} kind.
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int MAJOR_VERSION_CHANGE_NO_BREAKAGE = 3;
+	
+	/**
 	 * Constant representing the value of an illegal extend {@link IApiProblem} kind.
 	 * 
 	 * @see #getKind()
@@ -126,6 +140,20 @@ public interface IApiProblem {
 	public static final int ILLEGAL_IMPLEMENT = 4;
 	
 	/**
+	 * Constant representing the value of an illegal override {@link IApiProblem} kind.
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int ILLEGAL_OVERRIDE = 5;
+	
+	/**
+	 * Constant representing the value of a default API profile {@link IApiProblem} kind.
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int API_PROFILE_MISSING = 1;
+	
+	/**
 	 * Returns the severity of the problem. 
 	 * See {@link IMarker} for a listing of severities.
 	 * 
@@ -134,21 +162,54 @@ public interface IApiProblem {
 	public int getSeverity();
 	
 	/**
-	 * Returns the kind of element descriptor this problem is related to.
+	 * Returns the kind of element  this problem is related to.
 	 * 
 	 * @see IElementDescriptor#getElementType()
+	 * @see IDelta#getElementType()
 	 * 
-	 * @return the {@link IElementDescriptor} kind this problem is related to.
+	 * @return the element kind this problem is related to.
 	 */
 	public int getElementKind();
 	
 	/**
-	 * Returns the handle to the underlying resource of the marker this problem 
-	 * was created from.
+	 * Returns the project relative path to the resource this problem 
+	 * was found in.
 	 * 
-	 * @return the handle to the underlying resource
+	 * @return the project relative path to the resource the problem was found in
 	 */
-	public IResource getResource();
+	public String getResourcePath();
+	
+	/**
+	 * Returns the listing of message arguments passed in to the problem or an
+	 * empty array, never <code>null</code>
+	 * 
+	 * @return the message arguments passed to the problem or an empty array
+	 */
+	public String[] getMessageArguments();
+	
+	/**
+	 * Returns the start of the character selection to make, or -1 if there is no character 
+	 * starting position.
+	 * 
+	 * @return the start of the character selection or -1.
+	 */
+	public int getCharStart();
+	
+	/**
+	 * Returns the end of the character selection to make, or -1 if there is no character 
+	 * ending position.
+	 * 
+	 * @return the end of the character selection or -1
+	 */
+	public int getCharEnd();
+	
+	/**
+	 * Returns the number of the line this problem occurred on, or -1 
+	 * if there is no line number.
+	 * 
+	 * @return the line number this problem occurred on or -1
+	 */
+	public int getLineNumber();
 	
 	/**
 	 * Returns the category for this problem. Guaranteed to be
@@ -158,8 +219,9 @@ public interface IApiProblem {
 	 * <li>{@link #CATEGORY_SINCETAGS}</li>
 	 * <li>{@link #CATEGORY_USAGE}</li>
 	 * <li>{@link #CATEGORY_VERSION}</li>
+	 * <li>{@link #CATEGORY_API_PROFILE}</li>
 	 * </ul> 
-	 * @return
+	 * @return the category for the problem
 	 */
 	public int getCategory();
 	
@@ -172,7 +234,7 @@ public interface IApiProblem {
 	public int getId();
 	
 	/**
-	 * Returns a human readable description of the problem
+	 * Returns a human readable, localized description of the problem
 	 * 
 	 * @return the description of the problem
 	 */
@@ -191,4 +253,33 @@ public interface IApiProblem {
 	 * @return the flags for this problem
 	 */
 	public int getFlags();
+	
+	/**
+	 * Returns the names of the extra marker attributes associated to this problem when persisted into a marker 
+	 * by the {@link ApiProblemReporter}. By default, no EXTRA attributes is persisted, and an 
+	 * {@link IApiProblem} only persists the following attributes:
+	 * <ul>
+	 * <li>	<code>IMarker#MESSAGE</code> -&gt; {@link IApiProblem#getMessage()}</li>
+	 * <li>	<code>IMarker#SEVERITY</code> -&gt; {@link IApiProblem#getSeverity()} </li>
+	 * <li>	<code>IApiMarkerConstants#API_MARKER_ATTR_ID : String</code> -&gt; {@link IApiProblem#getId()}</li>
+	 * <li>	<code>IMarker#CHAR_START</code>  -&gt; {@link IApiProblem#getCharStart()}</li>
+	 * <li>	<code>IMarker#CHAR_END</code>  -&gt; {@link IApiProblem#getCharEnd()}</li>
+	 * <li>	<code>IMarker#LINE_NUMBER</code>  -&gt; {@link IApiProblem#getLineNumber()}</li>
+	 * </ul>
+	 * The names must be eligible for marker creation, as defined by <code>IMarker#setAttributes(String[], Object[])</code>, 
+	 * and there must be as many names as values according to {@link #getExtraMarkerAttributeValues()}.
+	 * Note that extra marker attributes will be inserted after default ones (as described in {@link CategorizedProblem#getMarkerType()},
+	 * and thus could be used to override defaults.
+	 * @return the names of the corresponding marker attributes
+	 */
+	public String[] getExtraMarkerAttributeIds();
+	
+	/**
+	 * Returns the respective values for the extra marker attributes associated to this problem when persisted into 
+	 * a marker by the JavaBuilder. Each value must correspond to a matching attribute name, as defined by
+	 * {@link #getExtraMarkerAttributeIds()}. 
+	 * The values must be eligible for marker creation, as defined by <code> IMarker#setAttributes(String[], Object[])}.
+	 * @return the values of the corresponding extra marker attributes
+	 */
+	public Object[] getExtraMarkerAttributeValues();
 }

@@ -85,7 +85,7 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 	protected IJavaElement resolveElementFromMarker() {
 		if(fResolvedElement == null) {
 			try {
-				String handle = (String) fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATT_HANDLE_ID);
+				String handle = (String) fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_HANDLE_ID);
 				if(handle != null) {
 					fResolvedElement = JavaCore.create(handle);
 				}

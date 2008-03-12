@@ -303,7 +303,7 @@ public class ApiUseAnalyzer {
 		if (weight == 0) {
 			weight = 1;
 		}
-		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.ApiUseAnalyzer_0, requiredComponents.length + weight);
+		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.Compatibility_Analysis, requiredComponents.length + weight);
 		// extract all references by component
 		Map referencesById = findAllReferences(component, (String[])reqComponentIds.toArray(new String[reqComponentIds.size()]), localMonitor.newChild(weight, SubMonitor.SUPPRESS_ALL_LABELS));
 		if (localMonitor.isCanceled()) {
@@ -315,7 +315,7 @@ public class ApiUseAnalyzer {
 			}
 			IApiComponent reqComponent = requiredComponents[i];
 			String id = reqComponent.getId();
-			localMonitor.subTask(MessageFormat.format(BuilderMessages.ApiUseAnalyzer_2, new String[]{id, reqComponent.getVersion()}));
+			localMonitor.subTask(MessageFormat.format(BuilderMessages.Analyzing_0_1, new String[]{id, reqComponent.getVersion()}));
 			List references = (List) referencesById.get(id);
 			if (references != null) { 
 				IApiComponent sourceComponent = reqComponent.getProfile().getApiComponent(component.getId());

@@ -113,6 +113,16 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_NAME_ELEMENT_TYPE = "element_type"; //$NON-NLS-1$
 	/**
+	 * Constant representing the char start attribute of an {@link IApiProblem} in xml.
+	 * Value is: <code>charstart</code>
+	 */
+	public static final String ATTR_CHAR_START = "charstart"; //$NON-NLS-1$
+	/**
+	 * Constant representing the charend attribute of an {@link IApiProblem} in xml.
+	 * Value is: <code>charend</code>
+	 */
+	public static final String ATTR_CHAR_END = "charend"; //$NON-NLS-1$
+	/**
 	 * Constant representing the flags attribute of a delta in xml report.
 	 * Value is: <code>flags</code>
 	 */
@@ -142,6 +152,16 @@ public interface IApiXmlConstants {
 	 * Value is: <code>type_name</code>
 	 */
 	public static final String ATTR_NAME_TYPE_NAME = "type_name"; //$NON-NLS-1$
+	/**
+	 * Constant representing the linenumber attribute of an {@link IApiProblem} in xml.
+	 * Value is: <code>linenumber</code>
+	 */
+	public static final String ATTR_LINE_NUMBER = "linenumber"; //$NON-NLS-1$
+	/**
+	 * Constant representing the message argument attribute of an {@link IApiProblem} in xml.
+	 * Value is: <code>messageargs</code>
+	 */
+	public static final String ATTR_MESSAGE_ARGUMENTS = "messageargs"; //$NON-NLS-1$
 	/**
 	 * Constant representing the path attribute of a resource in xml.
 	 * Value is: <code>path</code>

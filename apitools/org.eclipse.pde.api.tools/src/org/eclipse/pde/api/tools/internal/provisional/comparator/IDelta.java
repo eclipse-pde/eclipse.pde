@@ -160,6 +160,27 @@ public interface IDelta {
 	public static final int VALUE = 54;
 	public static final int VARARGS_TO_ARRAY = 55;
 
+	//new flags
+	public static final int EXTEND_RESTRICTED_FIELD = 56;
+	public static final int EXTEND_RESTRICTED_METHOD = 57;
+	public static final int EXTEND_RESTRICTED_TYPE_MEMBER = 58;
+	public static final int STATIC_FIELD = 59;
+	public static final int NON_VISIBLE_CHECKED_EXCEPTION = 60;
+	public static final int NON_VISIBLE_CONSTRUCTOR = 61;
+	public static final int NON_VISIBLE_FIELD = 62;
+	public static final int NON_VISIBLE_METHOD = 63;
+	public static final int NON_VISIBLE_TYPE_MEMBER = 64;
+	public static final int NON_VISIBLE_TYPE = 65;
+	public static final int NON_VISIBLE_VALUE = 66;
+	public static final int IMPLEMENT_RESTRICTED_METHOD = 67;
+	public static final int IMPLEMENT_RESTRICTED_TYPE_MEMBER = 68;
+	public static final int REFERENCE_RESTRICTED_FIELD = 69;
+	public static final int REFERENCE_RESTRICTED_METHOD = 70;
+	public static final int INSTANTIATE_RESTRICTED_TYPE_MEMBER = 71;
+	
+	
+	
+
 	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
 	 * 
@@ -227,6 +248,14 @@ public interface IDelta {
 	 * @return the delta's description
 	 */
 	public String getMessage();
+	
+	/**
+	 * Returns the set of arguments that can be used to compose NLS'd messages. These arguments will typically
+	 * be type, method and field names.
+	 * 
+	 * @return the set of arguments to compose NLS'd messages
+	 */
+	public String[] getArguments();
 	
 	/**
 	 * Returns the delta's restrictions.

@@ -38,6 +38,7 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		prefs.setDefault(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_WARNING);
 		prefs.setDefault(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_WARNING);
 		prefs.setDefault(IApiProblemTypes.ILLEGAL_REFERENCE, ApiPlugin.VALUE_WARNING);
+		prefs.setDefault(IApiProblemTypes.ILLEGAL_OVERRIDE, ApiPlugin.VALUE_WARNING);
 		
 		//binary compatibilities
 		for (int i = 0, max = ApiPlugin.AllBinaryCompatibilityKeys.length; i < max; i++) {

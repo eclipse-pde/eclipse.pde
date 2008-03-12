@@ -41,21 +41,21 @@ public interface IApiFilterStore {
 	public void addFilters(IApiProblem[] problems);
 	
 	/**
-	 * Returns all filters for the specified resource
+	 * Returns all filters for the specified project relative resource
 	 * 
-	 * @param resource the resource to get filters for
-	 * @return all filters for the given resource or an empty array, never <code>null</code>
+	 * @param resourcepath the project relative resource to get filters for
+	 * @return all filters for the given project relative resource or an empty array, never <code>null</code>
 	 */
-	public IApiProblemFilter[] getFilters(IResource resource);
+	public IApiProblemFilter[] getFilters(IResource resourc);
 	
 	/**
-	 * Returns all of the resources that have filters contained in this
-	 * filter store. If there are no resources with filters or the store has not
+	 * Returns all of the resource paths that have filters contained in this
+	 * filter store. If there are no resource paths with filters or the store has not
 	 * been initialized yet an empty array is returned, never <code>null</code>.
 	 * 
 	 * The returned resources are not guaranteed to exist.
 	 * 
-	 * @return the resources that have filters
+	 * @return the resource paths that have filters
 	 */
 	public IResource[] getResources();
 	

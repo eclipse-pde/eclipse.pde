@@ -154,14 +154,17 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return;
 		}
 		initializeApiFilters();
-		IResource res = null;
 		HashSet pfilters = null;
+		IResource resource = null;
 		for(int i = 0; i < filters.length; i++) {
-			res = filters[i].getUnderlyingProblem().getResource();
-			pfilters = (HashSet) fFilterMap.get(res);
+			resource = fProject.getProject().findMember(new Path(filters[i].getUnderlyingProblem().getResourcePath()));
+			if(resource == null) {
+				continue;
+			}
+			pfilters = (HashSet) fFilterMap.get(resource);
 			if(pfilters == null) {
 				pfilters = new HashSet();
-				fFilterMap.put(res, pfilters);
+				fFilterMap.put(resource, pfilters);
 			}
 			fNeedsSaving |= pfilters.add(filters[i]);
 		}
@@ -180,15 +183,18 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		}
 		initializeApiFilters();
 		IApiProblemFilter filter = null;
-		IResource res = null;
+		IResource resource = null;
 		HashSet filters = null;
 		for(int i = 0; i < problems.length; i++) {
 			filter = new ApiProblemFilter(fProject.getElementName(), problems[i]);
-			res = problems[i].getResource();
-			filters = (HashSet) fFilterMap.get(res);
+			resource = fProject.getProject().findMember(new Path(problems[i].getResourcePath()));
+			if(resource == null) {
+				continue;
+			}
+			filters = (HashSet) fFilterMap.get(resource);
 			if(filters == null) {
 				filters = new HashSet();
-				fFilterMap.put(res, filters);
+				fFilterMap.put(resource, filters);
 			}
 			fNeedsSaving |= filters.add(filter);
 		}
@@ -212,10 +218,14 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 */
 	public synchronized boolean isFiltered(IApiProblem problem) {
 		initializeApiFilters();
-		HashSet filters = (HashSet) fFilterMap.get(problem.getResource());
+		IResource resource = fProject.getProject().findMember(new Path(problem.getResourcePath()));
+		if(resource == null) {
+			return false;
+		}
+		HashSet filters = (HashSet) fFilterMap.get(resource);
 		if(filters == null) {
 			if(DEBUG) {
-				System.out.println("no filters defined for ["+problem.getResource().getName()+"] return not filtered"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("no filters defined for ["+problem.getResourcePath()+"] return not filtered"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return false;
 		}
@@ -267,10 +277,13 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		}
 		boolean success = true;
 		HashSet pfilters = null;
-		IResource res = null;
+		IResource resource = null;
 		for(int i = 0; i < filters.length; i++) {
-			res = filters[i].getUnderlyingProblem().getResource();
-			pfilters = (HashSet) fFilterMap.get(res);
+			resource = fProject.getProject().findMember(new Path(filters[i].getUnderlyingProblem().getResourcePath()));
+			if(resource == null) {
+				continue;
+			}
+			pfilters = (HashSet) fFilterMap.get(resource);
 			if(pfilters != null && pfilters.remove(filters[i])) {
 				if(DEBUG) {
 					System.out.println("removed filter: ["+filters[i]+"]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -278,7 +291,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				fNeedsSaving |= true;
 				success &= true;
 				if(pfilters.isEmpty()) {
-					success &= fFilterMap.remove(res) != null;
+					success &= fFilterMap.remove(resource) != null;
 				}
 			}
 			else {
@@ -324,13 +337,32 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				felement = document.createElement(IApiXmlConstants.ELEMENT_FILTER);
 				felement.setAttribute(IApiXmlConstants.ATTR_SEVERITY, Integer.toString(problem.getSeverity()));
 				felement.setAttribute(IApiXmlConstants.ATTR_ID, Integer.toString(problem.getId()));
-				felement.setAttribute(IApiXmlConstants.ATTR_MESSAGE, problem.getMessage());
+				if(problem.getMessageArguments().length > 0) {
+					felement.setAttribute(IApiXmlConstants.ATTR_MESSAGE_ARGUMENTS, createArgAttribute(problem.getMessageArguments()));
+				}
 				relement.appendChild(felement);
 			}
 		}
 		return Util.serializeDocument(document);
 	}
 
+	/**
+	 * Creates a single string attribute from an array of strings. Uses the '#' char as 
+	 * a delimiter
+	 * @param args
+	 * @return a single string attribute from an array or arguments
+	 */
+	private String createArgAttribute(String[] args) {
+		StringBuffer buff = new StringBuffer();
+		for(int i = 0; i < args.length; i++) {
+			buff.append(args[i]);
+			if(i < args.length-1) {
+				buff.append("#"); //$NON-NLS-1$
+			}
+		}
+		return buff.toString();
+	}
+	
 	/**
 	 * Initializes the backing filter map for this store from the .aip_filters file. Does nothing if the filter store has already been
 	 * initialized.
@@ -376,6 +408,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		String path = null;
 		NodeList filters = null;
 		int id = 0, severity = 0;
+		String[] messageargs = null;
 		IResource resource = null;
 		ArrayList newfilters = new ArrayList();
 		for(int i = 0; i < resources.getLength(); i++) {
@@ -403,7 +436,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				if(severity < 0) {
 					continue;
 				}
-				newfilters.add(ApiProblemFactory.newApiProblem(resource, element.getAttribute(IApiXmlConstants.ATTR_MESSAGE), severity, id));
+				messageargs = element.getAttribute(IApiXmlConstants.ATTR_MESSAGE_ARGUMENTS).split("#"); //$NON-NLS-1$
+				newfilters.add(ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), 
+						messageargs, null, null, -1, -1, -1, severity, id));
 			}
 		}
 		addFilters((IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]));
