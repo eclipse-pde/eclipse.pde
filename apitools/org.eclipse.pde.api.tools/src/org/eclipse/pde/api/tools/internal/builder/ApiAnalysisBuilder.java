@@ -1704,7 +1704,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			} catch (BadLocationException e) {
 				// ignore
 			}
-			return ApiProblemFactory.newSinceTagProblem(resource.getProjectRelativePath().toPortableString(), 
+			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(), 
 					messageargs, 
 					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
 					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID)}, 
@@ -1832,7 +1832,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			} else {
 				lineNumber = 1;
 			}
-			return ApiProblemFactory.newVersionNumberProblem(manifestFile.getProjectRelativePath().toPortableString(), 
+			return ApiProblemFactory.newApiVersionNumberProblem(manifestFile.getProjectRelativePath().toPortableString(), 
 					messageargs, 
 					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
 					new Object[] {version, new Integer(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID)}, 

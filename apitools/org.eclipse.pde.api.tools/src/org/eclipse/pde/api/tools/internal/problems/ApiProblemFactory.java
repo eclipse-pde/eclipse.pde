@@ -132,7 +132,7 @@ public class ApiProblemFactory {
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for since tags
 	 */
-	public static IApiProblem newSinceTagProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int element, int kind) {
+	public static IApiProblem newApiSinceTagProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_SINCETAGS, element, kind, IApiProblem.NO_FLAGS);
 		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, severity, id);
 	}
@@ -152,7 +152,7 @@ public class ApiProblemFactory {
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for version numbers
 	 */
-	public static IApiProblem newVersionNumberProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int element, int kind) {
+	public static IApiProblem newApiVersionNumberProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_VERSION, element, kind, IApiProblem.NO_FLAGS);
 		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, severity, id);
 	}
