@@ -69,7 +69,8 @@
             id="org.eclipse.pde.api.tools.ui.apitools.proppage"
             name="%ApiErrorsWarningsPage.name">
          <keywordReference
-               id="org.eclipse.pde.api.tools.ui.apitools.prefpage"></keywordReference>
+               id="org.eclipse.pde.api.tools.ui.apitools.prefpage">
+         </keywordReference>
          <enabledWhen>
             <adapt
                   type="org.eclipse.core.resources.IProject">
@@ -112,6 +113,10 @@
       <keyword
             id="org.eclipse.pde.api.tools.ui.apitools.filters.prefpage.keywords"
             label="%ApiFiltersPage.keywords">
+      </keyword>
+      <keyword
+            id="org.eclipse.pde.api.tools.ui.apitools.prefpage"
+            label="%ApiErrorsWarningsPage.keywords">
       </keyword>
    </extension>
    <extension
