@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<project name="project" default="default">
+	<description>
+    	 Build the pdebuild-ant.jar.  Either from scratch (default target), or by
+    	 gathering up the results of a workspace build from bin_ant.
+    </description>
+
+	<!-- ================================= 
+          target: default              
+         ================================= -->
+	<target name="default" description="--> description">
+		<tstamp/>
+		<eclipse.buildScript elements="plugin@org.eclipse.pde.build" 
+			buildDirectory="${buildDirectory}" 
+			configInfo="*,*,*" 
+			baseLocation="${baseLocation}" 
+			buildingOSGi="true" 
+			outputUpdateJars="false"
+			pluginpath="${thisPlugin}"
+			forceContextQualifier="z${DSTAMP}${TSTAMP}"
+			/>
+		<delete file="lib/pdebuild-ant.jar"/>
+		<ant antfile="build.xml" target="lib/pdebuild-ant.jar"/>
+	</target>
+	<target name="workspaceBinaries" description="Jar up the binaries that were compiled by the jdt builder" >
+		<delete file="lib/pdebuild-ant.jar"/>
+		<jar destfile="lib/pdebuild-ant.jar" basedir="bin_ant"/>
+	</target>
+</project>
