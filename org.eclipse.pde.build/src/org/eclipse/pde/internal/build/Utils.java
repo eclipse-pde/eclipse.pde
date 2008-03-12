@@ -133,6 +133,16 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return result;
 	}
 
+	public static File[] asFile(Collection collection) {
+		if(collection.size() == 0)
+			return new File[0];
+		Object first = collection.iterator().next();
+		if (first instanceof String)
+			return asFile((String[])collection.toArray(new String[collection.size()]));
+		else if (first instanceof URL) 
+			return asFile((URL[])collection.toArray(new URL[collection.size()]));
+		throw new IllegalArgumentException();
+	}
 	/**
 	 * Return a string which is a concatination of each member of the given
 	 * collection, separated by the given separator.

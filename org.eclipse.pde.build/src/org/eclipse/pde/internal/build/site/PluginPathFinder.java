@@ -11,8 +11,7 @@ package org.eclipse.pde.internal.build.site;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.util.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.internal.build.Utils;
@@ -51,6 +50,7 @@ public class PluginPathFinder {
 				}
 			}
 		} catch (IOException e) {
+			//ignore
 		}
 		return null;
 	}
@@ -103,7 +103,9 @@ public class PluginPathFinder {
 					System.setProperty(URL_PROPERTY, EMPTY_STRING);
 				}
 			} catch (MalformedURLException e) {
+				//ignore
 			} catch (IOException e) {
+				//ignore
 			}
 		}
 
@@ -111,13 +113,14 @@ public class PluginPathFinder {
 	}
 
 	private static URL[] getConfiguredSitesPaths(String platformHome, IPlatformConfiguration configuration, boolean features) {
-		URL[] installPlugins = scanLocations(new File[] {new File(platformHome, features ? "features" : "plugins")}); //$NON-NLS-1$ //$NON-NLS-2$
-		URL[] extensionPlugins = getExtensionPluginURLs(configuration, features);
+		List installPlugins = scanLocations(new File[] {new File(platformHome, features ? "features" : "plugins")}); //$NON-NLS-1$ //$NON-NLS-2$
+		List extensionPlugins = getExtensionPluginURLs(configuration, features);
 
-		URL[] all = new URL[installPlugins.length + extensionPlugins.length];
-		System.arraycopy(installPlugins, 0, all, 0, installPlugins.length);
-		System.arraycopy(extensionPlugins, 0, all, installPlugins.length, extensionPlugins.length);
-		return all;
+		Set all = new LinkedHashSet();
+		all.addAll(installPlugins);
+		all.addAll(extensionPlugins);
+		
+		return (URL[]) all.toArray(new URL[all.size()]);
 	}
 
 	/**
@@ -126,7 +129,7 @@ public class PluginPathFinder {
 	 * @param features true for features false for plugins
 	 * @return URLs for features or plugins on the site
 	 */
-	private static URL[] getExtensionPluginURLs(IPlatformConfiguration config, boolean features) {
+	private static List getExtensionPluginURLs(IPlatformConfiguration config, boolean features) {
 		ArrayList extensionPlugins = new ArrayList();
 		IPlatformConfiguration.ISiteEntry[] sites = config.getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
@@ -141,11 +144,12 @@ public class PluginPathFinder {
 					try {
 						extensionPlugins.add(new File(url.getFile(), entries[j]).toURL());
 					} catch (MalformedURLException e) {
+						//ignore
 					}
 				}
 			}
 		}
-		return (URL[]) extensionPlugins.toArray(new URL[extensionPlugins.size()]);
+		return extensionPlugins;
 	}
 
 	/**
@@ -153,7 +157,7 @@ public class PluginPathFinder {
 	 * @param sites
 	 * @return URLs to plugins/features
 	 */
-	private static URL[] scanLocations(File[] sites) {
+	private static List scanLocations(File[] sites) {
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < sites.length; i++) {
 			if (!sites[i].exists())
@@ -164,10 +168,11 @@ public class PluginPathFinder {
 					try {
 						result.add(children[j].toURL());
 					} catch (MalformedURLException e) {
+						//ignore
 					}
 				}
 			}
 		}
-		return (URL[]) result.toArray(new URL[result.size()]);
+		return result;
 	}
 }
