@@ -204,16 +204,18 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	public static boolean specialDotProcessing(Properties properties, String[] classpathInfo) {
 		findAndReplaceDot(classpathInfo);
+
+		String outputValue = properties.getProperty(PROPERTY_OUTPUT_PREFIX + DOT);
+		if (outputValue != null) {
+			properties.setProperty(PROPERTY_OUTPUT_PREFIX + EXPANDED_DOT, outputValue);
+			properties.remove(PROPERTY_OUTPUT_PREFIX + DOT);
+		}
+
 		String sourceFolder = properties.getProperty(PROPERTY_SOURCE_PREFIX + DOT);
 		if (sourceFolder != null) {
 			properties.setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, sourceFolder);
 			properties.remove(PROPERTY_SOURCE_PREFIX + DOT);
 
-			String outputValue = properties.getProperty(PROPERTY_OUTPUT_PREFIX + DOT);
-			if (outputValue != null) {
-				properties.setProperty(PROPERTY_OUTPUT_PREFIX + EXPANDED_DOT, outputValue);
-				properties.remove(PROPERTY_OUTPUT_PREFIX + DOT);
-			}
 			String excludedFromJar = properties.getProperty(PROPERTY_EXCLUDE_PREFIX + DOT);
 			if (excludedFromJar != null) {
 				properties.setProperty(PROPERTY_EXCLUDE_PREFIX + EXPANDED_DOT, excludedFromJar);

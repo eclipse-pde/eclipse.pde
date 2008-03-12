@@ -15,6 +15,10 @@ package org.eclipse.pde.internal.build;
  */
 public interface IPDEBuildConstants {
 
+	/** from PlatformURLPluginConnection and PlatformURLFragmentConnection **/
+	public static final String PLUGIN = "plugin"; //$NON-NLS-1$
+	public static final String FRAGMENT = "fragment"; //$NON-NLS-1$
+	
 	/** PDE Core plug-in id */
 	public static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
 	public static final String PI_BOOT_JAR_NAME = "boot.jar"; //$NON-NLS-1$

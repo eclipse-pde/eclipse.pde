@@ -16,8 +16,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.internal.runtime.PlatformURLFragmentConnection;
-import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
@@ -181,7 +179,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		Properties modelProps = getBuildPropertiesFor(model);
 		ModelBuildScriptGenerator.specialDotProcessing(modelProps, libraries);
 		for (int i = 0; i < libraries.length; i++) {
-			addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(modelProps.getProperty(PROPERTY_OUTPUT_PREFIX + libraries[i])));
+			addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(modelProps.getProperty(PROPERTY_OUTPUT_PREFIX + libraries[i])), modelProps);
 			addPathAndCheck(model, base, libraries[i], modelProps, classpath);
 		}
 	}
@@ -352,7 +350,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 					boolean isSource = (modelProperties.getProperty(PROPERTY_SOURCE_PREFIX + libraryName) != null);
 					if (isSource) {
-						addDevEntries(model, location, classpath, Utils.getArrayFromString(modelProperties.getProperty(PROPERTY_OUTPUT_PREFIX + libraryName)));
+						addDevEntries(model, location, classpath, Utils.getArrayFromString(modelProperties.getProperty(PROPERTY_OUTPUT_PREFIX + libraryName)), modelProperties);
 					}
 					//Potential pb: here there maybe a nasty case where the libraries variable may refer to something which is part of the base
 					//but $xx$ will replace it by the $xx instead of $basexx. The solution is for the user to use the explicitly set the content
@@ -366,7 +364,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			for (int i = 0; i < order.length; i++) {
 				if (order[i].equals(jar.getName(false)))
 					break;
-				addDevEntries(model, location, classpath, Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + order[i])));
+				addDevEntries(model, location, classpath, Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + order[i])), modelProperties);
 				addPathAndCheck(model, Path.EMPTY, order[i], modelProperties, classpath);
 			}
 			// Then we add all the "pure libraries" (the one that does not contain source)
@@ -422,7 +420,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		if (urlfragments.length > 2 && urlfragments[0].equals(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR)) {
 			String modelLocation = null;
 			BundleDescription bundle = null;
-			if (urlfragments[1].equalsIgnoreCase(PlatformURLPluginConnection.PLUGIN) || urlfragments[1].equalsIgnoreCase(PlatformURLFragmentConnection.FRAGMENT))
+			if (urlfragments[1].equalsIgnoreCase(PLUGIN) || urlfragments[1].equalsIgnoreCase(FRAGMENT))
 				bundle = generator.getSite(false).getRegistry().getResolvedBundle(urlfragments[2]);
 
 			if (urlfragments.length == 3) {
@@ -556,7 +554,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @param baseLocation
 	 * @param classpath
 	 */
-	private void addDevEntries(BundleDescription model, String baseLocation, List classpath, String[] jarSpecificEntries) {
+	private void addDevEntries(BundleDescription model, String baseLocation, List classpath, String[] jarSpecificEntries, Properties modelProperties) {
 		if (generator.devEntries == null && (jarSpecificEntries == null || jarSpecificEntries.length == 0))
 			return;
 
@@ -569,7 +567,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 		IPath root = Utils.makeRelative(new Path(generator.getLocation(model)), new Path(baseLocation));
 		for (int i = 0; i < entries.length; i++) {
-			addPathAndCheck(model, root, entries[i], null, classpath);
+			addPathAndCheck(model, root, entries[i], modelProperties, classpath);
 		}
 	}
 
