@@ -90,7 +90,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 						// The project/resources get refactored before the TextChange is applied, therefore we need their future locations
 						IProject newProject = ((IWorkspaceRoot) manifest.getProject().getParent()).getProject(newText);
 
-						MovedTextFileChange change = new MovedTextFileChange("", newProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), manifest); //$NON-NLS-1$ //$NON-NLS-2$
+						MovedTextFileChange change = new MovedTextFileChange("", newProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), manifest); //$NON-NLS-1$
 						MultiTextEdit edit = new MultiTextEdit();
 						edit.addChildren(listener.getTextOperations());
 						change.setEdit(edit);
