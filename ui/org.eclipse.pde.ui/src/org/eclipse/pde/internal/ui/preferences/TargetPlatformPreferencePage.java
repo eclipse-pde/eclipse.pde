@@ -314,7 +314,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				addWorkspaceTarget(file);
 			} catch (CoreException e) {
 			}
-		} else if (pref.length() > 3) { //$NON-NLS-1$
+		} else if (pref.length() > 3) {
 			prefId = pref.substring(3);
 		}
 
