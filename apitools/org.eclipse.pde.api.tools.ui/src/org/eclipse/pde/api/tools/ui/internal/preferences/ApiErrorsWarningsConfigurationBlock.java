@@ -36,6 +36,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -514,6 +515,162 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private final int BINARY_COMPATIBILITY_PAGE_ID = 1;
 	private final int VERSION_MANAGEMENT_PAGE_ID = 2;
 	
+	private static Key[] fgAllBinaryKeys = {
+		KEY_API_PROFILE_REMOVED_API_COMPONENT,
+		KEY_API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT,
+		KEY_API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT,
+		KEY_API_COMPONENT_REMOVED_TYPE,
+		KEY_API_COMPONENT_REMOVED_DUPLICATED_TYPE,
+		KEY_ANNOTATION_ADDED_FIELD,
+		KEY_ANNOTATION_ADDED_METHOD,
+		KEY_ANNOTATION_ADDED_TYPE_MEMBER,
+		KEY_ANNOTATION_REMOVED_FIELD,
+		KEY_ANNOTATION_REMOVED_METHOD_DEFAULT_VALUE,
+		KEY_ANNOTATION_REMOVED_METHOD_NO_DEFAULT_VALUE,
+		KEY_ANNOTATION_REMOVED_TYPE_MEMBER,
+		KEY_ANNOTATION_REMOVED_TYPE_PARAMETERS,
+		KEY_ANNOTATION_REMOVED_TYPE_PARAMETER,
+		KEY_ANNOTATION_REMOVED_CLASS_BOUND,
+		KEY_ANNOTATION_REMOVED_INTERFACE_BOUND,
+		KEY_ANNOTATION_REMOVED_INTERFACE_BOUNDS,
+		KEY_ANNOTATION_CHANGED_INTERFACE_BOUNDS,
+		KEY_ANNOTATION_CHANGED_CLASS_BOUND,
+		KEY_ANNOTATION_CHANGED_INTERFACE_BOUND,
+		KEY_ANNOTATION_CHANGED_TO_CLASS,
+		KEY_ANNOTATION_CHANGED_TO_ENUM,
+		KEY_ANNOTATION_CHANGED_TO_INTERFACE,
+		KEY_ANNOTATION_CHANGED_RESTRICTIONS,
+		KEY_ANNOTATION_ADDED_TYPE_PARAMETER,
+		KEY_ANNOTATION_ADDED_CLASS_BOUND,
+		KEY_ANNOTATION_ADDED_INTERFACE_BOUND,
+		KEY_ANNOTATION_ADDED_INTERFACE_BOUNDS,
+		KEY_ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE,
+		KEY_INTERFACE_ADDED_FIELD,
+		KEY_INTERFACE_ADDED_METHOD,
+		KEY_INTERFACE_ADDED_TYPE_MEMBER,
+		KEY_INTERFACE_ADDED_CLASS_BOUND,
+		KEY_INTERFACE_ADDED_INTERFACE_BOUND,
+		KEY_INTERFACE_ADDED_INTERFACE_BOUNDS,
+		KEY_INTERFACE_ADDED_TYPE_PARAMETER,
+		KEY_INTERFACE_REMOVED_TYPE_PARAMETER,
+		KEY_INTERFACE_REMOVED_TYPE_PARAMETERS,
+		KEY_INTERFACE_REMOVED_CLASS_BOUND,
+		KEY_INTERFACE_REMOVED_INTERFACE_BOUND,
+		KEY_INTERFACE_REMOVED_INTERFACE_BOUNDS,
+		KEY_INTERFACE_REMOVED_FIELD,
+		KEY_INTERFACE_REMOVED_METHOD,
+		KEY_INTERFACE_REMOVED_TYPE_MEMBER,
+		KEY_INTERFACE_CHANGED_CLASS_BOUND,
+		KEY_INTERFACE_CHANGED_INTERFACE_BOUND,
+		KEY_INTERFACE_CHANGED_INTERFACE_BOUNDS,
+		KEY_INTERFACE_CHANGED_TO_CLASS,
+		KEY_INTERFACE_CHANGED_TO_ENUM,
+		KEY_INTERFACE_CHANGED_TO_ANNOTATION,
+		KEY_INTERFACE_CHANGED_RESTRICTIONS,
+		KEY_ENUM_ADDED_FIELD,
+		KEY_ENUM_ADDED_METHOD,
+		KEY_ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
+		KEY_ENUM_CHANGED_TO_ANNOTATION,
+		KEY_ENUM_CHANGED_TO_CLASS,
+		KEY_ENUM_CHANGED_TO_INTERFACE,
+		KEY_ENUM_CHANGED_RESTRICTIONS,
+		KEY_ENUM_REMOVED_FIELD,
+		KEY_ENUM_REMOVED_ENUM_CONSTANT,
+		KEY_ENUM_REMOVED_METHOD,
+		KEY_ENUM_REMOVED_CONSTRUCTOR,
+		KEY_ENUM_REMOVED_TYPE_MEMBER,
+		KEY_CLASS_ADDED_FIELD,
+		KEY_CLASS_ADDED_METHOD,
+		KEY_CLASS_ADDED_TYPE_PARAMETER,
+		KEY_CLASS_ADDED_CLASS_BOUND,
+		KEY_CLASS_ADDED_INTERFACE_BOUND,
+		KEY_CLASS_ADDED_INTERFACE_BOUNDS,
+		KEY_CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
+		KEY_CLASS_CHANGED_CONTRACTED_SUPERCLASS_SET,
+		KEY_CLASS_CHANGED_SUPERCLASS,
+		KEY_CLASS_CHANGED_CLASS_BOUND,
+		KEY_CLASS_CHANGED_INTERFACE_BOUND,
+		KEY_CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
+		KEY_CLASS_CHANGED_NON_FINAL_TO_FINAL,
+		KEY_CLASS_CHANGED_TO_ANNOTATION,
+		KEY_CLASS_CHANGED_TO_ENUM,
+		KEY_CLASS_CHANGED_TO_INTERFACE,
+		KEY_CLASS_CHANGED_DECREASE_ACCESS,
+		KEY_CLASS_CHANGED_RESTRICTIONS,
+		KEY_CLASS_REMOVED_FIELD,
+		KEY_CLASS_REMOVED_METHOD,
+		KEY_CLASS_REMOVED_CONSTRUCTOR,
+		KEY_CLASS_REMOVED_TYPE_MEMBER,
+		KEY_CLASS_REMOVED_TYPE_PARAMETER,
+		KEY_CLASS_REMOVED_TYPE_PARAMETERS,
+		KEY_CLASS_REMOVED_CLASS_BOUND,
+		KEY_CLASS_REMOVED_INTERFACE_BOUND,
+		KEY_CLASS_REMOVED_INTERFACE_BOUNDS,
+		KEY_FIELD_ADDED_VALUE,
+		KEY_FIELD_CHANGED_TYPE,
+		KEY_FIELD_CHANGED_VALUE,
+		KEY_FIELD_CHANGED_DECREASE_ACCESS,
+		KEY_FIELD_CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT,
+		KEY_FIELD_CHANGED_NON_FINAL_TO_FINAL,
+		KEY_FIELD_CHANGED_STATIC_TO_NON_STATIC,
+		KEY_FIELD_CHANGED_NON_STATIC_TO_STATIC,
+		KEY_FIELD_REMOVED_VALUE,
+		KEY_FIELD_REMOVED_TYPE_ARGUMENTS,
+		KEY_METHOD_ADDED_CLASS_BOUND,
+		KEY_METHOD_ADDED_INTERFACE_BOUND,
+		KEY_METHOD_ADDED_INTERFACE_BOUNDS,
+		KEY_METHOD_ADDED_TYPE_PARAMETER,
+		KEY_METHOD_CHANGED_CLASS_BOUND,
+		KEY_METHOD_CHANGED_INTERFACE_BOUND,
+		KEY_METHOD_CHANGED_TYPE_PARAMETER,
+		KEY_METHOD_CHANGED_VARARGS_TO_ARRAY,
+		KEY_METHOD_CHANGED_DECREASE_ACCESS,
+		KEY_METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
+		KEY_METHOD_CHANGED_NON_STATIC_TO_STATIC,
+		KEY_METHOD_CHANGED_STATIC_TO_NON_STATIC,
+		KEY_METHOD_CHANGED_NON_FINAL_TO_FINAL,
+		KEY_METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE,
+		KEY_METHOD_REMOVED_TYPE_PARAMETERS,
+		KEY_METHOD_REMOVED_TYPE_PARAMETER,
+		KEY_METHOD_REMOVED_CLASS_BOUND,
+		KEY_METHOD_REMOVED_INTERFACE_BOUND,
+		KEY_METHOD_REMOVED_INTERFACE_BOUNDS,
+		KEY_CONSTRUCTOR_ADDED_CLASS_BOUND,
+		KEY_CONSTRUCTOR_ADDED_INTERFACE_BOUND,
+		KEY_CONSTRUCTOR_ADDED_INTERFACE_BOUNDS,
+		KEY_CONSTRUCTOR_ADDED_TYPE_PARAMETER,
+		KEY_CONSTRUCTOR_CHANGED_CLASS_BOUND,
+		KEY_CONSTRUCTOR_CHANGED_INTERFACE_BOUND,
+		KEY_CONSTRUCTOR_CHANGED_TYPE_PARAMETER,
+		KEY_CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY,
+		KEY_CONSTRUCTOR_CHANGED_DECREASE_ACCESS,
+		KEY_CONSTRUCTOR_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
+		KEY_CONSTRUCTOR_CHANGED_NON_STATIC_TO_STATIC,
+		KEY_CONSTRUCTOR_CHANGED_STATIC_TO_NON_STATIC,
+		KEY_CONSTRUCTOR_CHANGED_NON_FINAL_TO_FINAL,
+		KEY_CONSTRUCTOR_REMOVED_ANNOTATION_DEFAULT_VALUE,
+		KEY_CONSTRUCTOR_REMOVED_TYPE_PARAMETERS,
+		KEY_CONSTRUCTOR_REMOVED_TYPE_PARAMETER,
+		KEY_CONSTRUCTOR_REMOVED_CLASS_BOUND,
+		KEY_CONSTRUCTOR_REMOVED_INTERFACE_BOUND,
+		KEY_CONSTRUCTOR_REMOVED_INTERFACE_BOUNDS,		
+	};
+
+	private static Key[] fgAllApiScanningKeys = {
+		KEY_NOIMPLEMENT,
+		KEY_NOEXTEND,
+		KEY_NOREFERENCE,
+		KEY_NOINSTANTIATE,
+		KEY_NOOVERRIDE
+	};
+
+	private static Key[] fgAllVersionManagementKeys = {
+		KEY_MISSING_SINCE_TAG,
+		KEY_MALFORMED_SINCE_TAG,
+		KEY_INVALID_SINCE_TAG_VERSION,
+		KEY_INCOMPATIBLE_API_COMPONENT_VERSION
+	};
+
 	/**
 	 * An array of all of the keys for the page
 	 */
@@ -695,6 +852,30 @@ public class ApiErrorsWarningsConfigurationBlock {
 		}
 	};
 	
+	class SetAllSelectionAdapter extends SelectionAdapter {
+		String newValue;
+		int kind;
+
+		public SetAllSelectionAdapter(int kind, String newValue) {
+			this.kind = kind;
+			this.newValue = newValue;
+		}
+		
+		public void widgetSelected(SelectionEvent e) {
+			switch(this.kind) {
+				case API_SCANNING_USAGE_PAGE_ID :
+					setAllTo(this.newValue, fgAllApiScanningKeys);
+					break;
+				case VERSION_MANAGEMENT_PAGE_ID :
+					setAllTo(this.newValue, fgAllVersionManagementKeys);
+					break;
+				case BINARY_COMPATIBILITY_PAGE_ID :
+					setAllTo(this.newValue, fgAllBinaryKeys);
+					break;
+			}
+		}
+	}
+	
 	/**
 	 * Listing of all of the {@link ExpandableComposite}s in the block
 	 */
@@ -839,16 +1020,17 @@ public class ApiErrorsWarningsConfigurationBlock {
 		TabItem tab = new TabItem(folder, SWT.NONE);
 		tab.setText(name);
 		tab.setControl(page);
-		
-		SWTFactory.createVerticalSpacer(page, 1);
-		SWTFactory.createWrapLabel(page, description, 2);
-		SWTFactory.createVerticalSpacer(page, 1);
 
+		Composite internalComposite = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
+		SWTFactory.createVerticalSpacer(internalComposite, 1);
+		SWTFactory.createWrapLabel(internalComposite, description, 2);
+		SWTFactory.createVerticalSpacer(internalComposite, 1);
+		
 		switch(kind) {
 			case API_SCANNING_USAGE_PAGE_ID :
 				// API usage/scanning
 				//add visibility restrictions
-				initializeComboControls(page,
+				initializeComboControls(internalComposite,
 					new String[] {
 						PreferenceMessages.ApiProblemSeveritiesNoImplement,
 						PreferenceMessages.ApiProblemSeveritiesNoExtend,
@@ -870,7 +1052,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 			case VERSION_MANAGEMENT_PAGE_ID :
 				// API usage/scanning
 				//add visibility restrictions
-				initializeComboControls(page,
+				initializeComboControls(internalComposite,
 					new String[] {
 						PreferenceMessages.VersionManagementReportMissingSinceTag,
 						PreferenceMessages.VersionManagementReportMalformedSinceTags,
@@ -887,7 +1069,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				break;
 			case BINARY_COMPATIBILITY_PAGE_ID :
 				// binary compatibility
-				fScrolledComp = new ScrolledComposite(page, SWT.H_SCROLL | SWT.V_SCROLL);
+				fScrolledComp = new ScrolledComposite(internalComposite, SWT.H_SCROLL | SWT.V_SCROLL);
 				fScrolledComp.setExpandHorizontal(true);
 				fScrolledComp.setExpandVertical(true);
 				fScrolledComp.setLayout(new GridLayout(1, false));
@@ -1238,7 +1420,28 @@ public class ApiErrorsWarningsConfigurationBlock {
 					});
 				restoreExpansionState();
 		}
+		Composite buttonsComposite = SWTFactory.createComposite(page, 1, 1, GridData.FILL_BOTH, SWT.BORDER);
+		SWTFactory.createVerticalSpacer(buttonsComposite, 1);
+		buttonsComposite.setLayout(new GridLayout(1, false));
+		buttonsComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+		SWTFactory.createWrapLabel(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_setAllto, 1);
+		SWTFactory.createVerticalSpacer(buttonsComposite, 1);
+		Button allToErrorButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error, null, SWT.LEFT);
+		Button allToWarningButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning, null, SWT.LEFT);
+		Button allToIgnoreButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore, null, SWT.LEFT);
+		allToErrorButton.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error));
+		allToWarningButton.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning));
+		allToIgnoreButton.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore));
 		return page;
+	}
+
+	void setAllTo(String newValue, Key[] keys) {
+		for(int i = 0, max = keys.length; i < max; i++) {
+			keys[i].setStoredValue(fLookupOrder[0], newValue, fManager);
+		}
+		updateCombos();
+		fDirty = true;
+		fRebuildcount = 0;
 	}
 
 	/**

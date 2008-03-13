@@ -209,6 +209,7 @@ public class PreferenceMessages extends NLS {
 	public static String VersionManagementReportMalformedSinceTags;
 	public static String VersionManagementReportInvalidSinceTagVersion;
 	public static String VersionManagementReportInvalidApiComponentVersion;
+	public static String ApiErrorsWarningsConfigurationBlock_setAllto;
 
 	static {
 		// initialize resource bundle

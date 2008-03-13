@@ -418,6 +418,27 @@ public class SWTFactory {
 	}
 	
 	/**
+	 * Creates a composite that uses the parent's font and has a grid layout
+	 * 
+	 * @param parent the parent to add the composite to
+	 * @param columns the number of columns the composite should have
+	 * @param hspan the horizontal span the new composite should take up in the parent
+	 * @param fill the fill style of the composite {@link GridData}
+	 * @param style the style of the composite
+	 * @return a new composite with a grid layout
+	 */
+	public static Composite createComposite(Composite parent, int columns, int hspan, int fill, int style) {
+		Composite g = new Composite(parent, style);
+    	g.setLayout(new GridLayout(columns, false));
+    	g.setFont(parent.getFont());
+    	GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+		gd.grabExcessHorizontalSpace = true;
+    	g.setLayoutData(gd);
+    	return g;
+	}
+	
+	/**
 	 * Creates a vertical spacer for separating components. If applied to a 
 	 * <code>GridLayout</code>, this method will automatically span all of the columns of the parent
 	 * to make vertical space
