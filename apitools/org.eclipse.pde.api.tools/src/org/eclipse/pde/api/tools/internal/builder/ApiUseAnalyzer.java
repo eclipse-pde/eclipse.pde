@@ -19,19 +19,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchResult;
@@ -56,7 +77,7 @@ public class ApiUseAnalyzer {
 	/**
 	 * Empty reference collection
 	 */
-	private static final IReference[] EMPTY = new IReference[0];
+	private static final IApiProblem[] EMPTY = new IApiProblem[0];
 	
 	/**
 	 * Debugging flag
@@ -66,16 +87,23 @@ public class ApiUseAnalyzer {
 	/**
 	 * Collects search criteria from an API description for usage problems.
 	 */
-	static class UsageVisitor extends ApiDescriptionVisitor {
+	class UsageVisitor extends ApiDescriptionVisitor {
 		
+		/**
+		 * Maps search criteria to associated problem descriptors.
+		 */
 		private List fConditions;
+		
+		/**
+		 * Identifier of component elements are being searched for in
+		 */
 		private String fOwningComponentId;
 		
 		/**
 		 * @param conditions list to add conditions to
 		 */
-		UsageVisitor(List conditions) {
-			fConditions = conditions;
+		UsageVisitor() {
+			fConditions = new ArrayList();
 		}
 		
 		/**
@@ -97,43 +125,85 @@ public class ApiUseAnalyzer {
 				IElementDescriptor[] elements = new IElementDescriptor[]{element};
 				if (RestrictionModifiers.isExtendRestriction(mask)) {
 					if (element.getElementType() == IElementDescriptor.T_METHOD) {
-						add(ReferenceModifiers.REF_OVERRIDE, RestrictionModifiers.NO_EXTEND, elements);
+						add(ReferenceModifiers.REF_OVERRIDE, RestrictionModifiers.NO_EXTEND, elements, IApiProblem.ILLEGAL_OVERRIDE, IElementDescriptor.T_METHOD);
 					} else if (element.getElementType() == IElementDescriptor.T_REFERENCE_TYPE) {
-						add(ReferenceModifiers.REF_EXTENDS, RestrictionModifiers.NO_EXTEND, elements); 
+						add(ReferenceModifiers.REF_EXTENDS, RestrictionModifiers.NO_EXTEND, elements, IApiProblem.ILLEGAL_EXTEND, IElementDescriptor.T_REFERENCE_TYPE); 
 					}
 				}
 				if (RestrictionModifiers.isImplementRestriction(mask)) {
-					add(ReferenceModifiers.REF_IMPLEMENTS, RestrictionModifiers.NO_IMPLEMENT, elements);
+					add(ReferenceModifiers.REF_IMPLEMENTS, RestrictionModifiers.NO_IMPLEMENT, elements, IApiProblem.ILLEGAL_IMPLEMENT, IElementDescriptor.T_REFERENCE_TYPE);
 				}
 				if (RestrictionModifiers.isInstantiateRestriction(mask)) {
-					add(ReferenceModifiers.REF_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, elements);
+					add(ReferenceModifiers.REF_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, elements, IApiProblem.ILLEGAL_INSTANTIATE, IElementDescriptor.T_REFERENCE_TYPE);
 				}
 				if (RestrictionModifiers.isReferenceRestriction(mask)) {
 					if (element.getElementType() == IElementDescriptor.T_METHOD) {
 						add(
 							ReferenceModifiers.REF_INTERFACEMETHOD | ReferenceModifiers.REF_SPECIALMETHOD |
 							ReferenceModifiers.REF_STATICMETHOD | ReferenceModifiers.REF_VIRTUALMETHOD,
-							RestrictionModifiers.NO_REFERENCE, elements);
+							RestrictionModifiers.NO_REFERENCE, elements, IApiProblem.ILLEGAL_REFERENCE, IElementDescriptor.T_METHOD);
+						
 					} else if (element.getElementType() == IElementDescriptor.T_FIELD) {
 						add(
 							ReferenceModifiers.REF_GETFIELD | ReferenceModifiers.REF_GETSTATIC |
 							ReferenceModifiers.REF_PUTFIELD | ReferenceModifiers.REF_PUTSTATIC,
-							RestrictionModifiers.NO_REFERENCE, elements);
+							RestrictionModifiers.NO_REFERENCE, elements, IApiProblem.ILLEGAL_REFERENCE, IElementDescriptor.T_FIELD);
 					}
 				}
 			}
 			return true;
 		}
 		
-		private void add(int refKind, int restriction, IElementDescriptor[] elements) {
+		private void add(int refKind, int restriction, IElementDescriptor[] elements, int problemKind, int elemenType) {
 			IApiSearchCriteria condition = Factory.newSearchCriteria();
 			condition.addReferencedElementRestriction(fOwningComponentId, elements);
 			condition.setReferenceKinds(refKind);
 			condition.setReferencedRestrictions(VisibilityModifiers.ALL_VISIBILITIES, restriction);
+			condition.setUserData(new ProblemDescriptor(problemKind, elemenType));
 			fConditions.add(condition);
 		}
 		
+		/**
+		 * Returns search criteria with associated problem descriptions as user data
+		 * 
+		 * @return search criteria
+		 */
+		List getConditions() {
+			return fConditions;
+		}
+		
 	}	
+	
+	/**
+	 * Describes a kind of problem associated with a search criteria.
+	 */
+	class ProblemDescriptor {
+		private int fKind;
+		private int fElementType;
+		private int fFlags;
+		
+		ProblemDescriptor(int kind, int elementType) {
+			this(kind, elementType, IApiProblem.NO_FLAGS);
+		}
+		
+		ProblemDescriptor(int kind, int elementType, int flags) {
+			fKind = kind;
+			fElementType = elementType;
+			fFlags = flags;
+		}
+		
+		public int getKind() {
+			return fKind;
+		}
+		
+		public int getElementType() {
+			return fElementType;
+		}
+		
+		public int getFlags() {
+			return fFlags;
+		}
+	}
 	/**
 	 * Searches the specified scope within the the specified component and returns
 	 * reference objects identify illegal API use.
@@ -144,13 +214,47 @@ public class ApiUseAnalyzer {
 	 * @param monitor progress monitor
 	 * @exception CoreException if something goes wrong
 	 */
-	public IReference[] findIllegalApiUse(IApiProfile profile, IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor)  throws CoreException {
+	public IApiProblem[] findIllegalApiUse(IApiProfile profile, IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor)  throws CoreException {
 		IApiSearchCriteria[] conditions = buildSearchConditions(profile, component);
+		List problems = new ArrayList();
 		if (conditions.length > 0) {
 			IApiSearchEngine engine = Factory.newSearchEngine();
-			return getReferences(engine.search(scope, conditions, monitor));
+			IApiSearchResult[] results = engine.search(scope, conditions, monitor);
+			for (int i = 0; i < results.length; i++) {
+				IApiSearchResult result = results[i];
+				IReference[] references = result.getReferences();
+				ProblemDescriptor desc = (ProblemDescriptor) result.getSearchCriteria().getUserData();
+				for (int j = 0; j < references.length; j++) {
+					IReference reference = references[j];
+					IApiProblem problem = createProblem(desc.getKind(), desc.getElementType(), desc.getFlags(), reference);
+					if (problem != null) {
+						problems.add(problem);
+					}
+				}
+			}
+			return (IApiProblem[]) problems.toArray(new IApiProblem[problems.size()]);
 		}
 		return EMPTY;
+	}
+	
+	/**
+	 * Creates an API problem of the given type for the specified element type and
+	 * reference that exhibits the problem.
+	 * 
+	 * @param kind problem kind
+	 * @param elementType element type where the problem occurs
+	 * @param reference the reference that is a problem
+	 * @return API problem
+	 */
+	private IApiProblem createProblem(int kind, int elementType, int flags, IReference reference) {
+		IApiComponent component = reference.getSourceLocation().getApiComponent();
+		if (component instanceof PluginProjectApiComponent) {
+			PluginProjectApiComponent ppac = (PluginProjectApiComponent) component;
+			IJavaProject project = ppac.getJavaProject();
+			return createUsageProblem(kind, elementType, flags, reference, project);
+		} else {
+			return createUsageProblem(kind, elementType, flags, reference);
+		}
 	}
 	
 	/**
@@ -186,34 +290,7 @@ public class ApiUseAnalyzer {
 	}
 	
 	/**
-	 * Searches the entire profile and returns reference objects to identify illegal API use.
-	 * 
-	 * @param profile profile being analyzed
-	 * @param monitor progress monitor
-	 * @exception CoreException if something goes wrong
-	 */
-	public IReference[] findIllegalApiUse(IApiProfile profile, IProgressMonitor monitor)  throws CoreException {
-		IApiComponent[] components = profile.getApiComponents();
-		List references = new ArrayList();
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.ApiAnalyserTaskName, components.length);
-		for (int i = 0; i < components.length; i++) {
-			if (!monitor.isCanceled()) {
-				IApiComponent component = components[i];
-				if (!component.isSystemComponent()) {
-					IReference[] illegal = findIllegalApiUse(profile, component, Factory.newScope(new IApiComponent[]{component}), localMonitor);
-					for (int j = 0; j < illegal.length; j++) {
-						references.add(illegal[j]);
-					}
-				}
-				localMonitor.worked(1);
-			}
-		}
-		localMonitor.done();
-		return (IReference[]) references.toArray(new IReference[references.size()]);
-	}	
-	
-	/**
-	 * Build search conditions for API usage in all prerequisite components for
+	 * Build and return search conditions for API usage in all prerequisite components for
 	 * the given component and its profile.
 	 * 
 	 * @param profile
@@ -223,8 +300,7 @@ public class ApiUseAnalyzer {
 	private IApiSearchCriteria[] buildSearchConditions(IApiProfile profile, IApiComponent component) {
 		long start = System.currentTimeMillis();
 		IApiComponent[] components = profile.getPrerequisiteComponents(new IApiComponent[]{component});
-		List condidtions = new ArrayList();
-		UsageVisitor visitor = new UsageVisitor(condidtions);
+		UsageVisitor visitor = new UsageVisitor();
 		for (int i = 0; i < components.length; i++) {
 			IApiComponent prereq = components[i];
 			if (!prereq.equals(component)) {
@@ -240,7 +316,24 @@ public class ApiUseAnalyzer {
 		if (DEBUG) {
 			System.out.println("Time to build search conditions: " + (end-start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		return (IApiSearchCriteria[]) condidtions.toArray(new IApiSearchCriteria[condidtions.size()]);
+		// Add API leak conditions
+		List conditions = visitor.getConditions();
+		addLeakCondition(conditions, ReferenceModifiers.REF_EXTENDS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_EXTENDS);
+		addLeakCondition(conditions, ReferenceModifiers.REF_IMPLEMENTS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_IMPLEMENTS);
+		addLeakCondition(conditions, ReferenceModifiers.REF_FIELDDECL, IApiProblem.API_LEAK, IElementDescriptor.T_FIELD, IApiProblem.LEAK_FIELD);
+		addLeakCondition(conditions, ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_METHOD_PARAMETER);
+		addLeakCondition(conditions, ReferenceModifiers.REF_RETURNTYPE, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_RETURN_TYPE);
+		return (IApiSearchCriteria[]) conditions.toArray(new IApiSearchCriteria[conditions.size()]);
+	}
+	
+	private void addLeakCondition(List conditions, int refKind, int problemKind, int elementType, int flags) {
+		IApiSearchCriteria criteria = Factory.newSearchCriteria();
+		criteria.setReferenceKinds(refKind);
+		criteria.setReferencedRestrictions(VisibilityModifiers.PRIVATE, RestrictionModifiers.ALL_RESTRICTIONS);
+		criteria.setSourceRestrictions(VisibilityModifiers.API, RestrictionModifiers.ALL_RESTRICTIONS);
+		criteria.setSourceModifiers(Flags.AccPublic | Flags.AccProtected);	
+		criteria.setUserData(new ProblemDescriptor(problemKind, elementType, flags));
+		conditions.add(criteria);
 	}
 	
 	public class CompatibilityResult {
@@ -418,6 +511,326 @@ public class ApiUseAnalyzer {
 			IApiSearchEngine engine = Factory.newSearchEngine();
 			return getReferences(engine.search(scope, conditions, monitor));
 		}
-		return EMPTY;
+		return new IReference[0];
+	}	
+	
+	/**
+	 * Creates an {@link IApiProblem} for the given illegal reference.
+	 * 
+	 * @param reference illegal reference
+	 * @param project project the compilation unit is in
+	 * @return a new {@link IApiProblem} or <code>null</code>
+	 */
+	private IApiProblem createUsageProblem(int kind, int elementType, int flags, IReference reference, IJavaProject project) {
+		try {
+			ILocation location = reference.getSourceLocation();
+			IReferenceTypeDescriptor refType = location.getType();
+			String lookupName = null;
+			if (refType.getEnclosingType() == null) {
+				lookupName = refType.getQualifiedName();
+			} else {
+				lookupName = refType.getQualifiedName().replace('$', '.');
+			}
+			IType type = project.findType(lookupName);
+			if (type == null) {
+				return null;
+			}
+			ICompilationUnit compilationUnit = type.getCompilationUnit();
+			if (compilationUnit == null) {
+				return null;
+			}
+			IResource resource = compilationUnit.getCorrespondingResource();
+			if (resource == null) {
+				return null;
+			}
+			IDocument document = Util.getDocument(compilationUnit);
+			// retrieve line number, char start and char end
+			int lineNumber = location.getLineNumber();
+			int charStart = -1;
+			int charEnd = -1;
+			
+			String prefKey = null;
+			ILocation resolvedLocation = reference.getResolvedLocation();
+			String qualifiedTypeName = resolvedLocation.getType().getQualifiedName();
+			IMemberDescriptor member = resolvedLocation.getMember();
+			String[] messageargs = null;
+			try {
+				switch(kind) {
+					case IApiProblem.ILLEGAL_IMPLEMENT : {
+						prefKey = IApiProblemTypes.ILLEGAL_IMPLEMENT;
+						messageargs = new String[] {qualifiedTypeName};
+						// report error on the type
+						ISourceRange range = type.getNameRange();
+						charStart = range.getOffset();
+						charEnd = charStart + range.getLength();
+						lineNumber = document.getLineOfOffset(charStart);
+						break;
+					}
+					case IApiProblem.ILLEGAL_EXTEND : {
+						prefKey = IApiProblemTypes.ILLEGAL_EXTEND;
+						messageargs = new String[] {qualifiedTypeName};
+						// report error on the type
+						ISourceRange range = type.getNameRange();
+						charStart = range.getOffset();
+						charEnd = charStart + range.getLength();
+						lineNumber = document.getLineOfOffset(charStart);
+						break;
+					}
+					case IApiProblem.ILLEGAL_INSTANTIATE : {
+						prefKey = IApiProblemTypes.ILLEGAL_INSTANTIATE;
+						messageargs = new String[] {qualifiedTypeName};
+						int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
+						IReferenceTypeDescriptor typeDesc = (IReferenceTypeDescriptor) member;
+						int offset = document.getLineOffset(linenumber);
+						String line = document.get(offset, document.getLineLength(linenumber));
+						String qname = typeDesc.getQualifiedName();
+						int first = line.indexOf(qname);
+						if(first < 0) {
+							qname = typeDesc.getName();
+							first = line.indexOf(qname);
+						}
+						if(first > -1) {
+							charStart = offset + first;
+							charEnd = charStart + qname.length();
+						}
+						//TODO support the call to 'super'
+						break;
+					}
+					case IApiProblem.ILLEGAL_OVERRIDE : {
+						IMethodDescriptor method = (IMethodDescriptor) member;
+						prefKey = IApiProblemTypes.ILLEGAL_OVERRIDE;
+						messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
+						// report the marker on the method
+						String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
+						for (int i = 0; i < parameterTypes.length; i++) {
+							parameterTypes[i] = parameterTypes[i].replace('/', '.');
+						}
+						IMethod Qmethod = type.getMethod(method.getName(), parameterTypes);
+						IMethod[] methods = type.getMethods();
+						IMethod match = null;
+						for (int i = 0; i < methods.length; i++) {
+							IMethod m = methods[i];
+							if (m.isSimilar(Qmethod)) {
+								match = m;
+								break;
+							}
+						}
+						if (match != null) {
+							ISourceRange range = match.getNameRange();
+							charStart = range.getOffset();
+							charEnd = charStart + range.getLength();
+							lineNumber = document.getLineOfOffset(charStart);
+						}					
+						break;
+					}
+					case IApiProblem.ILLEGAL_REFERENCE: {
+						prefKey = IApiProblemTypes.ILLEGAL_REFERENCE;
+						switch (elementType) {
+							case IElementDescriptor.T_METHOD: {
+								IMethodDescriptor method = (IMethodDescriptor) member;							
+								messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
+								int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
+								int offset = document.getLineOffset(linenumber);
+								String line = document.get(offset, document.getLineLength(linenumber));
+								String name = method.getName();
+								int first = line.indexOf(name);
+								if(first > -1) {
+									charStart = offset + first;
+									charEnd = charStart + name.length();
+								}							
+								break;
+							}
+							case IElementDescriptor.T_FIELD: {
+								IFieldDescriptor field = (IFieldDescriptor) member;
+								messageargs = new String[] {field.getEnclosingType().getQualifiedName(), field.getName()};
+								String name = field.getName();
+								int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
+								int offset = document.getLineOffset(linenumber);
+								String line = document.get(offset, document.getLineLength(linenumber));
+								IReferenceTypeDescriptor parent = field.getEnclosingType();
+								String qname = parent.getQualifiedName()+"."+name; //$NON-NLS-1$
+								int first = line.indexOf(qname);
+								if(first < 0) {
+									qname = parent.getName()+"."+name; //$NON-NLS-1$
+									first = line.indexOf(qname);
+								}
+								if(first < 0) {
+									qname = "super."+name; //$NON-NLS-1$
+									first = line.indexOf(qname);
+								}
+								if(first < 0) {
+									qname = "this."+name; //$NON-NLS-1$
+									first = line.indexOf(qname);
+								}
+								if(first > -1) {
+									charStart = offset + first;
+									charEnd = charStart + qname.length();
+								}
+								else {
+									//optimistically select the whole line since we can't find the correct variable name and we can't just select
+									//the first occurrence 
+									charStart = offset;
+									charEnd = offset + line.length();
+								}							
+								break;
+							}
+						}
+						
+						break;
+					}
+					case IApiProblem.API_LEAK: {
+						prefKey = IApiProblemTypes.API_LEAK;
+						messageargs = new String[] {qualifiedTypeName};
+						switch (flags) {
+							case IApiProblem.LEAK_EXTENDS:
+							case IApiProblem.LEAK_IMPLEMENTS: {
+								// report error on the type
+								ISourceRange range = type.getNameRange();
+								charStart = range.getOffset();
+								charEnd = charStart + range.getLength();
+								lineNumber = document.getLineOfOffset(charStart);
+								break;
+							}
+							case IApiProblem.LEAK_FIELD: {
+								IFieldDescriptor field = (IFieldDescriptor) reference.getSourceLocation().getMember();
+								IField javaField = type.getField(field.getName());
+								if (javaField.exists()) {
+									ISourceRange range = javaField.getNameRange();
+									charStart = range.getOffset();
+									charEnd = charStart + range.getLength();
+									lineNumber = document.getLineOfOffset(charStart);
+								}
+								break;
+							}
+							case IApiProblem.LEAK_METHOD_PARAMETER:
+							case IApiProblem.LEAK_RETURN_TYPE: {
+								IMethodDescriptor method = (IMethodDescriptor) reference.getSourceLocation().getMember();
+								// report the marker on the method
+								// TODO: can we just lookup the method with resolved signature?
+								String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
+								for (int i = 0; i < parameterTypes.length; i++) {
+									parameterTypes[i] = parameterTypes[i].replace('/', '.');
+								}
+								IMethod Qmethod = type.getMethod(method.getName(), parameterTypes);
+								IMethod[] methods = type.getMethods();
+								IMethod match = null;
+								for (int i = 0; i < methods.length; i++) {
+									IMethod m = methods[i];
+									if (m.isSimilar(Qmethod)) {
+										match = m;
+										break;
+									}
+								}
+								if (match != null) {
+									ISourceRange range = match.getNameRange();
+									charStart = range.getOffset();
+									charEnd = charStart + range.getLength();
+									lineNumber = document.getLineOfOffset(charStart);
+								}										
+								break;
+							}
+						}
+						break;
+					}
+				} 
+			} catch (BadLocationException e) {
+				ApiPlugin.log(e);
+			}
+			int sev = ApiPlugin.getDefault().getSeverityLevel(prefKey, project.getProject());
+			if (sev == ApiPlugin.SEVERITY_IGNORE) {
+				// ignore
+				return null;
+			}
+			int severity = IMarker.SEVERITY_ERROR;
+			if (sev == ApiPlugin.SEVERITY_WARNING) {
+				severity = IMarker.SEVERITY_WARNING;
+			}
+			IJavaElement element = compilationUnit;
+			if(charStart > -1) {
+				element = compilationUnit.getElementAt(charStart);
+			}
+			return ApiProblemFactory.newApiUsageProblem(resource.getProjectRelativePath().toPortableString(), 
+					messageargs, 
+					new String[] {IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,	IApiMarkerConstants.API_MARKER_ATTR_ID}, 
+					new Object[] {(element == null ? compilationUnit.getHandleIdentifier() : element.getHandleIdentifier()),
+								   new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
+					lineNumber, 
+					charStart, 
+					charEnd, 
+					severity, 
+					elementType, 
+					kind,
+					flags);
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+		return null;
+	}
+	
+	/**
+	 * Creates an {@link IApiProblem} for the given illegal reference.
+	 * 
+	 * @param reference illegal reference
+	 * @return a new {@link IApiProblem} or <code>null</code>
+	 */
+	private IApiProblem createUsageProblem(int kind, int elementType, int flags, IReference reference) {
+		ILocation location = reference.getSourceLocation();
+		IReferenceTypeDescriptor refType = location.getType();
+		int lineNumber = location.getLineNumber();			
+		ILocation resolvedLocation = reference.getResolvedLocation();
+		String qualifiedTypeName = resolvedLocation.getType().getQualifiedName();
+		IMemberDescriptor member = resolvedLocation.getMember();
+		String[] messageargs = null;
+		switch(kind) {
+			case IApiProblem.ILLEGAL_IMPLEMENT : {
+				messageargs = new String[] {qualifiedTypeName};
+				break;
+			}
+			case IApiProblem.ILLEGAL_EXTEND : {
+				messageargs = new String[] {qualifiedTypeName};
+				break;
+			}
+			case IApiProblem.ILLEGAL_INSTANTIATE : {
+				messageargs = new String[] {qualifiedTypeName};
+				break;
+			}
+			case IApiProblem.ILLEGAL_OVERRIDE : {
+				IMethodDescriptor method = (IMethodDescriptor) member;
+				messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
+				break;
+			}
+			case IApiProblem.ILLEGAL_REFERENCE: {
+				switch (elementType) {
+					case IElementDescriptor.T_METHOD: {
+						IMethodDescriptor method = (IMethodDescriptor) member;							
+						messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
+						break;
+					}
+					case IElementDescriptor.T_FIELD: {
+						IFieldDescriptor field = (IFieldDescriptor) member;
+						messageargs = new String[] {field.getEnclosingType().getQualifiedName(), field.getName()};
+						break;
+					}
+				}						
+				break;
+			}
+			case IApiProblem.API_LEAK: {
+				messageargs = new String[] {qualifiedTypeName};
+				break;
+			}
+		} 
+		// TODO: where to get severity when no project?
+		int severity = IMarker.SEVERITY_WARNING;
+		return ApiProblemFactory.newApiUsageProblem(refType.getQualifiedName(), 
+				messageargs, 
+				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
+				new Object[] {new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
+				lineNumber, 
+				-1, 
+				-1, 
+				severity, 
+				elementType, 
+				kind,
+				flags);
 	}	
 }

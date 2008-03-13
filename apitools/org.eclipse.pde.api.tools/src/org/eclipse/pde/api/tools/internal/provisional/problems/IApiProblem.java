@@ -147,6 +147,48 @@ public interface IApiProblem {
 	public static final int ILLEGAL_OVERRIDE = 5;
 	
 	/**
+	 * Constant representing the value of an API leak {@link IApiProblem} kind.
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int API_LEAK = 6;	
+	
+	/**
+	 * Flags to indicate a leak from extending a non-API type. 
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int LEAK_EXTENDS = 1;	
+	
+	/**
+	 * Flags to indicate a leak from implementing a non-API type. 
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int LEAK_IMPLEMENTS = 2;
+	
+	/**
+	 * Flags to indicate a leak from a field declaration. 
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int LEAK_FIELD = 3;
+	
+	/**
+	 * Flags to indicate a leak from a return type. 
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int LEAK_RETURN_TYPE = 4;
+	
+	/**
+	 * Flags to indicate a leak from a method parameter 
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int LEAK_METHOD_PARAMETER = 5;	
+	
+	/**
 	 * Constant representing the value of a default API profile {@link IApiProblem} kind.
 	 * 
 	 * @see #getKind()

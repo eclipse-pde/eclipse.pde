@@ -119,4 +119,18 @@ public interface IApiSearchCriteria {
 	 * @param componentId API component identifier
 	 */
 	public void addSourceFilter(String componentId);
+	
+	/**
+	 * Sets arbitrary user data on this search criteria.
+	 * 
+	 * @param object user data or <code>null</code>
+	 */
+	public void setUserData(Object object);
+	
+	/**
+	 * Returns the user data set on this search criteria, or <code>null</code>.
+	 * 
+	 * @return user data or <code>null</code>
+	 */
+	public Object getUserData();
 }

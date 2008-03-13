@@ -347,7 +347,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 * 
 	 * @return associated Java project
 	 */
-	IJavaProject getJavaProject() {
+	public IJavaProject getJavaProject() {
 		return fProject;
 	}
 	

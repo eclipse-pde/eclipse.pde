@@ -108,8 +108,6 @@ public class SearchEngine implements IApiSearchEngine {
 						for (int i = 0; i < fConditions.length; i++) {
 							if (fConditions[i].isPotentialMatch(ref)) {
 								fPotentialMatches[i].add(ref);
-								// TODO: check other conditions for multiple matches?
-								break;
 							}
 						}
 					}

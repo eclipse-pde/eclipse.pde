@@ -45,12 +45,10 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -79,16 +77,10 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
-import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
-import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -376,15 +368,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
 		try {
 			long start = System.currentTimeMillis();
-			IReference[] illegal = analyzer.findIllegalApiUse(profile, component, scope, monitor);
+			IApiProblem[] illegal = analyzer.findIllegalApiUse(profile, component, scope, monitor);
 			long end = System.currentTimeMillis();
 			if (DEBUG) {
 				System.out.println("API usage scan: " + (end- start) + " ms\t" + illegal.length + " problems"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}		
 			if (illegal.length > 0) {
-				IJavaProject jproject = JavaCore.create(fCurrentProject);
 				for (int i = 0; i < illegal.length; i++) {
-					fProblemReporter.addProblem(createUsageProblem(illegal[i], jproject));
+					fProblemReporter.addProblem(illegal[i]);
 				}
 			}
 		} catch (CoreException e) {
@@ -1136,226 +1127,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 		return null;
 	}
-	
-	/**
-	 * Creates an {@link IApiProblem} for the given illegal reference.
-	 * 
-	 * @param reference illegal reference
-	 * @param project project the compilation unit is in
-	 * @return a new {@link IApiProblem} or <code>null</code>
-	 */
-	private IApiProblem createUsageProblem(IReference reference, IJavaProject project) {
-		try {
-			String prefKey = null;
-			ILocation resolvedLocation = reference.getResolvedLocation();
-			String qualifiedTypeName = resolvedLocation.getType().getQualifiedName();
-			IMemberDescriptor member = resolvedLocation.getMember();
-			String[] messageargs = null;
-			switch(reference.getReferenceKind()) {
-				case ReferenceModifiers.REF_IMPLEMENTS : {
-					prefKey = IApiProblemTypes.ILLEGAL_IMPLEMENT;
-					messageargs = new String[] {qualifiedTypeName};
-					break;
-				}
-				case ReferenceModifiers.REF_EXTENDS : {
-					prefKey = IApiProblemTypes.ILLEGAL_EXTEND;
-					messageargs = new String[] {qualifiedTypeName};
-					break;
-				}
-				case ReferenceModifiers.REF_INSTANTIATE : {
-					prefKey = IApiProblemTypes.ILLEGAL_INSTANTIATE;
-					messageargs = new String[] {qualifiedTypeName};
-					break;
-				}
-				case ReferenceModifiers.REF_OVERRIDE : {
-					IMethodDescriptor method = (IMethodDescriptor) member;
-					prefKey = IApiProblemTypes.ILLEGAL_OVERRIDE;
-					messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
-					break;
-				}
-				case ReferenceModifiers.REF_INTERFACEMETHOD :
-				case ReferenceModifiers.REF_SPECIALMETHOD: 
-				case ReferenceModifiers.REF_STATICMETHOD: 
-				case ReferenceModifiers.REF_VIRTUALMETHOD: {
-					IMethodDescriptor method = (IMethodDescriptor) member;
-					prefKey = IApiProblemTypes.ILLEGAL_REFERENCE;
-					messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
-					break;
-				}
-				case ReferenceModifiers.REF_GETFIELD :
-				case ReferenceModifiers.REF_GETSTATIC :
-				case ReferenceModifiers.REF_PUTFIELD :
-				case ReferenceModifiers.REF_PUTSTATIC : {
-					IFieldDescriptor field = (IFieldDescriptor) member;
-					prefKey = IApiProblemTypes.ILLEGAL_REFERENCE;
-					messageargs = new String[] {field.getEnclosingType().getQualifiedName(), field.getName()};
-					break;
-				}
-			}
-			int sev = ApiPlugin.getDefault().getSeverityLevel(prefKey, fCurrentProject);
-			if (sev == ApiPlugin.SEVERITY_IGNORE) {
-				// ignore
-				return null;
-			}
-			int severity = IMarker.SEVERITY_ERROR;
-			if (sev == ApiPlugin.SEVERITY_WARNING) {
-				severity = IMarker.SEVERITY_WARNING;
-			}
-			ILocation location = reference.getSourceLocation();
-			IReferenceTypeDescriptor refType = location.getType();
-			String lookupName = null;
-			if (refType.getEnclosingType() == null) {
-				lookupName = refType.getQualifiedName();
-			} else {
-				lookupName = refType.getQualifiedName().replace('$', '.');
-			}
-			IType type = project.findType(lookupName);
-			if (type == null) {
-				return null;
-			}
-			ICompilationUnit compilationUnit = type.getCompilationUnit();
-			if (compilationUnit == null) {
-				return null;
-			}
-			IResource resource = compilationUnit.getCorrespondingResource();
-			if (resource == null) {
-				return null;
-			}
-			IDocument document = Util.getDocument(compilationUnit);
-			// retrieve line number, char start and char end
-			int lineNumber = location.getLineNumber();
-			int charStart = -1;
-			int charEnd = -1;
-			try {
-				switch(reference.getReferenceKind()) {
-					case ReferenceModifiers.REF_IMPLEMENTS :
-					case ReferenceModifiers.REF_EXTENDS : {
-							// we report the marker on the type
-							ISourceRange range = type.getNameRange();
-							charStart = range.getOffset();
-							charEnd = charStart + range.getLength();
-							lineNumber = document.getLineOfOffset(charStart);
-						}
-						break;
-					case ReferenceModifiers.REF_OVERRIDE : {
-							// report the marker on the method
-							IMethodDescriptor methodDesc = (IMethodDescriptor) member;
-							String[] parameterTypes = Signature.getParameterTypes(methodDesc.getSignature());
-							for (int i = 0; i < parameterTypes.length; i++) {
-								parameterTypes[i] = parameterTypes[i].replace('/', '.');
-							}
-							IMethod Qmethod = type.getMethod(methodDesc.getName(), parameterTypes);
-							IMethod[] methods = type.getMethods();
-							IMethod match = null;
-							for (int i = 0; i < methods.length; i++) {
-								IMethod method = methods[i];
-								if (method.isSimilar(Qmethod)) {
-									match = method;
-									break;
-								}
-							}
-							if (match != null) {
-								ISourceRange range = match.getNameRange();
-								charStart = range.getOffset();
-								charEnd = charStart + range.getLength();
-								lineNumber = document.getLineOfOffset(charStart);
-							}
-						}
-						break;
-					case ReferenceModifiers.REF_INSTANTIATE : {
-						int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
-						IReferenceTypeDescriptor typeDesc = (IReferenceTypeDescriptor) member;
-						int offset = document.getLineOffset(linenumber);
-						String line = document.get(offset, document.getLineLength(linenumber));
-						String qname = typeDesc.getQualifiedName();
-						int first = line.indexOf(qname);
-						if(first < 0) {
-							qname = typeDesc.getName();
-							first = line.indexOf(qname);
-						}
-						if(first > -1) {
-							charStart = offset + first;
-							charEnd = charStart + qname.length();
-						}
-						//TODO support the call to 'super'
-						break;
-					}
-					case ReferenceModifiers.REF_INTERFACEMETHOD :
-					case ReferenceModifiers.REF_SPECIALMETHOD: 
-					case ReferenceModifiers.REF_STATICMETHOD: {
-						int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
-						IMethodDescriptor methodDesc = (IMethodDescriptor) member;
-						int offset = document.getLineOffset(linenumber);
-						String line = document.get(offset, document.getLineLength(linenumber));
-						String name = methodDesc.getName();
-						int first = line.indexOf(name);
-						if(first > -1) {
-							charStart = offset + first;
-							charEnd = charStart + name.length();
-						}
-						break;
-					}
-					case ReferenceModifiers.REF_GETSTATIC :
-					case ReferenceModifiers.REF_PUTSTATIC : 
-					case ReferenceModifiers.REF_PUTFIELD :
-					case ReferenceModifiers.REF_GETFIELD : {
-						IFieldDescriptor field = (IFieldDescriptor) member;
-						String name = field.getName();
-						int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
-						int offset = document.getLineOffset(linenumber);
-						String line = document.get(offset, document.getLineLength(linenumber));
-						IReferenceTypeDescriptor parent = field.getEnclosingType();
-						String qname = parent.getQualifiedName()+"."+name; //$NON-NLS-1$
-						int first = line.indexOf(qname);
-						if(first < 0) {
-							qname = parent.getName()+"."+name; //$NON-NLS-1$
-							first = line.indexOf(qname);
-						}
-						if(first < 0) {
-							qname = "super."+name; //$NON-NLS-1$
-							first = line.indexOf(qname);
-						}
-						if(first < 0) {
-							qname = "this."+name; //$NON-NLS-1$
-							first = line.indexOf(qname);
-						}
-						if(first > -1) {
-							charStart = offset + first;
-							charEnd = charStart + qname.length();
-						}
-						else {
-							//optimistically select the whole line since we can't find the correct variable name and we can't just select
-							//the first occurrence 
-							charStart = offset;
-							charEnd = offset + line.length();
-						}
-						break;
-					}
-				}
-			}
-			catch(BadLocationException ble) {
-				ApiPlugin.log(ble);
-			}
-			IJavaElement element = compilationUnit;
-			if(charStart > -1) {
-				element = compilationUnit.getElementAt(charStart);
-			}
-			return ApiProblemFactory.newApiUsageProblem(resource.getProjectRelativePath().toPortableString(), 
-					messageargs, 
-					new String[] {IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,	IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-					new Object[] {(element == null ? compilationUnit.getHandleIdentifier() : element.getHandleIdentifier()),
-								   new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
-					lineNumber, 
-					charStart, 
-					charEnd, 
-					severity, 
-					member.getElementType(), 
-					ApiProblemFactory.getProblemKindFromPref(prefKey));
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		}
-		return null;
-	}	
 
 	/**
 	 * Compares the two given profiles and generates an {@link IDelta}

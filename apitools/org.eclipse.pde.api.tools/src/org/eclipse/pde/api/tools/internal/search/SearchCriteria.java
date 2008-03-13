@@ -73,6 +73,11 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * Component filters for source reference locations or <code>null</code> if none.
 	 */
 	private String fSourceFilter[] = null;
+	
+	/**
+	 * User data or <code>null</code>
+	 */
+	private Object fUserData;
 
 	/**
 	 * Used for pattern matching.
@@ -575,7 +580,6 @@ public class SearchCriteria implements IApiSearchCriteria {
 		fSourceRestriction = restrictionMask;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria#addSourceFilter(java.lang.String)
 	 */
@@ -588,6 +592,21 @@ public class SearchCriteria implements IApiSearchCriteria {
 			temp[fSourceFilter.length] = componentId;
 			fSourceFilter = temp;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria#getUserData()
+	 */
+	public Object getUserData() {
+		return fUserData;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria#setUserData(java.lang.Object)
+	 */
+	public void setUserData(Object object) {
+		fUserData = object;
+		
 	}
 
 }

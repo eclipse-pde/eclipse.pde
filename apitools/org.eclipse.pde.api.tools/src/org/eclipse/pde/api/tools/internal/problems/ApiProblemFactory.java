@@ -110,6 +110,27 @@ public class ApiProblemFactory {
 	 * @param severity the severity of the problem
 	 * @param element the element kind
 	 * @param kind the kind
+	 * @param flags the flags
+	 * @return a new {@link IApiProblem} for API usage
+	 */
+	public static IApiProblem newApiUsageProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int element, int kind, int flags) {
+		int id = createProblemId(IApiProblem.CATEGORY_USAGE, element, kind, flags);
+		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, severity, id);
+	}
+	
+	/**
+	 * Creates a new API usage {@link IApiProblem}
+	 * @param resourcepath the path to the resource this problem was found in
+	 * @param messageargs listing of arguments to pass in to the localized message.
+	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param argumentids the ids of arguments passed into the problem
+	 * @param arguments the arguments that correspond to the listing of ids
+	 * @param linenumber the number of the line the problem occurred on
+	 * @param charstart the start of a char selection range
+	 * @param charend the end of a char selection range
+	 * @param severity the severity of the problem
+	 * @param element the element kind
+	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for API usage
 	 */
 	public static IApiProblem newApiProfileProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int element, int kind) {
