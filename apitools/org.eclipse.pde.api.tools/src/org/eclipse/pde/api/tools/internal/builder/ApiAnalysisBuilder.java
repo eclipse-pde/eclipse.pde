@@ -221,6 +221,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			fTypes.clear();
 			fPackages.clear();
 			fProjectToOutputLocations.clear();
+			checkDefaultProfileSet();
 			fProblemReporter.createMarkers(localMonitor);
 			fProblemReporter.dispose();
 			localMonitor.done();
@@ -228,7 +229,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (DEBUG) {
 			System.out.println("Finished build of " + this.fCurrentProject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		checkDefaultProfileSet();
 		return projects;
 	}
 
@@ -280,7 +280,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if (sev == ApiPlugin.SEVERITY_WARNING) {
 					severity = IMarker.SEVERITY_WARNING;
 				}
-				IApiProblem problem = ApiProblemFactory.newApiProfileProblem(fCurrentProject.getFullPath().toPortableString(), 
+				IApiProblem problem = ApiProblemFactory.newApiProfileProblem(fCurrentProject.getProjectRelativePath().toPortableString(), 
 						null, 
 						new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
 						new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)}, 
