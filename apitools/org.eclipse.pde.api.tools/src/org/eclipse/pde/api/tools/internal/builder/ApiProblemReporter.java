@@ -132,13 +132,6 @@ public class ApiProblemReporter implements IApiProblemReporter {
 			IApiProblem problem = null;
 			for(Iterator iter = fProblems.keySet().iterator(); iter.hasNext();) {
 				type = (String) iter.next();
-				try {
-					fProject.deleteMarkers(type, true, IResource.DEPTH_INFINITE);
-				}
-				catch(CoreException ce) {
-					ApiPlugin.log(ce);
-					continue;
-				}
 				problems = (HashSet) fProblems.get(type);
 				if(problems != null && problems.size() > 0) {
 					try {
