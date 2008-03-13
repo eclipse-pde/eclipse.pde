@@ -38,7 +38,7 @@ public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 	 */
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 
-		if (region == null || canShowMultipleHyperlinks)
+		if (region == null)
 			return null;
 
 		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);

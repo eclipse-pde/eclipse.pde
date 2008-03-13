@@ -35,7 +35,7 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
 	 */
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
-		if (region == null || canShowMultipleHyperlinks)
+		if (region == null)
 			return null;
 
 		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), false);
