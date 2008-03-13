@@ -463,7 +463,9 @@ public class ApiProfileWizardPage extends WizardPage {
 	 * creating the new profile
 	 */
 	public IApiProfile finish() throws IOException, CoreException {
-		fProfile.setName(nametext.getText().trim());
+		if(fProfile != null) {
+			fProfile.setName(nametext.getText().trim());
+		}	
 		return fProfile;
 	}
 }
