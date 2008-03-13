@@ -147,9 +147,21 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	}
 
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
-		if (fSourcePage != null)
-			return new IHyperlinkDetector[] {(IHyperlinkDetector) fSourcePage.getAdapter(IHyperlinkDetector.class)};
-		return super.getHyperlinkDetectors(sourceViewer);
+		IHyperlinkDetector[] registeredDetectors = super.getHyperlinkDetectors(sourceViewer);
+		if (registeredDetectors == null)
+			return null;
+
+		if (fSourcePage == null)
+			return registeredDetectors;
+
+		IHyperlinkDetector additionalDetector = (IHyperlinkDetector) fSourcePage.getAdapter(IHyperlinkDetector.class);
+		if (additionalDetector == null)
+			return registeredDetectors;
+
+		IHyperlinkDetector[] allDetectors = new IHyperlinkDetector[registeredDetectors.length + 1];
+		System.arraycopy(registeredDetectors, 0, allDetectors, 0, registeredDetectors.length);
+		allDetectors[registeredDetectors.length] = additionalDetector;
+		return allDetectors;
 	}
 
 	public abstract boolean affectsTextPresentation(PropertyChangeEvent event);
