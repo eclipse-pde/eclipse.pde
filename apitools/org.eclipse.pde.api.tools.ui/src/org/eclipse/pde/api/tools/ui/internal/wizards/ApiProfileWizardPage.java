@@ -305,7 +305,13 @@ public class ApiProfileWizardPage extends WizardPage {
 					dialog.setFilterPath(loctext);
 				}
 				String newPath = dialog.open();
-				if (newPath != null && !new Path(loctext).equals(new Path(newPath))) {
+				if (newPath != null && (!new Path(loctext).equals(new Path(newPath))
+						|| getCurrentComponents().length == 0)) {
+					/*
+					 * If the path is identical, but there is no component loaded, we still
+					 * want to reload. This might be the case if the combo is initialized by
+					 * copy/paste with a path that points to a plugin directory
+					 */
 					locationcombo.setText(newPath);
 					doReload();
 				}
