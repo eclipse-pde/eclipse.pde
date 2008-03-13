@@ -206,6 +206,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final Key KEY_NOINSTANTIATE = getApiToolsKey(IApiProblemTypes.ILLEGAL_INSTANTIATE);
 	private static final Key KEY_NOREFERENCE = getApiToolsKey(IApiProblemTypes.ILLEGAL_REFERENCE);
 	private static final Key KEY_NOOVERRIDE = getApiToolsKey(IApiProblemTypes.ILLEGAL_OVERRIDE);
+	private static final Key KEY_API_LEAK = getApiToolsKey(IApiProblemTypes.API_LEAK);
 	private static final Key KEY_API_PROFILE_REMOVED_API_COMPONENT =
 		getApiToolsKey(IApiProblemTypes.API_PROFILE_REMOVED_API_COMPONENT);
 	private static final Key KEY_API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT =
@@ -853,14 +854,16 @@ public class ApiErrorsWarningsConfigurationBlock {
 						PreferenceMessages.ApiProblemSeveritiesNoExtend,
 						PreferenceMessages.ApiProblemSeveritiesNoReference,
 						PreferenceMessages.ApiProblemSeveritiesNoInstanciate,
-						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_override_tagged_method
+						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_override_tagged_method,
+						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_API_Leak
 					},
 					new Key[] {
 						KEY_NOIMPLEMENT,
 						KEY_NOEXTEND,
 						KEY_NOREFERENCE,
 						KEY_NOINSTANTIATE,
-						KEY_NOOVERRIDE
+						KEY_NOOVERRIDE,
+						KEY_API_LEAK
 					}
 				);
 				break;
