@@ -162,8 +162,22 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally references foo.bar", new String[0])));
 	}
 	
+	/**
+	 * Tests getting (some of) the binary messages
+	 */
 	public void testGetBinaryMessages() {
-		
+		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, 
+				IApiProblem.CATEGORY_BINARY, IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.CONSTRUCTOR);
+		String message = problem.getMessage();
+		assertNotNull("the message should not be null", message);
+		assertFalse("the message should be found", message.equals(fDefaultMessage));
+		assertTrue("the message should be correct", message.equals(MessageFormat.format("Added a constructor", new String[0])));
+		problem = ApiProblemFactory.newApiProblem(null, new String[] {"foo()"}, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, 
+				IApiProblem.CATEGORY_BINARY, IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
+		message = problem.getMessage();
+		assertNotNull("the message should not be null", message);
+		assertFalse("the message should be found", message.equals(fDefaultMessage));
+		assertTrue("the message should be correct", message.equals(MessageFormat.format("Added method foo() in an interface that is intended to be implemented", new String[0])));
 	}
 	
 	/**

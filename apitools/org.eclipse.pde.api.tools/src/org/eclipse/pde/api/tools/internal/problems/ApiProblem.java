@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.internal.problems;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -69,30 +68,11 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Masks to get the original bits out of the id
 	 */
-	private static final int CATEGORY_MASK = 0xFF000000;
-	private static final int ELEMENT_KIND_MASK = 0x00FF0000;
-	private static final int KIND_MASK = 0x0000FF00;
-	private static final int FLAGS_MASK = 0x000000FF;
-	
-	/**
-	 * Constructor
-	 * @param resource the resource this problem occurs on / in
-	 * @param messageargs arguments to be passed into a localized message for the problem
-	 * @param argumentids the ids of arguments passed into the problem
-	 * @param arguments the arguments that correspond to the listing of ids
-	 * @param linenumber the line this problem occurred on
-	 * @param charstart the char selection start position
-	 * @param charend the char selection end position
-	 * @param severity the severity level of the problem
-	 * @param category the category of the problem
-	 * @param element the {@link IElementDescriptor} kind
-	 * @param kind the kind of problem
-	 * @param flags any additional flags for the problem kind
-	 */
-	public ApiProblem(String path, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int category, int element, int kind, int flags) {
-		this(path, messageargs, argumentids, arguments, linenumber, charstart, charend, severity, 
-				category | (element << IApiProblem.OFFSET_ELEMENT) | (kind << IApiProblem.OFFSET_KINDS) | (flags << IApiProblem.OFFSET_FLAGS));
-	}
+	private static final int CATEGORY_MASK = 0xF0000000;
+	private static final int ELEMENT_KIND_MASK = 0x0F000000;
+	private static final int KIND_MASK = 0x00F00000;
+	private static final int FLAGS_MASK = 0x000FF000;
+	private static final int MESSAGE_MASK = 0x00000FFF;
 	
 	/**
 	 * Constructor
@@ -132,6 +112,13 @@ public class ApiProblem implements IApiProblem {
 		return (fId & CATEGORY_MASK);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem#getMessageid()
+	 */
+	public int getMessageid() {
+		return (fId & MESSAGE_MASK) >> OFFSET_MESSAGE;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProblem#getFlags()
 	 */
@@ -271,6 +258,6 @@ public class ApiProblem implements IApiProblem {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getId() + fLineNumber + fCharStart + fCharEnd + fResourcePath.hashCode();
+		return getId() + fResourcePath.hashCode();
 	}
 }

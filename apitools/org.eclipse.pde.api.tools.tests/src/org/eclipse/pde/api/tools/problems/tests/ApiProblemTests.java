@@ -259,7 +259,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	public void testGetHashCode() {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), new String[] {"test1, test2, test3"}, null, null, 2, 2, 2, IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_BINARY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
-		assertEquals("the hashcode should be equal to the sum of: id, charstart, linenumber, charend, resourcepath.hashCode", 
-				problem.hashCode(), (problem.getId() + problem.getResourcePath().hashCode() + problem.getCharStart() + problem.getCharEnd() + problem.getLineNumber()));
+		assertEquals("the hashcode should be equal to the sum of: id, resourcepath.hashCode", 
+				problem.hashCode(), (problem.getId() + problem.getResourcePath().hashCode()));
 	}
 }

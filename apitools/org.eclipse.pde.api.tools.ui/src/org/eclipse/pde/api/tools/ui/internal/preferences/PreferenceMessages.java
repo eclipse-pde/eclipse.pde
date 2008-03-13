@@ -66,7 +66,6 @@ public class PreferenceMessages extends NLS {
 	public static String API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT;
 	public static String API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT;
 	public static String API_COMPONENT_REMOVED_TYPE;
-	public static String API_COMPONENT_REMOVED_DUPLICATED_TYPE;
 	public static String ANNOTATION_ADDED_FIELD;
 	public static String ANNOTATION_ADDED_METHOD;
 	public static String ANNOTATION_ADDED_TYPE_MEMBER;

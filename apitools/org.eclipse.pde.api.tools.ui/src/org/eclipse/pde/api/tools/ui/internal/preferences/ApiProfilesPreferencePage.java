@@ -174,6 +174,9 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 			public void widgetSelected(SelectionEvent e) {
 				IApiProfile[] states = getCurrentSelection();
 				for(int i = 0; i < states.length; i++) {
+					if(isDefault(states[i])) {
+						newdefault = null;
+					}
 					removed.add(states[i].getName());
 				}
 				backingcollection.removeAll(Arrays.asList(states));

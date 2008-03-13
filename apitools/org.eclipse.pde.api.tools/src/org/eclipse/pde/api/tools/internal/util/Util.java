@@ -774,7 +774,6 @@ public final class Util {
 			case IDelta.CONTRACTED_SUPERCLASS_SET : return "CONTRACTED_SUPERCLASS_SET"; //$NON-NLS-1$
 			case IDelta.CONTRACTED_SUPERINTERFACES_SET : return "CONTRACTED_SUPERINTERFACES_SET"; //$NON-NLS-1$
 			case IDelta.DECREASE_ACCESS : return "DECREASE_ACCESS"; //$NON-NLS-1$
-			case IDelta.DUPLICATED_TYPE : return "DUPLICATED_TYPE"; //$NON-NLS-1$
 			case IDelta.ENUM_CONSTANT : return "ENUM_CONSTANT"; //$NON-NLS-1$
 			case IDelta.EXECUTION_ENVIRONMENT : return "EXECUTION_ENVIRONMENT"; //$NON-NLS-1$
 			case IDelta.EXPANDED_SUPERCLASS_SET : return "EXPANDED_SUPERCLASS_SET"; //$NON-NLS-1$
@@ -1362,6 +1361,43 @@ public final class Util {
 	}
 	
 	/**
+	 * Return the string representation of the flags for a problem
+	 * @param category
+	 * @param flags
+	 * @return the string for the problem flags
+	 */
+	public static String getProblemFlagsName(int category, int flags) {
+		switch(category) {
+			case IApiProblem.CATEGORY_BINARY:  {
+				return getDeltaFlagsName(flags);
+			}
+			case IApiProblem.CATEGORY_SINCETAGS:
+			case IApiProblem.CATEGORY_USAGE:
+			case IApiProblem.CATEGORY_VERSION:
+			case IApiProblem.CATEGORY_API_PROFILE: {
+				switch(flags) {
+					case IApiProblem.LEAK_EXTENDS: {
+						return "LEAK_EXTENDS"; //$NON-NLS-1$
+					}
+					case IApiProblem.LEAK_FIELD: {
+						return "LEAK_FIELD"; //$NON-NLS-1$
+					}
+					case IApiProblem.LEAK_IMPLEMENTS: {
+						return "LEAK_IMPLEMENTS"; //$NON-NLS-1$
+					}
+					case IApiProblem.LEAK_METHOD_PARAMETER: {
+						return "LEAK_METHOD_PARAMETER"; //$NON-NLS-1$
+					}
+					case IApiProblem.LEAK_RETURN_TYPE: {
+						return "LEAK_RETURN_TYPE"; //$NON-NLS-1$
+					}
+				}
+			}
+		}
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
+	}
+	
+	/**
 	 * Returns the string representation of the kind of an
 	 * {@link IApiProblem}, given its category
 	 * @param category
@@ -1445,6 +1481,9 @@ public final class Util {
 			}
 			case IApiProblem.ILLEGAL_OVERRIDE: {
 				return "ILLEGAL_OVERRIDE"; //$NON-NLS-1$
+			}
+			case IApiProblem.API_LEAK: {
+				return "API_LEAK"; //$NON-NLS-1$
 			}
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$

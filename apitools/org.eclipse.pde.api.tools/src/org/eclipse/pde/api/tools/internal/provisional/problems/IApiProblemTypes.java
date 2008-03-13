@@ -31,8 +31,6 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.EXECUTION_ENVIRONMENT);
 	public static final String API_COMPONENT_REMOVED_TYPE =
 		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE);
-	public static final String API_COMPONENT_REMOVED_DUPLICATED_TYPE =
-		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.DUPLICATED_TYPE);
 	public static final String ANNOTATION_ADDED_TYPE_MEMBER =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_MEMBER);
 	public static final String ANNOTATION_ADDED_FIELD =

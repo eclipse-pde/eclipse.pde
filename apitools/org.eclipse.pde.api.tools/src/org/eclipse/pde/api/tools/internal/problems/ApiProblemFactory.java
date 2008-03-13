@@ -188,40 +188,23 @@ public class ApiProblemFactory {
 	 * @return a localized message for the given {@link IApiProblem} or <code>null</code>
 	 */
 	public static String getLocalizedMessage(IApiProblem problem) {
-		return getLocalizedMessage(problem.getCategory(), problem.getElementKind(), problem.getKind(), problem.getFlags(), problem.getMessageArguments());
+		return getLocalizedMessage(problem.getMessageid(), problem.getMessageArguments());
 	}
 	
 	/**
 	 * Returns the localized message for the given category, element kind, kind, flags and message arguments. Returns
 	 * <code>null</code> if no localized message cannot be created.
-	 * @param category
-	 * @param elementkind
-	 * @param kind
-	 * @param flags
+	 * @param messageid
 	 * @param messageargs
 	 * @return a localized message for the given arguments of <code>null</code>
 	 */
-	public static String getLocalizedMessage(int category, int elementkind, int kind, int flags, String[] messageargs){
+	public static String getLocalizedMessage(int messageid, String[] messageargs){
 		if(fMessages == null) {
 			fMessages = loadMessageTemplates(Locale.getDefault());
 		}
-		int id = category | (kind << IApiProblem.OFFSET_KINDS) | (flags << IApiProblem.OFFSET_FLAGS);
-		switch(category) {
-			case IApiProblem.CATEGORY_BINARY: {
-				if(kind == IDelta.ADDED) {
-					switch(flags) {
-						case IDelta.TYPE_MEMBER:
-						case IDelta.FIELD:
-						case IDelta.METHOD: {
-							id |= (elementkind << IApiProblem.OFFSET_ELEMENT);
-						}
-					}
-				}
-			}
-		}
-		String message = (String) fMessages.get(new Integer(id));
+		String message = (String) fMessages.get(new Integer(messageid));
 		if(message == null) {
-			return MessageFormat.format(BuilderMessages.ApiProblemFactory_problem_message_not_found, new String[] {Integer.toString(id)});
+			return MessageFormat.format(BuilderMessages.ApiProblemFactory_problem_message_not_found, new String[] {Integer.toString(messageid)});
 		}
 		return MessageFormat.format(message, messageargs);
 	}
@@ -266,7 +249,193 @@ public class ApiProblemFactory {
 	 * @return a new problem id
 	 */
 	public static int createProblemId(int category, int element, int kind, int flags) {
-		return category | element << IApiProblem.OFFSET_ELEMENT | kind << IApiProblem.OFFSET_KINDS | flags << IApiProblem.OFFSET_FLAGS;
+		return category | element << IApiProblem.OFFSET_ELEMENT | 
+						  kind << IApiProblem.OFFSET_KINDS | 
+						  flags << IApiProblem.OFFSET_FLAGS |
+						  getProblemMessageId(category, element, kind, flags);
+	}
+	
+	/**
+	 * Returns the problem message id for the given problem parameters.
+	 * @param category
+	 * @param element
+	 * @param kind
+	 * @param flags
+	 * @return the id of the message to use for the given problem parameters or <code>0</code>
+	 */
+	public static int getProblemMessageId(int category, int element, int kind, int flags) {
+		switch(category) {
+			case IApiProblem.CATEGORY_API_PROFILE: {
+				switch(kind) {
+					case IApiProblem.API_PROFILE_MISSING: return 1;
+				}
+			}
+			case IApiProblem.CATEGORY_SINCETAGS: {
+				switch(kind) {
+					case IApiProblem.SINCE_TAG_INVALID: return 2;
+					case IApiProblem.SINCE_TAG_MALFORMED: return 3;
+					case IApiProblem.SINCE_TAG_MISSING: return 4;
+				}
+			}
+			case IApiProblem.CATEGORY_VERSION: {
+				switch(kind) {
+					case IApiProblem.MAJOR_VERSION_CHANGE: return 5;
+					case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE: return 6;
+					case IApiProblem.MINOR_VERSION_CHANGE: return 7;
+				}
+			}
+			case IApiProblem.CATEGORY_USAGE: {
+				switch(kind) {
+					case IApiProblem.ILLEGAL_IMPLEMENT: return 8;
+					case IApiProblem.ILLEGAL_EXTEND: return 9;
+					case IApiProblem.ILLEGAL_INSTANTIATE: return 10;
+					case IApiProblem.ILLEGAL_OVERRIDE: return 11;
+					case IApiProblem.ILLEGAL_REFERENCE: return 12;
+					case IApiProblem.API_LEAK: {
+						switch(flags) {
+							case IApiProblem.LEAK_EXTENDS: return 13;
+							case IApiProblem.LEAK_IMPLEMENTS: return 14;
+							case IApiProblem.LEAK_FIELD: return 15;
+							case IApiProblem.LEAK_RETURN_TYPE: return 16;
+							case IApiProblem.LEAK_METHOD_PARAMETER: return 17;
+						}
+					}
+				}
+			}
+			case IApiProblem.CATEGORY_BINARY: {
+				switch(kind) {
+					case IDelta.ADDED: {
+						switch(element) {
+							case IDelta.CLASS_ELEMENT_TYPE: {
+								switch(flags) {
+									case IDelta.FIELD: return 37;
+									case IDelta.METHOD: return 41;
+									case IDelta.TYPE_MEMBER: return 47;
+								}
+							}
+							case IDelta.ENUM_ELEMENT_TYPE: {
+								switch(flags) {
+									case IDelta.FIELD: return 38;
+									case IDelta.METHOD: return 42;
+									case IDelta.TYPE_MEMBER: return 48;
+								}
+							}
+							case IDelta.ANNOTATION_ELEMENT_TYPE: {
+								switch(flags) {
+									case IDelta.FIELD: return 39;
+									case IDelta.METHOD: return 43;
+									case IDelta.TYPE_MEMBER: return 46;
+								}
+							}
+							case IDelta.INTERFACE_ELEMENT_TYPE: {
+								switch(flags) {
+									case IDelta.FIELD: return 40;
+									case IDelta.METHOD: return 44;
+									case IDelta.TYPE_MEMBER: return 45;
+								}
+							}
+						}
+						switch(flags) {
+							case IDelta.ANNOTATION_DEFAULT_VALUE: return 18;
+							case IDelta.API_COMPONENT: return 19;
+							case IDelta.CHECKED_EXCEPTION: return 20;
+							case IDelta.CLASS_BOUND: return 21;
+							case IDelta.CLINIT: return 22;
+							case IDelta.CONSTRUCTOR: return 23;
+							case IDelta.ENUM_CONSTANT: return 24;
+							case IDelta.EXECUTION_ENVIRONMENT: return 25;
+							case IDelta.INTERFACE_BOUND: return 26;
+							case IDelta.INTERFACE_BOUNDS: return 27;
+							case IDelta.METHOD_WITH_DEFAULT_VALUE: return 28;
+							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE: return 29;
+							case IDelta.SUPERCLASS: return 30;
+							case IDelta.TYPE: return 31;
+							case IDelta.TYPE_PARAMETER: return 32;
+							case IDelta.TYPE_ARGUMENTS: return 33;
+							case IDelta.TYPE_PARAMETERS: return 34;
+							case IDelta.UNCHECKED_EXCEPTION: return 35;
+							case IDelta.VALUE: return 36;
+							
+						}
+					}
+					case IDelta.CHANGED: {
+						switch(element) {
+							case IDelta.FIELD_ELEMENT_TYPE: {
+								switch(flags) {
+									case IDelta.TYPE: return 81;
+									case IDelta.VALUE: return 84;
+								}
+							}
+						}
+						switch(flags) {
+							case IDelta.ABSTRACT_TO_NON_ABSTRACT: return 49;
+							case IDelta.ANNOTATION_DEFAULT_VALUE: return 50;
+							case IDelta.ARRAY_TO_VARARGS: return 51;
+							case IDelta.CLASS_BOUND: return 52;
+							case IDelta.CONTRACTED_SUPERCLASS_SET: return 53;
+							case IDelta.CONTRACTED_SUPERINTERFACES_SET: return 54;
+							case IDelta.DECREASE_ACCESS: return 55;
+							case IDelta.EXECUTION_ENVIRONMENT: return 56;
+							case IDelta.EXPANDED_SUPERCLASS_SET: return 57;
+							case IDelta.EXPANDED_SUPERINTERFACES_SET: return 58;
+							case IDelta.FINAL_TO_NON_FINAL: return 59;
+							case IDelta.FINAL_TO_NON_FINAL_NON_STATIC: return 60;
+							case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT: return 61;
+							case IDelta.FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT: return 62;
+							case IDelta.INCREASE_ACCESS: return 63;
+							case IDelta.INTERFACE_BOUND: return 64;
+							case IDelta.NATIVE_TO_NON_NATIVE: return 65;
+							case IDelta.NON_ABSTRACT_TO_ABSTRACT: return 66;
+							case IDelta.NON_FINAL_TO_FINAL: return 67;
+							case IDelta.NON_NATIVE_TO_NATIVE: return 68;
+							case IDelta.NON_STATIC_TO_STATIC: return 69;
+							case IDelta.NON_SYNCHRONIZED_TO_SYNCHRONIZED: return 70;
+							case IDelta.NON_TRANSIENT_TO_TRANSIENT: return 71;
+							case IDelta.RESTRICTIONS: return 72;
+							case IDelta.STATIC_TO_NON_STATIC: return 73;
+							case IDelta.SUPERCLASS: return  74;
+							case IDelta.SYNCHRONIZED_TO_NON_SYNCHRONIZED: return 75;
+							case IDelta.TO_ANNOTATION: return 76;
+							case IDelta.TO_CLASS: return 77;
+							case IDelta.TO_ENUM: return 78;
+							case IDelta.TO_INTERFACE: return 79;
+							case IDelta.TRANSIENT_TO_NON_TRANSIENT: return 80;
+							case IDelta.TYPE_PARAMETER_NAME: return 82;
+							case IDelta.TYPE_VISIBILITY: return 83;
+							case IDelta.VARARGS_TO_ARRAY: return 85;
+						}
+					}
+					case IDelta.REMOVED: {
+						switch(flags) {
+							case IDelta.ANNOTATION_DEFAULT_VALUE: return 86;
+							case IDelta.API_COMPONENT: return 87;
+							case IDelta.CHECKED_EXCEPTION: return 88;
+							case IDelta.CLASS_BOUND: return 89;
+							case IDelta.CLINIT: return 90;
+							case IDelta.CONSTRUCTOR: return 91;
+							case IDelta.ENUM_CONSTANT: return 92;
+							case IDelta.EXECUTION_ENVIRONMENT: return 93;
+							case IDelta.FIELD: return 94;
+							case IDelta.FIELD_MOVED_UP: return 95;
+							case IDelta.INTERFACE_BOUND: return 96;
+							case IDelta.INTERFACE_BOUNDS: return 97;
+							case IDelta.METHOD: return 98;
+							case IDelta.METHOD_MOVED_UP: return 99;
+							case IDelta.METHOD_WITH_DEFAULT_VALUE: return 100;
+							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE: return 101;
+							case IDelta.TYPE: return 102;
+							case IDelta.TYPE_ARGUMENTS: return 103;
+							case IDelta.TYPE_MEMBER: return 104;
+							case IDelta.TYPE_PARAMETER: return 105;
+							case IDelta.TYPE_PARAMETERS: return 106;
+							case IDelta.UNCHECKED_EXCEPTION: return 107;
+							case IDelta.VALUE : return 108;
+						}
+					}
+				}
+			}
+		}
+		return 0;
 	}
 	
 	/**

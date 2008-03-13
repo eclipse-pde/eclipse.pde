@@ -240,7 +240,7 @@ public class ClassFileComparator {
 		if (superclassSet1 == null) {
 			if (superclassSet2 != null) {
 				// this means the direct super class of descriptor1 is java.lang.Object
-				this.addDelta(this.descriptor1, IDelta.ADDED, IDelta.SUPERCLASS, this.classFile, this.descriptor1.name);
+				this.addDelta(this.descriptor1, IDelta.ADDED, IDelta.SUPERCLASS, this.classFile, this.descriptor1.name, this.descriptor1.name);
 				return;
 			}
 			// both types extends java.lang.Object
@@ -334,7 +334,7 @@ public class ClassFileComparator {
 		// Report delta as a breakage
 		for (Iterator iterator = typeMembers2.iterator(); iterator.hasNext();) {
 			MemberTypeDescriptor typeMember = (MemberTypeDescriptor) iterator.next();
-			this.addDelta(this.descriptor1, typeMember, IDelta.ADDED, IDelta.TYPE_MEMBER, currentTypeApiRestrictions, this.classFile, typeMember.name);
+			this.addDelta(this.descriptor1, typeMember, IDelta.ADDED, IDelta.TYPE_MEMBER, currentTypeApiRestrictions, this.classFile, typeMember.name, typeMember.name);
 		}
 	}
 
@@ -387,7 +387,7 @@ public class ClassFileComparator {
 				if (parameterDescriptor1.classBound == null) {
 					if (parameterDescriptor2.classBound != null) {
 						// report delta added class bound of a type parameter
-						this.addDelta(elementDescriptor1, IDelta.ADDED, IDelta.CLASS_BOUND, this.classFile, name);
+						this.addDelta(elementDescriptor1, IDelta.ADDED, IDelta.CLASS_BOUND, this.classFile, name, name);
 					}
 				} else if (parameterDescriptor2.classBound == null) {
 					// report delta removed class bound of a type parameter
@@ -408,7 +408,7 @@ public class ClassFileComparator {
 					this.addDelta(elementDescriptor1, IDelta.REMOVED, IDelta.INTERFACE_BOUNDS, this.classFile, name, name);
 				} else if (interfaceBounds1.size() < interfaceBounds2.size()) {
 					// report delta added some interface bounds
-					this.addDelta(elementDescriptor1, IDelta.ADDED, IDelta.INTERFACE_BOUND, this.classFile, name);
+					this.addDelta(elementDescriptor1, IDelta.ADDED, IDelta.INTERFACE_BOUND, this.classFile, name, name);
 				} else if (interfaceBounds1.size() > interfaceBounds2.size()) {
 					// report delta removed some interface bounds
 					this.addDelta(elementDescriptor1, IDelta.REMOVED, IDelta.INTERFACE_BOUND, this.classFile, name, name);
@@ -969,26 +969,26 @@ public class ClassFileComparator {
 					if (isCheckedException(this.apiState2, this.component2, exceptionName)) {
 						// report delta - addition of checked exception
 						// TODO should we continue the loop for all remaining exceptions
-						this.addDelta(methodDescriptor, IDelta.ADDED, IDelta.CHECKED_EXCEPTION, this.classFile, key);
+						this.addDelta(methodDescriptor, IDelta.ADDED, IDelta.CHECKED_EXCEPTION, this.classFile, key, exceptionName);
 						break loop;
 					} else {
 						// report delta - addition of unchecked exception
-						this.addDelta(methodDescriptor, IDelta.ADDED, IDelta.UNCHECKED_EXCEPTION, this.classFile, key);
+						this.addDelta(methodDescriptor, IDelta.ADDED, IDelta.UNCHECKED_EXCEPTION, this.classFile, key, exceptionName);
 					}
 				}
 			}
 		} else if (methodDescriptor2.exceptions != null) {
-			// check all exception in methoddescriptor to see if they are checked or unchecked exceptions
+			// check all exception in method descriptor to see if they are checked or unchecked exceptions
 			loop: for (Iterator iterator = methodDescriptor2.exceptions.iterator(); iterator.hasNext(); ) {
 				String exceptionName = ((String) iterator.next()).replace('/', '.');
 				if (isCheckedException(this.apiState2, this.component2, exceptionName)) {
 					// report delta - addition of checked exception
-					this.addDelta(methodDescriptor, IDelta.ADDED, IDelta.CHECKED_EXCEPTION, this.classFile, key);
+					this.addDelta(methodDescriptor, IDelta.ADDED, IDelta.CHECKED_EXCEPTION, this.classFile, key, exceptionName);
 					// TODO should we continue the loop for all remaining exceptions
 					break loop;
 				} else {
 					// report delta - addition of unchecked exception
-					this.addDelta(methodDescriptor, IDelta.ADDED, IDelta.UNCHECKED_EXCEPTION, this.classFile, key);
+					this.addDelta(methodDescriptor, IDelta.ADDED, IDelta.UNCHECKED_EXCEPTION, this.classFile, key, exceptionName);
 				}
 			}
 		}
@@ -1203,9 +1203,9 @@ public class ClassFileComparator {
 			this.addDelta(descriptor, IDelta.ADDED, IDelta.ENUM_CONSTANT, this.classFile, name);
 		} else {
 			if (Util.isFinal(descriptor.access)) {
-				this.addDelta(descriptor, fieldDescriptor, IDelta.ADDED, IDelta.FIELD, this.getCurrentTypeApiRestrictions() | RestrictionModifiers.NO_EXTEND, this.classFile, name);
+				this.addDelta(descriptor, fieldDescriptor, IDelta.ADDED, IDelta.FIELD, this.getCurrentTypeApiRestrictions() | RestrictionModifiers.NO_EXTEND, this.classFile, name, name);
 			} else {
-				this.addDelta(descriptor, fieldDescriptor, IDelta.ADDED, IDelta.FIELD, this.getCurrentTypeApiRestrictions(), this.classFile, name);
+				this.addDelta(descriptor, fieldDescriptor, IDelta.ADDED, IDelta.FIELD, this.getCurrentTypeApiRestrictions(), this.classFile, name, name);
 			}
 		}
 	}
@@ -1229,10 +1229,10 @@ public class ClassFileComparator {
 					this.addDelta(typeDescriptor, IDelta.ADDED, IDelta.METHOD_WITHOUT_DEFAULT_VALUE, this.classFile, getKeyForMethod(methodDescriptor));
 				}
 			} else {
-				this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, IDelta.METHOD, this.getCurrentTypeApiRestrictions(), this.classFile, getKeyForMethod(methodDescriptor));
+				this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, IDelta.METHOD, this.getCurrentTypeApiRestrictions(), this.classFile, getKeyForMethod(methodDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));
 			}
 		} else {
-			this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, IDelta.METHOD, this.getCurrentTypeApiRestrictions(), this.classFile, getKeyForMethod(methodDescriptor));
+			this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, IDelta.METHOD, this.getCurrentTypeApiRestrictions(), this.classFile, getKeyForMethod(methodDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));
 		}
 	}
 	

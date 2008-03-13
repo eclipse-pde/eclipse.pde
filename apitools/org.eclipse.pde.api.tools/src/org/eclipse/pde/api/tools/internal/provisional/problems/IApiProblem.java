@@ -26,42 +26,47 @@ public interface IApiProblem {
 	/**
 	 * Constant representing the binary incompatibility problem category 
 	 */
-	public static final int CATEGORY_BINARY = 0x01000000;
+	public static final int CATEGORY_BINARY = 0x10000000;
 	
 	/**
 	 * Constant representing the api usage problem category
 	 */
-	public static final int CATEGORY_USAGE = 0x01000000 << 1;
+	public static final int CATEGORY_USAGE = 0x20000000;
 	
 	/**
 	 * Constant representing the version problem category
 	 */
-	public static final int CATEGORY_VERSION = 0x01000000 << 2;
+	public static final int CATEGORY_VERSION = 0x30000000;
 	
 	/**
 	 * Constant representing the since tag problem category
 	 */
-	public static final int CATEGORY_SINCETAGS = 0x01000000 << 3;
+	public static final int CATEGORY_SINCETAGS = 0x40000000;
 	
 	/**
 	 * Constant representing the api profile problem category
 	 */
-	public static final int CATEGORY_API_PROFILE = 0x01000000 << 4;
+	public static final int CATEGORY_API_PROFILE = 0x50000000;
+	
+	/**
+	 * Constant representing the offset of the message key portion of the id bit mask.
+	 */
+	public static final int OFFSET_MESSAGE = 0;
 	
 	/**
 	 * Constant representing the offset of the flags portion of a problem id bit mask.
 	 */
-	public static final int OFFSET_FLAGS = 0;
+	public static final int OFFSET_FLAGS = 12;
 	
 	/**
 	 * Constant representing the offset of the kinds portion of a problem id bit mask.
 	 */
-	public static final int OFFSET_KINDS = 8;
+	public static final int OFFSET_KINDS = 20;
 	
 	/**
 	 * Constant representing the offset of the element kinds portion of a problem id bit mask.
 	 */
-	public static final int OFFSET_ELEMENT = 16;
+	public static final int OFFSET_ELEMENT = 24;
 	
 	/**
 	 * Constant representing the value of having no flags.
@@ -204,7 +209,7 @@ public interface IApiProblem {
 	public int getSeverity();
 	
 	/**
-	 * Returns the kind of element  this problem is related to.
+	 * Returns the kind of element this problem is related to.
 	 * 
 	 * @see IElementDescriptor#getElementType()
 	 * @see IDelta#getElementType()
@@ -212,6 +217,13 @@ public interface IApiProblem {
 	 * @return the element kind this problem is related to.
 	 */
 	public int getElementKind();
+	
+	/**
+	 * Returns the id used to lookup the message for this problem.
+	 * 
+	 * @return the message id
+	 */
+	public int getMessageid();
 	
 	/**
 	 * Returns the project relative path to the resource this problem 

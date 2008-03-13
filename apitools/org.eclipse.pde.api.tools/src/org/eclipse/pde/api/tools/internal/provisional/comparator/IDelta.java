@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.comparator;
 
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+
 /**
  * Interface that represents a delta.
  * This interface is not intended to be implemented or extended by the client.
@@ -104,61 +106,625 @@ public interface IDelta {
 	public static final int METHOD_ELEMENT_TYPE = 10;
 
 
+	/**
+	 * Delta kind flag that denotes removing the abstract keyword from a member.
+	 *  <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
 	public static final int ABSTRACT_TO_NON_ABSTRACT = 1;
+	/**
+	 * Delta kind flag that denotes the default value of an annotation.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #CHANGED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
 	public static final int ANNOTATION_DEFAULT_VALUE = 2;
+	/**
+	 * Delta kind flag that denotes an {@link IApiComponent}.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
 	public static final int API_COMPONENT = 3;
+	/**
+	 * Delta kind flag that denotes changing an array of objects to a Java 1.5 varargs.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
 	public static final int ARRAY_TO_VARARGS = 4;
+	/**
+	 * Delta kind flag that denotes a checked exception.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
 	public static final int CHECKED_EXCEPTION = 5;
+	/**
+	 * Delta kind flag that denotes a Java 1.5 generics class bound.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul> 
+	 * 
+	 * @see #getFlags()
+	 */
 	public static final int CLASS_BOUND = 6;
+	/**
+	 * Delta kind flag that denotes a static initializer.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #CHANGED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
 	public static final int CLINIT = 7;
+	/**
+	 * Delta kind flag that denotes a constructor.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
 	public static final int CONSTRUCTOR = 8;
+	/**
+	 * Delta kind flag that denotes a class in the super-class set has been removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul> 
+	 * @see #getFlags()
+	 */
 	public static final int CONTRACTED_SUPERCLASS_SET = 9;
+	/**
+	 * Delta kind flag that denotes an interface in the super-interface set has been removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul> 
+	 * 
+	 * @see #getFlags()
+	 */
 	public static final int CONTRACTED_SUPERINTERFACES_SET = 10;
+	/**
+	 * Delta kind flag that denotes decreasing the access of a member.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
 	public static final int DECREASE_ACCESS = 11;
-	public static final int DUPLICATED_TYPE = 12;
-	public static final int ENUM_CONSTANT = 13;
-	public static final int EXECUTION_ENVIRONMENT = 14;
-	public static final int EXPANDED_SUPERCLASS_SET = 15;
-	public static final int EXPANDED_SUPERINTERFACES_SET = 16;
-	public static final int FIELD = 17;
-	public static final int FIELD_MOVED_UP = 18;
-	public static final int FINAL_TO_NON_FINAL = 19;
-	public static final int FINAL_TO_NON_FINAL_NON_STATIC = 20;
-	public static final int FINAL_TO_NON_FINAL_STATIC_CONSTANT = 21;
-	public static final int FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT = 22;
-	public static final int INCREASE_ACCESS = 23;
-	public static final int INTERFACE_BOUND = 24;
-	public static final int INTERFACE_BOUNDS = 25;
-	public static final int METHOD = 26;
-	public static final int METHOD_MOVED_UP = 27;
-	public static final int METHOD_WITH_DEFAULT_VALUE = 28;
-	public static final int METHOD_WITHOUT_DEFAULT_VALUE = 29;
-	public static final int NATIVE_TO_NON_NATIVE = 30;
-	public static final int NON_ABSTRACT_TO_ABSTRACT = 31;
-	public static final int NON_FINAL_TO_FINAL = 32;
-	public static final int NON_NATIVE_TO_NATIVE = 33;
-	public static final int NON_STATIC_TO_STATIC = 34;
-	public static final int NON_SYNCHRONIZED_TO_SYNCHRONIZED = 35;
-	public static final int NON_TRANSIENT_TO_TRANSIENT = 36;
-	public static final int RESTRICTIONS = 37;
-	public static final int STATIC_TO_NON_STATIC = 38;
-	public static final int SUPERCLASS = 39;
-	public static final int SYNCHRONIZED_TO_NON_SYNCHRONIZED = 40;
-	public static final int TO_ANNOTATION = 41;
-	public static final int TO_CLASS = 42;
-	public static final int TO_ENUM = 43;
-	public static final int TO_INTERFACE = 44;
-	public static final int TRANSIENT_TO_NON_TRANSIENT = 45;
-	public static final int TYPE = 46;
-	public static final int TYPE_ARGUMENTS = 47;
-	public static final int TYPE_MEMBER = 48;
-	public static final int TYPE_PARAMETER = 49;
-	public static final int TYPE_PARAMETER_NAME = 50;
-	public static final int TYPE_PARAMETERS = 51;
-	public static final int TYPE_VISIBILITY = 52;
-	public static final int UNCHECKED_EXCEPTION = 53;
-	public static final int VALUE = 54;
-	public static final int VARARGS_TO_ARRAY = 55;	
+	/**
+	 * Delta kind flag that denotes a constant value enum.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int ENUM_CONSTANT = 12;
+	/**
+	 * Delta kind flag that denotes and execution environment.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #CHANGED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int EXECUTION_ENVIRONMENT = 13;
+	/**
+	 * Delta kind flag that denotes a superclass has been added to the current super-class set.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int EXPANDED_SUPERCLASS_SET = 14;
+	/**
+	 * Delta kind flag that denotes an interface has been added to the current set of super-interfaces.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int EXPANDED_SUPERINTERFACES_SET = 15;
+	/**
+	 * Delta kind flag that denotes a field has been added or removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int FIELD = 16;
+	/**
+	 * Delta kind flag that denotes a field has been moved up the current super-class hierarchy.
+	 *  <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int FIELD_MOVED_UP = 17;
+	/**
+	 * Delta kind flag that denotes the final keyword has been removed from a member.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int FINAL_TO_NON_FINAL = 18;
+	/**
+	 * Delta kind flag that denotes that the final keyword has been removed from a static member.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int FINAL_TO_NON_FINAL_NON_STATIC = 19;
+	/**
+	 * Delta kind flag that denotes the final keyword has been removed from a constant field.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int FINAL_TO_NON_FINAL_STATIC_CONSTANT = 20;
+	/**
+	 * Delta kind flag that denotes the final keyword has been removed from a non-constant field.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT = 21;
+	/**
+	 * Delta kind flag that denotes the access to a member has been increased.
+	 *  <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * @see #getFlags()
+	 */
+	public static final int INCREASE_ACCESS = 22;
+	/**
+	 * Delta kind flag that denotes a Java 1.5 interface bound has been changed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #CHANGED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int INTERFACE_BOUND = 23;
+	/**
+	 * Delta kind flag that denotes Java 1.5 interface bounds have changed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int INTERFACE_BOUNDS = 24;
+	/**
+	 * Delta kind flag that denotes a method has been added or removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int METHOD = 25;
+	/**
+	 * Delta kind flag that denotes a method has moved up the super-class hierarchy.
+	 *  <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int METHOD_MOVED_UP = 26;
+	/**
+	 * Delta kind flag that denotes a method with a default value has been added or removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int METHOD_WITH_DEFAULT_VALUE = 27;
+	/**
+	 * Delta kind flag that denotes a method without a default value has been added or removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int METHOD_WITHOUT_DEFAULT_VALUE = 28;
+	/**
+	 * Delta kind flag that denotes the native keyword has been removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int NATIVE_TO_NON_NATIVE = 29;
+	/**
+	 * Delta kind flag that denotes the abstract keyword has been added.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int NON_ABSTRACT_TO_ABSTRACT = 30;
+	/**
+	 * Delta kind flag that denotes the final keyword has been added.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int NON_FINAL_TO_FINAL = 31;
+	/**
+	 * Delta kind flag that denotes the native keyword has been added.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int NON_NATIVE_TO_NATIVE = 32;
+	/**
+	 * Delta kind flag that denotes the static keyword has been added.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int NON_STATIC_TO_STATIC = 33;
+	/**
+	 * Delta kind flag that denotes the synchronized keyword has been added.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int NON_SYNCHRONIZED_TO_SYNCHRONIZED = 34;
+	/**
+	 * Delta kind flag that denotes the transient keyword has been added.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int NON_TRANSIENT_TO_TRANSIENT = 35;
+	/**
+	 * Delta kind flag that denotes API restrictions on a member have changed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int RESTRICTIONS = 36;
+	/**
+	 * Delta kind flag that denotes the static keyword has been removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int STATIC_TO_NON_STATIC = 37;
+	/**
+	 * Delta kind flag that denotes a super-class has been added or changed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int SUPERCLASS = 38;
+	/**
+	 * Delta kind flag that denotes the synchronized keyword has been removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int SYNCHRONIZED_TO_NON_SYNCHRONIZED = 39;
+	/**
+	 * Delta kind flag that denotes a type has changed to an annotation.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TO_ANNOTATION = 40;
+	/**
+	 * Delta kind flag that denotes a type has changed to a class.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TO_CLASS = 41;
+	/**
+	 * Delta kind flag that denotes a type has changed to an enum.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TO_ENUM = 42;
+	/**
+	 * Delta kind flag that denotes a type has changed to an interface.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TO_INTERFACE = 43;
+	/**
+	 * Delta kind flag that denotes the transient keyword has been removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TRANSIENT_TO_NON_TRANSIENT = 44;
+	/**
+	 * Delta kind flag that denotes a type has changed in some way.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #CHANGED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TYPE = 45;
+	/**
+	 * Delta kind flag that denotes type arguments have been added or removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TYPE_ARGUMENTS = 46;
+	/**
+	 * Delta kind flag that denotes a type member has been added or removed from a type.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * @see #getFlags()
+	 */
+	public static final int TYPE_MEMBER = 47;
+	/**
+	 * Delta kind flag that denotes a type parameter has been added or removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TYPE_PARAMETER = 48;
+	/**
+	 * Delta kind flag that a type parameter name has changed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TYPE_PARAMETER_NAME = 49;
+	/**
+	 * Delta kind flag that denotes parameters have been added or removed from a type.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TYPE_PARAMETERS = 50;
+	/**
+	 * Delta kind flag that denotes the visibility of a type has changed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TYPE_VISIBILITY = 51;
+	/**
+	 * Delta kind flag that denotes an unchecked exception has been added or removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int UNCHECKED_EXCEPTION = 52;
+	/**
+	 * Delta kind flag that denotes the value of a member has changed in some way.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #CHANGED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int VALUE = 53;
+	/**
+	 * Delta kind flag that denotes changing a Java 1.5 varargs to an array of {@link Object}s.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int VARARGS_TO_ARRAY = 54;	
 
 	/**
 	 * Return true if the receiver has no children deltas, false otherwise.

@@ -114,7 +114,6 @@ public class DeltaProcessor {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE :
-					case IDelta.DUPLICATED_TYPE :
 					case IDelta.EXECUTION_ENVIRONMENT :
 						return false;
 				}
