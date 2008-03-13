@@ -1206,7 +1206,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 						PreferenceMessages.CONSTRUCTOR_CHANGED_NON_STATIC_TO_STATIC,
 						PreferenceMessages.CONSTRUCTOR_CHANGED_STATIC_TO_NON_STATIC,
 						PreferenceMessages.CONSTRUCTOR_CHANGED_NON_FINAL_TO_FINAL,
-						PreferenceMessages.CONSTRUCTOR_REMOVED_ANNOTATION_DEFAULT_VALUE,
 						PreferenceMessages.CONSTRUCTOR_REMOVED_TYPE_PARAMETERS,
 						PreferenceMessages.CONSTRUCTOR_REMOVED_TYPE_PARAMETER,
 						PreferenceMessages.CONSTRUCTOR_REMOVED_CLASS_BOUND,
