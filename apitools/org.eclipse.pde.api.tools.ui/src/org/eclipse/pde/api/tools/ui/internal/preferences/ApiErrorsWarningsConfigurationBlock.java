@@ -661,7 +661,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_NOEXTEND,
 		KEY_NOREFERENCE,
 		KEY_NOINSTANTIATE,
-		KEY_NOOVERRIDE
+		KEY_NOOVERRIDE,
+		KEY_API_LEAK
 	};
 
 	private static Key[] fgAllVersionManagementKeys = {
@@ -679,6 +680,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_NOEXTEND,
 		KEY_NOINSTANTIATE,
 		KEY_NOREFERENCE,
+		KEY_NOOVERRIDE,
+		KEY_API_LEAK,
 		KEY_API_PROFILE_REMOVED_API_COMPONENT,
 		KEY_API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT,
 		KEY_API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT,
@@ -1426,9 +1429,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 		buttonsComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		SWTFactory.createWrapLabel(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_setAllto, 1);
 		SWTFactory.createVerticalSpacer(buttonsComposite, 1);
-		Button allToErrorButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error, null, SWT.LEFT);
-		Button allToWarningButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning, null, SWT.LEFT);
-		Button allToIgnoreButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore, null, SWT.LEFT);
+		Button allToErrorButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error_button, null, SWT.LEFT);
+		Button allToWarningButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning_button, null, SWT.LEFT);
+		Button allToIgnoreButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore_button, null, SWT.LEFT);
 		allToErrorButton.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error));
 		allToWarningButton.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning));
 		allToIgnoreButton.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore));

@@ -51,6 +51,9 @@ public class PreferenceMessages extends NLS {
 	public static String ApiErrorsWarningsConfigurationBlock_error;
 	public static String ApiErrorsWarningsConfigurationBlock_warning;
 	public static String ApiErrorsWarningsConfigurationBlock_ignore;
+	public static String ApiErrorsWarningsConfigurationBlock_error_button;
+	public static String ApiErrorsWarningsConfigurationBlock_warning_button;
+	public static String ApiErrorsWarningsConfigurationBlock_ignore_button;	
 	public static String ApiErrorsWarningsConfigurationBlock_override_tagged_method;
 	
 	public static String ProjectSelectionDialog_title;
