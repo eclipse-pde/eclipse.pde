@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		IResource res = fInfo.getBase().getUnderlyingResource();
 		if (res == null)
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_externalBundleError);
-		else if (!res.getProject().getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists()) //$NON-NLS-1$
+		else if (!res.getProject().getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists())
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_noManifestError);
 		if (fInfo.isRenameProject()) {
 			String newName = fInfo.getNewValue();
