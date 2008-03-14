@@ -80,6 +80,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	
 	private boolean fNeedsSaving = false;
 	private boolean fLoading = false;
+	private boolean fTriggeredChange = false;
 	
 	/**
 	 * Constructor
@@ -117,7 +118,8 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					if(xml == null) {
 						// no filters - delete the file if it exists
 						if (file.isAccessible()) {
-							file.delete(false, new NullProgressMonitor());
+							file.delete(true, new NullProgressMonitor());
+							fTriggeredChange = true;
 						}
 						return Status.OK_STATUS;
 					}
@@ -131,6 +133,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					else {
 						file.setContents(xstream, true, false, new NullProgressMonitor());
 					}
+					fTriggeredChange = true;
 					fNeedsSaving = false;
 				}
 				catch(CoreException ce) {
@@ -484,6 +487,13 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
+		if(fTriggeredChange) {
+			//eat the event if the deletion / addition / change occurred because we persisted the file
+			//via the persistApiFilters(..) method
+			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=222442
+			fTriggeredChange = false;
+			return;
+		}
 		if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
 			if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
 				IPath path = getFilterFilePath();

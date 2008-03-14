@@ -190,7 +190,6 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		public Object getParent(Object element) {return null;}
 		public void dispose() {}
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-		
 	}
 	
 	private TreeViewer fViewer = null;
@@ -210,7 +209,7 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		gd.widthHint = 200;
 		tree.setLayoutData(gd);
 		fViewer = new TreeViewer(tree);
-		/*fViewer.setAutoExpandLevel(2);*/
+		fViewer.setAutoExpandLevel(2);
 		fViewer.setContentProvider(new TreeContentProvider());
 		fViewer.setLabelProvider(new FilterStoreLabelProvider());
 		fViewer.setComparator(new ApiFilterComparator());
