@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -346,74 +345,7 @@ public class TagScanner {
 		private boolean matches(IMethodDescriptor descriptor, IMethodDescriptor methodDescriptor) {
 			String signature = descriptor.getSignature();
 			String signature2 = methodDescriptor.getSignature();
-			if (!matches(Signature.getReturnType(signature), Signature.getReturnType(signature2))) {
-				return false;
-			}
-			String[] parameterTypes = Signature.getParameterTypes(signature);
-			String[] parameterTypes2 = Signature.getParameterTypes(signature2);
-			for (int i = 0, max = parameterTypes.length; i < max; i++) {
-				if (!matches(parameterTypes[i], parameterTypes2[i])) {
-					return false;
-				}
-			}
-			return true;
-		}
-
-		private boolean matches(String type, String type2) {
-			if (type.length() == 1) {
-				if (type2.length() != 1) {
-					return false;
-				}
-				return type.charAt(0) == type2.charAt(0);
-			} else if (type2.length() == 1) {
-				return false;
-			}
-			char[] typeChars = type.toCharArray();
-			char[] type2Chars = type2.toCharArray();
-			// return types are reference types
-			if (typeChars[0] == Signature.C_ARRAY) {
-				// array type
-				if (type2Chars[0] != Signature.C_ARRAY) {
-					// not an array type
-					return false;
-				}
-				// check array types
-				// get type1 dimensions
-				int dims1 = Signature.getArrayCount(typeChars);
-				if (dims1 != Signature.getArrayCount(type2Chars)) {
-					return false;
-				}
-				return matches(CharOperation.subarray(typeChars, dims1, typeChars.length),
-						CharOperation.subarray(type2Chars, dims1, type2Chars.length));
-			}
-			if (type2.charAt(0) == Signature.C_ARRAY) {
-				// an array type
-				return false;
-			}
-			// check reference types
-			return matches(typeChars, type2Chars);
-		}
-
-		private boolean matches(char[] type, char[] type2) {
-			char[] typeName = Signature.toCharArray(type);
-			char[] typeName2 = Signature.toCharArray(type2);
-			if (CharOperation.lastIndexOf(Signature.C_DOLLAR, typeName2) == -1) {
-				// no member type
-				int index = CharOperation.indexOf(typeName, typeName2, true);
-				return index != -1 && ((index + typeName.length) == typeName2.length);
-			}
-			// member type
-			int index = CharOperation.indexOf(typeName, typeName2, true);
-			if (index != -1 && ((index + typeName.length) == typeName2.length)) {
-				return true;
-			}
-			int dotIndex = CharOperation.lastIndexOf(Signature.C_DOT, typeName);
-			if (dotIndex == -1) {
-				return false;
-			}
-			typeName[dotIndex] = Signature.C_DOLLAR;
-			index = CharOperation.indexOf(typeName, typeName2, true);
-			return index != -1 && ((index + typeName.length) == typeName2.length);
+			return Util.matchesSignatures(signature, signature2);
 		}
 		/**
 		 * Returns resolved method descriptors from the given class file.

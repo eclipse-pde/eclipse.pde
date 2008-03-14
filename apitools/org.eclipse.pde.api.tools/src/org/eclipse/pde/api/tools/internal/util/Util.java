@@ -78,6 +78,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -1119,7 +1120,8 @@ public final class Util {
 
 	private static IMember getMethod(IType type, String selector, String descriptor) {
 		IMethod method = null;
-		String[] parameterTypes = Signature.getParameterTypes(Util.dequalifySignature(descriptor));
+		String signature = descriptor.replace('/', '.');
+		String[] parameterTypes = Signature.getParameterTypes(signature);
 
 		try {
 			method = type.getMethod(selector, parameterTypes);
@@ -1154,75 +1156,14 @@ public final class Util {
 					return (IMember) list.get(0);
 				default:
 					// need to find a matching parameters
-					loop: for (Iterator iterator = list.iterator(); iterator.hasNext(); ) {
+					for (Iterator iterator = list.iterator(); iterator.hasNext(); ) {
 						IMethod method2 = (IMethod) iterator.next();
-						String[] parameterTypes2 = method2.getParameterTypes();
-						boolean found = false;
-						if (parameterTypes2.length == parameterTypes.length) {
-							for (int i = 0, max = parameterTypes.length; i < max; i++) {
-								switch(parameterTypes[i].charAt(0)) {
-									case Signature.C_UNRESOLVED :
-										// object type
-										int index = parameterTypes[i].lastIndexOf('$');
-										int index2 = parameterTypes2[i].lastIndexOf('$');
-										if (index == -1) {
-											continue loop;
-										}
-										if (!parameterTypes[i].substring(index + 1, parameterTypes[i].length()).equals(
-												parameterTypes2[i].substring(index2 + 1, parameterTypes2[i].length()))) {
-											continue loop;
-										}
-										break;
-									case Signature.C_ARRAY :
-										// array type
-										int counter = 0;
-										int j = 0;
-										while (parameterTypes[i].charAt(j) == '[') {
-											counter++;
-										}
-										int counter2 = 0;
-										j = 0;
-										if (parameterTypes[j].charAt(0) != '[') {
-											// not matching types
-											continue loop;
-										}
-										while (parameterTypes2[i].charAt(j) == '[') {
-											counter2++;
-										}
-										if (counter2 != counter) {
-											// not matching types
-											continue loop;
-										}
-										index = parameterTypes[i].lastIndexOf('$');
-										index2 = parameterTypes2[i].lastIndexOf('$');
-										if (index == -1) {
-											continue loop;
-										}
-										if (!parameterTypes[i].substring(index + 1, parameterTypes[i].length()).equals(
-												parameterTypes2[i].substring(index2 + 1, parameterTypes2[i].length()))) {
-											continue loop;
-										}
-										break;
-									case Signature.C_CHAR :
-									case Signature.C_BOOLEAN :
-									case Signature.C_BYTE :
-									case Signature.C_DOUBLE :
-									case Signature.C_FLOAT :
-									case Signature.C_INT :
-									case Signature.C_LONG :
-									case Signature.C_SHORT :
-									case Signature.C_VOID :
-										if (parameterTypes[i].charAt(0) != parameterTypes2[i].charAt(0)) {
-											// not matching types
-											continue loop;
-										}
-								}
-								continue loop;
+						try {
+							if (Util.matchesSignatures(method2.getSignature(), signature)) {
+								return method2;
 							}
-							found = true;
-						}
-						if (found) {
-							return method2;
+						} catch (JavaModelException e) {
+							// ignore
 						}
 					}
 			}
@@ -2432,5 +2373,78 @@ public final class Util {
 			}
 		}
 		return null;
+	}
+
+	public static boolean matchesSignatures(String signature, String signature2) {
+		if (!matches(Signature.getReturnType(signature), Signature.getReturnType(signature2))) {
+			return false;
+		}
+		String[] parameterTypes = Signature.getParameterTypes(signature);
+		String[] parameterTypes2 = Signature.getParameterTypes(signature2);
+		int length = parameterTypes.length;
+		int length2 = parameterTypes2.length;
+		if (length != length2) return false;
+		for (int i = 0; i < length2; i++) {
+			if (!matches(parameterTypes[i], parameterTypes2[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	private static boolean matches(String type, String type2) {
+		if (type.length() == 1) {
+			if (type2.length() != 1) {
+				return false;
+			}
+			return type.charAt(0) == type2.charAt(0);
+		} else if (type2.length() == 1) {
+			return false;
+		}
+		char[] typeChars = type.toCharArray();
+		char[] type2Chars = type2.toCharArray();
+		// return types are reference types
+		if (typeChars[0] == Signature.C_ARRAY) {
+			// array type
+			if (type2Chars[0] != Signature.C_ARRAY) {
+				// not an array type
+				return false;
+			}
+			// check array types
+			// get type1 dimensions
+			int dims1 = Signature.getArrayCount(typeChars);
+			if (dims1 != Signature.getArrayCount(type2Chars)) {
+				return false;
+			}
+			return matches(CharOperation.subarray(typeChars, dims1, typeChars.length),
+					CharOperation.subarray(type2Chars, dims1, type2Chars.length));
+		}
+		if (type2.charAt(0) == Signature.C_ARRAY) {
+			// an array type
+			return false;
+		}
+		// check reference types
+		return matches(typeChars, type2Chars);
+	}
+
+	private static boolean matches(char[] type, char[] type2) {
+		char[] typeName = Signature.toCharArray(type);
+		char[] typeName2 = Signature.toCharArray(type2);
+		if (CharOperation.lastIndexOf(Signature.C_DOLLAR, typeName2) == -1) {
+			// no member type
+			int index = CharOperation.indexOf(typeName, typeName2, true);
+			return index != -1 && ((index + typeName.length) == typeName2.length);
+		}
+		// member type
+		int index = CharOperation.indexOf(typeName, typeName2, true);
+		if (index != -1 && ((index + typeName.length) == typeName2.length)) {
+			return true;
+		}
+		int dotIndex = CharOperation.lastIndexOf(Signature.C_DOT, typeName);
+		if (dotIndex == -1) {
+			return false;
+		}
+		typeName[dotIndex] = Signature.C_DOLLAR;
+		index = CharOperation.indexOf(typeName, typeName2, true);
+		return index != -1 && ((index + typeName.length) == typeName2.length);
 	}
 }
