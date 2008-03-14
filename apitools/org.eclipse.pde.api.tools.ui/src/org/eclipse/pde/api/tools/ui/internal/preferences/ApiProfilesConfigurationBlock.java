@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -213,7 +212,7 @@ public class ApiProfilesConfigurationBlock {
 				ControlData data = (ControlData) combo.getData();
 				data.key.setStoredValue(fLookupOrder[0], combo.getText(), fManager);
 				fDirty = true;
-				fRebuildcount = 0;
+				ApiProfilesPreferencePage.rebuildcount = 0;
 			}
 		}
 	};
@@ -248,11 +247,6 @@ public class ApiProfilesConfigurationBlock {
 	 * Flag used to know if the page needs saving or not
 	 */
 	private boolean fDirty = false;
-	
-	/**
-	 * counter to know how many times we have prompted users' to rebuild
-	 */
-	private int fRebuildcount = 0;
 	
 	/**
 	 * The parent this block has been added to 
@@ -305,7 +299,7 @@ public class ApiProfilesConfigurationBlock {
 	}
 	
 	/**
-	 * Performs the save operation on the working cop manager
+	 * Performs the save operation on the working copy manager
 	 */
 	private void save() {
 		if(fDirty) {
@@ -313,12 +307,12 @@ public class ApiProfilesConfigurationBlock {
 				ArrayList changes = new ArrayList();
 				collectChanges(fLookupOrder[0], changes);
 				if(changes.size() > 0) {
-					if(fRebuildcount < 1) {
-						fRebuildcount++;
+					if(ApiProfilesPreferencePage.rebuildcount < 1) {
+						ApiProfilesPreferencePage.rebuildcount++;
 						fManager.applyChanges();
 						String message = PreferenceMessages.ApiErrorsWarningsConfigurationBlock_0;
 						if(MessageDialog.openQuestion(fParent.getShell(), PreferenceMessages.ApiErrorsWarningsConfigurationBlock_2, message)) {
-							Util.getBuildJob((IProject[]) null).schedule();
+							Util.getBuildJob(Util.getApiProjects()).schedule();
 						}
 					}
 				}
@@ -346,7 +340,6 @@ public class ApiProfilesConfigurationBlock {
 		}
 		updateCombos();
 		fDirty = true;
-		fRebuildcount = 0;
 	}
 	
 	/**

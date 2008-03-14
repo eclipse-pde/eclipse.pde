@@ -256,7 +256,7 @@ public class ApiComparator {
 				IDelta delta = null;
 				if (apiComponent2 == null) {
 					// report removal of an API component
-					delta = new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT, null, id, null);
+					delta = new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT, null, id, id);
 				} else {
 					apiComponentsIds.add(id);
 					if (!apiComponent.getVersion().equals(apiComponent2.getVersion())
@@ -321,7 +321,7 @@ public class ApiComparator {
 			IApiComponent apiComponent2 = referenceProfile.getApiComponent(id);
 			if (apiComponent2 == null) {
 				// report addition of an API component
-				delta = new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, id, null);
+				delta = new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, id, id);
 			} else {
 				if (!component.getVersion().equals(apiComponent2.getVersion())
 						|| force) {
@@ -420,9 +420,9 @@ public class ApiComparator {
 			if (component2 == null) {
 				throw new IllegalArgumentException("Both components cannot be null"); //$NON-NLS-1$
 			}
-			return new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, component2.getId(), null);
+			return new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, component2.getId(), component2.getId());
 		} else if (component2 == null) {
-			return new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT, null, referenceComponent.getId(), null);
+			return new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT, null, referenceComponent.getId(), referenceComponent.getId());
 		}
 		// check the EE first
 		String[] referenceComponentsEEs = referenceComponent.getExecutionEnvironments();

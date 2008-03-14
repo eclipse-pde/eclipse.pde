@@ -84,8 +84,9 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	private Button newbutton = null, 
 				   removebutton = null, 
 				   editbutton = null;
-	private int rebuildcount = 0;
+	protected static int rebuildcount = 0;
 	private String origdefault = null;
+	private boolean dirty = false;
 	
 	/**
 	 * The main configuration block for the page
@@ -126,6 +127,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				}
 				rebuildcount = 0;
 				tableviewer.refresh(true);
+				dirty = true;
 			}
 		});
 		tableviewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -158,6 +160,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 						backingcollection.add(profile);
 						tableviewer.refresh();
 						tableviewer.setSelection(new StructuredSelection(profile), true);
+						dirty = true;
 					}
 				}
 			}
@@ -179,7 +182,9 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 					}
 					removed.add(states[i].getName());
 				}
-				backingcollection.removeAll(Arrays.asList(states));
+				if(backingcollection.removeAll(Arrays.asList(states))) {
+					dirty = true;
+				}
 				tableviewer.refresh();
 			}
 		});
@@ -217,6 +222,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 					rebuildcount = 0;
 					tableviewer.refresh(true);
 				}
+				dirty = true;
 			}
 		}
 	}
@@ -286,6 +292,9 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	 * the current change set is cleared.
 	 */
 	protected void applyChanges() {
+		if(!dirty) {
+			return;
+		}
 		boolean build = false;
 		//remove 
 		for(Iterator iter = removed.iterator(); iter.hasNext();) {
@@ -317,6 +326,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 			}
 		}
 		origdefault = newdefault;
+		dirty = false;
 		removed.clear();
 	}
 	
