@@ -106,7 +106,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 			IMemberDescriptor member = location.getMember();
 			switch (member.getElementType()) {
 				case IElementDescriptor.T_REFERENCE_TYPE:
-					// TODO: class verus interface
+					// TODO: class versus interface
 					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
 				default:
 					// TODO: need visibility
