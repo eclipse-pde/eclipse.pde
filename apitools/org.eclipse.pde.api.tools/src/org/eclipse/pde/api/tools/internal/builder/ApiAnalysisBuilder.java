@@ -1477,8 +1477,16 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(), 
 					messageargs, 
-					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID)}, 
+					new String[] {
+						IApiMarkerConstants.MARKER_ATTR_VERSION,
+						IApiMarkerConstants.API_MARKER_ATTR_ID,
+						IApiMarkerConstants.MARKER_ATTR_KIND,
+					}, 
+					new Object[] {
+						version,
+						new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID),
+						new Integer(kind),
+					}, 
 					lineNumber, 
 					charStart, 
 					charEnd, 
@@ -1605,8 +1613,16 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			return ApiProblemFactory.newApiVersionNumberProblem(manifestFile.getProjectRelativePath().toPortableString(), 
 					messageargs, 
-					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-					new Object[] {version, new Integer(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID)}, 
+					new String[] {
+						IApiMarkerConstants.MARKER_ATTR_VERSION,
+						IApiMarkerConstants.API_MARKER_ATTR_ID,
+						IApiMarkerConstants.MARKER_ATTR_KIND,
+					}, 
+					new Object[] {
+						version,
+						new Integer(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
+						new Integer(kind),
+					}, 
 					lineNumber, 
 					charStart, 
 					charEnd, 
