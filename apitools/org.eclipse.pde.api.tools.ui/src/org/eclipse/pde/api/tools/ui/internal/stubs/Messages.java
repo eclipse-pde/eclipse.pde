@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.ui.internal.stubs;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.stubs.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.stubs.messages"; //$NON-NLS-1$
 	public static String ConverterUI_0;
 	public static String ConverterUI_1;
 	public static String ConverterUI_18;
