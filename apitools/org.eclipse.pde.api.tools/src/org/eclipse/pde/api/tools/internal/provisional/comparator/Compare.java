@@ -182,9 +182,11 @@ public class Compare {
 		if (!outputFile.exists()) {
 			File parentFile = outputFile.getParentFile();
 			if (parentFile != null) {
-				if (!parentFile.mkdirs()) {
-					System.err.println("Could not create the output folder for : " + this.output); //$NON-NLS-1$
-					return;
+				if (!parentFile.exists()) {
+					if (!parentFile.mkdirs()) {
+						System.err.println("Could not create the output folder for : " + this.output); //$NON-NLS-1$
+						return;
+					}
 				}
 			} else {
 				System.err.println("Could not retrieve the parent of the output file : " + this.output); //$NON-NLS-1$

@@ -61,6 +61,7 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_TYPE_NAME, delta.getTypeName());
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_BINARY_COMPATIBLE, Boolean.toString(DeltaProcessor.isBinaryCompatible(delta)));
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_MODIFIERS, Integer.toString(delta.getModifiers()));
+			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_RESTRICTIONS, Integer.toString(delta.getRestrictions()));
 			fDeltas.appendChild(deltaElement);
 		}
 		return true;
