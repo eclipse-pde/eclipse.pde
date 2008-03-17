@@ -392,7 +392,13 @@ public class EventDetailsDialog extends TrayDialog {
 			resetChildIndex();
 			isLastChild = childIndex == entryChildren.length - 1;
 			if (isLastChild) {
-				findNextSelectedChild(originalEntry);
+				if (isChild(entry)) {
+					findNextSelectedChild(originalEntry);
+				} else {
+					entry = originalEntry;
+					isAtEndOfLog = true;
+					nextPressed();
+				}
 			} else {
 				nextPressed();
 			}
