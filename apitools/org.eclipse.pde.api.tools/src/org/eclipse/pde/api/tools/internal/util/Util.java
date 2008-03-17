@@ -2165,6 +2165,10 @@ public final class Util {
 		return fakeEEFile;
 	}
 
+	/**
+	 * @return a string representation of all of the libraries from the bootpath 
+	 * of the current default system VM.
+	 */
 	public static String getJavaClassLibsAsString() {
 		String[] libs = Util.getJavaClassLibs();
 		StringBuffer buffer = new StringBuffer();
@@ -2176,6 +2180,10 @@ public final class Util {
 		}
 		return String.valueOf(buffer);
 	}
+	
+	/**
+	 * @return an array of the library names from the bootpath of the current default system VM 
+	 */
 	public static String[] getJavaClassLibs() {
 		// check bootclasspath properties for Sun, JRockit and Harmony VMs
 		String bootclasspathProperty = System.getProperty("sun.boot.class.path"); //$NON-NLS-1$
