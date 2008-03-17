@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -736,14 +735,8 @@ public class ApiUseAnalyzer {
 			} catch (BadLocationException e) {
 				ApiPlugin.log(e);
 			}
-			int sev = ApiPlugin.getDefault().getSeverityLevel(prefKey, project.getProject());
-			if (sev == ApiPlugin.SEVERITY_IGNORE) {
-				// ignore
+			if (ApiPlugin.getDefault().getSeverityLevel(prefKey, project.getProject()) == ApiPlugin.SEVERITY_IGNORE) {
 				return null;
-			}
-			int severity = IMarker.SEVERITY_ERROR;
-			if (sev == ApiPlugin.SEVERITY_WARNING) {
-				severity = IMarker.SEVERITY_WARNING;
 			}
 			IJavaElement element = compilationUnit;
 			if(charStart > -1) {
@@ -757,7 +750,6 @@ public class ApiUseAnalyzer {
 					lineNumber, 
 					charStart, 
 					charEnd, 
-					severity, 
 					elementType, 
 					kind,
 					flags);
@@ -819,16 +811,13 @@ public class ApiUseAnalyzer {
 				break;
 			}
 		} 
-		// TODO: where to get severity when no project?
-		int severity = IMarker.SEVERITY_WARNING;
 		return ApiProblemFactory.newApiUsageProblem(refType.getQualifiedName(), 
 				messageargs, 
 				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
 				new Object[] {new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
 				lineNumber, 
 				-1, 
-				-1, 
-				severity, 
+				-1,
 				elementType, 
 				kind,
 				flags);

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.problems;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -30,11 +32,6 @@ public class ApiProblem implements IApiProblem {
 	 * The resource path for this problem
 	 */
 	private String fResourcePath = null;
-	/**
-	 * the severity of the problem
-	 * TODO needs to be derived from the associated preference (lazily loaded)
-	 */
-	private int fSeverity = 0;
 	/**
 	 * The composite id of the problem. Contains the category, 
 	 * element kind, kind, and flags for a specific problem
@@ -86,9 +83,8 @@ public class ApiProblem implements IApiProblem {
 	 * @param severity the severity level of the problem
 	 * @param id the id of the problem
 	 */
-	public ApiProblem(String path, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int id) {
+	public ApiProblem(String path, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int id) {
 		this.fResourcePath = path;
-		this.fSeverity = severity;
 		this.fId = id;
 		this.fExtraArgumentIds = argumentids;
 		this.fExtraArguments = arguments;
@@ -154,7 +150,10 @@ public class ApiProblem implements IApiProblem {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProblem#getSeverity()
 	 */
 	public int getSeverity() {
-		return fSeverity;
+		if(ApiPlugin.isRunningInFramework()) {
+			return ApiPlugin.getDefault().getSeverityLevel(ApiProblemFactory.getProblemSeverityId(this), null);
+		}
+		return IMarker.SEVERITY_WARNING;
 	}
 	
 	/* (non-Javadoc)
@@ -241,7 +240,7 @@ public class ApiProblem implements IApiProblem {
 		buffer.append("Api problem: "); //$NON-NLS-1$
 		buffer.append(fResourcePath);
 		buffer.append("[severity: "); //$NON-NLS-1$
-		buffer.append(Util.getSeverity(fSeverity));
+		buffer.append(Util.getSeverity(getSeverity()));
 		buffer.append(" category: "); //$NON-NLS-1$
 		buffer.append(Util.getProblemCategory(getCategory()));
 		buffer.append(" element kind: "); //$NON-NLS-1$

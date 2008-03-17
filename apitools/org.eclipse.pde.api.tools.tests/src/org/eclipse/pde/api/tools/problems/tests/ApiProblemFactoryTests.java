@@ -34,10 +34,10 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testCreateProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1, 
-				IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_BINARY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
+				 IApiProblem.CATEGORY_BINARY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
 		assertNotNull("a new problem should have been created with null attributes", problem);
 		problem = ApiProblemFactory.newApiProblem("path", new String[0], new String[0], new Object[0], -1, -1, -1, 
-				IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_BINARY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
+				 IApiProblem.CATEGORY_BINARY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
 		assertNotNull("a new problem should have been created with non-null attributes", problem);
 	}
 	
@@ -46,10 +46,10 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void tesCreateUsageProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem(null, null, null, null, -1, -1, -1, 
-				IMarker.SEVERITY_ERROR, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with null attributes", problem);
 		problem = ApiProblemFactory.newApiUsageProblem("path", new String[0], new String[0], new Object[0], -1, -1, -1, 
-				IMarker.SEVERITY_ERROR, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with non-null attributes", problem);
 	}
 	
@@ -58,10 +58,10 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testCreateSincetagProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiSinceTagProblem(null, null, null, null, -1, -1, -1, 
-				IMarker.SEVERITY_ERROR, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with null attributes", problem);
 		problem = ApiProblemFactory.newApiSinceTagProblem("path", new String[0], new String[0], new Object[0], -1, -1, -1, 
-				IMarker.SEVERITY_ERROR, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with non-null attributes", problem);
 	}
 	
@@ -70,10 +70,10 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testCreateVersionProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiVersionNumberProblem(null, null, null, null, -1, -1, -1, 
-				IMarker.SEVERITY_ERROR, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with null attributes", problem);
 		problem = ApiProblemFactory.newApiVersionNumberProblem("path", new String[0], new String[0], new Object[0], -1, -1, -1, 
-				IMarker.SEVERITY_ERROR, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with non-null attributes", problem);
 	}
 	
@@ -104,21 +104,21 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testGetVersionMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiVersionNumberProblem("", 
-				new String[] {"1", "2"}, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MAJOR_VERSION_CHANGE);
+				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MAJOR_VERSION_CHANGE);
 		assertNotNull("there should be a new problem created", problem);
 		String message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("The major version should be incremented in version 1, since API breakage occurred since version 2", new String[0])));
 		problem = ApiProblemFactory.newApiVersionNumberProblem("", 
-				new String[] {"1", "2"}, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE);
+				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE);
 		assertNotNull("there should be a new problem created", problem);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("The major version should be identical in version 1, since no API breakage occurred since version 2", new String[0])));
 		problem = ApiProblemFactory.newApiVersionNumberProblem("", 
-				new String[] {"1", "2"}, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MINOR_VERSION_CHANGE);
+				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MINOR_VERSION_CHANGE);
 		assertNotNull("there should be a new problem created", problem);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
@@ -166,13 +166,13 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * Tests getting (some of) the binary messages
 	 */
 	public void testGetBinaryMessages() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, 
+		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1,  
 				IApiProblem.CATEGORY_BINARY, IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.CONSTRUCTOR);
 		String message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Added a constructor", new String[0])));
-		problem = ApiProblemFactory.newApiProblem(null, new String[] {"foo()"}, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, 
+		problem = ApiProblemFactory.newApiProblem(null, new String[] {"foo()"}, null, null, -1, -1, -1,  
 				IApiProblem.CATEGORY_BINARY, IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
@@ -185,19 +185,19 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testGetSinceTagMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiSinceTagProblem("", 
-				new String[] {"A", "B"}, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_INVALID);
+				new String[] {"A", "B"}, null, null, -1, -1, -1,  IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_INVALID);
 		String message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Invalid @since tag: A; the expected @since tag value is B", new String[0])));
 		problem = ApiProblemFactory.newApiSinceTagProblem("", 
-				new String[] {"A"}, null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_MALFORMED);
+				new String[] {"A"}, null, null, -1, -1, -1,  IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_MALFORMED);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Invalid @since tag: A; the @since tag can only have two fragments", new String[0])));
 		problem = ApiProblemFactory.newApiSinceTagProblem("", 
-				new String[0], null, null, -1, -1, -1, IMarker.SEVERITY_ERROR, IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_MISSING);
+				new String[0], null, null, -1, -1, -1,  IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_MISSING);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));

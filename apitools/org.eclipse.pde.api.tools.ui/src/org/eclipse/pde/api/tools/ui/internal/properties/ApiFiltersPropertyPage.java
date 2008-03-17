@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
@@ -92,7 +93,8 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 			if(element instanceof IApiProblemFilter) {
 				IApiProblemFilter filter = (IApiProblemFilter) element;
 				IApiProblem problem = filter.getUnderlyingProblem();
-				switch(problem.getSeverity()) {
+				int severity = ApiPlugin.getDefault().getSeverityLevel(ApiProblemFactory.getProblemSeverityId(problem), fProject);
+				switch(severity) {
 					case IMarker.SEVERITY_ERROR: {
 						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 					}

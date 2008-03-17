@@ -16,13 +16,13 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -48,15 +48,14 @@ public class ApiProblemFactory {
 	 * @param linenumber the number of the line the problem occurred on
 	 * @param charstart the start of a char selection range
 	 * @param charend the end of a char selection range
-	 * @param severity the severity of the problem. See {@link IMarker} for severity values.
 	 * @param category the category of the problem. See {@link IApiProblem} for categories
 	 * @param element the id of the backing element for this problem See {@link IElementDescriptor}, {@link IDelta} and {@link IJavaElement} for kinds
 	 * @param kind the kind of the problem
 	 * @param flags any additional flags for the kind
 	 * @return a new {@link IApiProblem}
 	 */
-	public static IApiProblem newApiProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int category, int element, int kind, int flags) {
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, severity, createProblemId(category, element, kind, flags));
+	public static IApiProblem newApiProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int category, int element, int kind, int flags) {
+		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, createProblemId(category, element, kind, flags));
 	}
 	
 	/**
@@ -69,12 +68,11 @@ public class ApiProblemFactory {
 	 * @param linenumber the number of the line the problem occurred on
 	 * @param charstart the start of a char selection range
 	 * @param charend the end of a char selection range
-	 * @param severity the severity of the problem. See {@link IMarker} for severity values.
 	 * @param id the composite id of the problem
 	 * @return a new {@link IApiProblem}
 	 */
-	public static IApiProblem newApiProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int id) {
-		return new ApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, severity, id);
+	public static IApiProblem newApiProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int id) {
+		return new ApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 	
 	/**
@@ -92,9 +90,9 @@ public class ApiProblemFactory {
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for API usage
 	 */
-	public static IApiProblem newApiUsageProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int element, int kind) {
+	public static IApiProblem newApiUsageProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_USAGE, element, kind, IApiProblem.NO_FLAGS);
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, severity, id);
+		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 
 	/**
@@ -113,9 +111,9 @@ public class ApiProblemFactory {
 	 * @param flags the flags
 	 * @return a new {@link IApiProblem} for API usage
 	 */
-	public static IApiProblem newApiUsageProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int element, int kind, int flags) {
+	public static IApiProblem newApiUsageProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind, int flags) {
 		int id = createProblemId(IApiProblem.CATEGORY_USAGE, element, kind, flags);
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, severity, id);
+		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 	
 	/**
@@ -133,9 +131,9 @@ public class ApiProblemFactory {
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for API usage
 	 */
-	public static IApiProblem newApiProfileProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int element, int kind) {
+	public static IApiProblem newApiProfileProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_API_PROFILE, element, kind, IApiProblem.NO_FLAGS);
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, severity, id);
+		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 	
 	/**
@@ -153,9 +151,9 @@ public class ApiProblemFactory {
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for since tags
 	 */
-	public static IApiProblem newApiSinceTagProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int element, int kind) {
+	public static IApiProblem newApiSinceTagProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_SINCETAGS, element, kind, IApiProblem.NO_FLAGS);
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, severity, id);
+		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 	
 	/**
@@ -173,9 +171,9 @@ public class ApiProblemFactory {
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for version numbers
 	 */
-	public static IApiProblem newApiVersionNumberProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int severity, int element, int kind) {
+	public static IApiProblem newApiVersionNumberProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_VERSION, element, kind, IApiProblem.NO_FLAGS);
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, severity, id);
+		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 	
 	/**
@@ -436,6 +434,48 @@ public class ApiProblemFactory {
 			}
 		}
 		return 0;
+	}
+	
+	/**
+	 * Returns the problem severity id for the given problem parameters.
+	 * @param category
+	 * @param element
+	 * @param kind
+	 * @param flags
+	 * @return the id of the preference to use to lookup the user specified severity level for the given {@link IApiProblem}
+	 */
+	public static String getProblemSeverityId(IApiProblem problem) {
+		switch(problem.getCategory()) {
+			case IApiProblem.CATEGORY_API_PROFILE: {
+				switch(problem.getKind()) {
+					case IApiProblem.API_PROFILE_MISSING: return IApiProblemTypes.MISSING_DEFAULT_API_PROFILE;
+				}
+			}
+			case IApiProblem.CATEGORY_SINCETAGS: {
+				switch(problem.getKind()) {
+					case IApiProblem.SINCE_TAG_INVALID: return IApiProblemTypes.INVALID_SINCE_TAG_VERSION;
+					case IApiProblem.SINCE_TAG_MALFORMED: return IApiProblemTypes.MALFORMED_SINCE_TAG;
+					case IApiProblem.SINCE_TAG_MISSING: return IApiProblemTypes.MISSING_SINCE_TAG;
+				}
+			}
+			case IApiProblem.CATEGORY_VERSION: {
+				return IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION;
+			}
+			case IApiProblem.CATEGORY_USAGE: {
+				switch(problem.getKind()) {
+					case IApiProblem.ILLEGAL_IMPLEMENT: return IApiProblemTypes.ILLEGAL_IMPLEMENT;
+					case IApiProblem.ILLEGAL_EXTEND: return IApiProblemTypes.ILLEGAL_EXTEND;
+					case IApiProblem.ILLEGAL_INSTANTIATE: return IApiProblemTypes.ILLEGAL_INSTANTIATE;
+					case IApiProblem.ILLEGAL_OVERRIDE: return IApiProblemTypes.ILLEGAL_OVERRIDE;
+					case IApiProblem.ILLEGAL_REFERENCE: return IApiProblemTypes.ILLEGAL_REFERENCE;
+					case IApiProblem.API_LEAK: return IApiProblemTypes.API_LEAK;
+				}
+			}
+			case IApiProblem.CATEGORY_BINARY: {
+				return Util.getDeltaPrefererenceKey(problem.getElementKind(), problem.getKind(), problem.getKind());
+			}
+		}
+		return null;
 	}
 	
 	/**

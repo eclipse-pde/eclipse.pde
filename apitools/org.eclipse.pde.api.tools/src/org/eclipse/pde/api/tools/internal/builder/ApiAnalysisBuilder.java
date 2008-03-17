@@ -273,12 +273,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 				int sev = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_PROFILE, fCurrentProject);
 				if (sev == ApiPlugin.SEVERITY_IGNORE) {
-					// ignore
 					return;
-				}
-				int severity = IMarker.SEVERITY_ERROR;
-				if (sev == ApiPlugin.SEVERITY_WARNING) {
-					severity = IMarker.SEVERITY_WARNING;
 				}
 				IApiProblem problem = ApiProblemFactory.newApiProfileProblem(fCurrentProject.getProjectRelativePath().toPortableString(), 
 						null, 
@@ -286,8 +281,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)}, 
 						-1, 
 						-1, 
-						-1, 
-						severity, 
+						-1,  
 						IElementDescriptor.T_RESOURCE, 
 						IApiProblem.API_PROFILE_MISSING);
 				fProblemReporter.addProblem(problem);
@@ -812,13 +806,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		IDelta delta = null;
 		long time = System.currentTimeMillis();
 		try {
-			delta = ApiComparator.compare(
-					classFile,
-					reference,
-					component,
-					reference.getProfile(),
-					component.getProfile(),
-					VisibilityModifiers.API);
+			delta = ApiComparator.compare(classFile, reference, component, reference.getProfile(), component.getProfile(), VisibilityModifiers.API);
 		} catch(Exception e) {
 			ApiPlugin.log(e);
 		} finally {
@@ -845,10 +833,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					DeltaInfo deltaInfo = (DeltaInfo) iterator.next();
 					IMember member = Util.getIMember(deltaInfo.delta, javaProject);
 					if (member != null) {
-						processSinceTags(javaProject, deltaInfo, member, component, reference,
-							ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject),
-							ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, fCurrentProject),
-							ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, fCurrentProject));
+						processSinceTags(javaProject, deltaInfo, member, component, reference);
 					}
 				}
 			}
@@ -885,9 +870,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param component
 	 */
 	private void checkApiComponentVersion(IApiComponent reference, IApiComponent component) {
-		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, fCurrentProject);
 		IApiProblem problem = null;
-		if (severityLevel != ApiPlugin.SEVERITY_IGNORE && reference != null) {
+		if (!shouldIgnoreProblem(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION) && reference != null) {
 			String refversionval = reference.getVersion();
 			String compversionval = component.getVersion();
 			Version refversion = new Version(refversionval);
@@ -903,7 +887,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier());
 					problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE,
 										new String[] {refversionval, compversionval},
-										severityLevel,
 										true,
 										String.valueOf(newversion));
 				}
@@ -914,7 +897,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					newversion = new Version(refversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
 					problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
 										new String[] {refversionval, compversionval},
-										severityLevel,
 										false,
 										String.valueOf(newversion));
 				} else if (compversion.getMinor() <= refversion.getMinor()) {
@@ -922,7 +904,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
 					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE, 
 										new String[] {refversionval, compversionval},
-										severityLevel,
 										false,
 										String.valueOf(newversion));
 				} else {
@@ -1046,6 +1027,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private IApiProblem createBinaryProblem(IDelta delta, ICompilationUnit compilationUnit, IJavaProject project, IApiComponent reference, IApiComponent component) {
 		try {
+			if(shouldIgnoreProblem(Util.getDeltaPrefererenceKey(delta.getElementType(), delta.getKind(), delta.getFlags()))) {
+				return null;
+			}
 			Version referenceVersion = new Version(reference.getVersion());
 			Version componentVersion = new Version(component.getVersion());
 			if (referenceVersion.getMajor() < componentVersion.getMajor()) {
@@ -1065,16 +1049,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if (resource == null) {
 					return null;
 				}
-			}
-			String prefKey = Util.getDeltaPrefererenceKey(delta.getElementType(), delta.getKind(), delta.getFlags());
-			int sev = ApiPlugin.getDefault().getSeverityLevel(prefKey, fCurrentProject);
-			if (sev == ApiPlugin.SEVERITY_IGNORE) {
-				// ignore
-				return null;
-			}
-			int severity = IMarker.SEVERITY_ERROR;
-			if (sev == ApiPlugin.SEVERITY_WARNING) {
-				severity = IMarker.SEVERITY_WARNING;
 			}
 			this.bits |= CONTAINS_API_BREAKAGE;
 			
@@ -1117,7 +1091,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					lineNumber, 
 					charStart, 
 					charEnd, 
-					severity, 
 					IApiProblem.CATEGORY_BINARY, 
 					delta.getElementType(), 
 					delta.getKind(), 
@@ -1128,6 +1101,15 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		return null;
 	}
 
+	/**
+	 * Returns if the problem specified by the given preference key should be ignored or not
+	 * @param prefkey
+	 * @return true if the problem should be ignored, false otherwise
+	 */
+	private boolean shouldIgnoreProblem(String prefkey) {
+		return ApiPlugin.SEVERITY_IGNORE == ApiPlugin.getDefault().getSeverityLevel(prefkey, fCurrentProject);
+	}
+	
 	/**
 	 * Compares the two given profiles and generates an {@link IDelta}
 	 * @param reference
@@ -1199,10 +1181,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						DeltaInfo deltaInfo = (DeltaInfo) iterator.next();
 						IMember member = Util.getIMember(deltaInfo.delta, javaProject);
 						if (member != null) {
-							processSinceTags(javaProject, deltaInfo, member, component, reference,
-								ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject),
-								ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, fCurrentProject),
-								ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, fCurrentProject));
+							processSinceTags(javaProject, deltaInfo, member, component, reference);
 						}
 					}
 				}
@@ -1238,16 +1217,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					&& (RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
 							|| RestrictionModifiers.isImplementRestriction(delta.getRestrictions())
 							|| (!RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
-									&& Flags.isStatic(delta.getModifiers())))
-					&& Util.isVisible(delta)) {
+							&& Flags.isStatic(delta.getModifiers()))) && Util.isVisible(delta)) {
 				// check new APIs
 				this.bits |= CONTAINS_API_CHANGES;
-				int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject);
-				int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, fCurrentProject);
-				int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, fCurrentProject);
-				if (missingTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
-						|| malformedTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
-						|| invalidTagVersionSeverityLevel != ApiPlugin.SEVERITY_IGNORE) {
+				if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
+						|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
+						|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
 					this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
 				}
 			}
@@ -1257,15 +1232,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				System.err.println(deltaDetails + " is not binary compatible"); //$NON-NLS-1$
 			}
 			problem = createBinaryProblem(delta, compilationUnit, javaProject, reference, component);
-			int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject);
-			int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, fCurrentProject);
-			int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, fCurrentProject);
-			if (missingTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
-					|| malformedTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
-					|| invalidTagVersionSeverityLevel != ApiPlugin.SEVERITY_IGNORE) {
+			if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
+					|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
+					|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
 				// ensure that there is a @since tag for the corresponding member
-				if (delta.getKind() == IDelta.ADDED
-						&& Util.isVisible(delta)) {
+				if (delta.getKind() == IDelta.ADDED && Util.isVisible(delta)) {
 					this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
 				}
 			}
@@ -1280,12 +1251,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param compilationUnit
 	 * @param member
 	 * @param component
-	 * @param missingTagSeverityLevel
-	 * @param malformedTagSeverityLevel
-	 * @param invalidTagVersionSeverityLevel
 	 */
 	private void processSinceTags(final IJavaProject javaProject, final DeltaInfo info, final IMember member, final IApiComponent component,
-			final IApiComponent reference, int missingTagSeverityLevel,	int malformedTagSeverityLevel, int invalidTagVersionSeverityLevel) {
+			final IApiComponent reference) {
 		ICompilationUnit cunit = info.unit;
 		IApiProblem problem = null;
 		if(cunit != null) {
@@ -1310,6 +1278,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			unit.accept(visitor);
 			String componentVersionString = component.getVersion();
 			if (visitor.hasNoComment() || visitor.isMissing()) {
+				if(shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)) {
+					return;
+				}
 				StringBuffer buffer = new StringBuffer();
 				Version componentVersion = null;
 				try {
@@ -1323,7 +1294,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
 					}
 					problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MISSING, null, 
-										 info, member, missingTagSeverityLevel, String.valueOf(buffer));
+										 info, member, String.valueOf(buffer));
 				} catch (IllegalArgumentException e) {
 					ApiPlugin.log(e);
 				}
@@ -1337,6 +1308,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					 * it cannot contain more than two fragments.
 					 */
 					if (Util.getFragmentNumber(sinceVersion) > 2) {
+						if(shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)) {
+							return;
+						}
 						// @since version cannot have more than 2 fragments
 						// create a marker on the member for missing @since tag
 						try {
@@ -1356,11 +1330,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							}
 							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED,
 												 new String[] {sinceVersion},
-												 info, member,	malformedTagSeverityLevel, String.valueOf(buffer));
+												 info, member, String.valueOf(buffer));
 						} catch (IllegalArgumentException e) {
 							ApiPlugin.log(e);
 						}
 					} else {
+						if(shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
+							return;
+						}
 						StringBuffer accurateVersionBuffer = new StringBuffer();
 						if (reference != null) {
 							String referenceVersionString = reference.getVersion();
@@ -1385,7 +1362,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 								String accurateSinceTagValue = String.valueOf(buffer);
 								problem = createSinceTagProblem(IApiProblem.SINCE_TAG_INVALID,
 													 new String[] {sinceVersion, accurateSinceTagValue},
-													 info, member, invalidTagVersionSeverityLevel, accurateSinceTagValue);
+													 info, member, accurateSinceTagValue);
 							} catch (IllegalArgumentException e) {
 								ApiPlugin.log(e);
 							}
@@ -1446,12 +1423,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param messageargs
 	 * @param compilationUnit
 	 * @param member
-	 * @param severity
 	 * @param version
 	 * @return a new {@link IApiProblem} or <code>null</code>
 	 */
 	private IApiProblem createSinceTagProblem(int kind, final String[] messageargs, final DeltaInfo info, 
-			IMember member, int severity, final String version) {
+			IMember member, final String version) {
 		try {
 			// create a marker on the member for missing @since tag
 			IResource resource = null;
@@ -1490,7 +1466,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					lineNumber, 
 					charStart, 
 					charEnd, 
-					severity, 
 					info.delta.getElementType(), 
 					kind);
 		} catch (CoreException e) {
@@ -1504,12 +1479,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * or <code>null</code> 
 	 * @param kind
 	 * @param messageargs
-	 * @param severity
 	 * @param breakage
 	 * @param version
 	 * @return a new {@link IApiProblem} or <code>null</code>
 	 */
-	private IApiProblem createVersionProblem(int kind, final String[] messageargs, int severity, boolean breakage, String version) {
+	private IApiProblem createVersionProblem(int kind, final String[] messageargs, boolean breakage, String version) {
 		try {
 			IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
 			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
@@ -1550,7 +1524,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			// this error should be located on the manifest.mf file
 			// first of all we check how many binary breakage marker are there
-			
 			int lineNumber = -1;
 			int charStart = 0;
 			int charEnd = 1;
@@ -1626,7 +1599,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					lineNumber, 
 					charStart, 
 					charEnd, 
-					severity, 
 					IElementDescriptor.T_RESOURCE, 
 					kind);
 		} catch (CoreException e) {

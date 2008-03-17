@@ -178,11 +178,6 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_RESTRICTIONS = "restrictions"; //$NON-NLS-1$
 	/**
-	 * Constant representing the severity attribute of an {@link IApiProblem} in xml.
-	 * Value is: <code>severity</code>
-	 */
-	public static final String ATTR_SEVERITY = "severity"; //$NON-NLS-1$
-	/**
 	 * Constant representing the signature attribute for a method xml node.
 	 * Value is: <code>signature</code> 
 	 */

@@ -338,7 +338,6 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			for(Iterator iter2 = filters.iterator(); iter2.hasNext();) {
 				problem = ((IApiProblemFilter) iter2.next()).getUnderlyingProblem();
 				felement = document.createElement(IApiXmlConstants.ELEMENT_FILTER);
-				felement.setAttribute(IApiXmlConstants.ATTR_SEVERITY, Integer.toString(problem.getSeverity()));
 				felement.setAttribute(IApiXmlConstants.ATTR_ID, Integer.toString(problem.getId()));
 				if(problem.getMessageArguments().length > 0) {
 					felement.setAttribute(IApiXmlConstants.ATTR_MESSAGE_ARGUMENTS, createArgAttribute(problem.getMessageArguments()));
@@ -410,7 +409,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		Element element = null;
 		String path = null;
 		NodeList filters = null;
-		int id = 0, severity = 0;
+		int id = 0;
 		String[] messageargs = null;
 		IResource resource = null;
 		ArrayList newfilters = new ArrayList();
@@ -435,13 +434,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				if(id <= 0) {
 					continue;
 				}
-				severity = loadIntegerAttribute(element, IApiXmlConstants.ATTR_SEVERITY);
-				if(severity < 0) {
-					continue;
-				}
 				messageargs = element.getAttribute(IApiXmlConstants.ATTR_MESSAGE_ARGUMENTS).split("#"); //$NON-NLS-1$
 				newfilters.add(ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), 
-						messageargs, null, null, -1, -1, -1, severity, id));
+						messageargs, null, null, -1, -1, -1, id));
 			}
 		}
 		addFilters((IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]));
