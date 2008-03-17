@@ -254,6 +254,60 @@ public class ApiProblemFactory {
 	}
 	
 	/**
+	 * Returns the kind of the problem from the given problem id. The returned kind is not checked to see if it
+	 * is correct or existing.
+	 * 
+	 * @see IApiProblem#getKind()
+	 * @see IDelta#getKind()
+	 * 
+	 * @param problemid
+	 * @return the kind from the given problem id
+	 */
+	public static int getProblemKind(int problemid) {
+		return (problemid & ApiProblem.KIND_MASK) >> IApiProblem.OFFSET_KINDS;
+	}
+	
+	/**
+	 * Returns the kind of element from the given problem id. The returned element kind is not checked to see if it
+	 * is correct or existing.
+	 * 
+	 * @see IElementDescriptor#getElementType()
+	 * @see IDelta#getElementType()
+	 * 
+	 * @param problemid
+	 * @return the element kind from the given problem id
+	 */
+	public static int getProblemElementKind(int problemid) {
+		return (problemid & ApiProblem.ELEMENT_KIND_MASK) >> IApiProblem.OFFSET_ELEMENT;
+	}
+	
+	/**
+	 * Returns the flags from the given problem id. The returned flags are not checked to see if they
+	 * are correct or existing.
+	 * 
+	 * @see IDelta#getFlags()
+	 * 
+	 * @param problemid
+	 * @return the flags from the given problem id
+	 */
+	public static int getProblemFlags(int problemid) {
+		return (problemid & ApiProblem.FLAGS_MASK) >> IApiProblem.OFFSET_FLAGS;
+	}
+	
+	/**
+	 * Returns the category of the given problem id. The returned category is not checked to see if it
+	 * is correct or existing.
+	 * 
+	 * @see IApiProblem#getCategory()
+	 * 
+	 * @param problemid
+	 * @return the category of this problem id
+	 */
+	public static int getProblemCategory(int problemid) {
+		return (problemid & ApiProblem.CATEGORY_MASK);
+	}
+	
+	/**
 	 * Returns the problem message id for the given problem parameters.
 	 * @param category
 	 * @param element

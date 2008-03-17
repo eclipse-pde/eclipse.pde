@@ -1453,16 +1453,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(), 
 					messageargs, 
-					new String[] {
-						IApiMarkerConstants.MARKER_ATTR_VERSION,
-						IApiMarkerConstants.API_MARKER_ATTR_ID,
-						IApiMarkerConstants.MARKER_ATTR_KIND,
-					}, 
-					new Object[] {
-						version,
-						new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID),
-						new Integer(kind),
-					}, 
+					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
+					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID)}, 
 					lineNumber, 
 					charStart, 
 					charEnd, 
@@ -1497,8 +1489,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if (manifestMarkers.length != 0) {
 					// check if the existing marker has the same severity (breakage vs non breakage
 					IMarker marker = manifestMarkers[0];
-					int tmpkind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
 					if (breakage) {
+						int tmpkind = ApiProblemFactory.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
 						if (IApiProblem.MAJOR_VERSION_CHANGE == tmpkind) {
 							// no need to create the same marker again
 							return null;
@@ -1514,7 +1506,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			} else if (manifestMarkers.length != 0) {
 				// this means the marker is not create for a breakage change
 				IMarker marker = manifestMarkers[0];
-				int tmpkind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
+				int tmpkind = ApiProblemFactory.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
 				if (IApiProblem.MAJOR_VERSION_CHANGE == tmpkind) {
 					// remove the existing marker to create one for non breakage version issue
 					marker.delete();
@@ -1586,16 +1578,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			return ApiProblemFactory.newApiVersionNumberProblem(manifestFile.getProjectRelativePath().toPortableString(), 
 					messageargs, 
-					new String[] {
-						IApiMarkerConstants.MARKER_ATTR_VERSION,
-						IApiMarkerConstants.API_MARKER_ATTR_ID,
-						IApiMarkerConstants.MARKER_ATTR_KIND,
-					}, 
-					new Object[] {
-						version,
-						new Integer(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
-						new Integer(kind),
-					}, 
+					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
+					new Object[] {version, new Integer(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID)}, 
 					lineNumber, 
 					charStart, 
 					charEnd, 

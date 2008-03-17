@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.swt.graphics.Image;
@@ -30,20 +31,20 @@ import org.eclipse.ui.progress.UIJob;
  * @since 1.0.0
  */
 public class SinceTagResolution implements IMarkerResolution2 {
-	int markerType;
-	String newVersionValue;
+	private int kind;
+	private String newVersionValue;
 	
 	public SinceTagResolution(IMarker marker) {
-		this.markerType = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
+		this.kind = ApiProblemFactory.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
 		this.newVersionValue = (String) marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 	 */
 	public String getDescription() {
-		if (IApiProblem.SINCE_TAG_INVALID == this.markerType) {
+		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
 			return NLS.bind(MarkerMessages.SinceTagResolution_invalid0, this.newVersionValue);
-		} else if (IApiProblem.SINCE_TAG_MALFORMED == this.markerType) {
+		} else if (IApiProblem.SINCE_TAG_MALFORMED == this.kind) {
 			return NLS.bind(MarkerMessages.SinceTagResolution_malformed0, this.newVersionValue);
 		} else {
 			return NLS.bind(MarkerMessages.SinceTagResolution_missing0, this.newVersionValue);
@@ -61,9 +62,9 @@ public class SinceTagResolution implements IMarkerResolution2 {
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
 	public String getLabel() {
-		if (IApiProblem.SINCE_TAG_INVALID == this.markerType) {
+		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
 			return NLS.bind(MarkerMessages.SinceTagResolution_invalid1, this.newVersionValue);
-		} else if (IApiProblem.SINCE_TAG_MALFORMED == this.markerType) {
+		} else if (IApiProblem.SINCE_TAG_MALFORMED == this.kind) {
 			return NLS.bind(MarkerMessages.SinceTagResolution_malformed1, this.newVersionValue);
 		} else {
 			return NLS.bind(MarkerMessages.SinceTagResolution_missing1, this.newVersionValue);
@@ -75,21 +76,18 @@ public class SinceTagResolution implements IMarkerResolution2 {
 	 */
 	public void run(final IMarker marker) {
 		String title = null;
-		if (IApiProblem.SINCE_TAG_INVALID == this.markerType) {
+		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
 			title = NLS.bind(MarkerMessages.SinceTagResolution_invalid2, this.newVersionValue);
-		} else if (IApiProblem.SINCE_TAG_MALFORMED == this.markerType) {
+		} else if (IApiProblem.SINCE_TAG_MALFORMED == this.kind) {
 			title = NLS.bind(MarkerMessages.SinceTagResolution_malformed2, this.newVersionValue);
 		} else {
 			title = NLS.bind(MarkerMessages.SinceTagResolution_missing2, this.newVersionValue);
 		}
 		UIJob job  = new UIJob(title) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				UpdateSinceTagOperation updateSinceTagOperation = new UpdateSinceTagOperation(
 						marker,
-						SinceTagResolution.this.markerType,
+						SinceTagResolution.this.kind,
 						SinceTagResolution.this.newVersionValue);
 				updateSinceTagOperation.run(monitor);
 				return Status.OK_STATUS;

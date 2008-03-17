@@ -65,11 +65,11 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Masks to get the original bits out of the id
 	 */
-	private static final int CATEGORY_MASK = 0xF0000000;
-	private static final int ELEMENT_KIND_MASK = 0x0F000000;
-	private static final int KIND_MASK = 0x00F00000;
-	private static final int FLAGS_MASK = 0x000FF000;
-	private static final int MESSAGE_MASK = 0x00000FFF;
+	public static final int CATEGORY_MASK = 0xF0000000;
+	public static final int ELEMENT_KIND_MASK = 0x0F000000;
+	public static final int KIND_MASK = 0x00F00000;
+	public static final int FLAGS_MASK = 0x000FF000;
+	public static final int MESSAGE_MASK = 0x00000FFF;
 	
 	/**
 	 * Constructor

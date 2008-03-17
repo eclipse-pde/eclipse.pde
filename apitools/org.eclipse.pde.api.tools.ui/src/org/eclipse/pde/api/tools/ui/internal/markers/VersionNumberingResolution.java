@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
@@ -29,13 +30,13 @@ import org.eclipse.ui.progress.UIJob;
  * @since 1.0.0
  */
 public class VersionNumberingResolution implements IMarkerResolution2 {
-	String newVersionValue;
+	private String newVersionValue;
 	// major or minor version
 	private int kind;
 	
 	public VersionNumberingResolution(IMarker marker) {
 		this.newVersionValue = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null);
-		this.kind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
+		this.kind = ApiProblemFactory.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
