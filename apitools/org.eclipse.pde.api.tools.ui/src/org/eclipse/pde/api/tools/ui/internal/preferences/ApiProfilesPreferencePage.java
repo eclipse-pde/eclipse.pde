@@ -101,7 +101,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiProfilesPreferencePage_0, 2, 200);
 		SWTFactory.createVerticalSpacer(comp, 1);
 		
-		Composite lcomp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH);
+		Composite lcomp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH, 0, 0);
 		SWTFactory.createWrapLabel(lcomp, PreferenceMessages.ApiProfilesPreferencePage_1, 2);
 		Table table = new Table(lcomp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));

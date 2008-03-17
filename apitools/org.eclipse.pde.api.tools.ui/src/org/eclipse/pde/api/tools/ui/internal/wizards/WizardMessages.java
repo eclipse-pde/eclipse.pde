@@ -32,6 +32,7 @@ public class WizardMessages extends NLS {
 	public static String ApiProfileWizardPage_copy_api_components;
 	public static String ApiProfileWizardPage_copy_profile_attribs;
 	public static String ApiProfileWizardPage_create_working_copy;
+	public static String ApiProfileWizardPage_location_needs_reset;
 	public static String ApiProfileWizardPage_profile_with_that_name_exists;
 	public static String ApiToolingSetupWizard_0;
 	public static String ApiToolingSetupWizardPage_0;

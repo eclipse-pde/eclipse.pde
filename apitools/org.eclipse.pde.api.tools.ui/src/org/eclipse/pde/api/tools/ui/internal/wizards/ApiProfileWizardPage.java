@@ -402,6 +402,7 @@ public class ApiProfileWizardPage extends WizardPage {
 			getContainer().run(true, true, op);
 			treeviewer.setInput(getCurrentComponents());
 			treeviewer.refresh();
+			setPageComplete(pageValid());
 		} 
 		catch (InvocationTargetException ite) {} 
 		catch (InterruptedException ie) {}
@@ -439,6 +440,10 @@ public class ApiProfileWizardPage extends WizardPage {
 				setErrorMessage(status.getMessage());
 				return false;
 			}
+		}
+		else {
+			setErrorMessage(WizardMessages.ApiProfileWizardPage_location_needs_reset);
+			return false;
 		}
 		return true;
 	}
