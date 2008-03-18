@@ -208,7 +208,8 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		SWTFactory.createWrapLabel(comp, PropertiesMessages.ApiFiltersPropertyPage_55, 2);
 		Tree tree = new Tree(comp, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 200;
+		gd.widthHint = 275;
+		gd.heightHint = 300;
 		tree.setLayoutData(gd);
 		fViewer = new TreeViewer(tree);
 		fViewer.setAutoExpandLevel(2);
