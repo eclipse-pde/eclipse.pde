@@ -233,6 +233,7 @@ public class ApiProfileWizardPage extends WizardPage {
 	}
 	
 	private IApiProfile fProfile = null;
+	private String originalname = null;
 	
 	/**
 	 * widgets
@@ -365,6 +366,7 @@ public class ApiProfileWizardPage extends WizardPage {
 	 */
 	protected void initialize() {
 		if(fProfile != null) {
+			originalname = fProfile.getName();
 			WorkingCopyOperation op = new WorkingCopyOperation(fProfile);
 			try {
 				getContainer().run(false, false, op);
@@ -413,17 +415,7 @@ public class ApiProfileWizardPage extends WizardPage {
 	 */
 	protected boolean pageValid() {
 		setErrorMessage(null);
-		String text = nametext.getText().trim();
-		if(text.length() < 1) {
-			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
-			return false;
-		}
-		if((fProfile != null && !text.equals(fProfile.getName())) && 
-				((ApiProfileManager)ApiPlugin.getDefault().getApiProfileManager()).isExistingProfileName(text)) {
-			setErrorMessage(WizardMessages.ApiProfileWizardPage_profile_with_that_name_exists);
-			return false;
-		}
-		text = locationcombo.getText().trim();
+		String text = locationcombo.getText().trim();
 		if(text.length() < 1) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_23);
 			reloadbutton.setEnabled(false);
@@ -434,7 +426,16 @@ public class ApiProfileWizardPage extends WizardPage {
 			reloadbutton.setEnabled(false);
 			return false;
 		}
-		if (fProfile != null) {
+		text = nametext.getText().trim();
+		if(text.length() < 1) {
+			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
+			return false;
+		}
+		if(!text.equals(originalname) && ((ApiProfileManager)ApiPlugin.getDefault().getApiProfileManager()).isExistingProfileName(text)) {
+			setErrorMessage(WizardMessages.ApiProfileWizardPage_profile_with_that_name_exists);
+			return false;
+		}
+		if(fProfile != null) {	
 			IStatus status = fProfile.getExecutionEnvironmentStatus();
 			if (status.getSeverity() == IStatus.ERROR) {
 				setErrorMessage(status.getMessage());
