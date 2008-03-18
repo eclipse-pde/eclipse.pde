@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.problems.tests;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -131,31 +130,31 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testGetUsageMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", 
-				new String[] {"foo"}, null, null, -1, -1, -1, IMarker.SEVERITY_INFO, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_EXTEND);
+				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_EXTEND);
 		String message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally extends foo", new String[0])));
 		problem = ApiProblemFactory.newApiUsageProblem("", 
-				new String[] {"foo"}, null, null, -1, -1, -1, IMarker.SEVERITY_INFO, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally implements foo", new String[0])));
 		problem = ApiProblemFactory.newApiUsageProblem("", 
-				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IMarker.SEVERITY_INFO, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_OVERRIDE);
+				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_OVERRIDE);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally overrides foo.bar", new String[0])));
 		problem = ApiProblemFactory.newApiUsageProblem("", 
-				new String[] {"foo"}, null, null, -1, -1, -1, IMarker.SEVERITY_INFO, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_INSTANTIATE);
+				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_INSTANTIATE);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally instantiates foo", new String[0])));
 		problem = ApiProblemFactory.newApiUsageProblem("", 
-				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IMarker.SEVERITY_INFO, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_REFERENCE);
+				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_REFERENCE);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
