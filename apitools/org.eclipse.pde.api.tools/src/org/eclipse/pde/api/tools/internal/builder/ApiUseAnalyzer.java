@@ -74,14 +74,45 @@ import com.ibm.icu.text.MessageFormat;
 public class ApiUseAnalyzer {
 	
 	/**
-	 * Empty reference collection
+	 * The result of a compatibility check
 	 */
-	private static final IApiProblem[] EMPTY = new IApiProblem[0];
-	
-	/**
-	 * Debugging flag
-	 */
-	private static final boolean DEBUG = Util.DEBUG;
+	public class CompatibilityResult {
+		
+		/**
+		 * Required component.
+		 */
+		private IApiComponent fComponent;
+		
+		/**
+		 * Unresolved references, possibly empty.
+		 */
+		private IReference[] fUnresolved;
+		
+		
+		CompatibilityResult(IApiComponent component, IReference[] unresolved) {
+			fComponent = component;
+			fUnresolved = unresolved;
+		}
+		
+		/**
+		 * Returns the component that was analyzed for compatibility.
+		 * 
+		 * @return required component
+		 */
+		public IApiComponent getRequiredComponent() {
+			return fComponent;
+		}
+		
+		/**
+		 * Returns any references that could not be resolved by the required component.
+		 * An empty collection indicates that it is compatible.
+		 * 
+		 * @return unresolved references, possibly empty
+		 */
+		public IReference[] getUnresolvedReferences() {
+			return fUnresolved;
+		}
+	}
 
 	/**
 	 * Collects search criteria from an API description for usage problems.
@@ -203,6 +234,17 @@ public class ApiUseAnalyzer {
 			return fFlags;
 		}
 	}
+	
+	/**
+	 * Empty reference collection
+	 */
+	private static final IApiProblem[] EMPTY = new IApiProblem[0];
+	
+	/**
+	 * Debugging flag
+	 */
+	private static final boolean DEBUG = Util.DEBUG;
+	
 	/**
 	 * Searches the specified scope within the the specified component and returns
 	 * reference objects identify illegal API use.
@@ -219,13 +261,14 @@ public class ApiUseAnalyzer {
 		if (conditions.length > 0) {
 			IApiSearchEngine engine = Factory.newSearchEngine();
 			IApiSearchResult[] results = engine.search(scope, conditions, monitor);
+			IApiProblem problem = null;
+			IReference[] references = null;
+			ProblemDescriptor desc = null;
 			for (int i = 0; i < results.length; i++) {
-				IApiSearchResult result = results[i];
-				IReference[] references = result.getReferences();
-				ProblemDescriptor desc = (ProblemDescriptor) result.getSearchCriteria().getUserData();
+				references = results[i].getReferences();
+				desc = (ProblemDescriptor) results[i].getSearchCriteria().getUserData();
 				for (int j = 0; j < references.length; j++) {
-					IReference reference = references[j];
-					IApiProblem problem = createProblem(desc.getKind(), desc.getElementType(), desc.getFlags(), reference);
+					problem = createProblem(desc.getKind(), desc.getElementType(), desc.getFlags(), references[j]);
 					if (problem != null) {
 						problems.add(problem);
 					}
@@ -325,6 +368,15 @@ public class ApiUseAnalyzer {
 		return (IApiSearchCriteria[]) conditions.toArray(new IApiSearchCriteria[conditions.size()]);
 	}
 	
+	/**
+	 * Creates a new {@link IApiSearchCriteria} for a leak kind and adds it to the 
+	 * collector specified
+	 * @param conditions
+	 * @param refKind
+	 * @param problemKind
+	 * @param elementType
+	 * @param flags
+	 */
 	private void addLeakCondition(List conditions, int refKind, int problemKind, int elementType, int flags) {
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
 		criteria.setReferenceKinds(refKind);
@@ -333,44 +385,6 @@ public class ApiUseAnalyzer {
 		criteria.setSourceModifiers(Flags.AccPublic | Flags.AccProtected);	
 		criteria.setUserData(new ProblemDescriptor(problemKind, elementType, flags));
 		conditions.add(criteria);
-	}
-	
-	public class CompatibilityResult {
-		
-		/**
-		 * Required component.
-		 */
-		private IApiComponent fComponent;
-		
-		/**
-		 * Unresolved references, possibly empty.
-		 */
-		private IReference[] fUnresolved;
-		
-		
-		CompatibilityResult(IApiComponent component, IReference[] unresolved) {
-			fComponent = component;
-			fUnresolved = unresolved;
-		}
-		
-		/**
-		 * Returns the component that was analyzed for compatibility.
-		 * 
-		 * @return required component
-		 */
-		public IApiComponent getRequiredComponent() {
-			return fComponent;
-		}
-		
-		/**
-		 * Returns any references that could not be resolved by the required component.
-		 * An empty collection indicates that it is compatible.
-		 * 
-		 * @return unresolved references, possibly empty
-		 */
-		public IReference[] getUnresolvedReferences() {
-			return fUnresolved;
-		}
 	}
 	
 	/**
@@ -480,38 +494,6 @@ public class ApiUseAnalyzer {
 		}
 		return map;
 	}
-	
-	/**
-	 * Searches the specified scope within the the specified component and returns
-	 * reference objects identify API leaks.
-	 * 
-	 * @param profile profile being analyzed
-	 * @param component component being analyzed
-	 * @param scope scope within the component to analyze
-	 * @param monitor progress monitor
-	 * @exception CoreException if something goes wrong
-	 * 
-	 * TODO: this will be combined with findIllegalApiUse to do one search that returns problems
-	 */
-	public IReference[] findApiLeaks(IApiProfile profile, IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor)  throws CoreException {
-		IApiSearchCriteria[] conditions = new IApiSearchCriteria[1];
-		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setReferenceKinds(
-			ReferenceModifiers.REF_EXTENDS |
-			ReferenceModifiers.REF_IMPLEMENTS |
-			ReferenceModifiers.REF_FIELDDECL |
-			ReferenceModifiers.REF_PARAMETER |
-			ReferenceModifiers.REF_RETURNTYPE );
-		criteria.setReferencedRestrictions(VisibilityModifiers.PRIVATE, RestrictionModifiers.ALL_RESTRICTIONS);
-		criteria.setSourceRestrictions(VisibilityModifiers.API, RestrictionModifiers.ALL_RESTRICTIONS);
-		criteria.setSourceModifiers(Flags.AccPublic | Flags.AccProtected);
-		conditions[0] = criteria;
-		if (conditions.length > 0) {
-			IApiSearchEngine engine = Factory.newSearchEngine();
-			return getReferences(engine.search(scope, conditions, monitor));
-		}
-		return new IReference[0];
-	}	
 	
 	/**
 	 * Creates an {@link IApiProblem} for the given illegal reference.

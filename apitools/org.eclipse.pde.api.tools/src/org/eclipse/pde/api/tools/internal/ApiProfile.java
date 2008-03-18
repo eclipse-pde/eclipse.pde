@@ -316,6 +316,7 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	 * @see IApiProfile#addApiComponents(org.eclipse.pde.api.tools.model.component.IApiComponent[], boolean)
 	 */
 	public void addApiComponents(IApiComponent[] components) {
+		HashSet ees = new HashSet();
 		for (int i = 0; i < components.length; i++) {
 			BundleApiComponent component = (BundleApiComponent) components[i];
 			if (component.isSourceComponent()) {
@@ -325,8 +326,9 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 			fState.addBundle(description);
 			this.storeBundleDescription(description, component);
 			fComponentsById.put(component.getId(), component);
+			ees.addAll(Arrays.asList(component.getExecutionEnvironments()));
 		}
-		resolveSystemLibrary();
+		resolveSystemLibrary(ees);
 		fState.resolve();
 		if (DEBUG) {
 			ResolverError[] errors = getErrors();
@@ -376,20 +378,11 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	 * Resolves and initializes the system library to use based on API component requirements.
 	 * Only works when running in the framework. Has no effect if not running in the framework.
 	 */
-	private void resolveSystemLibrary() {
+	private void resolveSystemLibrary(HashSet ees) {
 		if (ApiPlugin.isRunningInFramework() && fAutoResolve) {
 			IStatus error = null;
-			IApiComponent[] components = getApiComponents();
-			Set requiredEnvironments = new HashSet();
-			for (int i = 0; i < components.length; i++) {
-				IApiComponent component = components[i];
-				String[] environments = component.getExecutionEnvironments();
-				for (int j = 0; j < environments.length; j++) {
-					requiredEnvironments.add(environments[j]);
-				}
-			}
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-			Iterator iterator = requiredEnvironments.iterator();
+			Iterator iterator = ees.iterator();
 			Map VMsToEEs = new HashMap();
 			while (iterator.hasNext()) {
 				String ee = (String) iterator.next();
@@ -454,7 +447,7 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 			}
 			if (error == null) {
 				// build status for unbound required EE's
-				Set missing = new HashSet(requiredEnvironments);
+				Set missing = new HashSet(ees);
 				Set covered = new HashSet((Set)VMsToEEs.get(bestFit));
 				missing.removeAll(covered);
 				if (missing.isEmpty()) {
@@ -1022,7 +1015,12 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	 */
 	private void rebindVM() {
 		fVMBinding = null;
-		resolveSystemLibrary();
+		IApiComponent[] components = getApiComponents();
+		HashSet ees = new HashSet();
+		for (int i = 0; i < components.length; i++) {
+			ees.addAll(Arrays.asList(components[i].getExecutionEnvironments()));
+		}
+		resolveSystemLibrary(ees);
 	}
 	
 	/* (non-Javadoc)

@@ -16,7 +16,6 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.builder.ApiUseAnalyzer;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
@@ -432,34 +431,5 @@ public class SearchEngineTests extends TestCase {
 		assertTrue("missing callLeafInterface", set.contains("callLeafInterface"));
 		assertEquals("Wrong number of illegal references", 2, refs.length);
 	}		
-	
-	/**
-	 * Tests API leak detection.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testAPILeaks() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
-		IApiComponent componentA = profile.getApiComponent("component.a");
-		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentA});
-		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
-		IReference[] refs = analyzer.findApiLeaks(profile, componentA, sourceScope, null);
-		Set<String> set = new HashSet<String>();
-		for (int i = 0; i < refs.length; i++) {
-			set.add(refs[i].getSourceLocation().getMember().getName());
-		}
-		// fields
-		assertTrue("missing leakPublicField", set.contains("leakPublicField"));
-		assertTrue("missing leakProtectedField", set.contains("leakProtectedField"));
-		// methods
-		assertTrue("missing leakReturnType", set.contains("leakReturnType"));
-		assertTrue("missing leakParameter", set.contains("leakParameter"));
-		assertTrue("missing protectedReturnTypeLeak", set.contains("protectedReturnTypeLeak"));
-		assertTrue("missing protectedParameterLeak", set.contains("protectedParameterLeak"));
-		
-		// There are 18 leaks (3 x each leak since there is 1 top level and 2 innner classes 
-		// that make the same leaks)
-		assertEquals("Wrong number of illegal references", 18, refs.length);		
-	}
 }
 
