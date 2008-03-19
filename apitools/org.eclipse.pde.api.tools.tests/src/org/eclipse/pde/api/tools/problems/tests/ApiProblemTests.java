@@ -12,11 +12,14 @@ package org.eclipse.pde.api.tools.problems.tests;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblem;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 
 /**
@@ -247,10 +250,20 @@ public class ApiProblemTests extends AbstractApiTest {
 	/**
 	 * Tests getting the severity attribute
 	 */
-	public void _testGetSeverity() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_BINARY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
-		assertNotNull("there should have been a new problem created", problem);
-		assertEquals("the severity should be WARNING (no framework running)", IMarker.SEVERITY_WARNING, problem.getSeverity());
+	public void testGetSeverity() {
+		if(ApiPlugin.isRunningInFramework()) {
+			Preferences store = ApiPlugin.getDefault().getPluginPreferences();
+			store.setValue(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_IGNORE);
+			IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+			assertNotNull("there should have been a new problem created", problem);
+			assertEquals("the severity should be IGNORE", IMarker.SEVERITY_INFO, problem.getSeverity());
+			store.setValue(IApiProblemTypes.ILLEGAL_IMPLEMENT, store.getDefaultString(IApiProblemTypes.ILLEGAL_IMPLEMENT));
+		}
+		else {
+			IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+			assertNotNull("there should have been a new problem created", problem);
+			assertEquals("the severity should be WARNING (no framework running)", IMarker.SEVERITY_WARNING, problem.getSeverity());
+		}
 	}
 	
 	/**

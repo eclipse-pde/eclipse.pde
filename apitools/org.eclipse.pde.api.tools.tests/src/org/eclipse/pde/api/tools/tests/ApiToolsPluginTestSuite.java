@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.pde.api.tools.model.tests.ApiFilterStoreTests;
+import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;
 import org.eclipse.pde.api.tools.util.tests.ApiDescriptionProcessorTests;
 import org.eclipse.pde.api.tools.util.tests.ApiProfileManagerTests;
 import org.eclipse.pde.api.tools.util.tests.PreferencesTests;
@@ -45,5 +46,6 @@ public class ApiToolsPluginTestSuite extends TestSuite {
 		addTest(new TestSuite(PreferencesTests.class));
 		addTest(new TestSuite(ApiProfileManagerTests.class));
 		addTest(new TestSuite(ApiFilterStoreTests.class));
+		addTest(new TestSuite(ApiProblemTests.class));
 	}
 }
