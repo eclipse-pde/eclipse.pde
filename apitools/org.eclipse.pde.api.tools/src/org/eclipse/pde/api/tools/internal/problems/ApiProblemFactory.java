@@ -526,7 +526,7 @@ public class ApiProblemFactory {
 				}
 			}
 			case IApiProblem.CATEGORY_BINARY: {
-				return Util.getDeltaPrefererenceKey(problem.getElementKind(), problem.getKind(), problem.getKind());
+				return Util.getDeltaPrefererenceKey(problem.getElementKind(), problem.getKind(), problem.getFlags());
 			}
 		}
 		return null;
