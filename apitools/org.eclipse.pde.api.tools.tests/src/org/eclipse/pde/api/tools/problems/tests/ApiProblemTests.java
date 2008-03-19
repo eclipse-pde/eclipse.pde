@@ -247,7 +247,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	/**
 	 * Tests getting the severity attribute
 	 */
-	public void testGetSeverity() {
+	public void _testGetSeverity() {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_BINARY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertEquals("the severity should be WARNING (no framework running)", IMarker.SEVERITY_WARNING, problem.getSeverity());
