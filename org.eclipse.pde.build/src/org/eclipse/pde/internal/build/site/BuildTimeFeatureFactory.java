@@ -51,7 +51,7 @@ public class BuildTimeFeatureFactory /*extends BaseFeatureFactory */implements /
 			String newVersion = QualifierReplacer.replaceQualifierInVersion(feature.getVersion(), feature.getId(), qualifier, site != null ? site.getFeatureVersions() : null);
 			if (newVersion != null) {
 				//a feature version ending in qualifier using context will be further modified based on its included plugins				
-				if (feature.getVersion().endsWith(PROPERTY_QUALIFIER) && (qualifier == null || qualifier.equalsIgnoreCase(PROPERTY_CONTEXT))) {
+				if (feature.getVersion().endsWith(PROPERTY_QUALIFIER) && (qualifier == null || !qualifier.equalsIgnoreCase(PROPERTY_NONE))) {
 					int idx = feature.getVersion().lastIndexOf("."); //$NON-NLS-1$
 					feature.setContextQualifierLength(newVersion.length() - idx - 1);
 				}
