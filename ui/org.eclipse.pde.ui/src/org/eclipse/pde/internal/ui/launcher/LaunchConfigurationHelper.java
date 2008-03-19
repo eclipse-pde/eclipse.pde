@@ -142,11 +142,23 @@ public class LaunchConfigurationHelper {
 			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	/**
+	 * 
+	 * Computes the bundles to list inside the config.ini's osgi.bundles entry
+	 * 
+	 * @param bundleList the list of bundles obtained from the target's config.ini
+	 * @param map
+	 * @return a string that represents the osgi.bundles entry within a config.ini
+	 */
 	private static String computeOSGiBundles(String bundleList, Map map) {
+
+		// if p2 and only simple configurator and 
+		// if simple configurator isn't selected & isn't in bundle list... hack it
+
 		// if using p2's simple configurator, a bundles.txt will be written, so we only need simple configurator in the config.ini
-		if (bundleList.indexOf("org.eclipse.equinox.simpleconfigurator") != -1) { //$NON-NLS-1$
+		if (map.get("org.eclipse.equinox.simpleconfigurator") != null) //$NON-NLS-1$
 			return "org.eclipse.equinox.simpleconfigurator@1:start"; //$NON-NLS-1$
-		}
+
 		StringBuffer buffer = new StringBuffer();
 		Set initialBundleSet = new HashSet();
 		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
@@ -163,6 +175,7 @@ public class LaunchConfigurationHelper {
 				initialBundleSet.add(id);
 			}
 		}
+
 		// if org.eclipse.update.configurator is not included (LIKE IN BASIC RCP APPLICATION), then write out all bundles in osgi.bundles - bug 170772
 		if (!initialBundleSet.contains("org.eclipse.update.configurator")) { //$NON-NLS-1$
 			initialBundleSet.add("org.eclipse.osgi"); //$NON-NLS-1$
@@ -172,10 +185,16 @@ public class LaunchConfigurationHelper {
 				if (!initialBundleSet.contains(id)) {
 					if (buffer.length() > 0)
 						buffer.append(',');
+
 					buffer.append(id);
+					// if we are working with core.runtime, we need to ensure it's started
+					if ("org.eclipse.core.runtime".equals(id)) { //$NON-NLS-1$
+						buffer.append("@start"); //$NON-NLS-1$
+					}
 				}
 			}
 		}
+
 		return buffer.toString();
 	}
 

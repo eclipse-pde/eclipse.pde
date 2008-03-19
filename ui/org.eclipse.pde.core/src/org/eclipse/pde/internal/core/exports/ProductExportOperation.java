@@ -395,6 +395,11 @@ public class ProductExportOperation extends FeatureExportOperation {
 							if (buffer.length() > 0)
 								buffer.append(","); //$NON-NLS-1$
 							buffer.append(id);
+
+							// ensure core.runtime is always started
+							if ("org.eclipse.core.runtime".equals(id)) { //$NON-NLS-1$
+								buffer.append("@start"); //$NON-NLS-1$
+							}
 						}
 					}
 				} catch (InvalidSyntaxException e) {
