@@ -34,6 +34,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
+import org.eclipse.pde.api.tools.tests.util.FileUtils;
 
 /**
  * Tests the {@link ApiFilterStore} and {@link ApiProblemFilter}s
@@ -58,7 +59,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
     		assertNotNull("no project", project);
 			IProject project2 = project.getProject();
     		IPath settings = project2.getFullPath().append(".settings");
-    		importFileFromDirectory(dest, settings, new NullProgressMonitor());
+    		FileUtils.importFileFromDirectory(dest, settings, new NullProgressMonitor());
     		IResource filters = project2.findMember("/.settings/.api_filters", true);
     		assertNotNull("the .api_filters file must exist in the testing project", filters);
     	}
@@ -78,7 +79,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
     		IJavaProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME);
     		IPackageFragmentRoot srcroot = project.findPackageFragmentRoot(project.getProject().getFullPath().append("src"));
     		assertNotNull("the default src root must exist", srcroot);
-    		importFileFromDirectory(dest, srcroot.getPath(), new NullProgressMonitor());
+    		FileUtils.importFileFromDirectory(dest, srcroot.getPath(), new NullProgressMonitor());
     		IType type = project.findType("x.y.z.C4");
     		assertNotNull("the type C4 must exist in the testing project", type);
     	}
@@ -246,7 +247,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	public void testImportJar() {
 		try {
 			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-			importFileFromDirectory(PLUGIN_LOC.append("component_c_1.0.0.jar").toFile(), project.getFullPath(), new NullProgressMonitor());
+			FileUtils.importFileFromDirectory(PLUGIN_LOC.append("component_c_1.0.0.jar").toFile(), project.getFullPath(), new NullProgressMonitor());
 			IResource res = project.findMember("component_c_1.0.0.jar");
 			assertNotNull("the jar should exist in the project dir", res);
 		}

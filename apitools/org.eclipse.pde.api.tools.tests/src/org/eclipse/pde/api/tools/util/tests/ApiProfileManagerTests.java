@@ -67,6 +67,8 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
+import org.eclipse.pde.api.tools.tests.util.FileUtils;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -285,11 +287,11 @@ public class ApiProfileManagerTests extends AbstractApiTest {
         }
         JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.ADDED, 0, IJavaElement.JAVA_PROJECT);
         // create project and import source
-        fProject = createPluginProject(TESTING_PLUGIN_PROJECT_NAME, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
+        fProject = ProjectUtils.createPluginProject(TESTING_PLUGIN_PROJECT_NAME, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
         Object obj = waiter.waitForEvent();
         assertNotNull("the added event was not received", obj);
         assertNotNull("The java project must have been created", fProject);
-        fSrcroot = addSourceContainer(fProject, SRC_FOLDER);
+        fSrcroot = ProjectUtils.addSourceContainer(fProject, ProjectUtils.SRC_FOLDER);
         assertNotNull("the src root must have been created", fSrcroot);
         IPackageFragment fragment = fSrcroot.createPackageFragment("a.b.c", true, monitor);
 		assertNotNull("the package fragment a.b.c cannot be null", fragment);
@@ -297,7 +299,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
         // add rt.jar
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
         assertNotNull("No default JRE", vm);
-        addContainerEntry(fProject, new Path(JavaRuntime.JRE_CONTAINER));
+        ProjectUtils.addContainerEntry(fProject, new Path(JavaRuntime.JRE_CONTAINER));
         IApiProfile profile = getWorkspaceProfile();
         assertNotNull("the workspace profile cannot be null", profile);
         IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
@@ -351,7 +353,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 		try {
 			IPackageFragment fragment = fSrcroot.getPackageFragment("a.b.c");
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass1.java", IJavaElementDelta.ADDED, 0, IJavaElement.COMPILATION_UNIT);
-			importFileFromDirectory(SRC_LOC.append("TestClass1.java").toFile(), fragment.getPath(), new NullProgressMonitor());
+			FileUtils.importFileFromDirectory(SRC_LOC.append("TestClass1.java").toFile(), fragment.getPath(), new NullProgressMonitor());
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the added event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
@@ -436,7 +438,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 		try {			
 			NullProgressMonitor monitor = new NullProgressMonitor();
 			IPackageFragment fragment = fSrcroot.getPackageFragment("a.b.c");
-			importFileFromDirectory(SRC_LOC.append("TestClass2.java").toFile(), fragment.getPath(), monitor);
+			FileUtils.importFileFromDirectory(SRC_LOC.append("TestClass2.java").toFile(), fragment.getPath(), monitor);
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass2.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
 			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestClass2.java"));
 			assertNotNull("TestClass2 must exist in the test project", element);
@@ -470,7 +472,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 		try {
 			NullProgressMonitor monitor = new NullProgressMonitor();
 			IPackageFragment fragment = fSrcroot.getPackageFragment("a.b.c");
-			importFileFromDirectory(SRC_LOC.append("TestClass3.java").toFile(), fragment.getPath(), monitor);
+			FileUtils.importFileFromDirectory(SRC_LOC.append("TestClass3.java").toFile(), fragment.getPath(), monitor);
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass3.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
 			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestClass3.java"));
 			assertNotNull("TestClass3 must exist in the test project", element);
@@ -508,7 +510,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 		try {
 			NullProgressMonitor monitor = new NullProgressMonitor();
 			IPackageFragment fragment = fSrcroot.getPackageFragment("a.b.c");
-			importFileFromDirectory(SRC_LOC.append("TestClass1.java").toFile(), fragment.getPath(), monitor);
+			FileUtils.importFileFromDirectory(SRC_LOC.append("TestClass1.java").toFile(), fragment.getPath(), monitor);
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass1.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
 			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestClass1.java"));
 			assertNotNull("TestClass1 must exist in the test project", element);
@@ -545,7 +547,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 		try {
 			NullProgressMonitor monitor = new NullProgressMonitor();
 			IPackageFragment fragment = fSrcroot.getPackageFragment("a.b.c");
-			importFileFromDirectory(SRC_LOC.append("TestField9.java").toFile(), fragment.getPath(), monitor);
+			FileUtils.importFileFromDirectory(SRC_LOC.append("TestField9.java").toFile(), fragment.getPath(), monitor);
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestField9.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
 			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestField9.java"));
 			assertNotNull("TestField9 must exist in the test project", element);
@@ -674,7 +676,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 		try {
 			IFolder folder = fProject.getProject().getFolder("libx");
 			folder.create(false, true, null);
-			importFileFromDirectory(PLUGIN_LOC.append("component.a_1.0.0.jar").toFile(), folder.getFullPath(), null);
+			FileUtils.importFileFromDirectory(PLUGIN_LOC.append("component.a_1.0.0.jar").toFile(), folder.getFullPath(), null);
 			IPath libPath = folder.getFullPath().append("component.a_1.0.0.jar");
 			IClasspathEntry entry = JavaCore.newLibraryEntry(libPath, null, null);
 			IApiComponent component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
@@ -682,7 +684,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			int before  = component.getClassFileContainers().length;
 			// add to classpath
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("component.a_1.0.0.jar", IJavaElementDelta.CHANGED, IJavaElementDelta.F_ADDED_TO_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
-			addToClasspath(fProject, entry);
+			ProjectUtils.addToClasspath(fProject, entry);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the event for class path addition not received", obj);
 			// add to manifest bundle classpath
@@ -717,7 +719,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			int before  = component.getClassFileContainers().length;
 			// remove classpath entry
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("component.a_1.0.0.jar", IJavaElementDelta.CHANGED, IJavaElementDelta.F_REMOVED_FROM_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
-			removeFromClasspath(fProject, entry);
+			ProjectUtils.removeFromClasspath(fProject, entry);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the added event for the package fragment was not received", obj);
 			// remove from bundle class path
@@ -746,7 +748,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateDefaultOutputFolderChanged() {
 		try {
-			IContainer container = addFolderToProject(fProject.getProject(), "bin2");
+			IContainer container = ProjectUtils.addFolderToProject(fProject.getProject(), "bin2");
 			assertNotNull("the new output folder cannot be null", container);
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED | IJavaElementDelta.F_CLASSPATH_CHANGED, IJavaElement.JAVA_PROJECT);
 			IApiComponent component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
@@ -769,9 +771,9 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateOutputFolderSrcFolderChanged() {
 		try {
-			IContainer container = addFolderToProject(fProject.getProject(), "bin3");
+			IContainer container = ProjectUtils.addFolderToProject(fProject.getProject(), "bin3");
 			assertNotNull("the new output location cannot be null", container);
-			IPackageFragmentRoot src2 = addSourceContainer(fProject, "src2");
+			IPackageFragmentRoot src2 = ProjectUtils.addSourceContainer(fProject, "src2");
 			assertNotNull("the new source folder cannot be null", src2);
 			assertNull("the default output location should be 'bin2' (implicit as null)", src2.getRawClasspathEntry().getOutputLocation());
 			IClasspathEntry entry = JavaCore.newSourceEntry(src2.getPath(), new IPath[]{}, container.getFullPath());
@@ -779,7 +781,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			IApiComponent component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getClassFileContainers().length;
-			addToClasspath(fProject, entry);
+			ProjectUtils.addToClasspath(fProject, entry);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the changed event for the package fragment root (classpath) was not received", obj);
 			// add to bundle class path

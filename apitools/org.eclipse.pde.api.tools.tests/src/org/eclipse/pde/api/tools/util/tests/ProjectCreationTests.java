@@ -24,6 +24,8 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
+import org.eclipse.pde.api.tools.tests.util.FileUtils;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Creates the {@link IJavaProject} used for testing in the target workspace
@@ -60,15 +62,15 @@ public class ProjectCreationTests extends AbstractApiTest {
             pro.delete(true, true, null);
         }
         // create project and import source
-        project = createJavaProject(TESTING_PROJECT_NAME, null);
+        project = ProjectUtils.createJavaProject(TESTING_PROJECT_NAME, null);
         assertNotNull("The java project must have been created", project);
-        srcroot = addSourceContainer(project, SRC_FOLDER);
+        srcroot = ProjectUtils.addSourceContainer(project, ProjectUtils.SRC_FOLDER);
         assertNotNull("the src root must have been created", srcroot);
 
         // add rt.jar
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
         assertNotNull("No default JRE", vm);
-        addContainerEntry(project, new Path(JavaRuntime.JRE_CONTAINER));
+        ProjectUtils.addContainerEntry(project, new Path(JavaRuntime.JRE_CONTAINER));
     }
 
     /**
@@ -80,7 +82,7 @@ public class ProjectCreationTests extends AbstractApiTest {
     		assertTrue("the source dir must exist", dest.exists());
     		assertTrue("the source dir must be a directory", dest.isDirectory());
     		assertNotNull("the srcroot for the test java project must not be null", srcroot);
-    		importFilesFromDirectory(dest, srcroot.getPath().append("javadoc"), new NullProgressMonitor());
+    		FileUtils.importFilesFromDirectory(dest, srcroot.getPath().append("javadoc"), new NullProgressMonitor());
     		//try to look up a file to test if it worked
     		IType type = project.findType("javadoc.JavadocTestClass1", new NullProgressMonitor());
     		assertNotNull("the JavadocTestClass1 type should exist in the javadoc package", type);
@@ -101,7 +103,7 @@ public class ProjectCreationTests extends AbstractApiTest {
     		assertTrue("the original source dir must exist", dest.exists());
     		assertTrue("the original source dir must be a directory", dest.isDirectory());
     		assertNotNull("the srcroot for the test java project must not be null", srcroot);
-    		importFilesFromDirectory(dest, srcroot.getPath().append("javadoc").append("orig"), new NullProgressMonitor());
+    		FileUtils.importFilesFromDirectory(dest, srcroot.getPath().append("javadoc").append("orig"), new NullProgressMonitor());
     		//try to look up a file to test if it worked
     		IType type = project.findType("javadoc.JavadocTestClass1", new NullProgressMonitor());
     		assertNotNull("the JavadocTestClass1 type should exist in the javadoc package", type);
@@ -120,7 +122,7 @@ public class ProjectCreationTests extends AbstractApiTest {
     		assertTrue("the source dir must exist", dest.exists());
     		assertTrue("the source dir must be a directory", dest.isDirectory());
     		assertNotNull("the srcroot for the test java project must not be null", srcroot);
-    		importFilesFromDirectory(dest, srcroot.getPath().append("a").append("b").append("c"), new NullProgressMonitor());
+    		FileUtils.importFilesFromDirectory(dest, srcroot.getPath().append("a").append("b").append("c"), new NullProgressMonitor());
     	}
     	catch (Exception e) {
     		fail(e.getMessage());
