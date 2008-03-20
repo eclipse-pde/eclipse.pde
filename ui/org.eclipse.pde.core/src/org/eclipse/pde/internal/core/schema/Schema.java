@@ -654,7 +654,7 @@ public class Schema extends PlatformObject implements ISchema {
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("documentation") && !fAbbreviated) { //$NON-NLS-1$
 					element.setDescription(getNormalizedText(child.getFirstChild().getNodeValue()));
-				} else if (child.getNodeName().equals("appInfo")) { //$NON-NLS-1$
+				} else if (child.getNodeName().equals("appInfo") || child.getNodeName().equals("appinfo")) { //$NON-NLS-1$ //$NON-NLS-2$
 					NodeList infos = child.getChildNodes();
 					for (int j = 0; j < infos.getLength(); j++) {
 						Node meta = infos.item(j);
