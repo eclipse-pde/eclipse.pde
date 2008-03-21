@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.pde.ui" version="1">
+    <resource path="src/org/eclipse/pde/ui/launcher/IPDELauncherConstants.java">
+        <filter id="134742272" message="Invalid @since tag: 3.4; the expected @since tag value is  4.0" severity="2"/>
+    </resource>
+</component>
