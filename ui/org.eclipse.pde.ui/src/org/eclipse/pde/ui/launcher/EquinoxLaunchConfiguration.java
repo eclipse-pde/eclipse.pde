@@ -65,7 +65,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		Properties properties = new Properties();
 		properties.setProperty("osgi.install.area", "file:" + TargetPlatform.getLocation()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.put("osgi.framework", LaunchConfigurationHelper.getBundleURL("org.eclipse.osgi", fAllBundles)); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("osgi.framework", LaunchConfigurationHelper.getBundleURL("org.eclipse.osgi", fAllBundles, false)); //$NON-NLS-1$ //$NON-NLS-2$
 		int start = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
 		properties.put("osgi.bundles.defaultStartLevel", Integer.toString(start)); //$NON-NLS-1$
 		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, true);
@@ -79,8 +79,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 			}
 			StringBuffer buffer = new StringBuffer();
 			IPluginModelBase model = (IPluginModelBase) fAllBundles.get("org.eclipse.equinox.simpleconfigurator"); //$NON-NLS-1$
-			buffer.append("reference:"); //$NON-NLS-1$
-			buffer.append(LaunchConfigurationHelper.getBundleURL(model));
+			buffer.append(LaunchConfigurationHelper.getBundleURL(model, true));
 			appendStartData(buffer, (String) fModels.get(model), autostart);
 			bundles = buffer.toString();
 		} else {
@@ -106,8 +105,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 			if (!"org.eclipse.osgi".equals(id)) { //$NON-NLS-1$
 				if (buffer.length() > 0)
 					buffer.append(","); //$NON-NLS-1$
-				buffer.append("reference:"); //$NON-NLS-1$
-				buffer.append(LaunchConfigurationHelper.getBundleURL(model));
+				buffer.append(LaunchConfigurationHelper.getBundleURL(model, true));
 
 				// fragments must not be started or have a start level
 				if (model instanceof IFragmentModel)

@@ -27,8 +27,9 @@ import org.osgi.framework.*;
 
 public class TargetPlatformHelper {
 
-	private static String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
-	private static String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
+	public static String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
+	public static String PLATFORM_PREFIX = "platform:"; //$NON-NLS-1$
+	public static String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
 
 	private static Map fCachedLocations;
 
@@ -47,40 +48,64 @@ public class TargetPlatformHelper {
 		return null;
 	}
 
+	/**
+	 * Returns the list of bundles in the osgi.bundles property of the 
+	 * platform config ini, or a set of default bundles if the property 
+	 * could not be found.
+	 * @return string list of bundles
+	 */
 	public static String getBundleList() {
 		Properties properties = getConfigIniProperties();
 		String osgiBundles = properties == null ? null : properties.getProperty("osgi.bundles"); //$NON-NLS-1$
 		if (osgiBundles == null) {
-			StringBuffer buffer = new StringBuffer();
-			if (getTargetVersion() > 3.1) {
-				buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.update.configurator@3:start,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.core.runtime@start"); //$NON-NLS-1$
-			} else {
-				buffer.append("org.eclipse.core.runtime@2:start,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.update.configurator@3:start"); //$NON-NLS-1$
-			}
-			osgiBundles = buffer.toString();
+			osgiBundles = getDefaultBundleList();
 		} else {
 			osgiBundles = stripPathInformation(osgiBundles);
 		}
 		return osgiBundles;
 	}
 
+	/**
+	 * @return the default list of bundles to use in the osgi.bundles property 
+	 */
+	public static String getDefaultBundleList() {
+		StringBuffer buffer = new StringBuffer();
+		if (getTargetVersion() > 3.1) {
+			buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
+			buffer.append("org.eclipse.update.configurator@3:start,"); //$NON-NLS-1$
+			buffer.append("org.eclipse.core.runtime@start"); //$NON-NLS-1$
+		} else {
+			buffer.append("org.eclipse.core.runtime@2:start,"); //$NON-NLS-1$
+			buffer.append("org.eclipse.update.configurator@3:start"); //$NON-NLS-1$
+		}
+		return buffer.toString();
+	}
+
+	/**
+	 * Removed path information from the given string containing one or more comma separated
+	 * osgi bundles.  Replaces escaped '\:' with ':'.  Removes, reference, platform and file
+	 * prefixes.  Removes any other path information converting the location or the last
+	 * segment to a bundle id.
+	 * @param osgiBundles list of bundles to strip path information from (commma separated)
+	 * @return list of bundles with path information stripped
+	 */
 	public static String stripPathInformation(String osgiBundles) {
 		StringBuffer result = new StringBuffer();
 		StringTokenizer tokenizer = new StringTokenizer(osgiBundles, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			String token = tokenizer.nextToken();
-			int index = token.indexOf('@');
+			token = token.replaceAll("\\\\:", ":"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// read up until the first @, if there
-			String bundle = index > 0 ? token.substring(0, index) : token;
+			int atIndex = token.indexOf('@');
+			String bundle = atIndex > 0 ? token.substring(0, atIndex) : token;
 			bundle = bundle.trim();
 
-			// strip [reference:][file:/] prefixes if any
+			// strip [reference:][platform:][file:] prefixes if any
 			if (bundle.startsWith(REFERENCE_PREFIX) && bundle.length() > REFERENCE_PREFIX.length())
 				bundle = bundle.substring(REFERENCE_PREFIX.length());
+			if (bundle.startsWith(PLATFORM_PREFIX) && bundle.length() > PLATFORM_PREFIX.length())
+				bundle = bundle.substring(PLATFORM_PREFIX.length());
 			if (bundle.startsWith(FILE_URL_PREFIX) && bundle.length() > FILE_URL_PREFIX.length())
 				bundle = bundle.substring(FILE_URL_PREFIX.length());
 
@@ -88,11 +113,15 @@ public class TargetPlatformHelper {
 			// Otherwise, we need to retrieve the bundle symbolic name ourselves
 			IPath path = new Path(bundle);
 			String id = path.isAbsolute() ? getSymbolicName(bundle) : path.lastSegment();
+			int underscoreIndex = id.indexOf('_');
+			if (underscoreIndex >= 0) {
+				id = id.substring(0, underscoreIndex);
+			}
 			if (result.length() > 0)
 				result.append(","); //$NON-NLS-1$
 			result.append(id != null ? id : bundle);
-			if (index > -1)
-				result.append(token.substring(index).trim());
+			if (atIndex > -1)
+				result.append(token.substring(atIndex).trim());
 		}
 		return result.toString();
 	}

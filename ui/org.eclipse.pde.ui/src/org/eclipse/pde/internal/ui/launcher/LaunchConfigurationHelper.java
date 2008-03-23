@@ -19,12 +19,19 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
+/**
+ * Contains helper methods for launching an Eclipse Runtime Workbench
+ */
 public class LaunchConfigurationHelper {
+
+	private static final String PROP_OSGI_FRAMEWORK = "osgi.framework"; //$NON-NLS-1$
+	private static final String PROP_OSGI_BUNDLES = "osgi.bundles"; //$NON-NLS-1$
 
 	public static void synchronizeManifests(ILaunchConfiguration config, File configDir) {
 		try {
@@ -83,17 +90,17 @@ public class LaunchConfigurationHelper {
 			else if (productID == null || !productID.equals(properties.get("eclipse.product"))) //$NON-NLS-1$
 				properties.clear();
 			// if target's config.ini has the osgi.bundles header, then parse and compute the proper osgi.bundles value
-			String bundleList = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
+			String bundleList = properties.getProperty(PROP_OSGI_BUNDLES);
 			if (bundleList != null)
-				properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatformHelper.stripPathInformation(bundleList), map)); //$NON-NLS-1$
+				properties.setProperty(PROP_OSGI_BUNDLES, computeOSGiBundles(TargetPlatformHelper.stripPathInformation(bundleList), map));
 		} else {
 			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, (String) null);
 			if (templateLoc != null) {
 				properties = loadFromTemplate(getSubstitutedString(templateLoc));
 				// if template contains osgi.bundles, then only strip the path, do not compute the value
-				String osgiBundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
+				String osgiBundles = properties.getProperty(PROP_OSGI_BUNDLES);
 				if (osgiBundles != null)
-					properties.setProperty("osgi.bundles", TargetPlatformHelper.stripPathInformation(osgiBundles)); //$NON-NLS-1$
+					properties.setProperty(PROP_OSGI_BUNDLES, TargetPlatformHelper.stripPathInformation(osgiBundles));
 			}
 		}
 		// whether we create a new config.ini or read from one as a template, we should add the required properties - bug 161265
@@ -105,14 +112,9 @@ public class LaunchConfigurationHelper {
 		if (!directory.exists()) {
 			directory.mkdirs();
 		}
-		String osgiBundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
+		String osgiBundles = properties.getProperty(PROP_OSGI_BUNDLES);
 		// if we are launching using P2, write out P2 files (bundles.txt) and add P2 property to config.ini
-		if (osgiBundles != null && osgiBundles.indexOf("org.eclipse.equinox.simpleconfigurator") != -1) { //$NON-NLS-1$
-			if (map.get("org.eclipse.equinox.simpleconfigurator") == null) { //$NON-NLS-1$
-				IPluginModelBase model = PluginRegistry.findModel("org.eclipse.equinox.simpleconfigurator"); //$NON-NLS-1$
-				map.put("org.eclipse.equinox.simpleconfigurator", model); //$NON-NLS-1$
-			}
-
+		if (osgiBundles != null && osgiBundles.indexOf("org.eclipse.equinox.simpleconfigurator") != -1 && map.containsKey("org.eclipse.equinox.simpleconfigurator")) { //$NON-NLS-1$ //$NON-NLS-2$
 			URL bundlesTxt = P2Utils.writeBundlesTxt(map.values(), directory);
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
@@ -129,36 +131,38 @@ public class LaunchConfigurationHelper {
 			properties.setProperty("osgi.install.area", "file:" + TargetPlatform.getLocation()); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!properties.containsKey("osgi.configuration.cascaded")) //$NON-NLS-1$
 			properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (!properties.containsKey("osgi.framework")) //$NON-NLS-1$
-			properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!properties.containsKey(PROP_OSGI_FRAMEWORK))
+			properties.setProperty(PROP_OSGI_FRAMEWORK, "org.eclipse.osgi"); //$NON-NLS-1$
 		if (!properties.containsKey("osgi.splashPath") && productID != null) //$NON-NLS-1$
 			addSplashLocation(properties, productID, map);
 		// if osgi.splashPath is set, try to resolve relative paths to absolute paths
 		if (properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
 			resolveLocationPath(properties.getProperty("osgi.splashPath"), properties, map); //$NON-NLS-1$
-		if (!properties.containsKey("osgi.bundles")) //$NON-NLS-1$
-			properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatform.getBundleList(), map)); //$NON-NLS-1$
+		if (!properties.containsKey(PROP_OSGI_BUNDLES))
+			properties.setProperty(PROP_OSGI_BUNDLES, computeOSGiBundles(TargetPlatform.getBundleList(), map));
 		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
 			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
-	 * 
-	 * Computes the bundles to list inside the config.ini's osgi.bundles entry
-	 * 
-	 * @param bundleList the list of bundles obtained from the target's config.ini
-	 * @param map
-	 * @return a string that represents the osgi.bundles entry within a config.ini
+	 * Computes a list of osgi bundles to be put into the osgi.bundles property based
+	 * on the bundles from the target platform config.ini and a map of bundles we are
+	 * launching with.  The list of bundles must have already had it's path information
+	 * removed.
+	 * @param bundleList list of bundles without path information
+	 * @param map map of bundle id to bundle model, contains all bundles being launched with
+	 * @return string list of osgi bundles
 	 */
 	private static String computeOSGiBundles(String bundleList, Map map) {
-
+	
 		// if p2 and only simple configurator and 
 		// if simple configurator isn't selected & isn't in bundle list... hack it
 
 		// if using p2's simple configurator, a bundles.txt will be written, so we only need simple configurator in the config.ini
 		if (map.get("org.eclipse.equinox.simpleconfigurator") != null) //$NON-NLS-1$
 			return "org.eclipse.equinox.simpleconfigurator@1:start"; //$NON-NLS-1$
-
+	
+	
 		StringBuffer buffer = new StringBuffer();
 		Set initialBundleSet = new HashSet();
 		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
@@ -185,7 +189,6 @@ public class LaunchConfigurationHelper {
 				if (!initialBundleSet.contains(id)) {
 					if (buffer.length() > 0)
 						buffer.append(',');
-
 					buffer.append(id);
 					// if we are working with core.runtime, we need to ensure it's started
 					if ("org.eclipse.core.runtime".equals(id)) { //$NON-NLS-1$
@@ -194,7 +197,6 @@ public class LaunchConfigurationHelper {
 				}
 			}
 		}
-
 		return buffer.toString();
 	}
 
@@ -259,7 +261,7 @@ public class LaunchConfigurationHelper {
 			if (location.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
 				location = location.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			String url = getBundleURL(location, map);
+			String url = getBundleURL(location, map, false);
 			if (url == null)
 				continue;
 			if (buffer.length() > 0)
@@ -270,50 +272,68 @@ public class LaunchConfigurationHelper {
 			properties.setProperty("osgi.splashPath", buffer.toString()); //$NON-NLS-1$
 	}
 
-	public static String getBundleURL(String id, Map pluginMap) {
+	/**
+	 * Returns a string url representing the install location of the bundle model with the
+	 * specified id.  The model is obtained using the provided map.
+	 * @param id the id of the bundle
+	 * @param pluginMap mapping of bundle ids to bundle models
+	 * @param includeReference whether to prefix the url with 'reference:'
+	 * @return string url for the bundle location
+	 */
+	public static String getBundleURL(String id, Map pluginMap, boolean includeReference) {
 		IPluginModelBase model = (IPluginModelBase) pluginMap.get(id.trim());
-		return getBundleURL(model);
+		return getBundleURL(model, includeReference);
 	}
 
-	public static String getBundleURL(IPluginModelBase model) {
-		if (model == null)
+	/**
+	 * Returns a string url representing the install location of the given bundle model
+	 * @param model the model to create the url for
+	 * @param includeReference whether to prefix the url with 'reference:'
+	 * @return string url for bundle location
+	 */
+	public static String getBundleURL(IPluginModelBase model, boolean includeReference) {
+		if (model == null || model.getInstallLocation() == null)
 			return null;
-		return "file:" + new Path(model.getInstallLocation()).removeTrailingSeparator().toString(); //$NON-NLS-1$		
+		StringBuffer buf = new StringBuffer();
+		if (includeReference) {
+			buf.append(TargetPlatformHelper.REFERENCE_PREFIX);
+		}
+		buf.append(TargetPlatformHelper.FILE_URL_PREFIX);
+		buf.append(new Path(model.getInstallLocation()).removeTrailingSeparator().toString());
+		return buf.toString();
 	}
 
+	/**
+	 * Use the map of bundles we are launching with to update the osgi.framework
+	 * and osgi.bundles properties with the correct info.
+	 * @param map map of bundles being launched (id mapped to model)
+	 * @param properties properties for config.ini
+	 */
 	private static void setBundleLocations(Map map, Properties properties) {
-		String framework = properties.getProperty("osgi.framework"); //$NON-NLS-1$
+		String framework = properties.getProperty(PROP_OSGI_FRAMEWORK);
 		if (framework != null) {
-			if (framework.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
-				framework = framework.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			} else if (framework.startsWith("file:plugins/")) { //$NON-NLS-1$
-				framework = framework.replaceFirst("file:plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
-				int index = framework.lastIndexOf('_');
-				if (index != -1) {
-					framework = framework.substring(0, index);
-				}
-			}
-			String url = getBundleURL(framework, map);
+			framework = TargetPlatformHelper.stripPathInformation(framework);
+			String url = getBundleURL(framework, map, false);
 			if (url != null)
-				properties.setProperty("osgi.framework", url); //$NON-NLS-1$
+				properties.setProperty(PROP_OSGI_FRAMEWORK, url);
 		}
 
-		String bundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
+		String bundles = properties.getProperty(PROP_OSGI_BUNDLES);
 		if (bundles != null) {
 			StringBuffer buffer = new StringBuffer();
 			StringTokenizer tokenizer = new StringTokenizer(bundles, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken().trim();
-				String url = getBundleURL(token, map);
+				String url = getBundleURL(token, map, false);
 				int index = -1;
 				if (url == null) {
 					index = token.indexOf('@');
 					if (index != -1)
-						url = getBundleURL(token.substring(0, index), map);
+						url = getBundleURL(token.substring(0, index), map, false);
 					if (url == null) {
 						index = token.indexOf(':');
 						if (index != -1)
-							url = getBundleURL(token.substring(0, index), map);
+							url = getBundleURL(token.substring(0, index), map, false);
 					}
 				}
 				if (url != null) {
@@ -325,7 +345,7 @@ public class LaunchConfigurationHelper {
 						buffer.append(token.substring(index));
 				}
 			}
-			properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
+			properties.setProperty(PROP_OSGI_BUNDLES, buffer.toString());
 		}
 	}
 
