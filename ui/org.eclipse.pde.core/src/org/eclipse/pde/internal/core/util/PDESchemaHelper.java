@@ -60,7 +60,7 @@ public class PDESchemaHelper {
 	 * @return a reference identifier (e.g., org.eclipse.ui.perspectives/perspective/@id)
 	 */
 	public static String getReferenceIdentifier(ISchemaAttribute attribute) {
-		String rootId = attribute.getSchema().getQualifiedPointId();
+		String rootId = attribute.getSchema().getSchemaDescriptor().getPointId();
 		String refId = buildBasedOnValue(attribute.getParent()) + "/@" + attribute.getName(); //$NON-NLS-1$
 		return rootId + refId;
 	}
