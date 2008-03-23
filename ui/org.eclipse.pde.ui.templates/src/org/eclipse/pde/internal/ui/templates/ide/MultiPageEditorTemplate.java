@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,8 @@ import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
 import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
+import org.eclipse.pde.internal.ui.templates.PluginReference;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.PluginReference;
 import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class MultiPageEditorTemplate extends BaseEditorTemplate {
@@ -38,7 +38,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 	public String getSectionId() {
 		return "multiPageEditor"; //$NON-NLS-1$
 	}
-
+	
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		if (schemaVersion != null) {
 			IPluginReference[] dep = new IPluginReference[6];
@@ -52,7 +52,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		}
 		return super.getDependencies(schemaVersion);
 	}
-
+	
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
@@ -62,32 +62,44 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 
 	private void createOptions() {
 		// first page	
-		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.MultiPageEditorTemplate_packageName, (String) null, 0);
-		addOption("editorClassName", //$NON-NLS-1$
-				PDETemplateMessages.MultiPageEditorTemplate_className, "MultiPageEditor", //$NON-NLS-1$
-				0);
-		addOption("contributorClassName", //$NON-NLS-1$
-				PDETemplateMessages.MultiPageEditorTemplate_contributor, "MultiPageEditorContributor", //$NON-NLS-1$
-				0);
-		addOption("editorName", //$NON-NLS-1$
-				PDETemplateMessages.MultiPageEditorTemplate_editorName, PDETemplateMessages.MultiPageEditorTemplate_defaultEditorName, 0);
-		addOption("extensions", //$NON-NLS-1$
-				PDETemplateMessages.MultiPageEditorTemplate_extensions, "mpe", //$NON-NLS-1$
-				0);
+		addOption(
+			KEY_PACKAGE_NAME,
+			PDETemplateMessages.MultiPageEditorTemplate_packageName,
+			(String) null,
+			0);
+		addOption(
+			"editorClassName", //$NON-NLS-1$
+			PDETemplateMessages.MultiPageEditorTemplate_className,
+			"MultiPageEditor", //$NON-NLS-1$
+			0);
+		addOption(
+			"contributorClassName", //$NON-NLS-1$
+			PDETemplateMessages.MultiPageEditorTemplate_contributor,
+			"MultiPageEditorContributor", //$NON-NLS-1$
+			0);
+		addOption(
+			"editorName", //$NON-NLS-1$
+			PDETemplateMessages.MultiPageEditorTemplate_editorName,
+			PDETemplateMessages.MultiPageEditorTemplate_defaultEditorName,
+			0);
+		addOption(
+			"extensions", //$NON-NLS-1$
+			PDETemplateMessages.MultiPageEditorTemplate_extensions,
+			"mpe",  //$NON-NLS-1$
+			0);
 	}
 
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
 	}
-
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId)); 
 	}
 
 	public boolean isDependentOnParentWizard() {
@@ -127,8 +139,11 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		IPluginExtension extension = createExtension("org.eclipse.ui.editors", true); //$NON-NLS-1$
 		IPluginModelFactory factory = model.getPluginFactory();
 
-		String editorClassName = getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption("editorClassName"); //$NON-NLS-1$ //$NON-NLS-2$
-		String contributorClassName = getStringOption(KEY_PACKAGE_NAME) + "." //$NON-NLS-1$
+		String editorClassName =
+			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption("editorClassName"); //$NON-NLS-1$ //$NON-NLS-2$
+		String contributorClassName =
+			getStringOption(KEY_PACKAGE_NAME)
+				+ "." //$NON-NLS-1$
 				+ getStringOption("contributorClassName"); //$NON-NLS-1$
 
 		IPluginElement editorElement = factory.createElement(extension);
@@ -144,15 +159,15 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
-	 */
-	protected String getFormattedPackageName(String id) {
-		String packageName = super.getFormattedPackageName(id);
-		if (packageName.length() != 0)
-			return packageName + ".editors"; //$NON-NLS-1$
-		return "editors"; //$NON-NLS-1$
-	}
-
+     * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
+     */
+    protected String getFormattedPackageName(String id) {
+        String packageName = super.getFormattedPackageName(id);
+        if (packageName.length() != 0)
+            return packageName + ".editors"; //$NON-NLS-1$
+        return "editors"; //$NON-NLS-1$
+    }
+	
 }

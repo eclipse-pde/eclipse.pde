@@ -15,6 +15,7 @@ import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
 
+
 public class MailNewWizard extends NewPluginTemplateWizard {
 
 	/* (non-Javadoc)
@@ -22,9 +23,8 @@ public class MailNewWizard extends NewPluginTemplateWizard {
 	 */
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDETemplateMessages.MailNewWizard_title);
+		setWindowTitle(PDETemplateMessages.MailNewWizard_title); 
 	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()
 	 */

@@ -23,7 +23,6 @@ public class ViewNewWizard extends NewPluginTemplateWizard {
 	public ViewNewWizard() {
 		super();
 	}
-
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.ViewNewWizard_wtitle);
@@ -33,6 +32,7 @@ public class ViewNewWizard extends NewPluginTemplateWizard {
 	 * @see NewExtensionTemplateWizard#createTemplateSections()
 	 */
 	public ITemplateSection[] createTemplateSections() {
-		return new ITemplateSection[] {new ViewTemplate()};
+		return new ITemplateSection [] {
+				new ViewTemplate() };
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,10 +26,9 @@ import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
 import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
 import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
+import org.eclipse.pde.internal.ui.templates.PluginReference;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.AbstractTemplateSection;
 import org.eclipse.pde.ui.templates.BooleanOption;
-import org.eclipse.pde.ui.templates.PluginReference;
 
 public class BuilderTemplate extends PDETemplateSection {
 
@@ -77,12 +76,15 @@ public class BuilderTemplate extends PDETemplateSection {
 		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.BuilderTemplate_packageLabel, (String) null, 0);
 
 		addOption(KEY_BUILDER_CLASS_NAME, PDETemplateMessages.BuilderTemplate_builderClass, "SampleBuilder", 0); //$NON-NLS-1$
-		addOption(KEY_BUILDER_ID, PDETemplateMessages.BuilderTemplate_builderId, "sampleBuilder", 0); //$NON-NLS-1$
+		addOption(KEY_BUILDER_ID, PDETemplateMessages.BuilderTemplate_builderId,
+				"sampleBuilder", 0); //$NON-NLS-1$
 		addOption(KEY_BUILDER_NAME, PDETemplateMessages.BuilderTemplate_builderName, PDETemplateMessages.BuilderTemplate_defaultBuilderName, 0);
 
 		addOption(KEY_NATURE_CLASS_NAME, PDETemplateMessages.BuilderTemplate_natureClass, "SampleNature", 0); //$NON-NLS-1$
-		addOption(KEY_NATURE_ID, PDETemplateMessages.BuilderTemplate_natureId, "sampleNature", 0); //$NON-NLS-1$
-		addOption(KEY_NATURE_NAME, PDETemplateMessages.BuilderTemplate_natureName, PDETemplateMessages.BuilderTemplate_defaultNatureName, 0);
+		addOption(KEY_NATURE_ID, PDETemplateMessages.BuilderTemplate_natureId,
+				"sampleNature", 0); //$NON-NLS-1$
+		addOption(KEY_NATURE_NAME, PDETemplateMessages.BuilderTemplate_natureName,
+				PDETemplateMessages.BuilderTemplate_defaultNatureName, 0);
 
 		actionOption = (BooleanOption) addOption(KEY_GEN_ACTION, PDETemplateMessages.BuilderTemplate_generateAction, true, 0);
 	}
@@ -127,7 +129,8 @@ public class BuilderTemplate extends PDETemplateSection {
 		IPluginModelFactory factory = model.getPluginFactory();
 
 		// Builder
-		IPluginExtension extension1 = createExtension("org.eclipse.core.resources.builders", true); //$NON-NLS-1$
+		IPluginExtension extension1 = createExtension(
+				"org.eclipse.core.resources.builders", true); //$NON-NLS-1$
 		extension1.setId(getStringOption(KEY_BUILDER_ID));
 		extension1.setName(getStringOption(KEY_BUILDER_NAME));
 
@@ -146,9 +149,10 @@ public class BuilderTemplate extends PDETemplateSection {
 			plugin.add(extension1);
 
 		// Nature
-		IPluginExtension extension2 = createExtension("org.eclipse.core.resources.natures", true); //$NON-NLS-1$
+		IPluginExtension extension2 = createExtension(
+				"org.eclipse.core.resources.natures", true); //$NON-NLS-1$
 		extension2.setId(getStringOption(KEY_NATURE_ID));
-		extension2.setName(getStringOption(KEY_NATURE_NAME));
+		extension2.setName(getStringOption(KEY_NATURE_NAME)); 
 
 		IPluginElement runtime = factory.createElement(extension2);
 		runtime.setName("runtime"); //$NON-NLS-1$
@@ -171,8 +175,10 @@ public class BuilderTemplate extends PDETemplateSection {
 
 		// Popup Action
 		if (actionOption.isSelected()) {
-			IPluginExtension extension3 = createExtension("org.eclipse.ui.popupMenus", true); //$NON-NLS-1$
-			IPluginElement objectContribution = factory.createElement(extension3);
+			IPluginExtension extension3 = createExtension(
+					"org.eclipse.ui.popupMenus", true); //$NON-NLS-1$
+			IPluginElement objectContribution = factory
+					.createElement(extension3);
 			objectContribution.setName("objectContribution"); //$NON-NLS-1$
 			objectContribution.setAttribute("objectClass", //$NON-NLS-1$
 					"org.eclipse.core.resources.IProject"); //$NON-NLS-1$
@@ -184,7 +190,8 @@ public class BuilderTemplate extends PDETemplateSection {
 
 			IPluginElement action = factory.createElement(objectContribution);
 			action.setName("action"); //$NON-NLS-1$
-			action.setAttribute("label", PDETemplateMessages.BuilderTemplate_actionLabel); //$NON-NLS-1$
+			action.setAttribute(
+					"label", PDETemplateMessages.BuilderTemplate_actionLabel); //$NON-NLS-1$
 			action.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) //$NON-NLS-1$
 					+ ".ToggleNatureAction"); //$NON-NLS-1$
 			action.setAttribute("menubarPath", "additions"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -198,7 +205,8 @@ public class BuilderTemplate extends PDETemplateSection {
 		}
 
 		// Marker
-		IPluginExtension extension4 = createExtension("org.eclipse.core.resources.markers", false); //$NON-NLS-1$
+		IPluginExtension extension4 = createExtension(
+				"org.eclipse.core.resources.markers", false); //$NON-NLS-1$
 		extension4.setId("xmlProblem"); //$NON-NLS-1$
 		extension4.setName(PDETemplateMessages.BuilderTemplate_markerName);
 
@@ -231,7 +239,8 @@ public class BuilderTemplate extends PDETemplateSection {
 		if (actionOption.isSelected())
 			result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
 
-		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
+		return (IPluginReference[]) result.toArray(new IPluginReference[result
+				.size()]);
 	}
 
 	/*
@@ -256,19 +265,4 @@ public class BuilderTemplate extends PDETemplateSection {
 		}
 		return true;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getLabel()
-	 */
-	public String getLabel() {
-		return getPluginResourceString("newExtension.templates.builder.name"); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getDescription()
-	 */
-	public String getDescription() {
-		return getPluginResourceString("newExtension.templates.builder.desc"); //$NON-NLS-1$
-	}
-
 }

@@ -73,9 +73,9 @@ public class PDETemplateMessages extends NLS {
 	public static String IntroTemplate_title;
 	public static String IntroTemplate_desc;
 	public static String IntroTemplate_productName;
-	public static String IntroTemplate_generate;
-	public static String IntroTemplate_generateDynamicContent;
-	public static String IntroTemplate_generateStaticContent;
+    public static String IntroTemplate_generate;
+    public static String IntroTemplate_generateDynamicContent;
+    public static String IntroTemplate_generateStaticContent;
 
 	public static String SplashHandlersTemplate_descSplashHandlerOptions;
 
@@ -155,6 +155,8 @@ public class PDETemplateMessages extends NLS {
 	public static String ViewNewWizard_wtitle;
 	public static String ViewTemplate_title0;
 	public static String ViewTemplate_desc0;
+	public static String ViewTemplate_title1;
+	public static String ViewTemplate_desc1;
 	public static String ViewTemplate_packageName;
 	public static String ViewTemplate_className;
 	public static String ViewTemplate_name;
@@ -165,7 +167,11 @@ public class PDETemplateMessages extends NLS {
 	public static String ViewTemplate_select;
 	public static String ViewTemplate_table;
 	public static String ViewTemplate_tree;
-	public static String ViewTemplate_contextHelp;
+	public static String ViewTemplate_doubleClick;
+	public static String ViewTemplate_popup;
+	public static String ViewTemplate_toolbar;
+	public static String ViewTemplate_pulldown;
+	public static String ViewTemplate_sorting;
 	public static String ViewTemplate_addToPerspective;
 
 	public static String HelpTemplate_title;
@@ -194,7 +200,7 @@ public class PDETemplateMessages extends NLS {
 	public static String BuilderTemplate_defaultNatureName;
 	public static String BuilderTemplate_markerName;
 	public static String BuilderTemplate_generateAction;
-
+	
 	public static String DecoratorTemplate_title;
 	public static String DecoratorTemplate_desc;
 	public static String DecoratorTemplate_packageName;
@@ -205,7 +211,7 @@ public class PDETemplateMessages extends NLS {
 	public static String DecoratorTemplate_decorateReadOnly;
 	public static String DecoratorTemplate_placementChoices;
 	public static String DecoratorTemplate_decoratorClass;
-
+	
 	public static String ImportWizardTemplate_title;
 	public static String ImportWizardTemplate_desc;
 	public static String ImportWizardTemplate_packageName;
@@ -221,6 +227,8 @@ public class PDETemplateMessages extends NLS {
 	public static String ImportWizardTemplate_filters;
 	public static String ImportWizardTemplate_wizardDescription;
 
+	
+
 	public static String MailTemplate_title;
 	public static String MailNewWizard_title;
 	public static String MailTemplate_desc;
@@ -229,13 +237,14 @@ public class PDETemplateMessages extends NLS {
 	public static String MailTemplate_appClass;
 	public static String MailTemplate_packageName;
 
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, PDETemplateMessages.class);
 	}
 
 	public static String HelloRCPTemplate_productBranding;
-
+	
 	public static String HelloOSGiNewWizard_title;
 
 	public static String HelloOSGiTemplate_startMessage;
@@ -245,6 +254,8 @@ public class PDETemplateMessages extends NLS {
 	public static String HelloOSGiTemplate_pageTitle;
 
 	public static String HelloOSGiTemplate_pageDescription;
+
+
 
 	public static String UniversalWelcomeTemplate_key_directoryName;
 
@@ -265,13 +276,15 @@ public class PDETemplateMessages extends NLS {
 	public static String UniversalWelcomeTemplate_page_WebResources;
 
 	public static String UniversalWelcomeTemplate_linkUrl;
+	
 
+	
 	// Hello world OSGi Service template
 	public static String HelloOSGiServiceTemplate_greeting;
 	public static String HelloOSGiServiceTemplate_pageDescription;
 	public static String HelloOSGiServiceTemplate_pageTitle;
 	public static String HelloOSGiServiceNewWizard_title;
-
+	
 	// Perspective Template
 	public static String PerspectiveTemplate_title;
 	public static String PerspectiveTemplate_desc;
@@ -284,14 +297,15 @@ public class PDETemplateMessages extends NLS {
 	public static String PerspectiveTemplate_showViewShortcuts;
 	public static String PerspectiveTemplate_newWizardShortcuts;
 	public static String PerspectiveTemplate_actionSets;
-
+	
 	// Preferences Service Template
 	public static String OSGiPreferencesServiceNewWizard_title;
 	public static String OSGiPreferencesServiceTemplate_label;
 	public static String OSGiPreferencesServiceTemplate_pageTitle;
 	public static String OSGiPreferencesServiceTemplate_pageDescription;
 	public static String OSGiPreferencesServiceTemplate_value;
-
+	
+	
 	// OSGi Log Service Template
 	public static String OSGiSimpleLogServiceNewWizard_title;
 	public static String OSGiSimpleLogServiceTemplate_logMessage;
@@ -299,5 +313,5 @@ public class PDETemplateMessages extends NLS {
 	public static String OSGiSimpleLogServiceTemplate_pageTitle;
 	public static String OSGiSimpleLogServiceTemplate_startLogMessage;
 	public static String OSGiSimpleLogServiceTemplate_stopLogMessage;
-
+	
 }
