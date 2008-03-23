@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,16 +14,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.UpdateManagerHelper;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.core.*;
 
 /**
  * The central class for the plug-in development target platform. This class cannot
@@ -37,6 +29,9 @@ import org.eclipse.pde.internal.core.UpdateManagerHelper;
  * <p>
  * @since 3.3
  * </p>
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class TargetPlatform {
 

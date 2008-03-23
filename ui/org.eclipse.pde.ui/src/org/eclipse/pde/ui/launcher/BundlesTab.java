@@ -30,6 +30,8 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated, but it is not intended to be subclassed by clients.
  * </p>
  * @since 3.3
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class BundlesTab extends AbstractLauncherTab {
 

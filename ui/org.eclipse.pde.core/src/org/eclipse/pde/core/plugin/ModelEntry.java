@@ -11,7 +11,6 @@
 package org.eclipse.pde.core.plugin;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 
@@ -23,6 +22,9 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
  * </p>
  * 
  * @since 3.3
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ModelEntry extends PlatformObject {
 
