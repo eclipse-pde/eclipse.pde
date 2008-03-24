@@ -31,6 +31,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 		
 		ISimpleCS model = fModel.getSimpleCS();
 		String title = model.getTitle();
+		assertEquals("Incorrect title", "sample cheatsheet", title);
 		
 		// check intro
 		ISimpleCSIntro intro = model.getIntro();
