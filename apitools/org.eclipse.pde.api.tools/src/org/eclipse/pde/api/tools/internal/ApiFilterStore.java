@@ -79,7 +79,6 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	private IJavaProject fProject = null;
 	
 	private boolean fNeedsSaving = false;
-	private boolean fLoading = false;
 	private boolean fTriggeredChange = false;
 	
 	/**
@@ -97,7 +96,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * @throws IOException 
 	 */
 	private void persistApiFilters() {
-		if(!fNeedsSaving || fLoading) {
+		if(!fNeedsSaving) {
 			return;
 		}
 		WorkspaceJob job = new WorkspaceJob("") { //$NON-NLS-1$
@@ -178,30 +177,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#addFilters(org.eclipse.pde.api.tools.internal.provisional.IApiProblem[])
 	 */
 	public synchronized void addFilters(IApiProblem[] problems) {
-		if(problems == null) {
-			if(DEBUG) {
-				System.out.println("null problems array not addding filters"); //$NON-NLS-1$
-			}
-			return;
-		}
-		initializeApiFilters();
-		IApiProblemFilter filter = null;
-		IResource resource = null;
-		HashSet filters = null;
-		for(int i = 0; i < problems.length; i++) {
-			filter = new ApiProblemFilter(fProject.getElementName(), problems[i]);
-			resource = fProject.getProject().findMember(new Path(problems[i].getResourcePath()));
-			if(resource == null) {
-				continue;
-			}
-			filters = (HashSet) fFilterMap.get(resource);
-			if(filters == null) {
-				filters = new HashSet();
-				fFilterMap.put(resource, filters);
-			}
-			fNeedsSaving |= filters.add(filter);
-		}
-		persistApiFilters();
+		internalAddFilters(problems, true);
 	}
 
 	/* (non-Javadoc)
@@ -439,8 +415,42 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						messageargs, null, null, -1, -1, -1, id));
 			}
 		}
-		addFilters((IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]));
+		internalAddFilters((IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]), false);
 		newfilters.clear();
+	}
+	
+	/**
+	 * Internal use method that allows auto-persisting of the filter file to be turned on or off
+	 * @param problems the problems to add the the store
+	 * @param persist if the filters should be auto-persisted after they are added
+	 */
+	private void internalAddFilters(IApiProblem[] problems, boolean persist) {
+		if(problems == null) {
+			if(DEBUG) {
+				System.out.println("null problems array not addding filters"); //$NON-NLS-1$
+			}
+			return;
+		}
+		initializeApiFilters();
+		IApiProblemFilter filter = null;
+		IResource resource = null;
+		HashSet filters = null;
+		for(int i = 0; i < problems.length; i++) {
+			filter = new ApiProblemFilter(fProject.getElementName(), problems[i]);
+			resource = fProject.getProject().findMember(new Path(problems[i].getResourcePath()));
+			if(resource == null) {
+				continue;
+			}
+			filters = (HashSet) fFilterMap.get(resource);
+			if(filters == null) {
+				filters = new HashSet();
+				fFilterMap.put(resource, filters);
+			}
+			fNeedsSaving |= filters.add(filter);
+		}
+		if(persist) {
+			persistApiFilters();
+		}
 	}
 	
 	/**
@@ -511,13 +521,11 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						IFile file = (IFile) resource;
 						if(file.isAccessible()) {
 							try {
-								fLoading = true;
 								fFilterMap.clear();
 								fFilterMap = null; 
 								initializeApiFilters();
 							}
 							finally {
-								fLoading = false;
 								needsbuild = true;
 							}
 						}
