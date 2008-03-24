@@ -93,7 +93,11 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 			if(element instanceof IApiProblemFilter) {
 				IApiProblemFilter filter = (IApiProblemFilter) element;
 				IApiProblem problem = filter.getUnderlyingProblem();
-				int severity = ApiPlugin.getDefault().getSeverityLevel(ApiProblemFactory.getProblemSeverityId(problem), fProject);
+				String sid = ApiProblemFactory.getProblemSeverityId(problem);
+				if(sid == null) {
+					return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK);
+				}
+				int severity = ApiPlugin.getDefault().getSeverityLevel(sid, fProject);
 				switch(severity) {
 					case IMarker.SEVERITY_ERROR: {
 						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
