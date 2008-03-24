@@ -113,7 +113,7 @@ public class ApiProblemTests extends AbstractApiTest {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_BINARY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("the message should be null", problem.getMessage());
-		assertTrue("the not found message should be displayed", problem.getMessage().startsWith("Message not found for problem id: "));
+		assertTrue("the not found message should be displayed", problem.getMessage().startsWith("Message not found for id: "));
 	}	
 	
 	/**
