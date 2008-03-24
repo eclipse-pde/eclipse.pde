@@ -278,7 +278,7 @@ public class TestSuiteHelper {
 		cmd.toArray(args);
 		boolean result = false;
 		try {
-			result = new Main(outWriter, errWriter, true).compile(args);
+			result = new Main(outWriter, errWriter, true, null, null).compile(args);
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -342,7 +342,7 @@ public class TestSuiteHelper {
 		cmd.toArray(args);
 		boolean result = false;
 		try {
-			result = new Main(outWriter, errWriter, true).compile(args);
+			result = new Main(outWriter, errWriter, true, null, null).compile(args);
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
