@@ -24,8 +24,6 @@ public class BuilderMessages extends NLS {
 	
 	public static String ApiAnalyserTaskName;
 	public static String ApiProblemFactory_problem_message_not_found;
-	public static String ApiProblemReporter_creating_problem_markers;
-	public static String ApiProblemReporter_creating_problem_markers_on_0;
 	public static String Compatibility_Analysis;
 	public static String Analyzing_0_1;
 

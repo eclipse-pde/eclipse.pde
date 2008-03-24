@@ -19,16 +19,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemReporter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Class for collecting {@link IApiProblem}s and creating {@link IMarker}s (if running in the framework)
@@ -118,43 +114,23 @@ public class ApiProblemReporter implements IApiProblemReporter {
 	/**
 	 * Creates new markers are for the listing of problems added to this reporter.
 	 * If no problems have been added to this reporter, or we are not running in the framework,
-	 * no work is done
+	 * no work is done.
 	 */
-	public void createMarkers(IProgressMonitor monitor) {
+	public void createMarkers() {
 		if(fProblems == null || !ApiPlugin.isRunningInFramework()) {
 			return;
 		}
-		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.ApiProblemReporter_creating_problem_markers, fProblems.size());
-		try {
-			SubMonitor child = null;
-			HashSet problems = null;
-			String type = null;
-			IApiProblem problem = null;
-			for(Iterator iter = fProblems.keySet().iterator(); iter.hasNext();) {
-				type = (String) iter.next();
-				problems = (HashSet) fProblems.get(type);
-				if(problems != null && problems.size() > 0) {
-					try {
-						child = localmonitor.newChild(problems.size());
-						for(Iterator iter2 = problems.iterator(); iter2.hasNext();) {
-							problem = (IApiProblem) iter2.next();
-							child.setTaskName(MessageFormat.format(BuilderMessages.ApiProblemReporter_creating_problem_markers_on_0, new String[] {problem.getResourcePath()}));
-							createMarkerForProblem(type, problem);
-							child.worked(1);
-						}
-					}
-					finally {
-						if(child != null && !child.isCanceled()) {
-							child.done();
-						}
-					}
+		HashSet problems = null;
+		String type = null;
+		IApiProblem problem = null;
+		for(Iterator iter = fProblems.keySet().iterator(); iter.hasNext();) {
+			type = (String) iter.next();
+			problems = (HashSet) fProblems.get(type);
+			if(problems != null && problems.size() > 0) {
+				for(Iterator iter2 = problems.iterator(); iter2.hasNext();) {
+					problem = (IApiProblem) iter2.next();
+					createMarkerForProblem(type, problem);
 				}
-				localmonitor.worked(1);
-			}
-		}
-		finally {
-			if(!localmonitor.isCanceled()) {
-				localmonitor.done();
 			}
 		}
 	}

@@ -222,7 +222,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			fPackages.clear();
 			fProjectToOutputLocations.clear();
 			checkDefaultProfileSet();
-			fProblemReporter.createMarkers(localMonitor);
+			fProblemReporter.createMarkers();
 			fProblemReporter.dispose();
 			localMonitor.done();
 		}

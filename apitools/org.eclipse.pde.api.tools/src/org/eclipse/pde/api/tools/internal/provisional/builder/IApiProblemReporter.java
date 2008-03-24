@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.builder;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
@@ -36,10 +35,8 @@ public interface IApiProblemReporter {
 	
 	/**
 	 * Creates new markers for the listing of problems added to this reporter.
-	 * 
-	 * @param monitor to monitor progress
 	 */
-	public void createMarkers(IProgressMonitor monitor);
+	public void createMarkers();
 	
 	/**
 	 * Cleans up all the reporter and frees any used memory.
