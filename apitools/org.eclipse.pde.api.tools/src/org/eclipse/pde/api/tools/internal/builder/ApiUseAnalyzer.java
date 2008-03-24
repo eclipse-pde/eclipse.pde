@@ -726,7 +726,7 @@ public class ApiUseAnalyzer {
 			}
 			return ApiProblemFactory.newApiUsageProblem(resource.getProjectRelativePath().toPortableString(), 
 					messageargs, 
-					new String[] {IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,	IApiMarkerConstants.API_MARKER_ATTR_ID}, 
+					new String[] {IApiMarkerConstants.MARKER_ATTR_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
 					new Object[] {(element == null ? compilationUnit.getHandleIdentifier() : element.getHandleIdentifier()),
 								   new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
 					lineNumber, 

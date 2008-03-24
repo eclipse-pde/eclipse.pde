@@ -16,8 +16,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaElementLabels;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution2;
@@ -33,6 +36,7 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 
 	protected IMarker fBackingMarker = null;
 	protected IJavaElement fResolvedElement = null;
+	protected String fCategory = null;
 	
 	/**
 	 * Constructor
@@ -48,11 +52,11 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 	public String getDescription() {
 		IJavaElement element = resolveElementFromMarker();
 		if(element != null) {
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {element.getElementName()});
+			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {JavaElementLabels.getTextLabel(element, JavaElementLabels.M_PARAMETER_TYPES), resolveCategoryName()});
 		}
 		else {
 			IResource res = fBackingMarker.getResource();
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getFullPath().removeFileExtension().lastSegment()});
+			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getFullPath().removeFileExtension().lastSegment(), resolveCategoryName()});
 		}
 	}
 
@@ -69,12 +73,46 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 	public String getLabel() {
 		IJavaElement element = resolveElementFromMarker();
 		if(element != null) {
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {element.getElementName()});
+			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {JavaElementLabels.getTextLabel(element, JavaElementLabels.M_PARAMETER_TYPES), resolveCategoryName()});
 		}
 		else {
 			IResource res = fBackingMarker.getResource();
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getFullPath().removeFileExtension().lastSegment()});
+			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getFullPath().removeFileExtension().lastSegment(), resolveCategoryName()});
 		}
+	}
+	
+	/**
+	 * Returns the category name from the problem id contained in the 
+	 * backing marker.
+	 * @return the name of the category from the markers' problem id
+	 */
+	protected String resolveCategoryName() {
+		if(fCategory == null) {
+			int problemid = fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, -1);
+			int category = ApiProblemFactory.getProblemCategory(problemid);
+			switch(category) {
+				case IApiProblem.CATEGORY_BINARY: {
+					fCategory = MarkerMessages.FilterProblemResolution_binary_compatible;
+					break;
+				}
+				case IApiProblem.CATEGORY_API_PROFILE: {
+					fCategory = MarkerMessages.FilterProblemResolution_default_profile;
+					break;
+				}
+				case IApiProblem.CATEGORY_SINCETAGS: {
+					fCategory = MarkerMessages.FilterProblemResolution_since_tag;
+					break;
+				}
+				case IApiProblem.CATEGORY_USAGE: {
+					fCategory = MarkerMessages.FilterProblemResolution_usage;
+					break;
+				}
+				case IApiProblem.CATEGORY_VERSION: {
+					fCategory = MarkerMessages.FilterProblemResolution_version_number;
+				}
+			}
+		}
+		return fCategory;
 	}
 	
 	/**

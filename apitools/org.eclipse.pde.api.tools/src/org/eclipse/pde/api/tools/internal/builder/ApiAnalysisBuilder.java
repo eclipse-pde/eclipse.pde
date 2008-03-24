@@ -1453,8 +1453,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(), 
 					messageargs, 
-					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID)}, 
+					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID, IApiMarkerConstants.MARKER_ATTR_HANDLE_ID}, 
+					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID), member.getHandleIdentifier()}, 
 					lineNumber, 
 					charStart, 
 					charEnd, 
