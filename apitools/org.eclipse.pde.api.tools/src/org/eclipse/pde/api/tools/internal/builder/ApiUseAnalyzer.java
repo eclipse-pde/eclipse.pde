@@ -41,6 +41,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -674,6 +675,15 @@ public class ApiUseAnalyzer {
 							}
 							case IApiProblem.LEAK_FIELD: {
 								IFieldDescriptor field = (IFieldDescriptor) reference.getSourceLocation().getMember();
+								if ((Flags.AccProtected & field.getModifiers()) > 0) {
+									// ignore protected members if contained in a @noextend type
+									IApiDescription description = reference.getSourceLocation().getApiComponent().getApiDescription();
+									IApiAnnotations annotations = description.resolveAnnotations(null, field.getEnclosingType());
+									if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
+										// ignore
+										return null;
+									}
+								}
 								IField javaField = type.getField(field.getName());
 								if (javaField.exists()) {
 									ISourceRange range = javaField.getNameRange();
@@ -686,6 +696,15 @@ public class ApiUseAnalyzer {
 							case IApiProblem.LEAK_METHOD_PARAMETER:
 							case IApiProblem.LEAK_RETURN_TYPE: {
 								IMethodDescriptor method = (IMethodDescriptor) reference.getSourceLocation().getMember();
+								if ((Flags.AccProtected & method.getModifiers()) > 0) {
+									// ignore protected members if contained in a @noextend type
+									IApiDescription description = reference.getSourceLocation().getApiComponent().getApiDescription();
+									IApiAnnotations annotations = description.resolveAnnotations(null, method.getEnclosingType());
+									if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
+										// ignore
+										return null;
+									}
+								}								
 								// report the marker on the method
 								// TODO: can we just lookup the method with resolved signature?
 								String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
@@ -790,6 +809,40 @@ public class ApiUseAnalyzer {
 			}
 			case IApiProblem.API_LEAK: {
 				messageargs = new String[] {qualifiedTypeName};
+				try {
+					switch (flags) {
+						case IApiProblem.LEAK_FIELD: {
+							IFieldDescriptor field = (IFieldDescriptor) reference.getSourceLocation().getMember();
+							if ((Flags.AccProtected & field.getModifiers()) > 0) {
+								// ignore protected members if contained in a @noextend type
+								IApiDescription description = reference.getSourceLocation().getApiComponent().getApiDescription();
+								IApiAnnotations annotations = description.resolveAnnotations(null, field.getEnclosingType());
+								if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
+									// ignore
+									return null;
+								}
+							}
+							break;
+						}
+						case IApiProblem.LEAK_METHOD_PARAMETER:
+						case IApiProblem.LEAK_RETURN_TYPE: {
+							IMethodDescriptor method = (IMethodDescriptor) reference.getSourceLocation().getMember();
+							if ((Flags.AccProtected & method.getModifiers()) > 0) {
+								// ignore protected members if contained in a @noextend type
+								IApiDescription description = reference.getSourceLocation().getApiComponent().getApiDescription();
+								IApiAnnotations annotations = description.resolveAnnotations(null, method.getEnclosingType());
+								if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
+									// ignore
+									return null;
+								}
+							}								
+							break;
+						}
+					}				
+				} catch (CoreException e) {
+					// unable to retrieve API description
+					ApiPlugin.log(e.getStatus());
+				}
 				break;
 			}
 		} 
