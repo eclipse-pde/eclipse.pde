@@ -151,8 +151,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 
 	public static String[] AllBinaryCompatibilityKeys = new String[] {
 		IApiProblemTypes.API_PROFILE_REMOVED_API_COMPONENT,
-		IApiProblemTypes.API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT,
-		IApiProblemTypes.API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT,
 		IApiProblemTypes.API_COMPONENT_REMOVED_TYPE,
 		IApiProblemTypes.ANNOTATION_ADDED_TYPE_MEMBER,
 		IApiProblemTypes.ANNOTATION_ADDED_FIELD,

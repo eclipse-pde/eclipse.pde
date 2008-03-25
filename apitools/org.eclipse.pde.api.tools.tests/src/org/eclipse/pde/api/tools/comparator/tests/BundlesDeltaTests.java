@@ -71,12 +71,17 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState());
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
 	}
 
 	/**
@@ -92,7 +97,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
 	}
 
 	/**
@@ -103,12 +108,19 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState());
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertEquals("Wrong message", "Added the execution environment JRE-1.1", child.getMessage());
+		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
+		assertEquals("Wrong message", "The execution environment CDC-1.0/Foundation-1.0 has been removed", child.getMessage());
+		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
 	}
 	/**
 	 * Changing EEs
@@ -118,12 +130,19 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState());
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertEquals("Wrong message", "Added the execution environment J2SE-1.4", child.getMessage());
+		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
+		assertEquals("Wrong message", "The execution environment J2SE-1.5 has been removed", child.getMessage());
+		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));		
 	}
 	
 	/**
@@ -409,11 +428,21 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState());
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		assertEquals("Wrong size", 3, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		child = allLeavesDeltas[2];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
 	}
 }

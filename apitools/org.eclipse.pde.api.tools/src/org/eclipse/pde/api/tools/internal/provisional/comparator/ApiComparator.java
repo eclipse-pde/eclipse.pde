@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.comparator;
 
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -424,44 +424,24 @@ public class ApiComparator {
 		} else if (component2 == null) {
 			return new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT, null, referenceComponent.getId(), referenceComponent.getId());
 		}
-		// check the EE first
-		String[] referenceComponentsEEs = referenceComponent.getExecutionEnvironments();
-		String[] componentsEEs = component2.getExecutionEnvironments();
+		final Delta globalDelta = new Delta();
 
-		int referencedEEsLength = referenceComponentsEEs.length;
-		int componentsEEsLength = componentsEEs.length;
-		if (referencedEEsLength == componentsEEsLength) {
-			// we need to check that they are the same
-			if (referencedEEsLength != 0) {
-				Arrays.sort(referenceComponentsEEs);
-				Arrays.sort(componentsEEs);
-				for (int i = 0; i < referencedEEsLength; i++) {
-					if (!referenceComponentsEEs[i].equals(componentsEEs[i])) {
-						return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.CHANGED, IDelta.EXECUTION_ENVIRONMENT, null, referenceComponent.getId(), null);
-					}
-				}
+		// check the EE first
+		Set referenceEEs = Util.convertAsSet(referenceComponent.getExecutionEnvironments());
+		Set componentsEEs = Util.convertAsSet(component2.getExecutionEnvironments());
+		
+		for (Iterator iterator = referenceEEs.iterator(); iterator.hasNext(); ) {
+			String currentEE = (String) iterator.next();
+			if (!componentsEEs.remove(currentEE)) {
+				globalDelta.add(new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.EXECUTION_ENVIRONMENT, null, referenceComponent.getId(), currentEE));
 			}
-		} else if (componentsEEsLength < referencedEEsLength) {
-			// some EE have been removed - this is a breakage
-			return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.EXECUTION_ENVIRONMENT, null, referenceComponent.getId(), null);
-		} else {
-			// some EE have been added - we need to check that all the old ones are still included
-			for (int i = 0; i < referencedEEsLength; i++) {
-				String currentEE = referenceComponentsEEs[i];
-				boolean found = false;
-				loop: for (int j = 0; j < componentsEEsLength; j++) {
-					if (currentEE.equals(componentsEEs[j])) {
-						found = true;
-						break loop;
-					}
-				}
-				if (found) continue;
-				return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.EXECUTION_ENVIRONMENT, null, referenceComponent.getId(), null);
-			}
-			return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.EXECUTION_ENVIRONMENT, null, referenceComponent.getId(), null);
+		}
+		for (Iterator iterator = componentsEEs.iterator(); iterator.hasNext(); ) {
+			String currentEE = (String) iterator.next();
+			globalDelta.add(new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.EXECUTION_ENVIRONMENT, null, referenceComponent.getId(), currentEE));
 		}
 		try {
-			return internalCompare(referenceComponent, component2, referenceProfile, profile, visibilityModifiers);
+			return internalCompare(referenceComponent, component2, referenceProfile, profile, visibilityModifiers, globalDelta);
 		} catch(CoreException e) {
 			// null means an error case
 			return null;
@@ -473,10 +453,10 @@ public class ApiComparator {
 			final IApiComponent component2,
 			final IApiProfile referenceProfile,
 			final IApiProfile profile,
-			final int visibilityModifiers) throws CoreException {
+			final int visibilityModifiers,
+			final Delta globalDelta) throws CoreException {
 
 		final Set classFileBaseLineNames = new HashSet();
-		final Delta globalDelta = new Delta();
 		final String id = component.getId();
 		IClassFileContainer[] classFileContainers = component.getClassFileContainers(id);
 		final IApiDescription apiDescription = component.getApiDescription();

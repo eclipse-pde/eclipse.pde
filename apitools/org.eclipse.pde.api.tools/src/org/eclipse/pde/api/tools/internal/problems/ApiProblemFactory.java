@@ -427,7 +427,6 @@ public class ApiProblemFactory {
 							case IDelta.CONTRACTED_SUPERCLASS_SET: return 53;
 							case IDelta.CONTRACTED_SUPERINTERFACES_SET: return 54;
 							case IDelta.DECREASE_ACCESS: return 55;
-							case IDelta.EXECUTION_ENVIRONMENT: return 56;
 							case IDelta.EXPANDED_SUPERCLASS_SET: return 57;
 							case IDelta.EXPANDED_SUPERINTERFACES_SET: return 58;
 							case IDelta.FINAL_TO_NON_FINAL: return 59;

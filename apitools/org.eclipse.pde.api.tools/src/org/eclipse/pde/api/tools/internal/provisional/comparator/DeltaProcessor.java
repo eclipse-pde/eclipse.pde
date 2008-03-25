@@ -114,15 +114,9 @@ public class DeltaProcessor {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE :
-					case IDelta.EXECUTION_ENVIRONMENT :
 						return false;
 				}
 				break;
-			case IDelta.CHANGED :
-				switch(delta.getFlags()) {
-					case IDelta.EXECUTION_ENVIRONMENT :
-						return false;
-				}
 		}
 		return true;
 	}

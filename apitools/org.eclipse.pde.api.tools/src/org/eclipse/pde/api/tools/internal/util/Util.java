@@ -33,9 +33,11 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -2456,5 +2458,15 @@ public final class Util {
 		typeName[dotIndex] = Signature.C_DOLLAR;
 		index = CharOperation.indexOf(typeName, typeName2, true);
 		return index != -1 && ((index + typeName.length) == typeName2.length);
+	}
+	
+	public static Set convertAsSet(String[] values) {
+		Set set = new HashSet();
+		if (values != null && values.length != 0) {
+			for (int i = 0, max = values.length; i < max; i++) {
+				set.add(values[i]);
+			}
+		}
+		return set;
 	}
 }

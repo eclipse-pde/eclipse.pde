@@ -210,10 +210,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final Key KEY_API_LEAK = getApiToolsKey(IApiProblemTypes.API_LEAK);
 	private static final Key KEY_API_PROFILE_REMOVED_API_COMPONENT =
 		getApiToolsKey(IApiProblemTypes.API_PROFILE_REMOVED_API_COMPONENT);
-	private static final Key KEY_API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT =
-		getApiToolsKey(IApiProblemTypes.API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT);
-	private static final Key KEY_API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT =
-		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT);
 	private static final Key KEY_API_COMPONENT_REMOVED_TYPE =
 		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_TYPE);
 	private static final Key KEY_ANNOTATION_ADDED_CLASS_BOUND =
@@ -515,8 +511,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 	
 	private static Key[] fgAllBinaryKeys = {
 		KEY_API_PROFILE_REMOVED_API_COMPONENT,
-		KEY_API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT,
-		KEY_API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT,
 		KEY_API_COMPONENT_REMOVED_TYPE,
 		KEY_ANNOTATION_ADDED_FIELD,
 		KEY_ANNOTATION_ADDED_METHOD,
@@ -680,8 +674,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_NOOVERRIDE,
 		KEY_API_LEAK,
 		KEY_API_PROFILE_REMOVED_API_COMPONENT,
-		KEY_API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT,
-		KEY_API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT,
 		KEY_API_COMPONENT_REMOVED_TYPE,
 		KEY_ANNOTATION_ADDED_FIELD,
 		KEY_ANNOTATION_ADDED_METHOD,
@@ -1088,13 +1080,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 				initializeComboControls(
 						client,
 						new String[] {
-								PreferenceMessages.API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT,
-								PreferenceMessages.API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT,
 								PreferenceMessages.API_COMPONENT_REMOVED_TYPE,
 						},
 						new Key[] {
-								KEY_API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT,
-								KEY_API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT,
 								KEY_API_COMPONENT_REMOVED_TYPE,
 						});
 				client = createExpansibleComposite(sbody, PreferenceMessages.BinaryCompatibilityAnnotationElement);
