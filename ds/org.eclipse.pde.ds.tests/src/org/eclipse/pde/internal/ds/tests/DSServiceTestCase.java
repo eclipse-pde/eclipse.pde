@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
-import org.eclipse.pde.internal.ds.core.text.DSRoot;
-
 public class DSServiceTestCase extends AbstractDSModelTestCase {
 	
 	public void testAddService() {
