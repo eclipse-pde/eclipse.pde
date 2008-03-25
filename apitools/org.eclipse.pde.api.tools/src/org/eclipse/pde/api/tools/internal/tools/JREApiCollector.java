@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.ClassReader;
 
@@ -122,19 +123,17 @@ public class JREApiCollector {
 	private void run() {
 		File profileFile = new File(this.jreProfile);
 		if (!profileFile.exists()) {
-			throw new IllegalArgumentException("the jre profile file (" + this.jreProfile + ") doesn't exist");
+			throw new IllegalArgumentException(NLS.bind(Messages.noProfile, this.jreProfile));
 		}
 		File outputFile = new File(this.output);
 		if (outputFile.exists()) {
 			if (!outputFile.delete()) {
-				System.err.println("could not delete the output file " + this.output);
-				return;
+				throw new IllegalArgumentException(NLS.bind(Messages.cannotDeleteOutputFile, this.output));
 			}
 		} else {
 			File parent = outputFile.getParentFile();
 			if (!parent.exists() && !parent.mkdirs()) {
-				System.err.println("could not create the output file parent " + parent.getAbsolutePath());
-				return;
+				throw new IllegalArgumentException(NLS.bind(Messages.cannotCreateOutputFileParent, parent.getAbsolutePath()));
 			}
 		}
 		Properties properties = new Properties();
@@ -149,18 +148,18 @@ public class JREApiCollector {
 		}
 		String property = properties.getProperty(PACKAGE_PROPERTY);
 		if (property == null) {
-			throw new IllegalStateException("Could not find the package property :" + PACKAGE_PROPERTY);
+			throw new IllegalStateException(NLS.bind(Messages.cannotCreateOutputFileParent, PACKAGE_PROPERTY));
 		}
 		if (DEBUG) System.out.println(property);
 		Set packagesNames = new HashSet();
-		StringTokenizer tokenizer = new StringTokenizer(property, ",");
+		StringTokenizer tokenizer = new StringTokenizer(property, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
 			packagesNames.add(token.trim());
 		}
 		File jreHome = new File(this.jreLocation);
 		if (!jreHome.exists()) {
-			throw new IllegalArgumentException("No jre found at : " + this.jreLocation);
+			throw new IllegalArgumentException(NLS.bind(Messages.noJRELocation, this.jreLocation));
 		}
 		File[] files = Util.getAllFiles(jreHome, new FileFilter() {
 			public boolean accept(File pathname) {
@@ -195,8 +194,8 @@ public class JREApiCollector {
 			Set set = new HashSet();
 			set.addAll(collector);
 			if (DEBUG) {
-				System.out.println(collector.size() + " elements");
-				System.out.println(set.size() + " unique elements");
+				System.out.println(NLS.bind(Messages.numberOfElements, Integer.toString(collector.size())));
+				System.out.println(NLS.bind(Messages.numberOfUniqueElements, Integer.toString(set.size())));
 			}
 		}
 	}
@@ -236,7 +235,7 @@ public class JREApiCollector {
 	}
 
 	private boolean includesPackage(Set packageNames, String packageName) {
-		return packageNames.contains(packageName) || packageName.startsWith("java.");
+		return packageNames.contains(packageName) || packageName.startsWith("java."); //$NON-NLS-1$
 	}
 
 	private void extractApis(InputStream inputStream, Set collector) throws IOException {
