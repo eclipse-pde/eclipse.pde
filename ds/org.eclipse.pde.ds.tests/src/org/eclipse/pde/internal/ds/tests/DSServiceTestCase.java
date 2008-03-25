@@ -10,6 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
+import org.eclipse.pde.internal.ds.core.text.DSRoot;
+
 public class DSServiceTestCase extends AbstractDSModelTestCase {
+	
+	public void testAddService() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<service>");
+		buffer.append(LF);
+		buffer.append("<provide interface=\"");
+		buffer.append("java.lang.Runnable");
+		buffer.append("</provide>");
+		buffer.append(LF);
+		buffer.append("</service>");
+		setXMLContents(buffer, LF);
+		load();
+		
+		// TODO test stuff?
+	}
 
 }
