@@ -275,6 +275,19 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if (sev == ApiPlugin.SEVERITY_IGNORE) {
 					return;
 				}
+				IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+				int length = markers.length;
+				if (length != 0) {
+					// the marker already exists
+					switch(length) {
+						case 1 :
+							// do nothing
+							return;
+						default:
+							// markers have not been cleanup properly
+							this.fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+					}
+				}
 				IApiProblem problem = ApiProblemFactory.newApiProfileProblem(fCurrentProject.getProjectRelativePath().toPortableString(), 
 						null, 
 						new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
@@ -287,7 +300,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				fProblemReporter.addProblem(problem);
 			} else {
 				// we want to make sure that existing markers are removed
-				this.fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+				this.fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 			}
 		}
 		catch(CoreException e) {
@@ -967,8 +980,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if (resource.getType() == IResource.PROJECT) {
 					// on full builds
 					resource.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-					resource.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-				}
+					resource.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);				}
 			}
 		} catch(CoreException e) {
 			ApiPlugin.log(e.getStatus());
@@ -988,6 +1000,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
 				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
 				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
+				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
 				return (IMarker[]) markers.toArray(new IMarker[markers.size()]);
 			}
 		} catch(CoreException e) {}
