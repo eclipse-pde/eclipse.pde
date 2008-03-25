@@ -13,12 +13,14 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.*;
 import java.util.List;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * A FilteredChecboxTree.  This tree stores all the tree elements internally, and keeps the
@@ -33,6 +35,8 @@ import org.eclipse.ui.dialogs.PatternFilter;
  * 
  */
 class FilteredCheckboxTree extends FilteredTree {
+
+	private WorkbenchJob refreshJob;
 
 	/**
 	 * The FilteredCheckboxTree Constructor.
@@ -52,8 +56,30 @@ class FilteredCheckboxTree extends FilteredTree {
 		return new FilterableCheckboxTreeViewer(parent, style);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateRefreshJob()
+	 */
+	protected WorkbenchJob doCreateRefreshJob() {
+		// Since refresh job is private, we have to get a handle to it
+		// when it is created, and store it locally.  
+		// 
+		// See: 218903: [Viewers] support extensibility of the refresh job in FilteredTree
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=218903
+		WorkbenchJob job = super.doCreateRefreshJob();
+		refreshJob = job;
+		return job;
+	}
+
+	/**
+	 * Resets the filter and returns when the refresh is complete
+	 */
 	public void resetFilter() {
+		// Set the next to the initial Text, stop any outstanding jobs
+		// and call the refresh job to run synchronously.
 		getFilterControl().setText(this.initialText);
+		refreshJob.cancel();
+		refreshJob.runInUIThread(new NullProgressMonitor());
 	}
 
 	/**
