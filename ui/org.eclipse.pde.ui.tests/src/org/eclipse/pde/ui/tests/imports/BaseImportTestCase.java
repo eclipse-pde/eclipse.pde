@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard.ImportQuery;
 import org.eclipse.pde.ui.tests.PDETestCase;
@@ -62,7 +63,7 @@ public abstract class BaseImportTestCase extends PDETestCase {
 		final PluginImportOperation op = new PluginImportOperation(models, type, query, executionQuery, false);
 
 		try {
-			op.run(new NullProgressMonitor());
+			PDEPlugin.getWorkspace().run(op, new NullProgressMonitor());
 		} catch (OperationCanceledException e) {
 			fail("Import Operation failed: " + e);
 		} catch (CoreException e) {
