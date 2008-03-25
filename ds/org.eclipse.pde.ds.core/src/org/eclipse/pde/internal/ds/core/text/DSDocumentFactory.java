@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ds.core.text;
 import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
-import org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpRoot;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 
 /**
  * Handles the creation of document nodes representing the types of elements that
@@ -37,15 +37,83 @@ public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentN
 		if (isRoot(name)) { // Root
 			return createRoot();
 		}
+		if (isImplementation(name)){ 
+			return createImplementation();
+		}
+		if (isProperties(name)){
+			return createProperties();
+		}
+		if(isProperty(name)){
+			return createProperty();
+		}
+		if (isService(name)) { 
+			return createService();
+		}
+		if (isReference(name)){
+			return createReference();
+		}
+		if(isProvide(name)){
+			return createProvide();
+		}
+		
 		return super.createDocumentNode(name, parent);
 	}
 
-	public IDocumentElementNode createRoot() {
+	public DSProvide createProvide() {
+		return new DSProvide(fModel);
+	}
+
+	private DSProperty createProperty() {
+		return new DSProperty(fModel);
+	}
+
+	public DSReference createReference() {
+		return new DSReference(fModel);
+	}
+
+	public DSService createService() {
+		return new DSService(fModel);
+	}
+
+	public DSProperties createProperties() {
+		return new DSProperties(fModel);
+	}
+
+	public DSImplementation createImplementation() {
+		return new DSImplementation(fModel);
+	}
+	
+	public DSRoot createRoot() {
 		return new DSRoot(fModel);
 	}
 
+
+	private boolean isReference(String name) {
+		return name.equals(IDSConstants.ELEMENT_REFERENCE);
+	}
+
+	private boolean isService(String name) {
+		return name.equals(IDSConstants.ELEMENT_SERVICE);
+	}
+
+	private boolean isProperties(String name) {
+		return name.equals(IDSConstants.ELEMENT_PROPERTIES);
+	}
+
+	private boolean isImplementation(String name) {
+		return name.equals(IDSConstants.ELEMENT_IMPLEMENTATION);
+	}
+
 	private boolean isRoot(String name) {
-		return name.equals("<component>"); 
+		return name.equals(IDSConstants.ELEMENT_ROOT); 
+	}
+
+	private boolean isProperty(String name) {
+		return name.equals(IDSConstants.ELEMENT_PROPERTY);
+	}
+
+	private boolean isProvide(String name) {
+		return name.equals(IDSConstants.ELEMENT_PROVIDE);
 	}
 
 }
