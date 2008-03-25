@@ -11,31 +11,11 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Stack;
-import java.util.TreeMap;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jdt.core.IClasspathContainer;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.osgi.service.resolver.BaseDescription;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
-import org.eclipse.osgi.service.resolver.StateHelper;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -395,15 +375,16 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				String[] tokens = entry.getTokens();
 				for (int i = 0; i < tokens.length; i++) {
 					String pluginId = tokens[i];
-					if (added.contains(pluginId))
-						continue;
 					// Get PluginModelBase first to resolve system.bundle entry if it exists
 					IPluginModelBase model = PluginRegistry.findModel(pluginId);
 					if (model != null) {
+						BundleDescription bundleDesc = model.getBundleDescription();
+						if (added.contains(bundleDesc))
+							continue;
 						Map rules = new HashMap();
-						findExportedPackages(model.getBundleDescription(), desc, rules);
+						findExportedPackages(bundleDesc, desc, rules);
 						if (model != null) {
-							addDependency(model.getBundleDescription(), added, rules, entries, true);
+							addDependency(bundleDesc, added, rules, entries, true);
 						}
 					}
 				}
