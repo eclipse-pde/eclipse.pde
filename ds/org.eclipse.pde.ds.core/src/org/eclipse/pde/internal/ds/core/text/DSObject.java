@@ -17,8 +17,6 @@ import java.util.List;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.DocumentObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpModel;
-import org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpRoot;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 
 /**
@@ -26,7 +24,7 @@ import org.eclipse.pde.internal.ds.core.IDSConstants;
  * abstract class.
  * 
  * @since 3.4
- * @see DSModel
+ * @see CtXHelpModel
  * @see DSDocumentFactory
  */
 public abstract class DSObject extends DocumentObject implements IDSConstants, Serializable {
@@ -116,10 +114,10 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	/**
 	 * @return the root model object that is an ancestor to this object.
 	 */
-	public CtxHelpModel getModel() {
+	public DSModel getModel() {
 		final IModel sharedModel = getSharedModel();
-		if (sharedModel instanceof CtxHelpModel) {
-			return (CtxHelpModel) sharedModel;
+		if (sharedModel instanceof DSModel) {
+			return (DSModel) sharedModel;
 		}
 		return null;
 	}
@@ -127,10 +125,10 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	/**
 	 * @return the root element that is an ancestor to this object.
 	 */
-	public CtxHelpRoot getRoot() {
-		final CtxHelpModel model = getModel();
+	public DSRoot getRoot() {
+		final DSModel model = getModel();
 		if (model != null) {
-			return model.getCtxHelpRoot();
+			return model.getDSRoot();
 		}
 		return null;
 	}
@@ -141,8 +139,8 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	public abstract String getName();
 
 	/**
-	 * Get the concrete type of this object, must be one of the TYPE constants defined in ICtxHelpConstants.
-	 * @see ICtxHelpConstants
+	 * Get the concrete type of this object, must be one of the TYPE constants defined in IDSConstants.
+	 * @see IDSConstants
 	 */
 	public abstract int getType();
 
@@ -172,19 +170,19 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	}
 
 	/**
-	 * @param ctxHelpObject the child used to locate a sibling
+	 * @param DSObject the child used to locate a sibling
 	 * @return the object preceding the specified one in the list of children
 	 */
-	public DSObject getPreviousSibling(DSObject ctxHelpObject) {
-		return (DSObject) getPreviousSibling(ctxHelpObject, DSObject.class);
+	public DSObject getPreviousSibling(DSObject DSObject) {
+		return (DSObject) getPreviousSibling(DSObject, DSObject.class);
 	}
 
 	/**
-	 * @param ctxHelpObject the child used to locate a sibling
+	 * @param DSObject the child used to locate a sibling
 	 * @return the object proceeding the specified one in the list of children
 	 */
-	public DSObject getNextSibling(DSObject ctxHelpObject) {
-		return (DSObject) getNextSibling(ctxHelpObject, DSObject.class);
+	public DSObject getNextSibling(DSObject DSObject) {
+		return (DSObject) getNextSibling(DSObject, DSObject.class);
 	}
 
 	/**
