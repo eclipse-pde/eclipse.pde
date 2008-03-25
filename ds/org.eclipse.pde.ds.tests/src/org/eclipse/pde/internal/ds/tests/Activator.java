@@ -1,4 +1,4 @@
-package org.eclipse.pde.ds.tests;
+package org.eclipse.pde.internal.ds.tests;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
@@ -9,7 +9,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends Plugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.pde.ds.tests";
+	public static final String PLUGIN_ID = "org.eclipse.pde.internal.ds.tests";
 
 	// The shared instance
 	private static Activator plugin;
