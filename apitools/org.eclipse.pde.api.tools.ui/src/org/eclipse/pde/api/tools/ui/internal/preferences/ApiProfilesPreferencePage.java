@@ -179,6 +179,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				for(int i = 0; i < states.length; i++) {
 					if(isDefault(states[i])) {
 						newdefault = null;
+						rebuildcount = 0;
 					}
 					removed.add(states[i].getName());
 				}

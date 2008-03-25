@@ -315,11 +315,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	private void buildAll(IProgressMonitor monitor) {
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.api_analysis_on_0, new String[] {fCurrentProject.getName()}), 3);
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
+		cleanupMarkers(this.fCurrentProject);
 		if (profile == null) {
 			return;
 		}
 		// retrieve all .class files from the current project
-		cleanupMarkers(this.fCurrentProject);
 		IPluginModelBase currentModel = getCurrentModel();
 		if (currentModel != null) {
 			localMonitor.subTask(BuilderMessages.building_workspace_profile);
