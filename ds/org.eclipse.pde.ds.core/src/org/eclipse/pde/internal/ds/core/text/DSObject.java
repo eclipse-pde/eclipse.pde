@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
@@ -18,6 +19,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.DocumentObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
+import org.eclipse.pde.internal.ds.core.IDSRoot;
 
 /**
  * All modeled objects of a declarative services xml file must extend from this
@@ -125,7 +127,7 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	/**
 	 * @return the root element that is an ancestor to this object.
 	 */
-	public DSRoot getRoot() {
+	public IDSRoot getRoot() {
 		final DSModel model = getModel();
 		if (model != null) {
 			return model.getDSRoot();

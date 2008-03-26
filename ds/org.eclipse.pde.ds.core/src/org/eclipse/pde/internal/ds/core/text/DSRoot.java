@@ -7,8 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
+
+import org.eclipse.pde.internal.ds.core.IDSRoot;
 
 /**
  * Represents the root "component" entry in a DS xml file.  There may
@@ -25,7 +28,7 @@ package org.eclipse.pde.internal.ds.core.text;
  * @see DSModel
  * @see DSDocumentFactory
  */
-public class DSRoot extends DSObject {
+public class DSRoot extends DSObject implements IDSRoot {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -67,7 +70,7 @@ public class DSRoot extends DSObject {
 	 * @see org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canAddChild(org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject)
 	 */
 	public boolean canAddChild(int objectType) {
-		return objectType == TYPE_IMPLEMENTATION;
+		return objectType == TYPE_IMPLEMENTATION || objectType == TYPE_PROPERTIES || objectType == TYPE_PROPERTY || objectType == TYPE_SERVICE;
 	}
 
 	/* (non-Javadoc)
@@ -77,37 +80,61 @@ public class DSRoot extends DSObject {
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setAttributeName(java.lang.String)
+	 */
 	public void setAttributeName(String name){
 		setXMLAttribute(ATTRIBUTE_COMPONENT_NAME, name);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getAttributeName()
+	 */
 	public String getAttributeName(){
 		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_NAME);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setEnabled(boolean)
+	 */
 	public void setEnabled(boolean bool){
 		setBooleanAttributeValue(ATTRIBUTE_ENABLED, bool);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getEnabled()
+	 */
 	public boolean getEnabled(){
 		return getBooleanAttributeValue(ATTRIBUTE_COMPONENT_NAME, true);
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setFactory(java.lang.String)
+	 */
 	public void setFactory(String factory){
 		setXMLAttribute(ATTRIBUTE_FACTORY, factory);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getFactory()
+	 */
 	public String getFactory(){
 		return getXMLAttributeValue(ATTRIBUTE_FACTORY);
 	}
 	
-	public void setImmediate(String factory){
-		setXMLAttribute(ATTRIBUTE_IMMEDIATE, factory);
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setImmediate(boolean)
+	 */
+	public void setImmediate(boolean bool){
+		setBooleanAttributeValue(ATTRIBUTE_IMMEDIATE, bool);
 	}
 	
-	public String getImmediate(){
-		return getXMLAttributeValue(ATTRIBUTE_IMMEDIATE);
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getImmediate()
+	 */
+	public boolean getImmediate(){
+		return getBooleanAttributeValue(ATTRIBUTE_IMMEDIATE, false);
 	}
 	
 	

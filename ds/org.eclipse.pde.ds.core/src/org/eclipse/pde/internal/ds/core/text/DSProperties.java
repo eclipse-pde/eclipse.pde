@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
-public class DSProperties extends DSObject {
+import org.eclipse.pde.internal.ds.core.IDSProperties;
+
+public class DSProperties extends DSObject implements IDSProperties {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,10 +41,16 @@ public class DSProperties extends DSObject {
 		return TYPE_PROPERTIES;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperties#setEntry(java.lang.String)
+	 */
 	public void setEntry(String entry){
 		setXMLAttribute(ATTRIBUTE_ENTRY, entry);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperties#getEntry()
+	 */
 	public String getEntry(){
 		return getXMLAttributeValue(ATTRIBUTE_ENTRY);
 	}

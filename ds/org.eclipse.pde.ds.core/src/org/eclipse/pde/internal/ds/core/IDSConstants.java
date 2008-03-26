@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 

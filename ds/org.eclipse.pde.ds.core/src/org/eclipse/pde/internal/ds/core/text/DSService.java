@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
-public class DSService extends DSObject {
+import org.eclipse.pde.internal.ds.core.IDSService;
+
+public class DSService extends DSObject implements IDSService {
 
 	private static final long serialVersionUID = 1L;
 
@@ -31,19 +34,25 @@ public class DSService extends DSObject {
 	}
 
 	public String getName() {
-		return getServiceFactory();
+		return ""+getServiceFactory();
 	}
 
 	public int getType() {
 		return TYPE_SERVICE;
 	}
 	
-	public void setServiceFactory(String factory){
-		setXMLAttribute(ATTRIBUTE_SERVICE_FACTORY, factory);
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSService#setServiceFactory(boolean)
+	 */
+	public void setServiceFactory(boolean bool){
+		setBooleanAttributeValue(ATTRIBUTE_SERVICE_FACTORY, bool);
 	}
 	
-	public String getServiceFactory(){
-		return getXMLAttributeValue(ATTRIBUTE_SERVICE_FACTORY);
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSService#getServiceFactory()
+	 */
+	public boolean getServiceFactory(){
+		return getBooleanAttributeValue(ATTRIBUTE_SERVICE_FACTORY, false);
 	}
 
 }

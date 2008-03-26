@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
-public class DSImplementation extends DSObject {
+import org.eclipse.pde.internal.ds.core.IDSImplementation;
+
+public class DSImplementation extends DSObject implements IDSImplementation {
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,10 +42,16 @@ public class DSImplementation extends DSObject {
 		return TYPE_IMPLEMENTATION;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSImplementation#setClassName(java.lang.String)
+	 */
 	public void setClassName(String className){
 		setXMLAttribute(ATTRIBUTE_CLASS, className);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSImplementation#getClassName()
+	 */
 	public String getClassName(){
 		return getXMLAttributeValue(ATTRIBUTE_CLASS);
 	}

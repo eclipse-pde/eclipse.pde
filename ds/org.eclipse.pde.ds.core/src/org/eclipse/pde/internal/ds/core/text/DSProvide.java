@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
-public class DSProvide extends DSObject {
+import org.eclipse.pde.internal.ds.core.IDSProvide;
+
+public class DSProvide extends DSObject implements IDSProvide {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,10 +41,16 @@ public class DSProvide extends DSObject {
 		return TYPE_PROVIDE;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSProvide#setInterface(java.lang.String)
+	 */
 	public void setInterface(String interfaceName){
 		setXMLAttribute(ATTRIBUTE_PROVIDE_INTERFACE, interfaceName);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSProvide#getInterface()
+	 */
 	public String getInterface(){
 		return getXMLAttributeValue(ATTRIBUTE_PROVIDE_INTERFACE);
 	}
