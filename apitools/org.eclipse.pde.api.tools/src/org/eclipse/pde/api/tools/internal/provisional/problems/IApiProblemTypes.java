@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public interface IApiProblemTypes {
 
-	// Binary compatibility problems
+	// Compatibility problems
 	public static final String API_PROFILE_REMOVED_API_COMPONENT =
 		Util.getDeltaPrefererenceKey(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT);
 	public static final String API_COMPONENT_ADDED_EXECUTION_ENVIRONMENT =

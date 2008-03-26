@@ -58,7 +58,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_ENUM, child.getFlags());
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_CLASS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_ANNOTATION, child.getFlags());
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -124,7 +124,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_INTERFACE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_ENUM, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_ANNOTATION, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -190,7 +190,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_CLASS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -212,7 +212,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_ENUM, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -234,7 +234,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_INTERFACE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -256,7 +256,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_INTERFACE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -278,7 +278,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_CLASS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -300,6 +300,6 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TO_ANNOTATION, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 }

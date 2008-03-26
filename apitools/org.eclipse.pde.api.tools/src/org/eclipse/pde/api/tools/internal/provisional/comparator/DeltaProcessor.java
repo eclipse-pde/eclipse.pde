@@ -15,85 +15,85 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 
 /**
- * Class used to process the delta to find out if they are binary compatible or not.
+ * Class used to process the delta to find out if they are compatible or not.
  *
  * @since 1.0.0
  */
 public class DeltaProcessor {
 	
 	/**
-	 * Return true is the given delta is binary compatible, false otherwise.
+	 * Return true is the given delta is compatible, false otherwise.
 	 * 
 	 * @param delta the given delta
-	 * @return true is the given delta is binary compatible, false otherwise.
+	 * @return true is the given delta is compatible, false otherwise.
 	 */
-	public static boolean isBinaryCompatible(IDelta delta) {
-		class BinaryCompatibleVisitor extends DeltaVisitor {
-			boolean isBinaryCompatible = true;
+	public static boolean isCompatible(IDelta delta) {
+		class CompatibleVisitor extends DeltaVisitor {
+			boolean isCompatible = true;
 			
 			public boolean visit(IDelta delta) {
-				if (!this.isBinaryCompatible) return false;
+				if (!this.isCompatible) return false;
 				return true;
 			}
 			public void endVisit(IDelta delta) {
-				if (this.isBinaryCompatible) {
-					this.isBinaryCompatible = isBinaryCompatible0(delta);
+				if (this.isCompatible) {
+					this.isCompatible = isCompatible0(delta);
 				}
 			}
 		};
 		if (delta.getChildren().length != 0) {
-			BinaryCompatibleVisitor visitor = new BinaryCompatibleVisitor();
+			CompatibleVisitor visitor = new CompatibleVisitor();
 			delta.accept(visitor);
-			return visitor.isBinaryCompatible;
+			return visitor.isCompatible;
 		} else {
-			return isBinaryCompatible0(delta);
+			return isCompatible0(delta);
 		}
 	}
 
 	/**
-	 * Returns if the delta is binary compatible or not
+	 * Returns if the delta is compatible or not
 	 * @param delta
-	 * @return true if the delta represents a binary compatible change or not
+	 * @return true if the delta represents a compatible change or not
 	 */
-	private static boolean isBinaryCompatible0(IDelta delta) {
+	private static boolean isCompatible0(IDelta delta) {
 		switch(delta.getElementType()) {
 			case IDelta.API_PROFILE_ELEMENT_TYPE : {
-				return isApiProfileBinaryCompatible(delta);
+				return isApiProfileCompatible(delta);
 			}
 			case IDelta.API_COMPONENT_ELEMENT_TYPE : {
-				return isApiComponentBinaryCompatible(delta);
+				return isApiComponentCompatible(delta);
 			}
 			case IDelta.INTERFACE_ELEMENT_TYPE : {
-				return isInterfaceBinaryCompatible(delta);
+				return isInterfaceCompatible(delta);
 			}
 			case IDelta.ANNOTATION_ELEMENT_TYPE : {
-				return isAnnotationBinaryCompatible(delta);
+				return isAnnotationCompatible(delta);
 			}
 			case IDelta.METHOD_ELEMENT_TYPE : {
-				return isMethodBinaryCompatible(delta);
+				return isMethodCompatible(delta);
 			}
 			case IDelta.CONSTRUCTOR_ELEMENT_TYPE : {
-				return isConstructorBinaryCompatible(delta);
+				return isConstructorCompatible(delta);
 			}
 			case IDelta.FIELD_ELEMENT_TYPE : {
-				return isFieldBinaryCompatible(delta);
+				return isFieldCompatible(delta);
 			}
 			case IDelta.CLASS_ELEMENT_TYPE : {
-				return isClassBinaryCompatible(delta);
+				return isClassCompatible(delta);
 			}
 			case IDelta.ENUM_ELEMENT_TYPE : {
-				return isEnumBinaryCompatible(delta);
+				return isEnumCompatible(delta);
 			}
 		}
 		return true;
 	}
 	
 	/**
-	 * Returns if the API profile is binary compatible
+	 * Returns if the API profile is compatible
 	 * @param delta
-	 * @return true if binary compatible, false otherwise
+	 * @return true if compatible, false otherwise
 	 */
-	private static boolean isApiProfileBinaryCompatible(IDelta delta) {
+	private static boolean isApiProfileCompatible(IDelta delta) {
 		switch(delta.getKind()) {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
@@ -105,11 +105,11 @@ public class DeltaProcessor {
 	}
 	
 	/**
-	 * Returns if the API component is binary compatible
+	 * Returns if the API component is compatible
 	 * @param delta
-	 * @return true if binary compatible, false otherwise
+	 * @return true if compatible, false otherwise
 	 */
-	private static boolean isApiComponentBinaryCompatible(IDelta delta) {
+	private static boolean isApiComponentCompatible(IDelta delta) {
 		switch(delta.getKind()) {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
@@ -122,11 +122,11 @@ public class DeltaProcessor {
 	}
 	
 	/**
-	 * Returns if the annotation is binary compatible or not
+	 * Returns if the annotation is compatible or not
 	 * @param delta
-	 * @return true if binary compatible, false otherwise
+	 * @return true if compatible, false otherwise
 	 */
-	private static boolean isAnnotationBinaryCompatible(IDelta delta) {
+	private static boolean isAnnotationCompatible(IDelta delta) {
 		switch(delta.getKind()) {
 			case IDelta.ADDED :
 				switch(delta.getFlags()) {
@@ -172,11 +172,11 @@ public class DeltaProcessor {
 	}
 	
 	/**
-	 * Returns if the method is binary compatible or not
+	 * Returns if the method is compatible or not
 	 * @param delta
-	 * @return true if binary compatible, false otherwise
+	 * @return true if compatible, false otherwise
 	 */
-	private static boolean isMethodBinaryCompatible(IDelta delta) {
+	private static boolean isMethodCompatible(IDelta delta) {
 		switch(delta.getKind()) {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
@@ -218,11 +218,11 @@ public class DeltaProcessor {
 	}
 	
 	/**
-	 * Returns if the field is binary compatible or not
+	 * Returns if the field is compatible or not
 	 * @param delta
-	 * @return true if binary compatible, false otherwise
+	 * @return true if compatible, false otherwise
 	 */
-	private static boolean isFieldBinaryCompatible(IDelta delta) {
+	private static boolean isFieldCompatible(IDelta delta) {
 		switch(delta.getKind()) {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
@@ -262,11 +262,11 @@ public class DeltaProcessor {
 	}
 	
 	/**
-	 * Returns if the constructor is binary compatible or not
+	 * Returns if the constructor is compatible or not
 	 * @param delta
-	 * @return true if binary compatible, false otherwise
+	 * @return true if compatible, false otherwise
 	 */
-	private static boolean isConstructorBinaryCompatible(IDelta delta) {
+	private static boolean isConstructorCompatible(IDelta delta) {
 		switch(delta.getKind()) {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
@@ -307,11 +307,11 @@ public class DeltaProcessor {
 	}
 	
 	/**
-	 * Returns if the enum is binary compatible or not
+	 * Returns if the enum is compatible or not
 	 * @param delta
-	 * @return true if binary compatible, false otherwise
+	 * @return true if compatible, false otherwise
 	 */
-	private static boolean isEnumBinaryCompatible(IDelta delta) {
+	private static boolean isEnumCompatible(IDelta delta) {
 		switch(delta.getKind()) {
 			case IDelta.ADDED :
 				switch(delta.getFlags()) {
@@ -349,11 +349,11 @@ public class DeltaProcessor {
 	}
 	
 	/**
-	 * Returns if a class file is binary compatible
+	 * Returns if a class file is compatible
 	 * @param delta
-	 * @return true if binary compatible, false otherwise
+	 * @return true if compatible, false otherwise
 	 */
-	private static boolean isClassBinaryCompatible(IDelta delta) {
+	private static boolean isClassCompatible(IDelta delta) {
 		switch(delta.getKind()) {
 			case IDelta.ADDED:
 				switch(delta.getFlags()) {
@@ -419,11 +419,11 @@ public class DeltaProcessor {
 	}
 	
 	/**
-	 * Returns if the interface element is binary compatible 
+	 * Returns if the interface element is compatible 
 	 * @param delta
-	 * @return true if binary compatible, false otherwise
+	 * @return true if compatible, false otherwise
 	 */
-	private static boolean isInterfaceBinaryCompatible(IDelta delta) {
+	private static boolean isInterfaceCompatible(IDelta delta) {
 		switch(delta.getKind()) {
 			case IDelta.ADDED :
 				switch(delta.getFlags()) {

@@ -24,9 +24,9 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 public interface IApiProblem {
 
 	/**
-	 * Constant representing the binary incompatibility problem category 
+	 * Constant representing the incompatibility problem category 
 	 */
-	public static final int CATEGORY_BINARY = 0x10000000;
+	public static final int CATEGORY_COMPATIBILITY = 0x10000000;
 	
 	/**
 	 * Constant representing the api usage problem category
@@ -269,7 +269,7 @@ public interface IApiProblem {
 	 * Returns the category for this problem. Guaranteed to be
 	 * one of:
 	 * <ul>
-	 * <li>{@link #CATEGORY_BINARY}</li>
+	 * <li>{@link #CATEGORY_COMPATIBILITY}</li>
 	 * <li>{@link #CATEGORY_SINCETAGS}</li>
 	 * <li>{@link #CATEGORY_USAGE}</li>
 	 * <li>{@link #CATEGORY_VERSION}</li>

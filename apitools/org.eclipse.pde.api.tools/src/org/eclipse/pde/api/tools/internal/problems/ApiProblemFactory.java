@@ -354,7 +354,7 @@ public class ApiProblemFactory {
 					}
 				}
 			}
-			case IApiProblem.CATEGORY_BINARY: {
+			case IApiProblem.CATEGORY_COMPATIBILITY: {
 				switch(kind) {
 					case IDelta.ADDED: {
 						switch(element) {
@@ -524,7 +524,7 @@ public class ApiProblemFactory {
 					case IApiProblem.API_LEAK: return IApiProblemTypes.API_LEAK;
 				}
 			}
-			case IApiProblem.CATEGORY_BINARY: {
+			case IApiProblem.CATEGORY_COMPATIBILITY: {
 				return Util.getDeltaPrefererenceKey(problem.getElementKind(), problem.getKind(), problem.getFlags());
 			}
 		}

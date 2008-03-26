@@ -66,8 +66,8 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(delta));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(delta));
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -129,12 +129,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -173,12 +173,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -200,7 +200,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -244,7 +244,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -284,7 +284,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -307,7 +307,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
 	 * Removal of default field
@@ -329,7 +329,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -352,7 +352,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -375,7 +375,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -398,7 +398,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
 	 * Removal of default method
@@ -420,7 +420,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -443,7 +443,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -466,7 +466,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -489,7 +489,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
 	 * Removal of default constructor
@@ -511,7 +511,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -534,7 +534,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -556,7 +556,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.ABSTRACT_TO_NON_ABSTRACT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -578,7 +578,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.NON_ABSTRACT_TO_ABSTRACT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -600,7 +600,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FINAL_TO_NON_FINAL, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -622,7 +622,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -644,7 +644,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE_PARAMETERS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -666,7 +666,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE_PARAMETER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -688,7 +688,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE_PARAMETERS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -710,7 +710,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE_PARAMETER_NAME, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -732,12 +732,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CLASS_BOUND, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.INTERFACE_BOUNDS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -759,7 +759,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.INTERFACE_BOUNDS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -823,7 +823,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -845,7 +845,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -868,7 +868,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -891,7 +891,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -914,7 +914,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -937,7 +937,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -960,7 +960,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -982,7 +982,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
 	 * Decrease access
@@ -1003,7 +1003,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1025,7 +1025,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1047,7 +1047,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CLASS_BOUND, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1069,7 +1069,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.INTERFACE_BOUND, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1091,7 +1091,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.INTERFACE_BOUND, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1113,7 +1113,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.INTERFACE_BOUND, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1135,7 +1135,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.SUPERCLASS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1157,17 +1157,17 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.SUPERCLASS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXPANDED_SUPERCLASS_SET, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[2];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXPANDED_SUPERCLASS_SET, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1189,17 +1189,17 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONTRACTED_SUPERCLASS_SET, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONTRACTED_SUPERCLASS_SET, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[2];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.SUPERCLASS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1221,12 +1221,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONTRACTED_SUPERINTERFACES_SET, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1248,7 +1248,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONTRACTED_SUPERINTERFACES_SET, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1270,7 +1270,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXPANDED_SUPERINTERFACES_SET, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1292,7 +1292,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXPANDED_SUPERINTERFACES_SET, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1315,12 +1315,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Has no extend restrictions", !RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD_MOVED_UP, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1343,12 +1343,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FIELD_MOVED_UP, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1439,7 +1439,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1463,7 +1463,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Extend restrictions", !RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1486,7 +1486,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1508,7 +1508,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1531,7 +1531,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1553,7 +1553,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1576,7 +1576,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1600,7 +1600,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not a protected field", Util.isProtected(child.getModifiers()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1622,7 +1622,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1646,12 +1646,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not a protected field", Util.isProtected(child.getModifiers()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FIELD_MOVED_UP, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1674,12 +1674,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Extend restrictions", !RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD_MOVED_UP, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1702,12 +1702,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD_MOVED_UP, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1730,7 +1730,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
@@ -1753,7 +1753,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1792,7 +1792,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1815,7 +1815,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Extend restrictions", !RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1838,12 +1838,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Extend restrictions", !RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD_MOVED_UP, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1866,12 +1866,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FIELD_MOVED_UP, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1894,7 +1894,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1916,7 +1916,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
 	 * Remove type member (package visibility)
@@ -1938,7 +1938,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1961,7 +1961,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1983,7 +1983,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2006,7 +2006,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2029,7 +2029,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2052,7 +2052,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2075,7 +2075,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2098,7 +2098,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2121,7 +2121,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2144,7 +2144,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2167,7 +2167,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2190,7 +2190,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2213,7 +2213,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2236,7 +2236,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2258,12 +2258,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONTRACTED_SUPERINTERFACES_SET, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2334,7 +2334,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not static", Flags.isStatic(child.getModifiers()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		try {
 			DeltaXmlVisitor xmlVisitor = new DeltaXmlVisitor();
 			delta.accept(xmlVisitor);
@@ -2364,7 +2364,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2386,7 +2386,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2408,7 +2408,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE_VISIBILITY, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2430,7 +2430,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2454,7 +2454,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2478,7 +2478,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2501,7 +2501,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2525,7 +2525,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2548,7 +2548,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
 	 * Add a protected method in a class with extend restriction
@@ -2571,7 +2571,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("No extend restriction", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2594,7 +2594,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -2618,7 +2618,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
 	 * Remove a constructor with multiple methods with the same selector
@@ -2641,6 +2641,6 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 }

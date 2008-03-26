@@ -19,7 +19,7 @@
 	<!-- =================================================================================== -->
 	<!-- Extension: API Problem Markers                                                      -->
 	<!-- =================================================================================== -->
-<extension id="org.eclipse.pde.api.tools.binary_compatibility" point="org.eclipse.core.resources.markers" name="%markerBinaryCompatibility.name">
+<extension id="org.eclipse.pde.api.tools.compatibility" point="org.eclipse.core.resources.markers" name="%markerCompatibility.name">
   <super  type="org.eclipse.core.resources.problemmarker"/>
   <super type="org.eclipse.core.resources.textmarker"/>
   <persistent value="true"/>

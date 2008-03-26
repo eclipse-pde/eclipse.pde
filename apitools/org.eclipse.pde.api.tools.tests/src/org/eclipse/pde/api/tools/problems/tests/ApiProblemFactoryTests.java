@@ -33,10 +33,10 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testCreateProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1, 
-				 IApiProblem.CATEGORY_BINARY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
+				 IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
 		assertNotNull("a new problem should have been created with null attributes", problem);
 		problem = ApiProblemFactory.newApiProblem("path", new String[0], new String[0], new Object[0], -1, -1, -1, 
-				 IApiProblem.CATEGORY_BINARY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
+				 IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
 		assertNotNull("a new problem should have been created with non-null attributes", problem);
 	}
 	
@@ -166,13 +166,13 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testGetBinaryMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1,  
-				IApiProblem.CATEGORY_BINARY, IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.CONSTRUCTOR);
+				IApiProblem.CATEGORY_COMPATIBILITY, IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.CONSTRUCTOR);
 		String message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Added a constructor", new String[0])));
 		problem = ApiProblemFactory.newApiProblem(null, new String[] {"foo()"}, null, null, -1, -1, -1,  
-				IApiProblem.CATEGORY_BINARY, IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
+				IApiProblem.CATEGORY_COMPATIBILITY, IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));

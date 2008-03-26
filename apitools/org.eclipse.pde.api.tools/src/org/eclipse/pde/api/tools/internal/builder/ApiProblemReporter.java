@@ -95,8 +95,8 @@ public class ApiProblemReporter implements IApiProblemReporter {
 			case IApiProblem.CATEGORY_API_PROFILE: {
 				return IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER;
 			}
-			case IApiProblem.CATEGORY_BINARY: {
-				return IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER;
+			case IApiProblem.CATEGORY_COMPATIBILITY: {
+				return IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER;
 			}
 			case IApiProblem.CATEGORY_SINCETAGS: {
 				return IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER;

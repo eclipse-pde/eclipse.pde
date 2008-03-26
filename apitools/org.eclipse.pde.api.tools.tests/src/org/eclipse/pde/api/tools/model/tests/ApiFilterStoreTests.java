@@ -112,9 +112,9 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertNotNull("the resource src/x/C1.java must exist", resource);
 		filters = store.getFilters(resource);
 		assertTrue("there should be 2 filters for src/x/C1.java", filters.length == 2);
-		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_BINARY, 4, IDelta.REMOVED, IDelta.FIELD);
+		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, 4, IDelta.REMOVED, IDelta.FIELD);
 		assertTrue("the removed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem));
-		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_BINARY, 4, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY);
+		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, 4, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY);
 		assertTrue("the changed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem));
 		
 		//C3

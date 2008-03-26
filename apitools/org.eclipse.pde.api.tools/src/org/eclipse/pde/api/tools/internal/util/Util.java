@@ -1265,8 +1265,8 @@ public final class Util {
 	 * @return the string of the api problem category
 	 */
 	public static String getProblemCategory(int category) {
-		if(category == IApiProblem.CATEGORY_BINARY) {
-			return "BINARY"; //$NON-NLS-1$
+		if(category == IApiProblem.CATEGORY_COMPATIBILITY) {
+			return "COMPATIBILITY"; //$NON-NLS-1$
 		}
 		if(category == IApiProblem.CATEGORY_SINCETAGS) {
 			return "SINCETAGS"; //$NON-NLS-1$
@@ -1292,7 +1292,7 @@ public final class Util {
 	 */
 	public static String getProblemElementKind(int category, int kind) {
 		switch(category) {
-			case IApiProblem.CATEGORY_BINARY:
+			case IApiProblem.CATEGORY_COMPATIBILITY:
 			case IApiProblem.CATEGORY_SINCETAGS:{
 				return getDeltaElementType(kind);
 			}
@@ -1313,7 +1313,7 @@ public final class Util {
 	 */
 	public static String getProblemFlagsName(int category, int flags) {
 		switch(category) {
-			case IApiProblem.CATEGORY_BINARY:  {
+			case IApiProblem.CATEGORY_COMPATIBILITY:  {
 				return getDeltaFlagsName(flags);
 			}
 			case IApiProblem.CATEGORY_SINCETAGS:
@@ -1351,7 +1351,7 @@ public final class Util {
 	 */
 	public static String getProblemKind(int category, int kind) {
 		switch(category) {
-			case IApiProblem.CATEGORY_BINARY: {
+			case IApiProblem.CATEGORY_COMPATIBILITY: {
 				return getDeltaKindName(kind);
 			}
 			case IApiProblem.CATEGORY_SINCETAGS: {

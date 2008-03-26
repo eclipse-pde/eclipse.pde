@@ -33,7 +33,7 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 	public void initializeDefaultPreferences() {
 		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
 		
-		//restrictions
+		// restrictions
 		prefs.setDefault(IApiProblemTypes.ILLEGAL_EXTEND, ApiPlugin.VALUE_WARNING);
 		prefs.setDefault(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_WARNING);
 		prefs.setDefault(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_WARNING);
@@ -41,9 +41,9 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		prefs.setDefault(IApiProblemTypes.ILLEGAL_OVERRIDE, ApiPlugin.VALUE_WARNING);
 		prefs.setDefault(IApiProblemTypes.API_LEAK, ApiPlugin.VALUE_WARNING);
 		
-		//binary compatibilities
-		for (int i = 0, max = ApiPlugin.AllBinaryCompatibilityKeys.length; i < max; i++) {
-			prefs.setDefault(ApiPlugin.AllBinaryCompatibilityKeys[i], ApiPlugin.VALUE_ERROR);
+		// compatibilities
+		for (int i = 0, max = ApiPlugin.AllCompatibilityKeys.length; i < max; i++) {
+			prefs.setDefault(ApiPlugin.AllCompatibilityKeys[i], ApiPlugin.VALUE_ERROR);
 		}
 
 		// version management

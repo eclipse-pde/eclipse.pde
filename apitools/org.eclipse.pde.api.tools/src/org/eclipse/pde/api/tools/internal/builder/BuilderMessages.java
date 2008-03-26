@@ -17,7 +17,7 @@ public class BuilderMessages extends NLS {
 	public static String api_analysis_builder;
 	public static String api_analysis_on_0;
 	public static String building_workspace_profile;
-	public static String checking_binary_compat;
+	public static String checking_compatibility;
 	public static String checking_api_usage;
 
 	public static String ApiProblemFactory_problem_message_not_found;

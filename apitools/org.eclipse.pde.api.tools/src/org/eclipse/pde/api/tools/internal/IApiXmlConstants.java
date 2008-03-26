@@ -103,10 +103,10 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	/**
-	 * Constant representing the binary compatibility attribute of a delta in xml report.
-	 * Value is: <code>binary_compatible</code>
+	 * Constant representing the compatibility attribute of a delta in xml report.
+	 * Value is: <code>compatible</code>
 	 */
-	public static final String ATTR_NAME_BINARY_COMPATIBLE = "binary_compatible"; //$NON-NLS-1$
+	public static final String ATTR_NAME_COMPATIBLE = "compatible"; //$NON-NLS-1$
 	/**
 	 * Constant representing the element type attribute of a delta in xml report.
 	 * Value is: <code>element_type</code>

@@ -100,19 +100,19 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	}
 	
 	/**
-	 * Returns all of the binary compatibility markers on the given resource and its children
+	 * Returns all of the compatibility markers on the given resource and its children
 	 * @param resource
 	 * @return
 	 * @throws CoreException
 	 */
-	protected IMarker[] getAllBinaryMarkers(IResource resource) throws CoreException {
+	protected IMarker[] getAllCompatibilityMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
 			return new IMarker[0];
 		}
 		if(!resource.isAccessible()) {
 			return new IMarker[0];
 		}
-		return resource.findMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+		return resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
 	
 	/**
@@ -203,7 +203,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		try {
 			ArrayList problems = new ArrayList();
 			problems.addAll(Arrays.asList(getAllUsageMarkers(resource)));
-			problems.addAll(Arrays.asList(getAllBinaryMarkers(resource)));
+			problems.addAll(Arrays.asList(getAllCompatibilityMarkers(resource)));
 			problems.addAll(Arrays.asList(getAllAPIProfileMarkers(resource)));
 			problems.addAll(Arrays.asList(getAllSinceTagMarkers(resource)));
 			problems.addAll(Arrays.asList(getAllVersionMarkers(resource)));

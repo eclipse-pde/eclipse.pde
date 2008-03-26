@@ -369,7 +369,7 @@ public class ClassFileComparator {
 			TypeParameterDescriptor[] typeParameterDescriptors2 = signatureDescriptor2.getTypeParameterDescriptors();
 			int typeParameterDescriptorsLength2 = typeParameterDescriptors2.length;
 			if (typeParameterDescriptorsLength1 < typeParameterDescriptorsLength2) {
-				// report delta: binary incompatible
+				// report delta: incompatible
 				this.addDelta(elementDescriptor1, IDelta.ADDED, IDelta.TYPE_PARAMETER, this.classFile, elementDescriptor1.name);
 				return;
 			} else if (typeParameterDescriptorsLength1 > typeParameterDescriptorsLength2) {
@@ -714,7 +714,7 @@ public class ClassFileComparator {
 				}
 				if (!found) {
 					if (fieldDescriptor.isEnum()) {
-						// report delta (removal of an enum constant - not binary compatible)
+						// report delta (removal of an enum constant - not compatible)
 						this.addDelta(this.descriptor1, IDelta.REMOVED, IDelta.ENUM_CONSTANT, this.getCurrentTypeApiRestrictions(), this.classFile, name, name);
 						return;
 					}
@@ -999,7 +999,7 @@ public class ClassFileComparator {
 				this.addDelta(methodDescriptor, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY, this.classFile, key);
 			}
 		} else if (Util.isVarargs(access2)) {
-			// report delta: conversion from T[] to T... binary compatible
+			// report delta: conversion from T[] to T... compatible
 			this.addDelta(methodDescriptor, IDelta.CHANGED, IDelta.ARRAY_TO_VARARGS, this.classFile, key);
 		}
 		if (Util.isProtected(access)) {
@@ -1081,7 +1081,7 @@ public class ClassFileComparator {
 				this.addDelta(methodDescriptor, IDelta.ADDED, IDelta.ANNOTATION_DEFAULT_VALUE, this.classFile, key);
 			}
 		} else if (methodDescriptor2.defaultValue == null) {
-			// report delta : default value has been removed - binary incompatible
+			// report delta : default value has been removed - incompatible
 			this.addDelta(methodDescriptor, methodDescriptor, IDelta.REMOVED, IDelta.ANNOTATION_DEFAULT_VALUE, this.classFile, key, getMethodDisplayName(methodDescriptor, this.descriptor1));
 		} else if (!methodDescriptor.defaultValue.equals(methodDescriptor2.defaultValue)) {
 			// report delta: default value has changed
@@ -1199,7 +1199,7 @@ public class ClassFileComparator {
 			return;
 		}
 		if (fieldDescriptor.isEnum()) {
-			// report delta (addition of an enum constant - binary compatible
+			// report delta (addition of an enum constant - compatible
 			this.addDelta(descriptor, IDelta.ADDED, IDelta.ENUM_CONSTANT, this.classFile, name);
 		} else {
 			if (Util.isFinal(descriptor.access)) {

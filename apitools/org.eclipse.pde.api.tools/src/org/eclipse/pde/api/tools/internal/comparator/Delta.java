@@ -195,7 +195,7 @@ public class Delta implements IDelta {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getMessage()
 	 */
 	public String getMessage() {
-		int id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_BINARY, 
+		int id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, 
 				this.elementType, this.kind, this.flags);
 		return ApiProblemFactory.getLocalizedMessage(id, (this.data != null ? new String[] {this.data.toString()} : null));
 	}

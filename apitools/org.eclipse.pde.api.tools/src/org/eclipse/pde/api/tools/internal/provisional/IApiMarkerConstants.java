@@ -51,10 +51,10 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String DEFAULT_API_PROFILE_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_profile"; //$NON-NLS-1$
 	/**
-	 * Constant representing the id for the binary compatibility problem marker.
-	 * Value is: <code>org.eclipse.pde.api.tools.binary_compatibility</code> 
+	 * Constant representing the id for the compatibility problem marker.
+	 * Value is: <code>org.eclipse.pde.api.tools.compatibility</code> 
 	 */
-	public static final String BINARY_COMPATIBILITY_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".binary_compatibility"; //$NON-NLS-1$
+	public static final String COMPATIBILITY_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".compatibility"; //$NON-NLS-1$
 	/**
 	 * Constant representing the id for the API usage problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.api_usage</code> 
@@ -81,10 +81,10 @@ public interface IApiMarkerConstants {
 	 */
 	public static final int DEFAULT_API_PROFILE_MARKER_ID = 1;
 	/**
-	 * Constant representing the apiMarkerID value for binary compatibility markers.
+	 * Constant representing the apiMarkerID value for compatibility markers.
 	 * Value is: <code>2</code>
 	 */
-	public static final int BINARY_COMPATIBILITY_MARKER_ID = 2;
+	public static final int COMPATIBILITY_MARKER_ID = 2;
 	/**
 	 * Constant representing the apiMarkerID value for api usage markers.
 	 * Value is: <code>3</code>

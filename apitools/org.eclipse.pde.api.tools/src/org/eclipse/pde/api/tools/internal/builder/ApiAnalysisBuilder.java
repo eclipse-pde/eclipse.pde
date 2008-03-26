@@ -332,10 +332,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				return;
 			}
 			String id = currentModel.getBundleDescription().getSymbolicName();
-			// Binary compatibility checks
+			// Compatibility checks
 			IApiComponent apiComponent = wsprofile.getApiComponent(id);
 			if(apiComponent != null) {
-				localMonitor.subTask(BuilderMessages.checking_binary_compat);
+				localMonitor.subTask(BuilderMessages.checking_compatibility);
 				compareProfiles(profile.getApiComponent(id), apiComponent);
 				localMonitor.worked(1);
 				// API usage checks
@@ -934,7 +934,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private void cleanupVersionNumberingMarker() {
 		try {
-			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
 			if (manifestFile == null) return;
 			IMarker[] manifestMarkers = manifestFile.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
@@ -974,7 +974,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	public static void cleanupMarkers(IResource resource) {
 		try {
 			if (resource != null && resource.isAccessible()) {
-				resource.deleteMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				resource.deleteMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				resource.deleteMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				resource.deleteMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				if (resource.getType() == IResource.PROJECT) {
@@ -996,7 +996,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			if (resource != null && resource.exists()) {
 				ArrayList markers = new ArrayList();
-				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
+				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
 				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
 				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
 				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
@@ -1038,7 +1038,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param project
 	 * @return a new {@link IApiProblem} or <code>null</code>
 	 */
-	private IApiProblem createBinaryProblem(IDelta delta, ICompilationUnit compilationUnit, IJavaProject project, IApiComponent reference, IApiComponent component) {
+	private IApiProblem createCompatibilityProblem(IDelta delta, ICompilationUnit compilationUnit, IJavaProject project, IApiComponent reference, IApiComponent component) {
 		try {
 			if(shouldIgnoreProblem(Util.getDeltaPrefererenceKey(delta.getElementType(), delta.getKind(), delta.getFlags()))) {
 				return null;
@@ -1100,11 +1100,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			return ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), 
 					delta.getArguments(), 
 					new String[] {IApiMarkerConstants.MARKER_ATTR_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-					new Object[] {element.getHandleIdentifier(), new Integer(IApiMarkerConstants.BINARY_COMPATIBILITY_MARKER_ID)}, 
+					new Object[] {element.getHandleIdentifier(), new Integer(IApiMarkerConstants.COMPATIBILITY_MARKER_ID)}, 
 					lineNumber, 
 					charStart, 
 					charEnd, 
-					IApiProblem.CATEGORY_BINARY, 
+					IApiProblem.CATEGORY_COMPATIBILITY, 
 					delta.getElementType(), 
 					delta.getKind(), 
 					delta.getFlags());
@@ -1160,8 +1160,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					switch(localDelta.getElementType()) {
 						case IDelta.API_COMPONENT_ELEMENT_TYPE :
 						case IDelta.API_PROFILE_ELEMENT_TYPE :
-							if (!DeltaProcessor.isBinaryCompatible(localDelta)) {
-								problem = createBinaryProblem(localDelta, null, javaProject, reference, component);
+							if (!DeltaProcessor.isCompatible(localDelta)) {
+								problem = createCompatibilityProblem(localDelta, null, javaProject, reference, component);
 							}
 							break;
 						default:
@@ -1173,14 +1173,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							}
 							if (type == null) {
 								// delta reported against an API component or an api profile
-								if (!DeltaProcessor.isBinaryCompatible(localDelta)) {
-									problem = createBinaryProblem(localDelta, null, javaProject, reference, component);
+								if (!DeltaProcessor.isCompatible(localDelta)) {
+									problem = createCompatibilityProblem(localDelta, null, javaProject, reference, component);
 								}
 							} else {
 								ICompilationUnit compilationUnit = type.getCompilationUnit();
 								if (compilationUnit == null) {
-									if (!DeltaProcessor.isBinaryCompatible(localDelta)) {
-										problem = createBinaryProblem(localDelta, null, javaProject, reference, component);
+									if (!DeltaProcessor.isCompatible(localDelta)) {
+										problem = createCompatibilityProblem(localDelta, null, javaProject, reference, component);
 									}
 								} else {
 									processDelta(javaProject, localDelta, compilationUnit, reference, component);
@@ -1221,10 +1221,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private void processDelta(IJavaProject javaProject, IDelta delta, ICompilationUnit compilationUnit,	IApiComponent reference, IApiComponent component) {
 		IApiProblem problem = null;
-		if (DeltaProcessor.isBinaryCompatible(delta)) {
+		if (DeltaProcessor.isCompatible(delta)) {
 			if (DEBUG) {
 				String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
-				System.out.println(deltaDetails + " is binary compatible"); //$NON-NLS-1$
+				System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
 			}
 			if ((delta.getKind() == IDelta.ADDED)
 					&& (RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
@@ -1242,9 +1242,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		} else {
 			if (DEBUG) {
 				String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
-				System.err.println(deltaDetails + " is not binary compatible"); //$NON-NLS-1$
+				System.err.println(deltaDetails + " is not compatible"); //$NON-NLS-1$
 			}
-			problem = createBinaryProblem(delta, compilationUnit, javaProject, reference, component);
+			problem = createCompatibilityProblem(delta, compilationUnit, javaProject, reference, component);
 			if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
 					|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
 					|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
@@ -1491,7 +1491,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	private IApiProblem createVersionProblem(int kind, final String[] messageargs, boolean breakage, String version) {
 		try {
 			IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
-			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			if (manifestFile == null) {
 				// Cannot retrieve the manifest.mf file
 				return null;
@@ -1528,7 +1528,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				return null;
 			}
 			// this error should be located on the manifest.mf file
-			// first of all we check how many binary breakage marker are there
+			// first of all we check how many api breakage marker are there
 			int lineNumber = -1;
 			int charStart = 0;
 			int charEnd = 1;

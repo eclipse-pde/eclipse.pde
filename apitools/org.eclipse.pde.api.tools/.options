@@ -4,7 +4,7 @@ org.eclipse.pde.api.tools/debug=true
 # Reports incremental builder activity : nature of build, indictment process,...
 org.eclipse.pde.api.tools/debug/builder=false
 
-# Print notified binary compatibility deltas
+# Print notified compatibility deltas
 org.eclipse.pde.api.tools/debug/delta=false
 
 # for the class file visitor
