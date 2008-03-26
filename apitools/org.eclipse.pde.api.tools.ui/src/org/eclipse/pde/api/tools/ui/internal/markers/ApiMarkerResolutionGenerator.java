@@ -36,7 +36,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 		switch(marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1)) {
 			case IApiMarkerConstants.API_USAGE_MARKER_ID :
 				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
-			case IApiMarkerConstants.BINARY_COMPATIBILITY_MARKER_ID :
+			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID :
 				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
 			case IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID :
 				return new IMarkerResolution[] {new DefaultApiProfileResolution()};

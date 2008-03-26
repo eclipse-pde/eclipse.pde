@@ -38,15 +38,15 @@ public class PreferenceMessages extends NLS {
 	public static String ApiToolingNotificationsBlock_0;
 	public static String ApiToolingNotificationsBlock_1;
 	public static String ApiToolingNotificationsBlock_2;
-	public static String BinaryCompatibilityAPIProfileElement;
-	public static String BinaryCompatibilityAPIComponentElement;
-	public static String BinaryCompatibilityAnnotationElement;
-	public static String BinaryCompatibilityInterfaceElement;
-	public static String BinaryCompatibilityEnumElement;
-	public static String BinaryCompatibilityClassElement;
-	public static String BinaryCompatibilityFieldElement;
-	public static String BinaryCompatibilityMethodElement;
-	public static String BinaryCompatibilityConstructorElement;
+	public static String CompatibilityAPIProfileElement;
+	public static String CompatibilityAPIComponentElement;
+	public static String CompatibilityAnnotationElement;
+	public static String CompatibilityInterfaceElement;
+	public static String CompatibilityEnumElement;
+	public static String CompatibilityClassElement;
+	public static String CompatibilityFieldElement;
+	public static String CompatibilityMethodElement;
+	public static String CompatibilityConstructorElement;
 
 	public static String ApiErrorsWarningsConfigurationBlock_error;
 	public static String ApiErrorsWarningsConfigurationBlock_warning;

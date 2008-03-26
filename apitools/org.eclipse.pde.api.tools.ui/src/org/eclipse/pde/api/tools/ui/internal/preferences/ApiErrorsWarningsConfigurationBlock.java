@@ -506,10 +506,10 @@ public class ApiErrorsWarningsConfigurationBlock {
 		getApiToolsKey(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION);
 
 	private final int API_SCANNING_USAGE_PAGE_ID = 0;
-	private final int BINARY_COMPATIBILITY_PAGE_ID = 1;
+	private final int COMPATIBILITY_PAGE_ID = 1;
 	private final int VERSION_MANAGEMENT_PAGE_ID = 2;
 	
-	private static Key[] fgAllBinaryKeys = {
+	private static Key[] fgAllCompatibilityKeys = {
 		KEY_API_PROFILE_REMOVED_API_COMPONENT,
 		KEY_API_COMPONENT_REMOVED_TYPE,
 		KEY_ANNOTATION_ADDED_FIELD,
@@ -860,8 +860,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 				case VERSION_MANAGEMENT_PAGE_ID :
 					setAllTo(this.newValue, fgAllVersionManagementKeys);
 					break;
-				case BINARY_COMPATIBILITY_PAGE_ID :
-					setAllTo(this.newValue, fgAllBinaryKeys);
+				case COMPATIBILITY_PAGE_ID :
+					setAllTo(this.newValue, fgAllCompatibilityKeys);
 					break;
 			}
 		}
@@ -899,7 +899,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private Composite fMainComp = null;
 	
 	/**
-	 * The main scrolled composite for the binary compatibility tab
+	 * The main scrolled composite for the compatibility tab
 	 */
 	private ScrolledComposite fScrolledComp = null;
 	
@@ -978,9 +978,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 				folder,
 				PreferenceMessages.ApiToolingNotificationsBlock_0,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_3);
-		// API binary compatibility options
+		// API compatibility options
 		createPage(
-				BINARY_COMPATIBILITY_PAGE_ID,
+				COMPATIBILITY_PAGE_ID,
 				folder,
 				PreferenceMessages.ApiToolingNotificationsBlock_1,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_8); 
@@ -1058,8 +1058,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 					}
 				);
 				break;
-			case BINARY_COMPATIBILITY_PAGE_ID :
-				// binary compatibility
+			case COMPATIBILITY_PAGE_ID :
+				// compatibility
 				fScrolledComp = new ScrolledComposite(internalComposite, SWT.H_SCROLL | SWT.V_SCROLL);
 				fScrolledComp.setExpandHorizontal(true);
 				fScrolledComp.setExpandVertical(true);
@@ -1073,10 +1073,10 @@ public class ApiErrorsWarningsConfigurationBlock {
 				Composite sbody = SWTFactory.createComposite(fScrolledComp, 1, 1, GridData.FILL_BOTH);
 				fScrolledComp.setContent(sbody);
 				
-				Composite client = createExpansibleComposite(sbody, PreferenceMessages.BinaryCompatibilityAPIProfileElement);
+				Composite client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAPIProfileElement);
 				createComboControl(client, PreferenceMessages.API_PROFILE_REMOVED_API_COMPONENT, KEY_API_PROFILE_REMOVED_API_COMPONENT);
 				
-				client = createExpansibleComposite(sbody, PreferenceMessages.BinaryCompatibilityAPIComponentElement);
+				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAPIComponentElement);
 				initializeComboControls(
 						client,
 						new String[] {
@@ -1085,7 +1085,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 						new Key[] {
 								KEY_API_COMPONENT_REMOVED_TYPE,
 						});
-				client = createExpansibleComposite(sbody, PreferenceMessages.BinaryCompatibilityAnnotationElement);
+				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAnnotationElement);
 				initializeComboControls(
 					client,
 					new String[] {
@@ -1142,7 +1142,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 						KEY_ANNOTATION_REMOVED_METHOD_NO_DEFAULT_VALUE,
 						KEY_ANNOTATION_REMOVED_TYPE_MEMBER,
 					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.BinaryCompatibilityInterfaceElement);
+				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityInterfaceElement);
 				initializeComboControls(
 					client,
 					new String[] {
@@ -1195,7 +1195,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 						KEY_INTERFACE_REMOVED_METHOD,
 						KEY_INTERFACE_REMOVED_TYPE_MEMBER,
 					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.BinaryCompatibilityEnumElement);
+				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityEnumElement);
 				initializeComboControls(
 					client,
 					new String[] {
@@ -1226,7 +1226,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 						KEY_ENUM_REMOVED_CONSTRUCTOR,
 						KEY_ENUM_REMOVED_TYPE_MEMBER,
 					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.BinaryCompatibilityClassElement);
+				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityClassElement);
 				initializeComboControls(
 					client,
 					new String[] {
@@ -1287,7 +1287,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 						KEY_CLASS_REMOVED_INTERFACE_BOUND,
 						KEY_CLASS_REMOVED_INTERFACE_BOUNDS,
 					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.BinaryCompatibilityFieldElement);
+				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityFieldElement);
 				initializeComboControls(
 					client,
 					new String[] {
@@ -1314,7 +1314,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 						KEY_FIELD_REMOVED_VALUE,
 						KEY_FIELD_REMOVED_TYPE_ARGUMENTS,
 					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.BinaryCompatibilityMethodElement);
+				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityMethodElement);
 				initializeComboControls(
 					client,
 					new String[] {
@@ -1359,7 +1359,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 						KEY_METHOD_REMOVED_INTERFACE_BOUND,
 						KEY_METHOD_REMOVED_INTERFACE_BOUNDS,
 					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.BinaryCompatibilityConstructorElement);
+				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityConstructorElement);
 				initializeComboControls(
 					client,
 					new String[] {

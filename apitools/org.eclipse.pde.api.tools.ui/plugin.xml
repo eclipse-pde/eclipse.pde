@@ -124,7 +124,7 @@
       <markerTypeCategory
             name="%MarkerCategory.name">
          <markerTypeReference
-               id="org.eclipse.pde.api.tools.binary_compatibility">
+               id="org.eclipse.pde.api.tools.compatibility">
          </markerTypeReference>
          <markerTypeReference
                id="org.eclipse.pde.api.tools.api_usage">
@@ -148,7 +148,7 @@
       </markerResolutionGenerator>
       <markerResolutionGenerator
             class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
-            markerType="org.eclipse.pde.api.tools.binary_compatibility">
+            markerType="org.eclipse.pde.api.tools.compatibility">
       </markerResolutionGenerator>
       <markerResolutionGenerator
             class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"

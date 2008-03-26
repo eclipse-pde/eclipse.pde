@@ -91,8 +91,8 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 			int problemid = fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, -1);
 			int category = ApiProblemFactory.getProblemCategory(problemid);
 			switch(category) {
-				case IApiProblem.CATEGORY_BINARY: {
-					fCategory = MarkerMessages.FilterProblemResolution_binary_compatible;
+				case IApiProblem.CATEGORY_COMPATIBILITY: {
+					fCategory = MarkerMessages.FilterProblemResolution_compatible;
 					break;
 				}
 				case IApiProblem.CATEGORY_API_PROFILE: {
