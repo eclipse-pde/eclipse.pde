@@ -240,9 +240,13 @@ public class DeltaProcessor {
 					case IDelta.NON_STATIC_TO_STATIC :
 						return !Util.isVisible(delta);
 					case IDelta.VALUE :
-						if (Util.isVisible(delta)) {
+						if (Util.isProtected(delta.getModifiers())) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions()) || RestrictionModifiers.isImplementRestriction(delta.getRestrictions());
 						}
+						if (Util.isPublic(delta.getModifiers())) {
+							return false;
+						}
+						// not visible
 						return true;
 					case IDelta.DECREASE_ACCESS :
 						return false;
