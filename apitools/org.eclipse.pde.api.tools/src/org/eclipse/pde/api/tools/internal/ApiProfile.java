@@ -46,8 +46,10 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.PropertyChangeEvent;
@@ -421,6 +423,20 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 					if (environment.isStrictlyCompatible(bestFit)) {
 						systemEE = environment.getId();
 						break;
+					}
+				}
+				if (systemEE == null) {
+					// a best fit, but not strictly compatible with any environment (e.g.
+					// a 1.7 VM for which there is no profile yet). This is a bit of a hack
+					// until an OSGi profile exists for 1.7.
+					if (bestFit instanceof IVMInstall2) {
+			            String javaVersion = ((IVMInstall2)bestFit).getJavaVersion();
+			            if (javaVersion != null) {
+			            	if (javaVersion.startsWith(JavaCore.VERSION_1_7)) {
+			            		// set EE to 1.6 when 1.7 is detected
+			            		systemEE = "JavaSE-1.6"; //$NON-NLS-1$
+			            	}
+			            }
 					}
 				}
 				if (systemEE != null) {
