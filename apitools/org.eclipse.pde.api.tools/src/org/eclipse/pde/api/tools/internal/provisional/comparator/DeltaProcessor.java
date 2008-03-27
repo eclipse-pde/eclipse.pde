@@ -227,6 +227,14 @@ public class DeltaProcessor {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
 					case IDelta.VALUE :
+						if (Util.isProtected(delta.getModifiers())) {
+							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+						}
+						if (Util.isPublic(delta.getModifiers())) {
+							return false;
+						}
+						// not visible
+						return true;
 					case IDelta.TYPE_ARGUMENTS :
 						return !Util.isVisible(delta);
 				}
@@ -234,14 +242,14 @@ public class DeltaProcessor {
 			case IDelta.CHANGED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE :
-					case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT :
 					case IDelta.NON_FINAL_TO_FINAL :
 					case IDelta.STATIC_TO_NON_STATIC :
 					case IDelta.NON_STATIC_TO_STATIC :
 						return !Util.isVisible(delta);
 					case IDelta.VALUE :
+					case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT :
 						if (Util.isProtected(delta.getModifiers())) {
-							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions()) || RestrictionModifiers.isImplementRestriction(delta.getRestrictions());
+							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 						}
 						if (Util.isPublic(delta.getModifiers())) {
 							return false;

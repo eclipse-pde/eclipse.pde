@@ -174,7 +174,7 @@ public class ClassFileComparator {
 			IClassFile classFile,
 			String key,
 			Object data) {
-		this.addDelta(descriptor, descriptor2, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, classFile, key, data);
+		this.addDelta(descriptor, descriptor2, kind, flags, this.getCurrentTypeApiRestrictions(), classFile, key, data);
 	}
 
 	void addDelta(
@@ -195,7 +195,7 @@ public class ClassFileComparator {
 			int flags,
 			IClassFile classFile,
 			String key) {
-		this.addDelta(descriptor, descriptor2, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, classFile, key, null);
+		this.addDelta(descriptor, descriptor2, kind, flags, this.getCurrentTypeApiRestrictions(), classFile, key, null);
 	}
 
 	void addDelta(
@@ -204,7 +204,7 @@ public class ClassFileComparator {
 			int flags,
 			IClassFile classFile,
 			String key) {
-		this.addDelta(descriptor, descriptor, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, classFile, key, null);
+		this.addDelta(descriptor, descriptor, kind, flags, this.getCurrentTypeApiRestrictions(), classFile, key, null);
 	}
 
 	void addDelta(
@@ -214,7 +214,7 @@ public class ClassFileComparator {
 			IClassFile classFile,
 			String key,
 			Object data) {
-		this.addDelta(descriptor, descriptor, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, classFile, key, data);
+		this.addDelta(descriptor, descriptor, kind, flags, this.getCurrentTypeApiRestrictions(), classFile, key, data);
 	}
 	
 	void addDelta(IDelta delta) {
@@ -222,11 +222,11 @@ public class ClassFileComparator {
 	}
 
 	void addDelta(int elementType, int kind, int flags, int modifiers, IClassFile classFile, String key) {
-		this.addDelta(elementType, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, modifiers, classFile, key, null);
+		this.addDelta(elementType, kind, flags, this.getCurrentTypeApiRestrictions(), modifiers, classFile, key, null);
 	}
 	
 	void addDelta(int elementType, int kind, int flags, int modifiers, IClassFile classFile, String key, Object data) {
-		this.addDelta(elementType, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, modifiers, classFile, key, data);
+		this.addDelta(elementType, kind, flags, this.getCurrentTypeApiRestrictions(), modifiers, classFile, key, data);
 	}
 	
 	void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, Object data) {
@@ -824,7 +824,7 @@ public class ClassFileComparator {
 					if (restrictions != resolvedAPIDescription.getRestrictions()
 							&& restrictions != RestrictionModifiers.NO_RESTRICTIONS) {
 						// report different restrictions
-						this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.RESTRICTIONS, this.classFile, this.descriptor1.name);
+						this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.RESTRICTIONS, RestrictionModifiers.NO_RESTRICTIONS, this.classFile, this.descriptor1.name, null);
 					}
 				}
 				return resolvedAPIDescription.getRestrictions();
