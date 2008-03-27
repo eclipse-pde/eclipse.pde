@@ -44,6 +44,7 @@ import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.MethodNode;
 
 /**
  * Utility to convert 'normal' class files into 'stubs', removing the body declarations
@@ -141,16 +142,16 @@ public class Converter {
 			if ((this.flags & MODIFIER_SYNTHETIC) == 0 && (access & Opcodes.ACC_SYNTHETIC) != 0) {
 				return null;
 			}
-			MethodVisitor visitor = super.visitMethod(accessFlags, methodName, desc, signature, exceptions);
+			
+			if (reportRefs) {
+				return new ReferencesStubMethodAdapter(cv, accessFlags, methodName, desc, signature, exceptions);
+		    }
+			
+	    	MethodVisitor visitor = super.visitMethod(accessFlags, methodName, desc, signature, exceptions);
 			if (visitor != null) {
-				if (reportRefs) {
-					visitor = new ReferencesStubMethodAdapter(visitor);
-				} else {
-					visitor.visitEnd(); // for safety
-					visitor = null;
-				}
+				visitor.visitEnd(); // for safety
 			}
-			return visitor;
+			return null;
 		}
 
 		/* (non-Javadoc)
@@ -199,18 +200,28 @@ public class Converter {
 	/**
 	 * Method adapter for creating stub methods
 	 */
-	static class ReferencesStubMethodAdapter extends MethodAdapter {
+	static class ReferencesStubMethodAdapter extends MethodNode {
+		private final ClassVisitor cv;
 		String stringLiteral;
 		int line;
 		Label label;
 		int lastLine = -1;
+		boolean hasRefs; 
 
 		/**
 		 * Constructor
+		 * @param exceptions 
+		 * @param signature 
+		 * @param desc 
+		 * @param methodName 
+		 * @param accessFlags 
+		 * @param cv 
 		 * @param visitor
 		 */
-		public ReferencesStubMethodAdapter(MethodVisitor visitor) {
-			super(visitor);
+		public ReferencesStubMethodAdapter(ClassVisitor cv, int accessFlags, String methodName, String desc, String signature, String[] exceptions) {
+			super(accessFlags, methodName, desc, signature, exceptions);
+			this.cv = cv;
+			this.hasRefs = false;
 		}
 
 		/* (non-Javadoc)
@@ -225,19 +236,15 @@ public class Converter {
 		 */
 		public void visitMultiANewArrayInsn(String desc, int dims) {
 			this.insertLineEntry();
-			mv.visitMultiANewArrayInsn(desc, dims);
+			super.visitMultiANewArrayInsn(desc, dims);
+			this.hasRefs = true;
 		}
 
 		/* (non-Javadoc)
 		 * @see org.objectweb.asm.MethodAdapter#visitInsn(int)
 		 */
 		public void visitInsn(int opcode) {
-			if ((opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN)
-					|| opcode == Opcodes.ATHROW
-					|| opcode == Opcodes.POP) {
-				this.insertLineEntry();
-				mv.visitInsn(opcode);
-			}
+			// nothing to do
 		}
 
 		/* (non-Javadoc)
@@ -245,14 +252,16 @@ public class Converter {
 		 */
 		public void visitFieldInsn(int opcode, String owner, String name, String desc) {
 			this.insertLineEntry();
-			mv.visitFieldInsn(opcode, owner, name, desc);
+			super.visitFieldInsn(opcode, owner, name, desc);
+			this.hasRefs = true;
 		}
 		/* (non-Javadoc)
 		 * @see org.objectweb.asm.MethodAdapter#visitTypeInsn(int, String)
 		 */
 		public void visitTypeInsn(int opcode, String desc) {
 			this.insertLineEntry();
-			mv.visitTypeInsn(opcode, desc);
+			super.visitTypeInsn(opcode, desc);
+			this.hasRefs = true;
 		}
 
 		/* (non-Javadoc)
@@ -275,7 +284,8 @@ public class Converter {
 		public void visitLdcInsn(Object cst) {
 			if (cst instanceof Type) {
 				this.insertLineEntry();
-				mv.visitLdcInsn(cst);
+				super.visitLdcInsn(cst);
+				this.hasRefs = true;
 			} else if (cst instanceof String) {
 				stringLiteral = (String) cst;
 			}
@@ -302,7 +312,8 @@ public class Converter {
 			switch(opcode) {
 				case Opcodes.ASTORE :
 					this.insertLineEntry();
-					mv.visitVarInsn(opcode, var);
+					super.visitVarInsn(opcode, var);
+					this.hasRefs = true;
 			}
 		}
 
@@ -338,7 +349,7 @@ public class Converter {
 					if (name.equals("forName")) { //$NON-NLS-1$
 						if (processName(owner).equals("java.lang.Class")) { //$NON-NLS-1$
 							if (stringLiteral != null) {
-								mv.visitLdcInsn(this.stringLiteral);
+								super.visitLdcInsn(this.stringLiteral);
 							}
 						}
 					}
@@ -347,12 +358,13 @@ public class Converter {
 			}
 			stringLiteral = null;
 			this.insertLineEntry();
-			mv.visitMethodInsn(opcode, owner, name, desc);
+			super.visitMethodInsn(opcode, owner, name, desc);
+			this.hasRefs = true;
 		}
 
 		private void insertLineEntry() {
 			if (this.lastLine != this.line && this.label != null) {
-				mv.visitLineNumber(this.line, this.label);
+				super.visitLineNumber(this.line, this.label);
 				this.lastLine = this.line;
 			}
 		}
@@ -360,6 +372,20 @@ public class Converter {
 		public void visitLineNumber(int line, Label start) {
 			this.line = line;
 			this.label = start;
+		}
+		
+		public void visitEnd() {
+			if (hasRefs) {
+				MethodVisitor mv = cv.visitMethod(access, name, desc, signature, (String[]) exceptions.toArray(new String[exceptions.size()]));
+				if (mv != null) {
+					accept(mv);
+				}
+			} else {
+				MethodVisitor mv = cv.visitMethod(access | Opcodes.ACC_NATIVE, name, desc, signature, (String[]) exceptions.toArray(new String[exceptions.size()]));
+				if (mv != null) {
+					mv.visitEnd();
+				}
+			}
 		}
 	}
 
