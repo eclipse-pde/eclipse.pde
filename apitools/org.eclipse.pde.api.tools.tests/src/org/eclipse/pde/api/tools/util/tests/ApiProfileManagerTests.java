@@ -106,10 +106,10 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			if(signature != null) {
 				return false;
 			}
-			List fields = node.fragments();
+			List<VariableDeclarationFragment> fields = node.fragments();
 			VariableDeclarationFragment fragment = null;
-			for(Iterator iter = fields.iterator(); iter.hasNext();) {
-				fragment = (VariableDeclarationFragment) iter.next();
+			for(Iterator<VariableDeclarationFragment> iter = fields.iterator(); iter.hasNext();) {
+				fragment = iter.next();
 				if(fragment.getName().getFullyQualifiedName().equals(name)) {
 					break;
 				}
@@ -154,11 +154,11 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			}
 			ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
 			if(remove) {
-				List tags = (List) docnode.getStructuralProperty(Javadoc.TAGS_PROPERTY);
+				List<TagElement> tags = (List<TagElement>) docnode.getStructuralProperty(Javadoc.TAGS_PROPERTY);
 				if(tags != null) {
 					TagElement tag = null;
 					for(int i = 0 ; i < tags.size(); i++) {
-						tag = (TagElement) tags.get(i);
+						tag = tags.get(i);
 						if(tagname.equals(tag.getTagName())) {
 							lrewrite.remove(tag, null);
 						}

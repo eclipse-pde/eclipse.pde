@@ -45,11 +45,11 @@ public class ApiProfileTests extends TestCase {
 	public void testCreateBaseline() throws FileNotFoundException, CoreException {
 		IApiProfile baseline = TestSuiteHelper.createTestingProfile("test-plugins");
 		assertNotNull("the testing baseline should exist", baseline);
-		List reqs = new ArrayList();
+		List<IRequiredComponentDescription> reqs = new ArrayList<IRequiredComponentDescription>();
 		reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("")));
 		validateComponent(baseline, "component.a", "A Plug-in", "1.0.0", "J2SE-1.5", reqs);
 
-		reqs = new ArrayList();
+		reqs = new ArrayList<IRequiredComponentDescription>();
 		reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("")));
 		reqs.add(new RequiredComponentDescription("component.a", new BundleVersionRange("")));
 		validateComponent(baseline, "component.b", "B Plug-in", "1.0.0", "J2SE-1.4", reqs);
@@ -145,7 +145,7 @@ public class ApiProfileTests extends TestCase {
 	 * @param requiredComponents list of {@link IRequiredComponentDescription}
 	 * @throws CoreException 
 	 */
-	private void validateComponent(IApiProfile baseline, String id, String name, String version, String environment, List requiredComponents) throws CoreException {
+	private void validateComponent(IApiProfile baseline, String id, String name, String version, String environment, List<IRequiredComponentDescription> requiredComponents) throws CoreException {
 		IApiComponent component = baseline.getApiComponent(id);
 		
 		assertEquals("Id: ", id , component.getId());

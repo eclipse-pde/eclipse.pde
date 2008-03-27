@@ -63,7 +63,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * @param qualifiedname
 	 * @return the set of references from the specified class file name or <code>null</code>
 	 */
-	protected List getRefSet(String qualifiedname) {
+	protected List<IReference> getRefSet(String qualifiedname) {
 		try {
 			IClassFile cfile = container.findClassFile(qualifiedname);
 			scanner.scan(component, cfile, ReferenceModifiers.MASK_REF_ALL);
@@ -84,11 +84,11 @@ public class ClassFileScannerTests extends TestCase {
 	 * @param refs the set of {@link IReference}s to search within
 	 * @return a matching {@link IReference} or <code>null</code>
 	 */
-	protected IReference findReference(String sourcename, String targetname, int kind, List refs) {
+	protected IReference findReference(String sourcename, String targetname, int kind, List<IReference> refs) {
 		IReference ref = null;
 		ILocation target = null;
-		for(Iterator iter = refs.iterator(); iter.hasNext();) {
-			ref = (IReference) iter.next();
+		for(Iterator<IReference> iter = refs.iterator(); iter.hasNext();) {
+			ref = iter.next();
 			if(ref.getReferenceKind() == kind) {
 				if(ref.getSourceLocation().getType().getQualifiedName().equals(sourcename)) {
 					target = ref.getReferencedLocation();
@@ -112,11 +112,11 @@ public class ClassFileScannerTests extends TestCase {
 	 * @param refs the current listing of references to search within
 	 * @return an {@link IReference} matching the specified criteria or <code>null</code> if none found
 	 */
-	protected IReference findMemberReference(String sourcename, String sourceMember, String targetname, String targetMember, int kind, List refs) {
+	protected IReference findMemberReference(String sourcename, String sourceMember, String targetname, String targetMember, int kind, List<IReference> refs) {
 		IReference ref = null;
 		ILocation target = null;
-		for(Iterator iter = refs.iterator(); iter.hasNext();) {
-			ref = (IReference) iter.next();
+		for(Iterator<IReference> iter = refs.iterator(); iter.hasNext();) {
+			ref = iter.next();
 			if(ref.getReferenceKind() == kind) {
 				if(ref.getSourceLocation().getType().getQualifiedName().equals(sourcename)) {
 					target = ref.getReferencedLocation();
@@ -230,7 +230,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests scanning a simple class file that extends nothing, implements nothing and has no members
 	 */
 	public void testScanEmptyClass() {
-		List refs = getRefSet("Test1");
+		List<IReference> refs = getRefSet("Test1");
 		IReference ref = findMemberReference("classes.Test1", null, "java.lang.Object", null, ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
 		ref = findMemberReference("classes.Test1", "<init>", "java.lang.Object", null, ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
@@ -241,7 +241,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Test scanning a simple generic class file that extends nothing, implements nothing and has no members
 	 */
 	public void testScanEmptyGenericClass() {
-		List refs = getRefSet("Test2");
+		List<IReference> refs = getRefSet("Test2");
 		IReference ref = findMemberReference("classes.Test2", null, "java.lang.Object", null, ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("There should be an extends ref to java.lang.Object for an empty class", ref != null);
 		ref = findMemberReference("classes.Test2", "<init>", "java.lang.Object", null, ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
@@ -254,7 +254,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests scanning an empty inner class
 	 */
 	public void testScanInnerClass() {
-		List refs = getRefSet("Test3$Inner");
+		List<IReference> refs = getRefSet("Test3$Inner");
 		IReference ref = findMemberReference("classes.Test3$Inner", null, "java.lang.Object", null, ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
 		ref = findMemberReference("classes.Test3$Inner", "<init>", "java.lang.Object", null, ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
@@ -265,7 +265,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests scanning a empty static inner class
 	 */
 	public void testScanInnerStaticClass() {
-		List refs = getRefSet("Test3$Inner2");
+		List<IReference> refs = getRefSet("Test3$Inner2");
 		IReference ref = findReference("classes.Test3$Inner2", "java.lang.Object", ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
 		ref = findReference("classes.Test3$Inner2", "java.lang.Object", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
@@ -276,7 +276,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests scanning an empty inner class of an empty inner static class
 	 */
 	public void testScanInnerStaticInnerClass() {
-		List refs = getRefSet("Test3$Inner2$Inner3");
+		List<IReference> refs = getRefSet("Test3$Inner2$Inner3");
 		IReference ref = findReference("classes.Test3$Inner2$Inner3", "java.lang.Object", ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
 		ref = findReference("classes.Test3$Inner2$Inner3", "java.lang.Object", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
@@ -287,7 +287,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests scanning an empty outer class
 	 */
 	public void testScanOuterClass() {
-		List refs = getRefSet("Test3Outer");
+		List<IReference> refs = getRefSet("Test3Outer");
 		IReference ref = findReference("classes.Test3Outer", "java.lang.Object", ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
 		ref = findReference("classes.Test3Outer", "java.lang.Object", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
@@ -298,7 +298,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests scanning an empty class of the inner class of an outer class
 	 */
 	public void testScanInnerOuterClass() {
-		List refs = getRefSet("Test3Outer$Inner");
+		List<IReference> refs = getRefSet("Test3Outer$Inner");
 		IReference ref = findReference("classes.Test3Outer$Inner", "java.lang.Object", ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
 		ref = findReference("classes.Test3Outer$Inner", "java.lang.Object", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
@@ -309,7 +309,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests scanning an inner static generic type
 	 */
 	public void testScanInnerGenericClass() {
-		List refs = getRefSet("Test4$Inner");
+		List<IReference> refs = getRefSet("Test4$Inner");
 		IReference ref = findReference("classes.Test4$Inner", "java.lang.Object", ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("There should be an extends ref to java.lang.Object for an inner empty class", ref != null);
 		ref = findReference("classes.Test4$Inner", "java.lang.Object", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
@@ -322,7 +322,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests scanning an inner class of a static class of a generic type
 	 */
 	public void testScanInnerStaticInnerGenericClass() {
-		List refs = getRefSet("Test4$Inner$Inner2");
+		List<IReference> refs = getRefSet("Test4$Inner$Inner2");
 		IReference ref = findReference("classes.Test4$Inner$Inner2", "java.lang.Object", ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("There should be an extends ref to java.lang.Object for an inner empty class", ref != null);
 		ref = findReference("classes.Test4$Inner$Inner2", "java.lang.Object", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
@@ -335,7 +335,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests scanning a non-generic class that extends something and implements interfaces
 	 */
 	public void testScanClassExtendsImplements() {
-		List refs = getRefSet("Test5");
+		List<IReference> refs = getRefSet("Test5");
 		IReference ref = findReference("classes.Test5", "java.util.ArrayList", ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends reference to java.util.ArrayList", ref != null);
 		ref = findReference("classes.Test5", "java.lang.Iterable", ReferenceModifiers.REF_IMPLEMENTS, refs);
@@ -350,7 +350,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests scanning a generic class that extends something and implements interfaces
 	 */
 	public void testScanGenericClassExtendsImplements() {
-		List refs = getRefSet("Test6");
+		List<IReference> refs = getRefSet("Test6");
 		IReference ref = findReference("classes.Test6", "classes.Test6Abstract", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
 		assertTrue("there should be a REF_CONSTRUCTORMETHOD ref to classes.Test6Abstract", ref != null);
 		ref = findReference("classes.Test6", "java.lang.Iterable", ReferenceModifiers.REF_IMPLEMENTS, refs);
@@ -375,7 +375,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests a variety of method declarations
 	 */
 	public void testScanMethodDecl() {
-		List refs = getRefSet("Test7");
+		List<IReference> refs = getRefSet("Test7");
 		IReference ref = findMemberReference("classes.Test7", "m1", "java.lang.String", null, ReferenceModifiers.REF_RETURNTYPE, refs);
 		assertTrue("m1 should have a REF_RETURNTYPE ref to java.lang.String", ref != null);
 		ref = findMemberReference("classes.Test7", "m1", "java.lang.String", null, ReferenceModifiers.REF_PARAMETER, refs);
@@ -408,7 +408,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests a variety of method declarations with array types in them
 	 */
 	public void testScanMethodDeclArrayTypes() {
-		List refs = getRefSet("Test7");
+		List<IReference> refs = getRefSet("Test7");
 		IReference ref = findMemberReference("classes.Test7", "m4", "java.lang.Integer", null, ReferenceModifiers.REF_RETURNTYPE, refs);
 		assertTrue("m4 should have a REF_RETURNTYPE ref to java.lang.Integer", ref != null);
 		ref = findMemberReference("classes.Test7", "m4", "java.lang.Double", null, ReferenceModifiers.REF_PARAMETER, refs);
@@ -439,7 +439,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests a variety of method declarations with generic types
 	 */
 	public void testScanMethodDeclGenerics() {
-		List refs = getRefSet("Test8");
+		List<IReference> refs = getRefSet("Test8");
 		IReference ref = findMemberReference("classes.Test8", "m1", "java.util.ArrayList", null, ReferenceModifiers.REF_RETURNTYPE, refs);
 		assertTrue("there should be a REF_RETURNTYPE ref for m1", ref != null);
 		ref = findMemberReference("classes.Test8", "m1", "java.util.Map", null, ReferenceModifiers.REF_PARAMETER, refs);
@@ -471,7 +471,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests a variety of field declarations
 	 */
 	public void testScanFieldDecl() {
-		List refs = getRefSet("Test9");
+		List<IReference> refs = getRefSet("Test9");
 		IReference ref = findMemberReference("classes.Test9", "strs", "java.lang.String", null, ReferenceModifiers.REF_FIELDDECL, refs);
 		assertTrue("there should be a REF_FIELDDECL ref for java.lang.String", ref != null);
 		ref = findMemberReference("classes.Test9", "list", "java.util.ArrayList", null, ReferenceModifiers.REF_FIELDDECL, refs);
@@ -486,7 +486,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests a variety of arrays that have been declared as local variables in methods
 	 */
 	public void testScanLocalVariableArrays() {
-		List refs = getRefSet("Test10");
+		List<IReference> refs = getRefSet("Test10");
 		IReference ref = findMemberReference("classes.Test10", null, "java.lang.String", null, ReferenceModifiers.REF_ARRAYALLOC, refs);
 		assertTrue("there should be a REF_ARRAYALLOC ref to java.lang.String", ref != null);
 		ref = findMemberReference("classes.Test10", null, "java.lang.Object", null, ReferenceModifiers.REF_ARRAYALLOC, refs);
@@ -501,7 +501,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests a variety of LDC ops that load things like Integer.class onto the stack
 	 */
 	public void testScanConstantPoolAccess() {
-		List refs = getRefSet("Test11");
+		List<IReference> refs = getRefSet("Test11");
 		IReference ref = findMemberReference("classes.Test11", null, "java.lang.Integer", null, ReferenceModifiers.REF_CONSTANTPOOL, refs);
 		assertTrue("there should be a REF_CONSTANTPOOL ref to java.lang.Integer", ref != null);
 		ref = findMemberReference("classes.Test11", null, "java.lang.Double", null, ReferenceModifiers.REF_CONSTANTPOOL, refs);
@@ -515,7 +515,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * 1.4 code level class, and checks that the LDC ref is actually processed via a Class.forName static method call
 	 */
 	public void testScanConstantPoolAccess1_4() {
-		List refs = getRefSet("Test12");
+		List<IReference> refs = getRefSet("Test12");
 		IReference ref = findMemberReference("classes.Test12", null, "java.lang.Integer", null, ReferenceModifiers.REF_CONSTANTPOOL, refs);
 		assertTrue("there should be a REF_CONSTANTPOOL ref to java.lang.Integer", ref != null);
 		ref = findMemberReference("classes.Test12", null, "java.lang.Double", null, ReferenceModifiers.REF_CONSTANTPOOL, refs);
@@ -528,7 +528,7 @@ public class ClassFileScannerTests extends TestCase {
 	 * Tests a variety of method calls 
 	 */
 	public void testScanMethodCalls() {
-		List refs = getRefSet("Test13");
+		List<IReference> refs = getRefSet("Test13");
 		IReference ref = findMemberReference("classes.Test13", "m1", "classes.Test13", "m2", ReferenceModifiers.REF_VIRTUALMETHOD, refs);
 		assertTrue("the should be a REF_VIRTUALMETHOD ref to m2 from classes.Test13", ref != null);
 		ref = findMemberReference("classes.Test13", "m1", "classes.Test13", "m3", ReferenceModifiers.REF_VIRTUALMETHOD, refs);

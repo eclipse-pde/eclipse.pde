@@ -13,9 +13,9 @@ package org.eclipse.pde.api.tools.util.tests;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -90,10 +90,10 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				// means we are looking for a method
 				return false;
 			}
-			List fields = node.fragments();
+			List<VariableDeclarationFragment> fields = node.fragments();
 			VariableDeclarationFragment fragment = null;
-			for(Iterator iter = fields.iterator(); iter.hasNext();) {
-				fragment = (VariableDeclarationFragment) iter.next();
+			for(Iterator<VariableDeclarationFragment> iter = fields.iterator(); iter.hasNext();) {
+				fragment = iter.next();
 				if(fragment.getName().getFullyQualifiedName().equals(membername)) {
 					Javadoc docnode = node.getJavadoc();
 					assertNotNull("the field: "+membername+" must have a javadoc node", docnode);
@@ -145,13 +145,13 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		 * @param tags
 		 * @return true if the tag list contains all of the expected tags, false otherwise
 		 */
-		private boolean containsAllTags(List tags) {
+		private boolean containsAllTags(List<TagElement> tags) {
 			boolean allfound = true;
 			TagElement element = null;
 			for(int i = 0; i < expectedtags.length; i++) {
 				boolean contained = false;
 				for(int j = 0; j < tags.size(); j++) {
-					element = (TagElement) tags.get(j);
+					element = tags.get(j);
 					if(expectedtags[i].equals(element.getTagName())) {
 						contained = true;
 					}
@@ -229,21 +229,21 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 */
 	private void createTagChanges(CompositeChange projectchange, IJavaProject project, File cxml) {
 		try {
-			HashMap map = new HashMap();
+			HashMap<IFile, Set<TextEdit>> map = new HashMap<IFile, Set<TextEdit>>();
 			ApiDescriptionProcessor.collectTagUpdates(project, cxml, map);
 			IFile file = null;
 			TextFileChange change = null;
 			MultiTextEdit multiedit = null;
-			HashSet alledits = null;
+			Set<TextEdit> alledits = null;
 			TextEdit edit = null;
-			for(Iterator iter = map.keySet().iterator(); iter.hasNext();) {
-				file = (IFile) iter.next();
+			for(Iterator<IFile> iter = map.keySet().iterator(); iter.hasNext();) {
+				file = iter.next();
 				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, new String[] {file.getName()}), file);
 				multiedit = new MultiTextEdit();
 				change.setEdit(multiedit);
-				alledits = (HashSet)map.get(file);
+				alledits = map.get(file);
 				if(alledits != null) {
-					for(Iterator iter2 = alledits.iterator(); iter2.hasNext();) {
+					for(Iterator<TextEdit> iter2 = alledits.iterator(); iter2.hasNext();) {
 						edit = (TextEdit) iter2.next();
 						multiedit.addChild(edit);
 					}

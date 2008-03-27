@@ -101,7 +101,7 @@ public class ClassFileContainerTests extends TestCase {
 	 */
 	protected void doTestPackageNames(IClassFileContainer container) throws CoreException {
 		String[] packageNames = container.getPackageNames();
-		Set knownNames = new HashSet();
+		Set<String> knownNames = new HashSet<String>();
 		knownNames.add("");
 		knownNames.add("a");
 		knownNames.add("a.b.c");
@@ -137,11 +137,11 @@ public class ClassFileContainerTests extends TestCase {
 	 * @throws CoreException 
 	 */
 	protected void doTestVisitPackages(IClassFileContainer container) throws CoreException {
-		final List expectedPkgOrder = new ArrayList();
+		final List<String> expectedPkgOrder = new ArrayList<String>();
 		expectedPkgOrder.add("");
 		expectedPkgOrder.add("a");
 		expectedPkgOrder.add("a.b.c");
-		final List visit = new ArrayList();
+		final List<String> visit = new ArrayList<String>();
 		ClassFileContainerVisitor visitor = new ClassFileContainerVisitor() {
 			public boolean visitPackage(String packageName) {
 				visit.add(packageName);
@@ -187,27 +187,27 @@ public class ClassFileContainerTests extends TestCase {
 	 * @throws CoreException
 	 */
 	protected void doTestVisitClassFiles(IClassFileContainer container) throws CoreException {
-		final Map expectedTypes = new HashMap();
-		final List expectedPkgOrder = new ArrayList();
+		final Map<String, List<String>> expectedTypes = new HashMap<String, List<String>>();
+		final List<String> expectedPkgOrder = new ArrayList<String>();
 		expectedPkgOrder.add("");
-			List cf = new ArrayList();
+			List<String> cf = new ArrayList<String>();
 			cf.add("DefA");
 			cf.add("DefB");
 			expectedTypes.put("", cf);
 		expectedPkgOrder.add("a");
-			cf = new ArrayList();
+			cf = new ArrayList<String>();
 			cf.add("a.ClassA");
 			cf.add("a.ClassB");
 			cf.add("a.ClassB$InsideB");
 			expectedTypes.put("a", cf);
 		expectedPkgOrder.add("a.b.c");
-			cf = new ArrayList();
+			cf = new ArrayList<String>();
 			cf.add("a.b.c.ClassC");
 			cf.add("a.b.c.ClassD");
 			cf.add("a.b.c.InterfaceC");
 			expectedTypes.put("a.b.c", cf);
-		final List visit = new ArrayList();
-		final Map visitTypes = new HashMap();
+		final List<String> visit = new ArrayList<String>();
+		final Map<String, List<String>> visitTypes = new HashMap<String, List<String>>();
 		ClassFileContainerVisitor visitor = new ClassFileContainerVisitor() {
 			public boolean visitPackage(String packageName) {
 				visit.add(packageName);
@@ -215,9 +215,9 @@ public class ClassFileContainerTests extends TestCase {
 			}
 			public void visit(String packageName, IClassFile classFile) {
 				assertTrue("Should not visit types", visit.get(visit.size() - 1).equals(packageName));
-				List types = (List) visitTypes.get(packageName);
+				List<String> types = visitTypes.get(packageName);
 				if (types == null) {
-					types = new ArrayList();
+					types = new ArrayList<String>();
 					visitTypes.put(packageName, types);
 				}
 				types.add(classFile.getTypeName());
@@ -228,7 +228,7 @@ public class ClassFileContainerTests extends TestCase {
 				assertEquals("Visited wrong types", expectedTypes.get(packageName), visitTypes.get(packageName));
 			}
 			public void end(String packageName, IClassFile classFile) {
-				List types = (List) visitTypes.get(packageName);
+				List<String> types = visitTypes.get(packageName);
 				assertTrue("Should not visit types", types.get(types.size() - 1).equals(classFile.getTypeName()));
 			}
 		};

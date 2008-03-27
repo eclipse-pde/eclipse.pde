@@ -81,13 +81,13 @@ public class TestSuiteHelper {
 			}
 		}
 		// collect required components
-		IApiComponent[] base = (IApiComponent[]) components.toArray(new IApiComponent[components.size()]);
+		IApiComponent[] base = components.toArray(new IApiComponent[components.size()]);
 		for (int i = 0; i < base.length; i++) {
 			IApiComponent component = base[i];
 			addAllRequired(baseline, requiredComponents, component, components);
 		} 
 		
-		baseline.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
+		baseline.addApiComponents(components.toArray(new IApiComponent[components.size()]));
 		return baseline;
 	}	
 	
@@ -112,8 +112,8 @@ public class TestSuiteHelper {
 			IApiProfile baseline = newApiProfile("test", eeFile);
 			// create a component for each jar/directory in the folder
 			File[] files = file.listFiles();
-			List components = new ArrayList();
-			Set requiredComponents = new HashSet();
+			List<IApiComponent> components = new ArrayList<IApiComponent>();
+			Set<String> requiredComponents = new HashSet<String>();
 			for (int i = 0; i < files.length; i++) {
 				File bundle = files[i];
 				if (!bundle.getName().equals("CVS")) {
@@ -126,13 +126,13 @@ public class TestSuiteHelper {
 				}
 			}
 			// collect required components
-			IApiComponent[] base = (IApiComponent[]) components.toArray(new IApiComponent[components.size()]);
+			IApiComponent[] base = components.toArray(new IApiComponent[components.size()]);
 			for (int i = 0; i < base.length; i++) {
 				IApiComponent component = base[i];
 				addAllRequired(baseline, requiredComponents, component, components);
 			} 
 			
-			baseline.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
+			baseline.addApiComponents(components.toArray(new IApiComponent[components.size()]));
 			return baseline;
 		}
 		return null;
@@ -224,7 +224,7 @@ public class TestSuiteHelper {
 	 * @param collection collection to add prerequisites to.
 	 * @throws CoreException 
 	 */
-	public static void addAllRequired(IApiProfile baseline, Set done, IApiComponent component, List collection) throws CoreException {
+	public static void addAllRequired(IApiProfile baseline, Set<String> done, IApiComponent component, List<IApiComponent> collection) throws CoreException {
 		IRequiredComponentDescription[] descriptions = component.getRequiredComponents();
 		boolean error = false;
 		StringBuffer buffer = new StringBuffer();
@@ -263,7 +263,7 @@ public class TestSuiteHelper {
 		PrintWriter outWriter = new PrintWriter(out);
 		StringWriter err = new StringWriter();
 		PrintWriter errWriter = new PrintWriter(err);
-		List cmd = new ArrayList();
+		List<String> cmd = new ArrayList<String>();
 		cmd.add("-noExit");
 		for (int i = 0, max = compileroptions.length; i < max; i++) {
 			cmd.add(compileroptions[i]);
@@ -301,7 +301,7 @@ public class TestSuiteHelper {
 		PrintWriter outWriter = new PrintWriter(out);
 		StringWriter err = new StringWriter();
 		PrintWriter errWriter = new PrintWriter(err);
-		List cmd = new ArrayList();
+		List<String> cmd = new ArrayList<String>();
 		cmd.add("-noExit");
 		for (int i = 0, max = compilerOptions.length; i < max; i++) {
 			cmd.add(compilerOptions[i]);
@@ -310,7 +310,7 @@ public class TestSuiteHelper {
 			cmd.add("-d");
 			cmd.add(destinationPath);
 		}
-		Set directories = new HashSet();
+		Set<String> directories = new HashSet<String>();
 		for (int i = 0, max = sourceFilePaths.length; i < max; i++) {
 			String sourceFilePath = sourceFilePaths[i];
 			File file = new File(sourceFilePath);
@@ -328,8 +328,8 @@ public class TestSuiteHelper {
 			StringBuffer classpathEntry = new StringBuffer();
 			int length = directories.size();
 			int counter = 0;
-			for (Iterator iterator = directories.iterator(); iterator.hasNext();) {
-				String path = (String) iterator.next();
+			for (Iterator<String> iterator = directories.iterator(); iterator.hasNext();) {
+				String path = iterator.next();
 				classpathEntry.append(path);
 				if (counter < length - 1) {
 					classpathEntry.append(File.pathSeparatorChar);

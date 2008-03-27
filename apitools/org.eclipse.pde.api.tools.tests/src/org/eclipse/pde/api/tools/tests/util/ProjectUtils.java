@@ -241,14 +241,14 @@ public class ProjectUtils {
 	 */
 	public static void removeFromClasspath(IJavaProject project, IClasspathEntry entry) throws JavaModelException {
 		IClasspathEntry[] oldEntries = project.getRawClasspath();
-		ArrayList entries = new ArrayList();
+		ArrayList<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
 		for (int i= 0; i < oldEntries.length; i++) {
 			if (!oldEntries[i].equals(entry)) {
 				entries.add(oldEntries[i]);
 			}
 		}
 		if(entries.size() != oldEntries.length) {
-			project.setRawClasspath((IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]), new NullProgressMonitor());
+			project.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), new NullProgressMonitor());
 		}
 	}
 	

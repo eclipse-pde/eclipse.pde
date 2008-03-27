@@ -69,7 +69,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 				IJavaProject javaProject = ProjectUtils.createPluginProject(projectName, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
 				project = javaProject.getProject();
 				
-				HashMap options = new HashMap();
+				HashMap<String, String> options = new HashMap<String, String>();
 				options.put(CompilerOptions.OPTION_Compliance, compilerVersion);
 				options.put(CompilerOptions.OPTION_Source, compilerVersion);
 				options.put(CompilerOptions.OPTION_TargetPlatform, compilerVersion);
@@ -201,7 +201,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			}
 		}
 		try {
-			ArrayList problems = new ArrayList();
+			ArrayList<IMarker> problems = new ArrayList<IMarker>();
 			problems.addAll(Arrays.asList(getAllUsageMarkers(resource)));
 			problems.addAll(Arrays.asList(getAllCompatibilityMarkers(resource)));
 			problems.addAll(Arrays.asList(getAllAPIProfileMarkers(resource)));
@@ -239,7 +239,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 */
 	public ApiProblem[] getProblemsFor(IPath path, String additionalMarkerType){	
 		IMarker[] markers = getMarkersFor(path, additionalMarkerType);
-		ArrayList problems = new ArrayList();
+		ArrayList<ApiProblem> problems = new ArrayList<ApiProblem>();
 		for(int i = 0; i < markers.length; i++) {
 			problems.add(new ApiProblem(markers[i]));
 		}

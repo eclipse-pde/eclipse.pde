@@ -74,9 +74,9 @@ public class FileUtils {
 	 * @param collection
 	 * @throws IOException
 	 */
-	public static void addJavaFiles(File dir, List collection) throws IOException {
+	public static void addJavaFiles(File dir, List<File> collection) throws IOException {
 		File[] files = dir.listFiles();
-		List subDirs = new ArrayList(2);
+		List<File> subDirs = new ArrayList<File>(2);
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isFile()) {
 				collection.add(files[i]);
@@ -84,9 +84,9 @@ public class FileUtils {
 				subDirs.add(files[i]);
 			}
 		}
-		Iterator iter = subDirs.iterator();
+		Iterator<File> iter = subDirs.iterator();
 		while (iter.hasNext()) {
-			File subDir = (File)iter.next();
+			File subDir = iter.next();
 			addJavaFiles(subDir, collection);
 		}
 	}
@@ -101,7 +101,7 @@ public class FileUtils {
 	 */
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {		
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
-		List files = new ArrayList(100);
+		List<File> files = new ArrayList<File>(100);
 		addJavaFiles(rootDir, files);
 		try {
 			ImportOperation op= new ImportOperation(destPath, rootDir, structureProvider, new ImportOverwriteQuery(), files);
@@ -122,7 +122,7 @@ public class FileUtils {
 	 */
 	public static void importFileFromDirectory(File file, IPath destPath, IProgressMonitor monitor) throws CoreException, InvocationTargetException, IOException {		
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
-		List files = new ArrayList(1);
+		List<File> files = new ArrayList<File>(1);
 		files.add(file);
 		try {
 			ImportOperation ioperation = new ImportOperation(destPath, file.getParentFile(), structureProvider, new ImportOverwriteQuery(), files);

@@ -111,7 +111,7 @@ public class ApiBuilderTests extends BuilderTests {
 			printProblems();
 		}
 		IMarker[] rootProblems = getEnv().getMarkers();
-		Hashtable actual = new Hashtable(rootProblems.length * 2 + 1);
+		Hashtable<IPath, IPath> actual = new Hashtable<IPath, IPath>(rootProblems.length * 2 + 1);
 		for (int i = 0; i < rootProblems.length; i++) {
 			IPath culprit = rootProblems[i].getResource().getFullPath();
 			actual.put(culprit, culprit);
@@ -122,8 +122,8 @@ public class ApiBuilderTests extends BuilderTests {
 				assertTrue("missing expected problem with " + expected[i].toString(), false); //$NON-NLS-1$
 
 		if (actual.size() > expected.length) {
-			for (Enumeration e = actual.elements(); e.hasMoreElements();) {
-				IPath path = (IPath) e.nextElement();
+			for (Enumeration<IPath> e = actual.elements(); e.hasMoreElements();) {
+				IPath path = e.nextElement();
 				boolean found = false;
 				for (int i = 0; i < expected.length; ++i) {
 					if (path.equals(expected[i])) {
@@ -198,13 +198,6 @@ public class ApiBuilderTests extends BuilderTests {
 	protected void expectingProblemsFor(IPath[] roots, String expected) {
 		ApiProblem[] problems = allSortedProblems(roots);
 		assumeEquals("Invalid problem(s)!!!", expected, arrayToString(problems)); //$NON-NLS-1$
-	}
-
-	/**
-	 * Verifies that the given element has the expected problems.
-	 */
-	protected void expectingProblemsFor(IPath root, List expected) {
-		expectingProblemsFor(new IPath[] { root }, expected);
 	}
 
 	/**
