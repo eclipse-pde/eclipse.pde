@@ -223,6 +223,14 @@ public class ConverterUI extends Dialog {
 			case IDialogConstants.OK_ID :
 				// run button
 				// build up the command line
+				String text = this.outputText.getText();
+				if (text != null && this.output == null) {
+					this.output = text;
+				}
+				text = this.inputText.getText();
+				if (text != null && this.input == null) {
+					this.input = text;
+				}
 				if (this.input != null) {
 					this.addToCommandLine(getCommandLineOptions(INPUT_ID));
 					this.addToCommandLine(this.input);
