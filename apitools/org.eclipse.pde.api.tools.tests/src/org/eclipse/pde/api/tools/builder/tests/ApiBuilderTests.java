@@ -44,6 +44,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 /**
  * Base class for API builder tests
  */
+@SuppressWarnings("unchecked")
 public class ApiBuilderTests extends BuilderTests {
 	/**
 	 * Debug flag
@@ -84,7 +85,7 @@ public class ApiBuilderTests extends BuilderTests {
 	 */
 	protected void expectingNoProblemsFor(IPath[] roots) {
 		StringBuffer buffer = new StringBuffer();
-		ApiProblem[] problems = allSortedProblems(roots);
+		ApiProblem[] problems = allSortedApiProblems(roots);
 		if (problems != null) {
 			for (int i = 0, length = problems.length; i<length; i++) {
 				buffer.append(problems[i]+"\n");
@@ -196,7 +197,7 @@ public class ApiBuilderTests extends BuilderTests {
 	 * Verifies that the given elements have problems.
 	 */
 	protected void expectingProblemsFor(IPath[] roots, String expected) {
-		ApiProblem[] problems = allSortedProblems(roots);
+		ApiProblem[] problems = allSortedApiProblems(roots);
 		assumeEquals("Invalid problem(s)!!!", expected, arrayToString(problems)); //$NON-NLS-1$
 	}
 
@@ -204,7 +205,7 @@ public class ApiBuilderTests extends BuilderTests {
 	 * Verifies that the given elements have the expected problems.
 	 */
 	protected void expectingProblemsFor(IPath[] roots, List expected) {
-		ApiProblem[] problems = allSortedProblems(roots);
+		ApiProblem[] problems = allSortedApiProblems(roots);
 		assumeEquals("Invalid problem(s)!!!", arrayToString(expected.toArray()), arrayToString(problems));
 	}
 
@@ -214,7 +215,7 @@ public class ApiBuilderTests extends BuilderTests {
 	 * @param roots The path to get the problems
 	 * @return All sorted problems of all given path
 	 */
-	protected ApiProblem[] allSortedProblems(IPath[] roots) {
+	protected ApiProblem[] allSortedApiProblems(IPath[] roots) {
 		ApiProblem[] allProblems = null;
 		ApiProblem[] problems = null;
 		for (int i = 0, max=roots.length; i<max; i++) {

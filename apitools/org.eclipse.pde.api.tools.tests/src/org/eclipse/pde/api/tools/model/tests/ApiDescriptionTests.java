@@ -53,6 +53,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * 
  * @since 1.0.0
  */
+@SuppressWarnings("unchecked")
 public class ApiDescriptionTests extends TestCase {
 	
 	private IApiDescription fManifest = buildManifest();

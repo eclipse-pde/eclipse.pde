@@ -83,6 +83,7 @@ import org.osgi.framework.Constants;
 /**
  * Tests the {@link ApiProfileManager} without the framework running
  */
+@SuppressWarnings("unchecked")
 public class ApiProfileManagerTests extends AbstractApiTest {
 
 	class SourceChangeVisitor extends ASTVisitor {

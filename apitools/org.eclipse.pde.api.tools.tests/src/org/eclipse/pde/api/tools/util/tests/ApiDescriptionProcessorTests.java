@@ -53,6 +53,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 1.0.0
  */
+@SuppressWarnings("unchecked")
 public class ApiDescriptionProcessorTests extends AbstractApiTest {
 
 	/**
