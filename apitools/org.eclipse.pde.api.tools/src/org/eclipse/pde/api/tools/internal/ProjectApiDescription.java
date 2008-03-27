@@ -164,6 +164,9 @@ public class ProjectApiDescription extends ApiDescription {
 		public TypeNode(IType type, ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
 			super(parent, element, visibility, restrictions);
 			fType = type;
+			if (parent instanceof TypeNode) {
+				fTimeStamp = ((TypeNode)parent).fTimeStamp;
+			}
 		}
 
 		/* (non-Javadoc)
@@ -193,10 +196,10 @@ public class ProjectApiDescription extends ApiDescription {
 							modified();
 							children.clear();
 							restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+							fTimeStamp = resource.getModificationStamp();
 							try {
 								TagScanner.newScanner().scan(new CompilationUnit(unit), ProjectApiDescription.this,
 									getClassFileContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()));
-								fTimeStamp = resource.getModificationStamp();
 							} catch (CoreException e) {
 								ApiPlugin.log(e.getStatus());
 							}
@@ -354,8 +357,21 @@ public class ProjectApiDescription extends ApiDescription {
 			case IElementDescriptor.T_REFERENCE_TYPE:
 				IReferenceTypeDescriptor descriptor = (IReferenceTypeDescriptor) element;
 				try {
-					IType type = getJavaProject().findType(descriptor.getQualifiedName().replace('$', '.'));
-					if (type != null && type.getJavaProject().equals(getJavaProject())) {
+					IType type = null;
+					String name = descriptor.getName();
+					if (parentNode instanceof PackageNode) {
+						IPackageFragment fragment = ((PackageNode) parentNode).fFragment; 
+						if (fragment.getKind() == IPackageFragmentRoot.K_SOURCE) {
+							ICompilationUnit unit = fragment.getCompilationUnit(name + ".java"); //$NON-NLS-1$
+							type = unit.getType(name);
+						} else {
+							IClassFile file = fragment.getClassFile(name + ".class"); //$NON-NLS-1$
+							type = file.getType();
+						}
+					} else if (parentNode instanceof TypeNode) {
+						type = ((TypeNode)parentNode).fType.getType(name);
+					}
+					if (type != null) {
 						return newTypeNode(type, parentNode, element, VISIBILITY_INHERITED, RestrictionModifiers.NO_RESTRICTIONS);
 					}
 				} catch (CoreException e ) {
