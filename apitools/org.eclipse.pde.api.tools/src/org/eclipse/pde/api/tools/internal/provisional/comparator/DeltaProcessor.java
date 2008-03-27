@@ -389,11 +389,17 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.FIELD :
 					case IDelta.METHOD :
-					case IDelta.CONSTRUCTOR :
 					case IDelta.TYPE_MEMBER :
 						if (Util.isVisible(delta)) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
 									&& Util.isProtected(delta.getModifiers());
+						}
+						return true;
+					case IDelta.CONSTRUCTOR :
+						if (Util.isVisible(delta)) {
+							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
+									&& (Util.isProtected(delta.getModifiers()) ||
+											RestrictionModifiers.isInstantiateRestriction(delta.getRestrictions()));
 						}
 						return true;
 					case IDelta.CLASS_BOUND :

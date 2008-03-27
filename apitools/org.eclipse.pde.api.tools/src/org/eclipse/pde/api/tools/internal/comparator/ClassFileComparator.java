@@ -916,7 +916,7 @@ public class ClassFileComparator {
 							methodDescriptor,
 							IDelta.REMOVED,
 							methodDescriptor.isConstructor() ? IDelta.CONSTRUCTOR : IDelta.METHOD,
-							this.getCurrentTypeApiRestrictions(),
+							Util.isAbstract(this.descriptor1.access) ? this.getCurrentTypeApiRestrictions() | RestrictionModifiers.NO_INSTANTIATE : this.getCurrentTypeApiRestrictions(),
 							this.classFile,
 							this.descriptor1.name,
 							getMethodDisplayName(methodDescriptor, this.descriptor1));
