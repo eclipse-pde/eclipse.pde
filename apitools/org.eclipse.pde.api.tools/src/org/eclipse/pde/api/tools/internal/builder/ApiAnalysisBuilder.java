@@ -1233,11 +1233,20 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							|| (!RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
 							&& Flags.isStatic(delta.getModifiers()))) && Util.isVisible(delta)) {
 				// check new APIs
-				this.bits |= CONTAINS_API_CHANGES;
-				if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
-						|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
-						|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-					this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
+				switch(delta.getFlags()) {
+					case IDelta.TYPE_MEMBER :
+					case IDelta.METHOD :
+					case IDelta.CONSTRUCTOR :
+					case IDelta.ENUM_CONSTANT :
+					case IDelta.FIELD :
+					case IDelta.METHOD_WITH_DEFAULT_VALUE :
+					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+						this.bits |= CONTAINS_API_CHANGES;
+						if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
+								|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
+								|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
+							this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
+						}
 				}
 			}
 		} else {
