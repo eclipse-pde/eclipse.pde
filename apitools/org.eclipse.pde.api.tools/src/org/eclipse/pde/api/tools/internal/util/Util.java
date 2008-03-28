@@ -1144,7 +1144,12 @@ public final class Util {
 				methods = type.getMethods();
 			} catch (JavaModelException e) {
 				ApiPlugin.log(e);
-				return type;
+				// do not default to the enclosing type - see bug 224713
+				ApiPlugin.log(
+						new Status(IStatus.ERROR,
+								ApiPlugin.PLUGIN_ID,
+								NLS.bind(UtilMessages.Util_6, new String[] { selector, descriptor })));
+				return null;
 			}
 			List list = new ArrayList();
 			for (int i = 0, max = methods.length; i < max; i++) {
@@ -1155,7 +1160,12 @@ public final class Util {
 			}
 			switch(list.size()) {
 				case 0 :
-					return type;
+					// do not default to the enclosing type - see bug 224713
+					ApiPlugin.log(
+							new Status(IStatus.ERROR,
+									ApiPlugin.PLUGIN_ID,
+									NLS.bind(UtilMessages.Util_6, new String[] { selector, descriptor })));
+					return null;
 				case 1 :
 					return (IMember) list.get(0);
 				default:
@@ -1172,7 +1182,12 @@ public final class Util {
 					}
 			}
 		}
-		return type;
+		// do not default to the enclosing type - see bug 224713
+		ApiPlugin.log(
+				new Status(IStatus.ERROR,
+						ApiPlugin.PLUGIN_ID,
+						NLS.bind(UtilMessages.Util_6, new String[] { selector, descriptor })));
+		return null;
 	}
 
 	/**

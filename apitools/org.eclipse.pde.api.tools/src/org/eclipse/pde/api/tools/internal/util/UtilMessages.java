@@ -19,6 +19,7 @@ public class UtilMessages extends NLS {
 	public static String Util_3;
 	public static String Util_4;
 	public static String Util_5;
+	public static String Util_6;
 
 	static {
 		// initialize resource bundle
