@@ -1221,26 +1221,31 @@ public class ClassFileComparator {
 			return;
 		} else if (Util.isPublic(access) || Util.isProtected(access)) {
 			if (methodDescriptor.isConstructor()) {
-				this.addDelta(typeDescriptor, IDelta.ADDED, IDelta.CONSTRUCTOR, this.classFile, getKeyForMethod(methodDescriptor));
+				this.addDelta(typeDescriptor, IDelta.ADDED, IDelta.CONSTRUCTOR, this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor));
 			} else if (typeDescriptor.isAnnotation()) {
 				if (methodDescriptor.defaultValue != null) {
-					this.addDelta(typeDescriptor, IDelta.ADDED, IDelta.METHOD_WITH_DEFAULT_VALUE, this.classFile, getKeyForMethod(methodDescriptor));
+					this.addDelta(typeDescriptor, IDelta.ADDED, IDelta.METHOD_WITH_DEFAULT_VALUE, this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor));
 				} else {
-					this.addDelta(typeDescriptor, IDelta.ADDED, IDelta.METHOD_WITHOUT_DEFAULT_VALUE, this.classFile, getKeyForMethod(methodDescriptor));
+					this.addDelta(typeDescriptor, IDelta.ADDED, IDelta.METHOD_WITHOUT_DEFAULT_VALUE, this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor));
 				}
 			} else {
-				this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, IDelta.METHOD, this.getCurrentTypeApiRestrictions(), this.classFile, getKeyForMethod(methodDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));
+				this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, IDelta.METHOD, this.getCurrentTypeApiRestrictions(), this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));
 			}
 		} else {
-			this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, IDelta.METHOD, this.getCurrentTypeApiRestrictions(), this.classFile, getKeyForMethod(methodDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));
+			this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, IDelta.METHOD, this.getCurrentTypeApiRestrictions(), this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));
 		}
 	}
 	
-	private String getKeyForMethod(MethodDescriptor methodDescriptor) {
+	private String getKeyForMethod(MethodDescriptor methodDescriptor, TypeDescriptor typeDescriptor) {
 		StringBuffer buffer = new StringBuffer();
-		buffer
-			.append(methodDescriptor.name)
-			.append(methodDescriptor.descriptor);
+		if (methodDescriptor.isConstructor()) {
+			String name = typeDescriptor.name;
+			int index = name.lastIndexOf('.');
+			buffer.append(typeDescriptor.name.substring(index + 1));
+		} else {
+			buffer.append(methodDescriptor.name);
+		}
+		buffer.append(methodDescriptor.descriptor);
 		return String.valueOf(buffer);
 	}
 }
