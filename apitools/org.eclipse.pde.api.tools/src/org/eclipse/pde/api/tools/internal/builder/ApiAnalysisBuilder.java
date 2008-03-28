@@ -1047,6 +1047,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			Version componentVersion = new Version(component.getVersion());
 			if (referenceVersion.getMajor() < componentVersion.getMajor()) {
 				// API breakage are ok in this case
+				this.bits |= CONTAINS_API_BREAKAGE;
 				return null;
 			}
 			IResource resource = null;
