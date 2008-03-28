@@ -56,7 +56,7 @@ public class SearchScopeTests extends TestCase {
 		Collection<String> actualPackages = new HashSet<String>();
 		Collection<String> actualTypes = new HashSet<String>();
 		visit(scope, actualPackages, actualTypes);
-		assertEquals("Different pacakges", expectedPackages, actualPackages);
+		assertEquals("Different packages", expectedPackages, actualPackages);
 		assertEquals("Different types", expectedTypes, actualTypes);
 	}
 
@@ -108,7 +108,7 @@ public class SearchScopeTests extends TestCase {
 		Collection<String> actualPackages = new HashSet<String>();
 		Collection<String> actualTypes = new HashSet<String>();
 		visit(scope, actualPackages, actualTypes);
-		assertEquals("Different pacakges", expectedPackages, actualPackages);
+		assertEquals("Different packages", expectedPackages, actualPackages);
 		assertEquals("Different types", expectedTypes, actualTypes);
 	}
 	
@@ -130,7 +130,7 @@ public class SearchScopeTests extends TestCase {
 		Collection<String> actualPackages = new HashSet<String>();
 		Collection<String> actualTypes = new HashSet<String>();
 		visit(scope, actualPackages, actualTypes);
-		assertEquals("Different pacakges", expectedPackages, actualPackages);
+		assertEquals("Different packages", expectedPackages, actualPackages);
 		assertEquals("Different types", expectedTypes, actualTypes);
 	}	
 	
@@ -153,7 +153,7 @@ public class SearchScopeTests extends TestCase {
 		Collection<String> actualPackages = new HashSet<String>();
 		Collection<String> actualTypes = new HashSet<String>();
 		visit(scope, actualPackages, actualTypes);
-		assertEquals("Different pacakges", expectedPackages, actualPackages);
+		assertEquals("Different packages", expectedPackages, actualPackages);
 		assertEquals("Different types", expectedTypes, actualTypes);
 	}	
 	
@@ -234,7 +234,7 @@ public class SearchScopeTests extends TestCase {
 		Collection<String> actualPackages = new HashSet<String>();
 		Collection<String> actualTypes = new HashSet<String>();
 		visit(scope, actualPackages, actualTypes);
-		assertEquals("Different pacakges", expectedPackages, actualPackages);
+		assertEquals("Different packages", expectedPackages, actualPackages);
 		assertEquals("Different types", expectedTypes, actualTypes);
 	}
 	
