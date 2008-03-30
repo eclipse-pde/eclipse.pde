@@ -27,9 +27,10 @@ import org.osgi.framework.*;
 
 public class TargetPlatformHelper {
 
-	public static String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
-	public static String PLATFORM_PREFIX = "platform:"; //$NON-NLS-1$
-	public static String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
+	public static final String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
+	public static final String PLATFORM_PREFIX = "platform:"; //$NON-NLS-1$
+	public static final String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
+	public static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
 
 	private static Map fCachedLocations;
 
@@ -82,7 +83,7 @@ public class TargetPlatformHelper {
 	}
 
 	/**
-	 * Removed path information from the given string containing one or more comma separated
+	 * Removes path information from the given string containing one or more comma separated
 	 * osgi bundles.  Replaces escaped '\:' with ':'.  Removes, reference, platform and file
 	 * prefixes.  Removes any other path information converting the location or the last
 	 * segment to a bundle id.
@@ -112,10 +113,21 @@ public class TargetPlatformHelper {
 			// if the path is relative, the last segment is the bundle symbolic name
 			// Otherwise, we need to retrieve the bundle symbolic name ourselves
 			IPath path = new Path(bundle);
-			String id = path.isAbsolute() ? getSymbolicName(bundle) : path.lastSegment();
-			int underscoreIndex = id.indexOf('_');
-			if (underscoreIndex >= 0) {
-				id = id.substring(0, underscoreIndex);
+			String id = null;
+			if (path.isAbsolute()) {
+				id = getSymbolicName(bundle);
+			}
+			if (id == null) {
+				id = path.lastSegment();
+			}
+			if (id != null) {
+				int underscoreIndex = id.indexOf('_');
+				if (underscoreIndex >= 0) {
+					id = id.substring(0, underscoreIndex);
+				}
+				if (id.endsWith(JAR_EXTENSION)) {
+					id = id.substring(0, id.length() - 4);
+				}
 			}
 			if (result.length() > 0)
 				result.append(","); //$NON-NLS-1$
