@@ -29,7 +29,6 @@ public class AllPDETests {
 		suite.addTest(AllBundleModelTests.suite());
 		suite.addTest(AllXMLModelTests.suite());
 		suite.addTest(AllCheatSheetModelTests.suite());
-		suite.addTest(AllTargetTests.suite());
 		return suite;
 	}
 

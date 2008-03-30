@@ -18,6 +18,7 @@ public class AllTargetTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for testing targets"); //$NON-NLS-1$
 		suite.addTest(TargetEnvironmentTestCase.suite());
+		suite.addTest(TargetPlatformHelperTests.suite());
 		return suite;
 	}
 
