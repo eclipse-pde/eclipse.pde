@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.PDECore;
@@ -27,7 +28,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private URL fURL;
 
-	private Vector fListeners = new Vector();
+	private ListenerList fListeners = new ListenerList();
 
 	private Vector fElements = new Vector();
 
@@ -109,7 +110,7 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	public void addModelChangedListener(IModelChangedListener listener) {
-		fListeners.addElement(listener);
+		fListeners.add(listener);
 	}
 
 	private void collectElements(ISchemaCompositor compositor, Vector result) {
@@ -163,9 +164,9 @@ public class Schema extends PlatformObject implements ISchema {
 	public void fireModelChanged(IModelChangedEvent event) {
 		if (!fNotificationEnabled)
 			return;
-		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
-			IModelChangedListener listener = (IModelChangedListener) iter.next();
-			listener.modelChanged(event);
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			((IModelChangedListener) listeners[i]).modelChanged(event);
 		}
 	}
 
@@ -797,7 +798,7 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	public void removeModelChangedListener(IModelChangedListener listener) {
-		fListeners.removeElement(listener);
+		fListeners.remove(listener);
 	}
 
 	private void reset() {
