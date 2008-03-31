@@ -56,4 +56,22 @@ public class ApiSearchResult implements IApiSearchResult {
 		return fCondition;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(fCondition.toString());
+		if(fReferences != null) {
+			buffer.append("References: ["); //$NON-NLS-1$
+			for(int i = 0; i < fReferences.length; i++) {
+				buffer.append(fReferences[i].toString());
+				if(i < fReferences.length) {
+					buffer.append("\n"); //$NON-NLS-1$
+				}
+			}
+			buffer.append("]").append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return buffer.toString();
+	}
 }

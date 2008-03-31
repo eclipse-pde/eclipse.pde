@@ -61,7 +61,7 @@ public class ApiDescription implements IApiDescription {
 	 * We allow this to be null for testing purposes, but in general
 	 * a component description should have a component id.
 	 */
-	private String fOwningComponentId = null;
+	protected String fOwningComponentId = null;
 	
 	/**
 	 * Whether this description needs saving

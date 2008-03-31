@@ -158,5 +158,22 @@ public class TypeScope implements IApiSearchScope {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("*** Type Search Scope ***\n"); //$NON-NLS-1$
+		buffer.append("Component: ").append(fComponent); //$NON-NLS-1$
+		if(fPackageToTypes != null) {
+			String pack = null;
+			for(Iterator iter = fPackageToTypes.keySet().iterator(); iter.hasNext();) {
+				pack = (String) iter.next();
+				buffer.append("Package: ").append(pack).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append("Types: ").append(fPackageToTypes.get(pack).toString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		return buffer.toString();
+	}
 	
 }

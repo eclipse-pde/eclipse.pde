@@ -326,7 +326,10 @@ public class ProjectApiDescription extends ApiDescription {
 	protected boolean isInsertOnResolve(String component, IElementDescriptor elementDescriptor) {
 		// only insert for <null> component context, otherwise rules are explicit and should
 		// not be inserted
-		return component == null;
+		if(component != null) {
+			return component.equals(fOwningComponentId);
+		}
+		return true;
 	}
 	
 	/* (non-Javadoc)
