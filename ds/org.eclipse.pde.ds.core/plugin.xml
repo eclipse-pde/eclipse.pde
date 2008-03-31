@@ -6,9 +6,16 @@
       <content-type
             base-type="org.eclipse.core.runtime.xml"
             file-extensions="xml"
-            id="org.eclipse.pde.ds.core.content-type1"
+            id="org.eclipse.pde.ds.core.content-type"
             name="%content-type.name"
             priority="high">
+         <describer
+               class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2">
+            <parameter
+                  name="element"
+                  value="component">
+            </parameter>
+         </describer>
       </content-type>
    </extension>
 
