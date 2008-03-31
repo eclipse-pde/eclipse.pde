@@ -361,11 +361,11 @@ public class ApiUseAnalyzer {
 		}
 		// Add API leak conditions
 		List conditions = visitor.getConditions();
-		addLeakCondition(conditions, ReferenceModifiers.REF_EXTENDS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_EXTENDS);
-		addLeakCondition(conditions, ReferenceModifiers.REF_IMPLEMENTS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_IMPLEMENTS);
-		addLeakCondition(conditions, ReferenceModifiers.REF_FIELDDECL, IApiProblem.API_LEAK, IElementDescriptor.T_FIELD, IApiProblem.LEAK_FIELD);
-		addLeakCondition(conditions, ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_METHOD_PARAMETER);
-		addLeakCondition(conditions, ReferenceModifiers.REF_RETURNTYPE, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_RETURN_TYPE);
+		addLeakCondition(conditions, ReferenceModifiers.REF_EXTENDS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_EXTENDS, RestrictionModifiers.ALL_RESTRICTIONS);
+		addLeakCondition(conditions, ReferenceModifiers.REF_IMPLEMENTS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_IMPLEMENTS, RestrictionModifiers.ALL_RESTRICTIONS);
+		addLeakCondition(conditions, ReferenceModifiers.REF_FIELDDECL, IApiProblem.API_LEAK, IElementDescriptor.T_FIELD, IApiProblem.LEAK_FIELD, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE);
+		addLeakCondition(conditions, ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_METHOD_PARAMETER, RestrictionModifiers.ALL_RESTRICTIONS);
+		addLeakCondition(conditions, ReferenceModifiers.REF_RETURNTYPE, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_RETURN_TYPE, RestrictionModifiers.ALL_RESTRICTIONS);
 		return (IApiSearchCriteria[]) conditions.toArray(new IApiSearchCriteria[conditions.size()]);
 	}
 	
@@ -377,12 +377,13 @@ public class ApiUseAnalyzer {
 	 * @param problemKind
 	 * @param elementType
 	 * @param flags
+	 * @param restrictions
 	 */
-	private void addLeakCondition(List conditions, int refKind, int problemKind, int elementType, int flags) {
+	private void addLeakCondition(List conditions, int refKind, int problemKind, int elementType, int flags, int restrictions) {
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
 		criteria.setReferenceKinds(refKind);
 		criteria.setReferencedRestrictions(VisibilityModifiers.PRIVATE, RestrictionModifiers.ALL_RESTRICTIONS);
-		criteria.setSourceRestrictions(VisibilityModifiers.API, RestrictionModifiers.ALL_RESTRICTIONS);
+		criteria.setSourceRestrictions(VisibilityModifiers.API, restrictions);
 		criteria.setSourceModifiers(Flags.AccPublic | Flags.AccProtected);	
 		criteria.setUserData(new ProblemDescriptor(problemKind, elementType, flags));
 		conditions.add(criteria);

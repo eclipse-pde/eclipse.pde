@@ -318,6 +318,7 @@ public class ApiDescription implements IApiDescription {
 		Map map = fPackageMap;
 		ManifestNode parentNode = null;
 		ManifestNode node = null;
+		String componentid = translateComponentId(component);
 		for (int i = 0 ; i < path.length; i++) {
 			IElementDescriptor current = path[i];
 			parentNode = node;
@@ -341,10 +342,10 @@ public class ApiDescription implements IApiDescription {
 				map = node.children;
 			}
 		}
-		if (component == null || node == null) {
+		if (componentid == null || node == null) {
 			return node;
 		}
-		ManifestNode override = (ManifestNode) node.overrides.get(component);
+		ManifestNode override = (ManifestNode) node.overrides.get(componentid);
 		if (override == null) {
 			if (insert) {
 				override = createNode(parentNode, element);
@@ -360,6 +361,20 @@ public class ApiDescription implements IApiDescription {
 		return override;
 	}
 
+	/**
+	 * Translates the specified id to null if it is the same as the owning component id
+	 * @param id
+	 * @return the id or null
+	 */
+	private String translateComponentId(String id) {
+		if(id != null) {
+			if(!id.equals(fOwningComponentId)) {
+				return id;
+			}
+		}
+		return null;
+	}
+ 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#resolveAPIDescription(java.lang.String, org.eclipse.pde.api.tools.model.component.IElementDescriptor)
 	 */

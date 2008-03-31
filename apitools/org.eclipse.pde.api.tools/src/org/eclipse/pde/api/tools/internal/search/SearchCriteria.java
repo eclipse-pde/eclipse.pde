@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -493,8 +494,15 @@ public class SearchCriteria implements IApiSearchCriteria {
 			IApiAnnotations annotations = apiComponent.getApiDescription().resolveAnnotations(apiComponent.getId(), location.getMember());
 			if (annotations != null) {
 				if ((annotations.getVisibility() & fSourceVisibility) > 0) {
-					if (fSourceRestriction == RestrictionModifiers.ALL_RESTRICTIONS || (annotations.getRestrictions() & fRestrictionKinds) > 0) {
+					if(fSourceRestriction == RestrictionModifiers.ALL_RESTRICTIONS) {
 						return true;
+					}
+					int ares = annotations.getRestrictions();
+					if(ares != 0) {
+						return (ares & fSourceRestriction) > 0; 
+					}
+					else {
+						return fSourceRestriction != 0;
 					}
 				}
 			} else {
@@ -502,8 +510,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 				return true;
 			}
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ApiPlugin.log(e);
 		}
 		return false;
 	}
@@ -553,8 +560,10 @@ public class SearchCriteria implements IApiSearchCriteria {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("*** Search Criteria ***\n"); //$NON-NLS-1$
 		buffer.append("Reference Kinds: ").append(Util.getReferenceKind(fReferenceKinds)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append("Restriction Kinds: ").append(Util.getRestrictionKind(fRestrictionKinds)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append("Visibility Kinds: ").append(Util.getVisibilityKind(fVisibilityKinds)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("Reference Restriction Kinds: ").append(Util.getRestrictionKind(fRestrictionKinds)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("Reference Visibility Kinds: ").append(Util.getVisibilityKind(fVisibilityKinds)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("Source Restriction Kinds: ").append(Util.getRestrictionKind(fSourceRestriction)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("Source Visibility Kinds: ").append(Util.getVisibilityKind(fSourceVisibility)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		if(fPatterns != null) {
 			buffer.append("Patterns: ").append(fPatterns.toString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}

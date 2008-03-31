@@ -1578,27 +1578,43 @@ public final class Util {
 	 * @return the string for the kind or <code>null</code>
 	 */
 	public static String getRestrictionKind(int kind) {
-		switch(kind) {
-			case RestrictionModifiers.ALL_RESTRICTIONS: {
-				return "ALL_RESTRICTIONS"; //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer();
+		if(kind == RestrictionModifiers.ALL_RESTRICTIONS) {
+			buffer.append("ALL_RESTRICTIONS"); //$NON-NLS-1$
+		}
+		else {
+			if((kind & RestrictionModifiers.NO_EXTEND) > 0) {
+				buffer.append("NO_EXTEND"); //$NON-NLS-1$
 			}
-			case RestrictionModifiers.NO_EXTEND: {
-				return "NO_EXTEND"; //$NON-NLS-1$
+			if((kind & RestrictionModifiers.NO_IMPLEMENT) > 0) {
+				if(buffer.length() > 0) {
+					buffer.append(" | "); //$NON-NLS-1$
+				}
+				buffer.append("NO_IMPLEMENT"); //$NON-NLS-1$
 			}
-			case RestrictionModifiers.NO_IMPLEMENT: {
-				return "NO_IMPLEMENT"; //$NON-NLS-1$
+			if((kind & RestrictionModifiers.NO_INSTANTIATE) > 0) {
+				if(buffer.length() > 0) {
+					buffer.append(" | "); //$NON-NLS-1$
+				}
+				buffer.append("NO_INSTANTIATE"); //$NON-NLS-1$
 			}
-			case RestrictionModifiers.NO_INSTANTIATE: {
-				return "NO_INSTANTIATE"; //$NON-NLS-1$
+			if((kind & RestrictionModifiers.NO_REFERENCE) > 0) {
+				if(buffer.length() > 0) {
+					buffer.append(" | "); //$NON-NLS-1$
+				}
+				buffer.append("NO_REFERENCE"); //$NON-NLS-1$
 			}
-			case RestrictionModifiers.NO_REFERENCE: {
-				return "NO_REFERENCE"; //$NON-NLS-1$
-			}
-			case RestrictionModifiers.NO_RESTRICTIONS: {
-				return "NO_RESTRICTIONS"; //$NON-NLS-1$
+			if((kind & RestrictionModifiers.NO_RESTRICTIONS) > 0) {
+				if(buffer.length() > 0) {
+					buffer.append(" | "); //$NON-NLS-1$
+				}
+				buffer.append("NO_RESTRICTIONS"); //$NON-NLS-1$
 			}
 		}
-		return "UNKNOWN_KIND"; //$NON-NLS-1$
+		if(buffer.length() == 0) {
+			return "UNKNOWN_KIND"; //$NON-NLS-1$
+		}
+		return buffer.toString();
 	}
 	
 	/**
