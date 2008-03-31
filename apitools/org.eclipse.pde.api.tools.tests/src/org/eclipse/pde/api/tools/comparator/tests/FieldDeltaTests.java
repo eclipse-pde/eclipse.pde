@@ -955,6 +955,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	
 	/**
 	 * Remove compile-time constant
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=224994
 	 */
 	public void test39() {
 		deployBundles("test39");
