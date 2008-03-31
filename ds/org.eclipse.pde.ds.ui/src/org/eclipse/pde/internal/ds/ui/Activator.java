@@ -1,4 +1,4 @@
-package org.eclipse.pde.ds.ui;
+package org.eclipse.pde.internal.ds.ui;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
