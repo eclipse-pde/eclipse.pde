@@ -7,6 +7,9 @@
             default="true"
             id="org.eclipse.pde.ds.ui.editor"
             name="%editors.ds.name">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.pde.ds.core.content-type">
+         </contentTypeBinding>
       </editor>
    </extension>
 
