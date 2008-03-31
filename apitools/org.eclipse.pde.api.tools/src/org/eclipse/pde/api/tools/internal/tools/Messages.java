@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.internal.tools;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.tools.messages"; //$NON-NLS-1$
@@ -21,12 +20,12 @@ public class Messages extends NLS {
 	public static String cannotCreateOutputFileParent;
 	public static String cannotFindPackageProperty;
 	public static String numberOfElements;
-	public static String numberOfUniqueElements;	
+	public static String numberOfUniqueElements;
 	public static String noJRELocation;
 
 	static {
 		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, BuilderMessages.class);
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 
 	private Messages() {
