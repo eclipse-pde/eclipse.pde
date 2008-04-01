@@ -440,28 +440,51 @@ public class ClassFileComparator {
 	private void collectAllInterfaces(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile, Set set) {
 		try {
 			Set interfaces = typeDescriptor.interfaces;
-			if (interfaces == null) return;
-			for (Iterator iterator = interfaces.iterator(); iterator.hasNext();) {
-				String interfaceName = (String) iterator.next();
-				String packageName = Util.getPackageName(interfaceName);
+			if (interfaces != null) {
+				for (Iterator iterator = interfaces.iterator(); iterator.hasNext();) {
+					String interfaceName = (String) iterator.next();
+					String packageName = Util.getPackageName(interfaceName);
+					IApiComponent[] components = profile.resolvePackage(apiComponent, packageName);
+					if (components == null) {
+						// TODO should we report this failure ?
+						if (DEBUG) {
+							System.err.println("SUPERINTERFACES LOOKUP: Could not find package " + packageName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						}
+						continue;
+					}
+					IClassFile superinterface = Util.getClassFile(components, interfaceName);
+					if (superinterface == null) {
+						// TODO should we report this failure ?
+						if (DEBUG) {
+							System.err.println("SUPERINTERFACES LOOKUP: Could not find interface " + interfaceName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						}
+						continue;
+					}
+					TypeDescriptor typeDescriptor2 = new TypeDescriptor(superinterface.getContents());
+					set.add(typeDescriptor2);
+					collectAllInterfaces(typeDescriptor2, apiComponent, profile, set);
+				}
+			}
+			String superclassName = typeDescriptor.superName;
+			if (!Util.isJavaLangObject(superclassName)) {
+				String packageName = Util.getPackageName(superclassName);
 				IApiComponent[] components = profile.resolvePackage(apiComponent, packageName);
 				if (components == null) {
 					// TODO should we report this failure ?
 					if (DEBUG) {
 						System.err.println("SUPERINTERFACES LOOKUP: Could not find package " + packageName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
-					continue;
+					return;
 				}
-				IClassFile superinterface = Util.getClassFile(components, interfaceName);
-				if (superinterface == null) {
+				IClassFile superclass = Util.getClassFile(components, superclassName);
+				if (superclass == null) {
 					// TODO should we report this failure ?
 					if (DEBUG) {
-						System.err.println("SUPERINTERFACES LOOKUP: Could not find interface " + interfaceName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.err.println("SUPERINTERFACES LOOKUP: Could not find class " + superclassName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
-					continue;
+					return;
 				}
-				TypeDescriptor typeDescriptor2 = new TypeDescriptor(superinterface.getContents());
-				set.add(typeDescriptor2);
+				TypeDescriptor typeDescriptor2 = new TypeDescriptor(superclass.getContents());
 				collectAllInterfaces(typeDescriptor2, apiComponent, profile, set);
 			}
 		} catch (CoreException e) {
@@ -1098,8 +1121,6 @@ public class ClassFileComparator {
 	}
 
 	private Set getInterfacesSet(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile) {
-		TypeDescriptor descriptor = typeDescriptor;
-		if (descriptor.interfaces == null) return null;
 		HashSet set = new HashSet();
 		collectAllInterfaces(typeDescriptor, apiComponent, profile, set);
 		return set;
