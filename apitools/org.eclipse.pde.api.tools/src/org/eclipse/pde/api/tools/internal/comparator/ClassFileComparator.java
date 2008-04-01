@@ -1262,7 +1262,12 @@ public class ClassFileComparator {
 		if (methodDescriptor.isConstructor()) {
 			String name = typeDescriptor.name;
 			int index = name.lastIndexOf('.');
-			buffer.append(typeDescriptor.name.substring(index + 1));
+			int dollarIndex = name.lastIndexOf('$');
+			if (dollarIndex != -1 && typeDescriptor.isNestedType()) {
+				buffer.append(typeDescriptor.name.substring(dollarIndex + 1));
+			} else {
+				buffer.append(typeDescriptor.name.substring(index + 1));
+			}
 		} else {
 			buffer.append(methodDescriptor.name);
 		}
