@@ -227,7 +227,9 @@ public class ApiProblem implements IApiProblem {
 		if(obj instanceof IApiProblem) {
 			IApiProblem problem = (IApiProblem) obj;
 			return problem.getId() == fId &&
-					new Path(problem.getResourcePath()).equals(new Path(fResourcePath));
+					new Path(problem.getResourcePath()).equals(new Path(fResourcePath))
+					&& this.getCharEnd() == problem.getCharEnd()
+					&& this.getCharStart() == problem.getCharStart();
 		}
 		return super.equals(obj);
 	}
@@ -257,6 +259,6 @@ public class ApiProblem implements IApiProblem {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getId() + fResourcePath.hashCode();
+		return getId() + fResourcePath.hashCode() + this.getCharStart() + this.getCharEnd();
 	}
 }
