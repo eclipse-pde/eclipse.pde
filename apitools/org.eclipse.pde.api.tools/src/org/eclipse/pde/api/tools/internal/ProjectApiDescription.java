@@ -69,7 +69,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Time stamp at which package information was created
 	 */
-	long fPackageTimeStamp;
+	long fPackageTimeStamp = 0L;
 	
 	/** 
 	 * Whether a package refresh is in progress

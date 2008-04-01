@@ -351,19 +351,16 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 	 * @param element element with the integer
 	 * @param attr attribute name
 	 * @return attribute value as an integer
-	 * @throws CoreException
 	 */
-	private int getInt(Element element, String attr) throws CoreException {
+	private int getInt(Element element, String attr) {
 		String attribute = element.getAttribute(attr);
 		if (attribute != null) {
 			try {
 				return Integer.parseInt(attribute);
-			} catch (NumberFormatException e) {
-				abort(ScannerMessages.ApiDescriptionManager_6 + attribute, e);
-			}
+			} 
+			catch (NumberFormatException e) {}
 		}
-		abort(ScannerMessages.ApiDescriptionManager_7 + attr, null);
-		return -1;
+		return 0;
 	}
 	
 	/**
@@ -372,19 +369,16 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 	 * @param element element with the long
 	 * @param attr attribute name
 	 * @return attribute value as an long
-	 * @throws CoreException
 	 */
-	private long getLong(Element element, String attr) throws CoreException {
+	private long getLong(Element element, String attr) {
 		String attribute = element.getAttribute(attr);
 		if (attribute != null) {
 			try {
 				return Long.parseLong(attribute);
-			} catch (NumberFormatException e) {
-				abort(ScannerMessages.ApiDescriptionManager_8 + attribute, e);
-			}
+			} 
+			catch (NumberFormatException e) {}
 		}
-		abort(ScannerMessages.ApiDescriptionManager_9 + attr, null);
-		return -1L;
+		return 0L;
 	}	
 	
 	/**
