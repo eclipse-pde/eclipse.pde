@@ -334,6 +334,8 @@ public class ApiBuilderTests extends BuilderTests {
 	 */
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
+			UsageLeakTests.class,	
+				
 			AbstractMethodTests.class,
 			BasicBuildTests.class,
 			BuildpathTests.class,

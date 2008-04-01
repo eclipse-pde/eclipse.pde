@@ -364,8 +364,8 @@ public class ApiUseAnalyzer {
 		addLeakCondition(conditions, ReferenceModifiers.REF_EXTENDS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_EXTENDS, RestrictionModifiers.ALL_RESTRICTIONS);
 		addLeakCondition(conditions, ReferenceModifiers.REF_IMPLEMENTS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_IMPLEMENTS, RestrictionModifiers.ALL_RESTRICTIONS);
 		addLeakCondition(conditions, ReferenceModifiers.REF_FIELDDECL, IApiProblem.API_LEAK, IElementDescriptor.T_FIELD, IApiProblem.LEAK_FIELD, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE);
-		addLeakCondition(conditions, ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_METHOD_PARAMETER, RestrictionModifiers.ALL_RESTRICTIONS);
-		addLeakCondition(conditions, ReferenceModifiers.REF_RETURNTYPE, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_RETURN_TYPE, RestrictionModifiers.ALL_RESTRICTIONS);
+		addLeakCondition(conditions, ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_METHOD_PARAMETER, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE);
+		addLeakCondition(conditions, ReferenceModifiers.REF_RETURNTYPE, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_RETURN_TYPE, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE);
 		return (IApiSearchCriteria[]) conditions.toArray(new IApiSearchCriteria[conditions.size()]);
 	}
 	
