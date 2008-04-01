@@ -188,13 +188,13 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		String message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Invalid @since tag: A; the expected @since tag value is B", new String[0])));
+		assertTrue("the message should be correct", message.equals(MessageFormat.format("Invalid @since tag A; the expected @since tag value is B", new String[0])));
 		problem = ApiProblemFactory.newApiSinceTagProblem("", 
 				new String[] {"A"}, null, null, -1, -1, -1,  IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_MALFORMED);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Invalid @since tag: A; the @since tag can only have two fragments", new String[0])));
+		assertTrue("the message should be correct", message.equals(MessageFormat.format("Invalid @since tag A; the @since tag can only have two fragments", new String[0])));
 		problem = ApiProblemFactory.newApiSinceTagProblem("", 
 				new String[0], null, null, -1, -1, -1,  IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_MISSING);
 		message = problem.getMessage();
