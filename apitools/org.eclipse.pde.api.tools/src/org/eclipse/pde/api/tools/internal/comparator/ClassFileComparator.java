@@ -155,7 +155,7 @@ public class ClassFileComparator {
 			int restrictions,
 			IClassFile classFile,
 			String key,
-			Object data) {
+			String data) {
 		int actualFlags = flags;
 		switch(flags) {
 			case IDelta.METHOD :
@@ -173,7 +173,7 @@ public class ClassFileComparator {
 			int flags,
 			IClassFile classFile,
 			String key,
-			Object data) {
+			String data) {
 		this.addDelta(descriptor, descriptor2, kind, flags, this.getCurrentTypeApiRestrictions(), classFile, key, data);
 	}
 
@@ -184,7 +184,7 @@ public class ClassFileComparator {
 			int restrictions,
 			IClassFile classFile,
 			String key,
-			Object data) {
+			String data) {
 		this.addDelta(descriptor, descriptor2, kind, flags, restrictions, classFile, key, data);
 	}
 
@@ -213,7 +213,7 @@ public class ClassFileComparator {
 			int flags,
 			IClassFile classFile,
 			String key,
-			Object data) {
+			String data) {
 		this.addDelta(descriptor, descriptor, kind, flags, this.getCurrentTypeApiRestrictions(), classFile, key, data);
 	}
 	
@@ -225,11 +225,11 @@ public class ClassFileComparator {
 		this.addDelta(elementType, kind, flags, this.getCurrentTypeApiRestrictions(), modifiers, classFile, key, null);
 	}
 	
-	void addDelta(int elementType, int kind, int flags, int modifiers, IClassFile classFile, String key, Object data) {
+	void addDelta(int elementType, int kind, int flags, int modifiers, IClassFile classFile, String key, String data) {
 		this.addDelta(elementType, kind, flags, this.getCurrentTypeApiRestrictions(), modifiers, classFile, key, data);
 	}
 	
-	void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, Object data) {
+	void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String data) {
 		this.delta.add(new Delta(elementType, kind, flags, restrictions, modifiers, classFile, key, data));
 	}
 	
@@ -760,7 +760,7 @@ public class ClassFileComparator {
 		if (fieldDescriptor.value != null) {
 			if (fieldDescriptor2.value == null) {
 				// report delta - removal of constant value
-				this.addDelta(IDelta.FIELD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.VALUE, access2, this.classFile, name, fieldDescriptor.value);
+				this.addDelta(IDelta.FIELD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.VALUE, access2, this.classFile, name, String.valueOf(fieldDescriptor.value));
 			} else if (!fieldDescriptor.value.equals(fieldDescriptor2.value)) {
 				// report delta - modified constant value
 				if (Util.isFinal(this.descriptor2.access)) {
