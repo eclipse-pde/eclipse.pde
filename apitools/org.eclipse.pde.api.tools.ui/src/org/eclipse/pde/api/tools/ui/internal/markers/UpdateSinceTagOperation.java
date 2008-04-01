@@ -198,7 +198,9 @@ public class UpdateSinceTagOperation {
 								List fragments = sinceTag.fragments();
 								if (fragments.size() == 1) {
 									TextElement textElement = (TextElement) fragments.get(0);
-									rewrite.set(textElement, TextElement.TEXT_PROPERTY, this.sinceTagVersion, null);
+									StringBuffer buffer = new StringBuffer();
+									buffer.append(' ').append(this.sinceTagVersion);
+									rewrite.set(textElement, TextElement.TEXT_PROPERTY, String.valueOf(buffer), null);
 								}
 							}
 						}

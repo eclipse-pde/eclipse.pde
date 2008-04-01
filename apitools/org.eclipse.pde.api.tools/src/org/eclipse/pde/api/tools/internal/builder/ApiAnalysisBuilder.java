@@ -1340,7 +1340,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							SinceTagVersion tagVersion = null;
 							tagVersion = new SinceTagVersion(sinceVersion);
 							StringBuffer buffer = new StringBuffer();
-							buffer.append(' ');
 							if (tagVersion.pluginName() != null) {
 								buffer.append(tagVersion.pluginName()).append(' ');
 							}
@@ -1376,7 +1375,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							try {
 								tagVersion = new SinceTagVersion(sinceVersion);
 								StringBuffer buffer = new StringBuffer();
-								buffer.append(' ');
 								if (tagVersion.pluginName() != null) {
 									buffer.append(tagVersion.pluginName()).append(' ');
 								}
