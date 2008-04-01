@@ -95,7 +95,7 @@ public class TargetPlatformHelper {
 		StringTokenizer tokenizer = new StringTokenizer(osgiBundles, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			String token = tokenizer.nextToken();
-			token = token.replaceAll("\\\\:", ":"); //$NON-NLS-1$ //$NON-NLS-2$
+			token = token.replaceAll("\\\\:|/:", ":"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// read up until the first @, if there
 			int atIndex = token.indexOf('@');
