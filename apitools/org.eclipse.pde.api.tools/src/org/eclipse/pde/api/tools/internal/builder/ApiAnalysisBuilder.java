@@ -310,7 +310,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param monitor
 	 */
 	private void buildAll(IProgressMonitor monitor) {
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.api_analysis_on_0, new String[] {fCurrentProject.getName()}), 3);
+		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 3);
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		cleanupMarkers(this.fCurrentProject);
 		if (profile == null) {
@@ -332,12 +332,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			// Compatibility checks
 			IApiComponent apiComponent = wsprofile.getApiComponent(id);
 			if(apiComponent != null) {
-				localMonitor.subTask(BuilderMessages.checking_compatibility);
+				localMonitor.subTask(MessageFormat.format(BuilderMessages.checking_compatibility, new String[] {fCurrentProject.getName()}));
 				compareProfiles(profile.getApiComponent(id), apiComponent);
 				localMonitor.worked(1);
 				// API usage checks
 				IApiSearchScope scope = Factory.newScope(new IApiComponent[]{apiComponent});
-				localMonitor.subTask(BuilderMessages.checking_api_usage);
+				localMonitor.subTask(MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {fCurrentProject.getName()}));
 				checkApiUsage(wsprofile, apiComponent, scope, localMonitor);
 				localMonitor.worked(1);
 			}
