@@ -100,11 +100,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private static class DeltaInfo {
 		IDelta delta;
-		ICompilationUnit unit;
 		
-		public DeltaInfo(IDelta delta, ICompilationUnit unit) {
+		public DeltaInfo(IDelta delta) {
 			this.delta = delta;
-			this.unit = unit;
 		}
 	}
 
@@ -296,7 +294,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						-1,  
 						IElementDescriptor.T_RESOURCE, 
 						IApiProblem.API_PROFILE_MISSING);
-				fProblemReporter.addProblem(problem);
+				addAPIProblem(problem);
 			} else {
 				// we want to make sure that existing markers are removed
 				this.fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
@@ -381,7 +379,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}		
 			if (illegal.length > 0) {
 				for (int i = 0; i < illegal.length; i++) {
-					fProblemReporter.addProblem(illegal[i]);
+					addAPIProblem(illegal[i]);
 				}
 			}
 		} catch (CoreException e) {
@@ -837,16 +835,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			List allDeltas = Util.collectAllDeltas(delta);
 			for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
 				IDelta localDelta = (IDelta) iterator.next();
-				processDelta(javaProject, localDelta, compilationUnit, reference, component);
+				processDelta(javaProject, localDelta, reference, component);
 			}
 			if (!this.pendingDeltaInfos.isEmpty()) {
 				// process the list
 				for (Iterator iterator = this.pendingDeltaInfos.iterator(); iterator.hasNext();) {
 					DeltaInfo deltaInfo = (DeltaInfo) iterator.next();
-					IMember member = Util.getIMember(deltaInfo.delta, javaProject);
-					if (member != null) {
-						processSinceTags(javaProject, deltaInfo, member, component, reference);
-					}
+					processSinceTags(javaProject, deltaInfo, component, reference);
 				}
 			}
 			checkApiComponentVersion(reference, component);
@@ -924,7 +919,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 			}
 		}
-		fProblemReporter.addProblem(problem);
+		addAPIProblem(problem);
+	}
+
+	private void addAPIProblem(IApiProblem problem) {
+		if (problem != null) {
+			fProblemReporter.addProblem(problem);
+		}
 	}
 	
 	
@@ -1037,7 +1038,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param project
 	 * @return a new {@link IApiProblem} or <code>null</code>
 	 */
-	private IApiProblem createCompatibilityProblem(IDelta delta, ICompilationUnit compilationUnit, IJavaProject project, IApiComponent reference, IApiComponent component) {
+	private IApiProblem createCompatibilityProblem(IDelta delta, IJavaProject project, IApiComponent reference, IApiComponent component) {
 		try {
 			if(shouldIgnoreProblem(Util.getDeltaPrefererenceKey(delta.getElementType(), delta.getKind(), delta.getFlags()))) {
 				return null;
@@ -1050,7 +1051,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				return null;
 			}
 			IResource resource = null;
-			if (compilationUnit == null) {
+			IType type = null;
+			try {
+				type = project.findType(delta.getTypeName().replace('$', '.'));
+			} catch (JavaModelException e) {
+				ApiPlugin.log(e);
+			}
+			if (type == null) {
 				IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
 				if (manifestFile == null) {
 					// Cannot retrieve the manifest.mf file
@@ -1058,9 +1065,19 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 				resource = manifestFile;
 			} else {
-				resource = compilationUnit.getCorrespondingResource();
-				if (resource == null) {
-					return null;
+				ICompilationUnit unit = type.getCompilationUnit();
+				if (unit != null) {
+					resource = unit.getCorrespondingResource();
+					if (resource == null) {
+						return null;
+					}
+				} else {
+					IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
+					if (manifestFile == null) {
+						// Cannot retrieve the manifest.mf file
+						return null;
+					}
+					resource = manifestFile;
 				}
 			}
 			this.bits |= CONTAINS_API_BREAKAGE;
@@ -1075,38 +1092,22 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				charStart = range.getOffset();
 				charEnd = charStart + range.getLength();
 				try {
-					IDocument document = Util.getDocument(compilationUnit);
+					IDocument document = Util.getDocument(member.getCompilationUnit());
 					lineNumber = document.getLineOfOffset(charStart);
 				} catch (BadLocationException e) {
 					// ignore
 				}
 			}
-			IJavaElement element = null;
-			if (compilationUnit != null) {
-				if(charStart > -1) {
-					element = compilationUnit.getElementAt(charStart);
-					if(element == null) {
-						element = compilationUnit.findPrimaryType();
-						if(element == null) {
-							element = compilationUnit;
-						}
-					}
-				} else {
-					element = compilationUnit;
-				}
-			} else {
-				element = project;
-			}
-			return ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), 
-					delta.getArguments(), 
-					new String[] {IApiMarkerConstants.MARKER_ATTR_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-					new Object[] {element.getHandleIdentifier(), new Integer(IApiMarkerConstants.COMPATIBILITY_MARKER_ID)}, 
-					lineNumber, 
-					charStart, 
-					charEnd, 
-					IApiProblem.CATEGORY_COMPATIBILITY, 
-					delta.getElementType(), 
-					delta.getKind(), 
+			return ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
+					delta.getArguments(),
+					new String[] {IApiMarkerConstants.MARKER_ATTR_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID},
+					new Object[] {member == null ? null : member.getHandleIdentifier(), new Integer(IApiMarkerConstants.COMPATIBILITY_MARKER_ID)},
+					lineNumber,
+					charStart,
+					charEnd,
+					IApiProblem.CATEGORY_COMPATIBILITY,
+					delta.getElementType(),
+					delta.getKind(),
 					delta.getFlags());
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
@@ -1161,41 +1162,18 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						case IDelta.API_COMPONENT_ELEMENT_TYPE :
 						case IDelta.API_PROFILE_ELEMENT_TYPE :
 							if (!DeltaProcessor.isCompatible(localDelta)) {
-								problem = createCompatibilityProblem(localDelta, null, javaProject, reference, component);
+								problem = createCompatibilityProblem(localDelta, javaProject, reference, component);
 							}
 							break;
 						default:
-							IType type = null;
-							try {
-								type = javaProject.findType(localDelta.getTypeName().replace('$', '.'));
-							} catch (JavaModelException e) {
-								ApiPlugin.log(e);
-							}
-							if (type == null) {
-								// delta reported against an API component or an api profile
-								if (!DeltaProcessor.isCompatible(localDelta)) {
-									problem = createCompatibilityProblem(localDelta, null, javaProject, reference, component);
-								}
-							} else {
-								ICompilationUnit compilationUnit = type.getCompilationUnit();
-								if (compilationUnit == null) {
-									if (!DeltaProcessor.isCompatible(localDelta)) {
-										problem = createCompatibilityProblem(localDelta, null, javaProject, reference, component);
-									}
-								} else {
-									processDelta(javaProject, localDelta, compilationUnit, reference, component);
-								}
-							}
+							processDelta(javaProject, localDelta, reference, component);
 					}
 				}
 				if (!this.pendingDeltaInfos.isEmpty()) {
 					// process the list
 					for (Iterator iterator = this.pendingDeltaInfos.iterator(); iterator.hasNext();) {
 						DeltaInfo deltaInfo = (DeltaInfo) iterator.next();
-						IMember member = Util.getIMember(deltaInfo.delta, javaProject);
-						if (member != null) {
-							processSinceTags(javaProject, deltaInfo, member, component, reference);
-						}
+						processSinceTags(javaProject, deltaInfo, component, reference);
 					}
 				}
 				if (reference != null && component != null) {
@@ -1208,7 +1186,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		} else if (DEBUG) {
 			System.out.println("No delta"); //$NON-NLS-1$
 		}
-		fProblemReporter.addProblem(problem);
+		addAPIProblem(problem);
 	}
 
 	/**
@@ -1219,7 +1197,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param reference
 	 * @param component
 	 */
-	private void processDelta(IJavaProject javaProject, IDelta delta, ICompilationUnit compilationUnit,	IApiComponent reference, IApiComponent component) {
+	private void processDelta(IJavaProject javaProject, IDelta delta, IApiComponent reference, IApiComponent component) {
 		IApiProblem problem = null;
 		if (DeltaProcessor.isCompatible(delta)) {
 			if (DEBUG) {
@@ -1242,7 +1220,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
 									|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
 									|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-								this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
+								this.pendingDeltaInfos.add(new DeltaInfo(delta));
 							}
 							break;
 					}
@@ -1258,7 +1236,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
 									|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
 									|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-								this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
+								this.pendingDeltaInfos.add(new DeltaInfo(delta));
 							}
 							break;
 					}
@@ -1269,17 +1247,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
 				System.err.println(deltaDetails + " is not compatible"); //$NON-NLS-1$
 			}
-			problem = createCompatibilityProblem(delta, compilationUnit, javaProject, reference, component);
+			problem = createCompatibilityProblem(delta,javaProject, reference, component);
 			if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
 					|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
 					|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
 				// ensure that there is a @since tag for the corresponding member
 				if (delta.getKind() == IDelta.ADDED && Util.isVisible(delta)) {
-					this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
+					this.pendingDeltaInfos.add(new DeltaInfo(delta));
 				}
 			}
 		}
-		fProblemReporter.addProblem(problem);
+		addAPIProblem(problem);
 	}
 	
 	/**
@@ -1290,21 +1268,37 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param member
 	 * @param component
 	 */
-	private void processSinceTags(final IJavaProject javaProject, final DeltaInfo info, final IMember member, final IApiComponent component,
+	private void processSinceTags(final IJavaProject javaProject, final DeltaInfo info, final IApiComponent component,
 			final IApiComponent reference) {
-		ICompilationUnit cunit = info.unit;
-		IApiProblem problem = null;
-		if(cunit != null) {
-			ASTParser parser = ASTParser.newParser(AST.JLS3);
-			parser.setSource(cunit);
-			ISourceRange nameRange = null;
-			try {
-				nameRange = member.getNameRange();
-			} catch (JavaModelException e) {
-				ApiPlugin.log(e);
-				return;
+		IMember member = Util.getIMember(info.delta, javaProject);
+		if (member == null) {
+			return;
+		}
+		ICompilationUnit cunit = member.getCompilationUnit();
+		if (cunit == null) return;
+		try {
+			if (! cunit.isConsistent()) {
+				cunit.makeConsistent(null);
 			}
-			if (nameRange == null) return;
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+		IApiProblem problem = null;
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		String contents = null;
+		ISourceRange nameRange = null;
+		try {
+			contents = cunit.getBuffer().getContents();
+			nameRange = member.getNameRange();
+		} catch (JavaModelException e) {
+			ApiPlugin.log(e);
+			return;
+		}
+		parser.setSource(contents.toCharArray());
+		if (nameRange == null) {
+			return;
+		}
+		try {
 			int offset = nameRange.getOffset();
 			parser.setFocalPosition(offset);
 			parser.setResolveBindings(false);
@@ -1315,15 +1309,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			SinceTagChecker visitor = new SinceTagChecker(offset);
 			unit.accept(visitor);
 			String componentVersionString = component.getVersion();
-			if (visitor.hasNoComment() || visitor.isMissing()) {
-				if(shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)) {
-					return;
-				}
-				StringBuffer buffer = new StringBuffer();
-				Version componentVersion = null;
-				try {
-					// TODO check if reference version is lower than component version to set the appropriate 
-					// value for @since tag
+			try {
+				if (visitor.hasNoComment() || visitor.isMissing()) {
+					if(shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)) {
+						return;
+					}
+					StringBuffer buffer = new StringBuffer();
+					Version componentVersion = null;
 					if (reference != null) {
 						String referenceVersionString = reference.getVersion();
 						getAccurateVersion(componentVersionString, referenceVersionString, buffer);
@@ -1333,27 +1325,22 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					}
 					problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MISSING, null, 
 										 info, member, String.valueOf(buffer));
-				} catch (IllegalArgumentException e) {
-					ApiPlugin.log(e);
-				}
-			} else if (visitor.hasJavadocComment()) {
-				// we don't want to flag block comment
-				String sinceVersion = visitor.getSinceVersion();
-				if (sinceVersion != null) {
-					/*
-					 * Check the validity of the @since version
-					 * It cannot be greater than the component version and
-					 * it cannot contain more than two fragments.
-					 */
-					if (Util.getFragmentNumber(sinceVersion) > 2) {
-						if(shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)) {
-							return;
-						}
-						// @since version cannot have more than 2 fragments
-						// create a marker on the member for missing @since tag
-						try {
-							SinceTagVersion tagVersion = null;
-							tagVersion = new SinceTagVersion(sinceVersion);
+				} else if (visitor.hasJavadocComment()) {
+					// we don't want to flag block comment
+					String sinceVersion = visitor.getSinceVersion();
+					if (sinceVersion != null) {
+						/*
+						 * Check the validity of the @since version
+						 * It cannot be greater than the component version and
+						 * it cannot contain more than two fragments.
+						 */
+						SinceTagVersion tagVersion = new SinceTagVersion(sinceVersion);
+						if (Util.getFragmentNumber(sinceVersion) > 2 || tagVersion.getVersion() == null) {
+							if(shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)) {
+								return;
+							}
+							// @since version cannot have more than 2 fragments
+							// create a marker on the member for missing @since tag
 							StringBuffer buffer = new StringBuffer();
 							if (tagVersion.pluginName() != null) {
 								buffer.append(tagVersion.pluginName()).append(' ');
@@ -1368,27 +1355,21 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED,
 												 new String[] {sinceVersion},
 												 info, member, String.valueOf(buffer));
-						} catch (IllegalArgumentException e) {
-							ApiPlugin.log(e);
-						}
-					} else {
-						if(shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-							return;
-						}
-						StringBuffer accurateVersionBuffer = new StringBuffer();
-						if (reference != null) {
-							String referenceVersionString = reference.getVersion();
-							getAccurateVersion(componentVersionString, referenceVersionString, accurateVersionBuffer);
 						} else {
-							Version componentVersion = new Version(componentVersionString);
-							accurateVersionBuffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
-						}
-						String accurateVersion = String.valueOf(accurateVersionBuffer);
-						if (Util.isDifferentVersion(sinceVersion, accurateVersion)) {
-							// report invalid version number
-							SinceTagVersion tagVersion = null;
-							try {
-								tagVersion = new SinceTagVersion(sinceVersion);
+							if(shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
+								return;
+							}
+							StringBuffer accurateVersionBuffer = new StringBuffer();
+							if (reference != null) {
+								String referenceVersionString = reference.getVersion();
+								getAccurateVersion(componentVersionString, referenceVersionString, accurateVersionBuffer);
+							} else {
+								Version componentVersion = new Version(componentVersionString);
+								accurateVersionBuffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
+							}
+							String accurateVersion = String.valueOf(accurateVersionBuffer);
+							if (Util.isDifferentVersion(sinceVersion, accurateVersion)) {
+								// report invalid version number
 								StringBuffer buffer = new StringBuffer();
 								if (tagVersion.pluginName() != null) {
 									buffer.append(tagVersion.pluginName()).append(' ');
@@ -1399,15 +1380,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 								problem = createSinceTagProblem(IApiProblem.SINCE_TAG_INVALID,
 													 new String[] {sinceVersion, accurateSinceTagValue},
 													 info, member, accurateSinceTagValue);
-							} catch (IllegalArgumentException e) {
-								ApiPlugin.log(e);
 							}
 						}
 					}
 				}
+			} catch (IllegalArgumentException e) {
+				ApiPlugin.log(e);
 			}
-			fProblemReporter.addProblem(problem);
+		} catch (RuntimeException e) {
+			e.printStackTrace();
 		}
+		addAPIProblem(problem);
 	}
 
 	/**
@@ -1467,14 +1450,18 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			// create a marker on the member for missing @since tag
 			IResource resource = null;
+			ICompilationUnit unit = null;
 			try {
-				resource = info.unit.getCorrespondingResource();
+				unit = member.getCompilationUnit();
+				if (unit != null) {
+					resource = unit.getCorrespondingResource();
+				}
 			} catch (JavaModelException e) {
-				// ignore
+				ApiPlugin.log(e);
 			}
 			if (resource == null) {
 				return null;
-			}			
+			}
 			int lineNumber = 1;
 			int charStart = 0;
 			int charEnd = 1;
@@ -1482,10 +1469,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			charStart = range.getOffset();
 			charEnd = charStart + range.getLength();
 			try {
-				IDocument document = Util.getDocument(info.unit);
+				// unit cannot be null
+				IDocument document = Util.getDocument(unit);
 				lineNumber = document.getLineOfOffset(charStart);
 			} catch (BadLocationException e) {
-				// ignore
+				ApiPlugin.log(e);
 			}
 			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(), 
 					messageargs, 

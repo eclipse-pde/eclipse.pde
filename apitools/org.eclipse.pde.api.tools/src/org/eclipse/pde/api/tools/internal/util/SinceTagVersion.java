@@ -26,7 +26,7 @@ public class SinceTagVersion {
 	 * Creates a new instance.
 	 * 
 	 * @param value the given since tag value
-	 * @throws IllegalArgumentException if the given value is null or doesn't have the right format
+	 * @throws IllegalArgumentException if the given value is null
 	 */
 	public SinceTagVersion(String value) {
 		if (value == null) {
@@ -35,16 +35,24 @@ public class SinceTagVersion {
 		int index = value.indexOf(' ');
 		if (index == -1) {
 			// should be only a version; no plugin name
-			this.version = new Version(value);
+			try {
+				this.version = new Version(value);
+			} catch (IllegalArgumentException e) {
+				// ignore - wrong format
+			}
 		} else {
 			// plugin name followed by a version
 			this.pluginName = value.substring(0, index);
-			this.version = new Version(value.substring(index + 1, value.length()).trim());
+			try {
+				this.version = new Version(value.substring(index + 1, value.length()).trim());
+			} catch(IllegalArgumentException e) {
+				// ignore - wrong format
+			}
 		}
 	}
 
 	/**
-	 * Returns the version part of the @since tag. It cannot be null.
+	 * Returns the version part of the @since tag. null if the given version did not have the right format
 	 *
 	 * @return the version part of the @since tag
 	 */

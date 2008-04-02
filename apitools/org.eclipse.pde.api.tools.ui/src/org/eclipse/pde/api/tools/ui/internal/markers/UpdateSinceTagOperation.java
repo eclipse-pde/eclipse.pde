@@ -204,16 +204,15 @@ public class UpdateSinceTagOperation {
 								}
 							}
 						}
-						ITextFileBufferManager textFileBufferManager = FileBuffers.getTextFileBufferManager(); 
-						IPath path = compilationUnit.getPath(); 
+						ITextFileBufferManager textFileBufferManager = FileBuffers.getTextFileBufferManager();
+						IPath path = compilationUnit.getPath();
 						try {
 							if (monitor != null) {
 								monitor.worked(1);
 							}
 							textFileBufferManager.connect(path, LocationKind.IFILE, monitor);
 							ITextFileBuffer textFileBuffer = textFileBufferManager.getTextFileBuffer(path, LocationKind.IFILE);
-							IDocument document = textFileBuffer.getDocument(); 
-							//TODO support undo??
+							IDocument document = textFileBuffer.getDocument();
 							TextEdit edits = rewrite.rewriteAST(document, compilationUnit.getJavaProject().getOptions(true));
 							edits.apply(document);
 							textFileBuffer.commit(monitor, true);
@@ -223,6 +222,11 @@ public class UpdateSinceTagOperation {
 						} catch(BadLocationException e) {
 							ApiUIPlugin.log(e);
 						} finally {
+							compilationUnit.reconcile(
+									ICompilationUnit.NO_AST,
+									false /* don't force problem detection */,
+									null /* use primary owner */,
+									null /* no progress monitor */);
 							textFileBufferManager.disconnect(path, LocationKind.IFILE, monitor);
 						}
 					}
