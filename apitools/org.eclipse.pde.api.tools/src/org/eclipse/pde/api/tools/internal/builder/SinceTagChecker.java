@@ -41,13 +41,11 @@ public class SinceTagChecker extends ASTVisitor {
 	private static final int ABORT = 0x01;
 	private static final int MISSING = 0x02;
 	private static final int HAS_JAVA_DOC = 0x04;
-	private static final int HAS_NON_JAVA_DOC = 0x08;
 	private static final int HAS_NO_COMMENT  = 0x10;
 
 	private int nameStart;
 	int bits;
 	private String sinceVersion;
-	private CompilationUnit fCompilationUnit;
 
 	/**
 	 * Constructor
@@ -61,7 +59,6 @@ public class SinceTagChecker extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.CompilationUnit)
 	 */
 	public boolean visit(CompilationUnit compilationUnit) {
-		this.fCompilationUnit = compilationUnit;
 		return true;
 	}
 
