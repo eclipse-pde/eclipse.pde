@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -1227,26 +1226,42 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
 				System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
 			}
-			if ((delta.getKind() == IDelta.ADDED)
-					&& (RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
-							|| RestrictionModifiers.isImplementRestriction(delta.getRestrictions())
-							|| (!RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
-							&& Flags.isStatic(delta.getModifiers()))) && Util.isVisible(delta)) {
-				// check new APIs
-				switch(delta.getFlags()) {
-					case IDelta.TYPE_MEMBER :
-					case IDelta.METHOD :
-					case IDelta.CONSTRUCTOR :
-					case IDelta.ENUM_CONSTANT :
-					case IDelta.FIELD :
-					case IDelta.METHOD_WITH_DEFAULT_VALUE :
-					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-						this.bits |= CONTAINS_API_CHANGES;
-						if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
-								|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
-								|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-							this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
-						}
+			if (delta.getKind() == IDelta.ADDED) {
+				int modifiers = delta.getModifiers();
+				if (Util.isPublic(modifiers)) {
+					// if public, we always want to check @since tags
+					switch(delta.getFlags()) {
+						case IDelta.TYPE_MEMBER :
+						case IDelta.METHOD :
+						case IDelta.CONSTRUCTOR :
+						case IDelta.ENUM_CONSTANT :
+						case IDelta.METHOD_WITH_DEFAULT_VALUE :
+						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+						case IDelta.FIELD :
+							this.bits |= CONTAINS_API_CHANGES;
+							if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
+									|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
+									|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
+								this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
+							}
+							break;
+					}
+				} else if (Util.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
+					// if protected, we only want to check @since tags if the enclosing class can be subclassed
+					switch(delta.getFlags()) {
+						case IDelta.TYPE_MEMBER :
+						case IDelta.METHOD :
+						case IDelta.CONSTRUCTOR :
+						case IDelta.ENUM_CONSTANT :
+						case IDelta.FIELD :
+							this.bits |= CONTAINS_API_CHANGES;
+							if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
+									|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
+									|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
+								this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
+							}
+							break;
+					}
 				}
 			}
 		} else {
