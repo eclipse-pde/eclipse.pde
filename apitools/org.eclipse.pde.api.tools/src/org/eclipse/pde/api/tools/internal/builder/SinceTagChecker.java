@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,9 +18,7 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
-import org.eclipse.jdt.core.dom.BlockComment;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
-import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
@@ -212,28 +208,6 @@ public class SinceTagChecker extends ASTVisitor {
 			}
 			if (!found) {
 				this.bits |= MISSING;
-			}
-		} else if (this.fCompilationUnit != null) {
-			// we check if there is a block comment at the starting position of the body declaration
-			List commentList = this.fCompilationUnit.getCommentList();
-			if (commentList == null) {
-				this.bits |= HAS_NO_COMMENT;
-				return;
-			}
-			int extendedStartPosition = this.fCompilationUnit.getExtendedStartPosition(bodyDeclaration);
-			BlockComment newBlockComment = bodyDeclaration.getAST().newBlockComment();
-			newBlockComment.setSourceRange(extendedStartPosition, 1);
-			int result = Collections.binarySearch(commentList, newBlockComment, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					Comment comment1 = (Comment) o1;
-					Comment comment2 = (Comment) o2;
-					return comment1.getStartPosition() - comment2.getStartPosition();
-				}
-			});
-			if (result > 0) {
-				this.bits |= HAS_NON_JAVA_DOC;
-			} else {
-				this.bits |= HAS_NO_COMMENT;
 			}
 		} else {
 			this.bits |= HAS_NO_COMMENT;
