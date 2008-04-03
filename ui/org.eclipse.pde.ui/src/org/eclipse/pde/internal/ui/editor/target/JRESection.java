@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -217,11 +217,11 @@ public class JRESection extends PDESection {
 		if (jreType == ITargetJRE.TYPE_NAMED) {
 			if (fNamedJREsCombo.indexOf(jreName) < 0)
 				fNamedJREsCombo.add(jreName);
-			fNamedJREsCombo.setText(jreName);
+			fNamedJREsCombo.select(fNamedJREsCombo.indexOf(jreName));
 		} else if (jreType == ITargetJRE.TYPE_EXECUTION_ENV) {
 			if (fExecEnvsCombo.indexOf(jreName) < 0)
 				fExecEnvsCombo.add(jreName);
-			fExecEnvsCombo.setText(jreName);
+			fExecEnvsCombo.select(fExecEnvsCombo.indexOf(jreName));
 		}
 
 		if (fExecEnvsCombo.getSelectionIndex() == -1)
