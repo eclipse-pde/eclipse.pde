@@ -788,8 +788,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				compilationUnit = type.getCompilationUnit();
 				if (compilationUnit != null) {
 					compilationUnitResource = compilationUnit.getCorrespondingResource();
-					if (compilationUnitResource != null) {
-						if (DEBUG) {
+					if (DEBUG) {
+						if (compilationUnitResource != null) {
 							IMarker[] markers = getMarkers(compilationUnitResource);
 							for (int i = 0, max = markers.length; i < max; i++) {
 								System.out.println(markers[i]);
