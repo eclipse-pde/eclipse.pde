@@ -520,9 +520,11 @@ public class ClassFileComparator {
 				if (Util.isPrivate(typeAccess2) || Util.isDefault(typeAccess2)) {
 					// report delta - decrease access: protected to default or private
 					this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.DECREASE_ACCESS, this.classFile, this.descriptor1.name);
+					return this.delta;
 				} else if (Util.isPublic(typeAccess2)) {
 					// report delta - increase access: protected to public
 					this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.INCREASE_ACCESS, this.classFile, this.descriptor1.name);
+					return this.delta;
 				}
 			} else if (Util.isPublic(typeAccess)
 					&& (Util.isProtected(typeAccess2)
@@ -530,15 +532,18 @@ public class ClassFileComparator {
 							|| Util.isDefault(typeAccess2))) {
 				// report delta - decrease access: public to protected, default or private
 				this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.DECREASE_ACCESS, this.classFile, this.descriptor1.name);
+				return this.delta;
 			} else if (Util.isDefault(typeAccess)
 					&& (Util.isPublic(typeAccess2)
 							|| Util.isProtected(typeAccess2))) {
 				this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.INCREASE_ACCESS, this.classFile, this.descriptor1.name);
+				return this.delta;
 			} else if (Util.isPrivate(typeAccess)
 					&& (Util.isDefault(typeAccess2)
 							|| Util.isPublic(typeAccess2)
 							|| Util.isProtected(typeAccess2))) {
 				this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.INCREASE_ACCESS, this.classFile, this.descriptor1.name);
+				return this.delta;
 			}
 
 			if ((visibilityModifiers & VisibilityModifiers.API) != 0) {
