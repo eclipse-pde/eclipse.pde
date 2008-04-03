@@ -1248,12 +1248,24 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				System.err.println(deltaDetails + " is not compatible"); //$NON-NLS-1$
 			}
 			problem = createCompatibilityProblem(delta,javaProject, reference, component);
-			if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
-					|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
-					|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-				// ensure that there is a @since tag for the corresponding member
-				if (delta.getKind() == IDelta.ADDED && Util.isVisible(delta)) {
-					this.pendingDeltaInfos.add(new DeltaInfo(delta));
+			if (delta.getKind() == IDelta.ADDED) {
+				// if public, we always want to check @since tags
+				switch(delta.getFlags()) {
+					case IDelta.TYPE_MEMBER :
+					case IDelta.METHOD :
+					case IDelta.CONSTRUCTOR :
+					case IDelta.ENUM_CONSTANT :
+					case IDelta.METHOD_WITH_DEFAULT_VALUE :
+					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+					case IDelta.FIELD :
+						if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
+								|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
+								|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
+							// ensure that there is a @since tag for the corresponding member
+							if (delta.getKind() == IDelta.ADDED && Util.isVisible(delta)) {
+								this.pendingDeltaInfos.add(new DeltaInfo(delta));
+							}
+						}
 				}
 			}
 		}
