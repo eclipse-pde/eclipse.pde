@@ -18,7 +18,6 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.site.*;
-import org.eclipse.pde.internal.build.site.compatibility.FeatureReference;
 import org.eclipse.pde.internal.build.site.compatibility.SiteManager;
 
 /**
@@ -405,9 +404,11 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 		if (feature == null)
 			return null;
-		FeatureReference ref = feature.getSite().getFeatureReference(feature);
-		IPath featureBase = new Path(ref.getURL().getFile()).removeLastSegments(1);
-		return checkFile(featureBase, path, makeRelative);
+
+		String featureRoot = feature.getRootLocation();
+		if (featureRoot != null)
+			return checkFile(new Path(featureRoot), path, makeRelative);
+		return null;
 	}
 
 	private String checkFile(IPath base, Path target, boolean makeRelative) {

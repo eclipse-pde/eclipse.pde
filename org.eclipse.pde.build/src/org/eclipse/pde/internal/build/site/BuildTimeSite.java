@@ -374,46 +374,11 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		return feature;
 	}
 
-	public long getDownloadSizeFor(Feature feature) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public FeatureReference getFeatureReference(Feature feature) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public long getInstallSizeFor(Feature feature) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public FeatureEntry[] getPluginEntries() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public FeatureEntry[] getPluginEntriesOnlyReferencedBy(Feature feature) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public int getPluginEntryCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	public BuildTimeSiteContentProvider getSiteContentProvider() {
 		return contentProvider;
 	}
 	
 	public void setSiteContentProvider(BuildTimeSiteContentProvider siteContentProvider) {
 		this.contentProvider = siteContentProvider;
-	}
-
-	public void remove(Feature feature, IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-		
 	}
 }

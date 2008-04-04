@@ -413,12 +413,12 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("196159");
 
 		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"Plugin21;unpack=\"false\""});
-		
+
 		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
 		Utils.generateAllElements(buildFolder, "featureA");
-		
+
 		runBuild(buildFolder);
-		
+
 		IFile javaCompilerArgs = buildFolder.getFile("plugins/Plugin21/javaCompiler.Plugin21.jar.args");
 		assertFalse(javaCompilerArgs.exists());
 	}
@@ -427,20 +427,40 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("210464 space");
 
 		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"org.eclipse.osgi"});
-		
+
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "featureA"));
-		
+
 		assertResourceFile(buildFolder, "features/featureA/build.xml");
 	}
-	
+
 	public void testBug212920() throws Exception {
 		IFolder buildFolder = newTest("212920");
-		
+
 		Properties properties = new Properties();
 		properties.put("qualifier", "none");
 		Utils.generatePluginBuildProperties(buildFolder, properties);
 		Utils.generateBundleManifest(buildFolder, "bundle", "1.0.0.qualifier", null);
-		
+
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle"));
+	}
+
+	public void testBug224098() throws Exception {
+		IFolder buildFolder = newTest("224098");
+
+		Utils.generateFeature(buildFolder, "F", null, null);
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<product name=\"Test\" id=\"Test.product\" application=\"org.eclipse.ant.core.antRunner\" useFeatures=\"false\">");
+		buffer.append("  <configIni use=\"default\"/>");
+		buffer.append("  <launcherArgs>");
+		buffer.append("   <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>");
+		buffer.append("  </launcherArgs>");
+		buffer.append("</product> ");
+		Utils.writeBuffer(buildFolder.getFile("features/F/t.product"), buffer);
+		
+		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "F");
+		props.put("product", "F/t.product");
+		
+		generateScripts(buildFolder, props);
 	}
 }
