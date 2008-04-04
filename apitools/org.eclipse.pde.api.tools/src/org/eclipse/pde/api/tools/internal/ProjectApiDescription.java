@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
@@ -102,7 +101,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	class PackageNode extends ManifestNode {
 
-		private IPackageFragment fFragment;
+		private IPackageFragment[] fFragments;
 		/**
 		 * Constructs a new node.
 		 * 
@@ -111,9 +110,9 @@ public class ProjectApiDescription extends ApiDescription {
 		 * @param visibility
 		 * @param restrictions
 		 */
-		public PackageNode(IPackageFragment pkg, ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
+		public PackageNode(IPackageFragment fragments[], ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
 			super(parent, element, visibility, restrictions);
-			fFragment = pkg;
+			fFragments = fragments;
 		}
 
 		/* (non-Javadoc)
@@ -121,24 +120,52 @@ public class ProjectApiDescription extends ApiDescription {
 		 */
 		protected ManifestNode refresh() {
 			refreshPackages();
-			if (fFragment.exists()) {
-				return this;
-			} else {
-				modified();
-				return null;
+			for (int i = 0; i < fFragments.length; i++) {
+				if (!fFragments[i].exists()) {
+					modified();
+					return null;		
+				}
 			}
+			return this;
 		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML(org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
 		 */
-		void persistXML(Document document, Element parent, String component) {
+		void persistXML(Document document, Element parent) {
 			Element pkg = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE);
-			pkg.setAttribute(IApiXmlConstants.ATTR_HANDLE, fFragment.getHandleIdentifier());
-			persistAnnotations(pkg, component);
+			for (int i = 0; i < fFragments.length; i++) {
+				Element fragment = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE_FRAGMENT);
+				fragment.setAttribute(IApiXmlConstants.ATTR_HANDLE, fFragments[i].getHandleIdentifier());
+				pkg.appendChild(fragment);
+			}
+			persistAnnotations(pkg);
 			persistChildren(document, pkg, children);
 			parent.appendChild(pkg);
 		}		
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#toString()
+		 */
+		public String toString() {
+			StringBuffer buffer = new StringBuffer();
+			String name = ((IPackageDescriptor)element).getName();
+			buffer.append("Package Node: ").append(name.equals("") ? "<default package>" : name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			buffer.append("\nVisibility: ").append(Util.getVisibilityKind(visibility)); //$NON-NLS-1$
+			buffer.append("\nRestrictions: ").append(Util.getRestrictionKind(restrictions)); //$NON-NLS-1$
+			if(fFragments != null) {
+				buffer.append("\nFragments:"); //$NON-NLS-1$
+				IPackageFragment fragment = null;
+				for(int i = 0; i < fFragments.length; i++) {
+					fragment = fFragments[i];
+					buffer.append("\n\t").append(fragment.getElementName()); //$NON-NLS-1$
+					buffer.append(" ["); //$NON-NLS-1$
+					buffer.append(fragment.getParent().getElementName());
+					buffer.append("]"); //$NON-NLS-1$
+				}
+			}
+			return buffer.toString();
+		}
 	}
 	
 	/**
@@ -207,7 +234,7 @@ public class ProjectApiDescription extends ApiDescription {
 					} else {
 						// element has been removed
 						modified();
-						parent.children.remove(getElement());
+						parent.children.remove(element);
 						return null;
 					}
 				} else {
@@ -222,14 +249,30 @@ public class ProjectApiDescription extends ApiDescription {
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML(org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
 		 */
-		void persistXML(Document document, Element parent, String component) {
+		void persistXML(Document document, Element parent) {
 			Element type = document.createElement(IApiXmlConstants.ELEMENT_TYPE);
 			type.setAttribute(IApiXmlConstants.ATTR_HANDLE, fType.getHandleIdentifier());
-			persistAnnotations(type, component);
+			persistAnnotations(type);
 			type.setAttribute(IApiXmlConstants.ATTR_MODIFICATION_STAMP, Long.toString(fTimeStamp));
 			persistChildren(document, type, children);
 			parent.appendChild(type);
-		}		
+		}	
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#toString()
+		 */
+		public String toString() {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("Type Node: ").append(fType.getFullyQualifiedName()); //$NON-NLS-1$
+			buffer.append("\nVisibility: ").append(Util.getVisibilityKind(visibility)); //$NON-NLS-1$
+			buffer.append("\nRestrictions: ").append(Util.getRestrictionKind(restrictions)); //$NON-NLS-1$
+			if(parent != null) {
+				String pname = parent.element.getElementType() == IElementDescriptor.T_PACKAGE ?
+						((IPackageDescriptor)parent.element).getName() : ((IReferenceTypeDescriptor)parent.element).getQualifiedName();
+				buffer.append("\nParent: ").append(pname); //$NON-NLS-1$
+			}
+			return buffer.toString();
+		}
 	}
 	
 	/**
@@ -261,10 +304,10 @@ public class ProjectApiDescription extends ApiDescription {
 					}
 					IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragments[j].getElementName());
 					// visit package
-					ManifestNode pkgNode = findNode(null, packageDescriptor, isInsertOnResolve(null, packageDescriptor));
+					ManifestNode pkgNode = findNode(packageDescriptor, isInsertOnResolve(packageDescriptor));
 					if (pkgNode != null) {
 						IApiAnnotations annotations = resolveAnnotations(pkgNode, packageDescriptor);
-						if (visitor.visitElement(packageDescriptor, null, annotations)) {
+						if (visitor.visitElement(packageDescriptor, annotations)) {
 							children = fragments[j].getChildren();
 							for (int k = 0; k < children.length; k++) {
 								child = children[k];
@@ -280,9 +323,7 @@ public class ProjectApiDescription extends ApiDescription {
 						} else {
 							completeVisit = false;
 						}
-						visitor.endVisitElement(packageDescriptor, null, annotations);
-						// visit component overrides
-						visitOverrides(visitor, pkgNode);
+						visitor.endVisitElement(packageDescriptor, annotations);
 					}
 				}
 			} catch (JavaModelException e) {
@@ -305,30 +346,23 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	private void visit(ApiDescriptionVisitor visitor, IType type) {
 		IElementDescriptor element = getElementDescriptor(type);
-		ManifestNode typeNode = findNode(null, element, isInsertOnResolve(null, element));
+		ManifestNode typeNode = findNode(element, isInsertOnResolve(element));
 		if (typeNode != null) {
 			IApiAnnotations annotations = resolveAnnotations(typeNode, element);
-			if (visitor.visitElement(element, null, annotations)) {
+			if (visitor.visitElement(element, annotations)) {
 				// children
 				if (typeNode.children != null) {
 					visitChildren(visitor, typeNode.children);
 				}
 			}
-			visitor.endVisitElement(element, null, annotations);
-			// component specific overrides
-			visitOverrides(visitor, typeNode);
+			visitor.endVisitElement(element, annotations);
 		}
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#isInsertOnResolve(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
+	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#isInsertOnResolve(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
 	 */
-	protected boolean isInsertOnResolve(String component, IElementDescriptor elementDescriptor) {
-		// only insert for <null> component context, otherwise rules are explicit and should
-		// not be inserted
-		if(component != null) {
-			return component.equals(fOwningComponentId);
-		}
+	protected boolean isInsertOnResolve(IElementDescriptor elementDescriptor) {
 		return true;
 	}
 	
@@ -341,6 +375,7 @@ public class ProjectApiDescription extends ApiDescription {
 				try {
 					IPackageDescriptor pkg = (IPackageDescriptor) element;
 					IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
+					List fragments = new ArrayList(1);
 					for (int i = 0; i < roots.length; i++) {
 						IPackageFragmentRoot root = roots[i];
 						IClasspathEntry entry = root.getRawClasspathEntry();
@@ -349,11 +384,16 @@ public class ProjectApiDescription extends ApiDescription {
 						case IClasspathEntry.CPE_LIBRARY:
 							IPackageFragment fragment = root.getPackageFragment(pkg.getName());
 							if (fragment.exists()) {
-								return newPackageNode(fragment, parentNode, element, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
+								fragments.add(fragment);
 							}
 						}
 					}
-					return null;
+					if (fragments.isEmpty()) {
+						return null;
+					} else {
+						return newPackageNode((IPackageFragment[])fragments.toArray(new IPackageFragment[fragments.size()]), parentNode, element, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
+					}
+					
 				} catch (CoreException e) {
 					return null;
 				}
@@ -363,13 +403,28 @@ public class ProjectApiDescription extends ApiDescription {
 					IType type = null;
 					String name = descriptor.getName();
 					if (parentNode instanceof PackageNode) {
-						IPackageFragment fragment = ((PackageNode) parentNode).fFragment; 
-						if (fragment.getKind() == IPackageFragmentRoot.K_SOURCE) {
-							ICompilationUnit unit = fragment.getCompilationUnit(name + ".java"); //$NON-NLS-1$
-							type = unit.getType(name);
-						} else {
-							IClassFile file = fragment.getClassFile(name + ".class"); //$NON-NLS-1$
-							type = file.getType();
+						IPackageFragment[] fragments = ((PackageNode) parentNode).fFragments; 
+						for (int i = 0; i < fragments.length; i++) {
+							IPackageFragment fragment = fragments[i];
+							if (fragment.getKind() == IPackageFragmentRoot.K_SOURCE) {
+								ICompilationUnit unit = fragment.getCompilationUnit(name + ".java"); //$NON-NLS-1$
+								try {
+									IResource resource = unit.getUnderlyingResource();
+									if (resource != null) {
+										type = unit.getType(name);
+									}
+								} catch (JavaModelException jme) {
+									// exception if the resource does not exist
+									if (!jme.getJavaModelStatus().isDoesNotExist()) {
+										throw jme;
+									}
+								}
+							} else {
+								IClassFile file = fragment.getClassFile(name + ".class"); //$NON-NLS-1$
+								if (file.exists()) {
+									type = file.getType();
+								}
+							}							
 						}
 					} else if (parentNode instanceof TypeNode) {
 						type = ((TypeNode)parentNode).fType.getType(name);
@@ -395,8 +450,8 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @param res
 	 * @return
 	 */
-	PackageNode newPackageNode(IPackageFragment fragment, ManifestNode parent, IElementDescriptor descriptor, int vis, int res) {
-		return new PackageNode(fragment, parent, descriptor, vis, res);
+	PackageNode newPackageNode(IPackageFragment[] fragments, ManifestNode parent, IElementDescriptor descriptor, int vis, int res) {
+		return new PackageNode(fragments, parent, descriptor, vis, res);
 	}
 
 	/**
@@ -414,7 +469,7 @@ public class ProjectApiDescription extends ApiDescription {
 	}
 	
 	/**
-	 * Constructs a new manifiest node.
+	 * Constructs a new manifest node.
 	 * 
 	 * @param parent
 	 * @param element
@@ -591,16 +646,7 @@ public class ProjectApiDescription extends ApiDescription {
 		Iterator iterator = elementMap.values().iterator();
 		while (iterator.hasNext()) {
 			ManifestNode node = (ManifestNode) iterator.next();
-			node.persistXML(document, xmlElement, null);
-			if (node.overrides != null && !node.overrides.isEmpty()) {
-				Iterator entries = node.overrides.entrySet().iterator();
-				while (entries.hasNext()) {
-					Entry entry = (Entry) entries.next();
-					String component = (String) entry.getKey();
-					ManifestNode override = (ManifestNode) entry.getValue();
-					override.persistXML(document, xmlElement, component);
-				}
-			}
+			node.persistXML(document, xmlElement);
 		}
 	}
 	

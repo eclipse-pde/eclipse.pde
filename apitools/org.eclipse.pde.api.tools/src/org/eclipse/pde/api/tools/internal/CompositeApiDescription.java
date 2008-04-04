@@ -47,23 +47,11 @@ public class CompositeApiDescription implements IApiDescription {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#removeElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
-	 */
-	public boolean removeElement(IElementDescriptor element) {
-		for (int i = 0; i < fDescriptions.length; i++) {
-			if (fDescriptions[i].removeElement(element)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#resolveAnnotations(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
 	 */
-	public IApiAnnotations resolveAnnotations(String component, IElementDescriptor element) {
+	public IApiAnnotations resolveAnnotations(IElementDescriptor element) {
 		for (int i = 0; i < fDescriptions.length; i++) {
-			IApiAnnotations ann = fDescriptions[i].resolveAnnotations(component, element);
+			IApiAnnotations ann = fDescriptions[i].resolveAnnotations(element);
 			if (ann != null) {
 				return ann;
 			}
@@ -74,9 +62,9 @@ public class CompositeApiDescription implements IApiDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#setRestrictions(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, int)
 	 */
-	public IStatus setRestrictions(String component, IElementDescriptor element, int restrictions) {
+	public IStatus setRestrictions(IElementDescriptor element, int restrictions) {
 		for (int i = 0; i < fDescriptions.length; i++) {
-			IStatus status = fDescriptions[i].setRestrictions(component, element, restrictions);
+			IStatus status = fDescriptions[i].setRestrictions(element, restrictions);
 			if (status.isOK() || i == (fDescriptions.length - 1)) {
 				return status;
 			}
@@ -87,15 +75,15 @@ public class CompositeApiDescription implements IApiDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#setVisibility(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, int)
 	 */
-	public IStatus setVisibility(String component, IElementDescriptor element, int visibility) {
+	public IStatus setVisibility(IElementDescriptor element, int visibility) {
 		for (int i = 0; i < fDescriptions.length; i++) {
-			IStatus status = fDescriptions[i].setVisibility(component, element, visibility);
+			IStatus status = fDescriptions[i].setVisibility(element, visibility);
 			if (status.isOK() || i == (fDescriptions.length - 1)) {
 				return status;
 			}
 		}
 		return Status.CANCEL_STATUS;
-	}
+	}	
 
 	/**
 	 * Disconnects an underlying API description from the given bundle.

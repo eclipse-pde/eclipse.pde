@@ -148,7 +148,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	 * @param description the description to annotate from
 	 * @param element the element to annotate
 	 */
-	private void annotateElementAttributes(String componentContext, IApiAnnotations description, Element element) {
+	private void annotateElementAttributes(IApiAnnotations description, Element element) {
 		int restrictions = description.getRestrictions();
 		if (RestrictionModifiers.isImplementRestriction(restrictions)) {
 			element.setAttribute(IApiXmlConstants.ATTR_IMPLEMENT, VALUE_FALSE);
@@ -161,9 +161,6 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 		}
 		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
 			element.setAttribute(IApiXmlConstants.ATTR_REFERENCE, VALUE_FALSE);
-		}
-		if (componentContext != null) {
-			element.setAttribute(IApiXmlConstants.ATTR_CONTEXT, componentContext);
 		}
 		int visibility = description.getVisibility();
 		if (visibility != fPackageVisibility) {
@@ -206,7 +203,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.model.component.IElementDescriptor, java.lang.String, org.eclipse.pde.api.tools.model.IApiAnnotations)
 	 */
-	public boolean visitElement(IElementDescriptor element, String componentContext, IApiAnnotations description) {
+	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 		switch(element.getElementType()) {
 			case IElementDescriptor.T_PACKAGE: {
 				IPackageDescriptor pkg = (IPackageDescriptor) element;
@@ -225,7 +222,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 				IReferenceTypeDescriptor typeDesc = (IReferenceTypeDescriptor) element;
 				fTypeStack.push(fDoc.createElement(IApiXmlConstants.ELEMENT_TYPE));
 				Element type = (Element) fTypeStack.peek();
-				annotateElementAttributes(componentContext, description, type);
+				annotateElementAttributes(description, type);
 				fPackage.appendChild(type);
 				type.setAttribute(IApiXmlConstants.ATTR_NAME, Util.getTypeName(typeDesc.getQualifiedName()));
 				break;
@@ -235,7 +232,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 				Element method = fDoc.createElement(IApiXmlConstants.ELEMENT_METHOD);
 				Element type = (Element) fTypeStack.peek();
 				//add standard attributes
-				annotateElementAttributes(componentContext, description, method);
+				annotateElementAttributes(description, method);
 				if (method.hasAttributes()) {
 					type.appendChild(method);
 					//add specific method attributes
@@ -248,7 +245,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 				IFieldDescriptor desc = (IFieldDescriptor) element;
 				Element field = fDoc.createElement(IApiXmlConstants.ELEMENT_FIELD);
 				Element type = (Element) fTypeStack.peek();
-				annotateElementAttributes(componentContext, description, field);
+				annotateElementAttributes(description, field);
 				if (field.hasAttributes()) {
 					type.appendChild(field);
 					//add standard attributes

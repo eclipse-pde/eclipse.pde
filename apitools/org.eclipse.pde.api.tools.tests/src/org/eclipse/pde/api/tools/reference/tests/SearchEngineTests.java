@@ -145,9 +145,9 @@ public class SearchEngineTests extends TestCase {
 		IMethodDescriptor m1 = base.getMethod("noOverride", "()V");
 		IMethodDescriptor m2 = base.getMethod("noOverridePrimitiveArg", "(I)V");
 		IMethodDescriptor m3 = base.getMethod("noOverrideStringArg", "(Ljava/lang/String;)V");
-		componentA.getApiDescription().setRestrictions(null, m1, RestrictionModifiers.NO_EXTEND);
-		componentA.getApiDescription().setRestrictions(null, m2, RestrictionModifiers.NO_EXTEND);
-		componentA.getApiDescription().setRestrictions(null, m3, RestrictionModifiers.NO_EXTEND);
+		componentA.getApiDescription().setRestrictions(m1, RestrictionModifiers.NO_EXTEND);
+		componentA.getApiDescription().setRestrictions(m2, RestrictionModifiers.NO_EXTEND);
+		componentA.getApiDescription().setRestrictions(m3, RestrictionModifiers.NO_EXTEND);
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
 		criteria.setReferenceKinds(ReferenceModifiers.REF_OVERRIDE);
@@ -182,7 +182,7 @@ public class SearchEngineTests extends TestCase {
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("NoInstantiateClass");
-		componentA.getApiDescription().setRestrictions(null, noInst, RestrictionModifiers.NO_INSTANTIATE);
+		componentA.getApiDescription().setRestrictions(noInst, RestrictionModifiers.NO_INSTANTIATE);
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
@@ -206,7 +206,7 @@ public class SearchEngineTests extends TestCase {
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("NoExtendClass");
-		componentA.getApiDescription().setRestrictions(null, noInst, RestrictionModifiers.NO_EXTEND);
+		componentA.getApiDescription().setRestrictions(noInst, RestrictionModifiers.NO_EXTEND);
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
@@ -230,7 +230,7 @@ public class SearchEngineTests extends TestCase {
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("INoImplementInterface");
-		componentA.getApiDescription().setRestrictions(null, noInst, RestrictionModifiers.NO_IMPLEMENT);
+		componentA.getApiDescription().setRestrictions(noInst, RestrictionModifiers.NO_IMPLEMENT);
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
@@ -256,7 +256,7 @@ public class SearchEngineTests extends TestCase {
 		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("INoImplementInterface");
-		componentA.getApiDescription().setRestrictions(null, noInst, RestrictionModifiers.NO_IMPLEMENT);
+		componentA.getApiDescription().setRestrictions(noInst, RestrictionModifiers.NO_IMPLEMENT);
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentA});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
@@ -280,7 +280,7 @@ public class SearchEngineTests extends TestCase {
 		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("INoImplementInterface");
-		componentA.getApiDescription().setRestrictions(null, noInst, RestrictionModifiers.NO_IMPLEMENT);
+		componentA.getApiDescription().setRestrictions(noInst, RestrictionModifiers.NO_IMPLEMENT);
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentA});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
@@ -303,9 +303,9 @@ public class SearchEngineTests extends TestCase {
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("INoImplementInterface");
-		componentA.getApiDescription().setRestrictions(null, noInst, RestrictionModifiers.NO_IMPLEMENT);
+		componentA.getApiDescription().setRestrictions(noInst, RestrictionModifiers.NO_IMPLEMENT);
 		IReferenceTypeDescriptor noExt = Factory.packageDescriptor("component.a").getType("NoExtendClass");
-		componentA.getApiDescription().setRestrictions(null, noExt, RestrictionModifiers.NO_EXTEND);
+		componentA.getApiDescription().setRestrictions(noExt, RestrictionModifiers.NO_EXTEND);
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria c1 = Factory.newSearchCriteria();
@@ -344,9 +344,9 @@ public class SearchEngineTests extends TestCase {
 		IMethodDescriptor instanceMethod = noCall.getMethod("doNotCallInstance", "()V");
 		IMethodDescriptor staticMethod = noCall.getMethod("doNotCallStatic", "()V");
 		IMethodDescriptor superMethod = noCall.getMethod("doNotCallSuper", "()V");
-		componentA.getApiDescription().setRestrictions(null, instanceMethod, RestrictionModifiers.NO_REFERENCE);
-		componentA.getApiDescription().setRestrictions(null, staticMethod, RestrictionModifiers.NO_REFERENCE);
-		componentA.getApiDescription().setRestrictions(null, superMethod, RestrictionModifiers.NO_REFERENCE);
+		componentA.getApiDescription().setRestrictions(instanceMethod, RestrictionModifiers.NO_REFERENCE);
+		componentA.getApiDescription().setRestrictions(staticMethod, RestrictionModifiers.NO_REFERENCE);
+		componentA.getApiDescription().setRestrictions(superMethod, RestrictionModifiers.NO_REFERENCE);
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
@@ -379,8 +379,8 @@ public class SearchEngineTests extends TestCase {
 		IReferenceTypeDescriptor noCall = Factory.packageDescriptor("component.a").getType("FieldNoReference");
 		IFieldDescriptor instanceField = noCall.getField("INSTANCE_NO_REF");
 		IFieldDescriptor staticField = noCall.getField("STATIC_NO_REF");
-		componentA.getApiDescription().setRestrictions(null, instanceField, RestrictionModifiers.NO_REFERENCE);
-		componentA.getApiDescription().setRestrictions(null, staticField, RestrictionModifiers.NO_REFERENCE);
+		componentA.getApiDescription().setRestrictions(instanceField, RestrictionModifiers.NO_REFERENCE);
+		componentA.getApiDescription().setRestrictions(staticField, RestrictionModifiers.NO_REFERENCE);
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
@@ -413,7 +413,7 @@ public class SearchEngineTests extends TestCase {
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noCall = Factory.packageDescriptor("component.a").getType("MethodNoReferenceInterface");
 		IMethodDescriptor method = noCall.getMethod("getName", "()Ljava/lang/String;");
-		componentA.getApiDescription().setRestrictions(null, method, RestrictionModifiers.NO_REFERENCE);
+		componentA.getApiDescription().setRestrictions(method, RestrictionModifiers.NO_REFERENCE);
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();

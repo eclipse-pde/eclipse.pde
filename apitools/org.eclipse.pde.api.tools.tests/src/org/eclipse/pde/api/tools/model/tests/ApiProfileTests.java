@@ -195,7 +195,8 @@ public class ApiProfileTests extends TestCase {
 	
 	/**
 	 * Tests that an x-friends directive works. Component A exports package
-	 * component.a.friend.of.b as a friend for b.
+	 * component.a.friend.of.b as a friend for b. Note - the package should
+	 * still be private.
 	 * 
 	 * @throws CoreException 
 	 */
@@ -204,10 +205,10 @@ public class ApiProfileTests extends TestCase {
 		IApiComponent component = baseline.getApiComponent("component.a");
 		assertNotNull("Missing component.a", component);
 		IApiDescription description = component.getApiDescription();
-		IApiAnnotations result = description.resolveAnnotations("component.b", Factory.typeDescriptor("component.a.friend.of.b.FriendOfB"));
+		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.friend.of.b.FriendOfB"));
 		assertNotNull("Missing API description", result);
 		int visibility = result.getVisibility();
-		assertTrue("Should be API", VisibilityModifiers.isAPI(visibility));
+		assertTrue("Should be PRIVATE", VisibilityModifiers.isPrivate(visibility));
 	}
 	
 	/**
@@ -221,7 +222,7 @@ public class ApiProfileTests extends TestCase {
 		IApiComponent component = baseline.getApiComponent("component.a");
 		assertNotNull("Missing component.a", component);
 		IApiDescription description = component.getApiDescription();
-		IApiAnnotations result = description.resolveAnnotations("component.b", Factory.typeDescriptor("component.a.internal.InternalClass"));
+		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.internal.InternalClass"));
 		assertNotNull("Missing API description", result);
 		int visibility = result.getVisibility();
 		assertTrue("Should be private", VisibilityModifiers.isPrivate(visibility));
@@ -238,7 +239,7 @@ public class ApiProfileTests extends TestCase {
 		IApiComponent component = baseline.getApiComponent("component.a");
 		assertNotNull("Missing component.a", component);
 		IApiDescription description = component.getApiDescription();
-		IApiAnnotations result = description.resolveAnnotations("component.b", Factory.typeDescriptor("component.a.A"));
+		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.A"));
 		assertNotNull("Missing API description", result);
 		int visibility = result.getVisibility();
 		assertTrue("Should be API", VisibilityModifiers.isAPI(visibility));
@@ -255,7 +256,7 @@ public class ApiProfileTests extends TestCase {
 		IApiComponent component = baseline.getApiComponent("component.a");
 		assertNotNull("Missing component.a", component);
 		IApiDescription description = component.getApiDescription();
-		IApiAnnotations result = description.resolveAnnotations("component.b", Factory.typeDescriptor("component.a.not.exported.NotExported"));
+		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.not.exported.NotExported"));
 		assertNotNull("Missing API description", result);
 		int visibility = result.getVisibility();
 		assertTrue("Should be private", VisibilityModifiers.isPrivate(visibility));

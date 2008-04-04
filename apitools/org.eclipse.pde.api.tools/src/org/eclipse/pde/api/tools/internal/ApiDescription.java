@@ -72,11 +72,10 @@ public class ApiDescription implements IApiDescription {
 	 * Represents a single node in the tree of mapped manifest items
 	 */
 	class ManifestNode implements Comparable {
-		private IElementDescriptor element = null;
+		protected IElementDescriptor element = null;
 		protected int visibility, restrictions;
 		protected ManifestNode parent = null;
-		protected HashMap overrides = new HashMap(),
-						children = new HashMap();
+		protected HashMap children = new HashMap(1);
 		
 		public ManifestNode(ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
 			this.element = element;
@@ -84,16 +83,7 @@ public class ApiDescription implements IApiDescription {
 			this.restrictions = restrictions;
 			this.parent = parent;
 		}
-		
-		/**
-		 * Returns the element associated with this node.
-		 * 
-		 * @return element
-		 */
-		protected IElementDescriptor getElement() {
-			return element;
-		}
-
+	
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 * This method is safe to override, as the name of an element is unique within its branch of the tree
@@ -119,34 +109,40 @@ public class ApiDescription implements IApiDescription {
 		 * @see java.lang.Object#toString()
 		 */
 		public String toString() {
-			String vis = "Private"; //$NON-NLS-1$
-			switch(visibility) {
-				case VisibilityModifiers.API: {
-					vis = "API"; //$NON-NLS-1$
+			String type = null;
+			String name = null;
+			switch(element.getElementType()) {
+				case IElementDescriptor.T_FIELD: {
+					type = "Field"; //$NON-NLS-1$
+					name = ((IMemberDescriptor) element).getName();
 					break;
 				}
-				case VisibilityModifiers.SPI: {
-					vis = "SPI"; //$NON-NLS-1$
+				case IElementDescriptor.T_METHOD: {
+					type = "Method"; //$NON-NLS-1$
+					name = ((IMemberDescriptor) element).getName();
 					break;
 				}
-				case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
-					vis = "PRIVATE PERMISSIBLE"; //$NON-NLS-1$
+				case IElementDescriptor.T_PACKAGE: {
+					type = "Package"; //$NON-NLS-1$
+					name = ((IPackageDescriptor) element).getName();
 					break;
 				}
-				case VISIBILITY_INHERITED: {
-					vis = "INHERITED"; //$NON-NLS-1$
+				case IElementDescriptor.T_REFERENCE_TYPE: {
+					type = "Type"; //$NON-NLS-1$
+					name = ((IMemberDescriptor) element).getName();
 					break;
 				}
 			}
-			String name = ""; //$NON-NLS-1$
-			if (element instanceof IPackageDescriptor) {
-				name = ((IPackageDescriptor) element).getName();
-			} else {
-				name = ((IMemberDescriptor) element).getName();
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(type == null ? "Unknown" : type).append(" Node: ").append(name == null ? "Unknown Name" : name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			buffer.append("\nVisibility: ").append(Util.getVisibilityKind(visibility)); //$NON-NLS-1$
+			buffer.append("\nRestrictions: ").append(Util.getRestrictionKind(restrictions)); //$NON-NLS-1$
+			if(parent != null) {
+				String pname = parent.element.getElementType() == IElementDescriptor.T_PACKAGE ? 
+						((IPackageDescriptor)parent.element).getName() : ((IMemberDescriptor)parent.element).getName();
+				buffer.append("\nParent: ").append(parent == null ? null : pname); //$NON-NLS-1$
 			}
-			return "ManifestNode: " + name //$NON-NLS-1$
-				+" with "+vis+" visibility\n\n"+ //$NON-NLS-1$ //$NON-NLS-2$
-				(parent != null ? "Parent node: "+parent.toString() : ""); //$NON-NLS-1$ //$NON-NLS-2$
+			return buffer.toString();
 		}
 
 		/* (non-Javadoc)
@@ -180,21 +176,21 @@ public class ApiDescription implements IApiDescription {
 		 * @param parent parent element in the document
 		 * @param component component the description is for or <code>null</code>
 		 */
-		void persistXML(Document document, Element parent, String component) {
+		void persistXML(Document document, Element parent) {
 			switch (element.getElementType()) {
 			case IElementDescriptor.T_METHOD:
 				IMethodDescriptor md = (IMethodDescriptor) element;
 				Element method = document.createElement(IApiXmlConstants.ELEMENT_METHOD);
 				method.setAttribute(IApiXmlConstants.ATTR_NAME, md.getName());
 				method.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, md.getSignature());
-				persistAnnotations(method, component);
+				persistAnnotations(method);
 				parent.appendChild(method);
 				break;
 			case IElementDescriptor.T_FIELD:
 				IFieldDescriptor fd = (IFieldDescriptor) element;
 				Element field = document.createElement(IApiXmlConstants.ELEMENT_FIELD);
 				field.setAttribute(IApiXmlConstants.ATTR_NAME, fd.getName());
-				persistAnnotations(field, component);
+				persistAnnotations(field);
 				parent.appendChild(field);
 				break;
 			}
@@ -206,12 +202,9 @@ public class ApiDescription implements IApiDescription {
 		 * @param element XML element to annotate
 		 * @param component the component the description is for or <code>null</code>
 		 */
-		void persistAnnotations(Element element, String component) {
+		void persistAnnotations(Element element) {
 			element.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(visibility));
 			element.setAttribute(IApiXmlConstants.ATTR_RESTRICTIONS, Integer.toString(restrictions));
-			if (component != null) {
-				element.setAttribute(IApiXmlConstants.ATTR_CONTEXT, component);
-			}
 		}
 	}
 		
@@ -222,6 +215,11 @@ public class ApiDescription implements IApiDescription {
 	 * </pre>
 	 */
 	protected HashMap fPackageMap = new HashMap();
+	
+	/**
+	 * Map of package visibility overrides per component id.
+	 */
+	protected HashMap fOverrides = new HashMap();
 
 	/**
 	 * Constructs an API description owned by the specified component.
@@ -252,7 +250,7 @@ public class ApiDescription implements IApiDescription {
 		while (iterator.hasNext()) {
 			IElementDescriptor element = (IElementDescriptor) iterator.next();
 			ManifestNode node = (ManifestNode) childrenMap.get(element);
-			visitNode(visitor, null, node);
+			visitNode(visitor, node);
 		}
 	}
 	
@@ -260,10 +258,9 @@ public class ApiDescription implements IApiDescription {
 	 * Visits a node and its children.
 	 * 
 	 * @param visitor visitor to visit
-	 * @param component component context in which the node is being visited or <code>null</code> if none
 	 * @param node node to visit
 	 */
-	private void visitNode(ApiDescriptionVisitor visitor, String component, ManifestNode node) {
+	private void visitNode(ApiDescriptionVisitor visitor, ManifestNode node) {
 		int vis = node.visibility;
 		ManifestNode tmp = node;
 		while (tmp != null) {
@@ -276,31 +273,11 @@ public class ApiDescription implements IApiDescription {
 			}
 		}
 		IApiAnnotations desc = new ApiAnnotations(vis, node.restrictions);
-		boolean visitChildren = visitor.visitElement(node.element, component, desc);
+		boolean visitChildren = visitor.visitElement(node.element, desc);
 		if (visitChildren && !node.children.isEmpty()) {
 			visitChildren(visitor, node.children);
 		}
-		visitor.endVisitElement(node.element, component, desc);
-		visitOverrides(visitor, node);		
-	}
-
-	/**
-	 * Visits the overrides for a node, if any.
-	 * 
-	 * @param visitor
-	 * @param node
-	 */
-	protected void visitOverrides(ApiDescriptionVisitor visitor, ManifestNode node) {
-		if (!node.overrides.isEmpty()) {
-			List overrides = new ArrayList(node.overrides.keySet());
-			Collections.sort(overrides);
-			Iterator iterator = overrides.iterator();
-			while (iterator.hasNext()) {
-				String context = (String) iterator.next();
-				ManifestNode contextNode = (ManifestNode) node.overrides.get(context);
-				visitNode(visitor, context, contextNode);
-			}
-		}
+		visitor.endVisitElement(node.element, desc);	
 	}
 	
 	/**
@@ -308,17 +285,15 @@ public class ApiDescription implements IApiDescription {
 	 * Creates a new node with default visibility and no restrictions if insert is <code>true</code>
 	 * and a node is not present. Default visibility for packages is API, and for types is inherited.
 	 * 
-	 * @param component component context (i.e. referenced from this component)
 	 * @param element element
 	 * @param insert whether to insert a new node
 	 * @return manifest node or <code>null</code>
 	 */
-	protected ManifestNode findNode(String component, IElementDescriptor element, boolean insert) {
+	protected ManifestNode findNode(IElementDescriptor element, boolean insert) {
 		IElementDescriptor[] path = element.getPath();
 		Map map = fPackageMap;
 		ManifestNode parentNode = null;
 		ManifestNode node = null;
-		String componentid = translateComponentId(component);
 		for (int i = 0 ; i < path.length; i++) {
 			IElementDescriptor current = path[i];
 			parentNode = node;
@@ -328,58 +303,26 @@ public class ApiDescription implements IApiDescription {
 					node = createNode(parentNode, current);
 					if (node != null) {
 						map.put(current, node);
+					} else {
+						return null;
 					}
 				} else {
-					node = parentNode;
-					break; // check for component override
+					return parentNode;
 				}
 			}
-			if (node != null) {
-				// ensure node is up to date
-				node = node.refresh();
-			}
+			node = node.refresh();
 			if (node != null) {
 				map = node.children;
 			}
 		}
-		if (componentid == null || node == null) {
-			return node;
-		}
-		ManifestNode override = (ManifestNode) node.overrides.get(componentid);
-		if (override == null) {
-			if (insert) {
-				override = createNode(parentNode, element);
-				if (override != null) {
-					// ensure its up to date
-					override = override.refresh();
-					node.overrides.put(component, override);
-				}
-			} else {
-				return node;
-			}
-		}
-		return override;
-	}
-
-	/**
-	 * Translates the specified id to null if it is the same as the owning component id
-	 * @param id
-	 * @return the id or null
-	 */
-	private String translateComponentId(String id) {
-		if(id != null) {
-			if(!id.equals(fOwningComponentId)) {
-				return id;
-			}
-		}
-		return null;
+		return node;
 	}
  	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#resolveAPIDescription(java.lang.String, org.eclipse.pde.api.tools.model.component.IElementDescriptor)
 	 */
-	public IApiAnnotations resolveAnnotations(String component, IElementDescriptor element) {
-		ManifestNode node = findNode(component, element, isInsertOnResolve(component, element));
+	public IApiAnnotations resolveAnnotations(IElementDescriptor element) {
+		ManifestNode node = findNode(element, isInsertOnResolve(element));
 		if (node != null) {
 			return resolveAnnotations(node, element);
 		}
@@ -438,8 +381,8 @@ public class ApiDescription implements IApiDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#setRestrictions(java.lang.String, org.eclipse.pde.api.tools.model.component.IElementDescriptor, int)
 	 */
-	public IStatus setRestrictions(String component, IElementDescriptor element, int restrictions) {
-		ManifestNode node = findNode(component, element, true);
+	public IStatus setRestrictions(IElementDescriptor element, int restrictions) {
+		ManifestNode node = findNode(element, true);
 		if(node != null) {
 			modified();
 			node.restrictions = restrictions;
@@ -453,8 +396,8 @@ public class ApiDescription implements IApiDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#setVisibility(java.lang.String, org.eclipse.pde.api.tools.model.component.IElementDescriptor, int)
 	 */
-	public IStatus setVisibility(String component, IElementDescriptor element, int visibility) {
-		ManifestNode node = findNode(component, element, true);
+	public IStatus setVisibility(IElementDescriptor element, int visibility) {
+		ManifestNode node = findNode(element, true);
 		if(node != null) {
 			modified();
 			node.visibility = visibility;
@@ -465,24 +408,6 @@ public class ApiDescription implements IApiDescription {
 						new String[]{element.toString(), fOwningComponentId}), null);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiDescription#removeElement(org.eclipse.pde.api.tools.descriptors.IElementDescriptor)
-	 */
-	public boolean removeElement(IElementDescriptor element) {
-		ManifestNode node = findNode(null, element, false);
-		if(node != null) {
-			modified();
-			//packages have no parents
-			if(node.parent == null) {
-				return fPackageMap.remove(element) != null;
-			}
-			else {
-				return node.parent.children.remove(element) != null;
-			}
-		}
-		return false;
-	}
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -499,12 +424,11 @@ public class ApiDescription implements IApiDescription {
 	 * override this method as required.
 	 * </p>
 	 * @param elementDescriptor
-	 * @param component context from which to resolve
 	 * @return whether a new node should be inserted into the API description
 	 * when resolving the annotations for an element if a node is not already
 	 * present
 	 */
-	protected boolean isInsertOnResolve(String component, IElementDescriptor elementDescriptor) {
+	protected boolean isInsertOnResolve(IElementDescriptor elementDescriptor) {
 		return false;
 	}
 	

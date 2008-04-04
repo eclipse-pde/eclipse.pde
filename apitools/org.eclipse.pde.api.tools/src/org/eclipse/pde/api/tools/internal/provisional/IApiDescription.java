@@ -33,26 +33,25 @@ public interface IApiDescription {
 	/**
 	 * Sets the visibility for the specified element in the context of the specified component
 	 * and returns a status describing whether the operation succeeded.
-	 * 
-	 * @param component the component the visibility applies to or <code>null</code> for all components
 	 * @param element the element the visibility applies to 
 	 * @param visibility element visibility. See {@linkplain VisibilityModifiers} for
 	 * supported modifiers
+	 * 
 	 * @return status of the operation 
 	 */
-	public IStatus setVisibility(String component, IElementDescriptor element, int visibility);
-	
+	public IStatus setVisibility(IElementDescriptor element, int visibility);
+		
 	/**
-	 * Sets the restrictions for the specified element in the context of the specified component
-	 * and returns a status describing whether the operation succeeded.
-	 *  
-	 * @param component the component the visibility applies to or <code>null</code> for all components
+	 * Sets the restrictions for the specified element and returns a status describing whether the operation
+	 * succeeded.
+	 * 
 	 * @param element the element the restrictions apply to 
 	 * @param restrictions the restrictions to place on the element. See {@linkplain RestrictionModifiers} for
 	 * supported modifiers 
+	 *  
 	 * @return status of the operation
 	 */
-	public IStatus setRestrictions(String component, IElementDescriptor element, int restrictions);
+	public IStatus setRestrictions(IElementDescriptor element, int restrictions);
 	
 	/**
 	 * Returns annotations for the specified element when referenced from the specified component. 
@@ -65,12 +64,11 @@ public interface IApiDescription {
 	 * If there is no component specific API for the specified element, the general
 	 * annotations for the element are returned.
 	 * </p>
-	 * 
-	 * @param component the component the element was referenced from or <code>null</code>
 	 * @param element element to resolve API description for
+	 * 
 	 * @return API annotations or <code>null</code> 
 	 */
-	public IApiAnnotations resolveAnnotations(String component, IElementDescriptor element);
+	public IApiAnnotations resolveAnnotations(IElementDescriptor element);
 
 	/**
 	 * Traverses this description with the given visitor.
@@ -79,11 +77,4 @@ public interface IApiDescription {
 	 */
 	public void accept(ApiDescriptionVisitor visitor);
 	
-	/**
-	 * Removes the {@link IElementDescriptor} from this description
-	 * 
-	 * @param element the element to remove
-	 * @return true if the element was removed, false otherwise
-	 */
-	public boolean removeElement(IElementDescriptor element);
 }

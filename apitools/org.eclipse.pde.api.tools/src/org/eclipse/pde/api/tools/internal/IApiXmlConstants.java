@@ -23,7 +23,7 @@ public interface IApiXmlConstants {
 	/**
 	 * Constant representing the current version for api description files
 	 */
-	public static final String API_DESCRIPTION_CURRENT_VERSION = "1"; //$NON-NLS-1$
+	public static final String API_DESCRIPTION_CURRENT_VERSION = "1.1"; //$NON-NLS-1$
 	/**
 	 * Constant representing the current version for api filter store files
 	 */
@@ -37,11 +37,6 @@ public interface IApiXmlConstants {
 	 * Value is: <code>category</code>
 	 */
 	public static final String ATTR_CATEGORY = "category"; //$NON-NLS-1$
-	/**
-	 * Constant representing the context attribute for rules xml nodes specific to a component.
-	 * Value is: <code>context</code>
-	 */
-	public static final String ATTR_CONTEXT = "context"; //$NON-NLS-1$
 	/**
 	 * Constant representing the element kind attribute of an {@link IApiProblem} in xml.
 	 * Value is: <code>elementkind</code>
@@ -240,6 +235,11 @@ public interface IApiXmlConstants {
 	 * Value is: <code>package</code>
 	 */
 	public static final String ELEMENT_PACKAGE = "package"; //$NON-NLS-1$
+	/**
+	 * Constant representing a package fragment element node in xml.
+	 * Value is: <code>package</code>
+	 */
+	public static final String ELEMENT_PACKAGE_FRAGMENT = "fragment"; //$NON-NLS-1$	
 	/**
 	 * Constant representing a plugin element node in xml.
 	 * Value is: <code>plugin</code>

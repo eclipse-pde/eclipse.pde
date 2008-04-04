@@ -79,14 +79,14 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 		IApiDescription api = new ApiDescription(getId());
 		for (int i = 0; i < fSystemPackages.length; i++) {
 			IPackageDescriptor pkg  = Factory.packageDescriptor(fSystemPackages[i]);
-			api.setVisibility(null, pkg, VisibilityModifiers.API);
+			api.setVisibility(pkg, VisibilityModifiers.API);
 		}
 		// have to fill in java.* as well
 		String[] packageNames = getPackageNames();
 		for (int i = 0; i < packageNames.length; i++) {
 			if (packageNames[i].startsWith("java.")) { //$NON-NLS-1$
 				IPackageDescriptor pkg  = Factory.packageDescriptor(packageNames[i]);
-				api.setVisibility(null, pkg, VisibilityModifiers.API);
+				api.setVisibility(pkg, VisibilityModifiers.API);
 			}
 		}
 		return api;

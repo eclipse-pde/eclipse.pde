@@ -497,7 +497,7 @@ public class ClassFileComparator {
 			this.delta = new Delta();
 			// check visibility
 			final IApiDescription referenceApiDescription = component2.getApiDescription();
-			IApiAnnotations elementDescription = referenceApiDescription.resolveAnnotations(null, this.descriptor2.handle);
+			IApiAnnotations elementDescription = referenceApiDescription.resolveAnnotations(this.descriptor2.handle);
 			if (elementDescription != null) {
 				int visibility = elementDescription.getVisibility();
 				if ((visibility & visibilityModifiers) == 0) {
@@ -843,10 +843,10 @@ public class ClassFileComparator {
 	private int getCurrentTypeApiRestrictions() {
 		try {
 			IApiDescription apiDescription = this.component2.getApiDescription();
-			IApiAnnotations resolvedAPIDescription = apiDescription.resolveAnnotations(null, this.descriptor2.handle);
+			IApiAnnotations resolvedAPIDescription = apiDescription.resolveAnnotations(this.descriptor2.handle);
 			if (resolvedAPIDescription != null) {
 				IApiDescription apiDescription2 = this.component.getApiDescription();
-				IApiAnnotations referenceAPIDescription = apiDescription2.resolveAnnotations(null, this.descriptor1.handle);
+				IApiAnnotations referenceAPIDescription = apiDescription2.resolveAnnotations(this.descriptor1.handle);
 				if (referenceAPIDescription != null) {
 					int restrictions = referenceAPIDescription.getRestrictions();
 					if (restrictions != resolvedAPIDescription.getRestrictions()

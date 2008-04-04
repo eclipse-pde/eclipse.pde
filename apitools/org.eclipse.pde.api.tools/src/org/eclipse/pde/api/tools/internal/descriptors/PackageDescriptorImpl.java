@@ -40,7 +40,8 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return getName();
+		String name = getName();
+		return name.equals("") ? "<default package>" : name; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/* (non-Javadoc)

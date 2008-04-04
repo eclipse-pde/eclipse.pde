@@ -44,11 +44,10 @@ public class ApiDescriptionVisitor {
 	 * Subclasses may re-implement.
 	 * </p>
 	 * @param element element being visited
-	 * @param componentContext specific component the API applies to or <code>null</code>
 	 * @param description description of the element visited 
 	 * @return whether child elements should be visited
 	 */
-	public boolean visitElement(IElementDescriptor element, String componentContext, IApiAnnotations description) {
+	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 		return true;
 	}
 	
@@ -58,10 +57,9 @@ public class ApiDescriptionVisitor {
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
 	 * @param element element being end-visited
-	 * @param componentContext specific component the API applies to or <code>null</code>
 	 * @param description description of the element end-visited
 	 */
-	public void endVisitElement(IElementDescriptor element, String componentContext, IApiAnnotations description) {
+	public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 		// subclasses may re-implement
 	}
 }

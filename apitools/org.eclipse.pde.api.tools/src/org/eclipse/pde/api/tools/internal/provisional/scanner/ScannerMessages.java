@@ -19,7 +19,6 @@ public class ScannerMessages extends NLS {
 	public static String ApiDescriptionManager_2;
 	public static String ApiDescriptionManager_3;
 	public static String ApiDescriptionManager_4;
-	public static String ApiDescriptionManager_5;
 	public static String ApiDescriptionProcessor_0;
 	public static String ComponentXmlProcessor_0;
 	public static String ComponentXmlProcessor_1;

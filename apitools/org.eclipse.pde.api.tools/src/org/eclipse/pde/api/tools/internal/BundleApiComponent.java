@@ -264,7 +264,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 		Iterator iterator = packages.iterator();
 		while (iterator.hasNext()) {
 			String name = (String) iterator.next();
-			apiDesc.setVisibility(null, Factory.packageDescriptor(name), VisibilityModifiers.PRIVATE);
+			apiDesc.setVisibility(Factory.packageDescriptor(name), VisibilityModifiers.PRIVATE);
 		}
 		// then process exported packages that originate from this bundle
 		// considering host and fragment package exports
@@ -328,18 +328,15 @@ public class BundleApiComponent extends AbstractApiComponent {
 				}
 				IPackageDescriptor pkgDesc = Factory.packageDescriptor(pkgName);
 				if(internal) {
-					apiDesc.setVisibility(null, pkgDesc, VisibilityModifiers.PRIVATE);
+					apiDesc.setVisibility(pkgDesc, VisibilityModifiers.PRIVATE);
 				}
 				if (friends != null) {
-					apiDesc.setVisibility(null, pkgDesc, VisibilityModifiers.PRIVATE);
-					for(int j = 0; j < friends.length; j ++) {
-						apiDesc.setVisibility(friends[j], pkgDesc, VisibilityModifiers.API);
-					}
+					apiDesc.setVisibility(pkgDesc, VisibilityModifiers.PRIVATE);
 				}
 				if (!internal && friends == null) {
 					//there could have been directives that have nothing to do with
 					//visibility, so we need to add the package as API in that case
-					apiDesc.setVisibility(null, pkgDesc, VisibilityModifiers.API);
+					apiDesc.setVisibility(pkgDesc, VisibilityModifiers.API);
 				}
 			}				
 		}

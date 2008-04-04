@@ -226,7 +226,7 @@ public class TagScanner {
 						fException = e;
 					}
 				}
-				fDescription.setRestrictions(null, descriptor, restrictions);
+				fDescription.setRestrictions(descriptor, restrictions);
 			}
 		}
 		

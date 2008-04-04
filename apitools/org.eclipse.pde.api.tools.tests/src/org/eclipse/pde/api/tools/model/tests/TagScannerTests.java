@@ -108,19 +108,19 @@ public class TagScannerTests extends TestCase {
 		DirectoryClassFileContainer container = new DirectoryClassFileContainer(BIN_LOC.toOSString(), null);
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod10.java", manifest, container);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod10", "one", "(Ljava/lang/String;Ljava/lang/Integer;)V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod10", "one", "(Ljava/lang/String;Ljava/lang/Integer;)V"));
 		assertTrue("There should exist a description for method 'void one(String, Integer)'", description != null);
 		assertTrue("There should be API visibility for method 'void one(String, Integer)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one(String, Integer)'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod10", "two", "(Ljava/util/List;Ljava/lang/Runnable;)V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod10", "two", "(Ljava/util/List;Ljava/lang/Runnable;)V"));
 		assertTrue("There should exist a description for method 'void two(List, Runnable)'", description != null);
 		assertTrue("There should be API visibility for method 'void two(List, Runnable)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two(List, Runnable)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod10", "one", "(Ljava/lang/Object;Ljava/lang/Integer;)V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod10", "one", "(Ljava/lang/Object;Ljava/lang/Integer;)V"));
 		assertTrue("There should exist a description for method 'void one(Object, Integer)'", description != null);
 		assertTrue("There should be API visibility for method 'void one(Object, Integer)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction and no extend restriction on method 'void one(Object, Integer)'", description.getRestrictions() == (RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_REFERENCE));
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod10", "one", "([[Ljava/lang/String;Ljava/lang/Integer;)V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod10", "one", "([[Ljava/lang/String;Ljava/lang/Integer;)V"));
 		assertTrue("There should exist a description for method 'void one(String[][], Integer)'", description != null);
 		assertTrue("There should be API visibility for method 'void one(String[][], Integer)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void one(String[][], Integer)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -166,7 +166,7 @@ public class TagScannerTests extends TestCase {
 	public void testSingleTypeDefaultPackage() {	
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass1.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass1"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass1"));
 		assertNotNull("the description for TestClass1 should exist", description);
 		assertTrue("There should be no instantiate on TestClass1", description.getRestrictions() == RestrictionModifiers.NO_INSTANTIATE);
 		assertTrue("TestClass1 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
@@ -180,11 +180,11 @@ public class TagScannerTests extends TestCase {
 	public void testSingleInnerStaticTypeDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass2.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass2"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass2"));
 		assertNotNull("the description for TestClass2 should exist", description);
 		assertTrue("There should be no subclass on TestClass2", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
 		assertTrue("TestClass2 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass2$InnerTestClass2"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass2$InnerTestClass2"));
 		assertNotNull("the description for TestClass2$InnerTestClass2 should exist", description);
 		assertTrue("There should be no subclass or instantiate on TestClass2$InnerTestClass2", description.getRestrictions() == (RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE));
 		assertTrue("TestClass2$InnerTestClass2 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
@@ -198,11 +198,11 @@ public class TagScannerTests extends TestCase {
 	public void testSingleInnerTypeDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass3.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass3"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass3"));
 		assertNotNull("the description for TestClass3 should exist", description);
 		assertTrue("There should be no restrictions on TestClass3", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestClass3 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3"));
 		assertNotNull("the description for TestClass3$InnerTestClass3 should exist", description);
 		assertTrue("There should be no subclass on TestClass3$InnerTestClass3", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
 		assertTrue("TestClass3$InnerTestClass3 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
@@ -216,19 +216,19 @@ public class TagScannerTests extends TestCase {
 	public void testMultiNestedInnerTypeDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass4.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass4"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass4"));
 		assertNotNull("the description for TestClass4 should exist", description);
 		assertTrue("There should be no restrictions on TestClass4", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestClass4 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4"));
 		assertNotNull("the description for TestClass4$InnerTestClass4 should exist", description);
 		assertTrue("There should be no restrictions on TestClass4$InnerTestClass4", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestClass4$InnerTestClass4 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4$Inner2TestClass4"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4$Inner2TestClass4"));
 		assertNotNull("the description for TestClass4$InnerTestClass4$Inner2TestClass4 should exist", description);
 		assertTrue("There should be no restrictions on TestClass4$InnerTestClass4$Inner2TestClass4", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestClass4$InnerTestClass4$Inner2TestClass4 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4"));
 		assertNotNull("the description for TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4 should exist", description);
 		assertTrue("There should be no subclass, no instantiate, no reference on TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4", description.getRestrictions() == (RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE));
 		assertTrue("TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
@@ -241,15 +241,15 @@ public class TagScannerTests extends TestCase {
 	public void testMultiTypeDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass5.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass5"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass5"));
 		assertNotNull("the description for TestClass5 should exist", description);
 		assertTrue("There should be no restrictions on TestClass5", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestClass5 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass5a"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass5a"));
 		assertNotNull("the description for TestClass5a should exist", description);
 		assertTrue("There should be no subclass on TestClass5a", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
 		assertTrue("TestClass5a should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass5b"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass5b"));
 		assertNotNull("the description for TestClass5b should exist", description);
 		assertTrue("There should be no reference on TestClass5b", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
 		assertTrue("TestClass5b should have API visibility", description.getVisibility() == VisibilityModifiers.API);
@@ -263,19 +263,19 @@ public class TagScannerTests extends TestCase {
 	public void testMultiInnerTypeDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass6.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass6"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass6"));
 		assertNotNull("the description for TestClass6 should exist", description);
 		assertTrue("There should be no restrictions on TestClass6", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestClass6 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass6$InnerTestClass6a"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass6$InnerTestClass6a"));
 		assertNotNull("the description for TestClass6$InnerTestClass6a should exist", description);
 		assertTrue("There should be no subclass on TestClass6$InnerTestClass6a", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
 		assertTrue("TestClass6$InnerTestClass6a should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass6$InnerTestClass6b"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass6$InnerTestClass6b"));
 		assertNotNull("the description for TestClass6$InnerTestClass6b should exist", description);
 		assertTrue("There should be no instantiate on TestClass6$InnerTestClass6b", description.getRestrictions() == RestrictionModifiers.NO_INSTANTIATE);
 		assertTrue("TestClass6$InnerTestClass6b should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass6$InnerTestClass6c"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass6$InnerTestClass6c"));
 		assertNotNull("the description for TestClass6$InnerTestClass6c should exist", description);
 		assertTrue("There should be no restrictions on TestClass6$InnerTestClass6c", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestClass6$InnerTestClass6c should have API visibility", description.getVisibility() == VisibilityModifiers.API);
@@ -289,31 +289,31 @@ public class TagScannerTests extends TestCase {
 	public void testMultiTypeMultiInnerTypeDefatulPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass7.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass7"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7"));
 		assertNotNull("the description for TestClass7 should exist", description);
 		assertTrue("There should be no restrictions on TestClass7", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestClass7 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass7$InnerTestClass7"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7$InnerTestClass7"));
 		assertNotNull("the description for TestClass7$InnerTestClass7 should exist", description);
 		assertTrue("There should be no restrictions on TestClass7$InnerTestClass7", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestClass7$InnerTestClass7 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass7$InnerTestClass7$Inner2TestClass7"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7$InnerTestClass7$Inner2TestClass7"));
 		assertNotNull("the description for TestClass7$InnerTestClass7$Inner2TestClass7 should exist", description);
 		assertTrue("There should be no subclass on TestClass7$InnerTestClass7$Inner2TestClass7", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
 		assertTrue("TestClass7$InnerTestClass7$Inner2TestClass7 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass7a"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7a"));
 		assertNotNull("the description for TestClass7a should exist", description);
 		assertTrue("There should be no restrictions on TestClass7a", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestClass7a should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass7a$InnerTestClass7a"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7a$InnerTestClass7a"));
 		assertNotNull("the description for TestClass7a$InnerTestClass7a should exist", description);
 		assertTrue("There should be no reference on TestClass7a$InnerTestClass7a", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
 		assertTrue("TestClass7a$InnerTestClass7a should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass7b"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7b"));
 		assertNotNull("the description for TestClass7b should exist", description);
 		assertTrue("There should be no reference on TestClass7b", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
 		assertTrue("TestClass7b should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass7b$InnerTestClass7b"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7b$InnerTestClass7b"));
 		assertNotNull("the description for TestClass7b$InnerTestClass7b should exist", description);
 		assertTrue("There should be no extend on TestClass7b$InnerTestClass7b", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
 		assertTrue("TestClass7b$InnerTestClass7b should have API visibility", description.getVisibility() == VisibilityModifiers.API);
@@ -326,7 +326,7 @@ public class TagScannerTests extends TestCase {
 	public void testInterfaceDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestInterface1.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestInterface1"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface1"));
 		assertNotNull("the description for TestInterface1 should exist", description);
 		assertTrue("There should be no implement on TestInterface1", description.getRestrictions() == RestrictionModifiers.NO_IMPLEMENT);
 		assertTrue("TestInterface1 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
@@ -339,15 +339,15 @@ public class TagScannerTests extends TestCase {
 	public void testMultiInterfaceDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestInterface2.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestInterface2"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface2"));
 		assertNotNull("the description for TestInterface2 should exist", description);
 		assertTrue("There should be no restrictions on TestInterface2", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestInterface2 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestInterface2a"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface2a"));
 		assertNotNull("the description for TestInterface2a should exist", description);
 		assertTrue("There should be no implement on TestInterface2a", description.getRestrictions() == RestrictionModifiers.NO_IMPLEMENT);
 		assertTrue("TestInterface2a should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestInterface2b"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface2b"));
 		assertNotNull("the description for TestInterface2b should exist", description);
 		assertTrue("There should be no restrictions on TestInterface2b", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestInterface2b should have API visibility", description.getVisibility() == VisibilityModifiers.API);
@@ -360,11 +360,11 @@ public class TagScannerTests extends TestCase {
 	public void testSingleInnerInterfaceDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestInterface3.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestInterface3"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface3"));
 		assertNotNull("the description for TestInterface3 should exist", description);
 		assertTrue("There should be no restrictions on TestInterface3", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestInterface3 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestInterface3$Inner1"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface3$Inner1"));
 		assertNotNull("the description for TestInterface3$Inner1 should exist", description);
 		assertTrue("There should be no implement on TestInterface3$Inner1", description.getRestrictions() == RestrictionModifiers.NO_IMPLEMENT);
 		assertTrue("TestInterface3$Inner1 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
@@ -377,15 +377,15 @@ public class TagScannerTests extends TestCase {
 	public void testMultiInnerInterfaceDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestInterface4.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestInterface4"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface4"));
 		assertNotNull("the description for TestInterface4 should exist", description);
 		assertTrue("There should be no restrictions on TestInterface4", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestInterface3 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestInterface4$Inner1"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface4$Inner1"));
 		assertNotNull("the description for TestInterface4$Inner1 should exist", description);
 		assertTrue("There should be no implement on TestInterface4$Inner1", description.getRestrictions() == RestrictionModifiers.NO_IMPLEMENT);
 		assertTrue("TestInterface3$Inner1 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestInterface4$Inner2"));
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface4$Inner2"));
 		assertNotNull("the description for TestInterface4$Inner2 should exist", description);
 		assertTrue("There should be no restrictions on TestInterface4$Inner2", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestInterface3$Inner2 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
@@ -398,7 +398,7 @@ public class TagScannerTests extends TestCase {
 	public void testFieldBaseClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField1.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField1", "field"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField1", "field"));
 		assertNotNull("the description for field 'field' in TestField1 should exist", description);
 		assertTrue("there shouldbe API visibility on field 'field'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no reference on field 'field'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
@@ -411,7 +411,7 @@ public class TagScannerTests extends TestCase {
 	public void testFieldBaseClassInheritedNotSupported() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField7.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField7", "field1"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField7", "field1"));
 		assertNotNull("the description for field 'field1' in TestField7 should exist", description);
 		assertEquals("there shouldbe API visibility on field 'field1'", VisibilityModifiers.API, description.getVisibility());
 		assertEquals("There should be no restrictions on field 'field1'", RestrictionModifiers.NO_RESTRICTIONS, description.getRestrictions());
@@ -424,7 +424,7 @@ public class TagScannerTests extends TestCase {
 	public void testFieldBaseClassInheritedSupported() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField8.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField8", "field1"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField8", "field1"));
 		assertNotNull("the description for field 'field1' in TestField8 should exist", description);
 		assertTrue("there shouldbe API visibility on field 'field1'", description.getVisibility() == VisibilityModifiers.API);
 	}
@@ -436,11 +436,11 @@ public class TagScannerTests extends TestCase {
 	public void testFieldInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField2.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField2$Inner", "field"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField2$Inner", "field"));
 		assertNotNull("the description for field 'field' in TestField2$Inner should exist", description);
 		assertTrue("there shouldbe API visibility on field 'field'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no reference on field 'field'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField2$Inner", "number"));
+		description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField2$Inner", "number"));
 		assertNotNull("the description for field 'number' in TestField2$Inner should exist", description);
 		assertTrue("there shouldbe API visibility on field 'number'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no reference on field 'number'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
@@ -453,11 +453,11 @@ public class TagScannerTests extends TestCase {
 	public void testFieldStaticInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField3.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField3$Inner", "field"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField3$Inner", "field"));
 		assertNotNull("the description for field 'field' in TestField3$Inner should exist", description);
 		assertTrue("there shouldbe API visibility on field 'field'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no reference on field 'field'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField3$Inner", "number"));
+		description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField3$Inner", "number"));
 		assertNotNull("the description for field 'number' in TestField3$Inner should exist", description);
 		assertTrue("there shouldbe API visibility on field 'number'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no reference on field 'number'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
@@ -470,19 +470,19 @@ public class TagScannerTests extends TestCase {
 	public void testFieldMultiInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField4.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField4$Inner1", "field"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField4$Inner1", "field"));
 		assertNotNull("the description for field 'field' in TestField4$Inner1 should exist", description);
 		assertTrue("there shouldbe API visibility on field 'field' in TestField4$Inner1", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no reference on field 'field' in TestField4$Inner1", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField4$Inner1$Inner3", "field"));
+		description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField4$Inner1$Inner3", "field"));
 		assertNotNull("the description for field 'field' in TestField4$Inner1$Inner3 should exist", description);
 		assertTrue("there shouldbe API visibility on field 'field' in TestField4$Inner1$Inner3", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no reference on field 'field' in TestField4$Inner1$Inner3", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField4$Inner1$Inner3$Inner", "number"));
+		description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField4$Inner1$Inner3$Inner", "number"));
 		assertNotNull("the description for field 'number' in TestField4$Inner1$Inner3$Inner should exist", description);
 		assertTrue("there shouldbe API visibility on field 'number' in TestField4$Inner1$Inner3$Inner", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no reference on field 'number' in TestField4$Inner1$Inner3$Inner", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField4$Inner2", "field"));
+		description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField4$Inner2", "field"));
 		assertNotNull("the description for field 'field' in TestField4$Inner2 should exist", description);
 		assertTrue("there shouldbe API visibility on field 'field' in TestField4$Inner2", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no reference on field 'field' in TestField4$Inner2", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
@@ -495,7 +495,7 @@ public class TagScannerTests extends TestCase {
 	public void testFieldOuterClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField5.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField5Outer", "field"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField5Outer", "field"));
 		assertNotNull("the description for field 'field' in a.b.c.TestField5 should exist", description);
 		assertTrue("there shouldbe API visibility on field 'field' in a.b.c.TestField5Outer", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no reference on field 'field' in a.b.c.TestField5Outer", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
@@ -508,7 +508,7 @@ public class TagScannerTests extends TestCase {
 	public void testFieldAnonymousClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField6.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField6", "number"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField6", "number"));
 		assertNotNull("the description for field 'number' in a.b.c.TestField6 should exist", description);
 		assertTrue("there shouldbe API visibility on field 'number' in a.b.c.TestField6", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no reference on field 'number' in a.b.c.TestField6", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
@@ -521,15 +521,15 @@ public class TagScannerTests extends TestCase {
 	public void testMethodBaseClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod1.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod1", "one", "()V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod1", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod1", "two", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod1", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod1", "three", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod1", "three", "()V"));
 		assertTrue("There should exist a description for method 'void three()'", description != null);
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void three()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
@@ -543,7 +543,7 @@ public class TagScannerTests extends TestCase {
 	public void testMethodSingleParam() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod7.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod7", "one", "(QString;)V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod7", "one", "(QString;)V"));
 		assertTrue("There should exist a description for method 'void one(String)'", description != null);
 		assertTrue("There should be API visibility for method 'void one(String)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one(String)'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
@@ -557,7 +557,7 @@ public class TagScannerTests extends TestCase {
 	public void testMethodSinglePrimitiveParam() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod8.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod8", "one", "(I)V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod8", "one", "(I)V"));
 		assertTrue("There should exist a description for method 'void one(int)'", description != null);
 		assertTrue("There should be API visibility for method 'void one(int)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void one(int)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -571,11 +571,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodPrimitiveParams() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod9.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod9", "one", "(IDF)V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod9", "one", "(IDF)V"));
 		assertTrue("There should exist a description for method 'void one(int, double , float)'", description != null);
 		assertTrue("There should be API visibility for method 'void one(int, double , float)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one(int, double , float)'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod9", "two", "(DF)V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod9", "two", "(DF)V"));
 		assertTrue("There should exist a description for method 'void two(double, float)'", description != null);
 		assertTrue("There should be API visibility for method 'void two(double, float)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two(double, float)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -590,11 +590,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodObjectParams() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod10.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod10", "one", "(QString;QInteger;)V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod10", "one", "(QString;QInteger;)V"));
 		assertTrue("There should exist a description for method 'void one(String, Integer)'", description != null);
 		assertTrue("There should be API visibility for method 'void one(String, Integer)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one(String, Integer)'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod10", "two", "(QList;QRunnable;)V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod10", "two", "(QList;QRunnable;)V"));
 		assertTrue("There should exist a description for method 'void two(List, Runnable)'", description != null);
 		assertTrue("There should be API visibility for method 'void two(List, Runnable)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two(List, Runnable)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -608,11 +608,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodPrimitiveArrayParams() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod11.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod11", "one", "([I[[C)V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod11", "one", "([I[[C)V"));
 		assertTrue("There should exist a description for method 'void one(int[], char[][])'", description != null);
 		assertTrue("There should be API visibility for method 'void one(int[], char[][])'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one(int[], char[][])'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod11", "two", "([[F[D)V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod11", "two", "([[F[D)V"));
 		assertTrue("There should exist a description for method 'void two(float[][], double[])'", description != null);
 		assertTrue("There should be API visibility for method 'void two(float[][], double[])'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two(float[][], double[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -626,11 +626,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodObjectArrayParams() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod12.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod12", "one", "([QString;[[QDouble;)V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod12", "one", "([QString;[[QDouble;)V"));
 		assertTrue("There should exist a description for method 'void one(String[], Double[][])'", description != null);
 		assertTrue("There should be API visibility for method 'void one(String[], Double[][])'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one(String[], Double[][])'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod12", "two", "([[QList;[QRunnable;)V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod12", "two", "([[QList;[QRunnable;)V"));
 		assertTrue("There should exist a description for method 'void two(List[][], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'void two(List[][], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two(List[][], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -644,11 +644,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodMixedParams() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod13.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod13", "one", "(I[[QDouble;[CQInteger;)V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod13", "one", "(I[[QDouble;[CQInteger;)V"));
 		assertTrue("There should exist a description for method 'void one(int, Double[][], char[], Integer)'", description != null);
 		assertTrue("There should be API visibility for method 'void one(int, Double[][], char[], Integer)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one(int, Double[][], char[], Integer)'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod13", "two", "([[QList;DC[I[QRunnable;)V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod13", "two", "([[QList;DC[I[QRunnable;)V"));
 		assertTrue("There should exist a description for method 'void two(List[][], double, char, int[], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'void two(List[][], double, char, int[], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -662,11 +662,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodObjectReturn() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod14.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod14", "one", "(I[[QDouble;[CQInteger;)QString;"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod14", "one", "(I[[QDouble;[CQInteger;)QString;"));
 		assertTrue("There should exist a description for method 'String one(int, Double[][], char[], Integer)'", description != null);
 		assertTrue("There should be API visibility for method 'String one(int, Double[][], char[], Integer)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'String one(int, Double[][], char[], Integer)'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod14", "two", "([[QList;DC[I[QRunnable;)QDouble;"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod14", "two", "([[QList;DC[I[QRunnable;)QDouble;"));
 		assertTrue("There should exist a description for method 'Double two(List[][], double, char, int[], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'Double two(List[][], double, char, int[], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'Double two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -680,11 +680,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodPrimitiveReturn() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod15.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod15", "one", "(I[[QDouble;[CQInteger;)C"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod15", "one", "(I[[QDouble;[CQInteger;)C"));
 		assertTrue("There should exist a description for method 'char one(int, Double[][], char[], Integer)'", description != null);
 		assertTrue("There should be API visibility for method 'char one(int, Double[][], char[], Integer)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'char one(int, Double[][], char[], Integer)'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod15", "two", "([[QList;DC[I[QRunnable;)D"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod15", "two", "([[QList;DC[I[QRunnable;)D"));
 		assertTrue("There should exist a description for method 'double two(List[][], double, char, int[], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'double two(List[][], double, char, int[], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'double two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -698,11 +698,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodPrimitiveArrayReturn() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod17.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod17", "one", "(I[[QDouble;[CQInteger;)[[C"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod17", "one", "(I[[QDouble;[CQInteger;)[[C"));
 		assertTrue("There should exist a description for method 'char[][] one(int, Double[][], char[], Integer)'", description != null);
 		assertTrue("There should be API visibility for method 'char[][] one(int, Double[][], char[], Integer)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'char[][] one(int, Double[][], char[], Integer)'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod17", "two", "([[QList;DC[I[QRunnable;)[D"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod17", "two", "([[QList;DC[I[QRunnable;)[D"));
 		assertTrue("There should exist a description for method 'double[] two(List[][], double, char, int[], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'double[] two(List[][], double, char, int[], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'double[] two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -716,11 +716,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodObjectArrayReturn() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod16.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod16", "one", "(I[[QDouble;[CQInteger;)[[QString;"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod16", "one", "(I[[QDouble;[CQInteger;)[[QString;"));
 		assertTrue("There should exist a description for method 'String[][] one(int, Double[][], char[], Integer)'", description != null);
 		assertTrue("There should be API visibility for method 'String[][] one(int, Double[][], char[], Integer)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'String[][] one(int, Double[][], char[], Integer)'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod16", "two", "([[QList;DC[I[QRunnable;)[QDouble;"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod16", "two", "([[QList;DC[I[QRunnable;)[QDouble;"));
 		assertTrue("There should exist a description for method 'Double[] two(List[][], double, char, int[], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'Double[] two(List[][], double, char, int[], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'Double[] two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -733,11 +733,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod2.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod2$Inner", "one", "()V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod2$Inner", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod2$Inner", "two", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod2$Inner", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -750,15 +750,15 @@ public class TagScannerTests extends TestCase {
 	public void testMethodStaticInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod3.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod3$Inner", "one", "()V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod3$Inner", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod3$Inner", "two", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod3$Inner", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod3$Inner", "three", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod3$Inner", "three", "()V"));
 		assertTrue("There should exist a description for method 'void three()'", description != null);
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void three()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
@@ -771,43 +771,43 @@ public class TagScannerTests extends TestCase {
 	public void testMethodMultiInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod4.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod4$Inner1", "one", "()V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner1", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod4$Inner1", "two", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner1", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod4$Inner1", "three", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner1", "three", "()V"));
 		assertTrue("There should exist a description for method 'void three()'", description != null);
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void three()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod4$Inner1$Inner3", "one", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner1$Inner3", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod4$Inner1$Inner3", "two", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner1$Inner3", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod4$Inner1$Inner3", "three", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner1$Inner3", "three", "()V"));
 		assertTrue("There should exist a description for method 'void three()'", description != null);
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void three()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod4$Inner2", "one", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod4$Inner2", "two", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod4$Inner2$Inner4", "one", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2$Inner4", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod4$Inner2$Inner4", "two", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2$Inner4", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
@@ -820,15 +820,15 @@ public class TagScannerTests extends TestCase {
 	public void testMethodOuterClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod5.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod5Outer", "one", "()V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod5Outer", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod5Outer", "two", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod5Outer", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod5Outer", "three", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod5Outer", "three", "()V"));
 		assertTrue("There should exist a description for method 'void three()'", description != null);
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void three()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
@@ -841,7 +841,7 @@ public class TagScannerTests extends TestCase {
 	public void testMethodAnonymousClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod6.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod6", "run", "()V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod6", "run", "()V"));
 		assertTrue("There should exist a description for method 'void run()'", description != null);
 		assertTrue("There should be API visibility for method 'void run()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void run()'", description.getRestrictions() == (RestrictionModifiers.NO_REFERENCE | RestrictionModifiers.NO_EXTEND));
@@ -854,11 +854,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodInheritValidRestriction() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod18.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod18", "one", "()V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod18", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod18Outer", "two", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod18Outer", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be no restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
@@ -873,11 +873,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodInheritInvalidRestrictionClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod19.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod19", "one", "()V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod19", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod19Outer", "two", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod19Outer", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
@@ -892,11 +892,11 @@ public class TagScannerTests extends TestCase {
 	public void testMethodInheritInvalidRestrictionInterface() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod20.java", manifest);
-		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod20", "one", "()V"));
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod20", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
-		description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod20Outer", "two", "()V"));
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod20Outer", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);

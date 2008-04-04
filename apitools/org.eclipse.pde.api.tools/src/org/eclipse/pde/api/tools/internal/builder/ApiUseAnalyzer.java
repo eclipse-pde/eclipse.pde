@@ -149,7 +149,7 @@ public class ApiUseAnalyzer {
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.descriptors.IElementDescriptor, java.lang.String, org.eclipse.pde.api.tools.IApiAnnotations)
 		 */
-		public boolean visitElement(IElementDescriptor element, String componentContext, IApiAnnotations description) {
+		public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 			int mask = description.getRestrictions();
 			if (!RestrictionModifiers.isUnrestricted(mask)) {
 				// if there are restrictions, added to the search list
@@ -679,7 +679,7 @@ public class ApiUseAnalyzer {
 								if ((Flags.AccProtected & field.getModifiers()) > 0) {
 									// ignore protected members if contained in a @noextend type
 									IApiDescription description = reference.getSourceLocation().getApiComponent().getApiDescription();
-									IApiAnnotations annotations = description.resolveAnnotations(null, field.getEnclosingType());
+									IApiAnnotations annotations = description.resolveAnnotations(field.getEnclosingType());
 									if(annotations == null) {
 										return null;
 									}
@@ -703,7 +703,7 @@ public class ApiUseAnalyzer {
 								if ((Flags.AccProtected & method.getModifiers()) > 0) {
 									// ignore protected members if contained in a @noextend type
 									IApiDescription description = reference.getSourceLocation().getApiComponent().getApiDescription();
-									IApiAnnotations annotations = description.resolveAnnotations(null, method.getEnclosingType());
+									IApiAnnotations annotations = description.resolveAnnotations(method.getEnclosingType());
 									if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
 										// ignore
 										return null;
@@ -820,7 +820,7 @@ public class ApiUseAnalyzer {
 							if ((Flags.AccProtected & field.getModifiers()) > 0) {
 								// ignore protected members if contained in a @noextend type
 								IApiDescription description = reference.getSourceLocation().getApiComponent().getApiDescription();
-								IApiAnnotations annotations = description.resolveAnnotations(null, field.getEnclosingType());
+								IApiAnnotations annotations = description.resolveAnnotations(field.getEnclosingType());
 								if(annotations == null) {
 									return null;
 								}
@@ -837,7 +837,7 @@ public class ApiUseAnalyzer {
 							if ((Flags.AccProtected & method.getModifiers()) > 0) {
 								// ignore protected members if contained in a @noextend type
 								IApiDescription description = reference.getSourceLocation().getApiComponent().getApiDescription();
-								IApiAnnotations annotations = description.resolveAnnotations(null, method.getEnclosingType());
+								IApiAnnotations annotations = description.resolveAnnotations(method.getEnclosingType());
 								if(annotations == null) {
 									return null;
 								}

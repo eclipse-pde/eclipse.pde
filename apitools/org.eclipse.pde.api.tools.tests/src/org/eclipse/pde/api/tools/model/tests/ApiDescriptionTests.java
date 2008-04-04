@@ -139,51 +139,45 @@ public class ApiDescriptionTests extends TestCase {
 	 * 		class PC
 	 * 		class PD
 	 * 
-	 * package a.b.c.internal has API visibility for component "a.friend"
-	 * class D has SPI visibility for component "a.friend"
-	 * package a.b.c.spi has private visibility for component "no.friend"
 	 * 
 	 * @return
 	 */
 	protected IApiDescription buildManifest() {
 		IApiDescription manifest = newDescription();
 		// add packages to the manifest with default rules - public API
-		manifest.setVisibility(null, Factory.packageDescriptor(""), VisibilityModifiers.API);
-		manifest.setVisibility(null, Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API);
-		manifest.setVisibility(null, Factory.packageDescriptor("a.b.c.spi"), VisibilityModifiers.SPI);
-		manifest.setVisibility(null, Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.PRIVATE);
-		manifest.setVisibility("a.friend", Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.API);
-		manifest.setVisibility("a.friend", Factory.typeDescriptor("D"), VisibilityModifiers.SPI);
-		manifest.setVisibility("no.friend", Factory.packageDescriptor("a.b.c.spi"), VisibilityModifiers.PRIVATE);
+		manifest.setVisibility(Factory.packageDescriptor(""), VisibilityModifiers.API);
+		manifest.setVisibility(Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API);
+		manifest.setVisibility(Factory.packageDescriptor("a.b.c.spi"), VisibilityModifiers.SPI);
+		manifest.setVisibility(Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.PRIVATE);
 		
 		// add type specific settings
-		manifest.setRestrictions(null, Factory.typeDescriptor("B"), RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(null, Factory.typeDescriptor("C"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(null, Factory.typeDescriptor("D"), RestrictionModifiers.NO_REFERENCE);
-		manifest.setRestrictions(null, Factory.typeDescriptor("IB"), RestrictionModifiers.NO_IMPLEMENT);
+		manifest.setRestrictions(Factory.typeDescriptor("B"), RestrictionModifiers.NO_INSTANTIATE);
+		manifest.setRestrictions(Factory.typeDescriptor("C"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
+		manifest.setRestrictions(Factory.typeDescriptor("D"), RestrictionModifiers.NO_REFERENCE);
+		manifest.setRestrictions(Factory.typeDescriptor("IB"), RestrictionModifiers.NO_IMPLEMENT);
 		
-		manifest.setRestrictions(null, Factory.typeDescriptor("a.b.c.A"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(null, Factory.typeDescriptor("a.b.c.C"), RestrictionModifiers.NO_EXTEND);
-		manifest.setRestrictions(null, Factory.typeDescriptor("a.b.c.D"), RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(null, Factory.typeDescriptor("a.b.c.IC"), RestrictionModifiers.NO_IMPLEMENT);
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.A"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.C"), RestrictionModifiers.NO_EXTEND);
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.D"), RestrictionModifiers.NO_INSTANTIATE);
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.IC"), RestrictionModifiers.NO_IMPLEMENT);
 		
-		manifest.setRestrictions(null, Factory.typeDescriptor("a.b.c.spi.SpiB"), RestrictionModifiers.NO_EXTEND);
-		manifest.setRestrictions(null, Factory.typeDescriptor("a.b.c.spi.SpiC"), RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(null, Factory.typeDescriptor("a.b.c.spi.SpiD"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(null, Factory.typeDescriptor("a.b.c.spi.SpiE"), RestrictionModifiers.NO_REFERENCE);
-		manifest.setRestrictions(null, Factory.typeDescriptor("a.b.c.spi.ISpiB"), RestrictionModifiers.NO_IMPLEMENT);		
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiB"), RestrictionModifiers.NO_EXTEND);
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiC"), RestrictionModifiers.NO_INSTANTIATE);
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiD"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiE"), RestrictionModifiers.NO_REFERENCE);
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.ISpiB"), RestrictionModifiers.NO_IMPLEMENT);		
 		
 		//add method specific settings
-		manifest.setRestrictions(null, Factory.methodDescriptor("B", "m1", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_EXTEND);
-		manifest.setRestrictions(null, Factory.methodDescriptor("a.b.c.A","m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_REFERENCE);
-		manifest.setRestrictions(null, Factory.methodDescriptor("a.b.c.spi.SpiB","m3", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_RESTRICTIONS);
-		manifest.setRestrictions(null, Factory.methodDescriptor("a.b.c.spi.SpiC", "m4", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_EXTEND);
+		manifest.setRestrictions(Factory.methodDescriptor("B", "m1", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_EXTEND);
+		manifest.setRestrictions(Factory.methodDescriptor("a.b.c.A","m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_REFERENCE);
+		manifest.setRestrictions(Factory.methodDescriptor("a.b.c.spi.SpiB","m3", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_RESTRICTIONS);
+		manifest.setRestrictions(Factory.methodDescriptor("a.b.c.spi.SpiC", "m4", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_EXTEND);
 		
 		//add field specific settings
-		manifest.setRestrictions(null, Factory.fieldDescriptor("D", "f1"), RestrictionModifiers.NO_REFERENCE);
-		manifest.setRestrictions(null, Factory.fieldDescriptor("a.b.c.D","f2"), RestrictionModifiers.NO_REFERENCE);
-		manifest.setRestrictions(null, Factory.fieldDescriptor("a.b.c.spi.SpiD","f3"), RestrictionModifiers.NO_RESTRICTIONS);
-		manifest.setRestrictions(null, Factory.fieldDescriptor("a.b.c.spi.SpiC", "f4"), RestrictionModifiers.NO_REFERENCE);
+		manifest.setRestrictions(Factory.fieldDescriptor("D", "f1"), RestrictionModifiers.NO_REFERENCE);
+		manifest.setRestrictions(Factory.fieldDescriptor("a.b.c.D","f2"), RestrictionModifiers.NO_REFERENCE);
+		manifest.setRestrictions(Factory.fieldDescriptor("a.b.c.spi.SpiD","f3"), RestrictionModifiers.NO_RESTRICTIONS);
+		manifest.setRestrictions(Factory.fieldDescriptor("a.b.c.spi.SpiC", "f4"), RestrictionModifiers.NO_REFERENCE);
 		
 		return manifest;
 	}
@@ -193,31 +187,31 @@ public class ApiDescriptionTests extends TestCase {
 	 */
 	protected IApiDescription buildModifiableManifest() {
 		IApiDescription desc = newDescription();
-		desc.setVisibility(null, Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API);
-		desc.setVisibility(null, Factory.packageDescriptor(""), VisibilityModifiers.SPI);
+		desc.setVisibility(Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API);
+		desc.setVisibility(Factory.packageDescriptor(""), VisibilityModifiers.SPI);
 		IElementDescriptor element = Factory.typeDescriptor("C"); 
-		desc.setRestrictions(null, element, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-		desc.setVisibility(null, element, VisibilityModifiers.PRIVATE);
+		desc.setRestrictions(element, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
+		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		
 		element = Factory.typeDescriptor("a.b.c.D");
-		desc.setRestrictions(null, element, RestrictionModifiers.NO_REFERENCE);
-		desc.setVisibility(null, element, VisibilityModifiers.PRIVATE);
+		desc.setRestrictions(element, RestrictionModifiers.NO_REFERENCE);
+		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		
 		element = Factory.methodDescriptor("C", "m1", Signature.createMethodSignature(new String[0], Signature.SIG_VOID));
-		desc.setRestrictions(null, element, RestrictionModifiers.NO_EXTEND);
-		desc.setVisibility(null, element, VisibilityModifiers.PRIVATE);
+		desc.setRestrictions(element, RestrictionModifiers.NO_EXTEND);
+		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		
 		element = Factory.methodDescriptor("a.b.c.A","m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID));
-		desc.setRestrictions(null, element, RestrictionModifiers.NO_REFERENCE);
-		desc.setVisibility(null, element, VisibilityModifiers.PRIVATE);
+		desc.setRestrictions(element, RestrictionModifiers.NO_REFERENCE);
+		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		
 		element = Factory.fieldDescriptor("D", "f1");
-		desc.setRestrictions(null, element, RestrictionModifiers.NO_REFERENCE);
-		desc.setVisibility(null, element, VisibilityModifiers.PRIVATE);
+		desc.setRestrictions(element, RestrictionModifiers.NO_REFERENCE);
+		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		
 		element = Factory.fieldDescriptor("a.b.c","f2");
-		desc.setRestrictions(null, element, RestrictionModifiers.NO_REFERENCE);
-		desc.setVisibility(null, element, VisibilityModifiers.PRIVATE);
+		desc.setRestrictions(element, RestrictionModifiers.NO_REFERENCE);
+		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		return desc;
 	}
 	
@@ -294,7 +288,6 @@ public class ApiDescriptionTests extends TestCase {
 			ElementDescription C = new ElementDescription(defPkgDesc.getType("C"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
 			ElementDescription D = new ElementDescription(defPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
 				ElementDescription f1 = new ElementDescription(defPkgDesc.getType("D").getField("f1"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
-			ElementDescription DforAFriend = new ElementDescription("a.friend", defPkgDesc.getType("D"), VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS);
 			ElementDescription IB = new ElementDescription(defPkgDesc.getType("IB"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
 		IPackageDescriptor abcPkgDesc = Factory.packageDescriptor("a.b.c");
 		ElementDescription abcPkg = new ElementDescription(abcPkgDesc, VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
@@ -315,7 +308,6 @@ public class ApiDescriptionTests extends TestCase {
 			ElementDescription IspiB = new ElementDescription(spiPkgDesc.getType("ISpiB"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
 		IPackageDescriptor intPkgDesc = Factory.packageDescriptor("a.b.c.internal");
 		ElementDescription intPkg = new ElementDescription(intPkgDesc, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
-		ElementDescription intPkgForFriend = new ElementDescription("a.friend", intPkgDesc, VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
 		
 		final List<ElementDescription> visitOrder = new ArrayList<ElementDescription>();
 		visitOrder.add(defPkg); // start def
@@ -326,7 +318,6 @@ public class ApiDescriptionTests extends TestCase {
 			visitOrder.add(D); // start D
 				visitOrder.add(f1); visitOrder.add(f1); //start / end f1
 			visitOrder.add(D); // end D
-				visitOrder.add(DforAFriend); visitOrder.add(DforAFriend); // start/end D for "a.friend"
 			visitOrder.add(IB); visitOrder.add(IB); // start/end IB
 		visitOrder.add(defPkg); // end def
 		visitOrder.add(abcPkg); // start a.b.c
@@ -341,8 +332,6 @@ public class ApiDescriptionTests extends TestCase {
 		visitOrder.add(abcPkg); // end a.b.c
 		visitOrder.add(intPkg); // start a.b.c.internal
 		visitOrder.add(intPkg); // end a.b.c.internal
-		visitOrder.add(intPkgForFriend); // start a.b.c.internal ("a.friend")
-		visitOrder.add(intPkgForFriend); // end a.b.c.internal ("a.friend")
 		visitOrder.add(spiPkg); // start a.b.c.spi
 			visitOrder.add(IspiB); visitOrder.add(IspiB); // start/end ISpiB
 			visitOrder.add(spiB); //start spiB
@@ -357,19 +346,17 @@ public class ApiDescriptionTests extends TestCase {
 		visitOrder.add(spiPkg); // end a.b.c.spi
 				
 		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor() {
-			public boolean visitElement(IElementDescriptor element, String component, IApiAnnotations description) {
+			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
 				assertEquals("Wrong begin visit element", expected.fElement, element);
-				assertEquals("Wrong begin visit component", expected.fComponent, component);
 				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility());
 				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions());
 				return true;
 			}
 		
-			public void endVisitElement(IElementDescriptor element, String component, IApiAnnotations description) {
+			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
 				assertEquals("Wrong end visit element", expected.fElement, element);
-				assertEquals("Wrong end visit component", expected.fComponent, component);
 				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility());
 				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions());
 			}
@@ -541,7 +528,6 @@ public class ApiDescriptionTests extends TestCase {
 			ElementDescription C = new ElementDescription(defPkgDesc.getType("C"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
 			ElementDescription D = new ElementDescription(defPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
 				ElementDescription f1 = new ElementDescription(defPkgDesc.getType("D").getField("f1"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
-			ElementDescription DforAFriend = new ElementDescription("a.friend", defPkgDesc.getType("D"), VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS);
 			ElementDescription IB = new ElementDescription(defPkgDesc.getType("IB"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
 		IPackageDescriptor abcPkgDesc = Factory.packageDescriptor("a.b.c");
 		ElementDescription abcPkg = new ElementDescription(abcPkgDesc, VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
@@ -562,10 +548,8 @@ public class ApiDescriptionTests extends TestCase {
 				ElementDescription spiDf3 = new ElementDescription(spiPkgDesc.getType("SpiD").getField("f3"), VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS);
 			ElementDescription spiE = new ElementDescription(spiPkgDesc.getType("SpiE"), VisibilityModifiers.SPI, RestrictionModifiers.NO_REFERENCE);
 			ElementDescription IspiB = new ElementDescription(spiPkgDesc.getType("ISpiB"), VisibilityModifiers.SPI, RestrictionModifiers.NO_IMPLEMENT);
-		ElementDescription spiPkgForNoFriend = new ElementDescription("no.friend", spiPkgDesc, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
 		IPackageDescriptor intPkgDesc = Factory.packageDescriptor("a.b.c.internal");
 		ElementDescription intPkg = new ElementDescription(intPkgDesc, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
-		ElementDescription intPkgForFriend = new ElementDescription("a.friend", intPkgDesc, VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
 		
 		final List<ElementDescription> visitOrder = new ArrayList<ElementDescription>();
 		visitOrder.add(defPkg); // start def
@@ -576,7 +560,6 @@ public class ApiDescriptionTests extends TestCase {
 			visitOrder.add(D); // start D
 				visitOrder.add(f1); visitOrder.add(f1); //start / end f1
 			visitOrder.add(D); // end D
-				visitOrder.add(DforAFriend); visitOrder.add(DforAFriend); // start/end D for "a.friend"
 			visitOrder.add(IB); visitOrder.add(IB); // start/end IB
 		visitOrder.add(defPkg); // end def
 		visitOrder.add(abcPkg); // start a.b.c
@@ -591,8 +574,6 @@ public class ApiDescriptionTests extends TestCase {
 		visitOrder.add(abcPkg); // end a.b.c
 		visitOrder.add(intPkg); // start a.b.c.internal
 		visitOrder.add(intPkg); // end a.b.c.internal
-		visitOrder.add(intPkgForFriend); // start a.b.c.internal ("a.friend")
-		visitOrder.add(intPkgForFriend); // end a.b.c.internal ("a.friend")
 		visitOrder.add(spiPkg); // start a.b.c.spi
 			visitOrder.add(IspiB); visitOrder.add(IspiB); // start/end ISpiB
 			visitOrder.add(spiB); //start spiB
@@ -607,23 +588,19 @@ public class ApiDescriptionTests extends TestCase {
 			visitOrder.add(spiD); // end SpiD
 			visitOrder.add(spiE); visitOrder.add(spiE); // start/end SpiE
 		visitOrder.add(spiPkg); // end a.b.c.spi
-		visitOrder.add(spiPkgForNoFriend); // start a.b.c.spi ("no.friend")
-		visitOrder.add(spiPkgForNoFriend); // end a.b.c.spi ("no.friend");
 				
 		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor() {
-			public boolean visitElement(IElementDescriptor element, String component, IApiAnnotations description) {
+			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
 				assertEquals("Wrong begin visit element", expected.fElement, element);
-				assertEquals("Wrong begin visit component", expected.fComponent, component);
 				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility());
 				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions());
 				return true;
 			}
 		
-			public void endVisitElement(IElementDescriptor element, String component, IApiAnnotations description) {
+			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
 				assertEquals("Wrong end visit element", expected.fElement, element);
-				assertEquals("Wrong end visit component", expected.fComponent, component);
 				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility());
 				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions());
 			}
@@ -652,27 +629,21 @@ public class ApiDescriptionTests extends TestCase {
 		visitOrder.add(abcPkg); // end a.b.c
 		visitOrder.add(intPkg); // start a.b.c.internal
 		visitOrder.add(intPkg); // end a.b.c.internal
-		visitOrder.add(intPkgForFriend); // start a.b.c.internal ("a.friend")
-		visitOrder.add(intPkgForFriend); // end a.b.c.internal ("a.friend")
 		visitOrder.add(spiPkg); // start a.b.c.spi
 		visitOrder.add(spiPkg); // end a.b.c.spi
-		visitOrder.add(spiPkgForNoFriend); // start a.b.c.spi ("no.friend")
-		visitOrder.add(spiPkgForNoFriend); // end a.b.c.spi ("no.friend");		
 				
 		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor() {
-			public boolean visitElement(IElementDescriptor element, String component, IApiAnnotations description) {
+			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
 				assertEquals("Wrong begin visit element", expected.fElement, element);
-				assertEquals("Wrong begin visit component", expected.fComponent, component);
 				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility());
 				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions());
 				return false;
 			}
 		
-			public void endVisitElement(IElementDescriptor element, String component, IApiAnnotations description) {
+			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
 				assertEquals("Wrong end visit element", expected.fElement, element);
-				assertEquals("Wrong end visit component", expected.fComponent, component);
 				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility());
 				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions());
 			}
@@ -683,58 +654,6 @@ public class ApiDescriptionTests extends TestCase {
 		
 		assertEquals("Visit incomplete", 0, visitOrder.size());
 	}	
-
-	/**
-	 * Tests removing a package element descriptor from the description
-	 */
-	public void testRemovePackageElementDescription() {
-		IApiDescription desc = buildModifiableManifest();
-		assertNotNull("the description cannot be null", desc);
-		IElementDescriptor element = Factory.packageDescriptor("a.b.c");
-		assertTrue("the package element should have been removed", desc.removeElement(element));
-		IApiAnnotations annot = desc.resolveAnnotations(null, element);
-		assertNull("the element should have been removed", annot);
-	}
-	
-	/**
-	 * Tests removing a type element descriptor from the description 
-	 */
-	public void testRemoveTypeElementDescription() {
-		IApiDescription desc = buildModifiableManifest();
-		assertNotNull("the description cannot be null", desc);
-		IElementDescriptor element = Factory.typeDescriptor("a.b.c.D");
-		assertTrue("the type element should have been removed", desc.removeElement(element));
-	}
-	
-	/**
-	 * Tests removing a method element descriptor from the description
-	 */
-	public void testRemoveMethodElementDescription() {
-		IApiDescription desc = buildModifiableManifest();
-		assertNotNull("the description cannot be null", desc);
-		IElementDescriptor element = Factory.methodDescriptor("a.b.c.A","m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID));
-		assertTrue("the method element should have been removed", desc.removeElement(element));
-	}
-	
-	/**
-	 * Tests removing a field element descriptor from the description
-	 */
-	public void testRemoveFieldElementDescription() {
-		IApiDescription desc = buildModifiableManifest();
-		assertNotNull("the description cannot be null", desc);
-		IElementDescriptor element = Factory.fieldDescriptor("D", "f1");
-		assertTrue("the field element should have been removed", desc.removeElement(element));
-	}
-	
-	/**
-	 * Tests removing an element descriptor that does not exist in the description
-	 */
-	public void testRemoveNonExistantDescription() {
-		IApiDescription desc = buildModifiableManifest();
-		assertNotNull("the description cannot be null", desc);
-		IElementDescriptor element = Factory.fieldDescriptor("XXX", "foo");
-		assertTrue("the field element does not exist and should not have been removed", !desc.removeElement(element));
-	}
 	
 	/**
 	 * Test for bug 209335, where an element is not in the component map for an {@link ApiDescription},
@@ -745,7 +664,7 @@ public class ApiDescriptionTests extends TestCase {
 		String packageName = Util.getPackageName(typename);
 		String tName = Util.getTypeName(typename);
 		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
-		IApiAnnotations description = fManifest.resolveAnnotations(null, type);
+		IApiAnnotations description = fManifest.resolveAnnotations(type);
 		assertTrue("The description must be null", description == null);
 	}
 	
@@ -760,25 +679,7 @@ public class ApiDescriptionTests extends TestCase {
 		String packageName = Util.getPackageName(typeName);
 		String tName = Util.getTypeName(typeName);
 		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
-		IApiAnnotations description = fManifest.resolveAnnotations(null, type);
-		assertEquals("Wrong visibility", expectedVisibility, description.getVisibility());
-		assertEquals("Wrong restrictions", expectedRestrictions, description.getRestrictions());
-	}
-	
-	/**
-	 * Resolves API description for a type with the given name in the context of the given
-	 * component.
-	 *  
-	 * @param typeName fully qualified name of referenced type
-	 * @param fromComponent component from which the type was referenced
-	 * @param expectedVisibility expected visibility modifiers
-	 * @param expectedRestrictions expected visibility restriction modifiers
-	 */
-	protected void resolveType(String typeName, String fromComponent, int expectedVisibility, int expectedRestrictions) {
-		String packageName = Util.getPackageName(typeName);
-		String tName = Util.getTypeName(typeName);
-		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
-		IApiAnnotations description = fManifest.resolveAnnotations(fromComponent, type);
+		IApiAnnotations description = fManifest.resolveAnnotations(type);
 		assertEquals("Wrong visibility", expectedVisibility, description.getVisibility());
 		assertEquals("Wrong restrictions", expectedRestrictions, description.getRestrictions());
 	}
@@ -937,28 +838,5 @@ public class ApiDescriptionTests extends TestCase {
 	public void testBInternalPkg() {
 		resolveType("a.b.c.internal.PB", VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
 	}
-		
-	/**
-	 * Tests API description in context of 'a.friend': a.b.c.internal.A = API with no restrictions.
-	 * Note this type is not in the manifest explicitly.
-	 */
-	public void testAInternalPkgFromComponent() {
-		resolveType("a.b.c.internal.PA", "a.friend", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
-	}
-	
-	/**
-	 * Tests API description in context of 'a.friend': D = SPI with no restrictions.
-	 * Note this type is not in the manifest explicitly.
-	 */
-	public void testDDefPkgFromComponent() {
-		resolveType("D", "a.friend", VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS);
-	}
-	
-	/**
-	 * Tests API description in context of 'no.friend': a.b.c.spi.SpiA = Private with no restrictions.
-	 * Note this type is not in the manifest explicitly.
-	 */
-	public void testASpiPkgFromComponent() {
-		resolveType("a.b.c.spi.SpiA", "no.friend", VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
-	}
+			
 }

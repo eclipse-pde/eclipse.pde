@@ -132,7 +132,7 @@ public class ApiDescriptionProcessor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.model.component.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.model.component.IElementDescriptor, java.lang.String, org.eclipse.pde.api.tools.model.IApiAnnotations)
 		 */
-		public boolean visitElement(IElementDescriptor element, String componentContext, IApiAnnotations description) {
+		public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 			switch(element.getElementType()) {
 				case IElementDescriptor.T_PACKAGE: {
 					return true;
@@ -152,7 +152,7 @@ public class ApiDescriptionProcessor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.model.component.ApiDescriptionVisitor#endVisitElement(org.eclipse.pde.api.tools.model.component.IElementDescriptor, java.lang.String, org.eclipse.pde.api.tools.model.IApiAnnotations)
 		 */
-		public void endVisitElement(IElementDescriptor element, String componentContext, IApiAnnotations description) {
+		public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 			if (element.getElementType() == IElementDescriptor.T_REFERENCE_TYPE) {
 				IReferenceTypeDescriptor refType = (IReferenceTypeDescriptor) element;
 				try {
@@ -283,7 +283,7 @@ public class ApiDescriptionProcessor {
 		private void updateDocNode(IElementDescriptor element, BodyDeclaration body, int type, int member) {
 			if(element != null) {
 				//check for missing tags first, might not need to do any work
-				IApiAnnotations api = description.resolveAnnotations(null, element);
+				IApiAnnotations api = description.resolveAnnotations(element);
 				if(api != null) {
 					Javadoc docnode = body.getJavadoc();
 					AST ast = body.getAST();
@@ -623,13 +623,9 @@ public class ApiDescriptionProcessor {
 	 * @param element the current element to annotate from
 	 */
 	private static void annotateDescriptor(IJavaProject project, IApiDescription settings, IElementDescriptor descriptor, Element element) {
-		String component = element.getAttribute(IApiXmlConstants.ATTR_CONTEXT);
-		if (component.length() == 0) {
-			component = null;
-		}
 		int typeVis = getVisibility(element);
 		if (typeVis != -1) {
-			settings.setVisibility(component, descriptor, typeVis);
+			settings.setVisibility(descriptor, typeVis);
 		}
 		int restrictions = getRestrictions(element);
 		if (descriptor.getElementType() == IElementDescriptor.T_REFERENCE_TYPE) {
@@ -663,7 +659,7 @@ public class ApiDescriptionProcessor {
 				}
 			}
 		}
-		settings.setRestrictions(component, descriptor, restrictions);
+		settings.setRestrictions(descriptor, restrictions);
 	}
 	
 	/**

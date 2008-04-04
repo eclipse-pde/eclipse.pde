@@ -97,13 +97,13 @@ public class ApiComparator {
 				return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, classFile2, typeName, null);
 			}
 			final IApiDescription apiDescription = component2.getApiDescription();
-			IApiAnnotations elementDescription = apiDescription.resolveAnnotations(null, Factory.typeDescriptor(typeName));
+			IApiAnnotations elementDescription = apiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
 			if (elementDescription != null) {
 				int visibility = elementDescription.getVisibility();
 				if ((visibility & visibilityModifiers) == 0) {
 					// check visibility in the reference
 					final IApiDescription referenceApiDescription = component.getApiDescription();
-					elementDescription = referenceApiDescription.resolveAnnotations(null, Factory.typeDescriptor(typeName));
+					elementDescription = referenceApiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
 					if (elementDescription != null && (visibility & visibilityModifiers) == 0) {
 						// no delta
 						return NO_DELTA;
@@ -467,7 +467,7 @@ public class ApiComparator {
 					container.accept(new ClassFileContainerVisitor() {
 						public void visit(String packageName, IClassFile classFile) {
 							String typeName = classFile.getTypeName();
-							IApiAnnotations elementDescription = apiDescription.resolveAnnotations(null, Factory.typeDescriptor(typeName));
+							IApiAnnotations elementDescription = apiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
 							try {
 								TypeDescriptor typeDescriptor = new TypeDescriptor(classFile);
 								if (filterType(visibilityModifiers, elementDescription, typeDescriptor)) {
@@ -503,7 +503,7 @@ public class ApiComparator {
 					container.accept(new ClassFileContainerVisitor() {
 						public void visit(String packageName, IClassFile classFile) {
 							String typeName = classFile.getTypeName();
-							IApiAnnotations elementDescription = apiDescription2.resolveAnnotations(null, Factory.typeDescriptor(typeName));
+							IApiAnnotations elementDescription = apiDescription2.resolveAnnotations(Factory.typeDescriptor(typeName));
 							try {
 								TypeDescriptor typeDescriptor = new TypeDescriptor(classFile);
 								if (filterType(visibilityModifiers, elementDescription, typeDescriptor)) {

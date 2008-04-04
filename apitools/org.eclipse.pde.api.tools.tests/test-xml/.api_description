@@ -10,7 +10,6 @@
  	<type name="D" reference="false">
  		<field name="f1" reference="false"/>
  	</type>
- 	<type name="D" context="a.friend" visibility="SPI"/>
  	<type name="IB" implement="false"/>
  </package>
  <package name="a.b.c">

@@ -104,7 +104,7 @@ public class Reference implements IReference {
 					if(cpackage != null) {
 						ILocation res = new Location(cpackage, target.getMember());
 						res.setLineNumber(target.getLineNumber());
-						IApiAnnotations ann = cpackage.getApiDescription().resolveAnnotations(sourceComponent.getId(), res.getMember());
+						IApiAnnotations ann = cpackage.getApiDescription().resolveAnnotations(res.getMember());
 						setResolution(ann, res);
 					}
 				}
@@ -144,7 +144,7 @@ public class Reference implements IReference {
 						} else {
 							ILocation res = new Location(implComponent, method);
 							IApiAnnotations ann = implComponent.getApiDescription().resolveAnnotations(
-									getSourceLocation().getApiComponent().getId(), res.getMember());
+									res.getMember());
 							setResolution(ann, res);
 							return true;
 						}

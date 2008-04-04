@@ -491,7 +491,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 		}
 		IApiComponent apiComponent = location.getApiComponent();
 		try {
-			IApiAnnotations annotations = apiComponent.getApiDescription().resolveAnnotations(apiComponent.getId(), location.getMember());
+			IApiAnnotations annotations = apiComponent.getApiDescription().resolveAnnotations(location.getMember());
 			if (annotations != null) {
 				if ((annotations.getVisibility() & fSourceVisibility) > 0) {
 					if(fSourceRestriction == RestrictionModifiers.ALL_RESTRICTIONS) {

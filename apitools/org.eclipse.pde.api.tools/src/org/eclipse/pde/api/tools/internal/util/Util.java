@@ -1567,6 +1567,9 @@ public final class Util {
 			case VisibilityModifiers.SPI: {
 				return "SPI"; //$NON-NLS-1$
 			}
+			case 0: {
+				return "INHERITED"; //$NON-NLS-1$
+			}
 		}
 		return null;
 	}

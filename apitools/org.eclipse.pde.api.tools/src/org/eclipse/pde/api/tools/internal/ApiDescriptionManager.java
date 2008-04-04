@@ -14,8 +14,10 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.JarFile;
@@ -265,9 +267,13 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 					abort(ScannerMessages.ComponentXMLScanner_0, null); 
 				}
 				long timestamp = getLong(root, IApiXmlConstants.ATTR_MODIFICATION_STAMP);
-				description.fPackageTimeStamp = timestamp;
-				description.fManifestFile = project.getProject().getFile(JarFile.MANIFEST_NAME);
-				restoreChildren(description, root, null, description.fPackageMap);
+				String version = root.getAttribute(IApiXmlConstants.ATTR_VERSION);
+				if (IApiXmlConstants.API_DESCRIPTION_CURRENT_VERSION.equals(version)) {
+					description.fPackageTimeStamp = timestamp;
+					description.fManifestFile = project.getProject().getFile(JarFile.MANIFEST_NAME);
+					restoreChildren(description, root, null, description.fPackageMap);
+					return true;
+				}
 			} catch (IOException e) {
 				abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_1,
 						new String[]{project.getElementName()}), e);
@@ -290,16 +296,35 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 		ManifestNode node = null;
 		IElementDescriptor elementDesc = null;
 		if (element.getTagName().equals(IApiXmlConstants.ELEMENT_PACKAGE)) {
-			String handle = element.getAttribute(IApiXmlConstants.ATTR_HANDLE);
 			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
 			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
-			IJavaElement je = JavaCore.create(handle);
-			if (je.getElementType() != IJavaElement.PACKAGE_FRAGMENT) {
-				abort(ScannerMessages.ApiDescriptionManager_2 + handle, null);
+			// collect fragments
+			List fragments = new ArrayList();
+			NodeList childNodes = element.getChildNodes();
+			String pkgName = null;
+			for (int i = 0; i < childNodes.getLength(); i++) {
+				Node child = childNodes.item(i);
+				if (child.getNodeType() == Node.ELEMENT_NODE) {
+					if (((Element)child).getTagName().equals(IApiXmlConstants.ELEMENT_PACKAGE_FRAGMENT)) {
+						Element fragment = (Element) child;
+						String handle = fragment.getAttribute(IApiXmlConstants.ATTR_HANDLE);
+						IJavaElement je = JavaCore.create(handle);
+						if (je.getElementType() != IJavaElement.PACKAGE_FRAGMENT) {
+							abort(ScannerMessages.ApiDescriptionManager_2 + handle, null);
+						}
+						pkgName = je.getElementName();
+						fragments.add(je);
+					}
+				}
 			}
-			IPackageFragment fragment = (IPackageFragment) je;
-			elementDesc = Factory.packageDescriptor(fragment.getElementName());
-			node = apiDesc.newPackageNode(fragment, parentNode, elementDesc, vis, res);
+			if (!fragments.isEmpty()) {
+				elementDesc = Factory.packageDescriptor(pkgName);
+				node = apiDesc.newPackageNode((IPackageFragment[])fragments.toArray(new IPackageFragment[fragments.size()]), parentNode, elementDesc, vis, res);
+			} else {
+				abort(ScannerMessages.ApiDescriptionManager_2, null);
+			}
+		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_PACKAGE_FRAGMENT)) {
+			return; // nothing to do
 		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_TYPE)) {
 			String handle = element.getAttribute(IApiXmlConstants.ATTR_HANDLE);
 			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
@@ -314,34 +339,29 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 			node = tn;
 			tn.fTimeStamp = getLong(element, IApiXmlConstants.ATTR_MODIFICATION_STAMP);
 		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_FIELD)) {
-			IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.getElement();
-			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
-			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
-			String name = element.getAttribute(IApiXmlConstants.ATTR_NAME);
-			elementDesc = type.getField(name);
-			node = apiDesc.newNode(parentNode, elementDesc, vis, res);
+			if(parentNode.element instanceof IReferenceTypeDescriptor) {
+				IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.element;
+				int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
+				int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
+				String name = element.getAttribute(IApiXmlConstants.ATTR_NAME);
+				elementDesc = type.getField(name);
+				node = apiDesc.newNode(parentNode, elementDesc, vis, res);
+			}
 		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_METHOD)) {
-			IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.getElement();
-			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
-			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
-			String name = element.getAttribute(IApiXmlConstants.ATTR_NAME);
-			String sig = element.getAttribute(IApiXmlConstants.ATTR_SIGNATURE);
-			elementDesc = type.getMethod(name,sig,0);
-			node = apiDesc.newNode(parentNode, elementDesc, vis, res);
+			if(parentNode.element instanceof IReferenceTypeDescriptor) {
+				IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.element;
+				int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
+				int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
+				String name = element.getAttribute(IApiXmlConstants.ATTR_NAME);
+				String sig = element.getAttribute(IApiXmlConstants.ATTR_SIGNATURE);
+				elementDesc = type.getMethod(name,sig,0);
+				node = apiDesc.newNode(parentNode, elementDesc, vis, res);
+			}
 		}
 		if (node == null) {
 			abort(ScannerMessages.ApiDescriptionManager_4, null);
 		}
-		String component = element.getAttribute(IApiXmlConstants.ATTR_CONTEXT);
-		if (component == null || component.length() == 0) {
-			childrenMap.put(elementDesc, node);
-		} else {
-			ManifestNode baseNode = (ManifestNode) childrenMap.get(elementDesc);
-			if (baseNode == null) {
-				abort(ScannerMessages.ApiDescriptionManager_5 + elementDesc.toString(), null);
-			}
-			baseNode.overrides.put(component, node);
-		}
+		childrenMap.put(elementDesc, node);
 		restoreChildren(apiDesc, element, node, node.children);
 	}
 	

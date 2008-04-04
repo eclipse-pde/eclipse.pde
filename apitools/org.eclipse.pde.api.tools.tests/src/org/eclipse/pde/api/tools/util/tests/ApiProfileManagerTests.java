@@ -359,7 +359,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the added event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass1"));
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass1"));
 			assertNotNull("the annotations for a.b.c.TestClass1 cannot be null", annot);
 			assertTrue("there must be a noinstantiate setting for TestClass1", annot.getRestrictions() == RestrictionModifiers.NO_INSTANTIATE);
 		} catch (InvocationTargetException e) {
@@ -385,7 +385,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the removed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass1"));
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass1"));
 			assertNull("the annotations for a.b.c.TestClass1 should no longer be present", annot);
 		} catch (JavaModelException e) {
 			fail(e.getMessage());
@@ -448,7 +448,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the content changed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass2"));
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass2"));
 			assertNotNull("the annotations for a.b.c.TestClass2 cannot be null", annot);
 			assertTrue("there must be a noinstantiate setting for TestClass2", (annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE) != 0);
 			assertTrue("there must be a noextend setting for TestClass2", (annot.getRestrictions() & RestrictionModifiers.NO_EXTEND) != 0);
@@ -482,7 +482,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the content changed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3"));
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3"));
 			assertNotNull("the annotations for a.b.c.TestClass3$InnerTestClass3 cannot be null", annot);
 			assertTrue("there must be a noinstantiate setting for TestClass3$InnerTestClass3", (annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE) != 0);
 			assertTrue("there must be a noextend setting for TestClass3$InnerTestClass3", (annot.getRestrictions() & RestrictionModifiers.NO_EXTEND) != 0);
@@ -520,7 +520,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the content changed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestClass1", "foo", "()V"));
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestClass1", "foo", "()V"));
 			assertNotNull("the annotations for foo() cannot be null", annot);
 			assertTrue("there must be a noextend setting for foo()", (annot.getRestrictions() & RestrictionModifiers.NO_EXTEND) != 0);
 		}
@@ -557,7 +557,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the content changed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField9", "field"));
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField9", "field"));
 			assertNotNull("the annotations for 'field' cannot be null", annot);
 			assertTrue("there must be a noreference setting for 'field'", (annot.getRestrictions() & RestrictionModifiers.NO_REFERENCE) != 0);
 		}
@@ -591,7 +591,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the content changed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestClass1", "foo", "()V"));
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestClass1", "foo", "()V"));
 			assertNotNull("the annotations for foo() cannot be null", annot);
 			assertTrue("there must be no restrictions for foo()", annot.getRestrictions() == 0);
 		}
@@ -621,7 +621,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the content changed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3"));
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3"));
 			assertNotNull("the annotations for 'InnerTestClass3' cannot be null", annot);
 			assertTrue("there must be a no restrictions for 'InnerTestClass3'", (annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE) == 0);
 		}
@@ -651,7 +651,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the content changed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.fieldDescriptor("a.b.c.TestField9", "field"));
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField9", "field"));
 			assertNotNull("the annotations for 'field' cannot be null", annot);
 			assertTrue("there must be a no restrictions for 'field'", annot.getRestrictions() == 0);
 		}
@@ -826,7 +826,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the added event for the package fragment was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.packageDescriptor("x.y.z"));
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.packageDescriptor("x.y.z"));
 			assertNotNull("the annotations for package 'x.y.z' should exist", annot);
 		}
 		catch (JavaModelException e) {
@@ -853,7 +853,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the removed event for the package fragment was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.packageDescriptor("a.b.c"));
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.packageDescriptor("a.b.c"));
 			assertNull("the annotations for package 'a.b.c' should not exist", annot);
 		}
 		catch (JavaModelException e) {
@@ -874,7 +874,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			IPackageFragment fragment = fSrcroot.createPackageFragment("export1", true, new NullProgressMonitor());
 			assertNotNull("the new package 'export1' must exist", fragment);
 			setPackageToApi("export1");
-			IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(null, Factory.packageDescriptor("export1"));
+			IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(Factory.packageDescriptor("export1"));
 			assertNotNull("there must be an annotation for the new exported package", annot);
 			assertTrue("the newly exported package must be API visibility", annot.getVisibility() == VisibilityModifiers.API);
 		}
@@ -902,7 +902,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			newmodel.save();
 			Object object = waiter.waitForEvent();
 			assertNotNull("the changed event for the exported package change was not received", object);
-			IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(null, Factory.packageDescriptor("export1"));
+			IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(Factory.packageDescriptor("export1"));
 			assertNotNull("there must be an annotation for the new exported package", annot);
 			assertTrue("the changed exported package must be PRIVATE visibility", annot.getVisibility() == VisibilityModifiers.PRIVATE);
 		}
@@ -918,7 +918,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	public void testWPUpdateExportPackageRemoved() {
 		try {
 			setPackageToApi("export1");
-			IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(null, Factory.packageDescriptor("export1"));
+			IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(Factory.packageDescriptor("export1"));
 			assertNotNull("there must be an annotation for the new exported package", annot);
 			assertTrue("the newly exported package must be API visibility", annot.getVisibility() == VisibilityModifiers.API);
 			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
@@ -931,7 +931,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			newmodel.save();
 			Object object = waiter.waitForEvent();
 			assertNotNull("the changed event for the exported package change was not received", object);
-			annot = getTestProjectApiDescription().resolveAnnotations(null, Factory.packageDescriptor("export1"));
+			annot = getTestProjectApiDescription().resolveAnnotations(Factory.packageDescriptor("export1"));
 			assertNotNull("should still be an annotation for the package", annot);
 			assertTrue("unexported package must be private", VisibilityModifiers.isPrivate(annot.getVisibility()));
 		}
