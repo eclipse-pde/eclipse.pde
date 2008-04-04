@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
@@ -1007,7 +1008,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	 * @return
 	 */
 	private Composite createPage(int kind, TabFolder folder, String name, String description) {
-		Composite page = SWTFactory.createComposite(folder, 2, 1, GridData.FILL_BOTH);
+		Composite page = SWTFactory.createComposite(folder, 1, 1, GridData.FILL_BOTH);
 		TabItem tab = new TabItem(folder, SWT.NONE);
 		tab.setText(name);
 		tab.setControl(page);
@@ -1405,18 +1406,16 @@ public class ApiErrorsWarningsConfigurationBlock {
 					});
 				restoreExpansionState();
 		}
-		Composite buttonsComposite = SWTFactory.createComposite(page, 1, 1, GridData.FILL_BOTH, SWT.BORDER);
-		SWTFactory.createVerticalSpacer(buttonsComposite, 1);
-		buttonsComposite.setLayout(new GridLayout(1, false));
-		buttonsComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-		SWTFactory.createWrapLabel(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_setAllto, 1);
-		SWTFactory.createVerticalSpacer(buttonsComposite, 1);
-		Button allToErrorButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error_button, null, SWT.LEFT);
-		Button allToWarningButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning_button, null, SWT.LEFT);
-		Button allToIgnoreButton = SWTFactory.createPushButton(buttonsComposite, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore_button, null, SWT.LEFT);
-		allToErrorButton.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error));
-		allToWarningButton.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning));
-		allToIgnoreButton.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore));
+		
+		SWTFactory.createVerticalSpacer(page, 1);
+		
+		Group bcomp = SWTFactory.createGroup(page, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_setAllto, 3, 2, GridData.FILL_HORIZONTAL);
+		Button button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error_button, null, SWT.RIGHT);
+		button.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error));
+		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning_button, null, SWT.RIGHT);
+		button.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning));
+		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore_button, null, SWT.RIGHT);
+		button.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore));
 		return page;
 	}
 
