@@ -693,16 +693,6 @@ public class BundleApiComponent extends AbstractApiComponent {
 		} finally {
 			closingZipFileAndStream(stream, jarFile);
 		}
-		if (!supportNewFormat && !isJar) {
-			// delete the old file and create the new file
-			File file = new File(bundleLocation, IApiCoreConstants.COMPONENT_XML_NAME);
-			if (file.delete()) {
-				if (!bundleLocation.exists()) {
-					bundleLocation.mkdirs();
-				}
-				Util.saveFile(new File(bundleLocation, IApiCoreConstants.API_DESCRIPTION_XML_NAME), contents);
-			}
-		}
 		return contents;
 	}
 	
