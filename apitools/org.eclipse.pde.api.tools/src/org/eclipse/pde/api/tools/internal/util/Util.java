@@ -1802,6 +1802,28 @@ public final class Util {
 	}
 	
 	/**
+	 * Returns if the given project is API enabled
+	 * @param project
+	 * @return true if the project is API enabled, false otherwise
+	 */
+	public static boolean isApiProject(IProject project) {
+		try {
+			return project.hasNature(ApiPlugin.NATURE_ID);
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+	
+	/**
+	 * Returns if the given project is API enabled
+	 * @param project
+	 * @return true if the project is API enabled, false otherwise
+	 */
+	public static boolean isApiProject(IJavaProject project) {
+		return isApiProject(project.getProject());
+	}
+	
+	/**
 	 * Returns if the specified file name is an archive name. A name is
 	 * considered to be an archive name if it ends with either '.zip' or '.jar'
 	 * 
