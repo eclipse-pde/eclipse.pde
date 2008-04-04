@@ -641,48 +641,31 @@ public class BundleApiComponent extends AbstractApiComponent {
 	}
 
 	/**
-	 * Parses a bundle's component XML into a string. The file may be in a jar
+	 * Parses a bundle's .api_description XML into a string. The file may be in a jar
 	 * or in a directory at the specified location.
 	 * 
 	 * @param bundleLocation root location of the bundle
-	 * @return component XML as a string or <code>null</code> if none
+	 * @return API description XML as a string or <code>null</code> if none
 	 * @throws IOException if unable to parse
 	 */
 	protected String loadApiDescription(File bundleLocation) throws IOException {
 		ZipFile jarFile = null;
 		InputStream stream = null;
-		boolean supportNewFormat = false;
-		boolean isJar = false;
 		String contents = null;
 		try {
 			String extension = new Path(bundleLocation.getName()).getFileExtension();
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
-				isJar = true;
 				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
 				ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 				if (manifestEntry != null) {
 					// new file is present
 					stream = jarFile.getInputStream(manifestEntry);
-					supportNewFormat = true;
-				} else {
-					// fall back to old name
-					manifestEntry = jarFile.getEntry(IApiCoreConstants.COMPONENT_XML_NAME);
-					if (manifestEntry != null) {
-						stream = jarFile.getInputStream(manifestEntry);
-					}
 				}
 			} else {
 				File file = new File(bundleLocation, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 				if (file.exists()) {
 					// use new file
 					stream = new FileInputStream(file);
-					supportNewFormat = true;
-				} else {
-					file = new File(bundleLocation, IApiCoreConstants.COMPONENT_XML_NAME);
-					if (file.exists()) {
-						// fall back to old name
-						stream = new FileInputStream(file);
-					}
 				}
 			}
 			if (stream == null) {
