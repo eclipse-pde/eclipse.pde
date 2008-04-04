@@ -668,4 +668,13 @@ public class ProjectApiDescription extends ApiDescription {
 	synchronized void projectChanged() {
 		fInSynch = false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Project API description for: ").append(getJavaProject().getElementName()); //$NON-NLS-1$
+		return buffer.toString();
+	}
 }
