@@ -16,15 +16,25 @@ import java.util.Iterator;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.action.ControlContribution;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.ctxhelp.*;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.pde.internal.ui.wizards.ctxhelp.RegisterCtxHelpWizard;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.part.*;
 
 /**
@@ -265,6 +275,49 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	 */
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new CtxHelpSourcePage(editor, title, name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#contributeToToolbar(org.eclipse.jface.action.IToolBarManager)
+	 */
+	public void contributeToToolbar(IToolBarManager manager) {
+		if (getAggregateModel().isEditable()) {
+			manager.add(new ControlContribution("Register") { //$NON-NLS-1$
+						protected Control createControl(Composite parent) {
+							ImageHyperlink fImageHyperlinkRegisterTOC = new ImageHyperlink(parent, SWT.NONE);
+							fImageHyperlinkRegisterTOC.setText(PDEUIMessages.CtxHelpEditor_0);
+							fImageHyperlinkRegisterTOC.setUnderlined(true);
+							fImageHyperlinkRegisterTOC.setForeground(getToolkit().getHyperlinkGroup().getForeground());
+							fImageHyperlinkRegisterTOC.addHyperlinkListener(new IHyperlinkListener() {
+								public void linkActivated(HyperlinkEvent e) {
+									handleRegisterCtxHelpFile();
+								}
+
+								public void linkEntered(HyperlinkEvent e) {
+									((ImageHyperlink) e.getSource()).setForeground(getToolkit().getHyperlinkGroup().getActiveForeground());
+									getEditorSite().getActionBars().getStatusLineManager().setMessage(PDEUIMessages.CtxHelpEditor_0);
+								}
+
+								public void linkExited(HyperlinkEvent e) {
+									((ImageHyperlink) e.getSource()).setForeground(getToolkit().getHyperlinkGroup().getForeground());
+									getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
+								}
+							});
+							return fImageHyperlinkRegisterTOC;
+						}
+					});
+		}
+	}
+
+	/**
+	 * Opens the register context help wizard dialog.
+	 */
+	private void handleRegisterCtxHelpFile() {
+		RegisterCtxHelpWizard wizard = new RegisterCtxHelpWizard((IModel) getAggregateModel());
+		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+		dialog.create();
+		dialog.getShell().setSize(400, 250);
+		dialog.open();
 	}
 
 }

@@ -622,6 +622,16 @@ public class PDEUIMessages extends NLS {
 
 	public static String RegisterCSWizardPage_wizardPageDescription;
 
+	public static String RegisterCtxHelpWizard_0;
+
+	public static String RegisterCtxHelpWizard_2;
+
+	public static String RegisterCtxHelpWizard_3;
+
+	public static String RegisterCtxHelpWizard_4;
+
+	public static String RegisterCtxHelpWizard_5;
+
 	public static String RemoveUnknownExecEnvironments_label;
 
 	public static String AddDefaultExecutionEnvironment_label;
@@ -2888,6 +2898,8 @@ public class PDEUIMessages extends NLS {
 	public static String CtxHelpDescriptionDetails_description;
 
 	public static String CtxHelpDescriptionDetails_specifyDescription;
+
+	public static String CtxHelpEditor_0;
 
 	public static String CtxHelpPage_contextHelp;
 
