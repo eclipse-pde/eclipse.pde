@@ -174,7 +174,6 @@ public class ApiProblemReporter implements IApiProblemReporter {
 			if(problem.getExtraMarkerAttributeIds().length > 0) {
 				marker.setAttributes(problem.getExtraMarkerAttributeIds(), problem.getExtraMarkerAttributeValues());
 			}
-			
 		} catch (CoreException e) {
 			//ignore and continue
 			return;
