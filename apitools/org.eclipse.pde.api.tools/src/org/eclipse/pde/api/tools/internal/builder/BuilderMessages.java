@@ -21,6 +21,7 @@ public class BuilderMessages extends NLS {
 	public static String checking_api_usage;
 
 	public static String ApiProblemFactory_problem_message_not_found;
+	public static String CleaningAPIDescription;
 	public static String Compatibility_Analysis;
 	public static String Analyzing_0_1;
 

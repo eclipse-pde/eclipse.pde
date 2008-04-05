@@ -392,7 +392,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		fCurrentProject = getProject();
-		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format("Cleaning API description for {0}", new String[] {fCurrentProject.getName()}), 2);
+		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.CleaningAPIDescription, new String[] {fCurrentProject.getName()}), 2);
 		try {
 			// clean up all existing markers
 			cleanupMarkers(fCurrentProject);
