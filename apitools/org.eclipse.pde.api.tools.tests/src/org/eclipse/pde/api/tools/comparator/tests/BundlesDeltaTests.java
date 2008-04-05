@@ -30,7 +30,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(BundlesDeltaTests.class);
 		TestSuite suite = new TestSuite(BundlesDeltaTests.class.getName());
-		suite.addTest(new BundlesDeltaTests("test9"));
+		suite.addTest(new BundlesDeltaTests("test10"));
 		return suite;
 	}
 
@@ -444,5 +444,20 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Removed api packages
+	 */
+	public void test10() {
+		deployBundles("test10");
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
+		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 }
