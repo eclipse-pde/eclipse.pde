@@ -446,7 +446,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
-	 * Removed api packages
+	 * Removed api packages - bug 225473
 	 */
 	public void test10() {
 		deployBundles("test10");
