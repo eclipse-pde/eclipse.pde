@@ -21,8 +21,6 @@ public class SearchMessages extends NLS {
 	public static String SearchEngine_1;
 	public static String SearchEngine_2;
 	public static String SearchEngine_3;
-	public static String SearchEngine_4;
-	public static String SearchEngine_5;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);

@@ -39,6 +39,8 @@ import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.ClassReader;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Extracts references from an API component.
  * 
@@ -85,7 +87,7 @@ public class SearchEngine implements IApiSearchEngine {
 		}
 		
 		public boolean visitPackage(String packageName) {
-			fMonitor.subTask(SearchMessages.SearchEngine_0 + packageName);
+			fMonitor.subTask(MessageFormat.format(SearchMessages.SearchEngine_0, new String[]{packageName}));
 			return true;
 		}
 
@@ -348,14 +350,14 @@ public class SearchEngine implements IApiSearchEngine {
 			return EMPTY_RESULT;
 		}
 		// 2. resolve the remaining references
-		localMonitor.subTask(SearchMessages.SearchEngine_4);
+		localMonitor.subTask(SearchMessages.SearchEngine_3);
 		resolveReferences(fPotentialMatches, localMonitor);
 		localMonitor.worked(1);
 		if (localMonitor.isCanceled()) {
 			return EMPTY_RESULT;
 		}
 		// 3. filter based on search conditions
-		localMonitor.subTask(SearchMessages.SearchEngine_5);
+		localMonitor.subTask(SearchMessages.SearchEngine_3);
 		for (int i = 0; i < fPotentialMatches.length; i++) {
 			List references = fPotentialMatches[i];
 			if (!references.isEmpty()) {
