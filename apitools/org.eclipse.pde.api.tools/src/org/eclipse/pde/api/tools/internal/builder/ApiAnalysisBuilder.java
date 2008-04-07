@@ -909,7 +909,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if (compversion.getMajor() <= refversion.getMajor()) {
 					newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier());
 					problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE,
-										new String[] {refversionval, compversionval},
+										new String[] {compversionval, refversionval},
 										true,
 										String.valueOf(newversion));
 				}
@@ -919,14 +919,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					// major version should be identical
 					newversion = new Version(refversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
 					problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
-										new String[] {refversionval, compversionval},
+										new String[] {compversionval, refversionval},
 										false,
 										String.valueOf(newversion));
 				} else if (compversion.getMinor() <= refversion.getMinor()) {
 					// the minor version should be incremented
 					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
 					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE, 
-										new String[] {refversionval, compversionval},
+										new String[] {compversionval, refversionval},
 										false,
 										String.valueOf(newversion));
 				} else {
