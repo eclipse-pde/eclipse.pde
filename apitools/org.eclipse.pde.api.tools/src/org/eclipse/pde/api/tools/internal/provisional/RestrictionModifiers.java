@@ -37,6 +37,10 @@ public class RestrictionModifiers {
 	 * Restriction kind constant indicating a class cannot have a member referenced
 	 */
 	public static final int NO_REFERENCE = 0x0800;
+	/**
+	 * Restriction kind constant indicating a method cannot be overridden
+	 */
+	public static final int NO_OVERRIDE = 0x1000;
 	
 	/**
 	 * Bit mask of all restrictions.
@@ -53,12 +57,21 @@ public class RestrictionModifiers {
 	}
 	
 	/**
-	 * Returns if the no_subclass modifier has been set in the specified modifiers
+	 * Returns if the no_extend modifier has been set in the specified modifiers
 	 * @param modifiers the modifiers to resolve
-	 * @return if the no_subclass modifier has been set in the specified modifiers
+	 * @return if the no_extend modifier has been set in the specified modifiers
 	 */
 	public static final boolean isExtendRestriction(int modifiers) {
 		return (modifiers & NO_EXTEND) > 0;
+	}
+	
+	/**
+	 * Returns if the no_override modifier has been set in the specified modifiers
+	 * @param modifiers the modifiers to resolve
+	 * @return if the no_override modifier has been set in the specified modifiers
+	 */
+	public static final boolean isOverrideRestriction(int modifiers) {
+		return (modifiers & NO_OVERRIDE) > 0;
 	}
 	
 	/**

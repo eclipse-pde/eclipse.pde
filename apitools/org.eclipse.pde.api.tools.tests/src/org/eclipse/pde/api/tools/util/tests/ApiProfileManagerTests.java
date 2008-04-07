@@ -514,14 +514,14 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass1.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
 			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestClass1.java"));
 			assertNotNull("TestClass1 must exist in the test project", element);
-			updateTagInSource(element, "foo", "()V", "@noextend", false);
+			updateTagInSource(element, "foo", "()V", "@nooverride", false);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the content changed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
 			IApiAnnotations annot = desc.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestClass1", "foo", "()V"));
 			assertNotNull("the annotations for foo() cannot be null", annot);
-			assertTrue("there must be a noextend setting for foo()", (annot.getRestrictions() & RestrictionModifiers.NO_EXTEND) != 0);
+			assertTrue("there must be a nooverride setting for foo()", (annot.getRestrictions() & RestrictionModifiers.NO_OVERRIDE) != 0);
 		}
 		catch (InvocationTargetException e) {
 			fail(e.getMessage());
@@ -585,7 +585,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass1.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
 			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestClass1.java"));
 			assertNotNull("TestClass1 must exist in the test project", element);
-			updateTagInSource(element, "foo", "()V", "@noextend", true);
+			updateTagInSource(element, "foo", "()V", "@nooverride", true);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the content changed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();

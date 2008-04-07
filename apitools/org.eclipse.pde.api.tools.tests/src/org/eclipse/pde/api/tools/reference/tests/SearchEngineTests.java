@@ -145,15 +145,15 @@ public class SearchEngineTests extends TestCase {
 		IMethodDescriptor m1 = base.getMethod("noOverride", "()V");
 		IMethodDescriptor m2 = base.getMethod("noOverridePrimitiveArg", "(I)V");
 		IMethodDescriptor m3 = base.getMethod("noOverrideStringArg", "(Ljava/lang/String;)V");
-		componentA.getApiDescription().setRestrictions(m1, RestrictionModifiers.NO_EXTEND);
-		componentA.getApiDescription().setRestrictions(m2, RestrictionModifiers.NO_EXTEND);
-		componentA.getApiDescription().setRestrictions(m3, RestrictionModifiers.NO_EXTEND);
+		componentA.getApiDescription().setRestrictions(m1, RestrictionModifiers.NO_OVERRIDE);
+		componentA.getApiDescription().setRestrictions(m2, RestrictionModifiers.NO_OVERRIDE);
+		componentA.getApiDescription().setRestrictions(m3, RestrictionModifiers.NO_OVERRIDE);
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
 		criteria.setReferenceKinds(ReferenceModifiers.REF_OVERRIDE);
 		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
-				RestrictionModifiers.NO_EXTEND);
+				RestrictionModifiers.NO_OVERRIDE);
 		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
 				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of overrides", 3, refs.length);

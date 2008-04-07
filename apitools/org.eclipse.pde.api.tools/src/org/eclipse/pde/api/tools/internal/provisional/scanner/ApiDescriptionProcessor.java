@@ -348,9 +348,9 @@ public class ApiDescriptionProcessor {
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}
-					if(RestrictionModifiers.isExtendRestriction(res)) {
-						if(!containsRestrictionTag(tags, "@noextend")) { //$NON-NLS-1$
-							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noextend"); //$NON-NLS-1$
+					if(RestrictionModifiers.isOverrideRestriction(res)) {
+						if(!containsRestrictionTag(tags, "@nooverride")) { //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.nooverride"); //$NON-NLS-1$
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}
@@ -628,6 +628,12 @@ public class ApiDescriptionProcessor {
 			settings.setVisibility(descriptor, typeVis);
 		}
 		int restrictions = getRestrictions(element);
+		if(descriptor.getElementType() == IElementDescriptor.T_METHOD) {
+			if(RestrictionModifiers.isExtendRestriction(restrictions)) {
+				restrictions &= ~RestrictionModifiers.NO_EXTEND;
+				restrictions |= RestrictionModifiers.NO_OVERRIDE;
+			}
+		}
 		if (descriptor.getElementType() == IElementDescriptor.T_REFERENCE_TYPE) {
 			IReferenceTypeDescriptor referenceTypeDescriptor = (IReferenceTypeDescriptor) descriptor;
 			IType type = null;
@@ -671,6 +677,7 @@ public class ApiDescriptionProcessor {
 	private static int getRestrictions(Element element) {
 		int res = annotateRestriction(element, IApiXmlConstants.ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, RestrictionModifiers.NO_RESTRICTIONS);
 		res = annotateRestriction(element, IApiXmlConstants.ATTR_EXTEND, RestrictionModifiers.NO_EXTEND, res);
+		res = annotateRestriction(element, IApiXmlConstants.ATTR_OVERRIDE, RestrictionModifiers.NO_OVERRIDE, res);
 		res = annotateRestriction(element, "subclass", RestrictionModifiers.NO_EXTEND, res); //$NON-NLS-1$
 		res = annotateRestriction(element, IApiXmlConstants.ATTR_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, res);
 		res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);

@@ -1613,6 +1613,12 @@ public final class Util {
 				}
 				buffer.append("NO_RESTRICTIONS"); //$NON-NLS-1$
 			}
+			if((kind & RestrictionModifiers.NO_OVERRIDE) > 0) {
+				if(buffer.length() > 0) {
+					buffer.append(" | "); //$NON-NLS-1$
+				}
+				buffer.append("NO_OVERRIDE"); //$NON-NLS-1$
+			}
 		}
 		if(buffer.length() == 0) {
 			return "UNKNOWN_KIND"; //$NON-NLS-1$

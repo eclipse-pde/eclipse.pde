@@ -21,7 +21,7 @@ public class TestMethod1 {
 	 */
 	public void one() {}
 	/**
-	 * @noextend
+	 * @nooverride
 	 */
 	private void two() {}
 	/**

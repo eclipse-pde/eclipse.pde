@@ -28,7 +28,7 @@ public class TestMethod10 {
 	}
 	
 	/**
-	 * @noextend This method is not intended to be extended by clients.
+	 * @nooverride
 	 * @param name
 	 * @param number
 	 */
@@ -36,7 +36,7 @@ public class TestMethod10 {
 	}
 	
 	/**
-	 * @noextend
+	 * @nooverride
 	 * @param list
 	 * @param runnable
 	 */
@@ -45,7 +45,7 @@ public class TestMethod10 {
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
-	 * @noextend This method is not intended to be extended by clients.
+	 * @nooverride
 	 * @param name
 	 * @param number
 	 */

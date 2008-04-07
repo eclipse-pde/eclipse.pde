@@ -17,7 +17,7 @@ package a.b.c;
 public class TestMethod8 {
 
 	/**
-	 * @noextend
+	 * @nooverride
 	 * @param number
 	 */
 	public void one(int number) {

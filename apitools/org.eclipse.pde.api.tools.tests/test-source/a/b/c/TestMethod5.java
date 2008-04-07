@@ -24,7 +24,7 @@ class TestMethod5Outer {
 	 */
 	public void one() {}
 	/**
-	 * @noextend
+	 * @nooverride
 	 */
 	protected void two() {}
 	/**

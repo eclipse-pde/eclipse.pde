@@ -27,7 +27,7 @@ public class TestMethod9 {
 	}
 	
 	/**
-	 * @noextend
+	 * @nooverride
 	 * @param number
 	 * @param dbl
 	 * @param flot

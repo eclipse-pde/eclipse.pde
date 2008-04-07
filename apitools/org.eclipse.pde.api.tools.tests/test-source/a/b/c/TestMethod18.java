@@ -22,7 +22,7 @@ public class TestMethod18 {
 }
 
 /**
- * @noextend
+ * @nooverride
  * @since
  */
 class TestMethod18Outer {

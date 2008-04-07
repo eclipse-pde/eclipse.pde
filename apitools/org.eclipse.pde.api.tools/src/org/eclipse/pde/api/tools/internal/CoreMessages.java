@@ -23,16 +23,6 @@ public class CoreMessages extends NLS {
 	public static String ApiProfile_4;
 	public static String ApiProfile_7;
 	public static String ApiProfile_8;
-	public static String JavadocTagManager_class;
-	public static String JavadocTagManager_extended;
-	public static String JavadocTagManager_field;
-	public static String JavadocTagManager_implemented;
-	public static String JavadocTagManager_instantiated;
-	public static String JavadocTagManager_interface;
-	public static String JavadocTagManager_method;
-	public static String JavadocTagManager_not_intended_to_be;
-	public static String JavadocTagManager_referenced;
-	public static String JavadocTagManager_subclassed;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, CoreMessages.class);

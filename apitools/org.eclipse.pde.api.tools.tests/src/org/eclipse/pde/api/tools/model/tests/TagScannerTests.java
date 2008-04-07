@@ -115,15 +115,15 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod10", "two", "(Ljava/util/List;Ljava/lang/Runnable;)V"));
 		assertTrue("There should exist a description for method 'void two(List, Runnable)'", description != null);
 		assertTrue("There should be API visibility for method 'void two(List, Runnable)'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two(List, Runnable)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two(List, Runnable)'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod10", "one", "(Ljava/lang/Object;Ljava/lang/Integer;)V"));
 		assertTrue("There should exist a description for method 'void one(Object, Integer)'", description != null);
 		assertTrue("There should be API visibility for method 'void one(Object, Integer)'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no reference restriction and no extend restriction on method 'void one(Object, Integer)'", description.getRestrictions() == (RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_REFERENCE));
+		assertTrue("There should be a no reference restriction and no override restriction on method 'void one(Object, Integer)'", description.getRestrictions() == (RestrictionModifiers.NO_OVERRIDE | RestrictionModifiers.NO_REFERENCE));
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod10", "one", "([[Ljava/lang/String;Ljava/lang/Integer;)V"));
 		assertTrue("There should exist a description for method 'void one(String[][], Integer)'", description != null);
 		assertTrue("There should be API visibility for method 'void one(String[][], Integer)'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void one(String[][], Integer)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void one(String[][], Integer)'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -528,7 +528,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod1", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod1", "three", "()V"));
 		assertTrue("There should exist a description for method 'void three()'", description != null);
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
@@ -560,7 +560,7 @@ public class TagScannerTests extends TestCase {
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod8", "one", "(I)V"));
 		assertTrue("There should exist a description for method 'void one(int)'", description != null);
 		assertTrue("There should be API visibility for method 'void one(int)'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void one(int)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void one(int)'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -578,7 +578,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod9", "two", "(DF)V"));
 		assertTrue("There should exist a description for method 'void two(double, float)'", description != null);
 		assertTrue("There should be API visibility for method 'void two(double, float)'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two(double, float)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two(double, float)'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 		
 	}
 	
@@ -597,7 +597,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod10", "two", "(QList;QRunnable;)V"));
 		assertTrue("There should exist a description for method 'void two(List, Runnable)'", description != null);
 		assertTrue("There should be API visibility for method 'void two(List, Runnable)'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two(List, Runnable)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two(List, Runnable)'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -615,7 +615,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod11", "two", "([[F[D)V"));
 		assertTrue("There should exist a description for method 'void two(float[][], double[])'", description != null);
 		assertTrue("There should be API visibility for method 'void two(float[][], double[])'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two(float[][], double[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two(float[][], double[])'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -633,7 +633,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod12", "two", "([[QList;[QRunnable;)V"));
 		assertTrue("There should exist a description for method 'void two(List[][], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'void two(List[][], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two(List[][], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two(List[][], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -651,7 +651,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod13", "two", "([[QList;DC[I[QRunnable;)V"));
 		assertTrue("There should exist a description for method 'void two(List[][], double, char, int[], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'void two(List[][], double, char, int[], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -669,7 +669,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod14", "two", "([[QList;DC[I[QRunnable;)QDouble;"));
 		assertTrue("There should exist a description for method 'Double two(List[][], double, char, int[], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'Double two(List[][], double, char, int[], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'Double two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'Double two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -687,7 +687,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod15", "two", "([[QList;DC[I[QRunnable;)D"));
 		assertTrue("There should exist a description for method 'double two(List[][], double, char, int[], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'double two(List[][], double, char, int[], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'double two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'double two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -705,7 +705,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod17", "two", "([[QList;DC[I[QRunnable;)[D"));
 		assertTrue("There should exist a description for method 'double[] two(List[][], double, char, int[], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'double[] two(List[][], double, char, int[], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'double[] two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'double[] two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -723,7 +723,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod16", "two", "([[QList;DC[I[QRunnable;)[QDouble;"));
 		assertTrue("There should exist a description for method 'Double[] two(List[][], double, char, int[], Runnable[])'", description != null);
 		assertTrue("There should be API visibility for method 'Double[] two(List[][], double, char, int[], Runnable[])'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'Double[] two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'Double[] two(List[][], double, char, int[], Runnable[])'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -740,7 +740,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod2$Inner", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -757,7 +757,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod3$Inner", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod3$Inner", "three", "()V"));
 		assertTrue("There should exist a description for method 'void three()'", description != null);
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
@@ -778,7 +778,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner1", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner1", "three", "()V"));
 		assertTrue("There should exist a description for method 'void three()'", description != null);
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
@@ -790,7 +790,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner1$Inner3", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner1$Inner3", "three", "()V"));
 		assertTrue("There should exist a description for method 'void three()'", description != null);
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
@@ -802,7 +802,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2$Inner4", "one", "()V"));
 		assertTrue("There should exist a description for method 'void one()'", description != null);
 		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
@@ -810,7 +810,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2$Inner4", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 	}
 	
 	/**
@@ -827,7 +827,7 @@ public class TagScannerTests extends TestCase {
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod5Outer", "two", "()V"));
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod5Outer", "three", "()V"));
 		assertTrue("There should exist a description for method 'void three()'", description != null);
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
@@ -844,7 +844,7 @@ public class TagScannerTests extends TestCase {
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod6", "run", "()V"));
 		assertTrue("There should exist a description for method 'void run()'", description != null);
 		assertTrue("There should be API visibility for method 'void run()'", description.getVisibility() == VisibilityModifiers.API);
-		assertTrue("There should be a no reference restriction on method 'void run()'", description.getRestrictions() == (RestrictionModifiers.NO_REFERENCE | RestrictionModifiers.NO_EXTEND));
+		assertTrue("There should be a no reference and no override restriction on method 'void run()'", description.getRestrictions() == (RestrictionModifiers.NO_REFERENCE | RestrictionModifiers.NO_OVERRIDE));
 	}
 	
 	/**

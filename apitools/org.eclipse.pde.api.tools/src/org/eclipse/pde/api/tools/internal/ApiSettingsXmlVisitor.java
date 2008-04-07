@@ -156,6 +156,9 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 		if (RestrictionModifiers.isExtendRestriction(restrictions)) {
 			element.setAttribute(IApiXmlConstants.ATTR_EXTEND, VALUE_FALSE);
 		}
+		if(RestrictionModifiers.isOverrideRestriction(restrictions)) {
+			element.setAttribute(IApiXmlConstants.ATTR_OVERRIDE, VALUE_FALSE);
+		}
 		if (RestrictionModifiers.isInstantiateRestriction(restrictions)) {
 			element.setAttribute(IApiXmlConstants.ATTR_INSTANTIATE, VALUE_FALSE);
 		}

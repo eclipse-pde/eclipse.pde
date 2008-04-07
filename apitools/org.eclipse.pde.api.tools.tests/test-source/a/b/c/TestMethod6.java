@@ -21,7 +21,7 @@ public class TestMethod6 {
 		protected int number = -1;
 		/**
 		 * @noreference
-		 * @noextend
+		 * @nooverride
 		 */
 		public void run() {
 		}

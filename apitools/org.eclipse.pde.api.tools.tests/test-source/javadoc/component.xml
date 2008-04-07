@@ -7,7 +7,7 @@
  	<type name="JavadocTestClass2"/>
  	<type name="JavadocTestClass2$Inner" instantiate="false"/>
  	<type name="JavadocTestClass3">
- 		<method name="m1" signature="()V" extend="false"/>
+ 		<method name="m1" signature="()V" override="false"/>
  		<method name="m2" signature="()V" reference="false"/>
  	</type>
  	<type name="JavadocTestClass4">
@@ -23,12 +23,12 @@
  	<type name="JavadocTestClass6"/>
  	<type name="JavadocTestClass6$Inner"/>
  	<type name="JavadocTestClass6$Inner$Inner2">
- 		<method name="m1" signature="()V" extend="false"/>
+ 		<method name="m1" signature="()V" override="false"/>
  		<method name="m2" signature="()V" reference="false"/>
  	</type>
  	<type name="JavadocTestClass7" extend="false" instantiate="false">
  		<field name="f1" reference="false"/>
- 		<method name="m1" signature="()V" extend="false"/>
+ 		<method name="m1" signature="()V" override="false"/>
  	</type>
  	<type name="JavadocTestClass8" instantiate="false" subclass="false"/>
  </package>

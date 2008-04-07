@@ -115,7 +115,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("The major version should be identical in version 1, since no API breakage occurred since version 2", new String[0])));
+		assertTrue("the message should be correct", message.equals(MessageFormat.format("The major version should be the same for version 1, since no API breakage occurred since version 2", new String[0])));
 		problem = ApiProblemFactory.newApiVersionNumberProblem("", 
 				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MINOR_VERSION_CHANGE);
 		assertNotNull("there should be a new problem created", problem);

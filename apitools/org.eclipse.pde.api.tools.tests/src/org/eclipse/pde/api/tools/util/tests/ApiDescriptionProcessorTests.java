@@ -305,7 +305,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * javadoc section yet Uses <code>JavadocTestClass7</code>
 	 */
 	public void testProcessMethodAdditionNoDocElement() {
-		processUpdatedItem("JavadocTestClass7", null, "m1", "()V", new String[] {"@noextend"});
+		processUpdatedItem("JavadocTestClass7", null, "m1", "()V", new String[] {"@nooverride"});
 	}
 
 	/**
@@ -329,7 +329,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * <code>JavadocTestClass3</code>
 	 */
 	public void testProcessMethodAddition() {
-		processUpdatedItem("JavadocTestClass3", null, "m1", "()V", new String[] {"@noextend"});
+		processUpdatedItem("JavadocTestClass3", null, "m1", "()V", new String[] {"@nooverride"});
 		processUpdatedItem("JavadocTestClass3", null, "m2", "()V", new String[] {"@noreference"});
 	}
 
@@ -347,7 +347,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * <code>JavadocTestClass6</code>
 	 */
 	public void testProcessInnerMethodAddition() {
-		processUpdatedItem("JavadocTestClass6", "Inner2", "m1", "()V", new String[] {"@noextend"});
+		processUpdatedItem("JavadocTestClass6", "Inner2", "m1", "()V", new String[] {"@nooverride"});
 		processUpdatedItem("JavadocTestClass6", "Inner2", "m2", "()V", new String[] {"@noreference"});
 	}
 

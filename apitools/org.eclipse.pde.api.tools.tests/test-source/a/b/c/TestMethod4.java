@@ -22,7 +22,7 @@ public class TestMethod4 {
 		 */
 		public void one() {}
 		/**
-		 * @noextend
+		 * @nooverride
 		 */
 		protected void two() {}
 		/**
@@ -36,7 +36,7 @@ public class TestMethod4 {
 			 */
 			public void one() {}
 			/**
-			 * @noextend
+			 * @nooverride
 			 */
 			protected void two() {}
 			/**
@@ -52,7 +52,7 @@ public class TestMethod4 {
 		 */
 		public void one() {}
 		/**
-		 * @noextend
+		 * @nooverride
 		 */
 		protected void two() {}
 		
@@ -62,7 +62,7 @@ public class TestMethod4 {
 			 */
 			public void one() {}
 			/**
-			 * @noextend
+			 * @nooverride
 			 */
 			protected void two() {}
 		}

@@ -90,7 +90,10 @@ public class ApiAnnotations implements IApiAnnotations {
 				buffer.append("@noinstantiate "); //$NON-NLS-1$
 			}
 			if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
-				buffer.append("@noreference"); //$NON-NLS-1$
+				buffer.append("@noreference "); //$NON-NLS-1$
+			}
+			if(RestrictionModifiers.isOverrideRestriction(restrictions)) {
+				buffer.append("@nooverride"); //$NON-NLS-1$
 			}
 		}
 		return buffer.toString();

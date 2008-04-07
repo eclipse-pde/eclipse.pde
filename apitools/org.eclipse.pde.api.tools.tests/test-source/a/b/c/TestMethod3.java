@@ -22,7 +22,7 @@ public class TestMethod3 {
 		 */
 		public void one() {}
 		/**
-		 * @noextend
+		 * @nooverride
 		 */
 		protected void two() {}
 		/**

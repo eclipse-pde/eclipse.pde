@@ -155,11 +155,10 @@ public class ApiUseAnalyzer {
 				// if there are restrictions, added to the search list
 				IElementDescriptor[] elements = new IElementDescriptor[]{element};
 				if (RestrictionModifiers.isExtendRestriction(mask)) {
-					if (element.getElementType() == IElementDescriptor.T_METHOD) {
-						add(ReferenceModifiers.REF_OVERRIDE, RestrictionModifiers.NO_EXTEND, elements, IApiProblem.ILLEGAL_OVERRIDE, IElementDescriptor.T_METHOD);
-					} else if (element.getElementType() == IElementDescriptor.T_REFERENCE_TYPE) {
-						add(ReferenceModifiers.REF_EXTENDS, RestrictionModifiers.NO_EXTEND, elements, IApiProblem.ILLEGAL_EXTEND, IElementDescriptor.T_REFERENCE_TYPE); 
-					}
+					add(ReferenceModifiers.REF_EXTENDS, RestrictionModifiers.NO_EXTEND, elements, IApiProblem.ILLEGAL_EXTEND, IElementDescriptor.T_REFERENCE_TYPE); 
+				}
+				if(RestrictionModifiers.isOverrideRestriction(mask)) {
+					add(ReferenceModifiers.REF_OVERRIDE, RestrictionModifiers.NO_OVERRIDE, elements, IApiProblem.ILLEGAL_OVERRIDE, IElementDescriptor.T_METHOD);
 				}
 				if (RestrictionModifiers.isImplementRestriction(mask)) {
 					add(ReferenceModifiers.REF_IMPLEMENTS, RestrictionModifiers.NO_IMPLEMENT, elements, IApiProblem.ILLEGAL_IMPLEMENT, IElementDescriptor.T_REFERENCE_TYPE);
@@ -364,8 +363,8 @@ public class ApiUseAnalyzer {
 		addLeakCondition(conditions, ReferenceModifiers.REF_EXTENDS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_EXTENDS, RestrictionModifiers.ALL_RESTRICTIONS);
 		addLeakCondition(conditions, ReferenceModifiers.REF_IMPLEMENTS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_IMPLEMENTS, RestrictionModifiers.ALL_RESTRICTIONS);
 		addLeakCondition(conditions, ReferenceModifiers.REF_FIELDDECL, IApiProblem.API_LEAK, IElementDescriptor.T_FIELD, IApiProblem.LEAK_FIELD, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE);
-		addLeakCondition(conditions, ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_METHOD_PARAMETER, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE);
-		addLeakCondition(conditions, ReferenceModifiers.REF_RETURNTYPE, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_RETURN_TYPE, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE);
+		addLeakCondition(conditions, ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_METHOD_PARAMETER, RestrictionModifiers.ALL_RESTRICTIONS ^ (RestrictionModifiers.NO_REFERENCE | RestrictionModifiers.NO_OVERRIDE));
+		addLeakCondition(conditions, ReferenceModifiers.REF_RETURNTYPE, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_RETURN_TYPE, RestrictionModifiers.ALL_RESTRICTIONS ^ (RestrictionModifiers.NO_REFERENCE | RestrictionModifiers.NO_OVERRIDE));
 		return (IApiSearchCriteria[]) conditions.toArray(new IApiSearchCriteria[conditions.size()]);
 	}
 	
@@ -841,7 +840,7 @@ public class ApiUseAnalyzer {
 								if(annotations == null) {
 									return null;
 								}
-								if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
+								if (RestrictionModifiers.isOverrideRestriction(annotations.getRestrictions())) {
 									// ignore
 									return null;
 								}

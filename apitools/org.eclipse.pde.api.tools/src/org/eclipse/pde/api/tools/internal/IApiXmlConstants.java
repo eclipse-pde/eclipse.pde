@@ -48,6 +48,11 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_EXTEND = "extend"; //$NON-NLS-1$
 	/**
+	 * Constant representing the override attribute for a method xml node.
+	 * Value is: <code>override</code>
+	 */
+	public static final String ATTR_OVERRIDE = "override"; //$NON-NLS-1$
+	/**
 	 * Constant representing the flags attribute of an {@link IApiProblem} in xml.
 	 * Value is: <code>flags</code>
 	 */

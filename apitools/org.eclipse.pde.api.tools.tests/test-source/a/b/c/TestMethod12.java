@@ -28,7 +28,7 @@ public class TestMethod12 {
 	}
 	
 	/**
-	 * @noextend
+	 * @nooverride
 	 * @param names
 	 * @param runs
 	 */
