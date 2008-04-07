@@ -209,7 +209,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						}
 						buildAll(localMonitor);
 					} else {
-						buildDeltas(deltas);
+						State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(fCurrentProject, new NullProgressMonitor());
+						if (state == null) {
+							buildAll(localMonitor);
+						} else {
+							buildDeltas(deltas, state);
+						}
 					}
 					break;
 				}
@@ -456,7 +461,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * workspace profile
 	 * @param delta
 	 */
-	private void buildDeltas(IResourceDelta[] deltas) {
+	private void buildDeltas(IResourceDelta[] deltas, final State state) {
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		if (profile == null) {
 			return;
@@ -465,7 +470,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		for(int i = 0; i < deltas.length; i++) {
 			flatten0(deltas[i], flattenDeltas);
 		}
-		State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(fCurrentProject, new NullProgressMonitor());
 		for (Iterator iterator = flattenDeltas.iterator(); iterator.hasNext();) {
 			IResourceDelta resourceDelta = (IResourceDelta) iterator.next();
 			if (DEBUG) {
