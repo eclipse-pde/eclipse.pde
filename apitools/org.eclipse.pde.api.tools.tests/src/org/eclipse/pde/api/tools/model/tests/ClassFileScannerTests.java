@@ -42,7 +42,6 @@ import org.eclipse.pde.api.tools.internal.search.ClassFileScanner;
  * 
  * @since 1.0.0
  */
-@SuppressWarnings("unchecked")
 public class ClassFileScannerTests extends TestCase {
 	
 	private static IPath WORKSPACE_ROOT = null;

@@ -44,7 +44,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 /**
  * Base class for API builder tests
  */
-@SuppressWarnings("unchecked")
 public class ApiBuilderTests extends BuilderTests {
 	/**
 	 * Debug flag
