@@ -533,8 +533,8 @@ public class PDEUIMessages extends NLS {
 	public static String LibrarySection_addDialogButton;
 
 	public static String MainPreferencePage_group2;
-
 	public static String MainPreferencePage_updateStale;
+	public static String MainPreferencePage_targetPlatformRealization;
 
 	public static String ManifestStructureCreator_errorMessage;
 

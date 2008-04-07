@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private Combo fProfileCombo;
 	private Button fBrowseButton;
 	private Button fLoadProfileButton;
+	private Button fTargetRealization;
 
 	private TargetPluginsTab fPluginsTab;
 	private TargetEnvironmentTab fEnvironmentTab;
@@ -211,8 +212,15 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 		});
 
+		fTargetRealization = new Button(target, SWT.CHECK);
+		fTargetRealization.setText(PDEUIMessages.MainPreferencePage_targetPlatformRealization);
+		fTargetRealization.setSelection(fPreferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 4;
+		fTargetRealization.setLayoutData(gd);
+
 		fTabFolder = new TabFolder(target, SWT.NONE);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 4;
 		fTabFolder.setLayoutData(gd);
 
@@ -553,6 +561,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			IConfigurationElement elem = fElements[fProfileCombo.getSelectionIndex() - offSet];
 			fPreferences.setValue(ICoreConstants.TARGET_PROFILE, "id:" + elem.getAttribute("id")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		fPreferences.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, fTargetRealization.getSelection());
 	}
 
 	public String[] getPlatformLocations() {

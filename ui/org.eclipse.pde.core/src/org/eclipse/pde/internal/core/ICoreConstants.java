@@ -37,6 +37,7 @@ public interface ICoreConstants {
 	String IMPLICIT_DEPENDENCIES = "implicit_dependencies"; //$NON-NLS-1$
 	String GROUP_PLUGINS_VIEW = "group_plugins"; //$NON-NLS-1$
 	String ADDITIONAL_LOCATIONS = "additional_locations"; //$NON-NLS-1$
+	String TARGET_PLATFORM_REALIZATION = "target_platform_realization"; //$NON-NLS-1$
 
 	// Target Environment
 	String OS = "org.eclipse.pde.ui.os"; //$NON-NLS-1$

@@ -10,19 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Properties;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.pde.core.plugin.TargetPlatform;
@@ -93,6 +85,10 @@ public class PluginPathFinder {
 	}
 
 	public static URL[] getPluginPaths(String platformHome) {
+		Preferences store = PDECore.getDefault().getPluginPreferences();
+		if (!store.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION))
+			return scanLocations(getSites(platformHome, false));
+
 		URL[] urls = P2Utils.readBundlesTxt(platformHome);
 		if (urls != null) {
 			return urls;
