@@ -280,7 +280,7 @@ public class ApiDescription implements IApiDescription {
 		if (visitChildren && !node.children.isEmpty()) {
 			visitChildren(visitor, node.children);
 		}
-		visitor.endVisitElement(node.element, desc);	
+		visitor.endVisitElement(node.element, desc);
 	}
 	
 	/**
