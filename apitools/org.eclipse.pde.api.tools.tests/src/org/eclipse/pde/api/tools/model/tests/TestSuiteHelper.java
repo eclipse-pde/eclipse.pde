@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -33,16 +34,24 @@ import junit.framework.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.compiler.batch.Main;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
+import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -91,15 +100,102 @@ public class TestSuiteHelper {
 		return baseline;
 	}	
 	
+	/**
+	 * Creates a testing API profile
+	 * @param testDirectory
+	 * @return
+	 * @throws CoreException
+	 */
 	public static IApiProfile createTestingProfile(String testDirectory) throws CoreException {
 		return createTestingProfile(new Path(testDirectory));
+	}
+	
+	/**
+	 * Creates a testing {@link IApiComponent}
+	 * @param name
+	 * @param id
+	 * @param description
+	 * @return a new {@link IApiComponent} for testing
+	 */
+	public static IApiComponent createTestingApiComponent(final String name, final String id, final IApiDescription description) {
+		return new IApiComponent() {
+			public String[] getPackageNames() throws CoreException {
+				return null;
+			}
+			public IClassFile findClassFile(String qualifiedName) throws CoreException {
+				return null;
+			}
+			public void close() throws CoreException {
+			}
+			public void accept(ClassFileContainerVisitor visitor) throws CoreException {
+			}
+			public String getVersion() {
+				return null;
+			}
+			public IRequiredComponentDescription[] getRequiredComponents() {
+				return null;
+			}
+			public String getName() {
+				return name;
+			}
+			public String getLocation() {
+				return null;
+			}
+			public String getId() {
+				return id;
+			}
+			public String[] getExecutionEnvironments() {
+				return null;
+			}
+			public IClassFileContainer[] getClassFileContainers() {
+				return null;
+			}
+			public IApiDescription getApiDescription() {
+				return description;
+			}
+			public boolean isSystemComponent() {
+				return false;
+			}
+			public void dispose() {
+			}
+			public IApiProfile getProfile() {
+				return null;
+			}
+			@SuppressWarnings("unchecked")
+			public void export(Map options, IProgressMonitor monitor) throws CoreException {
+			}
+			public IApiFilterStore getFilterStore() {
+				return null;
+			}
+			public IApiProblemFilter newProblemFilter(IApiProblem problem) {
+				return null;
+			}
+			public boolean isSourceComponent() {
+				return false;
+			}
+			public boolean isFragment() {
+				return false;
+			}
+			public boolean hasFragments() {
+				return false;
+			}
+			public IClassFileContainer[] getClassFileContainers(String id) {
+				return null;
+			}
+			public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
+				return null;
+			}
+			public String getOrigin() {
+				return this.getId();
+			}
+		};
 	}
 	
 	/**
 	 * Creates a simple baseline from bundles in the specified directory of 
 	 * the test plug-in project.
 	 * 
-	 * @return Testing API baseline. If for some reason the testing dir is not available
+	 * @return Testing API baseline. If for some reason the testing directory is not available
 	 * <code>null</code> is returned
 	 * @throws CoreException
 	 */
@@ -353,7 +449,7 @@ public class TestSuiteHelper {
 	}
 	
 	/**
-	 * Delete the file f and all subdirectories if f is a directory
+	 * Delete the file f and all sub-directories if f is a directory
 	 * @param f the given file to delete
 	 * @return true if the file was successfully deleted, false otherwise
 	 */

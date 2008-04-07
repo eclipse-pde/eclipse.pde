@@ -16,35 +16,25 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
-import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
-import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -53,7 +43,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * 
  * @since 1.0.0
  */
-@SuppressWarnings("unchecked")
 public class ApiDescriptionTests extends TestCase {
 	
 	private IApiDescription fManifest = buildManifest();
@@ -78,7 +67,7 @@ public class ApiDescriptionTests extends TestCase {
 			fComponent = componentContext;
 		}
 	}
-	
+
 	/**
 	 * Creates and returns a container for an element and expected API settings.
 	 * 
@@ -107,13 +96,13 @@ public class ApiDescriptionTests extends TestCase {
 	 * 		class A
 	 * 		class B 		- @noinstantiate
 	 * 			method m1 	- @noextend
-	 * 		class C 		- @noinstantiate @nosubclass
+	 * 		class C 		- @noinstantiate @noextend
 	 * 		class D 		- @noreference
 	 * 			field f1 	- @noreference
 	 * 		interface IA
 	 * 		interface IB 	- @noimplement
 	 * package a.b.c: API
-	 * 		class A 		- @noinstantiate @nosubclass
+	 * 		class A 		- @noinstantiate @noextend
 	 * 			method m2 	- @noreference
 	 * 		class B
 	 * 		class C			- @noextend
@@ -128,7 +117,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * 		class SpiC 		- @noinstantiate
 	 * 			field f4	- @noreference
 	 * 			method m4	- @noextend
-	 * 		class SpiD 		- @nosubclass @noinstantiate
+	 * 		class SpiD 		- @noextend @noinstantiate
 	 * 		class SpiE 		- @noreference
 	 * 			field f3
 	 * 		interface ISpiA
@@ -233,13 +222,13 @@ public class ApiDescriptionTests extends TestCase {
 	 * 		class A
 	 * 		class B 		- @noinstantiate
 	 * 			method m1 	- @noextend
-	 * 		class C 		- @noinstantiate @nosubclass
+	 * 		class C 		- @noinstantiate @noextend
 	 * 		class D 		- @noreference
 	 * 			field f1 	- @noreference
 	 * 		interface IA
 	 * 		interface IB 	- @noimplement
 	 * package a.b.c: API
-	 * 		class A 		- @noinstantiate @nosubclass
+	 * 		class A 		- @noinstantiate @noextend
 	 * 			method m2 	- @noreference
 	 * 		class B
 	 * 		class C			- @noextend
@@ -254,7 +243,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * 		class SpiC 		- @noinstantiate
 	 * 			field f4	- @noreference
 	 * 			method m4	- @noextend
-	 * 		class SpiD 		- @nosubclass @noinstantiate
+	 * 		class SpiD 		- @noextend @noinstantiate
 	 * 		class SpiE 		- @noreference
 	 * 			field f3
 	 * 		interface ISpiA
@@ -400,80 +389,10 @@ public class ApiDescriptionTests extends TestCase {
 		ApiDescriptionProcessor.annotateApiSettings(null, settings, readXML);
 		
 		// write back to XML and then re-create
-		ApiSettingsXmlVisitor xmlVisitor = new ApiSettingsXmlVisitor(new IApiComponent() {
-			public String[] getPackageNames() throws CoreException {
-				return null;
-			}
-			public IClassFile findClassFile(String qualifiedName) throws CoreException {
-				return null;
-			}
-			public void close() throws CoreException {
-			}
-			public void accept(ClassFileContainerVisitor visitor) throws CoreException {
-			}
-			public String getVersion() {
-				return null;
-			}
-			public IRequiredComponentDescription[] getRequiredComponents() {
-				return null;
-			}
-			public String getName() {
-				return "test";
-			}
-			public String getLocation() {
-				return null;
-			}
-			public String getId() {
-				return "test";
-			}
-			public String[] getExecutionEnvironments() {
-				return null;
-			}
-			public IClassFileContainer[] getClassFileContainers() {
-				return null;
-			}
-			public IApiDescription getApiDescription() {
-				return null;
-			}
-			public boolean isSystemComponent() {
-				return false;
-			}
-			public void dispose() {
-			}
-			public IApiProfile getProfile() {
-				return null;
-			}
-			public void export(Map options, IProgressMonitor monitor) throws CoreException {
-			}
-			public IApiFilterStore getFilterStore() {
-				return null;
-			}
-			public IApiProblemFilter newProblemFilter(IApiProblem problem) {
-				return null;
-			}
-			public boolean isSourceComponent() {
-				return false;
-			}
-			public boolean isFragment() {
-				return false;
-			}
-			public boolean hasFragments() {
-				return false;
-			}
-			public IClassFileContainer[] getClassFileContainers(String id) {
-				return null;
-			}
-			public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
-				return null;
-			}
-			public String getOrigin() {
-				return this.getId();
-			}
-		});
-		settings.accept(xmlVisitor);
-		String writeXML = xmlVisitor.getXML();
+		IApiComponent component = TestSuiteHelper.createTestingApiComponent("test", "test", settings);
+		String writeXML = Util.getApiDescriptionXML(component);
 		
-		ApiDescription restored = new ApiDescription(null);
+		IApiDescription restored = new ApiDescription(null); 
 		ApiDescriptionProcessor.annotateApiSettings(null, restored, writeXML);
 		
 		// compare the original and restore settings
@@ -481,31 +400,44 @@ public class ApiDescriptionTests extends TestCase {
 		// build expected visit order from original
 		final List<ElementDescription> visitOrder = new ArrayList<ElementDescription>();
 		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor() {
-			public boolean visitElement(IElementDescriptor element, String component, IApiAnnotations description) {
-				visitOrder.add(new ElementDescription(component, element, description.getVisibility(), description.getRestrictions()));
-				return true;
+			/* (non-Javadoc)
+			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
+			 */
+			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
+				visitOrder.add(new ElementDescription(null, element, description.getVisibility(), description.getRestrictions()));
+				return super.visitElement(element, description);
 			}
-			public void endVisitElement(IElementDescriptor element, String component, IApiAnnotations description) {
-				visitOrder.add(new ElementDescription(component, element, description.getVisibility(), description.getRestrictions()));
+			/* (non-Javadoc)
+			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#endVisitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
+			 */
+			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
+				visitOrder.add(new ElementDescription(null, element, description.getVisibility(), description.getRestrictions()));
+				super.endVisitElement(element, description);
 			}
 		};
 		settings.accept(visitor);
 		
 		// now visit the restored version and compare order
 		visitor = new ApiDescriptionVisitor() {
-			public boolean visitElement(IElementDescriptor element, String component, IApiAnnotations description) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
+			 */
+			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
 				assertEquals("Wrong begin visit element", expected.fElement, element);
-				assertEquals("Wrong begin visit component", expected.fComponent, component);
+				assertEquals("Wrong begin visit component", expected.fComponent, null);
 				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility());
 				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions());
 				return true;
 			}
-		
-			public void endVisitElement(IElementDescriptor element, String component, IApiAnnotations description) {
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#endVisitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
+			 */
+			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
 				assertEquals("Wrong end visit element", expected.fElement, element);
-				assertEquals("Wrong end visit component", expected.fComponent, component);
+				assertEquals("Wrong end visit component", expected.fComponent, null);
 				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility());
 				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions());
 			}
@@ -520,7 +452,6 @@ public class ApiDescriptionTests extends TestCase {
 	 * Test visiting types
 	 */
 	protected void doVisitTypes(IApiDescription manifest) {
-		
 		IPackageDescriptor defPkgDesc= Factory.packageDescriptor("");
 		ElementDescription defPkg = new ElementDescription(defPkgDesc, VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
 			ElementDescription B = new ElementDescription(defPkgDesc.getType("B"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE);
@@ -618,9 +549,9 @@ public class ApiDescriptionTests extends TestCase {
 		ElementDescription defPkg = new ElementDescription(Factory.packageDescriptor(""), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
 		ElementDescription abcPkg = new ElementDescription(Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
 		ElementDescription spiPkg = new ElementDescription(Factory.packageDescriptor("a.b.c.spi"), VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS);
-		ElementDescription spiPkgForNoFriend = new ElementDescription("no.friend", Factory.packageDescriptor("a.b.c.spi"), VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
+		//ElementDescription spiPkgForNoFriend = new ElementDescription("no.friend", Factory.packageDescriptor("a.b.c.spi"), VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
 		ElementDescription intPkg = new ElementDescription(Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
-		ElementDescription intPkgForFriend = new ElementDescription("a.friend", Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
+		//ElementDescription intPkgForFriend = new ElementDescription("a.friend", Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
 		
 		final List<ElementDescription> visitOrder = new ArrayList<ElementDescription>();
 		visitOrder.add(defPkg); // start def
@@ -715,7 +646,7 @@ public class ApiDescriptionTests extends TestCase {
 		
 	/**
 	 * Tests API description: IA = API with no restrictions.
-	 * Note that this type is not explicity in the manifest.
+	 * Note that this type is not explicitly in the manifest.
 	 */
 	public void testIADefPkg() {
 		resolveType("IA", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);

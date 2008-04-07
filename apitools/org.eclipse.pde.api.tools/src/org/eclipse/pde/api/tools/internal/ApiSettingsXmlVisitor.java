@@ -169,9 +169,9 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.ApiDescriptionVisitor#endVisitElement(org.eclipse.pde.api.tools.model.component.IElementDescriptor, java.lang.String, org.eclipse.pde.api.tools.model.IApiAnnotations)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#endVisitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
 	 */
-	public void endVisitElement(IElementDescriptor element, String componentContext, IApiAnnotations description) {
+	public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 		switch(element.getElementType()) {
 			case IElementDescriptor.T_PACKAGE: {
 				// A null package indicates there was an override for the package in a different context.
