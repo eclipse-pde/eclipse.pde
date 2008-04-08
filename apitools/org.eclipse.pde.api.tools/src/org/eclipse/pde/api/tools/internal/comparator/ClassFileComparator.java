@@ -1255,7 +1255,52 @@ public class ClassFileComparator {
 					this.addDelta(typeDescriptor, IDelta.ADDED, IDelta.METHOD_WITHOUT_DEFAULT_VALUE, this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor));
 				}
 			} else {
-				this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, IDelta.METHOD, this.getCurrentTypeApiRestrictions(), this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));
+				// check superclass
+				// if null we need to walk the hierarchy of descriptor2
+				TypeDescriptor typeDescriptor2 = this.descriptor2;
+				boolean found = false;
+				if (this.component2 != null) {
+					String name = methodDescriptor.name;
+					String descriptor = methodDescriptor.descriptor;
+					if (this.descriptor1.isInterface()) {
+						Set interfacesSet = getInterfacesSet(typeDescriptor2, this.component2, this.apiState2);
+						if (interfacesSet != null) {
+							for (Iterator iterator = interfacesSet.iterator(); iterator.hasNext();) {
+								TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
+								MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
+								if (methodDescriptor3 == null) {
+									continue;
+								} else {
+									// interface method can only be public
+									// method has been move up in the hierarchy - report the delta and abort loop
+									found = true;
+									break;
+								}
+							}
+						}
+					} else {
+						Set superclassSet = getSuperclassSet(typeDescriptor2, this.component2, this.apiState2);
+						if (superclassSet != null) {
+							loop: for (Iterator iterator = superclassSet.iterator(); iterator.hasNext();) {
+								TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
+								MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
+								if (methodDescriptor3 == null) {
+									continue;
+								} else {
+									int access3 = methodDescriptor3.access;
+									if (Util.isPublic(access3)
+											|| Util.isProtected(access3)) {
+										// method has been move up in the hierarchy - report the delta and abort loop
+										// TODO need to make the distinction between methods that need to be reimplemented and methods that don't
+										found = true;
+										break loop;
+									}
+								}
+							}
+						}
+					}
+				}
+				this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, found ? IDelta.OVERRIDEN_METHOD : IDelta.METHOD, this.getCurrentTypeApiRestrictions(), this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));
 			}
 		} else {
 			this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, IDelta.METHOD, this.getCurrentTypeApiRestrictions(), this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));

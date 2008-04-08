@@ -508,6 +508,17 @@ public interface IDelta {
 	 */
 	public static final int NON_TRANSIENT_TO_TRANSIENT = 35;
 	/**
+	 * Delta kind flag that denotes a method addition that is overriding a method from a superclass
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int OVERRIDEN_METHOD = 36;
+	/**
 	 * Delta kind flag that denotes API restrictions on a member have changed.
 	 * <br>
 	 * Applies to kinds:
@@ -517,7 +528,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int RESTRICTIONS = 36;
+	public static final int RESTRICTIONS = 37;
 	/**
 	 * Delta kind flag that denotes the static keyword has been removed.
 	 * <br>
@@ -528,7 +539,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int STATIC_TO_NON_STATIC = 37;
+	public static final int STATIC_TO_NON_STATIC = 38;
 	/**
 	 * Delta kind flag that denotes a super-class has been added or changed.
 	 * <br>
@@ -540,7 +551,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int SUPERCLASS = 38;
+	public static final int SUPERCLASS = 39;
 	/**
 	 * Delta kind flag that denotes the synchronized keyword has been removed.
 	 * <br>
@@ -551,7 +562,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int SYNCHRONIZED_TO_NON_SYNCHRONIZED = 39;
+	public static final int SYNCHRONIZED_TO_NON_SYNCHRONIZED = 40;
 	/**
 	 * Delta kind flag that denotes a type has changed to an annotation.
 	 * <br>
@@ -562,7 +573,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TO_ANNOTATION = 40;
+	public static final int TO_ANNOTATION = 41;
 	/**
 	 * Delta kind flag that denotes a type has changed to a class.
 	 * <br>
@@ -573,7 +584,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TO_CLASS = 41;
+	public static final int TO_CLASS = 42;
 	/**
 	 * Delta kind flag that denotes a type has changed to an enum.
 	 * <br>
@@ -584,7 +595,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TO_ENUM = 42;
+	public static final int TO_ENUM = 43;
 	/**
 	 * Delta kind flag that denotes a type has changed to an interface.
 	 * <br>
@@ -595,7 +606,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TO_INTERFACE = 43;
+	public static final int TO_INTERFACE = 44;
 	/**
 	 * Delta kind flag that denotes the transient keyword has been removed.
 	 * <br>
@@ -606,7 +617,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TRANSIENT_TO_NON_TRANSIENT = 44;
+	public static final int TRANSIENT_TO_NON_TRANSIENT = 45;
 	/**
 	 * Delta kind flag that denotes a type has changed in some way.
 	 * <br>
@@ -619,7 +630,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TYPE = 45;
+	public static final int TYPE = 46;
 	/**
 	 * Delta kind flag that denotes type arguments have been added or removed.
 	 * <br>
@@ -631,7 +642,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TYPE_ARGUMENTS = 46;
+	public static final int TYPE_ARGUMENTS = 47;
 	/**
 	 * Delta kind flag that denotes a type member has been added or removed from a type.
 	 * <br>
@@ -642,7 +653,7 @@ public interface IDelta {
 	 * </ul>
 	 * @see #getFlags()
 	 */
-	public static final int TYPE_MEMBER = 47;
+	public static final int TYPE_MEMBER = 48;
 	/**
 	 * Delta kind flag that denotes a type parameter has been added or removed.
 	 * <br>
@@ -654,7 +665,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TYPE_PARAMETER = 48;
+	public static final int TYPE_PARAMETER = 49;
 	/**
 	 * Delta kind flag that a type parameter name has changed.
 	 * <br>
@@ -665,7 +676,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TYPE_PARAMETER_NAME = 49;
+	public static final int TYPE_PARAMETER_NAME = 50;
 	/**
 	 * Delta kind flag that denotes parameters have been added or removed from a type.
 	 * <br>
@@ -677,7 +688,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TYPE_PARAMETERS = 50;
+	public static final int TYPE_PARAMETERS = 51;
 	/**
 	 * Delta kind flag that denotes the visibility of a type has changed.
 	 * <br>
@@ -688,7 +699,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TYPE_VISIBILITY = 51;
+	public static final int TYPE_VISIBILITY = 52;
 	/**
 	 * Delta kind flag that denotes an unchecked exception has been added or removed.
 	 * <br>
@@ -700,7 +711,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int UNCHECKED_EXCEPTION = 52;
+	public static final int UNCHECKED_EXCEPTION = 53;
 	/**
 	 * Delta kind flag that denotes the value of a member has changed in some way.
 	 * <br>
@@ -713,7 +724,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int VALUE = 53;
+	public static final int VALUE = 54;
 	/**
 	 * Delta kind flag that denotes changing a Java 1.5 varargs to an array of {@link Object}s.
 	 * <br>
@@ -724,7 +735,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int VARARGS_TO_ARRAY = 54;	
+	public static final int VARARGS_TO_ARRAY = 55;
 
 	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
