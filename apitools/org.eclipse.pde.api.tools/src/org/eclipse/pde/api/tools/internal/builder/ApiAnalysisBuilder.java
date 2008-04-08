@@ -1148,7 +1148,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	private void compareProfiles(IApiComponent reference, IApiComponent component) {
 		long time = System.currentTimeMillis();
 		IDelta delta = null;
-		IApiProblem problem = null;
 		if (reference == null) {
 			delta = new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, component.getId(), component.getId());
 		} else {
@@ -1178,7 +1177,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						case IDelta.API_COMPONENT_ELEMENT_TYPE :
 						case IDelta.API_PROFILE_ELEMENT_TYPE :
 							if (!DeltaProcessor.isCompatible(localDelta)) {
-								problem = createCompatibilityProblem(localDelta, javaProject, reference, component);
+								addAPIProblem(createCompatibilityProblem(localDelta, javaProject, reference, component));
 							}
 							break;
 						default:
@@ -1202,7 +1201,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		} else if (DEBUG) {
 			System.out.println("No delta"); //$NON-NLS-1$
 		}
-		addAPIProblem(problem);
 	}
 
 	/**

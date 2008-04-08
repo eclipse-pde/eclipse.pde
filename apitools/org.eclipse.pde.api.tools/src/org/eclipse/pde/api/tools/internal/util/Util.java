@@ -1118,6 +1118,8 @@ public final class Util {
 					String descriptor = key.substring(index, key.length());
 					return getMethod(type, selector, descriptor);
 				}
+			case IDelta.API_COMPONENT_ELEMENT_TYPE :
+				return type;
 		}
 		return null;
 	}
