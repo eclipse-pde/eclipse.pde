@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -34,7 +33,6 @@ import junit.framework.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -160,9 +158,6 @@ public class TestSuiteHelper {
 			}
 			public IApiProfile getProfile() {
 				return null;
-			}
-			@SuppressWarnings("unchecked")
-			public void export(Map options, IProgressMonitor monitor) throws CoreException {
 			}
 			public IApiFilterStore getFilterStore() {
 				return null;

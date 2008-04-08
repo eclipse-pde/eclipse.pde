@@ -13,10 +13,8 @@ package org.eclipse.pde.api.tools.internal;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -110,13 +108,6 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 			libs.add(new ArchiveClassFileContainer(lib.getSystemLibraryPath().toOSString(), null));
 		}
 		return libs;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#export(java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void export(Map options, IProgressMonitor monitor) throws CoreException {
-		abort("System library does not support export.", null); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

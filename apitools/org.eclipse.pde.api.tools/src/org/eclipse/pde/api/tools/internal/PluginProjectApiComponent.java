@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -333,13 +332,6 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 		}
 		return null;
 	}	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#export(java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void export(Map options, IProgressMonitor monitor) throws CoreException {
-		abort("Plug-in project does not yet implement export.", null); //$NON-NLS-1$
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#getName()

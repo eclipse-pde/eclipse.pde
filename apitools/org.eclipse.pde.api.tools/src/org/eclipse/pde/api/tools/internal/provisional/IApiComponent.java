@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
-import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
@@ -28,27 +25,6 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
  */
 public interface IApiComponent extends IClassFileContainer {
 	
-	/**
-	 * Export option key {@link String} value specifying an absolute file
-	 * system path to a directory where the component should be exported.
-	 */
-	public static final String EXPORT_DIRECTORY = "EXPORT_DIRECTORY"; //$NON-NLS-1$
-	
-	/**
-	 * Optional export option key for a {@link Boolean} value indicating if class
-	 * files should be exported as stubs rather than original class files.
-	 * Has no effect if the component was generated from stubs - since original
-	 * class files cannot be regenerated from stubs. When unspecified class files
-	 * are exported in their original form.
-	 */
-	public static final String EXPORT_CLASS_FILE_STUBS = "EXPORT_CLASS_FILE_STUBS"; //$NON-NLS-1$
-	
-	/**
-	 * Optional export option key for a {@link Boolean} value indicating if generated
-	 * archive should be compressed. When unspecified, archive is not compressed.
-	 */
-	public static final String EXPORT_COMPRESS = "EXPORT_COMPRESS"; //$NON-NLS-1$	
-
 	/**
 	 * Returns a human readable name for this component.
 	 * 
@@ -163,16 +139,7 @@ public interface IApiComponent extends IClassFileContainer {
 	 * @return API profile
 	 */
 	public IApiProfile getProfile();
-	
-	/**
-	 * Exports this API component based on the supplied export options.
-	 * 
-	 * @param options export options
-	 * @param monitor progress monitor or <code>null</code> if none
-	 * @throws CoreException
-	 */
-	public void export(Map options, IProgressMonitor monitor) throws CoreException;
-	
+		
 	/**
 	 * Returns a store of problem filters defined for this component or <code>null</code>
 	 * if none.

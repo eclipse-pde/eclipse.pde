@@ -13,13 +13,11 @@ package org.eclipse.pde.api.tools.model.tests;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
@@ -196,8 +194,6 @@ public class ClassFileScannerTests extends TestCase {
 			}
 			public IApiProfile getProfile() {
 				return null;
-			}
-			public void export(Map options, IProgressMonitor monitor) throws CoreException {
 			}
 			public IApiFilterStore getFilterStore() {
 				return null;

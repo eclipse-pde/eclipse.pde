@@ -10,19 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -32,13 +28,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.jar.JarFile;
-import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -46,7 +39,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -57,7 +49,6 @@ import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
@@ -779,138 +770,6 @@ public class BundleApiComponent extends AbstractApiComponent {
 	public boolean isSystemComponent() {
 		return false;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#export(java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void export(Map options, IProgressMonitor monitor) throws CoreException {
-		String dirName = (String) options.get(EXPORT_DIRECTORY);
-		if (dirName == null) {
-			abort("Export directory unspecified.", null); //$NON-NLS-1$
-		}
-		File dir = new File(dirName);
-		if (!dir.exists()) {
-			abort("Export directory does not exist: " + dirName, null); //$NON-NLS-1$
-		}
-		if (!dir.isDirectory()) {
-			abort("Export directory is not a directory: " + dirName, null); //$NON-NLS-1$
-		}
-		StringBuffer buf = new StringBuffer();
-		buf.append(getId());
-		buf.append("_api_"); //$NON-NLS-1$
-		buf.append(getVersion());
-		buf.append(".jar"); //$NON-NLS-1$
-		String jarName = buf.toString();
-		File jar = new File(dir, jarName);
-		if (jar.exists()) {
-			abort("Export failed - API component already exists: " + jarName, null); //$NON-NLS-1$
-		}
-		boolean compress = getBooleanOption(options, IApiComponent.EXPORT_COMPRESS, false);
-		boolean stubs = getBooleanOption(options, IApiComponent.EXPORT_CLASS_FILE_STUBS, false);
-		FileOutputStream jarStream = null;
-		JarOutputStream outputStream = null;
-		try {
-			// create the jar with manifest
-			Manifest manifest = readManifest(new File(getLocation()));
-			// clear the file signing entries
-			manifest.getEntries().clear();
-			jarStream = new FileOutputStream(jar);
-			outputStream = new JarOutputStream(jarStream, manifest);
-			
-			// add class file containers
-			Set exported = new HashSet();
-			IClassFileContainer[] containers = getClassFileContainers();
-			for (int i = 0; i < containers.length; i++) {
-				IClassFileContainer container = containers[i];
-				IApiComponent origin = (IApiComponent) fContainerToBundle.get(container);
-				if (this.equals(origin)) {
-					// if origin is a fragment, don't export jar
-					String entryName = (String) fContainerToPath.get(container);
-					exportClassFileContainer(compress, stubs, outputStream, container, entryName);
-					exported.add(entryName);
-				}
-			}
-			
-			// add class file container from host that were defined by me (if I am a fragment
-			// and I did not already export them). This is because a fragment can support classes
-			// in a jar or folder and have them on a classpath entry in the manifest. The host
-			// can just refer to them
-			HostSpecification specification = fBundleDescription.getHost();
-			if (specification != null) {
-				BundleApiComponent host = (BundleApiComponent) getProfile().getApiComponent(specification.getName());
-				if (host != null) {
-					host.getClassFileContainers(); // ensure initialized
-					Iterator entries = host.fContainerToBundle.entrySet().iterator();
-					while (entries.hasNext()) {
-						Entry entry = (Entry) entries.next();
-						if (this.equals(entry.getValue())) {
-							IClassFileContainer container = (IClassFileContainer) entry.getKey();
-							String path = (String) host.fContainerToPath.get(container);
-							if (!exported.contains(path)) {
-								exportClassFileContainer(compress, stubs, outputStream, container, path);
-							}
-						}
-					}
-				}
-			}
-			
-			// add component.xml
-			String xml = Util.getApiDescriptionXML(this);
-			writeZipFileEntry(outputStream, IApiCoreConstants.COMPONENT_XML_NAME, xml.getBytes(IApiCoreConstants.UTF_8), compress);
-			
-			// add required files:
-			exportFileFromBundle(outputStream, IApiCoreConstants.PLUGIN_XML_NAME, compress, true);
-			exportFileFromBundle(outputStream, "plugin.properties", compress, true); //$NON-NLS-1$
-			exportFileFromBundle(outputStream, "about.html", compress, true); //$NON-NLS-1$
-			// TODO: about_files
-			// TODO: add extension point schemas
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-			abort("Export failed", e); //$NON-NLS-1$
-		} finally {
-			// make sure that the jar is closed
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			} else if (jarStream != null) {
-				try {
-					jarStream.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-	}
-
-	/**
-	 * Add the given class file container to the jar being exported.
-	 *  
-	 * @param compress whether to compress 
-	 * @param stubs whether to generate class file stubs
-	 * @param outputStream the jar to write to
-	 * @param container the container to export
-	 * @param entryName the name of the container
-	 * @throws CoreException
-	 * @throws IOException
-	 */
-	private void exportClassFileContainer(boolean compress, boolean stubs, JarOutputStream outputStream, IClassFileContainer container, String entryName) throws CoreException, IOException {
-		if (Util.isArchive(entryName)) {
-			// add as nested jar
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			ZipOutputStream zipOutputStream2 = new ZipOutputStream(new BufferedOutputStream(byteArrayOutputStream));
-			writeContainer(container, zipOutputStream2, compress, stubs);
-			zipOutputStream2.flush();
-			zipOutputStream2.close();
-			byte[] bytes = byteArrayOutputStream.toByteArray();
-			writeZipFileEntry(outputStream, entryName, bytes, compress);
-		} else {
-			// add to root of jar as individual files
-			writeContainer(container, outputStream, compress, stubs);
-		}
-	}
 	
 	/**
 	 * Returns a boolean option from the map or the default value if not present.
@@ -926,40 +785,6 @@ public class BundleApiComponent extends AbstractApiComponent {
 			return optionB.booleanValue();
 		}
 		return defaultValue;
-	}
-
-	/**
-	 * Copies a file from this component's bundle to the given jar.
-	 * 
-	 * @param outputStream jar being exported
-	 * @param filePath bundle relative path to file to export
-	 * @param compress whether to compress
-	 * @param optional whether the file may not exist
-	 * @throws MalformedURLException 
-	 * @throws IOException
-	 */
-	private void exportFileFromBundle(JarOutputStream outputStream, String filePath, boolean compress, boolean optional) throws MalformedURLException, IOException {
-		URL fileInBundle = getFileInBundle(new File(fLocation), filePath);
-		InputStream stream = null;
-		try {
-			URLConnection connection = fileInBundle.openConnection();
-			connection.setUseCaches(false);
-			stream = connection.getInputStream();
-			byte[] byteArray = Util.getInputStreamAsByteArray(stream, -1);
-			writeZipFileEntry(outputStream, filePath, byteArray, compress);
-		} catch (FileNotFoundException e) {
-			if (!optional) {
-				throw e;
-			}
-		} finally {
-			try {
-				if (stream != null) {
-					stream.close();
-				}
-			} catch(IOException e) {
-				ApiPlugin.log(e);
-			}
-		}
 	}
 	
 	/* (non-Javadoc)
