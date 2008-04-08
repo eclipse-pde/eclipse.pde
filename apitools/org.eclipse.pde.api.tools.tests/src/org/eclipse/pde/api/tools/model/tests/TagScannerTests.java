@@ -230,7 +230,7 @@ public class TagScannerTests extends TestCase {
 		assertTrue("TestClass4$InnerTestClass4$Inner2TestClass4 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
 		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4"));
 		assertNotNull("the description for TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4 should exist", description);
-		assertTrue("There should be no subclass, no instantiate, no reference on TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4", description.getRestrictions() == (RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE));
+		assertTrue("There should be no extend, no instantiate, no reference on TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4", description.getRestrictions() == (RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE | RestrictionModifiers.NO_REFERENCE));
 		assertTrue("TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
 	}
 	
