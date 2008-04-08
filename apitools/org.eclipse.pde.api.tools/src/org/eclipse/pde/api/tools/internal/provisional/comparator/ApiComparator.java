@@ -103,19 +103,28 @@ public class ApiComparator {
 				if ((visibility & visibilityModifiers) == 0) {
 					// check visibility in the reference
 					final IApiDescription referenceApiDescription = component.getApiDescription();
-					elementDescription = referenceApiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
-					if (elementDescription != null && (visibility & visibilityModifiers) == 0) {
-						// no delta
-						return NO_DELTA;
+					IApiAnnotations refElementDescription = referenceApiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
+					int refVisibility = -1;
+					if (refElementDescription != null) {
+						refVisibility = refElementDescription.getVisibility();
+						if ((refVisibility & visibilityModifiers) == 0) {
+							// no delta
+							return NO_DELTA;
+						}
 					}
 					// visibility has been changed
-					if (((visibility & VisibilityModifiers.API) != 0)
-							&& ((visibilityModifiers & VisibilityModifiers.API) != 0)) {
-						// was API and is no longer API
-						return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, classFile2, typeName, typeName);
+					if ((refVisibility & VisibilityModifiers.API) != 0) {
+						if ((visibility & VisibilityModifiers.API) == 0) {
+							// was API and is no longer API
+							return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, classFile2, typeName, typeName);
+						}
+					} else if ((visibility & VisibilityModifiers.API) != 0) {
+						return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, classFile2, typeName, typeName);
 					}
-					// no delta
-					return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_VISIBILITY, classFile2, typeName, null);
+					if (visibility != refVisibility) {
+						// changed visibility
+						return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_VISIBILITY, classFile2, typeName, null);
+					}
 				}
 			}
 			ClassFileComparator comparator = new ClassFileComparator(classFile, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);
