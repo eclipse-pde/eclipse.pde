@@ -29,7 +29,6 @@ public class TestClass4 {
 			/**
 			 * @noextend
 			 * @noinstantiate
-			 * @noreference
 			 * @since
 			 */
 			class Inner3TestClass4 {

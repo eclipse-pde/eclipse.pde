@@ -134,7 +134,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 					if (field) {
 						comments[0][1] = fComments[i];
 					}
-					if(!field & !method) {
+					if(!field & !method & !constructor) {
 						comments[0][2] = fComments[i];
 					}
 				}
