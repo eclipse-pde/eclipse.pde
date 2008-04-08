@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -189,6 +190,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (DEBUG) {
 			System.out.println("\nStarting build of " + fCurrentProject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		if (monitor != null && monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 2);
 		IProject[] projects = getRequiredProjects(true);
 		try {
@@ -213,20 +217,29 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						if (state == null) {
 							buildAll(localMonitor);
 						} else {
-							buildDeltas(deltas, state);
+							buildDeltas(deltas, state, localMonitor);
 						}
 					}
 					break;
 				}
+			}
+			if (monitor != null && monitor.isCanceled()) {
+				throw new OperationCanceledException();
 			}
 		} finally {
 			fTypes.clear();
 			fPackages.clear();
 			fProjectToOutputLocations.clear();
 			checkDefaultProfileSet();
-			fProblemReporter.createMarkers();
-			fProblemReporter.dispose();
-			localMonitor.done();
+			try {
+				if (monitor != null && monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+				fProblemReporter.createMarkers();
+			} finally {
+				fProblemReporter.dispose();
+				localMonitor.done();
+			}
 		}
 		if (DEBUG) {
 			System.out.println("Finished build of " + this.fCurrentProject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
@@ -327,6 +340,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			localMonitor.subTask(BuilderMessages.building_workspace_profile);
 			IApiProfile wsprofile = getWorkspaceProfile();
 			localMonitor.worked(1);
+			if (monitor != null && monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
 			if (wsprofile == null) {
 				if (DEBUG) {
 					System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
@@ -340,11 +356,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				localMonitor.subTask(MessageFormat.format(BuilderMessages.checking_compatibility, new String[] {fCurrentProject.getName()}));
 				compareProfiles(profile.getApiComponent(id), apiComponent);
 				localMonitor.worked(1);
+				if (monitor != null && monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
 				// API usage checks
 				IApiSearchScope scope = Factory.newScope(new IApiComponent[]{apiComponent});
 				localMonitor.subTask(MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {fCurrentProject.getName()}));
 				checkApiUsage(wsprofile, apiComponent, scope, localMonitor);
 				localMonitor.worked(1);
+				if (monitor != null && monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
 			}
 		}
 	}
@@ -461,7 +483,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * workspace profile
 	 * @param delta
 	 */
-	private void buildDeltas(IResourceDelta[] deltas, final State state) {
+	private void buildDeltas(IResourceDelta[] deltas, final State state, IProgressMonitor monitor) {
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		if (profile == null) {
 			return;
@@ -505,6 +527,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		collectAffectedSourceFiles(state);
+		if (monitor != null && monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
 		if (fTypesToCheck.size() != 0) {
 			IPluginModelBase currentModel = getCurrentModel();
 			if (currentModel != null) {
@@ -538,6 +563,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					if(reference != null) {
 						compareProfiles(new String(className), reference, apiComponent);
 					}
+					if (monitor != null && monitor.isCanceled()) {
+						throw new OperationCanceledException();
+					}
 					try {
 						IType[] allTypes = unit.getAllTypes();
 						for (int i = 0; i < allTypes.length; i++) {
@@ -548,6 +576,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					}
 				}
 				checkApiUsage(wsprofile, apiComponent, Factory.newTypeScope(apiComponent, (IReferenceTypeDescriptor[]) scopeElements.toArray(new IReferenceTypeDescriptor[scopeElements.size()])), null);
+				if (monitor != null && monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
 			}
 		} else if (DEBUG) {
 			System.out.println("No type to check"); //$NON-NLS-1$
