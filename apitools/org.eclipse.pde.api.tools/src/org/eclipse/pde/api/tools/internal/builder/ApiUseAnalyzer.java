@@ -571,11 +571,14 @@ public class ApiUseAnalyzer {
 							qname = typeDesc.getName();
 							first = line.indexOf(qname);
 						}
+						if(first < 0) {
+							qname = "super"; //$NON-NLS-1$
+							first = line.indexOf(qname);
+						}
 						if(first > -1) {
 							charStart = offset + first;
 							charEnd = charStart + qname.length();
 						}
-						//TODO support the call to 'super'
 						break;
 					}
 					case IApiProblem.ILLEGAL_OVERRIDE : {
