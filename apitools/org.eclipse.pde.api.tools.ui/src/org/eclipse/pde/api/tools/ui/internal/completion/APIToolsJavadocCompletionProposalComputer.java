@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.CompletionContext;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.text.java.ContentAssistInvocationContext;
@@ -70,7 +71,13 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 						int member = IApiJavadocTag.MEMBER_NONE;
 						switch(element.getElementType()) {
 							case IJavaElement.METHOD: {
-								member = IApiJavadocTag.MEMBER_METHOD;
+								IMethod method = (IMethod) element;
+								if(method.isConstructor()) {
+									member = IApiJavadocTag.MEMBER_CONSTRUCTOR;
+								}
+								else {
+									member = IApiJavadocTag.MEMBER_METHOD;
+								}
 								break;
 							}
 							case IJavaElement.FIELD: {

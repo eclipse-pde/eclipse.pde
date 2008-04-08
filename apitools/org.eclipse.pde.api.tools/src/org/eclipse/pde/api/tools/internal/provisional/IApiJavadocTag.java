@@ -49,6 +49,12 @@ public interface IApiJavadocTag {
 	public static final int MEMBER_NONE = 0x1 << 4;
 	
 	/**
+	 * Member constant representing the tag applies to a Java constructor
+	 * Values is <code>32</code>
+	 */
+	public static final int MEMBER_CONSTRUCTOR = 0x1 << 5;
+	
+	/**
 	 * Returns the restriction modifier for the tag, or 
 	 * {@link RestrictionModifiers#NO_RESTRICTIONS} if the restriction 
 	 * cannot be parsed into an integer. 

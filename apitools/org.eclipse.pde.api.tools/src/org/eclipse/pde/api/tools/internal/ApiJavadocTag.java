@@ -106,6 +106,9 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		else if(member == IApiJavadocTag.MEMBER_METHOD) {
 			i2 = 0;
 		}
+		else if(member == IApiJavadocTag.MEMBER_CONSTRUCTOR) {
+			i2 = 3;
+		}
 		return comments[i1][i2];
 	}
 	
@@ -114,13 +117,17 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 */
 	private void initializeElements() {
 		if(comments == null) {
-			comments = new String[2][3];
+			comments = new String[2][4];
 			for(int i = 0; i < fElements.length; i++) {
 				boolean clazz = (IApiJavadocTag.TYPE_CLASS & fElements[i]) != 0;
 				boolean inter = (IApiJavadocTag.TYPE_INTERFACE & fElements[i]) != 0;
 				boolean method = (IApiJavadocTag.MEMBER_METHOD & fElements[i]) != 0;
 				boolean field = (IApiJavadocTag.MEMBER_FIELD & fElements[i]) != 0;
+				boolean constructor = (IApiJavadocTag.MEMBER_CONSTRUCTOR & fElements[i]) != 0;
 				if(clazz) {
+					if(constructor) {
+						comments[0][3] = fComments[i];
+					}
 					if (method) {
 						comments[0][0] = fComments[i];
 					}
