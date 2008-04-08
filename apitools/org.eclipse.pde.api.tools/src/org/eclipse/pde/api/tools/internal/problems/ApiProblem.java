@@ -250,7 +250,7 @@ public class ApiProblem implements IApiProblem {
 		buffer.append(" kind: "); //$NON-NLS-1$
 		buffer.append(Util.getProblemKind(getCategory(), getKind()));
 		buffer.append(" flags: "); //$NON-NLS-1$
-		buffer.append(Util.getDeltaFlagsName(getFlags()));
+		buffer.append(Util.getProblemFlagsName(getCategory(), getFlags()));
 		buffer.append("]"); //$NON-NLS-1$
 		return buffer.toString();
 	}	
