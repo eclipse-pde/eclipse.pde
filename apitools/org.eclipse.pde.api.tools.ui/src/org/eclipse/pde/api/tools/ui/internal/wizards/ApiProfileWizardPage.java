@@ -436,6 +436,10 @@ public class ApiProfileWizardPage extends WizardPage {
 			return false;
 		}
 		if(fProfile != null) {	
+			if (fProfile.getApiComponents().length == 0) {
+				setErrorMessage(WizardMessages.ApiProfileWizardPage_2);
+				return false;
+			}
 			IStatus status = fProfile.getExecutionEnvironmentStatus();
 			if (status.getSeverity() == IStatus.ERROR) {
 				setErrorMessage(status.getMessage());
