@@ -93,7 +93,11 @@ public class ProvisionerListSelectionPage extends WizardSelectionPage {
 	}
 
 	protected void setDescriptionText(String text) {
-		fTextBox.setText(text);
+		if (text == null) {
+			fTextBox.setText(""); //$NON-NLS-1$
+		} else {
+			fTextBox.setText(text);
+		}
 	}
 
 	protected void handleSelection() {
