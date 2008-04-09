@@ -4,7 +4,7 @@
 
  <package name="">
  	<type name="B" instantiate="false">
- 		<method name="m1" signature="()V" extend="false"/>
+ 		<method name="m1" signature="()V" override="false"/>
  	</type>
  	<type name="C" extend="false" instantiate="false" />
  	<type name="D" reference="false">
@@ -26,7 +26,7 @@
  	<type name="SpiB" extend="false"/>
  	<type name="SpiC" instantiate="false">
  		<field name="f4" reference="false"/>
- 		<method name="m4" signature="()V" extend="false"/>
+ 		<method name="m4" signature="()V" override="false"/>
  	</type>
  	<type name="SpiD" extend="false" instantiate="false" />
  	<type name="SpiE" reference="false"/>
