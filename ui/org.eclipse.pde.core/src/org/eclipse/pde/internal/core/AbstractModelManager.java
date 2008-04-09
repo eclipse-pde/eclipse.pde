@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,28 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
 
 public abstract class AbstractModelManager {
 
-	private ArrayList fListeners = new ArrayList();
+	private ListenerList fListeners = new ListenerList();
 
 	public synchronized void removeModelProviderListener(IModelProviderListener listener) {
-		fListeners.remove(listener);
+		// TODO see bug 214613... investigate why FeatureModelManager is being bad
+		if (listener != null) {
+			fListeners.remove(listener);
+		}
 	}
 
 	public synchronized void addModelProviderListener(IModelProviderListener listener) {
-		if (!fListeners.contains(listener))
-			fListeners.add(listener);
+		fListeners.add(listener);
 	}
 
 	public void fireModelProviderEvent(IModelProviderEvent event) {
-		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
-			((IModelProviderListener) iter.next()).modelsChanged(event);
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			((IModelProviderListener) listeners[i]).modelsChanged(event);
 		}
 	}
 
@@ -40,9 +41,7 @@ public abstract class AbstractModelManager {
 	}
 
 	protected void removeListeners() {
-		if (fListeners.size() > 0) {
-			fListeners.clear();
-		}
+		fListeners.clear();
 	}
 
 }
