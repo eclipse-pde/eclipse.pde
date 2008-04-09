@@ -2638,6 +2638,7 @@ public class PDEUIMessages extends NLS {
 	public static String SchemaAttributeDetails_defaultDefaultValue;
 
 	public static String SchemaStringAttributeDetails_reference;
+	public static String SchemaIdentifierAttributeDetails_additionalRestrictions;
 
 	public static String SchemaDetails_name;
 

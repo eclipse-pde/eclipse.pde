@@ -51,7 +51,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 		fReferenceEntry = new FormEntry(parent, toolkit, PDEUIMessages.SchemaStringAttributeDetails_reference, PDEUIMessages.SchemaAttributeDetails_browseButton, false, 11);
 
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
-		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_restrictions);
+		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaIdentifierAttributeDetails_additionalRestrictions);
 		label.setForeground(foreground);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.horizontalIndent = 11;
