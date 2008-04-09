@@ -38,8 +38,11 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput == null)
+		if (newInput == null) {
+			if (fManager != null)
+				fManager.cancel(oldInput);
 			return;
+		}
 		fManager = new DeferredTreeContentManager((AbstractTreeViewer) viewer);
 		fManager.addUpdateCompleteListener(getCompletionJobListener());
 		fView.updateTitle(newInput);
@@ -131,7 +134,8 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 		return new JobChangeAdapter() {
 
 			public void done(IJobChangeEvent event) {
-				fView.updateContentDescription();
+				if (event.getResult().isOK())
+					fView.updateContentDescription();
 			}
 
 		};
