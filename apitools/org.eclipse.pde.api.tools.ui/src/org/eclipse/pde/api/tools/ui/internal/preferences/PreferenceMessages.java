@@ -17,7 +17,6 @@ public class PreferenceMessages extends NLS {
 	public static String ApiErrorsWarningsConfigurationBlock_0;
 	public static String ApiErrorsWarningsConfigurationBlock_1;
 	public static String ApiErrorsWarningsConfigurationBlock_2;
-	public static String ApiErrorsWarningsConfigurationBlock_API_Leak;
 	public static String ApiErrorsWarningsPreferencePage_0;
 	public static String ApiErrorsWarningsPreferencePage_1;
 	public static String ApiProblemSeveritiesConfigurationBlock_3;
@@ -52,9 +51,16 @@ public class PreferenceMessages extends NLS {
 	public static String ApiErrorsWarningsConfigurationBlock_warning;
 	public static String ApiErrorsWarningsConfigurationBlock_ignore;
 	public static String ApiErrorsWarningsConfigurationBlock_error_button;
+	public static String ApiErrorsWarningsConfigurationBlock_extend_non_api_class;
+	public static String ApiErrorsWarningsConfigurationBlock_field_decl_non_api;
 	public static String ApiErrorsWarningsConfigurationBlock_warning_button;
-	public static String ApiErrorsWarningsConfigurationBlock_ignore_button;	
+	public static String ApiErrorsWarningsConfigurationBlock_ignore_button;
+	public static String ApiErrorsWarningsConfigurationBlock_implement_non_api;
+	public static String ApiErrorsWarningsConfigurationBlock_leaks;	
 	public static String ApiErrorsWarningsConfigurationBlock_override_tagged_method;
+	public static String ApiErrorsWarningsConfigurationBlock_parameter_non_api;
+	public static String ApiErrorsWarningsConfigurationBlock_restrictions;
+	public static String ApiErrorsWarningsConfigurationBlock_return_type_non_api;
 	
 	public static String ProjectSelectionDialog_title;
 	public static String ProjectSelectionDialog_message;

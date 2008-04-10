@@ -1037,7 +1037,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 				scomp.addListener(SWT.Resize, new Listener() {
 					public void handleEvent(Event event) {
-						handleExpand(getScrollingParent(event.item));
+						handleExpand(getScrollingParent(event.widget));
 					}
 				});
 				Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
@@ -1107,7 +1107,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 				scomp.addListener(SWT.Resize, new Listener() {
 					public void handleEvent(Event event) {
-						handleExpand(getScrollingParent(event.item));
+						handleExpand(getScrollingParent(event.widget));
 					}
 				});
 				Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
@@ -1503,6 +1503,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 			if(parent != null) {
 				return (ScrolledComposite) parent;
 			}
+		}
+		if(obj instanceof ScrolledComposite) {
+			return (ScrolledComposite) obj;
 		}
 		return null;
 	}
