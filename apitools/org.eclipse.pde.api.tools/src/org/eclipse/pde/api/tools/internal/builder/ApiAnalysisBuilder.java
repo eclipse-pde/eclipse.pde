@@ -23,12 +23,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -105,6 +107,47 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		public DeltaInfo(IDelta delta) {
 			this.delta = delta;
 		}
+	}
+	
+	/**
+	 * Project relative path to the manifest file.
+	 */
+	private static final IPath MANIFEST_PATH = new Path(JarFile.MANIFEST_NAME);
+	
+	/**
+	 * Visits a resource delta to determine if the manifest has been modified.
+	 */
+	private class ManifestVisitor implements IResourceDeltaVisitor {	
+		
+		private boolean fManifestModified = false;
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
+		 */
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			switch (delta.getResource().getType()) {
+			case IResource.ROOT:
+			case IResource.PROJECT:
+				return true;
+			case IResource.FOLDER:
+				return delta.getResource().getProjectRelativePath().isPrefixOf(MANIFEST_PATH); 
+			case IResource.FILE:
+				if (delta.getResource().getProjectRelativePath().equals(MANIFEST_PATH)) {
+					fManifestModified = true;
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Returns whether the manifest file was modified.
+		 * 
+		 * @return whether the manifest file was modified
+		 */
+		boolean isManifiestModified() {
+			return fManifestModified;
+		}
+		
 	}
 
 	/**
@@ -207,17 +250,33 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				case AUTO_BUILD :
 				case INCREMENTAL_BUILD : {
 					IResourceDelta[] deltas = getDeltas(projects);
-					if (deltas.length == 0) {
+					boolean manifestModified = false;
+					ManifestVisitor visitor = new ManifestVisitor();
+					for (int i = 0; i < deltas.length; i++) {
+						deltas[i].accept(visitor);
+						if (visitor.isManifiestModified()) {
+							manifestModified = true;
+							break;
+						}
+					}
+					if (manifestModified) {
 						if (DEBUG) {
-							System.out.println("Performing full build since deltas are missing after incremental request"); //$NON-NLS-1$
+							System.out.println("Performing full build since MANIFEST.MF was modified"); //$NON-NLS-1$
 						}
 						buildAll(localMonitor);
 					} else {
-						State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(fCurrentProject, new NullProgressMonitor());
-						if (state == null) {
+						if (deltas.length == 0) {
+							if (DEBUG) {
+								System.out.println("Performing full build since deltas are missing after incremental request"); //$NON-NLS-1$
+							}
 							buildAll(localMonitor);
 						} else {
-							buildDeltas(deltas, state, localMonitor);
+							State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(fCurrentProject, new NullProgressMonitor());
+							if (state == null) {
+								buildAll(localMonitor);
+							} else {
+								buildDeltas(deltas, state, localMonitor);
+							}
 						}
 					}
 					break;
