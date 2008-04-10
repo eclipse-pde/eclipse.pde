@@ -318,7 +318,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 			if(rebuildcount < 1) {
 				rebuildcount++;
 				IProject[] projects = Util.getApiProjects();
-				//don not even ask if there are no projects to build
+				//do not even ask if there are no projects to build
 				if (projects != null) {
 					if(MessageDialog.openQuestion(getShell(), PreferenceMessages.ApiProfilesPreferencePage_6, PreferenceMessages.ApiProfilesPreferencePage_7)) {
 						Util.getBuildJob(projects).schedule();

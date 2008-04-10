@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -311,8 +312,12 @@ public class ApiProfilesConfigurationBlock {
 						ApiProfilesPreferencePage.rebuildcount++;
 						fManager.applyChanges();
 						String message = PreferenceMessages.ApiErrorsWarningsConfigurationBlock_0;
-						if(MessageDialog.openQuestion(fParent.getShell(), PreferenceMessages.ApiErrorsWarningsConfigurationBlock_2, message)) {
-							Util.getBuildJob(Util.getApiProjects()).schedule();
+						IProject[] apiProjects = Util.getApiProjects();
+						if (apiProjects != null) {
+							//do not even ask if there are no projects to build
+							if(MessageDialog.openQuestion(fParent.getShell(), PreferenceMessages.ApiErrorsWarningsConfigurationBlock_2, message)) {
+								Util.getBuildJob(apiProjects).schedule();
+							}
 						}
 					}
 				}

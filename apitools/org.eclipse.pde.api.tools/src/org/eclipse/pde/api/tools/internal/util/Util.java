@@ -603,9 +603,12 @@ public final class Util {
 	}
 
 	/**
-	 * Returns a build job
-	 * @param projects The projects to build or <code>null</code> to build the workspace.
+	 * Returns a build job.
+	 * 
+	 * If <code>projects</code> are null, then an AssertionFailedException is thrown
+	 * @param projects The projects to build
 	 * @return the build job
+	 * @throws AssertionFailedException if the given projects are null
 	 */
 	public static Job getBuildJob(final IProject[] projects) {
 		Assert.isNotNull(projects);
