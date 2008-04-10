@@ -871,7 +871,7 @@ public class ClassFileComparator {
 		}
 		String name = methodDescriptor.name;
 		String descriptor = methodDescriptor.descriptor;
-		String key = name + descriptor;
+		String key = getKeyForMethod(methodDescriptor, this.descriptor1);
 		MethodDescriptor methodDescriptor2 = getMethodDescriptor(this.descriptor2, name, descriptor);
 		if (methodDescriptor2 == null) {
 			if (methodDescriptor.isClinit()) {
