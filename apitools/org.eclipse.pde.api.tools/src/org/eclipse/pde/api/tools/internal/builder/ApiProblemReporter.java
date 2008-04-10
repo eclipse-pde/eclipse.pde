@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemReporter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -228,7 +229,10 @@ public class ApiProblemReporter implements IApiProblemReporter {
 		IApiComponent component = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile().getApiComponent(fProject.getName());
 		if(component != null) {
 			try {
-				return component.getFilterStore().isFiltered(problem);
+				IApiFilterStore filterStore = component.getFilterStore();
+				if (filterStore != null) {
+					return filterStore.isFiltered(problem);
+				}
 			}
 			catch(CoreException e) {
 				//ignore, return false
