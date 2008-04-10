@@ -212,6 +212,6 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		String message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Leaks non-API type fooconstructor via constructor parameter", new String[0])));
+		assertTrue("the message should be correct", message.equals(MessageFormat.format("Constructor with non-API parameter type fooconstructor", new String[0])));
 	}
 }
