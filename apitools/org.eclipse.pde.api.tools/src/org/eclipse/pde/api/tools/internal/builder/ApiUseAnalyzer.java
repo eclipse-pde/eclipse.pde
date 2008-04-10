@@ -676,11 +676,11 @@ public class ApiUseAnalyzer {
 						break;
 					}
 					case IApiProblem.API_LEAK: {
-						prefKey = IApiProblemTypes.API_LEAK;
 						messageargs = new String[] {qualifiedTypeName};
 						switch (flags) {
 							case IApiProblem.LEAK_EXTENDS:
 							case IApiProblem.LEAK_IMPLEMENTS: {
+								prefKey = (flags == IApiProblem.LEAK_EXTENDS ? IApiProblemTypes.LEAK_EXTEND : IApiProblemTypes.LEAK_IMPLEMENT);
 								// report error on the type
 								ISourceRange range = type.getNameRange();
 								charStart = range.getOffset();
@@ -689,6 +689,7 @@ public class ApiUseAnalyzer {
 								break;
 							}
 							case IApiProblem.LEAK_FIELD: {
+								prefKey = IApiProblemTypes.LEAK_FIELD_DECL;
 								IFieldDescriptor field = (IFieldDescriptor) reference.getSourceLocation().getMember();
 								if ((Flags.AccProtected & field.getModifiers()) > 0) {
 									// ignore protected members if contained in a @noextend type
@@ -713,6 +714,7 @@ public class ApiUseAnalyzer {
 							}
 							case IApiProblem.LEAK_METHOD_PARAMETER:
 							case IApiProblem.LEAK_RETURN_TYPE: {
+								prefKey = (flags == IApiProblem.LEAK_RETURN_TYPE ? IApiProblemTypes.LEAK_METHOD_RETURN_TYPE : IApiProblemTypes.LEAK_METHOD_PARAM);
 								IMethodDescriptor method = (IMethodDescriptor) reference.getSourceLocation().getMember();
 								if ((Flags.AccProtected & method.getModifiers()) > 0) {
 									// ignore protected members if contained in a @noextend type

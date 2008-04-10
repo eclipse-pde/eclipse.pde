@@ -208,7 +208,13 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final Key KEY_NOINSTANTIATE = getApiToolsKey(IApiProblemTypes.ILLEGAL_INSTANTIATE);
 	private static final Key KEY_NOREFERENCE = getApiToolsKey(IApiProblemTypes.ILLEGAL_REFERENCE);
 	private static final Key KEY_NOOVERRIDE = getApiToolsKey(IApiProblemTypes.ILLEGAL_OVERRIDE);
-	private static final Key KEY_API_LEAK = getApiToolsKey(IApiProblemTypes.API_LEAK);
+	private static final Key KEY_LEAK_EXTEND = getApiToolsKey(IApiProblemTypes.LEAK_EXTEND);
+	private static final Key KEY_LEAK_IMPLEMENT = getApiToolsKey(IApiProblemTypes.LEAK_IMPLEMENT);
+	private static final Key KEY_LEAK_METHOD_RETURN_TYPE = getApiToolsKey(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE);
+	private static final Key KEY_LEAK_FIELD_DECL = getApiToolsKey(IApiProblemTypes.LEAK_FIELD_DECL);
+	private static final Key KEY_LEAK_METHOD_PARAM = getApiToolsKey(IApiProblemTypes.LEAK_METHOD_PARAM);
+	
+	//compatibility keys
 	private static final Key KEY_API_PROFILE_REMOVED_API_COMPONENT =
 		getApiToolsKey(IApiProblemTypes.API_PROFILE_REMOVED_API_COMPONENT);
 	private static final Key KEY_API_COMPONENT_REMOVED_TYPE =
@@ -654,7 +660,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_NOREFERENCE,
 		KEY_NOINSTANTIATE,
 		KEY_NOOVERRIDE,
-		KEY_API_LEAK
+		KEY_LEAK_EXTEND,
+		KEY_LEAK_FIELD_DECL,
+		KEY_LEAK_IMPLEMENT,
+		KEY_LEAK_METHOD_PARAM,
+		KEY_LEAK_METHOD_RETURN_TYPE
 	};
 
 	private static Key[] fgAllVersionManagementKeys = {
@@ -673,7 +683,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_NOINSTANTIATE,
 		KEY_NOREFERENCE,
 		KEY_NOOVERRIDE,
-		KEY_API_LEAK,
+		KEY_LEAK_EXTEND,
+		KEY_LEAK_FIELD_DECL,
+		KEY_LEAK_IMPLEMENT,
+		KEY_LEAK_METHOD_PARAM,
+		KEY_LEAK_METHOD_RETURN_TYPE,
 		KEY_API_PROFILE_REMOVED_API_COMPONENT,
 		KEY_API_COMPONENT_REMOVED_TYPE,
 		KEY_ANNOTATION_ADDED_FIELD,
@@ -900,11 +914,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private Composite fMainComp = null;
 	
 	/**
-	 * The main scrolled composite for the compatibility tab
-	 */
-	private ScrolledComposite fScrolledComp = null;
-	
-	/**
 	 * Stored old fProject specific settings. 
 	 */
 	private IdentityHashMap fOldProjectSettings = null;
@@ -1019,17 +1028,30 @@ public class ApiErrorsWarningsConfigurationBlock {
 		SWTFactory.createVerticalSpacer(internalComposite, 1);
 		
 		switch(kind) {
-			case API_SCANNING_USAGE_PAGE_ID :
+			case API_SCANNING_USAGE_PAGE_ID : {
 				// API usage/scanning
+				ScrolledComposite scomp = new ScrolledComposite(internalComposite, SWT.H_SCROLL | SWT.V_SCROLL);
+				scomp.setExpandHorizontal(true);
+				scomp.setExpandVertical(true);
+				scomp.setLayout(new GridLayout(1, false));
+				scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+				scomp.addListener(SWT.Resize, new Listener() {
+					public void handleEvent(Event event) {
+						handleExpand(getScrollingParent(event.item));
+					}
+				});
+				Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
+				scomp.setContent(sbody);
+				
 				//add visibility restrictions
-				initializeComboControls(internalComposite,
+				Composite client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);
+				initializeComboControls(client,
 					new String[] {
 						PreferenceMessages.ApiProblemSeveritiesNoImplement,
 						PreferenceMessages.ApiProblemSeveritiesNoExtend,
 						PreferenceMessages.ApiProblemSeveritiesNoReference,
 						PreferenceMessages.ApiProblemSeveritiesNoInstanciate,
 						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_override_tagged_method,
-						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_API_Leak
 					},
 					new Key[] {
 						KEY_NOIMPLEMENT,
@@ -1037,10 +1059,27 @@ public class ApiErrorsWarningsConfigurationBlock {
 						KEY_NOREFERENCE,
 						KEY_NOINSTANTIATE,
 						KEY_NOOVERRIDE,
-						KEY_API_LEAK
 					}
 				);
+				client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_leaks);
+				initializeComboControls(client,
+						new String[] {
+							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_extend_non_api_class,
+							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_implement_non_api,
+							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_field_decl_non_api,
+							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_return_type_non_api,
+							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_parameter_non_api
+						},
+						new Key[] {
+							KEY_LEAK_EXTEND,
+							KEY_LEAK_IMPLEMENT,
+							KEY_LEAK_FIELD_DECL,
+							KEY_LEAK_METHOD_RETURN_TYPE,
+							KEY_LEAK_METHOD_PARAM
+						}
+					);
 				break;
+			}
 			case VERSION_MANAGEMENT_PAGE_ID :
 				// API usage/scanning
 				//add visibility restrictions
@@ -1061,18 +1100,18 @@ public class ApiErrorsWarningsConfigurationBlock {
 				break;
 			case COMPATIBILITY_PAGE_ID :
 				// compatibility
-				fScrolledComp = new ScrolledComposite(internalComposite, SWT.H_SCROLL | SWT.V_SCROLL);
-				fScrolledComp.setExpandHorizontal(true);
-				fScrolledComp.setExpandVertical(true);
-				fScrolledComp.setLayout(new GridLayout(1, false));
-				fScrolledComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-				fScrolledComp.addListener(SWT.Resize, new Listener() {
+				ScrolledComposite scomp = new ScrolledComposite(internalComposite, SWT.H_SCROLL | SWT.V_SCROLL);
+				scomp.setExpandHorizontal(true);
+				scomp.setExpandVertical(true);
+				scomp.setLayout(new GridLayout(1, false));
+				scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+				scomp.addListener(SWT.Resize, new Listener() {
 					public void handleEvent(Event event) {
-						handleExpand();
+						handleExpand(getScrollingParent(event.item));
 					}
 				});
-				Composite sbody = SWTFactory.createComposite(fScrolledComp, 1, 1, GridData.FILL_BOTH);
-				fScrolledComp.setContent(sbody);
+				Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
+				scomp.setContent(sbody);
 				
 				Composite client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAPIProfileElement);
 				createComboControl(client, PreferenceMessages.API_PROFILE_REMOVED_API_COMPONENT, KEY_API_PROFILE_REMOVED_API_COMPONENT);
@@ -1438,7 +1477,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 		ExpandableComposite ecomp = SWTFactory.createExpandibleComposite(parent, title, 1, GridData.FILL_HORIZONTAL);
 		ecomp.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
-				handleExpand();
+				Object obj = e.getSource();
+				handleExpand(getScrollingParent(obj));
 			}
 		});
 		ecomp.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
@@ -1449,21 +1489,43 @@ public class ApiErrorsWarningsConfigurationBlock {
 	}
 
 	/**
+	 * Returns the scrolling parent for the given ExpandibleComposite object
+	 * @param obj
+	 * @return
+	 */
+	private ScrolledComposite getScrollingParent(Object obj) {
+		if(obj instanceof ExpandableComposite) {
+			ExpandableComposite ecomp = (ExpandableComposite) obj;
+			Composite parent = ecomp.getParent();
+			while(parent != null && !(parent instanceof ScrolledComposite)) {
+				parent = parent.getParent();
+			}
+			if(parent != null) {
+				return (ScrolledComposite) parent;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Handles one of the expandable composites being expanded 
 	 */
-	private void handleExpand() {
+	private void handleExpand(ScrolledComposite composite) {
+		if(composite == null) {
+			return;
+		}
 		try {
-			fScrolledComp.setRedraw(false);
-			Composite c = (Composite) fScrolledComp.getContent();
+			composite.setRedraw(false);
+			Composite c = (Composite) composite.getContent();
 			if (c == null) {
 				return;
 			}
 			Point newSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			fScrolledComp.setMinSize(newSize);
+			composite.setMinSize(newSize);
 			c.layout(true);
 		}
 		finally {
-			fScrolledComp.setRedraw(true);
+			composite.setRedraw(true);
 		}
 	}
 	

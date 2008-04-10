@@ -522,7 +522,16 @@ public class ApiProblemFactory {
 					case IApiProblem.ILLEGAL_INSTANTIATE: return IApiProblemTypes.ILLEGAL_INSTANTIATE;
 					case IApiProblem.ILLEGAL_OVERRIDE: return IApiProblemTypes.ILLEGAL_OVERRIDE;
 					case IApiProblem.ILLEGAL_REFERENCE: return IApiProblemTypes.ILLEGAL_REFERENCE;
-					case IApiProblem.API_LEAK: return IApiProblemTypes.API_LEAK;
+					case IApiProblem.API_LEAK: {
+						switch(problem.getFlags()) {
+							case IApiProblem.LEAK_EXTENDS : return IApiProblemTypes.LEAK_EXTEND;
+							case IApiProblem.LEAK_FIELD : return IApiProblemTypes.LEAK_FIELD_DECL;
+							case IApiProblem.LEAK_IMPLEMENTS : return IApiProblemTypes.LEAK_IMPLEMENT;
+							case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: 
+							case IApiProblem.LEAK_METHOD_PARAMETER : return IApiProblemTypes.LEAK_METHOD_PARAM;
+							case IApiProblem.LEAK_RETURN_TYPE : return IApiProblemTypes.LEAK_METHOD_RETURN_TYPE;
+						}
+					}
 				}
 			}
 			case IApiProblem.CATEGORY_COMPATIBILITY: {

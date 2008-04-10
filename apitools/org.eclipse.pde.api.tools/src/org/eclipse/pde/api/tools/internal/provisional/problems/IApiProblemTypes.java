@@ -340,7 +340,23 @@ public interface IApiProblemTypes {
 	public static final String ILLEGAL_OVERRIDE = "ILLEGAL_OVERRIDE"; //$NON-NLS-1$
 	
 	/**
-	 * Key for the severity of an API leak.
+	 * Key for leaking an internal type through extension
 	 */
-	public static final String API_LEAK = "API_LEAK"; //$NON-NLS-1$
+	public static final String LEAK_EXTEND = "LEAK_EXTEND"; //$NON-NLS-1$
+	/**
+	 * Key for leaking an internal type through implements
+	 */
+	public static final String LEAK_IMPLEMENT = "LEAK_IMPLEMENT"; //$NON-NLS-1$
+	/**
+	 * Key for leaking an internal type through a field declaration
+	 */
+	public static final String LEAK_FIELD_DECL = "LEAK_FIELD_DECL"; //$NON-NLS-1$
+	/**
+	 * Key for leaking an internal type through a method return type
+	 */
+	public static final String LEAK_METHOD_RETURN_TYPE = "LEAK_METHOD_RETURN_TYPE"; //$NON-NLS-1$
+	/**
+	 * Key for leaking an internal type through a method parameter
+	 */
+	public static final String LEAK_METHOD_PARAM = "LEAK_METHOD_PARAM"; //$NON-NLS-1$
 }
