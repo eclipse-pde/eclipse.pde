@@ -60,6 +60,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
+import org.eclipse.pde.api.tools.internal.search.CompositeSearchCriteria;
 import org.eclipse.pde.api.tools.internal.search.Location;
 import org.eclipse.pde.api.tools.internal.search.Reference;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -154,28 +155,26 @@ public class ApiUseAnalyzer {
 			if (!RestrictionModifiers.isUnrestricted(mask)) {
 				// if there are restrictions, added to the search list
 				IElementDescriptor[] elements = new IElementDescriptor[]{element};
-				if (RestrictionModifiers.isExtendRestriction(mask)) {
-					add(ReferenceModifiers.REF_EXTENDS, RestrictionModifiers.NO_EXTEND, elements, IApiProblem.ILLEGAL_EXTEND, IElementDescriptor.T_REFERENCE_TYPE); 
-				}
 				if(RestrictionModifiers.isOverrideRestriction(mask)) {
-					add(ReferenceModifiers.REF_OVERRIDE, RestrictionModifiers.NO_OVERRIDE, elements, IApiProblem.ILLEGAL_OVERRIDE, IElementDescriptor.T_METHOD);
+					addCriteria(ReferenceModifiers.REF_OVERRIDE, RestrictionModifiers.NO_OVERRIDE, elements, IApiProblem.ILLEGAL_OVERRIDE, IElementDescriptor.T_METHOD);
+				}
+				if (RestrictionModifiers.isExtendRestriction(mask)) {
+					addCriteria(ReferenceModifiers.REF_EXTENDS, RestrictionModifiers.NO_EXTEND, elements, IApiProblem.ILLEGAL_EXTEND, IElementDescriptor.T_REFERENCE_TYPE); 
 				}
 				if (RestrictionModifiers.isImplementRestriction(mask)) {
-					add(ReferenceModifiers.REF_IMPLEMENTS, RestrictionModifiers.NO_IMPLEMENT, elements, IApiProblem.ILLEGAL_IMPLEMENT, IElementDescriptor.T_REFERENCE_TYPE);
+					addCriteria(ReferenceModifiers.REF_IMPLEMENTS, RestrictionModifiers.NO_IMPLEMENT, elements, IApiProblem.ILLEGAL_IMPLEMENT, IElementDescriptor.T_REFERENCE_TYPE);
 				}
 				if (RestrictionModifiers.isInstantiateRestriction(mask)) {
-					add(ReferenceModifiers.REF_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, elements, IApiProblem.ILLEGAL_INSTANTIATE, IElementDescriptor.T_REFERENCE_TYPE);
+					addCriteria(ReferenceModifiers.REF_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, elements, IApiProblem.ILLEGAL_INSTANTIATE, IElementDescriptor.T_REFERENCE_TYPE);
 				}
 				if (RestrictionModifiers.isReferenceRestriction(mask)) {
 					if (element.getElementType() == IElementDescriptor.T_METHOD) {
-						add(
-							ReferenceModifiers.REF_INTERFACEMETHOD | ReferenceModifiers.REF_SPECIALMETHOD |
+						addCriteria(ReferenceModifiers.REF_INTERFACEMETHOD | ReferenceModifiers.REF_SPECIALMETHOD |
 							ReferenceModifiers.REF_STATICMETHOD | ReferenceModifiers.REF_VIRTUALMETHOD,
 							RestrictionModifiers.NO_REFERENCE, elements, IApiProblem.ILLEGAL_REFERENCE, IElementDescriptor.T_METHOD);
 						
 					} else if (element.getElementType() == IElementDescriptor.T_FIELD) {
-						add(
-							ReferenceModifiers.REF_GETFIELD | ReferenceModifiers.REF_GETSTATIC |
+						addCriteria(ReferenceModifiers.REF_GETFIELD | ReferenceModifiers.REF_GETSTATIC |
 							ReferenceModifiers.REF_PUTFIELD | ReferenceModifiers.REF_PUTSTATIC,
 							RestrictionModifiers.NO_REFERENCE, elements, IApiProblem.ILLEGAL_REFERENCE, IElementDescriptor.T_FIELD);
 					}
@@ -184,7 +183,7 @@ public class ApiUseAnalyzer {
 			return true;
 		}
 		
-		private void add(int refKind, int restriction, IElementDescriptor[] elements, int problemKind, int elemenType) {
+		private void addCriteria(int refKind, int restriction, IElementDescriptor[] elements, int problemKind, int elemenType) {
 			IApiSearchCriteria condition = Factory.newSearchCriteria();
 			condition.addReferencedElementRestriction(fOwningComponentId, elements);
 			condition.setReferenceKinds(refKind);
@@ -360,11 +359,22 @@ public class ApiUseAnalyzer {
 		}
 		// Add API leak conditions
 		List conditions = visitor.getConditions();
-		addLeakCondition(conditions, ReferenceModifiers.REF_EXTENDS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_EXTENDS, RestrictionModifiers.ALL_RESTRICTIONS);
-		addLeakCondition(conditions, ReferenceModifiers.REF_IMPLEMENTS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.LEAK_IMPLEMENTS, RestrictionModifiers.ALL_RESTRICTIONS);
-		addLeakCondition(conditions, ReferenceModifiers.REF_FIELDDECL, IApiProblem.API_LEAK, IElementDescriptor.T_FIELD, IApiProblem.LEAK_FIELD, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE);
-		addLeakCondition(conditions, ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_METHOD_PARAMETER, RestrictionModifiers.ALL_RESTRICTIONS ^ (RestrictionModifiers.NO_REFERENCE | RestrictionModifiers.NO_OVERRIDE));
-		addLeakCondition(conditions, ReferenceModifiers.REF_RETURNTYPE, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_RETURN_TYPE, RestrictionModifiers.ALL_RESTRICTIONS ^ (RestrictionModifiers.NO_REFERENCE | RestrictionModifiers.NO_OVERRIDE));
+		
+		conditions.add(createLeakCondition(ReferenceModifiers.REF_EXTENDS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, 
+				IApiProblem.LEAK_EXTENDS, RestrictionModifiers.ALL_RESTRICTIONS, Flags.AccPublic | Flags.AccProtected));
+		conditions.add(createLeakCondition(ReferenceModifiers.REF_IMPLEMENTS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, 
+				IApiProblem.LEAK_IMPLEMENTS, RestrictionModifiers.ALL_RESTRICTIONS, Flags.AccPublic | Flags.AccProtected));
+		conditions.add(createLeakCondition(ReferenceModifiers.REF_FIELDDECL, IApiProblem.API_LEAK, IElementDescriptor.T_FIELD, 
+				IApiProblem.LEAK_FIELD, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE, Flags.AccPublic | Flags.AccProtected));
+		conditions.add(createLeakCondition(ReferenceModifiers.REF_RETURNTYPE, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, 
+				IApiProblem.LEAK_RETURN_TYPE, RestrictionModifiers.ALL_RESTRICTIONS ^ (RestrictionModifiers.NO_REFERENCE | RestrictionModifiers.NO_OVERRIDE),
+				Flags.AccPublic | Flags.AccProtected));
+		CompositeSearchCriteria criteria = new CompositeSearchCriteria(CompositeSearchCriteria.EVALUATE_OR, new ProblemDescriptor(IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_METHOD_PARAMETER));
+		criteria.addCriteria(createLeakCondition(ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, 
+				IApiProblem.LEAK_METHOD_PARAMETER, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE, Flags.AccPublic | Flags.AccProtected));
+		criteria.addCriteria(createLeakCondition(ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, 
+				IApiProblem.LEAK_METHOD_PARAMETER, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_OVERRIDE, Flags.AccProtected));
+		conditions.add(criteria);
 		return (IApiSearchCriteria[]) conditions.toArray(new IApiSearchCriteria[conditions.size()]);
 	}
 	
@@ -378,14 +388,14 @@ public class ApiUseAnalyzer {
 	 * @param flags
 	 * @param restrictions
 	 */
-	private void addLeakCondition(List conditions, int refKind, int problemKind, int elementType, int flags, int restrictions) {
+	private IApiSearchCriteria createLeakCondition(int refKind, int problemKind, int elementType, int flags, int restrictions, int sourcevis) {
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
 		criteria.setReferenceKinds(refKind);
 		criteria.setReferencedRestrictions(VisibilityModifiers.PRIVATE, RestrictionModifiers.ALL_RESTRICTIONS);
 		criteria.setSourceRestrictions(VisibilityModifiers.API, restrictions);
-		criteria.setSourceModifiers(Flags.AccPublic | Flags.AccProtected);	
+		criteria.setSourceModifiers(sourcevis);	
 		criteria.setUserData(new ProblemDescriptor(problemKind, elementType, flags));
-		conditions.add(criteria);
+		return criteria;
 	}
 	
 	/**
@@ -536,6 +546,8 @@ public class ApiUseAnalyzer {
 			String qualifiedTypeName = resolvedLocation.getType().getQualifiedName();
 			IMemberDescriptor member = resolvedLocation.getMember();
 			String[] messageargs = null;
+			//modifiable flags that are sent to the problem creator 
+			int resolvedflags = flags;
 			try {
 				switch(kind) {
 					case IApiProblem.ILLEGAL_IMPLEMENT : {
@@ -717,7 +729,12 @@ public class ApiUseAnalyzer {
 								for (int i = 0; i < parameterTypes.length; i++) {
 									parameterTypes[i] = parameterTypes[i].replace('/', '.');
 								}
-								IMethod Qmethod = type.getMethod(method.getName(), parameterTypes);
+								String methodname = method.getName();
+								if(methodname.equals("<init>")) { //$NON-NLS-1$
+									methodname = method.getEnclosingType().getName();
+									resolvedflags = IApiProblem.LEAK_CONSTRUCTOR_PARAMETER;
+								}
+								IMethod Qmethod = type.getMethod(methodname, parameterTypes);
 								IMethod[] methods = type.getMethods();
 								IMethod match = null;
 								for (int i = 0; i < methods.length; i++) {
@@ -759,7 +776,7 @@ public class ApiUseAnalyzer {
 					charEnd, 
 					elementType, 
 					kind,
-					flags);
+					resolvedflags);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}

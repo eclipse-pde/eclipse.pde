@@ -202,4 +202,16 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Missing @since tag", new String[0])));
 	}
+	
+	/**
+	 * Tests that the custom message for a constructor parameter can be acquired
+	 */
+	public void testGetLeakConstructorParamMessage() {
+		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", 
+				new String[] {"fooconstructor"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.API_LEAK, IApiProblem.LEAK_CONSTRUCTOR_PARAMETER);
+		String message = problem.getMessage();
+		assertNotNull("the message should not be null", message);
+		assertFalse("the message should be found", message.equals(fDefaultMessage));
+		assertTrue("the message should be correct", message.equals(MessageFormat.format("Leaks non-API type fooconstructor via constructor parameter", new String[0])));
+	}
 }

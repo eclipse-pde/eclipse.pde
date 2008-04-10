@@ -350,6 +350,7 @@ public class ApiProblemFactory {
 							case IApiProblem.LEAK_FIELD: return 15;
 							case IApiProblem.LEAK_RETURN_TYPE: return 16;
 							case IApiProblem.LEAK_METHOD_PARAMETER: return 17;
+							case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: return 109;
 						}
 					}
 				}

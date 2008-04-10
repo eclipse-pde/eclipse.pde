@@ -149,8 +149,14 @@ public class TagScanner {
 						MethodDeclaration method = (MethodDeclaration) parent;
 						String signature = Util.getMethodSignatureFromNode(method);
 						if(signature != null) {
-							IMethodDescriptor descriptor = fType.getMethod(method.getName().getFullyQualifiedName(), signature);
-							processTags(descriptor, tags, getEnclosingType(method), IApiJavadocTag.MEMBER_METHOD);
+							String methodname = method.getName().getFullyQualifiedName();
+							int member = IApiJavadocTag.MEMBER_METHOD;
+							if(method.isConstructor()) {
+								member = IApiJavadocTag.MEMBER_CONSTRUCTOR;
+								methodname = "<init>"; //$NON-NLS-1$
+							}
+							IMethodDescriptor descriptor = fType.getMethod(methodname, signature);
+							processTags(descriptor, tags, getEnclosingType(method), member);
 						}
 						break;
 					}
@@ -321,7 +327,7 @@ public class TagScanner {
 					}
 					if (object instanceof HashtableOfInt) {
 						HashtableOfInt hashtableOfInt = (HashtableOfInt) object;
-						int numberOfParameters = Signature.getParameterCount(descriptor.getSignature());
+						int numberOfParameters = Signature.getParameterCount(descriptor.getSignature())+1;
 						Object object2 = hashtableOfInt.get(numberOfParameters);
 						if (object2 instanceof IMethodDescriptor) {
 							return (IMethodDescriptor) object2;
@@ -370,7 +376,7 @@ public class TagScanner {
 		 * @return mapping of unresolved methods to resolved methods
 		 * @throws CoreException 
 		 */
-		private Map getMethodMapping(IClassFile file) throws CoreException {
+		private Map getMethodMapping(final IClassFile file) throws CoreException {
 			if (fMethodMappings == null) {
 				fMethodMappings = new HashMap();
 			}
@@ -384,7 +390,8 @@ public class TagScanner {
 					Object methodsCache = mapping.get(selector);
 					if (methodsCache != null) {
 						// already an existing method with the same selector
-						int numberOfParameter = Signature.getParameterCount(resolved.getSignature());
+						//parameter counts start @ 1 to be mappable
+						int numberOfParameter = Signature.getParameterCount(resolved.getSignature())+1;
 						if (methodsCache instanceof HashtableOfInt) {
 							HashtableOfInt hashtableOfInt = (HashtableOfInt) methodsCache;
 							Object object = hashtableOfInt.get(numberOfParameter);
@@ -406,7 +413,8 @@ public class TagScanner {
 							// this is a IMethodDescriptor
 							IMethodDescriptor previousMethod = (IMethodDescriptor) methodsCache;
 							HashtableOfInt hashtableOfInt = new HashtableOfInt();
-							int numberOfParametersForPrevious = Signature.getParameterCount(previousMethod.getSignature());
+							//parameter counts start @ 1 to be mappable
+							int numberOfParametersForPrevious = Signature.getParameterCount(previousMethod.getSignature())+1;
 							if (numberOfParametersForPrevious != numberOfParameter) {
 								hashtableOfInt.put(numberOfParameter, resolved);
 								hashtableOfInt.put(numberOfParametersForPrevious, previousMethod);

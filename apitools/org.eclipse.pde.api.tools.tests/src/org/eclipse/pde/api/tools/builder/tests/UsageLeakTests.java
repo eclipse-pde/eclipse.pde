@@ -41,36 +41,79 @@ public class UsageLeakTests extends ApiBuilderTests {
 	}
 
 	/**
-	 * Tests that a method leaking an internal type via its' return
+	 * Tests that a public method leaking an internal type via its' return
 	 * type is flagged properly as a leak
 	 */
-	public void testLeaksMethodInternalReturnType() {
+	public void testLeaksPublicMethodInternalReturnType() {
 		//TODO provide code for tests
 	}
 	
 	/**
-	 * Tests that a method leaking an internal type via its'
+	 * Tests that a protected method leaking an internal type via its' return
+	 * type is flagged properly as a leak
+	 */
+	public void testLeaksProtectedMethodInternalReturnType() {
+		//TODO provide code for tests
+	}
+	
+	/**
+	 * Tests that a public method leaking an internal type via its'
 	 * return type is ignored as a problem if the method 
 	 * has an @noreference tag on it
 	 */
-	public void testIgnoreNoRefMethodInternalReturnType() {
+	public void testIgnoreNoRefPublicMethodInternalReturnType() {
 		//TODO provide code for tests
 	}
 	
 	/**
-	 * Tests that a method leaking an internal type via a parameter
+	 * Tests that a protected method leaking an internal type via its'
+	 * return type is ignored as a problem if the method 
+	 * has an @noreference tag on it
+	 */
+	public void testIgnoreNoRefProtectedMethodInternalReturnType() {
+		//TODO provide code for tests
+	}
+	
+	/**
+	 * Tests that a protected method leaking an internal type via its'
+	 * return type is ignored as a problem if the method 
+	 * has an @nooverride tag on it
+	 */
+	public void testIgnoreNoOverrideProtectedMethodInternalReturnType() {
+		//TODO provide code for tests
+	}
+	
+	/**
+	 * Tests that a public method leaking an internal type via a parameter
 	 * is flagged properly as a leak
 	 */
-	public void testLeaksMethodParameterInternalType() {
+	public void testLeaksPublicMethodParameterInternalType() {
 		//TODO provide code for tests
 	}
 	
 	/**
-	 * Tests that a method that leaks an internal type via one
+	 * Tests that a protected method leaking an internal type via a parameter
+	 * is flagged properly as a leak
+	 */
+	public void testLeaksProtectedMethodParameterInternalType() {
+		//TODO provide code for tests
+	}
+	
+	/**
+	 * Tests that a public method that leaks an internal type via one
 	 * of its' parameters is ignored as a problem if there is an
 	 * @noreference tag on the method
 	 */
-	public void testIgnoreNoRefMethodParameterInternalType() {
+	public void testIgnoreNoRefPublicMethodParameterInternalType() {
+		//TODO provide code for tests
+	}
+	
+	/**
+	 * Tests that a protected method that leaks an internal type via one
+	 * of its' parameters is ignored as a problem if there is an
+	 * @noreference tag on the method
+	 */
+	public void testIgnoreNoRefProtectedMethodParameterInternalType() {
 		//TODO provide code for tests
 	}
 	
@@ -92,15 +135,23 @@ public class UsageLeakTests extends ApiBuilderTests {
 	}
 	
 	/**
-	 * Tests that a method leaking an internal type via the parameter on
+	 * Tests that a public method leaking an internal type via the parameter on
 	 * a generic is flagged properly as a leak
 	 */
-	public void testLeaksMethodReturnGeneric() {
+	public void testLeaksPublicMethodReturnGeneric() {
 		//TODO provide code for tests
 	}
 	
 	/**
-	 * Tests that a method leaking an internal type via 
+	 * Tests that a protected method leaking an internal type via the parameter on
+	 * a generic is flagged properly as a leak
+	 */
+	public void testLeaksProtectedMethodReturnGeneric() {
+		//TODO provide code for tests
+	}
+	
+	/**
+	 * Tests that a public method leaking an internal type via 
 	 * a parameter in a generic is ignored if there
 	 * is an @noreference tag on the method
 	 */
@@ -109,20 +160,73 @@ public class UsageLeakTests extends ApiBuilderTests {
 	}
 	
 	/**
-	 * Tests that a method leaking an internal type via a parameter
+	 * Tests that a protected method leaking an internal type
+	 * via a parameter in a generic is ignored if there is 
+	 * an @nooverride tag on the method
+	 */
+	public void testIgnoreNoOverrideMethodReturnGeneric() {
+		//TODO provide code for test
+	}
+	
+	/**
+	 * Tests that a public method leaking an internal type via
+	 * a method parameter in a generic is ignored if there is 
+	 * an @nooverride and an @noreference tag on the method 
+	 */
+	public void testIgnoreNoOverrideNoReferencePublicMethodReturnGeneric() {
+		//TODO provide code for test
+	}
+	
+	/**
+	 * Tests that a protected method leaking an internal type via
+	 * a method parameter in a generic is ignored if there is 
+	 * an @nooverride and an @noreference tag on the method 
+	 */
+	public void testIgnoreNoOverrideNoReferenceProtectedMethodReturnGeneric() {
+		//TODO provide code for test
+	}
+	
+	/**
+	 * Tests that a public method leaking an internal type via a parameter
 	 * of a generic that is a method parameter is flagged properly
 	 * as a problem
 	 */
-	public void testLeaksMethodParameterGeneric() {
+	public void testLeaksPublicMethodParameterGeneric() {
 		//TODO provide code for tests
 	}
 	
 	/**
-	 * Tests that a method leaking an internal type via a generic parameter
+	 * Tests that a protected method leaking an internal type via a parameter
+	 * in a generic is flagged properly as a problem
+	 */
+	public void testLeaksProtectedMethodParameterGeneric() {
+		//TODO provide code for test
+	}
+	
+	/**
+	 * Tests that a public method leaking an internal type via a generic parameter
 	 * in a method parameter is ignored if there is an @noreference tag
 	 * on the method
 	 */
-	public void testIgnoreNoRefethodParameterGeneric() {
+	public void testIgnoreNoRefMethodParameterGeneric() {
+		//TODO provide code for tests
+	}
+	
+	/**
+	 * Tests that a public method leaking an internal type via a generic parameter
+	 * in a method parameter is ignored if there is an @nooverride tag
+	 * on the method
+	 */
+	public void testIgnoreNoOverrideMethodParameterGeneric() {
+		//TODO provide code for tests
+	}
+	
+	/**
+	 * Tests that a public method leaking an internal type via a generic parameter
+	 * in a method parameter is ignored if there is an @noreference and 
+	 * and @nooverride tag on the method
+	 */
+	public void testIgnoreNoRefNoOverrideMethodParameterGeneric() {
 		//TODO provide code for tests
 	}
 	

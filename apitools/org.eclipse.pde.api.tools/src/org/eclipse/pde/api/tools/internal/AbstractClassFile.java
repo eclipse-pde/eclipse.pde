@@ -27,6 +27,9 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public abstract class AbstractClassFile implements IClassFile {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFile#getContents()
+	 */
 	public byte[] getContents() throws CoreException {
 		InputStream inputStream = getInputStream();
 		try {

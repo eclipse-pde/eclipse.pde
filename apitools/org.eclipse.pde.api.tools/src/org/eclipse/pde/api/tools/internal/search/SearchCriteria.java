@@ -406,18 +406,6 @@ public class SearchCriteria implements IApiSearchCriteria {
 	}
 	
 	/**
-	 * Returns whether the given reference is one of the reference kinds this criteria
-	 * is looking for.
-	 * 
-	 * @param reference reference
-	 * @return whether the given reference is one of the reference kinds this criteria
-	 * is looking for
-	 */
-	private boolean matchesReferenceKinds(IReference reference) {
-		return (reference.getReferenceKind() & (fReferenceKinds)) > 0;
-	}	
-	
-	/**
 	 * Returns whether the given location is contained within the component and
 	 * element restrictions of this search criteria.
 	 * 
@@ -451,13 +439,12 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#isPotentialMatch(org.eclipse.pde.api.tools.search.IReference)
 	 */
 	public boolean isPotentialMatch(IReference reference) {
-		return
-			matchesReferenceKinds(reference) &&
-			!isFilteredSourceLocation(reference.getSourceLocation()) &&
-			matchesSourceModifiers(reference.getSourceLocation()) &&
-			matchesSourceApiRestrictions(reference.getSourceLocation()) &&
-			matchesPatternRestrictions(reference.getReferencedLocation()) &&
-			isPotentialElementMatch(reference.getReferencedLocation());
+		return ((reference.getReferenceKind() & fReferenceKinds) > 0) &&
+				!isFilteredSourceLocation(reference.getSourceLocation()) &&
+				matchesSourceModifiers(reference.getSourceLocation()) &&
+				matchesSourceApiRestrictions(reference.getSourceLocation()) &&
+				matchesPatternRestrictions(reference.getReferencedLocation()) &&
+				isPotentialElementMatch(reference.getReferencedLocation());
 	}
 	
 	/**

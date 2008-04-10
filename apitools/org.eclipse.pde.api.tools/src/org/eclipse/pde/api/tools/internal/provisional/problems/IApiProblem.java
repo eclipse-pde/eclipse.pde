@@ -194,6 +194,13 @@ public interface IApiProblem {
 	public static final int LEAK_METHOD_PARAMETER = 5;	
 	
 	/**
+	 * Flags to indicate a leak from a constructor parameter 
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int LEAK_CONSTRUCTOR_PARAMETER = 6;
+	
+	/**
 	 * Constant representing the value of a default API profile {@link IApiProblem} kind.
 	 * 
 	 * @see #getKind()

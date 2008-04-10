@@ -1357,6 +1357,9 @@ public final class Util {
 					case IApiProblem.LEAK_RETURN_TYPE: {
 						return "LEAK_RETURN_TYPE"; //$NON-NLS-1$
 					}
+					case IApiProblem.NO_FLAGS: {
+						return "NO_FLAGS"; //$NON-NLS-1$
+					}
 				}
 			}
 		}
@@ -1482,19 +1485,11 @@ public final class Util {
 	 * @return the signature for the given method node or <code>null</code>
 	 */
 	public static String getMethodSignatureFromNode(MethodDeclaration node) {
-		if(!node.isConstructor()) {
-			List params = node.parameters();
-			List rparams = new ArrayList(params.size());
-			SingleVariableDeclaration param = null;
-			String pname = null;
-			for(Iterator iter = params.iterator(); iter.hasNext();) {
-				param = (SingleVariableDeclaration) iter.next();
-				pname = Util.getTypeSignature(param.getType());
-				if(pname != null) {
-					rparams.add(pname);
-				}
-			}
-			if(rparams.size() == params.size()) {
+		Assert.isNotNull(node);
+		List params = node.parameters();
+		List rparams = getParametersTypeNames(params);
+		if(rparams.size() == params.size()) {
+			if(!node.isConstructor()) {
 				Type returnType = node.getReturnType2();
 				if (returnType != null) {
 					String rtype = Util.getTypeSignature(returnType);
@@ -1503,8 +1498,33 @@ public final class Util {
 					}
 				}
 			}
+			else {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("<init>"); //$NON-NLS-1$
+				buffer.append(Signature.createMethodSignature((String[]) rparams.toArray(new String[rparams.size()]), Signature.SIG_VOID));
+				return buffer.toString();
+			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the listing of the signatures of the parameters passed in
+	 * @param rawparams
+	 * @return a listing of signatures for the specified parameters
+	 */
+	public static List getParametersTypeNames(List rawparams) {
+		List rparams = new ArrayList(rawparams.size());
+		SingleVariableDeclaration param = null;
+		String pname = null;
+		for(Iterator iter = rawparams.iterator(); iter.hasNext();) {
+			param = (SingleVariableDeclaration) iter.next();
+			pname = Util.getTypeSignature(param.getType());
+			if(pname != null) {
+				rparams.add(pname);
+			}
+		}
+		return rparams;
 	}
 	
 	/**
@@ -1588,6 +1608,9 @@ public final class Util {
 	 */
 	public static String getRestrictionKind(int kind) {
 		StringBuffer buffer = new StringBuffer();
+		if(kind == RestrictionModifiers.NO_RESTRICTIONS) {
+			return "NO_RESTRICTIONS"; //$NON-NLS-1$
+		}
 		if(kind == RestrictionModifiers.ALL_RESTRICTIONS) {
 			buffer.append("ALL_RESTRICTIONS"); //$NON-NLS-1$
 		}
@@ -1638,96 +1661,179 @@ public final class Util {
 	 * @return the string for the reference kind
 	 */
 	public static final String getReferenceKind(int kind) {
-		switch(kind) {
-			case ReferenceModifiers.REF_EXTENDS: {
-				return "EXTENDS"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_IMPLEMENTS: {
-				return "IMPLEMENTS"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_SPECIALMETHOD: {
-				return "INVOKED_SPECIAL"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_STATICMETHOD: {
-				return "INVOKED_STATIC"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_PUTFIELD: {
-				return "PUT_FIELD"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_PUTSTATIC: {
-				return "PUT_STATIC_FIELD"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_FIELDDECL: {
-				return "DECLARED_FIELD"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_PARAMETERIZED_TYPEDECL: {
-				return "DECLARED_PARAMETERIZED_TYPE"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_PARAMETERIZED_FIELDDECL: {
-				return "DECLARED_PARAMETERIZED_FIELD"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_PARAMETERIZED_METHODDECL: {
-				return "DECLARED_PARAMETERIZED_METHOD"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_PARAMETER: {
-				return "PARAMETER"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_LOCALVARIABLEDECL: {
-				return "LOCAL_VAR_DECLARED"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_PARAMETERIZED_VARIABLE: {
-				return "DECLARED_PARAMETERIZED_VARIABLE"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_THROWS: {
-				return "THROWS"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_CHECKCAST: {
-				return "CASTS"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_ARRAYALLOC: {
-				return "ALLOCATES_ARRAY"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_CATCHEXCEPTION: {
-				return "CATCHES_EXCEPTION"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_GETFIELD: {
-				return "GETS_FIELD"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_GETSTATIC: {
-				return "GETS_STATIC_FIELD"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_INSTANCEOF: {
-				return "INSTANCEOF"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_INTERFACEMETHOD: {
-				return "INTERFACE_METHOD"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_CONSTRUCTORMETHOD: {
-				return "CONSTRUCTOR_METHOD"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_LOCALVARIABLE: {
-				return "LOCAL_VARIABLE"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_PASSEDPARAMETER: {
-				return "PASSED_PARAMETER"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_RETURNTYPE: {
-				return "RETURN_TYPE"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_VIRTUALMETHOD: {
-				return "VIRTUAL_METHOD"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_CONSTANTPOOL: {
-				return "CONSTANT_POOL"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_INSTANTIATE: {
-				return "INSTANTIATION"; //$NON-NLS-1$
-			}
-			case ReferenceModifiers.REF_OVERRIDE : {
-				return "OVERRIDE"; //$NON-NLS-1$
-			}
+		StringBuffer buffer = new StringBuffer();
+		if((kind & ReferenceModifiers.REF_EXTENDS) > 0) {
+				buffer.append("EXTENDS"); //$NON-NLS-1$
 		}
-		return null;
+		if((kind & ReferenceModifiers.REF_IMPLEMENTS) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("IMPLEMENTS"); //$NON-NLS-1$
+		}
+		if ((kind & ReferenceModifiers.REF_SPECIALMETHOD) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("INVOKED_SPECIAL"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_STATICMETHOD) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("INVOKED_STATIC"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_PUTFIELD) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("PUT_FIELD"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_PUTSTATIC) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("PUT_STATIC_FIELD"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_FIELDDECL) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("DECLARED_FIELD"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_PARAMETERIZED_TYPEDECL) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("DECLARED_PARAMETERIZED_TYPE"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_PARAMETERIZED_FIELDDECL) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("DECLARED_PARAMETERIZED_FIELD"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_PARAMETERIZED_METHODDECL) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("DECLARED_PARAMETERIZED_METHOD"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_PARAMETER) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("PARAMETER"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_LOCALVARIABLEDECL) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("LOCAL_VAR_DECLARED"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_PARAMETERIZED_VARIABLE) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("DECLARED_PARAMETERIZED_VARIABLE"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_THROWS) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("THROWS"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_CHECKCAST) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("CASTS"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_ARRAYALLOC) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("ALLOCATES_ARRAY"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_CATCHEXCEPTION) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("CATCHES_EXCEPTION"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_GETFIELD) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("GETS_FIELD"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_GETSTATIC) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("GETS_STATIC_FIELD"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_INSTANCEOF) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("INSTANCEOF"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_INTERFACEMETHOD) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("INTERFACE_METHOD"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_CONSTRUCTORMETHOD) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("CONSTRUCTOR_METHOD"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_LOCALVARIABLE) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("LOCAL_VARIABLE"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_PASSEDPARAMETER) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("PASSED_PARAMETER"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_RETURNTYPE) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("RETURN_TYPE"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_VIRTUALMETHOD) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("VIRTUAL_METHOD"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_CONSTANTPOOL) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("CONSTANT_POOL"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_INSTANTIATE) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("INSTANTIATION"); //$NON-NLS-1$
+		}
+		if((kind & ReferenceModifiers.REF_OVERRIDE) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("OVERRIDE"); //$NON-NLS-1$
+		}
+		return buffer.toString();
 	}	
 	
 	/**

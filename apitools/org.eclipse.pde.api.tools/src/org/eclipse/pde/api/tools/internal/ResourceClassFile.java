@@ -14,6 +14,7 @@ import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 
 /**
  * A class file corresponding to a resource in the workspace.
@@ -56,4 +57,28 @@ public class ResourceClassFile extends AbstractClassFile {
 		return fTypeName;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getTypeName();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return fTypeName.hashCode();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if(obj instanceof IClassFile) {
+			IClassFile file = (IClassFile) obj;
+			return fTypeName.equals(file.getTypeName());
+		}
+		return super.equals(obj);
+	}
 }
