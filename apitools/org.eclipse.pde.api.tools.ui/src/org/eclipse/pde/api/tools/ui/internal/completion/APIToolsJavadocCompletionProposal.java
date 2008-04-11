@@ -15,8 +15,10 @@ import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.swt.graphics.Image;
@@ -28,7 +30,7 @@ import org.eclipse.swt.graphics.Point;
  * 
  * @since 1.0.0
  */
-public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposal, ICompletionProposalExtension2 {
+public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposal, ICompletionProposalExtension2, ICompletionProposalExtension3 {
 	
 	int fOffset = 0;
 	String fReplaceText = null;
@@ -128,10 +130,36 @@ public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposa
 			int length = offset-start;
 			String prefix = document.get(start, length);
 			if(length <= fDisplayText.length()) {
-				return prefix.equals(fDisplayText.substring(0, length));
+				if(prefix.equals(fDisplayText.substring(0, length))) {
+					return true;
+				}
 			}
 		}
 		catch (BadLocationException e) {}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getInformationControlCreator()
+	 */
+	public IInformationControlCreator getInformationControlCreator() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getPrefixCompletionStart(org.eclipse.jface.text.IDocument, int)
+	 */
+	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
+		return fContext.getTokenStart();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getPrefixCompletionText(org.eclipse.jface.text.IDocument, int)
+	 */
+	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
+		if(validate(document, completionOffset, null)) {
+			return fReplaceText;
+		}
+		return null;
 	}
 }
