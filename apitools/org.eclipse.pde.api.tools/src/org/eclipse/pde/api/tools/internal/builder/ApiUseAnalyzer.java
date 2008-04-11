@@ -617,14 +617,14 @@ public class ApiUseAnalyzer {
 							charStart = range.getOffset();
 							charEnd = charStart + range.getLength();
 							lineNumber = document.getLineOfOffset(charStart);
-						}					
+						}
 						break;
 					}
 					case IApiProblem.ILLEGAL_REFERENCE: {
 						prefKey = IApiProblemTypes.ILLEGAL_REFERENCE;
 						switch (elementType) {
 							case IElementDescriptor.T_METHOD: {
-								IMethodDescriptor method = (IMethodDescriptor) member;							
+								IMethodDescriptor method = (IMethodDescriptor) member;
 								messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
 								int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
 								int offset = document.getLineOffset(linenumber);
@@ -634,7 +634,7 @@ public class ApiUseAnalyzer {
 								if(first > -1) {
 									charStart = offset + first;
 									charEnd = charStart + name.length();
-								}							
+								}
 								break;
 							}
 							case IElementDescriptor.T_FIELD: {
@@ -668,7 +668,7 @@ public class ApiUseAnalyzer {
 									//the first occurrence 
 									charStart = offset;
 									charEnd = offset + line.length();
-								}							
+								}
 								break;
 							}
 						}
@@ -724,7 +724,7 @@ public class ApiUseAnalyzer {
 										// ignore
 										return null;
 									}
-								}								
+								}
 								// report the marker on the method
 								// TODO: can we just lookup the method with resolved signature?
 								String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
@@ -751,7 +751,7 @@ public class ApiUseAnalyzer {
 									charStart = range.getOffset();
 									charEnd = charStart + range.getLength();
 									lineNumber = document.getLineOfOffset(charStart);
-								}										
+								}
 								break;
 							}
 						}
@@ -820,7 +820,7 @@ public class ApiUseAnalyzer {
 			case IApiProblem.ILLEGAL_REFERENCE: {
 				switch (elementType) {
 					case IElementDescriptor.T_METHOD: {
-						IMethodDescriptor method = (IMethodDescriptor) member;							
+						IMethodDescriptor method = (IMethodDescriptor) member;
 						messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
 						break;
 					}
@@ -829,7 +829,7 @@ public class ApiUseAnalyzer {
 						messageargs = new String[] {field.getEnclosingType().getQualifiedName(), field.getName()};
 						break;
 					}
-				}						
+				}
 				break;
 			}
 			case IApiProblem.API_LEAK: {
