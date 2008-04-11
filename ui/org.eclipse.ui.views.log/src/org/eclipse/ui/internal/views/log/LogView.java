@@ -683,11 +683,7 @@ public class LogView extends ViewPart implements ILogListener {
 		if (!MessageDialog.openConfirm(fTree.getShell(), title, message))
 			return;
 		if (fInputFile.delete() || elements.size() > 0) {
-			elements.clear();
-			groups.clear();
-			currentSession.removeAllChildren();
-			asyncRefresh(false);
-			resetDialogButtons();
+			handleClear();
 		}
 	}
 
@@ -703,7 +699,9 @@ public class LogView extends ViewPart implements ILogListener {
 			public void run() {
 				elements.clear();
 				groups.clear();
-				currentSession.removeAllChildren();
+				if (currentSession != null) {
+					currentSession.removeAllChildren();
+				}
 				asyncRefresh(false);
 				resetDialogButtons();
 			}
