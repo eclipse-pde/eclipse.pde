@@ -18,6 +18,10 @@ public class AllCheatSheetModelTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for testing the cheatsheet model"); //$NON-NLS-1$
 		suite.addTestSuite(SimpleCSIntroTestCase.class);
+		suite.addTestSuite(SimpleCSItemTestCase.class);
+		suite.addTestSuite(SimpleCSSubItemTestCase.class);
+		suite.addTestSuite(SimpleCSItemAPITestCase.class);
+		suite.addTestSuite(SimpleCSSubItemAPITestCase.class);
 		return suite;
 	}
 
