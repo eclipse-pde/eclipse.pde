@@ -148,7 +148,6 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		// TODO Fix help
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/ctx_help_editor/page_ctx_help.htm"; //$NON-NLS-1$
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/ctx_help_editor/ctx_help_editor.htm"; //$NON-NLS-1$
 	}
 }
