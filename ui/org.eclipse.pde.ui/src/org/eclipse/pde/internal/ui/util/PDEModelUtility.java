@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.framework.Constants;
 
 /**
@@ -95,6 +96,16 @@ public class PDEModelUtility {
 	 */
 	public static void disconnect(PDEFormEditor editor) {
 		IProject project = editor.getCommonProject();
+		if (project == null) {
+			// getCommonProject will return null when project is deleted with editor open - bug 226788
+			// Solution is to use editor input if it is a FileEditorInput. 
+			IEditorInput input = editor.getEditorInput();
+			if (input != null && input instanceof FileEditorInput) {
+				FileEditorInput fei = (FileEditorInput) input;
+				IFile file = fei.getFile();
+				project = file.getProject();
+			}
+		}
 		if (project == null)
 			return;
 		if (!fOpenPDEEditors.containsKey(project))
