@@ -21,6 +21,8 @@ import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.pde.ui.IProvisionerWizard;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 public class AddTargetPluginsWizard extends NewWizard {
 
@@ -67,7 +69,20 @@ public class AddTargetPluginsWizard extends NewWizard {
 			for (int j = 0; j < elements.length; j++) {
 				WizardElement element = createWizardElement(elements[j]);
 				if (element != null) {
-					list.add(element);
+					final String pluginId = element.getPluginId();
+					final String contributionId = element.getID();
+					IPluginContribution pc = new IPluginContribution() {
+						public String getLocalId() {
+							return contributionId;
+						}
+
+						public String getPluginId() {
+							return pluginId;
+						}
+					};
+					if (!WorkbenchActivityHelper.filterItem(pc)) {
+						list.add(element);
+					}
 				}
 			}
 		}

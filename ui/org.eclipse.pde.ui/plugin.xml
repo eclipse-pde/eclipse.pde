@@ -1702,7 +1702,7 @@
        <provisioner
              class="org.eclipse.pde.internal.ui.wizards.provisioner.update.UpdateSiteProvisionerWizard"
              icon="$nl$/icons/etool16/newsiteprj_wiz.gif"
-             id="org.eclipse.pde.ui.provisioner.update"
+             id="org.eclipse.ui.update.provisioner"
              name="%provisioner.site.name">
           <description>
              %provisioner.site.description
