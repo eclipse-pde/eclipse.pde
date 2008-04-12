@@ -33,6 +33,16 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 		assertEquals(extensions[0].getChildCount(), 1);
 		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
 	}
+	
+	public void testReadSimpleExtensionOneLine() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
+		setXMLContents(sb, ""); // "" means no newline at the end of file
+		load();
+
+		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
+		assertEquals(extensions.length, 1);
+	}
 
 	public void testReadMultilineSimpleExtension() {
 		StringBuffer sb = new StringBuffer();

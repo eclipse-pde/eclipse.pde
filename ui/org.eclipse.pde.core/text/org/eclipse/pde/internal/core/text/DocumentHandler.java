@@ -115,7 +115,16 @@ public abstract class DocumentHandler extends DefaultHandler {
 		IDocument doc = getDocument();
 		if (col < 0)
 			col = doc.getLineLength(line);
-		String text = doc.get(fHighestOffset + 1, doc.getLineOffset(line) - fHighestOffset - 1);
+
+		int endOffset;
+		if (line < doc.getNumberOfLines()) {
+			endOffset = doc.getLineOffset(line);
+		} else {
+			line = doc.getNumberOfLines() - 1;
+			IRegion lineInfo = doc.getLineInformation(line);
+			endOffset = lineInfo.getOffset() + lineInfo.getLength();
+		}
+		String text = doc.get(fHighestOffset + 1, endOffset - fHighestOffset - 1);
 
 		ArrayList commentPositions = new ArrayList();
 		for (int idx = 0; idx < text.length();) {
