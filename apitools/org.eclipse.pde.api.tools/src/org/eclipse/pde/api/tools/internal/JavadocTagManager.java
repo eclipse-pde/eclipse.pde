@@ -94,7 +94,7 @@ public class JavadocTagManager {
 								IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.TYPE_INTERFACE | IApiJavadocTag.MEMBER_FIELD,
 								IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.MEMBER_CONSTRUCTOR}, 
 					new String[] {"This method is not intended to be referenced by clients.", //$NON-NLS-1$ 
-									"This field is not intended to be refereced by clients.", //$NON-NLS-1$
+									"This field is not intended to be referenced by clients.", //$NON-NLS-1$
 									"This constructor is not intended to be referenced by clients."}); //$NON-NLS-1$
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);

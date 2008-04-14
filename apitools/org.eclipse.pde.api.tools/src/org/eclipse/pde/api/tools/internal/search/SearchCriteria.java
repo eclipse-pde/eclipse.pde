@@ -49,26 +49,26 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * Map of component ID's to collection of leaf element in that scope, or an empty
 	 * collection for entire component.
 	 */
-	private Map fComponentIds = new HashMap();
+	protected Map fComponentIds = new HashMap();
 		
 	/**
 	 * References kinds with corresponding visibility and usage
 	 * restrictions on the referenced location
 	 */
-	private int fReferenceKinds = ReferenceModifiers.MASK_REF_ALL;
-	private int fVisibilityKinds = VisibilityModifiers.ALL_VISIBILITIES;
-	private int fRestrictionKinds = RestrictionModifiers.NO_RESTRICTIONS;
+	protected int fReferenceKinds = ReferenceModifiers.MASK_REF_ALL;
+	protected int fVisibilityKinds = VisibilityModifiers.ALL_VISIBILITIES;
+	protected int fRestrictionKinds = RestrictionModifiers.NO_RESTRICTIONS;
 	
 	/**
 	 * Java visibility to consider at the source or -1 if not considered
 	 */
-	private int fSourceModifiers = -1;
+	protected int fSourceModifiers = -1;
 	
 	/**
 	 * Corresponding visibility and usage restrictions on the source location
 	 */
-	private int fSourceVisibility = VisibilityModifiers.ALL_VISIBILITIES;
-	private int fSourceRestriction = RestrictionModifiers.ALL_RESTRICTIONS;	
+	protected int fSourceVisibility = VisibilityModifiers.ALL_VISIBILITIES;
+	protected int fSourceRestriction = RestrictionModifiers.ALL_RESTRICTIONS;	
 	
 	/**
 	 * Component filters for source reference locations or <code>null</code> if none.
@@ -472,7 +472,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * @param location source location
 	 * @return whether restrictions are satisfied
 	 */
-	private boolean matchesSourceApiRestrictions(ILocation location) {
+	protected boolean matchesSourceApiRestrictions(ILocation location) {
 		if (fSourceVisibility == VisibilityModifiers.ALL_VISIBILITIES && fSourceRestriction == RestrictionModifiers.ALL_RESTRICTIONS) {
 			return true;
 		}
@@ -509,7 +509,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * @param location source/referencing location
 	 * @return whether it matches Java visibility modifiers
 	 */
-	private boolean matchesSourceModifiers(ILocation location) {
+	protected boolean matchesSourceModifiers(ILocation location) {
 		if (fSourceModifiers == -1) {
 			return true;
 		}
@@ -525,7 +525,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 		return true;
 	}
 
-	private boolean isPotentialElementMatch(ILocation location) {
+	protected boolean isPotentialElementMatch(ILocation location) {
 		if (fPotentialElements == null) {
 			return true;
 		}

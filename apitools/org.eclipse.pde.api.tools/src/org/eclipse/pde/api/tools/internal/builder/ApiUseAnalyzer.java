@@ -60,8 +60,8 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
-import org.eclipse.pde.api.tools.internal.search.CompositeSearchCriteria;
 import org.eclipse.pde.api.tools.internal.search.Location;
+import org.eclipse.pde.api.tools.internal.search.MethodSearchCriteria;
 import org.eclipse.pde.api.tools.internal.search.Reference;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -366,14 +366,13 @@ public class ApiUseAnalyzer {
 				IApiProblem.LEAK_IMPLEMENTS, RestrictionModifiers.ALL_RESTRICTIONS, Flags.AccPublic | Flags.AccProtected));
 		conditions.add(createLeakCondition(ReferenceModifiers.REF_FIELDDECL, IApiProblem.API_LEAK, IElementDescriptor.T_FIELD, 
 				IApiProblem.LEAK_FIELD, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE, Flags.AccPublic | Flags.AccProtected));
-		conditions.add(createLeakCondition(ReferenceModifiers.REF_RETURNTYPE, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, 
-				IApiProblem.LEAK_RETURN_TYPE, RestrictionModifiers.ALL_RESTRICTIONS ^ (RestrictionModifiers.NO_REFERENCE | RestrictionModifiers.NO_OVERRIDE),
-				Flags.AccPublic | Flags.AccProtected));
-		CompositeSearchCriteria criteria = new CompositeSearchCriteria(CompositeSearchCriteria.EVALUATE_OR, new ProblemDescriptor(IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_METHOD_PARAMETER));
-		criteria.addCriteria(createLeakCondition(ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, 
-				IApiProblem.LEAK_METHOD_PARAMETER, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_REFERENCE, Flags.AccPublic | Flags.AccProtected));
-		criteria.addCriteria(createLeakCondition(ReferenceModifiers.REF_PARAMETER, IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, 
-				IApiProblem.LEAK_METHOD_PARAMETER, RestrictionModifiers.ALL_RESTRICTIONS ^ RestrictionModifiers.NO_OVERRIDE, Flags.AccProtected));
+		
+		//leaks return types
+		MethodSearchCriteria criteria = new MethodSearchCriteria(ReferenceModifiers.REF_RETURNTYPE, new ProblemDescriptor(IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_RETURN_TYPE));
+		conditions.add(criteria);
+		
+		//leaks parameters
+		criteria = new MethodSearchCriteria(ReferenceModifiers.REF_PARAMETER, new ProblemDescriptor(IApiProblem.API_LEAK, IElementDescriptor.T_METHOD, IApiProblem.LEAK_METHOD_PARAMETER));
 		conditions.add(criteria);
 		return (IApiSearchCriteria[]) conditions.toArray(new IApiSearchCriteria[conditions.size()]);
 	}
