@@ -110,7 +110,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 				} else {
 					path = new Path(TargetPlatform.getLocation()).append("eclipse"); //$NON-NLS-1$
 					if (TargetPlatform.getOS().equals("win32")) { //$NON-NLS-1$
-						path = path.addFileExtension(".exe"); //$NON-NLS-1$
+						path = path.addFileExtension("exe"); //$NON-NLS-1$
 					}
 				}
 
