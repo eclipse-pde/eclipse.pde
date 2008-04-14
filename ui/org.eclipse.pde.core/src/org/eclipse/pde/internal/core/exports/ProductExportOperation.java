@@ -308,8 +308,11 @@ public class ProductExportOperation extends FeatureExportOperation {
 			if (location != null)
 				writer.println("osgi.splashPath=" + location); //$NON-NLS-1$
 			writer.println("eclipse.product=" + fProduct.getId()); //$NON-NLS-1$
-			writer.println("osgi.bundles=" + getPluginList(config, TargetPlatform.getBundleList())); //$NON-NLS-1$
-			writer.println("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$ 		
+			writer.println("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$
+
+			String bundleList = getPluginList(config, TargetPlatform.getBundleList());
+			writer.println("osgi.bundles=" + bundleList); //$NON-NLS-1$
+
 		} catch (IOException e) {
 		} finally {
 			if (writer != null)
@@ -353,8 +356,13 @@ public class ProductExportOperation extends FeatureExportOperation {
 	}
 
 	private String getPluginList(String[] config, String bundleList) {
-		if (fProduct.useFeatures())
+		if (fProduct.useFeatures()) {
+			// if we're using features and find simple configurator in the list, let's just default and use update configurator 
+			if (bundleList.indexOf("org.eclipse.equinox.simpleconfigurator") != -1) { //$NON-NLS-1$
+				return "org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start"; //$NON-NLS-1$
+			}
 			return bundleList;
+		}
 
 		StringBuffer buffer = new StringBuffer();
 
