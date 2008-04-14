@@ -48,14 +48,19 @@ public class ImportLogAction extends Action implements IMenuCreator {
 			setId(name + "#" + location); //$NON-NLS-1$
 		}
 
+		protected void doRun() {
+			logView.handleImportPath(location);
+		}
+
 		/*
 		 * (non-Javadoc)
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
 		public void run() {
-			logView.handleImportPath(location);
+			doRun();
+
+			// remember we clicked on that item
 			if (isChecked()) {
-				// remember we clicked on that item
 				fMemento.putString(LogView.P_IMPORT_LOG, getId());
 			}
 		}
@@ -194,7 +199,13 @@ public class ImportLogAction extends Action implements IMenuCreator {
 		}
 
 		(new Separator()).fill(menu, -1);
-		ImportConfigurationLogAction importWorkspaceLogAction = new ImportConfigurationLogAction(Messages.ImportLogAction_reloadWorkspaceLog, Platform.getLogFileLocation().toFile().getAbsolutePath());
+		ImportConfigurationLogAction importWorkspaceLogAction = new ImportConfigurationLogAction(Messages.ImportLogAction_reloadWorkspaceLog, Platform.getLogFileLocation().toFile().getAbsolutePath()) {
+
+			public void doRun() {
+				logView.setPlatformLog();
+			}
+
+		};
 		importWorkspaceLogAction.setChecked(logView.isPlatformLogOpen());
 		ActionContributionItem item = new ActionContributionItem(importWorkspaceLogAction);
 		item.fill(menu, -1);

@@ -584,6 +584,9 @@ public class LogView extends ViewPart implements ILogListener {
 		super.dispose();
 	}
 
+	/**
+	 * Import log from file selected in FileDialog.
+	 */
 	void handleImport() {
 		FileDialog dialog = new FileDialog(getViewSite().getShell());
 		dialog.setFilterExtensions(new String[] {"*.log"}); //$NON-NLS-1$
@@ -603,27 +606,40 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 
+	/**
+	 * Import log from given file path. Do nothing if file not exists.
+	 * @param path path to log file.
+	 */
 	public void handleImportPath(String path) {
-		if (path != null && new Path(path).toFile().exists()) {
-			fInputFile = new Path(path).toFile();
-			fDirectory = fInputFile.getParent();
-			IRunnableWithProgress op = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-					monitor.beginTask(Messages.LogView_operation_importing, IProgressMonitor.UNKNOWN);
-					readLogFile();
-				}
-			};
-			ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite().getShell());
-			try {
-				pmd.run(true, true, op);
-			} catch (InvocationTargetException e) { // do nothing
-			} catch (InterruptedException e) { // do nothing
-			} finally {
-				fReadLogAction.setText(Messages.LogView_readLog_reload);
-				fReadLogAction.setToolTipText(Messages.LogView_readLog_reload);
-				asyncRefresh(false);
-				resetDialogButtons();
+		File file = new File(path);
+		if (path != null && file.exists()) {
+			setLogFile(file);
+		}
+	}
+
+	/**
+	 * Import log from given file path.
+	 * @param path path to log file.
+	 */
+	protected void setLogFile(File path) {
+		fInputFile = path;
+		fDirectory = fInputFile.getParent();
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				monitor.beginTask(Messages.LogView_operation_importing, IProgressMonitor.UNKNOWN);
+				readLogFile();
 			}
+		};
+		ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite().getShell());
+		try {
+			pmd.run(true, true, op);
+		} catch (InvocationTargetException e) { // do nothing
+		} catch (InterruptedException e) { // do nothing
+		} finally {
+			fReadLogAction.setText(Messages.LogView_readLog_reload);
+			fReadLogAction.setToolTipText(Messages.LogView_readLog_reload);
+			asyncRefresh(false);
+			resetDialogButtons();
 		}
 	}
 
@@ -729,9 +745,6 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private void readLogFile() {
-		if (!fInputFile.exists())
-			return;
-
 		elements.clear();
 		groups.clear();
 
@@ -894,7 +907,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	public void logging(IStatus status, String plugin) {
-		if (!fInputFile.equals(Platform.getLogFileLocation().toFile()))
+		if (!isPlatformLogOpen())
 			return;
 
 		if (batchEntries) {
@@ -1541,5 +1554,12 @@ public class LogView extends ViewPart implements ILogListener {
 	 */
 	public boolean isPlatformLogOpen() {
 		return (fInputFile.equals(Platform.getLogFileLocation().toFile()));
+	}
+
+	/**
+	 * 
+	 */
+	public void setPlatformLog() {
+		setLogFile(Platform.getLogFileLocation().toFile());
 	}
 }
