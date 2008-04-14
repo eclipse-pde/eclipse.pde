@@ -128,10 +128,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * Singleton instance of the {@link JavadocTagManager}
 	 */
 	private static JavadocTagManager fgTagManager = null;
-	/**
-	 * Singleton instance of the {@link IApiProfileManager}
-	 */
-	private static IApiProfileManager fgApiProfileManager = null;
 
 	/**
 	 * Private debug options
@@ -379,10 +375,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * @return the singleton instance of the {@link IApiProfileManager}
 	 */
 	public IApiProfileManager getApiProfileManager() {
-		if(fgApiProfileManager == null) {
-			fgApiProfileManager = new ApiProfileManager();
-		}
-		return fgApiProfileManager;
+		return ApiProfileManager.getManager();
 	}
 	
 	/**

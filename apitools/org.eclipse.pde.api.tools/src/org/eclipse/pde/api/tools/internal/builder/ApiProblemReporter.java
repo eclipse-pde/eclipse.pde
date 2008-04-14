@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
@@ -217,11 +218,7 @@ public class ApiProblemReporter implements IApiProblemReporter {
 	 * @return true if the {@link IApiProblem} should not have a marker created, false otherwise
 	 */
 	private boolean isProblemFiltered(IApiProblem problem) {
-		ApiPlugin plugin = ApiPlugin.getDefault();
-		if(plugin == null) {
-			return false;
-		}
-		IApiProfileManager manager = plugin.getApiProfileManager();
+		IApiProfileManager manager = ApiProfileManager.getManager();
 		IApiProfile profile = manager.getWorkspaceProfile();
 		if(profile == null) {
 			profile = manager.getApiProfile(IApiCoreConstants.ANT_BUILD_PROFILE_NAME);

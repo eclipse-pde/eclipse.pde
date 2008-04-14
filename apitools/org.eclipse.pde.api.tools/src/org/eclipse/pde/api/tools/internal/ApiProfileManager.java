@@ -122,14 +122,29 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 */
 	private boolean fNeedsSaving = false;
 	
+	private static ApiProfileManager fInstance = null;
+	
 	/**
 	 * Constructor
 	 */
-	public ApiProfileManager() {
-		ApiPlugin.getDefault().addSaveParticipant(this);
-		JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
-		PDECore.getDefault().getModelManager().addPluginModelListener(this);
+	private ApiProfileManager(boolean framework) {
+		if(framework) {
+			ApiPlugin.getDefault().addSaveParticipant(this);
+			JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
+			PDECore.getDefault().getModelManager().addPluginModelListener(this);
+		}
+	}
+	
+	/**
+	 * Returns the singleton instance of the manager
+	 * @return the singleton instance of the manager
+	 */
+	public static synchronized ApiProfileManager getManager() {
+		if(fInstance == null) {
+			fInstance = new ApiProfileManager(ApiPlugin.isRunningInFramework());
+		}
+		return fInstance;
 	}
 	
 	/* (non-Javadoc)
@@ -190,7 +205,10 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	private synchronized void initializeStateCache() {
 		long time = System.currentTimeMillis();
 		if(profilecache == null) {
-			profilecache = new HashMap();
+			profilecache = new HashMap(3);
+			if(!ApiPlugin.isRunningInFramework()) {
+				return;
+			}
 			File[] profiles = savelocation.toFile().listFiles(new FileFilter() {
 				public boolean accept(File pathname) {
 					return pathname.getName().endsWith(".profile"); //$NON-NLS-1$
@@ -388,7 +406,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	}
 	
 	/**
-	 * Cleans up the manager and persists any unsaved API profiles
+	 * Cleans up the manager
 	 */
 	public void stop() {
 		try {
@@ -397,16 +415,20 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 				IApiProfile profile = (IApiProfile) iterator.next();
 				profile.dispose();
 			}
-			this.profilecache.clear();
+			if(profilecache != null) {
+				this.profilecache.clear();
+			}
 			if(this.workspaceprofile != null) {
 				this.workspaceprofile.dispose();
 			}
 		}
 		finally {
-			ApiPlugin.getDefault().removeSaveParticipant(this);
-			JavaCore.removeElementChangedListener(this);
-			PDECore.getDefault().getModelManager().removePluginModelListener(this);
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+			if(ApiPlugin.isRunningInFramework()) {
+				ApiPlugin.getDefault().removeSaveParticipant(this);
+				JavaCore.removeElementChangedListener(this);
+				PDECore.getDefault().getModelManager().removePluginModelListener(this);
+				ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+			}
 		}
 	}
 
