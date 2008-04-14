@@ -1132,8 +1132,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		return null;
 	}
 	
+	/**
+	 * Returns the problem reporter to use for this instance of the builder
+	 * @return the problem reporter to use
+	 */
 	protected IApiProblemReporter getProblemReporter() {
-		return ApiProblemReporter.reporter(fCurrentProject);
+		return new ApiProblemReporter(fCurrentProject);
 	}
 	
 	/**

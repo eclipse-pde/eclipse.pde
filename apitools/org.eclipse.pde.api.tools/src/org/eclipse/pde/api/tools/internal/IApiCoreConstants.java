@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
+import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.tasks.CompareProfilesTask;
+
 /**
  * Constants used by API tools core plugin
  * 
@@ -52,5 +55,13 @@ public interface IApiCoreConstants {
 	 * Value is: <code>Eclipse-SourceBundle</code>
 	 */
 	public static final String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the name of the {@link IApiProfile} used in headless ant builds.
+	 * Value is: <code>ant_build_profile</code>
+	 * 
+	 * @see CompareProfilesTask 
+	 */
+	public static final String ANT_BUILD_PROFILE_NAME = "ant_build_profile"; //$NON-NLS-1$
 
 }

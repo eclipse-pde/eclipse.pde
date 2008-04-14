@@ -20,10 +20,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemReporter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
@@ -38,29 +41,17 @@ public class ApiProblemReporter implements IApiProblemReporter {
 	 * The current listing of {@link IApiProblem}s
 	 */
 	private HashMap fProblems = null;
-	/**
-	 * The singleton instance
-	 */
-	private static ApiProblemReporter fInstance = null;
-	private static IProject fProject = null;
-
-	/**
-	 * Constructor
-	 */
-	private ApiProblemReporter() {}
+	private IProject fProject = null;
 	
 	/**
-	 * Returns an {@link ApiProblemReporter} 
+	 * Returns an {@link ApiProblemReporter}
+	 * @param project the backing project
 	 * @return an {@link ApiProblemReporter}
 	 */
-	public static ApiProblemReporter reporter(IProject project) {
+	public ApiProblemReporter(IProject project) {
 		Assert.isNotNull(project);
 		Assert.isTrue(project.isAccessible());
-		if(fInstance == null) {
-			fInstance = new ApiProblemReporter();
-		}
 		fProject = project;
-		return fInstance;
 	}
 	
 	/* (non-Javadoc)
@@ -226,7 +217,19 @@ public class ApiProblemReporter implements IApiProblemReporter {
 	 * @return true if the {@link IApiProblem} should not have a marker created, false otherwise
 	 */
 	private boolean isProblemFiltered(IApiProblem problem) {
-		IApiComponent component = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile().getApiComponent(fProject.getName());
+		ApiPlugin plugin = ApiPlugin.getDefault();
+		if(plugin == null) {
+			return false;
+		}
+		IApiProfileManager manager = plugin.getApiProfileManager();
+		IApiProfile profile = manager.getWorkspaceProfile();
+		if(profile == null) {
+			profile = manager.getApiProfile(IApiCoreConstants.ANT_BUILD_PROFILE_NAME);
+		}
+		if(profile == null) {
+			return false;
+		}
+		IApiComponent component = profile.getApiComponent(fProject.getName());
 		if(component != null) {
 			try {
 				IApiFilterStore filterStore = component.getFilterStore();
