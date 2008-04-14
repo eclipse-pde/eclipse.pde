@@ -187,6 +187,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fHomeText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				fNeedsReload = true;
+				fPreferences.setDefault(ICoreConstants.TARGET_PLATFORM_REALIZATION, TargetPlatform.getDefaultLocation().equals(fHomeText.getText()));
+				fTargetRealization.setSelection(fPreferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION));
 			}
 		});
 
@@ -215,6 +217,11 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fTargetRealization = new Button(target, SWT.CHECK);
 		fTargetRealization.setText(PDEUIMessages.MainPreferencePage_targetPlatformRealization);
 		fTargetRealization.setSelection(fPreferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION));
+		fTargetRealization.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fNeedsReload = true;
+			}
+		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 4;
 		fTargetRealization.setLayoutData(gd);
@@ -536,6 +543,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 			fPluginsTab.handleReload(new ArrayList());
 			resetTargetProfile();
+
+			fPreferences.setDefault(ICoreConstants.TARGET_PLATFORM_REALIZATION, TargetPlatform.getDefaultLocation().equals(TargetPlatform.getLocation()));
 		}
 		// if performOK is getting run in lieu of performApply, we need update the fOriginalText so if the user changes it back to the first state, we know we need to reload
 		fOriginalText = fHomeText.getText();
