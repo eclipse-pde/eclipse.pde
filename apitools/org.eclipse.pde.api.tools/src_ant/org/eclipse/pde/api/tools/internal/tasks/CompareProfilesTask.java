@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.DeltaXmlVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -42,6 +41,8 @@ public class CompareProfilesTask extends Task {
 	private static final String REFERENCE = "reference"; //$NON-NLS-1$
 	private static final String CURRENT = "currentProfile"; //$NON-NLS-1$
 	private static final String REFERENCE_PROFILE_NAME = "reference_profile"; //$NON-NLS-1$
+	private static final String CURRENT_PROFILE_NAME = "current_profile"; //$NON-NLS-1$
+
 	private static final boolean DEBUG = true;
 
 	String referenceLocation;
@@ -94,7 +95,7 @@ public class CompareProfilesTask extends Task {
 		// run the comparison
 		// create profile for the reference
 		IApiProfile referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(tempDir, REFERENCE), this.eeFileLocation);
-		IApiProfile currentProfile = createProfile(IApiCoreConstants.ANT_BUILD_PROFILE_NAME, getInstallDir(tempDir, CURRENT), this.eeFileLocation);
+		IApiProfile currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(tempDir, CURRENT), this.eeFileLocation);
 		
 		IDelta delta = null;
 		
@@ -105,7 +106,7 @@ public class CompareProfilesTask extends Task {
 			currentProfile.dispose();
 		}
 		if (delta == null) {
-			// an error occurred during the comparison
+			// an error occured during the comparison
 			throw new BuildException("An error occured during the comparison"); //$NON-NLS-1$
 		}
 		if (delta != ApiComparator.NO_DELTA) {
