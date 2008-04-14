@@ -12,15 +12,6 @@
       </view>
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            name="%ViewCommand.logView.name"
-            description="%ViewCommand.logView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.pde.runtime.LogView">
-      </command>
-   </extension>
-   <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.ui.resourcePerspective">
@@ -32,9 +23,13 @@
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="org.eclipse.pde.runtime.LogView"
+            commandId="org.eclipse.ui.views.showView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M2+M3+Q L">
+         <parameter
+               id="org.eclipse.ui.views.showView.viewId"
+               value="org.eclipse.pde.runtime.LogView">
+         </parameter>
       </key>
       <key
             platform="carbon"
@@ -43,9 +38,13 @@
       </key>
       <key
             platform="carbon"
-            commandId="org.eclipse.pde.runtime.LogView"
+            commandId="org.eclipse.ui.views.showView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M3+Q L">
+         <parameter
+               id="org.eclipse.ui.views.showView.viewId"
+               value="org.eclipse.pde.runtime.LogView">
+         </parameter>
       </key>
    </extension>
    <extension
