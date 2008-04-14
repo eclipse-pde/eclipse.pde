@@ -16,6 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.plugin.*;
@@ -525,8 +526,11 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 		severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DISCOURAGED_CLASS);
 		if (severity != CompilerFlags.IGNORE) {
+			BundleDescription desc = fModel.getBundleDescription();
+			if (desc == null)
+				return;
 			// only check if we're discouraged if there is something on the classpath
-			if (onClasspath && PDEJavaHelper.isDiscouraged(value, javaProject, fModel.getBundleDescription())) {
+			if (onClasspath && PDEJavaHelper.isDiscouraged(value, javaProject, desc)) {
 				report(NLS.bind(PDECoreMessages.Builders_Manifest_discouragedClass, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.M_DISCOURAGED_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_OTHER);
 			}
 		}
