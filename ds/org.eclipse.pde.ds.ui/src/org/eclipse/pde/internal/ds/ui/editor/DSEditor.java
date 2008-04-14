@@ -8,88 +8,96 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223739
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSFormOutlinePage;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContextManager;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.PartInitException;
 
-// see TOCEditor as an example in org.eclipse.pde.ui
+// see TOCEditor or SimpleCSEditor as an example in org.eclipse.pde.ui
 
 public class DSEditor extends MultiSourceEditor {
 
 	public DSEditor() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 	protected void addEditorPages() {
-		// TODO Auto-generated method stub
+		try {
+			addPage(new DSPage(this));
+		} catch (PartInitException e) {
+			PDEPlugin.logException(e);
+		}
+		// Add source page
+		addSourcePage(DSInputContext.CONTEXT_ID);
 
 	}
 
 	protected ISortableContentOutlinePage createContentOutline() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DSFormOutlinePage(this);
 	}
 
 	protected InputContextManager createInputContextManager() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		return new DSInputContextManager(this);
+		}
 
 	protected void createResourceContexts(InputContextManager contexts,
 			IFileEditorInput input) {
-		// TODO Auto-generated method stub
-
+		contexts.putContext(input, new DSInputContext(this, input, true));
+		contexts.monitorFile(input.getFile());
 	}
 
 	protected void createStorageContexts(InputContextManager contexts,
 			IStorageEditorInput input) {
-		// TODO Auto-generated method stub
-
+		contexts.putContext(input, new DSInputContext(this, input, true));
 	}
 
 	protected void createSystemFileContexts(InputContextManager contexts,
 			SystemFileEditorInput input) {
-		// TODO Auto-generated method stub
-
+		File file = (File) input.getAdapter(File.class);
+		if (file != null) {
+			IEditorInput in = new SystemFileEditorInput(file);
+			contexts.putContext(in, new DSInputContext(this, in, true));
+		}
 	}
 
 	public void editorContextAdded(InputContext context) {
-		// TODO Auto-generated method stub
-
+		addSourcePage(context.getId());
 	}
 
 	protected String getEditorID() {
-		// TODO Auto-generated method stub
-		return null;
+		return "org.eclipse.pde.ui.dsEditor"; //TODO put Constant in org.eclipse.pde.internal.ui.IPDEUIConstants
 	}
 
 	protected InputContext getInputContext(Object object) {
-		// TODO Auto-generated method stub
-		return null;
+		return fInputContextManager.findContext(DSInputContext.CONTEXT_ID);
 	}
 
 	public void contextRemoved(InputContext context) {
-		// TODO Auto-generated method stub
-
+		close(false);
 	}
 
 	public void monitoredFileAdded(IFile monitoredFile) {
-		// TODO Auto-generated method stub
-
+		// no op
 	}
 
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }
