@@ -26,6 +26,7 @@ import org.eclipse.pde.api.tools.problems.tests.ApiProblemFactoryTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;
 import org.eclipse.pde.api.tools.reference.tests.SearchEngineTests;
 import org.eclipse.pde.api.tools.reference.tests.SearchScopeTests;
+import org.eclipse.pde.api.tools.util.tests.HeadlessApiProfileManagerTests;
 import org.eclipse.pde.api.tools.util.tests.UtilTests;
 
 /**
@@ -49,6 +50,7 @@ public class ApiToolsTestSuite extends TestSuite {
 	 */
 	public ApiToolsTestSuite() {
 		addTest(new TestSuite(ApiDescriptionTests.class));
+		addTest(new TestSuite(HeadlessApiProfileManagerTests.class));
 		addTest(new TestSuite(TagScannerTests.class));
 		addTest(new TestSuite(ComponentManifestTests.class));
 		addTest(new TestSuite(UtilTests.class));

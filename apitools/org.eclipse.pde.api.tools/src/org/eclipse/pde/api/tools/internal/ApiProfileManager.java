@@ -115,7 +115,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	/**
 	 * The default save location for persisting the cache from this manager.
 	 */
-	private IPath savelocation = ApiPlugin.getDefault().getStateLocation().append(".api_profiles").addTrailingSeparator(); //$NON-NLS-1$
+	private IPath savelocation = null;
 	
 	/**
 	 * If the cache of profiles needs to be saved or not.
@@ -133,6 +133,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 			JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
 			PDECore.getDefault().getModelManager().addPluginModelListener(this);
+			savelocation = ApiPlugin.getDefault().getStateLocation().append(".api_profiles").addTrailingSeparator(); //$NON-NLS-1$
 		}
 	}
 	
@@ -184,6 +185,9 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 			if(profile != null) {
 				profile.dispose();
 				boolean success = true;
+				if(savelocation == null) {
+					return success;
+				}
 				//remove from filesystem
 				File file = savelocation.append(name+".profile").toFile(); //$NON-NLS-1$
 				if(file.exists()) {
@@ -249,6 +253,9 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 * @throws IOException 
 	 */
 	private void persistStateCache() throws CoreException, IOException {
+		if(savelocation == null) {
+			return;
+		}
 		if(defaultprofile != null) {
 			ApiPlugin.getDefault().getPluginPreferences().setValue(DEFAULT_PROFILE, defaultprofile);
 		}
@@ -410,12 +417,12 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 */
 	public void stop() {
 		try {
-			// we should first dispose all existing profiles
-			for (Iterator iterator = this.profilecache.values().iterator(); iterator.hasNext();) {
-				IApiProfile profile = (IApiProfile) iterator.next();
-				profile.dispose();
-			}
 			if(profilecache != null) {
+				// we should first dispose all existing profiles
+				for (Iterator iterator = this.profilecache.values().iterator(); iterator.hasNext();) {
+					IApiProfile profile = (IApiProfile) iterator.next();
+					profile.dispose();
+				}
 				this.profilecache.clear();
 			}
 			if(this.workspaceprofile != null) {
@@ -523,6 +530,9 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
+		if(!ApiPlugin.isRunningInFramework()) {
+			return;
+		}
 		Object obj = event.getSource();
 		if(obj instanceof IJavaElementDelta) {
 			processJavaElementDeltas(((IJavaElementDelta)obj).getAffectedChildren(), null);
@@ -640,6 +650,9 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
 	 */
 	public void modelsChanged(PluginModelDelta delta) {
+		if(!ApiPlugin.isRunningInFramework()) {
+			return;
+		}
 		ModelEntry[] entries = null;
 		switch(delta.getKind()) {
 			case PluginModelDelta.ADDED: {
@@ -670,6 +683,9 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
+		if(!ApiPlugin.isRunningInFramework()) {
+			return;
+		}
 		// clean all API errors when a project description changes
 		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
