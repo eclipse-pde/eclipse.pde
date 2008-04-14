@@ -26,27 +26,30 @@ public abstract class BaseImportTestCase extends PDETestCase {
 	protected abstract int getType();
 	protected abstract void verifyProject(String projectName, boolean isJava);
 	
-	public void testImportLinksJAR() {
+	public void testImportJAR() {
 		doSingleImport("org.eclipse.pde.core", true);
 	}
 
-	public void testImportLinksFlat() {
+	public void testImportFlat() {
 		doSingleImport("org.eclipse.jdt.debug", true);
 	}
 
-	public void testImportLinksNotJavaFlat() {
-		doSingleImport("org.eclipse.pde.source", false);
+	public void testImportNotJavaFlat() {
+		doSingleImport("org.junit.source", false);
 	}
 
-	public void testImportLinksNotJavaJARd() {
+	public void testImportNotJavaJARd() {
 		doSingleImport("org.eclipse.jdt.doc.user", false);
+		doSingleImport("org.eclipse.pde.source", false);
 	}
 	
-	private void doSingleImport(String bundleSymbolicName, boolean isJava) {
-		IPluginModelBase modelToImport = PluginRegistry.findModel(bundleSymbolicName);
-		assertNull(modelToImport.getUnderlyingResource());
-		runOperation(new IPluginModelBase[] {modelToImport}, getType());
-		verifyProject(modelToImport, isJava);
+	public void testImportJUnit() {
+		doSingleImport("org.junit", true);
+		doSingleImport("org.junit4", true);
+	}
+	
+	public void testImportICU(){
+		doSingleImport("com.ibm.icu", true);
 	}
 	
 	public void testImportLinksMultiple() {
@@ -55,6 +58,13 @@ public abstract class BaseImportTestCase extends PDETestCase {
 		for (int i = 0; i < modelsToImport.length; i++) {
 			verifyProject(modelsToImport[i], i != 1);
 		}
+	}
+	
+	protected void doSingleImport(String bundleSymbolicName, boolean isJava) {
+		IPluginModelBase modelToImport = PluginRegistry.findModel(bundleSymbolicName);
+		assertNull(modelToImport.getUnderlyingResource());
+		runOperation(new IPluginModelBase[] {modelToImport}, getType());
+		verifyProject(modelToImport, isJava);
 	}
 	
 	protected void runOperation(IPluginModelBase[] models, int type) {

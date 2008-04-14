@@ -30,6 +30,11 @@ public class ImportAsBinaryTestCase extends BaseImportTestCase {
 	protected int getType() {
 		return TYPE;
 	}
+	
+	public void testImportAnt() {
+		// Note: Ant is exempt from importing as source
+		doSingleImport("org.apache.ant", true);
+	}
 
 	protected void verifyProject(String projectName, boolean isJava) {
 		try {
