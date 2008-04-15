@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207344
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218648 
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -24,7 +25,13 @@ public class Group extends AbstractEntry {
 		this.name = name;
 	}
 
-	public void write(PrintWriter writer) { // do nothing
+	public void write(PrintWriter writer) {
+		Object[] children = getChildren(null);
+		for (int i = 0; i < children.length; i++) {
+			AbstractEntry entry = (AbstractEntry) children[i];
+			entry.write(writer);
+			writer.println();
+		}
 	}
 
 	public String toString() {

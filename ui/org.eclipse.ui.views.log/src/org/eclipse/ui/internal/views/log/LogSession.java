@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207344
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218648 
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -60,5 +61,7 @@ public class LogSession extends Group {
 
 	public void write(PrintWriter writer) {
 		writer.write(sessionData);
+		writer.println();
+		super.write(writer);
 	}
 }

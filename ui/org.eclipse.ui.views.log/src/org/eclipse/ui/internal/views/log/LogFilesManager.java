@@ -43,7 +43,7 @@ public class LogFilesManager {
 	 */
 	static Map getLogSources() {
 		ILogFileProvider[] providers = (ILogFileProvider[]) logFileProviders.toArray(new ILogFileProvider[logFileProviders.size()]);
-		Map result = new HashMap();
+		Map result = new HashMap(providers.length);
 
 		for (int i = 0; i < providers.length; i++) {
 			ILogFileProvider provider = providers[i];

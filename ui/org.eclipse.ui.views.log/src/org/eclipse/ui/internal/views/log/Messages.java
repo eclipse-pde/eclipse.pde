@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207344
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218648 
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -26,6 +27,9 @@ public class Messages extends NLS {
 	public static String LogView_export;
 	public static String LogView_exportLog;
 	public static String LogView_export_tooltip;
+	public static String LogView_exportEntry;
+	public static String LogView_exportLogEntry;
+	public static String LogView_exportEntry_tooltip;
 	public static String LogView_import;
 	public static String LogView_import_tooltip;
 	public static String LogView_filter;

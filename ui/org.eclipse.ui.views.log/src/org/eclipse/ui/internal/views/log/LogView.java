@@ -11,7 +11,8 @@
  *     													bugs 207323, 207931, 207101
  *     													bugs 172658, 216341, 216657
  *     Michael Rennie <Michael_Rennie@ca.ibm.com> - bug 208637
- *******************************************************************************/
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218648 
+*******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
 
@@ -114,7 +115,8 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action fCopyAction;
 	private Action fActivateViewAction;
 	private Action fOpenLogAction;
-	private Action fExportAction;
+	private Action fExportLogAction;
+	private Action fExportLogEntryAction;
 
 	/**
 	 * Action called when user selects "Group by -> ..." from menu.
@@ -220,8 +222,10 @@ public class LogView extends ViewPart implements ILogListener {
 
 		IToolBarManager toolBarManager = bars.getToolBarManager();
 
-		fExportAction = createExportAction();
-		toolBarManager.add(fExportAction);
+		fExportLogAction = createExportLogAction();
+		toolBarManager.add(fExportLogAction);
+
+		fExportLogEntryAction = createExportLogEntryAction();
 
 		final Action importLogAction = createImportLogAction();
 		toolBarManager.add(importLogAction);
@@ -245,19 +249,15 @@ public class LogView extends ViewPart implements ILogListener {
 		IMenuManager mgr = bars.getMenuManager();
 
 		mgr.add(createGroupByAction());
-
 		mgr.add(new Separator());
-
 		mgr.add(createFilterAction());
-
 		mgr.add(new Separator());
 
 		fActivateViewAction = createActivateViewAction();
 		mgr.add(fActivateViewAction);
-
 		mgr.add(createShowTextFilter());
 
-		createPropertiesAction();
+		fPropertiesAction = createPropertiesAction();
 
 		MenuManager popupMenuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		IMenuListener listener = new IMenuListener() {
@@ -269,8 +269,10 @@ public class LogView extends ViewPart implements ILogListener {
 				manager.add(fOpenLogAction);
 				manager.add(fReadLogAction);
 				manager.add(new Separator());
-				manager.add(fExportAction);
+				manager.add(fExportLogAction);
 				manager.add(createImportLogAction());
+				manager.add(new Separator());
+				manager.add(fExportLogEntryAction);
 				manager.add(new Separator());
 
 				((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
@@ -335,16 +337,29 @@ public class LogView extends ViewPart implements ILogListener {
 		return action;
 	}
 
-	private Action createExportAction() {
+	private Action createExportLogAction() {
 		Action action = new Action(Messages.LogView_export) {
 			public void run() {
-				handleExport();
+				handleExport(true);
 			}
 		};
 		action.setToolTipText(Messages.LogView_export_tooltip);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_EXPORT));
 		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_EXPORT_DISABLED));
 		action.setEnabled(fInputFile.exists());
+		return action;
+	}
+
+	private Action createExportLogEntryAction() {
+		Action action = new Action(Messages.LogView_exportEntry) {
+			public void run() {
+				handleExport(false);
+			}
+		};
+		action.setToolTipText(Messages.LogView_exportEntry_tooltip);
+		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_EXPORT));
+		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_EXPORT_DISABLED));
+		action.setEnabled(!fFilteredTree.getViewer().getSelection().isEmpty());
 		return action;
 	}
 
@@ -397,12 +412,13 @@ public class LogView extends ViewPart implements ILogListener {
 		return action;
 	}
 
-	private void createPropertiesAction() {
-		fPropertiesAction = new EventDetailsDialogAction(fTree.getShell(), fFilteredTree.getViewer(), fMemento);
-		fPropertiesAction.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES));
-		fPropertiesAction.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES_DISABLED));
-		fPropertiesAction.setToolTipText(Messages.LogView_properties_tooltip);
-		fPropertiesAction.setEnabled(false);
+	private Action createPropertiesAction() {
+		Action action = new EventDetailsDialogAction(fTree.getShell(), fFilteredTree.getViewer(), fMemento);
+		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES));
+		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES_DISABLED));
+		action.setToolTipText(Messages.LogView_properties_tooltip);
+		action.setEnabled(false);
+		return action;
 	}
 
 	private Action createReadLogAction() {
@@ -644,7 +660,7 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 
-	private void handleExport() {
+	private void handleExport(boolean exportWholeLog) {
 		FileDialog dialog = new FileDialog(getViewSite().getShell(), SWT.SAVE);
 		dialog.setFilterExtensions(new String[] {"*.log"}); //$NON-NLS-1$
 		if (fDirectory != null)
@@ -657,22 +673,43 @@ public class LogView extends ViewPart implements ILogListener {
 			fDirectory = outputFile.getParent();
 			if (outputFile.exists()) {
 				String message = NLS.bind(Messages.LogView_confirmOverwrite_message, outputFile.toString());
-				if (!MessageDialog.openQuestion(getViewSite().getShell(), Messages.LogView_exportLog, message))
+				if (!MessageDialog.openQuestion(getViewSite().getShell(), (exportWholeLog ? Messages.LogView_exportLog : Messages.LogView_exportLogEntry), message))
 					return;
 			}
-			copy(fInputFile, outputFile);
+
+			Reader in = null;
+			Writer out = null;
+			try {
+				out = new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"); //$NON-NLS-1$
+				if (exportWholeLog)
+					in = new InputStreamReader(new FileInputStream(fInputFile), "UTF-8"); //$NON-NLS-1$
+				else {
+					String selectedEntryAsString = selectionToString(fFilteredTree.getViewer().getSelection());
+					in = new StringReader(selectedEntryAsString);
+				}
+				copy(in, out);
+			} catch (IOException ex) {
+				try {
+					if (in != null)
+						in.close();
+					if (out != null)
+						out.close();
+				} catch (IOException e1) { // do nothing
+				}
+			}
 		}
 	}
 
-	private void copy(File inputFile, File outputFile) {
+	private void copy(Reader input, Writer output) {
 		BufferedReader reader = null;
 		BufferedWriter writer = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8")); //$NON-NLS-1$
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8")); //$NON-NLS-1$
-			while (reader.ready()) {
-				writer.write(reader.readLine());
-				writer.write(System.getProperty("line.separator")); //$NON-NLS-1$
+			reader = new BufferedReader(input);
+			writer = new BufferedWriter(output);
+			String line;
+			while (reader.ready() && ((line = reader.readLine()) != null)) {
+				writer.write(line);
+				writer.newLine();
 			}
 		} catch (IOException e) { // do nothing
 		} finally {
@@ -681,7 +718,8 @@ public class LogView extends ViewPart implements ILogListener {
 					reader.close();
 				if (writer != null)
 					writer.close();
-			} catch (IOException e1) { // do nothing
+			} catch (IOException e1) {
+				// do nothing
 			}
 		}
 	}
@@ -979,11 +1017,13 @@ public class LogView extends ViewPart implements ILogListener {
 			display.asyncExec(new Runnable() {
 				public void run() {
 					if (!fTree.isDisposed()) {
-						fFilteredTree.getViewer().refresh();
-						fFilteredTree.getViewer().expandToLevel(2);
+						TreeViewer viewer = fFilteredTree.getViewer();
+						viewer.refresh();
+						viewer.expandToLevel(2);
 						fDeleteLogAction.setEnabled(fInputFile.exists() && fInputFile.equals(Platform.getLogFileLocation().toFile()));
 						fOpenLogAction.setEnabled(fInputFile.exists());
-						fExportAction.setEnabled(fInputFile.exists());
+						fExportLogAction.setEnabled(fInputFile.exists());
+						fExportLogEntryAction.setEnabled(!viewer.getSelection().isEmpty());
 						if (activate && fActivateViewAction.isChecked()) {
 							IWorkbenchPage page = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
 							if (page != null)
@@ -1002,8 +1042,9 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private void handleSelectionChanged(ISelection selection) {
 		updateStatus(selection);
-		fCopyAction.setEnabled((!selection.isEmpty()) && ((IStructuredSelection) selection).getFirstElement() instanceof LogEntry);
+		fCopyAction.setEnabled((!selection.isEmpty()) && ((IStructuredSelection) selection).getFirstElement() != null);
 		fPropertiesAction.setEnabled(!selection.isEmpty());
+		fExportLogEntryAction.setEnabled(!selection.isEmpty());
 	}
 
 	private void updateStatus(ISelection selection) {
@@ -1025,7 +1066,7 @@ public class LogView extends ViewPart implements ILogListener {
 		PrintWriter pwriter = new PrintWriter(writer);
 		if (selection.isEmpty())
 			return null;
-		LogEntry entry = (LogEntry) ((IStructuredSelection) selection).getFirstElement();
+		AbstractEntry entry = (AbstractEntry) ((IStructuredSelection) selection).getFirstElement();
 		entry.write(pwriter);
 		pwriter.flush();
 		String textVersion = writer.toString();
