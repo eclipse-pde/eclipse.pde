@@ -146,8 +146,8 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
 				}
 			} else {
-				script.printAttribute("root", "name", true); //$NON-NLS-1$ //$NON-NLS-2$
-				script.printAttribute("rootVersion", "1.0.0", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("root", "${p2.root.name}", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("rootVersion", "${p2.root.version}", true); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			script.println("/>"); //$NON-NLS-1$
