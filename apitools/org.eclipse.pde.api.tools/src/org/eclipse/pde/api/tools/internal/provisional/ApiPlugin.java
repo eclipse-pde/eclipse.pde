@@ -457,7 +457,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			sp.saving(context);
 		}
 		savePluginPreferences();
-	}	
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
