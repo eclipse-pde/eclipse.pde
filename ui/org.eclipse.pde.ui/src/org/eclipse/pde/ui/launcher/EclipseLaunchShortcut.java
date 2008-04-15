@@ -110,6 +110,9 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		launch(mode);
 	}
 
+	/**
+	 * @since 3.4
+	 */
 	protected ILaunchConfiguration findLaunchConfiguration(String mode) {
 		ILaunchConfiguration config = super.findLaunchConfiguration(mode);
 		try {

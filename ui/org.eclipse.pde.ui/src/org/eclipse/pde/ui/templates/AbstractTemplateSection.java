@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -719,6 +719,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 *            The name of the header to set
 	 * @param value
 	 *            The value of the header
+	 * @since 3.4
 	 */
 	protected void setManifestHeader(String name, String value) {
 
@@ -740,6 +741,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 *            The name of the header to fetch
 	 * @return The value of the manifest header, if available, otherwise
 	 *         <samp>null</samp>
+	 * @since 3.4
 	 */
 	protected String getManifestHeader(String name) {
 
@@ -764,6 +766,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * 
 	 * @return <sampl>true</samp> if the plug-in has a manifest, <samp>false</samp>
 	 *         otherwise
+	 * @since 3.4
 	 */
 	protected boolean hasBundleManifest() {
 

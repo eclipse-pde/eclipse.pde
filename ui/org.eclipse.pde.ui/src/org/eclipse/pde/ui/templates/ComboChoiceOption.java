@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,6 +109,7 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 	 * @param choice
 	 *            The key of the item
 	 * @return The position in the list, or -1 if not found
+	 * @since 3.4
 	 */
 	protected int getIndexOfChoice(String choice) {
 		final int NOT_FOUND = -1;
