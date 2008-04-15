@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,28 +11,10 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeMap;
-
+import java.util.*;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
-import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
-import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
-import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
-import org.eclipse.pde.internal.core.iproduct.IJREInfo;
-import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
-import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductFeature;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
-import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
-import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
-import org.eclipse.pde.internal.core.iproduct.IWindowImages;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.eclipse.pde.internal.core.iproduct.*;
+import org.w3c.dom.*;
 
 public class Product extends ProductObject implements IProduct {
 
@@ -40,6 +22,7 @@ public class Product extends ProductObject implements IProduct {
 	private String fId;
 	private String fName;
 	private String fApplication;
+	private String fVersion;
 	private IAboutInfo fAboutInfo;
 
 	private TreeMap fPlugins = new TreeMap();
@@ -69,6 +52,13 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public String getName() {
 		return fName;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getVersion()
+	 */
+	public String getVersion() {
+		return fVersion;
 	}
 
 	/* (non-Javadoc)
@@ -136,6 +126,8 @@ public class Product extends ProductObject implements IProduct {
 			writer.print(" " + P_ID + "=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fApplication != null && fApplication.length() > 0)
 			writer.print(" " + P_APPLICATION + "=\"" + fApplication + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (fVersion != null && fVersion.length() > 0)
+			writer.print(" " + P_VERSION + "=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.print(" " + P_USEFEATURES + "=\"" + Boolean.toString(fUseFeatures) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
 
@@ -239,6 +231,7 @@ public class Product extends ProductObject implements IProduct {
 			fApplication = element.getAttribute(P_APPLICATION);
 			fId = element.getAttribute(P_ID);
 			fName = element.getAttribute(P_NAME);
+			fVersion = element.getAttribute(P_VERSION);
 			fUseFeatures = "true".equals(element.getAttribute(P_USEFEATURES)); //$NON-NLS-1$
 			NodeList children = node.getChildNodes();
 			IProductModelFactory factory = getModel().getFactory();
