@@ -357,7 +357,7 @@ public class CompilersConfigurationTab {
 	}
 
 	/**
-	 * Applies the changes settings (if any), and frequests a full build (if needed)
+	 * Applies the changes settings (if any), and requests a full build (if needed)
 	 * @param enabled
 	 * @return the success of the operation
 	 */
