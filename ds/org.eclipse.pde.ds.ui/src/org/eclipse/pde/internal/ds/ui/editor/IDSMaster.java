@@ -12,29 +12,35 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
-import org.eclipse.pde.internal.ds.core.text.DSObject;
-import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.ui.forms.widgets.Section;
 
-public class DSFormOutlinePage extends FormOutlinePage  {
+public interface IDSMaster {
 
-	public DSFormOutlinePage(PDEFormEditor editor) {
-		super(editor);
-	}
-	
-	public class DSLabelProvider extends BasicLabelProvider {
-		public String getText(Object obj) {
-			if (obj instanceof DSObject) {
-				return getObjectText((DSObject) obj);
-			}
-			return super.getText(obj);
-		}
+	/**
+	 * 
+	 */
+	public void updateButtons();
 
-	}
-	
+	/**
+	 * @return
+	 */
+	public boolean isEditable();
 
-	protected String getObjectText(DSObject obj) {
-		//TODO verify limits?
-		return obj.getName();
-	}
+	/**
+	 * Special case:  Need to set the selection after the full UI is created
+	 * in order to properly fire an event to summon up the right details 
+	 * section
+	 */
+	public void fireSelection();
+
+	/**
+	 * @return
+	 */
+	public Section getSection();
+
+	/**
+	 * @param object
+	 * @return
+	 */
+	public boolean setFormInput(Object object);
 }

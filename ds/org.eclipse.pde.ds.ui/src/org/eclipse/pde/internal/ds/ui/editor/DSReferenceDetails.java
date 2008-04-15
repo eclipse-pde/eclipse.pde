@@ -12,29 +12,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
-import org.eclipse.pde.internal.ds.core.text.DSObject;
-import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.swt.widgets.Composite;
 
-public class DSFormOutlinePage extends FormOutlinePage  {
+public class DSReferenceDetails extends DSAbstractDetails{
 
-	public DSFormOutlinePage(PDEFormEditor editor) {
-		super(editor);
+	public DSReferenceDetails(IDSMaster masterSection) {
+		super(masterSection, DSInputContext.CONTEXT_ID);
+		// TODO Auto-generated constructor stub
 	}
-	
-	public class DSLabelProvider extends BasicLabelProvider {
-		public String getText(Object obj) {
-			if (obj instanceof DSObject) {
-				return getObjectText((DSObject) obj);
-			}
-			return super.getText(obj);
-		}
 
+	public void createDetails(Composite parent) {
+		// TODO Auto-generated method stub
+		
 	}
-	
 
-	protected String getObjectText(DSObject obj) {
-		//TODO verify limits?
-		return obj.getName();
+	public void hookListeners() {
+		// TODO Auto-generated method stub
+		
 	}
+
+	public void updateFields() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
