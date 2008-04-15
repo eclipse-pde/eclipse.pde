@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,20 +18,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
-import org.eclipse.pde.internal.runtime.spy.sections.ActiveDialogPageSection;
-import org.eclipse.pde.internal.runtime.spy.sections.ActiveHelpSection;
-import org.eclipse.pde.internal.runtime.spy.sections.ActivePartSection;
-import org.eclipse.pde.internal.runtime.spy.sections.ActiveSelectionSection;
-import org.eclipse.pde.internal.runtime.spy.sections.ActiveShellSection;
-import org.eclipse.pde.internal.runtime.spy.sections.ActiveWizardSection;
-import org.eclipse.pde.internal.runtime.spy.sections.ISpySection;
+import org.eclipse.pde.internal.runtime.spy.sections.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -59,7 +49,7 @@ public class SpyDialog extends PopupDialog {
 	}
 
 	public SpyDialog(Shell parent, ExecutionEvent event, Point point) {
-		super(parent, SWT.NONE, true, false, false, false, null, null);
+		super(parent, SWT.NONE, true, true, false, false, false, null, null);
 		this.event = event;
 		this.fAnchor = point;
 		this.toolkit = new SpyFormToolkit(this);
