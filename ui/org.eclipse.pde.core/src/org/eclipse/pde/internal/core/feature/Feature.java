@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,29 +11,12 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Vector;
-
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IMatchRules;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeatureData;
-import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.Node;
@@ -245,9 +228,16 @@ public class Feature extends VersionableObject implements IFeature {
 		Vector preservedImports = new Vector(fImports.size());
 		// new imports
 		ArrayList newImports = new ArrayList();
+		IPluginModelBase model = null;
 		for (int i = 0; i < fPlugins.size(); i++) {
 			IFeaturePlugin fp = (IFeaturePlugin) fPlugins.get(i);
-			IPluginModelBase model = PluginRegistry.findModel(fp.getId());
+			ModelEntry entry = PluginRegistry.findEntry(id);
+			IPluginModelBase[] models = entry.getActiveModels();
+			for (int j = 0; j < models.length; j++) {
+				IPluginModelBase m = models[i];
+				if (fp.getVersion().equals(m.getPluginBase().getVersion()))
+					model = m;
+			}
 			if (model != null) {
 				addPluginImports(preservedImports, newImports, model.getPluginBase());
 				if (model.isFragmentModel()) {
