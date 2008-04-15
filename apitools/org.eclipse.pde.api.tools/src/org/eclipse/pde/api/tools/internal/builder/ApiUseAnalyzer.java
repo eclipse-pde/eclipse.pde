@@ -43,7 +43,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -248,14 +247,13 @@ public class ApiUseAnalyzer {
 	 * Searches the specified scope within the the specified component and returns
 	 * reference objects identify illegal API use.
 	 * 
-	 * @param profile profile being analyzed
 	 * @param component component being analyzed
 	 * @param scope scope within the component to analyze
 	 * @param monitor progress monitor
 	 * @exception CoreException if something goes wrong
 	 */
-	public IApiProblem[] findIllegalApiUse(IApiProfile profile, IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor)  throws CoreException {
-		IApiSearchCriteria[] conditions = buildSearchConditions(profile, component);
+	public IApiProblem[] findIllegalApiUse(IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor)  throws CoreException {
+		IApiSearchCriteria[] conditions = buildSearchConditions(component);
 		List problems = new ArrayList();
 		if (conditions.length > 0) {
 			IApiSearchEngine engine = Factory.newSearchEngine();
@@ -334,13 +332,12 @@ public class ApiUseAnalyzer {
 	 * Build and return search conditions for API usage in all prerequisite components for
 	 * the given component and its profile.
 	 * 
-	 * @param profile
 	 * @param component component to analyze for API use problems
 	 * @return search conditions
 	 */
-	private IApiSearchCriteria[] buildSearchConditions(IApiProfile profile, IApiComponent component) {
+	private IApiSearchCriteria[] buildSearchConditions(IApiComponent component) {
 		long start = System.currentTimeMillis();
-		IApiComponent[] components = profile.getPrerequisiteComponents(new IApiComponent[]{component});
+		IApiComponent[] components = component.getProfile().getPrerequisiteComponents(new IApiComponent[]{component});
 		UsageVisitor visitor = new UsageVisitor();
 		for (int i = 0; i < components.length; i++) {
 			IApiComponent prereq = components[i];

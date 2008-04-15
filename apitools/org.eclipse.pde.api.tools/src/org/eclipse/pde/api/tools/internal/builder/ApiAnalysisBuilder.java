@@ -421,7 +421,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				// API usage checks
 				IApiSearchScope scope = Factory.newScope(new IApiComponent[]{apiComponent});
 				localMonitor.subTask(MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {fCurrentProject.getName()}));
-				checkApiUsage(wsprofile, apiComponent, scope, localMonitor);
+				checkApiUsage(apiComponent, scope, localMonitor);
 				localMonitor.worked(1);
 				if (monitor != null && monitor.isCanceled()) {
 					throw new OperationCanceledException();
@@ -446,19 +446,18 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * Checks for illegal API usage in the specified component, creating problem
 	 * markers as required.
 	 * 
-	 * @param profile profile being analyzed
 	 * @param component component being built
 	 * @param scope scope being built
 	 * @param monitor progress monitor
 	 */
-	private void checkApiUsage(IApiProfile profile, IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor) {
+	private void checkApiUsage(IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor) {
 		if(ignoreApiUsageScan()) {
 			return;
 		}
 		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
 		try {
 			long start = System.currentTimeMillis();
-			IApiProblem[] illegal = analyzer.findIllegalApiUse(profile, component, scope, monitor);
+			IApiProblem[] illegal = analyzer.findIllegalApiUse(component, scope, monitor);
 			long end = System.currentTimeMillis();
 			if (DEBUG) {
 				System.out.println("API usage scan: " + (end- start) + " ms\t" + illegal.length + " problems"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -634,7 +633,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						ApiPlugin.log(e.getStatus());
 					}
 				}
-				checkApiUsage(wsprofile, apiComponent, Factory.newTypeScope(apiComponent, (IReferenceTypeDescriptor[]) scopeElements.toArray(new IReferenceTypeDescriptor[scopeElements.size()])), null);
+				checkApiUsage(apiComponent, Factory.newTypeScope(apiComponent, (IReferenceTypeDescriptor[]) scopeElements.toArray(new IReferenceTypeDescriptor[scopeElements.size()])), null);
 				if (monitor != null && monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
