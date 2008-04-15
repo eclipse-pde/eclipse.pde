@@ -30,6 +30,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.swt.graphics.Image;
 
@@ -54,6 +55,9 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	public List computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		if(context instanceof JavaContentAssistInvocationContext) {
 			JavaContentAssistInvocationContext jcontext = (JavaContentAssistInvocationContext) context;
+			if(jcontext.getProject() == null || !Util.isApiProject(jcontext.getProject())) {
+				return Collections.EMPTY_LIST;
+			}
 			CompletionContext corecontext = jcontext.getCoreContext();
 			if(corecontext.isInJavadoc()) {
 				ICompilationUnit cunit = jcontext.getCompilationUnit();
