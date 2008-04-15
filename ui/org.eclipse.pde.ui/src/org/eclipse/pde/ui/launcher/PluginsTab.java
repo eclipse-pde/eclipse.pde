@@ -196,4 +196,10 @@ public class PluginsTab extends AbstractLauncherTab {
 		setErrorMessage(errorMessage);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
+	 */
+	public String getId() {
+		return "org.eclipse.pde.ui.launch.tab.plugins"; //$NON-NLS-1$
+	}
 }

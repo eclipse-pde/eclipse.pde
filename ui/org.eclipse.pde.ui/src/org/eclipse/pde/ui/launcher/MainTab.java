@@ -192,4 +192,11 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		setErrorMessage(error);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
+	 */
+	public String getId() {
+		return "org.eclipse.pde.ui.launch.tab.main"; //$NON-NLS-1$
+	}
+
 }

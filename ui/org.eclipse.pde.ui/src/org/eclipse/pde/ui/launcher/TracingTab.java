@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,5 +124,12 @@ public class TracingTab extends AbstractLauncherTab {
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
 	public void validateTab() {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
+	 */
+	public String getId() {
+		return "org.eclipse.pde.ui.launch.tab.tracing"; //$NON-NLS-1$
 	}
 }

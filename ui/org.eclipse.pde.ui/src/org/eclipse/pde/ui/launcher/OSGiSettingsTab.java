@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,5 +136,12 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	public void updateLaunchConfigurationDialog() {
 		if (!fInitializing)
 			super.updateLaunchConfigurationDialog();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
+	 */
+	public String getId() {
+		return "org.eclipse.pde.ui.launch.tab.osgi.settings"; //$NON-NLS-1$
 	}
 }
