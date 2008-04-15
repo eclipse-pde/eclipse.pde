@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.util.tests;
 
 import org.eclipse.pde.api.tools.internal.ApiProfileManager;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
@@ -22,6 +23,14 @@ import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	
 	private ApiProfileManager fManager = ApiProfileManager.getManager();
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		fManager.stop();
+		super.tearDown();
+	}
 	
 	/**
 	 * Tests that we can get an API profile that exists from the manager 
@@ -68,32 +77,42 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * Tests getting all profiles from the manager
 	 */
 	public void testGetAllProfiles() {
+		IApiProfile profile = Factory.newApiProfile("test1");
+		fManager.addApiProfile(profile);
+		profile = Factory.newApiProfile("test2");
+		fManager.addApiProfile(profile);
 		IApiProfile[] profiles = fManager.getApiProfiles();
-		assertTrue("there should be 2 profiles", profiles.length == 2);
+		assertEquals("there should be 2 profiles", 2, profiles.length);
 	}
 	
 	/**
 	 * Tests removing an existing profile from the manager
 	 */
 	public void testRemoveApiProfile() {
+		IApiProfile profile = Factory.newApiProfile("test2");
+		fManager.addApiProfile(profile);
 		boolean result = fManager.removeApiProfile("test2");
 		assertTrue("the profile test2 should have been removed from the manager", result);
-		assertTrue("There should only be 1 profile left", fManager.getApiProfiles().length == 1);
+		assertTrue("There should only be 0 profiles left", fManager.getApiProfiles().length == 0);
 	}
 	
 	/**
 	 * Tests trying to remove an non-existent profile from the manager
 	 */
 	public void testRemoveNonExistentProfile() {
+		IApiProfile profile = Factory.newApiProfile("test2");
+		fManager.addApiProfile(profile);
 		boolean result = fManager.removeApiProfile("fooprofile");
 		assertFalse("no profiles should have been removed", result);
-		assertTrue("There should still be 1 profile left", fManager.getApiProfiles().length == 1);
+		assertTrue("There should still be 1 profile still in the manager", fManager.getApiProfiles().length == 1);
 	}
 	
 	/**
 	 * Tests that isExistingProfileName(..) returns return true when expected to 
 	 */
 	public void testIsExistingName() {
+		IApiProfile profile = Factory.newApiProfile("test1");
+		fManager.addApiProfile(profile);
 		boolean result = fManager.isExistingProfileName("test1");
 		assertTrue("the name test1 should be an existing name", result);
 	}
@@ -110,11 +129,13 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * Tests that calling the saving(..) method on the manager in headless mode does not fail
 	 */
 	public void testSavingCall() {
-		try {
-			fManager.saving(null);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
+		if(!ApiPlugin.isRunningInFramework()) {
+			try {
+				fManager.saving(null);
+			}
+			catch(Exception e) {
+				fail(e.getMessage());
+			}
 		}
 	}
 	
@@ -123,11 +144,13 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * headless mode
 	 */
 	public void testDoneSavingCall() {
-		try {
-			fManager.doneSaving(null);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
+		if(!ApiPlugin.isRunningInFramework()) {
+			try {
+				fManager.doneSaving(null);
+			}
+			catch(Exception e) {
+				fail(e.getMessage());
+			}
 		}
 	}
 	
@@ -135,11 +158,13 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * Tests that calling preparingToSave(..) does not fail in headless mode
 	 */
 	public void testPreparingToSave() {
-		try {
-			fManager.prepareToSave(null);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
+		if(!ApiPlugin.isRunningInFramework()) {
+			try {
+				fManager.prepareToSave(null);
+			}
+			catch(Exception e) {
+				fail(e.getMessage());
+			}
 		}
 	}
 	
@@ -147,11 +172,13 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * Tests that calling rollback(..) does not fail in headless mode
 	 */
 	public void testRollback() {
-		try {
-			fManager.rollback(null);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
+		if(!ApiPlugin.isRunningInFramework()) {
+			try {
+				fManager.rollback(null);
+			}
+			catch(Exception e) {
+				fail(e.getMessage());
+			}
 		}
 	}
 	
@@ -160,11 +187,13 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * headless mode
 	 */
 	public void testResourceChanged() {
-		try {
-			fManager.resourceChanged(null);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
+		if(!ApiPlugin.isRunningInFramework()) {
+			try {
+				fManager.resourceChanged(null);
+			}
+			catch(Exception e) {
+				fail(e.getMessage());
+			}
 		}
 	}
 	
@@ -172,11 +201,13 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * Tests that a call to elementChanged(..) does not fail in headless mode
 	 */
 	public void testElementChanged() {
-		try {
-			fManager.elementChanged(null);
-		}
-		catch (Exception e) {
-			fail(e.getMessage());
+		if(!ApiPlugin.isRunningInFramework()) {
+			try {
+				fManager.elementChanged(null);
+			}
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
 		}
 	}
 	
@@ -185,7 +216,12 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testGetWorkspaceProfile() {
 		IApiProfile profile = fManager.getWorkspaceProfile();
-		assertNull("the workspace profile must be null in headless mode", profile);
+		if(ApiPlugin.isRunningInFramework()) {
+			assertNotNull("the workspace profile must not be null with the framework running", profile);
+		}
+		else {
+			assertNull("the workspace profile must be null in headless mode", profile);
+		}
 	}
 	
 	/**
