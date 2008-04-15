@@ -60,6 +60,7 @@ public class Messages extends NLS {
 	public static String LogView_FilterDialog_limitTo;
 	public static String LogView_FilterDialog_eventsLogged;
 	public static String LogView_FilterDialog_allSessions;
+	public static String LogView_FilterDialog_ok;
 	public static String LogView_FilterDialog_recentSession;
 	public static String LogView_GroupBy;
 	public static String LogView_GroupByNone;

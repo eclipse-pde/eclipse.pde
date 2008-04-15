@@ -50,6 +50,7 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final String P_LOG_WARNING = "warning"; //$NON-NLS-1$
 	public static final String P_LOG_ERROR = "error"; //$NON-NLS-1$
 	public static final String P_LOG_INFO = "info"; //$NON-NLS-1$
+	public static final String P_LOG_OK = "ok"; //$NON-NLS-1$
 	public static final String P_LOG_LIMIT = "limit"; //$NON-NLS-1$
 	public static final String P_USE_LIMIT = "useLimit"; //$NON-NLS-1$
 	public static final String P_SHOW_ALL_SESSIONS = "allSessions"; //$NON-NLS-1$
@@ -1093,6 +1094,9 @@ public class LogView extends ViewPart implements ILogListener {
 		if (fMemento.getString(P_LOG_INFO) == null) {
 			fMemento.putString(P_LOG_INFO, "true"); //$NON-NLS-1$
 		}
+		if (fMemento.getString(P_LOG_OK) == null) {
+			fMemento.putString(P_LOG_OK, "true"); //$NON-NLS-1$
+		}
 		if (fMemento.getString(P_LOG_WARNING) == null) {
 			fMemento.putString(P_LOG_WARNING, "true"); //$NON-NLS-1$
 		}
@@ -1448,6 +1452,7 @@ public class LogView extends ViewPart implements ILogListener {
 		try {
 			fMemento.putString(P_USE_LIMIT, s.getBoolean(P_USE_LIMIT) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_LOG_INFO, s.getBoolean(P_LOG_INFO) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			fMemento.putString(P_LOG_OK, s.getBoolean(P_LOG_OK) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_LOG_WARNING, s.getBoolean(P_LOG_WARNING) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_LOG_ERROR, s.getBoolean(P_LOG_ERROR) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_SHOW_ALL_SESSIONS, s.getBoolean(P_SHOW_ALL_SESSIONS) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1484,6 +1489,7 @@ public class LogView extends ViewPart implements ILogListener {
 		settings.put(P_USE_LIMIT, fMemento.getString(P_USE_LIMIT).equals("true")); //$NON-NLS-1$
 		settings.put(P_LOG_LIMIT, fMemento.getInteger(P_LOG_LIMIT).intValue());
 		settings.put(P_LOG_INFO, fMemento.getString(P_LOG_INFO).equals("true")); //$NON-NLS-1$
+		settings.put(P_LOG_OK, fMemento.getString(P_LOG_OK).equals("true")); //$NON-NLS-1$
 		settings.put(P_LOG_WARNING, fMemento.getString(P_LOG_WARNING).equals("true")); //$NON-NLS-1$
 		settings.put(P_LOG_ERROR, fMemento.getString(P_LOG_ERROR).equals("true")); //$NON-NLS-1$
 		settings.put(P_SHOW_ALL_SESSIONS, fMemento.getString(P_SHOW_ALL_SESSIONS).equals("true")); //$NON-NLS-1$

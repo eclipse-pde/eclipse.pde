@@ -31,9 +31,10 @@ public class FilterDialog extends TrayDialog {
 	Text limitText;
 
 	// entry types filter
-	private Button errorButton;
-	private Button warningButton;
-	private Button infoButton;
+	private Button errorCheckbox;
+	private Button warningCheckbox;
+	private Button infoCheckbox;
+	private Button okCheckbox;
 
 	// show all sessions
 	private Button showAllButton;
@@ -70,17 +71,21 @@ public class FilterDialog extends TrayDialog {
 		group.setLayoutData(gd);
 		group.setText(Messages.LogView_FilterDialog_eventTypes);
 
-		infoButton = new Button(group, SWT.CHECK);
-		infoButton.setText(Messages.LogView_FilterDialog_information);
-		infoButton.setSelection(memento.getString(LogView.P_LOG_INFO).equals("true")); //$NON-NLS-1$
+		okCheckbox = new Button(group, SWT.CHECK);
+		okCheckbox.setText(Messages.LogView_FilterDialog_ok);
+		okCheckbox.setSelection(memento.getString(LogView.P_LOG_OK).equals("true")); //$NON-NLS-1$
 
-		warningButton = new Button(group, SWT.CHECK);
-		warningButton.setText(Messages.LogView_FilterDialog_warning);
-		warningButton.setSelection(memento.getString(LogView.P_LOG_WARNING).equals("true")); //$NON-NLS-1$
+		infoCheckbox = new Button(group, SWT.CHECK);
+		infoCheckbox.setText(Messages.LogView_FilterDialog_information);
+		infoCheckbox.setSelection(memento.getString(LogView.P_LOG_INFO).equals("true")); //$NON-NLS-1$
 
-		errorButton = new Button(group, SWT.CHECK);
-		errorButton.setText(Messages.LogView_FilterDialog_error);
-		errorButton.setSelection(memento.getString(LogView.P_LOG_ERROR).equals("true")); //$NON-NLS-1$
+		warningCheckbox = new Button(group, SWT.CHECK);
+		warningCheckbox.setText(Messages.LogView_FilterDialog_warning);
+		warningCheckbox.setSelection(memento.getString(LogView.P_LOG_WARNING).equals("true")); //$NON-NLS-1$
+
+		errorCheckbox = new Button(group, SWT.CHECK);
+		errorCheckbox.setText(Messages.LogView_FilterDialog_error);
+		errorCheckbox.setSelection(memento.getString(LogView.P_LOG_ERROR).equals("true")); //$NON-NLS-1$
 	}
 
 	private void createLimitSection(Composite parent) {
@@ -251,9 +256,10 @@ public class FilterDialog extends TrayDialog {
 	}
 
 	protected void okPressed() {
-		memento.putString(LogView.P_LOG_INFO, infoButton.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		memento.putString(LogView.P_LOG_WARNING, warningButton.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		memento.putString(LogView.P_LOG_ERROR, errorButton.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		memento.putString(LogView.P_LOG_OK, okCheckbox.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		memento.putString(LogView.P_LOG_INFO, infoCheckbox.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		memento.putString(LogView.P_LOG_WARNING, warningCheckbox.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		memento.putString(LogView.P_LOG_ERROR, errorCheckbox.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		memento.putString(LogView.P_LOG_LIMIT, limitText.getText());
 		memento.putString(LogView.P_USE_LIMIT, limit.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		memento.putString(LogView.P_SHOW_ALL_SESSIONS, showAllButton.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
