@@ -312,7 +312,7 @@ public class ApiProblemReporter implements IApiProblemReporter {
 				break;
 		}
 		if (pref != null) {
-			if (ApiPlugin.getDefault().getSeverityLevel(pref, fProject) != ApiPlugin.SEVERITY_ERROR) {
+			if (ApiPlugin.getDefault().getSeverityLevel(pref, fProject) == ApiPlugin.SEVERITY_IGNORE) {
 				return true;
 			}
 		}
