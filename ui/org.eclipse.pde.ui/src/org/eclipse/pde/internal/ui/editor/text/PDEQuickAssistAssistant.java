@@ -13,16 +13,18 @@ package org.eclipse.pde.internal.ui.editor.text;
 import java.util.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.jface.text.quickassist.*;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.correction.AbstractPDEMarkerResolution;
 import org.eclipse.pde.internal.ui.correction.ResolutionGenerator;
+import org.eclipse.pde.internal.ui.editor.contentassist.display.BrowserInformationControl;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.ide.IDE;
@@ -34,7 +36,9 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 	private Image fRenameImage;
 	private Image fRemoveImage;
 
-	class PDECompletionProposal implements ICompletionProposal {
+	private IInformationControlCreator fCreator;
+
+	class PDECompletionProposal implements ICompletionProposal, ICompletionProposalExtension3 {
 
 		Position fPosition;
 		IMarkerResolution fResolution;
@@ -83,6 +87,28 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		}
 
 		public IContextInformation getContextInformation() {
+			return null;
+		}
+
+		public IInformationControlCreator getInformationControlCreator() {
+			if (!BrowserInformationControl.isAvailable(null))
+				return null;
+
+			if (fCreator == null) {
+				fCreator = new AbstractReusableInformationControlCreator() {
+					public IInformationControl doCreateInformationControl(Shell parent) {
+						return new BrowserInformationControl(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE);
+					}
+				};
+			}
+			return fCreator;
+		}
+
+		public int getPrefixCompletionStart(IDocument document, int completionOffset) {
+			return 0;
+		}
+
+		public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 			return null;
 		}
 
