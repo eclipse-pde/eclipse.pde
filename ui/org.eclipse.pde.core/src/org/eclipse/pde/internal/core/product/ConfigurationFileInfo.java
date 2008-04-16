@@ -68,7 +68,7 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 		if (fPath != null && fPath.trim().length() > 0)
 			writer.print(" " + P_PATH + "=\"" + getWritableString(fPath.trim()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fOS != null && fOS.trim().length() > 0)
-			writer.print(" " + P_OS + "\"" + getOS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.print(" " + P_OS + "=\"" + getOS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println("/>"); //$NON-NLS-1$
 	}
 

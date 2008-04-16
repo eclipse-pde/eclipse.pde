@@ -372,7 +372,7 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public IConfigurationFileInfo getConfigurationFileInfo(String os) {
 		IConfigurationFileInfo result = (IConfigurationFileInfo) fPlatformSpecificConfigInfos.get(os);
-		return result == null ? fConfigIniInfo : result;
+		return result;
 	}
 
 	/* (non-Javadoc)
