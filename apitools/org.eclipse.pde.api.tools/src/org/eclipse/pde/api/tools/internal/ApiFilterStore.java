@@ -121,7 +121,11 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					if(xml == null) {
 						// no filters - delete the file if it exists
 						if (file.isAccessible()) {
+							IFolder folder = (IFolder) file.getParent();
 							file.delete(true, monitor);
+							if(folder.members().length == 0) {
+								folder.delete(true, monitor);
+							}
 							fTriggeredChange = true;
 						}
 						return Status.OK_STATUS;
