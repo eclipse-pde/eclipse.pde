@@ -59,7 +59,7 @@ public class DefaultApiProfileResolution implements IMarkerResolution2 {
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				SWTFactory.showPreferencePage(IApiToolsConstants.ID_PROFILES_PREF_PAGE, null);
+				SWTFactory.showPreferencePage(ApiUIPlugin.getShell(), IApiToolsConstants.ID_PROFILES_PREF_PAGE, null);
 				return Status.OK_STATUS;
 			}
 		};

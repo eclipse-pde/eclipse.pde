@@ -78,7 +78,7 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage implements IWork
 				public void widgetSelected(SelectionEvent e) {
 					HashMap data = new HashMap();
 					data.put(ApiErrorsWarningsPreferencePage.NO_LINK, Boolean.TRUE);
-					SWTFactory.showPreferencePage("org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage", data); //$NON-NLS-1$
+					SWTFactory.showPreferencePage(getShell(), "org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage", data); //$NON-NLS-1$
 				};
 			});
 		}

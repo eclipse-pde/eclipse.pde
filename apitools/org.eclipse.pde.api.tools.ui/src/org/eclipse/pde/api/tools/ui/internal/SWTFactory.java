@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -543,10 +544,11 @@ public class SWTFactory {
 	/**
 	 * This method allows us to open the preference dialog on the specific page, in this case the perspective page
 	 * 
+	 * @param shell
 	 * @param id the id of preference page to show
 	 * @param page the actual page to show
 	 */
-	public static void showPreferencePage(String id, Object data) {
-		PreferencesUtil.createPreferenceDialogOn(ApiUIPlugin.getShell(), id, new String[] {id}, data).open();
+	public static void showPreferencePage(Shell shell, String id, Object data) {
+		PreferencesUtil.createPreferenceDialogOn(shell, id, new String[] {id}, data).open();
 	}
 }

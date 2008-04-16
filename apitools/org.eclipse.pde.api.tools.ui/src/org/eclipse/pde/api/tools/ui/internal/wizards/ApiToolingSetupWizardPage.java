@@ -342,7 +342,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 					boolean doit = MessageDialog.openQuestion(getShell(), WizardMessages.ApiToolingSetupWizardPage_1, WizardMessages.ApiToolingSetupWizardPage_2 +
 					WizardMessages.ApiToolingSetupWizardPage_3);
 					if(doit) {
-						SWTFactory.showPreferencePage(IApiToolsConstants.ID_PROFILES_PREF_PAGE, null);
+						SWTFactory.showPreferencePage(getShell(), IApiToolsConstants.ID_PROFILES_PREF_PAGE, null);
 					}
 					return Status.OK_STATUS;
 				}
