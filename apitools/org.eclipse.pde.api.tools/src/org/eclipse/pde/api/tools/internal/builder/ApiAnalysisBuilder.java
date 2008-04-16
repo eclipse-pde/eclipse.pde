@@ -880,6 +880,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			Version componentVersion = new Version(component.getVersion());
 			if (referenceVersion.getMajor() < componentVersion.getMajor()) {
 				// API breakage are ok in this case
+				this.buildState.addBreakingChange(delta);
 				return;
 			}
 			IResource resource = null;
@@ -1427,7 +1428,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					case IDelta.METHOD_WITH_DEFAULT_VALUE :
 					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 					case IDelta.FIELD :
-					case IDelta.TYPE :
 						// ensure that there is a @since tag for the corresponding member
 						if (delta.getKind() == IDelta.ADDED && Util.isVisible(delta)) {
 							if (DEBUG) {
