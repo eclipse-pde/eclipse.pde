@@ -100,4 +100,9 @@ public interface IApiMarkerConstants {
 	 * Value is: <code>5</code>
 	 */
 	public static final int SINCE_TAG_MARKER_ID = 5;
+	/**
+	 * Constant representing the description for the bundle version marker.
+	 * Value is: <code>description</code>
+	 */
+	public static final String VERSION_NUMBERING_ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
 }

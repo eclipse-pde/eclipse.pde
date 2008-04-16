@@ -43,13 +43,10 @@ public class MarkerMessages extends NLS {
 
 	public static String VersionNumberingResolution_major0;
 	public static String VersionNumberingResolution_minor0;
-	public static String VersionNumberingResolution_micro0;
 	public static String VersionNumberingResolution_major1;
 	public static String VersionNumberingResolution_minor1;
-	public static String VersionNumberingResolution_micro1;
 	public static String VersionNumberingResolution_major2;
 	public static String VersionNumberingResolution_minor2;
-	public static String VersionNumberingResolution_micro2;
 
 	public static String UpdateVersionNumberingOperation_title;
 

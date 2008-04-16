@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -27,7 +26,7 @@ public class Delta implements IDelta {
 	private static final int INITIAL_SIZE = 4;
 	
 	IDelta[] children;
-	IClassFile classFile;
+	String typeName;
 	int deltasCounter;
 	int elementType;
 	int flags;
@@ -36,7 +35,7 @@ public class Delta implements IDelta {
 	int modifiers;
 
 	int kind;
-	Object data;
+	String data;
 
 	/**
 	 * Constructor
@@ -54,8 +53,8 @@ public class Delta implements IDelta {
 	 * @param key
 	 * @param data
 	 */
-	public Delta(int elementType, int kind, int flags, IClassFile classFile, String key, Object data) {
-		this(elementType, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, 0, classFile, key, data);
+	public Delta(int elementType, int kind, int flags, String typeName, String key, String data) {
+		this(elementType, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, 0, typeName, key, data);
 	}
 
 	/**
@@ -69,12 +68,12 @@ public class Delta implements IDelta {
 	 * @param key
 	 * @param data
 	 */
-	public Delta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, Object data) {
+	public Delta(int elementType, int kind, int flags, int restrictions, int modifiers, String typeName, String key, String data) {
 		this.elementType = elementType;
 		this.kind = kind;
 		this.flags = flags;
 		this.modifiers = modifiers;
-		this.classFile = classFile;
+		this.typeName = typeName == null ? Util.EMPTY_STRING : typeName;
 		this.restrictions = restrictions;
 		this.key = key;
 		this.data = data;
@@ -159,8 +158,7 @@ public class Delta implements IDelta {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getTypeName()
 	 */
 	public String getTypeName() {
-		if (this.classFile != null) return this.classFile.getTypeName();
-		return Util.EMPTY_STRING;
+		return this.typeName;
 	}
 
 	/* (non-Javadoc)
@@ -207,7 +205,7 @@ public class Delta implements IDelta {
 		if(this.data == null) {
 			return new String[] {};
 		}
-		return new String[] {(String) this.data};
+		return new String[] {this.data};
 	}
 	
 	/* (non-Javadoc)
@@ -267,5 +265,61 @@ public class Delta implements IDelta {
 		writer.print(')');
 		writer.print('-');
 		writer.print(Util.getDetail(delta));
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.data == null) ? 0 : this.data.hashCode());
+		result = prime * result + this.elementType;
+		result = prime * result + this.flags;
+		result = prime * result + ((this.key == null) ? 0 : this.key.hashCode());
+		result = prime * result + ((this.typeName == null) ? 0 : this.typeName.hashCode());
+		result = prime * result + this.kind;
+		result = prime * result + this.modifiers;
+		result = prime * result + this.restrictions;
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Delta))
+			return false;
+		Delta other = (Delta) obj;
+		if (this.elementType != other.elementType)
+			return false;
+		if (this.flags != other.flags)
+			return false;
+		if (this.kind != other.kind)
+			return false;
+		if (this.modifiers != other.modifiers)
+			return false;
+		if (this.restrictions != other.restrictions)
+			return false;
+		if (this.typeName == null) {
+			if (other.typeName != null)
+				return false;
+		} else if (!this.typeName.equals(other.typeName))
+			return false;
+		if (this.key == null) {
+			if (other.key != null)
+				return false;
+		} else if (!this.key.equals(other.key))
+			return false;
+		if (this.data == null) {
+			if (other.data != null)
+				return false;
+		} else if (!this.data.equals(other.data))
+			return false;
+		return true;
 	}
 }

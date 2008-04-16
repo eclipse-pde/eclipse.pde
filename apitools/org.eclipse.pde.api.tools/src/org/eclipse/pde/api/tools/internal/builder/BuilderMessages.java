@@ -24,6 +24,11 @@ public class BuilderMessages extends NLS {
 	public static String CleaningAPIDescription;
 	public static String Compatibility_Analysis;
 	public static String Analyzing_0_1;
+	public static String build_wrongFileFormat;
+	public static String build_readStateProgress;
+	public static String build_saveStateProgress;
+	public static String build_saveStateComplete;
+	public static String build_cannotSaveState;
 
 	static {
 		// initialize resource bundle

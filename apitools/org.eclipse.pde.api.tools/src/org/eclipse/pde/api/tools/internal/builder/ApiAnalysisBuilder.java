@@ -10,11 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
+import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -37,9 +46,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -62,6 +74,7 @@ import org.eclipse.jdt.internal.core.builder.StringSet;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
@@ -97,30 +110,22 @@ import com.ibm.icu.text.MessageFormat;
  * @since 1.0.0
  */
 public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
-
-	/**
-	 * Holds delta and corresponding CU
-	 */
-	private static class DeltaInfo {
-		IDelta delta;
-		
-		public DeltaInfo(IDelta delta) {
-			this.delta = delta;
-		}
-	}
-	
-	/**
-	 * Project relative path to the manifest file.
-	 */
-	private static final IPath MANIFEST_PATH = new Path(JarFile.MANIFEST_NAME);
-	
 	/**
 	 * Visits a resource delta to determine if the manifest has been modified.
 	 */
-	private class ManifestVisitor implements IResourceDeltaVisitor {	
+	private class ManifestVisitor implements IResourceDeltaVisitor {
 		
 		private boolean fManifestModified = false;
 
+		/**
+		 * Returns whether the manifest file was modified.
+		 * 
+		 * @return whether the manifest file was modified
+		 */
+		boolean isManifiestModified() {
+			return fManifestModified;
+		}
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
@@ -139,28 +144,16 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			return false;
 		}
 		
-		/**
-		 * Returns whether the manifest file was modified.
-		 * 
-		 * @return whether the manifest file was modified
-		 */
-		boolean isManifiestModified() {
-			return fManifestModified;
-		}
-		
 	}
-
 	/**
-	 * Constants used with the <code>bits</code> field
+	 * Constant used for controlling tracing in the API tool builder
 	 */
-	private static final int CONTAINS_API_BREAKAGE = 1;
-	private static final int CONTAINS_API_CHANGES = 2;
+	private static boolean DEBUG = Util.DEBUG;
 	
 	/**
-	 * Constant representing the name of the 'source' attribute on API tooling markers.
-	 * Value is <code>Api Tooling</code>
+	 * Project relative path to the manifest file.
 	 */
-	public static final String SOURCE = "Api Tooling"; //$NON-NLS-1$
+	private static final IPath MANIFEST_PATH = new Path(JarFile.MANIFEST_NAME);
 	
 	/**
 	 * Internal flag used to determine what created the marker, as there is overlap for reference kinds and deltas
@@ -168,9 +161,31 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	public static final int REF_TYPE_FLAG = 0;
 
 	/**
-	 * Constant used for controlling tracing in the API tool builder
+	 * Constant representing the name of the 'source' attribute on API tooling markers.
+	 * Value is <code>Api Tooling</code>
 	 */
-	private static boolean DEBUG = Util.DEBUG;
+	public static final String SOURCE = "Api Tooling"; //$NON-NLS-1$
+	
+	/**
+	 * Cleans up markers associated with API tooling on the given resource.
+	 * 
+	 * @param resource
+	 */
+	public static void cleanupMarkers(IResource resource) {
+		try {
+			if (resource != null && resource.isAccessible()) {
+				resource.deleteMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				resource.deleteMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				resource.deleteMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				if (resource.getType() == IResource.PROJECT) {
+					// on full builds
+					resource.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+					resource.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);				}
+			}
+		} catch(CoreException e) {
+			ApiPlugin.log(e.getStatus());
+		}
+	}
 	
 	/**
 	 * Method used for initializing tracing in the API tool builder
@@ -178,51 +193,75 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	public static void setDebug(boolean debugValue) {
 		DEBUG = debugValue || Util.DEBUG;
 	}
-	
 	/**
 	 * The current project for which this builder was defined
 	 */
 	private IProject fCurrentProject = null;
 	
 	/**
+	 * List of package names to qualify type names
+	 */
+	private StringSet fPackages = new StringSet(3);
+	
+	/**
 	 * The problem reporter for this builder 
 	 */
 	private IApiProblemReporter fProblemReporter = null;
+	/**
+	 * Maps prereq projects to their output location(s)
+	 */
+	private HashMap fProjectToOutputLocations = new HashMap();
 	
 	/**
-	 * Used to help determine the scope of the API problem (change or breakage)
+	 * List of type names to lookup for each project context to find dependents of
 	 */
-	private int bits;
-	
+	private StringSet fTypes = new StringSet(3);
+
 	/**
 	 * The type that we want to check for API problems
 	 */
 	private ArrayList fTypesToCheck = new ArrayList();
 	
 	/**
-	 * List of type names to lookup for each project context to find dependents of
+	 * Current build state
 	 */
-	private StringSet fTypes = new StringSet(3);
-	/**
-	 * List of package names to qualify type names
-	 */
-	private StringSet fPackages = new StringSet(3);
+	private BuildState buildState;
 	
 	/**
-	 * List of pending delta infos for which the @since tags should be checked
+	 * List of pending deltas for which the @since tags should be checked
 	 */
 	private List pendingDeltaInfos = new ArrayList(3);
 
+	private boolean addAPIProblem(IApiProblem problem) {
+		if (problem != null) {
+			return fProblemReporter.addProblem(problem);
+		}
+		return false;
+	}
+	
 	/**
-	 * Maps prereq projects to their output location(s)
+	 * Adds a type to search for dependents of in considered projects for an incremental build
+	 * 
+	 * @param path
 	 */
-	private HashMap fProjectToOutputLocations = new HashMap();
+	private void addDependentsOf(IPath path) {
+		// the qualifiedStrings are of the form 'p1/p2' & the simpleStrings are just 'X'
+		path = path.setDevice(null);
+		String packageName = path.removeLastSegments(1).toString();
+		String typeName = path.lastSegment();
+		int memberIndex = typeName.indexOf('$');
+		if (memberIndex > 0) {
+			typeName = typeName.substring(0, memberIndex);
+		}
+		if (fTypes.add(typeName) && fPackages.add(packageName) && DEBUG) {
+			System.out.println("  will look for dependents of " + typeName + " in " + packageName); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		this.bits = 0;
 		fCurrentProject = getProject();
 		fProblemReporter = getProblemReporter();
 		fTypesToCheck.clear();
@@ -264,15 +303,18 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							System.out.println("Performing full build since MANIFEST.MF was modified"); //$NON-NLS-1$
 						}
 						buildAll(localMonitor);
+					} else if (deltas.length == 0) {
+						if (DEBUG) {
+							System.out.println("Performing full build since deltas are missing after incremental request"); //$NON-NLS-1$
+						}
+						buildAll(localMonitor);
 					} else {
-						if (deltas.length == 0) {
-							if (DEBUG) {
-								System.out.println("Performing full build since deltas are missing after incremental request"); //$NON-NLS-1$
-							}
+						State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(fCurrentProject, new NullProgressMonitor());
+						if (state == null) {
 							buildAll(localMonitor);
 						} else {
-							State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(fCurrentProject, new NullProgressMonitor());
-							if (state == null) {
+							this.buildState = getLastBuiltState(this.fCurrentProject);
+							if (this.buildState == null) {
 								buildAll(localMonitor);
 							} else {
 								buildDeltas(deltas, state, localMonitor);
@@ -290,103 +332,40 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			fPackages.clear();
 			fProjectToOutputLocations.clear();
 			checkDefaultProfileSet();
+			if (monitor != null && monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
 			try {
-				if (monitor != null && monitor.isCanceled()) {
-					throw new OperationCanceledException();
-				}
 				fProblemReporter.createMarkers();
 			} finally {
 				fProblemReporter.dispose();
 				localMonitor.done();
 			}
+			saveBuiltState(this.fCurrentProject, this.buildState);
+			this.buildState = null;
 		}
 		if (DEBUG) {
 			System.out.println("Finished build of " + this.fCurrentProject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
+			IMarker[] markers = getMarkers(fCurrentProject);
+			if (markers.length == 0) {
+				// no marker created
+				System.out.println("No markers created on: ["+fCurrentProject.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				for (int i = 0, max = markers.length; i < max; i++) {
+					System.out.println(markers[i]);
+				}
+			}
 		}
 		return projects;
-	}
-
-	/**
-	 * Returns a listing of deltas for this project and for dependent projects
-	 * @param projects
-	 * @return
-	 */
-	private IResourceDelta[] getDeltas(IProject[] projects) {
-		if(DEBUG) {
-			System.out.println("Searching for deltas for build of project: "+fCurrentProject.getName()); //$NON-NLS-1$
-		}
-		ArrayList deltas = new ArrayList();
-		IResourceDelta delta = getDelta(fCurrentProject);
-		if(delta != null) {
-			if (DEBUG) {
-				System.out.println("Found a delta: " + delta); //$NON-NLS-1$
-			}
-			deltas.add(delta);
-		}
-		for(int i = 0; i < projects.length; i++) {
-			delta = getDelta(projects[i]);
-			if(delta != null) {
-				if (DEBUG) {
-					System.out.println("Found a delta: " + delta); //$NON-NLS-1$
-				}
-				deltas.add(delta);
-			}
-		}
-		return (IResourceDelta[]) deltas.toArray(new IResourceDelta[deltas.size()]);
-	}
-	
-	/**
-	 * Checks to see if there is a default API profile set in the workspace,
-	 * if not create a marker
-	 */
-	private void checkDefaultProfileSet() {
-		try {
-			if(ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile() == null) {
-				if(DEBUG) {
-					System.out.println("No default API profile, adding marker to ["+fCurrentProject.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				int sev = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_PROFILE, fCurrentProject);
-				if (sev == ApiPlugin.SEVERITY_IGNORE) {
-					return;
-				}
-				IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-				int length = markers.length;
-				if (length != 0) {
-					// the marker already exists
-					switch(length) {
-						case 1 :
-							// do nothing
-							return;
-						default:
-							// markers have not been cleanup properly
-							this.fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
-					}
-				}
-				IApiProblem problem = ApiProblemFactory.newApiProfileProblem(fCurrentProject.getProjectRelativePath().toPortableString(), 
-						null, 
-						new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-						new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)}, 
-						-1, 
-						-1, 
-						-1,  
-						IElementDescriptor.T_RESOURCE, 
-						IApiProblem.API_PROFILE_MISSING);
-				addAPIProblem(problem);
-			} else {
-				// we want to make sure that existing markers are removed
-				this.fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
-			}
-		}
-		catch(CoreException e) {
-			ApiPlugin.log(e);
-		}
 	}
 	
 	/**
 	 * Performs a full build for the workspace
 	 * @param monitor
 	 */
-	private void buildAll(IProgressMonitor monitor) {
+	private void buildAll(IProgressMonitor monitor) throws CoreException {
+		clearLastState();
+		this.buildState = new BuildState();
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 3);
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		cleanupMarkers(this.fCurrentProject);
@@ -431,117 +410,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	}
 	
 	/**
-	 * @return if the API usage scan should be ignored
-	 */
-	private boolean ignoreApiUsageScan() {
-		boolean ignore = true;
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_EXTEND, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_IMPLEMENT, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_INSTANTIATE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_REFERENCE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		return ignore;
-	}
-	
-	/**
-	 * Checks for illegal API usage in the specified component, creating problem
-	 * markers as required.
-	 * 
-	 * @param component component being built
-	 * @param scope scope being built
-	 * @param monitor progress monitor
-	 */
-	private void checkApiUsage(IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor) {
-		if(ignoreApiUsageScan()) {
-			return;
-		}
-		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
-		try {
-			long start = System.currentTimeMillis();
-			IApiProblem[] illegal = analyzer.findIllegalApiUse(component, scope, monitor);
-			long end = System.currentTimeMillis();
-			if (DEBUG) {
-				System.out.println("API usage scan: " + (end- start) + " ms\t" + illegal.length + " problems"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}		
-			if (illegal.length > 0) {
-				for (int i = 0; i < illegal.length; i++) {
-					addAPIProblem(illegal[i]);
-				}
-			}
-		} catch (CoreException e) {
-			ApiPlugin.log(e.getStatus());
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected void clean(IProgressMonitor monitor) throws CoreException {
-		fCurrentProject = getProject();
-		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.CleaningAPIDescription, new String[] {fCurrentProject.getName()}), 2);
-		try {
-			// clean up all existing markers
-			cleanupMarkers(fCurrentProject);
-			if(!localmonitor.isCanceled()) {
-				localmonitor.worked(1);
-			}
-			//clean up the .api_settings
-			cleanupApiDescription(fCurrentProject);
-			if(!localmonitor.isCanceled()) {
-				localmonitor.worked(1);
-			}
-		}
-		finally {
-			localmonitor.done();
-		}
-	}
-
-	/**
-	 * Cleans the .api_settings file for the given project
-	 * @param project
-	 */
-	private void cleanupApiDescription(IProject project) {
-		if(project != null && project.exists()) {
-			ApiDescriptionManager.getDefault().clean(JavaCore.create(project), true, false);
-		}
-	}
-	
-	/**
-	 * @return the workspace {@link IApiProfile}
-	 */
-	private IApiProfile getWorkspaceProfile() {
-		return ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
-	}
-	
-	/**
-	 * @return the current {@link IPluginModelBase} based on the current project for this builder
-	 */
-	private IPluginModelBase getCurrentModel() {
-		IPluginModelBase[] workspaceModels = PluginRegistry.getWorkspaceModels();
-		IPath location = fCurrentProject.getLocation();
-		IPluginModelBase currentModel = null;
-		BundleDescription desc = null;
-		loop: for (int i = 0, max = workspaceModels.length; i < max; i++) {
-			desc = workspaceModels[i].getBundleDescription();
-			if(desc != null) {
-				Path path = new Path(desc.getLocation());
-				if (path.equals(location)) {
-					currentModel = workspaceModels[i];
-					break loop;
-				}
-			}
-			else if(DEBUG) {
-				System.out.println("Tried to look up bundle description for: " + workspaceModels[i].toString()); //$NON-NLS-1$
-			}
-		}
-		return currentModel;
-	}
-
-	/**
 	 * Builds an API delta using the default profile (from the workspace settings and the current
 	 * workspace profile
 	 * @param delta
 	 */
-	private void buildDeltas(IResourceDelta[] deltas, final State state, IProgressMonitor monitor) {
+	private void buildDeltas(IResourceDelta[] deltas, final State state, IProgressMonitor monitor) throws CoreException {
+		clearLastState(); // so if the build fails, a full build will be triggered
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		if (profile == null) {
 			return;
@@ -606,6 +480,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				IApiComponent reference = profile.getApiComponent(id);
 				List scopeElements = new ArrayList(); // build search scope for API usage scan
 				String className = null;
+				IJavaProject javaProject = JavaCore.create(fCurrentProject);
 				for (Iterator iterator = fTypesToCheck.iterator(); iterator.hasNext(); ) {
 					IFile file = (IFile) iterator.next();
 					cleanupMarkers(file);
@@ -618,8 +493,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						continue;
 					}
 					className = type.getFullyQualifiedName();
-					if(reference != null) {
-						compareProfiles(new String(className), reference, apiComponent);
+					if(reference != null && javaProject != null) {
+						compareProfiles(javaProject, new String(className), reference, apiComponent);
 					}
 					if (monitor != null && monitor.isCanceled()) {
 						throw new OperationCanceledException();
@@ -634,35 +509,179 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					}
 				}
 				checkApiUsage(apiComponent, Factory.newTypeScope(apiComponent, (IReferenceTypeDescriptor[]) scopeElements.toArray(new IReferenceTypeDescriptor[scopeElements.size()])), null);
+				createSecondaryProblems(reference, apiComponent, javaProject);
 				if (monitor != null && monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
 			}
+			fTypesToCheck.clear();
 		} else if (DEBUG) {
 			System.out.println("No type to check"); //$NON-NLS-1$
 		}
-		fTypesToCheck.clear();
+	}
+
+	/**
+	 * Checks the version number of the API component and creates problem markers as needed
+	 * @param javaProject
+	 * @param reference
+	 * @param component
+	 */
+	private void checkApiComponentVersion(IApiComponent reference, IApiComponent component) {
+		IApiProblem problem = null;
+		String refversionval = reference.getVersion();
+		String compversionval = component.getVersion();
+		Version refversion = new Version(refversionval);
+		Version compversion = new Version(compversionval);
+		Version newversion = null;
+		if (DEBUG) {
+			System.out.println("reference version of " + reference.getId() + " : " + refversion); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("component version of " + component.getId() + " : " + compversion); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		IDelta[] breakingChanges = this.buildState.getBreakingChanges();
+		if (breakingChanges.length != 0) {
+			// make sure that the major version has been incremented
+			if (compversion.getMajor() <= refversion.getMajor()) {
+				newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier());
+				problem = createVersionProblem(
+						IApiProblem.MAJOR_VERSION_CHANGE,
+						new String[] {
+							compversionval,
+							refversionval
+						},
+						true,
+						String.valueOf(newversion),
+						collectDetails(breakingChanges));
+			}
+		} else {
+			IDelta[] compatibleChanges = this.buildState.getCompatibleChanges();
+			if (compatibleChanges.length != 0) {
+				// only new API have been added
+				if (compversion.getMajor() != refversion.getMajor()) {
+					// major version should be identical
+					newversion = new Version(refversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
+					problem = createVersionProblem(
+							IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
+							new String[] {
+								compversionval,
+								refversionval
+							},
+							false,
+							String.valueOf(newversion),
+							collectDetails(breakingChanges));
+				} else if (compversion.getMinor() <= refversion.getMinor()) {
+					// the minor version should be incremented
+					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
+					problem = createVersionProblem(
+							IApiProblem.MINOR_VERSION_CHANGE, 
+							new String[] {
+								compversionval,
+								refversionval
+							},
+							false,
+							String.valueOf(newversion),
+							collectDetails(breakingChanges));
+				}
+			}
+		}
+		addAPIProblem(problem);
+	}
+
+	private String collectDetails(IDelta[] deltas) {
+		StringWriter writer = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(writer);
+		for (int i = 0, max = deltas.length; i < max ; i++) {
+			printWriter.print("- "); //$NON-NLS-1$
+			printWriter.println(deltas[i].getMessage());
+		}
+		printWriter.flush();
+		printWriter.close();
+		return String.valueOf(writer.getBuffer());
+	}
+	/**
+	 * Checks for illegal API usage in the specified component, creating problem
+	 * markers as required.
+	 * 
+	 * @param profile profile being analyzed
+	 * @param component component being built
+	 * @param scope scope being built
+	 * @param monitor progress monitor
+	 */
+	private void checkApiUsage(IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor) {
+		if(ignoreApiUsageScan()) {
+			return;
+		}
+		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
+		try {
+			long start = System.currentTimeMillis();
+			IApiProblem[] illegal = analyzer.findIllegalApiUse(component, scope, monitor);
+			long end = System.currentTimeMillis();
+			if (DEBUG) {
+				System.out.println("API usage scan: " + (end- start) + " ms\t" + illegal.length + " problems"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}		
+			if (illegal.length > 0) {
+				for (int i = 0; i < illegal.length; i++) {
+					addAPIProblem(illegal[i]);
+				}
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e.getStatus());
+		}
 	}
 	
 	/**
-	 * Adds a type to search for dependents of in considered projects for an incremental build
-	 * 
-	 * @param path
+	 * Checks to see if there is a default API profile set in the workspace,
+	 * if not create a marker
 	 */
-	private void addDependentsOf(IPath path) {
-		// the qualifiedStrings are of the form 'p1/p2' & the simpleStrings are just 'X'
-		path = path.setDevice(null);
-		String packageName = path.removeLastSegments(1).toString();
-		String typeName = path.lastSegment();
-		int memberIndex = typeName.indexOf('$');
-		if (memberIndex > 0) {
-			typeName = typeName.substring(0, memberIndex);
-		}
-		if (fTypes.add(typeName) && fPackages.add(packageName) && DEBUG) {
-			System.out.println("  will look for dependents of " + typeName + " in " + packageName); //$NON-NLS-1$ //$NON-NLS-2$
+	private void checkDefaultProfileSet() {
+		if(ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile() == null) {
+			if(DEBUG) {
+				System.out.println("No default API profile, adding marker to ["+fCurrentProject.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			IApiProblem problem = ApiProblemFactory.newApiProfileProblem(fCurrentProject.getProjectRelativePath().toPortableString(),
+					null,
+					new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
+					new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)},
+					-1,
+					-1,
+					-1,
+					IElementDescriptor.T_RESOURCE,
+					IApiProblem.API_PROFILE_MISSING);
+			addAPIProblem(problem);
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void clean(IProgressMonitor monitor) throws CoreException {
+		fCurrentProject = getProject();
+		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.CleaningAPIDescription, new String[] {fCurrentProject.getName()}), 2);
+		try {
+			// clean up all existing markers
+			cleanupMarkers(fCurrentProject);
+			if(!localmonitor.isCanceled()) {
+				localmonitor.worked(1);
+			}
+			//clean up the .api_settings
+			cleanupApiDescription(fCurrentProject);
+			if(!localmonitor.isCanceled()) {
+				localmonitor.worked(1);
+			}
+		}
+		finally {
+			localmonitor.done();
+		}
+	}
+
+	/**
+	 * Cleans the .api_settings file for the given project
+	 * @param project
+	 */
+	private void cleanupApiDescription(IProject project) {
+		if(project != null && project.exists()) {
+			ApiDescriptionManager.getDefault().clean(JavaCore.create(project), true, false);
+		}
+	}
 	/**
 	 * Collects the complete set of affected source files from the current project context based on the current JDT build state.
 	 * 
@@ -698,6 +717,525 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Compares the two given profiles and generates an {@link IDelta}
+	 * @param reference
+	 * @param component
+	 */
+	private void compareProfiles(IApiComponent reference, IApiComponent component) {
+		long time = System.currentTimeMillis();
+		IDelta delta = null;
+		if (reference == null) {
+			delta = new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, component.getId(), component.getId());
+		} else {
+			try {
+				delta = ApiComparator.compare(reference, component, VisibilityModifiers.API);
+			} catch(Exception e) {
+				ApiPlugin.log(e);
+			} finally {
+				if (DEBUG) {
+					System.out.println("Time spent for " + component.getId() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+				this.pendingDeltaInfos.clear();
+			}
+		}
+		if (delta == null) {
+			if (DEBUG) System.err.println("An error occured while comparing"); //$NON-NLS-1$
+			return;
+		}
+		if (delta != ApiComparator.NO_DELTA) {
+			List allDeltas = Util.collectAllDeltas(delta);
+			if (allDeltas.size() != 0) {
+				IJavaProject javaProject = JavaCore.create(this.fCurrentProject);
+				if (javaProject == null) return;
+				for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
+					IDelta localDelta = (IDelta) iterator.next();
+					processDelta(javaProject, localDelta, reference, component);
+				}
+				if (!this.pendingDeltaInfos.isEmpty()) {
+					// process the list
+					for (Iterator iterator = this.pendingDeltaInfos.iterator(); iterator.hasNext();) {
+						Delta currentDelta = (Delta) iterator.next();
+						processSinceTags(javaProject, currentDelta, component);
+					}
+				}
+				createSecondaryProblems(reference, component, javaProject);
+			}
+			if (DEBUG) {
+				System.out.println("Complete"); //$NON-NLS-1$
+			}
+		} else if (DEBUG) {
+			System.out.println("No delta"); //$NON-NLS-1$
+		}
+	}
+
+	private void createSecondaryProblems(IApiComponent reference,
+			IApiComponent component, IJavaProject javaProject) {
+		if (reference == null || component == null) {
+			return;
+		}
+		checkApiComponentVersion(reference, component);
+	}
+	
+	/**
+	 * Compares the given type between the two API components
+	 * @param typeName the type to check in each component
+	 * @param reference 
+	 * @param component
+	 */
+	private void compareProfiles(IJavaProject javaProject, String typeName, IApiComponent reference, IApiComponent component) {
+		ICompilationUnit compilationUnit = null;
+		if (DEBUG) {
+			System.out.println("comparing profiles ["+reference.getId()+"] and ["+component.getId()+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		}
+		IResource compilationUnitResource = null;
+		try {
+			IType type = getType(javaProject, typeName);
+			if (type != null) {
+				compilationUnit = type.getCompilationUnit();
+				if (compilationUnit != null) {
+					compilationUnitResource = compilationUnit.getCorrespondingResource();
+					if (DEBUG) {
+						if (compilationUnitResource != null) {
+							IMarker[] markers = getMarkers(compilationUnitResource);
+							for (int i = 0, max = markers.length; i < max; i++) {
+								System.out.println(markers[i]);
+							}
+						}
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+			// ignore, we cannot create markers in this case
+		}
+		IClassFile classFile = null;
+		try {
+			classFile = component.findClassFile(typeName);
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+		if (classFile == null) {
+			if (DEBUG) {
+				System.err.println("Could not retrieve class file for " + typeName + " in " + component.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return;
+		}
+		this.buildState.cleanup(typeName);
+		IDelta delta = null;
+		long time = System.currentTimeMillis();
+		try {
+			delta = ApiComparator.compare(classFile, reference, component, reference.getProfile(), component.getProfile(), VisibilityModifiers.API);
+		} catch(Exception e) {
+			ApiPlugin.log(e);
+		} finally {
+			if (DEBUG) {
+				System.out.println("Time spent for " + typeName + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			this.pendingDeltaInfos.clear();
+		}
+		if (delta == null) {
+			if (DEBUG) {
+				System.err.println("An error occured while comparing"); //$NON-NLS-1$
+			}
+			return;
+		}
+		if (delta != ApiComparator.NO_DELTA) {
+			List allDeltas = Util.collectAllDeltas(delta);
+			for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
+				IDelta localDelta = (IDelta) iterator.next();
+				processDelta(javaProject, localDelta, reference, component);
+			}
+			if (!this.pendingDeltaInfos.isEmpty()) {
+				// process the list
+				for (Iterator iterator = this.pendingDeltaInfos.iterator(); iterator.hasNext();) {
+					Delta currentDelta = (Delta) iterator.next();
+					processSinceTags(javaProject, currentDelta, component);
+				}
+			}
+			if (DEBUG) {
+				System.out.println("Complete"); //$NON-NLS-1$
+			}
+		} else if (DEBUG) {
+			System.out.println("No delta"); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Creates an {@link IApiProblem} for the given delta on the backing resource of the specified 
+	 * {@link ICompilationUnit}
+	 * @param delta
+	 * @param compilationUnit
+	 * @param project
+	 * @return a new {@link IApiProblem} or <code>null</code>
+	 */
+	private void addCompatibilityProblem(IDelta delta, IJavaProject project, IApiComponent reference, IApiComponent component) {
+		if (reference == null) {
+			// This would be the case for addition of api component 
+			return;
+		}
+		try {
+			Version referenceVersion = new Version(reference.getVersion());
+			Version componentVersion = new Version(component.getVersion());
+			if (referenceVersion.getMajor() < componentVersion.getMajor()) {
+				// API breakage are ok in this case
+				return;
+			}
+			IResource resource = null;
+			IType type = null;
+			try {
+				type = project.findType(delta.getTypeName().replace('$', '.'));
+			} catch (JavaModelException e) {
+				ApiPlugin.log(e);
+			}
+			if (type == null) {
+				IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
+				if (manifestFile == null) {
+					// Cannot retrieve the manifest.mf file
+					return;
+				}
+				resource = manifestFile;
+			} else {
+				ICompilationUnit unit = type.getCompilationUnit();
+				if (unit != null) {
+					resource = unit.getCorrespondingResource();
+					if (resource == null) {
+						return;
+					}
+				} else {
+					IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
+					if (manifestFile == null) {
+						// Cannot retrieve the manifest.mf file
+						return;
+					}
+					resource = manifestFile;
+				}
+			}
+			// retrieve line number, char start and char end
+			int lineNumber = 1;
+			int charStart = -1;
+			int charEnd = 1;
+			IMember member = Util.getIMember(delta, project);
+			if (member != null) {
+				ISourceRange range = member.getNameRange();
+				charStart = range.getOffset();
+				charEnd = charStart + range.getLength();
+				try {
+					IDocument document = Util.getDocument(member.getCompilationUnit());
+					lineNumber = document.getLineOfOffset(charStart);
+				} catch (BadLocationException e) {
+					// ignore
+				}
+			}
+			IApiProblem apiProblem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
+					delta.getArguments(),
+					new String[] {
+						IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,
+						IApiMarkerConstants.API_MARKER_ATTR_ID
+					},
+					new Object[] {
+						member == null ? null : member.getHandleIdentifier(),
+						new Integer(IApiMarkerConstants.COMPATIBILITY_MARKER_ID),
+					},
+					lineNumber,
+					charStart,
+					charEnd,
+					IApiProblem.CATEGORY_COMPATIBILITY,
+					delta.getElementType(),
+					delta.getKind(),
+					delta.getFlags());
+			if (addAPIProblem(apiProblem)) {
+				this.buildState.addBreakingChange(delta);
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+	}
+	
+	/**
+	 * Creates a marker to denote a problem with the since tag (existence or correctness) for a member
+	 * and returns it, or <code>null</code>
+	 * @param kind
+	 * @param messageargs
+	 * @param compilationUnit
+	 * @param member
+	 * @param version
+	 * @return a new {@link IApiProblem} or <code>null</code>
+	 */
+	private IApiProblem createSinceTagProblem(int kind, final String[] messageargs, final Delta info, 
+			IMember member, final String version) {
+		try {
+			// create a marker on the member for missing @since tag
+			IResource resource = null;
+			ICompilationUnit unit = null;
+			try {
+				unit = member.getCompilationUnit();
+				if (unit != null) {
+					resource = unit.getCorrespondingResource();
+				}
+			} catch (JavaModelException e) {
+				ApiPlugin.log(e);
+			}
+			if (resource == null) {
+				return null;
+			}
+			int lineNumber = 1;
+			int charStart = 0;
+			int charEnd = 1;
+			ISourceRange range = member.getNameRange();
+			charStart = range.getOffset();
+			charEnd = charStart + range.getLength();
+			try {
+				// unit cannot be null
+				IDocument document = Util.getDocument(unit);
+				lineNumber = document.getLineOfOffset(charStart);
+			} catch (BadLocationException e) {
+				ApiPlugin.log(e);
+			}
+			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(), 
+					messageargs, 
+					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID, IApiMarkerConstants.MARKER_ATTR_HANDLE_ID}, 
+					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID), member.getHandleIdentifier()}, 
+					lineNumber, 
+					charStart, 
+					charEnd, 
+					info.getElementType(), 
+					kind);
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+		return null;
+	}
+	
+	/**
+	 * Creates a marker on a manifest file for a version numbering problem and returns it
+	 * or <code>null</code> 
+	 * @param kind
+	 * @param messageargs
+	 * @param breakage
+	 * @param version
+	 * @param description the description of details
+	 * @return a new {@link IApiProblem} or <code>null</code>
+	 */
+	private IApiProblem createVersionProblem(int kind, final String[] messageargs, boolean breakage, String version, String description) {
+		IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
+		if (manifestFile == null) {
+			// Cannot retrieve the manifest.mf file
+			return null;
+		}
+		// this error should be located on the manifest.mf file
+		// first of all we check how many api breakage marker are there
+		int lineNumber = -1;
+		int charStart = 0;
+		int charEnd = 1;
+		char[] contents = null;
+		if (manifestFile.getType() == IResource.FILE) {
+			IFile file = (IFile) manifestFile;
+			InputStream inputStream = null;
+			LineNumberReader reader = null;
+			try {
+				inputStream = file.getContents(true);
+				contents = Util.getInputStreamAsCharArray(inputStream, -1, IApiCoreConstants.UTF_8);
+				reader = new LineNumberReader(new BufferedReader(new StringReader(new String(contents))));
+				int lineCounter = 0;
+				String line = null;
+				loop: while ((line = reader.readLine()) != null) {
+					lineCounter++;
+					if (line.startsWith(Constants.BUNDLE_VERSION)) {
+						lineNumber = lineCounter;
+						break loop;
+					}
+				}
+			} catch (CoreException e) {
+				// ignore
+			} catch (IOException e) {
+				// ignore
+			} finally {
+				try {
+					if (inputStream != null) {
+						inputStream.close();
+					}
+					if (reader != null) {
+						reader.close();
+					}
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+		if (lineNumber != -1 && contents != null) {
+			// initialize char start, char end
+			int index = CharOperation.indexOf(Constants.BUNDLE_VERSION.toCharArray(), contents, true);
+			loop: for (int i = index + Constants.BUNDLE_VERSION.length() + 1, max = contents.length; i < max; i++) {
+				char currentCharacter = contents[i];
+				if (CharOperation.isWhitespace(currentCharacter)) {
+					continue;
+				}
+				charStart = i;
+				break loop;
+			}
+			loop: for (int i = charStart + 1, max = contents.length; i < max; i++) {
+				switch(contents[i]) {
+					case '\r' :
+					case '\n' :
+						charEnd = i;
+						break loop;
+				}
+			}
+		} else {
+			lineNumber = 1;
+		}
+		return ApiProblemFactory.newApiVersionNumberProblem(manifestFile.getProjectRelativePath().toPortableString(), 
+				messageargs, 
+				new String[] {
+					IApiMarkerConstants.MARKER_ATTR_VERSION,
+					IApiMarkerConstants.API_MARKER_ATTR_ID,
+					IApiMarkerConstants.VERSION_NUMBERING_ATTR_DESCRIPTION,
+				}, 
+				new Object[] {
+					version,
+					new Integer(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
+					description
+				}, 
+				lineNumber, 
+				charStart, 
+				charEnd, 
+				IElementDescriptor.T_RESOURCE, 
+				kind);
+	}
+
+	/**
+	 * Finds affected source files for a resource that has changed that either contains class files or is itself a class file
+	 * @param binaryDelta
+	 */
+	private void findAffectedSourceFiles(IResourceDelta binaryDelta) {
+		IResource resource = binaryDelta.getResource();
+		if(resource.getType() == IResource.FILE) {
+			if (Util.isClassFile(resource.getName())) {
+				IPath typePath = resolveJavaPathFromResource(resource);
+				if(typePath == null) {
+					return;
+				}
+				switch (binaryDelta.getKind()) {
+					case IResourceDelta.ADDED :
+					case IResourceDelta.REMOVED : {
+						if (DEBUG) {
+							System.out.println("Found added/removed class file " + typePath); //$NON-NLS-1$
+						}
+						addDependentsOf(typePath);
+						return;
+					}
+					case IResourceDelta.CHANGED : {
+						if ((binaryDelta.getFlags() & IResourceDelta.CONTENT) == 0) {
+							return; // skip it since it really isn't changed
+						}
+						if (DEBUG) {
+							System.out.println("Found changed class file " + typePath); //$NON-NLS-1$
+						}
+						addDependentsOf(typePath);
+					}
+				}
+				return;
+			}
+		}
+	}
+
+	/**
+	 * recursively flattens the given delta into a list of individual deltas
+	 * @param delta
+	 * @param flattenDeltas
+	 */
+	private void flatten0(IResourceDelta delta, List flattenDeltas) {
+		IResourceDelta[] deltas = delta.getAffectedChildren();
+		int length = deltas.length;
+		if (length != 0) {
+			for (int i = 0; i < length; i++) {
+				flatten0(deltas[i], flattenDeltas);
+			}
+		} else {
+			flattenDeltas.add(delta);
+		}
+	}
+	/**
+	 * @return the current {@link IPluginModelBase} based on the current project for this builder
+	 */
+	private IPluginModelBase getCurrentModel() {
+		IPluginModelBase[] workspaceModels = PluginRegistry.getWorkspaceModels();
+		IPath location = fCurrentProject.getLocation();
+		IPluginModelBase currentModel = null;
+		BundleDescription desc = null;
+		loop: for (int i = 0, max = workspaceModels.length; i < max; i++) {
+			desc = workspaceModels[i].getBundleDescription();
+			if(desc != null) {
+				Path path = new Path(desc.getLocation());
+				if (path.equals(location)) {
+					currentModel = workspaceModels[i];
+					break loop;
+				}
+			}
+			else if(DEBUG) {
+				System.out.println("Tried to look up bundle description for: " + workspaceModels[i].toString()); //$NON-NLS-1$
+			}
+		}
+		return currentModel;
+	}
+
+	/**
+	 * Returns a listing of deltas for this project and for dependent projects
+	 * @param projects
+	 * @return
+	 */
+	private IResourceDelta[] getDeltas(IProject[] projects) {
+		if(DEBUG) {
+			System.out.println("Searching for deltas for build of project: "+fCurrentProject.getName()); //$NON-NLS-1$
+		}
+		ArrayList deltas = new ArrayList();
+		IResourceDelta delta = getDelta(fCurrentProject);
+		if(delta != null) {
+			if (DEBUG) {
+				System.out.println("Found a delta: " + delta); //$NON-NLS-1$
+			}
+			deltas.add(delta);
+		}
+		for(int i = 0; i < projects.length; i++) {
+			delta = getDelta(projects[i]);
+			if(delta != null) {
+				if (DEBUG) {
+					System.out.println("Found a delta: " + delta); //$NON-NLS-1$
+				}
+				deltas.add(delta);
+			}
+		}
+		return (IResourceDelta[]) deltas.toArray(new IResourceDelta[deltas.size()]);
+	}
+
+	/**
+	 * Returns the complete set of API tooling markers currently on the specified resource
+	 * @param resource
+	 * @return the complete set of API tooling markers
+	 */
+	private IMarker[] getMarkers(IResource resource) {
+		try {
+			if (resource != null && resource.exists()) {
+				ArrayList markers = new ArrayList();
+				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
+				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
+				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
+				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
+				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
+				return (IMarker[]) markers.toArray(new IMarker[markers.size()]);
+			}
+		} catch(CoreException e) {}
+		return new IMarker[0];
+	}
+
+	/**
+	 * Returns the problem reporter to use for this instance of the builder
+	 * @return the problem reporter to use
+	 */
+	protected IApiProblemReporter getProblemReporter() {
+		return new ApiProblemReporter(fCurrentProject);
 	}
 	
 	/**
@@ -777,342 +1315,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	}
 	
 	/**
-	 * Returns is the given classpath entry is optional or not
-	 * @param entry
-	 * @return true if the specified {@link IClasspathEntry} is optional, false otherwise
-	 */
-	private boolean isOptional(IClasspathEntry entry) {
-		IClasspathAttribute[] attribs = entry.getExtraAttributes();
-		for (int i = 0, length = attribs.length; i < length; i++) {
-			IClasspathAttribute attribute = attribs[i];
-			if (IClasspathAttribute.OPTIONAL.equals(attribute.getName()) && "true".equals(attribute.getValue())) //$NON-NLS-1$
-				return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * Finds affected source files for a resource that has changed that either contains class files or is itself a class file
-	 * @param binaryDelta
-	 */
-	private void findAffectedSourceFiles(IResourceDelta binaryDelta) {
-		IResource resource = binaryDelta.getResource();
-		if(resource.getType() == IResource.FILE) {
-			if (Util.isClassFile(resource.getName())) {
-				IPath typePath = resolveJavaPathFromResource(resource);
-				if(typePath == null) {
-					return;
-				}
-				switch (binaryDelta.getKind()) {
-					case IResourceDelta.ADDED :
-					case IResourceDelta.REMOVED : {
-						if (DEBUG) {
-							System.out.println("Found added/removed class file " + typePath); //$NON-NLS-1$
-						}
-						addDependentsOf(typePath);
-						return;
-					}
-					case IResourceDelta.CHANGED : {
-						if ((binaryDelta.getFlags() & IResourceDelta.CONTENT) == 0) {
-							return; // skip it since it really isn't changed
-						}
-						if (DEBUG) {
-							System.out.println("Found changed class file " + typePath); //$NON-NLS-1$
-						}
-						addDependentsOf(typePath);
-					}
-				}
-				return;
-			}
-		}
-	}
-	
-	/**
-	 * Resolves the java path from the given resource
-	 * @param resource
-	 * @return the resolved path or <code>null</code> if the resource is not part of the java model
-	 */
-	private IPath resolveJavaPathFromResource(IResource resource) {
-		IJavaElement element = JavaCore.create(resource);
-		if(element != null) {
-			switch(element.getElementType()) {
-				case IJavaElement.CLASS_FILE: {
-					org.eclipse.jdt.core.IClassFile classfile = (org.eclipse.jdt.core.IClassFile) element;
-					IType type = classfile.getType();
-					HashSet paths = (HashSet) fProjectToOutputLocations.get(resource.getProject());
-					IPath prefix = null;
-					for(Iterator iter = paths.iterator(); iter.hasNext();) {
-						prefix = (IPath) iter.next();
-						if(prefix.isPrefixOf(type.getPath())) {
-							return type.getPath().removeFirstSegments(prefix.segmentCount()).removeFileExtension();
-						}
-					}
-					break;
-				}
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * recursively flattens the given delta into a list of individual deltas
-	 * @param delta
-	 * @param flattenDeltas
-	 */
-	private void flatten0(IResourceDelta delta, List flattenDeltas) {
-		IResourceDelta[] deltas = delta.getAffectedChildren();
-		int length = deltas.length;
-		if (length != 0) {
-			for (int i = 0; i < length; i++) {
-				flatten0(deltas[i], flattenDeltas);
-			}
-		} else {
-			flattenDeltas.add(delta);
-		}
-	}
-
-	/**
-	 * Compares the given type between the two API components
-	 * @param typeName the type to check in each component
-	 * @param reference 
-	 * @param component
-	 */
-	private void compareProfiles(String typeName, IApiComponent reference, IApiComponent component) {
-		IJavaProject javaProject = JavaCore.create(fCurrentProject);
-		if (javaProject == null) {
-			return;
-		}
-		ICompilationUnit compilationUnit = null;
-		if (DEBUG) {
-			System.out.println("comparing profiles ["+reference.getId()+"] and ["+component.getId()+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		}
-		IResource compilationUnitResource = null;
-		try {
-			IType type = getType(javaProject, typeName);
-			if (type != null) {
-				compilationUnit = type.getCompilationUnit();
-				if (compilationUnit != null) {
-					compilationUnitResource = compilationUnit.getCorrespondingResource();
-					if (DEBUG) {
-						if (compilationUnitResource != null) {
-							IMarker[] markers = getMarkers(compilationUnitResource);
-							for (int i = 0, max = markers.length; i < max; i++) {
-								System.out.println(markers[i]);
-							}
-						}
-					}
-				}
-			}
-		} catch (JavaModelException e) {
-			// ignore, we cannot create markers in this case
-		}
-		IClassFile classFile = null;
-		try {
-			classFile = component.findClassFile(typeName);
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		}
-		if (classFile == null) {
-			if (DEBUG) {
-				System.err.println("Could not retrieve class file for " + typeName + " in " + component.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			return;
-		}
-		IDelta delta = null;
-		long time = System.currentTimeMillis();
-		try {
-			delta = ApiComparator.compare(classFile, reference, component, reference.getProfile(), component.getProfile(), VisibilityModifiers.API);
-		} catch(Exception e) {
-			ApiPlugin.log(e);
-		} finally {
-			if (DEBUG) {
-				System.out.println("Time spent for " + typeName + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
-			this.pendingDeltaInfos.clear();
-		}
-		if (delta == null) {
-			if (DEBUG) {
-				System.err.println("An error occured while comparing"); //$NON-NLS-1$
-			}
-			return;
-		}
-		if (delta != ApiComparator.NO_DELTA) {
-			List allDeltas = Util.collectAllDeltas(delta);
-			for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
-				IDelta localDelta = (IDelta) iterator.next();
-				processDelta(javaProject, localDelta, reference, component);
-			}
-			if (!this.pendingDeltaInfos.isEmpty()) {
-				// process the list
-				for (Iterator iterator = this.pendingDeltaInfos.iterator(); iterator.hasNext();) {
-					DeltaInfo deltaInfo = (DeltaInfo) iterator.next();
-					processSinceTags(javaProject, deltaInfo, component, reference);
-				}
-			}
-			checkApiComponentVersion(reference, component);
-			if (DEBUG) {
-				System.out.println("Completed compare with no delta"); //$NON-NLS-1$
-			}
-		} else {
-			if (DEBUG) {
-				System.out.println("No delta"); //$NON-NLS-1$
-			}
-			cleanupVersionNumberingMarker();
-		}
-		if (DEBUG) {
-			System.out.println("finished comparing profiles ["+reference.getId()+"] and ["+component.getId()+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			if (compilationUnitResource != null) {
-				IMarker[] markers = getMarkers(compilationUnitResource);
-				if (markers.length == 0) {
-					// no marker created
-					System.out.println("No markers created on: ["+compilationUnitResource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					for (int i = 0, max = markers.length; i < max; i++) {
-						System.out.println(markers[i]);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Checks the version number of the API component and creates problem markers as needed
-	 * @param javaProject
-	 * @param reference
-	 * @param component
-	 */
-	private void checkApiComponentVersion(IApiComponent reference, IApiComponent component) {
-		IApiProblem problem = null;
-		if (!shouldIgnoreProblem(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION) && reference != null) {
-			String refversionval = reference.getVersion();
-			String compversionval = component.getVersion();
-			Version refversion = new Version(refversionval);
-			Version compversion = new Version(compversionval);
-			Version newversion = null;
-			if (DEBUG) {
-				System.out.println("reference version of " + reference.getId() + " : " + refversion); //$NON-NLS-1$ //$NON-NLS-2$
-				System.out.println("component version of " + component.getId() + " : " + compversion); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			if ((this.bits & CONTAINS_API_BREAKAGE) != 0) {
-				// make sure that the major version has been incremented
-				if (compversion.getMajor() <= refversion.getMajor()) {
-					newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier());
-					problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE,
-										new String[] {compversionval, refversionval},
-										true,
-										String.valueOf(newversion));
-				}
-			} else if ((this.bits & CONTAINS_API_CHANGES) != 0) {
-				// only new API have been added
-				if (compversion.getMajor() != refversion.getMajor()) {
-					// major version should be identical
-					newversion = new Version(refversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
-					problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
-										new String[] {compversionval, refversionval},
-										false,
-										String.valueOf(newversion));
-				} else if (compversion.getMinor() <= refversion.getMinor()) {
-					// the minor version should be incremented
-					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
-					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE, 
-										new String[] {compversionval, refversionval},
-										false,
-										String.valueOf(newversion));
-				} else {
-					// see if we should remove the marker
-					cleanupVersionNumberingMarker();
-				}
-			}
-		}
-		addAPIProblem(problem);
-	}
-
-	private void addAPIProblem(IApiProblem problem) {
-		if (problem != null) {
-			fProblemReporter.addProblem(problem);
-		}
-	}
-	
-	
-	/**
-	 * Cleans up the version numbering problem markers
-	 */
-	private void cleanupVersionNumberingMarker() {
-		try {
-			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-			IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
-			if (manifestFile == null) return;
-			IMarker[] manifestMarkers = manifestFile.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-			if (markers.length != 0) {
-				// check if we already have such a version numbering marker
-				if (manifestMarkers.length != 0) {
-					// the existing marker will only be updated on full build
-					return;
-				}
-			}
-			switch(manifestMarkers.length) {
-				case 0 :
-					return;
-				case 1 :
-					IMarker marker = manifestMarkers[0];
-					int kind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
-					if (IApiProblem.MAJOR_VERSION_CHANGE == kind) {
-						marker.delete();
-					}
-					break;
-				default:
-					// delete all markers
-					for (int i = 0, max = manifestMarkers.length; i < max; i++) {
-						manifestMarkers[i].delete();
-					}
-			}
-		} catch (CoreException e) {
-			// ignore
-		}
-	}
-
-	/**
-	 * Cleans up markers associated with API tooling on the given resource.
-	 * 
-	 * @param resource
-	 */
-	public static void cleanupMarkers(IResource resource) {
-		try {
-			if (resource != null && resource.isAccessible()) {
-				resource.deleteMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-				resource.deleteMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-				resource.deleteMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-				if (resource.getType() == IResource.PROJECT) {
-					// on full builds
-					resource.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-					resource.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);				}
-			}
-		} catch(CoreException e) {
-			ApiPlugin.log(e.getStatus());
-		}
-	}
-
-	/**
-	 * Returns the complete set of API tooling markers currently on the specified resource
-	 * @param resource
-	 * @return the complete set of API tooling markers
-	 */
-	private IMarker[] getMarkers(IResource resource) {
-		try {
-			if (resource != null && resource.exists()) {
-				ArrayList markers = new ArrayList();
-				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
-				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
-				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
-				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
-				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
-				return (IMarker[]) markers.toArray(new IMarker[markers.size()]);
-			}
-		} catch(CoreException e) {}
-		return new IMarker[0];
-	}
-
-	/**
 	 * Find a java type within a java project. Converts '$' to '.' as needed
 	 * @param javaProject
 	 * @param typeName
@@ -1130,170 +1332,39 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns the problem reporter to use for this instance of the builder
-	 * @return the problem reporter to use
+	 * @return the workspace {@link IApiProfile}
 	 */
-	protected IApiProblemReporter getProblemReporter() {
-		return new ApiProblemReporter(fCurrentProject);
-	}
-	
-	/**
-	 * Creates an {@link IApiProblem} for the given delta on the backing resource of the specified 
-	 * {@link ICompilationUnit}
-	 * @param delta
-	 * @param compilationUnit
-	 * @param project
-	 * @return a new {@link IApiProblem} or <code>null</code>
-	 */
-	private IApiProblem createCompatibilityProblem(IDelta delta, IJavaProject project, IApiComponent reference, IApiComponent component) {
-		try {
-			if(shouldIgnoreProblem(Util.getDeltaPrefererenceKey(delta.getElementType(), delta.getKind(), delta.getFlags()))) {
-				return null;
-			}
-			Version referenceVersion = new Version(reference.getVersion());
-			Version componentVersion = new Version(component.getVersion());
-			if (referenceVersion.getMajor() < componentVersion.getMajor()) {
-				// API breakage are ok in this case
-				this.bits |= CONTAINS_API_BREAKAGE;
-				return null;
-			}
-			IResource resource = null;
-			IType type = null;
-			try {
-				type = project.findType(delta.getTypeName().replace('$', '.'));
-			} catch (JavaModelException e) {
-				ApiPlugin.log(e);
-			}
-			if (type == null) {
-				IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
-				if (manifestFile == null) {
-					// Cannot retrieve the manifest.mf file
-					return null;
-				}
-				resource = manifestFile;
-			} else {
-				ICompilationUnit unit = type.getCompilationUnit();
-				if (unit != null) {
-					resource = unit.getCorrespondingResource();
-					if (resource == null) {
-						return null;
-					}
-				} else {
-					IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
-					if (manifestFile == null) {
-						// Cannot retrieve the manifest.mf file
-						return null;
-					}
-					resource = manifestFile;
-				}
-			}
-			this.bits |= CONTAINS_API_BREAKAGE;
-			
-			// retrieve line number, char start and char end
-			int lineNumber = 1;
-			int charStart = -1;
-			int charEnd = 1;
-			IMember member = Util.getIMember(delta, project);
-			if (member != null) {
-				ISourceRange range = member.getNameRange();
-				charStart = range.getOffset();
-				charEnd = charStart + range.getLength();
-				try {
-					IDocument document = Util.getDocument(member.getCompilationUnit());
-					lineNumber = document.getLineOfOffset(charStart);
-				} catch (BadLocationException e) {
-					// ignore
-				}
-			}
-			return ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
-					delta.getArguments(),
-					new String[] {IApiMarkerConstants.MARKER_ATTR_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID},
-					new Object[] {member == null ? null : member.getHandleIdentifier(), new Integer(IApiMarkerConstants.COMPATIBILITY_MARKER_ID)},
-					lineNumber,
-					charStart,
-					charEnd,
-					IApiProblem.CATEGORY_COMPATIBILITY,
-					delta.getElementType(),
-					delta.getKind(),
-					delta.getFlags());
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		}
-		return null;
+	private IApiProfile getWorkspaceProfile() {
+		return ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
 	}
 
 	/**
-	 * Returns if the problem specified by the given preference key should be ignored or not
-	 * @param prefkey
-	 * @return true if the problem should be ignored, false otherwise
+	 * @return if the API usage scan should be ignored
 	 */
-	private boolean shouldIgnoreProblem(String prefkey) {
-		return ApiPlugin.SEVERITY_IGNORE == ApiPlugin.getDefault().getSeverityLevel(prefkey, fCurrentProject);
+	private boolean ignoreApiUsageScan() {
+		boolean ignore = true;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_EXTEND, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_IMPLEMENT, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_INSTANTIATE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_REFERENCE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		return ignore;
 	}
 	
 	/**
-	 * Compares the two given profiles and generates an {@link IDelta}
-	 * @param reference
-	 * @param component
+	 * Returns is the given classpath entry is optional or not
+	 * @param entry
+	 * @return true if the specified {@link IClasspathEntry} is optional, false otherwise
 	 */
-	private void compareProfiles(IApiComponent reference, IApiComponent component) {
-		long time = System.currentTimeMillis();
-		IDelta delta = null;
-		if (reference == null) {
-			delta = new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, component.getId(), component.getId());
-		} else {
-			try {
-				delta = ApiComparator.compare(reference, component, VisibilityModifiers.API);
-			} catch(Exception e) {
-				ApiPlugin.log(e);
-			} finally {
-				if (DEBUG) {
-					System.out.println("Time spent for " + component.getId() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				}
-				this.pendingDeltaInfos.clear();
-			}
+	private boolean isOptional(IClasspathEntry entry) {
+		IClasspathAttribute[] attribs = entry.getExtraAttributes();
+		for (int i = 0, length = attribs.length; i < length; i++) {
+			IClasspathAttribute attribute = attribs[i];
+			if (IClasspathAttribute.OPTIONAL.equals(attribute.getName()) && "true".equals(attribute.getValue())) //$NON-NLS-1$
+				return true;
 		}
-		if (delta == null) {
-			if (DEBUG) System.err.println("An error occured while comparing"); //$NON-NLS-1$
-			return;
-		}
-		if (delta != ApiComparator.NO_DELTA) {
-			List allDeltas = Util.collectAllDeltas(delta);
-			if (allDeltas.size() != 0) {
-				IJavaProject javaProject = JavaCore.create(this.fCurrentProject);
-				if (javaProject == null) return;
-				for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
-					IDelta localDelta = (IDelta) iterator.next();
-					switch(localDelta.getElementType()) {
-						case IDelta.API_COMPONENT_ELEMENT_TYPE :
-						case IDelta.API_PROFILE_ELEMENT_TYPE :
-							if (!DeltaProcessor.isCompatible(localDelta)) {
-								addAPIProblem(createCompatibilityProblem(localDelta, javaProject, reference, component));
-							}
-							break;
-						default:
-							processDelta(javaProject, localDelta, reference, component);
-					}
-				}
-				if (!this.pendingDeltaInfos.isEmpty()) {
-					// process the list
-					for (Iterator iterator = this.pendingDeltaInfos.iterator(); iterator.hasNext();) {
-						DeltaInfo deltaInfo = (DeltaInfo) iterator.next();
-						processSinceTags(javaProject, deltaInfo, component, reference);
-					}
-				}
-				if (reference != null && component != null) {
-					checkApiComponentVersion(reference, component);
-				}
-			}
-			if (DEBUG) {
-				System.out.println("Complete"); //$NON-NLS-1$
-			}
-		} else if (DEBUG) {
-			System.out.println("No delta"); //$NON-NLS-1$
-		}
+		return false;
 	}
 
 	/**
@@ -1305,12 +1376,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param component
 	 */
 	private void processDelta(IJavaProject javaProject, IDelta delta, IApiComponent reference, IApiComponent component) {
-		IApiProblem problem = null;
 		if (DeltaProcessor.isCompatible(delta)) {
-			if (DEBUG) {
-				String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
-				System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
-			}
+			this.buildState.addCompatibleChange(delta);
 			if (delta.getKind() == IDelta.ADDED) {
 				int modifiers = delta.getModifiers();
 				if (Util.isPublic(modifiers)) {
@@ -1323,12 +1390,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						case IDelta.METHOD_WITH_DEFAULT_VALUE :
 						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 						case IDelta.FIELD :
-							this.bits |= CONTAINS_API_CHANGES;
-							if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
-									|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
-									|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-								this.pendingDeltaInfos.add(new DeltaInfo(delta));
+						case IDelta.TYPE :
+							if (DEBUG) {
+								String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
+								System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
 							}
+							this.pendingDeltaInfos.add(delta);
 							break;
 					}
 				} else if (Util.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
@@ -1339,22 +1406,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						case IDelta.CONSTRUCTOR :
 						case IDelta.ENUM_CONSTANT :
 						case IDelta.FIELD :
-							this.bits |= CONTAINS_API_CHANGES;
-							if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
-									|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
-									|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-								this.pendingDeltaInfos.add(new DeltaInfo(delta));
+						case IDelta.TYPE :
+							if (DEBUG) {
+								String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
+								System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
 							}
+							this.pendingDeltaInfos.add(delta);
 							break;
 					}
 				}
 			}
 		} else {
-			if (DEBUG) {
-				String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
-				System.err.println(deltaDetails + " is not compatible"); //$NON-NLS-1$
-			}
-			problem = createCompatibilityProblem(delta,javaProject, reference, component);
 			if (delta.getKind() == IDelta.ADDED) {
 				// if public, we always want to check @since tags
 				switch(delta.getFlags()) {
@@ -1365,20 +1427,21 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					case IDelta.METHOD_WITH_DEFAULT_VALUE :
 					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 					case IDelta.FIELD :
-						if (!shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)
-								|| !shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)
-								|| !shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-							// ensure that there is a @since tag for the corresponding member
-							if (delta.getKind() == IDelta.ADDED && Util.isVisible(delta)) {
-								this.pendingDeltaInfos.add(new DeltaInfo(delta));
+					case IDelta.TYPE :
+						// ensure that there is a @since tag for the corresponding member
+						if (delta.getKind() == IDelta.ADDED && Util.isVisible(delta)) {
+							if (DEBUG) {
+								String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
+								System.err.println(deltaDetails + " is not compatible"); //$NON-NLS-1$
 							}
+							this.pendingDeltaInfos.add(delta);
 						}
 				}
 			}
+			addCompatibilityProblem(delta, javaProject, reference, component);
 		}
-		addAPIProblem(problem);
 	}
-	
+
 	/**
 	 * Processes an {@link IMember} to determine if it needs an @since tag. If it does and one
 	 * is not present or the version of the tag is incorrect, a marker is created
@@ -1387,14 +1450,18 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param member
 	 * @param component
 	 */
-	private void processSinceTags(final IJavaProject javaProject, final DeltaInfo info, final IApiComponent component,
-			final IApiComponent reference) {
-		IMember member = Util.getIMember(info.delta, javaProject);
+	private void processSinceTags(
+			final IJavaProject javaProject,
+			final Delta info,
+			final IApiComponent component) {
+		IMember member = Util.getIMember(info, javaProject);
 		if (member == null) {
 			return;
 		}
 		ICompilationUnit cunit = member.getCompilationUnit();
-		if (cunit == null) return;
+		if (cunit == null) {
+			return;
+		}
 		try {
 			if (! cunit.isConsistent()) {
 				cunit.makeConsistent(null);
@@ -1430,18 +1497,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			String componentVersionString = component.getVersion();
 			try {
 				if (visitor.hasNoComment() || visitor.isMissing()) {
-					if(shouldIgnoreProblem(IApiProblemTypes.MISSING_SINCE_TAG)) {
-						return;
-					}
 					StringBuffer buffer = new StringBuffer();
-					Version componentVersion = null;
-					if (reference != null) {
-						String referenceVersionString = reference.getVersion();
-						getAccurateVersion(componentVersionString, referenceVersionString, buffer);
-					} else {
-						componentVersion = new Version(componentVersionString);
-						buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
-					}
+					Version componentVersion = new Version(componentVersionString);
+					buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
 					problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MISSING, null, 
 										 info, member, String.valueOf(buffer));
 				} else if (visitor.hasJavadocComment()) {
@@ -1455,37 +1513,21 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						 */
 						SinceTagVersion tagVersion = new SinceTagVersion(sinceVersion);
 						if (Util.getFragmentNumber(sinceVersion) > 2 || tagVersion.getVersion() == null) {
-							if(shouldIgnoreProblem(IApiProblemTypes.MALFORMED_SINCE_TAG)) {
-								return;
-							}
 							// @since version cannot have more than 2 fragments
 							// create a marker on the member for missing @since tag
 							StringBuffer buffer = new StringBuffer();
 							if (tagVersion.pluginName() != null) {
 								buffer.append(tagVersion.pluginName()).append(' ');
 							}
-							if (reference != null) {
-								String referenceVersionString = reference.getVersion();
-								getAccurateVersion(componentVersionString, referenceVersionString, buffer);
-							} else {
-								Version componentVersion = new Version(componentVersionString);
-								buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
-							}
+							Version componentVersion = new Version(componentVersionString);
+							buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
 							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED,
 												 new String[] {sinceVersion},
 												 info, member, String.valueOf(buffer));
 						} else {
-							if(shouldIgnoreProblem(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-								return;
-							}
 							StringBuffer accurateVersionBuffer = new StringBuffer();
-							if (reference != null) {
-								String referenceVersionString = reference.getVersion();
-								getAccurateVersion(componentVersionString, referenceVersionString, accurateVersionBuffer);
-							} else {
-								Version componentVersion = new Version(componentVersionString);
-								accurateVersionBuffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
-							}
+							Version componentVersion = new Version(componentVersionString);
+							accurateVersionBuffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
 							String accurateVersion = String.valueOf(accurateVersionBuffer);
 							if (Util.isDifferentVersion(sinceVersion, accurateVersion)) {
 								// report invalid version number
@@ -1513,223 +1555,28 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * Returns the adjusted version based on the reference version
-	 * @param componentVersionString
-	 * @param referenceVersionString
-	 * @param buffer
+	 * Resolves the java path from the given resource
+	 * @param resource
+	 * @return the resolved path or <code>null</code> if the resource is not part of the java model
 	 */
-	private void getAccurateVersion(String componentVersionString, String referenceVersionString, StringBuffer buffer) {
-		Version componentVersion;
-		if (Util.isGreatherVersion(componentVersionString, referenceVersionString)) {
-			// check the validity of the component version vs the reference version
-			componentVersion = new Version(componentVersionString);
-			Version referenceVersion = new Version(referenceVersionString);
-			if ((this.bits & CONTAINS_API_BREAKAGE) != 0) {
-				if ((referenceVersion.getMajor() + 1) != componentVersion.getMajor()) {
-					buffer.append(referenceVersion.getMajor() + 1).append(".0"); //$NON-NLS-1$
-				} else {
-					buffer.append(componentVersion.getMajor()).append(".0"); //$NON-NLS-1$
-				}
-			} else {
-				if (referenceVersion.getMajor() != componentVersion.getMajor()) {
-					buffer.append(referenceVersion.getMajor());
-				} else {
-					buffer.append(componentVersion.getMajor());
-				}
-				buffer.append('.');
-				if ((referenceVersion.getMinor() + 1) != componentVersion.getMinor()) {
-					buffer.append(referenceVersion.getMinor() + 1);
-				} else {
-					buffer.append(componentVersion.getMinor());
-				}
-			}
-		} else if ((this.bits & CONTAINS_API_BREAKAGE) != 0) {
-			// API breakage
-			componentVersion = new Version(componentVersionString);
-			buffer.append(componentVersion.getMajor() + 1).append(".0"); //$NON-NLS-1$
-		} else {
-			// new API
-			componentVersion = new Version(componentVersionString);
-			buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor() + 1);
-		}
-	}
-
-	/**
-	 * Creates a marker to denote a problem with the since tag (existence or correctness) for a member
-	 * and returns it, or <code>null</code>
-	 * @param kind
-	 * @param messageargs
-	 * @param compilationUnit
-	 * @param member
-	 * @param version
-	 * @return a new {@link IApiProblem} or <code>null</code>
-	 */
-	private IApiProblem createSinceTagProblem(int kind, final String[] messageargs, final DeltaInfo info, 
-			IMember member, final String version) {
-		try {
-			// create a marker on the member for missing @since tag
-			IResource resource = null;
-			ICompilationUnit unit = null;
-			try {
-				unit = member.getCompilationUnit();
-				if (unit != null) {
-					resource = unit.getCorrespondingResource();
-				}
-			} catch (JavaModelException e) {
-				ApiPlugin.log(e);
-			}
-			if (resource == null) {
-				return null;
-			}
-			int lineNumber = 1;
-			int charStart = 0;
-			int charEnd = 1;
-			ISourceRange range = member.getNameRange();
-			charStart = range.getOffset();
-			charEnd = charStart + range.getLength();
-			try {
-				// unit cannot be null
-				IDocument document = Util.getDocument(unit);
-				lineNumber = document.getLineOfOffset(charStart);
-			} catch (BadLocationException e) {
-				ApiPlugin.log(e);
-			}
-			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(), 
-					messageargs, 
-					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID, IApiMarkerConstants.MARKER_ATTR_HANDLE_ID}, 
-					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID), member.getHandleIdentifier()}, 
-					lineNumber, 
-					charStart, 
-					charEnd, 
-					info.delta.getElementType(), 
-					kind);
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		}
-		return null;
-	}
-
-	/**
-	 * Creates a marker on a manifest file for a version numbering problem and returns it
-	 * or <code>null</code> 
-	 * @param kind
-	 * @param messageargs
-	 * @param breakage
-	 * @param version
-	 * @return a new {@link IApiProblem} or <code>null</code>
-	 */
-	private IApiProblem createVersionProblem(int kind, final String[] messageargs, boolean breakage, String version) {
-		try {
-			IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
-			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-			if (manifestFile == null) {
-				// Cannot retrieve the manifest.mf file
-				return null;
-			}
-			IMarker[] manifestMarkers = manifestFile.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-			if (markers.length != 0) {
-				// check if we already have such a version numbering marker
-				if (manifestMarkers.length != 0) {
-					// check if the existing marker has the same severity (breakage vs non breakage
-					IMarker marker = manifestMarkers[0];
-					if (breakage) {
-						int tmpkind = ApiProblemFactory.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
-						if (IApiProblem.MAJOR_VERSION_CHANGE == tmpkind) {
-							// no need to create the same marker again
-							return null;
-						} else {
-							// create a new marker
-							marker.delete();
+	private IPath resolveJavaPathFromResource(IResource resource) {
+		IJavaElement element = JavaCore.create(resource);
+		if(element != null) {
+			switch(element.getElementType()) {
+				case IJavaElement.CLASS_FILE: {
+					org.eclipse.jdt.core.IClassFile classfile = (org.eclipse.jdt.core.IClassFile) element;
+					IType type = classfile.getType();
+					HashSet paths = (HashSet) fProjectToOutputLocations.get(resource.getProject());
+					IPath prefix = null;
+					for(Iterator iter = paths.iterator(); iter.hasNext();) {
+						prefix = (IPath) iter.next();
+						if(prefix.isPrefixOf(type.getPath())) {
+							return type.getPath().removeFirstSegments(prefix.segmentCount()).removeFileExtension();
 						}
 					}
-					// no need to report a marker for minor version issue if the major version is wrong 
-					// or to report the minor issue again. We preserve the existing marker
-					return null;
-				}
-			} else if (manifestMarkers.length != 0) {
-				// this means the marker is not create for a breakage change
-				IMarker marker = manifestMarkers[0];
-				int tmpkind = ApiProblemFactory.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
-				if (IApiProblem.MAJOR_VERSION_CHANGE == tmpkind) {
-					// remove the existing marker to create one for non breakage version issue
-					marker.delete();
-				}
-				// no need to report a marker for minor version issue again
-				return null;
-			}
-			// this error should be located on the manifest.mf file
-			// first of all we check how many api breakage marker are there
-			int lineNumber = -1;
-			int charStart = 0;
-			int charEnd = 1;
-			char[] contents = null;
-			if (manifestFile.getType() == IResource.FILE) {
-				IFile file = (IFile) manifestFile;
-				InputStream inputStream = null;
-				LineNumberReader reader = null;
-				try {
-					inputStream = file.getContents(true);
-					contents = Util.getInputStreamAsCharArray(inputStream, -1, IApiCoreConstants.UTF_8);
-					reader = new LineNumberReader(new BufferedReader(new StringReader(new String(contents))));
-					int lineCounter = 0;
-					String line = null;
-					loop: while ((line = reader.readLine()) != null) {
-						lineCounter++;
-						if (line.startsWith(Constants.BUNDLE_VERSION)) {
-							lineNumber = lineCounter;
-							break loop;
-						}
-					}
-				} catch (CoreException e) {
-					// ignore
-				} catch (IOException e) {
-					// ignore
-				} finally {
-					try {
-						if (inputStream != null) {
-							inputStream.close();
-						}
-						if (reader != null) {
-							reader.close();
-						}
-					} catch (IOException e) {
-						// ignore
-					}
+					break;
 				}
 			}
-			if (lineNumber != -1 && contents != null) {
-				// initialize char start, char end
-				int index = CharOperation.indexOf(Constants.BUNDLE_VERSION.toCharArray(), contents, true);
-				loop: for (int i = index + Constants.BUNDLE_VERSION.length() + 1, max = contents.length; i < max; i++) {
-					char currentCharacter = contents[i];
-					if (CharOperation.isWhitespace(currentCharacter)) {
-						continue;
-					}
-					charStart = i;
-					break loop;
-				}
-				loop: for (int i = charStart + 1, max = contents.length; i < max; i++) {
-					switch(contents[i]) {
-						case '\r' :
-						case '\n' :
-							charEnd = i;
-							break loop;
-					}
-				}
-			} else {
-				lineNumber = 1;
-			}
-			return ApiProblemFactory.newApiVersionNumberProblem(manifestFile.getProjectRelativePath().toPortableString(), 
-					messageargs, 
-					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-					new Object[] {version, new Integer(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID)}, 
-					lineNumber, 
-					charStart, 
-					charEnd, 
-					IElementDescriptor.T_RESOURCE, 
-					kind);
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
 		}
 		return null;
 	}
@@ -1739,5 +1586,122 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	public String toString() {
 		return "Builder for project: ["+fCurrentProject.getName()+"]"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	/**
+	 * Return the last built state for the given project, or null if none
+	 */
+	public static BuildState getLastBuiltState(IProject project) throws CoreException {
+		if (!Util.isApiProject(project)) {
+			// should never be requested on non-Java projects
+			return null;
+		}
+		return readState(project);
+	}
+	
+	/**
+	 * Reads the build state for the relevant project.
+	 */
+	protected static BuildState readState(IProject project) throws CoreException {
+		File file = getSerializationFile(project);
+		if (file != null && file.exists()) {
+			try {
+				DataInputStream in= new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+				try {
+					return BuildState.read(project, in);
+				} finally {
+					if (DEBUG) {
+						System.out.println("Saved state thinks last build failed for " + project.getName()); //$NON-NLS-1$
+					}
+					in.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new CoreException(new Status(IStatus.ERROR, JavaCore.PLUGIN_ID, Platform.PLUGIN_ERROR, "Error reading last build state for project "+ project.getName(), e)); //$NON-NLS-1$
+			}
+		} else if (DEBUG) {
+			if (file == null) {
+				System.out.println("Project does not exist: " + project); //$NON-NLS-1$
+			} else {
+				System.out.println("Build state file " + file.getPath() + " does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Sets the last built state for the given project, or null to reset it.
+	 */
+	public static void setLastBuiltState(IProject project, BuildState state) throws CoreException {
+		if (Util.isApiProject(project)) {
+			// should never be requested on non-Java projects
+			if (state != null) {
+				saveBuiltState(project, state);
+			} else {
+				try {
+					File file = getSerializationFile(project);
+					if (file != null && file.exists()) {
+						file.delete();
+					}
+				} catch(SecurityException se) {
+					// could not delete file: cannot do much more
+				}
+			}
+		}
+	}	
+
+	/**
+	 * Returns the File to use for saving and restoring the last built state for the given project.
+	 */
+	private static File getSerializationFile(IProject project) {
+		if (!project.exists()) return null;
+		IPath workingLocation = project.getWorkingLocation(ApiPlugin.PLUGIN_ID);
+		return workingLocation.append("state.dat").toFile(); //$NON-NLS-1$
+	}
+
+	private static void saveBuiltState(IProject project, BuildState state) throws CoreException {
+		if (DEBUG) {
+			System.out.println(NLS.bind(BuilderMessages.build_saveStateProgress, project.getName()));
+		}
+		File file = getSerializationFile(project);
+		if (file == null) return;
+		long t = 0;
+		if (DEBUG) {
+			t = System.currentTimeMillis();
+		}
+		try {
+			DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+			try {
+				BuildState.write(state, out);
+			} finally {
+				out.close();
+			}
+		} catch (RuntimeException e) {
+			try {
+				file.delete();
+			} catch(SecurityException se) {
+				// could not delete file: cannot do much more
+			}
+			throw new CoreException(
+				new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR,
+					NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e)); 
+		} catch (IOException e) {
+			try {
+				file.delete();
+			} catch(SecurityException se) {
+				// could not delete file: cannot do much more
+			}
+			throw new CoreException(
+				new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR,
+					NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e)); 
+		}
+		if (DEBUG) {
+			t = System.currentTimeMillis() - t;
+			System.out.println(NLS.bind(BuilderMessages.build_saveStateComplete, String.valueOf(t))); 
+		}
+	}
+
+	private void clearLastState() throws CoreException {
+		setLastBuiltState(this.fCurrentProject, null);
 	}
 }

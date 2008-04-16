@@ -30,6 +30,8 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemReporter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Class for collecting {@link IApiProblem}s and creating {@link IMarker}s (if running in the framework)
@@ -110,6 +112,12 @@ public class ApiProblemReporter implements IApiProblemReporter {
 	 * no work is done.
 	 */
 	public void createMarkers() {
+		try {
+			this.fProject.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+			this.fProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
 		if(fProblems == null || !ApiPlugin.isRunningInFramework()) {
 			return;
 		}
@@ -118,6 +126,7 @@ public class ApiProblemReporter implements IApiProblemReporter {
 		IApiProblem problem = null;
 		for(Iterator iter = fProblems.keySet().iterator(); iter.hasNext();) {
 			type = (String) iter.next();
+			// we might do some cleanup if there is no more such problem
 			problems = (HashSet) fProblems.get(type);
 			if(problems != null && problems.size() > 0) {
 				for(Iterator iter2 = problems.iterator(); iter2.hasNext();) {
@@ -135,6 +144,7 @@ public class ApiProblemReporter implements IApiProblemReporter {
 	 * @param problem the problem to create a marker from
 	 */
 	private void createMarkerForProblem(String type, IApiProblem problem) {
+		// before we create the marker we check the corresponding option on the current project preferences
 		IResource resource = resolveResource(problem);
 		if(resource == null) {
 			return;
@@ -231,11 +241,79 @@ public class ApiProblemReporter implements IApiProblemReporter {
 			try {
 				IApiFilterStore filterStore = component.getFilterStore();
 				if (filterStore != null) {
-					return filterStore.isFiltered(problem);
+					if (filterStore.isFiltered(problem)) return true;
 				}
 			}
 			catch(CoreException e) {
 				//ignore, return false
+			}
+		}
+		String pref = null;
+		switch(problem.getCategory()) {
+			case IApiProblem.CATEGORY_API_PROFILE:
+				pref = IApiProblemTypes.MISSING_DEFAULT_API_PROFILE;
+				break;
+			case IApiProblem.CATEGORY_COMPATIBILITY:
+				pref = Util.getDeltaPrefererenceKey(problem.getElementKind(), problem.getKind(), problem.getFlags());
+				break;
+			case IApiProblem.CATEGORY_SINCETAGS:
+				switch(problem.getKind()) {
+					case IApiProblem.SINCE_TAG_MISSING :
+						pref = IApiProblemTypes.MISSING_SINCE_TAG;
+						break;
+					case IApiProblem.SINCE_TAG_INVALID :
+						pref = IApiProblemTypes.INVALID_SINCE_TAG_VERSION;
+						break;
+					case IApiProblem.SINCE_TAG_MALFORMED :
+						pref = IApiProblemTypes.MALFORMED_SINCE_TAG;
+				}
+				break;
+			case IApiProblem.CATEGORY_USAGE:
+				switch(problem.getKind()) {
+					case IApiProblem.ILLEGAL_IMPLEMENT :
+						pref = IApiProblemTypes.ILLEGAL_IMPLEMENT;
+						break;
+					case IApiProblem.ILLEGAL_EXTEND :
+						pref = IApiProblemTypes.ILLEGAL_EXTEND;
+						break;
+					case IApiProblem.ILLEGAL_INSTANTIATE :
+						pref = IApiProblemTypes.ILLEGAL_INSTANTIATE;
+						break;
+					case IApiProblem.ILLEGAL_OVERRIDE :
+						pref = IApiProblemTypes.ILLEGAL_OVERRIDE;
+						break;
+					case IApiProblem.ILLEGAL_REFERENCE:
+						pref = IApiProblemTypes.ILLEGAL_REFERENCE;
+						break;
+					case IApiProblem.API_LEAK:
+						switch(problem.getFlags()) {
+							case IApiProblem.LEAK_EXTENDS :
+								pref = IApiProblemTypes.LEAK_EXTEND;
+								break;
+							case IApiProblem.LEAK_FIELD :
+								pref = IApiProblemTypes.LEAK_FIELD_DECL;
+								break;
+							case IApiProblem.LEAK_IMPLEMENTS :
+								pref = IApiProblemTypes.LEAK_IMPLEMENT;
+								break;
+							case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER:
+							case IApiProblem.LEAK_METHOD_PARAMETER :
+								pref = IApiProblemTypes.LEAK_METHOD_PARAM;
+								break;
+							case IApiProblem.LEAK_RETURN_TYPE :
+								pref = IApiProblemTypes.LEAK_METHOD_RETURN_TYPE;
+								break;
+						}
+						break;
+				}
+				break;
+			case IApiProblem.CATEGORY_VERSION:
+				pref = IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION;
+				break;
+		}
+		if (pref != null) {
+			if (ApiPlugin.getDefault().getSeverityLevel(pref, fProject) != ApiPlugin.SEVERITY_ERROR) {
+				return true;
 			}
 		}
 		return false;

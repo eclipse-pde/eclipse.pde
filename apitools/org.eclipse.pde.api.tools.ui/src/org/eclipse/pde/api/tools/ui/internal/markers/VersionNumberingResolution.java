@@ -33,22 +33,35 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 	private String newVersionValue;
 	// major or minor version
 	private int kind;
+	private String description;
 	
 	public VersionNumberingResolution(IMarker marker) {
 		this.newVersionValue = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null);
 		this.kind = ApiProblemFactory.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
+		this.description = marker.getAttribute(IApiMarkerConstants.VERSION_NUMBERING_ATTR_DESCRIPTION, null);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 	 */
 	public String getDescription() {
 		if (IApiProblem.MAJOR_VERSION_CHANGE == this.kind) {
-			return NLS.bind(MarkerMessages.VersionNumberingResolution_major0, this.newVersionValue);
-		} else if (IApiProblem.MINOR_VERSION_CHANGE == this.kind) {
-			return NLS.bind(MarkerMessages.VersionNumberingResolution_minor0, this.newVersionValue);
-		} else {
-			return NLS.bind(MarkerMessages.VersionNumberingResolution_micro0, this.newVersionValue);
+			return NLS.bind(
+					MarkerMessages.VersionNumberingResolution_major0,
+					new String[] {
+						this.newVersionValue,
+						this.description
+					});
 		}
+		if (IApiProblem.MINOR_VERSION_CHANGE == this.kind) {
+			return NLS.bind(
+					MarkerMessages.VersionNumberingResolution_minor0,
+					new String[] {
+							this.newVersionValue,
+							this.description
+					});
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -64,11 +77,11 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 	public String getLabel() {
 		if (IApiProblem.MAJOR_VERSION_CHANGE == this.kind) {
 			return NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
-		} else if (IApiProblem.MINOR_VERSION_CHANGE == this.kind) {
-			return NLS.bind(MarkerMessages.VersionNumberingResolution_minor1, this.newVersionValue);
-		} else {
-			return NLS.bind(MarkerMessages.VersionNumberingResolution_micro1, this.newVersionValue);
 		}
+		if (IApiProblem.MINOR_VERSION_CHANGE == this.kind) {
+			return NLS.bind(MarkerMessages.VersionNumberingResolution_minor1, this.newVersionValue);
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -80,8 +93,6 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 			title = NLS.bind(MarkerMessages.VersionNumberingResolution_major2, this.newVersionValue);
 		} else if (IApiProblem.MINOR_VERSION_CHANGE == this.kind) {
 			title = NLS.bind(MarkerMessages.VersionNumberingResolution_minor2, this.newVersionValue);
-		} else {
-			title = NLS.bind(MarkerMessages.VersionNumberingResolution_micro2, this.newVersionValue);
 		}
 		UIJob job  = new UIJob(title) {
 			/* (non-Javadoc)

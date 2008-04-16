@@ -72,6 +72,13 @@ public class ApiProblem implements IApiProblem {
 	public static final int MESSAGE_MASK = 0x00000FFF;
 	
 	/**
+	 * Constant representing the name of the 'compatibilityStatus' attribute on API problem
+	 * for the compatibility category.
+	 * Value is: <code>compatibilityStatus</code>
+	 */
+	public static final String COMPATIBILITY_STATUS = "compatibilityStatus"; //$NON-NLS-1$
+
+	/**
 	 * Constructor
 	 * @param resource the resource this problem occurs on / in
 	 * @param messageargs arguments to be passed into a localized message for the problem
