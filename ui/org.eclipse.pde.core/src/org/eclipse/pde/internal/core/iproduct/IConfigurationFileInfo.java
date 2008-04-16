@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ public interface IConfigurationFileInfo extends IProductObject {
 
 	public static final String P_USE = "use"; //$NON-NLS-1$
 	public static final String P_PATH = "path"; //$NON-NLS-1$
+	public static final String P_OS = "os"; //$NON-NLS-1$
 
 	void setUse(String use);
 
@@ -22,5 +23,9 @@ public interface IConfigurationFileInfo extends IProductObject {
 	void setPath(String path);
 
 	String getPath();
+
+	String getOS();
+
+	void setOS(String os);
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
-
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.w3c.dom.Element;
@@ -24,6 +23,7 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 	private String fUse;
 
 	private String fPath;
+	private String fOS;
 
 	public ConfigurationFileInfo(IProductModel model) {
 		super(model);
@@ -54,6 +54,7 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 			Element element = (Element) node;
 			fPath = element.getAttribute(P_PATH);
 			fUse = element.getAttribute(P_USE);
+			fOS = element.getAttribute(P_OS);
 		}
 	}
 
@@ -66,6 +67,8 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 			writer.print(" " + P_USE + "=\"" + fUse + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fPath != null && fPath.trim().length() > 0)
 			writer.print(" " + P_PATH + "=\"" + getWritableString(fPath.trim()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (fOS != null && fOS.trim().length() > 0)
+			writer.print(" " + P_OS + "\"" + getOS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
@@ -84,6 +87,17 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 	 */
 	public String getUse() {
 		return fUse;
+	}
+
+	public String getOS() {
+		return fOS;
+	}
+
+	public void setOS(String os) {
+		String old = fUse;
+		fOS = os;
+		if (isEditable())
+			firePropertyChanged(P_OS, old, fOS);
 	}
 
 }
