@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -105,6 +106,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
+					if(monitor == null) {
+						monitor = new NullProgressMonitor();
+					}
 					IProject project = fProject.getProject();
 					if(!project.isAccessible()) {
 						if(DEBUG) {
@@ -117,7 +121,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					if(xml == null) {
 						// no filters - delete the file if it exists
 						if (file.isAccessible()) {
-							file.delete(true, new NullProgressMonitor());
+							file.delete(true, monitor);
 							fTriggeredChange = true;
 						}
 						return Status.OK_STATUS;
@@ -126,17 +130,29 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					if(xstream == null) {
 						return Status.CANCEL_STATUS;
 					}
-					if(!file.exists()) {
-						file.create(xstream, true, new NullProgressMonitor());
+					try {
+						if(!file.exists()) {
+							IFolder folder = (IFolder) file.getParent();
+							if(!folder.exists()) {
+								folder.create(true, true, monitor);
+							}
+							file.create(xstream, true, monitor);
+						}
+						else {
+							file.setContents(xstream, true, false, monitor);
+						}
 					}
-					else {
-						file.setContents(xstream, true, false, new NullProgressMonitor());
+					finally {
+						xstream.close();
 					}
 					fTriggeredChange = true;
 					fNeedsSaving = false;
 				}
 				catch(CoreException ce) {
 					ApiPlugin.log(ce);
+				}
+				catch (IOException ioe) {
+					ApiPlugin.log(ioe);	
 				}
 				return Status.OK_STATUS;
 			}

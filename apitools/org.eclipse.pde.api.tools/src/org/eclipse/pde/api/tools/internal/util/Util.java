@@ -2221,7 +2221,8 @@ public final class Util {
 	}
 
 	/**
-	 * Returns the given string as an {@link InputStream}
+	 * Returns the given string as an {@link InputStream}. It is up to the caller to close
+	 * the new stream.
 	 * @param string the string to convert
 	 * @return the {@link InputStream} for the given string
 	 */
