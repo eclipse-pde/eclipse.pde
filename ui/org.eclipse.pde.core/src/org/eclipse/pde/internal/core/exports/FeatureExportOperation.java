@@ -249,6 +249,16 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 		return new String[] {"build.jars"}; //$NON-NLS-1$ 
 	}
 
+	/**
+	 * Execute the script at the given location.
+	 * 
+	 * @param location the script to run
+	 * @param targets the targets in the script to run, use <code>null</code> to run all
+	 * @param properties map of user properties
+	 * @param monitor progress monitor
+	 * @throws InvocationTargetException
+	 * @throws CoreException
+	 */
 	protected void runScript(String location, String[] targets, Map properties, IProgressMonitor monitor) throws InvocationTargetException, CoreException {
 		AntRunner runner = new AntRunner();
 		runner.addUserProperties(properties);
@@ -355,20 +365,6 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 				fAntBuildProperties.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, dir);
 			}
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_TAR_ARGS, ""); //$NON-NLS-1$
-
-			// P2 Build Properties
-			// TODO update this stuff
-			if (fInfo.toDirectory) {
-				fAntBuildProperties.put("generate.p2.metadata", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-				fAntBuildProperties.put("p2.flavor", "tooling"); //$NON-NLS-1$ //$NON-NLS-2$
-				fAntBuildProperties.put("p2.publish.artifacts", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-				try {
-					fAntBuildProperties.put("p2.metadata.repo", new File(fInfo.destinationDirectory, "p2repo").toURL().toString()); //$NON-NLS-1$ //$NON-NLS-2$
-					fAntBuildProperties.put("p2.artifact.repo", new File(fInfo.destinationDirectory, "p2repo").toURL().toString()); //$NON-NLS-1$ //$NON-NLS-2$
-				} catch (MalformedURLException e) {
-					PDECore.log(e);
-				}
-			}
 
 		}
 		return fAntBuildProperties;
