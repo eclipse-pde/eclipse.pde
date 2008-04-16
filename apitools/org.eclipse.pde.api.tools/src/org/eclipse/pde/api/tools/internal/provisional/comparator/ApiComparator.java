@@ -94,7 +94,9 @@ public class ApiComparator {
 			String typeName = classFile2.getTypeName();
 			IClassFile classFile = component.findClassFile(typeName);
 			if (classFile == null) {
-				return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, typeName, typeName, null);
+				final IApiDescription apiDescription = component.getApiDescription();
+				IApiAnnotations elementDescription = apiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
+				return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, null);
 			}
 			final IApiDescription apiDescription = component2.getApiDescription();
 			IApiAnnotations elementDescription = apiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
@@ -522,7 +524,7 @@ public class ApiComparator {
 									// already processed
 									return;
 								}
-								globalDelta.add(new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, typeName, typeName, null));
+								globalDelta.add(new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, null));
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
 							}
