@@ -999,6 +999,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				folder,
 				PreferenceMessages.ApiToolingNotificationsBlock_2,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_9); 
+		restoreExpansionState();
 		return fMainComp;
 	}
 
@@ -1443,7 +1444,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 						KEY_CONSTRUCTOR_REMOVED_INTERFACE_BOUND,
 						KEY_CONSTRUCTOR_REMOVED_INTERFACE_BOUNDS,
 					});
-				restoreExpansionState();
 		}
 		
 		SWTFactory.createVerticalSpacer(page, 1);
