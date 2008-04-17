@@ -19,6 +19,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.DocumentObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
+import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSRoot;
 
 /**
@@ -26,10 +27,10 @@ import org.eclipse.pde.internal.ds.core.IDSRoot;
  * abstract class.
  * 
  * @since 3.4
- * @see CtXHelpModel
+ * @see DSModel
  * @see DSDocumentFactory
  */
-public abstract class DSObject extends DocumentObject implements IDSConstants, Serializable {
+public abstract class DSObject extends DocumentObject implements IDSConstants, Serializable, IDSObject {
 
 	private static final long serialVersionUID = 1L;
 
@@ -43,8 +44,8 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 		super(model, tagName);
 	}
 
-	/**
-	 * @return the children of the object or an empty List if none exist.
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getChildren()
 	 */
 	public List getChildren() {
 		//Create a copy of the child list instead of 
@@ -113,8 +114,8 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 		}
 	}
 
-	/**
-	 * @return the root model object that is an ancestor to this object.
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getModel()
 	 */
 	public DSModel getModel() {
 		final IModel sharedModel = getSharedModel();
@@ -124,8 +125,8 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 		return null;
 	}
 
-	/**
-	 * @return the root element that is an ancestor to this object.
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getRoot()
 	 */
 	public IDSRoot getRoot() {
 		final DSModel model = getModel();
@@ -135,14 +136,13 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 		return null;
 	}
 
-	/**
-	 * @return the identifier for this object to be used when displaying the element to the user
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getName()
 	 */
 	public abstract String getName();
 
-	/**
-	 * Get the concrete type of this object, must be one of the TYPE constants defined in IDSConstants.
-	 * @see IDSConstants
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
 	 */
 	public abstract int getType();
 
