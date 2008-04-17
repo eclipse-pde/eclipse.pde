@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 201566
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 227105
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
@@ -26,6 +27,7 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.util.PDESchemaHelper;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -58,15 +60,19 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 	protected static final int F_EXTENSION_POINT_AND_VALUE = 7;
 
-	protected static final int F_TOTAL_TYPES = 8;
+	protected static final int F_ATTRIBUTE_ID_VALUE = 8;
+
+	protected static final int F_ATTRIBUTE_BOOLEAN_VALUE = 9;
+
+	protected static final int F_TOTAL_TYPES = 10;
 
 	// proposal generation type
 	private static final int F_NO_ASSIST = 0, F_ADD_ATTRIB = 1, F_ADD_CHILD = 2, F_OPEN_TAG = 3;
 
 	private static final ArrayList F_V_BOOLS = new ArrayList();
 	static {
-		F_V_BOOLS.add(new VirtualSchemaObject("true", null, F_ATTRIBUTE_VALUE)); //$NON-NLS-1$
-		F_V_BOOLS.add(new VirtualSchemaObject("false", null, F_ATTRIBUTE_VALUE)); //$NON-NLS-1$
+		F_V_BOOLS.add(new VirtualSchemaObject("true", null, F_ATTRIBUTE_BOOLEAN_VALUE)); //$NON-NLS-1$
+		F_V_BOOLS.add(new VirtualSchemaObject("false", null, F_ATTRIBUTE_BOOLEAN_VALUE)); //$NON-NLS-1$
 	}
 
 	private static final String F_STR_EXT_PT = "extension-point"; //$NON-NLS-1$
@@ -236,6 +242,13 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			} else if (sAttr.getKind() == IMetaAttribute.RESOURCE) {
 				// provide proposals with all resources in current plugin?
 
+			} else if (sAttr.getKind() == IMetaAttribute.IDENTIFIER) {
+				String[] validAttributes = (String[]) PDESchemaHelper.getValidAttributes(sAttr).keySet().toArray(new String[0]);
+				Arrays.sort(validAttributes);
+				ArrayList objs = new ArrayList(validAttributes.length);
+				for (int i = 0; i < validAttributes.length; i++)
+					objs.add(new VirtualSchemaObject(validAttributes[i], null, F_ATTRIBUTE_ID_VALUE));
+				return computeAttributeProposal(attr, offset, attrValue, objs);
 			} else { // we have an IMetaAttribute.STRING kind
 				if (sAttr.getType() == null)
 					return null;
@@ -255,7 +268,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			}
 		} else if (obj instanceof IPluginExtensionPoint) {
 			if (attr.getAttributeValue().equals(IPluginExtensionPoint.P_SCHEMA)) {
-				// provide proposals with all schama files in current plugin?
+				// provide proposals with all schema files in current plugin?
 
 			}
 		}
@@ -353,7 +366,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		}
 	}
 
-	private ICompletionProposal[] computeAttributeProposal(IDocumentAttributeNode attr, int offset, String currValue, ArrayList validValues) {
+	private ICompletionProposal[] computeAttributeProposal(IDocumentAttributeNode attr, int offset, String currValue, List validValues) {
 		if (validValues == null)
 			return null;
 		ArrayList list = new ArrayList();
@@ -808,6 +821,10 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				case F_ATTRIBUTE :
 				case F_ATTRIBUTE_VALUE :
 					return fImages[type] = PDEPluginImages.DESC_ATT_URI_OBJ.createImage();
+				case F_ATTRIBUTE_ID_VALUE :
+					return fImages[type] = PDEPluginImages.DESC_ATT_ID_OBJ.createImage();
+				case F_ATTRIBUTE_BOOLEAN_VALUE :
+					return fImages[type] = PDEPluginImages.DESC_ATT_BOOLEAN_OBJ.createImage();
 			}
 		}
 		return fImages[type];

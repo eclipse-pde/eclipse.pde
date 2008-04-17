@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 227105
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
@@ -127,6 +128,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE :
 				doInternalWork = true; // we will want to add required child nodes/attributes
 			case XMLContentAssistProcessor.F_ATTRIBUTE_VALUE :
+			case XMLContentAssistProcessor.F_ATTRIBUTE_BOOLEAN_VALUE :
+			case XMLContentAssistProcessor.F_ATTRIBUTE_ID_VALUE :
 				applyAttributeValue(document, documentInsertBuffer);
 				break;
 		}
