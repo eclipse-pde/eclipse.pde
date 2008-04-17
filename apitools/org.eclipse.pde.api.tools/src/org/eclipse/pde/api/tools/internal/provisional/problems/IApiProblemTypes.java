@@ -25,10 +25,6 @@ public interface IApiProblemTypes {
 	// Compatibility problems
 	public static final String API_PROFILE_REMOVED_API_COMPONENT =
 		Util.getDeltaPrefererenceKey(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT);
-	public static final String API_COMPONENT_ADDED_EXECUTION_ENVIRONMENT =
-		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.EXECUTION_ENVIRONMENT);
-	public static final String API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT =
-		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.EXECUTION_ENVIRONMENT);
 	public static final String API_COMPONENT_REMOVED_TYPE =
 		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE);
 	public static final String ANNOTATION_ADDED_TYPE_MEMBER =

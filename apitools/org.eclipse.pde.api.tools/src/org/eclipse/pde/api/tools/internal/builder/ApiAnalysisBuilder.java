@@ -1378,7 +1378,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private void processDelta(IJavaProject javaProject, IDelta delta, IApiComponent reference, IApiComponent component) {
 		if (DeltaProcessor.isCompatible(delta)) {
-			this.buildState.addCompatibleChange(delta);
+			if (delta.getFlags() != IDelta.EXECUTION_ENVIRONMENT) {
+				// we filter EXECUTION ENVIRONMENT deltas
+				this.buildState.addCompatibleChange(delta);
+			}
 			if (delta.getKind() == IDelta.ADDED) {
 				int modifiers = delta.getModifiers();
 				if (Util.isPublic(modifiers)) {
