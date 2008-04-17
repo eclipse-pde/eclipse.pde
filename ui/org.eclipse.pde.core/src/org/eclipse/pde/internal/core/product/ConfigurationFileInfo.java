@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.w3c.dom.*;
@@ -23,10 +24,10 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 	private String fUse;
 	private String fPath;
 
-	private static final String LIN = "linux"; //$NON-NLS-1$
-	private static final String MAC = "macos"; //$NON-NLS-1$
-	private static final String SOL = "solaris"; //$NON-NLS-1$
-	private static final String WIN = "windows"; //$NON-NLS-1$
+	private static final String LIN = Constants.OS_LINUX;
+	private static final String MAC = Constants.OS_MACOSX;
+	private static final String SOL = Constants.OS_SOLARIS;
+	private static final String WIN = Constants.OS_WIN32;
 
 	private String fLinPath, fLinUse;
 	private String fMacPath, fMacUse;
