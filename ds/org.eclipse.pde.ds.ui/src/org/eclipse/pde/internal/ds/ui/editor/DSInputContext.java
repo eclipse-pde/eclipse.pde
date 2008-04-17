@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -31,7 +30,6 @@ import org.eclipse.ui.IStorageEditorInput;
 
 /**
  * DSInputContext
- *
  */
 public class DSInputContext extends XMLInputContext {
 
@@ -53,38 +51,36 @@ public class DSInputContext extends XMLInputContext {
 	}
 
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
-		if ((input instanceof IStorageEditorInput) == false) {
-			return null;
+		if (input instanceof IStorageEditorInput) {
+			boolean isReconciling = input instanceof IFileEditorInput;
+			IDocument document = getDocumentProvider().getDocument(input);
+
+			DSModel model = new DSModel(document, isReconciling);
+
+			if (input instanceof IFileEditorInput) {
+				IFile file = ((IFileEditorInput) input).getFile();
+				model.setUnderlyingResource(file);
+				model.setCharset(file.getCharset());
+			} else if (input instanceof SystemFileEditorInput) {
+				File file = (File) ((SystemFileEditorInput) input)
+						.getAdapter(File.class);
+				model.setInstallLocation(file.getParent());
+				model.setCharset(getDefaultCharset());
+			} else if (input instanceof JarEntryEditorInput) {
+				File file = (File) ((JarEntryEditorInput) input)
+						.getAdapter(File.class);
+				model.setInstallLocation(file.toString());
+				model.setCharset(getDefaultCharset());
+			} else {
+				model.setCharset(getDefaultCharset());
+			}
+
+			model.load();
+
+			return model;
 		}
 
-		boolean isReconciling = false;
-		if (input instanceof IFileEditorInput) {
-			isReconciling = true;
-		}
-		
-		IDocument document = getDocumentProvider().getDocument(this);
-		DSModel model = new DSModel(document, isReconciling);
-
-		if (input instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput) input).getFile();
-			model.setUnderlyingResource(file);
-			model.setCharset(file.getCharset());
-		} else if (input instanceof SystemFileEditorInput) {
-			File file = (File) ((SystemFileEditorInput) input).getAdapter(File.class);
-			model.setInstallLocation(file.getParent());
-			model.setCharset(getDefaultCharset());
-		} else if (input instanceof JarEntryEditorInput) {
-			File file = (File) ((JarEntryEditorInput) input).getAdapter(File.class);
-			model.setInstallLocation(file.toString());
-			model.setCharset(getDefaultCharset());
-		} else {
-			model.setCharset(getDefaultCharset());
-		}
-
-		
-		model.load();
-		
-		return model;
+		return null;
 	}
 
 	public String getId() {
