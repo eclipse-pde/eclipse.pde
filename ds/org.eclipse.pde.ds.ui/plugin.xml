@@ -4,6 +4,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
+            class="org.eclipse.pde.internal.ds.ui.editor.DSEditor"
             default="true"
             id="org.eclipse.pde.ds.ui.editor"
             name="%editors.ds.name">
