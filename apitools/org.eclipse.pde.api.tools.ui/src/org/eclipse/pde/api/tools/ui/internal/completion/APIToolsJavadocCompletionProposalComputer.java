@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.CompletionContext;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -55,7 +56,8 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	public List computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		if(context instanceof JavaContentAssistInvocationContext) {
 			JavaContentAssistInvocationContext jcontext = (JavaContentAssistInvocationContext) context;
-			if(jcontext.getProject() == null || !Util.isApiProject(jcontext.getProject())) {
+			IJavaProject project = jcontext.getProject();
+			if(project == null || !Util.isApiProject(project)) {
 				return Collections.EMPTY_LIST;
 			}
 			CompletionContext corecontext = jcontext.getCoreContext();
