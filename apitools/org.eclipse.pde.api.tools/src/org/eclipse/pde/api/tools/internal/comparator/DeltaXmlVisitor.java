@@ -47,24 +47,28 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 		fDeltas = fDoc.createElement(IApiXmlConstants.DELTAS_ELEMENT_NAME);
 		fDoc.appendChild(fDeltas);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor#visit(org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta)
 	 */
 	public boolean visit(IDelta delta) {
 		if (delta.getChildren().length == 0) {
-			Element deltaElement = fDoc.createElement(IApiXmlConstants.DELTA_ELEMENT_NAME);
-			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_FLAGS, Integer.toString(delta.getFlags()));
-			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_KIND, Util.getDeltaKindName(delta));
-			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE, Util.getDeltaElementType(delta));
-			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_KEY, delta.getKey());
-			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_TYPE_NAME, delta.getTypeName());
-			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_COMPATIBLE, Boolean.toString(DeltaProcessor.isCompatible(delta)));
-			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_MODIFIERS, Integer.toString(delta.getModifiers()));
-			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_RESTRICTIONS, Integer.toString(delta.getRestrictions()));
-			fDeltas.appendChild(deltaElement);
+			processLeafDelta(delta);
 		}
 		return true;
+	}
+
+	protected void processLeafDelta(IDelta delta) {
+		Element deltaElement = fDoc.createElement(IApiXmlConstants.DELTA_ELEMENT_NAME);
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_FLAGS, Integer.toString(delta.getFlags()));
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_KIND, Util.getDeltaKindName(delta));
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE, Util.getDeltaElementType(delta));
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_KEY, delta.getKey());
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_TYPE_NAME, delta.getTypeName());
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_COMPATIBLE, Boolean.toString(DeltaProcessor.isCompatible(delta)));
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_MODIFIERS, Integer.toString(delta.getModifiers()));
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_RESTRICTIONS, Integer.toString(delta.getRestrictions()));
+		fDeltas.appendChild(deltaElement);
 	}
 
 	/* (non-Javadoc)
