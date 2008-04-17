@@ -15,13 +15,11 @@ package org.eclipse.pde.internal.ds.ui.editor;
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSFormOutlinePage;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContextManager;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.ui.IEditorInput;
@@ -81,7 +79,7 @@ public class DSEditor extends MultiSourceEditor {
 	}
 
 	protected String getEditorID() {
-		return "org.eclipse.pde.ui.dsEditor"; //TODO put Constant in org.eclipse.pde.internal.ui.IPDEUIConstants
+		return IConstants.ID_EDITOR;
 	}
 
 	protected InputContext getInputContext(Object object) {

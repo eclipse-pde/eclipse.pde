@@ -12,9 +12,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
+import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.swt.widgets.Composite;
 
 public class DSImplementationDetails extends DSAbstractDetails {
+	
+	IDSImplementation fImplementation;
 
 	public DSImplementationDetails(IDSMaster masterSection) {
 		super(masterSection, DSInputContext.CONTEXT_ID);

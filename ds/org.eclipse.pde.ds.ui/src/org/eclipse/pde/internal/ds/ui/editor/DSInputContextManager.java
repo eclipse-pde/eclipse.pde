@@ -14,7 +14,6 @@ package org.eclipse.pde.internal.ds.ui.editor;
 
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 

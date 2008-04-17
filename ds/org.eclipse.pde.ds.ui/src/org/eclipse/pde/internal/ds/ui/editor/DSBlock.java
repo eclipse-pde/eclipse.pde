@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
@@ -111,6 +112,16 @@ public class DSBlock extends PDEMasterDetailsBlock implements IModelChangedListe
 		}
 		// Should never reach here
 		return object.getClass();
+	}
+	
+	/**
+	 * @return
+	 */
+	public ISelection getSelection() {
+		if (fMasterSection != null) {
+			return fMasterSection.getSelection();
+		}
+		return null;
 	}
 
 }

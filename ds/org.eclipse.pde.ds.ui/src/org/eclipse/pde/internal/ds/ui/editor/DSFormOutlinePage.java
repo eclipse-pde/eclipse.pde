@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.internal.ds.core.text.DSObject;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -36,5 +37,25 @@ public class DSFormOutlinePage extends FormOutlinePage  {
 	protected String getObjectText(DSObject obj) {
 		//TODO verify limits?
 		return obj.getName();
+	}
+
+
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#createLabelProvider()
+	 */
+	public ILabelProvider createLabelProvider() {
+		return new DSLabelProvider();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getParentPageId(java.lang.Object)
+	 */
+	protected String getParentPageId(Object item) {
+		return DSPage.PAGE_ID;
 	}
 }
