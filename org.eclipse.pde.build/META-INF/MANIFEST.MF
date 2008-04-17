@@ -19,7 +19,7 @@ Export-Package:
  org.eclipse.pde.internal.build.ant;x-internal:=true,
  org.eclipse.pde.internal.build.builder;x-internal:=true,
  org.eclipse.pde.internal.build.fetch;x-internal:=true,
- org.eclipse.pde.internal.build.packager;x-internal:=true,
+ org.eclipse.pde.internal.build.packager;x-friends:="org.eclipse.pde.core",
  org.eclipse.pde.internal.build.properties;x-internal:=true,
  org.eclipse.pde.internal.build.site;x-friends:="org.eclipse.pde.core,org.eclipse.pde.ui",
  org.eclipse.pde.internal.build.site.compatibility;x-internal:=true,

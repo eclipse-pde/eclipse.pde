@@ -192,11 +192,15 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public void openScript(String scriptLocation, String scriptName) throws CoreException {
 		if (script != null)
 			return;
+		script = newAntScript(scriptLocation, scriptName);
+	}
 
+	protected static AntScript newAntScript(String scriptLocation, String scriptName) throws CoreException {
+		AntScript result = null;
 		try {
 			OutputStream scriptStream = new BufferedOutputStream(new FileOutputStream(scriptLocation + '/' + scriptName));
 			try {
-				script = new AntScript(scriptStream);
+				result = new AntScript(scriptStream);
 			} catch (IOException e) {
 				try {
 					scriptStream.close();
@@ -210,8 +214,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			String message = NLS.bind(Messages.exception_writingFile, scriptLocation + '/' + scriptName);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
+		return result;
 	}
-
+	
 	public void closeScript() {
 		script.close();
 	}
@@ -254,6 +259,15 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	public static boolean getDefaultBuildingOSGi() {
 		return true;
+	}
+
+	protected static boolean loadP2Class() {
+		try {
+			BundleHelper.getDefault().getClass().getClassLoader().loadClass("org.eclipse.equinox.internal.provisional.p2.metadata.generator.Generator"); //$NON-NLS-1$
+			return true;
+		} catch (Throwable e) {
+			return false;
+		}
 	}
 
 	/**

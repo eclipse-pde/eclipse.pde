@@ -8,9 +8,12 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.build.packager;
 
+import java.io.*;
 import java.util.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.ant.AntScript;
 
 public class PackageScriptGenerator extends AssembleScriptGenerator {
 	private String packagingPropertiesLocation;
@@ -80,30 +83,92 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	protected void generateMetadataTarget() {
 		if (configScriptGenerator.haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);
-			script.print("<p2.generator "); //$NON-NLS-1$
-			script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("flavor", "${p2.flavor}", true); //$NON-NLS-1$//$NON-NLS-2$
-			script.printAttribute("metadataRepository", "${p2.metadata.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("mode", "final", true); //$NON-NLS-1$ //$NON-NLS-2$
 
 			ProductFile product = configScriptGenerator.getProductFile();
-			if (product != null) {
-				script.printAttribute("productFile", product.getLocation(), true); //$NON-NLS-1$
-				if (versionsList) {
-					if (product.useFeatures())
-						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
-					else
-						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
-				}
-			} else {
-				script.printAttribute("root", "${p2.root.name}", true); //$NON-NLS-1$ //$NON-NLS-2$
-				script.printAttribute("rootVersion", "${p2.root.version}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			String versionAdvice = null;
+			if (versionsList) {
+				if (product.useFeatures())
+					versionAdvice = getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
+				else
+					versionAdvice = getWorkingDirectory() + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
 			}
-
-			script.println("/>"); //$NON-NLS-1$
+			generateP2FinalCall(script, product != null ? product.getLocation() : null, versionAdvice);
 			script.printTargetEnd();
 		}
+	}
+
+	private static void generateP2FinalCall(AntScript script, String productFileLocation, String versionAdvice) {
+		script.print("<p2.generator "); //$NON-NLS-1$
+		script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printAttribute("flavor", "${p2.flavor}", true); //$NON-NLS-1$//$NON-NLS-2$
+		script.printAttribute("metadataRepository", "${p2.metadata.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printAttribute("mode", "final", true); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (productFileLocation != null) {
+			script.printAttribute("productFile", productFileLocation, true); //$NON-NLS-1$
+			if (versionAdvice != null)
+				script.printAttribute("versionAdvice", versionAdvice, true); //$NON-NLS-1$
+		} else {
+			script.printAttribute("root", "${p2.root.name}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("rootVersion", "${p2.root.version}", true); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		script.println("/>"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Generate an ant script that can be run to generate final p2 metadata for a product.
+	 * Returns null if p2 bundles aren't available.
+	 * 
+	 * If no product file is given, the generated p2 call generates final metadata for a 
+	 * ${p2.root.name}_${p2.root.version} IU.
+	 * 
+	 * versionAdvice is a properties file with bsn=3.2.1.xyz entries
+	 * 
+	 * @param workingDir			- the directory in which to generate the script
+	 * @param productFileLocation   - the location of a .product file (can be null)
+	 * @param versionAdvice			- version advice (can be null)
+	 * @return The location of the generated script, or null
+	 * @throws CoreException
+	 */
+	public static String generateP2ProductScript(String workingDir, String productFileLocation, Properties versionAdvice) throws CoreException {
+		if (!loadP2Class())
+			return null;
+
+		File working = new File(workingDir);
+		working.mkdirs();
+
+		File adviceFile = null;
+		if (versionAdvice != null) {
+			adviceFile = new File(working, "versionAdvice.properties"); //$NON-NLS-1$
+			try {
+				OutputStream os = new BufferedOutputStream(new FileOutputStream(adviceFile));
+				try {
+					versionAdvice.store(os, null);
+				} finally {
+					os.close();
+				}
+			} catch (IOException e) {
+				String message = NLS.bind(Messages.exception_writingFile, adviceFile.toString());
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+			}
+		}
+
+		AntScript p2Script = null;
+		try {
+			p2Script = newAntScript(workingDir, "p2product.xml"); //$NON-NLS-1$
+			p2Script.printProjectDeclaration("P2 Product IU Generation", "main", "."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			p2Script.println();
+			p2Script.printTargetDeclaration("main", null, TARGET_P2_METADATA, null, "Generate the final Product IU"); //$NON-NLS-1$//$NON-NLS-2$
+			generateP2FinalCall(p2Script, productFileLocation, adviceFile != null ? adviceFile.getAbsolutePath() : null);
+			p2Script.printTargetEnd();
+			p2Script.printProjectEnd();
+		} finally {
+			if (p2Script != null)
+				p2Script.close();
+		}
+		return workingDir + "/p2product.xml"; //$NON-NLS-1$
 	}
 }

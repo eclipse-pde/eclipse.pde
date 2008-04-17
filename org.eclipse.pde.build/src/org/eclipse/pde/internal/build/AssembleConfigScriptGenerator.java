@@ -574,12 +574,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (p2Bundles != null)
 			return p2Bundles.booleanValue();
 
-		try {
-			this.getClass().getClassLoader().loadClass("org.eclipse.equinox.internal.provisional.p2.metadata.generator.Generator"); //$NON-NLS-1$
-			p2Bundles = Boolean.TRUE;
-		} catch (Exception e) {
-			p2Bundles = Boolean.FALSE;
-		}
+		p2Bundles = Boolean.valueOf(loadP2Class());
 		return p2Bundles.booleanValue();
 	}
 
