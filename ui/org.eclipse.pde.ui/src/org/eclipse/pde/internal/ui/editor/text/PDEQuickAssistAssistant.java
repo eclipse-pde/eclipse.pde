@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 
@@ -91,9 +92,15 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		}
 
 		public IInformationControlCreator getInformationControlCreator() {
+			// if browser isn't available, use the default information control
 			if (!BrowserInformationControl.isAvailable(null))
-				return null;
+				fCreator = new AbstractReusableInformationControlCreator() {
+					public IInformationControl doCreateInformationControl(Shell parent) {
+						return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
+					}
+				};
 
+			// if the browser is available, let's use the browser one
 			if (fCreator == null) {
 				fCreator = new AbstractReusableInformationControlCreator() {
 					public IInformationControl doCreateInformationControl(Shell parent) {
