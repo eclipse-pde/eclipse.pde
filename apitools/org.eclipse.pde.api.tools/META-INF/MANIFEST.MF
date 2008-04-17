@@ -32,7 +32,7 @@ Export-Package: org.eclipse.pde.api.tools.internal;x-friends:="org.eclipse.pde.a
  org.eclipse.pde.api.tools.internal.provisional.stubs;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.api.tools.internal.search;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.api.tools.internal.tasks;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
- org.eclipse.pde.api.tools.internal.tools,
+ org.eclipse.pde.api.tools.internal.tools;x-internal:=true,
  org.eclipse.pde.api.tools.internal.util;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.api.tools.internal.util.profiles;x-internal:=true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
