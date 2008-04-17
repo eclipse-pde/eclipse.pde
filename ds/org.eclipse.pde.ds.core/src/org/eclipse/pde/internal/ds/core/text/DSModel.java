@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738 
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
@@ -15,6 +16,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.text.XMLEditingModel;
+import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -22,7 +24,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @since 3.4
  */
-public class DSModel extends XMLEditingModel {
+public class DSModel extends XMLEditingModel implements IDSModel {
 
 	private DSDocumentHandler fHandler;
 	private DSDocumentFactory fFactory;
@@ -53,6 +55,9 @@ public class DSModel extends XMLEditingModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ITocModel#getFactory()
 	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSModel#getFactory()
+	 */
 	public DSDocumentFactory getFactory() {
 		if (fFactory == null) {
 			fFactory = new DSDocumentFactory(this);
@@ -62,6 +67,9 @@ public class DSModel extends XMLEditingModel {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ITocModel#getToc()
+	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSModel#getDSRoot()
 	 */
 	public DSRoot getDSRoot() {
 		if (fRoot == null) {
