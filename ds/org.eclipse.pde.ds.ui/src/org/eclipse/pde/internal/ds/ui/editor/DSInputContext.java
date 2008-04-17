@@ -92,7 +92,7 @@ public class DSInputContext extends XMLInputContext {
 	}
 
 	protected String getPartitionName() {
-		return "___ds_partition"; 
+		return "___ds_partition"; //$NON-NLS-1$
 	}
 
 }
