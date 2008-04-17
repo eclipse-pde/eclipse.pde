@@ -91,6 +91,18 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsProcessor_rootMessage;
 
+	public static String PDECompilersConfigurationBlock_general;
+
+	public static String PDECompilersConfigurationBlock_references;
+
+	public static String PDECompilersConfigurationBlock_setting_changed_project;
+
+	public static String PDECompilersConfigurationBlock_settings_changed;
+
+	public static String PDECompilersConfigurationBlock_settings_changed_all;
+
+	public static String PDECompilersConfigurationBlock_usage;
+
 	public static String PDEWizardNewFileCreationPage_errorMsgStartsWithDot;
 
 	public static String CommandComposerPart_formTitle;
@@ -1895,17 +1907,14 @@ public class PDEUIMessages extends NLS {
 	public static String SiteHTML_loadError;
 
 	//
-
-	public static String CompilersConfigurationBlock_error;
-	public static String CompilersConfigurationBlock_warning;
-	public static String CompilersConfigurationBlock_ignore;
 	public static String CompilersConfigurationBlock_plugins;
 	public static String CompilersConfigurationBlock_schemas;
 	public static String CompilersConfigurationBlock_features;
 	public static String CompilersConfigurationBlock_label;
 	public static String CompilersConfigurationBlock_altlabel;
 
-	public static String CompilersPreferencePage_desc;
+	public static String CompilersPreferencePage_configure_project_specific_settings;
+
 	public static String CompilersPreferencePage_title;
 
 	public static String CompilersPropertyPage_useworkspacesettings_change;

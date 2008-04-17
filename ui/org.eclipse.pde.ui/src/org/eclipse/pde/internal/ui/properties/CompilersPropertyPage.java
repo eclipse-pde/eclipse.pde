@@ -10,31 +10,35 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.properties;
 
+import java.util.HashMap;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.pde.internal.core.builders.CompilerFlags;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.preferences.CompilersConfigurationTab;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.preferences.CompilersPreferencePage;
+import org.eclipse.pde.internal.ui.preferences.PDECompilersConfigurationBlock;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * The PDE manifest compiler options property page for plugin projects
  */
 public class CompilersPropertyPage extends PropertyPage {
 
-	private ControlEnableState blockEnableState;
-	private CompilersConfigurationTab configurationBlock;
-	private Control configurationBlockControl;
+	/**
+	 * The data map passed when showing the page
+	 */
+	private HashMap fPageData = null;
+
+	/**
+	 * The control block 
+	 */
+	private PDECompilersConfigurationBlock fBlock = null;
 
 	/**
 	 * If project specific settings are being used or not
@@ -52,54 +56,45 @@ public class CompilersPropertyPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		configurationBlock = new CompilersConfigurationTab(getProject());
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.numColumns = 2;
-		composite.setLayout(layout);
-
-		fProjectSpecific = new Button(composite, SWT.CHECK);
+		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
+		Composite tcomp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		fProjectSpecific = new Button(tcomp, SWT.CHECK);
 		fProjectSpecific.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, true, false));
 		fProjectSpecific.setText(PDEUIMessages.CompilersPropertyPage_useprojectsettings_label);
 		fProjectSpecific.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				updateEnableState();
+				boolean psp = fProjectSpecific.getSelection();
+				fBlock.useProjectSpecificSettings(psp);
+				if (fWorkspaceLink != null) {
+					fWorkspaceLink.setEnabled(!psp);
+				}
 			}
 		});
 
-		fWorkspaceLink = new Link(composite, SWT.NONE);
-		fWorkspaceLink.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_change);
-		fWorkspaceLink.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				String id = "org.eclipse.pde.ui.CompilersPreferencePage"; //$NON-NLS-1$
-				PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String[] {id}, null).open();
-			}
-		});
+		if (offerLink()) {
+			fWorkspaceLink = new Link(tcomp, SWT.NONE);
+			fWorkspaceLink.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_change);
+			fWorkspaceLink.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					HashMap data = new HashMap();
+					data.put(CompilersPreferencePage.NO_LINK, Boolean.TRUE);
+					SWTFactory.showPreferencePage(getShell(), "org.eclipse.pde.ui.CompilersPreferencePage", data); //$NON-NLS-1$
+				}
+			});
+		}
 
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
+		fBlock = new PDECompilersConfigurationBlock(getProject(), (IWorkbenchPreferenceContainer) getContainer());
+		fBlock.createControl(comp);
 
-		configurationBlockControl = configurationBlock.createContents(composite);
-		configurationBlockControl.setLayoutData(data);
-
-		boolean useProjectSettings = CompilerFlags.getBoolean(getProject(), CompilerFlags.USE_PROJECT_PREF);
-
-		fProjectSpecific.setSelection(useProjectSettings);
-		fWorkspaceLink.setEnabled(!useProjectSettings);
-
-		updateEnableState();
-		Dialog.applyDialogFont(composite);
-		return composite;
-	}
-
-	/*
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.COMPILERS_PROPERTY_PAGE);
+		boolean ps = fBlock.hasProjectSpecificSettings(getProject());
+		fProjectSpecific.setSelection(ps);
+		fBlock.useProjectSpecificSettings(ps);
+		if (fWorkspaceLink != null) {
+			fWorkspaceLink.setEnabled(!ps);
+		}
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.COMPILERS_PROPERTY_PAGE);
+		Dialog.applyDialogFont(comp);
+		return comp;
 	}
 
 	/**
@@ -109,51 +104,60 @@ public class CompilersPropertyPage extends PropertyPage {
 		return (IProject) getElement().getAdapter(IProject.class);
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferencePage#performDefaults()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
-	protected void performDefaults() {
-		if (useProjectSettings()) {
-			fProjectSpecific.setSelection(false);
-			updateEnableState();
-			configurationBlock.performDefaults();
-		}
-		super.performDefaults();
+	public boolean performCancel() {
+		fBlock.performCancel();
+		return super.performCancel();
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		if (!configurationBlock.performOk(useProjectSettings())) {
-			getContainer().updateButtons();
-			return false;
-		}
+		fBlock.performOK();
 		return super.performOk();
 	}
 
 	/**
-	 * Updates the enabled state of the controls based on the project specific settings
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
-	private void updateEnableState() {
-		if (useProjectSettings()) {
-			if (blockEnableState != null) {
-				fWorkspaceLink.setEnabled(false);
-				blockEnableState.restore();
-				blockEnableState = null;
-			}
-		} else {
-			if (blockEnableState == null) {
-				fWorkspaceLink.setEnabled(true);
-				blockEnableState = ControlEnableState.disable(configurationBlockControl);
-			}
-		}
+	protected void performDefaults() {
+		fBlock.performDefaults();
+		super.performDefaults();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
+	 */
+	protected void performApply() {
+		fBlock.performApply();
+		super.performApply();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
+	 */
+	public void dispose() {
+		fBlock.dispose();
+		super.dispose();
 	}
 
 	/**
-	 * @return if project specific settings are being configured
+	 * @return true if the link should be shown, false otherwise
 	 */
-	private boolean useProjectSettings() {
-		return fProjectSpecific.getSelection();
+	private boolean offerLink() {
+		return fPageData == null || !Boolean.TRUE.equals(fPageData.get(CompilersPreferencePage.NO_LINK));
+	}
+
+	/**
+	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
+	 */
+	public void applyData(Object data) {
+		if (data instanceof HashMap) {
+			fPageData = (HashMap) data;
+			fWorkspaceLink.setVisible(!Boolean.TRUE.equals(fPageData.get(CompilersPreferencePage.NO_LINK)));
+		}
 	}
 }

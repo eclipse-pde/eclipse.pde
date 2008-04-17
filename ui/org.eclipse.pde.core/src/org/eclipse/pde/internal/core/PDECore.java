@@ -18,7 +18,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.builders.*;
+import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
+import org.eclipse.pde.internal.core.builders.PluginRebuilder;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.osgi.framework.BundleContext;
@@ -217,7 +218,6 @@ public class PDECore extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fBundleContext = context;
-		CompilerFlags.initializeDefaults();
 		fJavaElementChangeListener = new JavaElementChangeListener();
 		fJavaElementChangeListener.start();
 		fPluginRebuilder = new PluginRebuilder();

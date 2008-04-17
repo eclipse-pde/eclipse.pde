@@ -24,6 +24,7 @@ public interface IHelpContextIds {
 	public static final String IMPLICIT_PLUGINS_PREFERENCE_PAGE = PREFIX + "implicit_plugins_preference_page"; //$NON-NLS-1$
 	public static final String LAUNCHING_ARGS_PREFERENCE_PAGE = PREFIX + "launching_args_preference_page"; //$NON-NLS-1$
 	public static final String COMPILERS_PREFERENCE_PAGE = PREFIX + "compilers_preference_page"; //$NON-NLS-1$
+	public static final String PROJECT_SELECTION_DIALOG = PREFIX + "project_selection_dialog"; //$NON-NLS-1$
 	public static final String TARGET_ENVIRONMENT_PREFERENCE_PAGE = PREFIX + "target_environment_preference_page"; //$NON-NLS-1$
 	public static final String TARGET_PLATFORM_PREFERENCE_PAGE = PREFIX + "target_platform_preference_page"; //$NON-NLS-1$
 
