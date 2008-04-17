@@ -36,8 +36,6 @@ public interface IProduct extends IProductObject {
 
 	IConfigurationFileInfo getConfigurationFileInfo();
 
-	IConfigurationFileInfo getConfigurationFileInfo(String os);
-
 	IArgumentsInfo getLauncherArguments();
 
 	IJREInfo getJREInfo();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,25 +12,30 @@ package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.FileNameFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -43,6 +48,13 @@ public class ConfigurationSection extends PDESection {
 	private Button fDefault;
 	private Button fCustom;
 	private FormEntry fCustomEntry;
+	private boolean fBlockChanges;
+
+	private static final String[] TAB_LABELS = {"linux", "macosx", "solaris", "win32"}; //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private static final String[] TAB_OS = {Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_SOLARIS, Platform.OS_WIN32};
+
+	private CTabFolder fTabFolder;
+	private int fLastTab;
 
 	public ConfigurationSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -65,16 +77,39 @@ public class ConfigurationSection extends PDESection {
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		fTabFolder = new CTabFolder(client, SWT.FLAT | SWT.TOP);
+		toolkit.adapt(fTabFolder, true, true);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		fTabFolder.setLayoutData(gd);
+		gd.heightHint = 2;
+		gd.horizontalSpan = 3;
+		gd.grabExcessHorizontalSpace = true;
+		toolkit.getColors().initializeSectionToolBarColors();
+		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
+		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
+
+		fTabFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				refresh();
+			}
+		});
+		fTabFolder.setUnselectedImageVisible(false);
+
 		fDefault = toolkit.createButton(client, PDEUIMessages.ConfigurationSection_default, SWT.RADIO);
-		GridData gd = new GridData();
+		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fDefault.setLayoutData(gd);
 		fDefault.setEnabled(isEditable());
 		fDefault.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				boolean selected = fDefault.getSelection();
-				getConfigurationFileInfo().setUse(selected ? "default" : "custom"); //$NON-NLS-1$ //$NON-NLS-2$
-				fCustomEntry.setEditable(!selected);
+				if (!fBlockChanges) {
+					boolean selected = fDefault.getSelection();
+					IConfigurationFileInfo info = getConfigurationFileInfo();
+					String os = getOS(fLastTab);
+					info.setUse(os, selected ? "default" : "custom"); //$NON-NLS-1$ //$NON-NLS-2$
+					info.setPath(os, selected == true ? null : fCustomEntry.getValue());
+					fCustomEntry.setValue(selected == true ? null : fCustomEntry.getValue(), true);
+				}
 			}
 		});
 
@@ -88,7 +123,12 @@ public class ConfigurationSection extends PDESection {
 		fCustomEntry = new FormEntry(client, toolkit, PDEUIMessages.ConfigurationSection_file, PDEUIMessages.ConfigurationSection_browse, isEditable(), 35); // 
 		fCustomEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
-				getConfigurationFileInfo().setPath(entry.getValue());
+				if (!fBlockChanges) {
+					IConfigurationFileInfo info = getConfigurationFileInfo();
+					String os = getOS(fLastTab);
+					info.setUse(os, "custom"); //$NON-NLS-1$
+					info.setPath(os, entry.getValue());
+				}
 			}
 
 			public void browseButtonSelected(FormEntry entry) {
@@ -101,6 +141,7 @@ public class ConfigurationSection extends PDESection {
 		});
 		fCustomEntry.setEditable(isEditable());
 
+		createTabs();
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 		// Register to be notified when the model changes
@@ -135,18 +176,22 @@ public class ConfigurationSection extends PDESection {
 	}
 
 	public void refresh() {
+		fBlockChanges = true;
+		fLastTab = fTabFolder.getSelectionIndex();
 		IConfigurationFileInfo info = getConfigurationFileInfo();
+		String os = getOS(fLastTab);
 		if (info == null) {
 			fDefault.setSelection(true);
 			fCustomEntry.setEditable(false);
 		} else {
-			boolean custom = "custom".equals(info.getUse()); //$NON-NLS-1$
+			boolean custom = "custom".equals(info.getUse(os)); //$NON-NLS-1$
 			fDefault.setSelection(!custom);
 			fCustom.setSelection(custom);
-			fCustomEntry.setValue(info.getPath(), true);
+			fCustomEntry.setValue(custom == true ? info.getPath(os) : null, true);
 			fCustomEntry.setEditable(custom);
 		}
 		super.refresh();
+		fBlockChanges = false;
 	}
 
 	private IConfigurationFileInfo getConfigurationFileInfo() {
@@ -234,4 +279,32 @@ public class ConfigurationSection extends PDESection {
 		// The solution is to redirect focus to a stable widget.
 		getPage().setLastFocusControl(fCustomEntry.getText());
 	}
+
+	private void createTabs() {
+		for (int i = 0; i < TAB_LABELS.length; i++) {
+			CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
+			item.setText(TAB_LABELS[i]);
+			item.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_OPERATING_SYSTEM_OBJ));
+		}
+		fLastTab = 0;
+		fTabFolder.setSelection(fLastTab);
+
+		String currentTarget = TargetPlatform.getOS();
+
+		if (Platform.OS_WIN32.equals(currentTarget)) {
+			fTabFolder.setSelection(3);
+		} else if (Platform.OS_MACOSX.equals(currentTarget)) {
+			fTabFolder.setSelection(1);
+		} else if (Platform.OS_SOLARIS.equals(currentTarget)) {
+			fTabFolder.setSelection(2);
+		}
+	}
+
+	private String getOS(int tab) {
+		if (tab >= 0 && tab < TAB_OS.length) {
+			return TAB_OS[tab];
+		}
+		return null;
+	}
+
 }

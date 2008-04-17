@@ -90,7 +90,7 @@ public class LaunchAction extends Action {
 		}
 		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());
 		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
-		String configIni = getTemplateConfigIni();
+		String configIni = getTemplateConfigIni(os);
 		wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, configIni == null);
 		if (configIni != null)
 			wc.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, configIni);
@@ -189,12 +189,15 @@ public class LaunchAction extends Action {
 		}
 	}
 
-	private String getTemplateConfigIni() {
+	private String getTemplateConfigIni(String os) {
 		IConfigurationFileInfo info = fProduct.getConfigurationFileInfo();
-		if (info != null && info.getUse().equals("custom")) { //$NON-NLS-1$
-			String path = getExpandedPath(info.getPath());
-			if (path != null) {
-				File file = new File(path);
+		String path = info.getPath(os);
+		if (path == null) // if we can't find an os path, let's try the normal one
+			path = info.getPath(null);
+		if (info != null && path != null) {
+			String expandedPath = getExpandedPath(path);
+			if (expandedPath != null) {
+				File file = new File(expandedPath);
 				if (file.exists() && file.isFile())
 					return file.getAbsolutePath();
 			}

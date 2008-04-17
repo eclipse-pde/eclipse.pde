@@ -16,16 +16,12 @@ public interface IConfigurationFileInfo extends IProductObject {
 	public static final String P_PATH = "path"; //$NON-NLS-1$
 	public static final String P_OS = "os"; //$NON-NLS-1$
 
-	void setUse(String use);
+	void setUse(String os, String use);
 
-	String getUse();
+	String getUse(String os);
 
-	void setPath(String path);
+	void setPath(String os, String path);
 
-	String getPath();
-
-	String getOS();
-
-	void setOS(String os);
+	String getPath(String os);
 
 }

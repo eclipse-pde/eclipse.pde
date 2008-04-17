@@ -76,12 +76,15 @@ public class ProductExportOperation extends FeatureExportOperation {
 		monitor.done();
 	}
 
-	private File getCustomIniFile() {
+	private File getCustomIniFile(String os) {
 		IConfigurationFileInfo info = fProduct.getConfigurationFileInfo();
-		if (info != null && info.getUse().equals("custom")) { //$NON-NLS-1$
-			String path = getExpandedPath(info.getPath());
-			if (path != null) {
-				File file = new File(path);
+		String path = info.getPath(os);
+		if (path == null) // if we can't find an os path, let's try the normal one
+			path = info.getPath(null);
+		if (info != null && path != null) {
+			String expandedPath = getExpandedPath(path);
+			if (expandedPath != null) {
+				File file = new File(expandedPath);
 				if (file.exists() && file.isFile())
 					return file;
 			}
@@ -277,12 +280,11 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 		PrintWriter writer = null;
 
-		File custom = getCustomIniFile();
+		File custom = getCustomIniFile(config[0]);
 		if (custom != null) {
-			String path = getExpandedPath(fProduct.getConfigurationFileInfo().getPath());
 			BufferedReader in = null;
 			try {
-				in = new BufferedReader(new FileReader(path));
+				in = new BufferedReader(new FileReader(custom));
 				writer = new PrintWriter(new FileWriter(new File(dir, "config.ini"))); //$NON-NLS-1$
 				String line;
 				while ((line = in.readLine()) != null) {

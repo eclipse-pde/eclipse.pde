@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	protected void initializeProduct(IProduct product) {
 		IProductModelFactory factory = product.getModel().getFactory();
 		IConfigurationFileInfo info = factory.createConfigFileInfo();
-		info.setUse("default"); //$NON-NLS-1$
+		info.setUse(null, "default"); //$NON-NLS-1$
 		product.setConfigurationFileInfo(info);
 		// preset some common VM args for macosx (bug 174232 comment #4)
 		IArgumentsInfo args = factory.createLauncherArguments();

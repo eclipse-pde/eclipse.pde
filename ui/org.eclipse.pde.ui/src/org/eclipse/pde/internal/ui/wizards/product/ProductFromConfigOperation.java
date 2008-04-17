@@ -75,8 +75,8 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(path));
 				if (container != null) {
 					IConfigurationFileInfo info = factory.createConfigFileInfo();
-					info.setUse("custom"); //$NON-NLS-1$
-					info.setPath(container.getFullPath().toString());
+					info.setUse(null, "custom"); //$NON-NLS-1$
+					info.setPath(null, container.getFullPath().toString());
 					product.setConfigurationFileInfo(info);
 				} else {
 					super.initializeProduct(product);

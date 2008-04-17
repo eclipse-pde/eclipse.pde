@@ -28,7 +28,6 @@ public class Product extends ProductObject implements IProduct {
 	private TreeMap fPlugins = new TreeMap();
 	private List fFeatures = new ArrayList();
 	private IConfigurationFileInfo fConfigIniInfo;
-	private Map fPlatformSpecificConfigInfos = new HashMap();
 	private IJREInfo fJVMInfo;
 	private boolean fUseFeatures;
 	private IWindowImages fWindowImages;
@@ -142,13 +141,6 @@ public class Product extends ProductObject implements IProduct {
 			fConfigIniInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 
-		for (Iterator iter = fPlatformSpecificConfigInfos.keySet().iterator(); iter.hasNext();) {
-			writer.println();
-			String key = (String) iter.next();
-			IConfigurationFileInfo info = (IConfigurationFileInfo) fPlatformSpecificConfigInfos.get(key);
-			info.write(indent + "   ", writer); //$NON-NLS-1$
-		}
-
 		if (fLauncherArgs != null) {
 			writer.println();
 			fLauncherArgs.write(indent + "   ", writer); //$NON-NLS-1$
@@ -255,7 +247,8 @@ public class Product extends ProductObject implements IProduct {
 					} else if (name.equals("features")) { //$NON-NLS-1$
 						parseFeatures(child.getChildNodes());
 					} else if (name.equals("configIni")) { //$NON-NLS-1$
-						parseConfigInfo(child);
+						fConfigIniInfo = factory.createConfigFileInfo();
+						fConfigIniInfo.parse(child);
 					} else if (name.equals("windowImages")) { //$NON-NLS-1$
 						fWindowImages = factory.createWindowImages();
 						fWindowImages.parse(child);
@@ -277,18 +270,6 @@ public class Product extends ProductObject implements IProduct {
 					}
 				}
 			}
-		}
-	}
-
-	private void parseConfigInfo(Node child) {
-		IProductModelFactory factory = getModel().getFactory();
-		IConfigurationFileInfo temp = factory.createConfigFileInfo();
-		temp.parse(child);
-		String os = temp.getOS();
-		if (os != null && os.length() > 0) {
-			fPlatformSpecificConfigInfos.put(os, temp);
-		} else {
-			fConfigIniInfo = temp;
 		}
 	}
 
@@ -365,14 +346,6 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public IConfigurationFileInfo getConfigurationFileInfo() {
 		return fConfigIniInfo;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getConfigurationFileInfo(java.lang.String)
-	 */
-	public IConfigurationFileInfo getConfigurationFileInfo(String os) {
-		IConfigurationFileInfo result = (IConfigurationFileInfo) fPlatformSpecificConfigInfos.get(os);
-		return result;
 	}
 
 	/* (non-Javadoc)
