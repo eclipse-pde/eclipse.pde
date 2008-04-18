@@ -50,16 +50,18 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 	 */
 	public String getDescription() {
-		IJavaElement element = resolveElementFromMarker();
-		if(element != null) {
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {JavaElementLabels.getTextLabel(element, JavaElementLabels.M_PARAMETER_TYPES), resolveCategoryName()});
-		}
-		else {
-			IResource res = fBackingMarker.getResource();
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getFullPath().removeFileExtension().lastSegment(), resolveCategoryName()});
-		}
+		try {
+			String value = (String) fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS);
+			String[] args = new String[0];
+			if(value != null) {
+				args = value.split("#"); //$NON-NLS-1$
+			}
+			int id = fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0);
+			return ApiProblemFactory.getLocalizedMessage(ApiProblemFactory.getProblemMessageId(id), args);
+		} catch (CoreException e) {}
+		return null;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
 	 */

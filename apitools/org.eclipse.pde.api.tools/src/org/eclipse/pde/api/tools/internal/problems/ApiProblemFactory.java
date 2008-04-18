@@ -190,11 +190,11 @@ public class ApiProblemFactory {
 	}
 	
 	/**
-	 * Returns the localized message for the given category, element kind, kind, flags and message arguments. Returns
-	 * <code>null</code> if no localized message cannot be created.
+	 * Returns the localized message for the given problem id and message arguments. Returns
+	 * a not found message if no localized message cannot be created.
 	 * @param messageid
 	 * @param messageargs
-	 * @return a localized message for the given arguments of <code>null</code>
+	 * @return a localized message for the given arguments or a 'not found' message
 	 */
 	public static String getLocalizedMessage(int messageid, String[] messageargs){
 		if(fMessages == null) {
@@ -305,6 +305,15 @@ public class ApiProblemFactory {
 	 */
 	public static int getProblemCategory(int problemid) {
 		return (problemid & ApiProblem.CATEGORY_MASK);
+	}
+	
+	/**
+	 * Convenience method to get the message id from a problem id
+	 * @param problemid
+	 * @return the message id to use for the given problem id
+	 */
+	public static int getProblemMessageId(int problemid) {
+		return getProblemMessageId(getProblemCategory(problemid), getProblemElementKind(problemid), getProblemKind(problemid), getProblemFlags(problemid));
 	}
 	
 	/**

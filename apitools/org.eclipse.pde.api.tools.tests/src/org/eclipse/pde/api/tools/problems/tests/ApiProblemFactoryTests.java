@@ -153,12 +153,12 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally instantiates foo", new String[0])));
-		problem = ApiProblemFactory.newApiUsageProblem("", 
-				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_REFERENCE);
+		problem = ApiProblemFactory.newApiProblem("", 
+				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE,IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally references foo.bar", new String[0])));
+		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally references method foo.bar", new String[0])));
 	}
 	
 	/**
