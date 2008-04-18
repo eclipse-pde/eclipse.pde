@@ -95,9 +95,10 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	 * @throws CoreException if unable to construct the visitor
 	 */
 	public ApiSettingsXmlVisitor(String componentName, String componentId) throws CoreException {
-		fDoc = Util.newDocument();	
+		fDoc = Util.newDocument();
 		fComponent = fDoc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 		fComponent.setAttribute(IApiXmlConstants.ATTR_NAME, componentName);
+		fComponent.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_DESCRIPTION_CURRENT_VERSION);
 		fDoc.appendChild(fComponent);
 		Element plugin = fDoc.createElement(IApiXmlConstants.ELEMENT_PLUGIN);
 		plugin.setAttribute(IApiXmlConstants.ATTR_ID, componentId);
