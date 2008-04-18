@@ -11,7 +11,9 @@
    </aboutInfo>
 
    <configIni use="custom" os="win32" path="win32/config.ini"/>
-   <configIni use="custom" os="linux" path="linux/config.ini"/>
+   <configIni use="custom">
+   		<linux>linux/config.ini</linux>
+   </configIni>
 
 
    <launcherArgs>

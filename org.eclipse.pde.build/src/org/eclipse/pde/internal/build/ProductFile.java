@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,8 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private static final int STATE_VM_ARGS_MAC = 13;
 	private static final int STATE_VM_ARGS_SOLARIS = 14;
 	private static final int STATE_VM_ARGS_WIN = 15;
-	
+	private static final int STATE_CONFIG_INI = 16;
+
 	private int state = STATE_START;
 
 	private SAXParser parser;
@@ -86,6 +87,8 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private String icons[] = null;
 	private String configPath = null;
 	private final Map platformSpecificConfigPaths = new HashMap();
+	private String configPlatform = null;
+	private String platformConfigPath = null;
 	private String id = null;
 	private boolean useFeatures = false;
 	private List plugins = null;
@@ -283,6 +286,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 			case STATE_PRODUCT :
 				if (CONFIG_INI.equals(localName)) {
 					processConfigIni(attributes);
+					state = STATE_CONFIG_INI;
 				} else if (LAUNCHER.equals(localName)) {
 					processLauncher(attributes);
 					state = STATE_LAUNCHER;
@@ -295,6 +299,10 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 				} else if (SPLASH.equals(localName)) {
 					splashLocation = attributes.getValue("location"); //$NON-NLS-1$
 				}
+				break;
+
+			case STATE_CONFIG_INI :
+				processConfigIniPlatform(localName, true);
 				break;
 
 			case STATE_LAUNCHER :
@@ -383,6 +391,13 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 			case STATE_VM_ARGS_WIN :
 				state = STATE_LAUNCHER_ARGS;
 				break;
+				
+			case STATE_CONFIG_INI:
+				if (CONFIG_INI.equals(localName))
+					state = STATE_PRODUCT;
+				else
+					processConfigIniPlatform(localName, false);
+				break;
 		}
 	}
 	
@@ -417,6 +432,10 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 				break;
 			case STATE_VM_ARGS_WIN :
 				addLaunchArgumentToMap(VM_ARGS_WIN, String.valueOf(ch, start, length));
+				break;
+			case STATE_CONFIG_INI:
+				if (platformConfigPath != null)
+					platformConfigPath += String.valueOf(ch, start, length);
 				break;
 		}
 	}
@@ -470,9 +489,19 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 			// TODO should we allow a platform-specific default to over-ride a custom generic path?
 			if (path != null)
 				platformSpecificConfigPaths.put(os, path);
-		} else {
+		} else if (path != null) {
 			configPath = path;
  		}
+	}
+
+	private void processConfigIniPlatform(String key, boolean begin) {
+		if (begin) {
+			configPlatform = key;
+			platformConfigPath = ""; //$NON-NLS-1$
+		} else if (configPlatform.equals(key) && platformConfigPath.length() > 0) {
+			platformSpecificConfigPaths.put(key, platformConfigPath);
+			platformConfigPath = null;
+		}
 	}
 
 	private void processLauncher(Attributes attributes) {
