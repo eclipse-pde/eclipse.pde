@@ -169,7 +169,7 @@ public class ApiUseAnalyzer {
 				if (RestrictionModifiers.isReferenceRestriction(mask)) {
 					if (element.getElementType() == IElementDescriptor.T_METHOD) {
 						addCriteria(ReferenceModifiers.REF_INTERFACEMETHOD | ReferenceModifiers.REF_SPECIALMETHOD |
-							ReferenceModifiers.REF_STATICMETHOD | ReferenceModifiers.REF_VIRTUALMETHOD,
+							ReferenceModifiers.REF_STATICMETHOD | ReferenceModifiers.REF_VIRTUALMETHOD | ReferenceModifiers.REF_CONSTRUCTORMETHOD,
 							RestrictionModifiers.NO_REFERENCE, elements, IApiProblem.ILLEGAL_REFERENCE, IElementDescriptor.T_METHOD);
 						
 					} else if (element.getElementType() == IElementDescriptor.T_FIELD) {
@@ -622,11 +622,21 @@ public class ApiUseAnalyzer {
 							case IElementDescriptor.T_METHOD: {
 								IMethodDescriptor method = (IMethodDescriptor) member;
 								messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
+								resolvedflags = IApiProblem.METHOD;
 								int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
 								int offset = document.getLineOffset(linenumber);
 								String line = document.get(offset, document.getLineLength(linenumber));
 								String name = method.getName();
+								if("<init>".equals(name)) { //$NON-NLS-1$
+									name = method.getEnclosingType().getName();
+									resolvedflags = IApiProblem.CONSTRUCTOR_METHOD;
+									messageargs = new String[] {Signature.toString(method.getSignature(), method.getEnclosingType().getQualifiedName(), null, false, false)};
+								}
 								int first = line.indexOf(name);
+								if(first < 0) {
+									name = "super"; //$NON-NLS-1$
+								}
+								first = line.indexOf(name);
 								if(first > -1) {
 									charStart = offset + first;
 									charEnd = charStart + name.length();
@@ -636,6 +646,7 @@ public class ApiUseAnalyzer {
 							case IElementDescriptor.T_FIELD: {
 								IFieldDescriptor field = (IFieldDescriptor) member;
 								messageargs = new String[] {field.getEnclosingType().getQualifiedName(), field.getName()};
+								resolvedflags = IApiProblem.FIELD;
 								String name = field.getName();
 								int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
 								int offset = document.getLineOffset(linenumber);

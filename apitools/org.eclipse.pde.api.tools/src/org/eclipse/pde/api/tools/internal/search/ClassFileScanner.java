@@ -78,7 +78,7 @@ public class ClassFileScanner {
 	 */
 	public void scan(IApiComponent component, IClassFile classfile, int referenceKinds) throws CoreException {
 		if (this.references == null || this.references == Collections.EMPTY_LIST) {
-			this.references = new ArrayList(150);
+			this.references = new ArrayList(100);
 		} else {
 			references.clear();
 		}

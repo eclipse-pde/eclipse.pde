@@ -201,6 +201,27 @@ public interface IApiProblem {
 	public static final int LEAK_CONSTRUCTOR_PARAMETER = 6;
 	
 	/**
+	 * Flags to indicate a constructor method
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int CONSTRUCTOR_METHOD = 7;
+	
+	/**
+	 * Flags to indicate a 'normal' method
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int METHOD = 8;
+
+	/**
+	 * Flags to indicate a field
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int FIELD = 9;
+
+	/**
 	 * Constant representing the value of a default API profile {@link IApiProblem} kind.
 	 * 
 	 * @see #getKind()

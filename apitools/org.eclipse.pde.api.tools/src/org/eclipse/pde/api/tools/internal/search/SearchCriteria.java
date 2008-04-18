@@ -604,5 +604,4 @@ public class SearchCriteria implements IApiSearchCriteria {
 		fUserData = object;
 		
 	}
-
 }

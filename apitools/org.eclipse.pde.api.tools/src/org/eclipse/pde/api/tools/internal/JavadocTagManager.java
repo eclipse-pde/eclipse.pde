@@ -71,9 +71,8 @@ public class JavadocTagManager {
 			newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.nooverride", //$NON-NLS-1$
 					"nooverride", //$NON-NLS-1$
 					RestrictionModifiers.NO_OVERRIDE,
-					new int[] {IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.MEMBER_METHOD, IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.MEMBER_CONSTRUCTOR},
-					new String[] {"This method is not intended to be re-implemented or extended by clients.", //$NON-NLS-1$
-									"This constructor is not intended to be re-implemented or extended by clients."}); //$NON-NLS-1$
+					new int[] {IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.MEMBER_METHOD},
+					new String[] {"This method is not intended to be re-implemented or extended by clients."}); //$NON-NLS-1$
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			

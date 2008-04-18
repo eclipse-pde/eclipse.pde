@@ -342,7 +342,13 @@ public class ApiProblemFactory {
 					case IApiProblem.ILLEGAL_EXTEND: return 9;
 					case IApiProblem.ILLEGAL_INSTANTIATE: return 10;
 					case IApiProblem.ILLEGAL_OVERRIDE: return 11;
-					case IApiProblem.ILLEGAL_REFERENCE: return 12;
+					case IApiProblem.ILLEGAL_REFERENCE: {
+						switch(flags) {
+							case IApiProblem.FIELD: return 12;
+							case IApiProblem.CONSTRUCTOR_METHOD: return 110;
+							case IApiProblem.METHOD: return 111;
+						}
+					}
 					case IApiProblem.API_LEAK: {
 						switch(flags) {
 							case IApiProblem.LEAK_EXTENDS: return 13;
