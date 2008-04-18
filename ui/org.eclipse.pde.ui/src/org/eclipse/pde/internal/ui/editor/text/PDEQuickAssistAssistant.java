@@ -20,8 +20,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.correction.AbstractPDEMarkerResolution;
 import org.eclipse.pde.internal.ui.correction.ResolutionGenerator;
-import org.eclipse.pde.internal.ui.editor.contentassist.display.BrowserInformationControl;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
@@ -92,23 +90,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		}
 
 		public IInformationControlCreator getInformationControlCreator() {
-			// if browser isn't available, use the default information control
-			if (!BrowserInformationControl.isAvailable(null))
-				fCreator = new AbstractReusableInformationControlCreator() {
-					public IInformationControl doCreateInformationControl(Shell parent) {
-						return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
-					}
-				};
-
-			// if the browser is available, let's use the browser one
-			if (fCreator == null) {
-				fCreator = new AbstractReusableInformationControlCreator() {
-					public IInformationControl doCreateInformationControl(Shell parent) {
-						return new BrowserInformationControl(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE);
-					}
-				};
-			}
-			return fCreator;
+			return null;
 		}
 
 		public int getPrefixCompletionStart(IDocument document, int completionOffset) {
@@ -205,11 +187,22 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		fCreateImage = PDEPluginImages.DESC_ADD_ATT.createImage();
 		fRemoveImage = PDEPluginImages.DESC_DELETE.createImage();
 		fRenameImage = PDEPluginImages.DESC_REFRESH.createImage();
+
+		if (fCreator == null) {
+			fCreator = new AbstractReusableInformationControlCreator() {
+				public IInformationControl doCreateInformationControl(Shell parent) {
+					return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
+				}
+			};
+		}
+
+		setInformationControlCreator(fCreator);
 	}
 
 	public void dispose() {
 		fCreateImage.dispose();
 		fRemoveImage.dispose();
 		fRenameImage.dispose();
+		fCreator = null;
 	}
 }
