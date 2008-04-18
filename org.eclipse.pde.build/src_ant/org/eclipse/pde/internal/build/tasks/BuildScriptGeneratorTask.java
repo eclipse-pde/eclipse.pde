@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.File;
@@ -71,11 +69,11 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setSignificantVersionDigits(String significantDigits) {
 		antProperties.put(IBuildPropertiesConstants.PROPERTY_SIGNIFICANT_VERSION_DIGITS, significantDigits);
 	}
-	
+
 	public void setGeneratedVersionLength(String generatedLength) {
 		antProperties.put(IBuildPropertiesConstants.PROPERTY_GENERATED_VERSION_LENGTH, generatedLength);
 	}
-	
+
 	public void execute() throws BuildException {
 		try {
 			run();
@@ -85,24 +83,33 @@ public class BuildScriptGeneratorTask extends Task {
 	}
 
 	public void run() throws CoreException {
-		generator.setReportResolutionErrors(true);
-		String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
-		if (Boolean.valueOf(value).booleanValue())
-			antProperties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
-		value = getProject().getProperty("individualSourceBundles"); //$NON-NLS-1$
-		if (Boolean.valueOf(value).booleanValue())
-			antProperties.put("individualSourceBundles", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		initializeAntProperties(antProperties);
 		setEEProfileProperties(antProperties);
+		generator.setReportResolutionErrors(true);
 		generator.setImmutableAntProperties(antProperties);
 		BundleHelper.getDefault().setLog(this);
 		generator.generate();
 		BundleHelper.getDefault().setLog(null);
 	}
 
+	private void initializeAntProperties(Properties properties) {
+		String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
+		if (Boolean.valueOf(value).booleanValue())
+			properties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
+
+		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_INDIVIDUAL_SOURCE);
+		if (Boolean.valueOf(value).booleanValue())
+			properties.put(IBuildPropertiesConstants.PROPERTY_INDIVIDUAL_SOURCE, "true"); //$NON-NLS-1$
+
+		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
+		if (Boolean.valueOf(value).booleanValue())
+			properties.put(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES, "true"); //$NON-NLS-1$
+	}
+
 	private void setEEProfileProperties(Properties antProperties) {
 		//TODO this relies on the formatting of the profile file names in osgi.
 		// More robust would be to load each profile and check its name directly.
-		String [] profiles = BundleHelper.getDefault().getRuntimeJavaProfiles();
+		String[] profiles = BundleHelper.getDefault().getRuntimeJavaProfiles();
 		for (int i = 0; i < profiles.length; i++) {
 			String profileName = profiles[i].substring(0, profiles[i].length() - 8); //strip .profile off the end
 			profileName = profileName.replace('_', '/');
@@ -112,7 +119,7 @@ public class BuildScriptGeneratorTask extends Task {
 			}
 		}
 	}
-	
+
 	/** 
 	 * Set the folder in which the build will occur.
 	 * @param buildDirectory the location where the build will occur.
@@ -130,7 +137,7 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setInstall(String installLocation) {
 		generator.setWorkingDirectory(installLocation);
 	}
-	
+
 	/**
 	 * Set the boolean value indicating whether or not the build scripts should be
 	 * generated for nested features. The default is set to true.
@@ -152,17 +159,16 @@ public class BuildScriptGeneratorTask extends Task {
 		AbstractScriptGenerator.setConfigInfo(configInfo);
 	}
 
-		 
-	 /** 
-	  * Set on a configuration basis, the format of the archive being produced. The default is set to be configuration independent.
-	  * @param archivesFormat an ampersand separated list of configuration (for example win32, win32 - zip, x86 & macoxs, carbon, ppc - tar).
-	  * @throws CoreException
-	  * @since 3.0
-	  */
-	 public void setArchivesFormat(String archivesFormat) throws CoreException {
-	 		 generator.setArchivesFormat(archivesFormat);
-	 }
-		 
+	/** 
+	 * Set on a configuration basis, the format of the archive being produced. The default is set to be configuration independent.
+	 * @param archivesFormat an ampersand separated list of configuration (for example win32, win32 - zip, x86 & macoxs, carbon, ppc - tar).
+	 * @throws CoreException
+	 * @since 3.0
+	 */
+	public void setArchivesFormat(String archivesFormat) throws CoreException {
+		generator.setArchivesFormat(archivesFormat);
+	}
+
 	/**
 	 * Set a location that contains plugins and features required by plugins and features for which build scripts are being generated.
 	 * @param baseLocation a path to a folder
@@ -182,7 +188,7 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setBuildingOSGi(boolean osgi) {
 		generator.setBuildingOSGi(osgi);
 	}
-	
+
 	/**
 	 * Set the folder in which the build will occur.
 	 * <p>
@@ -220,32 +226,32 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setGenerateJnlp(boolean value) {
 		generator.setGenerateJnlp(value);
 	}
-	
+
 	public void setOutputUpdateJars(boolean value) {
 		AbstractScriptGenerator.setForceUpdateJar(value);
 	}
-	
+
 	public void setForceContextQualifier(String value) {
 		QualifierReplacer.setGlobalQualifier(value);
 	}
-	
+
 	/**
 	 * Set the boolean value indicating whether or not to generate a version suffix
 	 * for features based on their content.
 	 * @param value <code>true</code> if version suffixes should be generated.
 	 */
-	public void setGenerateFeatureVersionSuffix(boolean value){
+	public void setGenerateFeatureVersionSuffix(boolean value) {
 		generator.setGenerateFeatureVersionSuffix(value);
 	}
-	
+
 	/**
 	 * Set whether or not to generate plugin & feature versions lists
 	 * @param value
 	 */
-	public void setGenerateVersionsLists(boolean value){
+	public void setGenerateVersionsLists(boolean value) {
 		generator.setGenerateVersionsList(value);
 	}
-	
+
 	/**
 	 * Set the boolean indicating if resulting archive should contain a group of all the configurations being built.
 	 * @param value <code>false</code> if the configurations being built should be grouped in one archive.
@@ -253,11 +259,11 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setGroupConfiguration(boolean value) {
 		generator.setGroupConfigs(value);
 	}
-	
+
 	public void setFilteredDependencyCheck(boolean value) {
 		generator.setFilterState(value);
 	}
-	
+
 	/**
 	 * Set the filename to use for the platform properties that will be passed to the state.
 	 */

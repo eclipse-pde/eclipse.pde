@@ -81,11 +81,8 @@ public class PackagerTask extends Task {
 
 	public void execute() throws BuildException {
 		try {
+			initializeAntProperties(antProperties);
 			generator.setImmutableAntProperties(antProperties);
-			antProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE, "true"); //$NON-NLS-1$
-			String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
-			if (Boolean.valueOf(value).booleanValue())
-				antProperties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
 			generator.setProduct(getProject().getProperty("product")); //$NON-NLS-1$
 			generator.setGenerateVersionsList(Boolean.valueOf(getProject().getProperty("generateVersionsList")).booleanValue()); //$NON-NLS-1$
 			BundleHelper.getDefault().setLog(this);
@@ -96,6 +93,18 @@ public class PackagerTask extends Task {
 		}
 	}
 
+	private void initializeAntProperties(Properties properties) {
+		properties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE, "true"); //$NON-NLS-1$
+		
+		String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
+		if (Boolean.valueOf(value).booleanValue())
+			properties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
+		
+		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
+		if (Boolean.valueOf(value).booleanValue())
+			properties.put(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES, "true"); //$NON-NLS-1$
+	}
+	
 	/**
 	 *  Set the property file containing information about packaging
 	 * @param propertyFile the path to a property file

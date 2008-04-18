@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: B Plug-in
+Bundle-SymbolicName: B
+Bundle-Version: 1.0.0
+Bundle-Activator: b.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ A;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Export-Package: b

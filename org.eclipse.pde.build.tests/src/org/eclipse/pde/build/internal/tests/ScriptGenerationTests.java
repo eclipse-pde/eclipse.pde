@@ -463,4 +463,16 @@ public class ScriptGenerationTests extends PDETestCase {
 		
 		generateScripts(buildFolder, props);
 	}
+	
+	public void testBug208011_simpleCycle() throws Exception {
+		IFolder buildFolder = newTest("208011");
+		
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("allowBinaryCycles", "true");
+		properties.put("topLevelElementId", "featureA");
+		Utils.storeBuildProperties(buildFolder, properties);
+		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"B"});
+		
+		runBuild(buildFolder);
+	}
 }

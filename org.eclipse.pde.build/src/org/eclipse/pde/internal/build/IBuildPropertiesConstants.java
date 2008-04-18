@@ -78,6 +78,8 @@ public interface IBuildPropertiesConstants {
 	public static final String VALUE_DEVELOPMENT = "development"; //$NON-NLS-1$
 
 	public static final String RESOLVER_DEV_MODE = "resolution.devMode"; //$NON-NLS-1$
+	public static final String PROPERTY_INDIVIDUAL_SOURCE = "individualSourceBundles"; //$NON-NLS-1$
+	public static final String PROPERTY_ALLOW_BINARY_CYCLES = "allowBinaryCycles"; //$NON-NLS-1$
 
 	//Internal usage only
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$

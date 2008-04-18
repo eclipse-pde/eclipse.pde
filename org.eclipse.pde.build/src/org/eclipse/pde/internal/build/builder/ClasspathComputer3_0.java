@@ -84,6 +84,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private ModelBuildScriptGenerator generator;
 	private Map visiblePackages = null;
 	private Map pathElements = null;
+	private boolean allowBinaryCycles = false;
 	
 	public ClasspathComputer3_0(ModelBuildScriptGenerator modelGenerator) {
 		this.generator = modelGenerator;
@@ -106,6 +107,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		pathElements = new HashMap();
 		visiblePackages = getVisiblePackages(model);
 
+		allowBinaryCycles = AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
+		
 		//PREREQUISITE
 		addPrerequisites(model, classpath, location, pluginChain, addedPlugins);
 
@@ -463,6 +466,10 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	//Add the prerequisite of a given plugin (target)
 	private void addPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain, Set addedPlugins) throws CoreException {
 		if (pluginChain.contains(target)) {
+			if (allowBinaryCycles && isAllowableCycle(target, pluginChain)) {
+				return;
+			}
+			// else exception
 			String cycleString = ""; //$NON-NLS-1$
 			for (Iterator iter = pluginChain.iterator(); iter.hasNext();)
 				cycleString += iter.next().toString() + ", "; //$NON-NLS-1$
@@ -482,6 +489,26 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		}
 		pluginChain.remove(target);
 		addedPlugins.add(target);
+	}
+
+	/* We can allow a cycle if it only contains 1 bundle that needs to be built and the rest are  binary. */
+	private boolean isAllowableCycle(BundleDescription target, List pluginChain) {
+		boolean haveNonBinary = false;
+		boolean inCycle = false;
+		for (Iterator iterator = pluginChain.iterator(); iterator.hasNext();) {
+			BundleDescription bundle = (BundleDescription) iterator.next();
+			if (bundle == target) {
+				inCycle = true;
+				haveNonBinary = !Utils.isBinary(bundle);
+				continue;
+			}
+			if (inCycle && !Utils.isBinary(bundle)) {
+				if (haveNonBinary)
+					return false;
+				haveNonBinary = true;
+			}
+		}
+		return true;
 	}
 
 	/**
