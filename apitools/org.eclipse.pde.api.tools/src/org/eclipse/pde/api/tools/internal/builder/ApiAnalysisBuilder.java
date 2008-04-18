@@ -567,7 +567,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							},
 							false,
 							String.valueOf(newversion),
-							collectDetails(breakingChanges));
+							collectDetails(compatibleChanges));
 				} else if (compversion.getMinor() <= refversion.getMinor()) {
 					// the minor version should be incremented
 					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
@@ -579,7 +579,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							},
 							false,
 							String.valueOf(newversion),
-							collectDetails(breakingChanges));
+							collectDetails(compatibleChanges));
 				}
 			}
 		}
