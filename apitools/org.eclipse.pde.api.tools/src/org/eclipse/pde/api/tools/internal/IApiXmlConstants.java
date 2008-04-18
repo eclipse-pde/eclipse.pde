@@ -178,6 +178,11 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_RESTRICTIONS = "restrictions"; //$NON-NLS-1$
 	/**
+	 * Constant representing the delta component id attribute name in xml.
+	 * Value is <code>componentId</code>
+	 */
+	public static final String ATTR_NAME_COMPONENT_ID = "componentId"; //$NON-NLS-1$
+	/**
 	 * Constant representing the signature attribute for a method xml node.
 	 * Value is: <code>signature</code> 
 	 */

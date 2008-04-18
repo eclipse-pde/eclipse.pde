@@ -2644,4 +2644,27 @@ public final class Util {
 		}
 		return set;
 	}
+
+	public static String getDeltaComponentID(IApiComponent component) {
+		StringBuffer buffer = new StringBuffer(component.getId());
+		String version = component.getVersion();
+		// remove the qualifier part
+		if (version != null) {
+			buffer.append('_');
+			try {
+				Version version2 = new Version(version);
+				buffer
+					.append(version2.getMajor())
+					.append('.')
+					.append(version2.getMinor())
+					.append('.')
+					.append(version2.getMicro());
+			} catch (IllegalArgumentException e) {
+				// the version string doesn't follow the Eclipse pattern
+				// we keep the version as is
+				buffer.append(version);
+			}
+		}
+		return String.valueOf(buffer);
+	}
 }

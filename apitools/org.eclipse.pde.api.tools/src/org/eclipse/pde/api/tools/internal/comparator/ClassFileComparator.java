@@ -230,7 +230,7 @@ public class ClassFileComparator {
 	}
 	
 	void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String data) {
-		this.delta.add(new Delta(elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, data));
+		this.delta.add(new Delta(Util.getDeltaComponentID(this.component), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, data));
 	}
 	
 	private void checkSuperclass() {
@@ -505,10 +505,10 @@ public class ClassFileComparator {
 					if (((visibility & VisibilityModifiers.API) == 0)
 							&& ((visibilityModifiers & VisibilityModifiers.API) != 0)) {
 						// was API and is no longer API
-						return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, elementDescription.getRestrictions(), this.descriptor2.access, classFile.getTypeName(), this.descriptor1.name, this.descriptor1.name);
+						return new Delta(Util.getDeltaComponentID(component2), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, elementDescription.getRestrictions(), this.descriptor2.access, classFile.getTypeName(), this.descriptor1.name, this.descriptor1.name);
 					}
 					// no delta
-					return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_VISIBILITY, classFile.getTypeName(), this.descriptor1.name, null);
+					return new Delta(Util.getDeltaComponentID(component2), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_VISIBILITY, classFile.getTypeName(), this.descriptor1.name, null);
 				}
 			}
 			// first make sure that we compare interface with interface, class with class,

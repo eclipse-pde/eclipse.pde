@@ -23,7 +23,9 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -47,10 +49,12 @@ public class APIFreezeTask extends Task {
 	public static class APIFreezeDeltaVisitor extends DeltaXmlVisitor {
 		private String excludeListLocation;
 		private Set excludedElement;
+		private List nonExcludedElements;
 
 		public APIFreezeDeltaVisitor(String excludeListLocation) throws CoreException {
 			super();
 			this.excludeListLocation = excludeListLocation;
+			this.nonExcludedElements = new ArrayList();
 		}
 		protected void processLeafDelta(IDelta delta) {
 			if (DeltaProcessor.isCompatible(delta)) {
@@ -117,7 +121,12 @@ public class APIFreezeTask extends Task {
 		}
 		private boolean isExcluded(IDelta delta) {
 			String typeName = delta.getTypeName();
-			StringBuffer buffer = new StringBuffer(typeName);
+			StringBuffer buffer = new StringBuffer();
+			String componentId = delta.getApiComponentID();
+			if (componentId != null) {
+				buffer.append(componentId).append(':');
+			}
+			buffer.append(typeName);
 			switch(delta.getFlags()) {
 				case IDelta.TYPE_MEMBER :
 					buffer.append('.').append(delta.getKey());
@@ -135,7 +144,7 @@ public class APIFreezeTask extends Task {
 			if (this.excludedElement.contains(excludeListKey)) {
 				return true;
 			}
-			System.out.println(excludeListKey);
+			this.nonExcludedElements.add(excludeListKey);
 			return false;
 		}
 		private void initializeExcludedElement() {
@@ -179,6 +188,18 @@ public class APIFreezeTask extends Task {
 				}
 			}
 		}
+		
+		public String getPotentialExcludeList() {
+			if (this.nonExcludedElements == null) return Util.EMPTY_STRING;
+			Collections.sort(this.nonExcludedElements);
+			StringWriter stringWriter = new StringWriter();
+			PrintWriter writer = new PrintWriter(stringWriter);
+			for (Iterator iterator = this.nonExcludedElements.iterator(); iterator.hasNext(); ) {
+				writer.println(iterator.next());
+			}
+			writer.close();
+			return String.valueOf(stringWriter.getBuffer());
+		}
 	}
 
 	private static final String PLUGINS_FOLDER_NAME = "plugins"; //$NON-NLS-1$
@@ -189,7 +210,7 @@ public class APIFreezeTask extends Task {
 	private static final String REFERENCE_PROFILE_NAME = "reference_profile"; //$NON-NLS-1$
 	private static final String CURRENT_PROFILE_NAME = "current_profile"; //$NON-NLS-1$
 
-	private static final boolean DEBUG = true;
+	private boolean debug;
 
 	private String referenceLocation;
 	private String profileLocation;
@@ -212,12 +233,19 @@ public class APIFreezeTask extends Task {
 	public void setEEFile(String eeFileLocation) {
 		this.eeFileLocation = eeFileLocation;
 	}
-	
+	public void setDebug(String debugValue) {
+		this.debug = Boolean.toString(true).equals(debugValue); 
+	}
 	public void execute() throws BuildException {
-		if (DEBUG) {
+		if (this.debug) {
 			System.out.println("reference : " + this.referenceLocation); //$NON-NLS-1$
 			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
 			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
+			if (this.excludeListLocation != null) {
+				System.out.println("exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
+			} else {
+				System.out.println("No exclude list location"); //$NON-NLS-1$
+			}
 		}
 		if (this.referenceLocation == null
 				|| this.profileLocation == null
@@ -236,6 +264,10 @@ public class APIFreezeTask extends Task {
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		// unzip reference
+		long time = 0;
+		if (this.debug) {
+			time = System.currentTimeMillis();
+		}
 		File tempDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
 		
 		File referenceInstallDir = new File(tempDir, REFERENCE);
@@ -243,24 +275,35 @@ public class APIFreezeTask extends Task {
 
 		File profileInstallDir = new File(tempDir, CURRENT);
 		extractSDK(profileInstallDir, this.profileLocation);
-
+		if (this.debug) {
+			System.out.println("Extraction of both archives : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			time = System.currentTimeMillis();
+		}
 		// run the comparison
 		// create profile for the reference
 		IApiProfile referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(tempDir, REFERENCE), this.eeFileLocation);
 		IApiProfile currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(tempDir, CURRENT), this.eeFileLocation);
 		
 		IDelta delta = null;
-		long time = 0;
-		if (DEBUG) {
+		if (this.debug) {
+			System.out.println("Creation of both profiles : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
 		try {
-			delta = ApiComparator.compare(referenceProfile, currentProfile, VisibilityModifiers.API);
+			delta = ApiComparator.compare(referenceProfile, currentProfile, VisibilityModifiers.API, true);
 		} finally {
+			if (this.debug) {
+				System.out.println("API freeze check : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				time = System.currentTimeMillis();
+			}
 			referenceProfile.dispose();
 			currentProfile.dispose();
 			Util.delete(referenceInstallDir);
 			Util.delete(profileInstallDir);
+			if (this.debug) {
+				System.out.println("Cleanup : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				time = System.currentTimeMillis();
+			}
 		}
 		if (delta == null) {
 			// an error occured during the comparison
@@ -288,6 +331,13 @@ public class APIFreezeTask extends Task {
 				delta.accept(visitor);
 				writer.write(visitor.getXML());
 				writer.flush();
+				if (this.debug) {
+					String potentialExcludeList = visitor.getPotentialExcludeList();
+					if (potentialExcludeList.length() != 0) {
+						System.out.println("Potential exclude list:"); //$NON-NLS-1$
+						System.out.println(potentialExcludeList);
+					}
+				}
 			} catch (IOException e) {
 				ApiPlugin.log(e);
 			} catch (CoreException e) {
@@ -301,8 +351,8 @@ public class APIFreezeTask extends Task {
 					// ignore
 				}
 			}
-			if (DEBUG) {
-				System.out.println("Time spent: " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (this.debug) {
+				System.out.println("Report generation : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

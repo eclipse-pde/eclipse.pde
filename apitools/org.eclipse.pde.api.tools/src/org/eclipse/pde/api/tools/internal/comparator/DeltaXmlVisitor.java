@@ -68,6 +68,10 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_COMPATIBLE, Boolean.toString(DeltaProcessor.isCompatible(delta)));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_MODIFIERS, Integer.toString(delta.getModifiers()));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_RESTRICTIONS, Integer.toString(delta.getRestrictions()));
+		String apiComponentID = delta.getApiComponentID();
+		if (apiComponentID != null) {
+			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_COMPONENT_ID, apiComponentID);
+		}
 		fDeltas.appendChild(deltaElement);
 	}
 

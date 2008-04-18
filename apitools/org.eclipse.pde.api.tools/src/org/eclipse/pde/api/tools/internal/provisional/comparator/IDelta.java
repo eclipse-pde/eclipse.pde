@@ -827,4 +827,12 @@ public interface IDelta {
 	 * @return the delta's modifiers
 	 */
 	public int getModifiers();
+	
+	/**
+	 * Returns the component id in which the given delta is reported. Might be null if the delta
+	 * is reported against an api profile.
+	 * 
+	 * @return the component id in which the given delta is reported, null if none
+	 */
+	public String getApiComponentID();
 }

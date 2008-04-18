@@ -65,6 +65,9 @@ public class BuildState {
 
 	private static IDelta readDelta(DataInputStream in) throws IOException {
 		// decode the delta from the build state
+		boolean hasComponentID = in.readBoolean();
+		String componentID = null;
+		if (hasComponentID) in.readUTF(); // delta.getComponentID()
 		int elementType = in.readInt(); // delta.getElementType()
 		int kind = in.readInt(); // delta.getKind()
 		int flags = in.readInt(); // delta.getFlags()
@@ -79,7 +82,7 @@ public class BuildState {
 		} else {
 			data = Util.EMPTY_STRING;
 		}
-		return new Delta(elementType, kind, flags, restrictions, modifiers, typeName, key, data);
+		return new Delta(componentID, elementType, kind, flags, restrictions, modifiers, typeName, key, data);
 	}
 
 	public static void write(BuildState state, DataOutputStream out) throws IOException {
@@ -104,6 +107,12 @@ public class BuildState {
 	private static void writeDelta(IDelta delta, DataOutputStream out) throws IOException {
 		// encode a delta into the build state
 		// int elementType, int kind, int flags, int restrictions, int modifiers, String typeName, String key, Object data
+		String apiComponentID = delta.getApiComponentID();
+		boolean hasComponentID = apiComponentID != null;
+		out.writeBoolean(hasComponentID);
+		if (hasComponentID) {
+			out.writeUTF(apiComponentID);
+		}
 		out.writeInt(delta.getElementType());
 		out.writeInt(delta.getKind());
 		out.writeInt(delta.getFlags());
