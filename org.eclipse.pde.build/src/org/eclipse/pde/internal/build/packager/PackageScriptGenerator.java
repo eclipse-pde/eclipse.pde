@@ -86,7 +86,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 
 			ProductFile product = configScriptGenerator.getProductFile();
 			String versionAdvice = null;
-			if (versionsList) {
+			if (versionsList && product != null) {
 				if (product.useFeatures())
 					versionAdvice = getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
 				else
