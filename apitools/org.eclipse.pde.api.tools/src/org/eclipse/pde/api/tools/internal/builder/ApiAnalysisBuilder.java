@@ -341,8 +341,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				fProblemReporter.dispose();
 				localMonitor.done();
 			}
-			saveBuiltState(this.fCurrentProject, this.buildState);
-			this.buildState = null;
+			if (this.buildState != null) {
+				saveBuiltState(this.fCurrentProject, this.buildState);
+				this.buildState = null;
+			}
 		}
 		if (DEBUG) {
 			System.out.println("Finished build of " + this.fCurrentProject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1666,7 +1668,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (DEBUG) {
 			System.out.println(NLS.bind(BuilderMessages.build_saveStateProgress, project.getName()));
 		}
-		if (state == null) return;
 		File file = getSerializationFile(project);
 		if (file == null) return;
 		long t = 0;
