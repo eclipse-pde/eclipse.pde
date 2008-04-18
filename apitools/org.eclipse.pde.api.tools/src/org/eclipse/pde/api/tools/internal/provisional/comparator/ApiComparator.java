@@ -27,6 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -96,7 +97,7 @@ public class ApiComparator {
 			if (classFile == null) {
 				final IApiDescription apiDescription = component.getApiDescription();
 				IApiAnnotations elementDescription = apiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
-				return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, null);
+				return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription == null ? RestrictionModifiers.NO_RESTRICTIONS : elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, null);
 			}
 			final IApiDescription apiDescription = component2.getApiDescription();
 			IApiAnnotations elementDescription = apiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
@@ -524,7 +525,7 @@ public class ApiComparator {
 									// already processed
 									return;
 								}
-								globalDelta.add(new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, null));
+								globalDelta.add(new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription == null ? RestrictionModifiers.NO_RESTRICTIONS : elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, null));
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
 							}

@@ -716,7 +716,7 @@ public class ApiUseAnalyzer {
 									// ignore protected members if contained in a @noextend type
 									IApiDescription description = reference.getSourceLocation().getApiComponent().getApiDescription();
 									IApiAnnotations annotations = description.resolveAnnotations(method.getEnclosingType());
-									if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
+									if (annotations == null || RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
 										// ignore
 										return null;
 									}
@@ -838,10 +838,7 @@ public class ApiUseAnalyzer {
 								// ignore protected members if contained in a @noextend type
 								IApiDescription description = reference.getSourceLocation().getApiComponent().getApiDescription();
 								IApiAnnotations annotations = description.resolveAnnotations(field.getEnclosingType());
-								if(annotations == null) {
-									return null;
-								}
-								if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
+								if (annotations == null || RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
 									// ignore
 									return null;
 								}
@@ -855,14 +852,11 @@ public class ApiUseAnalyzer {
 								// ignore protected members if contained in a @noextend type
 								IApiDescription description = reference.getSourceLocation().getApiComponent().getApiDescription();
 								IApiAnnotations annotations = description.resolveAnnotations(method.getEnclosingType());
-								if(annotations == null) {
-									return null;
-								}
-								if (RestrictionModifiers.isOverrideRestriction(annotations.getRestrictions())) {
+								if (annotations == null || RestrictionModifiers.isOverrideRestriction(annotations.getRestrictions())) {
 									// ignore
 									return null;
 								}
-							}								
+							}
 							break;
 						}
 					}				
