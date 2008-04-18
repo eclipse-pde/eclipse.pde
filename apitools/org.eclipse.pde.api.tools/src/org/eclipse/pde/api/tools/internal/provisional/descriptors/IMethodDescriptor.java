@@ -37,5 +37,12 @@ public interface IMethodDescriptor extends IMemberDescriptor {
 	 * @return whether this method is synthetic
 	 */
 	public boolean isSynthetic();
+	
+	/**
+	 * Returns whether this method is a constructor
+	 * 
+	 * @return whether this method is a constructor
+	 */
+	public boolean isConstructor();
 
 }

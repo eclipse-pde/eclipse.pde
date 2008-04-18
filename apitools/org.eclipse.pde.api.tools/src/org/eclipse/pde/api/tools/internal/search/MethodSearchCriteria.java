@@ -16,7 +16,9 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -59,13 +61,21 @@ public class MethodSearchCriteria extends SearchCriteria {
 	 * @see org.eclipse.pde.api.tools.internal.search.SearchCriteria#matchesSourceApiRestrictions(org.eclipse.pde.api.tools.internal.provisional.search.ILocation)
 	 */
 	protected boolean matchesSourceApiRestrictions(ILocation location) {
+		IMemberDescriptor member = location.getMember();
+		if(member.getElementType() != IElementDescriptor.T_METHOD) {
+			return false;
+		}
 		IApiComponent apiComponent = location.getApiComponent();
 		try {
-			IApiAnnotations annotations = apiComponent.getApiDescription().resolveAnnotations(location.getMember());
+			IMethodDescriptor method = (IMethodDescriptor) member;
+			IApiAnnotations annotations = apiComponent.getApiDescription().resolveAnnotations(method);
 			if (annotations != null) {
 				if ((annotations.getVisibility() & fSourceVisibility) > 0) {
 					int ares = annotations.getRestrictions();
 					if(ares != 0) {
+						if(method.isConstructor()) {
+							return (ares & RestrictionModifiers.NO_REFERENCE) == 0;
+						}
 						return (ares & RestrictionModifiers.NO_OVERRIDE) == 0 ||
 								(ares & RestrictionModifiers.NO_REFERENCE) == 0; 
 					}

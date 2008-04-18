@@ -627,7 +627,7 @@ public class ApiUseAnalyzer {
 								int offset = document.getLineOffset(linenumber);
 								String line = document.get(offset, document.getLineLength(linenumber));
 								String name = method.getName();
-								if("<init>".equals(name)) { //$NON-NLS-1$
+								if(method.isConstructor()) {
 									name = method.getEnclosingType().getName();
 									resolvedflags = IApiProblem.CONSTRUCTOR_METHOD;
 									messageargs = new String[] {Signature.toString(method.getSignature(), method.getEnclosingType().getQualifiedName(), null, false, false)};
@@ -733,13 +733,12 @@ public class ApiUseAnalyzer {
 									}
 								}
 								// report the marker on the method
-								// TODO: can we just lookup the method with resolved signature?
 								String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
 								for (int i = 0; i < parameterTypes.length; i++) {
 									parameterTypes[i] = parameterTypes[i].replace('/', '.');
 								}
 								String methodname = method.getName();
-								if(methodname.equals("<init>")) { //$NON-NLS-1$
+								if(method.isConstructor()) {
 									methodname = method.getEnclosingType().getName();
 									resolvedflags = IApiProblem.LEAK_CONSTRUCTOR_PARAMETER;
 								}

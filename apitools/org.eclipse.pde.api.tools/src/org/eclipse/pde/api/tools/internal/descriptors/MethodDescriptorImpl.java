@@ -92,4 +92,11 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 	public boolean isSynthetic() {
 		return Flags.isSynthetic(getModifiers());
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor#isConstructor()
+	 */
+	public boolean isConstructor() {
+		return "<init>".equals(getName()); //$NON-NLS-1$
+	}
 }

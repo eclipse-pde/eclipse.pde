@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * Represents a method inside a clas file
+ * Represents a method inside a class file
  */
 public class MethodDescriptor extends ElementDescriptor {
 	private static final String INIT = "<init>"; //$NON-NLS-1$
