@@ -1666,6 +1666,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (DEBUG) {
 			System.out.println(NLS.bind(BuilderMessages.build_saveStateProgress, project.getName()));
 		}
+		if (state == null) return;
 		File file = getSerializationFile(project);
 		if (file == null) return;
 		long t = 0;
