@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: API Tooling Tests (Incubation)
+Bundle-Name: API Tooling Tests
 Bundle-SymbolicName: org.eclipse.pde.api.tools.tests
-Bundle-Version: 0.1.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
@@ -15,12 +15,12 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.pde.api.tools.ui,
  org.eclipse.ui.ide,
  org.eclipse.text,
- org.eclipse.pde.ui;bundle-version="3.4.0",
- org.eclipse.core.filebuffers;bundle-version="3.3.100",
- org.eclipse.ltk.core.refactoring;bundle-version="3.4.0",
- org.eclipse.test.performance;bundle-version="3.3.0",
- org.eclipse.jdt.core.tests.builder;bundle-version="3.3.100",
- org.eclipse.jdt.core.tests.compiler;bundle-version="3.3.100"
+ org.eclipse.pde.ui,
+ org.eclipse.core.filebuffers,
+ org.eclipse.ltk.core.refactoring,
+ org.eclipse.test.performance,
+ org.eclipse.jdt.core.tests.builder,
+ org.eclipse.jdt.core.tests.compiler
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.pde.api.tools.builder.tests,
  org.eclipse.pde.api.tools.comparator.tests,
