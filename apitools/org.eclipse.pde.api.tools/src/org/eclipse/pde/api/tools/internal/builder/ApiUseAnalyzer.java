@@ -574,11 +574,12 @@ public class ApiUseAnalyzer {
 						int offset = document.getLineOffset(linenumber);
 						String line = document.get(offset, document.getLineLength(linenumber));
 						String qname = typeDesc.getQualifiedName();
-						int first = line.indexOf(qname);
+						int first = findMethodNameStart(qname, line, 0);
 						if(first < 0) {
 							qname = typeDesc.getName();
-							first = line.indexOf(qname);
+							first = findMethodNameStart(qname, line, 0);
 						}
+						//TODO might be implicit check for source location type name
 						if(first < 0) {
 							qname = "super"; //$NON-NLS-1$
 							first = line.indexOf(qname);
@@ -632,14 +633,14 @@ public class ApiUseAnalyzer {
 									resolvedflags = IApiProblem.CONSTRUCTOR_METHOD;
 									messageargs = new String[] {Signature.toString(method.getSignature(), method.getEnclosingType().getQualifiedName(), null, false, false)};
 								}
-								int first = line.indexOf(name);
+								int first = findMethodNameStart(name, line, 0);
 								if(first < 0) {
 									name = "super"; //$NON-NLS-1$
 								}
-								first = line.indexOf(name);
+								first = findMethodNameStart(name, line, 0);
 								if(first > -1) {
 									charStart = offset + first;
-									charEnd = charStart + name.length();
+									charEnd = charStart + name.length()-1;
 								}
 								break;
 							}
@@ -789,6 +790,37 @@ public class ApiUseAnalyzer {
 			ApiPlugin.log(e);
 		}
 		return null;
+	}
+	
+	/**
+	 * Finds the method name to select on the given line of code starting from the given index.
+	 * This method will recurse to find a method name in the even there is a name clash with the type.
+	 * For example:
+	 * <pre>
+	 * 		MyType type = new MyType();
+	 * </pre>
+	 * If we are trying to find the constructor method call we have a name collision (and the first occurrence of MyType would be selected). 
+	 * <br>
+	 * A name is determined to be a method name if it is followed by a '(' character (excluding spaces)
+	 * @param namepart
+	 * @param line
+	 * @param index
+	 * @return the index of the method name on the given line or -1 if not found
+	 */
+	private int findMethodNameStart(String namepart, String line, int index) {
+		int start = line.indexOf(namepart, index);
+		if(start < 0) {
+			return -1;
+		}
+		int offset = start+namepart.length();
+		System.out.println(line.charAt(offset));;
+		while(line.charAt(offset) == ' ') {
+			offset++;
+		}
+		if(line.charAt(offset) == '(') {
+			return start;
+		}
+		return findMethodNameStart(namepart, line, offset);
 	}
 	
 	/**
