@@ -49,7 +49,8 @@ public class DSBlock extends PDEMasterDetailsBlock implements IModelChangedListe
 	protected PDESection createMasterSection(IManagedForm managedForm,
 			Composite parent) {
 		fMasterSection = new DSMasterTreeSection(getPage(), parent);
-		return fMasterSection;	}
+		return fMasterSection;
+	}
 
 	protected void registerPages(DetailsPart arg0) {
 		// Only static pages to be defined.  Do not cache pages
@@ -124,4 +125,11 @@ public class DSBlock extends PDEMasterDetailsBlock implements IModelChangedListe
 		return null;
 	}
 
+	/**
+	 * @return
+	 */
+	public IDSMaster getMasterSection() {
+		return fMasterSection;
+	}
+	
 }
