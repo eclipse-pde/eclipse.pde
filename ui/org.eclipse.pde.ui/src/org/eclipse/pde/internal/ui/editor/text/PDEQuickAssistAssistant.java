@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.text;
 import java.util.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter;
 import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.jface.text.quickassist.*;
 import org.eclipse.jface.text.source.Annotation;
@@ -25,7 +26,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 
@@ -34,8 +34,6 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 	private Image fCreateImage;
 	private Image fRenameImage;
 	private Image fRemoveImage;
-
-	private IInformationControlCreator fCreator;
 
 	class PDECompletionProposal implements ICompletionProposal, ICompletionProposalExtension3 {
 
@@ -187,22 +185,16 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		fCreateImage = PDEPluginImages.DESC_ADD_ATT.createImage();
 		fRemoveImage = PDEPluginImages.DESC_DELETE.createImage();
 		fRenameImage = PDEPluginImages.DESC_REFRESH.createImage();
-
-		if (fCreator == null) {
-			fCreator = new AbstractReusableInformationControlCreator() {
-				public IInformationControl doCreateInformationControl(Shell parent) {
-					return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
-				}
-			};
-		}
-
-		setInformationControlCreator(fCreator);
+		setInformationControlCreator(new AbstractReusableInformationControlCreator() {
+			public IInformationControl doCreateInformationControl(Shell parent) {
+				return new DefaultInformationControl(parent, (IInformationPresenter) null);
+			}
+		});
 	}
 
 	public void dispose() {
 		fCreateImage.dispose();
 		fRemoveImage.dispose();
 		fRenameImage.dispose();
-		fCreator = null;
 	}
 }
