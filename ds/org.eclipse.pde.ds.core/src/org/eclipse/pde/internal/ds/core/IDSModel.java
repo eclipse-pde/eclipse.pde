@@ -11,10 +11,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.internal.ds.core.text.DSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.text.DSRoot;
 
-public interface IDSModel {
+public interface IDSModel extends IModelChangeProvider, IModel {
 
 	public abstract DSDocumentFactory getFactory();
 
