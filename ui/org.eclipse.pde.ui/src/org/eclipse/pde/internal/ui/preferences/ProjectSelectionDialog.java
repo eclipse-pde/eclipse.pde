@@ -83,7 +83,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	public ProjectSelectionDialog(Shell parentShell, Set projectsWithSpecifics) {
 		super(parentShell);
 		setTitle(PDEUIMessages.ProjectSelectionDialog_title);
-		setMessage(PDEUIMessages.ProjectSelectionDialog_title);
+		setMessage(PDEUIMessages.ProjectSelectionDialog_message);
 		fProjectsWithSpecifics = projectsWithSpecifics;
 
 		fFilter = new ViewerFilter() {
