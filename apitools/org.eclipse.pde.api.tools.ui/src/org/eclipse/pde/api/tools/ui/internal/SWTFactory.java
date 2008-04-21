@@ -248,6 +248,7 @@ public class SWTFactory {
 	 */
 	public static SharedScrolledComposite createScrolledComposite(Composite parent, int columns, int hspan, int marginwidth, int marginheight) {
 		SharedScrolledComposite comp = new SharedScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL) {};
+		comp.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridLayout layout = new GridLayout(columns, false);
 		layout.marginHeight = marginheight;
 		layout.marginWidth = marginwidth;
@@ -273,6 +274,7 @@ public class SWTFactory {
 	 */
 	public static ExpandableComposite createExpandibleComposite(Composite parent, String label, int hspan, int fill) {
 		ExpandableComposite ex = new ExpandableComposite(parent, SWT.NONE, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
+		ex.setBackgroundMode(SWT.INHERIT_FORCE);
 		ex.setText(label);
 		ex.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
 		GridData gd = new GridData(fill);

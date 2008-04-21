@@ -1032,6 +1032,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 			case API_SCANNING_USAGE_PAGE_ID : {
 				// API usage/scanning
 				ScrolledComposite scomp = new ScrolledComposite(internalComposite, SWT.H_SCROLL | SWT.V_SCROLL);
+				scomp.setBackground(page.getBackground());
 				scomp.setExpandHorizontal(true);
 				scomp.setExpandVertical(true);
 				scomp.setLayout(new GridLayout(1, false));
@@ -1102,6 +1103,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 			case COMPATIBILITY_PAGE_ID :
 				// compatibility
 				ScrolledComposite scomp = new ScrolledComposite(internalComposite, SWT.H_SCROLL | SWT.V_SCROLL);
+				scomp.setBackground(page.getBackground());
 				scomp.setExpandHorizontal(true);
 				scomp.setExpandVertical(true);
 				scomp.setLayout(new GridLayout(1, false));
