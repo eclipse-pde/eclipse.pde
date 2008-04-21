@@ -127,7 +127,7 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants 
 	}
 
 	private void processDiscoverySite(Attributes attributes) {
-		result.addDiscoverySite(attributes.getValue("url"), attributes.getValue("label")); //$NON-NLS-1$ //$NON-NLS-2$
+		result.addDiscoverySite(attributes.getValue("label"), attributes.getValue("url")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void setEnvironment(Attributes attributes, FeatureEntry entry) {
