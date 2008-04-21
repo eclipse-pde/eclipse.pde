@@ -16,7 +16,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.CompletionContext;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -87,6 +89,10 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 								break;
 							}
 							case IJavaElement.FIELD: {
+								IField field  = (IField) element;
+								if(Flags.isFinal(field.getFlags())) {
+									return Collections.EMPTY_LIST;
+								}
 								member = IApiJavadocTag.MEMBER_FIELD;
 								break;
 							}
