@@ -3227,4 +3227,8 @@ public class PDEUIMessages extends NLS {
 	public static String FilteredSchemaAttributeSelectionDialog_searching;
 	public static String FilteredSchemaAttributeSelectionDialog_showOptionalAttributes;
 
+	public static String ProjectSelectionDialog_title;
+	public static String ProjectSelectionDialog_message;
+	public static String ProjectSelectionDialog_settingsTitle;
+
 }

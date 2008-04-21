@@ -82,8 +82,8 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	 */
 	public ProjectSelectionDialog(Shell parentShell, Set projectsWithSpecifics) {
 		super(parentShell);
-		setTitle("Project Specific Configuration");
-		setMessage("&Select the project to configure:");
+		setTitle(PDEUIMessages.ProjectSelectionDialog_title);
+		setMessage(PDEUIMessages.ProjectSelectionDialog_title);
 		fProjectsWithSpecifics = projectsWithSpecifics;
 
 		fFilter = new ViewerFilter() {
@@ -126,7 +126,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		fTableViewer.setComparator(new JavaElementComparator());
 		fTableViewer.getControl().setFont(font);
 
-		Button checkbox = SWTFactory.createCheckButton(composite, "Show only &projects with project specific settings", null, false, 1);
+		Button checkbox = SWTFactory.createCheckButton(composite, PDEUIMessages.ProjectSelectionDialog_settingsTitle, null, false, 1);
 		checkbox.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				updateFilter(((Button) e.widget).getSelection());
