@@ -1283,6 +1283,7 @@ public class PDEUIMessages extends NLS {
 	public static String Preferences_TargetPlatformPage_PlatformHome_Button;
 	public static String Preferences_TargetPlatformPage_title;
 	public static String Preferences_TargetPlatformPage_question;
+	public static String Preferences_TargetPlatformPage_targetPlatformRealizationQuestion;
 	public static String ExternalPluginsBlock_reload;
 	public static String ExternalPluginsBlock_addRequired;
 	public static String ExternalPluginsBlock_workingSet;

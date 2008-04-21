@@ -219,6 +219,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fTargetRealization.setSelection(fPreferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION));
 		fTargetRealization.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				fPreferences.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, fTargetRealization.getSelection());
 				fNeedsReload = true;
 			}
 		});
@@ -535,8 +536,15 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 
 	public boolean performOk() {
-		if (fNeedsReload && !new Path(fOriginalText).equals(new Path(fHomeText.getText()))) {
-			MessageDialog dialog = new MessageDialog(getShell(), PDEUIMessages.Preferences_TargetPlatformPage_title, null, PDEUIMessages.Preferences_TargetPlatformPage_question, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 1);
+		fPreferences.setDefault(ICoreConstants.TARGET_PLATFORM_REALIZATION, TargetPlatform.getDefaultLocation().equals(TargetPlatform.getLocation()));
+		fPreferences.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, fTargetRealization.getSelection());
+		if (fNeedsReload) {
+			String message = PDEUIMessages.Preferences_TargetPlatformPage_question;
+			if (new Path(fOriginalText).equals(new Path(fHomeText.getText()))) {
+				message = PDEUIMessages.Preferences_TargetPlatformPage_targetPlatformRealizationQuestion;
+			}
+
+			MessageDialog dialog = new MessageDialog(getShell(), PDEUIMessages.Preferences_TargetPlatformPage_title, null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 1);
 			if (dialog.open() == 1) {
 				getContainer().updateButtons();
 				return false;
@@ -544,7 +552,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			fPluginsTab.handleReload(new ArrayList());
 			resetTargetProfile();
 
-			fPreferences.setDefault(ICoreConstants.TARGET_PLATFORM_REALIZATION, TargetPlatform.getDefaultLocation().equals(TargetPlatform.getLocation()));
 		}
 		// if performOK is getting run in lieu of performApply, we need update the fOriginalText so if the user changes it back to the first state, we know we need to reload
 		fOriginalText = fHomeText.getText();
@@ -570,7 +577,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			IConfigurationElement elem = fElements[fProfileCombo.getSelectionIndex() - offSet];
 			fPreferences.setValue(ICoreConstants.TARGET_PROFILE, "id:" + elem.getAttribute("id")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		fPreferences.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, fTargetRealization.getSelection());
 	}
 
 	public String[] getPlatformLocations() {
