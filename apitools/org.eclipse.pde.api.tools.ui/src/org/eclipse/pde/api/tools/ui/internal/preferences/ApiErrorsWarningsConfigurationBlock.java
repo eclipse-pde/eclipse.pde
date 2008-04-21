@@ -1022,16 +1022,14 @@ public class ApiErrorsWarningsConfigurationBlock {
 		TabItem tab = new TabItem(folder, SWT.NONE);
 		tab.setText(name);
 		tab.setControl(page);
-
-		Composite internalComposite = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
-		SWTFactory.createVerticalSpacer(internalComposite, 1);
-		SWTFactory.createWrapLabel(internalComposite, description, 2);
-		SWTFactory.createVerticalSpacer(internalComposite, 1);
+		
+		SWTFactory.createVerticalSpacer(page, 1);
+		SWTFactory.createWrapLabel(page, description, 2);
+		SWTFactory.createVerticalSpacer(page, 1);
 		
 		switch(kind) {
 			case API_SCANNING_USAGE_PAGE_ID : {
-				// API usage/scanning
-				ScrolledComposite scomp = new ScrolledComposite(internalComposite, SWT.H_SCROLL | SWT.V_SCROLL);
+				ScrolledComposite scomp = new ScrolledComposite(page, SWT.H_SCROLL | SWT.V_SCROLL);
 				scomp.setExpandHorizontal(true);
 				scomp.setExpandVertical(true);
 				scomp.setLayout(new GridLayout(1, false));
@@ -1082,9 +1080,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 				break;
 			}
 			case VERSION_MANAGEMENT_PAGE_ID :
-				// API usage/scanning
-				//add visibility restrictions
-				initializeComboControls(internalComposite,
+				Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
+				initializeComboControls(vcomp,
 					new String[] {
 						PreferenceMessages.VersionManagementReportMissingSinceTag,
 						PreferenceMessages.VersionManagementReportMalformedSinceTags,
@@ -1101,7 +1098,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				break;
 			case COMPATIBILITY_PAGE_ID :
 				// compatibility
-				ScrolledComposite scomp = new ScrolledComposite(internalComposite, SWT.H_SCROLL | SWT.V_SCROLL);
+				ScrolledComposite scomp = new ScrolledComposite(page, SWT.H_SCROLL | SWT.V_SCROLL);
 				scomp.setExpandHorizontal(true);
 				scomp.setExpandVertical(true);
 				scomp.setLayout(new GridLayout(1, false));
