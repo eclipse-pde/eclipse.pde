@@ -210,7 +210,9 @@ public class DeltaProcessor {
 					case IDelta.DECREASE_ACCESS :
 						return false;
 					case IDelta.NON_FINAL_TO_FINAL :
-						return !Util.isVisible(delta) || RestrictionModifiers.isOverrideRestriction(delta.getRestrictions());
+						int restrictions = delta.getRestrictions();
+						return !Util.isVisible(delta) || RestrictionModifiers.isOverrideRestriction(restrictions)
+							|| RestrictionModifiers.isExtendRestriction(restrictions);
 				}
 				break;
 		}
