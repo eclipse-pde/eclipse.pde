@@ -89,8 +89,8 @@ public class ClassFileComparator {
 		return true;
 	}
 
-	IApiProfile apiState;
-	IApiProfile apiState2;
+	IApiProfile apiProfile;
+	IApiProfile apiProfile2;
 
 	IClassFile classFile;
 	IClassFile classFile2;
@@ -111,8 +111,8 @@ public class ClassFileComparator {
 			this.component2 = component2;
 			this.descriptor1 = new TypeDescriptor(classFile.getContents());
 			this.descriptor2 = new TypeDescriptor(classFile2.getContents());
-			this.apiState = apiState;
-			this.apiState2 = apiState2;
+			this.apiProfile = apiState;
+			this.apiProfile2 = apiState2;
 			this.classFile = classFile;
 			this.classFile2 = classFile2;
 			this.visibilityModifiers = visibilityModifiers;
@@ -127,8 +127,8 @@ public class ClassFileComparator {
 			this.component2 = component2;
 			this.descriptor1 = typeDescriptor;
 			this.descriptor2 = new TypeDescriptor(classFile2.getContents());
-			this.apiState = apiState;
-			this.apiState2 = apiState2;
+			this.apiProfile = apiState;
+			this.apiProfile2 = apiState2;
 			this.classFile = typeDescriptor.classFile;
 			this.classFile2 = classFile2;
 			this.visibilityModifiers = visibilityModifiers;
@@ -235,8 +235,8 @@ public class ClassFileComparator {
 	
 	private void checkSuperclass() {
 		// check superclass set
-		Set superclassSet1 = getSuperclassSet(this.descriptor1, this.component, this.apiState);
-		Set superclassSet2 = getSuperclassSet(this.descriptor2, this.component2, this.apiState2);
+		Set superclassSet1 = getSuperclassSet(this.descriptor1, this.component, this.apiProfile);
+		Set superclassSet2 = getSuperclassSet(this.descriptor2, this.component2, this.apiProfile2);
 		if (superclassSet1 == null) {
 			if (superclassSet2 != null) {
 				// this means the direct super class of descriptor1 is java.lang.Object
@@ -267,8 +267,8 @@ public class ClassFileComparator {
 	}
 
 	private void checkSuperInterfaces() {
-		Set superinterfacesSet1 = getInterfacesSet(this.descriptor1, this.component, this.apiState);
-		Set superinterfacesSet2 = getInterfacesSet(this.descriptor2, this.component2, this.apiState2);
+		Set superinterfacesSet1 = getInterfacesSet(this.descriptor1, this.component, this.apiProfile);
+		Set superinterfacesSet2 = getInterfacesSet(this.descriptor2, this.component2, this.apiProfile2);
 
 		if (superinterfacesSet1 == null) {
 			if (superinterfacesSet2 != null) {
@@ -313,7 +313,7 @@ public class ClassFileComparator {
 					try {
 						IClassFile memberType1 = this.component.findClassFile(typeMemberName);
 						IClassFile memberType2 = this.component2.findClassFile(typeMemberName);
-						ClassFileComparator comparator = new ClassFileComparator(memberType1, memberType2, this.component, this.component2, this.apiState, this.apiState2, this.visibilityModifiers);
+						ClassFileComparator comparator = new ClassFileComparator(memberType1, memberType2, this.component, this.component2, this.apiProfile, this.apiProfile2, this.visibilityModifiers);
 						IDelta delta2 = comparator.getDelta();
 						if (delta2 != null && delta2 != ApiComparator.NO_DELTA) {
 							this.addDelta(delta2);
@@ -702,7 +702,7 @@ public class ClassFileComparator {
 				boolean found = false;
 				if (this.component2 != null) {
 					if (this.descriptor1.isInterface()) {
-						Set interfacesSet = getInterfacesSet(this.descriptor2, this.component2, this.apiState2);
+						Set interfacesSet = getInterfacesSet(this.descriptor2, this.component2, this.apiProfile2);
 						if (interfacesSet != null) {
 							for (Iterator iterator = interfacesSet.iterator(); iterator.hasNext();) {
 								TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
@@ -719,7 +719,7 @@ public class ClassFileComparator {
 							}
 						}
 					} else {
-						Set superclassSet = getSuperclassSet(this.descriptor2, this.component2, this.apiState2);
+						Set superclassSet = getSuperclassSet(this.descriptor2, this.component2, this.apiProfile2);
 						if (superclassSet != null) {
 							loop: for (Iterator iterator = superclassSet.iterator(); iterator.hasNext();) {
 								TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
@@ -888,7 +888,7 @@ public class ClassFileComparator {
 			boolean found = false;
 			if (this.component2 != null) {
 				if (this.descriptor1.isInterface()) {
-					Set interfacesSet = getInterfacesSet(typeDescriptor, this.component2, this.apiState2);
+					Set interfacesSet = getInterfacesSet(typeDescriptor, this.component2, this.apiProfile2);
 					if (interfacesSet != null) {
 						for (Iterator iterator = interfacesSet.iterator(); iterator.hasNext();) {
 							TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
@@ -905,7 +905,7 @@ public class ClassFileComparator {
 						}
 					}
 				} else {
-					Set superclassSet = getSuperclassSet(typeDescriptor, this.component2, this.apiState2);
+					Set superclassSet = getSuperclassSet(typeDescriptor, this.component2, this.apiProfile2);
 					if (superclassSet != null) {
 						loop: for (Iterator iterator = superclassSet.iterator(); iterator.hasNext();) {
 							TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
@@ -957,7 +957,7 @@ public class ClassFileComparator {
 				// check all exception in method descriptor to see if they are checked or unchecked exceptions
 				loop: for (Iterator iterator = methodDescriptor.exceptions.iterator(); iterator.hasNext(); ) {
 					String exceptionName = ((String) iterator.next()).replace('/', '.');
-					if (isCheckedException(this.apiState, this.component, exceptionName)) {
+					if (isCheckedException(this.apiProfile, this.component, exceptionName)) {
 						// report delta - removal of checked exception
 						// TODO should we continue the loop for all remaining exceptions
 						this.addDelta(methodDescriptor, IDelta.REMOVED, IDelta.CHECKED_EXCEPTION, this.classFile, key, exceptionName);
@@ -981,7 +981,7 @@ public class ClassFileComparator {
 				if (removedExceptions.size() != 0) {
 					loop: for (Iterator iterator = removedExceptions.iterator(); iterator.hasNext(); ) {
 						String exceptionName = ((String) iterator.next()).replace('/', '.');
-						if (isCheckedException(this.apiState, this.component, exceptionName)) {
+						if (isCheckedException(this.apiProfile, this.component, exceptionName)) {
 							// report delta - removal of checked exception
 							// TODO should we continue the loop for all remaining exceptions
 							this.addDelta(methodDescriptor, IDelta.REMOVED, IDelta.CHECKED_EXCEPTION, this.classFile, key, exceptionName);
@@ -994,7 +994,7 @@ public class ClassFileComparator {
 				}
 				loop: for (Iterator iterator = methodDescriptor2.exceptions.iterator(); iterator.hasNext(); ) {
 					String exceptionName = ((String) iterator.next()).replace('/', '.');
-					if (isCheckedException(this.apiState2, this.component2, exceptionName)) {
+					if (isCheckedException(this.apiProfile2, this.component2, exceptionName)) {
 						// report delta - addition of checked exception
 						// TODO should we continue the loop for all remaining exceptions
 						this.addDelta(methodDescriptor, IDelta.ADDED, IDelta.CHECKED_EXCEPTION, this.classFile, key, exceptionName);
@@ -1009,7 +1009,7 @@ public class ClassFileComparator {
 			// check all exception in method descriptor to see if they are checked or unchecked exceptions
 			loop: for (Iterator iterator = methodDescriptor2.exceptions.iterator(); iterator.hasNext(); ) {
 				String exceptionName = ((String) iterator.next()).replace('/', '.');
-				if (isCheckedException(this.apiState2, this.component2, exceptionName)) {
+				if (isCheckedException(this.apiProfile2, this.component2, exceptionName)) {
 					// report delta - addition of checked exception
 					this.addDelta(methodDescriptor, IDelta.ADDED, IDelta.CHECKED_EXCEPTION, this.classFile, key, exceptionName);
 					// TODO should we continue the loop for all remaining exceptions
@@ -1170,17 +1170,19 @@ public class ClassFileComparator {
 		signatureReader.accept(new SignatureDecoder(signatureDescriptor));
 		return signatureDescriptor;
 	}
-
 	private Set getSuperclassSet(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile) {
+		return getSuperclassSet(typeDescriptor, apiComponent, profile, false);
+	}
+	private Set getSuperclassSet(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile, boolean includeObject) {
 		TypeDescriptor descriptor = typeDescriptor;
 		String superName = descriptor.superName;
-		if (Util.isJavaLangObject(superName)) {
+		if (Util.isJavaLangObject(superName) && !includeObject) {
 			return null;
 		}
 		HashSet set = new HashSet();
 		IApiComponent sourceComponent = apiComponent; 
 		try {
-			loop: while (!Util.isJavaLangObject(superName)) {
+			loop: while (superName != null && (!Util.isJavaLangObject(superName) || includeObject)) {
 				String packageName = Util.getPackageName(superName);
 				IApiComponent[] components = profile.resolvePackage(sourceComponent, packageName);
 				if (components == null) {
@@ -1263,7 +1265,7 @@ public class ClassFileComparator {
 					String name = methodDescriptor.name;
 					String descriptor = methodDescriptor.descriptor;
 					if (this.descriptor1.isInterface()) {
-						Set interfacesSet = getInterfacesSet(typeDescriptor2, this.component2, this.apiState2);
+						Set interfacesSet = getInterfacesSet(typeDescriptor2, this.component2, this.apiProfile2);
 						if (interfacesSet != null) {
 							for (Iterator iterator = interfacesSet.iterator(); iterator.hasNext();) {
 								TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
@@ -1279,7 +1281,7 @@ public class ClassFileComparator {
 							}
 						}
 					} else {
-						Set superclassSet = getSuperclassSet(typeDescriptor2, this.component2, this.apiState2);
+						Set superclassSet = getSuperclassSet(typeDescriptor2, this.component2, this.apiProfile2, true);
 						if (superclassSet != null) {
 							loop: for (Iterator iterator = superclassSet.iterator(); iterator.hasNext();) {
 								TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
