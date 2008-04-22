@@ -49,7 +49,7 @@ public interface IApiMarkerConstants {
 	 * Constant representing the id for the default API profile problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.api_profile</code>
 	 */
-	public static final String DEFAULT_API_PROFILE_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_profile"; //$NON-NLS-1$
+	public static final String DEFAULT_API_BASELINE_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_profile"; //$NON-NLS-1$
 	/**
 	 * Constant representing the id for the compatibility problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.compatibility</code> 

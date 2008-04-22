@@ -142,6 +142,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	private static final String API_PROFILE_MANAGER_DEBUG = PLUGIN_ID + "/debug/profilemanager"; //$NON-NLS-1$
 	private static final String API_PROFILE_DEBUG = PLUGIN_ID + "/debug/apiprofile" ; //$NON-NLS-1$
 	private static final String API_FILTER_STORE_DEBUG = PLUGIN_ID + "/debug/apifilterstore"; //$NON-NLS-1$
+	private static final String API_ANALYZER_DEBUG = PLUGIN_ID + "/debug/apianalyzer"; //$NON-NLS-1$
 
 	public final static String TRUE = "true"; //$NON-NLS-1$
 
@@ -567,6 +568,10 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 				ApiProfile.setDebug(option.equalsIgnoreCase(TRUE));
 			}
 			option = Platform.getDebugOption(API_FILTER_STORE_DEBUG);
+			if(option != null) {
+				ApiFilterStore.setDebug(option.equalsIgnoreCase(TRUE));
+			}
+			option = Platform.getDebugOption(API_ANALYZER_DEBUG);
 			if(option != null) {
 				ApiFilterStore.setDebug(option.equalsIgnoreCase(TRUE));
 			}

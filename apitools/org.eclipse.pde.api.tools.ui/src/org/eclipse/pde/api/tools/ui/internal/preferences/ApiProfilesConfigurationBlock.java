@@ -185,7 +185,7 @@ public class ApiProfilesConfigurationBlock {
 		return new Key(ApiPlugin.getPluginIdentifier(), key);
 	}
 
-	private static final Key KEY_MISSING_DEFAULT_API_PROFILE = getApiToolsKey(IApiProblemTypes.MISSING_DEFAULT_API_PROFILE);
+	private static final Key KEY_MISSING_DEFAULT_API_PROFILE = getApiToolsKey(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE);
 
 	/**
 	 * An array of all of the keys for the page

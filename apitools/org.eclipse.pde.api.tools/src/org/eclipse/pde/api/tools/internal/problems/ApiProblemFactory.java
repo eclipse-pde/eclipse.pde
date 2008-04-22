@@ -85,7 +85,6 @@ public class ApiProblemFactory {
 	 * @param linenumber the number of the line the problem occurred on
 	 * @param charstart the start of a char selection range
 	 * @param charend the end of a char selection range
-	 * @param severity the severity of the problem
 	 * @param element the element kind
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for API usage
@@ -105,7 +104,6 @@ public class ApiProblemFactory {
 	 * @param linenumber the number of the line the problem occurred on
 	 * @param charstart the start of a char selection range
 	 * @param charend the end of a char selection range
-	 * @param severity the severity of the problem
 	 * @param element the element kind
 	 * @param kind the kind
 	 * @param flags the flags
@@ -126,7 +124,6 @@ public class ApiProblemFactory {
 	 * @param linenumber the number of the line the problem occurred on
 	 * @param charstart the start of a char selection range
 	 * @param charend the end of a char selection range
-	 * @param severity the severity of the problem
 	 * @param element the element kind
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for API usage
@@ -146,7 +143,6 @@ public class ApiProblemFactory {
 	 * @param linenumber the number of the line the problem occurred on
 	 * @param charstart the start of a char selection range
 	 * @param charend the end of a char selection range
-	 * @param severity the severity
 	 * @param element the element kind
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for since tags
@@ -166,7 +162,6 @@ public class ApiProblemFactory {
 	 * @param linenumber the number of the line the problem occurred on
 	 * @param charstart the start of a char selection range
 	 * @param charend the end of a char selection range
-	 * @param severity the severity
 	 * @param element the element kind
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for version numbers
@@ -517,7 +512,7 @@ public class ApiProblemFactory {
 		switch(problem.getCategory()) {
 			case IApiProblem.CATEGORY_API_PROFILE: {
 				switch(problem.getKind()) {
-					case IApiProblem.API_PROFILE_MISSING: return IApiProblemTypes.MISSING_DEFAULT_API_PROFILE;
+					case IApiProblem.API_PROFILE_MISSING: return IApiProblemTypes.MISSING_DEFAULT_API_BASELINE;
 				}
 			}
 			case IApiProblem.CATEGORY_SINCETAGS: {

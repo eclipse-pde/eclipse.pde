@@ -56,7 +56,7 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		prefs.setDefault(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, ApiPlugin.VALUE_ERROR);
 		prefs.setDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_ERROR);
 		
-		prefs.setDefault(IApiProblemTypes.MISSING_DEFAULT_API_PROFILE, ApiPlugin.VALUE_WARNING);
+		prefs.setDefault(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, ApiPlugin.VALUE_WARNING);
 	}
 
 }

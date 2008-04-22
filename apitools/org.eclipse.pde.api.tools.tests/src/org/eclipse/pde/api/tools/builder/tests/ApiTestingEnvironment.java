@@ -128,7 +128,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		if(!resource.isAccessible()) {
 			return new IMarker[0];
 		}
-		return resource.findMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+		return resource.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
 	
 	/**

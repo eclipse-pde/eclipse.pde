@@ -640,7 +640,7 @@ public class ApiUseAnalyzer {
 								first = findMethodNameStart(name, line, 0);
 								if(first > -1) {
 									charStart = offset + first;
-									charEnd = charStart + name.length()-1;
+									charEnd = charStart + name.length();
 								}
 								break;
 							}
