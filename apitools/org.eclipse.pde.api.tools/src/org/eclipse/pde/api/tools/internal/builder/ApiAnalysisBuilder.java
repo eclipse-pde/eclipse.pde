@@ -232,9 +232,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (DEBUG) {
 			System.out.println("\nStarting build of " + fCurrentProject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (monitor != null && monitor.isCanceled()) {
-			throw new OperationCanceledException();
-		}
+		updateMonitor(monitor, 0);
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 2);
 		IProject[] projects = getRequiredProjects(true);
 		try {
@@ -284,9 +282,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					break;
 				}
 			}
-			if (monitor != null && monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
+			updateMonitor(monitor, 0);
 		} finally {
 			fTypes.clear();
 			fPackages.clear();
@@ -501,6 +497,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	private void buildDeltas(IResourceDelta[] deltas, final State state, IProgressMonitor monitor) throws CoreException {
 		clearLastState(); // so if the build fails, a full build will be triggered
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
+		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 5);
 		if (profile == null) {
 			return;
 		}
@@ -520,8 +517,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 			}
 		}
+		updateMonitor(localMonitor, 1);
 		collectAffectedSourceFiles(state);
-		updateMonitor(monitor, 0);
+		updateMonitor(localMonitor, 1);
 		if (fTypesToCheck.size() != 0) {
 			IPluginModelBase currentModel = getCurrentModel();
 			if (currentModel != null) {
@@ -542,7 +540,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				for (Iterator iterator = fTypesToCheck.iterator(); iterator.hasNext(); ) {
 					IFile file = (IFile) iterator.next();
 					cleanupMarkers(file);
-					updateMonitor(monitor, 0);
+					updateMonitor(localMonitor, 0);
 					ICompilationUnit unit = (ICompilationUnit) JavaCore.create(file);
 					if(!unit.exists()) {
 						continue;
@@ -559,10 +557,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					} catch (JavaModelException e) {
 						ApiPlugin.log(e.getStatus());
 					}
-					updateMonitor(monitor, 0);
+					updateMonitor(localMonitor, 0);
 				}
-				fAnalyzer.analyzeComponent(profile, apiComponent, (String[]) scopeElements.toArray(new String[scopeElements.size()]), monitor);
-				updateMonitor(monitor, 0);
+				updateMonitor(localMonitor, 1);
+				fAnalyzer.analyzeComponent(profile, apiComponent, (String[]) scopeElements.toArray(new String[scopeElements.size()]), localMonitor);
+				updateMonitor(localMonitor, 1);
 			}
 			fTypesToCheck.clear();
 		}
@@ -577,14 +576,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			// clean up all existing markers
 			cleanupMarkers(fCurrentProject);
-			if(!localmonitor.isCanceled()) {
-				localmonitor.worked(1);
-			}
+			updateMonitor(localmonitor, 1);
 			//clean up the .api_settings
 			cleanupApiDescription(fCurrentProject);
-			if(!localmonitor.isCanceled()) {
-				localmonitor.worked(1);
-			}
+			updateMonitor(localmonitor, 1);
 		}
 		finally {
 			localmonitor.done();
