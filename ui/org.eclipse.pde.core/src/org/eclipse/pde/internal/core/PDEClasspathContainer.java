@@ -13,20 +13,11 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IAccessRule;
-import org.eclipse.jdt.core.IClasspathAttribute;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 
 public class PDEClasspathContainer {
 
@@ -64,13 +55,13 @@ public class PDEClasspathContainer {
 		}
 	}
 
-	public static IClasspathEntry[] getExternalEntries(IPluginModelBase model) throws CoreException {
+	public static IClasspathEntry[] getExternalEntries(IPluginModelBase model) {
 		ArrayList entries = new ArrayList();
 		addExternalPlugin(model, new Rule[0], entries);
 		return (IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]);
 	}
 
-	protected static void addExternalPlugin(IPluginModelBase model, Rule[] rules, ArrayList entries) throws CoreException {
+	protected static void addExternalPlugin(IPluginModelBase model, Rule[] rules, ArrayList entries) {
 		if (new File(model.getInstallLocation()).isFile()) {
 			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
 			if (srcPath == null)
@@ -84,13 +75,13 @@ public class PDEClasspathContainer {
 				model = (IPluginModelBase) libraries[i].getModel();
 				String name = libraries[i].getName();
 				String expandedName = ClasspathUtilCore.expandLibraryName(name);
-				IPath path = getPath(model, expandedName);
+				IPath path = ClasspathUtilCore.getPath(model, expandedName);
 				if (path == null && !model.isFragmentModel() && ClasspathUtilCore.containsVariables(name)) {
 					model = resolveLibraryInFragments(model, expandedName);
 					if (model != null && model.isEnabled())
-						path = getPath(model, expandedName);
+						path = ClasspathUtilCore.getPath(model, expandedName);
 				}
-				if (path != null && !path.toFile().isDirectory())
+				if (path != null)
 					addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), rules, getClasspathAttributes(model), entries);
 			}
 		}
@@ -142,16 +133,6 @@ public class PDEClasspathContainer {
 			DISCOURAGED_RULES.put(path, rule);
 		}
 		return rule;
-	}
-
-	protected static IPath getPath(IPluginModelBase model, String libraryName) {
-		IResource resource = model.getUnderlyingResource();
-		if (resource != null) {
-			IResource jarFile = resource.getProject().findMember(libraryName);
-			return (jarFile != null) ? jarFile.getFullPath() : null;
-		}
-		File file = new File(model.getInstallLocation(), libraryName);
-		return file.exists() ? new Path(file.getAbsolutePath()) : null;
 	}
 
 	protected static IPluginModelBase resolveLibraryInFragments(IPluginModelBase model, String libraryName) {

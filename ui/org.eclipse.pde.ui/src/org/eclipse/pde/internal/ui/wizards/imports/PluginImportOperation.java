@@ -241,6 +241,19 @@ public class PluginImportOperation extends JarImportOperation {
 				project.open(monitor);
 			monitor.worked(1);
 
+			if (Platform.inDevelopmentMode()) {
+				// if we are importing plug-ins in the runtime workbench from the host workbench, import everything as-is and return
+				File location = new File(model.getInstallLocation());
+				if (location.isDirectory()) {
+					File classpathFile = new File(location, ".classpath"); //$NON-NLS-1$
+					File projectFile = new File(location, ".project"); //$NON-NLS-1$
+					if (classpathFile.exists() && classpathFile.isFile() && projectFile.exists() && projectFile.isFile()) {
+						importContent(location, project.getFullPath(), FileSystemStructureProvider.INSTANCE, null, new SubProgressMonitor(monitor, 1));
+						return;
+					}
+				}
+			}
+
 			switch (fImportType) {
 				case IMPORT_BINARY :
 					importAsBinary(project, model, true, new SubProgressMonitor(monitor, 4));

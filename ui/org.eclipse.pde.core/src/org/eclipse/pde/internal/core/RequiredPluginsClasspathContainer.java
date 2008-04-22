@@ -308,7 +308,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		return model != null ? ClasspathUtilCore.hasExtensibleAPI(model) : false;
 	}
 
-	protected void addExtraClasspathEntries(HashSet added, ArrayList entries) throws CoreException {
+	protected void addExtraClasspathEntries(HashSet added, ArrayList entries) {
 		IBuildEntry[] buildEntries = fBuild.getBuildEntries();
 		for (int i = 0; i < buildEntries.length; i++) {
 			String name = buildEntries[i].getName();
@@ -318,7 +318,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}
 	}
 
-	protected void addExtraClasspathEntries(HashSet added, ArrayList entries, String[] tokens) throws CoreException {
+	protected void addExtraClasspathEntries(HashSet added, ArrayList entries, String[] tokens) {
 		for (int i = 0; i < tokens.length; i++) {
 			IPath path = Path.fromPortableString(tokens[i]);
 			if (!path.isAbsolute()) {
@@ -436,7 +436,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		return (((Boolean) pkg.getDirective(ICoreConstants.INTERNAL_DIRECTIVE)).booleanValue());
 	}
 
-	private void addExtraLibrary(IPath path, IPluginModelBase model, ArrayList entries) throws CoreException {
+	private void addExtraLibrary(IPath path, IPluginModelBase model, ArrayList entries) {
 		IPath srcPath = null;
 		if (model != null) {
 			IPath shortPath = path.removeFirstSegments(path.matchingFirstSegments(new Path(model.getInstallLocation())));

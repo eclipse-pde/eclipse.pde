@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,37 +12,24 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundleFragment;
 import org.eclipse.pde.internal.core.bundle.BundlePlugin;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.plugin.Fragment;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.Plugin;
-import org.eclipse.pde.internal.core.plugin.PluginBase;
 
 public class ClasspathUtilCore {
 
-	public static void addLibraries(IPluginModelBase model, ArrayList result) throws CoreException {
+	public static void addLibraries(IPluginModelBase model, ArrayList result) {
 		if (new File(model.getInstallLocation()).isFile()) {
 			addJARdPlugin(model, result);
 		} else {
@@ -58,7 +45,7 @@ public class ClasspathUtilCore {
 		}
 	}
 
-	private static void addJARdPlugin(IPluginModelBase model, ArrayList result) throws CoreException {
+	private static void addJARdPlugin(IPluginModelBase model, ArrayList result) {
 
 		IPath sourcePath = getSourceAnnotation(model, "."); //$NON-NLS-1$
 		if (sourcePath == null)
@@ -72,30 +59,21 @@ public class ClasspathUtilCore {
 
 	protected static IClasspathEntry createLibraryEntry(IPluginLibrary library) {
 
-		IClasspathEntry entry = null;
-		try {
-			String name = library.getName();
-			String expandedName = expandLibraryName(name);
+		String name = library.getName();
+		String expandedName = expandLibraryName(name);
 
-			IPluginModelBase model = library.getPluginModel();
-			IPath path = getPath(model, expandedName);
-			if (path == null) {
-				if (model.isFragmentModel() || !containsVariables(name))
-					return null;
-				model = resolveLibraryInFragments(library, expandedName);
-				if (model == null)
-					return null;
-				path = getPath(model, expandedName);
-			}
-
-			// classpath must not contain entries referencing external folders
-			if (model.getUnderlyingResource() == null && path.toFile().isDirectory())
+		IPluginModelBase model = library.getPluginModel();
+		IPath path = getPath(model, expandedName);
+		if (path == null) {
+			if (model.isFragmentModel() || !containsVariables(name))
 				return null;
-
-			entry = JavaCore.newLibraryEntry(path, getSourceAnnotation(model, expandedName), null, false);
-		} catch (CoreException e) {
+			model = resolveLibraryInFragments(library, expandedName);
+			if (model == null)
+				return null;
+			path = getPath(model, expandedName);
 		}
-		return entry;
+
+		return JavaCore.newLibraryEntry(path, getSourceAnnotation(model, expandedName), null, false);
 	}
 
 	public static boolean hasExtensibleAPI(IPluginModelBase model) {
@@ -168,8 +146,9 @@ public class ClasspathUtilCore {
 		return source;
 	}
 
-	public static IPath getSourceAnnotation(IPluginModelBase model, String libraryName) throws CoreException {
-		String zipName = getSourceZipName(libraryName);
+	public static IPath getSourceAnnotation(IPluginModelBase model, String libraryName) {
+		String newlibraryName = TargetWeaver.getWeavedSourceLibraryName(model, libraryName);
+		String zipName = getSourceZipName(newlibraryName);
 		IPath path = getPath(model, zipName);
 		if (path == null) {
 			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
@@ -194,7 +173,7 @@ public class ClasspathUtilCore {
 		return null;
 	}
 
-	private static IPath getPath(IPluginModelBase model, String libraryName) {
+	public static IPath getPath(IPluginModelBase model, String libraryName) {
 		IResource resource = model.getUnderlyingResource();
 		if (resource != null) {
 			IResource jarFile = resource.getProject().findMember(libraryName);
@@ -204,6 +183,10 @@ public class ClasspathUtilCore {
 			File file = new File(model.getInstallLocation(), libraryName);
 			if (file.exists())
 				return new Path(file.getAbsolutePath());
+			file = new File(libraryName);
+			if (file.exists() && file.isAbsolute()) {
+				return new Path(libraryName);
+			}
 		}
 		return null;
 	}

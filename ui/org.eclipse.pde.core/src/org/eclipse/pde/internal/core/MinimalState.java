@@ -119,6 +119,8 @@ public class MinimalState {
 
 	public BundleDescription addBundle(File bundleLocation, long bundleId) throws PluginConversionException, CoreException, IOException {
 		Dictionary manifest = loadManifest(bundleLocation);
+		// update for development mode
+		TargetWeaver.weaveManifest(manifest);
 		boolean hasBundleStructure = manifest != null && manifest.get(Constants.BUNDLE_SYMBOLICNAME) != null;
 		if (!hasBundleStructure) {
 			if (!bundleLocation.isFile() && !new File(bundleLocation, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).exists() && !new File(bundleLocation, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR).exists())

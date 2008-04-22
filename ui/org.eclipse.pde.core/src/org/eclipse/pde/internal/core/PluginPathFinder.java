@@ -132,7 +132,7 @@ public class PluginPathFinder {
 				if (file.exists())
 					return file;
 			} catch (CoreException e) {
-				e.printStackTrace();
+				PDECore.log(e);
 			}
 		}
 		file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$

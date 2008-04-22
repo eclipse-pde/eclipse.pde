@@ -10,47 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ISaveContext;
-import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.ElementChangedEvent;
-import org.eclipse.jdt.core.IClasspathContainer;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IElementChangedListener;
-import org.eclipse.jdt.core.IJavaElementDelta;
-import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import java.io.*;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 /**
@@ -147,7 +114,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		return null;
 	}
 
-	public void shutdown() throws CoreException {
+	public void shutdown() {
 		// remove listener
 		JavaCore.removeElementChangedListener(fElementListener);
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
@@ -205,20 +172,16 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	public Object createAdapterChild(FileAdapter parent, File file) {
 		if (!file.isDirectory()) {
 			String name = file.getName().toLowerCase(Locale.ENGLISH);
-			try {
-				if (name.endsWith(".jar")) { //$NON-NLS-1$
-					IPackageFragmentRoot root = findPackageFragmentRoot(new Path(file.getAbsolutePath()));
-					if (root != null)
-						return root;
-				}
-			} catch (CoreException e) {
-				PDECore.log(e);
+			if (name.endsWith(".jar")) { //$NON-NLS-1$
+				IPackageFragmentRoot root = findPackageFragmentRoot(new Path(file.getAbsolutePath()));
+				if (root != null)
+					return root;
 			}
 		}
 		return new FileAdapter(parent, file, this);
 	}
 
-	private IPackageFragmentRoot findPackageFragmentRoot(IPath jarPath) throws CoreException {
+	private IPackageFragmentRoot findPackageFragmentRoot(IPath jarPath) {
 		IJavaProject jProject = getProxyProject();
 		if (jProject != null) {
 			try {
@@ -234,7 +197,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 			}
 		}
 
-		// Find in other plugin (and fragments) projects dependencies
+		// Find in other plug-in (and fragments) projects dependencies
 		IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < pluginModels.length; i++) {
 			IProject project = pluginModels[i].getUnderlyingResource().getProject();
@@ -348,7 +311,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		// nothing is required here
 	}
 
-	public void prepareToSave(ISaveContext context) throws CoreException {
+	public void prepareToSave(ISaveContext context) {
 		// no need for preparation
 	}
 
@@ -411,7 +374,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		return project;
 	}
 
-	private void computeClasspath(IJavaProject project, IProgressMonitor monitor) throws CoreException {
+	private void computeClasspath(IJavaProject project, IProgressMonitor monitor) {
 		IClasspathEntry[] classpath = new IClasspathEntry[2];
 		classpath[0] = JavaCore.newContainerEntry(JavaRuntime.newDefaultJREContainerPath());
 		classpath[1] = JavaCore.newContainerEntry(PDECore.JAVA_SEARCH_CONTAINER_PATH);

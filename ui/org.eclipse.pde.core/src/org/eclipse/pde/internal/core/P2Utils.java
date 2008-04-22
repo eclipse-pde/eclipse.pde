@@ -45,17 +45,17 @@ public class P2Utils {
 	 */
 	public static URL[] readBundlesTxt(String platformHome) {
 
-		File home = new File(platformHome);
 		Path basePath = new Path(platformHome);
 
-		File bundlesTxt = new File(home, "configuration" + File.separator + BUNDLE_TXT_PATH); //$NON-NLS-1$
+		File configArea = TargetWeaver.getConfigurationArea(platformHome);
+		File bundlesTxt = new File(configArea, BUNDLE_TXT_PATH);
 		List bundles = getBundlesFromFile(bundlesTxt, basePath);
 
 		if (bundles == null) {
 			return null;
 		}
 
-		File srcBundlesTxt = new File(home, "configuration" + File.separator + SRC_BUNDLE_TXT_PATH); //$NON-NLS-1$
+		File srcBundlesTxt = new File(configArea, SRC_BUNDLE_TXT_PATH);
 		List srcBundles = getBundlesFromFile(srcBundlesTxt, basePath);
 
 		if (srcBundles == null) {

@@ -407,7 +407,7 @@ public class PDEModelUtility {
 		// with the PluginContentMergeViewer
 		String textType = name.equals("plugin.xml") || //$NON-NLS-1$
 				name.equals("fragment.xml") ? //$NON-NLS-1$
-		"PLUGIN2"
+		"PLUGIN2" //$NON-NLS-1$
 				: file.getFileExtension(); //$NON-NLS-1$
 		// if the file extension is null, the setTextType method will use type "txt", so no null guard needed
 		change.setTextType(textType);

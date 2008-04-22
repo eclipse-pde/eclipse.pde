@@ -35,6 +35,8 @@ public class ClasspathHelper {
 			}
 		}
 		Properties properties = new Properties();
+		// account for cascading workspaces
+		TargetWeaver.weaveDevProperties(properties);
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
@@ -79,6 +81,8 @@ public class ClasspathHelper {
 			}
 		}
 		Properties properties = new Properties();
+		// account for cascading workspaces
+		TargetWeaver.weaveDevProperties(properties);
 		Iterator iter = map.values().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
