@@ -43,6 +43,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -132,24 +133,25 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if(fCurrentProject != null) {
 			if(reference != null) {
 				IJavaProject jproject = JavaCore.create(fCurrentProject);
+				localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, fCurrentProject.getName()));
 				if(typenames != null) {
 					for(int i = 0; i < typenames.length; i++) {
 						compareProfiles(jproject, typenames[i], reference, component);
-						updateMonitor(monitor);
+						updateMonitor(localMonitor);
 					}
 				}
 				else {
 					compareProfiles(jproject, reference, component);
-					updateMonitor(monitor);
+					updateMonitor(localMonitor);
 				}
 			}
 		}
 		//usage checks
-		checkApiUsage(component, getSearchScope(component, typenames), monitor);
+		checkApiUsage(component, getSearchScope(component, typenames), localMonitor);
 		updateMonitor(localMonitor);
 		//version checks
 		checkApiComponentVersion(reference, component);
-		updateMonitor(monitor);
+		updateMonitor(localMonitor);
 		//check default baseline
 		checkDefaultBaselineSet();
 		updateMonitor(localMonitor);

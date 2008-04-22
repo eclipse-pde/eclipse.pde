@@ -330,7 +330,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			// Compatibility checks
 			IApiComponent apiComponent = wsprofile.getApiComponent(id);
 			if(apiComponent != null) {
-				localMonitor.subTask(MessageFormat.format(BuilderMessages.checking_compatibility, new String[] {fCurrentProject.getName()}));
 				fAnalyzer.analyzeComponent(profile, apiComponent, null, localMonitor);
 				updateMonitor(localMonitor, 1);
 			}
@@ -506,6 +505,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			flatten0(deltas[i], flattenDeltas);
 		}
 		IResourceDelta delta = null;
+		localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, fCurrentProject.getName()));
+		updateMonitor(localMonitor, 0);
 		for (Iterator iterator = flattenDeltas.iterator(); iterator.hasNext();) {
 			delta = (IResourceDelta) iterator.next();
 			IResource resource = delta.getResource();
