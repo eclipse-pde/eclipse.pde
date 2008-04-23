@@ -87,6 +87,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	protected static int rebuildcount = 0;
 	private String origdefault = null;
 	private boolean dirty = false;
+	private boolean needsbuild = false;
 	
 	/**
 	 * The main configuration block for the page
@@ -221,6 +222,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 					tableviewer.setSelection(new StructuredSelection(newprofile), true);
 					newdefault = newprofile.getName();
 					rebuildcount = 0;
+					needsbuild = true;
 					tableviewer.refresh(true);
 				}
 				dirty = true;
@@ -296,7 +298,6 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		if(!dirty) {
 			return;
 		}
-		boolean build = false;
 		//remove 
 		for(Iterator iter = removed.iterator(); iter.hasNext();) {
 			manager.removeApiProfile((String) iter.next());
@@ -308,13 +309,12 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		IApiProfile def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		if(def != null && !def.getName().equals(newdefault)) {
 			manager.setDefaultApiProfile(newdefault);
-			build = true;
 		}
 		else if(def == null) {
 			manager.setDefaultApiProfile(newdefault);
-			build = true;
+			needsbuild = true;
 		}
-		if(build) {
+		if(needsbuild) {
 			if(rebuildcount < 1) {
 				rebuildcount++;
 				IProject[] projects = Util.getApiProjects();
