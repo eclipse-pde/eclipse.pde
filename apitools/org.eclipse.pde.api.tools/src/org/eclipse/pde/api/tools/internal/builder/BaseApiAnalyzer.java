@@ -122,7 +122,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(org.eclipse.pde.api.tools.internal.provisional.IApiProfile, org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void analyzeComponent(final BuildState state, final IApiProfile baseline, final IApiComponent component, final String[] typenames, IProgressMonitor monitor) {
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analzing_api, 3 + (typenames == null ? 0 : typenames.length));
+		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 3 + (typenames == null ? 0 : typenames.length));
 		fJavaProject = getJavaProject(component);
 		if(baseline == null) {
 			//check default baseline
