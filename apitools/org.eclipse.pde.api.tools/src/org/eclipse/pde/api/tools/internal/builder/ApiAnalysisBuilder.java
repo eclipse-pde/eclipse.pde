@@ -312,9 +312,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 3);
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		cleanupMarkers(this.fCurrentProject);
-		if (profile == null) {
-			return;
-		}
 		IPluginModelBase currentModel = getCurrentModel();
 		if (currentModel != null) {
 			localMonitor.subTask(BuilderMessages.building_workspace_profile);
@@ -497,9 +494,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		clearLastState(); // so if the build fails, a full build will be triggered
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 5);
-		if (profile == null) {
-			return;
-		}
 		List flattenDeltas = new ArrayList();
 		for(int i = 0; i < deltas.length; i++) {
 			flatten0(deltas[i], flattenDeltas);

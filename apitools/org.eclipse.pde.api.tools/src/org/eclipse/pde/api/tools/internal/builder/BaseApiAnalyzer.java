@@ -123,6 +123,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	public void analyzeComponent(final BuildState state, final IApiProfile baseline, final IApiComponent component, final String[] typenames, IProgressMonitor monitor) {
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analzing_api, 3 + (typenames == null ? 0 : typenames.length));
+		if(baseline == null) {
+			checkDefaultBaselineSet();
+			return;
+		}
 		IApiComponent reference = baseline.getApiComponent(component.getId());
 		this.fBuildState = state;
 		if(fBuildState == null) {
@@ -981,21 +985,19 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			return;
 		}
-		if(ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile() == null) {
-			if(DEBUG) {
-				System.out.println("Checking if the default api baseline is set"); //$NON-NLS-1$
-			}
-			IApiProblem problem = ApiProblemFactory.newApiProfileProblem(Path.EMPTY.toPortableString(), 
-					null, 
-					new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-					new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)}, 
-					-1, 
-					-1, 
-					-1,  
-					IElementDescriptor.T_RESOURCE, 
-					IApiProblem.API_PROFILE_MISSING);
-			fProblems.add(problem);
+		if(DEBUG) {
+			System.out.println("Checking if the default api baseline is set"); //$NON-NLS-1$
 		}
+		IApiProblem problem = ApiProblemFactory.newApiProfileProblem(Path.EMPTY.toPortableString(), 
+				null, 
+				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
+				new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)}, 
+				-1, 
+				-1, 
+				-1,  
+				IElementDescriptor.T_RESOURCE, 
+				IApiProblem.API_PROFILE_MISSING);
+		fProblems.add(problem);
 	}
 	
 	/**

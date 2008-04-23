@@ -31,18 +31,19 @@ public interface IApiAnalyzer {
 
 	/**
 	 * Analyzes a given {@link IApiComponent} for API problems.
-	 * The component is guaranteed to not be <code>null</code> and to be 
-	 * up-to-date in the API description it belongs to.
+	 * <p>The component is guaranteed to not be <code>null</code> and to be 
+	 * up-to-date in the API description it belongs to.</p>
+	 * <p>If the baseline is null, no analysis is done.</p>
 	 *
 	 * @param buildState the given build state or null if none
-	 * @param profile the profile context to check the component against
+	 * @param baseline the profile context to check the component against
 	 * @param component the component to analyze
 	 * @param typenames the context of type names to analyze within the given component
 	 * @param monitor to report progress
 	 * @see PluginProjectApiComponent
 	 * @see BundleApiComponent
 	 */
-	public void analyzeComponent(final BuildState buildState, final IApiProfile profile, final IApiComponent component, final String[] typenames, IProgressMonitor monitor);
+	public void analyzeComponent(final BuildState buildState, final IApiProfile baseline, final IApiComponent component, final String[] typenames, IProgressMonitor monitor);
 	
 	/**
 	 * Returns the complete set of {@link IApiProblem}s found by this analyzer, or an empty
