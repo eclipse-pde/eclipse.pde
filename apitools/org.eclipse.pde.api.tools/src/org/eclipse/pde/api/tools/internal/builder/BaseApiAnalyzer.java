@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -44,6 +46,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
+import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -91,16 +94,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * List of pending deltas for which the @since tags should be checked
 	 */
 	private List fPendingDeltaInfos = new ArrayList(3);
-	
-	/**
-	 * the project context, or <code>null</code> if we are headless
-	 */
-	private IProject fCurrentProject = null;
-	
+		
 	/**
 	 * The current build state to use
 	 */
 	private BuildState fBuildState = null;
+	
+	/**
+	 * The associated {@link IJavaProject}, if there is one
+	 */
+	private IJavaProject fJavaProject = null;
 	
 	/**
 	 * Method used for initializing tracing in the API tool builder
@@ -110,39 +113,34 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 	
 	/**
-	 * Constructor
-	 * @param project the project being built, or <code>null</code> during
-	 * a headless build
+	 * Constructs an API analyzer
 	 */
-	public BaseApiAnalyzer(IProject project) {
-		fCurrentProject = project;
+	public BaseApiAnalyzer() {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(org.eclipse.pde.api.tools.internal.provisional.IApiProfile, org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void analyzeComponent(final BuildState state, final IApiProfile profile, final IApiComponent component, final String[] typenames, IProgressMonitor monitor) {
+	public void analyzeComponent(final BuildState state, final IApiProfile baseline, final IApiComponent component, final String[] typenames, IProgressMonitor monitor) {
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analzing_api, 3 + (typenames == null ? 0 : typenames.length));
-		IApiComponent reference = profile.getApiComponent(component.getId());
+		IApiComponent reference = baseline.getApiComponent(component.getId());
 		this.fBuildState = state;
 		if(fBuildState == null) {
 			fBuildState = getBuildState();
 		}
+		fJavaProject = getJavaProject(component);
 		//compatibility checks
-		if(fCurrentProject != null) {
-			if(reference != null) {
-				IJavaProject jproject = JavaCore.create(fCurrentProject);
-				localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, fCurrentProject.getName()));
-				if(typenames != null) {
-					for(int i = 0; i < typenames.length; i++) {
-						compareProfiles(jproject, typenames[i], reference, component);
-						updateMonitor(localMonitor);
-					}
-				}
-				else {
-					compareProfiles(jproject, reference, component);
+		if(reference != null) {
+			localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, reference.getId()));
+			if(typenames != null) {
+				for(int i = 0; i < typenames.length; i++) {
+					compareProfiles(typenames[i], reference, component);
 					updateMonitor(localMonitor);
 				}
+			}
+			else {
+				compareProfiles(reference, component);
+				updateMonitor(localMonitor);
 			}
 		}
 		//usage checks
@@ -160,11 +158,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @return the build state to use.
 	 */
 	private BuildState getBuildState() {
-		if(fCurrentProject == null) {
+		IProject project = null;
+		if (fJavaProject != null) {
+			project = fJavaProject.getProject();
+		}
+		if(project == null) {
 			return new BuildState();
 		}
 		try {
-			BuildState state = ApiAnalysisBuilder.getLastBuiltState(fCurrentProject);
+			BuildState state = ApiAnalysisBuilder.getLastBuiltState(project);
 			if(state != null) {
 				return state;
 			}
@@ -223,7 +225,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			fPendingDeltaInfos.clear();
 			fPendingDeltaInfos = null;
 		}
-		fCurrentProject = null;
 		if(fBuildState != null) {
 			fBuildState = null;
 		}
@@ -233,17 +234,22 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @return if the API usage scan should be ignored
 	 */
 	private boolean ignoreApiUsageScan() {
+		if (fJavaProject == null) {
+			// do the API use scan for binary bundles in non-OSGi mode
+			return false;
+		}
+		IProject project = fJavaProject.getProject();
 		boolean ignore = true;
 		ApiPlugin plugin = ApiPlugin.getDefault();
-		ignore &= plugin.getSeverityLevel(IApiProblemTypes.ILLEGAL_EXTEND, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= plugin.getSeverityLevel(IApiProblemTypes.ILLEGAL_IMPLEMENT, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= plugin.getSeverityLevel(IApiProblemTypes.ILLEGAL_INSTANTIATE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= plugin.getSeverityLevel(IApiProblemTypes.ILLEGAL_REFERENCE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= plugin.getSeverityLevel(IApiProblemTypes.LEAK_EXTEND, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= plugin.getSeverityLevel(IApiProblemTypes.LEAK_FIELD_DECL, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= plugin.getSeverityLevel(IApiProblemTypes.LEAK_IMPLEMENT, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= plugin.getSeverityLevel(IApiProblemTypes.LEAK_METHOD_PARAM, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= plugin.getSeverityLevel(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= plugin.getSeverityLevel(IApiProblemTypes.ILLEGAL_EXTEND, project) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= plugin.getSeverityLevel(IApiProblemTypes.ILLEGAL_IMPLEMENT, project) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= plugin.getSeverityLevel(IApiProblemTypes.ILLEGAL_INSTANTIATE, project) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= plugin.getSeverityLevel(IApiProblemTypes.ILLEGAL_REFERENCE, project) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= plugin.getSeverityLevel(IApiProblemTypes.LEAK_EXTEND, project) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= plugin.getSeverityLevel(IApiProblemTypes.LEAK_FIELD_DECL, project) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= plugin.getSeverityLevel(IApiProblemTypes.LEAK_IMPLEMENT, project) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= plugin.getSeverityLevel(IApiProblemTypes.LEAK_METHOD_PARAM, project) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= plugin.getSeverityLevel(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, project) == ApiPlugin.SEVERITY_IGNORE;
 		return ignore;
 	}
 	
@@ -251,10 +257,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @return if the default API baseline check should be ignored or not
 	 */
 	private boolean ignoreDefaultBaselineCheck() {
-		if(fCurrentProject == null) {
+		if(fJavaProject == null) {
 			return true;
 		}
-		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
 	
 	/**
@@ -264,14 +270,18 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @return
 	 */
 	private boolean ignoreSinceTagCheck(String pref) {
+		if (fJavaProject == null) {
+			return true;
+		}
+		IProject project = fJavaProject.getProject();
 		if(pref == null) {
-			boolean all = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-			all &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-			all &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+			boolean all = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, project) == ApiPlugin.SEVERITY_IGNORE;
+			all &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, project) == ApiPlugin.SEVERITY_IGNORE;
+			all &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, project) == ApiPlugin.SEVERITY_IGNORE;
 			return all;
 		}
 		else {
-			return ApiPlugin.getDefault().getSeverityLevel(pref, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+			return ApiPlugin.getDefault().getSeverityLevel(pref, project) == ApiPlugin.SEVERITY_IGNORE;
 		}
 	}
 	
@@ -279,10 +289,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @return if the component version checks should be ignored or not
 	 */
 	private boolean ignoreComponentVersionCheck() {
-		if(fCurrentProject == null) {
-			return true;
+		if (fJavaProject == null) {
+			// still do version checks for non-OSGi case
+			return false;
 		}
-		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
 	
 	/**
@@ -300,9 +311,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				System.out.println("Ignoring API usage scan"); //$NON-NLS-1$
 			}
 			return;
-		}
-		String message = fCurrentProject == null ? BuilderMessages.BaseApiAnalyzer_checking_api_usage : MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {fCurrentProject.getName()});
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, message, 2);
+		} 
+		IProgressMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {component.getId()}), 2);
 		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
 		try {
 			long start = System.currentTimeMillis();
@@ -329,7 +339,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param reference 
 	 * @param component
 	 */
-	private void compareProfiles(final IJavaProject jproject, final String typeName, final IApiComponent reference, final IApiComponent component) {
+	private void compareProfiles(final String typeName, final IApiComponent reference, final IApiComponent component) {
 		if (DEBUG) {
 			System.out.println("comparing profiles ["+reference.getId()+"] and ["+component.getId()+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
@@ -364,11 +374,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (delta != ApiComparator.NO_DELTA) {
 			List allDeltas = Util.collectAllDeltas(delta);
 			for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
-				processDelta(jproject, (IDelta) iterator.next(), reference, component);
+				processDelta((IDelta) iterator.next(), reference, component);
 			}
 			if (!fPendingDeltaInfos.isEmpty()) {
 				for (Iterator iterator = fPendingDeltaInfos.iterator(); iterator.hasNext();) {
-					checkSinceTags(jproject, (Delta) iterator.next(), component);
+					checkSinceTags((Delta) iterator.next(), component);
 				}
 			}
 		}
@@ -380,7 +390,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param reference
 	 * @param component
 	 */
-	private void compareProfiles(final IJavaProject jproject, final IApiComponent reference, final IApiComponent component) {
+	private void compareProfiles(final IApiComponent reference, final IApiComponent component) {
 		long time = System.currentTimeMillis();
 		IDelta delta = null;
 		if (reference == null) {
@@ -404,11 +414,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			List allDeltas = Util.collectAllDeltas(delta);
 			if (allDeltas.size() != 0) {
 				for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
-					processDelta(jproject, (IDelta) iterator.next(), reference, component);
+					processDelta((IDelta) iterator.next(), reference, component);
 				}
 				if (!fPendingDeltaInfos.isEmpty()) {
 					for (Iterator iterator = fPendingDeltaInfos.iterator(); iterator.hasNext();) {
-						checkSinceTags(jproject, (Delta) iterator.next(), component);
+						checkSinceTags((Delta) iterator.next(), component);
 					}
 				}
 			}
@@ -422,11 +432,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param delta
 	 * @param component
 	 */
-	private void checkSinceTags(final IJavaProject jproject, final Delta delta, final IApiComponent component) {
+	private void checkSinceTags(final Delta delta, final IApiComponent component) {
 		if(ignoreSinceTagCheck(null)) {
 			return;
 		}
-		IMember member = Util.getIMember(delta, jproject);
+		if (fJavaProject == null) {
+			// TODO: @since tag validation only performed for projects currently
+			// (i.e. we need source) 
+			return;
+		}
+		IMember member = Util.getIMember(delta, fJavaProject);
 		if (member == null) {
 			return;
 		}
@@ -458,7 +473,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			int offset = nameRange.getOffset();
 			parser.setFocalPosition(offset);
 			parser.setResolveBindings(false);
-			Map options = jproject.getOptions(true);
+			Map options = fJavaProject.getOptions(true);
 			options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 			parser.setCompilerOptions(options);
 			final CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
@@ -594,7 +609,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param component
 	 * @return a new compatibility problem or <code>null</code>
 	 */
-	private IApiProblem createCompatibilityProblem(final IDelta delta, final IJavaProject jproject, final IApiComponent reference, final IApiComponent component) {
+	private IApiProblem createCompatibilityProblem(final IDelta delta, final IApiComponent reference, final IApiComponent component) {
 		try {
 			Version referenceVersion = new Version(reference.getVersion());
 			Version componentVersion = new Version(component.getVersion());
@@ -605,43 +620,41 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			IResource resource = null;
 			IType type = null;
-			try {
-				//TODO won't work in the headless world
-				type = jproject.findType(delta.getTypeName().replace('$', '.'));
-			} catch (JavaModelException e) {
-				ApiPlugin.log(e);
-			}
-			if (type == null) {
-				//TODO won't work in the headless world
-				IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
-				if (manifestFile == null) {
-					// Cannot retrieve the manifest.mf file
-					return null;
+			if (fJavaProject != null) {
+				try {
+					type = fJavaProject.findType(delta.getTypeName().replace('$', '.'));
+				} catch (JavaModelException e) {
+					ApiPlugin.log(e);
 				}
-				resource = manifestFile;
-			} else {
-				//TODO won't work in the headless world
-				ICompilationUnit unit = type.getCompilationUnit();
-				if (unit != null) {
-					resource = unit.getCorrespondingResource();
-					if (resource == null) {
-						return null;
-					}
-				} else {
-					//TODO won't work in the headless world
-					IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
+				if (type == null) {
+					IResource manifestFile = Util.getManifestFile(fJavaProject.getProject());
 					if (manifestFile == null) {
 						// Cannot retrieve the manifest.mf file
 						return null;
 					}
 					resource = manifestFile;
+				} else {
+					ICompilationUnit unit = type.getCompilationUnit();
+					if (unit != null) {
+						resource = unit.getCorrespondingResource();
+						if (resource == null) {
+							return null;
+						}
+					} else {
+						IResource manifestFile = Util.getManifestFile(fJavaProject.getProject());
+						if (manifestFile == null) {
+							// Cannot retrieve the manifest.mf file
+							return null;
+						}
+						resource = manifestFile;
+					}
 				}
 			}
 			// retrieve line number, char start and char end
 			int lineNumber = 1;
 			int charStart = -1;
 			int charEnd = 1;
-			IMember member = Util.getIMember(delta, jproject);
+			IMember member = Util.getIMember(delta, fJavaProject);
 			if (member != null) {
 				ISourceRange range = member.getNameRange();
 				charStart = range.getOffset();
@@ -653,8 +666,13 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					// ignore
 				}
 			}
-			//TODO won't work in the headless world
-			IApiProblem apiProblem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
+			String path = null;
+			if (resource == null) {
+				path = delta.getTypeName();
+			} else {
+				path = resource.getProjectRelativePath().toPortableString();
+			}
+			IApiProblem apiProblem = ApiProblemFactory.newApiProblem(path,
 					delta.getArguments(),
 					new String[] {
 						IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,
@@ -686,7 +704,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param reference
 	 * @param component
 	 */
-	private void processDelta(final IJavaProject jproject, final IDelta delta, final IApiComponent reference, final IApiComponent component) {
+	private void processDelta(final IDelta delta, final IApiComponent reference, final IApiComponent component) {
 		int flags = delta.getFlags();
 		int kind = delta.getKind();
 		if (DeltaProcessor.isCompatible(delta)) {
@@ -760,7 +778,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						return;
 					}
 			}
-			IApiProblem problem = createCompatibilityProblem(delta, jproject, reference, component);
+			IApiProblem problem = createCompatibilityProblem(delta, reference, component);
 			if(problem != null) {
 				if(fProblems.add(problem)) {
 					fBuildState.addBreakingChange(delta);
@@ -802,7 +820,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							compversionval,
 							refversionval
 						},
-						true,
 						String.valueOf(newversion),
 						collectDetails(breakingChanges));
 			}
@@ -819,7 +836,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								compversionval,
 								refversionval
 							},
-							false,
 							String.valueOf(newversion),
 							collectDetails(compatibleChanges));
 				} else if (compversion.getMinor() <= refversion.getMinor()) {
@@ -831,7 +847,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								compversionval,
 								refversionval
 							},
-							false,
 							String.valueOf(newversion),
 							collectDetails(compatibleChanges));
 				}
@@ -861,16 +876,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * or <code>null</code> 
 	 * @param kind
 	 * @param messageargs
-	 * @param breakage
 	 * @param version
 	 * @param description the description of details
 	 * @return a new {@link IApiProblem} or <code>null</code>
 	 */
-	private IApiProblem createVersionProblem(int kind, final String[] messageargs, boolean breakage, String version, String description) {
-		IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
-		if (manifestFile == null) {
-			// Cannot retrieve the manifest.mf file
-			return null;
+	private IApiProblem createVersionProblem(int kind, final String[] messageargs, String version, String description) {
+		IResource manifestFile = null;
+		String path = JarFile.MANIFEST_NAME;
+		if (fJavaProject != null) {
+			manifestFile = Util.getManifestFile(fJavaProject.getProject());
+			
 		}
 		// this error should be located on the manifest.mf file
 		// first of all we check how many api breakage marker are there
@@ -878,7 +893,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		int charStart = 0;
 		int charEnd = 1;
 		char[] contents = null;
-		if (manifestFile.getType() == IResource.FILE) {
+		if (manifestFile!= null && manifestFile.getType() == IResource.FILE) {
+			path = manifestFile.getProjectRelativePath().toPortableString();
 			IFile file = (IFile) manifestFile;
 			InputStream inputStream = null;
 			LineNumberReader reader = null;
@@ -934,7 +950,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} else {
 			lineNumber = 1;
 		}
-		return ApiProblemFactory.newApiVersionNumberProblem(manifestFile.getProjectRelativePath().toPortableString(), 
+		return ApiProblemFactory.newApiVersionNumberProblem(path, 
 				messageargs, 
 				new String[] {
 					IApiMarkerConstants.MARKER_ATTR_VERSION,
@@ -968,7 +984,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if(DEBUG) {
 				System.out.println("Checking if the default api baseline is set"); //$NON-NLS-1$
 			}
-			IApiProblem problem = ApiProblemFactory.newApiProfileProblem(fCurrentProject.getProjectRelativePath().toPortableString(), 
+			IApiProblem problem = ApiProblemFactory.newApiProfileProblem(Path.EMPTY.toPortableString(), 
 					null, 
 					new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
 					new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)}, 
@@ -993,5 +1009,20 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				throw new OperationCanceledException();
 			}
 		}
+	}
+	
+	/**
+	 * Returns the Java project associated with the given API component, or <code>null</code>
+	 * if none.
+	 * 
+	 *@param component API component
+	 * @return Java project or <code>null</code>
+	 */
+	private IJavaProject getJavaProject(IApiComponent component) {
+		if (component instanceof PluginProjectApiComponent) {
+			PluginProjectApiComponent pp = (PluginProjectApiComponent) component;
+			return pp.getJavaProject();
+		}
+		return null;
 	}
 }

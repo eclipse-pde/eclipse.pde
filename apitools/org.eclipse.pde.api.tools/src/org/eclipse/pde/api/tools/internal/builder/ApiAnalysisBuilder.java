@@ -770,7 +770,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @return the API analyzer to use
 	 */
 	protected IApiAnalyzer getAnalyzer() {
-		return new BaseApiAnalyzer(fCurrentProject);
+		return new BaseApiAnalyzer();
 	}
 	
 	/**
