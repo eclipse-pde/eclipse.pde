@@ -30,3 +30,6 @@ org.eclipse.pde.api.tools/debug/apiprofile=false
 
 # for api filter store
 org.eclipse.pde.api.tools/debug/apifilterstore=false
+
+#for api analyzer
+org.eclipse.pde.api.tools/debug/apianalyzer=false
