@@ -81,6 +81,14 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_INDIVIDUAL_SOURCE = "individualSourceBundles"; //$NON-NLS-1$
 	public static final String PROPERTY_ALLOW_BINARY_CYCLES = "allowBinaryCycles"; //$NON-NLS-1$
 
+	public static final String PROPERTY_P2_METADATA_REPO = "p2.metadata.repo"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_ARTIFACT_REPO = "p2.artifact.repo"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_PUBLISH_ARTIFACTS = "p2.publish.artifacts"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_ROOT_NAME = "p2.root.name"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_ROOT_VERSION = "p2.root.version"; //$NON-NLS-1$
+	
+	public static final String PROPERTY_P2_FLAVOR = "p2.flavor"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_APPEND = "p2.append"; //$NON-NLS-1$
 	//Internal usage only
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 

@@ -83,7 +83,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	protected void generateMetadataTarget() {
 		if (configScriptGenerator.haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);
-
+			script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
 			ProductFile product = configScriptGenerator.getProductFile();
 			String versionAdvice = null;
 			if (versionsList && product != null) {
@@ -99,11 +99,11 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 
 	private static void generateP2FinalCall(AntScript script, String productFileLocation, String versionAdvice) {
 		script.print("<p2.generator "); //$NON-NLS-1$
-		script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printAttribute("flavor", "${p2.flavor}", true); //$NON-NLS-1$//$NON-NLS-2$
-		script.printAttribute("metadataRepository", "${p2.metadata.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$ 
+		script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
+		script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
+		script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
+		script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$ 
 		script.printAttribute("mode", "final", true); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (productFileLocation != null) {
@@ -111,8 +111,8 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 			if (versionAdvice != null)
 				script.printAttribute("versionAdvice", versionAdvice, true); //$NON-NLS-1$
 		} else {
-			script.printAttribute("root", "${p2.root.name}", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("rootVersion", "${p2.root.version}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("root", Utils.getPropertyFormat(PROPERTY_P2_ROOT_NAME), true); //$NON-NLS-1$
+			script.printAttribute("rootVersion", Utils.getPropertyFormat(PROPERTY_P2_ROOT_VERSION), true); //$NON-NLS-1$
 		}
 
 		script.println("/>"); //$NON-NLS-1$
@@ -161,6 +161,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 			p2Script = newAntScript(workingDir, "p2product.xml"); //$NON-NLS-1$
 			p2Script.printProjectDeclaration("P2 Product IU Generation", "main", "."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			p2Script.println();
+			p2Script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
 			p2Script.printTargetDeclaration("main", null, TARGET_P2_METADATA, null, "Generate the final Product IU"); //$NON-NLS-1$//$NON-NLS-2$
 			generateP2FinalCall(p2Script, productFileLocation, adviceFile != null ? adviceFile.getAbsolutePath() : null);
 			p2Script.printTargetEnd();

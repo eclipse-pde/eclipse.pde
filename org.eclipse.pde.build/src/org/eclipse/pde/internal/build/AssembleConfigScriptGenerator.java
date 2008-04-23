@@ -537,13 +537,14 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private void generateMetadataTarget() {
 		if (haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);
+			script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
 			script.print("<p2.generator "); //$NON-NLS-1$
 			script.printAttribute("source", Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$
-			script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("flavor", "${p2.flavor}", true); //$NON-NLS-1$//$NON-NLS-2$
-			script.printAttribute("metadataRepository", "${p2.metadata.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
+			script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
+			script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
+			script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
+			script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$ 
 			script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
 			script.printAttribute("mode", "incremental", true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.println("/>"); //$NON-NLS-1$
@@ -551,13 +552,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			if (rootFileProviders.size() > 0) {
 				script.print("<p2.generator "); //$NON-NLS-1$
 				script.printAttribute("config", rootFolder, true); //$NON-NLS-1$
-				script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
-				script.printAttribute("flavor", "${p2.flavor}", true); //$NON-NLS-1$//$NON-NLS-2$
-				script.printAttribute("metadataRepository", "${p2.metadata.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
-				script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$ 
+				script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
+				script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
+				script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
 				script.printAttribute("launcherConfig", configInfo.toString(), true); //$NON-NLS-1$
 				script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
-				script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$ 
 				script.printAttribute("mode", "incremental", true); //$NON-NLS-1$ //$NON-NLS-2$
 				if (productFile != null) {
 					script.printAttribute("exe", rootFolder + '/' + Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), true); //$NON-NLS-1$

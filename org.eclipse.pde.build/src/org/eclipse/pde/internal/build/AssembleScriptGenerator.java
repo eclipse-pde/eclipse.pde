@@ -128,12 +128,13 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		if (configScriptGenerator.haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, PROPERTY_RUN_PACKAGER, null);
 			script.printConditionIsSet("mode", "incremental", PROPERTY_RUN_PACKAGER, "final"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
 			script.print("<p2.generator "); //$NON-NLS-1$
-			script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("flavor", "${p2.flavor}", true); //$NON-NLS-1$//$NON-NLS-2$
-			script.printAttribute("metadataRepository", "${p2.metadata.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
+			script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
+			script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
+			script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
+			script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$ 
 			script.printAttribute("mode", "${mode}", true); //$NON-NLS-1$ //$NON-NLS-2$
 
 			ProductFile product = configScriptGenerator.getProductFile();
@@ -146,8 +147,8 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
 				}
 			} else {
-				script.printAttribute("root", "${p2.root.name}", true); //$NON-NLS-1$ //$NON-NLS-2$
-				script.printAttribute("rootVersion", "${p2.root.version}", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("root", Utils.getPropertyFormat(PROPERTY_P2_ROOT_NAME), true); //$NON-NLS-1$ 
+				script.printAttribute("rootVersion", Utils.getPropertyFormat(PROPERTY_P2_ROOT_VERSION), true); //$NON-NLS-1$ 
 			}
 
 			script.println("/>"); //$NON-NLS-1$
