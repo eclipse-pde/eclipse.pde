@@ -123,7 +123,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	public void analyzeComponent(final BuildState state, final IApiProfile baseline, final IApiComponent component, final String[] typenames, IProgressMonitor monitor) {
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analzing_api, 3 + (typenames == null ? 0 : typenames.length));
+		fJavaProject = getJavaProject(component);
 		if(baseline == null) {
+			//check default baseline
 			checkDefaultBaselineSet();
 			return;
 		}
@@ -132,7 +134,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if(fBuildState == null) {
 			fBuildState = getBuildState();
 		}
-		fJavaProject = getJavaProject(component);
 		//compatibility checks
 		if(reference != null) {
 			localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, reference.getId()));
@@ -152,9 +153,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		updateMonitor(localMonitor);
 		//version checks
 		checkApiComponentVersion(reference, component);
-		updateMonitor(localMonitor);
-		//check default baseline
-		checkDefaultBaselineSet();
 		updateMonitor(localMonitor);
 	}
 
