@@ -96,6 +96,13 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 		this.fProject = JavaCore.create(project);
 		this.fModel = model;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#isBinaryBundle()
+	 */
+	protected boolean isBinaryBundle() {
+		return false;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#dispose()

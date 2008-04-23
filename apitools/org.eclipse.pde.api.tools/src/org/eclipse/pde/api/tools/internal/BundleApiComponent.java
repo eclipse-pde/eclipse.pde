@@ -59,6 +59,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescri
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.TargetWeaver;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.xml.sax.InputSource;
@@ -167,11 +168,25 @@ public class BundleApiComponent extends AbstractApiComponent {
 	protected void init(State state, long bundleId) throws CoreException {
 		try {
 			Dictionary manifest = getManifest();
+			if (isBinaryBundle() && ApiPlugin.WORKSPACE_API_PROFILE_ID.equals(getProfile().getName())) {
+				// must account for bundles in development mode - look for class files in output
+				// folders rather than jars
+				TargetWeaver.weaveManifest(manifest);
+			}
 			StateObjectFactory factory = StateObjectFactory.defaultFactory;
 			fBundleDescription = factory.createBundleDescription(state, manifest, fLocation, bundleId);
 		} catch (BundleException e) {
 			abort("Unable to create API component from specified location: " + fLocation, e); //$NON-NLS-1$
 		}
+	}
+	
+	/**
+	 * Returns whether this API component represents a binary bundle versus a project bundle.
+	 * 
+	 * @return whether this API component represents a binary bundle
+	 */
+	protected boolean isBinaryBundle() {
+		return true;
 	}
 	
 	/* (non-Javadoc)
