@@ -94,11 +94,6 @@ public class ApiComparator {
 			}
 			String typeName = classFile2.getTypeName();
 			IClassFile classFile = component.findClassFile(typeName);
-			if (classFile == null) {
-				final IApiDescription apiDescription = component.getApiDescription();
-				IApiAnnotations elementDescription = apiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
-				return new Delta(Util.getDeltaComponentID(component), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription == null ? RestrictionModifiers.NO_RESTRICTIONS : elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, null);
-			}
 			final IApiDescription apiDescription = component2.getApiDescription();
 			IApiAnnotations elementDescription = apiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
 			if (elementDescription != null) {
@@ -114,6 +109,8 @@ public class ApiComparator {
 							// no delta
 							return NO_DELTA;
 						}
+					} else if (classFile == null) {
+						return NO_DELTA;
 					}
 					// visibility has been changed
 					if ((refVisibility & VisibilityModifiers.API) != 0) {
@@ -129,6 +126,11 @@ public class ApiComparator {
 						return new Delta(Util.getDeltaComponentID(component), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_VISIBILITY, typeName, typeName, null);
 					}
 				}
+				if (classFile == null) {
+					return new Delta(Util.getDeltaComponentID(component), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, null);
+				}
+			} else if (classFile == null) {
+				return new Delta(Util.getDeltaComponentID(component), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, RestrictionModifiers.NO_RESTRICTIONS, typeDescriptor.access, typeName, typeName, null);
 			}
 			ClassFileComparator comparator = new ClassFileComparator(classFile, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);
 			return comparator.getDelta();
