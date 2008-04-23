@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -34,7 +33,7 @@ public class BuildState {
 	private Map compatibleChanges;
 	private Map breakingChanges;
 	
-	public static BuildState read(IProject project, DataInputStream in) throws IOException {
+	public static BuildState read(DataInputStream in) throws IOException {
 		String pluginID= in.readUTF();
 		if (!pluginID.equals(ApiPlugin.PLUGIN_ID))
 			throw new IOException(BuilderMessages.build_wrongFileFormat); 
