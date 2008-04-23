@@ -813,7 +813,6 @@ public class ApiUseAnalyzer {
 			return -1;
 		}
 		int offset = start+namepart.length();
-		System.out.println(line.charAt(offset));;
 		while(line.charAt(offset) == ' ') {
 			offset++;
 		}
