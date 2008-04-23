@@ -29,7 +29,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 public class BuildState {
 	private IDelta[] EMPTY_DELTAS = new IDelta[0];
-	private static final int VERSION = 0x02;
+	private static final int VERSION = 0x03;
 	
 	private Map compatibleChanges;
 	private Map breakingChanges;
@@ -62,7 +62,24 @@ public class BuildState {
 		}
 		return null;
 	}
-
+	public static void write(BuildState state, DataOutputStream out) throws IOException {
+		out.writeUTF(ApiPlugin.PLUGIN_ID);
+		out.writeUTF("STATE"); //$NON-NLS-1$
+		out.writeInt(VERSION);
+		out.writeBoolean(true);
+		IDelta[] compatibleChangesDeltas = state.getCompatibleChanges();
+		int length = compatibleChangesDeltas.length;
+		out.writeInt(length);
+		for (int i = 0; i < length; i++) {
+			writeDelta(compatibleChangesDeltas[i], out);
+		}
+		IDelta[] breakingChangesDeltas = state.getBreakingChanges();
+		int length2 = breakingChangesDeltas.length;
+		out.writeInt(length2);
+		for (int i = 0; i < length2; i++) {
+			writeDelta(breakingChangesDeltas[i], out);
+		}
+	}
 	private static IDelta readDelta(DataInputStream in) throws IOException {
 		// decode the delta from the build state
 		boolean hasComponentID = in.readBoolean();
@@ -84,26 +101,6 @@ public class BuildState {
 		}
 		return new Delta(componentID, elementType, kind, flags, restrictions, modifiers, typeName, key, data);
 	}
-
-	public static void write(BuildState state, DataOutputStream out) throws IOException {
-		out.writeUTF(ApiPlugin.PLUGIN_ID);
-		out.writeUTF("STATE"); //$NON-NLS-1$
-		out.writeInt(VERSION);
-		out.writeBoolean(true);
-		IDelta[] compatibleChangesDeltas = state.getCompatibleChanges();
-		int length = compatibleChangesDeltas.length;
-		out.writeInt(length);
-		for (int i = 0; i < length; i++) {
-			writeDelta(compatibleChangesDeltas[i], out);
-		}
-		IDelta[] breakingChangesDeltas = state.getBreakingChanges();
-		int length2 = breakingChangesDeltas.length;
-		out.writeInt(length2);
-		for (int i = 0; i < length2; i++) {
-			writeDelta(breakingChangesDeltas[i], out);
-		}
-	}
-
 	private static void writeDelta(IDelta delta, DataOutputStream out) throws IOException {
 		// encode a delta into the build state
 		// int elementType, int kind, int flags, int restrictions, int modifiers, String typeName, String key, Object data

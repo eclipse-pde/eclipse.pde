@@ -925,7 +925,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			try {
 				DataInputStream in= new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 				try {
-					return BuildState.read(project, in);
+					return BuildState.read(in);
 				} finally {
 					if (DEBUG) {
 						System.out.println("Saved state thinks last build failed for " + project.getName()); //$NON-NLS-1$
