@@ -620,6 +620,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			IResource resource = null;
 			IType type = null;
+			// retrieve line number, char start and char end
+			int lineNumber = 1;
+			int charStart = -1;
+			int charEnd = 1;
+			IMember member = null;
 			if (fJavaProject != null) {
 				try {
 					type = fJavaProject.findType(delta.getTypeName().replace('$', '.'));
@@ -649,13 +654,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						resource = manifestFile;
 					}
 				}
-			}
-			// retrieve line number, char start and char end
-			int lineNumber = 1;
-			int charStart = -1;
-			int charEnd = 1;
-			IMember member = null;
-			if (fJavaProject != null) {
 				member = Util.getIMember(delta, fJavaProject);
 				if (member != null) {
 					ISourceRange range = member.getNameRange();
