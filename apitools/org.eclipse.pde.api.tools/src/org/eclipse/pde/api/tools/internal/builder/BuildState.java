@@ -29,7 +29,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 public class BuildState {
 	private IDelta[] EMPTY_DELTAS = new IDelta[0];
-	private static final int VERSION = 0x01;
+	private static final int VERSION = 0x02;
 	
 	private Map compatibleChanges;
 	private Map breakingChanges;
