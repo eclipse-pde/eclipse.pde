@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -956,33 +955,20 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			return;
 		}
-		try {
-			if(ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile() == null) {
-				if(DEBUG) {
-					System.out.println("Checking if the default api baseline is set"); //$NON-NLS-1$
-				}
-				IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-				if (markers.length > 1) {
-					// markers have not been cleaned up properly
-					this.fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
-				}
-				IApiProblem problem = ApiProblemFactory.newApiProfileProblem(fCurrentProject.getProjectRelativePath().toPortableString(), 
-						null, 
-						new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-						new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)}, 
-						-1, 
-						-1, 
-						-1,  
-						IElementDescriptor.T_RESOURCE, 
-						IApiProblem.API_PROFILE_MISSING);
-				fProblems.add(problem);
-			} else {
-				// we want to make sure that existing markers are removed
-				this.fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+		if(ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile() == null) {
+			if(DEBUG) {
+				System.out.println("Checking if the default api baseline is set"); //$NON-NLS-1$
 			}
-		}
-		catch(CoreException e) {
-			ApiPlugin.log(e);
+			IApiProblem problem = ApiProblemFactory.newApiProfileProblem(fCurrentProject.getProjectRelativePath().toPortableString(), 
+					null, 
+					new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
+					new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)}, 
+					-1, 
+					-1, 
+					-1,  
+					IElementDescriptor.T_RESOURCE, 
+					IApiProblem.API_PROFILE_MISSING);
+			fProblems.add(problem);
 		}
 	}
 	
