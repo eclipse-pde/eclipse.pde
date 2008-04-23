@@ -98,4 +98,12 @@ public class DSEditor extends MultiSourceEditor {
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return true;
+	}
 }

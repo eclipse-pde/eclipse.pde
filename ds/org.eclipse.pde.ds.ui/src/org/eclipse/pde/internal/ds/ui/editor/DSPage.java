@@ -41,7 +41,9 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
-		// TODO ds.modelChanged content
+
+		// Inform the block
+		fBlock.modelChanged(event);
 	}
 
 	/*
@@ -63,7 +65,7 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 			createFormErrorContent(
 					managedForm,
 					"DS Load Failure",
-					"An error was encountered while parsing the cheat sheet XML file.",
+					"An error was encountered while parsing the DS XML file.",
 					e);
 			return;
 		}

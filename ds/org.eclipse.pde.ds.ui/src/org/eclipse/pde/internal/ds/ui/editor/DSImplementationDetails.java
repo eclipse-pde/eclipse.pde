@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
@@ -58,6 +59,10 @@ public class DSImplementationDetails extends DSAbstractDetails {
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
 
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		fMainSection.setLayoutData(data);
+
+		
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
 		getPage().alignSectionHeaders(getMasterSection().getSection(),
