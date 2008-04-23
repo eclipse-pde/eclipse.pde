@@ -687,16 +687,18 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param component
 	 */
 	private void processDelta(final IJavaProject jproject, final IDelta delta, final IApiComponent reference, final IApiComponent component) {
+		int flags = delta.getFlags();
+		int kind = delta.getKind();
 		if (DeltaProcessor.isCompatible(delta)) {
-			if (delta.getFlags() != IDelta.EXECUTION_ENVIRONMENT) {
+			if (flags != IDelta.EXECUTION_ENVIRONMENT) {
 				// we filter EXECUTION ENVIRONMENT deltas
 				fBuildState.addCompatibleChange(delta);
 			}
-			if (delta.getKind() == IDelta.ADDED) {
+			if (kind == IDelta.ADDED) {
 				int modifiers = delta.getModifiers();
 				if (Util.isPublic(modifiers)) {
 					// if public, we always want to check @since tags
-					switch(delta.getFlags()) {
+					switch(flags) {
 						case IDelta.TYPE_MEMBER :
 						case IDelta.METHOD :
 						case IDelta.CONSTRUCTOR :
@@ -714,7 +716,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 				} else if (Util.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
 					// if protected, we only want to check @since tags if the enclosing class can be subclassed
-					switch(delta.getFlags()) {
+					switch(flags) {
 						case IDelta.TYPE_MEMBER :
 						case IDelta.METHOD :
 						case IDelta.CONSTRUCTOR :
@@ -731,25 +733,32 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 			}
 		} else {
-			if (delta.getKind() == IDelta.ADDED) {
-				// if public, we always want to check @since tags
-				switch(delta.getFlags()) {
-					case IDelta.TYPE_MEMBER :
-					case IDelta.METHOD :
-					case IDelta.CONSTRUCTOR :
-					case IDelta.ENUM_CONSTANT :
-					case IDelta.METHOD_WITH_DEFAULT_VALUE :
-					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-					case IDelta.FIELD :
-						// ensure that there is a @since tag for the corresponding member
-						if (delta.getKind() == IDelta.ADDED && Util.isVisible(delta)) {
-							if (DEBUG) {
-								String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
-								System.err.println(deltaDetails + " is not compatible"); //$NON-NLS-1$
+			switch(kind) {
+				case IDelta.ADDED :
+					// if public, we always want to check @since tags
+					switch(flags) {
+						case IDelta.TYPE_MEMBER :
+						case IDelta.METHOD :
+						case IDelta.CONSTRUCTOR :
+						case IDelta.ENUM_CONSTANT :
+						case IDelta.METHOD_WITH_DEFAULT_VALUE :
+						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+						case IDelta.FIELD :
+							// ensure that there is a @since tag for the corresponding member
+							if (Util.isVisible(delta)) {
+								if (DEBUG) {
+									String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
+									System.err.println(deltaDetails + " is not compatible"); //$NON-NLS-1$
+								}
+								fPendingDeltaInfos.add(delta);
 							}
-							fPendingDeltaInfos.add(delta);
-						}
-				}
+					}
+					break;
+				case IDelta.CHANGED :
+					if (flags == IDelta.RESTRICTIONS) {
+						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=228424
+						return;
+					}
 			}
 			IApiProblem problem = createCompatibilityProblem(delta, jproject, reference, component);
 			if(problem != null) {
