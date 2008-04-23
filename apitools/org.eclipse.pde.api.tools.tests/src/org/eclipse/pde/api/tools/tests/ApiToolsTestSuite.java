@@ -14,6 +14,7 @@ package org.eclipse.pde.api.tools.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.pde.api.tools.builder.tests.OSGiLessAnalysisTests;
 import org.eclipse.pde.api.tools.comparator.tests.AllDeltaTests;
 import org.eclipse.pde.api.tools.model.tests.ApiDescriptionTests;
 import org.eclipse.pde.api.tools.model.tests.ApiProfileTests;
@@ -64,6 +65,7 @@ public class ApiToolsTestSuite extends TestSuite {
 		addTest(new TestSuite(SearchEngineTests.class));
 		addTest(new TestSuite(ApiProblemTests.class));
 		addTest(new TestSuite(ApiProblemFactoryTests.class));
+		addTest(new TestSuite(OSGiLessAnalysisTests.class));
 		//addTest(new TestSuite(ExportComponentTests.class));
 		/*addTest(new TestSuite(DiscouragedAccessTests.class));*/
 	}	
