@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.BundleApiComponent;
 import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
+import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -32,7 +33,8 @@ public interface IApiAnalyzer {
 	 * Analyzes a given {@link IApiComponent} for API problems.
 	 * The component is guaranteed to not be <code>null</code> and to be 
 	 * up-to-date in the API description it belongs to.
-	 * 
+	 *
+	 * @param buildState the given build state or null if none
 	 * @param profile the profile context to check the component against
 	 * @param component the component to analyze
 	 * @param typenames the context of type names to analyze within the given component
@@ -40,7 +42,7 @@ public interface IApiAnalyzer {
 	 * @see PluginProjectApiComponent
 	 * @see BundleApiComponent
 	 */
-	public void analyzeComponent(final IApiProfile profile, final IApiComponent component, final String[] typenames, IProgressMonitor monitor);
+	public void analyzeComponent(final BuildState buildState, final IApiProfile profile, final IApiComponent component, final String[] typenames, IProgressMonitor monitor);
 	
 	/**
 	 * Returns the complete set of {@link IApiProblem}s found by this analyzer, or an empty

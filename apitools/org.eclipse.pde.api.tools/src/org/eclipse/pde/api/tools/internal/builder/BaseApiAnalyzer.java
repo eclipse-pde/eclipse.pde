@@ -114,17 +114,17 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param project the project being built, or <code>null</code> during
 	 * a headless build
 	 */
-	public BaseApiAnalyzer(IProject project, BuildState state) {
+	public BaseApiAnalyzer(IProject project) {
 		fCurrentProject = project;
-		fBuildState = state;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(org.eclipse.pde.api.tools.internal.provisional.IApiProfile, org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void analyzeComponent(final IApiProfile profile, final IApiComponent component, final String[] typenames, IProgressMonitor monitor) {
+	public void analyzeComponent(final BuildState state, final IApiProfile profile, final IApiComponent component, final String[] typenames, IProgressMonitor monitor) {
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analzing_api, 3 + (typenames == null ? 0 : typenames.length));
 		IApiComponent reference = profile.getApiComponent(component.getId());
+		this.fBuildState = state;
 		if(fBuildState == null) {
 			fBuildState = getBuildState();
 		}

@@ -330,7 +330,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			// Compatibility checks
 			IApiComponent apiComponent = wsprofile.getApiComponent(id);
 			if(apiComponent != null) {
-				fAnalyzer.analyzeComponent(profile, apiComponent, null, localMonitor);
+				fAnalyzer.analyzeComponent(this.fBuildState, profile, apiComponent, null, localMonitor);
 				updateMonitor(localMonitor, 1);
 			}
 		}
@@ -561,7 +561,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					updateMonitor(localMonitor, 0);
 				}
 				updateMonitor(localMonitor, 1);
-				fAnalyzer.analyzeComponent(profile, apiComponent, (String[]) scopeElements.toArray(new String[scopeElements.size()]), localMonitor);
+				fAnalyzer.analyzeComponent(this.fBuildState, profile, apiComponent, (String[]) scopeElements.toArray(new String[scopeElements.size()]), localMonitor);
 				updateMonitor(localMonitor, 1);
 			}
 			fTypesToCheck.clear();
@@ -770,7 +770,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @return the API analyzer to use
 	 */
 	protected IApiAnalyzer getAnalyzer() {
-		return new BaseApiAnalyzer(fCurrentProject, fBuildState);
+		return new BaseApiAnalyzer(fCurrentProject);
 	}
 	
 	/**
