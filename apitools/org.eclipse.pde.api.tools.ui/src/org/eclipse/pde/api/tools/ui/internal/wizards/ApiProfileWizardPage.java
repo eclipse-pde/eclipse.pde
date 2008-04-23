@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.wizards;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +50,6 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
-import org.eclipse.pde.internal.core.PluginPathFinder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -156,7 +157,7 @@ public class ApiProfileWizardPage extends WizardPage {
 		 */
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {	
 			monitor.beginTask(WizardMessages.ApiProfileWizardPage_0, 10);
-			URL[] urls = PluginPathFinder.getPluginPaths(location);	
+			URL[] urls = scanLocation(new Path(location));	
 			monitor.worked(1);
 			fProfile = Factory.newApiProfile(name);
 			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 8);
@@ -177,6 +178,29 @@ public class ApiProfileWizardPage extends WizardPage {
 			fProfile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
 			monitor.worked(1);
 			monitor.done();
+		}
+		
+		/**
+		 * Scan given plugin directory for plugins
+		 * @param path
+		 * @return URLs to plugins/features
+		 */
+		private URL[] scanLocation(IPath path) {
+			File file = path.append("plugins").toFile(); //$NON-NLS-1$
+			if(!file.exists() && !file.isDirectory()) {
+				return new URL[0];
+			}
+			HashSet result = new HashSet();
+			File[] children = file.listFiles();
+			if (children != null) {
+				for (int j = 0; j < children.length; j++) {
+					try {
+						result.add(children[j].toURL());
+					} catch (MalformedURLException e) {
+					}
+				}
+			}
+			return (URL[]) result.toArray(new URL[result.size()]);
 		}
 	}
 	
