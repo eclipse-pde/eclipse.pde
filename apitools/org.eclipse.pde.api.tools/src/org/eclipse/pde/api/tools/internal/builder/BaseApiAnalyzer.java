@@ -654,16 +654,19 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			int lineNumber = 1;
 			int charStart = -1;
 			int charEnd = 1;
-			IMember member = Util.getIMember(delta, fJavaProject);
-			if (member != null) {
-				ISourceRange range = member.getNameRange();
-				charStart = range.getOffset();
-				charEnd = charStart + range.getLength();
-				try {
-					IDocument document = Util.getDocument(member.getCompilationUnit());
-					lineNumber = document.getLineOfOffset(charStart);
-				} catch (BadLocationException e) {
-					// ignore
+			IMember member = null;
+			if (fJavaProject != null) {
+				member = Util.getIMember(delta, fJavaProject);
+				if (member != null) {
+					ISourceRange range = member.getNameRange();
+					charStart = range.getOffset();
+					charEnd = charStart + range.getLength();
+					try {
+						IDocument document = Util.getDocument(member.getCompilationUnit());
+						lineNumber = document.getLineOfOffset(charStart);
+					} catch (BadLocationException e) {
+						// ignore
+					}
 				}
 			}
 			String path = null;
