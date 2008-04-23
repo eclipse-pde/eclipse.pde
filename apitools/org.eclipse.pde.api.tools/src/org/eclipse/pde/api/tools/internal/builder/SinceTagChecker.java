@@ -188,19 +188,6 @@ public class SinceTagChecker extends ASTVisitor {
 						}
 					}
 					break;
-				} else if (tagName == null) {
-					List fragments = element.fragments();
-					loop: for (Iterator iterator2 = fragments.iterator(); iterator2.hasNext(); ) {
-						ASTNode node = (ASTNode) iterator2.next();
-						if (node.getNodeType() == ASTNode.TAG_ELEMENT) {
-							TagElement tagElement = (TagElement) node;
-							if (TagElement.TAG_INHERITDOC.equals(tagElement.getTagName())) {
-								// we don't want to flag inherited doc comment
-								found = true;
-								break loop;
-							}
-						}
-					}
 				}
 			}
 			if (!found) {
@@ -210,7 +197,6 @@ public class SinceTagChecker extends ASTVisitor {
 			this.bits |= HAS_NO_COMMENT;
 		}
 	}
-	
 	/**
 	 * @return if the javadoc tag is missing
 	 */
