@@ -372,7 +372,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		if(DEBUG) {
 			System.out.println("null filter map, creating a new one"); //$NON-NLS-1$
 		}
-		fFilterMap = new HashMap();
+		fFilterMap = new HashMap(5);
 		IPath filepath = getFilterFilePath();
 		IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(filepath);
 		if(file == null) {
@@ -541,8 +541,10 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						IFile file = (IFile) resource;
 						if(file.isAccessible()) {
 							try {
-								fFilterMap.clear();
-								fFilterMap = null; 
+								if(fFilterMap != null) {
+									fFilterMap.clear();
+									fFilterMap = null; 
+								}
 								initializeApiFilters();
 							}
 							finally {
