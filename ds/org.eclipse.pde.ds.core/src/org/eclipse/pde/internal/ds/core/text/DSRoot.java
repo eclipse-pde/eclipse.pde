@@ -105,7 +105,7 @@ public class DSRoot extends DSObject implements IDSRoot {
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getEnabled()
 	 */
 	public boolean getEnabled(){
-		return getBooleanAttributeValue(ATTRIBUTE_COMPONENT_NAME, true);
+		return getBooleanAttributeValue(ATTRIBUTE_ENABLED, true);
 	}
 	
 
