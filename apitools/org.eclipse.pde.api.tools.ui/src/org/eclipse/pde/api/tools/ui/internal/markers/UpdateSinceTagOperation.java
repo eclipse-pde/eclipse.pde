@@ -14,14 +14,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -46,8 +41,7 @@ import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.text.edits.TextEdit;
@@ -133,107 +127,100 @@ public class UpdateSinceTagOperation {
 		try {
 			if (javaElement != null && javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
 				ICompilationUnit compilationUnit = (ICompilationUnit) javaElement;
+				if (!compilationUnit.isWorkingCopy()) {
+					// open an editor of the corresponding unit to "show" the quickfix change
+					JavaUI.openInEditor(compilationUnit);
+				}
 				ASTParser parser = ASTParser.newParser(AST.JLS3);
 				parser.setSource(compilationUnit);
 				Integer charStartAttribute = null;
-				try {
-					charStartAttribute = (Integer) this.fMarker.getAttribute(IMarker.CHAR_START);
-					int intValue = charStartAttribute.intValue();
-					parser.setFocalPosition(intValue);
-					parser.setResolveBindings(true);
-					Map options = compilationUnit.getJavaProject().getOptions(true);
-					options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
-					parser.setCompilerOptions(options);
-					final CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
-					NodeFinder nodeFinder = new NodeFinder(intValue);
-					unit.accept(nodeFinder);
-					if (monitor != null) {
-						monitor.worked(1);
-					}
-					BodyDeclaration node = nodeFinder.getNode();
-					if (node != null) {
-						unit.recordModifications();
-						AST ast = unit.getAST();
-						ASTRewrite rewrite = ASTRewrite.create(ast);
-						if (IApiProblem.SINCE_TAG_MISSING == this.sinceTagType) {
-							Javadoc docnode = node.getJavadoc();
-							if (docnode == null) {
-								docnode = ast.newJavadoc();
-								//we do not want to create a new empty Javadoc node in
-								//the AST if there are no missing tags
-								rewrite.set(node, node.getJavadocProperty(), docnode, null);
-							} else {
-								List tags = docnode.tags();
-								boolean found = false;
-								loop: for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
-									TagElement element = (TagElement) iterator.next();
-									String tagName = element.getTagName();
-									if (TagElement.TAG_SINCE.equals(tagName)) {
-										found = true;
-										break loop;
-									}
-								}
-								if (found) return;
-							}
-							ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
-							// check the existing tags list
-							TagElement newtag = ast.newTagElement();
-							newtag.setTagName(TagElement.TAG_SINCE);
-							TextElement textElement = ast.newTextElement();
-							textElement.setText(this.sinceTagVersion);
-							newtag.fragments().add(textElement);
-							lrewrite.insertLast(newtag, null);
+				charStartAttribute = (Integer) this.fMarker.getAttribute(IMarker.CHAR_START);
+				int intValue = charStartAttribute.intValue();
+				parser.setFocalPosition(intValue);
+				parser.setResolveBindings(true);
+				Map options = compilationUnit.getJavaProject().getOptions(true);
+				options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
+				parser.setCompilerOptions(options);
+				final CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
+				NodeFinder nodeFinder = new NodeFinder(intValue);
+				unit.accept(nodeFinder);
+				if (monitor != null) {
+					monitor.worked(1);
+				}
+				BodyDeclaration node = nodeFinder.getNode();
+				if (node != null) {
+					unit.recordModifications();
+					AST ast = unit.getAST();
+					ASTRewrite rewrite = ASTRewrite.create(ast);
+					if (IApiProblem.SINCE_TAG_MISSING == this.sinceTagType) {
+						Javadoc docnode = node.getJavadoc();
+						if (docnode == null) {
+							docnode = ast.newJavadoc();
+							//we do not want to create a new empty Javadoc node in
+							//the AST if there are no missing tags
+							rewrite.set(node, node.getJavadocProperty(), docnode, null);
 						} else {
-							Javadoc docnode = node.getJavadoc();
 							List tags = docnode.tags();
-							TagElement sinceTag = null;
-							for (Iterator iterator = tags.iterator(); iterator.hasNext(); ) {
-								TagElement tagElement = (TagElement) iterator.next();
-								if (TagElement.TAG_SINCE.equals(tagElement.getTagName())) {
-									sinceTag = tagElement;
-									break;
+							boolean found = false;
+							loop: for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
+								TagElement element = (TagElement) iterator.next();
+								String tagName = element.getTagName();
+								if (TagElement.TAG_SINCE.equals(tagName)) {
+									found = true;
+									break loop;
 								}
 							}
-							if (sinceTag != null) {
-								List fragments = sinceTag.fragments();
-								if (fragments.size() == 1) {
-									TextElement textElement = (TextElement) fragments.get(0);
-									StringBuffer buffer = new StringBuffer();
-									buffer.append(' ').append(this.sinceTagVersion);
-									rewrite.set(textElement, TextElement.TEXT_PROPERTY, String.valueOf(buffer), null);
-								}
+							if (found) return;
+						}
+						ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
+						// check the existing tags list
+						TagElement newtag = ast.newTagElement();
+						newtag.setTagName(TagElement.TAG_SINCE);
+						TextElement textElement = ast.newTextElement();
+						textElement.setText(this.sinceTagVersion);
+						newtag.fragments().add(textElement);
+						lrewrite.insertLast(newtag, null);
+					} else {
+						Javadoc docnode = node.getJavadoc();
+						List tags = docnode.tags();
+						TagElement sinceTag = null;
+						for (Iterator iterator = tags.iterator(); iterator.hasNext(); ) {
+							TagElement tagElement = (TagElement) iterator.next();
+							if (TagElement.TAG_SINCE.equals(tagElement.getTagName())) {
+								sinceTag = tagElement;
+								break;
 							}
 						}
-						ITextFileBufferManager textFileBufferManager = FileBuffers.getTextFileBufferManager();
-						IPath path = compilationUnit.getPath();
-						try {
-							if (monitor != null) {
-								monitor.worked(1);
+						if (sinceTag != null) {
+							List fragments = sinceTag.fragments();
+							if (fragments.size() == 1) {
+								TextElement textElement = (TextElement) fragments.get(0);
+								StringBuffer buffer = new StringBuffer();
+								buffer.append(' ').append(this.sinceTagVersion);
+								rewrite.set(textElement, TextElement.TEXT_PROPERTY, String.valueOf(buffer), null);
 							}
-							textFileBufferManager.connect(path, LocationKind.IFILE, monitor);
-							ITextFileBuffer textFileBuffer = textFileBufferManager.getTextFileBuffer(path, LocationKind.IFILE);
-							IDocument document = textFileBuffer.getDocument();
-							TextEdit edits = rewrite.rewriteAST(document, compilationUnit.getJavaProject().getOptions(true));
-							edits.apply(document);
-							textFileBuffer.commit(monitor, true);
-							if (monitor != null) {
-								monitor.worked(1);
-							}
-						} catch(BadLocationException e) {
-							ApiUIPlugin.log(e);
-						} finally {
-							compilationUnit.reconcile(
-									ICompilationUnit.NO_AST,
-									false /* don't force problem detection */,
-									null /* use primary owner */,
-									null /* no progress monitor */);
-							textFileBufferManager.disconnect(path, LocationKind.IFILE, monitor);
 						}
 					}
-				} catch (CoreException e) {
-					ApiUIPlugin.log(e);
+					try {
+						if (monitor != null) {
+							monitor.worked(1);
+						}
+						TextEdit edit= rewrite.rewriteAST();
+						compilationUnit.applyTextEdit(edit, monitor);
+						if (monitor != null) {
+							monitor.worked(1);
+						}
+					} finally {
+						compilationUnit.reconcile(
+								ICompilationUnit.NO_AST,
+								false /* don't force problem detection */,
+								null /* use primary owner */,
+								null /* no progress monitor */);
+					}
 				}
 			}
+		} catch (CoreException e) {
+			ApiUIPlugin.log(e);
 		} finally {
 			if (monitor != null) {
 				monitor.done();
