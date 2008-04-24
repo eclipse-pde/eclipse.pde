@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.osgi.framework.*;
 
 public class RegistryBrowserContentProvider implements ITreeContentProvider {
-	private Hashtable fPluginMap = new Hashtable();
 	private Hashtable fExtensionPointMap = new Hashtable();
 	public boolean isInExtensionSet;
 
@@ -42,6 +41,13 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 				children = getFolderChildren(bundle, id);
 			}
 			return children;
+		}
+
+		/**
+		 * Resets folder's previously cached knowledge about it's children. 
+		 */
+		public void refresh() {
+			children = null;
 		}
 
 		public int getFolderId() {
@@ -92,22 +98,18 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		}
 	}
 
+	/**
+	 * Creates contents adapter for given folder id.
+	 * @param object Folder contents to be wrapped in adapter
+	 * @param id Type of folder
+	 * @return Adapter 
+	 */
 	static protected PluginObjectAdapter createAdapter(Object object, int id) {
 		if (id == IBundleFolder.F_EXTENSIONS)
 			return new ExtensionAdapter(object);
 		if (id == IBundleFolder.F_EXTENSION_POINTS)
 			return new ExtensionPointAdapter(object);
 		return new PluginObjectAdapter(object);
-	}
-
-	protected Object[] createPluginFolders(Bundle bundle) {
-		Object[] array = new Object[5];
-		array[0] = new BundleFolder(bundle, IBundleFolder.F_LOCATION);
-		array[1] = new BundleFolder(bundle, IBundleFolder.F_IMPORTS);
-		array[2] = new BundleFolder(bundle, IBundleFolder.F_LIBRARIES);
-		array[3] = new BundleFolder(bundle, IBundleFolder.F_EXTENSION_POINTS);
-		array[4] = new BundleFolder(bundle, IBundleFolder.F_EXTENSIONS);
-		return array;
 	}
 
 	public void dispose() { // nothing to dispose
@@ -131,27 +133,25 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		if (element instanceof ConfigurationElementAdapter)
 			return ((ConfigurationElementAdapter) element).getChildren();
 
+		if (element instanceof PluginAdapter) {
+			PluginAdapter bundle = (PluginAdapter) element;
+
+			Object[] folders = bundle.getChildren();
+
+			// filter out empty folders
+			ArrayList folderList = new ArrayList();
+			for (int i = 0; i < folders.length; i++) {
+				if (folders[i] != null && ((IBundleFolder) folders[i]).getChildren() != null || ((IBundleFolder) folders[i]).getFolderId() == IBundleFolder.F_LOCATION)
+					folderList.add(folders[i]);
+			}
+			folders = folderList.toArray(new Object[folderList.size()]);
+
+			return folders;
+		}
+
 		if (element instanceof PluginObjectAdapter)
 			element = ((PluginObjectAdapter) element).getObject();
 
-		if (element instanceof Bundle) {
-			Bundle bundle = (Bundle) element;
-			String bundleID = new Long(bundle.getBundleId()).toString();
-			Object[] folders = (Object[]) fPluginMap.get(bundleID);
-			if (folders == null) {
-				folders = createPluginFolders(bundle);
-
-				ArrayList folderList = new ArrayList();
-				for (int i = 0; i < folders.length; i++) {
-					if (folders[i] != null && ((IBundleFolder) folders[i]).getChildren() != null || ((IBundleFolder) folders[i]).getFolderId() == IBundleFolder.F_LOCATION)
-						folderList.add(folders[i]);
-				}
-				folders = folderList.toArray(new Object[folderList.size()]);
-
-				fPluginMap.put(bundleID, folders);
-			}
-			return folders;
-		}
 		if (element instanceof IBundleFolder) {
 			IBundleFolder folder = (IBundleFolder) element;
 			isInExtensionSet = folder.getFolderId() == IBundleFolder.F_EXTENSIONS;
@@ -185,7 +185,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	static Object[] getFolderChildren(Bundle bundle, int id) {
+	protected static Object[] getFolderChildren(Bundle bundle, int id) {
 		Object[] array = null;
 		String bundleId = bundle.getSymbolicName();
 		switch (id) {
@@ -201,6 +201,10 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			case IBundleFolder.F_LIBRARIES :
 				array = getManifestHeaderArray(bundle, Constants.BUNDLE_CLASSPATH);
 				break;
+			case IBundleFolder.F_REGISTERED_SERVICES :
+				return getServices(bundle, IBundleFolder.F_REGISTERED_SERVICES);
+			case IBundleFolder.F_SERVICES_IN_USE :
+				return getServices(bundle, IBundleFolder.F_SERVICES_IN_USE);
 		}
 		Object[] result = null;
 		if (array != null && array.length > 0) {
@@ -210,6 +214,34 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			}
 		}
 		return result;
+	}
+
+	protected static Object[] getServices(Bundle bundle, int type) {
+		Set result = new HashSet();
+
+		try {
+			ServiceReference[] references = PDERuntimePlugin.getDefault().getBundleContext().getAllServiceReferences(null, null);
+
+			for (int i = 0; i < references.length; i++) {
+				ServiceReference ref = references[i];
+
+				if ((type == IBundleFolder.F_REGISTERED_SERVICES) && (bundle.equals(ref.getBundle()))) {
+					result.add(new ServiceReferenceAdapter(ref));
+				}
+
+				Bundle[] usingBundles = ref.getUsingBundles();
+				if ((type == IBundleFolder.F_SERVICES_IN_USE) && (usingBundles != null && Arrays.asList(usingBundles).contains(bundle))) {
+					result.add(new ServiceReferenceAdapter(ref));
+				}
+			}
+
+		} catch (InvalidSyntaxException e) { // nothing
+		}
+
+		if (result.size() == 0)
+			return null;
+
+		return result.toArray(new ServiceReferenceAdapter[result.size()]);
 	}
 
 	public Object getParent(Object element) {

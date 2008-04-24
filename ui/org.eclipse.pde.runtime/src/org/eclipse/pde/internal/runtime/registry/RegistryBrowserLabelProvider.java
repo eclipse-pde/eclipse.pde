@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.runtime.registry;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -21,6 +22,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceReference;
 
 public class RegistryBrowserLabelProvider extends LabelProvider {
 
@@ -40,6 +42,9 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image fReqPluginImage;
 	private Image fLocationImage;
 	private Image fDisabledImage;
+	private Image fExporterImage;
+	private Image fImporterImage;
+	private Image fServiceImage;
 	private TreeViewer fViewer;
 
 	public RegistryBrowserLabelProvider(TreeViewer viewer) {
@@ -56,6 +61,9 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		fGenericAttrImage = PDERuntimePluginImages.DESC_ATTR_XML_OBJ.createImage();
 		fRuntimeImage = PDERuntimePluginImages.DESC_RUNTIME_OBJ.createImage();
 		fLocationImage = PDERuntimePluginImages.DESC_LOCATION.createImage();
+		fExporterImage = PDERuntimePluginImages.DESC_EXP_OBJ.createImage();
+		fImporterImage = PDERuntimePluginImages.DESC_IMP_OBJ.createImage();
+		fServiceImage = PDERuntimePluginImages.DESC_SERVICE_OBJ.createImage();
 
 		ImageDescriptor activePluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_RUN_CO}});
 		fActivePluginImage = activePluginDesc.createImage();
@@ -88,6 +96,9 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		fRuntimeImage.dispose();
 		fLocationImage.dispose();
 		fDisabledImage.dispose();
+		fImporterImage.dispose();
+		fExporterImage.dispose();
+		fServiceImage.dispose();
 	}
 
 	public Image getImage(Object element) {
@@ -117,6 +128,11 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 					return fPluginImage;
 			}
 		}
+
+		if (element instanceof ServiceReference) {
+			return fServiceImage;
+		}
+
 		if (element instanceof IBundleFolder) {
 			int id = ((IBundleFolder) element).getFolderId();
 			switch (id) {
@@ -130,6 +146,10 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 					return fRuntimeImage;
 				case IBundleFolder.F_LOCATION :
 					return fLocationImage;
+				case IBundleFolder.F_REGISTERED_SERVICES :
+					return fExporterImage;
+				case IBundleFolder.F_SERVICES_IN_USE :
+					return fImporterImage;
 			}
 			return null;
 		}
@@ -164,6 +184,13 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 				return id;
 			return id + " (" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		if (element instanceof ServiceReference) {
+			ServiceReference ref = (ServiceReference) element;
+			String[] classes = (String[]) ref.getProperty(org.osgi.framework.Constants.OBJECTCLASS);
+			Long id = (Long) ref.getProperty(org.osgi.framework.Constants.SERVICE_ID);
+			String identifier = " (id=" + id.toString() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			return Arrays.asList(classes).toString().concat(identifier);
+		}
 		if (element instanceof IBundleFolder) {
 			switch (((IBundleFolder) element).getFolderId()) {
 				case IBundleFolder.F_IMPORTS :
@@ -174,6 +201,10 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 					return PDERuntimeMessages.RegistryView_folders_extensionPoints;
 				case IBundleFolder.F_EXTENSIONS :
 					return PDERuntimeMessages.RegistryView_folders_extensions;
+				case IBundleFolder.F_REGISTERED_SERVICES :
+					return PDERuntimeMessages.RegistryBrowserLabelProvider_registeredServices;
+				case IBundleFolder.F_SERVICES_IN_USE :
+					return PDERuntimeMessages.RegistryBrowserLabelProvider_usedServices;
 				case IBundleFolder.F_LOCATION :
 					Bundle bundle = ((IBundleFolder) element).getBundle();
 					URL bundleEntry = bundle.getEntry("/"); //$NON-NLS-1$

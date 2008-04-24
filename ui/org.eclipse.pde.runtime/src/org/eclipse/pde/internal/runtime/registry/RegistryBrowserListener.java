@@ -11,11 +11,12 @@
 package org.eclipse.pde.internal.runtime.registry;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.runtime.registry.RegistryBrowserContentProvider.BundleFolder;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.osgi.framework.*;
 
-public class RegistryBrowserListener implements IRegistryChangeListener, BundleListener {
+public class RegistryBrowserListener implements IRegistryChangeListener, BundleListener, ServiceListener {
 
 	protected RegistryBrowser fBrowser;
 	protected boolean fExtOnly;
@@ -263,7 +264,7 @@ public class RegistryBrowserListener implements IRegistryChangeListener, BundleL
 		switch (changeType) {
 			case BundleEvent.INSTALLED :
 				if (data == null)
-					fBrowser.add(new PluginObjectAdapter(bundle));
+					fBrowser.add(new PluginAdapter(bundle));
 				break;
 			case BundleEvent.UNINSTALLED :
 				if (data != null)
@@ -326,5 +327,39 @@ public class RegistryBrowserListener implements IRegistryChangeListener, BundleL
 				// nothing needs to be done for any other cases
 				break;
 		}
+	}
+
+	public void serviceChanged(ServiceEvent event) {
+		ServiceReference ref = event.getServiceReference();
+
+		switch (event.getType()) {
+			case ServiceEvent.REGISTERED :
+			case ServiceEvent.UNREGISTERING :
+				Bundle bundle = ref.getBundle();
+				TreeItem bundleItem = findBundleItem(bundle.getSymbolicName());
+				PluginAdapter bundleAdapter = ((PluginAdapter) bundleItem.getData());
+				Object[] folders = bundleAdapter.getChildren();
+
+				for (int j = 0; j < folders.length; j++) {
+					if (folders[j] instanceof IBundleFolder) {
+						IBundleFolder folder = (IBundleFolder) folders[j];
+
+						if (folder.getFolderId() == IBundleFolder.F_REGISTERED_SERVICES) {
+							if ((event.getType() == ServiceEvent.REGISTERED) || (event.getType() == ServiceEvent.UNREGISTERING)) {
+								((BundleFolder) folder).refresh(); // refresh model
+								fBrowser.refresh(folder); // refresh view
+
+								// refresh whole bundle in case there were folders added - they might have not existed if bundle had no service before
+								fBrowser.refresh(bundleAdapter);
+							}
+						}
+					}
+				}
+
+				break;
+			case ServiceEvent.MODIFIED :
+				break;
+		}
+
 	}
 }

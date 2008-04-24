@@ -19,8 +19,12 @@ public interface IBundleFolder extends IAdaptable {
 	public static final int F_EXTENSION_POINTS = 2;
 	public static final int F_IMPORTS = 3;
 	public static final int F_LIBRARIES = 4;
+	public static final int F_REGISTERED_SERVICES = 5;
+	public static final int F_SERVICES_IN_USE = 6;
 
 	public Object[] getChildren();
+
+	public void refresh();
 
 	int getFolderId();
 

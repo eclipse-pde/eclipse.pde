@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.runtime;
 
 import java.net.URL;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -73,6 +72,9 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_RUNTIME_OBJ = create(PATH_OBJ, "runtime_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_WARNING_ST_OBJ = create(PATH_OBJ, "warning_st_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_LOCATION = create(PATH_OBJ, "location_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_IMP_OBJ = create(PATH_OBJ, "bundle-importer.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXP_OBJ = create(PATH_OBJ, "bundle-exporter.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_SERVICE_OBJ = create(PATH_OBJ, "int_obj.gif"); //$NON-NLS-1$
 
 	/*
 	 * Overlays

@@ -162,6 +162,7 @@ public class RegistryBrowser extends ViewPart {
 		if (fListener != null) {
 			Platform.getExtensionRegistry().removeRegistryChangeListener(fListener);
 			PDERuntimePlugin.getDefault().getBundleContext().removeBundleListener(fListener);
+			PDERuntimePlugin.getDefault().getBundleContext().removeServiceListener(fListener);
 		}
 		fClipboard.dispose();
 		super.dispose();
@@ -181,6 +182,7 @@ public class RegistryBrowser extends ViewPart {
 
 		PDERuntimePlugin.getDefault().getBundleContext().addBundleListener(fListener);
 		Platform.getExtensionRegistry().addRegistryChangeListener(fListener);
+		PDERuntimePlugin.getDefault().getBundleContext().addServiceListener(fListener);
 	}
 
 	private void createTreeViewer(Composite parent) {
@@ -243,7 +245,7 @@ public class RegistryBrowser extends ViewPart {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < bundles.length; i++)
 			if (bundles[i].getHeaders().get(Constants.FRAGMENT_HOST) == null)
-				list.add(new PluginObjectAdapter(bundles[i]));
+				list.add(new PluginAdapter(bundles[i]));
 		return (PluginObjectAdapter[]) list.toArray(new PluginObjectAdapter[list.size()]);
 	}
 
