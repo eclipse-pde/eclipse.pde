@@ -231,5 +231,6 @@ public class DSComponentDetails extends DSAbstractDetails {
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		fName.commit();
+		fFactory.commit();
 	}
 }

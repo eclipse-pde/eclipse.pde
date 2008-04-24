@@ -90,5 +90,22 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
 		// IHelpContextIds.SIMPLE_CS_EDITOR);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#refresh()
+	 */
+	protected void refresh() {
+		super.refresh();
+		ScrolledForm form = getManagedForm().getForm();
+		IDSModel model = (IDSModel) getModel();
+		String oldTitle = form.getText();
+		String newTitle = model.getDSRoot().getName();
+		if (newTitle.equals(oldTitle) == false) {
+			// Update form page title
+			form.setText(PDETextHelper.translateReadText(newTitle));
+		}
+	}
 
 }
