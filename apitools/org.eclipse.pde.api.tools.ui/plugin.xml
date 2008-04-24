@@ -44,7 +44,7 @@
          <action
                class="org.eclipse.pde.api.tools.ui.internal.actions.ApiToolingSetupObjectContribution"
                enablesFor="+"
-               helpContextId="update_javadoc_tags_contribution_action"
+               helpContextId="api_tooling_setup_action"
                icon="icons/full/obj16/category_menu.gif"
                id="org.eclipse.pde.api.tools.ui.update.javadoctags"
                label="%ApiToolingSetup.name"

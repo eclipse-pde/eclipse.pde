@@ -58,14 +58,5 @@ public interface IApiToolsHelpContextIds {
 	 * Constant representing the help id for the {@link ApiFiltersPropertyPage}
 	 */
 	public static final String APITOOLS_FILTERS_PROPERTY_PAGE = PREFIX + "apitools_filters_property_page"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the help id for the {@link EditApiFilterDialog}
-	 */
-	public static final String APITOOLS_FILTERS_EDIT_DIALOG = PREFIX + "apitools_filters_edit_dialog"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the help id for the {@link KindSelectionDialog}
-	 */
-	public static final String APITOOLS_KIND_SELECTION_DIALOG = PREFIX + "apitools_kinds_selection_dialog"; //$NON-NLS-1$
+		
 }
