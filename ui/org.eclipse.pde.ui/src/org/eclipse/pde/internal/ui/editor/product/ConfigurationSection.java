@@ -90,6 +90,8 @@ public class ConfigurationSection extends PDESection {
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (fCustomEntry.isDirty())
+					fCustomEntry.commit();
 				refresh();
 			}
 		});
@@ -109,6 +111,7 @@ public class ConfigurationSection extends PDESection {
 					info.setUse(os, selected ? "default" : "custom"); //$NON-NLS-1$ //$NON-NLS-2$
 					info.setPath(os, selected == true ? null : fCustomEntry.getValue());
 					fCustomEntry.setValue(selected == true ? null : fCustomEntry.getValue(), true);
+					fCustomEntry.setEditable(!selected);
 				}
 			}
 		});
