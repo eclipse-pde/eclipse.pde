@@ -276,14 +276,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return true;
 		}
 		IProject project = fJavaProject.getProject();
+		ApiPlugin plugin = ApiPlugin.getDefault();
 		if(pref == null) {
-			boolean all = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, project) == ApiPlugin.SEVERITY_IGNORE;
-			all &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, project) == ApiPlugin.SEVERITY_IGNORE;
-			all &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, project) == ApiPlugin.SEVERITY_IGNORE;
-			return all;
+			boolean ignore = plugin.getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, project) == ApiPlugin.SEVERITY_IGNORE;
+			ignore &= plugin.getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, project) == ApiPlugin.SEVERITY_IGNORE;
+			ignore &= plugin.getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, project) == ApiPlugin.SEVERITY_IGNORE;
+			return ignore;
 		}
 		else {
-			return ApiPlugin.getDefault().getSeverityLevel(pref, project) == ApiPlugin.SEVERITY_IGNORE;
+			return plugin.getSeverityLevel(pref, project) == ApiPlugin.SEVERITY_IGNORE;
 		}
 	}
 	
