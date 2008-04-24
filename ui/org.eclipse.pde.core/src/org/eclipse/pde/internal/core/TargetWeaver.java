@@ -15,8 +15,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.osgi.framework.Constants;
 
 /**
@@ -69,17 +71,20 @@ public class TargetWeaver {
 	public static File getConfigurationArea(String platformHome) {
 		// only weave in development mode
 		if (fgIsDev && fgConfigAreaURL != null) {
-			try {
-				URL url = new URL(fgConfigAreaURL);
-				String file = url.getFile();
-				if (file != null && file.length() > 0) {
-					File area = new File(file);
-					if (area != null && area.exists()) {
-						return area;
+			if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation()))) {
+				// only point to dev config area for default target platform
+				try {
+					URL url = new URL(fgConfigAreaURL);
+					String file = url.getFile();
+					if (file != null && file.length() > 0) {
+						File area = new File(file);
+						if (area != null && area.exists()) {
+							return area;
+						}
 					}
+				} catch (MalformedURLException e) {
+					PDECore.log(e);
 				}
-			} catch (MalformedURLException e) {
-				PDECore.log(e);
 			}
 		}
 		// default
