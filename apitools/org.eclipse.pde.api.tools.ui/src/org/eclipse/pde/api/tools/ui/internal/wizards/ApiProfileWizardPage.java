@@ -13,8 +13,6 @@ package org.eclipse.pde.api.tools.ui.internal.wizards;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -157,15 +155,15 @@ public class ApiProfileWizardPage extends WizardPage {
 		 */
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {	
 			monitor.beginTask(WizardMessages.ApiProfileWizardPage_0, 10);
-			URL[] urls = scanLocation(new Path(location));	
+			File[] files = scanLocation(new Path(location));	
 			monitor.worked(1);
 			fProfile = Factory.newApiProfile(name);
 			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 8);
-			subMonitor.beginTask(IApiToolsConstants.EMPTY_STRING, urls.length); 
+			subMonitor.beginTask(IApiToolsConstants.EMPTY_STRING, files.length); 
 			List components = new ArrayList();
-			for (int i = 0; i < urls.length; i++) {
+			for (int i = 0; i < files.length; i++) {
 				try {
-					IApiComponent component = fProfile.newApiComponent(urls[i].getFile());
+					IApiComponent component = fProfile.newApiComponent(files[i].getPath());
 					if (component != null) {
 						components.add(component);
 					}
@@ -183,24 +181,21 @@ public class ApiProfileWizardPage extends WizardPage {
 		/**
 		 * Scan given plugin directory for plugins
 		 * @param path
-		 * @return URLs to plugins/features
+		 * @return Files of plugins/features
 		 */
-		private URL[] scanLocation(IPath path) {
+		private File[] scanLocation(IPath path) {
 			File file = path.append("plugins").toFile(); //$NON-NLS-1$
 			if(!file.exists() && !file.isDirectory()) {
-				return new URL[0];
+				return new File[0];
 			}
 			HashSet result = new HashSet();
 			File[] children = file.listFiles();
 			if (children != null) {
 				for (int j = 0; j < children.length; j++) {
-					try {
-						result.add(children[j].toURL());
-					} catch (MalformedURLException e) {
-					}
+					result.add(children[j]);
 				}
 			}
-			return (URL[]) result.toArray(new URL[result.size()]);
+			return (File[]) result.toArray(new File[result.size()]);
 		}
 	}
 	
