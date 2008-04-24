@@ -33,10 +33,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 
-	public void setPageComplete(boolean complete) {
-		super.setPageComplete(complete);
-	}
-
 	private IPluginModelBase[] fSelected;
 	private IPluginModelBase[] fUnmigrated;
 	private CheckboxTableViewer pluginListViewer;
@@ -54,11 +50,6 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 	class TablePart extends WizardCheckboxTablePart {
 		public TablePart(String mainLabel) {
 			super(mainLabel);
-		}
-
-		public void updateCounter(int count) {
-			super.updateCounter(count);
-			dialogChanged();
 		}
 
 		protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
@@ -138,20 +129,8 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 		fUnmigrated = (IPluginModelBase[]) modelArray.toArray(new IPluginModelBase[modelArray.size()]);
 	}
 
-	private void dialogChanged() {
-		setPageComplete(tablePart.getSelectionCount() > 0);
-	}
-
-	public boolean isPageComplete() {
-		if (tablePart.isEnabled()) {
-			return tablePart.getSelectionCount() > 0;
-		}
-		return true;
-	}
-
 	public void setEnable(boolean enabled) {
 		tablePart.setEnabled(enabled);
-		setPageComplete(isPageComplete());
 	}
 
 	public void updateData() {

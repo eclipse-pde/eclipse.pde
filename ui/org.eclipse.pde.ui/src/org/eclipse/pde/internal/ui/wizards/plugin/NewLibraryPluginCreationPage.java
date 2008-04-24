@@ -146,7 +146,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		gd.horizontalSpan = 2;
 		fUpdateRefsCheck.setLayoutData(gd);
 		//enable by default
-		fUpdateRefsCheck.setSelection(true);
+		fUpdateRefsCheck.setSelection(false);
 		fUpdateRefsCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (getNextPage() instanceof NewLibraryPluginCreationUpdateRefPage) {
