@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,9 @@ import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.ui.PartInitException;
 
+/**
+ * @since 3.4
+ */
 public class SpyIDEUtil {
 	public static void openClass(String pluginId, String clazz) {
 		IPluginModelBase model = PluginRegistry.findModel(pluginId);

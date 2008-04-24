@@ -37,6 +37,9 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.osgi.framework.Bundle;
 
+/**
+ * @since 3.4
+ */
 public class ActivePartSection implements ISpySection {
 
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {

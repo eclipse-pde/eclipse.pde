@@ -21,6 +21,9 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+/**
+ * @since 3.4
+ */
 public class ActiveShellSection implements ISpySection {
 
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {

@@ -28,6 +28,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.PackageAdmin;
 
+/**
+ * @since 3.4
+ */
 public class ActiveDialogPageSection implements ISpySection {
 
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {

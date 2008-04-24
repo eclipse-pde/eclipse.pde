@@ -40,6 +40,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.part.ViewPart;
 
+/**
+ * @since 3.4
+ */
 public class ActiveHelpSection implements ISpySection {
 
 	private SpyFormToolkit toolkit;
