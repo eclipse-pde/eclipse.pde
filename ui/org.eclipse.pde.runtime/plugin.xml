@@ -45,10 +45,16 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+M2+F1">
       </key>
+       <key
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            locale="ja"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+M2+F1">
+      </key>
       <key
             commandId="org.eclipse.pde.runtime.spy.commands.spyCommand"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            platform="carbon"
+            locale="ja"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M3+F1">
       </key>
