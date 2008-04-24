@@ -155,7 +155,12 @@ public class ApiProfileWizardPage extends WizardPage {
 		 */
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {	
 			monitor.beginTask(WizardMessages.ApiProfileWizardPage_0, 10);
-			File[] files = scanLocation(new Path(location));	
+			Path path = new Path(location);
+			File plugins = path.append("plugins").toFile(); //$NON-NLS-1$
+			if (!plugins.exists() || !plugins.isDirectory()) {
+				plugins = path.toFile();
+			}
+			File[] files = scanLocation(plugins);
 			monitor.worked(1);
 			fProfile = Factory.newApiProfile(name);
 			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 8);
@@ -179,17 +184,16 @@ public class ApiProfileWizardPage extends WizardPage {
 		}
 		
 		/**
-		 * Scan given plugin directory for plugins
-		 * @param path
-		 * @return Files of plugins/features
+		 * Scan given directory for plug-ins
+		 * @param directory
+		 * @return Files of plug-ins/features
 		 */
-		private File[] scanLocation(IPath path) {
-			File file = path.append("plugins").toFile(); //$NON-NLS-1$
-			if(!file.exists() && !file.isDirectory()) {
+		private File[] scanLocation(File directory) {
+			if(!directory.exists() && !directory.isDirectory()) {
 				return new File[0];
 			}
 			HashSet result = new HashSet();
-			File[] children = file.listFiles();
+			File[] children = directory.listFiles();
 			if (children != null) {
 				for (int j = 0; j < children.length; j++) {
 					result.add(children[j]);
