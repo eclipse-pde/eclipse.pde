@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,15 +13,8 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -112,7 +105,7 @@ public class JavadocLocationManager {
 					buffer.append(path);
 					if (archive)
 						buffer.insert(0, "jar:"); //$NON-NLS-1$
-					processPlugins(buffer.toString(), children[i].getChildren()); //$NON-NLS-1$				
+					processPlugins(buffer.toString(), children[i].getChildren());
 				}
 			}
 		}
@@ -134,7 +127,7 @@ public class JavadocLocationManager {
 		}
 	}
 
-	public void reset() {
+	public synchronized void reset() {
 		fLocations = null;
 	}
 

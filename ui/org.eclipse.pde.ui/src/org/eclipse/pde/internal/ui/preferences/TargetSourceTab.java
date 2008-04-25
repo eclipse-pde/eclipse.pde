@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogPage;
@@ -162,7 +163,15 @@ public class TargetSourceTab {
 	public boolean performOk() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		preferences.setValue(ICoreConstants.P_SOURCE_LOCATIONS, encodeSourceLocations());
-		PDECore.getDefault().getJavadocLocationManager().reset();
+		// Reset the javadoc locations in a job in case locations are being initialized
+		Job resetJavadocJob = new Job("Reset Javadoc Locations") { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				PDECore.getDefault().getJavadocLocationManager().reset();
+				return Status.OK_STATUS;
+			}
+		};
+		resetJavadocJob.setSystem(true);
+		resetJavadocJob.schedule();
 		return true;
 	}
 
