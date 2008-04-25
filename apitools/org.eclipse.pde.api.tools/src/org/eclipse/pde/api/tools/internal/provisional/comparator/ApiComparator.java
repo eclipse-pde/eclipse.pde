@@ -485,14 +485,18 @@ public class ApiComparator {
 									// we skip nested types (member, local and anonymous)
 									return;
 								}
+								int visibility = 0;
+								if (elementDescription != null) {
+									visibility = elementDescription.getVisibility();
+								}
 								IClassFile classFile2 = component2.findClassFile(typeName, id);
 								if (classFile2 == null) {
+									if ((visibility & visibilityModifiers) == 0) {
+										// we skip the class file according to their visibility
+										return;
+									}
 									globalDelta.add(new Delta(Util.getDeltaComponentID(component2), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, typeName, typeName, typeName));
 								} else {
-									int visibility = 0;
-									if (elementDescription != null) {
-										visibility = elementDescription.getVisibility();
-									}
 									if ((visibility & visibilityModifiers) == 0) {
 										// we skip the class file according to their visibility
 										return;

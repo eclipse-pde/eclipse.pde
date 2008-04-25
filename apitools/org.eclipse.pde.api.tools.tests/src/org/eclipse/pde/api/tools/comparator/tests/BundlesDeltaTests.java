@@ -30,7 +30,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(BundlesDeltaTests.class);
 		TestSuite suite = new TestSuite(BundlesDeltaTests.class.getName());
-		suite.addTest(new BundlesDeltaTests("test8"));
+		suite.addTest(new BundlesDeltaTests("test12"));
 		return suite;
 	}
 
@@ -482,4 +482,20 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertNotNull("No delta", delta);
 		assertTrue("Wrong delta", delta == ApiComparator.NO_DELTA);
 	}
+	/**
+	 * Remove internal type in non API package
+	 */
+	public void test12() {
+		deployBundles("test12");
+		IApiProfile beforeState = getBeforeState();
+		IApiProfile afterState = getAfterState();
+		IApiComponent apiComponent = afterState.getApiComponent("deltatest1");
+		assertNotNull("No api component", apiComponent);
+		IApiComponent refApiComponent = beforeState.getApiComponent("deltatest1");
+		assertNotNull("No api component", refApiComponent);
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false);
+		assertNotNull("No delta", delta);
+		assertTrue("Wrong delta", delta == ApiComparator.NO_DELTA);
+	}
+
 }
