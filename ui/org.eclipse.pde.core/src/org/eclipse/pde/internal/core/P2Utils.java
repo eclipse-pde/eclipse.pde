@@ -201,8 +201,9 @@ public class P2Utils {
 					srcOut.write(',');
 					srcOut.write(base.getVersion());
 					srcOut.write(',');
-					File location = new File(currentModel.getInstallLocation());
-					if (location != null) {
+					String installLocation = currentModel.getInstallLocation();
+					if (installLocation != null) {
+						File location = new File(installLocation);
 						try {
 							srcOut.write(location.toURL().toString());
 						} catch (MalformedURLException e) {
@@ -219,8 +220,9 @@ public class P2Utils {
 					out.write(',');
 					out.write(base.getVersion());
 					out.write(',');
-					File location = new File(currentModel.getInstallLocation());
-					if (location != null) {
+					String installLocation = currentModel.getInstallLocation();
+					if (installLocation != null) {
+						File location = new File(installLocation);
 						try {
 							out.write(location.toURL().toString());
 						} catch (MalformedURLException e) {
