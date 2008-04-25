@@ -2690,4 +2690,27 @@ public final class Util {
 		}
 		return String.valueOf(buffer);
 	}
+
+	public static String getDeltaRestrictions(int restrictions) {
+		StringBuffer buffer = new StringBuffer();
+		if (RestrictionModifiers.isExtendRestriction(restrictions)) {
+			buffer.append("NO_EXTEND"); //$NON-NLS-1$
+		}
+		if (RestrictionModifiers.isImplementRestriction(restrictions)) {
+			buffer.append("NO_IMPLEMENT"); //$NON-NLS-1$
+		}
+		if (RestrictionModifiers.isOverrideRestriction(restrictions)) {
+			buffer.append("NO_OVERRIDEN"); //$NON-NLS-1$
+		}
+		if (RestrictionModifiers.isInstantiateRestriction(restrictions)) {
+			buffer.append("NO_INSTANTIATE"); //$NON-NLS-1$
+		}
+		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+			buffer.append("NO_REFERENCE"); //$NON-NLS-1$
+		}
+		if (RestrictionModifiers.isUnrestricted(restrictions)) {
+			buffer.append("NO_RESTRICTIONS"); //$NON-NLS-1$
+		}
+		return String.valueOf(buffer);
+	}
 }

@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
+import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 import com.ibm.icu.text.MessageFormat;
@@ -42,6 +44,8 @@ public abstract class DeltaTestSetup extends TestCase {
 	private static final String AFTER = "after";
 	
 	private static final IDelta[] EMPTY_CHILDREN = new IDelta[0];
+	
+	private final static boolean DEBUG = false;
 
 	static {
 		WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append(WORKSPACE_NAME);
@@ -175,11 +179,47 @@ public abstract class DeltaTestSetup extends TestCase {
 			IDelta leafDelta = result[i];
 			String message = leafDelta.getMessage();
 			assertNotNull("No message", message);
+			if (DEBUG) {
+				if (DeltaProcessor.isCompatible(leafDelta)) {
+					printDeltaDetails(leafDelta);
+				}
+			}
 			assertFalse("Should not be an unknown message : " + leafDelta, message.startsWith(unknownMessageStart));
 		}
 		return result;
 	}
 	
+	private void printDeltaDetails(IDelta delta) {
+		StringBuffer buffer = new StringBuffer();
+		int flags = delta.getFlags();
+		buffer
+			.append(Util.getDeltaElementType(delta.getElementType()))
+			.append('_')
+			.append(Util.getDeltaKindName(delta.getKind()))
+			.append('_')
+			.append(Util.getDeltaFlagsName(flags));
+		switch(flags) {
+			case IDelta.METHOD :
+			case IDelta.FIELD :
+			case IDelta.TYPE_MEMBER :
+			case IDelta.TYPE :
+			case IDelta.API_TYPE :
+			case IDelta.CONSTRUCTOR :
+				buffer
+					.append('_')
+					.append(Util.getDeltaRestrictions(delta.getRestrictions()));
+				break;
+			default: 
+		}
+		String[] arguments = delta.getArguments();
+		int length = arguments.length;
+		switch(length) {
+			case 1 :
+				buffer.append(" arguments: ").append("{0}");
+		}
+		System.out.println(String.valueOf(buffer));
+	}
+
 	private void collect0(IDelta delta, List<IDelta> collect) {
 		IDelta[] children = delta.getChildren();
 		int length = children.length;
