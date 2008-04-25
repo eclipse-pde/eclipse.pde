@@ -313,8 +313,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (featureProperties.containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId)) {
 				String[] extraElementsToFetch = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId), ","); //$NON-NLS-1$
 				for (int j = 1; j < extraElementsToFetch.length; j++) {
-					Object[] infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
-					generateFetchEntry((String) infos[0], (Version) infos[1], false);
+					Map infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
+					generateFetchEntry((String) infos.get(Utils.EXTRA_ID), (Version) infos.get(Utils.EXTRA_VERSION), false);
 				}
 				continue;
 			}
@@ -399,8 +399,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (featureProperties.containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + elementId)) {
 				String[] extraElementsToFetch = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + elementId), ","); //$NON-NLS-1$
 				for (int j = 1; j < extraElementsToFetch.length; j++) {
-					Object[] infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
-					generateFetchEntry((String) infos[0], (Version) infos[1], false);
+					Map infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
+					generateFetchEntry((String) infos.get(Utils.EXTRA_ID), (Version) infos.get(Utils.EXTRA_VERSION), false);
 				}
 				continue;
 			}

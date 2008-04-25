@@ -134,15 +134,16 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	public static File[] asFile(Collection collection) {
-		if(collection.size() == 0)
+		if (collection.size() == 0)
 			return new File[0];
 		Object first = collection.iterator().next();
 		if (first instanceof String)
-			return asFile((String[])collection.toArray(new String[collection.size()]));
-		else if (first instanceof URL) 
-			return asFile((URL[])collection.toArray(new URL[collection.size()]));
+			return asFile((String[]) collection.toArray(new String[collection.size()]));
+		else if (first instanceof URL)
+			return asFile((URL[]) collection.toArray(new URL[collection.size()]));
 		throw new IllegalArgumentException();
 	}
+
 	/**
 	 * Return a string which is a concatination of each member of the given
 	 * collection, separated by the given separator.
@@ -502,7 +503,16 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return Collections.EMPTY_MAP;
 	}
 
-	public static Object[] parseExtraBundlesString(String input, boolean onlyId) {
+	public static final String EXTRA_ID = "id"; //$NON-NLS-1$
+	public static final String EXTRA_VERSION = "version"; //$NON-NLS-1$
+	public static final String EXTRA_UNPACK = "unpack"; //$NON-NLS-1$
+	public static final String EXTRA_OPTIONAL = "optional"; //$NON-NLS-1$
+	public static final String EXTRA_OS = "os"; //$NON-NLS-1$
+	public static final String EXTRA_WS = "ws"; //$NON-NLS-1$
+	public static final String EXTRA_ARCH = "arch"; //$NON-NLS-1$
+
+	public static Map parseExtraBundlesString(String input, boolean onlyId) {
+		Map results = new HashMap();
 		StringTokenizer tokenizer = null;
 		if (onlyId)
 			if (input.startsWith("plugin@")) //$NON-NLS-1$
@@ -513,21 +523,34 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 				tokenizer = new StringTokenizer(input, ";"); //$NON-NLS-1$
 		else
 			tokenizer = new StringTokenizer(input, ";"); //$NON-NLS-1$
-		String bundleId = tokenizer.nextToken();
-		Version version = Version.emptyVersion;
-		Boolean unpack = Boolean.FALSE;
+
+		results.put(EXTRA_ID, tokenizer.nextToken());
+		results.put(EXTRA_VERSION, Version.emptyVersion);
+		results.put(EXTRA_UNPACK, Boolean.TRUE);
+
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
-			if (token.startsWith("version")) { //$NON-NLS-1$
-				version = new Version(token.substring(8));
-				continue;
+			String value = null;
+			int idx = token.indexOf('=');
+			if (idx > 0 && idx < token.length() - 1) {
+				value = token.substring(idx + 1).trim();
+				if (value.charAt(0) == '"' && value.charAt(value.length() - 1) == '"')
+					value = value.substring(1, value.length() - 1);
 			}
-			if (token.startsWith("unpack")) { //$NON-NLS-1$
-				unpack = (token.toLowerCase().indexOf(TRUE) > -1) ? Boolean.TRUE : Boolean.FALSE;
-				continue;
-			}
+			if (token.startsWith(EXTRA_VERSION))
+				results.put(EXTRA_VERSION, new Version(value));
+			else if (token.startsWith(EXTRA_UNPACK))
+				results.put(EXTRA_UNPACK, Boolean.valueOf(value));
+			else if (token.startsWith(EXTRA_OS))
+				results.put(EXTRA_OS, value);
+			else if (token.startsWith(EXTRA_WS))
+				results.put(EXTRA_WS, value);
+			else if (token.startsWith(EXTRA_ARCH))
+				results.put(EXTRA_ARCH, value);
+			else if (token.startsWith(EXTRA_OPTIONAL))
+				results.put(EXTRA_OPTIONAL, Boolean.valueOf(value));
 		}
-		return new Object[] {bundleId, version, unpack};
+		return results;
 	}
 
 	static public boolean matchVersions(String version1, String version2) {

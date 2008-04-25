@@ -110,6 +110,9 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants 
 		FeatureEntry entry = new FeatureEntry(attributes.getValue("id"), attributes.getValue("version"), false); //$NON-NLS-1$ //$NON-NLS-2$
 		String flag = attributes.getValue("unpack"); //$NON-NLS-1$
 		if (flag != null)
+			entry.setUnpack(Boolean.valueOf(flag).booleanValue());
+		flag = attributes.getValue("optional"); //$NON-NLS-1$
+		if (flag != null)
 			entry.setOptional(Boolean.valueOf(flag).booleanValue());
 		setEnvironment(attributes, entry);
 		result.addEntry(entry);

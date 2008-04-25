@@ -241,6 +241,31 @@ public class SourceTests extends PDETestCase {
 		entries.add("eclipse/plugins/source_1.0.0/src/bundleA_1.0.0/src.zip");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 	}
+	
+	// test use of feature@foo;optional="true"
+	public void testBug228537() throws Exception {
+		IFolder buildFolder = newTest("228537");
+		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
+		
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "source" }, null);
+		Properties properties = new Properties();
+		properties.put("generate.feature@source", "sdk,feature@org.eclipse.rcp;optional=\"true\";os=\"win32\"");
+		Utils.storeBuildProperties(sdk, properties);
+		
+		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
+		generateScripts(buildFolder, buildProperties);
+		
+		assertResourceFile(buildFolder, "features/source/feature.xml");
+		IFile featureFile = buildFolder.getFile("features/source/feature.xml");
+
+		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
+		BuildTimeFeature feature = factory.parseBuildFeature(featureFile.getLocationURI().toURL());
+		FeatureEntry [] entries = feature.getRawIncludedFeatureReferences();
+		assertTrue(entries.length == 1);
+		assertEquals(entries[0].getId(), "org.eclipse.rcp");
+		assertTrue(entries[0].isOptional());
+		assertEquals(entries[0].getOS(), "win32");
+	}
 
 	public void testIndividualSourceBundles() throws Exception {
 		IFolder buildFolder = newTest("individualSourceBundles");

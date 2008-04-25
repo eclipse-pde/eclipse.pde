@@ -180,32 +180,39 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		FeatureEntry entry;
 
 		for (int i = 1; i < extraEntries.length; i++) {
+			Map items = Utils.parseExtraBundlesString(extraEntries[i], true);
+			String id = (String) items.get(Utils.EXTRA_ID);
+			Version version = (Version) items.get(Utils.EXTRA_VERSION);
+			
 			// see if we have a plug-in or a fragment
 			if (extraEntries[i].startsWith("feature@")) { //$NON-NLS-1$
-				String id = extraEntries[i].substring(8);
-				entry = new FeatureEntry(id, GENERIC_VERSION_NUMBER, false);
+				entry = new FeatureEntry(id, version.toString(), false);
+				if (items.containsKey(Utils.EXTRA_OPTIONAL))
+					entry.setOptional(((Boolean)items.get(Utils.EXTRA_OPTIONAL)).booleanValue());
+				entry.setEnvironment((String)items.get(Utils.EXTRA_OS), (String)items.get(Utils.EXTRA_WS), (String)items.get(Utils.EXTRA_ARCH), null);
 				sourceFeature.addEntry(entry);
 			} else if (extraEntries[i].startsWith("plugin@")) { //$NON-NLS-1$
-				Object[] items = Utils.parseExtraBundlesString(extraEntries[i], true);
-				model = getSite().getRegistry().getResolvedBundle((String) items[0], ((Version) items[1]).toString());
+				model = getSite().getRegistry().getResolvedBundle((String) items.get(Utils.EXTRA_ID), ((Version) items.get(Utils.EXTRA_VERSION)).toString());
 				if (model == null) {
-					IStatus status = getSite().missingPlugin((String) items[0], ((Version) items[1]).toString(), false);
+					IStatus status = getSite().missingPlugin(id, version.toString(), false);
 					BundleHelper.getDefault().getLog().log(status);
 					continue;
 				}
 				entry = new FeatureEntry(model.getSymbolicName(), model.getVersion().toString(), true);
-				entry.setUnpack(((Boolean) items[2]).booleanValue());
+				entry.setUnpack(((Boolean) items.get(Utils.EXTRA_UNPACK)).booleanValue());
+				entry.setEnvironment((String)items.get(Utils.EXTRA_OS), (String)items.get(Utils.EXTRA_WS), (String)items.get(Utils.EXTRA_ARCH), null);
 				sourceFeature.addEntry(entry);
 			} else if (extraEntries[i].startsWith("exclude@")) { //$NON-NLS-1$
 				if (excludedEntries == null)
 					excludedEntries = new HashMap();
-				Object[] items = Utils.parseExtraBundlesString(extraEntries[i], true);
-				if (excludedEntries.containsKey(items[0])) {
-					((List) excludedEntries.get(items[0])).add(items[1]);
+				
+				if (excludedEntries.containsKey(id)) {
+					((List) excludedEntries.get(id)).add(version);
+				} else {
+					List versionList = new ArrayList();
+					versionList.add(version);
+					excludedEntries.put(id, versionList);
 				}
-				List versionList = new ArrayList();
-				versionList.add(items[1]);
-				excludedEntries.put(items[0], versionList);
 			}
 		}
 	}
