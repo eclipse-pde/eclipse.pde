@@ -20,6 +20,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddStepAction;
+import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddSubStepAction;
+import org.eclipse.pde.internal.ds.ui.editor.actions.DSRemoveRunObjectAction;
+import org.eclipse.pde.internal.ds.ui.editor.actions.DSRemoveStepAction;
+import org.eclipse.pde.internal.ds.ui.editor.actions.DSRemoveSubStepAction;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -38,6 +43,14 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
+	private static final int F_BUTTON_ADD_STEP = 0;
+	private static final int F_BUTTON_ADD_SUBSTEP = 1;
+	private static final int F_BUTTON_REMOVE = 4;
+	private static final int F_BUTTON_UP = 5;
+	private static final int F_BUTTON_DOWN = 6;
+	private static final int F_UP_FLAG = -1;
+	private static final int F_DOWN_FLAG = 1;
+
 	private TreeViewer fTreeViewer;
 
 	private IDSModel fModel;
@@ -46,12 +59,24 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
 	private ControlDecoration fSubStepInfoDecoration;
 
+	private DSAddStepAction fAddStepAction;
+	private DSRemoveStepAction fRemoveStepAction;
+	private DSRemoveSubStepAction fRemoveSubStepAction;
+	private DSAddSubStepAction fAddSubStepAction;
+	private DSRemoveRunObjectAction fRemoveRunObjectAction;
+
 	public DSMasterTreeSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {
-				"Add",
-				"Add Sub-Step", null, null,
-				"Remove",
-				"Up", "Down" });
+		super(page, parent, Section.DESCRIPTION, new String[] { "Add",
+				"Add Sub-Step", null, null, "Remove", "Up", "Down" });
+
+		// Create actions
+		fAddStepAction = new DSAddStepAction();
+		fRemoveStepAction = new DSRemoveStepAction();
+		fRemoveSubStepAction = new DSRemoveSubStepAction();
+		fAddSubStepAction = new DSAddSubStepAction();
+		fRemoveRunObjectAction = new DSRemoveRunObjectAction();
+		fCollapseAction = null;
+
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
@@ -181,20 +206,65 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		}
 		fTreeViewer.setInput(fModel);
 
-		// getTreePart().setButtonEnabled(F_BUTTON_ADD_STEP,
-		// fModel.isEditable());
-		//		getTreePart().setButtonEnabled(F_BUTTON_ADD_SUBSTEP, false);
-		//		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, false);
-		//		getTreePart().setButtonEnabled(F_BUTTON_UP, false);
-		// getTreePart().setButtonEnabled(F_BUTTON_DOWN, false);
-		// getTreePart().setButtonEnabled(F_BUTTON_PREVIEW, true);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_STEP, fModel.isEditable());
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_SUBSTEP, false);
+		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, false);
+		getTreePart().setButtonEnabled(F_BUTTON_UP, false);
+		getTreePart().setButtonEnabled(F_BUTTON_DOWN, false);
 
 		IDSRoot dsRoot = fModel.getDSRoot();
-		// Select the cheatsheet node in the tree
+		// Select the ds node in the tree
 		fTreeViewer.setSelection(new StructuredSelection(dsRoot), true);
 		fTreeViewer.expandToLevel(2);
 	}
-	
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
+	 */
+	protected void buttonSelected(int index) {
+		switch (index) {
+		case F_BUTTON_ADD_STEP:
+			handleAddStepAction();
+			break;
+		case F_BUTTON_ADD_SUBSTEP:
+			handleAddSubStepAction();
+			break;
+		case F_BUTTON_REMOVE:
+			handleDeleteAction();
+			break;
+		case F_BUTTON_UP:
+			handleMoveStepAction(F_UP_FLAG);
+			break;
+		case F_BUTTON_DOWN:
+			handleMoveStepAction(F_DOWN_FLAG);
+			break;
+		}
+	}
+
+	private void handleMoveStepAction(int upFlag) {
+		// TODO Auto-generated method stub
+		System.out.println("handleMoveStepAction" + upFlag);
+
+	}
+
+	private void handleDeleteAction() {
+		// TODO Auto-generated method stub
+		System.out.println("handleDeleteAction");
+
+	}
+
+	private void handleAddSubStepAction() {
+		// TODO Auto-generated method stub
+		System.out.println("handleAddSubStepAction");
+
+	}
+
+	private void handleAddStepAction() {
+		// TODO Auto-generated method stub
+		System.out.println("handleAddStepAction");
+
+	}
 
 }
