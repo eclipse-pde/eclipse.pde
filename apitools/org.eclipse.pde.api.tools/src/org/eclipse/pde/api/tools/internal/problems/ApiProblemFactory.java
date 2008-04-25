@@ -492,6 +492,7 @@ public class ApiProblemFactory {
 							case IDelta.TYPE_PARAMETERS: return 106;
 							case IDelta.UNCHECKED_EXCEPTION: return 107;
 							case IDelta.VALUE : return 108;
+							case IDelta.API_TYPE: return 112;
 						}
 					}
 				}

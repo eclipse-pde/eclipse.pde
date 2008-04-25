@@ -25,7 +25,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
-import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
@@ -138,18 +137,7 @@ public class ClassFileComparator {
 			ApiPlugin.log(e);
 		}
 	}
-
-	void addDelta(
-			ElementDescriptor descriptor,
-			ElementDescriptor descriptor2,
-			int kind,
-			int flags,
-			int restrictions,
-			IClassFile classFile,
-			String key) {
-		addDelta(descriptor, descriptor2, kind, flags, restrictions, classFile, key, null);
-	}
-	void addDelta(
+	private void addDelta(
 			ElementDescriptor descriptor,
 			ElementDescriptor descriptor2,
 			int kind,
@@ -158,46 +146,9 @@ public class ClassFileComparator {
 			IClassFile classFile,
 			String key,
 			String data) {
-		int actualFlags = flags;
-		switch(flags) {
-			case IDelta.METHOD :
-				if (descriptor2.getElementType() == IDelta.CONSTRUCTOR_ELEMENT_TYPE) {
-					actualFlags = IDelta.CONSTRUCTOR;
-				}
-		}
-		this.addDelta(descriptor.getElementType(), kind, actualFlags, restrictions, descriptor2.access, classFile, key, data);
+		this.addDelta(descriptor.getElementType(), kind, flags, restrictions, descriptor2.access, classFile, key, data);
 	}
-
-	void addDelta(
-			ElementDescriptor descriptor,
-			ElementDescriptor descriptor2,
-			int kind,
-			int flags,
-			int restrictions,
-			int modifiers,
-			IClassFile classFile,
-			String key,
-			String data) {
-		int actualFlags = flags;
-		switch(flags) {
-			case IDelta.METHOD :
-				if (descriptor2.getElementType() == IDelta.CONSTRUCTOR_ELEMENT_TYPE) {
-					actualFlags = IDelta.CONSTRUCTOR;
-				}
-		}
-		this.addDelta(descriptor.getElementType(), kind, actualFlags, restrictions, modifiers, classFile, key, data);
-	}
-
-	void addDelta(
-			ElementDescriptor descriptor,
-			ElementDescriptor descriptor2,
-			int kind,
-			int flags,
-			IClassFile classFile,
-			String key) {
-		this.addDelta(descriptor, descriptor2, kind, flags, this.currentDescriptorRestrictions, classFile, key, null);
-	}
-	void addDelta(
+	private void addDelta(
 			ElementDescriptor descriptor,
 			int kind,
 			int flags,
@@ -205,8 +156,7 @@ public class ClassFileComparator {
 			String key) {
 		this.addDelta(descriptor, descriptor, kind, flags, this.currentDescriptorRestrictions, classFile, key, null);
 	}
-
-	void addDelta(
+	private void addDelta(
 			ElementDescriptor descriptor,
 			int kind,
 			int flags,
@@ -215,16 +165,13 @@ public class ClassFileComparator {
 			String data) {
 		this.addDelta(descriptor, descriptor, kind, flags, this.currentDescriptorRestrictions, classFile, key, data);
 	}
-	
-	void addDelta(IDelta delta) {
+	private void addDelta(IDelta delta) {
 		this.delta.add(delta);
 	}
-
-	void addDelta(int elementType, int kind, int flags, int modifiers, IClassFile classFile, String key) {
+	private void addDelta(int elementType, int kind, int flags, int modifiers, IClassFile classFile, String key) {
 		this.addDelta(elementType, kind, flags, this.currentDescriptorRestrictions, modifiers, classFile, key, null);
 	}
-
-	void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String data) {
+	private void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String data) {
 		this.delta.add(new Delta(Util.getDeltaComponentID(this.component), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, data));
 	}
 	
@@ -308,6 +255,7 @@ public class ClassFileComparator {
 					try {
 						IClassFile memberType1 = this.component.findClassFile(typeMemberName);
 						IClassFile memberType2 = this.component2.findClassFile(typeMemberName);
+						// TODO check visibility of member types
 						ClassFileComparator comparator = new ClassFileComparator(memberType1, memberType2, this.component, this.component2, this.apiProfile, this.apiProfile2, this.visibilityModifiers);
 						IDelta delta2 = comparator.getDelta();
 						if (delta2 != null && delta2 != ApiComparator.NO_DELTA) {
@@ -320,7 +268,7 @@ public class ClassFileComparator {
 			}
 			for (Iterator iterator = removedTypeMembers.iterator(); iterator.hasNext();) {
 				MemberTypeDescriptor typeMember = (MemberTypeDescriptor) iterator.next();
-				this.addDelta(this.descriptor1, this.descriptor2, IDelta.REMOVED, IDelta.TYPE_MEMBER, this.currentDescriptorRestrictions, typeMember.access, this.classFile, typeMember.name, typeMember.name.replace('$', '.'));
+				this.addDelta(this.descriptor1.getElementType(), IDelta.REMOVED, IDelta.TYPE_MEMBER, this.currentDescriptorRestrictions, typeMember.access, this.classFile, typeMember.name, typeMember.name.replace('$', '.'));
 			}
 		}
 		if (typeMembers2 == null) return;
@@ -497,17 +445,6 @@ public class ClassFileComparator {
 			this.initialDescriptorRestrictions = RestrictionModifiers.NO_RESTRICTIONS;
 			this.currentDescriptorRestrictions = RestrictionModifiers.NO_RESTRICTIONS;
 			if (elementDescription2 != null) {
-				int visibility = elementDescription2.getVisibility();
-				if ((visibility & visibilityModifiers) == 0) {
-					// visibility has been changed
-					if (((visibility & VisibilityModifiers.API) == 0)
-							&& ((visibilityModifiers & VisibilityModifiers.API) != 0)) {
-						// was API and is no longer API
-						return new Delta(Util.getDeltaComponentID(component2), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, elementDescription2.getRestrictions(), this.descriptor2.access, classFile.getTypeName(), this.descriptor1.name, this.descriptor1.name);
-					}
-					// no delta
-					return new Delta(Util.getDeltaComponentID(component2), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_VISIBILITY, classFile.getTypeName(), this.descriptor1.name, null);
-				}
 				int restrictions2 = elementDescription2.getRestrictions();
 				IApiDescription apiDescription = this.component.getApiDescription();
 				IApiAnnotations componentApiDescription = apiDescription.resolveAnnotations(this.descriptor1.handle);
@@ -558,12 +495,6 @@ public class ClassFileComparator {
 							|| Util.isProtected(typeAccess2))) {
 				this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.INCREASE_ACCESS, this.classFile, this.descriptor1.name);
 				return this.delta;
-			}
-
-			if ((visibilityModifiers & VisibilityModifiers.API) != 0) {
-				if (!Util.isPublic(typeAccess2) && !Util.isProtected(typeAccess2)) {
-					return this.delta.isEmpty() ? ApiComparator.NO_DELTA : this.delta;
-				}
 			}
 			
 			if (Util.isAnnotation(typeAccess)) {
@@ -745,7 +676,7 @@ public class ClassFileComparator {
 									if (Util.isPublic(access3)
 											|| Util.isProtected(access3)) {
 										// method has been move up in the hierarchy - report the delta and abort loop
-										this.addDelta(this.descriptor1, this.descriptor2, IDelta.REMOVED, IDelta.FIELD_MOVED_UP, this.currentDescriptorRestrictions, fieldDescriptor3.access, this.classFile, name, null);
+										this.addDelta(this.descriptor1.getElementType(), IDelta.REMOVED, IDelta.FIELD_MOVED_UP, this.currentDescriptorRestrictions, fieldDescriptor3.access, this.classFile, name, null);
 										found = true;
 										break loop;
 									}
@@ -1046,26 +977,26 @@ public class ClassFileComparator {
 		if (Util.isProtected(access)) {
 			if (Util.isPrivate(access2) || Util.isDefault(access2)) {
 				// report delta - decrease access: protected to default or private
-				this.addDelta(methodDescriptor, methodDescriptor2, IDelta.CHANGED, IDelta.DECREASE_ACCESS, restrictions, methodDescriptor.access, this.classFile, key, null);
+				this.addDelta(methodDescriptor.getElementType(), IDelta.CHANGED, IDelta.DECREASE_ACCESS, restrictions, methodDescriptor.access, this.classFile, key, null);
 			} else if (Util.isPublic(access2)) {
 				// report delta - increase access: protected to public
-				this.addDelta(methodDescriptor, methodDescriptor2, IDelta.CHANGED, IDelta.INCREASE_ACCESS, restrictions, methodDescriptor.access,this.classFile, key, null);
+				this.addDelta(methodDescriptor.getElementType(), IDelta.CHANGED, IDelta.INCREASE_ACCESS, restrictions, methodDescriptor.access,this.classFile, key, null);
 			}
 		} else if (Util.isPublic(access)
 				&& (Util.isProtected(access2)
 						|| Util.isPrivate(access2)
 						|| Util.isDefault(access2))) {
 			// report delta - decrease access: public to protected, default or private
-			this.addDelta(methodDescriptor, methodDescriptor2, IDelta.CHANGED, IDelta.DECREASE_ACCESS, restrictions, methodDescriptor.access, this.classFile, key, null);
+			this.addDelta(methodDescriptor.getElementType(), IDelta.CHANGED, IDelta.DECREASE_ACCESS, restrictions, methodDescriptor.access, this.classFile, key, null);
 		} else if (Util.isDefault(access)
 				&& (Util.isPublic(access2)
 						|| Util.isProtected(access2))) {
-			this.addDelta(methodDescriptor, methodDescriptor2, IDelta.CHANGED, IDelta.INCREASE_ACCESS, restrictions, methodDescriptor.access, this.classFile, key, null);
+			this.addDelta(methodDescriptor.getElementType(), IDelta.CHANGED, IDelta.INCREASE_ACCESS, restrictions, methodDescriptor.access, this.classFile, key, null);
 		} else if (Util.isPrivate(access)
 				&& (Util.isDefault(access2)
 						|| Util.isPublic(access2)
 						|| Util.isProtected(access2))) {
-			this.addDelta(methodDescriptor, methodDescriptor2, IDelta.CHANGED, IDelta.INCREASE_ACCESS, restrictions, methodDescriptor.access, this.classFile, key, null);
+			this.addDelta(methodDescriptor.getElementType(), IDelta.CHANGED, IDelta.INCREASE_ACCESS, restrictions, methodDescriptor.access, this.classFile, key, null);
 		}
 		if (Util.isAbstract(access)) {
 			if (!Util.isAbstract(access2)) {
@@ -1149,6 +1080,7 @@ public class ClassFileComparator {
 	private Set getInterfacesSet(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile) {
 		HashSet set = new HashSet();
 		collectAllInterfaces(typeDescriptor, apiComponent, profile, set);
+		if (set.isEmpty()) return null;
 		return set;
 	}
 
@@ -1326,7 +1258,7 @@ public class ClassFileComparator {
 				this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, found ? IDelta.OVERRIDEN_METHOD : IDelta.METHOD, this.currentDescriptorRestrictions, this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));
 			}
 		} else {
-			this.addDelta(typeDescriptor, methodDescriptor, IDelta.ADDED, IDelta.METHOD, this.currentDescriptorRestrictions, this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));
+			this.addDelta(typeDescriptor.getElementType(), IDelta.ADDED, methodDescriptor.isConstructor() ? IDelta.CONSTRUCTOR : IDelta.METHOD, this.currentDescriptorRestrictions, methodDescriptor.access, this.classFile, getKeyForMethod(methodDescriptor, typeDescriptor), getMethodDisplayName(methodDescriptor, typeDescriptor));
 		}
 	}
 	

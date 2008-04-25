@@ -736,7 +736,18 @@ public interface IDelta {
 	 * @see #getFlags()
 	 */
 	public static final int VARARGS_TO_ARRAY = 55;
-
+	/**
+	 * Delta kind flag that denotes changing the visibility of a type from VisibilityModifiers.API to another visibility.
+	 * As a consequence, the corresponding type is no longer an API.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int API_TYPE = 56;
 	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
 	 * 

@@ -132,6 +132,7 @@ public final class Util {
 	 */
 	private static final class BuildJob extends Job {
 		private final IProject[] fProjects;
+		private int fBuildType;
 
 		/**
 		 * Constructor
@@ -139,10 +140,13 @@ public final class Util {
 		 * @param project
 		 */
 		private BuildJob(String name, IProject[] projects) {
+			this(name, projects, IncrementalProjectBuilder.FULL_BUILD);
+		}
+		private BuildJob(String name, IProject[] projects, int buildType) {
 			super(name);
 			fProjects = projects;
+			this.fBuildType = buildType;
 		}
-		
 		public boolean belongsTo(Object family) {
 			return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
 		}
@@ -202,7 +206,7 @@ public final class Util {
 					for (int i = 0; i < length; i++) {
 						IProject project = fProjects[i];
 						monitor.subTask(NLS.bind(UtilMessages.Util_5, project.getName())); 
-						project.build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, new SubProgressMonitor(monitor,1));
+						project.build(this.fBuildType, ApiPlugin.BUILDER_ID, null, new SubProgressMonitor(monitor,1));
 						monitor.worked(1);
 					}
 				}
@@ -603,16 +607,34 @@ public final class Util {
 	}
 
 	/**
-	 * Returns a build job.
+	 * Returns a build job that will perform a full build on the given projects.
 	 * 
 	 * If <code>projects</code> are null, then an AssertionFailedException is thrown
-	 * @param projects The projects to build
+	 * @param projects the projects to build
 	 * @return the build job
 	 * @throws AssertionFailedException if the given projects are null
 	 */
 	public static Job getBuildJob(final IProject[] projects) {
 		Assert.isNotNull(projects);
 		Job buildJob = new BuildJob(UtilMessages.Util_4, projects);
+		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+		buildJob.setUser(true);
+		return buildJob;
+	}
+	
+	/**
+	 * Returns a build job that will return the build that corresponds to the given
+	 * build kind on the given projects.
+	 * 
+	 * If <code>projects</code> are null, then an AssertionFailedException is thrown
+	 * @param projects the projects to build
+	 * @param buildKind the given build kind
+	 * @return the build job
+	 * @throws AssertionFailedException if the given projects are null
+	 */
+	public static Job getBuildJob(final IProject[] projects, int buildKind) {
+		Assert.isNotNull(projects);
+		Job buildJob = new BuildJob(UtilMessages.Util_4, projects, buildKind);
 		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
 		buildJob.setUser(true);
 		return buildJob;
@@ -826,6 +848,7 @@ public final class Util {
 			case IDelta.VALUE : return "VALUE"; //$NON-NLS-1$
 			case IDelta.VARARGS_TO_ARRAY : return "VARARGS_TO_ARRAY"; //$NON-NLS-1$
 			case IDelta.RESTRICTIONS : return "RESTRICTIONS"; //$NON-NLS-1$
+			case IDelta.API_TYPE : return "API_TYPE"; //$NON-NLS-1$
 		}
 		return UNKNOWN_FLAGS;
 	}

@@ -30,7 +30,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(BundlesDeltaTests.class);
 		TestSuite suite = new TestSuite(BundlesDeltaTests.class.getName());
-		suite.addTest(new BundlesDeltaTests("test10"));
+		suite.addTest(new BundlesDeltaTests("test8"));
 		return suite;
 	}
 
@@ -456,7 +456,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
+		assertEquals("Wrong flag", IDelta.API_TYPE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}

@@ -217,6 +217,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 	//compatibility keys
 	private static final Key KEY_API_PROFILE_REMOVED_API_COMPONENT =
 		getApiToolsKey(IApiProblemTypes.API_PROFILE_REMOVED_API_COMPONENT);
+	private static final Key KEY_API_COMPONENT_REMOVED_API_TYPE =
+		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_API_TYPE);
 	private static final Key KEY_API_COMPONENT_REMOVED_TYPE =
 		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_TYPE);
 	private static final Key KEY_ANNOTATION_ADDED_CLASS_BOUND =
@@ -518,6 +520,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	
 	private static Key[] fgAllCompatibilityKeys = {
 		KEY_API_PROFILE_REMOVED_API_COMPONENT,
+		KEY_API_COMPONENT_REMOVED_API_TYPE,
 		KEY_API_COMPONENT_REMOVED_TYPE,
 		KEY_ANNOTATION_ADDED_FIELD,
 		KEY_ANNOTATION_ADDED_METHOD,
@@ -689,6 +692,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_LEAK_METHOD_PARAM,
 		KEY_LEAK_METHOD_RETURN_TYPE,
 		KEY_API_PROFILE_REMOVED_API_COMPONENT,
+		KEY_API_COMPONENT_REMOVED_API_TYPE,
 		KEY_API_COMPONENT_REMOVED_TYPE,
 		KEY_ANNOTATION_ADDED_FIELD,
 		KEY_ANNOTATION_ADDED_METHOD,
@@ -1118,9 +1122,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 				initializeComboControls(
 						client,
 						new String[] {
+								PreferenceMessages.API_COMPONENT_REMOVED_API_TYPE,
 								PreferenceMessages.API_COMPONENT_REMOVED_TYPE,
 						},
 						new Key[] {
+								KEY_API_COMPONENT_REMOVED_API_TYPE,
 								KEY_API_COMPONENT_REMOVED_TYPE,
 						});
 				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAnnotationElement);

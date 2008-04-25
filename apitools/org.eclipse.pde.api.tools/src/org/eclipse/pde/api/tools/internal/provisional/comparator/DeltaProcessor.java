@@ -114,6 +114,7 @@ public class DeltaProcessor {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE :
+					case IDelta.API_TYPE :
 						return false;
 				}
 				break;
