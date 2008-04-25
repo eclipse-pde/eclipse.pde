@@ -28,11 +28,11 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		final String DOT_JAR = '.' + JAR;
 		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
 			Path path = new Path(bundle.getLocation());
-			if (shape.equals(FILE) && !JAR.equalsIgnoreCase(path.getFileExtension()))
+			if (shape.equals(ShapeAdvisor.FILE) && !JAR.equalsIgnoreCase(path.getFileExtension()))
 				return path.lastSegment().concat(DOT_JAR);
 			return path.lastSegment();
 		}
-		if (shape.equals(FILE))
+		if (shape.equals(ShapeAdvisor.FILE))
 			return ModelBuildScriptGenerator.getNormalizedName(bundle) + DOT_JAR;
 		return ModelBuildScriptGenerator.getNormalizedName(bundle);
 	}
@@ -68,9 +68,9 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 				location = new Path(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
 			}
 			if (isFolder) {
-				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + getFinalName(plugins[i], FOLDER), new FileSet[] {new FileSet(location, null, null, null, excludedFiles, null, null)}, false, false);
+				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + getFinalName(plugins[i], ShapeAdvisor.FOLDER), new FileSet[] {new FileSet(location, null, null, null, excludedFiles, null, null)}, false, false);
 			} else {
-				script.printCopyFileTask(location, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + getFinalName(plugins[i], FILE), false);
+				script.printCopyFileTask(location, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + getFinalName(plugins[i], ShapeAdvisor.FILE), false);
 			}
 		}
 
@@ -160,15 +160,15 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 	protected Object[] getFinalShape(BundleDescription bundle) {
 		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == true) {
-			String shape = isFolder(new Path(bundle.getLocation())) ? FOLDER : FILE;
+			String shape = isFolder(new Path(bundle.getLocation())) ? ShapeAdvisor.FOLDER : ShapeAdvisor.FILE;
 			return new Object[] {getFinalName(bundle, shape), shape};
 		}
-		return super.getFinalShape(bundle);
+		return shapeAdvisor.getFinalShape(bundle);
 	}
 
 	protected Object[] getFinalShape(BuildTimeFeature feature) {
 		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == true)
-			return new Object[] {getFinalName(feature), FOLDER};
-		return super.getFinalShape(feature);
+			return new Object[] {getFinalName(feature), ShapeAdvisor.FOLDER};
+		return shapeAdvisor.getFinalShape(feature);
 	}
 }

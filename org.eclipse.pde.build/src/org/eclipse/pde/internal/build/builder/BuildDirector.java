@@ -165,7 +165,10 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 * @see AbstractScriptGenerator#generate()
 	 */
 	public void generate(BuildTimeFeature feature) throws CoreException {
-
+		generate(feature, true);
+	}
+	
+	protected void generate(BuildTimeFeature feature, boolean generateProductFiles) throws CoreException {
 		if (analyseIncludedFeatures)
 			generateIncludedFeatureBuildFile(feature);
 		if (analysePlugins)
@@ -177,6 +180,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			FeatureBuildScriptGenerator featureScriptGenerator = new FeatureBuildScriptGenerator(feature);
 			featureScriptGenerator.setDirector(this);
 			featureScriptGenerator.setBuildSiteFactory(siteFactory);
+			featureScriptGenerator.setGenerateProductFiles(generateProductFiles);
 			featureScriptGenerator.generate();
 		}
 	}
@@ -206,7 +210,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			nestedFeature = getSite(false).findFeature(featureId, featureVersion, true);
 
 			try {
-				generate(nestedFeature);
+				generate(nestedFeature, false);
 			} catch (CoreException exception) {
 				absorbExceptionIfOptionalFeature(referencedFeatures[i], exception);
 			}

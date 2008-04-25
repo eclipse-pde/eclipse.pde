@@ -32,7 +32,7 @@ public class ElementCollector extends BuildDirector {
 			BuildTimeFeature nestedFeature = getSite(false).findFeature(featureId, null, true);
 
 			try {
-				generate(nestedFeature);
+				generate(nestedFeature, false);
 			} catch (CoreException exception) {
 				//If the referenced feature is not optional, there is a real problem and the exception is re-thrown. 
 				if (exception.getStatus().getCode() != EXCEPTION_FEATURE_MISSING || (exception.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && !referencedFeatures[i].isOptional()))

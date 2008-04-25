@@ -23,6 +23,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 //	private boolean signJars = false;
 //	private String product = null;
 	private BuildDirector director;
+	private boolean generateProductFiles = true;
 	
 	protected String featureFolderName;
 	protected String featureTempFolder;
@@ -366,7 +367,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 *  
 	 */
 	private void generateRootFilesAndPermissions() throws CoreException {
-		String product = director.getProduct();
+		String product = generateProductFiles ? director.getProduct() : null;
 		if (product != null && !havePDEUIState()) {
 			ProductGenerator generator = new ProductGenerator();
 			generator.setProduct(product);
@@ -374,6 +375,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setBuildProperties(getBuildProperties());
 			generator.setRoot(featureRootLocation);
 			generator.setWorkingDirectory(getWorkingDirectory());
+			generator.setDirector(director);
 			try {
 				generator.generate();
 			} catch (CoreException e) {
@@ -714,5 +716,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		params.put(PROPERTY_TARGET, TARGET_REFRESH);
 		script.printAntCallTask(TARGET_ALL_CHILDREN, true, params);
 		script.printTargetEnd();
+	}
+
+	public void setGenerateProductFiles(boolean generateProductFiles) {
+		this.generateProductFiles = generateProductFiles;
 	}
 }

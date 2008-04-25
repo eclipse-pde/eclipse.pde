@@ -18,7 +18,6 @@ import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
-import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 /**
  * Generate an assemble script for a given feature and a given config. It
@@ -34,21 +33,14 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected String filename;
 	protected Collection rootFileProviders;
 	protected String rootFolder = null;
-	protected Properties pluginsPostProcessingSteps;
-	protected Properties featuresPostProcessingSteps;
 	protected ArrayList addedByPermissions = new ArrayList(); //contains the list of files and folders that have been added to an archive by permission management
 
 	private static final String PROPERTY_SOURCE = "source"; //$NON-NLS-1$
 	private static final String PROPERTY_ELEMENT_NAME = "elementName"; //$NON-NLS-1$
-
-	private static final String UPDATEJAR = "updateJar"; //$NON-NLS-1$
-	private static final String FLAT = "flat"; //$NON-NLS-1$
-
+	
 	private static final byte BUNDLE = 0;
 	private static final byte FEATURE = 1;
 
-	protected static final String FOLDER = "folder"; //$NON-NLS-1$
-	protected static final String FILE = "file"; //$NON-NLS-1$
 	protected String PROPERTY_ECLIPSE_PLUGINS = "eclipse.plugins"; //$NON-NLS-1$
 	protected String PROPERTY_ECLIPSE_FEATURES = "eclipse.features"; //$NON-NLS-1$
 	private boolean signJars;
@@ -58,6 +50,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private boolean groupConfigs = false;
 	private String product;
 	private ProductFile productFile = null;
+	protected ShapeAdvisor shapeAdvisor = null;
 	private Boolean p2Bundles = null;
 
 	public AssembleConfigScriptGenerator() {
@@ -80,7 +73,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		this.plugins = (BundleDescription[]) elementList.toArray(this.plugins);
 
 		openScript(directoryName, getTargetName() + ".xml"); //$NON-NLS-1$
-		loadPostProcessingSteps();
+		shapeAdvisor = new ShapeAdvisor();
+		shapeAdvisor.setForceUpdateJars(forceUpdateJarFormat);
 	}
 
 	private String computeIconsList() {
@@ -98,15 +92,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			}
 		}
 		return result;
-	}
-
-	private void loadPostProcessingSteps() {
-		try {
-			pluginsPostProcessingSteps = readProperties(AbstractScriptGenerator.getWorkingDirectory(), DEFAULT_PLUGINS_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR, IStatus.INFO);
-			featuresPostProcessingSteps = readProperties(AbstractScriptGenerator.getWorkingDirectory(), DEFAULT_FEATURES_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR, IStatus.INFO);
-		} catch (CoreException e) {
-			//Ignore
-		}
 	}
 
 	public void generate() {
@@ -374,12 +359,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		printCustomAssemblyAntCall(PROPERTY_POST + TARGET_GATHER_BIN_PARTS, null);
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
-			generatePostProcessingSteps(plugin.getSymbolicName(), plugin.getVersion().toString(), (String) getFinalShape(plugin)[1], BUNDLE);
+			generatePostProcessingSteps(plugin.getSymbolicName(), plugin.getVersion().toString(), (String) shapeAdvisor.getFinalShape(plugin)[1], BUNDLE);
 		}
 
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
-			generatePostProcessingSteps(feature.getId(), feature.getVersion(), (String) getFinalShape(feature)[1], FEATURE);
+			generatePostProcessingSteps(feature.getId(), feature.getVersion(), (String) shapeAdvisor.getFinalShape(feature)[1], FEATURE);
 		}
 		printCustomAssemblyAntCall(PROPERTY_POST + TARGET_JARUP, null);
 	}
@@ -424,9 +409,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	//generate the appropriate postProcessingCall
 	private void generatePostProcessingSteps(String name, String version, String style, byte type) {
-		if (FOLDER.equalsIgnoreCase(style))
+		if (ShapeAdvisor.FOLDER.equalsIgnoreCase(style))
 			return;
-		if (FILE.equalsIgnoreCase(style)) {
+		if (ShapeAdvisor.FILE.equalsIgnoreCase(style)) {
 			generateJarUpCall(name, version, type);
 			generateSignJarCall(name, version, type);
 			generateJNLPCall(name, version, type);
@@ -443,48 +428,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		String dir = type == BUNDLE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES);
 		String location = dir + '/' + name + '_' + version + ".jar"; //$NON-NLS-1$
 		script.println("<eclipse.jnlpGenerator feature=\"" + AntScript.getEscaped(location) + "\"  codebase=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_LOCALE) + "\" generateOfflineAllowed=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_GENOFFLINE) + "\" configInfo=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CONFIGS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
-	}
-
-	private boolean getUnpackClause(BundleDescription bundle) {
-		Set entries = (Set) ((Properties) bundle.getUserObject()).get(PLUGIN_ENTRY);
-		return ((FeatureEntry) entries.iterator().next()).isUnpack();
-	}
-
-	protected Object[] getFinalShape(BundleDescription bundle) {
-		String style = getUnpackClause(bundle) ? FLAT : UPDATEJAR;
-		return getFinalShape(bundle.getSymbolicName(), bundle.getVersion().toString(), style, BUNDLE);
-	}
-
-	protected Object[] getFinalShape(BuildTimeFeature feature) {
-		return getFinalShape(feature.getId(), feature.getVersion(), FLAT, FEATURE);
-	}
-
-	protected Object[] getFinalShape(String name, String version, String initialShape, byte type) {
-		String style = initialShape;
-		style = getShapeOverride(name, type, style);
-
-		if (FLAT.equalsIgnoreCase(style)) {
-			//do nothing
-			return new Object[] {name + '_' + version, FOLDER};
-		}
-		if (UPDATEJAR.equalsIgnoreCase(style)) {
-			return new Object[] {name + '_' + version + ".jar", FILE}; //$NON-NLS-1$
-		}
-		return new Object[] {name + '_' + version, FOLDER};
-	}
-
-	private String getShapeOverride(String name, byte type, String initialStyle) {
-		String result = initialStyle;
-		Properties currentProperties = type == BUNDLE ? pluginsPostProcessingSteps : featuresPostProcessingSteps;
-		if (currentProperties.size() > 0) {
-			String styleFromFile = currentProperties.getProperty(name);
-			if (styleFromFile == null)
-				styleFromFile = currentProperties.getProperty(DEFAULT_FINAL_SHAPE);
-			result = styleFromFile;
-		}
-		if (forceUpdateJarFormat)
-			result = UPDATEJAR;
-		return result;
 	}
 
 	private void generateJarUpCall(String name, String version, byte type) {
@@ -583,7 +526,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		final int parameterSize = 15;
 		List parameters = new ArrayList(parameterSize + 1);
 		for (int i = 0; i < plugins.length; i++) {
-			parameters.add(Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) getFinalShape(plugins[i])[0]);
+			parameters.add(Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shapeAdvisor.getFinalShape(plugins[i])[0]);
 			if (i % parameterSize == 0) {
 				createZipExecCommand(parameters);
 				parameters.clear();
@@ -600,7 +543,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		for (int i = 0; i < features.length; i++) {
-			parameters.add(Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) getFinalShape(features[i])[0]);
+			parameters.add(Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shapeAdvisor.getFinalShape(features[i])[0]);
 			if (i % parameterSize == 0) {
 				createZipExecCommand(parameters);
 				parameters.clear();
@@ -665,16 +608,16 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected void generateAntZipTarget() {
 		FileSet[] filesPlugins = new FileSet[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {
-			Object[] shape = getFinalShape(plugins[i]);
-			filesPlugins[i] = new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
+			Object[] shape = shapeAdvisor.getFinalShape(plugins[i]);
+			filesPlugins[i] = new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
 		}
 		if (plugins.length != 0)
 			script.printZipTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesPlugins);
 
 		FileSet[] filesFeatures = new FileSet[features.length];
 		for (int i = 0; i < features.length; i++) {
-			Object[] shape = getFinalShape(features[i]);
-			filesFeatures[i] = new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
+			Object[] shape = shapeAdvisor.getFinalShape(features[i]);
+			filesFeatures[i] = new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
 		}
 		if (features.length != 0)
 			script.printZipTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesFeatures);
@@ -748,16 +691,16 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private void generateAntTarTarget() {
 		FileSet[] filesPlugins = new FileSet[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {
-			Object[] shape = getFinalShape(plugins[i]);
-			filesPlugins[i] = new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
+			Object[] shape = shapeAdvisor.getFinalShape(plugins[i]);
+			filesPlugins[i] = new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
 		}
 		if (plugins.length != 0)
 			script.printTarTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesPlugins);
 
 		FileSet[] filesFeatures = new FileSet[features.length];
 		for (int i = 0; i < features.length; i++) {
-			Object[] shape = getFinalShape(features[i]);
-			filesFeatures[i] = new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
+			Object[] shape = shapeAdvisor.getFinalShape(features[i]);
+			filesFeatures[i] = new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
 		}
 		if (features.length != 0)
 			script.printTarTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesFeatures);

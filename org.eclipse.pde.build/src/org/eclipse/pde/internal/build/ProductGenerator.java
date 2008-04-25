@@ -9,26 +9,38 @@
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.internal.build.builder.BuildDirector;
+import org.eclipse.pde.internal.build.site.P2Utils;
 import org.eclipse.pde.internal.build.site.PDEState;
 
 public class ProductGenerator extends AbstractScriptGenerator {
 	private static final String BUNDLE_EQUINOX_COMMON = "org.eclipse.equinox.common"; //$NON-NLS-1$
 	private static final String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
+	private static final String BUNDLE_EQUINOX_LAUNCHER = "org.eclipse.equinox.launcher"; //$NON-NLS-1$
 	private static final String BUNDLE_CORE_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final String BUNDLE_UPDATE_CONFIGURATOR = "org.eclipse.update.configurator"; //$NON-NLS-1$
+	private static final String BUNDLE_SIMPLE_CONFIGURATOR = "org.eclipse.equinox.simpleconfigurator"; //$NON-NLS-1$
+	private static final String SIMPLE_CONFIGURATOR_CONFIG_URL = "org.eclipse.equinox.simpleconfigurator.configUrl"; //$NON-NLS-1$
+	private static final String START_LEVEL_1 = "@1:start"; //$NON-NLS-1$
 	private static final String START_LEVEL_2 = "@2:start"; //$NON-NLS-1$
 	private static final String START_LEVEL_3 = "@3:start"; //$NON-NLS-1$
 	private static final String START = "@start"; //$NON-NLS-1$
 
+	private static final byte CONFIG_STYLE_ORIGINAL = 1;
+	private static final byte CONFIG_STYLE_REFACTORED = 2;
+	private static final byte CONFIG_STYLE_SIMPLE = 4;
+	private static final byte CONFIG_STYLE_UPDATE = 8;
+
 	private String product = null;
 	private ProductFile productFile = null;
 	private String root = null;
-	private boolean refactoredRuntime = false;
 	private Properties buildProperties;
+	private BuildDirector director = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.build.AbstractScriptGenerator#generate()
@@ -116,9 +128,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private void initialize() throws CoreException {
 		productFile = loadProduct(product);
-
-		PDEState state = getSite(false).getRegistry();
-		refactoredRuntime = state.getResolvedBundle(BUNDLE_EQUINOX_COMMON) != null;
 	}
 
 	private void copyFile(String src, String dest) {
@@ -162,12 +171,137 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		}
 	}
 
+	private byte determineConfigStyle(Config config) throws CoreException {
+		byte result = 0;
+		
+		PDEState state = getSite(false).getRegistry();
+		Collection bundles = director.getAssemblyData().getPlugins(config);
+
+		BundleDescription bundle = state.getResolvedBundle(BUNDLE_SIMPLE_CONFIGURATOR);
+		if (bundle != null && bundles.contains(bundle)) {
+			result |= CONFIG_STYLE_SIMPLE;
+		} else {
+			bundle = state.getResolvedBundle(BUNDLE_UPDATE_CONFIGURATOR);
+			if (bundle != null && bundles.contains(bundle))
+				result |= CONFIG_STYLE_UPDATE;
+		}
+
+		bundle = state.getResolvedBundle(BUNDLE_EQUINOX_COMMON);
+		if (bundle != null && bundles.contains(bundle)) {
+			return (byte) (result | CONFIG_STYLE_REFACTORED);
+		}
+
+		return (byte) (result | CONFIG_STYLE_ORIGINAL);
+	}
+
+	private List getBundlesFromProductFile() throws CoreException {
+		PDEState state = getSite(false).getRegistry();
+		List pluginList = productFile.getPlugins();
+		List results = new ArrayList(pluginList.size());
+		for (Iterator iter = pluginList.iterator(); iter.hasNext();) {
+			String id = (String) iter.next();
+			BundleDescription bundle = state.getResolvedBundle(id);
+			if (bundle == null) {
+				//TODO error?
+				continue;
+			}
+			results.add(bundle);
+		}
+		return results;
+	}
+
+	private void printSimpleBundles(StringBuffer buffer, Config config, File configDir, byte style) throws CoreException {
+		buffer.append("osgi.bundles="); //$NON-NLS-1$
+		buffer.append(BUNDLE_SIMPLE_CONFIGURATOR);
+		buffer.append(START_LEVEL_1);
+		buffer.append("\n"); //$NON-NLS-1$
+		
+		Collection plugins = null;
+		if (productFile.useFeatures())
+			plugins = director.getAssemblyData().getPlugins(config);
+		else
+			plugins = getBundlesFromProductFile();
+		
+		URL bundlesTxt = P2Utils.writeBundlesTxt(plugins, configDir, (style & CONFIG_STYLE_REFACTORED) > 0);
+		if (bundlesTxt != null) {
+			buffer.append(SIMPLE_CONFIGURATOR_CONFIG_URL);
+			buffer.append("=file:"); //$NON-NLS-1$
+			buffer.append(P2Utils.BUNDLE_TXT_PATH);
+			buffer.append("\n"); //$NON-NLS-1$
+		}
+	}
+
+	private void printUpdateBundles(StringBuffer buffer, int style) {
+		buffer.append("osgi.bundles="); //$NON-NLS-1$
+		if (style == CONFIG_STYLE_REFACTORED) {
+			//start levels for eclipse 3.2
+			//org.eclipse.equinox.common@2:start,  
+			buffer.append(BUNDLE_EQUINOX_COMMON);
+			buffer.append(START_LEVEL_2);
+			buffer.append(',');
+			//org.eclipse.update.configurator@3:start
+			buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
+			buffer.append(START_LEVEL_3);
+			buffer.append(',');
+			//org.eclipse.core.runtime
+			buffer.append(BUNDLE_CORE_RUNTIME);
+			buffer.append(START);
+			buffer.append('\n');
+		} else {
+			//start level for 3.1 and 3.0
+			buffer.append(BUNDLE_CORE_RUNTIME);
+			buffer.append(START_LEVEL_2);
+			buffer.append(',');
+			buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
+			buffer.append(START_LEVEL_3);
+			buffer.append('\n');
+		}
+	}
+	
+	private void printAllBundles(StringBuffer buffer, Config config, byte style) throws CoreException {
+		buffer.append("osgi.bundles="); //$NON-NLS-1$
+		
+		//When the plugins are all listed.
+		Dictionary environment = new Hashtable(3);
+		environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
+		environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
+		environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
+
+		List bundles = getBundlesFromProductFile();
+		BundleHelper helper = BundleHelper.getDefault();
+		boolean first = true;
+		for (Iterator iter = bundles.iterator(); iter.hasNext();) {
+			BundleDescription bundle = (BundleDescription) iter.next();
+			String id = bundle.getSymbolicName();
+			if (BUNDLE_OSGI.equals(id) || BUNDLE_EQUINOX_LAUNCHER.equals(id))
+				continue;
+			String filter = bundle.getPlatformFilter();
+			if (filter == null || helper.createFilter(filter).match(environment)) {
+				if (first)
+					first = false;
+				else
+					buffer.append(","); //$NON-NLS-1$
+				buffer.append(bundle.getSymbolicName());
+				if (BUNDLE_EQUINOX_COMMON.equals(id)) {
+					buffer.append(START_LEVEL_2);
+				} else if (BUNDLE_CORE_RUNTIME.equals(id)) {
+					if ((style & CONFIG_STYLE_REFACTORED) > 0) {
+						buffer.append(START);
+					} else {
+						buffer.append(START_LEVEL_2);
+					}
+				}
+			}
+		}
+		buffer.append('\n');
+	}
+
 	private void createConfigIni(Config config, String location) throws CoreException {
 		File configDir = new File(location + "/configuration"); //$NON-NLS-1$
 		if ((!configDir.exists() && !configDir.mkdirs()) || configDir.isFile())
 			return; //we will fail trying to create the file, TODO log warning/error
 
-		PDEState state = getSite(false).getRegistry();
+		byte configStyle = determineConfigStyle(config);
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("#Product Runtime Configuration File\n"); //$NON-NLS-1$
@@ -180,70 +314,16 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (application != null)
 			buffer.append("eclipse.application=" + application + '\n'); //$NON-NLS-1$
 		buffer.append("eclipse.product=" + productFile.getId() + '\n'); //$NON-NLS-1$
-		buffer.append("osgi.bundles="); //$NON-NLS-1$
-		//When update configurator is present or when feature based product
-		if (productFile.useFeatures() || productFile.containsPlugin(BUNDLE_UPDATE_CONFIGURATOR)) {
-			if (refactoredRuntime) {
-				//start levels for eclipse 3.2
-				//org.eclipse.equinox.common@2:start,  
-				buffer.append(BUNDLE_EQUINOX_COMMON);
-				buffer.append(START_LEVEL_2);
-				buffer.append(',');
-				//org.eclipse.update.configurator@3:start
-				buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
-				buffer.append(START_LEVEL_3);
-				buffer.append(',');
-				//org.eclipse.core.runtime
-				buffer.append(BUNDLE_CORE_RUNTIME);
-				buffer.append(START);
-				buffer.append('\n');
-			} else {
-				//start level for 3.1 and 3.0
-				buffer.append(BUNDLE_CORE_RUNTIME);
-				buffer.append(START_LEVEL_2);
-				buffer.append(',');
-				buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
-				buffer.append(START_LEVEL_3);
-				buffer.append('\n');
-			}
-		} else {
-			//When the plugins are all listed.
-			Dictionary environment = new Hashtable(3);
-			environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
-			environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
-			environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
 
-			List pluginList = productFile.getPlugins();
-			BundleHelper helper = BundleHelper.getDefault();
-			boolean first = true;
-			for (Iterator iter = pluginList.iterator(); iter.hasNext();) {
-				String id = (String) iter.next();
-				BundleDescription bundle = state.getResolvedBundle(id);
-				if (bundle == null) {
-					//TODO error?
-					continue;
-				}
-				String filter = bundle.getPlatformFilter();
-				if (filter == null || helper.createFilter(filter).match(environment)) {
-					if (BUNDLE_OSGI.equals(id))
-						continue;
-					if (first)
-						first = false;
-					else
-						buffer.append(","); //$NON-NLS-1$
-					buffer.append(id);
-					if (BUNDLE_EQUINOX_COMMON.equals(id)) {
-						buffer.append(START_LEVEL_2);
-					} else if (BUNDLE_CORE_RUNTIME.equals(id)) {
-						if (refactoredRuntime) {
-							buffer.append(START);
-						} else {
-							buffer.append(START_LEVEL_2);
-						}
-					}
-				}
+		if ((configStyle & CONFIG_STYLE_SIMPLE) > 0) {
+			printSimpleBundles(buffer, config, configDir, configStyle);
+		} else {
+			//When update configurator is present or when feature based product
+			if ((configStyle & CONFIG_STYLE_UPDATE) > 0) {
+				printUpdateBundles(buffer, configStyle);
+			} else {
+				printAllBundles(buffer, config, configStyle);
 			}
-			buffer.append('\n');
 		}
 		buffer.append("osgi.bundles.defaultStartLevel=4\n"); //$NON-NLS-1$ 	
 
@@ -422,6 +502,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	public void setBuildProperties(Properties buildProperties) {
 		this.buildProperties = buildProperties;
+	}
+
+	public void setDirector(BuildDirector director) {
+		this.director = director;
 	}
 
 }
