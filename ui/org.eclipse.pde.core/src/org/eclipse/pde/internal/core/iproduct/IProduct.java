@@ -62,6 +62,8 @@ public interface IProduct extends IProductObject {
 
 	void setId(String id);
 
+	void setVersion(String version);
+
 	void setName(String name);
 
 	void setAboutInfo(IAboutInfo info);

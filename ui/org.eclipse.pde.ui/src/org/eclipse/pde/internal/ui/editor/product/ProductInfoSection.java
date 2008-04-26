@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class ProductInfoSection extends PDESection implements IRegistryChangeListener, IStateDeltaListener {
 
 	private FormEntry fNameEntry;
+	private FormEntry fVersionEntry;
 	private ExtensionIdComboPart fAppCombo;
 	private ExtensionIdComboPart fProductCombo;
 	private Button fPluginButton;
@@ -166,6 +167,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 
 		createNameEntry(client, toolkit, actionBars);
 		createIdEntry(client, toolkit, actionBars);
+		createVersionEntry(client, toolkit, actionBars);
 		createApplicationEntry(client, toolkit, actionBars);
 		createConfigurationOption(client, toolkit);
 
@@ -195,7 +197,28 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 				getProduct().setName(entry.getValue().trim());
 			}
 		});
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalSpan = 2;
+		fNameEntry.getText().setLayoutData(gd);
 		fNameEntry.setEditable(isEditable());
+	}
+
+	private void createVersionEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+		createLabel(client, toolkit, ""); //$NON-NLS-1$
+		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_versionTitle);
+
+		fVersionEntry = new FormEntry(client, toolkit, PDEUIMessages.ProductInfoSection_version, null, false);
+		fVersionEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			public void textValueChanged(FormEntry entry) {
+				getProduct().setVersion(entry.getValue().trim());
+			}
+		});
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalSpan = 2;
+		fVersionEntry.getText().setLayoutData(gd);
+		fVersionEntry.setEditable(isEditable());
 	}
 
 	private void createIdEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
@@ -324,6 +347,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	 */
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
+		fVersionEntry.commit();
 		super.commit(onSave);
 	}
 
@@ -332,6 +356,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	 */
 	public void cancelEdit() {
 		fNameEntry.cancelEdit();
+		fVersionEntry.cancelEdit();
 		super.cancelEdit();
 	}
 
@@ -350,6 +375,9 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		IProduct product = getProduct();
 		if (product.getName() != null) {
 			fNameEntry.setValue(product.getName(), true);
+		}
+		if (product.getVersion() != null) {
+			fVersionEntry.setValue(product.getVersion(), true);
 		}
 		if (product.getId() != null) {
 			refreshProductCombo(product.getId());
@@ -376,6 +404,8 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 			refreshProductCombo(e.getNewValue().toString());
 		} else if (prop.equals(IProduct.P_NAME)) {
 			fNameEntry.setValue(e.getNewValue().toString(), true);
+		} else if (prop.equals(IProduct.P_VERSION)) {
+			fVersionEntry.setValue(e.getNewValue().toString(), true);
 		} else if (prop.equals(IProduct.P_APPLICATION)) {
 			fAppCombo.setText(e.getNewValue().toString());
 		}

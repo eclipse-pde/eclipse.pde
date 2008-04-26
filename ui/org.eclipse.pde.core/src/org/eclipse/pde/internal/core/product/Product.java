@@ -89,6 +89,16 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setVersion(java.lang.String)
+	 */
+	public void setVersion(String version) {
+		String old = fVersion;
+		fVersion = version;
+		if (isEditable())
+			firePropertyChanged(P_VERSION, old, fVersion);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setName(java.lang.String)
 	 */
 	public void setName(String name) {
