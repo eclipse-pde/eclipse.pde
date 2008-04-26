@@ -1613,6 +1613,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginImportOperation_linking;
 	public static String PluginContentPage_appQuestion;
 
+	public static String PluginContentPage_enable_api_analysis;
+
 	public static String ImportWizard_title;
 	public static String ImportWizard_noToAll;
 	public static String ImportWizard_messages_title;

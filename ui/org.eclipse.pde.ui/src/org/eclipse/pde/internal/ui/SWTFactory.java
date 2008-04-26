@@ -41,6 +41,14 @@ public class SWTFactory {
 	}
 
 	/**
+	 * Returns a width hint for a button control.
+	 */
+	public static int getButtonWidthHint(Button button, int widthHint) {
+		button.setFont(JFaceResources.getDialogFont());
+		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	}
+
+	/**
 	 * Sets width and height hint for the button control.
 	 * <b>Note:</b> This is a NOP if the button's layout data is not
 	 * an instance of <code>GridData</code>.

@@ -20,10 +20,8 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.swt.SWT;
@@ -34,8 +32,10 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
+/**
+ * Content wizard page for the New Plugin Project wizard (page 2)
+ */
 public class PluginContentPage extends ContentPage {
-	protected final static int P_CLASS_GROUP = 2;
 
 	private Text fClassText;
 	private Button fGenerateClass;
@@ -44,17 +44,30 @@ public class PluginContentPage extends ContentPage {
 	private Label fEELabel;
 	private Button fExeEnvButton;
 	private Combo fEEChoice;
-
+	private Group fRCPGroup;
 	private Label fLabel;
 	private Button fYesButton;
 	private Button fNoButton;
 
+	/**
+	 * Button to enable API analysis for the project by default
+	 */
+	private Button fApiAnalysisButton = null;
+
+	/**
+	 * Dialog settings constants
+	 */
 	private final static String S_GENERATE_ACTIVATOR = "generateActivator"; //$NON-NLS-1$
 	private final static String S_UI_PLUGIN = "uiPlugin"; //$NON-NLS-1$
 	private final static String S_RCP_PLUGIN = "rcpPlugin"; //$NON-NLS-1$
+	private final static String S_API_ANALYSIS = "apiAnalysis"; //$NON-NLS-1$
 
+	protected final static int P_CLASS_GROUP = 2;
 	private final static String NO_EXECUTION_ENVIRONMENT = PDEUIMessages.PluginContentPage_noEE;
 
+	/**
+	 * default tText modify listener
+	 */
 	private ModifyListener classListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			if (fInitialized)
@@ -63,8 +76,13 @@ public class PluginContentPage extends ContentPage {
 		}
 	};
 
-	private Group fRCPGroup;
-
+	/**
+	 * Constructor
+	 * @param pageName
+	 * @param provider
+	 * @param page
+	 * @param data
+	 */
 	public PluginContentPage(String pageName, IProjectProvider provider, NewProjectCreationPage page, AbstractFieldData data) {
 		super(pageName, provider, page, data);
 		setTitle(PDEUIMessages.ContentPage_title);
@@ -80,18 +98,19 @@ public class PluginContentPage extends ContentPage {
 
 		createPluginPropertiesGroup(container);
 		createPluginClassGroup(container);
-		createRCPGroup(container);
+		createRCPQuestion(container, 2);
 
 		Dialog.applyDialogFont(container);
 		setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_PROJECT_REQUIRED_DATA);
 	}
 
+	/**
+	 * Creates all of the plugin properties widgets
+	 * @param container
+	 */
 	private void createPluginPropertiesGroup(Composite container) {
-		Group propertiesGroup = new Group(container, SWT.NONE);
-		propertiesGroup.setLayout(new GridLayout(3, false));
-		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		propertiesGroup.setText(PDEUIMessages.ContentPage_pGroup);
+		Group propertiesGroup = SWTFactory.createGroup(container, PDEUIMessages.ContentPage_pGroup, 3, 1, GridData.FILL_HORIZONTAL);
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_pid);
@@ -112,6 +131,17 @@ public class PluginContentPage extends ContentPage {
 		createExecutionEnvironmentControls(propertiesGroup);
 	}
 
+	/**
+	 * @return if API analysis should be set up on the project by default
+	 */
+	protected boolean setupApiAnalysis() {
+		return fApiAnalysisButton.getSelection();
+	}
+
+	/**
+	 * Creates all of the EE widgets
+	 * @param container
+	 */
 	private void createExecutionEnvironmentControls(Composite container) {
 		// Create label
 		fEELabel = new Label(container, SWT.NONE);
@@ -161,22 +191,16 @@ public class PluginContentPage extends ContentPage {
 		});
 	}
 
+	/**
+	 * Creates all of the plugin options widgets
+	 * @param container
+	 */
 	private void createPluginClassGroup(Composite container) {
-		Group classGroup = new Group(container, SWT.NONE);
-		classGroup.setLayout(new GridLayout(2, false));
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		classGroup.setLayoutData(gd);
-		classGroup.setText(PDEUIMessages.ContentPage_pClassGroup);
+		Group classGroup = SWTFactory.createGroup(container, PDEUIMessages.ContentPage_pClassGroup, 2, 1, GridData.FILL_HORIZONTAL);
 
 		IDialogSettings settings = getDialogSettings();
 
-		fGenerateClass = new Button(classGroup, SWT.CHECK);
-		fGenerateClass.setText(PDEUIMessages.ContentPage_generate);
-		fGenerateClass.setSelection((settings != null) ? !settings.getBoolean(S_GENERATE_ACTIVATOR) : true);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fGenerateClass.setLayoutData(gd);
+		fGenerateClass = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null, (settings != null) ? !settings.getBoolean(S_GENERATE_ACTIVATOR) : true, 2);
 		fGenerateClass.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fClassLabel.setEnabled(fGenerateClass.getSelection());
@@ -188,25 +212,31 @@ public class PluginContentPage extends ContentPage {
 
 		fClassLabel = new Label(classGroup, SWT.NONE);
 		fClassLabel.setText(PDEUIMessages.ContentPage_classname);
-		gd = new GridData();
+		GridData gd = new GridData();
 		gd.horizontalIndent = 20;
 		fClassLabel.setLayoutData(gd);
 		fClassText = createText(classGroup, classListener);
 
-		fUIPlugin = new Button(classGroup, SWT.CHECK);
-		fUIPlugin.setText(PDEUIMessages.ContentPage_uicontribution);
-		fUIPlugin.setSelection((settings != null) ? !settings.getBoolean(S_UI_PLUGIN) : true);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fUIPlugin.setLayoutData(gd);
+		fUIPlugin = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_uicontribution, null, (settings != null) ? !settings.getBoolean(S_UI_PLUGIN) : true, 2);
 		fUIPlugin.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateData();
 				validatePage();
 			}
 		});
+
+		fApiAnalysisButton = SWTFactory.createCheckButton(classGroup, PDEUIMessages.PluginContentPage_enable_api_analysis, null, false, 2);
+		fApiAnalysisButton.setSelection((settings != null) ? settings.getBoolean(S_API_ANALYSIS) : false);
+		fApiAnalysisButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				validatePage();
+			}
+		});
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#updateData()
+	 */
 	public void updateData() {
 		super.updateData();
 		PluginFieldData data = (PluginFieldData) fData;
@@ -221,17 +251,14 @@ public class PluginContentPage extends ContentPage {
 		}
 	}
 
-	private void createRCPGroup(Composite container) {
-		fRCPGroup = new Group(container, SWT.NONE);
-		fRCPGroup.setLayout(new GridLayout(2, false));
-		fRCPGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fRCPGroup.setText(PDEUIMessages.PluginContentPage_rcpGroup);
-
-		createRCPQuestion(fRCPGroup, 2);
-	}
-
+	/**
+	 * Creates the RCP questions 
+	 * @param parent
+	 * @param horizontalSpan
+	 */
 	private void createRCPQuestion(Composite parent, int horizontalSpan) {
-		Composite comp = new Composite(parent, SWT.NONE);
+		fRCPGroup = SWTFactory.createGroup(parent, PDEUIMessages.PluginContentPage_rcpGroup, 2, 1, GridData.FILL_HORIZONTAL);
+		Composite comp = new Composite(fRCPGroup, SWT.NONE);
 		GridLayout layout = new GridLayout(3, false);
 		layout.marginHeight = layout.marginWidth = 0;
 		comp.setLayout(layout);
@@ -250,7 +277,7 @@ public class PluginContentPage extends ContentPage {
 		fYesButton.setText(PDEUIMessages.PluginContentPage_yes);
 		fYesButton.setSelection(rcpApp);
 		gd = new GridData();
-		gd.widthHint = getButtonWidthHint(fYesButton);
+		gd.widthHint = SWTFactory.getButtonWidthHint(fYesButton, 50);
 		fYesButton.setLayoutData(gd);
 		fYesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -263,7 +290,7 @@ public class PluginContentPage extends ContentPage {
 		fNoButton.setText(PDEUIMessages.PluginContentPage_no);
 		fNoButton.setSelection(!rcpApp);
 		gd = new GridData();
-		gd.widthHint = getButtonWidthHint(fNoButton);
+		gd.widthHint = SWTFactory.getButtonWidthHint(fNoButton, 50);
 		fNoButton.setLayoutData(gd);
 	}
 
@@ -304,6 +331,9 @@ public class PluginContentPage extends ContentPage {
 		super.setVisible(visible);
 	}
 
+	/**
+	 * @return if the field data is using the OSGi framework
+	 */
 	private boolean isPureOSGi() {
 		return ((PluginFieldData) fData).getOSGiFramework() != null;
 	}
@@ -341,16 +371,16 @@ public class PluginContentPage extends ContentPage {
 		return PDEUIMessages.ContentPage_plugin;
 	}
 
-	private static int getButtonWidthHint(Button button) {
-		if (button.getFont().equals(JFaceResources.getDefaultFont()))
-			button.setFont(JFaceResources.getDialogFont());
-		return Math.max(50, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-	}
-
+	/**
+	 * Saves the current state of widgets of interest in the dialog settings for the wizard
+	 * @param settings
+	 */
 	protected void saveSettings(IDialogSettings settings) {
 		settings.put(S_GENERATE_ACTIVATOR, !fGenerateClass.getSelection());
-		if (fUIPlugin.isEnabled())
+		if (fUIPlugin.isEnabled()) {
 			settings.put(S_UI_PLUGIN, !fUIPlugin.getSelection());
+		}
+		settings.put(S_API_ANALYSIS, fApiAnalysisButton.getSelection());
 		settings.put(S_RCP_PLUGIN, fYesButton.getSelection());
 	}
 }
