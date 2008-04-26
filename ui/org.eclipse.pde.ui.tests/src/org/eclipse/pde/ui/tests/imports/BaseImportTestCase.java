@@ -27,7 +27,7 @@ public abstract class BaseImportTestCase extends PDETestCase {
 	protected abstract void verifyProject(String projectName, boolean isJava);
 	
 	public void testImportJAR() {
-		doSingleImport("org.eclipse.pde.core", true);
+		doSingleImport("org.eclipse.jsch.core", true);
 	}
 
 	public void testImportFlat() {
