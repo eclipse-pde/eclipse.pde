@@ -10,11 +10,12 @@
  *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223739
  *******************************************************************************/
-package org.eclipse.pde.internal.ds.ui.editor;
-
+package org.eclipse.pde.internal.ds.ui.editor.details;
 
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.pde.internal.ds.core.IDSImplementation;
+import org.eclipse.pde.internal.ds.core.IDSProperties;
+import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
+import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -27,20 +28,19 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class DSImplementationDetails extends DSAbstractDetails {
-	
-	private IDSImplementation fImplementation;
+public class DSPropertiesDetails extends DSAbstractDetails{
+	private IDSProperties fProperties;
 
 	private Section fMainSection;
 
-	private FormEntry fTitle;
+	private FormEntry fEntry;
 
 
-	public DSImplementationDetails(IDSMaster masterSection) {
+	public DSPropertiesDetails(IDSMaster masterSection) {
 		super(masterSection, DSInputContext.CONTEXT_ID);
-		fImplementation = null;
+		fProperties = null;
 		fMainSection = null;
-		fTitle = null;
+		fEntry = null;
 
 	}
 
@@ -54,32 +54,32 @@ public class DSImplementationDetails extends DSAbstractDetails {
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		fMainSection.setText("Definition");
 		fMainSection
-				.setDescription("Specify the service's implementation class:");
+				.setDescription("Specify the properties' entry: ");
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
-
+		
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		fMainSection.setLayoutData(data);
 
-		
+
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
 		getPage().alignSectionHeaders(getMasterSection().getSection(),
 				fMainSection);
 
 		// Create container for main section
-		 Composite mainSectionClient = getToolkit()
+		Composite mainSectionClient = getToolkit()
 				.createComposite(fMainSection);
 		mainSectionClient.setLayout(FormLayoutFactory
 				.createSectionClientGridLayout(false, 2));
 
 		// Attribute: title
-		fTitle = new FormEntry(mainSectionClient, getToolkit(), "Title*:",
+		fEntry = new FormEntry(mainSectionClient, getToolkit(), "Entry*:",
 				SWT.NONE);
-		
+
 		// Bind widgets
-		 getToolkit().paintBordersFor(mainSectionClient);
+		getToolkit().paintBordersFor(mainSectionClient);
 		fMainSection.setClient(mainSectionClient);
 		markDetailsPart(fMainSection);
 
@@ -89,13 +89,13 @@ public class DSImplementationDetails extends DSAbstractDetails {
 
 	public void hookListeners() {
 		// Attribute: title
-		fTitle.setFormEntryListener(new FormEntryAdapter(this) {
+		fEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
-				if (fImplementation == null) {
+				if (fProperties == null) {
 					return;
 				}
-				fImplementation.setClassName(fTitle.getValue());
+				fProperties.setEntry(fEntry.getValue());
 			}
 		});
 	}
@@ -106,16 +106,16 @@ public class DSImplementationDetails extends DSAbstractDetails {
 
 		boolean editable = isEditableElement();
 		// Ensure data object is defined
-		if (fImplementation == null) {
+		if (fProperties == null) {
 			return;
 		}
 
-		if (fImplementation.getClassName() == null) {
+		if (fProperties.getEntry() == null) {
 			return;
 		}
 		// Attribute: title
-		fTitle.setValue(fImplementation.getClassName(), true);
-		fTitle.setEditable(editable);
+		fEntry.setValue(fProperties.getEntry(), true);
+		fEntry.setEditable(editable);
 
 
 		
@@ -125,11 +125,11 @@ public class DSImplementationDetails extends DSAbstractDetails {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
 		// Ensure we have the right type
-		if ((object == null) || (object instanceof IDSImplementation) == false) {
+		if ((object == null) || (object instanceof IDSProperties) == false) {
 			return;
 		}
 		// Set data
-		setData((IDSImplementation) object);
+		setData((IDSProperties) object);
 		// Update the UI given the new data
 		updateFields();
 	}
@@ -137,11 +137,11 @@ public class DSImplementationDetails extends DSAbstractDetails {
 	/**
 	 * @param object
 	 */
-	public void setData(IDSImplementation object) {
+	public void setData(IDSProperties object) {
 		// Set data
-		fImplementation = object;
+		fProperties = object;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -149,6 +149,7 @@ public class DSImplementationDetails extends DSAbstractDetails {
 	 */
 	public void commit(boolean onSave) {
 		super.commit(onSave);
-		fTitle.commit();
+		fEntry.commit();
 	}
+
 }
