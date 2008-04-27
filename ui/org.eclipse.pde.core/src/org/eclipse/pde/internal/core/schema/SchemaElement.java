@@ -12,16 +12,7 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
-
-import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
-import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.ischema.ISchemaRepeatable;
-import org.eclipse.pde.internal.core.ischema.ISchemaType;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 
@@ -251,11 +242,14 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		String realDescription = getWritableDescription();
 		if (realDescription.length() == 0)
 			realDescription = null;
-		if (realDescription != null || iconName != null || labelProperty != null || isDeprecated() || hasTranslatableContent()) {
+
+		String extendedProperties = getExtendedAttributes();
+
+		if (realDescription != null || iconName != null || labelProperty != null || extendedProperties != null || isDeprecated() || hasTranslatableContent()) {
 			String indent3 = indent2 + Schema.INDENT;
 			String indent4 = indent3 + Schema.INDENT;
 			writer.println(indent2 + "<annotation>"); //$NON-NLS-1$
-			if (iconName != null || labelProperty != null || isDeprecated() || hasTranslatableContent()) {
+			if (iconName != null || labelProperty != null || extendedProperties != null || isDeprecated() || hasTranslatableContent()) {
 				writer.println(indent3 + "<appinfo>"); //$NON-NLS-1$
 				writer.print(indent4 + "<meta.element"); //$NON-NLS-1$
 				if (labelProperty != null)
@@ -266,7 +260,6 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 					writer.print(" translatable=\"true\""); //$NON-NLS-1$
 				if (isDeprecated())
 					writer.print(" deprecated=\"true\""); //$NON-NLS-1$
-				String extendedProperties = getExtendedAttributes();
 				if (extendedProperties != null)
 					writer.print(extendedProperties);
 				writer.println("/>"); //$NON-NLS-1$

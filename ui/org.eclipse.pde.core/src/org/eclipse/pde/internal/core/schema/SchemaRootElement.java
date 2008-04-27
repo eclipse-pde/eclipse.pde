@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,9 @@ import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 public class SchemaRootElement extends SchemaElement implements ISchemaRootElement {
 
 	private static final long serialVersionUID = 1L;
-	public static final String P_DEP_REPLACEMENT = "replacement"; //$NON-NLS-1$
+
 	private String fDeperecatedReplacement;
+	private boolean fInternal;
 
 	public SchemaRootElement(ISchemaObject parent, String name) {
 		super(parent, name);
@@ -34,8 +35,24 @@ public class SchemaRootElement extends SchemaElement implements ISchemaRootEleme
 	}
 
 	public String getExtendedAttributes() {
-		if (fDeperecatedReplacement == null)
-			return null;
-		return " " + P_DEP_REPLACEMENT + "=\"" + fDeperecatedReplacement + "\" "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(" "); //$NON-NLS-1$
+		if (fDeperecatedReplacement != null)
+			buffer.append(P_DEP_REPLACEMENT + "=\"" + fDeperecatedReplacement + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (fInternal == true)
+			buffer.append(P_INTERNAL + "=\"" + "true" + "\" "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+		return buffer.toString();
+	}
+
+	public boolean isInternal() {
+		return fInternal;
+	}
+
+	public void setInternal(boolean value) {
+		boolean oldValue = fInternal;
+		fInternal = value;
+		getSchema().fireModelObjectChanged(this, P_INTERNAL, Boolean.valueOf(oldValue), Boolean.valueOf(fInternal));
 	}
 }

@@ -202,6 +202,7 @@ public class PDECompilersConfigurationBlock {
 	private static final Key KEY_P_INCOMPATIBLE_ENV = getPDEPrefKey(CompilerFlags.P_INCOMPATIBLE_ENV);
 	private static final Key KEY_P_MISSING_EXPORT_PKGS = getPDEPrefKey(CompilerFlags.P_MISSING_EXPORT_PKGS);
 	private static final Key KEY_P_DEPRECATED = getPDEPrefKey(CompilerFlags.P_DEPRECATED);
+	private static final Key KEY_P_INTERNAL = getPDEPrefKey(CompilerFlags.P_INTERNAL);
 	private static final Key KEY_P_MISSING_BUNDLE_CLASSPATH_ENTRIES = getPDEPrefKey(CompilerFlags.P_MISSING_BUNDLE_CLASSPATH_ENTRIES);
 	private static final Key KEY_S_CREATE_DOCS = getPDEPrefKey(CompilerFlags.S_CREATE_DOCS);
 	private static final Key KEY_S_DOC_FOLDER = getPDEPrefKey(CompilerFlags.S_DOC_FOLDER);
@@ -209,7 +210,7 @@ public class PDECompilersConfigurationBlock {
 
 	private static String[] SEVERITIES = {IPreferenceConstants.VALUE_ERROR, IPreferenceConstants.VALUE_WARNING, IPreferenceConstants.VALUE_IGNORE};
 
-	private static Key[] fgAllKeys = {KEY_F_UNRESOLVED_FEATURES, KEY_F_UNRESOLVED_PLUGINS, KEY_P_BUILD, KEY_P_DEPRECATED, KEY_P_DISCOURAGED_CLASS, KEY_P_INCOMPATIBLE_ENV, KEY_P_MISSING_BUNDLE_CLASSPATH_ENTRIES, KEY_P_MISSING_EXPORT_PKGS, KEY_P_NO_REQUIRED_ATT, KEY_P_NOT_EXTERNALIZED, KEY_P_UNKNOWN_ATTRIBUTE, KEY_P_UNKNOWN_CLASS, KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_IDENTIFIER, KEY_P_UNKNOWN_RESOURCE, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_UNRESOLVED_IMPORTS, KEY_S_CREATE_DOCS, KEY_S_DOC_FOLDER, KEY_S_OPEN_TAGS};
+	private static Key[] fgAllKeys = {KEY_F_UNRESOLVED_FEATURES, KEY_F_UNRESOLVED_PLUGINS, KEY_P_BUILD, KEY_P_INTERNAL, KEY_P_DEPRECATED, KEY_P_DISCOURAGED_CLASS, KEY_P_INCOMPATIBLE_ENV, KEY_P_MISSING_BUNDLE_CLASSPATH_ENTRIES, KEY_P_MISSING_EXPORT_PKGS, KEY_P_NO_REQUIRED_ATT, KEY_P_NOT_EXTERNALIZED, KEY_P_UNKNOWN_ATTRIBUTE, KEY_P_UNKNOWN_CLASS, KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_IDENTIFIER, KEY_P_UNKNOWN_RESOURCE, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_UNRESOLVED_IMPORTS, KEY_S_CREATE_DOCS, KEY_S_DOC_FOLDER, KEY_S_OPEN_TAGS};
 
 	/**
 	 * Constant representing the {@link IDialogSettings} section for this block
@@ -499,7 +500,7 @@ public class PDECompilersConfigurationBlock {
 				initializeComboControls(client, new String[] {PDEUIMessages.compilers_p_no_required_att, PDEUIMessages.CompilersConfigurationTab_buildPropertiesErrors, PDEUIMessages.CompilersConfigurationTab_incompatEnv, PDEUIMessages.compilers_p_exported_pkgs, PDEUIMessages.CompilersConfigurationTab_missingBundleClasspathEntries}, new Key[] {KEY_P_NO_REQUIRED_ATT, KEY_P_BUILD, KEY_P_INCOMPATIBLE_ENV, KEY_P_MISSING_EXPORT_PKGS, KEY_P_MISSING_BUNDLE_CLASSPATH_ENTRIES}, CompilerFlags.PLUGIN_FLAGS);
 				//Usage
 				client = createExpansibleComposite(sbody, PDEUIMessages.PDECompilersConfigurationBlock_usage);
-				initializeComboControls(client, new String[] {PDEUIMessages.compilers_p_unresolved_import, PDEUIMessages.compilers_p_unresolved_ex_points, PDEUIMessages.compilers_p_deprecated, PDEUIMessages.compilers_p_not_externalized_att}, new Key[] {KEY_P_UNRESOLVED_IMPORTS, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_DEPRECATED, KEY_P_NOT_EXTERNALIZED}, CompilerFlags.PLUGIN_FLAGS);
+				initializeComboControls(client, new String[] {PDEUIMessages.compilers_p_unresolved_import, PDEUIMessages.compilers_p_unresolved_ex_points, PDEUIMessages.compilers_p_internal, PDEUIMessages.compilers_p_deprecated, PDEUIMessages.compilers_p_not_externalized_att}, new Key[] {KEY_P_UNRESOLVED_IMPORTS, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_INTERNAL, KEY_P_DEPRECATED, KEY_P_NOT_EXTERNALIZED}, CompilerFlags.PLUGIN_FLAGS);
 				//References
 				client = createExpansibleComposite(sbody, PDEUIMessages.PDECompilersConfigurationBlock_references);
 				initializeComboControls(client, new String[] {PDEUIMessages.compilers_p_unknown_element, PDEUIMessages.compilers_p_unknown_attribute, PDEUIMessages.compilers_p_unknown_class, PDEUIMessages.compilers_p_discouraged_class, PDEUIMessages.compilers_p_unknown_resource, PDEUIMessages.compilers_p_unknown_identifier}, new Key[] {KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_ATTRIBUTE, KEY_P_UNKNOWN_CLASS, KEY_P_DISCOURAGED_CLASS, KEY_P_UNKNOWN_RESOURCE, KEY_P_UNKNOWN_IDENTIFIER,}, CompilerFlags.PLUGIN_FLAGS);

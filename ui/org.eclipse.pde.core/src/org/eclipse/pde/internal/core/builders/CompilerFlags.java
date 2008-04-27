@@ -56,6 +56,7 @@ public class CompilerFlags {
 	public static final String P_INCOMPATIBLE_ENV = "compilers.incompatible-environment"; //$NON-NLS-1$
 	public static final String P_MISSING_EXPORT_PKGS = "compilers.p.missing-packages"; //$NON-NLS-1$
 	public static final String P_DEPRECATED = "compilers.p.deprecated"; //$NON-NLS-1$
+	public static final String P_INTERNAL = "compilers.p.internal"; //$NON-NLS-1$
 	public static final String P_MISSING_BUNDLE_CLASSPATH_ENTRIES = "compilers.p.missing-bundle-classpath-entries"; //$NON-NLS-1$
 
 	/**

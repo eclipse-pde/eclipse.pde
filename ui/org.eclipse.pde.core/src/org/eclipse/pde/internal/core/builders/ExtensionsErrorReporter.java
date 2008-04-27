@@ -185,6 +185,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			if (schemaElement != null) {
 				validateRequiredExtensionAttributes(element, schemaElement);
 				validateExistingExtensionAttributes(element, element.getAttributes(), schemaElement);
+				validateInternalExtensionAttribute(element, schemaElement);
 				if (schemaElement.isDeprecated()) {
 					if (schemaElement instanceof ISchemaRootElement)
 						reportDeprecatedRootElement(element, ((ISchemaRootElement) schemaElement).getDeprecatedSuggestion());
@@ -199,6 +200,21 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
 				validateElement((Element) children.item(i), schema, false);
+			}
+		}
+	}
+
+	private void validateInternalExtensionAttribute(Element element, ISchemaElement schemaElement) {
+		if (schemaElement instanceof ISchemaRootElement) {
+			ISchemaRootElement rootElement = (ISchemaRootElement) schemaElement;
+			if (rootElement.isInternal()) {
+				int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_INTERNAL);
+				if (severity != CompilerFlags.IGNORE) {
+					String point = element.getAttribute("point"); //$NON-NLS-1$
+					if (point == null)
+						return; // should never come to this...
+					report(NLS.bind(PDECoreMessages.Builders_Manifest_internal_rootElement, point), getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
+				}
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,10 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	private FormEntry fName;
 	private Button fDepTrue;
 	private Button fDepFalse;
+
+	private Button fInternalTrue;
+	private Button fInternalFalse;
+
 	private FormEntry fSuggestion;
 
 	public SchemaRootElementDetails(ElementSection section) {
@@ -47,11 +51,17 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		// Ensures label columns on every detail page are same width
 		((GridData) fName.getLabel().getLayoutData()).widthHint = minLabelWeight;
 
-		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
+		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_internal);
 		label.setForeground(foreground);
-		Button[] buttons = createTrueFalseButtons(parent, toolkit, 2);
-		fDepTrue = buttons[0];
-		fDepFalse = buttons[1];
+		Button[] internalButtons = createTrueFalseButtons(parent, toolkit, 2);
+		fInternalTrue = internalButtons[0];
+		fInternalFalse = internalButtons[1];
+
+		label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
+		label.setForeground(foreground);
+		Button[] deprecatedButtons = createTrueFalseButtons(parent, toolkit, 2);
+		fDepTrue = deprecatedButtons[0];
+		fDepFalse = deprecatedButtons[1];
 
 		fSuggestion = new FormEntry(parent, toolkit, PDEUIMessages.SchemaRootElementDetails_replacement, null, false, 6);
 
@@ -73,8 +83,14 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		fDepFalse.setSelection(!fElement.isDeprecated());
 		fSuggestion.setValue(fElement.getDeprecatedSuggestion(), true);
 
+		fInternalTrue.setSelection(fElement.isInternal());
+		fInternalFalse.setSelection(!fElement.isInternal());
+
 		fDepTrue.setEnabled(isEditable());
 		fDepFalse.setEnabled(isEditable());
+
+		fInternalTrue.setEnabled(isEditable());
+		fInternalFalse.setEnabled(isEditable());
 
 		if (!fElement.isDeprecated()) {
 			fSuggestion.getLabel().setEnabled(false);
@@ -95,6 +111,16 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 				fSuggestion.getText().setEditable(deprecated);
 			}
 		});
+
+		fInternalTrue.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
+				boolean internal = fInternalTrue.getSelection();
+				fElement.setInternal(internal);
+			}
+		});
+
 		fSuggestion.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())

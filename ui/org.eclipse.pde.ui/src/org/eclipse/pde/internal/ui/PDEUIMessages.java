@@ -1934,6 +1934,7 @@ public class PDEUIMessages extends NLS {
 	public static String compilers_p_no_required_att;
 	public static String compilers_p_not_externalized_att;
 	public static String compilers_p_deprecated;
+	public static String compilers_p_internal;
 	public static String compilers_s_create_docs;
 	public static String compilers_s_doc_folder;
 	public static String compilers_s_open_tags;
@@ -2638,6 +2639,7 @@ public class PDEUIMessages extends NLS {
 	public static String DocSection_text;
 
 	public static String SchemaDetails_deprecated;
+	public static String SchemaDetails_internal;
 
 	public static String SchemaAttributeDetails_use;
 	public static String SchemaAttributeDetails_type;

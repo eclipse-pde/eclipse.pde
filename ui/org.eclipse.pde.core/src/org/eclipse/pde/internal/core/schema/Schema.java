@@ -668,8 +668,13 @@ public class Schema extends PlatformObject implements ISchema {
 								element.setTranslatableProperty(processTranslatable(getAttribute(meta, "translatable"))); //$NON-NLS-1$
 								element.setDeprecatedProperty(processDeprecated(getAttribute(meta, "deprecated"))); //$NON-NLS-1$
 								if (element instanceof ISchemaRootElement) {
-									String depSug = getAttribute(meta, SchemaRootElement.P_DEP_REPLACEMENT);
+									// set deprecated suggestion
+									String depSug = getAttribute(meta, ISchemaRootElement.P_DEP_REPLACEMENT);
 									((ISchemaRootElement) element).setDeprecatedSuggestion(depSug);
+
+									// set internal
+									String internal = getAttribute(meta, ISchemaRootElement.P_INTERNAL);
+									((ISchemaRootElement) element).setInternal(Boolean.parseBoolean(internal));
 								}
 							}
 						}
