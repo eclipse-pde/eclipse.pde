@@ -11,18 +11,11 @@
 package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -59,12 +52,8 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
-import org.eclipse.pde.api.tools.internal.search.Location;
 import org.eclipse.pde.api.tools.internal.search.MethodSearchCriteria;
-import org.eclipse.pde.api.tools.internal.search.Reference;
 import org.eclipse.pde.api.tools.internal.util.Util;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Analyzes a component or scope within a component for illegal API use in prerequisite
@@ -74,47 +63,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ApiUseAnalyzer {
 	
-	/**
-	 * The result of a compatibility check
-	 */
-	public class CompatibilityResult {
-		
-		/**
-		 * Required component.
-		 */
-		private IApiComponent fComponent;
-		
-		/**
-		 * Unresolved references, possibly empty.
-		 */
-		private IReference[] fUnresolved;
-		
-		
-		CompatibilityResult(IApiComponent component, IReference[] unresolved) {
-			fComponent = component;
-			fUnresolved = unresolved;
-		}
-		
-		/**
-		 * Returns the component that was analyzed for compatibility.
-		 * 
-		 * @return required component
-		 */
-		public IApiComponent getRequiredComponent() {
-			return fComponent;
-		}
-		
-		/**
-		 * Returns any references that could not be resolved by the required component.
-		 * An empty collection indicates that it is compatible.
-		 * 
-		 * @return unresolved references, possibly empty
-		 */
-		public IReference[] getUnresolvedReferences() {
-			return fUnresolved;
-		}
-	}
-
 	/**
 	 * Collects search criteria from an API description for usage problems.
 	 */
@@ -297,38 +245,6 @@ public class ApiUseAnalyzer {
 	}
 	
 	/**
-	 * Returns all references in the given search results.
-	 * 
-	 * TODO: this method will be deleted
-	 * 
-	 * @param results
-	 * @return
-	 * @deprecated to be deleted, and the analyzer will return IApiProblems instead
-	 */
-	private IReference[] getReferences(IApiSearchResult[] results) {
-		if (results.length == 1) {
-			return results[0].getReferences();
-		}
-		if (results.length == 0) {
-			return new IReference[0];
-		}
-		int size = 0;
-		for (int i = 0; i < results.length; i++) {
-			IApiSearchResult result = results[i];
-			size += result.getReferences().length;
-		}
-		IReference[] refs = new IReference[size];
-		int index = 0;
-		for (int i = 0; i < results.length; i++) {
-			IApiSearchResult result = results[i];
-			IReference[] references = result.getReferences();
-			System.arraycopy(references, 0, refs, index, references.length);
-			index = index + references.length;
-		}
-		return refs;
-	}
-	
-	/**
 	 * Build and return search conditions for API usage in all prerequisite components for
 	 * the given component and its profile.
 	 * 
@@ -393,115 +309,7 @@ public class ApiUseAnalyzer {
 		criteria.setUserData(new ProblemDescriptor(problemKind, elementType, flags));
 		return criteria;
 	}
-	
-	/**
-	 * Analyzes the given required API component for compatibility with the specified components
-	 * in other profiles.
-	 * 
-	 * @param component the component being analyzed for compatibility with required components
-	 * 	in other profiles.
-	 * @param requiredComponents a collection of a collection of required components to analyze
-	 * @param monitor
-	 * @return results of analysis or null if canceled
-	 * @throws CoreException
-	 */
-	public CompatibilityResult[] analyzeCompatibility(IApiComponent component, IApiComponent[] requiredComponents, IProgressMonitor monitor) throws CoreException {
-		Set reqComponentIds = new HashSet();
-		for (int i = 0; i < requiredComponents.length; i++) {
-			reqComponentIds.add(requiredComponents[i].getId());
-		}
-		CompatibilityResult[] results = new CompatibilityResult[requiredComponents.length];
-		//extracting references take half the time
-		int weight = requiredComponents.length / 2;
-		if (weight == 0) {
-			weight = 1;
-		}
-		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.Compatibility_Analysis, requiredComponents.length + weight);
-		// extract all references by component
-		Map referencesById = findAllReferences(component, (String[])reqComponentIds.toArray(new String[reqComponentIds.size()]), localMonitor.newChild(weight, SubMonitor.SUPPRESS_ALL_LABELS));
-		if (localMonitor.isCanceled()) {
-			return null;
-		}
-		for (int i = 0; i < requiredComponents.length; i++) {
-			if (localMonitor.isCanceled()) {
-				return null;
-			}
-			IApiComponent reqComponent = requiredComponents[i];
-			String id = reqComponent.getId();
-			localMonitor.subTask(MessageFormat.format(BuilderMessages.Analyzing_0_1, new String[]{id, reqComponent.getVersion()}));
-			List references = (List) referencesById.get(id);
-			if (references != null) { 
-				IApiComponent sourceComponent = reqComponent.getProfile().getApiComponent(component.getId());
-				// recreate unresolved references to re-resolve
-				IReference[] unresolved = new IReference[references.size()];
-				Iterator iterator = references.iterator();
-				int index = 0;
-				// TODO: there is an issue when a new required plug-in is introduced, as references won't be resolved
-				// in the "old profile" that does not have the required plug-in
-				// TODO: there is an issue with new packages introduced in the base plug-in, as they cannot be resolved
-				// in the "old profile"
-				while (iterator.hasNext()) {
-					IReference reference = (IReference) iterator.next();
-					ILocation source = new Location(sourceComponent, reference.getSourceLocation().getMember());
-					source.setLineNumber(reference.getSourceLocation().getLineNumber());
-					ILocation target = new Location(reqComponent, reference.getReferencedLocation().getMember());
-					unresolved[index++] = new Reference(source, target, reference.getReferenceKind());
-				}				
-				Factory.newSearchEngine().resolveReferences(unresolved, localMonitor.newChild(1, SubMonitor.SUPPRESS_ALL_LABELS));
-				// collect unresolved references
-				List missing = new ArrayList();
-				for (int j = 0; j < unresolved.length; j++) {
-					IReference reference = unresolved[j];
-					if (reference.getResolvedLocation() == null) {
-						missing.add(reference);
-					}
-				}
-				results[i] = new CompatibilityResult(reqComponent, (IReference[]) missing.toArray(new IReference[missing.size()]));
-			} else {
-				// no references... compatible
-				results[i] = new CompatibilityResult(reqComponent, new IReference[0]);
-				localMonitor.worked(1);
-			}
-		}
-		localMonitor.done();
-		monitor.done();
-		return results;
-	}
-	
-	/**
-	 * Extracts and returns all references that 'from' makes to 'IDs', in a map keyed by ID.
-	 * 
-	 * @param from component references are extracted from
-	 * @param ids component IDs references are to
-	 * @return map of <String> -> <IReference[]>
-	 * @throws CoreException 
-	 */
-	private Map findAllReferences(IApiComponent from, String[] ids, IProgressMonitor monitor) throws CoreException {
-		IApiSearchEngine engine = Factory.newSearchEngine();
-		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		for (int i = 0; i < ids.length; i++) {
-			criteria.addReferencedComponentRestriction(ids[i]);
-		}
-		criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL);
-		criteria.setReferencedRestrictions(VisibilityModifiers.ALL_VISIBILITIES, RestrictionModifiers.ALL_RESTRICTIONS);
-		IReference[] all = getReferences(engine.search(Factory.newScope(new IApiComponent[]{from}), new IApiSearchCriteria[]{criteria}, monitor));
-		Map map = new HashMap(ids.length);
-		for (int i = 0; i < all.length; i++) {
-			IReference reference = all[i];
-			ILocation location = reference.getResolvedLocation();
-			if (location != null) {
-				IApiComponent component = location.getApiComponent();
-				List list = (List) map.get(component.getId());
-				if (list == null) {
-					list = new LinkedList();
-					map.put(component.getId(), list);
-				}
-				list.add(reference);
-			}
-		}
-		return map;
-	}
-	
+		
 	/**
 	 * Creates an {@link IApiProblem} for the given illegal reference.
 	 * 

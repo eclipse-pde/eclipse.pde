@@ -170,17 +170,4 @@
             markerType="org.eclipse.pde.api.tools.unsupported_tags">
       </markerResolutionGenerator>
    </extension>
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <viewerContribution
-            id="org.eclipse.pde.api.tools.ui.actions.compatibleBundles"
-            targetID="#RequiredPluginsContextMenu">
-         <action
-               class="org.eclipse.pde.api.tools.ui.internal.wizards.analysis.AnalyzeCompatibilityAction"
-               id="org.eclipse.pde.api.tools.ui.action.bundleCompatibility"
-               label="%AnalyzeCompatibleBundles.action.label"
-               menubarPath="additions">
-         </action>
-      </viewerContribution>
-   </extension>
 </plugin>

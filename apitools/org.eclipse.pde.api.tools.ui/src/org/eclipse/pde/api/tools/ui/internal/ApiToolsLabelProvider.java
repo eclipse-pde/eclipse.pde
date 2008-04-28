@@ -19,7 +19,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.pde.api.tools.internal.builder.ApiUseAnalyzer.CompatibilityResult;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
@@ -84,23 +83,6 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		if(element instanceof EEEntry) {
 			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
 		}
-		if (element instanceof CompatibilityResult) {
-			CompatibilityResult result = (CompatibilityResult) element;
-			IApiComponent component = result.getRequiredComponent();
-			String baseKey = null;
-			if (component.isFragment()) {
-				baseKey = IApiToolsConstants.IMG_OBJ_FRAGMENT;
-			} else if (component.isSystemComponent()) {
-				baseKey = IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY;
-			} else {
-				baseKey = IApiToolsConstants.IMG_OBJ_BUNDLE;
-			}
-			int flags = ApiImageDescriptor.SUCCESS;
-			if (result.getUnresolvedReferences().length > 0) {
-				flags = ApiImageDescriptor.ERROR;
-			}
-			return ApiUIPlugin.getImage(new ApiImageDescriptor(ApiUIPlugin.getImageDescriptor(baseKey), flags));
-		}
 		if (element instanceof ILocation) {
 			ILocation location = (ILocation) element;
 			IMemberDescriptor member = location.getMember();
@@ -137,9 +119,6 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		}
 		if(element instanceof EEEntry) {
 			return ((EEEntry)element).toString();
-		}
-		if (element instanceof CompatibilityResult) {
-			return getText(((CompatibilityResult)element).getRequiredComponent());
 		}
 		if (element instanceof ILocation) {
 			ILocation location = (ILocation) element;
