@@ -13,10 +13,10 @@ package org.eclipse.pde.internal.ds.core;
 
 import java.util.List;
 
-import org.eclipse.pde.internal.ds.core.text.DSModel;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.text.DSObject;
 
-public interface IDSObject {
+public interface IDSObject extends IDocumentElementNode {
 
 	/**
 	 * @return the children of the object or an empty List if none exist.
@@ -26,7 +26,7 @@ public interface IDSObject {
 	/**
 	 * @return the root model object that is an ancestor to this object.
 	 */
-	public abstract DSModel getModel();
+	public abstract IDSModel getModel();
 
 	/**
 	 * @return the root element that is an ancestor to this object.
@@ -51,5 +51,18 @@ public interface IDSObject {
 	public abstract DSObject getParent();
 	
 	
+	/**
+	 * @param DSObject
+	 *            the child used to locate a sibling
+	 * @return the object preceding the specified one in the list of children
+	 */
+	public abstract IDSObject getPreviousSibling(IDSObject DSObject);
+
+	/**
+	 * @param DSObject
+	 *            the child used to locate a sibling
+	 * @return the object proceeding the specified one in the list of children
+	 */
+	public abstract IDSObject getNextSibling(IDSObject DSObject);
 
 }

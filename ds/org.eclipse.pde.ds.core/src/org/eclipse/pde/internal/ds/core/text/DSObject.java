@@ -19,6 +19,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.DocumentObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
+import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSRoot;
 
@@ -117,7 +118,7 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getModel()
 	 */
-	public DSModel getModel() {
+	public IDSModel getModel() {
 		final IModel sharedModel = getSharedModel();
 		if (sharedModel instanceof DSModel) {
 			return (DSModel) sharedModel;
@@ -129,7 +130,7 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getRoot()
 	 */
 	public IDSRoot getRoot() {
-		final DSModel model = getModel();
+		final IDSModel model = getModel();
 		if (model != null) {
 			return model.getDSRoot();
 		}
@@ -175,16 +176,16 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	 * @param DSObject the child used to locate a sibling
 	 * @return the object preceding the specified one in the list of children
 	 */
-	public DSObject getPreviousSibling(DSObject DSObject) {
-		return (DSObject) getPreviousSibling(DSObject, DSObject.class);
+	public IDSObject getPreviousSibling(IDSObject dsObject) {
+		return (IDSObject) getPreviousSibling(dsObject, IDSObject.class);
 	}
 
 	/**
 	 * @param DSObject the child used to locate a sibling
 	 * @return the object proceeding the specified one in the list of children
 	 */
-	public DSObject getNextSibling(DSObject DSObject) {
-		return (DSObject) getNextSibling(DSObject, DSObject.class);
+	public IDSObject getNextSibling(IDSObject dsObject) {
+		return (IDSObject) getNextSibling(dsObject, IDSObject.class);
 	}
 
 	/**
