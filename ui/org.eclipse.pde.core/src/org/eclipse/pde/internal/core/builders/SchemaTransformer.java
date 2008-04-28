@@ -14,21 +14,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Locale;
-
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ischema.IDocumentSection;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
-import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
-import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
-import org.eclipse.pde.internal.core.schema.ChoiceRestriction;
-import org.eclipse.pde.internal.core.schema.DocumentSection;
-import org.eclipse.pde.internal.core.schema.SchemaRootElement;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.schema.*;
 import org.osgi.framework.Bundle;
 
 public class SchemaTransformer {
@@ -351,6 +340,8 @@ public class SchemaTransformer {
 		if (typeName.equals("boolean")) { //$NON-NLS-1$
 			fWriter.print("(true | false) "); //$NON-NLS-1$
 			choices = true;
+		} else if (att.getKind() == IMetaAttribute.IDENTIFIER) {
+			fWriter.print("IDREF "); //$NON-NLS-1$
 		} else if (restriction != null) {
 			appendRestriction(restriction);
 			choices = true;
