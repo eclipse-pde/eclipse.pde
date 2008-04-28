@@ -213,6 +213,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final Key KEY_LEAK_METHOD_RETURN_TYPE = getApiToolsKey(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE);
 	private static final Key KEY_LEAK_FIELD_DECL = getApiToolsKey(IApiProblemTypes.LEAK_FIELD_DECL);
 	private static final Key KEY_LEAK_METHOD_PARAM = getApiToolsKey(IApiProblemTypes.LEAK_METHOD_PARAM);
+	private static final Key KEY_INVALID_JAVADOC_TAG = getApiToolsKey(IApiProblemTypes.INVALID_JAVADOC_TAG);
 	
 	//compatibility keys
 	private static final Key KEY_API_PROFILE_REMOVED_API_COMPONENT =
@@ -667,7 +668,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_LEAK_FIELD_DECL,
 		KEY_LEAK_IMPLEMENT,
 		KEY_LEAK_METHOD_PARAM,
-		KEY_LEAK_METHOD_RETURN_TYPE
+		KEY_LEAK_METHOD_RETURN_TYPE,
+		KEY_INVALID_JAVADOC_TAG
 	};
 
 	private static Key[] fgAllVersionManagementKeys = {
@@ -691,6 +693,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_LEAK_IMPLEMENT,
 		KEY_LEAK_METHOD_PARAM,
 		KEY_LEAK_METHOD_RETURN_TYPE,
+		KEY_INVALID_JAVADOC_TAG,
 		KEY_API_PROFILE_REMOVED_API_COMPONENT,
 		KEY_API_COMPONENT_REMOVED_API_TYPE,
 		KEY_API_COMPONENT_REMOVED_TYPE,
@@ -1046,8 +1049,13 @@ public class ApiErrorsWarningsConfigurationBlock {
 				Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
 				scomp.setContent(sbody);
 				
-				//add visibility restrictions
-				Composite client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);
+				Composite client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_general);
+				initializeComboControls(client, 
+						new String[] {PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_tag_use},
+						new Key[] {KEY_INVALID_JAVADOC_TAG}
+						);
+				
+				client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);
 				initializeComboControls(client,
 					new String[] {
 						PreferenceMessages.ApiProblemSeveritiesNoImplement,

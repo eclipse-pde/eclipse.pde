@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -130,6 +131,19 @@ public class JavadocTagManager {
 	public synchronized IApiJavadocTag getTag(String id) {
 		initializeJavadocTags();
 		return (IApiJavadocTag) tagcache.get(id);
+	}
+	
+	/**
+	 * Returns the complete listing of {@link IApiJavadocTag}s contained in the manager or an empty 
+	 * array, never <code>null</code>
+	 * @return the complete listing of tags in the manager or <code>null</code>
+	 */
+	public synchronized IApiJavadocTag[] getAllTags() {
+		if(tagcache == null) {
+			return new IApiJavadocTag[0];
+		}
+		Collection values = tagcache.values();
+		return (IApiJavadocTag[]) values.toArray(new IApiJavadocTag[values.size()]);
 	}
 	
 	/**

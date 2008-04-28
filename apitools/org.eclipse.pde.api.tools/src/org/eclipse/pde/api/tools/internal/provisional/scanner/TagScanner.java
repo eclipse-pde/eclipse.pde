@@ -59,7 +59,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.ClassReader;
 
 /**
- * Scans the source of a *.java file for the javadoc tags on types that have been contributed to the apiJavadocTags extension point:
+ * Scans the source of a *.java file for any API javadoc tags
  * @since 1.0.0
  */
 public class TagScanner {

@@ -19,6 +19,8 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
  * Describes a given api problem.
  * 
  * @since 1.0.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IApiProblem {
 
@@ -75,6 +77,8 @@ public interface IApiProblem {
 
 	/**
 	 * Constant representing the value of the invalid @since tag {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>1</code>
 	 * 
 	 * @see #getKind()
 	 */
@@ -82,6 +86,8 @@ public interface IApiProblem {
 
 	/**
 	 * Constant representing the value of the malformed @since tag {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>2</code>
 	 * 
 	 * @see #getKind()
 	 */
@@ -89,6 +95,8 @@ public interface IApiProblem {
 
 	/**
 	 * Constant representing the value of the missing @since tag {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>3</code>
 	 * 
 	 * @see #getKind()
 	 */
@@ -96,6 +104,8 @@ public interface IApiProblem {
 
 	/**
 	 * Constant representing the value of the major version change {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>1</code>
 	 * 
 	 * @see #getKind()
 	 */
@@ -103,6 +113,8 @@ public interface IApiProblem {
 
 	/**
 	 * Constant representing the value of the minor version change {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>2</code>
 	 * 
 	 * @see #getKind()
 	 */
@@ -110,6 +122,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Constant representing the value of the major version change (no API breakage) {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>3</code>
 	 * 
 	 * @see #getKind()
 	 */
@@ -117,6 +131,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Constant representing the value of an illegal extend {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>1</code>
 	 * 
 	 * @see #getKind()
 	 */
@@ -124,6 +140,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Constant representing the value of an illegal instantiate {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>2</code>
 	 * 
 	 * @see #getKind()
 	 */
@@ -131,6 +149,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Constant representing the value of an illegal reference {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>3</code>
 	 * 
 	 * @see #getKind()
 	 */
@@ -138,6 +158,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Constant representing the value of an illegal implement {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>4</code>
 	 * 
 	 * @see #getKind()
 	 */
@@ -145,6 +167,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Constant representing the value of an illegal override {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>5</code>
 	 * 
 	 * @see #getKind()
 	 */
@@ -152,13 +176,26 @@ public interface IApiProblem {
 	
 	/**
 	 * Constant representing the value of an API leak {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>6</code>
 	 * 
 	 * @see #getKind()
 	 */
 	public static final int API_LEAK = 6;	
 	
 	/**
+	 * Constant representing the value of an invalid API javadoc tag use {@link IApiProblem} kind
+	 * <br>
+	 * Value is: <code>7</code>
+	 * 
+	 *  @see #getKind()
+	 */
+	public static final int UNSUPPORTED_TAG_USE = 7;
+	
+	/**
 	 * Flags to indicate a leak from extending a non-API type. 
+	 * <br>
+	 * Value is: <code>1</code>
 	 * 
 	 * @see #getFlags()
 	 */
@@ -166,6 +203,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Flags to indicate a leak from implementing a non-API type. 
+	 * <br>
+	 * Value is: <code>2</code>
 	 * 
 	 * @see #getFlags()
 	 */
@@ -173,6 +212,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Flags to indicate a leak from a field declaration. 
+	 * <br>
+	 * Value is: <code>3</code>
 	 * 
 	 * @see #getFlags()
 	 */
@@ -180,6 +221,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Flags to indicate a leak from a return type. 
+	 * <br>
+	 * Value is: <code>4</code>
 	 * 
 	 * @see #getFlags()
 	 */
@@ -187,6 +230,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Flags to indicate a leak from a method parameter 
+	 * <br>
+	 * Value is: <code>5</code>
 	 * 
 	 * @see #getFlags()
 	 */
@@ -194,6 +239,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Flags to indicate a leak from a constructor parameter 
+	 * <br>
+	 * Value is: <code>6</code>
 	 * 
 	 * @see #getFlags()
 	 */
@@ -201,6 +248,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Flags to indicate a constructor method
+	 * <br>
+	 * Value is: <code>7</code>
 	 * 
 	 * @see #getFlags()
 	 */
@@ -208,6 +257,8 @@ public interface IApiProblem {
 	
 	/**
 	 * Flags to indicate a 'normal' method
+	 * <br>
+	 * Value is: <code>8</code>
 	 * 
 	 * @see #getFlags()
 	 */
@@ -215,6 +266,8 @@ public interface IApiProblem {
 
 	/**
 	 * Flags to indicate a field
+	 * <br>
+	 * Value is: <code>9</code>
 	 * 
 	 * @see #getFlags()
 	 */
@@ -222,6 +275,8 @@ public interface IApiProblem {
 
 	/**
 	 * Constant representing the value of a default API profile {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>1</code>
 	 * 
 	 * @see #getKind()
 	 */

@@ -53,9 +53,11 @@ public class PreferenceMessages extends NLS {
 	public static String ApiErrorsWarningsConfigurationBlock_error_button;
 	public static String ApiErrorsWarningsConfigurationBlock_extend_non_api_class;
 	public static String ApiErrorsWarningsConfigurationBlock_field_decl_non_api;
+	public static String ApiErrorsWarningsConfigurationBlock_general;
 	public static String ApiErrorsWarningsConfigurationBlock_warning_button;
 	public static String ApiErrorsWarningsConfigurationBlock_ignore_button;
 	public static String ApiErrorsWarningsConfigurationBlock_implement_non_api;
+	public static String ApiErrorsWarningsConfigurationBlock_invalid_tag_use;
 	public static String ApiErrorsWarningsConfigurationBlock_leaks;	
 	public static String ApiErrorsWarningsConfigurationBlock_override_tagged_method;
 	public static String ApiErrorsWarningsConfigurationBlock_parameter_non_api;

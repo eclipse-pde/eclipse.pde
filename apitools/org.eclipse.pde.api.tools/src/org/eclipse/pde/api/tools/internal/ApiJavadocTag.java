@@ -192,4 +192,24 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		initializeElements();
 		return getTagComment(type, member) != null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if(obj instanceof IApiJavadocTag) {
+			return ((IApiJavadocTag)obj).getTagLabel().equals(getTagLabel());
+		}
+		if(obj instanceof String) {
+			return ((String)obj).equals(getTagLabel());
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getTagLabel().hashCode();
+	}
 }

@@ -363,6 +363,7 @@ public class ApiProblemFactory {
 							case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: return 109;
 						}
 					}
+					case IApiProblem.UNSUPPORTED_TAG_USE: return 112;
 				}
 			}
 			case IApiProblem.CATEGORY_COMPATIBILITY: {
@@ -543,6 +544,7 @@ public class ApiProblemFactory {
 							case IApiProblem.LEAK_RETURN_TYPE : return IApiProblemTypes.LEAK_METHOD_RETURN_TYPE;
 						}
 					}
+					case IApiProblem.UNSUPPORTED_TAG_USE: return IApiProblemTypes.INVALID_JAVADOC_TAG;
 				}
 			}
 			case IApiProblem.CATEGORY_COMPATIBILITY: {

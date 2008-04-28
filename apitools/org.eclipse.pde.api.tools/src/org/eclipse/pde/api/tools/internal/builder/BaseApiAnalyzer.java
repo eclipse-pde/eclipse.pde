@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.compiler.CharOperation;
@@ -50,11 +52,13 @@ import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer;
@@ -80,6 +84,18 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class BaseApiAnalyzer implements IApiAnalyzer {
 
+	/**
+	 * Visitor for validating Javadoc tags in {@link IClassFile}s 
+	 */
+	class ClassFileVisitor extends ClassFileContainerVisitor {
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor#visit(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.IClassFile)
+		 */
+		public void visit(String packageName, IClassFile classFile) {
+			processType(classFile.getTypeName());
+		}
+	}
+	
 	/**
 	 * Constant used for controlling tracing in the API tool builder
 	 */
@@ -127,6 +143,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if(baseline == null) {
 			//check default baseline
 			checkDefaultBaselineSet();
+			updateMonitor(localMonitor, 3);
 			return;
 		}
 		IApiComponent reference = baseline.getApiComponent(component.getId());
@@ -139,12 +156,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, reference.getId()));
 			if(typenames != null) {
 				for(int i = 0; i < typenames.length; i++) {
-					compareProfiles(typenames[i], reference, component);
+					checkCompatibility(typenames[i], reference, component);
 					updateMonitor(localMonitor);
 				}
 			}
 			else {
-				compareProfiles(reference, component);
+				checkCompatibility(reference, component);
 				updateMonitor(localMonitor);
 			}
 		}
@@ -154,8 +171,25 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		//version checks
 		checkApiComponentVersion(reference, component);
 		updateMonitor(localMonitor);
+		//tag validation
+		checkTagValidation(typenames, component, localMonitor);
+		updateMonitor(localMonitor);
 	}
 
+	private CompilationUnit createAST(ITypeRoot root, int offset) {
+		if(fJavaProject == null) {
+			return null;
+		}
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		parser.setFocalPosition(offset);
+		parser.setResolveBindings(false);
+		parser.setSource(root);
+		Map options = fJavaProject.getOptions(true);
+		options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
+		parser.setCompilerOptions(options);
+		return (CompilationUnit) parser.createAST(new NullProgressMonitor());
+	}
+	
 	/**
 	 * @return the build state to use.
 	 */
@@ -300,6 +334,77 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 	
 	/**
+	 * @return if the invalid tag check should be ignored
+	 */
+	private boolean ignoreInvalidTagCheck() {
+		if(fJavaProject == null) {
+			return true;
+		}
+		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_JAVADOC_TAG, fJavaProject.getProject()) == ApiPlugin.SEVERITY_IGNORE;
+	}
+	
+	/**
+	 * Checks the validation of tags for the given {@link IApiComponent}
+	 * @param typenames
+	 * @param component
+	 * @param monitor
+	 */
+	private void checkTagValidation(String[] typenames, IApiComponent component, IProgressMonitor monitor) {
+		if(ignoreInvalidTagCheck()) {
+			return;
+		}
+		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + (typenames == null ? component.getClassFileContainers().length : typenames.length));
+		try {
+			if(typenames == null) {
+				IClassFileContainer[] containers = component.getClassFileContainers();
+				ClassFileVisitor visitor = new ClassFileVisitor();
+				for(int i = 0; i < containers.length; i++) {
+					try {
+						containers[i].accept(visitor);
+						updateMonitor(localMonitor);
+					}
+					catch(CoreException ce) {}
+				}
+			}
+			else {
+				for(int i = 0; i < typenames.length; i++) {
+					processType(typenames[i]);
+					updateMonitor(localMonitor);
+				}
+			}
+			updateMonitor(localMonitor);
+		}
+		finally {
+			localMonitor.done();
+		}
+	}
+	
+	/**
+	 * Processes the given type name for invalid Javadoc tags
+	 * @param typename
+	 */
+	private void processType(String typename) {
+		try {
+			IMember type = fJavaProject.findType(typename);
+			if(type != null) {
+				ICompilationUnit cunit = type.getCompilationUnit();
+				if(cunit != null) {
+					TagValidator tv = new TagValidator(cunit);
+					CompilationUnit comp = createAST(cunit, 0);
+					if(comp == null) {
+						return;
+					}
+					comp.accept(tv);
+					fProblems.addAll(Arrays.asList(tv.getTagProblems()));
+				}
+			}
+		} 
+		catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Checks for illegal API usage in the specified component, creating problem
 	 * markers as required.
 	 * 
@@ -331,8 +436,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 			}
 			updateMonitor(localMonitor);
-		} catch (CoreException e) {
+		} 
+		catch (CoreException e) {
 			ApiPlugin.log(e.getStatus());
+		}
+		finally {
+			localMonitor.done();
 		}
 	}
 	
@@ -342,7 +451,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param reference 
 	 * @param component
 	 */
-	private void compareProfiles(final String typeName, final IApiComponent reference, final IApiComponent component) {
+	private void checkCompatibility(final String typeName, final IApiComponent reference, final IApiComponent component) {
 		if (DEBUG) {
 			System.out.println("comparing profiles ["+reference.getId()+"] and ["+component.getId()+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
@@ -393,7 +502,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param reference
 	 * @param component
 	 */
-	private void compareProfiles(final IApiComponent reference, final IApiComponent component) {
+	private void checkCompatibility(final IApiComponent reference, final IApiComponent component) {
 		long time = System.currentTimeMillis();
 		IDelta delta = null;
 		if (reference == null) {
@@ -439,11 +548,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if(ignoreSinceTagCheck(null)) {
 			return;
 		}
-		if (fJavaProject == null) {
-			// TODO: @since tag validation only performed for projects currently
-			// (i.e. we need source) 
-			return;
-		}
 		IMember member = Util.getIMember(delta, fJavaProject);
 		if (member == null) {
 			return;
@@ -460,7 +564,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			e.printStackTrace();
 		}
 		IApiProblem problem = null;
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		ISourceRange nameRange = null;
 		try {
 			nameRange = member.getNameRange();
@@ -468,20 +571,17 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			ApiPlugin.log(e);
 			return;
 		}
-		parser.setSource(cunit);
 		if (nameRange == null) {
 			return;
 		}
 		try {
 			int offset = nameRange.getOffset();
-			parser.setFocalPosition(offset);
-			parser.setResolveBindings(false);
-			Map options = fJavaProject.getOptions(true);
-			options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
-			parser.setCompilerOptions(options);
-			final CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
+			CompilationUnit comp = createAST(cunit, offset);
+			if(comp == null) {
+				return;
+			}
 			SinceTagChecker visitor = new SinceTagChecker(offset);
-			unit.accept(visitor);
+			comp.accept(visitor);
 			String componentVersionString = component.getVersion();
 			try {
 				if (visitor.hasNoComment() || visitor.isMissing()) {
@@ -1005,8 +1105,18 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @throws OperationCanceledException if the monitor has been cancelled
 	 */
 	private void updateMonitor(IProgressMonitor monitor) throws OperationCanceledException {
+		updateMonitor(monitor, 1);
+	}
+	
+	/**
+	 * Updates the work done on the monitor by 1 tick and polls to see if the monitor has been cancelled
+	 * @param monitor
+	 * @param work
+	 * @throws OperationCanceledException if the monitor has been cancelled
+	 */
+	private void updateMonitor(IProgressMonitor monitor, int work) throws OperationCanceledException {
 		if(monitor != null) {
-			monitor.worked(1);
+			monitor.worked(work);
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}

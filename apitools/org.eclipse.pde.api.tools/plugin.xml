@@ -125,4 +125,27 @@
           name="apitooling.deltareportconversion">
     </antTask>
  </extension>
+ <extension
+       id="org.eclipse.pde.api.tools.unsupported_tags"
+       name="%markerUnsupportedTags.name"
+       point="org.eclipse.core.resources.markers">
+    <super
+          type="org.eclipse.core.resources.problemmarker">
+    </super>
+    <super
+          type="org.eclipse.core.resources.textmarker">
+    </super>
+    <persistent
+          value="true">
+    </persistent>
+    <attribute
+          name="flags">
+    </attribute>
+    <attribute
+          name="kind">
+    </attribute>
+    <attribute
+          name="apiMarkerID">
+    </attribute>
+ </extension>
 </plugin>

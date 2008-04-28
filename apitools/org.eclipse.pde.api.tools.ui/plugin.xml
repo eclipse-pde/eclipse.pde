@@ -138,6 +138,9 @@
          <markerTypeReference
                id="org.eclipse.pde.api.tools.marker.sincetags">
          </markerTypeReference>
+         <markerTypeReference
+               id="org.eclipse.pde.api.tools.unsupported_tags">
+         </markerTypeReference>
       </markerTypeCategory>
    </extension>
    <extension
@@ -161,6 +164,10 @@
       <markerResolutionGenerator
             class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
             markerType="org.eclipse.pde.api.tools.marker.sincetags">
+      </markerResolutionGenerator>
+      <markerResolutionGenerator
+            class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
+            markerType="org.eclipse.pde.api.tools.unsupported_tags">
       </markerResolutionGenerator>
    </extension>
    <extension

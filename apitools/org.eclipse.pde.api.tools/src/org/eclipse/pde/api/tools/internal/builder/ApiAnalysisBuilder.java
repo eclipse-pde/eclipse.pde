@@ -189,6 +189,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				resource.deleteMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				resource.deleteMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				resource.deleteMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				resource.deleteMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				if (resource.getType() == IResource.PROJECT) {
 					// on full builds
 					resource.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
@@ -348,7 +349,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		IApiProblem[] problems = fAnalyzer.getProblems();
 		String type = null;
 		for(int i = 0; i < problems.length; i++) {
-			type = getProblemTypeFromCategory(problems[i].getCategory());
+			type = getProblemTypeFromCategory(problems[i].getCategory(), problems[i].getKind());
 			if(type == null) {
 				continue;
 			}
@@ -362,7 +363,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param category
 	 * @return the problem type or <code>null</code>
 	 */
-	private String getProblemTypeFromCategory(int category) {
+	private String getProblemTypeFromCategory(int category, int kind) {
 		switch(category) {
 			case IApiProblem.CATEGORY_API_PROFILE: {
 				return IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER;
@@ -374,6 +375,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				return IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER;
 			}
 			case IApiProblem.CATEGORY_USAGE: {
+				if(kind == IApiProblem.UNSUPPORTED_TAG_USE) {
+					return IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER;
+				}
 				return IApiMarkerConstants.API_USAGE_PROBLEM_MARKER;
 			}
 			case IApiProblem.CATEGORY_VERSION: {

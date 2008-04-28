@@ -34,23 +34,33 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			return NO_RESOLUTIONS;
 		}
 		switch(marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1)) {
-			case IApiMarkerConstants.API_USAGE_MARKER_ID :
+			case IApiMarkerConstants.API_USAGE_MARKER_ID : {
 				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
-			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID :
+			}
+			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID : {
 				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
-			case IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID :
+			}
+			case IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID : {
 				return new IMarkerResolution[] {new DefaultApiProfileResolution()};
-			case IApiMarkerConstants.SINCE_TAG_MARKER_ID :
+			}
+			case IApiMarkerConstants.SINCE_TAG_MARKER_ID : {
 				return new IMarkerResolution[] {new SinceTagResolution(marker), new FilterProblemResolution(marker)};
-			case IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID :
+			}
+			case IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID : {
 				return new IMarkerResolution[] {new VersionNumberingResolution(marker), new FilterProblemResolution(marker)};
+			}
+			case IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID: {
+				return new IMarkerResolution[] {new UnsupportedTagResolution(marker)};
+			}
 			default :
 				return NO_RESOLUTIONS;
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse.core.resources.IMarker)
+	 */
 	public boolean hasResolutions(IMarker marker) {
 		return marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1) > 0;
 	}
-
 }

@@ -27,10 +27,18 @@ public class BuilderMessages extends NLS {
 	public static String BaseApiAnalyzer_analyzing_api;
 	public static String BaseApiAnalyzer_checking_api_usage;
 	public static String BaseApiAnalyzer_comparing_api_profiles;
+	public static String BaseApiAnalyzer_validating_javadoc_tags;
 	public static String build_wrongFileFormat;
 	public static String build_readStateProgress;
 	public static String build_saveStateComplete;
 	public static String build_cannotSaveState;
+
+	public static String TagValidator_a_class;
+	public static String TagValidator_a_constructor;
+	public static String TagValidator_a_field;
+	public static String TagValidator_a_final_field;
+	public static String TagValidator_a_method;
+	public static String TagValidator_an_interface;
 
 	static {
 		// initialize resource bundle

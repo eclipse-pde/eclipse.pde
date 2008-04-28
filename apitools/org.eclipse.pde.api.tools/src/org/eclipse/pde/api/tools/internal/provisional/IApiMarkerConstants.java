@@ -16,6 +16,8 @@ package org.eclipse.pde.api.tools.internal.provisional;
  * This interface is not intended to be extended or implemented.
  *
  * @since 1.0.0
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IApiMarkerConstants {
 
@@ -71,6 +73,11 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String SINCE_TAGS_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".marker.sincetags"; //$NON-NLS-1$
 	/**
+	 * Constant representing the id for the unsupported Javadoc tag marker
+	 * Values is : <code>>org.eclipse.pde.api.tools.unsupported_tags</code>
+	 */
+	public static final String UNSUPPORTED_TAG_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".unsupported_tags"; //$NON-NLS-1$
+	/**
 	 * Constant representing the name of the 'apiMarkerID' attribute on API tooling markers.
 	 * Value is: <code>apiMarkerID</code>
 	 */
@@ -100,6 +107,11 @@ public interface IApiMarkerConstants {
 	 * Value is: <code>5</code>
 	 */
 	public static final int SINCE_TAG_MARKER_ID = 5;
+	/**
+	 * Constant representing the apiMarkerID value for unsupported javadoc tag markers
+	 * Value is: <code>6</code>
+	 */
+	public static final int UNSUPPORTED_TAG_MARKER_ID = 6;
 	/**
 	 * Constant representing the description for the bundle version marker.
 	 * Value is: <code>description</code>

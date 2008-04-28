@@ -23,22 +23,12 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
-import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
-import org.eclipse.jdt.core.dom.EnumDeclaration;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TextElement;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.ui.JavaUI;
@@ -47,65 +37,7 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.text.edits.TextEdit;
 
 public class UpdateSinceTagOperation {
-	static class NodeFinder extends ASTVisitor {
-		BodyDeclaration declaration;
-		int position;
-		public NodeFinder(int position) {
-			this.position = position;
-		}
-
-		public boolean visit(AnnotationTypeDeclaration node) {
-			return visitNode(node);
-		}
-		public boolean visit(EnumDeclaration node) {
-			return visitNode(node);
-		}
-		public boolean visit(TypeDeclaration node) {
-			return visitNode(node);
-		}
-		public boolean visit(MethodDeclaration node) {
-			return visitNode(node);
-		}
-		public boolean visit(FieldDeclaration node) {
-			return visitNode(node);
-		}
-		public boolean visit(EnumConstantDeclaration node) {
-			return visitNode(node);
-		}
-		public boolean visit(AnnotationTypeMemberDeclaration node) {
-			return visitNode(node);
-		}
-		public boolean visit(Initializer node) {
-			return false;
-		}
-		private boolean visitNode(BodyDeclaration bodyDeclaration) {
-			int start = bodyDeclaration.getStartPosition();
-			int end = bodyDeclaration.getLength() - 1 + start;
-			switch(bodyDeclaration.getNodeType()) {
-				case ASTNode.TYPE_DECLARATION :
-				case ASTNode.ENUM_DECLARATION :
-				case ASTNode.ANNOTATION_TYPE_DECLARATION :
-					if (start <= this.position && this.position <= end) {
-						this.declaration = bodyDeclaration;
-						return true;
-					}
-					return false;
-				case ASTNode.ENUM_CONSTANT_DECLARATION :
-				case ASTNode.FIELD_DECLARATION :
-				case ASTNode.METHOD_DECLARATION :
-				case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION :
-					if (start <= this.position && this.position <= end) {
-						this.declaration = bodyDeclaration;
-					}
-					return false;
-				default :
-					return false;
-			}
-		}
-		public BodyDeclaration getNode() {
-			return this.declaration;
-		}
-	}
+	
 	private IMarker fMarker;
 	private int sinceTagType;
 	private String sinceTagVersion;

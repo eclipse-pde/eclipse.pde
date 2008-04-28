@@ -15,10 +15,10 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * API problem types.
- * 
- * This interface is not intended to be extended or implemented.
  *
  * @since 1.0
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IApiProblemTypes {
 
@@ -357,4 +357,8 @@ public interface IApiProblemTypes {
 	 * Key for leaking an internal type through a method parameter
 	 */
 	public static final String LEAK_METHOD_PARAM = "LEAK_METHOD_PARAM"; //$NON-NLS-1$
+	/**
+	 * Key for an invalid javadoc tag appearing where it does not belong
+	 */
+	public static final String INVALID_JAVADOC_TAG = "INVALID_JAVADOC_TAG"; //$NON-NLS-1$
 }
