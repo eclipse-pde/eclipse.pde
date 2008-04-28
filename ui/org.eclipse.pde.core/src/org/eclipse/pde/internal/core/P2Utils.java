@@ -32,6 +32,8 @@ public class P2Utils {
 	private static final String SRC_BUNDLE_TXT_PATH = SRC_BUNDLE_TXT_FOLDER + File.separator + "source.info"; //$NON-NLS-1$
 	private static final String BUNDLE_TXT_PATH = BUNDLE_TXT_FOLDER + File.separator + "bundles.info"; //$NON-NLS-1$
 
+	public static final String P2_FLAVOR_DEFAULT = "tooling"; //$NON-NLS-1$
+
 	/**
 	 * Returns bundles defined by the 'bundles.info' file in the
 	 * specified location, or <code>null</code> if none. The "bundles.info" file

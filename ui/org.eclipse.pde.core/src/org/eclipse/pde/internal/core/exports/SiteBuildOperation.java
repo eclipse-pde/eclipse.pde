@@ -13,6 +13,9 @@ package org.eclipse.pde.internal.core.exports;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.build.IXMLConstants;
+import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
 
 /**
@@ -43,12 +46,12 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 		HashMap map = super.createAntBuildProperties(os, ws, arch);
 		// P2 Build Properties
 		if (fInfo.toDirectory) {
-			map.put("generate.p2.metadata", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-			map.put("p2.flavor", "tooling"); //$NON-NLS-1$ //$NON-NLS-2$
-			map.put("p2.publish.artifacts", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_PUBLISH_ARTIFACTS, IBuildPropertiesConstants.FALSE);
 			try {
-				map.put("p2.metadata.repo", new File(fInfo.destinationDirectory).toURL().toString()); //$NON-NLS-1$
-				map.put("p2.artifact.repo", new File(fInfo.destinationDirectory).toURL().toString()); //$NON-NLS-1$
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fInfo.destinationDirectory).toURL().toString());
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fInfo.destinationDirectory).toURL().toString());
 			} catch (MalformedURLException e) {
 				PDECore.log(e);
 			}

@@ -492,12 +492,12 @@ public class ProductExportOperation extends FeatureExportOperation {
 	 */
 	private void addP2MetadataProperties(Map map) {
 		if (fInfo.toDirectory && fInfo.exportMetadata) {
-			map.put("generate.p2.metadata", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-			map.put("p2.flavor", "tooling"); //$NON-NLS-1$ //$NON-NLS-2$
-			map.put("p2.publish.artifacts", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_PUBLISH_ARTIFACTS, IBuildPropertiesConstants.TRUE);
 			try {
-				map.put("p2.metadata.repo", new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$ //$NON-NLS-2$
-				map.put("p2.artifact.repo", new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				PDECore.log(e);
 			}
