@@ -206,7 +206,7 @@ public class LaunchPluginValidator {
 						// b) if there's no version, add it
 						// c) if there's only one instance of that bundle in the list of ids... add it
 						String[] counter = ids.split(id); // hack to get how many bundles in list of ids
-						if (models[i].getPluginBase().getVersion().equals(version) || version == null || counter.length == 2)
+						if (models[i].getPluginBase().getVersion().equals(version) || version == null || (counter.length == 2 && models.length == 1))
 							set.add(models[i]);
 					}
 				}
