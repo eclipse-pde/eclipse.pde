@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.core.IDSService;
 
 /**
  * Represents the root "component" entry in a DS xml file.  There may
@@ -136,8 +139,18 @@ public class DSRoot extends DSObject implements IDSRoot {
 	public boolean getImmediate(){
 		return getBooleanAttributeValue(ATTRIBUTE_IMMEDIATE, false);
 	}
-	
-	
-	
+
+	public void addService(IDSService service) {
+		addChildNode((IDocumentElementNode) service, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 */
+	public void removeChild(IDSObject subitem) {
+		removeChildNode((IDocumentElementNode) subitem, true);
+	}	
 	
 }

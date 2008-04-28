@@ -28,5 +28,7 @@ public interface IDSRoot {
 	public void setImmediate(boolean bool);
 
 	public boolean getImmediate();
+	
+	public void removeChild(IDSObject obj);
 
 }
