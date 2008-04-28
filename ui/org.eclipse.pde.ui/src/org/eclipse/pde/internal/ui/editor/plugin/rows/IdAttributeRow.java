@@ -38,6 +38,37 @@ public class IdAttributeRow extends ButtonAttributeRow {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 		}
 
+		public String getText(Object element) {
+			if (element instanceof Map.Entry) {
+				Map.Entry entry = (Map.Entry) element;
+				String text = (String) entry.getKey();
+				if (entry.getValue() instanceof IConfigurationElement) {
+					IConfigurationElement value = (IConfigurationElement) entry.getValue();
+					String name = value.getAttribute("name"); //$NON-NLS-1$
+					if (name == null) {
+						name = value.getAttribute("label"); //$NON-NLS-1$
+						if (name == null) {
+							name = value.getAttribute("description"); //$NON-NLS-1$
+						}
+					}
+
+					String contributor = value.getContributor().getName();
+
+					if (input != null && name.startsWith("%") && contributor != null) { //$NON-NLS-1$
+						IPluginModelBase model = PluginRegistry.findModel(contributor);
+						name = model.getResourceString(name);
+					}
+
+					if (name != null) {
+						text += " - " + name; //$NON-NLS-1$
+					}
+					if (contributor != null)
+						text += " [" + contributor + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				return text;
+			}
+			return super.getText(element);
+		}
 	}
 
 	public IdAttributeRow(IContextPart part, ISchemaAttribute att) {
@@ -57,9 +88,10 @@ public class IdAttributeRow extends ButtonAttributeRow {
 		dialog.setMessage(PDEUIMessages.IdAttributeRow_message);
 		dialog.setEmptyListMessage(PDEUIMessages.IdAttributeRow_emptyMessage);
 		Map attributeMap = PDESchemaHelper.getValidAttributes(getAttribute());
-		dialog.setElements(attributeMap.keySet().toArray());
+		dialog.setElements(attributeMap.entrySet().toArray());
 		if (dialog.open() == Window.OK) {
-			text.setText(dialog.getFirstResult().toString());
+			Map.Entry entry = (Map.Entry) dialog.getFirstResult();
+			text.setText(entry.getKey().toString());
 		}
 	}
 
