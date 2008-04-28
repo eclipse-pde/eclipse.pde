@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 				return PDEUIMessages.SchemaEditor_topic_since;
 			if (sectionId.equals(IDocumentSection.IMPLEMENTATION))
 				return PDEUIMessages.SchemaEditor_topic_implementation;
-			if (sectionId.equals(IDocumentSection.API_INFO))
+			if (sectionId.equalsIgnoreCase(IDocumentSection.API_INFO))
 				return PDEUIMessages.SchemaEditor_topic_api;
 			if (sectionId.equals(IDocumentSection.COPYRIGHT))
 				return PDEUIMessages.SchemaEditor_topic_copyright;
