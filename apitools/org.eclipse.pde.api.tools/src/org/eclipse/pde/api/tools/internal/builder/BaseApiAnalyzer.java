@@ -139,41 +139,46 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	public void analyzeComponent(final BuildState state, final IApiProfile baseline, final IApiComponent component, final String[] typenames, IProgressMonitor monitor) {
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 3 + (typenames == null ? 0 : typenames.length));
-		fJavaProject = getJavaProject(component);
-		if(baseline == null) {
-			//check default baseline
-			checkDefaultBaselineSet();
-			updateMonitor(localMonitor, 3);
-			return;
-		}
-		IApiComponent reference = baseline.getApiComponent(component.getId());
-		this.fBuildState = state;
-		if(fBuildState == null) {
-			fBuildState = getBuildState();
-		}
-		//compatibility checks
-		if(reference != null) {
-			localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, reference.getId()));
-			if(typenames != null) {
-				for(int i = 0; i < typenames.length; i++) {
-					checkCompatibility(typenames[i], reference, component);
+		try {
+			fJavaProject = getJavaProject(component);
+			if(baseline == null) {
+				//check default baseline
+				checkDefaultBaselineSet();
+				updateMonitor(localMonitor, 3);
+				return;
+			}
+			IApiComponent reference = baseline.getApiComponent(component.getId());
+			this.fBuildState = state;
+			if(fBuildState == null) {
+				fBuildState = getBuildState();
+			}
+			//compatibility checks
+			if(reference != null) {
+				localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, reference.getId()));
+				if(typenames != null) {
+					for(int i = 0; i < typenames.length; i++) {
+						checkCompatibility(typenames[i], reference, component);
+						updateMonitor(localMonitor);
+					}
+				}
+				else {
+					checkCompatibility(reference, component);
 					updateMonitor(localMonitor);
 				}
 			}
-			else {
-				checkCompatibility(reference, component);
-				updateMonitor(localMonitor);
-			}
+			//usage checks
+			checkApiUsage(component, getSearchScope(component, typenames), localMonitor);
+			updateMonitor(localMonitor);
+			//version checks
+			checkApiComponentVersion(reference, component);
+			updateMonitor(localMonitor);
+			//tag validation
+			checkTagValidation(typenames, component, localMonitor);
+			updateMonitor(localMonitor);
 		}
-		//usage checks
-		checkApiUsage(component, getSearchScope(component, typenames), localMonitor);
-		updateMonitor(localMonitor);
-		//version checks
-		checkApiComponentVersion(reference, component);
-		updateMonitor(localMonitor);
-		//tag validation
-		checkTagValidation(typenames, component, localMonitor);
-		updateMonitor(localMonitor);
+		finally {
+			localMonitor.done();
+		}
 	}
 
 	private CompilationUnit createAST(ITypeRoot root, int offset) {

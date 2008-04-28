@@ -246,6 +246,10 @@ public class ApiProblem implements IApiProblem {
 	 * @return true if all of the arguments are equal, false otherwise
 	 */
 	private boolean argumentsEqual(String[] arguments) {
+		if((fMessageArguments == null && arguments != null) ||
+			(fMessageArguments != null && arguments == null)) {
+			return false;
+		}
 		boolean equal = true;
 		if(fMessageArguments.length != arguments.length) {
 			return false;
@@ -262,6 +266,9 @@ public class ApiProblem implements IApiProblem {
 	 * @return the hash code of the message arguments
 	 */
 	private int argumentsHashcode(String[] arguments) {
+		if(fMessageArguments == null) {
+			return 0;
+		}
 		int hashcode = 0;
 		for(int i = 0; i < fMessageArguments.length; i++) {
 			hashcode += fMessageArguments[i].hashCode();
