@@ -1124,6 +1124,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	private void updateMonitor(IProgressMonitor monitor, int work) throws OperationCanceledException {
 		if(monitor != null) {
 			monitor.worked(work);
+			monitor.setTaskName(""); //$NON-NLS-1$
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
