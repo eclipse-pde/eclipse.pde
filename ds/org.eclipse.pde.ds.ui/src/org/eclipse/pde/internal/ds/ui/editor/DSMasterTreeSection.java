@@ -15,16 +15,18 @@ package org.eclipse.pde.internal.ds.ui.editor;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
+import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.pde.internal.ds.core.IDSModel;
+import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSRoot;
 import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddStepAction;
 import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddSubStepAction;
-import org.eclipse.pde.internal.ds.ui.editor.actions.DSRemoveRunObjectAction;
-import org.eclipse.pde.internal.ds.ui.editor.actions.DSRemoveStepAction;
-import org.eclipse.pde.internal.ds.ui.editor.actions.DSRemoveSubStepAction;
+import org.eclipse.pde.internal.ds.ui.editor.actions.DSRemoveItemAction;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -60,10 +62,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	private ControlDecoration fSubStepInfoDecoration;
 
 	private DSAddStepAction fAddStepAction;
-	private DSRemoveStepAction fRemoveStepAction;
-	private DSRemoveSubStepAction fRemoveSubStepAction;
+	private DSRemoveItemAction fRemoveItemAction;
 	private DSAddSubStepAction fAddSubStepAction;
-	private DSRemoveRunObjectAction fRemoveRunObjectAction;
 
 	public DSMasterTreeSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] { "Add",
@@ -71,10 +71,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
 		// Create actions
 		fAddStepAction = new DSAddStepAction();
-		fRemoveStepAction = new DSRemoveStepAction();
-		fRemoveSubStepAction = new DSRemoveSubStepAction();
+		fRemoveItemAction = new DSRemoveItemAction();
 		fAddSubStepAction = new DSAddSubStepAction();
-		fRemoveRunObjectAction = new DSRemoveRunObjectAction();
 		fCollapseAction = null;
 
 	}
@@ -127,13 +125,52 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	}
 
 	public void fireSelection() {
-		// TODO Auto-generated method stub
-
+		fTreeViewer.setSelection(fTreeViewer.getSelection());
 	}
 
+	/**
+	 * 
+	 */
 	public void updateButtons() {
-		// TODO Auto-generated method stub
+		if (!fModel.isEditable()) {
+			return;
+		}
+		IDSObject dsObject = getCurrentSelection();
 
+		boolean canAdd = false;
+		boolean canAddSub = false;
+		boolean canRemove = false;
+		boolean canMoveUp = false;
+		boolean canMoveDown = false;
+
+		if (dsObject != null) {
+
+			if (dsObject.getType() == IDSConstants.TYPE_ROOT) {
+				// Add item to end of cheat sheet child items
+				canAdd = true;
+			} else if (dsObject.getType() == IDSConstants.TYPE_IMPLEMENTATION) {
+			} else if (dsObject.getType() == IDSConstants.TYPE_PROVIDE) {
+				canRemove = true;
+				canAddSub = true;
+
+			} else if (dsObject.getType() == IDSConstants.TYPE_SERVICE) {
+				canAdd = true;
+				canAddSub = true;
+				canRemove = true;
+			} else if ((dsObject.getType() == IDSConstants.TYPE_PROPERTIES)
+					|| (dsObject.getType() == IDSConstants.TYPE_PROPERTY)
+					|| (dsObject.getType() == IDSConstants.TYPE_REFERENCE)) {
+				canRemove = true;
+				canMoveUp = true;
+				canMoveDown = true;
+			}
+
+		}
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_STEP, canAdd);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_SUBSTEP, canAddSub);
+		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, canRemove);
+		getTreePart().setButtonEnabled(F_BUTTON_UP, canMoveUp);
+		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
 	}
 
 	/**
@@ -147,7 +184,17 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		fTreeViewer.setContentProvider(new DSContentProvider());
 		fTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		// TODO createListeners and Decoration
+		createTreeListeners();
+	}
+
+	/**
+	 * 
+	 */
+	private void createTreeListeners() {
+		// Create listener for the outline view 'link with editor' toggle
+		// button
+		fTreeViewer
+				.addPostSelectionChangedListener(getPage().getPDEEditor().new PDEFormEditorChangeListener());
 	}
 
 	/*
@@ -156,20 +203,62 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
-		// No need to call super, world changed event handled here
+		super.modelChanged(event);
 
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			handleModelEventWorldChanged(event);
 		} else if (event.getChangeType() == IModelChangedEvent.INSERT) {
 			// handleModelInsertType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-			// handleModelRemoveType(event);
-			// } else if ((event.getChangeType() == IModelChangedEvent.CHANGE)
-			// && (event.getChangedProperty()
-			// .equals(IDocumentElementNode.F_PROPERTY_CHANGE_TYPE_SWAP))) {
-			// handleModelChangeTypeSwap(event);
+			handleModelRemoveType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-			// handleModelChangeType(event);
+			handleModelChangeType(event);
+		}
+	}
+
+	private void handleModelChangeType(IModelChangedEvent event) {
+		// Change event
+		Object[] objects = event.getChangedObjects();
+		// Ensure right type
+		if ((objects[0] instanceof IDSObject) == false) {
+			return;
+		}
+		IDSObject object = (IDSObject) objects[0];
+		if (object == null) {
+			// Ignore
+		} else if ((object.getType() == IDSConstants.TYPE_IMPLEMENTATION)
+				|| (object.getType() == IDSConstants.TYPE_PROPERTIES)
+				|| (object.getType() == IDSConstants.TYPE_PROPERTY)
+				|| (object.getType() == IDSConstants.TYPE_PROVIDE)
+				|| (object.getType() == IDSConstants.TYPE_REFERENCE)
+				|| (object.getType() == IDSConstants.TYPE_ROOT)
+				|| (object.getType() == IDSConstants.TYPE_SERVICE)) {
+			// Refresh the element in the tree viewer
+			fTreeViewer.update(object, null);
+
+		}
+
+	}
+
+	private void handleModelRemoveType(IModelChangedEvent event) {
+		// Remove event
+		Object[] objects = event.getChangedObjects();
+		IDSObject object = (IDSObject) objects[0];
+		if (object == null) {
+			// Ignore
+		} else if (object.getType() == IDSConstants.TYPE_ROOT) {
+			// Remove the item
+			fTreeViewer.remove(object);
+			// Determine if we should make a selection
+			if (canSelect() == false) {
+				return;
+			}
+			// Select the appropriate object
+			IDSObject dsObject = fRemoveItemAction.getObjectToSelect();
+			if (dsObject == null) {
+				dsObject = object.getParent();
+			}
+			fTreeViewer.setSelection(new StructuredSelection(dsObject), true);
 		}
 	}
 
@@ -241,6 +330,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 			handleMoveStepAction(F_DOWN_FLAG);
 			break;
 		}
+		// TODO verify if it is correct to refresh tTreeViewer here.
+		fTreeViewer.refresh();
 	}
 
 	private void handleMoveStepAction(int upFlag) {
@@ -250,9 +341,36 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	}
 
 	private void handleDeleteAction() {
-		// TODO Auto-generated method stub
-		System.out.println("handleDeleteAction");
+		IDSObject object = getCurrentSelection();
+		if (object != null) {
+			if (object instanceof IDSRoot) {
+				// Preserve ds validity
+				// Semantic Rule: Cannot have a cheat sheet with no root
+				// ds component node
+				// Produce audible beep
+				Display.getCurrent().beep();
+			} else if (object instanceof IDSImplementation) {
+				// Preserve ds validity
+				// Semantic Rule: Cannot have a cheat sheet with no
+				// implementation
+				// Produce audible beep
+				Display.getCurrent().beep();
+			} else {
+				// Preserve cheat sheet validity
+				fRemoveItemAction.setItem(object);
+				fRemoveItemAction.run();
 
+			}
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	private IDSObject getCurrentSelection() {
+		ISelection selection = fTreeViewer.getSelection();
+		Object object = ((IStructuredSelection) selection).getFirstElement();
+		return (IDSObject) object;
 	}
 
 	private void handleAddSubStepAction() {
@@ -265,6 +383,15 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		// TODO Auto-generated method stub
 		System.out.println("handleAddStepAction");
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	protected void selectionChanged(IStructuredSelection selection) {
+		updateButtons();
 	}
 
 }

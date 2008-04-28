@@ -12,16 +12,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSModel;
+import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class DSPage extends PDEFormPage implements IModelChangedListener {
@@ -41,10 +49,40 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
+		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
+			Object[] objects = event.getChangedObjects();
+			// Ensure right type
+			if ((objects[0] instanceof IDSObject) == false) {
+				return;
+			}
+			IDSObject object = (IDSObject) objects[0];
+			if (object == null) {
+				// Ignore
+			} else if (object.getType() == IDSConstants.TYPE_ROOT) {
+				String changeProperty = event.getChangedProperty();
+				if ((changeProperty != null)
+						&& changeProperty
+								.equals(IDSConstants.ATTRIBUTE_COMPONENT_NAME)) {
+					// Has to be a String if the property is a title
+					// Update the form page title
+					getManagedForm().getForm().setText(
+							PDETextHelper.translateReadText((String) event
+									.getNewValue()));
+				}
+			}
+		} else if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			handleModelEventWorldChanged(event);
+		}
 
 		// Inform the block
 		fBlock.modelChanged(event);
 	}
+	
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// Page will be updated on refresh
+		markStale();
+	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -107,5 +145,65 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 			form.setText(PDETextHelper.translateReadText(newTitle));
 		}
 	}
+	
+	/**
+	 * @return
+	 */
+	public ISelection getSelection() {
+		return fBlock.getSelection();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#setActive(boolean)
+	 */
+	public void setActive(boolean active) {
+		super.setActive(active);
+
+		if (active == false) {
+			// Switching away from this page
+			return;
+		}
+		// Switching into this page
+		// Get source page
+		IFormPage page = getPDEEditor().findPage(
+				DSInputContext.CONTEXT_ID);
+		// Ensure we got the source page
+		if ((page instanceof PDESourcePage) == false) {
+			return;
+		}
+		PDESourcePage sourcePage = (PDESourcePage) page;
+		// Get the source viewer
+		ISourceViewer viewer = sourcePage.getViewer();
+		// Ensure the viewer is defined
+		if (viewer == null) {
+			return;
+		}
+		// Get the styled text
+		StyledText text = viewer.getTextWidget();
+		// Ensure the styled text is defined
+		if (text == null) {
+			return;
+		}
+		// Get the cursor offset
+		int offset = text.getCaretOffset();
+		// Ensure the offset is defined
+		if (offset < 0) {
+			return;
+		}
+		// Get the range the offset is on
+		IDocumentRange range = sourcePage.getRangeElement(offset, true);
+		// Adapt the range to a node representable in the master tree viewer
+		range = sourcePage.adaptRange(range);
+		// Ensure the range is defined
+		if (range == null) {
+			return;
+		}
+		// Select the node in the master tree viewer if defined
+		fBlock.getMasterSection().setFormInput(range);
+	}
+
+
 
 }

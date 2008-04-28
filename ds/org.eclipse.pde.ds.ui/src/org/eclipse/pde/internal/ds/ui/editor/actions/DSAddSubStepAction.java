@@ -13,7 +13,13 @@
 package org.eclipse.pde.internal.ds.ui.editor.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.pde.internal.ds.core.IDSObject;
 
 public class DSAddSubStepAction extends Action {
+
+	public void setDataObject(IDSObject dsObject) {
+		// TODO Auto-generated method stub
+
+	}
 
 }

@@ -1,0 +1,84 @@
+/*******************************************************************************
+ * Copyright (c) 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     Chris Aniszczyk <caniszczyk@gmail.com>
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> 
+ *******************************************************************************/
+package org.eclipse.pde.internal.ds.ui.editor.actions;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
+import org.eclipse.pde.internal.ds.core.IDSObject;
+import org.eclipse.pde.internal.ds.core.IDSRoot;
+
+public class DSRemoveItemAction extends Action {
+	private IDSObject fItem;
+	private IDSObject fObjectToSelect;
+
+	/**
+	 * 
+	 */
+	public DSRemoveItemAction() {
+		setText("Delete");
+		fItem = null;
+	}
+
+	/**
+	 * @param item
+	 */
+	public void setItem(IDSObject item) {
+		fItem = item;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	public void run() {
+		if (fItem != null) {
+			// Determine parent type and remove accordingly
+			IDSObject parent = fItem.getParent();
+			if (parent.getType() == IDSConstants.TYPE_ROOT) {
+				// Parent is a component
+				IDSRoot item = (IDSRoot) parent;
+				// Determine the item to select after the deletion takes place
+				determineItemToSelect(parent);
+				// Remove the subitem
+				item.removeChild(fItem);
+				// TODO Remove Service -> Provide!
+			}
+		}
+	}
+
+	/**
+	 * @param item
+	 */
+	private void determineItemToSelect(IDSObject item) {
+		// Select the next sibling
+		fObjectToSelect = item.getNextSibling(fItem);
+		if (fObjectToSelect == null) {
+			// No next sibling
+			// Select the previous sibling
+			fObjectToSelect = item.getPreviousSibling(fItem);
+			if (fObjectToSelect == null) {
+				// No previous sibling
+				// Select the parent
+				fObjectToSelect = item;
+			}
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	public IDSObject getObjectToSelect() {
+		return fObjectToSelect;
+	}
+}

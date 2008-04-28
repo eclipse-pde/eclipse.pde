@@ -13,7 +13,13 @@
 package org.eclipse.pde.internal.ds.ui.editor.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.pde.internal.ds.core.text.DSRoot;
 
 public class DSAddStepAction extends Action {
+
+	public void setDataObject(DSRoot root) {
+		// TODO Auto-generated method stub
+
+	}
 
 }
