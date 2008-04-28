@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,8 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.part.IPage;
+import org.eclipse.ui.part.PageBookView;
 import org.osgi.framework.Bundle;
 
 /**
@@ -55,6 +57,13 @@ public class ActivePartSection implements ISpySection {
 
 		// time to analyze the active part
 		buffer.append(toolkit.createClassSection(text, NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, partType), new Class[] {part.getClass()}));
+		if (part instanceof PageBookView) {
+			PageBookView outline = (PageBookView) part;
+			IPage currentPage = outline.getCurrentPage();
+			if (currentPage != null) {
+				buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activePageBook_title, new Class[] {currentPage.getClass()}));
+			}
+		}
 
 		// time to analyze the contributing plug-in
 		final Bundle bundle = Platform.getBundle(part.getSite().getPluginId());
