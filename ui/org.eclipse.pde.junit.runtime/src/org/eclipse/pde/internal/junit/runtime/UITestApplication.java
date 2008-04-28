@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,7 @@
 package org.eclipse.pde.internal.junit.runtime;
 
 import junit.framework.Assert;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPlatformRunnable;
-import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.ui.PlatformUI;
@@ -95,15 +89,17 @@ public class UITestApplication implements IApplication, ITestHarness {
 	 * the name of the default application.
 	 * In 3.0, the default is the "org.eclipse.ui.ide.worbench" application.
 	 * 
+	 * see bug 228044
+	 * 
 	 */
 	private String getApplicationToRun(String[] args) {
-		IProduct product = Platform.getProduct();
-		if (product != null)
-			return product.getApplication();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-testApplication") && i < args.length - 1) //$NON-NLS-1$
 				return args[i + 1];
 		}
+		IProduct product = Platform.getProduct();
+		if (product != null)
+			return product.getApplication();
 		return DEFAULT_APP_3_0;
 	}
 
