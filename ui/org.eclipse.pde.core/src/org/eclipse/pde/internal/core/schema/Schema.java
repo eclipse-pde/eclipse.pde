@@ -674,7 +674,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 									// set internal
 									String internal = getAttribute(meta, ISchemaRootElement.P_INTERNAL);
-									((ISchemaRootElement) element).setInternal(Boolean.parseBoolean(internal));
+									((ISchemaRootElement) element).setInternal(Boolean.valueOf(internal).booleanValue());
 								}
 							}
 						}
