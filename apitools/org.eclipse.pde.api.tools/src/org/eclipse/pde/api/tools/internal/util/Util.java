@@ -1380,6 +1380,9 @@ public final class Util {
 					case IApiProblem.LEAK_RETURN_TYPE: {
 						return "LEAK_RETURN_TYPE"; //$NON-NLS-1$
 					}
+					case IApiProblem.CONSTRUCTOR_METHOD: {
+						return "CONSTRUCTOR_METHOD"; //$NON-NLS-1$
+					}
 					case IApiProblem.NO_FLAGS: {
 						return "NO_FLAGS"; //$NON-NLS-1$
 					}
@@ -1476,6 +1479,9 @@ public final class Util {
 			}
 			case IApiProblem.API_LEAK: {
 				return "API_LEAK"; //$NON-NLS-1$
+			}
+			case IApiProblem.UNSUPPORTED_TAG_USE: {
+				return "UNSUPPORTED_TAG_USE"; //$NON-NLS-1$
 			}
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$

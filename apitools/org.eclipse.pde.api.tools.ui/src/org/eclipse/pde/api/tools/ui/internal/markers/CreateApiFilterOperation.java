@@ -78,7 +78,7 @@ public class CreateApiFilterOperation extends UIJob {
 					fBackingMarker.getAttribute(IMarker.CHAR_END, -1), 
 					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
 			store.addFilters(new IApiProblem[] {problem});
-			fBackingMarker.delete();
+			resource.touch(null);
 			return Status.OK_STATUS;
 		}
 		catch(CoreException ce) {

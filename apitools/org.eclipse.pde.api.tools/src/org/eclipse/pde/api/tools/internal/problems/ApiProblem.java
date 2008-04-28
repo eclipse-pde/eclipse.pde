@@ -235,10 +235,38 @@ public class ApiProblem implements IApiProblem {
 			IApiProblem problem = (IApiProblem) obj;
 			return problem.getId() == fId &&
 					new Path(problem.getResourcePath()).equals(new Path(fResourcePath))
-					&& this.getCharEnd() == problem.getCharEnd()
-					&& this.getCharStart() == problem.getCharStart();
+					&& argumentsEqual(problem.getMessageArguments());
 		}
 		return super.equals(obj);
+	}
+	
+	/**
+	 * COmpares the complete list of message arguments
+	 * @param arguments
+	 * @return true if all of the arguments are equal, false otherwise
+	 */
+	private boolean argumentsEqual(String[] arguments) {
+		boolean equal = true;
+		if(fMessageArguments.length != arguments.length) {
+			return false;
+		}
+		for(int i = 0; i < fMessageArguments.length; i++) {
+			equal &= fMessageArguments[i].equals(arguments[i]);
+		}
+		return equal;
+	}
+	
+	/**
+	 * Returns the deep hash code of the complete listing of message arguments
+	 * @param arguments
+	 * @return the hash code of the message arguments
+	 */
+	private int argumentsHashcode(String[] arguments) {
+		int hashcode = 0;
+		for(int i = 0; i < fMessageArguments.length; i++) {
+			hashcode += fMessageArguments[i].hashCode();
+		}
+		return hashcode;
 	}
 	
 	/* (non-Javadoc)
@@ -247,18 +275,19 @@ public class ApiProblem implements IApiProblem {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Api problem: "); //$NON-NLS-1$
-		buffer.append(fResourcePath);
-		buffer.append("[severity: "); //$NON-NLS-1$
-		buffer.append(Util.getSeverity(getSeverity()));
-		buffer.append(" category: "); //$NON-NLS-1$
-		buffer.append(Util.getProblemCategory(getCategory()));
-		buffer.append(" element kind: "); //$NON-NLS-1$
-		buffer.append(Util.getProblemElementKind(getCategory(), getElementKind()));
-		buffer.append(" kind: "); //$NON-NLS-1$
-		buffer.append(Util.getProblemKind(getCategory(), getKind()));
-		buffer.append(" flags: "); //$NON-NLS-1$
-		buffer.append(Util.getProblemFlagsName(getCategory(), getFlags()));
-		buffer.append("]"); //$NON-NLS-1$
+		buffer.append(fResourcePath).append("\n"); //$NON-NLS-1$
+		buffer.append("\tseverity: "); //$NON-NLS-1$
+		buffer.append(Util.getSeverity(getSeverity())).append("\n"); //$NON-NLS-1$
+		buffer.append("\tcategory: "); //$NON-NLS-1$
+		buffer.append(Util.getProblemCategory(getCategory())).append("\n"); //$NON-NLS-1$
+		buffer.append("\telement kind: "); //$NON-NLS-1$
+		buffer.append(Util.getProblemElementKind(getCategory(), getElementKind())).append("\n"); //$NON-NLS-1$
+		buffer.append("\tkind: "); //$NON-NLS-1$
+		buffer.append(Util.getProblemKind(getCategory(), getKind())).append("\n"); //$NON-NLS-1$
+		buffer.append("\tflags: "); //$NON-NLS-1$
+		buffer.append(Util.getProblemFlagsName(getCategory(), getFlags())).append("\n"); //$NON-NLS-1$
+		buffer.append("\tmessage id: "); //$NON-NLS-1$
+		buffer.append(getMessageid());
 		return buffer.toString();
 	}	
 	
@@ -266,6 +295,6 @@ public class ApiProblem implements IApiProblem {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getId() + fResourcePath.hashCode() + this.getCharStart() + this.getCharEnd();
+		return getId() + fResourcePath.hashCode() + argumentsHashcode(fMessageArguments);
 	}
 }
