@@ -19,12 +19,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 
 /**
@@ -35,6 +39,13 @@ public class SpyIDEUtil {
 		IPluginModelBase model = PluginRegistry.findModel(pluginId);
 		IResource resource = model != null ? model.getUnderlyingResource() : null;
 		IJavaProject project = null;
+
+		// if we don't find a model
+		if (model == null) {
+			MessageDialog.openError(Display.getCurrent().getActiveShell(), PDERuntimeMessages.SpyIDEUtil_noSourceFound_title, NLS.bind(PDERuntimeMessages.SpyIDEUtil_noSourceFound_message, new Object[] {clazz}));
+			return;
+		}
+
 		if (resource != null) { // project is open in workspace
 			project = JavaCore.create(resource.getProject());
 		} else {
