@@ -201,7 +201,12 @@ public class LaunchPluginValidator {
 				if (entry != null) {
 					IPluginModelBase models[] = targetPlatform ? entry.getExternalModels() : entry.getWorkspaceModels();
 					for (int i = 0; i < models.length; i++) {
-						if (models[i].getPluginBase().getVersion().equals(version) || version == null)
+						// the logic here is this (see bug 225644)
+						// a) if we come across a bundle that has the right version, immediately add it
+						// b) if there's no version, add it
+						// c) if there's only one instance of that bundle in the list of ids... add it
+						String[] counter = ids.split(id); // hack to get how many bundles in list of ids
+						if (models[i].getPluginBase().getVersion().equals(version) || version == null || counter.length == 2)
 							set.add(models[i]);
 					}
 				}
