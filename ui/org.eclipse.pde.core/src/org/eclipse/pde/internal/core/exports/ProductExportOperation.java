@@ -400,7 +400,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		if (fProduct.useFeatures()) {
 			// if we're using features and find simple configurator in the list, let's just default and use update configurator 
 			if (bundleList.indexOf("org.eclipse.equinox.simpleconfigurator") != -1) { //$NON-NLS-1$
-				return "org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start"; //$NON-NLS-1$
+				return TargetPlatformHelper.getDefaultBundleList();
 			}
 			return bundleList;
 		}
@@ -455,6 +455,11 @@ public class ProductExportOperation extends FeatureExportOperation {
 				}
 			}
 		}
+
+		// something horribly went wrong if we get there
+		if (buffer.length() == 0)
+			return TargetPlatformHelper.getDefaultBundleList();
+
 		return buffer.toString();
 	}
 
