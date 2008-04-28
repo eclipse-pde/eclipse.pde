@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.comparator;
 
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 
 /**
  * Interface that represents a delta.

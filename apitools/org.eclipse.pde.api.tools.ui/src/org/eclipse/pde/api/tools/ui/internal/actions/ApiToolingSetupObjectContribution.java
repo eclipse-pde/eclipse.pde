@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.actions;
 
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
-import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizard;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupRefactoring;
+import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizard;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 

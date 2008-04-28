@@ -17,8 +17,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.objectweb.asm.ClassReader;
 
 /**

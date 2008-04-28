@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.descriptors;
 
-import org.eclipse.core.resources.IResource;
 
 /**
  * Describes an element in an API component.

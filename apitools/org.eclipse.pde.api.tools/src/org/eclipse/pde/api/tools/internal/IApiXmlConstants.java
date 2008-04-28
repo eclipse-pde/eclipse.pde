@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Interface containing all of the constants used in XML documents

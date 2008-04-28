@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 
 /**
  * Constants used by API tools core plugin

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.descriptors;
 
-import org.eclipse.jdt.core.Flags;
 
 /**
  * Describes a field.

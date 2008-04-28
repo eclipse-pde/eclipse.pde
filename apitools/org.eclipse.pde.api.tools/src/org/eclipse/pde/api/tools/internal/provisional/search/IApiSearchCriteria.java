@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.search;
 
-import org.eclipse.jdt.core.Flags;
-import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
-import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 /**

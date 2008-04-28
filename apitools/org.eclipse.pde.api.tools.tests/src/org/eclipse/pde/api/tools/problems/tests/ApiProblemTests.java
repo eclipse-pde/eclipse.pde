@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.problems.tests;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.pde.api.tools.internal.problems.ApiProblem;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;

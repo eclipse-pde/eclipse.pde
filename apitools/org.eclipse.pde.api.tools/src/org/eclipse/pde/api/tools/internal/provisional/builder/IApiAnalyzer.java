@@ -11,9 +11,6 @@
 package org.eclipse.pde.api.tools.internal.provisional.builder;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.pde.api.tools.internal.BundleApiComponent;
-import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
-import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;

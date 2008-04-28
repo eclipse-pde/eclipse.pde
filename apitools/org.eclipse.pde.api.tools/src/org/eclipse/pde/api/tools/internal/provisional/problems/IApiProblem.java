@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.problems;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.compiler.CategorizedProblem;
-import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 /**
  * Describes a given api problem.
