@@ -59,6 +59,7 @@ public interface IXMLConstants {
 	public static final String TARGET_JARING = "jarIng"; //$NON-NLS-1$
 	public static final String TARGET_JARSIGNING = "jarSigning"; //$NON-NLS-1$
 	public static final String TARGET_ROOTFILES_PREFIX = "rootFiles"; //$NON-NLS-1$
+	public static final String TARGET_ROOT_TARGET = "rootTarget"; //$NON-NLS-1$
 	public static final String TARGET_CUSTOM_ASSEMBLY = "customAssembly"; //$NON-NLS-1$
 	public static final String TARGET_P2_METADATA = "generate.p2.metadata"; //$NON-NLS-1$
 	// properties
@@ -145,6 +146,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_ROOT_FOLDER = "rootFolder"; //$NON-NLS-1$
 	public static final String PROPERTY_JARING_MANIFEST = "jaringManifest"; //$NON-NLS-1$
 	public static final String PROPERTY_JARING_TASK = "jaringTask"; //$NON-NLS-1$
+	public static final String PROPERTY_OMIT_ROOTFILES = "updateJar.omitRootfiles"; //$NON-NLS-1$
 
 	//Jar processor properties
 	public static final String PROPERTY_SIGN_ALIAS = "sign.alias"; //$NON-NLS-1$

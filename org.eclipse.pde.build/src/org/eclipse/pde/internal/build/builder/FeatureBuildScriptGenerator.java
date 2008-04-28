@@ -360,7 +360,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 *  
 	 */
 	private void generateRootFilesAndPermissionsCalls() {
-		script.printAntCallTask(TARGET_ROOTFILES_PREFIX + Utils.getPropertyFormat(PROPERTY_OS) + '_' + Utils.getPropertyFormat(PROPERTY_WS) + '_' + Utils.getPropertyFormat(PROPERTY_ARCH), true, null);
+		Map param = new HashMap(1);
+		param.put(TARGET_ROOT_TARGET, TARGET_ROOTFILES_PREFIX + Utils.getPropertyFormat(PROPERTY_OS) + '_' + Utils.getPropertyFormat(PROPERTY_WS) + '_' + Utils.getPropertyFormat(PROPERTY_ARCH));		
+		script.printAntCallTask(TARGET_ROOTFILES_PREFIX, true, param);
 	}
 
 	/**
@@ -383,6 +385,12 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 				//TODO Log warning/error
 			}
 		}
+		
+		script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX, null, null, PROPERTY_OMIT_ROOTFILES, null);
+		script.printAntCallTask(Utils.getPropertyFormat(TARGET_ROOT_TARGET), true, null);
+		script.printTargetEnd();
+		script.println();
+		
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config aConfig = (Config) iter.next();
 			script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX + aConfig.toString("_"), null, null, null, null); //$NON-NLS-1$
@@ -477,12 +485,15 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printProperty(PROPERTY_FEATURE_BASE, featureTempFolder);
 		script.printDeleteTask(featureTempFolder, null, null);
 		script.printMkdirTask(featureTempFolder);
+		script.printMkdirTask(featureTempFolder + '/' + featureFolderName);
 		params.clear();
 		params.put(PROPERTY_FEATURE_BASE, featureTempFolder);
 		params.put(PROPERTY_OS, feature.getOS() == null ? Config.ANY : feature.getOS());
 		params.put(PROPERTY_WS, feature.getWS() == null ? Config.ANY : feature.getWS());
 		params.put(PROPERTY_ARCH, feature.getArch() == null ? Config.ANY : feature.getArch());
 		params.put(PROPERTY_NL, feature.getNL() == null ? Config.ANY : feature.getNL());
+		params.put(PROPERTY_OMIT_ROOTFILES, "true"); //$NON-NLS-1$
+		
 		// Be sure to call the gather with children turned off. The only way to
 		// do this is
 		// to clear all inherited values. Must remember to setup anything that
@@ -499,6 +510,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			}
 			script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" pack=\"" + Utils.getPropertyFormat(PROPERTY_PACK) + "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) + "\" jar=\"" + AntScript.getEscaped(jar) + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 		}
+		script.printAntCallTask(TARGET_REFRESH, true, null);
 		script.printTargetEnd();
 	}
 

@@ -475,4 +475,23 @@ public class ScriptGenerationTests extends PDETestCase {
 		
 		runBuild(buildFolder);
 	}
+	
+	public void testBug199241() throws Exception {
+		IFolder buildFolder = newTest("199241");
+		IFolder fooFolder = Utils.createFolder(buildFolder, "plugins/foo");
+		IFolder featureFolder = Utils.createFolder(buildFolder, "features/F");
+		
+		Utils.generateBundle(fooFolder, "foo");
+		Utils.createFolder(fooFolder, "src");
+		Utils.generateFeature(buildFolder, "F", null, new String[] { "foo" });
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "F"));
+		
+		assertResourceFile(featureFolder, "build.xml");
+		IFile script = featureFolder.getFile("build.xml");
+		runAntScript(script.getLocation().toOSString(), new String [] {}, featureFolder.getLocation().toOSString(), null);
+		
+		assertResourceFile(featureFolder, "F_1.0.0.jar");
+		assertResourceFile(fooFolder, "foo_1.0.0.jar");
+	}
 }
