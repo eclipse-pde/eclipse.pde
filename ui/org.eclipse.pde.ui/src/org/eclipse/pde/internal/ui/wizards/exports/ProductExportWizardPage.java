@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	private static final String S_SYNC_PRODUCT = "syncProduct"; //$NON-NLS-1$
 	private static final String S_EXPORT_SOURCE = "exportSource"; //$NON-NLS-1$
 	private static final String S_MULTI_PLATFORM = "multiplatform"; //$NON-NLS-1$
+	private static final String S_EXPORT_METADATA = "p2metadata"; //$NON-NLS-1$
 
 	private Button fSyncButton;
 	private IStructuredSelection fSelection;
@@ -37,6 +38,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	private ProductConfigurationSection fConfigurationGroup;
 	private Button fExportSource;
 	private Button fMultiPlatform;
+	private Button fExportMetadata;
 
 	public ProductExportWizardPage(IStructuredSelection selection) {
 		super("productExport"); //$NON-NLS-1$
@@ -109,6 +111,9 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		fExportSource = new Button(group, SWT.CHECK);
 		fExportSource.setText(PDEUIMessages.ExportWizard_includeSource);
 
+		fExportMetadata = new Button(group, SWT.CHECK);
+		fExportMetadata.setText(PDEUIMessages.ExportWizard_includesMetadata);
+
 		if (getWizard().getPages().length > 1) {
 			fMultiPlatform = new Button(group, SWT.CHECK);
 			fMultiPlatform.setText(PDEUIMessages.ExportWizard_multi_platform);
@@ -130,6 +135,8 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		fExportGroup.initialize(settings, fConfigurationGroup.getProductFile());
 
 		fExportSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
+		fExportMetadata.setSelection(settings.getBoolean(S_EXPORT_METADATA));
+
 		if (fMultiPlatform != null)
 			fMultiPlatform.setSelection(settings.getBoolean(S_MULTI_PLATFORM));
 	}
@@ -159,6 +166,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		settings.put(S_SYNC_PRODUCT, fSyncButton.getSelection());
 		fExportGroup.saveSettings(settings);
 		settings.put(S_EXPORT_SOURCE, doExportSource());
+		settings.put(S_EXPORT_METADATA, doExportMetadata());
 
 		if (fMultiPlatform != null)
 			settings.put(S_MULTI_PLATFORM, fMultiPlatform.getSelection());
@@ -174,6 +182,10 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 	protected boolean doExportSource() {
 		return fExportSource.getSelection();
+	}
+
+	protected boolean doExportMetadata() {
+		return fExportMetadata.getSelection();
 	}
 
 	protected boolean doExportToDirectory() {

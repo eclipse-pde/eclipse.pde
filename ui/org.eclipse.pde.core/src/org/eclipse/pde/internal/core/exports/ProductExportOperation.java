@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.exports;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import javax.xml.parsers.*;
@@ -22,6 +23,7 @@ import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -47,6 +49,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 		String[][] configurations = fInfo.targets;
 		if (configurations == null)
 			configurations = new String[][] {{TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL()}};
+
+		Properties versionAdvice = new Properties();
 		monitor.beginTask("", 10 * configurations.length); //$NON-NLS-1$
 		for (int i = 0; i < configurations.length; i++) {
 			try {
@@ -64,15 +68,49 @@ public class ProductExportOperation extends FeatureExportOperation {
 				createLauncherIniFile(config[0]);
 				doExport(featureID, null, fFeatureLocation, config[0], config[1], config[2], new SubProgressMonitor(monitor, 8));
 			} catch (IOException e) {
+				PDECore.log(e);
 			} catch (InvocationTargetException e) {
 				throwCoreException(e);
 			} finally {
+
+				// Append platform specific version information so that it is available for the p2 post script
+				String versionsPrefix = fProduct.useFeatures() ? IPDEBuildConstants.DEFAULT_FEATURE_VERSION_FILENAME_PREFIX : IPDEBuildConstants.DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX;
+				File versionFile = new File(fFeatureLocation, versionsPrefix + IPDEBuildConstants.PROPERTIES_FILE_SUFFIX);
+				InputStream stream = null;
+				try {
+					stream = new BufferedInputStream(new FileInputStream(versionFile));
+					versionAdvice.load(stream);
+				} catch (IOException e) {
+				} finally {
+					try {
+						if (stream != null)
+							stream.close();
+					} catch (IOException e) {
+					}
+				}
+
+				// Clean up generated files
 				for (int j = 0; j < fInfo.items.length; j++) {
 					deleteBuildFiles(fInfo.items[j]);
 				}
 				cleanup(fInfo.targets == null ? null : configurations[i], new SubProgressMonitor(monitor, 1));
 			}
 		}
+
+		// Run postscript to generate p2 metadata for product
+		String postScript = PackageScriptGenerator.generateP2ProductScript(fFeatureLocation, fProduct.getModel().getInstallLocation(), versionAdvice);
+		if (postScript != null) {
+			try {
+				Map properties = new HashMap();
+				addP2MetadataProperties(properties);
+				runScript(postScript, null, properties, monitor);
+			} catch (InvocationTargetException e) {
+				throwCoreException(e);
+			}
+		}
+
+		cleanup(null, new SubProgressMonitor(monitor, 1));
+
 		monitor.done();
 	}
 
@@ -213,7 +251,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 		properties.put("id", fProduct.getId()); //$NON-NLS-1$
 		if (model != null)
 			properties.put("version", model.getPluginBase().getVersion()); //$NON-NLS-1$
-		save(new File(dir, ".eclipseproduct"), properties, "Eclipse Product File"); //$NON-NLS-1$ //$NON-NLS-2$
+		File product = new File(dir, ".eclipseproduct"); //$NON-NLS-1$
+		save(product, properties, "Eclipse Product File"); //$NON-NLS-1$
 	}
 
 	private void createLauncherIniFile(String os) {
@@ -442,11 +481,27 @@ public class ProductExportOperation extends FeatureExportOperation {
 		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, fRoot);
 		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, fRoot);
 
-		//for now, don't do p2 generation for products
-		if (fAntBuildProperties.containsKey("generate.p2.metadata")) { //$NON-NLS-1$
-			fAntBuildProperties.remove("generate.p2.metadata"); //$NON-NLS-1$
-		}
+		addP2MetadataProperties(properties);
+
 		return properties;
+	}
+
+	/**
+	 * Adds the standard p2 metadata generator properties to the given map.
+	 * @param map the map to add properties to
+	 */
+	private void addP2MetadataProperties(Map map) {
+		if (fInfo.toDirectory && fInfo.exportMetadata) {
+			map.put("generate.p2.metadata", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			map.put("p2.flavor", "tooling"); //$NON-NLS-1$ //$NON-NLS-2$
+			map.put("p2.publish.artifacts", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			try {
+				map.put("p2.metadata.repo", new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+				map.put("p2.artifact.repo", new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (MalformedURLException e) {
+				PDECore.log(e);
+			}
+		}
 	}
 
 	private String getLauncherName() {
@@ -520,6 +575,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 	protected void setupGenerator(BuildScriptGenerator generator, String featureID, String versionId, String os, String ws, String arch, String featureLocation) throws CoreException {
 		super.setupGenerator(generator, featureID, versionId, os, ws, arch, featureLocation);
+		generator.setGenerateVersionsList(true);
 		if (fProduct != null)
 			generator.setProduct(fProduct.getModel().getInstallLocation());
 	}
