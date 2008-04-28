@@ -18,6 +18,9 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -330,10 +333,25 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 	public boolean performOk() {
 		try {
 			if(fChangeset.size() > 0) {
-				getFilterStore().removeFilters((IApiProblemFilter[]) fChangeset.toArray(new IApiProblemFilter[fChangeset.size()]));
-				if(MessageDialog.openQuestion(getShell(), PropertiesMessages.ApiFiltersPropertyPage_58, 
-						MessageFormat.format(PropertiesMessages.ApiFiltersPropertyPage_59, new String[] {fProject.getName()}))) {
-					Util.getBuildJob(new IProject[] {fProject}).schedule();
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IApiProblemFilter[] apiProblemFilters = (IApiProblemFilter[]) fChangeset.toArray(new IApiProblemFilter[fChangeset.size()]);
+				getFilterStore().removeFilters(apiProblemFilters);
+				// we want to make sure that we rebuild only applicable types
+				for (int i = 0, max = apiProblemFilters.length; i < max; i++) {
+					IApiProblemFilter filter = apiProblemFilters[i];
+					IApiProblem apiProblem = filter.getUnderlyingProblem();
+					if (apiProblem != null) {
+						IResource resource = fProject.findMember(apiProblem.getResourcePath());
+						if (resource != null) {
+							resource.touch(null);
+						}
+					}
+				}
+				if (!workspace.isAutoBuilding()) {
+					if(MessageDialog.openQuestion(getShell(), PropertiesMessages.ApiFiltersPropertyPage_58, 
+							MessageFormat.format(PropertiesMessages.ApiFiltersPropertyPage_59, new String[] {fProject.getName()}))) {
+						Util.getBuildJob(new IProject[] {fProject}, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
+					}
 				}
 			}
 			fChangeset.clear();

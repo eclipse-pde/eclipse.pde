@@ -513,6 +513,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			if(resource.getType() == IResource.FILE) {
 				if (Util.isClassFile(fileName)) {
 					findAffectedSourceFiles(delta);
+				} else if (Util.isJavaFileName(fileName)) {
+					fTypesToCheck.add(resource);
 				}
 			}
 		}
