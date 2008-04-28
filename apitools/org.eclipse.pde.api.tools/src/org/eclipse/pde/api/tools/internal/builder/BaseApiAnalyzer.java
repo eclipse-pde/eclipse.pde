@@ -360,6 +360,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				ClassFileVisitor visitor = new ClassFileVisitor();
 				for(int i = 0; i < containers.length; i++) {
 					try {
+						localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, containers[i].getOrigin()));
 						containers[i].accept(visitor);
 						updateMonitor(localMonitor);
 					}
@@ -368,6 +369,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			else {
 				for(int i = 0; i < typenames.length; i++) {
+					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, typenames[i]));
 					processType(typenames[i]);
 					updateMonitor(localMonitor);
 				}

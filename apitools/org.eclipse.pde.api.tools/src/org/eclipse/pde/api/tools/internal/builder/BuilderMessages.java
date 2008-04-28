@@ -27,6 +27,7 @@ public class BuilderMessages extends NLS {
 	public static String BaseApiAnalyzer_analyzing_api;
 	public static String BaseApiAnalyzer_checking_api_usage;
 	public static String BaseApiAnalyzer_comparing_api_profiles;
+	public static String BaseApiAnalyzer_scanning_0;
 	public static String BaseApiAnalyzer_validating_javadoc_tags;
 	public static String build_wrongFileFormat;
 	public static String build_readStateProgress;
