@@ -424,7 +424,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 			}
 		}
 
-		if (!fProduct.containsPlugin("org.eclipse.update.configurator")) { //$NON-NLS-1$
+		// TODO clean up this logic in 3.5... it's way to complicated now
+		if (!fProduct.containsPlugin("org.eclipse.update.configurator") || bundleList.equals("org.eclipse.equinox.simpleconfigurator@1:start")) { //$NON-NLS-1$ //$NON-NLS-2$
 			initialBundleSet.add("org.eclipse.osgi"); //$NON-NLS-1$
 
 			Dictionary environment = new Hashtable(4);
