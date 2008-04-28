@@ -62,9 +62,8 @@ public class JavadocTagManager {
 			newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.noextend",  //$NON-NLS-1$
 					"noextend", //$NON-NLS-1$
 					RestrictionModifiers.NO_EXTEND,
-					new int[] {IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.TYPE_INTERFACE}, 
-					new String[] {"This class is not intended to be subclassed by clients.",   //$NON-NLS-1$ 
-									"This interface is not intended to be extended by clients."});   //$NON-NLS-1$ 
+					new int[] {IApiJavadocTag.TYPE_CLASS}, 
+					new String[] {"This class is not intended to be subclassed by clients."});   //$NON-NLS-1$ 
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			

@@ -110,6 +110,7 @@ public class ApiUseAnalyzer {
 				}
 				if (RestrictionModifiers.isImplementRestriction(mask)) {
 					addCriteria(ReferenceModifiers.REF_IMPLEMENTS, RestrictionModifiers.NO_IMPLEMENT, elements, IApiProblem.ILLEGAL_IMPLEMENT, IElementDescriptor.T_REFERENCE_TYPE);
+					addCriteria(ReferenceModifiers.REF_EXTENDS, RestrictionModifiers.NO_IMPLEMENT, elements, IApiProblem.ILLEGAL_IMPLEMENT, IElementDescriptor.T_REFERENCE_TYPE);
 				}
 				if (RestrictionModifiers.isInstantiateRestriction(mask)) {
 					addCriteria(ReferenceModifiers.REF_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, elements, IApiProblem.ILLEGAL_INSTANTIATE, IElementDescriptor.T_REFERENCE_TYPE);
