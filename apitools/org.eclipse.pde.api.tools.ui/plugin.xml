@@ -143,6 +143,32 @@
          </markerTypeReference>
       </markerTypeCategory>
    </extension>
+    <extension
+          point="org.eclipse.ui.ide.markerSupport">
+        <markerGroupingEntry id="org.eclipse.pde.api.tools.jdt_category"
+                markerGrouping="org.eclipse.jdt.ui.java_marker_category"
+                label="%MarkerGroupingEntryLabel"
+                priority="83"/>
+        <markerAttributeGrouping
+             defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
+             markerType="org.eclipse.pde.api.tools.compatibility"/>
+        <markerAttributeGrouping
+             defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
+             markerType="org.eclipse.pde.api.tools.api_usage"/>
+        <markerAttributeGrouping
+             defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
+             markerType="org.eclipse.pde.api.tools.version_numbering"/>
+        <markerAttributeGrouping
+             defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
+             markerType="org.eclipse.pde.api.tools.api_profile"/>
+        <markerAttributeGrouping
+             defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
+             markerType="org.eclipse.pde.api.tools.marker.sincetags"/>
+        <markerAttributeGrouping
+              defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
+              markerType="org.eclipse.pde.api.tools.unsupported_tags">
+        </markerAttributeGrouping>
+    </extension>
    <extension
          point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator
