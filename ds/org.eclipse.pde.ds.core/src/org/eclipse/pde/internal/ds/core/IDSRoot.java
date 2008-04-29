@@ -31,4 +31,5 @@ public interface IDSRoot {
 	
 	public void removeChild(IDSObject obj);
 
+	public void moveItem(IDSObject item, int newRelativeIndex);
 }

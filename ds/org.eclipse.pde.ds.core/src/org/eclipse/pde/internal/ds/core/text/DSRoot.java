@@ -151,6 +151,17 @@ public class DSRoot extends DSObject implements IDSRoot {
 	 */
 	public void removeChild(IDSObject subitem) {
 		removeChildNode((IDocumentElementNode) subitem, true);
-	}	
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#moveItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem,
+	 *      int)
+	 */
+	public void moveItem(IDSObject item, int newRelativeIndex) {
+		moveChildNode((IDocumentElementNode) item, newRelativeIndex, true);
+	}
+
 	
 }
