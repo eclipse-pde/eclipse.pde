@@ -308,6 +308,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		IApiProfile def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		if(def != null && !def.getName().equals(newdefault)) {
 			manager.setDefaultApiProfile(newdefault);
+			needsbuild = true;
 		}
 		else if(def == null) {
 			manager.setDefaultApiProfile(newdefault);
