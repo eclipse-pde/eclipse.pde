@@ -205,16 +205,21 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	}
 
 	private void validateInternalExtensionAttribute(Element element, ISchemaElement schemaElement) {
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_INTERNAL);
+		if (severity == CompilerFlags.IGNORE)
+			return;
+
 		if (schemaElement instanceof ISchemaRootElement) {
 			ISchemaRootElement rootElement = (ISchemaRootElement) schemaElement;
-			if (rootElement.isInternal()) {
-				int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_INTERNAL);
-				if (severity != CompilerFlags.IGNORE) {
-					String point = element.getAttribute("point"); //$NON-NLS-1$
-					if (point == null)
-						return; // should never come to this...
-					report(NLS.bind(PDECoreMessages.Builders_Manifest_internal_rootElement, point), getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
-				}
+			String epid = schemaElement.getSchema().getPluginId();
+			String pid = fModel.getPluginBase().getId();
+			if (epid == null || pid == null)
+				return;
+			if (rootElement.isInternal() && !epid.equals(pid)) {
+				String point = element.getAttribute("point"); //$NON-NLS-1$
+				if (point == null)
+					return; // should never come to this...
+				report(NLS.bind(PDECoreMessages.Builders_Manifest_internal_rootElement, point), getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
 			}
 		}
 	}
