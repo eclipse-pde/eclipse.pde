@@ -16,7 +16,6 @@ package org.eclipse.pde.api.tools.internal.provisional;
  * This interface is not intended to be extended or implemented.
  *
  * @since 1.0.0
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IApiMarkerConstants {

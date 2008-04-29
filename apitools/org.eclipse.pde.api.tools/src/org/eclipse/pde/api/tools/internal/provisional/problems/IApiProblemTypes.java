@@ -17,7 +17,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * API problem types.
  *
  * @since 1.0
- * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IApiProblemTypes {
