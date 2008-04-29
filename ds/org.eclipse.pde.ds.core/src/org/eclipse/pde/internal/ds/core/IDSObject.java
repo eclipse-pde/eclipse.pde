@@ -50,19 +50,4 @@ public interface IDSObject extends IDocumentElementNode {
 	 */
 	public abstract DSObject getParent();
 	
-	
-	/**
-	 * @param DSObject
-	 *            the child used to locate a sibling
-	 * @return the object preceding the specified one in the list of children
-	 */
-	public abstract IDSObject getPreviousSibling(IDSObject DSObject);
-
-	/**
-	 * @param DSObject
-	 *            the child used to locate a sibling
-	 * @return the object proceeding the specified one in the list of children
-	 */
-	public abstract IDSObject getNextSibling(IDSObject DSObject);
-
 }

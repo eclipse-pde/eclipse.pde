@@ -173,22 +173,6 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	}
 
 	/**
-	 * @param DSObject the child used to locate a sibling
-	 * @return the object preceding the specified one in the list of children
-	 */
-	public IDSObject getPreviousSibling(IDSObject dsObject) {
-		return (IDSObject) getPreviousSibling(dsObject, IDSObject.class);
-	}
-
-	/**
-	 * @param DSObject the child used to locate a sibling
-	 * @return the object proceeding the specified one in the list of children
-	 */
-	public IDSObject getNextSibling(IDSObject dsObject) {
-		return (IDSObject) getNextSibling(dsObject, IDSObject.class);
-	}
-
-	/**
 	 * @return true iff a this object can be removed
 	 */
 	public boolean canBeRemoved() {
