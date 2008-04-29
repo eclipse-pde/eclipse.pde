@@ -246,16 +246,17 @@ public class ApiProblem implements IApiProblem {
 	 * @return true if all of the arguments are equal, false otherwise
 	 */
 	private boolean argumentsEqual(String[] arguments) {
-		if((fMessageArguments == null && arguments != null) ||
-			(fMessageArguments != null && arguments == null)) {
+		String[] currentArguments = getMessageArguments();
+		if((currentArguments == null && arguments != null) ||
+			(currentArguments != null && arguments == null)) {
 			return false;
 		}
 		boolean equal = true;
-		if(fMessageArguments.length != arguments.length) {
+		if(currentArguments.length != arguments.length) {
 			return false;
 		}
-		for(int i = 0; i < fMessageArguments.length; i++) {
-			equal &= fMessageArguments[i].equals(arguments[i]);
+		for(int i = 0; i < currentArguments.length; i++) {
+			equal &= currentArguments[i].equals(arguments[i]);
 		}
 		return equal;
 	}

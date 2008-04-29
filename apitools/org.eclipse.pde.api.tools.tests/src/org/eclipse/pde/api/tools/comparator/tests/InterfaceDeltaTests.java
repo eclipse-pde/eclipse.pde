@@ -28,7 +28,8 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(InterfaceDeltaTests.class);
 		TestSuite suite = new TestSuite(InterfaceDeltaTests.class.getName());
-		suite.addTest(new InterfaceDeltaTests("test24"));
+		suite.addTest(new InterfaceDeltaTests("test18"));
+		suite.addTest(new InterfaceDeltaTests("test19"));
 		return suite;
 	}
 
@@ -443,7 +444,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 	}
 
 	/**
-	 * Add a member types
+	 * Add a member type
 	 */
 	public void test18() {
 		deployBundles("test18");

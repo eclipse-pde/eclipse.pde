@@ -405,7 +405,6 @@ public class ApiProblemFactory {
 							case IDelta.CLINIT: return 22;
 							case IDelta.CONSTRUCTOR: return 23;
 							case IDelta.ENUM_CONSTANT: return 24;
-							case IDelta.EXECUTION_ENVIRONMENT: return 25;
 							case IDelta.INTERFACE_BOUND: return 26;
 							case IDelta.INTERFACE_BOUNDS: return 27;
 							case IDelta.METHOD_WITH_DEFAULT_VALUE: return 28;
@@ -475,7 +474,6 @@ public class ApiProblemFactory {
 							case IDelta.CLINIT: return 90;
 							case IDelta.CONSTRUCTOR: return 91;
 							case IDelta.ENUM_CONSTANT: return 92;
-							case IDelta.EXECUTION_ENVIRONMENT: return 93;
 							case IDelta.FIELD: return 94;
 							case IDelta.FIELD_MOVED_UP: return 95;
 							case IDelta.INTERFACE_BOUND: return 96;
@@ -491,7 +489,7 @@ public class ApiProblemFactory {
 							case IDelta.TYPE_PARAMETERS: return 106;
 							case IDelta.UNCHECKED_EXCEPTION: return 107;
 							case IDelta.VALUE : return 108;
-							case IDelta.API_TYPE: return 112;
+							case IDelta.API_TYPE: return 113;
 						}
 					}
 				}

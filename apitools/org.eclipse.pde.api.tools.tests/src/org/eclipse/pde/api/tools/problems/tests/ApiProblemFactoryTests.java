@@ -170,13 +170,13 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		String message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Added a constructor", new String[0])));
-		problem = ApiProblemFactory.newApiProblem(null, new String[] {"foo()"}, null, null, -1, -1, -1,  
+		assertTrue("the message should be correct", message.equals(MessageFormat.format("The constructor {0}.{1} has been added", new String[0])));
+		problem = ApiProblemFactory.newApiProblem(null, new String[] {"X", "foo()"}, null, null, -1, -1, -1,  
 				IApiProblem.CATEGORY_COMPATIBILITY, IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
 		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Added method foo() in an interface that is intended to be implemented", new String[0])));
+		assertTrue("the message should be correct", message.equals(MessageFormat.format("Added method X.foo() in an interface that is intended to be implemented", new String[0])));
 	}
 	
 	/**

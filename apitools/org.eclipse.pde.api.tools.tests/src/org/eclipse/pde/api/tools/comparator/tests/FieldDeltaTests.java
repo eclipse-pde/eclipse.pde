@@ -729,7 +729,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
+		assertEquals("Wrong flag", IDelta.TYPE_ARGUMENTS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -750,7 +750,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
+		assertEquals("Wrong flag", IDelta.TYPE_ARGUMENTS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -837,7 +837,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
+		assertEquals("Wrong flag", IDelta.TYPE_ARGUMENTS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -935,7 +935,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 3, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
-		assertTrue("Is visible", Util.isVisible(child));
+		assertFalse("Not visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));

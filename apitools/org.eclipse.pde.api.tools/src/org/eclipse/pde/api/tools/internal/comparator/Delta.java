@@ -15,6 +15,7 @@ import java.io.StringWriter;
 
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -71,7 +72,7 @@ public class Delta implements IDelta {
 	}
 	private IDelta[] children;
 	private String componentID;
-	private String data;
+	private String[] datas;
 	private int deltasCounter;
 	private int elementType;
 	private int flags;
@@ -110,9 +111,21 @@ public class Delta implements IDelta {
 		this.typeName = typeName == null ? Util.EMPTY_STRING : typeName;
 		this.restrictions = restrictions;
 		this.key = key;
-		this.data = data;
+		this.datas = new String[] {data};
 	}
 
+	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int modifiers, String typeName, String key, String[] datas) {
+		this.componentID = componentID;
+		this.elementType = elementType;
+		this.kind = kind;
+		this.flags = flags;
+		this.modifiers = modifiers;
+		this.typeName = typeName == null ? Util.EMPTY_STRING : typeName;
+		this.restrictions = restrictions;
+		this.key = key;
+		this.datas = datas;
+	}
+	
 	/**
 	 * Constructor
 	 * @param elementType
@@ -192,10 +205,10 @@ public class Delta implements IDelta {
 				return false;
 		} else if (!this.key.equals(other.key))
 			return false;
-		if (this.data == null) {
-			if (other.data != null)
+		if (this.datas == null) {
+			if (other.datas != null)
 				return false;
-		} else if (!this.data.equals(other.data))
+		} else if (!this.datas.equals(other.datas))
 			return false;
 		if (this.componentID == null) {
 			if (other.componentID != null)
@@ -213,10 +226,10 @@ public class Delta implements IDelta {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getArguments()
 	 */
 	public String[] getArguments() {
-		if(this.data == null) {
-			return new String[] {};
+		if(this.datas == null) {
+			return new String[] { typeName };
 		}
-		return new String[] {this.data};
+		return this.datas;
 	}
 	
 	/* (non-Javadoc)
@@ -263,11 +276,14 @@ public class Delta implements IDelta {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getMessage()
 	 */
 	public String getMessage() {
+		if (DeltaProcessor.isCompatible(this)) {
+			return Messages.getCompatibleLocalizedMessage(this);
+		}
 		int id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, 
 				this.elementType, this.kind, this.flags);
-		return ApiProblemFactory.getLocalizedMessage(id, (this.data != null ? new String[] {this.data.toString()} : null));
+		return ApiProblemFactory.getLocalizedMessage(id, (this.datas != null ? new String[] {this.datas.toString()} : null));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getModifiers()
 	 */
@@ -295,7 +311,7 @@ public class Delta implements IDelta {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.data == null) ? 0 : this.data.hashCode());
+		result = prime * result + ((this.datas == null) ? 0 : this.datas.hashCode());
 		result = prime * result + this.elementType;
 		result = prime * result + this.flags;
 		result = prime * result + ((this.key == null) ? 0 : this.key.hashCode());

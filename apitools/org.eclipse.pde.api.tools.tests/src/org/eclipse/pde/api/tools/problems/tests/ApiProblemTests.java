@@ -274,7 +274,16 @@ public class ApiProblemTests extends AbstractApiTest {
 		assertEquals("the hashcode should be equal to the sum of: id, resourcepath.hashCode", 
 				problem.hashCode(), (problem.getId()
 						+ problem.getResourcePath().hashCode()
-						+ problem.getCharStart()
-						+ problem.getCharEnd()));
+						+ argumentsHashcode(new String[] {"test1, test2, test3"})));
+	}
+	private int argumentsHashcode(String[] arguments) {
+		if(arguments == null) {
+			return 0;
+		}
+		int hashcode = 0;
+		for(int i = 0; i < arguments.length; i++) {
+			hashcode += arguments[i].hashCode();
+		}
+		return hashcode;
 	}
 }

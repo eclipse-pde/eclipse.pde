@@ -112,16 +112,48 @@ public class ApiComparator {
 					return NO_DELTA;
 				}
 				if ((refVisibility & VisibilityModifiers.API) != 0) {
-					return new Delta(Util.getDeltaComponentID(component), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_TYPE, typeName, typeName, typeName);
+					return new Delta(
+							Util.getDeltaComponentID(component),
+							IDelta.API_COMPONENT_ELEMENT_TYPE,
+							IDelta.REMOVED,
+							IDelta.API_TYPE,
+							RestrictionModifiers.NO_RESTRICTIONS,
+							typeDescriptor.access,
+							typeName,
+							typeName,
+							new String[] { typeName, Util.getDeltaComponentID(component)});
 				}
-			} else {
-				if (((refVisibility & VisibilityModifiers.API) == 0)
-						&& ((visibility & VisibilityModifiers.API) != 0)) {
-					return new Delta(Util.getDeltaComponentID(component), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, typeName, typeName, typeName);
+			} else if (((refVisibility & VisibilityModifiers.API) == 0)
+					&& ((visibility & VisibilityModifiers.API) != 0)) {
+				return new Delta(
+						Util.getDeltaComponentID(component),
+						IDelta.API_COMPONENT_ELEMENT_TYPE,
+						IDelta.ADDED,
+						IDelta.TYPE,
+						RestrictionModifiers.NO_RESTRICTIONS,
+						typeDescriptor.access,
+						typeName,
+						typeName,
+						new String[] { typeName, Util.getDeltaComponentID(component)});
+			}
+			if (visibilityModifiers == VisibilityModifiers.API) {
+				// if the visibility is API, we only consider public and protected types
+				if (Util.isDefault(typeDescriptor.access)
+							|| Util.isPrivate(typeDescriptor.access)) {
+					return NO_DELTA;
 				}
 			}
 			if (classFile == null) {
-				return new Delta(Util.getDeltaComponentID(component), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, null);
+				return new Delta(
+						Util.getDeltaComponentID(component),
+						IDelta.API_COMPONENT_ELEMENT_TYPE,
+						IDelta.ADDED,
+						IDelta.TYPE,
+						elementDescription.getRestrictions(),
+						typeDescriptor.access,
+						typeName,
+						typeName,
+						new String[] { typeName, Util.getDeltaComponentID(component2)});
 			}
 			ClassFileComparator comparator = new ClassFileComparator(classFile, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);
 			return comparator.getDelta();
@@ -425,10 +457,24 @@ public class ApiComparator {
 			if (component2 == null) {
 				throw new IllegalArgumentException("Both components cannot be null"); //$NON-NLS-1$
 			}
-			return new Delta(null, IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, component2.getId(), component2.getId());
+			return new Delta(
+					null,
+					IDelta.API_PROFILE_ELEMENT_TYPE,
+					IDelta.ADDED,
+					IDelta.API_COMPONENT,
+					null,
+					component2.getId(),
+					Util.getDeltaComponentID(component2));
 		} else if (component2 == null) {
 			String referenceComponentId = referenceComponent.getId();
-			return new Delta(null, IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT, null, referenceComponentId, referenceComponentId);
+			return new Delta(
+					null,
+					IDelta.API_PROFILE_ELEMENT_TYPE,
+					IDelta.REMOVED,
+					IDelta.API_COMPONENT,
+					null,
+					referenceComponentId,
+					Util.getDeltaComponentID(referenceComponent));
 		}
 		String referenceComponentId = referenceComponent.getId();
 		final Delta globalDelta = new Delta();
@@ -440,12 +486,32 @@ public class ApiComparator {
 		for (Iterator iterator = referenceEEs.iterator(); iterator.hasNext(); ) {
 			String currentEE = (String) iterator.next();
 			if (!componentsEEs.remove(currentEE)) {
-				globalDelta.add(new Delta(Util.getDeltaComponentID(referenceComponent), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.EXECUTION_ENVIRONMENT, null, referenceComponentId, currentEE));
+				globalDelta.add(
+						new Delta(
+								Util.getDeltaComponentID(referenceComponent),
+								IDelta.API_COMPONENT_ELEMENT_TYPE,
+								IDelta.REMOVED,
+								IDelta.EXECUTION_ENVIRONMENT,
+								RestrictionModifiers.NO_RESTRICTIONS,
+								0,
+								null,
+								referenceComponentId,
+								new String[] { currentEE, Util.getDeltaComponentID(referenceComponent)}));
 			}
 		}
 		for (Iterator iterator = componentsEEs.iterator(); iterator.hasNext(); ) {
 			String currentEE = (String) iterator.next();
-			globalDelta.add(new Delta(Util.getDeltaComponentID(referenceComponent), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.EXECUTION_ENVIRONMENT, null, referenceComponentId, currentEE));
+			globalDelta.add(
+					new Delta(
+							Util.getDeltaComponentID(referenceComponent),
+							IDelta.API_COMPONENT_ELEMENT_TYPE,
+							IDelta.ADDED,
+							IDelta.EXECUTION_ENVIRONMENT,
+							RestrictionModifiers.NO_RESTRICTIONS,
+							0,
+							null,
+							referenceComponentId,
+							new String[] { currentEE, Util.getDeltaComponentID(referenceComponent)}));
 		}
 		try {
 			return internalCompare(referenceComponent, component2, referenceProfile, profile, visibilityModifiers, globalDelta);
@@ -495,7 +561,24 @@ public class ApiComparator {
 										// we skip the class file according to their visibility
 										return;
 									}
-									globalDelta.add(new Delta(Util.getDeltaComponentID(component2), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, typeName, typeName, typeName));
+									if (visibilityModifiers == VisibilityModifiers.API) {
+										// if the visibility is API, we only consider public and protected types
+										if (Util.isDefault(typeDescriptor.access)
+													|| Util.isPrivate(typeDescriptor.access)) {
+											return;
+										}
+									}
+									globalDelta.add(
+											new Delta(
+													Util.getDeltaComponentID(component2),
+													IDelta.API_COMPONENT_ELEMENT_TYPE,
+													IDelta.REMOVED,
+													IDelta.TYPE,
+													RestrictionModifiers.NO_RESTRICTIONS,
+													0,
+													typeName,
+													typeName,
+													new String[] { typeName, Util.getDeltaComponentID(component2)}));
 								} else {
 									if ((visibility & visibilityModifiers) == 0) {
 										// we skip the class file according to their visibility
@@ -515,12 +598,32 @@ public class ApiComparator {
 										}
 									}
 									if (((visibility & VisibilityModifiers.API) != 0) && ((visibility2 & VisibilityModifiers.API) == 0)) {
-										globalDelta.add(new Delta(Util.getDeltaComponentID(component2), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_TYPE, elementDescription2.getRestrictions(), typeDescriptor2.access, typeName, typeDescriptor.name, typeDescriptor.name));
+										globalDelta.add(
+												new Delta(
+														Util.getDeltaComponentID(component2),
+														IDelta.API_COMPONENT_ELEMENT_TYPE,
+														IDelta.REMOVED,
+														IDelta.API_TYPE,
+														elementDescription2.getRestrictions(),
+														typeDescriptor2.access,
+														typeName,
+														typeName,
+														new String[] { typeName, Util.getDeltaComponentID(component2)}));
 										return;
 									}
 									if ((visibility2 & visibilityModifiers) == 0) {
 										// we simply report a changed visibility
-										globalDelta.add(new Delta(Util.getDeltaComponentID(component2), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_VISIBILITY, elementDescription2.getRestrictions(), typeDescriptor2.access, typeName, typeDescriptor.name, typeDescriptor.name));
+										globalDelta.add(
+												new Delta(
+														Util.getDeltaComponentID(component2),
+														IDelta.API_COMPONENT_ELEMENT_TYPE,
+														IDelta.CHANGED,
+														IDelta.TYPE_VISIBILITY,
+														elementDescription2.getRestrictions(),
+														typeDescriptor2.access,
+														typeName,
+														typeName,
+														new String[] { typeName, Util.getDeltaComponentID(component2)}));
 									}
 									classFileBaseLineNames.add(typeName);
 									ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);
@@ -560,7 +663,7 @@ public class ApiComparator {
 									// already processed
 									return;
 								}
-								globalDelta.add(new Delta(Util.getDeltaComponentID(component2), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription == null ? RestrictionModifiers.NO_RESTRICTIONS : elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, null));
+								globalDelta.add(new Delta(Util.getDeltaComponentID(component2), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription == null ? RestrictionModifiers.NO_RESTRICTIONS : elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, typeName));
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
 							}

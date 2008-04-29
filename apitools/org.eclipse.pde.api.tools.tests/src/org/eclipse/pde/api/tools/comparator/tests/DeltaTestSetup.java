@@ -22,10 +22,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
@@ -180,9 +182,7 @@ public abstract class DeltaTestSetup extends TestCase {
 			String message = leafDelta.getMessage();
 			assertNotNull("No message", message);
 			if (DEBUG) {
-				if (DeltaProcessor.isCompatible(leafDelta)) {
-					printDeltaDetails(leafDelta);
-				}
+				printDeltaDetails(leafDelta);
 			}
 			assertFalse("Should not be an unknown message : " + leafDelta, message.startsWith(unknownMessageStart));
 		}
@@ -191,31 +191,68 @@ public abstract class DeltaTestSetup extends TestCase {
 	
 	private void printDeltaDetails(IDelta delta) {
 		StringBuffer buffer = new StringBuffer();
+		if (!DeltaProcessor.isCompatible(delta)) {
+			buffer.append("NOT ");
+		};
+		buffer.append("COMPATIBLE ");
 		int flags = delta.getFlags();
+		int kind = delta.getKind();
+		int elementType = delta.getElementType();
+		int problemMessageId = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, 
+				elementType, kind, flags);
+		buffer.append(" message key : ").append(problemMessageId).append(", ");
 		buffer
-			.append(Util.getDeltaElementType(delta.getElementType()))
+			.append(Util.getDeltaElementType(elementType))
 			.append('_')
-			.append(Util.getDeltaKindName(delta.getKind()))
+			.append(Util.getDeltaKindName(kind))
 			.append('_')
 			.append(Util.getDeltaFlagsName(flags));
 		switch(flags) {
-			case IDelta.METHOD :
 			case IDelta.FIELD :
 			case IDelta.TYPE_MEMBER :
 			case IDelta.TYPE :
 			case IDelta.API_TYPE :
 			case IDelta.CONSTRUCTOR :
-				buffer
-					.append('_')
-					.append(Util.getDeltaRestrictions(delta.getRestrictions()));
+			case IDelta.METHOD :
+				switch(kind) {
+					case IDelta.ADDED :
+					case IDelta.REMOVED :
+						buffer
+						.append('_')
+						.append(Util.getDeltaRestrictions(delta.getRestrictions()));
+				}
 				break;
-			default: 
+			case IDelta.NON_FINAL_TO_FINAL :
+				switch(kind) {
+					case IDelta.CHANGED :
+						buffer
+							.append('_')
+							.append(Util.getDeltaRestrictions(delta.getRestrictions()));
+				}
 		}
 		String[] arguments = delta.getArguments();
 		int length = arguments.length;
 		switch(length) {
+			case 2 :
+				buffer
+					.append(" arguments: ")
+					.append("{0} ").append(arguments[0])
+					.append(" {1} ").append(arguments[1]);
+				break;
 			case 1 :
-				buffer.append(" arguments: ").append("{0}");
+				buffer.append(" arguments: ").append("{0} ").append(arguments[0]);
+				break;
+			case 0 :
+				buffer.append(" no arguments");
+				break;
+			default:
+				System.out.println("ARGUMENT SIZE NOT HANDLED");
+		}
+		String typeName = delta.getTypeName();
+		if (typeName.length() == 0) {
+			buffer.append(" type name : No type name");
+		} else {
+			buffer.append(" type name : " + typeName);
 		}
 		System.out.println(String.valueOf(buffer));
 	}

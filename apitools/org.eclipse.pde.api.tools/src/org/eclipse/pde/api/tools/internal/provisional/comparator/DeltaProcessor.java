@@ -103,7 +103,7 @@ public class DeltaProcessor {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns if the API component is compatible
 	 * @param delta
@@ -245,6 +245,7 @@ public class DeltaProcessor {
 			case IDelta.CHANGED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE :
+					case IDelta.TYPE_ARGUMENTS :
 					case IDelta.NON_FINAL_TO_FINAL :
 					case IDelta.STATIC_TO_NON_STATIC :
 					case IDelta.NON_STATIC_TO_STATIC :

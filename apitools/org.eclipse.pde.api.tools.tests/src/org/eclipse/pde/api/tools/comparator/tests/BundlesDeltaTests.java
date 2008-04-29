@@ -113,13 +113,17 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertEquals("Wrong message", "Added the execution environment JRE-1.1", child.getMessage());
+		String[] arguments = child.getArguments();
+		assertEquals("Wrong size", 2, arguments.length);
+		assertEquals("Wrong value", "JRE-1.1", arguments[0]);
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertEquals("Wrong message", "The execution environment CDC-1.0/Foundation-1.0 has been removed", child.getMessage());
+		arguments = child.getArguments();
+		assertEquals("Wrong size", 2, arguments.length);
+		assertEquals("Wrong value", "CDC-1.0/Foundation-1.0", arguments[0]);
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
@@ -135,14 +139,18 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertEquals("Wrong message", "Added the execution environment J2SE-1.4", child.getMessage());
+		String[] arguments = child.getArguments();
+		assertEquals("Wrong size", 2, arguments.length);
+		assertEquals("Wrong value", "J2SE-1.4", arguments[0]);
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.EXECUTION_ENVIRONMENT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
-		assertEquals("Wrong message", "The execution environment J2SE-1.5 has been removed", child.getMessage());
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));		
+		arguments = child.getArguments();
+		assertEquals("Wrong size", 2, arguments.length);
+		assertEquals("Wrong value", "J2SE-1.5", arguments[0]);
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
