@@ -15,7 +15,9 @@ package org.eclipse.pde.internal.ds.ui.editor.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSObject;
+import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.core.IDSService;
 
 public class DSRemoveItemAction extends Action {
 	private IDSObject fItem;
@@ -48,32 +50,19 @@ public class DSRemoveItemAction extends Action {
 			if (parent.getType() == IDSConstants.TYPE_ROOT) {
 				// Parent is a component
 				IDSRoot item = (IDSRoot) parent;
-				// Determine the item to select after the deletion takes place
-				determineItemToSelect(parent);
+				fObjectToSelect = parent;
 				// Remove the subitem
 				item.removeChild(fItem);
-				// TODO Remove Service -> Provide!
-			}
+			} else if (parent.getType() == IDSConstants.TYPE_SERVICE) {
+				// Parent is a service
+				IDSService item = (IDSService) parent;
+				fObjectToSelect = parent;
+				// Remove the subitem
+				item.removeChild((IDSProvide) fItem);
+			}  
 		}
 	}
 
-	/**
-	 * @param item
-	 */
-	private void determineItemToSelect(IDSObject item) {
-		// Select the next sibling
-		fObjectToSelect = item.getNextSibling(fItem);
-		if (fObjectToSelect == null) {
-			// No next sibling
-			// Select the previous sibling
-			fObjectToSelect = item.getPreviousSibling(fItem);
-			if (fObjectToSelect == null) {
-				// No previous sibling
-				// Select the parent
-				fObjectToSelect = item;
-			}
-		}
-	}
 
 	/**
 	 * @return

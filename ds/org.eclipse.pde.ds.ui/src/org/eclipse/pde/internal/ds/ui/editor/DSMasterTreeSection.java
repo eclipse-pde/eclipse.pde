@@ -23,7 +23,11 @@ import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSObject;
+import org.eclipse.pde.internal.ds.core.IDSProperties;
+import org.eclipse.pde.internal.ds.core.IDSProperty;
+import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddStepAction;
 import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddSubStepAction;
 import org.eclipse.pde.internal.ds.ui.editor.actions.DSRemoveItemAction;
@@ -149,6 +153,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 				// Add item to end of cheat sheet child items
 				canAdd = true;
 			} else if (dsObject.getType() == IDSConstants.TYPE_IMPLEMENTATION) {
+				canMoveUp = true;
+				canMoveDown = true;
 			} else if (dsObject.getType() == IDSConstants.TYPE_PROVIDE) {
 				canRemove = true;
 				canAddSub = true;
@@ -157,6 +163,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 				canAdd = true;
 				canAddSub = true;
 				canRemove = true;
+				canMoveUp = true;
+				canMoveDown = true;
 			} else if ((dsObject.getType() == IDSConstants.TYPE_PROPERTIES)
 					|| (dsObject.getType() == IDSConstants.TYPE_PROPERTY)
 					|| (dsObject.getType() == IDSConstants.TYPE_REFERENCE)) {
@@ -164,7 +172,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 				canMoveUp = true;
 				canMoveDown = true;
 			}
-
+			
 		}
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_STEP, canAdd);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_SUBSTEP, canAddSub);
@@ -313,6 +321,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
 	 */
 	protected void buttonSelected(int index) {
+		ISelection selection = fTreeViewer.getSelection();
 		switch (index) {
 		case F_BUTTON_ADD_STEP:
 			handleAddStepAction();
@@ -330,14 +339,23 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 			handleMoveStepAction(F_DOWN_FLAG);
 			break;
 		}
-		// TODO verify if it is correct to refresh tTreeViewer here.
-		fTreeViewer.refresh();
+		
+		// TODO verify if it is correct to refresh here.
+		this.refresh();
+		if (selection != null)
+			fTreeViewer.setSelection(selection);
 	}
 
 	private void handleMoveStepAction(int upFlag) {
-		// TODO Auto-generated method stub
-		System.out.println("handleMoveStepAction" + upFlag);
-
+		IDSObject object = getCurrentSelection();
+		if (object != null) {
+			if (object instanceof IDSService || object instanceof IDSProperty
+					|| object instanceof IDSImplementation
+					|| object instanceof IDSProperties
+					|| object instanceof IDSReference) {
+				((IDSRoot) object.getParent()).moveItem(object, upFlag);
+			}
+		}
 	}
 
 	private void handleDeleteAction() {
