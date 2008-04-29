@@ -17,4 +17,8 @@ public interface IDSService {
 
 	public boolean getServiceFactory();
 
+	public void removeChild(IDSProvide item);
+	
+	
+
 }
