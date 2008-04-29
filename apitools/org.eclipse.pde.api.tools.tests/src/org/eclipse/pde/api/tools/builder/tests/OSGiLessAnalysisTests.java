@@ -34,7 +34,7 @@ public class OSGiLessAnalysisTests extends TestCase {
 		BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 		IApiComponent component = current.getApiComponent("test.bundle.a");
 		assertNotNull("Missing API component test.bundle.a", component);
-		analyzer.analyzeComponent(null, baseline, component, null, new NullProgressMonitor());
+		analyzer.analyzeComponent(null, baseline, component, null, null, new NullProgressMonitor());
 		IApiProblem[] problems = analyzer.getProblems();
 		Set<Integer> expectedIds = new HashSet<Integer>();
 		expectedIds.add(new Integer(923795461));

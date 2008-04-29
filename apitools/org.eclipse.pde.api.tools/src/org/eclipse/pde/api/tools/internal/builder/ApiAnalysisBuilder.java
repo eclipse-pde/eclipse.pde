@@ -174,6 +174,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	private HashSet fTypesToCheck = new HashSet();
 	
 	/**
+	 * The set of changed types that came directly from the delta 
+	 */
+	private HashSet fChangedTypes = new HashSet(5);
+	
+	/**
 	 * Current build state
 	 */
 	private BuildState fBuildState;
@@ -189,13 +194,27 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				resource.deleteMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				resource.deleteMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				resource.deleteMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-				resource.deleteMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				if (resource.getType() == IResource.PROJECT) {
 					// on full builds
 					resource.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 					resource.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);				}
 			}
 		} catch(CoreException e) {
+			ApiPlugin.log(e.getStatus());
+		}
+	}
+	
+	/**
+	 * Cleans up unsupported Javadoc tag markers on the specified resource
+	 * @param resource
+	 */
+	private void cleanupUnsupportedTagMarkers(IResource resource) {
+		try {
+			if(DEBUG) {
+				System.out.println("cleaning unsupported tag problems"); //$NON-NLS-1$
+			}
+			resource.deleteMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
 			ApiPlugin.log(e.getStatus());
 		}
 	}
@@ -226,6 +245,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		fCurrentProject = getProject();
 		fAnalyzer = getAnalyzer();
 		fTypesToCheck.clear();
+		fChangedTypes.clear();
 		if (fCurrentProject == null || !fCurrentProject.isAccessible() || !fCurrentProject.hasNature(ApiPlugin.NATURE_ID) ||
 				hasBeenBuilt(fCurrentProject)) {
 			return new IProject[0];
@@ -287,6 +307,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		} finally {
 			fTypes.clear();
 			fPackages.clear();
+			fTypesToCheck.clear();
+			fChangedTypes.clear();
 			fProjectToOutputLocations.clear();
 			updateMonitor(monitor, 0);
 			createMarkers();
@@ -304,7 +326,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	}
 	
 	/**
-	 * Performs a full build for the workspace
+	 * Performs a full build for the project
 	 * @param monitor
 	 */
 	private void buildAll(IProgressMonitor monitor) throws CoreException {
@@ -328,7 +350,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			// Compatibility checks
 			IApiComponent apiComponent = wsprofile.getApiComponent(id);
 			if(apiComponent != null) {
-				fAnalyzer.analyzeComponent(this.fBuildState, profile, apiComponent, null, localMonitor);
+				fAnalyzer.analyzeComponent(this.fBuildState, profile, apiComponent, null, null, localMonitor);
 				updateMonitor(localMonitor, 1);
 			}
 		}
@@ -352,6 +374,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			type = getProblemTypeFromCategory(problems[i].getCategory(), problems[i].getKind());
 			if(type == null) {
 				continue;
+			}
+			if(DEBUG) {
+				System.out.println("creating marker for: "+problems[i].toString());
 			}
 			createMarkerForProblem(type, problems[i]);
 		}
@@ -513,7 +538,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			if(resource.getType() == IResource.FILE) {
 				if (Util.isClassFile(fileName)) {
 					findAffectedSourceFiles(delta);
-				} else if (Util.isJavaFileName(fileName)) {
+				} else if (Util.isJavaFileName(fileName) && fCurrentProject.equals(resource.getProject())) {
+					fChangedTypes.add(resource);
 					fTypesToCheck.add(resource);
 				}
 			}
@@ -536,36 +562,53 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if(apiComponent == null) {
 					return;
 				}
-				List scopeElements = new ArrayList(); // build search scope for API usage scan
-				IType[] allTypes = null;
-				for (Iterator iterator = fTypesToCheck.iterator(); iterator.hasNext(); ) {
-					IFile file = (IFile) iterator.next();
-					cleanupMarkers(file);
-					updateMonitor(localMonitor, 0);
-					ICompilationUnit unit = (ICompilationUnit) JavaCore.create(file);
-					if(!unit.exists()) {
-						continue;
-					}
-					IType type = unit.findPrimaryType();
-					if(type == null) {
-						continue;
-					}
-					try {
-						allTypes = unit.getAllTypes();
-						for (int i = 0; i < allTypes.length; i++) {
-							scopeElements.add(allTypes[i].getFullyQualifiedName('$'));
-						}
-					} catch (JavaModelException e) {
-						ApiPlugin.log(e.getStatus());
-					}
-					updateMonitor(localMonitor, 0);
-				}
+				String[] typenames = getFullyQualifiedNames(fTypesToCheck, false, localMonitor);
+				String[] changedtypes = getFullyQualifiedNames(fChangedTypes, true, localMonitor);
 				updateMonitor(localMonitor, 1);
-				fAnalyzer.analyzeComponent(this.fBuildState, profile, apiComponent, (String[]) scopeElements.toArray(new String[scopeElements.size()]), localMonitor);
+				fAnalyzer.analyzeComponent(this.fBuildState, profile, apiComponent, typenames, changedtypes, localMonitor);
 				updateMonitor(localMonitor, 1);
 			}
-			fTypesToCheck.clear();
 		}
+	}
+	
+	/**
+	 * Returns an array of type names, and cleans up markers for the specified resource
+	 * @param files the listing of {@link IFile}s to get qualified names from
+	 * @param cleantagsonly if only unsupported tag problems should be cleaned
+	 * @param monitor
+	 * @return array of qualified type names or an empty list, never <code>null</code>
+	 */
+	private String[] getFullyQualifiedNames(HashSet files, boolean cleantagsonly, IProgressMonitor monitor) {
+		ArrayList elements = new ArrayList(files.size());
+		IType[] allTypes = null;
+		for (Iterator iterator = files.iterator(); iterator.hasNext(); ) {
+			IFile file = (IFile) iterator.next();
+			if(cleantagsonly) {
+				cleanupUnsupportedTagMarkers(file);
+			}
+			else {
+				cleanupMarkers(file);
+			}
+			updateMonitor(monitor, 0);
+			ICompilationUnit unit = (ICompilationUnit) JavaCore.create(file);
+			if(!unit.exists()) {
+				continue;
+			}
+			IType type = unit.findPrimaryType();
+			if(type == null) {
+				continue;
+			}
+			try {
+				allTypes = unit.getAllTypes();
+				for (int i = 0; i < allTypes.length; i++) {
+					elements.add(allTypes[i].getFullyQualifiedName('$'));
+				}
+			} catch (JavaModelException e) {
+				ApiPlugin.log(e.getStatus());
+			}
+			updateMonitor(monitor, 0);
+		}
+		return (String[]) elements.toArray(new String[elements.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -621,7 +664,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				ReferenceCollection refs = (ReferenceCollection) valueTable[i];
 				if (refs.includes(internedQualifiedNames, internedSimpleNames)) {
 					IFile file = fCurrentProject.getFile(typeLocator);
-					if (file == null || fTypesToCheck.contains(file)) {
+					if (file == null) {
 						continue next;
 					}
 					if (DEBUG) {

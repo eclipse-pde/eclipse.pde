@@ -116,6 +116,9 @@ public class RemoveUnsupportedTagOperation {
 								break;
 							}
 						}
+						if(tag == null) {
+							return;
+						}
 						ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
 						lrewrite.remove(tag, null);
 						if(localMonitor.isCanceled()) {

@@ -123,7 +123,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						if (file.isAccessible()) {
 							IFolder folder = (IFolder) file.getParent();
 							file.delete(true, monitor);
-							if(folder.members().length == 0) {
+							if(folder.members().length == 0 && folder.isAccessible()) {
 								folder.delete(true, monitor);
 							}
 							fTriggeredChange = true;

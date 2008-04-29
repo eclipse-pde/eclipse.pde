@@ -134,10 +134,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	public BaseApiAnalyzer() {
 	}
 	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(org.eclipse.pde.api.tools.internal.provisional.IApiProfile, org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(org.eclipse.pde.api.tools.internal.builder.BuildState, org.eclipse.pde.api.tools.internal.provisional.IApiProfile, org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String[], java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void analyzeComponent(final BuildState state, final IApiProfile baseline, final IApiComponent component, final String[] typenames, IProgressMonitor monitor) {
+	public void analyzeComponent(final BuildState state, final IApiProfile baseline, final IApiComponent component, final String[] typenames, final String[] changedtypes, IProgressMonitor monitor) {
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 3 + (typenames == null ? 0 : typenames.length));
 		try {
 			fJavaProject = getJavaProject(component);
@@ -173,7 +174,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			checkApiComponentVersion(reference, component);
 			updateMonitor(localMonitor);
 			//tag validation
-			checkTagValidation(typenames, component, localMonitor);
+			checkTagValidation(changedtypes, component, localMonitor);
 			updateMonitor(localMonitor);
 		}
 		finally {
