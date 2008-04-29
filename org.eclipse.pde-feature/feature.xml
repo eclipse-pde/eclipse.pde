@@ -28,6 +28,11 @@
       <import feature="org.eclipse.platform" version="3.0.0" match="compatible"/>
    </requires>
 
+	<includes
+         id="org.eclipse.equinox.pde.p2"
+         version="0.0.0"
+         optional="true"/>
+
    <plugin
          id="org.eclipse.pde"
          download-size="0"
@@ -109,15 +114,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>  
-         
-    <plugin
-         id="org.eclipse.pde.p2.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/> 
-         
-       
+         unpack="false"/>                  
                  
 </feature>
