@@ -54,7 +54,7 @@ public class IdAttributeRow extends ButtonAttributeRow {
 
 					String contributor = value.getContributor().getName();
 
-					if (input != null && name.startsWith("%") && contributor != null) { //$NON-NLS-1$
+					if (input != null && name != null && name.startsWith("%") && contributor != null) { //$NON-NLS-1$
 						IPluginModelBase model = PluginRegistry.findModel(contributor);
 						name = model.getResourceString(name);
 					}
