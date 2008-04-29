@@ -100,6 +100,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
+import org.eclipse.pde.api.tools.internal.comparator.TypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
@@ -2717,5 +2718,14 @@ public final class Util {
 			buffer.append("NO_RESTRICTIONS"); //$NON-NLS-1$
 		}
 		return String.valueOf(buffer);
+	}
+
+	public static String getDescriptorName(TypeDescriptor descriptor) {
+		String typeName = descriptor.name;
+		int index = typeName.lastIndexOf('$');
+		if (index != -1) {
+			return typeName.replace('$', '.');
+		}
+		return typeName;
 	}
 }

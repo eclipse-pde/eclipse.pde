@@ -293,7 +293,15 @@ public class ApiComparator {
 				IDelta delta = null;
 				if (apiComponent2 == null) {
 					// report removal of an API component
-					delta = new Delta(null, IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT, null, id, id);
+					delta =
+						new Delta(
+								null,
+								IDelta.API_PROFILE_ELEMENT_TYPE,
+								IDelta.REMOVED,
+								IDelta.API_COMPONENT,
+								null,
+								id,
+								id);
 				} else {
 					apiComponentsIds.add(id);
 					if (!apiComponent.getVersion().equals(apiComponent2.getVersion())
@@ -319,7 +327,15 @@ public class ApiComparator {
 				String id = apiComponent.getId();
 				if (!apiComponentsIds.contains(id)) {
 					// addition of an API component
-					globalDelta.add(new Delta(null, IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, id, id));
+					globalDelta.add(
+							new Delta(
+									null,
+									IDelta.API_PROFILE_ELEMENT_TYPE,
+									IDelta.ADDED,
+									IDelta.API_COMPONENT,
+									null,
+									id,
+									id));
 				}
 			}
 		}
@@ -358,7 +374,15 @@ public class ApiComparator {
 			IApiComponent apiComponent2 = referenceProfile.getApiComponent(id);
 			if (apiComponent2 == null) {
 				// report addition of an API component
-				delta = new Delta(null, IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, id, id);
+				delta =
+					new Delta(
+						null,
+						IDelta.API_PROFILE_ELEMENT_TYPE,
+						IDelta.ADDED,
+						IDelta.API_COMPONENT,
+						null,
+						id,
+						id);
 			} else {
 				if (!component.getVersion().equals(apiComponent2.getVersion())
 						|| force) {
@@ -663,7 +687,17 @@ public class ApiComparator {
 									// already processed
 									return;
 								}
-								globalDelta.add(new Delta(Util.getDeltaComponentID(component2), IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, elementDescription == null ? RestrictionModifiers.NO_RESTRICTIONS : elementDescription.getRestrictions(), typeDescriptor.access, typeName, typeName, typeName));
+								globalDelta.add(
+										new Delta(
+												Util.getDeltaComponentID(component2),
+												IDelta.API_COMPONENT_ELEMENT_TYPE,
+												IDelta.ADDED,
+												IDelta.TYPE,
+												elementDescription == null ? RestrictionModifiers.NO_RESTRICTIONS : elementDescription.getRestrictions(),
+												typeDescriptor.access,
+												typeName,
+												typeName,
+												typeName));
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
 							}

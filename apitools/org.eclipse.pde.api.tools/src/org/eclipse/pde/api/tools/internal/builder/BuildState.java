@@ -24,11 +24,10 @@ import java.util.Set;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 public class BuildState {
 	private IDelta[] EMPTY_DELTAS = new IDelta[0];
-	private static final int VERSION = 0x03;
+	private static final int VERSION = 0x04;
 	
 	private Map compatibleChanges;
 	private Map breakingChanges;
@@ -92,13 +91,19 @@ public class BuildState {
 		String typeName = in.readUTF(); // delta.getTypeName()
 		String key = in.readUTF(); // delta.getKey()
 		int length = in.readInt(); // arguments.length;
-		String data = null;
-		if (length == 1) {
-			data = in.readUTF(); // data
+		String[] datas = null;
+		if (length != 0) {
+			ArrayList arguments = new ArrayList();
+			for (int i = 0; i < length; i++) {
+				arguments.add(in.readUTF());
+			}
+			datas = new String[length];
+			arguments.toArray(datas);
 		} else {
-			data = Util.EMPTY_STRING;
+			datas = new String[1];
+			datas[0] = typeName.replace('$', '.');
 		}
-		return new Delta(componentID, elementType, kind, flags, restrictions, modifiers, typeName, key, data);
+		return new Delta(componentID, elementType, kind, flags, restrictions, modifiers, typeName, key, datas);
 	}
 	private static void writeDelta(IDelta delta, DataOutputStream out) throws IOException {
 		// encode a delta into the build state

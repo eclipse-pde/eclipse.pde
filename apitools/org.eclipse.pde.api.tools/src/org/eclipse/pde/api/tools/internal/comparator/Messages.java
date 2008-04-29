@@ -142,7 +142,7 @@ public class Messages extends NLS {
 								if (RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
 									return 11;
 								}
-								break;
+								return 80;
 							case IDelta.METHOD :
 								if (!Util.isAbstract(delta.getModifiers())) {
 									return 12;
@@ -259,6 +259,8 @@ public class Messages extends NLS {
 									return 50;
 								}
 								return 51;
+							case IDelta.TYPE :
+								return 78;
 						}
 						break;
 					case IDelta.REMOVED :
@@ -287,8 +289,11 @@ public class Messages extends NLS {
 						}
 						break;
 					case IDelta.CHANGED :
-						if (delta.getFlags() == IDelta.TYPE_PARAMETER_NAME) {
-							return 59;
+						switch(delta.getFlags()) {
+							case IDelta.TYPE_PARAMETER_NAME :
+								return 59;
+							case IDelta.EXPANDED_SUPERINTERFACES_SET :
+								return 79;
 						}
 						break;
 					case IDelta.REMOVED :
@@ -336,6 +341,16 @@ public class Messages extends NLS {
 								return 74;
 							case IDelta.TYPE_PARAMETER_NAME :
 								return 75;
+							case IDelta.NON_FINAL_TO_FINAL :
+								if (RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
+									return 81;
+								}
+								if (RestrictionModifiers.isOverrideRestriction(delta.getRestrictions())) {
+									return 82;
+								}
+								return 83;
+							case IDelta.NON_STATIC_TO_STATIC :
+								return 84;
 						}
 					case IDelta.REMOVED :
 						switch(delta.getFlags()) {

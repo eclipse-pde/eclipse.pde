@@ -427,6 +427,8 @@ public class DeltaProcessor {
 					case IDelta.TO_ENUM :
 					case IDelta.TO_INTERFACE :
 					case IDelta.RESTRICTIONS :
+					case IDelta.STATIC_TO_NON_STATIC :
+					case IDelta.NON_STATIC_TO_STATIC :
 						return !Util.isVisible(delta);
 					case IDelta.DECREASE_ACCESS :
 						return false;

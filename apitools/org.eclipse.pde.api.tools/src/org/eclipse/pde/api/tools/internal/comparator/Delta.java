@@ -281,7 +281,7 @@ public class Delta implements IDelta {
 		}
 		int id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, 
 				this.elementType, this.kind, this.flags);
-		return ApiProblemFactory.getLocalizedMessage(id, (this.datas != null ? new String[] {this.datas.toString()} : null));
+		return ApiProblemFactory.getLocalizedMessage(id, (this.datas != null ? this.datas : null));
 	}
 
 	/* (non-Javadoc)

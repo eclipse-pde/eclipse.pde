@@ -372,13 +372,11 @@ public class ApiProblemFactory {
 								switch(flags) {
 									case IDelta.FIELD: return 37;
 									case IDelta.METHOD: return 41;
-									case IDelta.TYPE_MEMBER: return 47;
 								}
 							}
 							case IDelta.ENUM_ELEMENT_TYPE: {
 								switch(flags) {
 									case IDelta.FIELD: return 38;
-									case IDelta.METHOD: return 42;
 									case IDelta.TYPE_MEMBER: return 48;
 								}
 							}
@@ -393,28 +391,17 @@ public class ApiProblemFactory {
 								switch(flags) {
 									case IDelta.FIELD: return 40;
 									case IDelta.METHOD: return 44;
-									case IDelta.TYPE_MEMBER: return 45;
 								}
 							}
 						}
 						switch(flags) {
 							case IDelta.ANNOTATION_DEFAULT_VALUE: return 18;
-							case IDelta.API_COMPONENT: return 19;
-							case IDelta.CHECKED_EXCEPTION: return 20;
 							case IDelta.CLASS_BOUND: return 21;
-							case IDelta.CLINIT: return 22;
 							case IDelta.CONSTRUCTOR: return 23;
-							case IDelta.ENUM_CONSTANT: return 24;
 							case IDelta.INTERFACE_BOUND: return 26;
 							case IDelta.INTERFACE_BOUNDS: return 27;
-							case IDelta.METHOD_WITH_DEFAULT_VALUE: return 28;
 							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE: return 29;
-							case IDelta.SUPERCLASS: return 30;
-							case IDelta.TYPE: return 31;
 							case IDelta.TYPE_PARAMETER: return 32;
-							case IDelta.TYPE_ARGUMENTS: return 33;
-							case IDelta.TYPE_PARAMETERS: return 34;
-							case IDelta.UNCHECKED_EXCEPTION: return 35;
 							case IDelta.VALUE: return 36;
 							
 						}
@@ -425,43 +412,43 @@ public class ApiProblemFactory {
 								switch(flags) {
 									case IDelta.TYPE: return 81;
 									case IDelta.VALUE: return 84;
+									case IDelta.DECREASE_ACCESS: return 114;
+									case IDelta.NON_FINAL_TO_FINAL: return 118;
+									case IDelta.STATIC_TO_NON_STATIC: return 121;
+									case IDelta.NON_STATIC_TO_STATIC: return 69;
+								}
+							}
+							case IDelta.METHOD_ELEMENT_TYPE : {
+								switch(flags) {
+									case IDelta.DECREASE_ACCESS : return 115;
+									case IDelta.NON_ABSTRACT_TO_ABSTRACT : return 117;
+									case IDelta.NON_FINAL_TO_FINAL: return 119;
+									case IDelta.NON_STATIC_TO_STATIC: return 120;
+									case IDelta.STATIC_TO_NON_STATIC: return 122;
+								}
+							}
+							case IDelta.CONSTRUCTOR_ELEMENT_TYPE : {
+								switch(flags) {
+									case IDelta.DECREASE_ACCESS : return 116;
 								}
 							}
 						}
 						switch(flags) {
-							case IDelta.ABSTRACT_TO_NON_ABSTRACT: return 49;
-							case IDelta.ANNOTATION_DEFAULT_VALUE: return 50;
-							case IDelta.ARRAY_TO_VARARGS: return 51;
-							case IDelta.CLASS_BOUND: return 52;
 							case IDelta.CONTRACTED_SUPERCLASS_SET: return 53;
 							case IDelta.CONTRACTED_SUPERINTERFACES_SET: return 54;
 							case IDelta.DECREASE_ACCESS: return 55;
-							case IDelta.EXPANDED_SUPERCLASS_SET: return 57;
-							case IDelta.EXPANDED_SUPERINTERFACES_SET: return 58;
-							case IDelta.FINAL_TO_NON_FINAL: return 59;
-							case IDelta.FINAL_TO_NON_FINAL_NON_STATIC: return 60;
 							case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT: return 61;
-							case IDelta.FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT: return 62;
-							case IDelta.INCREASE_ACCESS: return 63;
 							case IDelta.INTERFACE_BOUND: return 64;
-							case IDelta.NATIVE_TO_NON_NATIVE: return 65;
 							case IDelta.NON_ABSTRACT_TO_ABSTRACT: return 66;
 							case IDelta.NON_FINAL_TO_FINAL: return 67;
-							case IDelta.NON_NATIVE_TO_NATIVE: return 68;
-							case IDelta.NON_STATIC_TO_STATIC: return 69;
-							case IDelta.NON_SYNCHRONIZED_TO_SYNCHRONIZED: return 70;
-							case IDelta.NON_TRANSIENT_TO_TRANSIENT: return 71;
+							case IDelta.NON_STATIC_TO_STATIC: return 123;
 							case IDelta.RESTRICTIONS: return 72;
 							case IDelta.STATIC_TO_NON_STATIC: return 73;
 							case IDelta.SUPERCLASS: return  74;
-							case IDelta.SYNCHRONIZED_TO_NON_SYNCHRONIZED: return 75;
 							case IDelta.TO_ANNOTATION: return 76;
 							case IDelta.TO_CLASS: return 77;
 							case IDelta.TO_ENUM: return 78;
 							case IDelta.TO_INTERFACE: return 79;
-							case IDelta.TRANSIENT_TO_NON_TRANSIENT: return 80;
-							case IDelta.TYPE_PARAMETER_NAME: return 82;
-							case IDelta.TYPE_VISIBILITY: return 83;
 							case IDelta.VARARGS_TO_ARRAY: return 85;
 						}
 					}
@@ -469,17 +456,13 @@ public class ApiProblemFactory {
 						switch(flags) {
 							case IDelta.ANNOTATION_DEFAULT_VALUE: return 86;
 							case IDelta.API_COMPONENT: return 87;
-							case IDelta.CHECKED_EXCEPTION: return 88;
 							case IDelta.CLASS_BOUND: return 89;
-							case IDelta.CLINIT: return 90;
 							case IDelta.CONSTRUCTOR: return 91;
 							case IDelta.ENUM_CONSTANT: return 92;
 							case IDelta.FIELD: return 94;
-							case IDelta.FIELD_MOVED_UP: return 95;
 							case IDelta.INTERFACE_BOUND: return 96;
 							case IDelta.INTERFACE_BOUNDS: return 97;
 							case IDelta.METHOD: return 98;
-							case IDelta.METHOD_MOVED_UP: return 99;
 							case IDelta.METHOD_WITH_DEFAULT_VALUE: return 100;
 							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE: return 101;
 							case IDelta.TYPE: return 102;
@@ -487,7 +470,6 @@ public class ApiProblemFactory {
 							case IDelta.TYPE_MEMBER: return 104;
 							case IDelta.TYPE_PARAMETER: return 105;
 							case IDelta.TYPE_PARAMETERS: return 106;
-							case IDelta.UNCHECKED_EXCEPTION: return 107;
 							case IDelta.VALUE : return 108;
 							case IDelta.API_TYPE: return 113;
 						}

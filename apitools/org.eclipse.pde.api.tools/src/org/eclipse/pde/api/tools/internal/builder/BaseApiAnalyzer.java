@@ -513,7 +513,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		long time = System.currentTimeMillis();
 		IDelta delta = null;
 		if (reference == null) {
-			delta = new Delta(null, IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, component.getId(), component.getId());
+			delta =
+				new Delta(
+					null,
+					IDelta.API_PROFILE_ELEMENT_TYPE,
+					IDelta.ADDED,
+					IDelta.API_COMPONENT,
+					null,
+					component.getId(),
+					component.getId());
 		} else {
 			try {
 				delta = ApiComparator.compare(reference, component, VisibilityModifiers.API);

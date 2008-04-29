@@ -39,7 +39,7 @@ public class OSGiLessAnalysisTests extends TestCase {
 		Set<Integer> expectedIds = new HashSet<Integer>();
 		expectedIds.add(new Integer(923795461));
 		expectedIds.add(new Integer(403804204));
-		expectedIds.add(new Integer(388018231));
+		expectedIds.add(new Integer(388018290));
 		expectedIds.add(new Integer(338792546));
 		assertEquals("Wrong number of problems", 4, problems.length);
 		for (int i = 0; i < problems.length; i++) {

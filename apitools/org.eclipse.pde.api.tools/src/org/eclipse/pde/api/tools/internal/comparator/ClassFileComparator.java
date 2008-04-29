@@ -163,7 +163,7 @@ public class ClassFileComparator {
 						this.descriptor1.access,
 						this.classFile,
 						this.descriptor1.name,
-						this.descriptor1.name);
+						Util.getDescriptorName(descriptor1));
 				return;
 			}
 			// both types extends java.lang.Object
@@ -179,7 +179,7 @@ public class ClassFileComparator {
 					this.descriptor1.access,
 					this.classFile,
 					this.descriptor1.name,
-					this.descriptor1.name);
+					Util.getDescriptorName(descriptor1));
 			return;
 		}
 		for (Iterator iterator = superclassSet1.iterator(); iterator.hasNext();) {
@@ -193,7 +193,7 @@ public class ClassFileComparator {
 						this.descriptor1.access,
 						this.classFile,
 						this.descriptor1.name,
-						this.descriptor1.name);
+						Util.getDescriptorName(descriptor1));
 				return;
 			}
 		}
@@ -206,7 +206,7 @@ public class ClassFileComparator {
 					this.descriptor1.access,
 					this.classFile,
 					this.descriptor1.name,
-					this.descriptor1.name);
+					Util.getDescriptorName(descriptor1));
 		}
 		
 		// TODO check super class if they are not checked anyway
@@ -227,7 +227,7 @@ public class ClassFileComparator {
 						this.descriptor1.access,
 						this.classFile,
 						this.descriptor1.name,
-						this.descriptor1.name);
+						Util.getDescriptorName(descriptor1));
 			}
 		} else if (superinterfacesSet2 == null) {
 			this.addDelta(
@@ -238,7 +238,7 @@ public class ClassFileComparator {
 					this.descriptor1.access,
 					this.classFile,
 					this.descriptor1.name,
-					this.descriptor1.name);
+					Util.getDescriptorName(descriptor1));
 		} else {
 			for (Iterator iterator = superinterfacesSet1.iterator(); iterator.hasNext();) {
 				TypeDescriptor superInterfaceTypeDescriptor = (TypeDescriptor) iterator.next();
@@ -251,7 +251,7 @@ public class ClassFileComparator {
 							this.descriptor1.access,
 							this.classFile,
 							this.descriptor1.name,
-							this.descriptor1.name);
+							Util.getDescriptorName(descriptor1));
 					return;
 				}
 			}
@@ -264,7 +264,7 @@ public class ClassFileComparator {
 						this.descriptor1.access,
 						this.classFile,
 						this.descriptor1.name,
-						this.descriptor1.name);
+						Util.getDescriptorName(descriptor1));
 			}
 		}
 	}
@@ -357,7 +357,7 @@ public class ClassFileComparator {
 											typeMember.access,
 											typeMemberName,
 											typeMemberName,
-											typeMemberName.replace('$', '.')));
+											new String[] { typeMemberName.replace('$', '.'), Util.getDeltaComponentID(component2)}));
 							continue;
 						}
 						if ((memberTypeVisibility2 & visibilityModifiers) == 0) {
@@ -792,7 +792,7 @@ public class ClassFileComparator {
 									typeAccess,
 									this.classFile,
 									this.descriptor1.name,
-									this.descriptor1.name);
+									Util.getDescriptorName(descriptor1));
 						} else if (!RestrictionModifiers.isUnrestricted(restrictions2)) {
 							// report different restrictions - different restrictions
 							this.addDelta(
@@ -803,7 +803,7 @@ public class ClassFileComparator {
 									typeAccess,
 									this.classFile,
 									this.descriptor1.name,
-									this.descriptor1.name);
+									Util.getDescriptorName(descriptor1));
 						}
 					}
 				}
@@ -824,7 +824,7 @@ public class ClassFileComparator {
 							typeAccess,
 							this.classFile,
 							this.descriptor1.name,
-							this.descriptor1.name);
+							Util.getDescriptorName(descriptor1));
 					return this.delta;
 				} else if (Util.isPublic(typeAccess2)) {
 					// report delta - increase access: protected to public
@@ -836,7 +836,7 @@ public class ClassFileComparator {
 							typeAccess,
 							this.classFile,
 							this.descriptor1.name,
-							this.descriptor1.name);
+							Util.getDescriptorName(descriptor1));
 					return this.delta;
 				}
 			} else if (Util.isPublic(typeAccess)
@@ -852,7 +852,7 @@ public class ClassFileComparator {
 						typeAccess,
 						this.classFile,
 						this.descriptor1.name,
-						this.descriptor1.name);
+						Util.getDescriptorName(descriptor1));
 				return this.delta;
 			} else if (Util.isDefault(typeAccess)
 					&& (Util.isPublic(typeAccess2)
@@ -865,7 +865,7 @@ public class ClassFileComparator {
 						typeAccess,
 						this.classFile,
 						this.descriptor1.name,
-						this.descriptor1.name);
+						Util.getDescriptorName(descriptor1));
 				return this.delta;
 			} else if (Util.isPrivate(typeAccess)
 					&& (Util.isDefault(typeAccess2)
@@ -879,7 +879,7 @@ public class ClassFileComparator {
 						typeAccess,
 						this.classFile,
 						this.descriptor1.name,
-						this.descriptor1.name);
+						Util.getDescriptorName(descriptor1));
 				return this.delta;
 			}
 			
@@ -895,7 +895,7 @@ public class ClassFileComparator {
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								this.descriptor1.name);
+								Util.getDescriptorName(descriptor1));
 					} else if (Util.isEnum(typeAccess2)) {
 						// report conversion from annotation to enum
 						this.addDelta(
@@ -906,7 +906,7 @@ public class ClassFileComparator {
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								this.descriptor1.name);
+								Util.getDescriptorName(descriptor1));
 					} else {
 						// report conversion from annotation to class
 						this.addDelta(
@@ -917,7 +917,7 @@ public class ClassFileComparator {
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								this.descriptor1.name);
+								Util.getDescriptorName(descriptor1));
 					}
 					return this.delta;
 				}
@@ -932,7 +932,7 @@ public class ClassFileComparator {
 							typeAccess2,
 							this.classFile,
 							this.descriptor1.name,
-							this.descriptor1.name);
+							Util.getDescriptorName(descriptor1));
 					return this.delta;
 				} else if (!Util.isInterface(typeAccess2)) {
 					if (Util.isEnum(typeAccess2)) {
@@ -945,7 +945,7 @@ public class ClassFileComparator {
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								this.descriptor1.name);
+								Util.getDescriptorName(descriptor1));
 					} else {
 						// conversion from interface to class
 						this.addDelta(
@@ -956,7 +956,7 @@ public class ClassFileComparator {
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								this.descriptor1.name);
+								Util.getDescriptorName(descriptor1));
 					}
 					return this.delta;
 				}
@@ -972,7 +972,7 @@ public class ClassFileComparator {
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								this.descriptor1.name);
+								Util.getDescriptorName(descriptor1));
 					} else if (Util.isInterface(typeAccess2)) {
 						// report conversion from enum to interface
 						this.addDelta(
@@ -983,7 +983,7 @@ public class ClassFileComparator {
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								this.descriptor1.name);
+								Util.getDescriptorName(descriptor1));
 					} else {
 						// report conversion from enum to class
 						this.addDelta(
@@ -994,7 +994,7 @@ public class ClassFileComparator {
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								this.descriptor1.name);
+								Util.getDescriptorName(descriptor1));
 					}
 					return this.delta;
 				}
@@ -1009,7 +1009,7 @@ public class ClassFileComparator {
 							typeAccess2,
 							this.classFile,
 							this.descriptor1.name,
-							this.descriptor1.name);
+							Util.getDescriptorName(descriptor1));
 				} else if (Util.isInterface(typeAccess2)) {
 					// report conversion from class to interface
 					this.addDelta(
@@ -1020,7 +1020,7 @@ public class ClassFileComparator {
 							typeAccess2,
 							this.classFile,
 							this.descriptor1.name,
-							this.descriptor1.name);
+							Util.getDescriptorName(descriptor1));
 				} else {
 					// report conversion from class to enum
 					this.addDelta(
@@ -1031,11 +1031,34 @@ public class ClassFileComparator {
 							typeAccess2,
 							this.classFile,
 							this.descriptor1.name,
-							this.descriptor1.name);
+							Util.getDescriptorName(descriptor1));
 				}
 				return this.delta;
 			}
 
+			if (Util.isStatic(typeAccess)) {
+				if (!Util.isStatic(typeAccess2)) {
+					this.addDelta(
+							this.descriptor1.getElementType(),
+							IDelta.CHANGED,
+							IDelta.STATIC_TO_NON_STATIC,
+							this.currentDescriptorRestrictions,
+							typeAccess2,
+							this.classFile,
+							this.descriptor1.name,
+							Util.getDescriptorName(descriptor1));
+				}
+			} else if (Util.isStatic(typeAccess2)) {
+				this.addDelta(
+						this.descriptor1.getElementType(),
+						IDelta.CHANGED,
+						IDelta.NON_STATIC_TO_STATIC,
+						this.currentDescriptorRestrictions,
+						typeAccess2,
+						this.classFile,
+						this.descriptor1.name,
+						Util.getDescriptorName(descriptor1));
+			}
 			// check super class set
 			checkSuperclass();
 			// check super interfaces set
@@ -1091,7 +1114,7 @@ public class ClassFileComparator {
 							typeAccess,
 							this.classFile,
 							this.descriptor1.name,
-							this.descriptor1.name);
+							Util.getDescriptorName(descriptor1));
 				}
 			} else if (Util.isAbstract(typeAccess2)){
 				// report delta - changed from non-abstract to abstract
@@ -1103,7 +1126,7 @@ public class ClassFileComparator {
 						typeAccess,
 						this.classFile,
 						this.descriptor1.name,
-						this.descriptor1.name);
+						Util.getDescriptorName(descriptor1));
 			}
 
 			if (Util.isFinal(typeAccess)) {
@@ -1117,7 +1140,7 @@ public class ClassFileComparator {
 							typeAccess,
 							this.classFile,
 							this.descriptor1.name,
-							this.descriptor1.name);
+							Util.getDescriptorName(descriptor1));
 				}
 			} else if (Util.isFinal(typeAccess2)){
 				// report delta - changed from non-final to final
@@ -1129,7 +1152,7 @@ public class ClassFileComparator {
 						typeAccess,
 						this.classFile,
 						this.descriptor1.name,
-						this.descriptor1.name);
+						Util.getDescriptorName(descriptor1));
 			}
 			// check type parameters
 			String signature1 = this.descriptor1.signature;
@@ -1164,7 +1187,7 @@ public class ClassFileComparator {
 						access,
 						this.classFile,
 						name,
-						new String[] {this.descriptor1.name, name});
+						new String[] {Util.getDescriptorName(this.descriptor1), name});
 			} else {
 				boolean found = false;
 				if (this.component2 != null) {
@@ -1187,7 +1210,7 @@ public class ClassFileComparator {
 											fieldDescriptor.access,
 											this.classFile,
 											name,
-											new String[] {this.descriptor1.name, name});
+											new String[] {Util.getDescriptorName(this.descriptor1), name});
 									found = true;
 									break;
 								}
@@ -1214,7 +1237,7 @@ public class ClassFileComparator {
 												fieldDescriptor3.access,
 												this.classFile,
 												name,
-												new String[] {this.descriptor1.name, name});
+												new String[] {Util.getDescriptorName(this.descriptor1), name});
 										found = true;
 										break loop;
 									}
@@ -1234,7 +1257,7 @@ public class ClassFileComparator {
 								this.descriptor2.access,
 								this.classFile,
 								name,
-								new String[] {this.descriptor1.name, name});
+								new String[] {Util.getDescriptorName(this.descriptor1), name});
 						return;
 					}
 					// removing a public field is a breakage
@@ -1246,7 +1269,7 @@ public class ClassFileComparator {
 							fieldDescriptor.access,
 							this.classFile,
 							name,
-							new String[] {this.descriptor1.name, name});
+							new String[] {Util.getDescriptorName(this.descriptor1), name});
 				}
 			}
 			return;
@@ -1275,7 +1298,7 @@ public class ClassFileComparator {
 					access2,
 					this.classFile,
 					name,
-					new String[] {this.descriptor1.name, name});
+					new String[] {Util.getDescriptorName(this.descriptor1), name});
 		} else {
 			// check type parameters
 			String signature1 = fieldDescriptor.signature;
@@ -1293,7 +1316,7 @@ public class ClassFileComparator {
 						access2,
 						this.classFile,
 						name,
-						new String[] {this.descriptor1.name, name, String.valueOf(fieldDescriptor.value)});
+						new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor.value)});
 			} else if (!fieldDescriptor.value.equals(fieldDescriptor2.value)) {
 				// report delta - modified constant value
 				if (Util.isFinal(this.descriptor2.access)) {
@@ -1306,7 +1329,7 @@ public class ClassFileComparator {
 							access2,
 							this.classFile,
 							name,
-							new String[] {this.descriptor1.name, name, String.valueOf(fieldDescriptor.value)});
+							new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor.value)});
 				} else {
 					this.addDelta(
 							IDelta.FIELD_ELEMENT_TYPE,
@@ -1316,7 +1339,7 @@ public class ClassFileComparator {
 							access2,
 							this.classFile,
 							name,
-							new String[] {this.descriptor1.name, name, String.valueOf(fieldDescriptor.value)});
+							new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor.value)});
 				}
 			}
 		} else if (fieldDescriptor2.value != null) {
@@ -1329,7 +1352,7 @@ public class ClassFileComparator {
 					access2,
 					this.classFile,
 					name,
-					new String[] {this.descriptor1.name, name, String.valueOf(fieldDescriptor2.value)});
+					new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor2.value)});
 		}
 		if (Util.isProtected(access)) {
 			if (Util.isPrivate(access2) || Util.isDefault(access2)) {
@@ -1342,7 +1365,7 @@ public class ClassFileComparator {
 						access2,
 						this.classFile,
 						name,
-						new String[] {this.descriptor1.name, name});
+						new String[] {Util.getDescriptorName(this.descriptor1), name});
 			} else if (Util.isPublic(access2)) {
 				// report delta - increase access: protected to public
 				this.addDelta(
@@ -1353,7 +1376,7 @@ public class ClassFileComparator {
 						access2,
 						this.classFile,
 						name,
-						new String[] {this.descriptor1.name, name});
+						new String[] {Util.getDescriptorName(this.descriptor1), name});
 			}
 		} else if (Util.isPublic(access)
 				&& (Util.isProtected(access2)
@@ -1368,7 +1391,7 @@ public class ClassFileComparator {
 					access2,
 					this.classFile,
 					name,
-					new String[] {this.descriptor1.name, name});
+					new String[] {Util.getDescriptorName(this.descriptor1), name});
 		} else if (Util.isPrivate(access)
 				&& (Util.isProtected(access2)
 						|| Util.isDefault(access2)
@@ -1381,7 +1404,7 @@ public class ClassFileComparator {
 					access2,
 					this.classFile,
 					name,
-					new String[] {this.descriptor1.name, name});
+					new String[] {Util.getDescriptorName(this.descriptor1), name});
 		} else if (Util.isDefault(access)
 				&& (Util.isProtected(access2)
 						|| Util.isPublic(access2))) {
@@ -1393,7 +1416,7 @@ public class ClassFileComparator {
 					access2,
 					this.classFile,
 					name,
-					new String[] {this.descriptor1.name, name});
+					new String[] {Util.getDescriptorName(this.descriptor1), name});
 		}
 		if (Util.isFinal(access)) {
 			if (!Util.isFinal(access2)) {
@@ -1407,7 +1430,7 @@ public class ClassFileComparator {
 							access2,
 							this.classFile,
 							name,
-							new String[] {this.descriptor1.name, name});
+							new String[] {Util.getDescriptorName(this.descriptor1), name});
 				} else if (fieldDescriptor.value != null) {
 					// report delta - final to non-final for a static field with a compile time constant
 					this.addDelta(
@@ -1418,7 +1441,7 @@ public class ClassFileComparator {
 							access2,
 							this.classFile,
 							name,
-							new String[] {this.descriptor1.name, name});
+							new String[] {Util.getDescriptorName(this.descriptor1), name});
 				} else {
 					// report delta - final to non-final for a static field with no compile time constant
 					this.addDelta(
@@ -1429,7 +1452,7 @@ public class ClassFileComparator {
 							access2,
 							this.classFile,
 							name,
-							new String[] {this.descriptor1.name, name});
+							new String[] {Util.getDescriptorName(this.descriptor1), name});
 				}
 			}
 		} else if (Util.isFinal(access2)) {
@@ -1442,7 +1465,7 @@ public class ClassFileComparator {
 					access2,
 					this.classFile,
 					name,
-					new String[] {this.descriptor1.name, name});
+					new String[] {Util.getDescriptorName(this.descriptor1), name});
 		}
 		if (Util.isStatic(access)) {
 			if (!Util.isStatic(access2)) {
@@ -1455,7 +1478,7 @@ public class ClassFileComparator {
 						access2,
 						this.classFile,
 						name,
-						new String[] {this.descriptor1.name, name});
+						new String[] {Util.getDescriptorName(this.descriptor1), name});
 			}
 		} else if (Util.isStatic(access2)) {
 			// report delta - non-static to static
@@ -1467,7 +1490,7 @@ public class ClassFileComparator {
 					access2,
 					this.classFile,
 					name,
-					new String[] {this.descriptor1.name, name});
+					new String[] {Util.getDescriptorName(this.descriptor1), name});
 		}
 		if (Util.isTransient(access)) {
 			if (!Util.isTransient(access2)) {
@@ -1480,7 +1503,7 @@ public class ClassFileComparator {
 						access2,
 						this.classFile,
 						name,
-						new String[] {this.descriptor1.name, name});
+						new String[] {Util.getDescriptorName(this.descriptor1), name});
 			}
 		} else if (Util.isTransient(access2)) {
 			// report delta - non-tansient to transient
@@ -1492,7 +1515,7 @@ public class ClassFileComparator {
 					access2,
 					this.classFile,
 					name,
-					new String[] {this.descriptor1.name, name});
+					new String[] {Util.getDescriptorName(this.descriptor1), name});
 		}
 	}
 	private void getDeltaForMethodDescriptor(MethodDescriptor methodDescriptor) {
@@ -1517,7 +1540,7 @@ public class ClassFileComparator {
 						access,
 						this.classFile,
 						this.descriptor1.name,
-						this.descriptor1.name);
+						Util.getDescriptorName(descriptor1));
 				return;
 			} else if (Util.isPrivate(access)
 					|| Util.isDefault(access)) {
@@ -1529,7 +1552,7 @@ public class ClassFileComparator {
 						access,
 						this.classFile,
 						this.descriptor1.name,
-						new String[] { this.descriptor1.name, methodDisplayName});
+						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 				return;
 			}
 			// if null we need to walk the hierarchy of descriptor2
@@ -1555,7 +1578,7 @@ public class ClassFileComparator {
 										access,
 										this.classFile,
 										this.descriptor1.name,
-										new String[] {this.descriptor1.name, methodDisplayName});
+										new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 								found = true;
 								break;
 							}
@@ -1583,7 +1606,7 @@ public class ClassFileComparator {
 											access,
 											this.classFile,
 											this.descriptor1.name,
-											new String[] {this.descriptor1.name, methodDisplayName});
+											new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 									found = true;
 									break loop;
 								}
@@ -1602,7 +1625,7 @@ public class ClassFileComparator {
 							methodDescriptor.access,
 							this.classFile,
 							this.descriptor1.name,
-							new String[] {this.descriptor1.name, methodDisplayName});
+							new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 				} else {
 					this.addDelta(
 							this.descriptor1.getElementType(),
@@ -1612,7 +1635,7 @@ public class ClassFileComparator {
 							methodDescriptor.access,
 							this.classFile,
 							this.descriptor1.name,
-							new String[] {this.descriptor1.name, methodDisplayName});
+							new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 				}
 			}
 			return;
@@ -1643,7 +1666,7 @@ public class ClassFileComparator {
 								methodDescriptor2.access,
 								this.classFile,
 								key,
-								new String[] {this.descriptor1.name, methodDisplayName, exceptionName});
+								new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName, exceptionName});
 						break loop;
 					} else {
 						// report delta - removal of unchecked exception
@@ -1655,7 +1678,7 @@ public class ClassFileComparator {
 								methodDescriptor2.access,
 								this.classFile,
 								key,
-								new String[] {this.descriptor1.name, methodDisplayName, exceptionName});
+								new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName, exceptionName});
 					}
 				}
 			} else {
@@ -1683,7 +1706,7 @@ public class ClassFileComparator {
 									methodDescriptor2.access,
 									this.classFile,
 									key,
-									new String[] {this.descriptor1.name, methodDisplayName, exceptionName});
+									new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName, exceptionName});
 							break loop;
 						} else {
 							// report delta - removal of unchecked exception
@@ -1695,7 +1718,7 @@ public class ClassFileComparator {
 									methodDescriptor2.access,
 									this.classFile,
 									key,
-									new String[] {this.descriptor1.name, methodDisplayName, exceptionName});
+									new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName, exceptionName});
 						}
 					}
 				}
@@ -1712,7 +1735,7 @@ public class ClassFileComparator {
 								methodDescriptor2.access,
 								this.classFile,
 								key,
-								new String[] {this.descriptor1.name, methodDisplayName, exceptionName});
+								new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName, exceptionName});
 						break loop;
 					} else {
 						// report delta - addition of unchecked exception
@@ -1724,7 +1747,7 @@ public class ClassFileComparator {
 								methodDescriptor2.access,
 								this.classFile,
 								key,
-								new String[] {this.descriptor1.name, methodDisplayName, exceptionName});
+								new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName, exceptionName});
 					}
 				}
 			}
@@ -1742,7 +1765,7 @@ public class ClassFileComparator {
 							methodDescriptor2.access,
 							this.classFile,
 							key,
-							new String[] {this.descriptor1.name, methodDisplayName, exceptionName});
+							new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName, exceptionName});
 					// TODO should we continue the loop for all remaining exceptions
 					break loop;
 				} else {
@@ -1755,7 +1778,7 @@ public class ClassFileComparator {
 							methodDescriptor2.access,
 							this.classFile,
 							key,
-							new String[] {this.descriptor1.name, methodDisplayName, exceptionName});
+							new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName, exceptionName});
 				}
 			}
 		}
@@ -1771,7 +1794,7 @@ public class ClassFileComparator {
 						methodDescriptor2.access,
 						this.classFile,
 						key,
-						new String[] {this.descriptor1.name, methodDisplayName});
+						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 			}
 		} else if (Util.isVarargs(access2)) {
 			// report delta: conversion from T[] to T... compatible
@@ -1783,7 +1806,7 @@ public class ClassFileComparator {
 					methodDescriptor2.access,
 					this.classFile,
 					key,
-					new String[] {this.descriptor1.name, methodDisplayName});
+					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 		}
 		if (Util.isProtected(access)) {
 			if (Util.isPrivate(access2) || Util.isDefault(access2)) {
@@ -1796,7 +1819,7 @@ public class ClassFileComparator {
 						methodDescriptor.access,
 						this.classFile,
 						key,
-						new String[] {this.descriptor1.name, methodDisplayName});
+						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 			} else if (Util.isPublic(access2)) {
 				// report delta - increase access: protected to public
 				this.addDelta(
@@ -1807,7 +1830,7 @@ public class ClassFileComparator {
 						methodDescriptor.access,
 						this.classFile,
 						key,
-						new String[] {this.descriptor1.name, methodDisplayName});
+						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 			}
 		} else if (Util.isPublic(access)
 				&& (Util.isProtected(access2)
@@ -1822,7 +1845,7 @@ public class ClassFileComparator {
 					methodDescriptor.access,
 					this.classFile,
 					key,
-					new String[] {this.descriptor1.name, methodDisplayName});
+					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 		} else if (Util.isDefault(access)
 				&& (Util.isPublic(access2)
 						|| Util.isProtected(access2))) {
@@ -1834,7 +1857,7 @@ public class ClassFileComparator {
 					methodDescriptor.access,
 					this.classFile,
 					key,
-					new String[] {this.descriptor1.name, methodDisplayName});
+					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 		} else if (Util.isPrivate(access)
 				&& (Util.isDefault(access2)
 						|| Util.isPublic(access2)
@@ -1847,7 +1870,7 @@ public class ClassFileComparator {
 					methodDescriptor.access,
 					this.classFile,
 					key,
-					new String[] {this.descriptor1.name, methodDisplayName});
+					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 		}
 		if (Util.isAbstract(access)) {
 			if (!Util.isAbstract(access2)) {
@@ -1860,7 +1883,7 @@ public class ClassFileComparator {
 						access,
 						this.classFile,
 						key,
-						new String[] {this.descriptor1.name, methodDisplayName});
+						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 			}
 		} else if (Util.isAbstract(access2)){
 			// report delta - changed from non-abstract to abstract
@@ -1872,7 +1895,7 @@ public class ClassFileComparator {
 					methodDescriptor2.access,
 					this.classFile,
 					key,
-					new String[] {this.descriptor1.name, methodDisplayName});
+					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 		}
 		if (Util.isFinal(access)) {
 			if (!Util.isFinal(access2)) {
@@ -1885,7 +1908,7 @@ public class ClassFileComparator {
 						methodDescriptor2.access,
 						this.classFile,
 						key,
-						new String[] {this.descriptor1.name, methodDisplayName});
+						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 			}
 		} else if (Util.isFinal(access2)) {
 			int res = restrictions;
@@ -1904,7 +1927,7 @@ public class ClassFileComparator {
 					methodDescriptor2.access,
 					this.classFile,
 					key,
-					new String[] {this.descriptor2.name, getMethodDisplayName(methodDescriptor2, this.descriptor2)});
+					new String[] {Util.getDescriptorName(this.descriptor2), getMethodDisplayName(methodDescriptor2, this.descriptor2)});
 		}
 		if (Util.isStatic(access)) {
 			if (!Util.isStatic(access2)) {
@@ -1917,7 +1940,7 @@ public class ClassFileComparator {
 						access2,
 						this.classFile,
 						key,
-						new String[] {this.descriptor1.name, methodDisplayName});
+						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 			}
 		} else if (Util.isStatic(access2)){
 			// report delta: change from non-static to static
@@ -1929,7 +1952,7 @@ public class ClassFileComparator {
 					access2,
 					this.classFile,
 					key,
-					new String[] {this.descriptor1.name, methodDisplayName});
+					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 		}
 		if (Util.isNative(access)) {
 			if (!Util.isNative(access2)) {
@@ -1942,7 +1965,7 @@ public class ClassFileComparator {
 						access2,
 						this.classFile,
 						key,
-						new String[] {this.descriptor1.name, methodDisplayName});
+						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 			}
 		} else if (Util.isNative(access2)){
 			// report delta: change from non-native to native
@@ -1954,7 +1977,7 @@ public class ClassFileComparator {
 					access2,
 					this.classFile,
 					key,
-					new String[] {this.descriptor1.name, methodDisplayName});
+					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 		}
 		if (Util.isSynchronized(access)) {
 			if (!Util.isSynchronized(access2)) {
@@ -1967,7 +1990,7 @@ public class ClassFileComparator {
 						access2,
 						this.classFile,
 						key,
-						new String[] {this.descriptor1.name, methodDisplayName});
+						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 			}
 		} else if (Util.isSynchronized(access2)){
 			// report delta: change from non-synchronized to synchronized
@@ -1979,7 +2002,7 @@ public class ClassFileComparator {
 					access2,
 					this.classFile,
 					key,
-					new String[] {this.descriptor1.name, methodDisplayName});
+					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 		}
 		// check type parameters
 		String signature1 = methodDescriptor.signature;
@@ -1997,7 +2020,7 @@ public class ClassFileComparator {
 						access2,
 						this.classFile,
 						key,
-						new String[] {this.descriptor1.name, methodDisplayName});
+						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 			}
 		} else if (methodDescriptor2.defaultValue == null) {
 			// report delta : default value has been removed - incompatible
@@ -2009,7 +2032,7 @@ public class ClassFileComparator {
 					access,
 					this.classFile,
 					key,
-					new String[] {this.descriptor1.name, methodDisplayName});
+					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 		} else if (!methodDescriptor.defaultValue.equals(methodDescriptor2.defaultValue)) {
 			// report delta: default value has changed
 			this.addDelta(
@@ -2020,7 +2043,7 @@ public class ClassFileComparator {
 					access,
 					this.classFile,
 					key,
-					new String[] {this.descriptor1.name, methodDisplayName});
+					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
 		}
 	}
 
@@ -2067,7 +2090,18 @@ public class ClassFileComparator {
 	private String getMethodDisplayName(MethodDescriptor methodDescriptor, TypeDescriptor typeDescriptor) {
 		String methodName = methodDescriptor.name;
 		if (methodDescriptor.isConstructor()) {
-			methodName = typeDescriptor.name;
+			String typeName = typeDescriptor.name;
+			int index = typeName.lastIndexOf('.');
+			if (index == -1) {
+				methodName = typeName;
+			} else {
+				int index2 = typeName.lastIndexOf('$');
+				if (index2 > index) {
+					methodName = typeName.substring(index2 + 1);
+				} else {
+					methodName = typeName.substring(index + 1);
+				}
+			}
 		}
 		return Signature.toString(methodDescriptor.descriptor, methodName, null, false, false);
 	}
@@ -2144,7 +2178,7 @@ public class ClassFileComparator {
 					descriptor.access,
 					this.classFile,
 					name,
-					new String[] {descriptor.name, name});
+					new String[] {Util.getDescriptorName(descriptor), name});
 		} else {
 			if (Util.isFinal(descriptor.access)) {
 				this.addDelta(
@@ -2155,7 +2189,7 @@ public class ClassFileComparator {
 						fieldDescriptor.access,
 						this.classFile,
 						name,
-						new String[] {descriptor.name, name});
+						new String[] {Util.getDescriptorName(descriptor), name});
 			} else {
 				this.addDelta(
 						descriptor.getElementType(),
@@ -2165,7 +2199,7 @@ public class ClassFileComparator {
 						fieldDescriptor.access,
 						this.classFile,
 						name,
-						new String[] {descriptor.name, name});
+						new String[] {Util.getDescriptorName(descriptor), name});
 			}
 		}
 	}
@@ -2180,7 +2214,7 @@ public class ClassFileComparator {
 					methodDescriptor.access,
 					this.classFile,
 					typeDescriptor.name,
-					typeDescriptor.name);
+					Util.getDescriptorName(descriptor1));
 			return;
 		}
 		int access = methodDescriptor.access;
@@ -2199,7 +2233,7 @@ public class ClassFileComparator {
 							access,
 							this.classFile,
 							getKeyForMethod(methodDescriptor, typeDescriptor),
-							new String[] {typeDescriptor.name, methodDisplayName});
+							new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName});
 				} else if (typeDescriptor.isAnnotation()) {
 					if (methodDescriptor.defaultValue != null) {
 						this.addDelta(
@@ -2210,7 +2244,7 @@ public class ClassFileComparator {
 								access,
 								this.classFile,
 								getKeyForMethod(methodDescriptor, typeDescriptor),
-								new String[] { typeDescriptor.name, methodDisplayName });
+								new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
 					} else {
 						this.addDelta(
 								typeDescriptor.getElementType(),
@@ -2220,7 +2254,7 @@ public class ClassFileComparator {
 								typeDescriptor.access,
 								this.classFile,
 								getKeyForMethod(methodDescriptor, typeDescriptor),
-								new String[] { typeDescriptor.name, methodDisplayName });
+								new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
 					}
 				} else {
 					// check superclass
@@ -2276,7 +2310,7 @@ public class ClassFileComparator {
 							methodDescriptor.access,
 							this.classFile,
 							getKeyForMethod(methodDescriptor, typeDescriptor),
-							new String[] { typeDescriptor.name, methodDisplayName });
+							new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
 				}
 			} else {
 				this.addDelta(
@@ -2287,7 +2321,7 @@ public class ClassFileComparator {
 						methodDescriptor.access,
 						this.classFile,
 						getKeyForMethod(methodDescriptor, typeDescriptor),
-						new String[] { typeDescriptor.name, methodDisplayName });
+						new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
 			}
 		}
 	}
