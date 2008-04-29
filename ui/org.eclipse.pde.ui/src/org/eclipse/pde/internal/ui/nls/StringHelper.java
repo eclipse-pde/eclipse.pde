@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,24 +11,39 @@
 package org.eclipse.pde.internal.ui.nls;
 
 public class StringHelper {
+	private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-	protected static String preparePropertiesString(String s, char[] newLine) {
+	public static String preparePropertiesString(String s, char[] newLine) {
 		if (s == null)
 			return null;
 		int length = s.length();
 		int nlLength = newLine.length;
 		StringBuffer sb = new StringBuffer(length + nlLength);
-		for (int i = 0; i < length; i++) {
+		int i = 0;
+		while (i < length) {
 			char c = s.charAt(i);
 			if (i + nlLength < length) {
 				boolean notNewLine = false;
 				for (int j = 0; j < nlLength; j++)
 					if (s.charAt(i + j) != newLine[j])
 						notNewLine = true;
-				if (!notNewLine)
-					sb.append("\\"); //$NON-NLS-1$
+				if (!notNewLine) {
+					sb.append(unwindEscapeChars(new String(newLine)));
+					// skip the nl chars
+					i += nlLength;
+					while (i < length && s.charAt(i) == ' ') {
+						sb.append(' ');
+						i++;
+					}
+					if (i < length) {
+						sb.append("\\"); //$NON-NLS-1$
+						sb.append(newLine);
+					}
+					continue;
+				}
 			}
-			sb.append(c);
+			sb.append(unwindEscapeChars(Character.toString(c)));
+			i++;
 		}
 		return sb.toString();
 	}
@@ -60,8 +75,15 @@ public class StringHelper {
 				return "\\r";//$NON-NLS-1$
 			case '\\' :
 				return "\\\\";//$NON-NLS-1$
+			default :
+				if (((c < 0x0020) || (c > 0x007e)))
+					return new StringBuffer().append('\\').append('u').append(toHex((c >> 12) & 0xF)).append(toHex((c >> 8) & 0xF)).append(toHex((c >> 4) & 0xF)).append(toHex(c & 0xF)).toString();
 		}
 		return String.valueOf(c);
+	}
+
+	private static char toHex(int halfByte) {
+		return HEX_DIGITS[(halfByte & 0xF)];
 	}
 
 	protected static String windEscapeChars(String s) {
