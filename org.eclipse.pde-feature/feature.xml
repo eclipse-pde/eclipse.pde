@@ -29,7 +29,7 @@
    </requires>
 
 	<includes
-         id="org.eclipse.equinox.pde.p2"
+         id="org.eclipse.pde.p2"
          version="0.0.0"
          optional="true"/>
 
