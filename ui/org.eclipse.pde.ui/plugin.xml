@@ -1896,4 +1896,14 @@
           </menuContribution>
           -->
        </extension>
+           <extension
+          point="org.eclipse.ui.ide.markerSupport">
+    	<markerGroupingEntry id="org.eclipse.pde.ui.jdt_category.pde"
+        	markerGrouping="org.eclipse.jdt.ui.java_marker_category"
+        	label="%markerGroupingEntry.label"
+        	priority="85"/>
+        <markerAttributeGrouping
+             defaultGroupingEntry="org.eclipse.pde.ui.jdt_category.pde"
+             markerType="org.eclipse.pde.core.problem"/>
+    </extension>
 </plugin>
