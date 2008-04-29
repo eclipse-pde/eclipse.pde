@@ -19,6 +19,8 @@ import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -105,5 +107,10 @@ public class DSEditor extends MultiSourceEditor {
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
+	}
+	
+	protected PDESourcePage createSourcePage(PDEFormEditor editor,
+			String title, String name, String contextId) {
+		return new DSSourcePage(editor, title, name);
 	}
 }
