@@ -108,10 +108,11 @@ public class DSProvideDetails extends DSAbstractDetails {
 		}
 
 		if (fProvide.getInterface() == null) {
-			return;
+			fInterface.setValue("", true);
+		} else {
+			// Attribute: interface
+			fInterface.setValue(fProvide.getInterface(), true);
 		}
-		// Attribute: title
-		fInterface.setValue(fProvide.getInterface(), true);
 		fInterface.setEditable(editable);
 
 	}

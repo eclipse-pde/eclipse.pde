@@ -13,7 +13,6 @@
 package org.eclipse.pde.internal.ds.ui.editor;
 
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -28,8 +27,7 @@ import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.core.IDSRoot;
 import org.eclipse.pde.internal.ds.core.IDSService;
-import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddStepAction;
-import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddSubStepAction;
+import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddItemAction;
 import org.eclipse.pde.internal.ds.ui.editor.actions.DSRemoveItemAction;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -49,11 +47,19 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
-	private static final int F_BUTTON_ADD_STEP = 0;
-	private static final int F_BUTTON_ADD_SUBSTEP = 1;
-	private static final int F_BUTTON_REMOVE = 4;
-	private static final int F_BUTTON_UP = 5;
-	private static final int F_BUTTON_DOWN = 6;
+	private static final int F_BUTTON_ADD_SERVICE = 0;
+	private static final int F_BUTTON_ADD_PROPERTY = 1;
+	private static final int F_BUTTON_ADD_REFERENCE = 2;
+	private static final int F_BUTTON_ADD_PROPERTIES = 3;
+	private static final int F_BUTTON_ADD_PROVIDE = 4;
+
+	// 5 and 6 constants missing due to null, null parameters at Class
+	// Constructor
+
+	private static final int F_BUTTON_REMOVE = 7;
+	private static final int F_BUTTON_UP = 8;
+	private static final int F_BUTTON_DOWN = 9;
+
 	private static final int F_UP_FLAG = -1;
 	private static final int F_DOWN_FLAG = 1;
 
@@ -63,20 +69,17 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
 	private CollapseAction fCollapseAction;
 
-	private ControlDecoration fSubStepInfoDecoration;
-
-	private DSAddStepAction fAddStepAction;
+	private DSAddItemAction fAddStepAction;
 	private DSRemoveItemAction fRemoveItemAction;
-	private DSAddSubStepAction fAddSubStepAction;
 
 	public DSMasterTreeSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] { "Add",
-				"Add Sub-Step", null, null, "Remove", "Up", "Down" });
+		super(page, parent, Section.DESCRIPTION, new String[] { "Add Service",
+				"Add Property", "Add Reference", "Add Properties",
+				"Add Provide", null, null, "Remove", "Up", "Down" });
 
 		// Create actions
-		fAddStepAction = new DSAddStepAction();
+		fAddStepAction = new DSAddItemAction();
 		fRemoveItemAction = new DSRemoveItemAction();
-		fAddSubStepAction = new DSAddSubStepAction();
 		fCollapseAction = null;
 
 	}
@@ -141,30 +144,36 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		}
 		IDSObject dsObject = getCurrentSelection();
 
-		boolean canAdd = false;
-		boolean canAddSub = false;
 		boolean canRemove = false;
 		boolean canMoveUp = false;
 		boolean canMoveDown = false;
 
+		boolean canAddService = false;
+		boolean canAddProperty = true;
+		boolean canAddProperties = true;
+		boolean canAddReference = true;
+		boolean canAddProvide = false;
+
 		if (dsObject != null) {
 
 			if (dsObject.getType() == IDSConstants.TYPE_ROOT) {
-				// Add item to end of cheat sheet child items
-				canAdd = true;
+				// no op
+
 			} else if (dsObject.getType() == IDSConstants.TYPE_IMPLEMENTATION) {
 				canMoveUp = true;
 				canMoveDown = true;
 			} else if (dsObject.getType() == IDSConstants.TYPE_PROVIDE) {
 				canRemove = true;
-				canAddSub = true;
 
 			} else if (dsObject.getType() == IDSConstants.TYPE_SERVICE) {
-				canAdd = true;
-				canAddSub = true;
 				canRemove = true;
 				canMoveUp = true;
 				canMoveDown = true;
+				// if TYPE_Service has no child, can add one Provide component
+
+				if (dsObject.getChildCount() == 0) {
+					canAddProvide = true;
+				}
 			} else if ((dsObject.getType() == IDSConstants.TYPE_PROPERTIES)
 					|| (dsObject.getType() == IDSConstants.TYPE_PROPERTY)
 					|| (dsObject.getType() == IDSConstants.TYPE_REFERENCE)) {
@@ -172,13 +181,26 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 				canMoveUp = true;
 				canMoveDown = true;
 			}
-			
+
+			// DS Validity: if Root component has no service child, can add one
+			// Service component
+			int childNodeCount = dsObject.getModel().getDSRoot()
+					.getChildNodeCount(IDSService.class);
+			if (childNodeCount == 0) {
+				canAddService = true;
+			}
 		}
-		getTreePart().setButtonEnabled(F_BUTTON_ADD_STEP, canAdd);
-		getTreePart().setButtonEnabled(F_BUTTON_ADD_SUBSTEP, canAddSub);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_SERVICE, canAddService);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTY, canAddProperty);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_REFERENCE, canAddReference);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTIES,
+				canAddProperties);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROVIDE, canAddProvide);
+
 		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, canRemove);
 		getTreePart().setButtonEnabled(F_BUTTON_UP, canMoveUp);
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
+
 	}
 
 	/**
@@ -216,11 +238,25 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			handleModelEventWorldChanged(event);
 		} else if (event.getChangeType() == IModelChangedEvent.INSERT) {
-			// handleModelInsertType(event);
+			// FIXME unreached (handleAddAction() should raise this event)
+			handleModelInsertType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 			handleModelRemoveType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			handleModelChangeType(event);
+		}
+	}
+
+	private void handleModelInsertType(IModelChangedEvent event) {
+		// Insert event
+		Object[] objects = event.getChangedObjects();
+		IDSObject object = (IDSObject) objects[0];
+		if (object != null) {
+			// Refresh the parent element in the tree viewer
+			fTreeViewer.refresh(object.getParent());
+			this.refresh();
+			// Select the new item in the tree
+			fTreeViewer.setSelection(new StructuredSelection(object), true);
 		}
 	}
 
@@ -252,21 +288,10 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		// Remove event
 		Object[] objects = event.getChangedObjects();
 		IDSObject object = (IDSObject) objects[0];
-		if (object == null) {
-			// Ignore
-		} else if (object.getType() == IDSConstants.TYPE_ROOT) {
-			// Remove the item
+		if (object != null) {
 			fTreeViewer.remove(object);
-			// Determine if we should make a selection
-			if (canSelect() == false) {
-				return;
-			}
-			// Select the appropriate object
-			IDSObject dsObject = fRemoveItemAction.getObjectToSelect();
-			if (dsObject == null) {
-				dsObject = object.getParent();
-			}
-			fTreeViewer.setSelection(new StructuredSelection(dsObject), true);
+			fTreeViewer.setSelection(
+					new StructuredSelection(fModel.getDSRoot()), true);
 		}
 	}
 
@@ -303,11 +328,18 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		}
 		fTreeViewer.setInput(fModel);
 
-		getTreePart().setButtonEnabled(F_BUTTON_ADD_STEP, fModel.isEditable());
-		getTreePart().setButtonEnabled(F_BUTTON_ADD_SUBSTEP, false);
+		// Enable buttons when Root component is selected
 		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, false);
 		getTreePart().setButtonEnabled(F_BUTTON_UP, false);
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, false);
+
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTIES, true);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTY, true);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROVIDE, false);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_REFERENCE, true);
+		boolean hasService = (fModel.getDSRoot().getChildNodeCount(
+				IDSService.class) == 1);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_SERVICE, !hasService);
 
 		IDSRoot dsRoot = fModel.getDSRoot();
 		// Select the ds node in the tree
@@ -321,32 +353,73 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
 	 */
 	protected void buttonSelected(int index) {
-		ISelection selection = fTreeViewer.getSelection();
+		// ISelection selection = fTreeViewer.getSelection();
+
 		switch (index) {
-		case F_BUTTON_ADD_STEP:
-			handleAddStepAction();
+		case F_BUTTON_ADD_PROPERTIES:
+			handleAddAction(IDSConstants.TYPE_PROPERTIES);
+			// FIXME add actions should raise IModelChangedEvent.INSERT event,
+			// but it isn't raising (so I put this temporary 2-line code):
+			this.refresh();
+			fTreeViewer.setSelection(new StructuredSelection(fAddStepAction
+					.getFNewObject()));
 			break;
-		case F_BUTTON_ADD_SUBSTEP:
-			handleAddSubStepAction();
+		case F_BUTTON_ADD_PROPERTY:
+			handleAddAction(IDSConstants.TYPE_PROPERTY);
+			this.refresh();
+			fTreeViewer.setSelection(new StructuredSelection(fAddStepAction
+					.getFNewObject()));
+			break;
+		case F_BUTTON_ADD_PROVIDE:
+			handleAddAction(IDSConstants.TYPE_PROVIDE);
+			this.refresh();
+			fTreeViewer.setSelection(new StructuredSelection(fAddStepAction
+					.getFNewObject()));
+			break;
+		case F_BUTTON_ADD_REFERENCE:
+			handleAddAction(IDSConstants.TYPE_REFERENCE);
+			this.refresh();
+			fTreeViewer.setSelection(new StructuredSelection(fAddStepAction
+					.getFNewObject()));
+			break;
+		case F_BUTTON_ADD_SERVICE:
+			handleAddAction(IDSConstants.TYPE_SERVICE);
+			this.refresh();
+			fTreeViewer.setSelection(new StructuredSelection(fAddStepAction
+					.getFNewObject()));
 			break;
 		case F_BUTTON_REMOVE:
 			handleDeleteAction();
 			break;
 		case F_BUTTON_UP:
-			handleMoveStepAction(F_UP_FLAG);
+			handleMoveAction(F_UP_FLAG);
 			break;
 		case F_BUTTON_DOWN:
-			handleMoveStepAction(F_DOWN_FLAG);
+			handleMoveAction(F_DOWN_FLAG);
 			break;
 		}
-		
-		// TODO verify if it is correct to refresh here.
-		this.refresh();
-		if (selection != null)
-			fTreeViewer.setSelection(selection);
+
 	}
 
-	private void handleMoveStepAction(int upFlag) {
+	private void handleAddAction(int type) {
+		fAddStepAction.setType(type);
+
+		IDSObject object = getCurrentSelection();
+		if (object != null) {
+			fAddStepAction.setSelection(object);
+
+		} else {
+			if (type != IDSConstants.TYPE_PROVIDE) {
+				fAddStepAction.setSelection(fModel.getDSRoot());
+			} else {
+				return;
+			}
+		}
+		// Execute the action
+		fAddStepAction.run();
+	}
+
+	private void handleMoveAction(int upFlag) {
 		IDSObject object = getCurrentSelection();
 		if (object != null) {
 			if (object instanceof IDSService || object instanceof IDSProperty
@@ -354,6 +427,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 					|| object instanceof IDSProperties
 					|| object instanceof IDSReference) {
 				((IDSRoot) object.getParent()).moveItem(object, upFlag);
+				this.refresh();
+				fTreeViewer.setSelection(new StructuredSelection(object));
 			}
 		}
 	}
@@ -391,18 +466,6 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		return (IDSObject) object;
 	}
 
-	private void handleAddSubStepAction() {
-		// TODO Auto-generated method stub
-		System.out.println("handleAddSubStepAction");
-
-	}
-
-	private void handleAddStepAction() {
-		// TODO Auto-generated method stub
-		System.out.println("handleAddStepAction");
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -410,6 +473,23 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	 */
 	protected void selectionChanged(IStructuredSelection selection) {
 		updateButtons();
+	}
+
+
+	public boolean setFormInput(Object object) {
+		// This method allows the outline view to select items in the tree
+		// Invoked by
+		// org.eclipse.ui.forms.editor.IFormPage.selectReveal(Object object)
+		if (object instanceof IDSObject) {
+			// Select the item in the tree
+			fTreeViewer.setSelection(new StructuredSelection(object), true);
+			// Verify that something was actually selected
+			ISelection selection = fTreeViewer.getSelection();
+			if ((selection != null) && (selection.isEmpty() == false)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

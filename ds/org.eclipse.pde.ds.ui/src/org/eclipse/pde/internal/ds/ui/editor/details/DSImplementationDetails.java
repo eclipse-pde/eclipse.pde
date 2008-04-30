@@ -113,10 +113,12 @@ public class DSImplementationDetails extends DSAbstractDetails {
 		}
 
 		if (fImplementation.getClassName() == null) {
-			return;
+			fTitle.setValue("", true);
+		} else {
+			// Attribute: title
+			fTitle.setValue(fImplementation.getClassName(), true);
+
 		}
-		// Attribute: title
-		fTitle.setValue(fImplementation.getClassName(), true);
 		fTitle.setEditable(editable);
 
 

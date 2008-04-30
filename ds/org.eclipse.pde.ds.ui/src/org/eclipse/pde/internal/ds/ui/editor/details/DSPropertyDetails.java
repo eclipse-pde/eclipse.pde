@@ -133,8 +133,7 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		GridData data = null;
 		// Create the label
 		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
-		Label label = getToolkit().createLabel(parent,
-				"Body: ", SWT.WRAP);
+		Label label = getToolkit().createLabel(parent, "Body: ", SWT.WRAP);
 		label.setForeground(foreground);
 		int style = GridData.VERTICAL_ALIGN_BEGINNING
 				| GridData.HORIZONTAL_ALIGN_END;
@@ -240,26 +239,40 @@ public class DSPropertyDetails extends DSAbstractDetails {
 			return;
 		}
 		// Attribute: name
-		fName.setValue(fProperty.getPropertyName(), true);
+		if (fProperty.getPropertyName() != null) {
+			fName.setValue(fProperty.getPropertyName(), true);
+		} else {
+			fName.setValue("");
+		}
 		fName.setEditable(editable);
 
 		// Attribute: value
-		fValue.setValue(fProperty.getPropertyValue(), true);
+		if (fProperty.getPropertyValue() != null) {
+			fValue.setValue(fProperty.getPropertyValue(), true);
+		} else {
+			fValue.setValue("", true);
+		}
 		fValue.setEditable(editable);
 
 		// Attribute: type
-		fType.setValue(fProperty.getPropertyType(), true);
+		if (fProperty.getPropertyType() != null) {
+			fType.setValue(fProperty.getPropertyType(), true);
+		} else {
+			fType.setValue("", true);
+		}
 		fType.setEditable(editable);
 
-		
 		if (fProperty.getPropertyElemBody() == null) {
-			return;
+			fBlockEvents = true;
+			fContentViewer.getDocument().set("");
+			fBlockEvents = false;
+		} else {
+			// description: Content (Element)
+			fBlockEvents = true;
+			fContentViewer.getDocument().set(fProperty.getPropertyElemBody());
+			fBlockEvents = false;
 		}
-
-		// description: Content (Element)
-		fBlockEvents = true;
-		fContentViewer.getDocument().set(fProperty.getPropertyElemBody());
-		fBlockEvents = false;
+		
 		fContentViewer.getViewer().setEditable(editable);
 	}
 

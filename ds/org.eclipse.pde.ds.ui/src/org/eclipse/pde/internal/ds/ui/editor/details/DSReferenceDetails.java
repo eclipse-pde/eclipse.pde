@@ -41,11 +41,11 @@ public class DSReferenceDetails extends DSAbstractDetails {
 	private FormEntry fName;
 
 	private FormEntry fInterface;
-	
+
 	private FormEntry fBind;
 
 	private FormEntry fUnBind;
-	
+
 	private FormEntry fTarget;
 
 	private ComboPart fCardinality;
@@ -115,15 +115,13 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		fCardinality = new ComboPart();
 		fCardinality.createControl(mainSectionClient, getToolkit(),
 				SWT.READ_ONLY);
-		
+
 		String[] itemsCard = new String[] { "0..1", "0..n", "1..1", "1..n" };
 		fCardinality.setItems(itemsCard);
 
 		// Attribute: Target
 		fTarget = new FormEntry(mainSectionClient, getToolkit(), "Target:",
 				SWT.NONE);
-
-		
 
 		// Attribute: Bind
 		fBind = new FormEntry(mainSectionClient, getToolkit(), "Bind:",
@@ -133,7 +131,6 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		fUnBind = new FormEntry(mainSectionClient, getToolkit(), "Unbind:",
 				SWT.NONE);
 
-		
 		// Attribute: Policy
 		fLabelPolicy = getToolkit().createLabel(mainSectionClient, "Policy:",
 				SWT.WRAP);
@@ -172,7 +169,7 @@ public class DSReferenceDetails extends DSAbstractDetails {
 				fReference.setReferenceInterface(fInterface.getValue());
 			}
 		});
-		
+
 		// Attribute: Target
 		fTarget.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
@@ -205,7 +202,7 @@ public class DSReferenceDetails extends DSAbstractDetails {
 				fReference.setReferenceUnbind(fUnBind.getValue());
 			}
 		});
-		
+
 		// Attribute: Cardinality
 		fCardinality.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -213,7 +210,7 @@ public class DSReferenceDetails extends DSAbstractDetails {
 				if (fReference == null) {
 					return;
 				}
-				
+
 				fReference.setReferenceCardinality(fCardinality.getSelection());
 			}
 
@@ -244,24 +241,25 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		}
 
 		if (fReference.getReferenceName() == null) {
-			return;
+			fName.setValue("");
+		} else {
+			// Attribute: name
+			fName.setValue(fReference.getReferenceName(), true);
 		}
-		// Attribute: name
-		fName.setValue(fReference.getReferenceName(), true);
 		fName.setEditable(editable);
 
 		if (fReference.getReferenceInterface() == null) {
-			return;
+			fInterface.setValue("");
+		} else {
+			// Attribute: Interface
+			fInterface.setValue(fReference.getReferenceInterface(), true);
 		}
-		// Attribute: Interface
-		fInterface.setValue(fReference.getReferenceInterface(), true);
 		fInterface.setEditable(editable);
 
 		// Attribute: Target
 		fTarget.setValue(fReference.getReferenceTarget(), true);
 		fTarget.setEditable(editable);
 
-		
 		// Attribute: Bind
 		fBind.setValue(fReference.getReferenceBind(), true);
 		fBind.setEditable(editable);
@@ -271,10 +269,12 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		fUnBind.setEditable(editable);
 
 		// Attribute: Cardinality
-		fCardinality.setText(fReference.getReferenceCardinality());
+		if(fReference.getReferenceCardinality() != null)
+			fCardinality.setText(fReference.getReferenceCardinality());
 
 		// Attribute: Policy
-		fPolicy.setText(fReference.getReferencePolicy());
+		if (fReference.getReferencePolicy() != null)
+			fPolicy.setText(fReference.getReferencePolicy());
 
 	}
 

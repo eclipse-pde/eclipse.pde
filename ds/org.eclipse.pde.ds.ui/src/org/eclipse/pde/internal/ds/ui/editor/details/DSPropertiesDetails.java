@@ -28,13 +28,12 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class DSPropertiesDetails extends DSAbstractDetails{
+public class DSPropertiesDetails extends DSAbstractDetails {
 	private IDSProperties fProperties;
 
 	private Section fMainSection;
 
 	private FormEntry fEntry;
-
 
 	public DSPropertiesDetails(IDSMaster masterSection) {
 		super(masterSection, DSInputContext.CONTEXT_ID);
@@ -53,15 +52,13 @@ public class DSPropertiesDetails extends DSAbstractDetails{
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		fMainSection.setText("Definition");
-		fMainSection
-				.setDescription("Specify the properties' entry: ");
+		fMainSection.setDescription("Specify the properties' entry: ");
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
-		
+
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		fMainSection.setLayoutData(data);
-
 
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
@@ -83,8 +80,6 @@ public class DSPropertiesDetails extends DSAbstractDetails{
 		fMainSection.setClient(mainSectionClient);
 		markDetailsPart(fMainSection);
 
-
-		
 	}
 
 	public void hookListeners() {
@@ -111,14 +106,13 @@ public class DSPropertiesDetails extends DSAbstractDetails{
 		}
 
 		if (fProperties.getEntry() == null) {
-			return;
+			fEntry.setValue("", true);
+		} else {
+			// Attribute: title
+			fEntry.setValue(fProperties.getEntry(), true);
 		}
-		// Attribute: title
-		fEntry.setValue(fProperties.getEntry(), true);
 		fEntry.setEditable(editable);
 
-
-		
 	}
 
 	public void selectionChanged(IFormPart part, ISelection selection) {

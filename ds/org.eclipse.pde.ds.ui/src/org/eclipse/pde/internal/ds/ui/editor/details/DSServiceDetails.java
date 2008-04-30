@@ -148,5 +148,7 @@ public class DSServiceDetails extends DSAbstractDetails {
 		// Set data
 		fService = object;
 	}
+	
+
 
 }

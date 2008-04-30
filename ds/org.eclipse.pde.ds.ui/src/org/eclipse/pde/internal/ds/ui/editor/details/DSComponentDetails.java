@@ -183,17 +183,20 @@ public class DSComponentDetails extends DSAbstractDetails {
 		}
 
 		if (fComponent.getAttributeName() == null) {
-			return;
+			// Attribute: name
+			fName.setValue("", true);
+		} else {
+			// Attribute: name
+			fName.setValue(fComponent.getAttributeName(), true);
 		}
-		// Attribute: name
-		fName.setValue(fComponent.getAttributeName(), true);
 		fName.setEditable(editable);
 
 		if (fComponent.getFactory() == null) {
-			return;
+			fFactory.setValue("", true);
+		} else {
+			// Attribute: name
+			fFactory.setValue(fComponent.getFactory(), true);
 		}
-		// Attribute: name
-		fFactory.setValue(fComponent.getFactory(), true);
 		fFactory.setEditable(editable);
 
 		// Attribute: Enabled
