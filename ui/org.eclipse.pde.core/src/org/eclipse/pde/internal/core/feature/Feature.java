@@ -231,11 +231,11 @@ public class Feature extends VersionableObject implements IFeature {
 		IPluginModelBase model = null;
 		for (int i = 0; i < fPlugins.size(); i++) {
 			IFeaturePlugin fp = (IFeaturePlugin) fPlugins.get(i);
-			ModelEntry entry = PluginRegistry.findEntry(id);
+			ModelEntry entry = PluginRegistry.findEntry(fp.getId());
 			IPluginModelBase[] models = entry.getActiveModels();
 			for (int j = 0; j < models.length; j++) {
-				IPluginModelBase m = models[i];
-				if (fp.getVersion().equals(m.getPluginBase().getVersion()))
+				IPluginModelBase m = models[j];
+				if (fp.getVersion().equals(m.getPluginBase().getVersion()) || fp.getVersion().equals("0.0.0")) //$NON-NLS-1$
 					model = m;
 			}
 			if (model != null) {
