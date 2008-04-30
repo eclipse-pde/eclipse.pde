@@ -47,6 +47,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected boolean filterState = false;
 	protected List featuresForFilterRoots = new ArrayList();
 	protected List pluginsForFilterRoots = new ArrayList();
+	protected boolean filterP2Base = false;
 
 	protected boolean reportResolutionErrors;
 	
@@ -285,6 +286,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			siteFactory.setFilterState(filterState);
 			siteFactory.setFilterRoots(featuresForFilterRoots, pluginsForFilterRoots);
 			siteFactory.setReportResolutionErrors(reportResolutionErrors);
+			siteFactory.setFilterP2Base(filterP2Base);
 		}
 
 		siteFactory.setSitePaths(getPaths());
@@ -439,6 +441,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		filterState = filter;
 	}
 
+	public void setFilterP2Base(boolean filter) {
+		filterP2Base = filter;
+	}
 	/*
 	 * If the user has specified a platform properties then load it.
 	 */

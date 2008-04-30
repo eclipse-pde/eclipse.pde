@@ -39,6 +39,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 	private List rootFeaturesForFilter;
 	private List rootPluginsForFilter;
 	private boolean filterState;
+	private boolean filterP2Base = false;
 
 	/** 
 	 * Create a build time site, using the sitePaths, and the installedBaseLocation.
@@ -101,6 +102,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 			}
 		}
 		BuildTimeSiteContentProvider contentProvider = new BuildTimeSiteContentProvider(sitePaths, installedBaseURL, pdeUIState);
+		contentProvider.setFilterP2Base(filterP2Base);
 		site.setSiteContentProvider(contentProvider);
 		contentProvider.setSite(site);
 		return site;
@@ -191,5 +193,9 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 
 	public FeatureReference createFeatureReferenceModel() {
 		return new FeatureReference();
+	}
+
+	public void setFilterP2Base(boolean filterP2Base) {
+		this.filterP2Base = filterP2Base;
 	}
 }

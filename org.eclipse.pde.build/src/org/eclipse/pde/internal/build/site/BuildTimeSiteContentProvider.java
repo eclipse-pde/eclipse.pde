@@ -20,6 +20,7 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	private String[] urls;
 	private PDEUIStateWrapper pdeUIState;
 	private BuildTimeSite site;
+	private boolean filterP2Base = false;
 
 	public BuildTimeSiteContentProvider(String[] urls, String installedBaseURL, PDEUIStateWrapper initialState) {
 		//super(null);
@@ -39,7 +40,7 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	public Collection getPluginPaths() {
 		Collection pluginsToCompile = findPluginXML(Utils.asFile(urls));
 		if (installedBaseURL != null) {
-			pluginsToCompile.addAll(Arrays.asList(PluginPathFinder.getPluginPaths(installedBaseURL)));
+			pluginsToCompile.addAll(Arrays.asList(PluginPathFinder.getPluginPaths(installedBaseURL, filterP2Base)));
 		}
 		return pluginsToCompile;
 	}
@@ -81,5 +82,9 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 
 	public void setSite(BuildTimeSite site) {
 		this.site = site;
+	}
+	
+	public void setFilterP2Base(boolean filter) {
+		this.filterP2Base = filter;
 	}
 }

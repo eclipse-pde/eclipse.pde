@@ -9,7 +9,8 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileFilter;
 import java.util.*;
 import java.util.jar.Attributes;
 
@@ -17,7 +18,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.types.Path;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.*;
@@ -156,6 +158,54 @@ public class ScriptGenerationTests extends PDETestCase {
 			assertTrue(false);
 		} catch (Exception e) {
 			assertTrue(e.getMessage().endsWith("Unable to find element: org.eclipse.core.resources."));
+		}
+	}
+
+	public void testBug221855() throws Exception {
+		IFolder buildFolder = newTest("221855");
+		IFolder tempFolder = Utils.createFolder(buildFolder, "temp");
+		Utils.generateBundle(tempFolder, "org.eclipse.pde.build.test.221855");
+
+		String configLocation = Platform.getConfigurationLocation().getURL().getFile();
+		if (!new File(configLocation, "org.eclipse.equinox.simpleconfigurator/bundles.info").exists())
+			fail("bundles.info not Found.");
+
+		File testBundle = null;
+		try {
+			String baseLocation = Platform.getInstallLocation().getURL().getPath();
+
+			testBundle = new File(baseLocation, "plugins/org.eclipse.pde.build.test.221855");
+			new File(testBundle, "META-INF").mkdirs();
+			new File(testBundle, "src").mkdir();
+
+			IFile buildProperties = tempFolder.getFile("build.properties");
+			IFile manifest = tempFolder.getFile("META-INF/MANIFEST.MF");
+
+			buildProperties.getLocation().toFile().renameTo(new File(testBundle, "build.properties"));
+			manifest.getLocation().toFile().renameTo(new File(testBundle, "META-INF/MANIFEST.MF"));
+
+			buildProperties.delete(true, null);
+			manifest.delete(true, null);
+
+			Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "org.eclipse.pde.build.test.221855");
+			properties.put("filterP2Base", "true");
+			try {
+				generateScripts(buildFolder, properties);
+				fail("Script generation was expected to fail.");
+			} catch (Exception e) {
+				IFile log = buildFolder.getFile("log.log");
+				assertLogContainsLine(log, "Unable to find element: org.eclipse.pde.build.test.221855.");
+			}
+
+			properties.put("filterP2Base", "false");
+			generateScripts(buildFolder, properties);
+		} finally {
+			new File(testBundle, "META-INF/MANIFEST.MF").delete();
+			new File(testBundle, "META-INF").delete();
+			new File(testBundle, "src").delete();
+			new File(testBundle, "build.properties").delete();
+			new File(testBundle, "build.xml").delete();
+			testBundle.delete();
 		}
 	}
 
@@ -457,40 +507,40 @@ public class ScriptGenerationTests extends PDETestCase {
 		buffer.append("  </launcherArgs>");
 		buffer.append("</product> ");
 		Utils.writeBuffer(buildFolder.getFile("features/F/t.product"), buffer);
-		
+
 		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "F");
 		props.put("product", "F/t.product");
-		
+
 		generateScripts(buildFolder, props);
 	}
-	
+
 	public void testBug208011_simpleCycle() throws Exception {
 		IFolder buildFolder = newTest("208011");
-		
+
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("allowBinaryCycles", "true");
 		properties.put("topLevelElementId", "featureA");
 		Utils.storeBuildProperties(buildFolder, properties);
 		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"B"});
-		
+
 		runBuild(buildFolder);
 	}
-	
+
 	public void testBug199241() throws Exception {
 		IFolder buildFolder = newTest("199241");
 		IFolder fooFolder = Utils.createFolder(buildFolder, "plugins/foo");
 		IFolder featureFolder = Utils.createFolder(buildFolder, "features/F");
-		
+
 		Utils.generateBundle(fooFolder, "foo");
 		Utils.createFolder(fooFolder, "src");
-		Utils.generateFeature(buildFolder, "F", null, new String[] { "foo" });
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"foo"});
 
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "F"));
-		
+
 		assertResourceFile(featureFolder, "build.xml");
 		IFile script = featureFolder.getFile("build.xml");
-		runAntScript(script.getLocation().toOSString(), new String [] {}, featureFolder.getLocation().toOSString(), null);
-		
+		runAntScript(script.getLocation().toOSString(), new String[] {}, featureFolder.getLocation().toOSString(), null);
+
 		assertResourceFile(featureFolder, "F_1.0.0.jar");
 		assertResourceFile(fooFolder, "foo_1.0.0.jar");
 	}

@@ -83,14 +83,26 @@ public class PluginPathFinder {
 	}
 
 	public static File[] getFeaturePaths(String platformHome) {
-		return getPaths(platformHome, true);
+		return getPaths(platformHome, true, false);
+	}
+
+	public static File[] getPluginPaths(String platformHome, boolean filterP2Base) {
+		return getPaths(platformHome, false, filterP2Base);
 	}
 	
 	public static File[] getPluginPaths(String platformHome) {
-		return getPaths(platformHome, false);
+		return getPaths(platformHome, false, false);
 	}
-	
-	public static File[] getPaths(String platformHome, boolean features) {
+
+	public static File[] getPaths(String platformHome, boolean features, boolean filterP2Base) {
+
+		if (filterP2Base) {
+			URL[] urls = P2Utils.readBundlesTxt(platformHome);
+			if (urls != null) {
+				return Utils.asFile(urls);
+			}
+		}
+
 		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
 		if (file.exists()) {
 			try {
@@ -119,7 +131,7 @@ public class PluginPathFinder {
 		Set all = new LinkedHashSet();
 		all.addAll(installPlugins);
 		all.addAll(extensionPlugins);
-		
+
 		return (URL[]) all.toArray(new URL[all.size()]);
 	}
 

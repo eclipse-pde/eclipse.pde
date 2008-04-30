@@ -270,4 +270,8 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setPlatformProperties(String filename) {
 		generator.setPlatformProperties(filename);
 	}
+	
+	public void setFilterP2Base(boolean value) {
+		generator.setFilterP2Base(value);
+	}
 }

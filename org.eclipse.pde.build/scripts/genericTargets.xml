@@ -25,6 +25,7 @@
 <property name="groupConfigurations" value="false"/>
 <property name="pluginPath" value=""/>
 <property name="filteredDependencyCheck" value="false"/>
+<property name="filterP2Base" value="false"/>
 
 <!-- ===================================================================== -->
 <!-- Fetch a single element (feature, plugin, fragment) -->
@@ -83,6 +84,7 @@
 		pluginPath="${pluginPath}"
 		filteredDependencyCheck="${filteredDependencyCheck}"
 		platformProperties="${platformProperties}"
+		filterP2Base="${filterP2Base}"
 	/>
 </target>
 
