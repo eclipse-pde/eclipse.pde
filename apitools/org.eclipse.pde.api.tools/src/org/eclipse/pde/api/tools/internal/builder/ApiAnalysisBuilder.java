@@ -292,8 +292,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						if (state == null) {
 							buildAll(localMonitor);
 						} else {
-							this.fBuildState = getLastBuiltState(this.fCurrentProject);
-							if (this.fBuildState == null) {
+							fBuildState = getLastBuiltState(fCurrentProject);
+							if (fBuildState == null) {
 								buildAll(localMonitor);
 							} else {
 								buildDeltas(deltas, state, localMonitor);
@@ -314,13 +314,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			createMarkers();
 			fAnalyzer.dispose();
 			localMonitor.done();
-			if (this.fBuildState != null) {
-				saveBuiltState(this.fCurrentProject, this.fBuildState);
-				this.fBuildState = null;
+			if (fBuildState != null) {
+				saveBuiltState(fCurrentProject, fBuildState);
+				fBuildState = null;
 			}
 		}
 		if (DEBUG) {
-			System.out.println("Finished build of " + this.fCurrentProject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("Finished build of " + fCurrentProject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return projects;
 	}
@@ -331,10 +331,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private void buildAll(IProgressMonitor monitor) throws CoreException {
 		clearLastState();
-		this.fBuildState = new BuildState();
+		fBuildState = new BuildState();
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 3);
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
-		cleanupMarkers(this.fCurrentProject);
+		cleanupMarkers(fCurrentProject);
+		cleanupUnsupportedTagMarkers(fCurrentProject);
 		IPluginModelBase currentModel = getCurrentModel();
 		if (currentModel != null) {
 			localMonitor.subTask(BuilderMessages.building_workspace_profile);
@@ -350,7 +351,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			// Compatibility checks
 			IApiComponent apiComponent = wsprofile.getApiComponent(id);
 			if(apiComponent != null) {
-				fAnalyzer.analyzeComponent(this.fBuildState, profile, apiComponent, null, null, localMonitor);
+				fAnalyzer.analyzeComponent(fBuildState, profile, apiComponent, null, null, localMonitor);
 				updateMonitor(localMonitor, 1);
 			}
 		}
@@ -363,8 +364,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	protected void createMarkers() {
 		try {
-			this.fCurrentProject.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-			this.fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+			fCurrentProject.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+			fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -565,7 +566,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				String[] typenames = getFullyQualifiedNames(fTypesToCheck, false, localMonitor);
 				String[] changedtypes = getFullyQualifiedNames(fChangedTypes, true, localMonitor);
 				updateMonitor(localMonitor, 1);
-				fAnalyzer.analyzeComponent(this.fBuildState, profile, apiComponent, typenames, changedtypes, localMonitor);
+				fAnalyzer.analyzeComponent(fBuildState, profile, apiComponent, typenames, changedtypes, localMonitor);
 				updateMonitor(localMonitor, 1);
 			}
 		}
@@ -1074,6 +1075,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @throws CoreException
 	 */
 	private void clearLastState() throws CoreException {
-		setLastBuiltState(this.fCurrentProject, null);
+		setLastBuiltState(fCurrentProject, null);
 	}
 }
