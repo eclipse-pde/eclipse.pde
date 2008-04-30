@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
+import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 
 /**
  * Handles the creation of document nodes representing the types of elements that
@@ -23,7 +24,7 @@ import org.eclipse.pde.internal.ds.core.IDSConstants;
  * @see DSModel
  * @see DSDocumentHandler
  */
-public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentNodeFactory {
+public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentNodeFactory, IDSDocumentFactory {
 	private DSModel fModel;
 
 	public DSDocumentFactory(DSModel model) {
@@ -31,7 +32,7 @@ public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentN
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
 	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent) {
 		if (isRoot(name)) { // Root
@@ -59,30 +60,51 @@ public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentN
 		return super.createDocumentNode(name, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createProvide()
+	 */
 	public DSProvide createProvide() {
 		return new DSProvide(fModel);
 	}
 
-	private DSProperty createProperty() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createProperty()
+	 */
+	public DSProperty createProperty() {
 		return new DSProperty(fModel);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createReference()
+	 */
 	public DSReference createReference() {
 		return new DSReference(fModel);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createService()
+	 */
 	public DSService createService() {
 		return new DSService(fModel);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createProperties()
+	 */
 	public DSProperties createProperties() {
 		return new DSProperties(fModel);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createImplementation()
+	 */
 	public DSImplementation createImplementation() {
 		return new DSImplementation(fModel);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createRoot()
+	 */
 	public DSRoot createRoot() {
 		return new DSRoot(fModel);
 	}
