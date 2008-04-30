@@ -41,7 +41,7 @@ public abstract class DeltaTestSetup extends TestCase {
 	
 	private static final IDelta[] EMPTY_CHILDREN = new IDelta[0];
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	static {
 		WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append(WORKSPACE_NAME);
