@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.ui.Messages;
+import org.eclipse.pde.internal.ds.ui.SharedImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
@@ -117,6 +118,11 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 		} else {
 			form.setText("Definition");
 		}
+		
+		// decorate the form heading
+		managedForm.getToolkit().decorateFormHeading(form.getForm());
+		form.setImage(SharedImages.getImage(SharedImages.DESC_DS));
+		
 		// Create the masters details block
 		fBlock.createContent(managedForm);
 		// Force the selection in the masters tree section to load the

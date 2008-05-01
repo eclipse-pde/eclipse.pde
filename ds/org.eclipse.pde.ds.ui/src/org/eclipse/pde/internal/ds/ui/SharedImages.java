@@ -30,6 +30,7 @@ public final class SharedImages {
 	public static final String DESC_REFERENCE = PATH_OBJ + "generic_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_ROOT = PATH_OBJ + "component_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_SERVICE = PATH_OBJ + "int_obj.gif"; //$NON-NLS-1$
+	public static final String DESC_DS = PATH_OBJ + "ds_obj.gif"; //$NON-NLS-1$
 
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return Activator.getDefault().getImageRegistry().getDescriptor(key);
