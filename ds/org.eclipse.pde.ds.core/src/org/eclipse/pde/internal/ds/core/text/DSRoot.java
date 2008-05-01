@@ -66,7 +66,7 @@ public class DSRoot extends DSObject implements IDSRoot {
 	 * @see org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#getName()
 	 */
 	public String getName() {
-		return ELEMENT_ROOT;
+		return this.getAttributeName();
 	}
 
 	/* (non-Javadoc)

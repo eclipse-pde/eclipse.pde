@@ -34,7 +34,7 @@ public class DSProvide extends DSObject implements IDSProvide {
 	}
 
 	public String getName() {
-		return null;
+		return getInterface();
 	}
 
 	public int getType() {

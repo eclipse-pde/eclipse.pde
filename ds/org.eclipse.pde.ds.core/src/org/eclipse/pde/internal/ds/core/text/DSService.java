@@ -36,7 +36,7 @@ public class DSService extends DSObject implements IDSService {
 	}
 
 	public String getName() {
-		return ""+getServiceFactory();
+		return "Service";
 	}
 
 	public int getType() {
