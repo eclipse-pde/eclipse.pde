@@ -6,6 +6,7 @@
       <editor
             class="org.eclipse.pde.internal.ds.ui.editor.DSEditor"
             default="true"
+            icon="$nl$/icons/obj16/ds_obj.gif"
             id="org.eclipse.pde.ds.ui.editor"
             name="%editors.ds.name">
          <contentTypeBinding
