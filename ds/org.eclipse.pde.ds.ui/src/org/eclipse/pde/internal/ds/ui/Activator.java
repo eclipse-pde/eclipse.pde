@@ -12,16 +12,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui;
 
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends Plugin {
+public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.pde.ds.ui";
+	public static final String PLUGIN_ID = "org.eclipse.pde.ds.ui"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
@@ -58,5 +60,28 @@ public class Activator extends Plugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
+	
+	protected void initializeImageRegistry(ImageRegistry registry) {
+		registry.put(SharedImages.DESC_IMPLEMENTATION,
+				createImageDescriptor(SharedImages.DESC_IMPLEMENTATION));
+		registry.put(SharedImages.DESC_PROPERTIES,
+				createImageDescriptor(SharedImages.DESC_PROPERTIES));
+		registry.put(SharedImages.DESC_PROPERTY,
+				createImageDescriptor(SharedImages.DESC_PROPERTY));
+		registry.put(SharedImages.DESC_PROVIDE,
+				createImageDescriptor(SharedImages.DESC_PROVIDE));
+		registry.put(SharedImages.DESC_REFERENCE,
+				createImageDescriptor(SharedImages.DESC_REFERENCE));
+		registry.put(SharedImages.DESC_ROOT,
+				createImageDescriptor(SharedImages.DESC_ROOT));
+		registry.put(SharedImages.DESC_SERVICE,
+				createImageDescriptor(SharedImages.DESC_SERVICE));
+		
+	}
+	
+	private ImageDescriptor createImageDescriptor(String id) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, id);
+	}
+
 
 }

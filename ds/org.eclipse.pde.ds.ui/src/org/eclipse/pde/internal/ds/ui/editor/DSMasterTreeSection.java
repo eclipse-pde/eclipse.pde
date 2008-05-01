@@ -13,6 +13,7 @@
 package org.eclipse.pde.internal.ds.ui.editor;
 
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -72,6 +73,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	private DSAddItemAction fAddStepAction;
 	private DSRemoveItemAction fRemoveItemAction;
 
+	private ControlDecoration fInfoDecoration;
+	
 	public DSMasterTreeSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] { "Add Service",
 				"Add Property", "Add Reference", "Add Properties",
@@ -212,7 +215,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
 		fTreeViewer = treePart.getTreeViewer();
 		fTreeViewer.setContentProvider(new DSContentProvider());
-		fTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fTreeViewer.setLabelProvider(new DSLabelProvider());
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		createTreeListeners();
 	}
