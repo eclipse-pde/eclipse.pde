@@ -244,6 +244,10 @@ public class RegistryBrowserListener implements IRegistryChangeListener, BundleL
 	}
 
 	protected Object findTreeBundleData(Object searchData) {
+		final Tree tree = fBrowser.getUndisposedTree();
+		if (tree == null)
+			return null;
+
 		Object data = null;
 		TreeItem[] items = fBrowser.getTreeItems();
 		if (items == null)
@@ -329,14 +333,31 @@ public class RegistryBrowserListener implements IRegistryChangeListener, BundleL
 		}
 	}
 
-	public void serviceChanged(ServiceEvent event) {
-		ServiceReference ref = event.getServiceReference();
+	public void serviceChanged(final ServiceEvent event) {
+		final Tree tree = fBrowser.getUndisposedTree();
+		if (tree == null)
+			return;
 
+		tree.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				handleServiceChangedEvent(event);
+			}
+		});
+
+	}
+
+	protected void handleServiceChangedEvent(ServiceEvent event) {
+		ServiceReference ref = event.getServiceReference();
 		switch (event.getType()) {
 			case ServiceEvent.REGISTERED :
 			case ServiceEvent.UNREGISTERING :
 				Bundle bundle = ref.getBundle();
-				TreeItem bundleItem = findBundleItem(bundle.getSymbolicName());
+				if (bundle == null)
+					return;
+				String name = bundle.getSymbolicName();
+				if (name == null)
+					return;
+				TreeItem bundleItem = findBundleItem(name);
 				PluginAdapter bundleAdapter = ((PluginAdapter) bundleItem.getData());
 				Object[] folders = bundleAdapter.getChildren();
 
@@ -360,6 +381,6 @@ public class RegistryBrowserListener implements IRegistryChangeListener, BundleL
 			case ServiceEvent.MODIFIED :
 				break;
 		}
-
 	}
+
 }
