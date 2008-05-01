@@ -18,8 +18,21 @@ public class Messages extends NLS {
 
 	public static String DSPage_title;
 
-	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$
+	public static String DSMasterTreeSection_addService;
+	public static String DSMasterTreeSection_addProperty;
+	public static String DSMasterTreeSection_addProperties;
+	public static String DSMasterTreeSection_addReference;
+	public static String DSMasterTreeSection_addProvide;
 
+	public static String DSMasterTreeSection_up;
+	public static String DSMasterTreeSection_down;
+	public static String DSMasterTreeSection_remove;
+	public static String DSMasterTreeSection_client_text;
+	public static String DSMasterTreeSection_client_description;
+	
+	
+	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

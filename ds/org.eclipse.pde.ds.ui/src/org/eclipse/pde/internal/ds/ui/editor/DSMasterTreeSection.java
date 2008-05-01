@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.core.IDSRoot;
 import org.eclipse.pde.internal.ds.core.IDSService;
+import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddItemAction;
 import org.eclipse.pde.internal.ds.ui.editor.actions.DSRemoveItemAction;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -76,9 +77,15 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	private ControlDecoration fInfoDecoration;
 	
 	public DSMasterTreeSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] { "Add Service",
-				"Add Property", "Add Reference", "Add Properties",
-				"Add Provide", null, null, "Remove", "Up", "Down" });
+		super(page, parent, Section.DESCRIPTION, new String[] {
+				Messages.DSMasterTreeSection_addService,
+				Messages.DSMasterTreeSection_addProperty,
+				Messages.DSMasterTreeSection_addReference,
+				Messages.DSMasterTreeSection_addProperties,
+				Messages.DSMasterTreeSection_addProvide, null, null,
+				Messages.DSMasterTreeSection_remove,
+				Messages.DSMasterTreeSection_up,
+				Messages.DSMasterTreeSection_down });
 
 		// Create actions
 		fAddStepAction = new DSAddItemAction();
@@ -91,10 +98,10 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		// Get the model
 		fModel = (IDSModel) getPage().getModel();
 		// TODO Externalize Strings (use PDEUIMessages?)
-		section.setText("Content");
+		section.setText(Messages.DSMasterTreeSection_client_text);
 		// Set section description
 		section
-				.setDescription("Edit the structure of this DS XML file in the following section.");
+				.setDescription(Messages.DSMasterTreeSection_client_description);
 		// Create section client
 		Composite container = createClientContainer(section, 2, toolkit);
 
