@@ -616,7 +616,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					StringBuffer buffer = new StringBuffer();
 					Version componentVersion = new Version(componentVersionString);
 					buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
-					problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MISSING, null, delta, member, String.valueOf(buffer));
+					problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MISSING, new String[] { Util.getDeltaArgumentString(delta) }, delta, member, String.valueOf(buffer));
 				} else if (visitor.hasJavadocComment()) {
 					// we don't want to flag block comment
 					String sinceVersion = visitor.getSinceVersion();
@@ -635,7 +635,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							}
 							Version componentVersion = new Version(componentVersionString);
 							buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
-							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED, new String[] {sinceVersion}, delta, member, String.valueOf(buffer));
+							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED, new String[] {sinceVersion, Util.getDeltaArgumentString(delta) }, delta, member, String.valueOf(buffer));
 						} else {
 							if(ignoreSinceTagCheck(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
 								if(DEBUG) {
@@ -656,7 +656,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								Version version = new Version(accurateVersion);
 								buffer.append(version.getMajor()).append('.').append(version.getMinor());
 								String accurateSinceTagValue = String.valueOf(buffer);
-								problem = createSinceTagProblem(IApiProblem.SINCE_TAG_INVALID, new String[] {sinceVersion, accurateSinceTagValue}, delta, member, accurateSinceTagValue);
+								problem = createSinceTagProblem(IApiProblem.SINCE_TAG_INVALID, new String[] {sinceVersion, accurateSinceTagValue, Util.getDeltaArgumentString(delta)}, delta, member, accurateSinceTagValue);
 							}
 						}
 					}

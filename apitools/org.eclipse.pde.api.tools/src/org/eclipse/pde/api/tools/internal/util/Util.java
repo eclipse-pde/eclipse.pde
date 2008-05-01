@@ -2728,4 +2728,21 @@ public final class Util {
 		}
 		return typeName;
 	}
+
+	public static String getDeltaArgumentString(IDelta delta) {
+		String[] arguments = delta.getArguments();
+		switch(delta.getFlags()) {
+			case IDelta.TYPE_MEMBER :
+			case IDelta.TYPE :
+				return arguments[0];
+			case IDelta.METHOD :
+			case IDelta.CONSTRUCTOR :
+			case IDelta.ENUM_CONSTANT :
+			case IDelta.METHOD_WITH_DEFAULT_VALUE :
+			case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+			case IDelta.FIELD :
+				return arguments[1];
+		}
+		return EMPTY_STRING;
+	}
 }
