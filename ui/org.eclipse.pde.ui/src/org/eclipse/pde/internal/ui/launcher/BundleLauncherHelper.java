@@ -121,8 +121,15 @@ public class BundleLauncherHelper {
 
 	public static String writeBundles(IPluginModelBase model, String startLevel, String autoStart) {
 		IPluginBase base = model.getPluginBase();
-		StringBuffer buffer = new StringBuffer(base.getId());
-		buffer.append(VERSION_SEPARATOR).append(base.getVersion());
+		String id = base.getId();
+		StringBuffer buffer = new StringBuffer(id);
+
+		ModelEntry entry = PluginRegistry.findEntry(id);
+		if (entry.getActiveModels().length > 1) {
+			buffer.append(VERSION_SEPARATOR);
+			buffer.append(model.getPluginBase().getVersion());
+		}
+
 		if (startLevel != null || autoStart != null)
 			buffer.append('@');
 		if (startLevel != null)

@@ -134,9 +134,15 @@ public class PluginBlock extends AbstractPluginBlock {
 	private void appendBundle(StringBuffer buffer, IPluginModelBase model) {
 		if (buffer.length() > 0)
 			buffer.append(","); //$NON-NLS-1$
-		buffer.append(model.getPluginBase().getId());
-		buffer.append(BundleLauncherHelper.VERSION_SEPARATOR);
-		buffer.append(model.getPluginBase().getVersion());
+
+		String id = model.getPluginBase().getId();
+		buffer.append(id);
+
+		ModelEntry entry = PluginRegistry.findEntry(id);
+		if (entry.getActiveModels().length > 1) {
+			buffer.append(BundleLauncherHelper.VERSION_SEPARATOR);
+			buffer.append(model.getPluginBase().getVersion());
+		}
 	}
 
 	protected void computeSubset() {
