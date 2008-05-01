@@ -61,13 +61,10 @@ import org.eclipse.jdt.internal.core.builder.StringSet;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
-import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -377,7 +374,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				continue;
 			}
 			if(DEBUG) {
-				System.out.println("creating marker for: "+problems[i].toString());
+				System.out.println("creating marker for: "+problems[i].toString()); //$NON-NLS-1$
 			}
 			createMarkerForProblem(type, problems[i]);
 		}
@@ -420,9 +417,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param problem the problem to create a marker from
 	 */
 	private void createMarkerForProblem(String type, IApiProblem problem) {
-		if(isProblemFiltered(problem)) {
-			return;
-		}
 		IResource resource = resolveResource(problem);
 		if(resource == null) {
 			return;
@@ -782,31 +776,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		return (IResourceDelta[]) deltas.toArray(new IResourceDelta[deltas.size()]);
-	}
-
-	/**
-	 * Returns if the given {@link IApiProblem} should be filtered from having a problem marker created for it
-	 * 
-	 * @param problem the problem that may or may not be filtered
-	 * @return true if the {@link IApiProblem} should not have a marker created, false otherwise
-	 */
-	private boolean isProblemFiltered(IApiProblem problem) {
-		IApiProfileManager manager = ApiProfileManager.getManager();
-		IApiProfile profile = manager.getWorkspaceProfile();
-		if(profile == null) {
-			return false;
-		}
-		IApiComponent component = profile.getApiComponent(fCurrentProject.getName());
-		if(component != null) {
-			try {
-				IApiFilterStore filterStore = component.getFilterStore();
-				if (filterStore != null) {
-					return filterStore.isFiltered(problem);
-				}
-			}
-			catch(CoreException e) {}
-		}
-		return false;
 	}
 
 	/**

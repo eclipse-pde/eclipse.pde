@@ -143,10 +143,10 @@ public class ClassFileComparator {
 		this.delta.add(delta);
 	}
 	private void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String data) {
-		this.delta.add(new Delta(Util.getDeltaComponentID(this.component), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, data));
+		this.delta.add(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, data));
 	}
 	private void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String[] datas) {
-		this.delta.add(new Delta(Util.getDeltaComponentID(this.component), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, datas));
+		this.delta.add(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, datas));
 	}
 	private void checkSuperclass() {
 		// check superclass set
@@ -346,33 +346,34 @@ public class ClassFileComparator {
 								continue loop;
 							}
 						}
+						String deltaComponentID = Util.getDeltaComponentID(component2);
 						if (((memberTypeVisibility & VisibilityModifiers.API) != 0) && ((memberTypeVisibility2 & VisibilityModifiers.API) == 0)) {
 							this.addDelta(
 									new Delta(
-											Util.getDeltaComponentID(component2),
+											deltaComponentID,
 											IDelta.API_COMPONENT_ELEMENT_TYPE,
 											IDelta.REMOVED,
 											IDelta.API_TYPE,
-											memberTypeElementDescription2.getRestrictions(),
+											memberTypeElementDescription2 != null ? memberTypeElementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
 											typeMember.access,
 											typeMemberName,
 											typeMemberName,
-											new String[] { typeMemberName.replace('$', '.'), Util.getDeltaComponentID(component2)}));
+											new String[] { typeMemberName.replace('$', '.'), deltaComponentID}));
 							continue;
 						}
 						if ((memberTypeVisibility2 & visibilityModifiers) == 0) {
 							// we simply report a changed visibility
 							this.addDelta(
 									new Delta(
-											Util.getDeltaComponentID(component2),
+											deltaComponentID,
 											IDelta.API_COMPONENT_ELEMENT_TYPE,
 											IDelta.CHANGED,
 											IDelta.TYPE_VISIBILITY,
-											memberTypeElementDescription2.getRestrictions(),
+											memberTypeElementDescription2 != null ? memberTypeElementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
 											typeMember.access,
 											typeMemberName,
 											typeMemberName,
-											typeMemberName.replace('$', '.')));
+											new String[] { typeMemberName.replace('$', '.'), deltaComponentID}));
 						}
 						IClassFile memberType2 = this.component2.findClassFile(typeMemberName);
 						ClassFileComparator comparator = new ClassFileComparator(memberType1, memberType2, this.component, this.component2, this.apiProfile, this.apiProfile2, this.visibilityModifiers);
@@ -411,11 +412,11 @@ public class ClassFileComparator {
 							this.descriptor1.getElementType(),
 							IDelta.REMOVED,
 							IDelta.TYPE_MEMBER,
-							this.currentDescriptorRestrictions,
+							memberTypeElementDescription != null ? memberTypeElementDescription.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
 							typeMember.access,
 							this.classFile,
 							typeMember.name,
-							typeMember.name.replace('$', '.'));
+							new String[] { typeMemberName.replace('$', '.'), Util.getDeltaComponentID(component2)});
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
 				}

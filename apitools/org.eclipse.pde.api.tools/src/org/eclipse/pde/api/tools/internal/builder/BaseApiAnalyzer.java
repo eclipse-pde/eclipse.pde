@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +46,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
@@ -55,8 +55,10 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -403,7 +405,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						return;
 					}
 					comp.accept(tv);
-					fProblems.addAll(Arrays.asList(tv.getTagProblems()));
+					IApiProblem[] tagProblems = tv.getTagProblems();
+					for (int i = 0; i < tagProblems.length; i++) {
+						IApiProblem apiProblem = tagProblems[i];
+						this.addProblem(apiProblem);
+					}
 				}
 			}
 		} 
@@ -440,7 +446,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}		
 			if (illegal.length > 0) {
 				for (int i = 0; i < illegal.length; i++) {
-					fProblems.add(illegal[i]);
+					this.addProblem(illegal[i]);
 				}
 			}
 			updateMonitor(localMonitor);
@@ -662,7 +668,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			ApiPlugin.log(e);
 		}
 		if(problem != null) {
-			fProblems.add(problem);
+			this.addProblem(problem);
 		}
 	}
 	
@@ -899,10 +905,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 			}
 			IApiProblem problem = createCompatibilityProblem(delta, reference, component);
-			if(problem != null) {
-				if(fProblems.add(problem)) {
-					fBuildState.addBreakingChange(delta);
-				}
+			if(this.addProblem(problem)) {
+				fBuildState.addBreakingChange(delta);
 			}
 		}
 	}
@@ -973,7 +977,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 		}
 		if(problem != null) {
-			fProblems.add(problem);
+			this.addProblem(problem);
 		}
 	}
 	
@@ -1005,7 +1009,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		String path = JarFile.MANIFEST_NAME;
 		if (fJavaProject != null) {
 			manifestFile = Util.getManifestFile(fJavaProject.getProject());
-			
 		}
 		// this error should be located on the manifest.mf file
 		// first of all we check how many api breakage marker are there
@@ -1112,7 +1115,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				-1,  
 				IElementDescriptor.T_RESOURCE, 
 				IApiProblem.API_PROFILE_MISSING);
-		fProblems.add(problem);
+		this.addProblem(problem);
 	}
 	
 	/**
@@ -1153,5 +1156,44 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return pp.getJavaProject();
 		}
 		return null;
+	}
+	
+	private boolean addProblem(IApiProblem problem) {
+		if (problem == null || isProblemFiltered(problem)) return false;
+		return this.fProblems.add(problem);
+	}
+	/**
+	 * Returns if the given {@link IApiProblem} should be filtered from having a problem marker created for it
+	 * 
+	 * @param problem the problem that may or may not be filtered
+	 * @return true if the {@link IApiProblem} should not have a marker created, false otherwise
+	 */
+	private boolean isProblemFiltered(IApiProblem problem) {
+		if (fJavaProject == null) {
+			return true;
+		}
+
+		IProject project = fJavaProject.getProject();
+		// first the severity is checked
+		if (ApiPlugin.getDefault().getSeverityLevel(ApiProblemFactory.getProblemSeverityId(problem), project) == ApiPlugin.SEVERITY_IGNORE) {
+			return true;
+		}
+
+		IApiProfileManager manager = ApiProfileManager.getManager();
+		IApiProfile profile = manager.getWorkspaceProfile();
+		if(profile == null) {
+			return true;
+		}
+		IApiComponent component = profile.getApiComponent(project.getName());
+		if(component != null) {
+			try {
+				IApiFilterStore filterStore = component.getFilterStore();
+				if (filterStore != null) {
+					return filterStore.isFiltered(problem);
+				}
+			}
+			catch(CoreException e) {}
+		}
+		return false;
 	}
 }

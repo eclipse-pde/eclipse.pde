@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.problems;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -160,7 +159,7 @@ public class ApiProblem implements IApiProblem {
 		if(ApiPlugin.isRunningInFramework()) {
 			return ApiPlugin.getDefault().getSeverityLevel(ApiProblemFactory.getProblemSeverityId(this), null);
 		}
-		return IMarker.SEVERITY_WARNING;
+		return ApiPlugin.SEVERITY_WARNING;
 	}
 	
 	/* (non-Javadoc)

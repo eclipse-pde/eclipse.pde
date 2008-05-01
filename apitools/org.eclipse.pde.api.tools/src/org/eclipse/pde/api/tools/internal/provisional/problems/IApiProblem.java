@@ -278,10 +278,13 @@ public interface IApiProblem {
 	public static final int API_PROFILE_MISSING = 1;
 	
 	/**
-	 * Returns the severity of the problem. 
-	 * See {@link IMarker} for a listing of severities.
+	 * Returns the severity of the problem. See the severity constants defined in
+	 * {@link org.eclipse.pde.api.tools.internal.provisional.ApiPlugin} class.
 	 * 
 	 * @return the severity of the problem
+	 * @see org.eclipse.pde.api.tools.internal.provisional.ApiPlugin#SEVERITY_ERROR
+	 * @see org.eclipse.pde.api.tools.internal.provisional.ApiPlugin#SEVERITY_WARNING
+	 * @see org.eclipse.pde.api.tools.internal.provisional.ApiPlugin#SEVERITY_IGNORE
 	 */
 	public int getSeverity();
 	

@@ -106,6 +106,7 @@ public class ApiComparator {
 			if (refElementDescription != null) {
 				refVisibility = refElementDescription.getVisibility();
 			}
+			String deltaComponentID = Util.getDeltaComponentID(component2);
 			if ((visibility & visibilityModifiers) == 0) {
 				if ((refVisibility & visibilityModifiers) == 0) {
 					// no delta
@@ -113,28 +114,28 @@ public class ApiComparator {
 				}
 				if ((refVisibility & VisibilityModifiers.API) != 0) {
 					return new Delta(
-							Util.getDeltaComponentID(component),
+							deltaComponentID,
 							IDelta.API_COMPONENT_ELEMENT_TYPE,
 							IDelta.REMOVED,
 							IDelta.API_TYPE,
-							RestrictionModifiers.NO_RESTRICTIONS,
+							elementDescription != null ? elementDescription.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
 							typeDescriptor.access,
 							typeName,
 							typeName,
-							new String[] { typeName, Util.getDeltaComponentID(component)});
+							new String[] { typeName, deltaComponentID});
 				}
 			} else if (((refVisibility & VisibilityModifiers.API) == 0)
 					&& ((visibility & VisibilityModifiers.API) != 0)) {
 				return new Delta(
-						Util.getDeltaComponentID(component),
+						deltaComponentID,
 						IDelta.API_COMPONENT_ELEMENT_TYPE,
 						IDelta.ADDED,
 						IDelta.TYPE,
-						RestrictionModifiers.NO_RESTRICTIONS,
+						elementDescription != null ? elementDescription.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
 						typeDescriptor.access,
 						typeName,
 						typeName,
-						new String[] { typeName, Util.getDeltaComponentID(component)});
+						new String[] { typeName, deltaComponentID});
 			}
 			if (visibilityModifiers == VisibilityModifiers.API) {
 				// if the visibility is API, we only consider public and protected types
@@ -145,15 +146,15 @@ public class ApiComparator {
 			}
 			if (classFile == null) {
 				return new Delta(
-						Util.getDeltaComponentID(component),
+						deltaComponentID,
 						IDelta.API_COMPONENT_ELEMENT_TYPE,
 						IDelta.ADDED,
 						IDelta.TYPE,
-						elementDescription.getRestrictions(),
+						elementDescription != null ? elementDescription.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
 						typeDescriptor.access,
 						typeName,
 						typeName,
-						new String[] { typeName, Util.getDeltaComponentID(component2)});
+						new String[] { typeName, deltaComponentID});
 			}
 			ClassFileComparator comparator = new ClassFileComparator(classFile, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);
 			return comparator.getDelta();
@@ -580,6 +581,7 @@ public class ApiComparator {
 									visibility = elementDescription.getVisibility();
 								}
 								IClassFile classFile2 = component2.findClassFile(typeName, id);
+								String deltaComponentID = Util.getDeltaComponentID(component2);
 								if (classFile2 == null) {
 									if ((visibility & visibilityModifiers) == 0) {
 										// we skip the class file according to their visibility
@@ -594,7 +596,7 @@ public class ApiComparator {
 									}
 									globalDelta.add(
 											new Delta(
-													Util.getDeltaComponentID(component2),
+													deltaComponentID,
 													IDelta.API_COMPONENT_ELEMENT_TYPE,
 													IDelta.REMOVED,
 													IDelta.TYPE,
@@ -602,7 +604,7 @@ public class ApiComparator {
 													0,
 													typeName,
 													typeName,
-													new String[] { typeName, Util.getDeltaComponentID(component2)}));
+													new String[] { typeName, deltaComponentID}));
 								} else {
 									if ((visibility & visibilityModifiers) == 0) {
 										// we skip the class file according to their visibility
@@ -624,30 +626,30 @@ public class ApiComparator {
 									if (((visibility & VisibilityModifiers.API) != 0) && ((visibility2 & VisibilityModifiers.API) == 0)) {
 										globalDelta.add(
 												new Delta(
-														Util.getDeltaComponentID(component2),
+														deltaComponentID,
 														IDelta.API_COMPONENT_ELEMENT_TYPE,
 														IDelta.REMOVED,
 														IDelta.API_TYPE,
-														elementDescription2.getRestrictions(),
+														elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
 														typeDescriptor2.access,
 														typeName,
 														typeName,
-														new String[] { typeName, Util.getDeltaComponentID(component2)}));
+														new String[] { typeName, deltaComponentID}));
 										return;
 									}
 									if ((visibility2 & visibilityModifiers) == 0) {
 										// we simply report a changed visibility
 										globalDelta.add(
 												new Delta(
-														Util.getDeltaComponentID(component2),
+														deltaComponentID,
 														IDelta.API_COMPONENT_ELEMENT_TYPE,
 														IDelta.CHANGED,
 														IDelta.TYPE_VISIBILITY,
-														elementDescription2.getRestrictions(),
+														elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
 														typeDescriptor2.access,
 														typeName,
 														typeName,
-														new String[] { typeName, Util.getDeltaComponentID(component2)}));
+														new String[] { typeName, deltaComponentID}));
 									}
 									classFileBaseLineNames.add(typeName);
 									ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);
@@ -687,17 +689,18 @@ public class ApiComparator {
 									// already processed
 									return;
 								}
+								String deltaComponentID = Util.getDeltaComponentID(component2);
 								globalDelta.add(
 										new Delta(
-												Util.getDeltaComponentID(component2),
+												deltaComponentID,
 												IDelta.API_COMPONENT_ELEMENT_TYPE,
 												IDelta.ADDED,
 												IDelta.TYPE,
-												elementDescription == null ? RestrictionModifiers.NO_RESTRICTIONS : elementDescription.getRestrictions(),
+												elementDescription != null ? elementDescription.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
 												typeDescriptor.access,
 												typeName,
 												typeName,
-												typeName));
+												new String[] { typeName, deltaComponentID}));
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
 							}
