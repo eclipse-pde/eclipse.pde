@@ -1170,7 +1170,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	private boolean isProblemFiltered(IApiProblem problem) {
 		if (fJavaProject == null) {
-			return true;
+			return false;
 		}
 
 		IProject project = fJavaProject.getProject();
@@ -1182,7 +1182,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		IApiProfileManager manager = ApiProfileManager.getManager();
 		IApiProfile profile = manager.getWorkspaceProfile();
 		if(profile == null) {
-			return true;
+			return false;
 		}
 		IApiComponent component = profile.getApiComponent(project.getName());
 		if(component != null) {
