@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.problems.tests;
 
+import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -26,8 +27,11 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ApiProblemFactoryTests extends AbstractApiTest {
 
-	String fDefaultMessage = MessageFormat.format("Message not found for problem id:", new String[0]);
-	
+	String fDefaultMessage = null;
+	{
+		String unknownMessage = BuilderMessages.ApiProblemFactory_problem_message_not_found;
+		fDefaultMessage = unknownMessage.substring(0, unknownMessage.lastIndexOf('{'));
+	}
 	/**
 	 * Tests that creating an {@link IApiProblem} does not fail
 	 */
@@ -105,60 +109,44 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		IApiProblem problem = ApiProblemFactory.newApiVersionNumberProblem("", 
 				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MAJOR_VERSION_CHANGE);
 		assertNotNull("there should be a new problem created", problem);
-		String message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("The major version should be incremented in version 1, since API breakage occurred since version 2", new String[0])));
+		validateProblem(2, problem);
 		problem = ApiProblemFactory.newApiVersionNumberProblem("", 
 				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE);
 		assertNotNull("there should be a new problem created", problem);
-		message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("The major version should be the same for version 1, since no API breakage occurred since version 2", new String[0])));
+		validateProblem(2, problem);
 		problem = ApiProblemFactory.newApiVersionNumberProblem("", 
 				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MINOR_VERSION_CHANGE);
 		assertNotNull("there should be a new problem created", problem);
-		message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("The minor version should be incremented in version 1, since new APIs have been added since version 2", new String[0])));
+		validateProblem(2, problem);
+		
 	}
 	
+	private void validateProblem(int argumentsSize, IApiProblem apiProblem) {
+		String message = apiProblem.getMessage();
+		assertNotNull("the message should not be null", message);
+		assertFalse("the message should be correct", message.startsWith(this.fDefaultMessage));
+		assertEquals("Wrong argument size", argumentsSize, apiProblem.getMessageArguments().length);
+	}
+
 	/**
 	 * Tests getting API usage problem messages
 	 */
 	public void testGetUsageMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", 
 				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_EXTEND);
-		String message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally extends foo", new String[0])));
+		validateProblem(1, problem);
 		problem = ApiProblemFactory.newApiUsageProblem("", 
 				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
-		message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally implements foo", new String[0])));
+		validateProblem(1, problem);
 		problem = ApiProblemFactory.newApiUsageProblem("", 
 				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_OVERRIDE);
-		message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally overrides foo.bar", new String[0])));
+		validateProblem(2, problem);
 		problem = ApiProblemFactory.newApiUsageProblem("", 
 				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_INSTANTIATE);
-		message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally instantiates foo", new String[0])));
+		validateProblem(1, problem);
 		problem = ApiProblemFactory.newApiProblem("", 
 				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE,IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD);
-		message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Illegally references method foo.bar", new String[0])));
+		validateProblem(2, problem);
 	}
 	
 	/**
@@ -169,13 +157,13 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 				IApiProblem.CATEGORY_COMPATIBILITY, IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.CONSTRUCTOR);
 		String message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
+		assertFalse("the message should be correct", message.startsWith(this.fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("The constructor {0}.{1} has been added", new String[0])));
 		problem = ApiProblemFactory.newApiProblem(null, new String[] {"X", "foo()"}, null, null, -1, -1, -1,  
 				IApiProblem.CATEGORY_COMPATIBILITY, IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
 		message = problem.getMessage();
 		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
+		assertFalse("the message should be correct", message.startsWith(this.fDefaultMessage));
 		assertTrue("the message should be correct", message.equals(MessageFormat.format("Added method X.foo() in an interface that is intended to be implemented", new String[0])));
 	}
 	
@@ -185,22 +173,13 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	public void testGetSinceTagMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiSinceTagProblem("", 
 				new String[] {"A", "B", "C"}, null, null, -1, -1, -1,  IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_INVALID);
-		String message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Invalid @since {0} tag on {2}; expecting @since {1}", new String[] {"A", "B", "C"})));
+		validateProblem(3, problem);
 		problem = ApiProblemFactory.newApiSinceTagProblem("", 
 				new String[] {"A", "B"}, null, null, -1, -1, -1,  IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_MALFORMED);
-		message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Invalid @since tag {0} on {1}; expecting only two fragments", new String[] {"A", "B"})));
+		validateProblem(2, problem);
 		problem = ApiProblemFactory.newApiSinceTagProblem("", 
 				new String[] {"A"}, null, null, -1, -1, -1,  IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_MISSING);
-		message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Missing @since tag on {0}", new String[] {"A"})));
+		validateProblem(1, problem);
 	}
 	
 	/**
@@ -209,9 +188,6 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	public void testGetLeakConstructorParamMessage() {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", 
 				new String[] {"fooconstructor"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.API_LEAK, IApiProblem.LEAK_CONSTRUCTOR_PARAMETER);
-		String message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be found", message.equals(fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Constructor with non-API parameter type fooconstructor", new String[0])));
+		validateProblem(1, problem);
 	}
 }
