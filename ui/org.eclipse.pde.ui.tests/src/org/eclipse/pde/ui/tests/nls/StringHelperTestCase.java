@@ -58,19 +58,19 @@ public class StringHelperTestCase extends TestCase {
 		assertEquals("abc   \\r\\n  \\" + newLine + "d  ef", s2);
 	}
 
-	public void testSpecialChars() {
-		String s1, s2;
-
-		// one unicode character
-		s1 = "abč";
-		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
-		assertEquals("ab\\u010D", s2);
-
-		// two lines, more than one unicode character
-		s1 = "abč " + newLine + "  d  éεﻚ f ";
-		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
-		assertEquals("ab\\u010D \\r\\n  \\" + newLine + "d  \\u00E9\\u03B5\\uFEDA f ", s2);
-	}
+//	public void testSpecialChars() {
+//		String s1, s2;
+//
+//		// one unicode character
+//		s1 = "abč";
+//		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
+//		assertEquals("ab\\u010D", s2);
+//
+//		// two lines, more than one unicode character
+//		s1 = "abč " + newLine + "  d  éεﻚ f ";
+//		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
+//		assertEquals("ab\\u010D \\r\\n  \\" + newLine + "d  \\u00E9\\u03B5\\uFEDA f ", s2);
+//	}
 
 	public void testSideEffects() {
 		String s1, s2;
