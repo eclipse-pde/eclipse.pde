@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.ischema;
 
 import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangeProvider;
@@ -154,11 +153,18 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	ISchemaInclude[] getIncludes();
 
 	/**
-	 * Returns whether the root schema element ( the <exension> element)
+	 * Returns whether the root schema element (the <extension> element)
 	 * has been marked deprecated, making this schema deprecated.
 	 * @return true if this schema is deprecated
 	 */
 	public boolean isDeperecated();
+
+	/**
+	 * Returns whether the root schema element (the <extension> element)
+	 * has been marked internal, making this schema internal.
+	 * @return true if this schema is internal
+	 */
+	public boolean isInternal();
 
 	/**
 	 * Returns replacement schema in case this one is deprecated.

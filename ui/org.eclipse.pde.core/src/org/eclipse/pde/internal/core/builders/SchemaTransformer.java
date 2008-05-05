@@ -119,6 +119,11 @@ public class SchemaTransformer {
 				fWriter.print(", use <i>" + suggestion + "</i> as a replacement."); //$NON-NLS-1$ //$NON-NLS-2$
 			fWriter.println("</div>"); //$NON-NLS-1$
 		}
+		if (fSchema.isInternal()) {
+			fWriter.print("<div style=\"border: 1px solid #990000; padding: 5px; text-align: center; color: red;\">"); //$NON-NLS-1$
+			fWriter.print("This extension point is internal"); //$NON-NLS-1$
+			fWriter.println("</div>"); //$NON-NLS-1$
+		}
 		fWriter.println("<p></p>"); //$NON-NLS-1$
 		fWriter.print("<h6 class=\"CaptionFigColumn SchemaHeader\">Identifier: </h6>"); //$NON-NLS-1$
 		fWriter.print(fSchema.getQualifiedPointId());

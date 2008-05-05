@@ -1016,4 +1016,13 @@ public class Schema extends PlatformObject implements ISchema {
 		return null;
 	}
 
+	public boolean isInternal() {
+		Iterator it = fElements.iterator();
+		while (it.hasNext()) {
+			Object next = it.next();
+			if (next instanceof SchemaRootElement)
+				return ((SchemaRootElement) next).isInternal();
+		}
+		return false;
+	}
 }
