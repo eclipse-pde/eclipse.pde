@@ -379,11 +379,22 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return;
 		}
 		String xml = null;
+		InputStream contents = null;
 		try {
-			xml = new String(Util.getInputStreamAsCharArray(((IFile)file).getContents(), -1, IApiCoreConstants.UTF_8));
+			contents = ((IFile)file).getContents();
+			xml = new String(Util.getInputStreamAsCharArray(contents, -1, IApiCoreConstants.UTF_8));
 		}
 		catch(CoreException ce) {}
 		catch(IOException ioe) {}
+		finally {
+			if (contents != null) {
+				try {
+					contents.close();
+				} catch(IOException e) {
+					// ignore
+				}
+			}
+		}
 		if(xml == null) {
 			return;
 		}

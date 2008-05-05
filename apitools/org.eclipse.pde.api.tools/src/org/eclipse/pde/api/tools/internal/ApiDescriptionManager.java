@@ -259,9 +259,10 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 		File file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).
 			append(IApiCoreConstants.API_DESCRIPTION_XML_NAME).toFile();
 		if (file.exists()) {
+			BufferedInputStream stream = null;
 			try {
-				String xml = new String(Util.getInputStreamAsCharArray(
-					new BufferedInputStream(new FileInputStream(file)), -1, IApiCoreConstants.UTF_8));
+				stream = new BufferedInputStream(new FileInputStream(file));
+				String xml = new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
 				Element root = Util.parseDocument(xml);
 				if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
 					abort(ScannerMessages.ComponentXMLScanner_0, null); 
@@ -277,6 +278,14 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 			} catch (IOException e) {
 				abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_1,
 						new String[]{project.getElementName()}), e);
+			} finally {
+				if (stream != null) {
+					try {
+						stream.close();
+					} catch (IOException e) {
+						// ignore
+					}
+				}
 			}
 		}
 		return false;
