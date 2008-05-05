@@ -35,7 +35,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class DSPage extends PDEFormPage implements IModelChangedListener {
 
-	public static final String PAGE_ID = "dsPage";
+	public static final String PAGE_ID = Messages.DSPage_0;
 
 	private DSBlock fBlock;
 
@@ -78,12 +78,11 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 		// Inform the block
 		fBlock.modelChanged(event);
 	}
-	
+
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		// Page will be updated on refresh
 		markStale();
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -101,11 +100,8 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 				e = ((AbstractModel) model).getException();
 			}
 			// Create a formatted error page
-			createFormErrorContent(
-					managedForm,
-					"DS Load Failure",
-					"An error was encountered while parsing the DS XML file.",
-					e);
+			createFormErrorContent(managedForm, Messages.DSPage_1,
+					Messages.DSPage_2, e);
 			return;
 		}
 		// Create the rest of the actions in the form title area
@@ -116,13 +112,13 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 		if (title.length() > 0) {
 			form.setText(title);
 		} else {
-			form.setText("Definition");
+			form.setText(Messages.DSPage_3);
 		}
-		
+
 		// decorate the form heading
 		managedForm.getToolkit().decorateFormHeading(form.getForm());
 		form.setImage(SharedImages.getImage(SharedImages.DESC_DS));
-		
+
 		// Create the masters details block
 		fBlock.createContent(managedForm);
 		// Force the selection in the masters tree section to load the
@@ -134,7 +130,7 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
 		// IHelpContextIds.SIMPLE_CS_EDITOR);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -151,14 +147,14 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 			form.setText(PDETextHelper.translateReadText(newTitle));
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public ISelection getSelection() {
 		return fBlock.getSelection();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -173,8 +169,7 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 		}
 		// Switching into this page
 		// Get source page
-		IFormPage page = getPDEEditor().findPage(
-				DSInputContext.CONTEXT_ID);
+		IFormPage page = getPDEEditor().findPage(DSInputContext.CONTEXT_ID);
 		// Ensure we got the source page
 		if ((page instanceof PDESourcePage) == false) {
 			return;
@@ -209,7 +204,5 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 		// Select the node in the master tree viewer if defined
 		fBlock.getMasterSection().setFormInput(range);
 	}
-
-
 
 }

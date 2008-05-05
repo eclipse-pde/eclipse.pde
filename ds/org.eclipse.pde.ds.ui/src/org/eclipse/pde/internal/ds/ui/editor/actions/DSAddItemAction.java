@@ -16,6 +16,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSObject;
+import org.eclipse.pde.internal.ds.ui.Messages;
 
 public class DSAddItemAction extends Action {
 
@@ -31,7 +32,7 @@ public class DSAddItemAction extends Action {
 	 * 
 	 */
 	public DSAddItemAction() {
-		setText("Add");
+		setText(Messages.DSAddItemAction_0);
 		fType = -1;
 		fSelection = null;
 		fNewObject = null;

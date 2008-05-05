@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ds.ui.editor.details;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
+import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -52,9 +53,9 @@ public class DSProvideDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText("Definition");
+		fMainSection.setText(Messages.DSProvideDetails_0);
 		fMainSection
-				.setDescription("Specify the service's provided interface:");
+				.setDescription(Messages.DSProvideDetails_1);
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
@@ -75,7 +76,7 @@ public class DSProvideDetails extends DSAbstractDetails {
 
 		// Attribute: title
 		fInterface = new FormEntry(mainSectionClient, getToolkit(),
-				"Interface*:", SWT.NONE);
+				Messages.DSProvideDetails_2, SWT.NONE);
 
 		// Bind widgets
 		getToolkit().paintBordersFor(mainSectionClient);
@@ -108,7 +109,7 @@ public class DSProvideDetails extends DSAbstractDetails {
 		}
 
 		if (fProvide.getInterface() == null) {
-			fInterface.setValue("", true);
+			fInterface.setValue("", true); //$NON-NLS-1$
 		} else {
 			// Attribute: interface
 			fInterface.setValue(fProvide.getInterface(), true);

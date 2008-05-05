@@ -17,6 +17,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
+import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -75,8 +76,8 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText("Definition");
-		fMainSection.setDescription("Specify the Property attributes");
+		fMainSection.setText(Messages.DSPropertyDetails_0);
+		fMainSection.setDescription(Messages.DSPropertyDetails_1);
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -94,15 +95,15 @@ public class DSPropertyDetails extends DSAbstractDetails {
 				.createSectionClientGridLayout(false, 2));
 
 		// Attribute: title
-		fName = new FormEntry(mainSectionClient, getToolkit(), "Name*:",
+		fName = new FormEntry(mainSectionClient, getToolkit(), Messages.DSPropertyDetails_2,
 				SWT.NONE);
 
 		// Attribute: value
-		fValue = new FormEntry(mainSectionClient, getToolkit(), "Value:",
+		fValue = new FormEntry(mainSectionClient, getToolkit(), Messages.DSPropertyDetails_3,
 				SWT.NONE);
 
 		// Attribute: type
-		fType = new FormEntry(mainSectionClient, getToolkit(), "Type:",
+		fType = new FormEntry(mainSectionClient, getToolkit(), Messages.DSPropertyDetails_4,
 				SWT.NONE);
 
 		// description: Content (Element)
@@ -133,7 +134,7 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		GridData data = null;
 		// Create the label
 		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
-		Label label = getToolkit().createLabel(parent, "Body: ", SWT.WRAP);
+		Label label = getToolkit().createLabel(parent, Messages.DSPropertyDetails_5, SWT.WRAP);
 		label.setForeground(foreground);
 		int style = GridData.VERTICAL_ALIGN_BEGINNING
 				| GridData.HORIZONTAL_ALIGN_END;
@@ -242,7 +243,7 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		if (fProperty.getPropertyName() != null) {
 			fName.setValue(fProperty.getPropertyName(), true);
 		} else {
-			fName.setValue("");
+			fName.setValue(""); //$NON-NLS-1$
 		}
 		fName.setEditable(editable);
 
@@ -250,7 +251,7 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		if (fProperty.getPropertyValue() != null) {
 			fValue.setValue(fProperty.getPropertyValue(), true);
 		} else {
-			fValue.setValue("", true);
+			fValue.setValue("", true); //$NON-NLS-1$
 		}
 		fValue.setEditable(editable);
 
@@ -258,13 +259,13 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		if (fProperty.getPropertyType() != null) {
 			fType.setValue(fProperty.getPropertyType(), true);
 		} else {
-			fType.setValue("", true);
+			fType.setValue("", true); //$NON-NLS-1$
 		}
 		fType.setEditable(editable);
 
 		if (fProperty.getPropertyElemBody() == null) {
 			fBlockEvents = true;
-			fContentViewer.getDocument().set("");
+			fContentViewer.getDocument().set(""); //$NON-NLS-1$
 			fBlockEvents = false;
 		} else {
 			// description: Content (Element)

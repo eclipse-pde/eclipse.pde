@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ds.ui.editor.details;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
+import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -54,9 +55,9 @@ public class DSImplementationDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText("Definition");
+		fMainSection.setText(Messages.DSImplementationDetails_0);
 		fMainSection
-				.setDescription("Specify the service's implementation class:");
+				.setDescription(Messages.DSImplementationDetails_1);
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
@@ -77,7 +78,7 @@ public class DSImplementationDetails extends DSAbstractDetails {
 				.createSectionClientGridLayout(false, 2));
 
 		// Attribute: title
-		fTitle = new FormEntry(mainSectionClient, getToolkit(), "Title*:",
+		fTitle = new FormEntry(mainSectionClient, getToolkit(), Messages.DSImplementationDetails_2,
 				SWT.NONE);
 		
 		// Bind widgets
@@ -113,7 +114,7 @@ public class DSImplementationDetails extends DSAbstractDetails {
 		}
 
 		if (fImplementation.getClassName() == null) {
-			fTitle.setValue("", true);
+			fTitle.setValue("", true); //$NON-NLS-1$
 		} else {
 			// Attribute: title
 			fTitle.setValue(fImplementation.getClassName(), true);

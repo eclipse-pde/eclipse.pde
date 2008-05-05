@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSRoot;
 import org.eclipse.pde.internal.ds.core.IDSService;
+import org.eclipse.pde.internal.ds.ui.Messages;
 
 public class DSRemoveItemAction extends Action {
 	private IDSObject fItem;
@@ -27,7 +28,7 @@ public class DSRemoveItemAction extends Action {
 	 * 
 	 */
 	public DSRemoveItemAction() {
-		setText("Delete");
+		setText(Messages.DSRemoveItemAction_0);
 		fItem = null;
 	}
 
@@ -59,10 +60,9 @@ public class DSRemoveItemAction extends Action {
 				fObjectToSelect = parent;
 				// Remove the subitem
 				item.removeChild((IDSProvide) fItem);
-			}  
+			}
 		}
 	}
-
 
 	/**
 	 * @return

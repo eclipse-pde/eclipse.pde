@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ds.ui.editor.details;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ds.core.IDSReference;
+import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -79,9 +80,9 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText("Definition");
+		fMainSection.setText(Messages.DSReferenceDetails_0);
 		fMainSection
-				.setDescription("Specify the reference's component attributes:");
+				.setDescription(Messages.DSReferenceDetails_1);
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
@@ -101,43 +102,43 @@ public class DSReferenceDetails extends DSAbstractDetails {
 				.createSectionClientGridLayout(false, 2));
 
 		// Attribute: name
-		fName = new FormEntry(mainSectionClient, getToolkit(), "Name*:",
+		fName = new FormEntry(mainSectionClient, getToolkit(), Messages.DSReferenceDetails_2,
 				SWT.NONE);
 
 		// Attribute: Interface
 		fInterface = new FormEntry(mainSectionClient, getToolkit(),
-				"Interface*:", SWT.NONE);
+				Messages.DSReferenceDetails_3, SWT.NONE);
 
 		// Attribute: Cardinality
 		fLabelCardinality = getToolkit().createLabel(mainSectionClient,
-				"Cardinality:", SWT.WRAP);
+				Messages.DSReferenceDetails_4, SWT.WRAP);
 		fLabelCardinality.setForeground(foreground);
 		fCardinality = new ComboPart();
 		fCardinality.createControl(mainSectionClient, getToolkit(),
 				SWT.READ_ONLY);
 
-		String[] itemsCard = new String[] { "0..1", "0..n", "1..1", "1..n" };
+		String[] itemsCard = new String[] { "0..1", "0..n", "1..1", "1..n" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		fCardinality.setItems(itemsCard);
 
 		// Attribute: Target
-		fTarget = new FormEntry(mainSectionClient, getToolkit(), "Target:",
+		fTarget = new FormEntry(mainSectionClient, getToolkit(), Messages.DSReferenceDetails_9,
 				SWT.NONE);
 
 		// Attribute: Bind
-		fBind = new FormEntry(mainSectionClient, getToolkit(), "Bind:",
+		fBind = new FormEntry(mainSectionClient, getToolkit(), Messages.DSReferenceDetails_10,
 				SWT.NONE);
 
 		// Attribute: UnBind
-		fUnBind = new FormEntry(mainSectionClient, getToolkit(), "Unbind:",
+		fUnBind = new FormEntry(mainSectionClient, getToolkit(), Messages.DSReferenceDetails_11,
 				SWT.NONE);
 
 		// Attribute: Policy
-		fLabelPolicy = getToolkit().createLabel(mainSectionClient, "Policy:",
+		fLabelPolicy = getToolkit().createLabel(mainSectionClient, Messages.DSReferenceDetails_12,
 				SWT.WRAP);
 		fLabelPolicy.setForeground(foreground);
 		fPolicy = new ComboPart();
 		fPolicy.createControl(mainSectionClient, getToolkit(), SWT.READ_ONLY);
-		String[] itemsPolicy = new String[] { "static", "dynamic" };
+		String[] itemsPolicy = new String[] { "static", "dynamic" }; //$NON-NLS-1$ //$NON-NLS-2$
 		fPolicy.setItems(itemsPolicy);
 
 		// Bind widgets
@@ -241,7 +242,7 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		}
 
 		if (fReference.getReferenceName() == null) {
-			fName.setValue("");
+			fName.setValue(""); //$NON-NLS-1$
 		} else {
 			// Attribute: name
 			fName.setValue(fReference.getReferenceName(), true);
@@ -249,7 +250,7 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		fName.setEditable(editable);
 
 		if (fReference.getReferenceInterface() == null) {
-			fInterface.setValue("");
+			fInterface.setValue(""); //$NON-NLS-1$
 		} else {
 			// Attribute: Interface
 			fInterface.setValue(fReference.getReferenceInterface(), true);

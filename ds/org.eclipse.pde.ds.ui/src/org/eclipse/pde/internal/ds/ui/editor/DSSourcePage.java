@@ -8,6 +8,7 @@ import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
+import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
@@ -110,20 +111,7 @@ public class DSSourcePage extends XMLSourcePage {
 			return adaptRange(((IDocumentTextNode) range).getEnclosingElement());
 		} else if (range instanceof IDocumentElementNode) {
 			// Element
-			// if (range instanceof IDSRoot) {
 			return range;
-			// } else if (range instanceof IDSImplementation) {
-			// return range;
-			// } else if (range instanceof IDSSubItemObject) {
-			// return range;
-			// } else if (range instanceof IDSIntro) {
-			// return range;
-			// } else if (range instanceof IDSPerformWhen) {
-			// return range;
-			// } else {
-			// return adaptRange(((IDocumentElementNode) range)
-			// .getParentNode());
-			// }
 		}
 		return null;
 	}
@@ -134,7 +122,7 @@ public class DSSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.ui.part.EditorPart#setPartName(java.lang.String)
 	 */
 	protected void setPartName(String partName) {
-		super.setPartName("Source");
+		super.setPartName(Messages.DSSourcePage_0); //$NON-NLS-1$
 	}
 
 }

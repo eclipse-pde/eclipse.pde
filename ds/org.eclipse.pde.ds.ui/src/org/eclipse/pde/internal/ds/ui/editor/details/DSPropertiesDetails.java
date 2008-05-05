@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ds.ui.editor.details;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
+import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -51,8 +52,8 @@ public class DSPropertiesDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText("Definition");
-		fMainSection.setDescription("Specify the properties' entry: ");
+		fMainSection.setText(Messages.DSPropertiesDetails_0);
+		fMainSection.setDescription(Messages.DSPropertiesDetails_1);
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
@@ -72,7 +73,7 @@ public class DSPropertiesDetails extends DSAbstractDetails {
 				.createSectionClientGridLayout(false, 2));
 
 		// Attribute: title
-		fEntry = new FormEntry(mainSectionClient, getToolkit(), "Entry*:",
+		fEntry = new FormEntry(mainSectionClient, getToolkit(), Messages.DSPropertiesDetails_2,
 				SWT.NONE);
 
 		// Bind widgets
@@ -106,7 +107,7 @@ public class DSPropertiesDetails extends DSAbstractDetails {
 		}
 
 		if (fProperties.getEntry() == null) {
-			fEntry.setValue("", true);
+			fEntry.setValue("", true); //$NON-NLS-1$
 		} else {
 			// Attribute: title
 			fEntry.setValue(fProperties.getEntry(), true);

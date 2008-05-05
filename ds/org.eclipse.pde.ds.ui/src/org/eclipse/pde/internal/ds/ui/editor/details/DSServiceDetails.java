@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ds.ui.editor.details;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ds.core.IDSService;
+import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -56,8 +57,8 @@ public class DSServiceDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText("Definition");
-		fMainSection.setDescription("Specify the service's attributes:");
+		fMainSection.setText(Messages.DSServiceDetails_0);
+		fMainSection.setDescription(Messages.DSServiceDetails_1);
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
@@ -78,7 +79,7 @@ public class DSServiceDetails extends DSAbstractDetails {
 
 		// Attribute: LabelServiceFactory
 		fLabelServiceFactory = getToolkit().createLabel(mainSectionClient,
-				"ServiceFactory:", SWT.WRAP);
+				Messages.DSServiceDetails_2, SWT.WRAP);
 		fLabelServiceFactory.setForeground(foreground);
 
 		// Attribute: ServiceFactory
@@ -86,7 +87,7 @@ public class DSServiceDetails extends DSAbstractDetails {
 		fServiceFactory.createControl(mainSectionClient, getToolkit(),
 				SWT.READ_ONLY);
 		Control control = fServiceFactory.getControl();
-		String[] items = new String[] { "true", "false" };
+		String[] items = new String[] { "true", "false" }; //$NON-NLS-1$ //$NON-NLS-2$
 		fServiceFactory.setItems(items);
 
 		// Bind widgets

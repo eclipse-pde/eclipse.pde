@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ds.ui.editor.details;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -67,9 +68,8 @@ public class DSComponentDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText("Definition");
-		fMainSection
-				.setDescription("Specify the service's component attributes:");
+		fMainSection.setText(Messages.DSComponentDetails_0);
+		fMainSection.setDescription(Messages.DSComponentDetails_1);
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
@@ -89,26 +89,26 @@ public class DSComponentDetails extends DSAbstractDetails {
 				.createSectionClientGridLayout(false, 2));
 
 		// Attribute: name
-		fName = new FormEntry(mainSectionClient, getToolkit(), "Name*:",
-				SWT.NONE);
+		fName = new FormEntry(mainSectionClient, getToolkit(),
+				Messages.DSComponentDetails_2, SWT.NONE);
 
 		// Attribute: factory
-		fFactory = new FormEntry(mainSectionClient, getToolkit(), "Factory:",
-				SWT.NONE);
+		fFactory = new FormEntry(mainSectionClient, getToolkit(),
+				Messages.DSComponentDetails_3, SWT.NONE);
 
 		// Attribute: Enabled
-		fLabelEnabled = getToolkit().createLabel(mainSectionClient, "Enabled:",
-				SWT.WRAP);
+		fLabelEnabled = getToolkit().createLabel(mainSectionClient,
+				Messages.DSComponentDetails_4, SWT.WRAP);
 		fLabelEnabled.setForeground(foreground);
 		fEnabled = new ComboPart();
 		fEnabled.createControl(mainSectionClient, getToolkit(), SWT.READ_ONLY);
 		Control control = fEnabled.getControl();
-		String[] items = new String[] { "true", "false" };
+		String[] items = new String[] { "true", "false" }; //$NON-NLS-1$ //$NON-NLS-2$
 		fEnabled.setItems(items);
 
 		// Attribute: Immediate
 		fLabelImmediate = getToolkit().createLabel(mainSectionClient,
-				"Immediate:", SWT.WRAP);
+				Messages.DSComponentDetails_7, SWT.WRAP);
 		fLabelImmediate.setForeground(foreground);
 		fImmediate = new ComboPart();
 		fImmediate
@@ -184,7 +184,7 @@ public class DSComponentDetails extends DSAbstractDetails {
 
 		if (fComponent.getAttributeName() == null) {
 			// Attribute: name
-			fName.setValue("", true);
+			fName.setValue("", true); //$NON-NLS-1$
 		} else {
 			// Attribute: name
 			fName.setValue(fComponent.getAttributeName(), true);
@@ -192,7 +192,7 @@ public class DSComponentDetails extends DSAbstractDetails {
 		fName.setEditable(editable);
 
 		if (fComponent.getFactory() == null) {
-			fFactory.setValue("", true);
+			fFactory.setValue("", true); //$NON-NLS-1$
 		} else {
 			// Attribute: name
 			fFactory.setValue(fComponent.getFactory(), true);
