@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
-public interface IDSReference {
+public interface IDSReference extends IDSObject {
 
 	public void setReferenceName(String name);
 

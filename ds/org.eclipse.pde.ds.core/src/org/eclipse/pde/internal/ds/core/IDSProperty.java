@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
-public interface IDSProperty {
+public interface IDSProperty extends IDSObject {
 
 	public String getPropertyName();
 

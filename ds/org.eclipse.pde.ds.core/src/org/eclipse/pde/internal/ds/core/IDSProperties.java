@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
-public interface IDSProperties {
+public interface IDSProperties extends IDSObject {
 
 	public void setEntry(String entry);
 

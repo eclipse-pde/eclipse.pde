@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
-public interface IDSRoot {
+public interface IDSRoot extends IDSObject {
 
 	public void setAttributeName(String name);
 
@@ -32,4 +32,5 @@ public interface IDSRoot {
 	public void removeChild(IDSObject obj);
 
 	public void moveItem(IDSObject item, int newRelativeIndex);
+
 }

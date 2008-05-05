@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
-public interface IDSService {
+public interface IDSService extends IDSObject {
 
 	public void setServiceFactory(boolean bool);
 

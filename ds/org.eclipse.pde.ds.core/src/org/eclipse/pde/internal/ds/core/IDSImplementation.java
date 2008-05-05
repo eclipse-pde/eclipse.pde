@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
-public interface IDSImplementation {
+public interface IDSImplementation extends IDSObject {
 
 	public void setClassName(String className);
 

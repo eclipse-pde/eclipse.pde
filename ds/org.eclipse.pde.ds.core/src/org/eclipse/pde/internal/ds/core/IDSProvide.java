@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
-public interface IDSProvide {
+public interface IDSProvide extends IDSObject {
 
 	public void setInterface(String interfaceName);
 

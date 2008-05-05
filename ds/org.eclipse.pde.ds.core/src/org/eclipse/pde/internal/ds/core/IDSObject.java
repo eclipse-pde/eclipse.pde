@@ -53,4 +53,6 @@ public interface IDSObject extends IDocumentElementNode {
 
 	public abstract boolean descendsFrom(DSObject obj);
 	
+	
+	public int getChildNodeCount(Class clazz);
 }
