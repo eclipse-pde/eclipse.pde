@@ -186,10 +186,34 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param resource
 	 */
 	public static void cleanupMarkers(IResource resource) {
+		cleanupUsageMarkers(resource);
+		cleanupCompatibiltiyMarkers(resource);
+		cleanupUnsupportedTagMarkers(resource);
+	}
+	
+	/**
+	 * Cleans up unsupported Javadoc tag markers on the specified resource
+	 * @param resource
+	 */
+	private static void cleanupUnsupportedTagMarkers(IResource resource) {
+		try {
+			if(DEBUG) {
+				System.out.println("cleaning unsupported tag problems"); //$NON-NLS-1$
+			}
+			resource.deleteMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
+			ApiPlugin.log(e.getStatus());
+		}
+	}
+	
+	/**
+	 * Cleans up only API compatibility markers on the given {@link IResource}
+	 * @param resource
+	 */
+	private static void cleanupCompatibiltiyMarkers(IResource resource) {
 		try {
 			if (resource != null && resource.isAccessible()) {
 				resource.deleteMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-				resource.deleteMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				resource.deleteMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				if (resource.getType() == IResource.PROJECT) {
 					// on full builds
@@ -202,16 +226,15 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	}
 	
 	/**
-	 * Cleans up unsupported Javadoc tag markers on the specified resource
+	 * cleans up only API usage markers from the given {@link IResource}
 	 * @param resource
 	 */
-	private void cleanupUnsupportedTagMarkers(IResource resource) {
+	private static void cleanupUsageMarkers(IResource resource) {
 		try {
-			if(DEBUG) {
-				System.out.println("cleaning unsupported tag problems"); //$NON-NLS-1$
+			if (resource != null && resource.isAccessible()) {
+				resource.deleteMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			}
-			resource.deleteMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
+		} catch(CoreException e) {
 			ApiPlugin.log(e.getStatus());
 		}
 	}
@@ -557,10 +580,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if(apiComponent == null) {
 					return;
 				}
-				String[] typenames = getFullyQualifiedNames(fTypesToCheck, false, localMonitor);
-				String[] changedtypes = getFullyQualifiedNames(fChangedTypes, true, localMonitor);
+				List tnames = new ArrayList(fTypesToCheck.size()),
+					 cnames = new ArrayList(fChangedTypes.size());
+				collectAllQualifiedNames(fTypesToCheck, fChangedTypes, tnames, cnames, localMonitor);
 				updateMonitor(localMonitor, 1);
-				fAnalyzer.analyzeComponent(fBuildState, profile, apiComponent, typenames, changedtypes, localMonitor);
+				fAnalyzer.analyzeComponent(fBuildState, profile, apiComponent, (String[])tnames.toArray(new String[tnames.size()]), (String[])cnames.toArray(new String[cnames.size()]), localMonitor);
 				updateMonitor(localMonitor, 1);
 			}
 		}
@@ -568,23 +592,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	
 	/**
 	 * Returns an array of type names, and cleans up markers for the specified resource
-	 * @param files the listing of {@link IFile}s to get qualified names from
-	 * @param cleantagsonly if only unsupported tag problems should be cleaned
+	 * @param alltypes the listing of {@link IFile}s to get qualified names from
+	 * @param changedtypes the listing of {@link IFile}s that have actually changed (from the {@link IResourceDelta}
+	 * @param tnames the list to collect all type names into (including inner member names)
+	 * @param cnames the list to collect the changed type names into
 	 * @param monitor
-	 * @return array of qualified type names or an empty list, never <code>null</code>
 	 */
-	private String[] getFullyQualifiedNames(HashSet files, boolean cleantagsonly, IProgressMonitor monitor) {
-		ArrayList elements = new ArrayList(files.size());
-		IType[] allTypes = null;
-		for (Iterator iterator = files.iterator(); iterator.hasNext(); ) {
-			IFile file = (IFile) iterator.next();
-			if(cleantagsonly) {
-				cleanupUnsupportedTagMarkers(file);
-			}
-			else {
-				cleanupMarkers(file);
-			}
-			updateMonitor(monitor, 0);
+	private void collectAllQualifiedNames(final HashSet alltypes, final HashSet changedtypes, List tnames, List cnames, final IProgressMonitor monitor) {
+		IType[] types = null;
+		IFile file = null;
+		for (Iterator iterator = alltypes.iterator(); iterator.hasNext(); ) {
+			file = (IFile) iterator.next();
 			ICompilationUnit unit = (ICompilationUnit) JavaCore.create(file);
 			if(!unit.exists()) {
 				continue;
@@ -593,17 +611,26 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			if(type == null) {
 				continue;
 			}
+			updateMonitor(monitor, 0);
+			if(changedtypes.contains(file)) {
+				cleanupUnsupportedTagMarkers(file);
+				updateMonitor(monitor, 0);
+				cleanupCompatibiltiyMarkers(file);
+				updateMonitor(monitor, 0);
+				cnames.add(type.getFullyQualifiedName());
+			}
 			try {
-				allTypes = unit.getAllTypes();
-				for (int i = 0; i < allTypes.length; i++) {
-					elements.add(allTypes[i].getFullyQualifiedName('$'));
+				cleanupUsageMarkers(file);
+				updateMonitor(monitor, 0);
+				types = unit.getAllTypes();
+				for (int i = 0; i < types.length; i++) {
+					tnames.add(types[i].getFullyQualifiedName('$'));
 				}
 			} catch (JavaModelException e) {
 				ApiPlugin.log(e.getStatus());
 			}
 			updateMonitor(monitor, 0);
 		}
-		return (String[]) elements.toArray(new String[elements.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -614,7 +641,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.CleaningAPIDescription, new String[] {fCurrentProject.getName()}), 2);
 		try {
 			// clean up all existing markers
-			cleanupMarkers(fCurrentProject);
+			cleanupUsageMarkers(fCurrentProject);
+			cleanupCompatibiltiyMarkers(fCurrentProject);
+			cleanupUnsupportedTagMarkers(fCurrentProject);
 			updateMonitor(localmonitor, 1);
 			//clean up the .api_settings
 			cleanupApiDescription(fCurrentProject);

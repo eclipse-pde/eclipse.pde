@@ -158,9 +158,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			//compatibility checks
 			if(reference != null) {
 				localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, reference.getId()));
-				if(typenames != null) {
-					for(int i = 0; i < typenames.length; i++) {
-						checkCompatibility(typenames[i], reference, component);
+				if(changedtypes != null) {
+					for(int i = 0; i < changedtypes.length; i++) {
+						checkCompatibility(changedtypes[i], reference, component);
 						updateMonitor(localMonitor);
 					}
 				}
@@ -170,7 +170,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 			}
 			//usage checks
-			checkApiUsage(component, getSearchScope(component, typenames), localMonitor);
+			checkApiUsage(component, typenames, localMonitor);
 			updateMonitor(localMonitor);
 			//version checks
 			checkApiComponentVersion(reference, component);
@@ -184,6 +184,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 
+	/**
+	 * Creates and AST for the given {@link ITypeRoot} at the given offset
+	 * @param root
+	 * @param offset
+	 * @return
+	 */
 	private CompilationUnit createAST(ITypeRoot root, int offset) {
 		if(fJavaProject == null) {
 			return null;
@@ -424,16 +430,17 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * 
 	 * @param profile profile being analyzed
 	 * @param component component being built
-	 * @param scope scope being built
+	 * @param typenames
 	 * @param monitor progress monitor
 	 */
-	private void checkApiUsage(final IApiComponent component, final IApiSearchScope scope, IProgressMonitor monitor) {
+	private void checkApiUsage(final IApiComponent component, final String[] typenames, IProgressMonitor monitor) {
 		if(ignoreApiUsageScan()) {
 			if(DEBUG) {
 				System.out.println("Ignoring API usage scan"); //$NON-NLS-1$
 			}
 			return;
 		} 
+		IApiSearchScope scope = getSearchScope(component, typenames);
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {component.getId()}), 2);
 		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
 		try {
