@@ -228,7 +228,7 @@ public class Messages extends NLS {
 					case IDelta.ADDED :
 						switch(delta.getFlags()) {
 							case IDelta.TYPE_ARGUMENTS :
-								return 39;
+								return 18;
 							case IDelta.VALUE :
 								return 40;
 						}
@@ -286,6 +286,8 @@ public class Messages extends NLS {
 								return 57;
 							case IDelta.TYPE_PARAMETERS :
 								return 58;
+							case IDelta.TYPE_ARGUMENTS :
+								return 18;
 						}
 						break;
 					case IDelta.CHANGED :
@@ -317,6 +319,8 @@ public class Messages extends NLS {
 								return 64;
 							case IDelta.UNCHECKED_EXCEPTION :
 								return 65;
+							case IDelta.TYPE_ARGUMENTS :
+								return 18;
 						}
 						break;
 					case IDelta.CHANGED :

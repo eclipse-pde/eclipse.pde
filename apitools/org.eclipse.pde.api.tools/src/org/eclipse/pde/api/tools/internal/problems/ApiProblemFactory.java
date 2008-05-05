@@ -323,6 +323,7 @@ public class ApiProblemFactory {
 				switch(kind) {
 					case IApiProblem.API_PROFILE_MISSING: return 1;
 				}
+				break;
 			}
 			case IApiProblem.CATEGORY_SINCETAGS: {
 				switch(kind) {
@@ -330,6 +331,7 @@ public class ApiProblemFactory {
 					case IApiProblem.SINCE_TAG_MALFORMED: return 3;
 					case IApiProblem.SINCE_TAG_MISSING: return 4;
 				}
+				break;
 			}
 			case IApiProblem.CATEGORY_VERSION: {
 				switch(kind) {
@@ -337,6 +339,7 @@ public class ApiProblemFactory {
 					case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE: return 6;
 					case IApiProblem.MINOR_VERSION_CHANGE: return 7;
 				}
+				break;
 			}
 			case IApiProblem.CATEGORY_USAGE: {
 				switch(kind) {
@@ -350,6 +353,7 @@ public class ApiProblemFactory {
 							case IApiProblem.CONSTRUCTOR_METHOD: return 110;
 							case IApiProblem.METHOD: return 111;
 						}
+						break;
 					}
 					case IApiProblem.API_LEAK: {
 						switch(flags) {
@@ -360,9 +364,11 @@ public class ApiProblemFactory {
 							case IApiProblem.LEAK_METHOD_PARAMETER: return 17;
 							case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: return 109;
 						}
+						break;
 					}
 					case IApiProblem.UNSUPPORTED_TAG_USE: return 112;
 				}
+				break;
 			}
 			case IApiProblem.CATEGORY_COMPATIBILITY: {
 				switch(kind) {
@@ -403,8 +409,8 @@ public class ApiProblemFactory {
 							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE: return 29;
 							case IDelta.TYPE_PARAMETER: return 32;
 							case IDelta.VALUE: return 36;
-							
 						}
+						break;
 					}
 					case IDelta.CHANGED: {
 						switch(element) {
@@ -434,6 +440,7 @@ public class ApiProblemFactory {
 							}
 						}
 						switch(flags) {
+							case IDelta.CLASS_BOUND: return 52;
 							case IDelta.CONTRACTED_SUPERCLASS_SET: return 53;
 							case IDelta.CONTRACTED_SUPERINTERFACES_SET: return 54;
 							case IDelta.DECREASE_ACCESS: return 55;
@@ -450,7 +457,9 @@ public class ApiProblemFactory {
 							case IDelta.TO_ENUM: return 78;
 							case IDelta.TO_INTERFACE: return 79;
 							case IDelta.VARARGS_TO_ARRAY: return 85;
+							case IDelta.TYPE_ARGUMENTS: return 124;
 						}
+						break;
 					}
 					case IDelta.REMOVED: {
 						switch(flags) {

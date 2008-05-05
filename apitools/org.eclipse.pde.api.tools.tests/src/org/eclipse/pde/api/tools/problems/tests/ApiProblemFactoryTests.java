@@ -18,8 +18,6 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * Tests various aspects of the {@link ApiProblemFactory}
  * 
@@ -153,18 +151,12 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * Tests getting (some of) the binary messages
 	 */
 	public void testGetBinaryMessages() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1,  
+		IApiProblem problem = ApiProblemFactory.newApiProblem(null, new String[] {"X", "X()"}, null, null, -1, -1, -1,  
 				IApiProblem.CATEGORY_COMPATIBILITY, IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.CONSTRUCTOR);
-		String message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be correct", message.startsWith(this.fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("The constructor {0}.{1} has been added", new String[0])));
+		validateProblem(2, problem);
 		problem = ApiProblemFactory.newApiProblem(null, new String[] {"X", "foo()"}, null, null, -1, -1, -1,  
 				IApiProblem.CATEGORY_COMPATIBILITY, IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
-		message = problem.getMessage();
-		assertNotNull("the message should not be null", message);
-		assertFalse("the message should be correct", message.startsWith(this.fDefaultMessage));
-		assertTrue("the message should be correct", message.equals(MessageFormat.format("Added method X.foo() in an interface that is intended to be implemented", new String[0])));
+		validateProblem(2, problem);
 	}
 	
 	/**

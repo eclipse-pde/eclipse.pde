@@ -27,9 +27,9 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 public class FieldDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
-		if (true) return new TestSuite(FieldDeltaTests.class);
+		if (false) return new TestSuite(FieldDeltaTests.class);
 		TestSuite suite = new TestSuite(FieldDeltaTests.class.getName());
-		suite.addTest(new FieldDeltaTests("test41"));
+		suite.addTest(new FieldDeltaTests("test42"));
 		return suite;
 	}
 
@@ -1054,6 +1054,27 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertTrue("Wrong restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertTrue("Wrong modifier", Util.isProtected(child.getModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Added type arguments List&lt;String&gt;
+	 */
+	public void test42() {
+		deployBundles("test42");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.TYPE_ARGUMENTS, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 }
