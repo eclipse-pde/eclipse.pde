@@ -651,7 +651,7 @@ public class ApiUseAnalyzer {
 	private IApiProblem createUsageProblem(int kind, int elementType, int flags, IReference reference) {
 		ILocation location = reference.getSourceLocation();
 		IReferenceTypeDescriptor refType = location.getType();
-		int lineNumber = location.getLineNumber();			
+		int lineNumber = location.getLineNumber();
 		ILocation resolvedLocation = reference.getResolvedLocation();
 		String typename = resolvedLocation.getType().getQualifiedName();
 		String ltypename = location.getType().getQualifiedName();
@@ -684,8 +684,10 @@ public class ApiUseAnalyzer {
 					case IElementDescriptor.T_METHOD: {
 						IMethodDescriptor method = (IMethodDescriptor) member;
 						String methodname = method.getName();
+						resolvedflags = IApiProblem.METHOD;
 						if(method.isConstructor()) {
 							methodname = method.getEnclosingType().getName();
+							resolvedflags = IApiProblem.CONSTRUCTOR_METHOD;
 						}
 						messageargs = new String[] {method.getEnclosingType().getQualifiedName(), ltypename, Signature.toString(method.getSignature(), methodname, null, false, false)};
 						break;
@@ -693,6 +695,7 @@ public class ApiUseAnalyzer {
 					case IElementDescriptor.T_FIELD: {
 						IFieldDescriptor field = (IFieldDescriptor) member;
 						messageargs = new String[] {field.getEnclosingType().getQualifiedName(), ltypename, field.getName()};
+						resolvedflags = IApiProblem.FIELD;
 						break;
 					}
 				}
@@ -731,19 +734,19 @@ public class ApiUseAnalyzer {
 									// ignore
 									return null;
 								}
-								String name = method.getName();
-								if(method.isConstructor()) {
-									name = method.getEnclosingType().getName();
-									resolvedflags = IApiProblem.LEAK_CONSTRUCTOR_PARAMETER;
-								}
-								messageargs = new String[] {
-										typename,
-										ltypename,
-										Signature.toString(method.getSignature(), name, null, false, false)};
 							}
+							String name = method.getName();
+							if(method.isConstructor()) {
+								name = method.getEnclosingType().getName();
+								resolvedflags = IApiProblem.LEAK_CONSTRUCTOR_PARAMETER;
+							}
+							messageargs = new String[] {
+									typename,
+									ltypename,
+									Signature.toString(method.getSignature(), name, null, false, false)};
 							break;
 						}
-					}				
+					}
 				} catch (CoreException e) {
 					// unable to retrieve API description
 					ApiPlugin.log(e.getStatus());
