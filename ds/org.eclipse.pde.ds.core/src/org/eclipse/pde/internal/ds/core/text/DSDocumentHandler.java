@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ds.core.text;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.NodeDocumentHandler;
 
 /**
@@ -26,7 +27,7 @@ public class DSDocumentHandler extends NodeDocumentHandler {
 	private DSModel fModel;
 
 	public DSDocumentHandler(DSModel model, boolean reconciling) {
-		super(reconciling, model.getFactory());
+		super(reconciling, (IDocumentNodeFactory) model.getFactory());
 		fModel = model;
 	}
 

@@ -48,6 +48,9 @@ public interface IDSObject extends IDocumentElementNode {
 	 * @return the parent of this object, or <code>null</code> if there is no
 	 *         parent.
 	 */
-	public abstract DSObject getParent();
+	public abstract IDSObject getParent();
+
+
+	public abstract boolean descendsFrom(DSObject obj);
 	
 }

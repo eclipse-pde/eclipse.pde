@@ -11,28 +11,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
-import org.eclipse.pde.internal.ds.core.text.DSImplementation;
-import org.eclipse.pde.internal.ds.core.text.DSProperties;
-import org.eclipse.pde.internal.ds.core.text.DSProperty;
-import org.eclipse.pde.internal.ds.core.text.DSProvide;
-import org.eclipse.pde.internal.ds.core.text.DSReference;
-import org.eclipse.pde.internal.ds.core.text.DSRoot;
-import org.eclipse.pde.internal.ds.core.text.DSService;
 
 public interface IDSDocumentFactory {
 
-	public abstract DSProvide createProvide();
+	public abstract IDSProvide createProvide();
 
-	public abstract DSProperty createProperty();
+	public abstract IDSProperty createProperty();
 
-	public abstract DSReference createReference();
+	public abstract IDSReference createReference();
 
-	public abstract DSService createService();
+	public abstract IDSService createService();
 
-	public abstract DSProperties createProperties();
+	public abstract IDSProperties createProperties();
 
-	public abstract DSImplementation createImplementation();
+	public abstract IDSImplementation createImplementation();
 
-	public abstract DSRoot createRoot();
+	public abstract IDSRoot createRoot();
 
 }

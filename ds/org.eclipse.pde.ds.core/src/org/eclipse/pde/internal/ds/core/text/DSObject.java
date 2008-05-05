@@ -150,9 +150,9 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	/**
 	 * @return the parent of this object, or <code>null</code> if there is no parent.
 	 */
-	public DSObject getParent() {
+	public IDSObject getParent() {
 		IDocumentElementNode parent = getParentNode();
-		return parent instanceof DSObject ? (DSObject) parent : null;
+		return parent instanceof IDSObject ? (IDSObject) parent : null;
 	}
 
 	/**
