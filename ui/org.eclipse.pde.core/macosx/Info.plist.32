@@ -34,7 +34,6 @@
 			-->
 			<string>-startup</string><string>../../../startup.jar</string>
 			<string>-keyring</string><string>~/.eclipse_keyring</string>
-			<string>-consoleLog</string>
 			<string>-showlocation</string>
 			<!-- WARNING:
 				If you try to add a single VM argument (-vmargs) here,
