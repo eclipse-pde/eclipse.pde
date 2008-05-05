@@ -103,7 +103,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 						for(int i = 0; i < tags.length; i++) {
 							completiontext = tags[i].getCompleteTag(type, member);
 							if(appliesToContext(jcontext.getDocument(), completiontext, tokenstart, (length > 0 ? length : 1))) {
-								list.add(new APIToolsJavadocCompletionProposal(corecontext, completiontext, tags[i].getTagLabel(), fImageHandle));
+								list.add(new APIToolsJavadocCompletionProposal(corecontext, completiontext, tags[i].getTagName(), fImageHandle));
 							}
 						}
 						return list;

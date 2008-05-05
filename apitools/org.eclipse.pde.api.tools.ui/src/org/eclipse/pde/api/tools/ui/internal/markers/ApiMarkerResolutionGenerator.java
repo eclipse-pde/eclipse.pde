@@ -11,7 +11,9 @@
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 
@@ -35,6 +37,14 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 		}
 		switch(marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1)) {
 			case IApiMarkerConstants.API_USAGE_MARKER_ID : {
+				int problemid = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, -1);
+				int flags  = ApiProblemFactory.getProblemFlags(problemid);
+				if(ApiProblemFactory.getProblemKind(problemid) == IApiProblem.API_LEAK &&
+						(flags == IApiProblem.LEAK_METHOD_PARAMETER || 
+						 flags == IApiProblem.LEAK_METHOD_PARAMETER ||
+						 flags == IApiProblem.LEAK_RETURN_TYPE)) {
+					return new IMarkerResolution[] {new FilterProblemResolution(marker), new AddNoReferenceTagResolution(marker)};
+				}
 				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
 			}
 			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID : {

@@ -55,6 +55,32 @@ public interface IApiJavadocTag {
 	public static final int MEMBER_CONSTRUCTOR = 0x1 << 5;
 	
 	/**
+	 * Constant representing the id of the @noreference Javadoc tag.
+	 * Value is: <code>org.eclipse.pde.api.tools.noreference</code>
+	 */
+	public static final String NO_REFERENCE_TAG_ID = "org.eclipse.pde.api.tools.noreference"; //$NON-NLS-1$
+	/**
+	 * Constant representing the id of the @noextend Javadoc tag.
+	 * Value is: <code>org.eclipse.pde.api.tools.noextend</code>
+	 */
+	public static final String NO_EXTEND_TAG_ID = "org.eclipse.pde.api.tools.noextend"; //$NON-NLS-1$
+	/**
+	 * Constant representing the id of the @noimplement Javadoc tag.
+	 * Value is: <code>org.eclipse.pde.api.tools.noimplement</code>
+	 */
+	public static final String NO_IMPLEMENT_TAG_ID = "org.eclipse.pde.api.tools.noimplement"; //$NON-NLS-1$
+	/**
+	 * Constant representing the id of the @nooverride Javadoc tag.
+	 * Value is: <code>org.eclipse.pde.api.tools.nooverride</code>
+	 */
+	public static final String NO_OVERRIDE_TAG_ID = "org.eclipse.pde.api.tools.nooverride"; //$NON-NLS-1$
+	/**
+	 * Constant representing the id of the @noinstantiate Javadoc tag.
+	 * Value is: <code>org.eclipse.pde.api.tools.noinstantiate</code>
+	 */
+	public static final String NO_INSTANTIATE_TAG_ID = "org.eclipse.pde.api.tools.noinstantiate"; //$NON-NLS-1$
+	
+	/**
 	 * Returns the restriction modifier for the tag, or 
 	 * {@link RestrictionModifiers#NO_RESTRICTIONS} if the restriction 
 	 * cannot be parsed into an integer. 
@@ -75,7 +101,7 @@ public interface IApiJavadocTag {
 	 * </pre>
 	 * @return the formatted javadoc tag label
 	 */
-	public String getTagLabel();
+	public String getTagName();
 	
 	/**
 	 * Returns the complete formatted javadoc tag for an element of the specified

@@ -408,7 +408,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					IApiProblem[] tagProblems = tv.getTagProblems();
 					for (int i = 0; i < tagProblems.length; i++) {
 						IApiProblem apiProblem = tagProblems[i];
-						this.addProblem(apiProblem);
+						addProblem(apiProblem);
 					}
 				}
 			}
@@ -446,7 +446,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}		
 			if (illegal.length > 0) {
 				for (int i = 0; i < illegal.length; i++) {
-					this.addProblem(illegal[i]);
+					addProblem(illegal[i]);
 				}
 			}
 			updateMonitor(localMonitor);
@@ -668,7 +668,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			ApiPlugin.log(e);
 		}
 		if(problem != null) {
-			this.addProblem(problem);
+			addProblem(problem);
 		}
 	}
 	
@@ -905,7 +905,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 			}
 			IApiProblem problem = createCompatibilityProblem(delta, reference, component);
-			if(this.addProblem(problem)) {
+			if(addProblem(problem)) {
 				fBuildState.addBreakingChange(delta);
 			}
 		}
@@ -977,7 +977,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 		}
 		if(problem != null) {
-			this.addProblem(problem);
+			addProblem(problem);
 		}
 	}
 	
@@ -1115,7 +1115,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				-1,  
 				IElementDescriptor.T_RESOURCE, 
 				IApiProblem.API_PROFILE_MISSING);
-		this.addProblem(problem);
+		addProblem(problem);
 	}
 	
 	/**
@@ -1158,9 +1158,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		return null;
 	}
 	
+	/**
+	 * Adds the problem to the list of problems iff it is not <code>null</code> and not filtered
+	 * @param problem
+	 * @return
+	 */
 	private boolean addProblem(IApiProblem problem) {
-		if (problem == null || isProblemFiltered(problem)) return false;
-		return this.fProblems.add(problem);
+		if (problem == null || isProblemFiltered(problem)) {
+			return false;
+		}
+		return fProblems.add(problem);
 	}
 	/**
 	 * Returns if the given {@link IApiProblem} should be filtered from having a problem marker created for it

@@ -118,7 +118,7 @@ public class TagValidator extends ASTVisitor {
 		IApiJavadocTag[] alltags = ApiPlugin.getJavadocTagManager().getAllTags();
 		HashSet invalidtags = new HashSet(alltags.length);
 		for(int i = 0; i < alltags.length; i++) {
-			invalidtags.add(alltags[i].getTagLabel());
+			invalidtags.add(alltags[i].getTagName());
 		}
 		for(int i = 0; i < validtags.length; i++) {
 			invalidtags.remove(validtags[i]);

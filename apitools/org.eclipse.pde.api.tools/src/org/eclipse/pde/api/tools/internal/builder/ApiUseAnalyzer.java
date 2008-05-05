@@ -348,7 +348,7 @@ public class ApiUseAnalyzer {
 			
 			String prefKey = null;
 			ILocation resolvedLocation = reference.getResolvedLocation();
-			String qualifiedTypeName = resolvedLocation.getType().getQualifiedName();
+			String typename = resolvedLocation.getType().getName();
 			IMemberDescriptor member = resolvedLocation.getMember();
 			String[] messageargs = null;
 			//modifiable flags that are sent to the problem creator 
@@ -357,7 +357,7 @@ public class ApiUseAnalyzer {
 				switch(kind) {
 					case IApiProblem.ILLEGAL_IMPLEMENT : {
 						prefKey = IApiProblemTypes.ILLEGAL_IMPLEMENT;
-						messageargs = new String[] {qualifiedTypeName};
+						messageargs = new String[] {typename, type.getElementName()};
 						// report error on the type
 						ISourceRange range = type.getNameRange();
 						charStart = range.getOffset();
@@ -367,7 +367,7 @@ public class ApiUseAnalyzer {
 					}
 					case IApiProblem.ILLEGAL_EXTEND : {
 						prefKey = IApiProblemTypes.ILLEGAL_EXTEND;
-						messageargs = new String[] {qualifiedTypeName};
+						messageargs = new String[] {typename, type.getElementName()};
 						// report error on the type
 						ISourceRange range = type.getNameRange();
 						charStart = range.getOffset();
@@ -377,7 +377,7 @@ public class ApiUseAnalyzer {
 					}
 					case IApiProblem.ILLEGAL_INSTANTIATE : {
 						prefKey = IApiProblemTypes.ILLEGAL_INSTANTIATE;
-						messageargs = new String[] {qualifiedTypeName};
+						messageargs = new String[] {typename, type.getElementName()};
 						int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
 						IReferenceTypeDescriptor typeDesc = (IReferenceTypeDescriptor) member;
 						int offset = document.getLineOffset(linenumber);
@@ -402,7 +402,11 @@ public class ApiUseAnalyzer {
 					case IApiProblem.ILLEGAL_OVERRIDE : {
 						IMethodDescriptor method = (IMethodDescriptor) member;
 						prefKey = IApiProblemTypes.ILLEGAL_OVERRIDE;
-						messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
+						String sig = Signature.toString(method.getSignature(), method.getName(), null, false, false);
+						messageargs = new String[] {
+								method.getEnclosingType().getName(),
+								type.getElementName(),
+								sig};
 						// report the marker on the method
 						String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
 						for (int i = 0; i < parameterTypes.length; i++) {
@@ -431,7 +435,10 @@ public class ApiUseAnalyzer {
 						switch (elementType) {
 							case IElementDescriptor.T_METHOD: {
 								IMethodDescriptor method = (IMethodDescriptor) member;
-								messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
+								messageargs = new String[] {
+										method.getEnclosingType().getName(), 
+										type.getElementName(), 
+										Signature.toString(method.getSignature(), method.getName(), null, false, false)};
 								resolvedflags = IApiProblem.METHOD;
 								int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
 								int offset = document.getLineOffset(linenumber);
@@ -440,7 +447,9 @@ public class ApiUseAnalyzer {
 								if(method.isConstructor()) {
 									name = method.getEnclosingType().getName();
 									resolvedflags = IApiProblem.CONSTRUCTOR_METHOD;
-									messageargs = new String[] {Signature.toString(method.getSignature(), method.getEnclosingType().getQualifiedName(), null, false, false)};
+									messageargs = new String[] {
+											Signature.toString(method.getSignature(), method.getEnclosingType().getName(), null, false, false), 
+											type.getElementName()};
 								}
 								int first = findMethodNameStart(name, line, 0);
 								if(first < 0) {
@@ -455,7 +464,7 @@ public class ApiUseAnalyzer {
 							}
 							case IElementDescriptor.T_FIELD: {
 								IFieldDescriptor field = (IFieldDescriptor) member;
-								messageargs = new String[] {field.getEnclosingType().getQualifiedName(), field.getName()};
+								messageargs = new String[] {field.getEnclosingType().getName(), type.getElementName(), field.getName()};
 								resolvedflags = IApiProblem.FIELD;
 								String name = field.getName();
 								int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
@@ -493,7 +502,6 @@ public class ApiUseAnalyzer {
 						break;
 					}
 					case IApiProblem.API_LEAK: {
-						messageargs = new String[] {qualifiedTypeName};
 						switch (flags) {
 							case IApiProblem.LEAK_EXTENDS:
 							case IApiProblem.LEAK_IMPLEMENTS: {
@@ -503,6 +511,7 @@ public class ApiUseAnalyzer {
 								charStart = range.getOffset();
 								charEnd = charStart + range.getLength();
 								lineNumber = document.getLineOfOffset(charStart);
+								messageargs = new String[] {typename, type.getElementName()};
 								break;
 							}
 							case IApiProblem.LEAK_FIELD: {
@@ -527,6 +536,7 @@ public class ApiUseAnalyzer {
 									charEnd = charStart + range.getLength();
 									lineNumber = document.getLineOfOffset(charStart);
 								}
+								messageargs = new String[] {typename, type.getElementName(), field.getName()};
 								break;
 							}
 							case IApiProblem.LEAK_METHOD_PARAMETER:
@@ -568,6 +578,7 @@ public class ApiUseAnalyzer {
 									charEnd = charStart + range.getLength();
 									lineNumber = document.getLineOfOffset(charStart);
 								}
+								messageargs = new String[] {typename, type.getElementName(), Signature.toString(method.getSignature(), methodname, null, false, false)};
 								break;
 							}
 						}
@@ -642,44 +653,52 @@ public class ApiUseAnalyzer {
 		IReferenceTypeDescriptor refType = location.getType();
 		int lineNumber = location.getLineNumber();			
 		ILocation resolvedLocation = reference.getResolvedLocation();
-		String qualifiedTypeName = resolvedLocation.getType().getQualifiedName();
+		String typename = resolvedLocation.getType().getQualifiedName();
+		String ltypename = location.getType().getQualifiedName();
 		IMemberDescriptor member = resolvedLocation.getMember();
 		String[] messageargs = null;
+		int resolvedflags = flags;
 		switch(kind) {
 			case IApiProblem.ILLEGAL_IMPLEMENT : {
-				messageargs = new String[] {qualifiedTypeName};
+				messageargs = new String[] {typename, ltypename};
 				break;
 			}
 			case IApiProblem.ILLEGAL_EXTEND : {
-				messageargs = new String[] {qualifiedTypeName};
+				messageargs = new String[] {typename, ltypename};
 				break;
 			}
 			case IApiProblem.ILLEGAL_INSTANTIATE : {
-				messageargs = new String[] {qualifiedTypeName};
+				messageargs = new String[] {typename, ltypename};
 				break;
 			}
 			case IApiProblem.ILLEGAL_OVERRIDE : {
 				IMethodDescriptor method = (IMethodDescriptor) member;
-				messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
+				messageargs = new String[] {
+						method.getEnclosingType().getQualifiedName(),
+						ltypename,
+						Signature.toString(method.getSignature(), method.getName(), null, false, false)};
 				break;
 			}
 			case IApiProblem.ILLEGAL_REFERENCE: {
 				switch (elementType) {
 					case IElementDescriptor.T_METHOD: {
 						IMethodDescriptor method = (IMethodDescriptor) member;
-						messageargs = new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)};
+						String methodname = method.getName();
+						if(method.isConstructor()) {
+							methodname = method.getEnclosingType().getName();
+						}
+						messageargs = new String[] {method.getEnclosingType().getQualifiedName(), ltypename, Signature.toString(method.getSignature(), methodname, null, false, false)};
 						break;
 					}
 					case IElementDescriptor.T_FIELD: {
 						IFieldDescriptor field = (IFieldDescriptor) member;
-						messageargs = new String[] {field.getEnclosingType().getQualifiedName(), field.getName()};
+						messageargs = new String[] {field.getEnclosingType().getQualifiedName(), ltypename, field.getName()};
 						break;
 					}
 				}
 				break;
 			}
 			case IApiProblem.API_LEAK: {
-				messageargs = new String[] {qualifiedTypeName};
 				try {
 					switch (flags) {
 						case IApiProblem.LEAK_FIELD: {
@@ -693,6 +712,7 @@ public class ApiUseAnalyzer {
 									return null;
 								}
 							}
+							messageargs = new String[] {typename, ltypename, field.getName()};
 							break;
 						}
 						case IApiProblem.LEAK_METHOD_PARAMETER:
@@ -706,6 +726,15 @@ public class ApiUseAnalyzer {
 									// ignore
 									return null;
 								}
+								String name = method.getName();
+								if(method.isConstructor()) {
+									name = method.getEnclosingType().getName();
+									resolvedflags = IApiProblem.CONSTRUCTOR_METHOD;
+								}
+								messageargs = new String[] {
+										typename,
+										ltypename,
+										Signature.toString(method.getSignature(), name, null, false, false)};
 							}
 							break;
 						}
@@ -726,6 +755,6 @@ public class ApiUseAnalyzer {
 				-1,
 				elementType, 
 				kind,
-				flags);
+				resolvedflags);
 	}	
 }

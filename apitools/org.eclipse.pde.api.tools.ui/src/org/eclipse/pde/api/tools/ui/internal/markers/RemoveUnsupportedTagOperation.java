@@ -86,7 +86,7 @@ public class RemoveUnsupportedTagOperation {
 				charStartAttribute = (Integer) fBackingMarker.getAttribute(IMarker.CHAR_START);
 				int intValue = charStartAttribute.intValue();
 				parser.setFocalPosition(intValue);
-				parser.setResolveBindings(true);
+				parser.setResolveBindings(false);
 				Map options = compilationUnit.getJavaProject().getOptions(true);
 				options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 				parser.setCompilerOptions(options);

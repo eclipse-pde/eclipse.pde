@@ -162,7 +162,7 @@ public class JavadocTagManager {
 		ApiJavadocTag tag = null;
 		for (int i = 0; i < tags.length; i++) {
 			tag = (ApiJavadocTag) tags[i];
-			if (tag.getTagLabel().equals(tagname) && (tag.isApplicable(type, member))) {
+			if (tag.getTagName().equals(tagname) && (tag.isApplicable(type, member))) {
 				return tag.getRestrictionModifier();
 			}
 		}

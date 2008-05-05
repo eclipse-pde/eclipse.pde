@@ -93,7 +93,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 * @param member
 	 * @return the comment for the tag
 	 */
-	protected String getTagComment(int type, int member) {
+	public String getTagComment(int type, int member) {
 		initializeElements();
 		int i1 = 0;
 		if(type == IApiJavadocTag.TYPE_INTERFACE) {
@@ -156,7 +156,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.IApiJavadocTag#getTagLabel()
 	 */
-	public String getTagLabel() {
+	public String getTagName() {
 		if(taglabel == null) {
 			StringBuffer tag = new StringBuffer();
 			tag.append("@"); //$NON-NLS-1$
@@ -170,7 +170,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return getTagLabel();
+		return getTagName();
 	}
 
 	/* (non-Javadoc)
@@ -198,10 +198,10 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 */
 	public boolean equals(Object obj) {
 		if(obj instanceof IApiJavadocTag) {
-			return ((IApiJavadocTag)obj).getTagLabel().equals(getTagLabel());
+			return ((IApiJavadocTag)obj).getTagName().equals(getTagName());
 		}
 		if(obj instanceof String) {
-			return ((String)obj).equals(getTagLabel());
+			return ((String)obj).equals(getTagName());
 		}
 		return false;
 	}
@@ -210,6 +210,6 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getTagLabel().hashCode();
+		return getTagName().hashCode();
 	}
 }
