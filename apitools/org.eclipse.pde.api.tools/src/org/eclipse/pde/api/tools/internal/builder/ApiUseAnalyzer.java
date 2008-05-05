@@ -701,6 +701,11 @@ public class ApiUseAnalyzer {
 			case IApiProblem.API_LEAK: {
 				try {
 					switch (flags) {
+						case IApiProblem.LEAK_EXTENDS:
+						case IApiProblem.LEAK_IMPLEMENTS: {
+							messageargs = new String[] {typename, ltypename};
+							break;
+						}
 						case IApiProblem.LEAK_FIELD: {
 							IFieldDescriptor field = (IFieldDescriptor) reference.getSourceLocation().getMember();
 							if ((Flags.AccProtected & field.getModifiers()) > 0) {
@@ -729,7 +734,7 @@ public class ApiUseAnalyzer {
 								String name = method.getName();
 								if(method.isConstructor()) {
 									name = method.getEnclosingType().getName();
-									resolvedflags = IApiProblem.CONSTRUCTOR_METHOD;
+									resolvedflags = IApiProblem.LEAK_CONSTRUCTOR_PARAMETER;
 								}
 								messageargs = new String[] {
 										typename,
