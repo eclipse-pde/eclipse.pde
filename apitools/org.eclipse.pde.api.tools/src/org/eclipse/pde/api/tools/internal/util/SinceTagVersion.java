@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.osgi.framework.Version;
 
 /**
@@ -19,8 +22,12 @@ import org.osgi.framework.Version;
  * @since 3.4
  */
 public class SinceTagVersion {
-	private String pluginName;
+	private String prefixString;
 	private Version version;
+	private String versionString;
+	private String postfixString;
+	private static final Pattern VERSION_PATTERN = Pattern.compile("\\s([0-9]+\\.?[0-9]?\\.?[0-9]?\\.?[A-Za-z0-9]*)\\s");; //$NON-NLS-1$
+	private static final Pattern NO_SPACE_VERSION_PATTERN = Pattern.compile("([0-9]+\\.?[0-9]?\\.?[0-9]?\\.?[A-Za-z0-9]*)");; //$NON-NLS-1$
 
 	/**
 	 * Creates a new instance.
@@ -32,23 +39,42 @@ public class SinceTagVersion {
 		if (value == null) {
 			throw new IllegalArgumentException("The given value cannot be null"); //$NON-NLS-1$
 		}
-		int index = value.indexOf(' ');
-		if (index == -1) {
-			// should be only a version; no plugin name
+		Matcher m = VERSION_PATTERN.matcher(value);
+		if (m.find()) {
+			this.versionString = m.group(1);
+		} else {
+			m = NO_SPACE_VERSION_PATTERN.matcher(value);
+			if (m.find()) {
+				this.versionString = m.group(1);
+			}
+		}
+		if (this.versionString != null) {
+			int prefixIndex = value.indexOf(this.versionString);
+			if (versionString.length() != value.length()) {
+				if (prefixIndex != 0) {
+					this.prefixString = value.substring(0, prefixIndex);
+				}
+			}
+			// extract postfix
+			int beginIndex = prefixIndex + this.versionString.length();
+			if (beginIndex != value.length()) {
+				this.postfixString = value.substring(beginIndex);
+			}
 			try {
-				this.version = new Version(value);
+				this.version = new Version(this.versionString);
 			} catch (IllegalArgumentException e) {
 				// ignore - wrong format
 			}
-		} else {
-			// plugin name followed by a version
-			this.pluginName = value.substring(0, index);
-			try {
-				this.version = new Version(value.substring(index + 1, value.length()).trim());
-			} catch(IllegalArgumentException e) {
-				// ignore - wrong format
-			}
 		}
+	}
+
+	/**
+	 * Returns the version part of the @since tag as a string. null if the given version did not have the right format
+	 *
+	 * @return the version part of the @since tag
+	 */
+	public String getVersionString() {
+		return this.versionString;
 	}
 
 	/**
@@ -61,11 +87,19 @@ public class SinceTagVersion {
 	}
 	
 	/**
-	 * Returns the plugin name part of the @since tag. It can be null.
+	 * Returns the prefix part of the @since tag. It can be null.
 	 *
-	 * @return the plugin name part of the @since tag
+	 * @return the prefix part of the @since tag
 	 */
-	public String pluginName() {
-		return this.pluginName;
+	public String prefixString() {
+		return this.prefixString;
+	}
+	/**
+	 * Returns the postfix part of the @since tag. It can be null.
+	 *
+	 * @return the postfix part of the @since tag
+	 */
+	public String postfixString() {
+		return this.postfixString;
 	}
 }

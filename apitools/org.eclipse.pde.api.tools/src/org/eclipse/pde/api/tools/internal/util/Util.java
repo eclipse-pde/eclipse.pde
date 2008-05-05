@@ -1041,7 +1041,17 @@ public final class Util {
 		}
 		return null;
 	}
-	
+	/**
+	 * Returns the number of fragments for the given since tag version, -1 if the format is unknown.
+	 * The version is formed like: [optional plugin name] major.minor.micro.qualifier [optional comment].
+	 * 
+	 * @param version the given version value
+	 * @return the number of fragments for the given version value or -1 if the format is unknown
+	 * @throws IllegalArgumentException if version is null
+	 */
+	public static final int getFragmentNumber(SinceTagVersion version) {
+		return getFragmentNumber(version.getVersionString());
+	}
 	/**
 	 * Returns the number of fragments for the given version value, -1 if the format is unknown.
 	 * The version is formed like: [optional plugin name] major.minor.micro.qualifier.

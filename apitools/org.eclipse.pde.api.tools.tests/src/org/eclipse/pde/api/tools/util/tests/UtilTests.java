@@ -16,6 +16,7 @@ import java.io.FileFilter;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
@@ -144,7 +145,7 @@ public class UtilTests extends TestCase {
 		assertEquals("wrong value", 1, Util.getFragmentNumber("1"));
 		assertEquals("wrong value", 4, Util.getFragmentNumber("org.test 1.0.0.0"));
 		try {
-			Util.getFragmentNumber(null);
+			Util.getFragmentNumber((String) null);
 			assertTrue(false);
 		} catch (IllegalArgumentException e) {
 			// ignore
@@ -158,5 +159,97 @@ public class UtilTests extends TestCase {
 	 */
 	public void testIsGreatherVersion() {
 		assertEquals("wrong value", 1, 1);
+	}
+	
+	public void testSinceTagVersion() {
+		SinceTagVersion sinceTagVersion = new SinceTagVersion(" org.eclipse.jdt.core 3.4. test plugin");
+		assertEquals("wrong version string", "3.4.", sinceTagVersion.getVersionString());
+		assertEquals("wrong prefix string", " org.eclipse.jdt.core ", sinceTagVersion.prefixString());
+		assertEquals("wrong postfix string", " test plugin", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3.4");
+		assertEquals("wrong version string", "3.4", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertNull("wrong postfix string", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("org.eclipse.jdt.core 3.4.0.");
+		assertEquals("wrong version string", "3.4.0.", sinceTagVersion.getVersionString());
+		assertEquals("wrong prefix string", "org.eclipse.jdt.core ", sinceTagVersion.prefixString());
+		assertNull("wrong postfix string", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("org.eclipse.jdt.core 3.4.0.qualifier");
+		assertEquals("wrong version string", "3.4.0.qualifier", sinceTagVersion.getVersionString());
+		assertEquals("wrong prefix string", "org.eclipse.jdt.core ", sinceTagVersion.prefixString());
+		assertNull("wrong postfix string", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("org.eclipse.jdt.core 3.4.0.qualifier postfix");
+		assertEquals("wrong version string", "3.4.0.qualifier", sinceTagVersion.getVersionString());
+		assertEquals("wrong prefix string", "org.eclipse.jdt.core ", sinceTagVersion.prefixString());
+		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3.4.0");
+		assertEquals("wrong version string", "3.4.0", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertNull("wrong postfix string", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3.4.0.");
+		assertEquals("wrong version string", "3.4.0.", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertNull("wrong postfix string", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3.4.");
+		assertEquals("wrong version string", "3.4.", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertNull("wrong postfix string", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3.");
+		assertEquals("wrong version string", "3.", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertNull("wrong postfix string", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3");
+		assertEquals("wrong version string", "3", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertNull("wrong postfix string", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3.4.0.qualifier");
+		assertEquals("wrong version string", "3.4.0.qualifier", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertNull("wrong postfix string", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3.4.0.qualifier postfix");
+		assertEquals("wrong version string", "3.4.0.qualifier", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3.4.0. postfix");
+		assertEquals("wrong version string", "3.4.0.", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3.4.0 postfix");
+		assertEquals("wrong version string", "3.4.0", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3.4. postfix");
+		assertEquals("wrong version string", "3.4.", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3.4 postfix");
+		assertEquals("wrong version string", "3.4", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3. postfix");
+		assertEquals("wrong version string", "3.", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("3 postfix");
+		assertEquals("wrong version string", "3", sinceTagVersion.getVersionString());
+		assertNull("wrong prefix string", sinceTagVersion.prefixString());
+		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString());
 	}
 }

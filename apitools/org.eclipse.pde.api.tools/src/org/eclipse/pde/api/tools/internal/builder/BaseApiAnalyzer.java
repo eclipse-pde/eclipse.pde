@@ -629,7 +629,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					String sinceVersion = visitor.getSinceVersion();
 					if (sinceVersion != null) {
 						SinceTagVersion tagVersion = new SinceTagVersion(sinceVersion);
-						if (Util.getFragmentNumber(sinceVersion) > 2 || tagVersion.getVersion() == null) {
+						if (tagVersion.getVersion() == null || Util.getFragmentNumber(tagVersion.getVersionString()) > 2) {
 							if(ignoreSinceTagCheck(IApiProblemTypes.MALFORMED_SINCE_TAG)) {
 								if(DEBUG) {
 									System.out.println("Ignoring malformed since tag problem"); //$NON-NLS-1$
@@ -637,12 +637,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								return;
 							}
 							StringBuffer buffer = new StringBuffer();
-							if (tagVersion.pluginName() != null) {
-								buffer.append(tagVersion.pluginName()).append(' ');
+							if (tagVersion.prefixString() != null) {
+								buffer.append(tagVersion.prefixString());
 							}
 							Version componentVersion = new Version(componentVersionString);
 							buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
-							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED, new String[] {sinceVersion, Util.getDeltaArgumentString(delta) }, delta, member, String.valueOf(buffer));
+							if (tagVersion.postfixString() != null) {
+								buffer.append(tagVersion.postfixString());
+							}
+							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED, new String[] {sinceVersion}, delta, member, String.valueOf(buffer));
 						} else {
 							if(ignoreSinceTagCheck(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
 								if(DEBUG) {
@@ -657,11 +660,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							if (Util.isDifferentVersion(sinceVersion, accurateVersion)) {
 								// report invalid version number
 								StringBuffer buffer = new StringBuffer();
-								if (tagVersion.pluginName() != null) {
-									buffer.append(tagVersion.pluginName()).append(' ');
+								if (tagVersion.prefixString() != null) {
+									buffer.append(tagVersion.prefixString());
 								}
 								Version version = new Version(accurateVersion);
 								buffer.append(version.getMajor()).append('.').append(version.getMinor());
+								if (tagVersion.postfixString() != null) {
+									buffer.append(tagVersion.postfixString());
+								}
 								String accurateSinceTagValue = String.valueOf(buffer);
 								problem = createSinceTagProblem(IApiProblem.SINCE_TAG_INVALID, new String[] {sinceVersion, accurateSinceTagValue, Util.getDeltaArgumentString(delta)}, delta, member, accurateSinceTagValue);
 							}
