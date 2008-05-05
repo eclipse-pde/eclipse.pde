@@ -101,12 +101,21 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			switch (delta.getResource().getType()) {
 			case IResource.ROOT:
 			case IResource.PROJECT:
-				return true;
+				return !fManifestModified;
 			case IResource.FOLDER:
-				return delta.getResource().getProjectRelativePath().isPrefixOf(MANIFEST_PATH); 
+				return !fManifestModified; 
 			case IResource.FILE:
 				if (delta.getResource().getProjectRelativePath().equals(MANIFEST_PATH)) {
 					fManifestModified = true;
+					break;
+				}
+				IResource resource = delta.getResource();
+				String fileName = resource.getName();
+				if (Util.isClassFile(fileName)) {
+					findAffectedSourceFiles(delta);
+				} else if (Util.isJavaFileName(fileName) && fCurrentProject.equals(resource.getProject())) {
+					fChangedTypes.add(resource);
+					fTypesToCheck.add(resource);
 				}
 			}
 			return false;
@@ -264,8 +273,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		fCurrentProject = getProject();
 		fAnalyzer = getAnalyzer();
-		fTypesToCheck.clear();
-		fChangedTypes.clear();
 		if (fCurrentProject == null || !fCurrentProject.isAccessible() || !fCurrentProject.hasNature(ApiPlugin.NATURE_ID) ||
 				hasBeenBuilt(fCurrentProject)) {
 			return new IProject[0];
@@ -316,7 +323,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							if (fBuildState == null) {
 								buildAll(localMonitor);
 							} else {
-								buildDeltas(deltas, state, localMonitor);
+								build(state, localMonitor);
 							}
 						}
 					}
@@ -353,6 +360,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		clearLastState();
 		fBuildState = new BuildState();
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 3);
+		localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_initializing_analyzer, fCurrentProject.getName()));
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		cleanupMarkers(fCurrentProject);
 		cleanupUnsupportedTagMarkers(fCurrentProject);
@@ -535,34 +543,15 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Builds an API delta using the default profile (from the workspace settings and the current
 	 * workspace profile
-	 * @param delta
+	 * @param state
+	 * @param monitor
 	 */
-	private void buildDeltas(IResourceDelta[] deltas, final State state, IProgressMonitor monitor) throws CoreException {
+	private void build(final State state, IProgressMonitor monitor) throws CoreException {
 		clearLastState(); // so if the build fails, a full build will be triggered
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 5);
-		List flattenDeltas = new ArrayList();
-		for(int i = 0; i < deltas.length; i++) {
-			flatten0(deltas[i], flattenDeltas);
-		}
-		IResourceDelta delta = null;
+		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
 		localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, fCurrentProject.getName()));
 		updateMonitor(localMonitor, 0);
-		for (Iterator iterator = flattenDeltas.iterator(); iterator.hasNext();) {
-			delta = (IResourceDelta) iterator.next();
-			IResource resource = delta.getResource();
-			IPath location = resource.getLocation();
-			String fileName = location.lastSegment();
-			if(resource.getType() == IResource.FILE) {
-				if (Util.isClassFile(fileName)) {
-					findAffectedSourceFiles(delta);
-				} else if (Util.isJavaFileName(fileName) && fCurrentProject.equals(resource.getProject())) {
-					fChangedTypes.add(resource);
-					fTypesToCheck.add(resource);
-				}
-			}
-		}
-		updateMonitor(localMonitor, 1);
 		collectAffectedSourceFiles(state);
 		updateMonitor(localMonitor, 1);
 		if (fTypesToCheck.size() != 0) {
@@ -738,22 +727,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	/**
-	 * recursively flattens the given delta into a list of individual deltas
-	 * @param delta
-	 * @param flattenDeltas
-	 */
-	private void flatten0(IResourceDelta delta, List flattenDeltas) {
-		IResourceDelta[] deltas = delta.getAffectedChildren();
-		int length = deltas.length;
-		if (length != 0) {
-			for (int i = 0; i < length; i++) {
-				flatten0(deltas[i], flattenDeltas);
-			}
-		} else {
-			flattenDeltas.add(delta);
-		}
-	}
 	/**
 	 * @return the current {@link IPluginModelBase} based on the current project for this builder
 	 */
