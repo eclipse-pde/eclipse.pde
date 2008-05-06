@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -115,8 +114,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			IPluginContentWizard contentWizard = fWizardListPage.getSelectedWizard();
 			getContainer().run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
 
-			addApiAnalysisNature(fContentPage.setupApiAnalysis());
-
 			IWorkingSet[] workingSets = fMainPage.getSelectedWorkingSets();
 			getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(), workingSets);
 
@@ -128,24 +125,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		return false;
 	}
 
-	/**
-	 * Add the API analysis nature to the new project
-	 * @param add
-	 */
-	private void addApiAnalysisNature(boolean add) {
-		try {
-			IProject project = fProjectProvider.getProject();
-			IProjectDescription description = project.getDescription();
-			String[] prevNatures = description.getNatureIds();
-			String[] newNatures = new String[prevNatures.length + 1];
-			System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-			newNatures[prevNatures.length] = "org.eclipse.pde.api.tools.apiAnalysisNature"; //$NON-NLS-1$
-			description.setNatureIds(newNatures);
-			project.setDescription(description, new NullProgressMonitor());
-		} catch (CoreException ce) {
-			//ignore
-		}
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#dispose()

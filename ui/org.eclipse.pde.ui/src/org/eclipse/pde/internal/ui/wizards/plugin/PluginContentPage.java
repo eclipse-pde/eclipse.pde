@@ -50,9 +50,9 @@ public class PluginContentPage extends ContentPage {
 	private Button fNoButton;
 
 	/**
-	 * Button to enable API analysis for the project by default
+	 * Button to enable API analysis for the project during project creation
 	 */
-	private Button fApiAnalysisButton = null;
+	private Button fApiAnalysisButton;
 
 	/**
 	 * Dialog settings constants
@@ -129,13 +129,6 @@ public class PluginContentPage extends ContentPage {
 		fProviderText = createText(propertiesGroup, propertiesListener, 2);
 
 		createExecutionEnvironmentControls(propertiesGroup);
-	}
-
-	/**
-	 * @return if API analysis should be set up on the project by default
-	 */
-	protected boolean setupApiAnalysis() {
-		return fApiAnalysisButton.getSelection();
 	}
 
 	/**
@@ -229,6 +222,7 @@ public class PluginContentPage extends ContentPage {
 		fApiAnalysisButton.setSelection((settings != null) ? settings.getBoolean(S_API_ANALYSIS) : false);
 		fApiAnalysisButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				updateData();
 				validatePage();
 			}
 		});
@@ -244,6 +238,7 @@ public class PluginContentPage extends ContentPage {
 		data.setUIPlugin(fUIPlugin.getSelection());
 		data.setDoGenerateClass(fGenerateClass.isEnabled() && fGenerateClass.getSelection());
 		data.setRCPApplicationPlugin(!fData.isSimple() && !isPureOSGi() && fYesButton.getSelection());
+		data.setEnableAPITooling(fApiAnalysisButton.getSelection());
 		if (fEEChoice.isEnabled() && !fEEChoice.getText().equals(NO_EXECUTION_ENVIRONMENT)) {
 			fData.setExecutionEnvironment(fEEChoice.getText().trim());
 		} else {

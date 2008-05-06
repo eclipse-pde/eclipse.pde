@@ -255,6 +255,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		IProject project = createProject();
 		monitor.worked(1);
 		createContents(monitor, project);
+		
 		// set classpath if project has a Java nature
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			monitor.subTask(PDEUIMessages.NewProjectCreationOperation_setClasspath);
@@ -269,6 +270,12 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			if (data.doGenerateClass()) {
 				generateTopLevelPluginClass(project, new SubProgressMonitor(monitor, 1));
 			}
+			
+			// add API tooling nature if requested
+			if (data.doEnableAPITooling()){
+				addApiAnalysisNature();
+			}
+			
 		}
 		// generate the manifest file
 		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile);
@@ -497,6 +504,25 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				}
 			}
 		} catch (JavaModelException e) {
+		}
+	}
+	
+	/**
+	 * Add the API analysis nature to the project
+	 * @param add
+	 */
+	private void addApiAnalysisNature() {
+		try {
+			IProject project = fProjectProvider.getProject();
+			IProjectDescription description = project.getDescription();
+			String[] prevNatures = description.getNatureIds();
+			String[] newNatures = new String[prevNatures.length + 1];
+			System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
+			newNatures[prevNatures.length] = "org.eclipse.pde.api.tools.apiAnalysisNature"; //$NON-NLS-1$
+			description.setNatureIds(newNatures);
+			project.setDescription(description, new NullProgressMonitor());
+		} catch (CoreException ce) {
+			//ignore
 		}
 	}
 

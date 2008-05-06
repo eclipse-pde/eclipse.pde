@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	private boolean fIsUIPlugin = true;
 	private boolean fDoGenerateClass = true;
 	private boolean fRCPAppPlugin = false;
+	private boolean fSetupAPITooling = false;
 	private ArrayList templates = new ArrayList();
 
 	/* (non-Javadoc)
@@ -70,6 +71,21 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 
 	public boolean isRCPApplicationPlugin() {
 		return fRCPAppPlugin;
+	}
+
+	/**
+	 * @return whether API Tooling should be enabled in the plugin when created
+	 */
+	public boolean doEnableAPITooling() {
+		return fSetupAPITooling;
+	}
+
+	/**
+	 * Set whether API Tooling should be enabled in the plugin when created
+	 * @param enable whether to enable API tooling
+	 */
+	public void setEnableAPITooling(boolean enable) {
+		fSetupAPITooling = enable;
 	}
 
 }
