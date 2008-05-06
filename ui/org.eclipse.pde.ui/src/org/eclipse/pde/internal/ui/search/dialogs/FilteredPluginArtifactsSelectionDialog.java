@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 230248
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
@@ -554,7 +555,12 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	private class PluginSearchComparator implements Comparator {
 
 		public int compare(Object o1, Object o2) {
-			return getId(o1) - getId(o2);
+			int id1 = getId(o1);
+			int id2 = getId(o2);
+
+			if (id1 != id2)
+				return id1 - id2;
+			return compareSimilarObjects(o1, o2);
 		}
 
 		private int getId(Object element) {
@@ -570,6 +576,46 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			return 0;
 		}
 
+		private int compareSimilarObjects(Object o1, Object o2) {
+			if (o1 instanceof IPluginModelBase && o2 instanceof IPluginModelBase) {
+				IPluginModelBase ipmb1 = (IPluginModelBase) o1;
+				IPluginModelBase ipmb2 = (IPluginModelBase) o1;
+				return comparePlugins(ipmb1.getPluginBase(), ipmb2.getPluginBase());
+			} else if (o1 instanceof IPluginExtensionPoint && o2 instanceof IPluginExtensionPoint) {
+				IPluginExtensionPoint ipep1 = (IPluginExtensionPoint) o1;
+				IPluginExtensionPoint ipep2 = (IPluginExtensionPoint) o2;
+				return compareExtensionPoints(ipep1, ipep2);
+			} else if (o1 instanceof IPluginExtension && o2 instanceof IPluginExtension) {
+				IPluginExtension ipe1 = (IPluginExtension) o1;
+				IPluginExtension ipe2 = (IPluginExtension) o2;
+				int comparePointsResult = ipe1.getPoint().compareTo(ipe2.getPoint());
+				if (comparePointsResult == 0)
+					return comparePlugins(ipe1.getPluginBase(), ipe2.getPluginBase());
+				// else
+				return comparePointsResult;
+			} else if (o1 instanceof ExportPackageDescription && o2 instanceof ExportPackageDescription) {
+				ExportPackageDescription epd1 = (ExportPackageDescription) o1;
+				ExportPackageDescription epd2 = (ExportPackageDescription) o2;
+				int compareNamesResult = epd1.getName().compareTo(epd2.getName());
+				if (compareNamesResult == 0)
+					return compareBundleDescriptions(epd1.getSupplier(), epd2.getSupplier());
+				// else
+				return compareNamesResult;
+			}
+			return 0;
+		}
+
+		private int comparePlugins(IPluginBase ipmb1, IPluginBase ipmb2) {
+			return ipmb1.getId().compareTo(ipmb2.getId());
+		}
+
+		private int compareExtensionPoints(IPluginExtensionPoint ipep1, IPluginExtensionPoint ipep2) {
+			return ipep1.getFullId().compareTo(ipep2.getFullId());
+		}
+
+		private int compareBundleDescriptions(BundleDescription bd1, BundleDescription bd2) {
+			return bd1.getName().compareTo(bd2.getName());
+		}
 	}
 
 	public boolean close() {
