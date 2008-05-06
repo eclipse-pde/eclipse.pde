@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,8 @@ package org.eclipse.pde.internal.core.util;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.core.resources.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -50,9 +44,15 @@ public class ManifestUtils {
 		List pkgFragRoots = new LinkedList();
 		for (int j = 0; j < libs.length; j++) {
 			String lib = libs[j];
+			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=230469  			
 			IPackageFragmentRoot root = null;
-			if (!lib.equals(".")) //$NON-NLS-1$
-				root = javaProject.getPackageFragmentRoot(project.getFile(lib));
+			if (!lib.equals(".")) { //$NON-NLS-1$
+				try {
+					root = javaProject.getPackageFragmentRoot(project.getFile(lib));
+				} catch (IllegalArgumentException e) {
+					return new IPackageFragmentRoot[0];
+				}
+			}
 			if (root != null && root.exists()) {
 				pkgFragRoots.add(root);
 			} else {
