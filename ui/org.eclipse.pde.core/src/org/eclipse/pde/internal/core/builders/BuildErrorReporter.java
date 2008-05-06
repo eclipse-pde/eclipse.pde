@@ -155,8 +155,6 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 		// validation not relying on build flag
 		if (fClasspathSeverity != CompilerFlags.IGNORE) {
-			if (jarsExtra != null)
-				validateJarsExtraClasspath(jarsExtra);
 			if (bundleList != null)
 				validateDependencyManagement(bundleList);
 		}
@@ -165,6 +163,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		if (fBuildSeverity == CompilerFlags.IGNORE)
 			return;
 
+		if (jarsExtra != null)
+			validateJarsExtraClasspath(jarsExtra);
 		validateIncludes(binIncludes, sourceEntryKeys);
 		validateIncludes(binExcludes, sourceEntryKeys);
 		validateIncludes(srcIncludes, sourceEntryKeys);
@@ -307,7 +307,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				exists = projectPath.append(tokens[i]).toFile().exists();
 
 			if (!exists && !startsWithAntVariable(tokens[i])) {
-				prepareError(PROPERTY_JAR_EXTRA_CLASSPATH, tokens[i], NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, tokens[i]), PDEMarkerFactory.NO_RESOLUTION, fClasspathSeverity, PDEMarkerFactory.CAT_OTHER);
+				prepareError(PROPERTY_JAR_EXTRA_CLASSPATH, tokens[i], NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, tokens[i]), PDEMarkerFactory.NO_RESOLUTION, fBuildSeverity, PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 	}
