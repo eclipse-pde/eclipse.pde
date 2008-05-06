@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on May 30, 2003
- *
- * To change this generated comment go to 
- * Window>Preferences>Java>Code Generation>Code Template
- */
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.File;
@@ -31,7 +25,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.*;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -39,6 +32,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * The first page of the import plugins wizard
+ */
 public class PluginImportWizardFirstPage extends WizardPage {
 
 	private static String SETTINGS_IMPORTTYPE = "importType"; //$NON-NLS-1$
@@ -59,7 +55,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private Button binaryWithLinksButton;
 	private Button sourceButton;
 
-	//private String currentLocation;
 	public static String TARGET_PLATFORM = "targetPlatform"; //$NON-NLS-1$
 	private IPluginModelBase[] models = new IPluginModelBase[0];
 	private boolean canceled = false;
@@ -71,9 +66,12 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
 	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
+		Composite container = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		GridLayout layout = (GridLayout) container.getLayout();
 		layout.verticalSpacing = 15;
 		container.setLayout(layout);
 
@@ -87,36 +85,30 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PLUGIN_IMPORT_FIRST_PAGE);
 	}
 
+	/**
+	 * Create the import choices group
+	 * @param container
+	 */
 	private void createImportChoicesGroup(Composite container) {
-		Group importChoices = new Group(container, SWT.NONE);
-		importChoices.setText(PDEUIMessages.ImportWizard_FirstPage_importGroup);
-		importChoices.setLayout(new GridLayout());
-		importChoices.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		scanButton = new Button(importChoices, SWT.RADIO);
-		scanButton.setText(PDEUIMessages.ImportWizard_FirstPage_scanAll);
-
-		importButton = new Button(importChoices, SWT.RADIO);
-		importButton.setText(PDEUIMessages.ImportWizard_FirstPage_importPrereqs);
-
+		Group importChoices = SWTFactory.createGroup(container, PDEUIMessages.ImportWizard_FirstPage_importGroup, 1, 1, GridData.FILL_HORIZONTAL);
+		scanButton = SWTFactory.createRadioButton(importChoices, PDEUIMessages.ImportWizard_FirstPage_scanAll);
+		importButton = SWTFactory.createRadioButton(importChoices, PDEUIMessages.ImportWizard_FirstPage_importPrereqs);
 	}
 
+	/**
+	 * Create the import options group
+	 * @param container
+	 */
 	private void createImportOptionsGroup(Composite container) {
-		Group options = new Group(container, SWT.NONE);
-		options.setText(PDEUIMessages.ImportWizard_FirstPage_importAs);
-		options.setLayout(new GridLayout());
-		options.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		binaryButton = new Button(options, SWT.RADIO);
-		binaryButton.setText(PDEUIMessages.ImportWizard_FirstPage_binary);
-
-		binaryWithLinksButton = new Button(options, SWT.RADIO);
-		binaryWithLinksButton.setText(PDEUIMessages.ImportWizard_FirstPage_binaryLinks);
-
-		sourceButton = new Button(options, SWT.RADIO);
-		sourceButton.setText(PDEUIMessages.ImportWizard_FirstPage_source);
+		Group options = SWTFactory.createGroup(container, PDEUIMessages.ImportWizard_FirstPage_importAs, 1, 1, GridData.FILL_HORIZONTAL);
+		binaryButton = SWTFactory.createRadioButton(options, PDEUIMessages.ImportWizard_FirstPage_binary);
+		binaryWithLinksButton = SWTFactory.createRadioButton(options, PDEUIMessages.ImportWizard_FirstPage_binaryLinks);
+		sourceButton = SWTFactory.createRadioButton(options, PDEUIMessages.ImportWizard_FirstPage_source);
 	}
 
+	/**
+	 * Initialize the page with previous choices from dialog settings
+	 */
 	private void initialize() {
 		IDialogSettings settings = getDialogSettings();
 
@@ -163,21 +155,14 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	}
 
+	/**
+	 * Creates the directory group
+	 * @param parent
+	 */
 	private void createDirectoryGroup(Composite parent) {
-		Group composite = new Group(parent, SWT.NONE);
-		composite.setText(PDEUIMessages.ImportWizard_FirstPage_importFrom);
+		Group composite = SWTFactory.createGroup(parent, PDEUIMessages.ImportWizard_FirstPage_importFrom, 3, 1, GridData.FILL_HORIZONTAL);
 
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		runtimeLocationButton = new Button(composite, SWT.CHECK);
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		runtimeLocationButton.setLayoutData(gd);
-
-		runtimeLocationButton.setText(PDEUIMessages.ImportWizard_FirstPage_target);
+		runtimeLocationButton = SWTFactory.createCheckButton(composite, PDEUIMessages.ImportWizard_FirstPage_target, null, false, 2);
 		runtimeLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = runtimeLocationButton.getSelection();
@@ -192,29 +177,26 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			}
 		});
 
-		changeButton = new Button(composite, SWT.PUSH);
-		changeButton.setText(PDEUIMessages.ImportWizard_FirstPage_goToTarget);
+		changeButton = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_goToTarget, null);
 		changeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleChangeTargetPlatform();
+				IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
+				if (PDEPreferencesUtil.showPreferencePage(targetNode, getShell())) {
+					dropLocation.setText(TargetPlatform.getLocation());
+				}
 			}
 		});
-		changeButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		SWTUtil.setButtonDimensionHint(changeButton);
 
-		otherLocationLabel = new Label(composite, SWT.NULL);
-		otherLocationLabel.setText(PDEUIMessages.ImportWizard_FirstPage_otherFolder);
+		otherLocationLabel = SWTFactory.createLabel(composite, PDEUIMessages.ImportWizard_FirstPage_otherFolder, 1);
 
-		dropLocation = new Combo(composite, SWT.DROP_DOWN);
-		dropLocation.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		dropLocation = SWTFactory.createCombo(composite, SWT.DROP_DOWN, 1, GridData.FILL_HORIZONTAL, null);
 		dropLocation.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validateDropLocation();
 			}
 		});
 
-		browseButton = new Button(composite, SWT.PUSH);
-		browseButton.setText(PDEUIMessages.ImportWizard_FirstPage_browse);
+		browseButton = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_browse, null, GridData.HORIZONTAL_ALIGN_FILL);
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseDropLocation();
@@ -222,45 +204,29 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					dropLocation.setText(chosen.toOSString());
 			}
 		});
-		browseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		SWTUtil.setButtonDimensionHint(browseButton);
 
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(PDEUIMessages.ImportWizard_FirstPage_source_label);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
+		SWTFactory.createLabel(composite, PDEUIMessages.ImportWizard_FirstPage_source_label, 2);
 
-		Button sourceLocations = new Button(composite, SWT.PUSH);
-		sourceLocations.setText(PDEUIMessages.ImportWizard_FirstPage_codeLocations);
-		sourceLocations.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		sourceLocations.addSelectionListener(new SelectionAdapter() {
+		Button button = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_codeLocations, null, GridData.HORIZONTAL_ALIGN_END);
+		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleSourceLocations();
+				PDEPreferencesUtil.showPreferencePage(new SourceCodeLocationsPreferenceNode(), getShell());
 			}
 		});
-		SWTUtil.setButtonDimensionHint(sourceLocations);
-		sourceLocations.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
-		label = new Label(composite, SWT.WRAP);
-		label.setText(PDEUIMessages.ImportWizard_FirstPage_variables);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
+		SWTFactory.createLabel(composite, PDEUIMessages.ImportWizard_FirstPage_variables, 2);
 
-		Button envButton = new Button(composite, SWT.PUSH);
-		envButton.setText(PDEUIMessages.ImportWizard_FirstPage_env);
-		envButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.FILL_HORIZONTAL));
-		envButton.addSelectionListener(new SelectionAdapter() {
+		button = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_env, null, GridData.HORIZONTAL_ALIGN_END);
+		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleEnvChange();
+				PDEPreferencesUtil.showPreferencePage(new TargetEnvironmentPreferenceNode(), getShell());
 			}
 		});
-		SWTUtil.setButtonDimensionHint(envButton);
-		envButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-
 	}
 
+	/**
+	 * @return a chosen path from the directory dialog invoked from browse button
+	 */
 	private IPath chooseDropLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setFilterPath(dropLocation.getText());
@@ -273,29 +239,30 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		return null;
 	}
 
-	private void handleChangeTargetPlatform() {
-		IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
-		if (PDEPreferencesUtil.showPreferencePage(targetNode, getShell()))
-			dropLocation.setText(TargetPlatform.getLocation());
-	}
-
-	private void handleSourceLocations() {
-		PDEPreferencesUtil.showPreferencePage(new SourceCodeLocationsPreferenceNode(), getShell());
-	}
-
-	private void handleEnvChange() {
-		PDEPreferencesUtil.showPreferencePage(new TargetEnvironmentPreferenceNode(), getShell());
-	}
-
+	/**
+	 * @return the value of the {@link ICoreConstants#PLATFORM_PATH} preference
+	 */
 	private String getTargetHome() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		return preferences.getString(ICoreConstants.PLATFORM_PATH);
 	}
 
+	/**
+	 * @return the selection state of the scan all plugins button
+	 */
 	public boolean getScanAllPlugins() {
 		return scanButton.getSelection();
 	}
 
+	/**
+	 * Returns the type of the import. One of:
+	 * <ul>
+	 * <li>{@link PluginImportOperation#IMPORT_BINARY}</li>
+	 * <li>{@link PluginImportOperation#IMPORT_BINARY_WITH_LINKS}</li>
+	 * <li>{@link PluginImportOperation#IMPORT_WITH_SOURCE}</li>
+	 * </ul>
+	 * @return the type of the import.
+	 */
 	public int getImportType() {
 		if (binaryButton.getSelection()) {
 			return PluginImportOperation.IMPORT_BINARY;
@@ -308,10 +275,16 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		return PluginImportOperation.IMPORT_WITH_SOURCE;
 	}
 
+	/**
+	 * @return the location specified as the drop location for the target platform
+	 */
 	public String getDropLocation() {
 		return runtimeLocationButton.getSelection() ? TARGET_PLATFORM : dropLocation.getText().trim();
 	}
 
+	/**
+	 * Store all of the dialog settings for this page
+	 */
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		boolean other = !runtimeLocationButton.getSelection();
@@ -328,10 +301,16 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		settings.put(SETTINGS_SCAN_ALL, getScanAllPlugins());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
+	 */
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
+	/**
+	 * Validates the drop location
+	 */
 	private void validateDropLocation() {
 		if (!runtimeLocationButton.getSelection()) {
 			IPath curr = new Path(dropLocation.getText());
@@ -363,6 +342,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		setMessage(PDEUIMessages.ImportWizard_FirstPage_desc);
 	}
 
+	/**
+	 * Resolves the target platform
+	 */
 	private void resolveTargetPlatform() {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -378,6 +360,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 	}
 
+	/**
+	 * Resolves the plugin locations given the base location. Uses {@link PluginPathFinder#scanLocations(File[])}
+	 * to find plugins
+	 * @param location
+	 */
 	private void resolveArbitraryLocation(final String location) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -406,6 +393,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 	}
 
+	/**
+	 * @return the complete set of {@link IPluginModelBase}s for the given drop location
+	 */
 	public IPluginModelBase[] getModels() {
 		String dropLocation = getDropLocation();
 		if (dropLocation.equals(TARGET_PLATFORM)) {
@@ -416,10 +406,16 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		return models;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#isCurrentPage()
+	 */
 	public boolean isCurrentPage() {
 		return super.isCurrentPage();
 	}
 
+	/**
+	 * @return true if the page needs to be refreshed, false otherwise
+	 */
 	public boolean isRefreshNeeded() {
 		if (canceled) {
 			canceled = false;
