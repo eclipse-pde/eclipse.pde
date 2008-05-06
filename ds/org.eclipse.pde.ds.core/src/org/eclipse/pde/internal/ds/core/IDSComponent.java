@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
+ *     Rafael Oliveira NÃ³brega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
-public interface IDSRoot extends IDSObject {
+public interface IDSComponent extends IDSObject {
 
 	public void setAttributeName(String name);
 

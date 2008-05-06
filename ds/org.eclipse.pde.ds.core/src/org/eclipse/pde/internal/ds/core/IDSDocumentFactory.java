@@ -26,6 +26,6 @@ public interface IDSDocumentFactory {
 
 	public abstract IDSImplementation createImplementation();
 
-	public abstract IDSRoot createRoot();
+	public abstract IDSComponent createComponent();
 
 }

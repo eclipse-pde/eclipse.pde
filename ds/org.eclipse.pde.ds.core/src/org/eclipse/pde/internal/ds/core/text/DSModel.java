@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.text.XMLEditingModel;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSModel;
-import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -30,7 +30,7 @@ public class DSModel extends XMLEditingModel implements IDSModel {
 
 	private DSDocumentHandler fHandler;
 	private IDSDocumentFactory fFactory;
-	private IDSRoot fRoot;
+	private IDSComponent fComponent;
 
 	public DSModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
@@ -73,18 +73,18 @@ public class DSModel extends XMLEditingModel implements IDSModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSModel#getDSRoot()
 	 */
-	public IDSRoot getDSRoot() {
-		if (fRoot == null) {
-			fRoot = getFactory().createRoot();
+	public IDSComponent getDSComponent() {
+		if (fComponent == null) {
+			fComponent = getFactory().createComponent();
 		}
-		return fRoot;
+		return fComponent;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.XMLEditingModel#getRoot()
 	 */
 	protected IWritable getRoot() {
-		return (IWritable) getDSRoot();
+		return (IWritable) getDSComponent();
 	}
 
 }

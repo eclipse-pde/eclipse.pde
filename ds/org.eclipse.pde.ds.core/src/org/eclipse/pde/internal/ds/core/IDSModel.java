@@ -18,6 +18,6 @@ public interface IDSModel extends IModelChangeProvider, IModel {
 
 	public abstract IDSDocumentFactory getFactory();
 
-	public abstract IDSRoot getDSRoot();
+	public abstract IDSComponent getDSComponent();
 
 }

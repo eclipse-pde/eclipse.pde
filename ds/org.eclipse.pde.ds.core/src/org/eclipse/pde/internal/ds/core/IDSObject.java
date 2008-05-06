@@ -31,7 +31,7 @@ public interface IDSObject extends IDocumentElementNode {
 	/**
 	 * @return the root element that is an ancestor to this object.
 	 */
-	public abstract IDSRoot getRoot();
+	public abstract IDSComponent getComponent();
 
 	/**
 	 * @return the identifier for this object to be used when displaying the element to the user

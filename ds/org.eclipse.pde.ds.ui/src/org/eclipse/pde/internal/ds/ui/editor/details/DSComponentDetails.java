@@ -13,7 +13,7 @@
 package org.eclipse.pde.internal.ds.ui.editor.details;
 
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
@@ -36,7 +36,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class DSComponentDetails extends DSAbstractDetails {
 
-	private IDSRoot fComponent;
+	private IDSComponent fComponent;
 
 	private Section fMainSection;
 
@@ -211,11 +211,11 @@ public class DSComponentDetails extends DSAbstractDetails {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
 		// Ensure we have the right type
-		if ((object == null) || (object instanceof IDSRoot) == false) {
+		if ((object == null) || (object instanceof IDSComponent) == false) {
 			return;
 		}
 		// Set data
-		setData((IDSRoot) object);
+		setData((IDSComponent) object);
 		// Update the UI given the new data
 		updateFields();
 	}
@@ -223,7 +223,7 @@ public class DSComponentDetails extends DSAbstractDetails {
 	/**
 	 * @param object
 	 */
-	public void setData(IDSRoot object) {
+	public void setData(IDSComponent object) {
 		// Set data
 		fComponent = object;
 	}

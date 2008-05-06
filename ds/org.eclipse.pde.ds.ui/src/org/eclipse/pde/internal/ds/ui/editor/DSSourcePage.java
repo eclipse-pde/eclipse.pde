@@ -81,7 +81,7 @@ public class DSSourcePage extends XMLSourcePage {
 	 */
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IDocumentElementNode rootNode = ((DSModel) getInputContext().getModel())
-				.getDSRoot();
+				.getDSComponent();
 		return findNode(rootNode, offset, searchChildren);
 	}
 

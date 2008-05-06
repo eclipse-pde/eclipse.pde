@@ -24,7 +24,7 @@ public class DSContentProvider extends DefaultContentProvider implements
 
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IDSModel) {
-			return new Object[] { ((IDSModel) parentElement).getDSRoot() };
+			return new Object[] { ((IDSModel) parentElement).getDSComponent() };
 		} else if (parentElement instanceof IDSObject) {
 			List list = ((IDSObject) parentElement).getChildren();
 			// List is never null

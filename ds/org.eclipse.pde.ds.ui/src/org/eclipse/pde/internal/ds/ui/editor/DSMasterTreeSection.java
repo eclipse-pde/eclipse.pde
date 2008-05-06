@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSReference;
-import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddItemAction;
@@ -133,7 +133,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		});
 		// Add collapse action to the tool bar
 		fCollapseAction = new CollapseAction(fTreeViewer,
-				PDEUIMessages.ExtensionsPage_collapseAll, 1, fModel.getDSRoot());
+				PDEUIMessages.ExtensionsPage_collapseAll, 1, fModel.getDSComponent());
 		toolBarManager.add(fCollapseAction);
 
 		toolBarManager.update(true);
@@ -194,7 +194,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
 			// DS Validity: if Root component has no service child, can add one
 			// Service component
-			int childNodeCount = dsObject.getModel().getDSRoot()
+			int childNodeCount = dsObject.getModel().getDSComponent()
 					.getChildNodeCount(IDSService.class);
 			if (childNodeCount == 0) {
 				canAddService = true;
@@ -301,7 +301,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		if (object != null) {
 			fTreeViewer.remove(object);
 			fTreeViewer.setSelection(
-					new StructuredSelection(fModel.getDSRoot()), true);
+					new StructuredSelection(fModel.getDSComponent()), true);
 		}
 	}
 
@@ -347,13 +347,13 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTY, true);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROVIDE, false);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_REFERENCE, true);
-		boolean hasService = (fModel.getDSRoot().getChildNodeCount(
+		boolean hasService = (fModel.getDSComponent().getChildNodeCount(
 				IDSService.class) == 1);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_SERVICE, !hasService);
 
-		IDSRoot dsRoot = fModel.getDSRoot();
+		IDSComponent dsComponent = fModel.getDSComponent();
 		// Select the ds node in the tree
-		fTreeViewer.setSelection(new StructuredSelection(dsRoot), true);
+		fTreeViewer.setSelection(new StructuredSelection(dsComponent), true);
 		fTreeViewer.expandToLevel(2);
 	}
 
@@ -420,7 +420,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
 		} else {
 			if (type != IDSConstants.TYPE_PROVIDE) {
-				fAddStepAction.setSelection(fModel.getDSRoot());
+				fAddStepAction.setSelection(fModel.getDSComponent());
 			} else {
 				return;
 			}
@@ -436,7 +436,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 					|| object instanceof IDSImplementation
 					|| object instanceof IDSProperties
 					|| object instanceof IDSReference) {
-				((IDSRoot) object.getParent()).moveItem(object, upFlag);
+				((IDSComponent) object.getParent()).moveItem(object, upFlag);
 				this.refresh();
 				fTreeViewer.setSelection(new StructuredSelection(object));
 			}
@@ -446,7 +446,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	private void handleDeleteAction() {
 		IDSObject object = getCurrentSelection();
 		if (object != null) {
-			if (object instanceof IDSRoot) {
+			if (object instanceof IDSComponent) {
 				// Preserve ds validity
 				// Semantic Rule: Cannot have a cheat sheet with no root
 				// ds component node

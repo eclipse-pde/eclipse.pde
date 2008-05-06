@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
+ *     Rafael Oliveira NÃ³brega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSObject;
-import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSService;
 
 /**
@@ -31,12 +31,12 @@ import org.eclipse.pde.internal.ds.core.IDSService;
  * @see DSModel
  * @see DSDocumentFactory
  */
-public class DSRoot extends DSObject implements IDSRoot {
+public class DSComponent extends DSObject implements IDSComponent {
 
 	private static final long serialVersionUID = 1L;
 	
 
-	public DSRoot(DSModel model) {
+	public DSComponent(DSModel model) {
 		super(model, ELEMENT_ROOT);
 		setInTheModel(true);
 	}

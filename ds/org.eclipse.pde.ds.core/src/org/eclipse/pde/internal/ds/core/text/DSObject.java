@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSObject;
-import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 
 /**
  * All modeled objects of a declarative services xml file must extend from this
@@ -129,10 +129,10 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getRoot()
 	 */
-	public IDSRoot getRoot() {
+	public IDSComponent getComponent() {
 		final IDSModel model = getModel();
 		if (model != null) {
-			return model.getDSRoot();
+			return model.getDSComponent();
 		}
 		return null;
 	}

@@ -60,7 +60,7 @@ public class DSAddItemAction extends Action {
 	private IDSObject createNewItem() {
 		IDSDocumentFactory factory = fSelection.getModel().getFactory();
 
-		fParent = fSelection.getModel().getDSRoot();
+		fParent = fSelection.getModel().getDSComponent();
 
 		switch (fType) {
 		case IDSConstants.TYPE_SERVICE:

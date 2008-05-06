@@ -33,11 +33,11 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		setXMLContents(buffer, LF);
 		load();
 
-		IDSObject root = fModel.getDSRoot();
+		IDSObject component = fModel.getDSComponent();
 
-		assertTrue(root.getChildCount() == 1);
+		assertTrue(component.getChildCount() == 1);
 
-		IDocumentElementNode child = root.getChildAt(0);
+		IDocumentElementNode child = component.getChildAt(0);
 
 		assertTrue(child instanceof IDSService);
 
@@ -92,11 +92,11 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		setXMLContents(buffer, LF);
 		load();
 
-		IDSObject root = fModel.getDSRoot();
+		IDSObject component = fModel.getDSComponent();
 
-		assertTrue(root.getChildCount() == 1);
+		assertTrue(component.getChildCount() == 1);
 
-		IDocumentElementNode child = root.getChildAt(0);
+		IDocumentElementNode child = component.getChildAt(0);
 
 		assertTrue(child instanceof IDSService);
 
@@ -126,11 +126,11 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		setXMLContents(buffer, LF);
 		load();
 
-		IDSObject root = fModel.getDSRoot();
+		IDSObject component = fModel.getDSComponent();
 
-		assertTrue(root.getChildCount() == 1);
+		assertTrue(component.getChildCount() == 1);
 
-		IDocumentElementNode child = root.getChildAt(0);
+		IDocumentElementNode child = component.getChildAt(0);
 
 		assertTrue(child instanceof IDSService);
 

@@ -16,7 +16,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
-import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.Messages;
 
@@ -50,7 +50,7 @@ public class DSRemoveItemAction extends Action {
 			IDSObject parent = fItem.getParent();
 			if (parent.getType() == IDSConstants.TYPE_ROOT) {
 				// Parent is a component
-				IDSRoot item = (IDSRoot) parent;
+				IDSComponent item = (IDSComponent) parent;
 				fObjectToSelect = parent;
 				// Remove the subitem
 				item.removeChild(fItem);

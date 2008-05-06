@@ -107,7 +107,7 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 		// Create the rest of the actions in the form title area
 		// super.createFormContent(managedForm);
 		// Form title
-		String title = PDETextHelper.translateReadText(model.getDSRoot()
+		String title = PDETextHelper.translateReadText(model.getDSComponent()
 				.getAttributeName());
 		if (title.length() > 0) {
 			form.setText(title);
@@ -141,7 +141,7 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 		ScrolledForm form = getManagedForm().getForm();
 		IDSModel model = (IDSModel) getModel();
 		String oldTitle = form.getText();
-		String newTitle = model.getDSRoot().getName();
+		String newTitle = model.getDSComponent().getName();
 		if (newTitle.equals(oldTitle) == false) {
 			// Update form page title
 			form.setText(PDETextHelper.translateReadText(newTitle));

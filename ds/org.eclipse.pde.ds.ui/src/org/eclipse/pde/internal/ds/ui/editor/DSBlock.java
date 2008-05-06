@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSReference;
-import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.editor.details.DSComponentDetails;
 import org.eclipse.pde.internal.ds.ui.editor.details.DSImplementationDetails;
@@ -103,7 +103,7 @@ public class DSBlock extends PDEMasterDetailsBlock implements IModelChangedListe
 
 	public Object getPageKey(Object object) {
 		// Get static page key
-		if (object instanceof IDSRoot) {
+		if (object instanceof IDSComponent) {
 			return DSComponentDetails.class;
 		} else if (object instanceof IDSImplementation) {
 			return DSImplementationDetails.class;

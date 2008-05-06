@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSReference;
-import org.eclipse.pde.internal.ds.core.IDSRoot;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSService;
 
 /**
@@ -43,7 +43,7 @@ public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentN
 	 */
 	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent) {
 		if (isRoot(name)) { // Root
-			return (IDocumentElementNode) createRoot();
+			return (IDocumentElementNode) createComponent();
 		}
 		if (isImplementation(name)){ 
 			return (IDocumentElementNode) createImplementation();
@@ -112,8 +112,8 @@ public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentN
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createRoot()
 	 */
-	public IDSRoot createRoot() {
-		return new DSRoot(fModel);
+	public IDSComponent createComponent() {
+		return new DSComponent(fModel);
 	}
 
 
