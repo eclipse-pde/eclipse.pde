@@ -12,19 +12,20 @@
 package org.eclipse.pde.internal.ds.core.text;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.eclipse.pde.internal.ds.core.IDSImplementation;
+import org.eclipse.pde.internal.ds.core.IDSObject;
+import org.eclipse.pde.internal.ds.core.IDSProperties;
+import org.eclipse.pde.internal.ds.core.IDSProperty;
+import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.core.IDSService;
 
 /**
- * Represents the root "component" entry in a DS xml file.  There may
- * be only one root node in the file and all other nodes must be inside the root.
- * The structure of component XML grammar is:
+ * Represents the root "component" entry in a DS xml file. There may be only one
+ * root node in the file and all other nodes must be inside the root. The
+ * structure of component XML grammar is:
  * 
- * <component> ::= <implementation>
- * 				   <properties> *
- * 				   <service> ?
- * 				   <reference> *
+ * <component> ::= <implementation> <properties> * <service> ? <reference> *
  * 
  * @since 3.4
  * @see DSObject
@@ -34,109 +35,137 @@ import org.eclipse.pde.internal.ds.core.IDSService;
 public class DSComponent extends DSObject implements IDSComponent {
 
 	private static final long serialVersionUID = 1L;
-	
 
 	public DSComponent(DSModel model) {
 		super(model, ELEMENT_ROOT);
 		setInTheModel(true);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isRoot()
 	 */
 	public boolean isRoot() {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.core.toc.TocObject#getType()
 	 */
 	public int getType() {
 		return TYPE_ROOT;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canBeParent()
 	 */
 	public boolean canBeParent() {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#getName()
 	 */
 	public String getName() {
 		return this.getAttributeName();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canAddChild(org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject)
 	 */
 	public boolean canAddChild(int objectType) {
-		return objectType == TYPE_IMPLEMENTATION || objectType == TYPE_PROPERTIES || objectType == TYPE_PROPERTY || objectType == TYPE_SERVICE;
+		return objectType == TYPE_IMPLEMENTATION
+				|| objectType == TYPE_PROPERTIES || objectType == TYPE_PROPERTY
+				|| objectType == TYPE_SERVICE;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canAddSibling(int)
 	 */
 	public boolean canAddSibling(int objectType) {
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setAttributeName(java.lang.String)
 	 */
-	public void setAttributeName(String name){
+	public void setAttributeName(String name) {
 		setXMLAttribute(ATTRIBUTE_COMPONENT_NAME, name);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getAttributeName()
 	 */
-	public String getAttributeName(){
+	public String getAttributeName() {
 		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_NAME);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setEnabled(boolean)
 	 */
-	public void setEnabled(boolean bool){
+	public void setEnabled(boolean bool) {
 		setBooleanAttributeValue(ATTRIBUTE_ENABLED, bool);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getEnabled()
 	 */
-	public boolean getEnabled(){
+	public boolean getEnabled() {
 		return getBooleanAttributeValue(ATTRIBUTE_ENABLED, true);
 	}
-	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setFactory(java.lang.String)
 	 */
-	public void setFactory(String factory){
+	public void setFactory(String factory) {
 		setXMLAttribute(ATTRIBUTE_FACTORY, factory);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getFactory()
 	 */
-	public String getFactory(){
+	public String getFactory() {
 		return getXMLAttributeValue(ATTRIBUTE_FACTORY);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setImmediate(boolean)
 	 */
-	public void setImmediate(boolean bool){
+	public void setImmediate(boolean bool) {
 		setBooleanAttributeValue(ATTRIBUTE_IMMEDIATE, bool);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getImmediate()
 	 */
-	public boolean getImmediate(){
+	public boolean getImmediate() {
 		return getBooleanAttributeValue(ATTRIBUTE_IMMEDIATE, false);
 	}
 
@@ -163,5 +192,29 @@ public class DSComponent extends DSObject implements IDSComponent {
 		moveChildNode((IDocumentElementNode) item, newRelativeIndex, true);
 	}
 
-	
+	public IDSImplementation[] getImplementations() {
+		return (IDSImplementation[]) getChildNodesList(IDSImplementation.class,
+				true).toArray();
+	}
+
+	public IDSProperties[] getPropertiesElements() {
+		return (IDSProperties[]) getChildNodesList(IDSProperties.class, true)
+				.toArray();
+	}
+
+	public IDSProperty[] getPropertyElements() {
+		return (IDSProperty[]) getChildNodesList(IDSProperty.class, true)
+				.toArray();
+	}
+
+	public IDSReference[] getReferences() {
+		return (IDSReference[]) getChildNodesList(IDSReference.class, true)
+				.toArray();
+	}
+
+	public IDSService[] getServices() {
+		return (IDSService[]) getChildNodesList(IDSService.class, true)
+				.toArray();
+	}
+
 }

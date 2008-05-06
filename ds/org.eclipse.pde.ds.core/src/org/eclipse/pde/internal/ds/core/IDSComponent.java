@@ -32,5 +32,16 @@ public interface IDSComponent extends IDSObject {
 	public void removeChild(IDSObject obj);
 
 	public void moveItem(IDSObject item, int newRelativeIndex);
+	
+	public IDSImplementation[] getImplementations();
+	
+	public IDSProperty[] getPropertyElements();
+	
+	public IDSProperties[] getPropertiesElements();
+	
+	public IDSService[] getServices();
+	
+	public IDSReference[] getReferences();
+	
 
 }
