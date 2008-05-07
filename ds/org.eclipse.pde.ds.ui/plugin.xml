@@ -5,6 +5,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="org.eclipse.pde.internal.ds.ui.editor.DSEditor"
+            contributorClass="org.eclipse.pde.internal.ds.ui.editor.DSEditorContributor"
             default="true"
             icon="$nl$/icons/obj16/ds_obj.gif"
             id="org.eclipse.pde.ds.ui.editor"
