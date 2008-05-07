@@ -232,6 +232,8 @@ public class Feature extends VersionableObject implements IFeature {
 		for (int i = 0; i < fPlugins.size(); i++) {
 			IFeaturePlugin fp = (IFeaturePlugin) fPlugins.get(i);
 			ModelEntry entry = PluginRegistry.findEntry(fp.getId());
+			if (entry == null)
+				continue;
 			IPluginModelBase[] models = entry.getActiveModels();
 			for (int j = 0; j < models.length; j++) {
 				IPluginModelBase m = models[j];
