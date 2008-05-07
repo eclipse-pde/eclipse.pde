@@ -25,14 +25,11 @@ import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Utilities for handling files
@@ -40,33 +37,20 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  * @since 1.0.0
  */
 public class FileUtils {
+	/**
+	 * Maximum of time in ms to wait in deletion operation while running JDT/Core tests.
+	 * Default is 10 seconds. This number cannot exceed 1 minute (ie. 60000).
+	 * <br>
+	 * To avoid too many loops while waiting, the ten first ones are done waiting
+	 * 10ms before repeating, the ten loops after are done waiting 100ms and
+	 * the other loops are done waiting 1s...
+	 */
+	public static int DELETE_MAX_WAIT = 10000;
 
 	/**
-	 * Static class for an <code>IOverwriteQuery</code> implementation
+	 * Time wasted deleted resources
 	 */
-	private static class ImportOverwriteQuery implements IOverwriteQuery {
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.dialogs.IOverwriteQuery#queryOverwrite(java.lang.String)
-		 */
-		public String queryOverwrite(String file) {
-			return ALL;
-		}	
-	}
-	
-    /**
-     * Maximum of time in ms to wait in deletion operation while running JDT/Core tests.
-     * Default is 10 seconds. This number cannot exceed 1 minute (ie. 60000).
-     * <br>
-     * To avoid too many loops while waiting, the ten first ones are done waiting
-     * 10ms before repeating, the ten loops after are done waiting 100ms and
-     * the other loops are done waiting 1s...
-     */
-    public static int DELETE_MAX_WAIT = 10000;
-    
-    /**
-     * Time wasted deleted resources
-     */
-    private static int DELETE_MAX_TIME = 0;
+	private static int DELETE_MAX_TIME = 0;
 	
 	/**
 	 * Recursively adds files from the specified directory to the provided list
@@ -99,16 +83,14 @@ public class FileUtils {
 	 * @throws InvocationTargetException
 	 * @throws IOException
 	 */
-	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {		
-		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
-		List<File> files = new ArrayList<File>(100);
-		addJavaFiles(rootDir, files);
+	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {
+		IResource findMember = ResourcesPlugin.getWorkspace().getRoot().getFolder(destPath);
+		File dest = findMember.getLocation().toFile();
+		if (!dest.exists()) dest.mkdirs();
+		TestSuiteHelper.copy(rootDir, dest);
 		try {
-			ImportOperation op= new ImportOperation(destPath, rootDir, structureProvider, new ImportOverwriteQuery(), files);
-			op.setCreateContainerStructure(false);
-			op.run(monitor);
-		} catch (InterruptedException e) {
-			// should not happen
+			findMember.refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
 		}
 	}
 	
@@ -120,23 +102,23 @@ public class FileUtils {
 	 * @throws InvocationTargetException
 	 * @throws IOException
 	 */
-	public static void importFileFromDirectory(File file, IPath destPath, IProgressMonitor monitor) throws CoreException, InvocationTargetException, IOException {		
-		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
-		List<File> files = new ArrayList<File>(1);
-		files.add(file);
+	public static void importFileFromDirectory(File file, IPath destPath, IProgressMonitor monitor) throws CoreException, InvocationTargetException, IOException {
+		IResource findMember = null;
+		if (destPath.segmentCount() == 1) {
+			findMember = ResourcesPlugin.getWorkspace().getRoot().getProject(destPath.lastSegment());
+		} else {
+			findMember = ResourcesPlugin.getWorkspace().getRoot().getFolder(destPath);
+		}
+		if (findMember == null) return;
+		File dest = findMember.getLocation().toFile();
+		if (!dest.exists()) dest.mkdirs();
+		TestSuiteHelper.copy(file, dest);
 		try {
-			ImportOperation ioperation = new ImportOperation(destPath, file.getParentFile(), structureProvider, new ImportOverwriteQuery(), files);
-			ioperation.setCreateContainerStructure(false);
-			ioperation.run(monitor);
-			IStatus status = ioperation.getStatus();
-			if(!status.isOK()) {
-				throw new CoreException(status);
-			}
-		} catch (InterruptedException e) {
-			// should not happen
+			findMember.refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
 		}
 	}
-	
+
 	/**
 	 * Creates a new java.io.File at the given path with the given contents
 	 * @param path

@@ -21,9 +21,12 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.text.BadLocationException;
@@ -100,14 +103,14 @@ public class TagValidator extends ASTVisitor {
 						validtags = (IApiJavadocTag[]) vtags.toArray(new IApiJavadocTag[vtags.size()]);
 					}
 				}
-				processTags(tags, validtags, IElementDescriptor.T_REFERENCE_TYPE, context);
+				processTags(getTypeName(type), tags, validtags, IElementDescriptor.T_REFERENCE_TYPE, context);
 				break;
 			}
 			case ASTNode.METHOD_DECLARATION: {
 				MethodDeclaration method = (MethodDeclaration) node;
 				IApiJavadocTag[] validtags = jtm.getTagsForType(getParentKind(node), method.isConstructor() ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
 				String context = method.isConstructor() ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
-				processTags(tags, validtags, IElementDescriptor.T_METHOD, context);
+				processTags(getTypeName(method), tags, validtags, IElementDescriptor.T_METHOD, context);
 				break;
 			}
 			case ASTNode.FIELD_DECLARATION: {
@@ -115,12 +118,37 @@ public class TagValidator extends ASTVisitor {
 				IApiJavadocTag[] validtags = jtm.getTagsForType(getParentKind(node), IApiJavadocTag.MEMBER_FIELD);
 				boolean isfinal = Flags.isFinal(field.getModifiers());
 				String context = isfinal ? BuilderMessages.TagValidator_a_final_field : BuilderMessages.TagValidator_a_field;
-				processTags(tags, isfinal ? new IApiJavadocTag[0] : validtags, IElementDescriptor.T_FIELD, context);
+				processTags(getTypeName(field), tags, isfinal ? new IApiJavadocTag[0] : validtags, IElementDescriptor.T_FIELD, context);
 				break;
 			}
 		}
 	}
 	
+	private String getTypeName(ASTNode node) {
+		return getTypeName(node, new StringBuffer());
+	}
+	
+	private String getTypeName(ASTNode node, StringBuffer buffer) {
+		switch(node.getNodeType()) {
+		case ASTNode.COMPILATION_UNIT :
+			CompilationUnit unit = (CompilationUnit) node;
+			PackageDeclaration packageDeclaration = unit.getPackage();
+			if (packageDeclaration != null) {
+				buffer.insert(0, '.');
+				buffer.insert(0, packageDeclaration.getName().getFullyQualifiedName());
+			}
+			return String.valueOf(buffer);
+		default :
+			if (node instanceof AbstractTypeDeclaration) {
+				AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) node;
+				if (typeDeclaration.isPackageMemberTypeDeclaration()) {
+					buffer.append(typeDeclaration.getName().getIdentifier());
+				}
+			}
+		}
+		return getTypeName(node.getParent(), buffer);
+	}
+
 	/**
 	 * Processes the listing of valid tags against the listing of existing tags on the node, and
 	 * creates errors if disallowed tags are found.
@@ -129,7 +157,7 @@ public class TagValidator extends ASTVisitor {
 	 * @param element
 	 * @param context
 	 */
-	private void processTags(List tags, IApiJavadocTag[] validtags, int element, String context) {
+	private void processTags(String typeName, List tags, IApiJavadocTag[] validtags, int element, String context) {
 		IApiJavadocTag[] alltags = ApiPlugin.getJavadocTagManager().getAllTags();
 		HashSet invalidtags = new HashSet(alltags.length);
 		for(int i = 0; i < alltags.length; i++) {
@@ -145,7 +173,7 @@ public class TagValidator extends ASTVisitor {
 		for(Iterator iter = tags.iterator(); iter.hasNext();) {
 			tag = (TagElement) iter.next();
 			if(invalidtags.contains(tag.getTagName())) {
-				processTagProblem(tag, element, context);
+				processTagProblem(typeName, tag, element, context);
 			}
 		}
 	}
@@ -156,7 +184,7 @@ public class TagValidator extends ASTVisitor {
 	 * @param element
 	 * @param context
 	 */
-	private void processTagProblem(TagElement tag, int element, String context) {
+	private void processTagProblem(String typeName, TagElement tag, int element, String context) {
 		if(fTagProblems == null) {
 			fTagProblems = new HashSet(10);
 		}
@@ -171,16 +199,17 @@ public class TagValidator extends ASTVisitor {
 		catch (BadLocationException e) {} 
 		catch (CoreException e) {}
 		try {
-			IApiProblem problem = ApiProblemFactory.newApiProblem(fCompilationUnit.getCorrespondingResource().getProjectRelativePath().toPortableString(), 
-					new String[] {tag.getTagName(), context}, 
+			IApiProblem problem = ApiProblemFactory.newApiProblem(fCompilationUnit.getCorrespondingResource().getProjectRelativePath().toPortableString(),
+					typeName,
+					new String[] {tag.getTagName(), context},
 					new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID, IApiMarkerConstants.MARKER_ATTR_HANDLE_ID}, 
 					new Object[] {new Integer(IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID), fCompilationUnit.getHandleIdentifier()}, 
-					linenumber, 
-					charstart, 
-					charend, 
-					IApiProblem.CATEGORY_USAGE, 
-					element, 
-					IApiProblem.UNSUPPORTED_TAG_USE, 
+					linenumber,
+					charstart,
+					charend,
+					IApiProblem.CATEGORY_USAGE,
+					element,
+					IApiProblem.UNSUPPORTED_TAG_USE,
 					IApiProblem.NO_FLAGS);
 			
 			fTagProblems.add(problem);

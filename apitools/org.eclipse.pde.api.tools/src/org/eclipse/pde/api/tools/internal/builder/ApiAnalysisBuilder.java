@@ -379,7 +379,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			// Compatibility checks
 			IApiComponent apiComponent = wsprofile.getApiComponent(id);
 			if(apiComponent != null) {
-				fAnalyzer.analyzeComponent(fBuildState, profile, apiComponent, null, null, localMonitor);
+				fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, null, null, localMonitor);
 				updateMonitor(localMonitor, 1);
 			}
 		}
@@ -468,13 +468,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							new Integer(problem.getCharStart()),
 							new Integer(problem.getCharEnd()),
 							ApiAnalysisBuilder.SOURCE,
-							new Integer(problem.getId()),
+							new Integer(problem.getId())
 					}
 				);
 			//add message arguments, if any
 			String[] args = problem.getMessageArguments();
 			if(args.length > 0) {
 				marker.setAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS, createArgAttribute(args));
+			}
+			String typeName = problem.getTypeName();
+			if (typeName != null) {
+				marker.setAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_TYPE_NAME, typeName);
 			}
 			//add all other extra arguments, if any
 			if(problem.getExtraMarkerAttributeIds().length > 0) {
@@ -497,7 +501,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @return the resource or <code>null</code>
 	 */
 	private IResource resolveResource(IApiProblem problem) {
-		IResource resource = fCurrentProject.findMember(new Path(problem.getResourcePath()));
+		String resourcePath = problem.getResourcePath();
+		if (resourcePath == null) {
+			return null;
+		}
+		IResource resource = fCurrentProject.findMember(new Path(resourcePath));
 		if(resource == null) {
 			return null;
 		}
@@ -573,7 +581,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					 cnames = new ArrayList(fChangedTypes.size());
 				collectAllQualifiedNames(fTypesToCheck, fChangedTypes, tnames, cnames, localMonitor);
 				updateMonitor(localMonitor, 1);
-				fAnalyzer.analyzeComponent(fBuildState, profile, apiComponent, (String[])tnames.toArray(new String[tnames.size()]), (String[])cnames.toArray(new String[cnames.size()]), localMonitor);
+				fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, (String[])tnames.toArray(new String[tnames.size()]), (String[])cnames.toArray(new String[cnames.size()]), localMonitor);
 				updateMonitor(localMonitor, 1);
 			}
 		}

@@ -68,7 +68,8 @@ public class CreateApiFilterOperation extends UIJob {
 				return Status.CANCEL_STATUS;
 			}
 			IApiFilterStore store = component.getFilterStore();
-			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), 
+			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
+					getTypeNameFromMarker(),
 					getMessageArgumentsFromMarker(), 
 					null,
 					null,
@@ -96,5 +97,9 @@ public class CreateApiFilterOperation extends UIJob {
 			return arguments.split("#"); //$NON-NLS-1$
 		}
 		return (String[]) args.toArray(new String[args.size()]);
+	}
+	
+	private String getTypeNameFromMarker() {
+		return fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_TYPE_NAME, null);
 	}
 }

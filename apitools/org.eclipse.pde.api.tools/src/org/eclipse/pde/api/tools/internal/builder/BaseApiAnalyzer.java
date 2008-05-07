@@ -118,7 +118,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * The current build state to use
 	 */
 	private BuildState fBuildState = null;
-	
+	/**
+	 * The current filter store to use
+	 */
+	private IApiFilterStore fFilterStore = null;
 	/**
 	 * The associated {@link IJavaProject}, if there is one
 	 */
@@ -141,7 +144,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(org.eclipse.pde.api.tools.internal.builder.BuildState, org.eclipse.pde.api.tools.internal.provisional.IApiProfile, org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String[], java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void analyzeComponent(final BuildState state, final IApiProfile baseline, final IApiComponent component, final String[] typenames, final String[] changedtypes, IProgressMonitor monitor) {
+	public void analyzeComponent(
+			final BuildState state,
+			final IApiFilterStore filterStore,
+			final IApiProfile baseline,
+			final IApiComponent component,
+			final String[] typenames,
+			final String[] changedtypes,
+			IProgressMonitor monitor) {
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 3 + (typenames == null ? 0 : typenames.length));
 		try {
 			fJavaProject = getJavaProject(component);
@@ -155,6 +165,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			this.fBuildState = state;
 			if(fBuildState == null) {
 				fBuildState = getBuildState();
+			}
+			if (filterStore != null) {
+				this.fFilterStore = filterStore;
 			}
 			//compatibility checks
 			if(reference != null) {
@@ -726,14 +739,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			} catch (BadLocationException e) {
 				ApiPlugin.log(e);
 			}
-			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(), 
-					messageargs, 
-					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID, IApiMarkerConstants.MARKER_ATTR_HANDLE_ID}, 
-					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID), member.getHandleIdentifier()}, 
-					lineNumber, 
-					charStart, 
-					charEnd, 
-					info.getElementType(), 
+			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(),
+					member.getDeclaringType().getFullyQualifiedName(),
+					messageargs,
+					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID, IApiMarkerConstants.MARKER_ATTR_HANDLE_ID},
+					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID), member.getHandleIdentifier()},
+					lineNumber,
+					charStart,
+					charEnd,
+					info.getElementType(),
 					kind);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
@@ -808,12 +822,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 			}
 			String path = null;
-			if (resource == null) {
-				path = delta.getTypeName();
-			} else {
+			if (resource != null) {
 				path = resource.getProjectRelativePath().toPortableString();
 			}
 			IApiProblem apiProblem = ApiProblemFactory.newApiProblem(path,
+					delta.getTypeName(),
 					delta.getArguments(),
 					new String[] {
 						IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,
@@ -1091,7 +1104,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} else {
 			lineNumber = 1;
 		}
-		return ApiProblemFactory.newApiVersionNumberProblem(path, 
+		return ApiProblemFactory.newApiVersionNumberProblem(path,
+				null,
 				messageargs, 
 				new String[] {
 					IApiMarkerConstants.MARKER_ATTR_VERSION,
@@ -1124,14 +1138,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if(DEBUG) {
 			System.out.println("Checking if the default api baseline is set"); //$NON-NLS-1$
 		}
-		IApiProblem problem = ApiProblemFactory.newApiProfileProblem(Path.EMPTY.toPortableString(), 
-				null, 
-				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-				new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)}, 
-				-1, 
-				-1, 
-				-1,  
-				IElementDescriptor.T_RESOURCE, 
+		IApiProblem problem = ApiProblemFactory.newApiProfileProblem(
+				Path.EMPTY.toPortableString(),
+				null,
+				null,
+				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
+				new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)},
+				-1,
+				-1,
+				-1,
+				IElementDescriptor.T_RESOURCE,
 				IApiProblem.API_PROFILE_MISSING);
 		addProblem(problem);
 	}
@@ -1195,6 +1211,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	private boolean isProblemFiltered(IApiProblem problem) {
 		if (fJavaProject == null) {
+			if (this.fFilterStore != null) {
+				return this.fFilterStore.isFiltered(problem);
+			}
 			return false;
 		}
 

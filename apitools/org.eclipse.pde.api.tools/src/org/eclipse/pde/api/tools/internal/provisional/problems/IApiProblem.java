@@ -307,11 +307,20 @@ public interface IApiProblem {
 	
 	/**
 	 * Returns the project relative path to the resource this problem 
-	 * was found in.
+	 * was found in, or <code>null</code> if none.
 	 * 
-	 * @return the project relative path to the resource the problem was found in
+	 * @return the project relative path to the resource the problem was found in, or null if none
 	 */
 	public String getResourcePath();
+	
+	/**
+	 * Returns the fully qualified type name to the type this problem 
+	 * was found in, or <code>null</code> if none. 
+	 * 
+	 * @return the fully qualified type name to the type this problem , null if none.
+	 * was found in
+	 */
+	public String getTypeName();
 	
 	/**
 	 * Returns the listing of message arguments passed in to the problem or an

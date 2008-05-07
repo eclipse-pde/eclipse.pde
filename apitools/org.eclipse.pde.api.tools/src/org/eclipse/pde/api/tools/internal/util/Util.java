@@ -2314,8 +2314,8 @@ public final class Util {
 		InputStream zipIn = new FileInputStream(zipPath);
 		byte[] buf = new byte[8192];
 		File destDir = new File(destDirPath);
-		ZipInputStream zis = new ZipInputStream(zipIn);
-		FileOutputStream fos = null;
+		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(zipIn));
+		BufferedOutputStream outputStream = null;
 		try {
 			ZipEntry zEntry;
 			while ((zEntry = zis.getNextEntry()) != null) {
@@ -2335,17 +2335,17 @@ public final class Util {
 				new File(destDir, fileDir).mkdirs();
 				//write file
 				File outFile = new File(destDir, filePath);
-				fos = new FileOutputStream(outFile);
+				outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
 				int n = 0;
 				while ((n = zis.read(buf)) >= 0) {
-					fos.write(buf, 0, n);
+					outputStream.write(buf, 0, n);
 				}
-				fos.close();
+				outputStream.close();
 			}
 		} catch (IOException ioe) {
-			if (fos != null) {
+			if (outputStream != null) {
 				try {
-					fos.close();
+					outputStream.close();
 				} catch (IOException ioe2) {
 				}
 			}

@@ -340,9 +340,12 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 					IApiProblemFilter filter = apiProblemFilters[i];
 					IApiProblem apiProblem = filter.getUnderlyingProblem();
 					if (apiProblem != null) {
-						IResource resource = fProject.findMember(apiProblem.getResourcePath());
-						if (resource != null) {
-							resource.touch(null);
+						String resourcePath = apiProblem.getResourcePath();
+						if (resourcePath != null) {
+							IResource resource = fProject.findMember(resourcePath);
+							if (resource != null) {
+								resource.touch(null);
+							}
 						}
 					}
 				}

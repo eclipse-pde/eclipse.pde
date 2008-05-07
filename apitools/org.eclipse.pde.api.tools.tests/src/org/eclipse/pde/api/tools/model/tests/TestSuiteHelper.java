@@ -485,7 +485,11 @@ public class TestSuiteHelper {
 	 *        or it doesn't exist or if the given file doesn't exist
 	 */
 	public static void copy(File file, File dest) {
-		if (!dest.exists() || !dest.isDirectory()) {
+		if (!dest.exists()) {
+			if (!dest.mkdirs()) {
+				throw new IllegalArgumentException("could not create destination");
+			}
+		} else if (!dest.isDirectory()) {
 			throw new IllegalArgumentException("destination is not a directory");
 		}
 		if (!file.exists()) {

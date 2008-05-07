@@ -17,6 +17,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -53,7 +56,8 @@ import org.w3c.dom.NodeList;
  * @since 1.0.0
  */
 public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener {
-	
+	private static final String GLOBAL = "!global!"; //$NON-NLS-1$
+	public static final int CURRENT_STORE_VERSION = 2;
 	/**
 	 * Constant used for controlling tracing in the plug-in workspace component
 	 */
@@ -176,17 +180,33 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return;
 		}
 		initializeApiFilters();
-		HashSet pfilters = null;
-		IResource resource = null;
 		for(int i = 0; i < filters.length; i++) {
-			resource = fProject.getProject().findMember(new Path(filters[i].getUnderlyingProblem().getResourcePath()));
+			IApiProblem problem = filters[i].getUnderlyingProblem();
+			String resourcePath = problem.getResourcePath();
+			if (resourcePath == null) {
+				continue;
+			}
+			IResource resource = fProject.getProject().findMember(new Path(resourcePath));
 			if(resource == null) {
 				continue;
 			}
-			pfilters = (HashSet) fFilterMap.get(resource);
-			if(pfilters == null) {
+			Map pTypeNames = (HashMap) fFilterMap.get(resource);
+			String typeName = problem.getTypeName();
+			if (typeName == null) {
+				typeName = GLOBAL;
+			}
+			Set pfilters = null;
+			if(pTypeNames == null) {
+				pTypeNames = new HashMap();
 				pfilters = new HashSet();
-				fFilterMap.put(resource, pfilters);
+				pTypeNames.put(typeName, pfilters);
+				fFilterMap.put(resource, pTypeNames);
+			} else {
+				pfilters = (Set) pTypeNames.get(typeName);
+				if (pfilters == null) {
+					pfilters = new HashSet();
+					pTypeNames.put(typeName, pfilters);
+				}
 			}
 			fNeedsSaving |= pfilters.add(filters[i]);
 		}
@@ -205,11 +225,16 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 */
 	public synchronized IApiProblemFilter[] getFilters(IResource resource) {
 		initializeApiFilters();
-		HashSet filters = (HashSet) fFilterMap.get(resource);
-		if(filters == null) {
+		Map pTypeNames = (Map) fFilterMap.get(resource);
+		if(pTypeNames == null) {
 			return new IApiProblemFilter[0];
 		}
-		return (IApiProblemFilter[]) filters.toArray(new IApiProblemFilter[filters.size()]);
+		List allFilters = new ArrayList();
+		for (Iterator iterator = pTypeNames.values().iterator(); iterator.hasNext(); ) {
+			Set values = (Set) iterator.next();
+			allFilters.addAll(values);
+		}
+		return (IApiProblemFilter[]) allFilters.toArray(new IApiProblemFilter[allFilters.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -217,21 +242,26 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 */
 	public synchronized boolean isFiltered(IApiProblem problem) {
 		initializeApiFilters();
-		IResource resource = fProject.getProject().findMember(new Path(problem.getResourcePath()));
+		String resourcePath = problem.getResourcePath();
+		if (resourcePath == null) {
+			return false;
+		}
+		IResource resource = fProject.getProject().findMember(new Path(resourcePath));
 		if(resource == null) {
 			return false;
 		}
-		HashSet filters = (HashSet) fFilterMap.get(resource);
+		IApiProblemFilter[] filters = this.getFilters(resource);
 		if(filters == null) {
 			if(DEBUG) {
-				System.out.println("no filters defined for ["+problem.getResourcePath()+"] return not filtered"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("no filters defined for ["+resourcePath+"] return not filtered"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return false;
 		}
 		IApiProblemFilter filter = null;
-		for(Iterator iter = filters.iterator(); iter.hasNext();) {
-			filter = (IApiProblemFilter) iter.next();
-			if(filter.getUnderlyingProblem().equals(problem)) {
+		for(int i = 0, max = filters.length; i < max; i++) {
+			filter = filters[i];
+			IApiProblem underlyingProblem = filter.getUnderlyingProblem();
+			if(underlyingProblem.equals(problem)) {
 				return true;
 			}
 		}
@@ -275,14 +305,23 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return false;
 		}
 		boolean success = true;
-		HashSet pfilters = null;
-		IResource resource = null;
 		for(int i = 0; i < filters.length; i++) {
-			resource = fProject.getProject().findMember(new Path(filters[i].getUnderlyingProblem().getResourcePath()));
+			IApiProblem underlyingProblem = filters[i].getUnderlyingProblem();
+			String resourcePath = underlyingProblem.getResourcePath();
+			if (resourcePath == null) {
+				continue;
+			}
+			IResource resource = fProject.getProject().findMember(new Path(resourcePath));
 			if(resource == null) {
 				continue;
 			}
-			pfilters = (HashSet) fFilterMap.get(resource);
+			Map pTypeNames = (Map) fFilterMap.get(resource);
+			if (pTypeNames == null) continue;
+			String typeName = underlyingProblem.getTypeName();
+			if (typeName == null) {
+				typeName = GLOBAL;
+			}
+			Set pfilters = (Set) pTypeNames.get(typeName);
 			if(pfilters != null && pfilters.remove(filters[i])) {
 				if(DEBUG) {
 					System.out.println("removed filter: ["+filters[i]+"]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -290,10 +329,12 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				fNeedsSaving |= true;
 				success &= true;
 				if(pfilters.isEmpty()) {
-					success &= fFilterMap.remove(resource) != null;
+					pTypeNames.remove(typeName);
+					if (pTypeNames.isEmpty()) {
+						success &= fFilterMap.remove(resource) != null;
+					}
 				}
-			}
-			else {
+			} else {
 				success &= false;
 			}
 		}
@@ -318,49 +359,54 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		document.appendChild(root);
 		root.setAttribute(IApiXmlConstants.ATTR_ID, fProject.getElementName());
 		root.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_FILTER_STORE_CURRENT_VERSION);
-		HashSet filters = null;
-		IResource resource = null;
-		IApiProblem problem = null;
-		Element relement = null, felement = null;
 		for(Iterator iter = fFilterMap.keySet().iterator(); iter.hasNext();) {
-			resource = (IResource) iter.next();
-			relement = document.createElement(IApiXmlConstants.ELEMENT_RESOURCE);
-			relement.setAttribute(IApiXmlConstants.ATTR_PATH, resource.getProjectRelativePath().toPortableString());
-			root.appendChild(relement);
-			filters = (HashSet) fFilterMap.get(resource);
-			if(filters.isEmpty()) {
+			IResource resource = (IResource) iter.next();
+			Map pTypeNames = (Map) fFilterMap.get(resource);
+			if(pTypeNames == null) {
 				continue;
 			}
-			for(Iterator iter2 = filters.iterator(); iter2.hasNext();) {
-				problem = ((IApiProblemFilter) iter2.next()).getUnderlyingProblem();
-				felement = document.createElement(IApiXmlConstants.ELEMENT_FILTER);
-				felement.setAttribute(IApiXmlConstants.ATTR_ID, Integer.toString(problem.getId()));
-				if(problem.getMessageArguments().length > 0) {
-					felement.setAttribute(IApiXmlConstants.ATTR_MESSAGE_ARGUMENTS, createArgAttribute(problem.getMessageArguments()));
+			for (Iterator iterator = pTypeNames.entrySet().iterator(); iterator.hasNext(); ) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String typeName = (String) entry.getKey();
+				Set filters = (Set) entry.getValue();
+				if(filters.isEmpty()) {
+					continue;
 				}
-				relement.appendChild(felement);
+				Element relement = document.createElement(IApiXmlConstants.ELEMENT_RESOURCE);
+				relement.setAttribute(IApiXmlConstants.ATTR_PATH, resource.getProjectRelativePath().toPortableString());
+				boolean typeNameIsInitialized = false;
+				if (typeName != GLOBAL) {
+					relement.setAttribute(IApiXmlConstants.ATTR_TYPE, typeName);
+					typeNameIsInitialized = true;
+				}
+				root.appendChild(relement);
+				typeName = null;
+				for(Iterator iterator2 = filters.iterator(); iterator2.hasNext(); ) {
+					IApiProblem problem = ((IApiProblemFilter) iterator2.next()).getUnderlyingProblem();
+					typeName = problem.getTypeName();
+					Element filterElement = document.createElement(IApiXmlConstants.ELEMENT_FILTER);
+					filterElement.setAttribute(IApiXmlConstants.ATTR_ID, Integer.toString(problem.getId()));
+					String[] messageArguments = problem.getMessageArguments();
+					int length = messageArguments.length;
+					if(length > 0) {
+						Element messageArgumentsElement = document.createElement(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS);
+						for (int j = 0; j < length; j++) {
+							Element messageArgumentElement = document.createElement(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT);
+							messageArgumentElement.setAttribute(IApiXmlConstants.ATTR_VALUE, String.valueOf(messageArguments[j]));
+							messageArgumentsElement.appendChild(messageArgumentElement);
+						}
+						filterElement.appendChild(messageArgumentsElement);
+					}
+					relement.appendChild(filterElement);
+				}
+				if (typeName != null && !typeNameIsInitialized && typeName.length() != 0) {
+					relement.setAttribute(IApiXmlConstants.ATTR_TYPE, typeName);
+				}
 			}
 		}
 		return Util.serializeDocument(document);
 	}
 
-	/**
-	 * Creates a single string attribute from an array of strings. Uses the '#' char as 
-	 * a delimiter
-	 * @param args
-	 * @return a single string attribute from an array or arguments
-	 */
-	private String createArgAttribute(String[] args) {
-		StringBuffer buff = new StringBuffer();
-		for(int i = 0; i < args.length; i++) {
-			buff.append(args[i]);
-			if(i < args.length-1) {
-				buff.append("#"); //$NON-NLS-1$
-			}
-		}
-		return buff.toString();
-	}
-	
 	/**
 	 * Initializes the backing filter map for this store from the .aip_filters file. Does nothing if the filter store has already been
 	 * initialized.
@@ -412,37 +458,59 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		if(component.length() == 0) {
 			return;
 		}
+		String versionValue = root.getAttribute(IApiXmlConstants.ATTR_VERSION);
+		int currentVersion = Integer.parseInt(IApiXmlConstants.API_FILTER_STORE_CURRENT_VERSION);
+		int version = 0;
+		if(versionValue.length() != 0) {
+			try {
+				version = Integer.parseInt(versionValue);
+			} catch (NumberFormatException e) {
+				// ignore
+			}
+		}
+		if (version != currentVersion) {
+			// we discard all filters since there is no way to retrieve the type name
+			fNeedsSaving = true;
+			persistApiFilters();
+			return;
+		}
 		NodeList resources = root.getElementsByTagName(IApiXmlConstants.ELEMENT_RESOURCE);
-		Element element = null;
-		String path = null;
-		NodeList filters = null;
-		int id = 0;
-		String[] messageargs = null;
-		IResource resource = null;
 		ArrayList newfilters = new ArrayList();
 		for(int i = 0; i < resources.getLength(); i++) {
-			element = (Element) resources.item(i);
-			path = element.getAttribute(IApiXmlConstants.ATTR_PATH);
+			Element element = (Element) resources.item(i);
+			String path = element.getAttribute(IApiXmlConstants.ATTR_PATH);
 			if(path.length() == 0) {
 				continue;
 			}
+			String typeName = element.getAttribute(IApiXmlConstants.ATTR_TYPE);
 			IProject project = (IProject) ResourcesPlugin.getWorkspace().getRoot().findMember(component);
 			if(project == null) {
 				continue;
 			}
-			resource = project.findMember(new Path(path));
+			IResource resource = project.findMember(new Path(path));
 			if(resource == null) {
 				continue;
 			}
-			filters = element.getElementsByTagName(IApiXmlConstants.ELEMENT_FILTER);
+			NodeList filters = element.getElementsByTagName(IApiXmlConstants.ELEMENT_FILTER);
 			for(int j = 0; j < filters.getLength(); j++) {
 				element = (Element) filters.item(j);
-				id = loadIntegerAttribute(element, IApiXmlConstants.ATTR_ID);
+				int id = loadIntegerAttribute(element, IApiXmlConstants.ATTR_ID);
 				if(id <= 0) {
 					continue;
 				}
-				messageargs = element.getAttribute(IApiXmlConstants.ATTR_MESSAGE_ARGUMENTS).split("#"); //$NON-NLS-1$
-				newfilters.add(ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), 
+				String[] messageargs = null;
+				NodeList elements = element.getElementsByTagName(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS);
+				if (elements.getLength() != 1) continue;
+				Element messageArguments = (Element) elements.item(0);
+				NodeList arguments = messageArguments.getElementsByTagName(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT);
+				int length = arguments.getLength();
+				messageargs = new String[length];
+				for (int k = 0; k < length; k++) {
+					Element messageArgument = (Element) arguments.item(k);
+					messageargs[k] = messageArgument.getAttribute(IApiXmlConstants.ATTR_VALUE);
+				}
+				newfilters.add(ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
+						typeName,
 						messageargs, null, null, -1, -1, -1, id));
 			}
 		}
@@ -463,19 +531,34 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return;
 		}
 		initializeApiFilters();
-		IApiProblemFilter filter = null;
-		IResource resource = null;
-		HashSet filters = null;
+		Set filters = null;
 		for(int i = 0; i < problems.length; i++) {
-			filter = new ApiProblemFilter(fProject.getElementName(), problems[i]);
-			resource = fProject.getProject().findMember(new Path(problems[i].getResourcePath()));
+			IApiProblem problem = problems[i];
+			IApiProblemFilter filter = new ApiProblemFilter(fProject.getElementName(), problem);
+			String resourcePath = problem.getResourcePath();
+			if (resourcePath == null) {
+				continue;
+			}
+			IResource resource = fProject.getProject().findMember(new Path(resourcePath));
 			if(resource == null) {
 				continue;
 			}
-			filters = (HashSet) fFilterMap.get(resource);
-			if(filters == null) {
+			Map pTypeNames = (Map) fFilterMap.get(resource);
+			String typeName = problem.getTypeName();
+			if (typeName == null) {
+				typeName = GLOBAL;
+			}
+			if(pTypeNames == null) {
 				filters = new HashSet();
-				fFilterMap.put(resource, filters);
+				pTypeNames = new HashMap();
+				pTypeNames.put(typeName, filters);
+				fFilterMap.put(resource, pTypeNames);
+			} else {
+				filters = (Set) pTypeNames.get(typeName);
+				if (filters == null) {
+					filters = new HashSet();
+					pTypeNames.put(typeName, filters);
+				}
 			}
 			fNeedsSaving |= filters.add(filter);
 		}

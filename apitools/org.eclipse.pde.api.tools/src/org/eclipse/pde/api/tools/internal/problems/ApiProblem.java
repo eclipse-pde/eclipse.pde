@@ -32,6 +32,10 @@ public class ApiProblem implements IApiProblem {
 	 */
 	private String fResourcePath = null;
 	/**
+	 * The qualified type name for this problem
+	 */
+	private String fTypeName = null;
+	/**
 	 * The composite id of the problem. Contains the category, 
 	 * element kind, kind, and flags for a specific problem
 	 */
@@ -80,6 +84,7 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Constructor
 	 * @param resource the resource this problem occurs on / in
+	 * @param typeName the qualified type name this problem occurs on / in
 	 * @param messageargs arguments to be passed into a localized message for the problem
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
@@ -89,8 +94,9 @@ public class ApiProblem implements IApiProblem {
 	 * @param severity the severity level of the problem
 	 * @param id the id of the problem
 	 */
-	public ApiProblem(String path, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int id) {
+	public ApiProblem(String path, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int id) {
 		this.fResourcePath = path;
+		this.fTypeName = typeName;
 		this.fId = id;
 		this.fExtraArgumentIds = argumentids;
 		this.fExtraArguments = arguments;
@@ -226,19 +232,35 @@ public class ApiProblem implements IApiProblem {
 		return fMessageArguments;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	public boolean equals(Object obj) {
 		if(obj instanceof IApiProblem) {
 			IApiProblem problem = (IApiProblem) obj;
-			return problem.getId() == fId &&
-					new Path(problem.getResourcePath()).equals(new Path(fResourcePath))
-					&& argumentsEqual(problem.getMessageArguments());
+			if (problem.getId() == fId && argumentsEqual(problem.getMessageArguments())) {
+				String resourcePath = problem.getResourcePath();
+				if (resourcePath == null) {
+					if (this.fResourcePath != null) {
+						return false;
+					}
+				} else if (this.fResourcePath == null) {
+					return false;
+				} else if (!new Path(resourcePath).equals(new Path(fResourcePath))) {
+					return false;
+				}
+				String typeName = problem.getTypeName();
+				if (typeName == null) {
+					if (this.fTypeName != null) {
+						return false;
+					}
+					return true;
+				} else if (this.fTypeName == null) {
+					return false;
+				}
+				return typeName.equals(this.fTypeName);
+			}
+			return false;
 		}
 		return super.equals(obj);
 	}
-	
 	/**
 	 * COmpares the complete list of message arguments
 	 * @param arguments
@@ -302,6 +324,13 @@ public class ApiProblem implements IApiProblem {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getId() + fResourcePath.hashCode() + argumentsHashcode(fMessageArguments);
+		return getId()
+			+ (fResourcePath != null ? fResourcePath.hashCode() : 0)
+			+ argumentsHashcode(fMessageArguments)
+			+ (fTypeName != null ? fTypeName.hashCode() : 0);
+	}
+
+	public String getTypeName() {
+		return this.fTypeName;
 	}
 }

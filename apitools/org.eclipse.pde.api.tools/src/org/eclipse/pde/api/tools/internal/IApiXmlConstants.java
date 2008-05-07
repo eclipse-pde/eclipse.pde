@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-
 /**
  * Interface containing all of the constants used in XML documents
  * in API tooling 
@@ -26,11 +25,15 @@ public interface IApiXmlConstants {
 	/**
 	 * Constant representing the current version for api filter store files
 	 */
-	public static final String API_FILTER_STORE_CURRENT_VERSION = "1"; //$NON-NLS-1$
+	public static final String API_FILTER_STORE_CURRENT_VERSION = Integer.toString(ApiFilterStore.CURRENT_STORE_VERSION);
 	/**
 	 * Constant representing the current version for api profile files
 	 */
 	public static final String API_PROFILE_CURRENT_VERSION = "1"; //$NON-NLS-1$
+	/**
+	 * Constant representing the current version for api problems xml file
+	 */
+	public static final String API_PROBLEM_CURRENT_VERSION = "1"; //$NON-NLS-1$
 	/**
 	 * Constant representing the category attribute of an {@link IApiProblem} in xml.
 	 * Value is: <code>category</code>
@@ -62,7 +65,7 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_HANDLE = "handle"; //$NON-NLS-1$
 	/**
-	 * Constant representing the id attribute for plug-in xml node.
+	 * Constant representing the id attribute for plug-in xml node or an extra argument node.
 	 * Value is: <code>id</code>
 	 */
 	public static final String ATTR_ID = "id"; //$NON-NLS-1$
@@ -269,4 +272,74 @@ public interface IApiXmlConstants {
 	 * Value is: <code>type</code>
 	 */
 	public static final String ELEMENT_TYPE = "type"; //$NON-NLS-1$
+	/**
+	 * Constant representing an api problems element node in xml.
+	 * Value is: <code>api_problems</code>
+	 */
+	public static final String ELEMENT_API_PROBLEMS = "api_problems"; //$NON-NLS-1$
+	/**
+	 * Constant representing an api problem element node in xml.
+	 * Value is: <code>api_problem</code>
+	 */
+	public static final String ELEMENT_API_PROBLEM = "api_problem"; //$NON-NLS-1$
+	/**
+	 * Constant representing an extra arguments element node for an api problem element in xml.
+	 * Value is: <code>extra_arguments</code>
+	 */
+	public static final String ELEMENT_PROBLEM_EXTRA_ARGUMENTS = "extra_arguments"; //$NON-NLS-1$
+	/**
+	 * Constant representing an extra argument element node for an api problem element in xml.
+	 * Value is: <code>extra_argument</code>
+	 */
+	public static final String ELEMENT_PROBLEM_EXTRA_ARGUMENT = "extra_argument"; //$NON-NLS-1$
+	/**
+	 * Constant representing the value attribute for extra argument element node or a category node.
+	 * Value is: <code>value</code>
+	 */
+	public static final String ATTR_VALUE = "value"; //$NON-NLS-1$
+	/**
+	 * Constant representing a message arguments element node for an api problem element in xml.
+	 * Value is: <code>message_arguments</code>
+	 */
+	public static final String ELEMENT_PROBLEM_MESSAGE_ARGUMENTS = "message_arguments"; //$NON-NLS-1$
+	/**
+	 * Constant representing a message argument element node for an api problem element in xml.
+	 * Value is: <code>message_argument</code>
+	 */
+	public static final String ELEMENT_PROBLEM_MESSAGE_ARGUMENT = "message_argument"; //$NON-NLS-1$
+	/**
+	 * Constant representing the component id attribute for report element xml node.
+	 * Value is: <code>componentID</code>
+	 */
+	public static final String ATTR_COMPONENT_ID = "componentID"; //$NON-NLS-1$
+	/**
+	 * Constant representing a report element node in xml.
+	 * Value is: <code>report</code>
+	 */
+	public static final String ELEMENT_API_TOOL_REPORT = "report"; //$NON-NLS-1$<
+	/**
+	 * Constant representing a category element node for a report element in xml.
+	 * Value is: <code>category</code>
+	 */
+	public static final String ELEMENT_API_PROBLEM_CATEGORY = "category"; //$NON-NLS-1$<
+	/**
+	 * Constant representing the key attribute for category node.
+	 * Value is: <code>key</code>
+	 */
+	public static final String ATTR_KEY = "key"; //$NON-NLS-1$
+	/**
+	 * Constant representing the problem id attribute for api problem node.
+	 * Value is: <code>id</code>
+	 */
+	public static final String ATTR_PROBLEM_ID = "id"; //$NON-NLS-1$
+	/**
+	 * Constant representing the type attribute for resource node inside api filters.
+	 * Value is: <code>type</code>
+	 */
+	public static final String ATTR_TYPE = "type"; //$NON-NLS-1$
+	/**
+	 * Constant representing the type name attribute for api problem node.
+	 * Value is: <code>typeName</code>
+	 */
+	public static final String ATTR_TYPE_NAME = "typeName"; //$NON-NLS-1$
 }

@@ -595,7 +595,8 @@ public class ApiUseAnalyzer {
 			if(charStart > -1) {
 				element = compilationUnit.getElementAt(charStart);
 			}
-			return ApiProblemFactory.newApiUsageProblem(resource.getProjectRelativePath().toPortableString(), 
+			return ApiProblemFactory.newApiUsageProblem(resource.getProjectRelativePath().toPortableString(),
+					type.getFullyQualifiedName(),
 					messageargs, 
 					new String[] {IApiMarkerConstants.MARKER_ATTR_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
 					new Object[] {(element == null ? compilationUnit.getHandleIdentifier() : element.getHandleIdentifier()),
@@ -754,7 +755,9 @@ public class ApiUseAnalyzer {
 				break;
 			}
 		} 
-		return ApiProblemFactory.newApiUsageProblem(refType.getQualifiedName(), 
+		return ApiProblemFactory.newApiUsageProblem(
+				null,
+				refType.getQualifiedName(),
 				messageargs, 
 				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
 				new Object[] {new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 

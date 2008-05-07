@@ -39,6 +39,7 @@ public class ApiProblemFactory {
 	/**
 	 * Creates a new {@link IApiProblem}
 	 * @param resourcepath the path to the resource this problem was found in
+	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized message.
 	 * The arguments are passed into the string in the order they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
@@ -52,13 +53,14 @@ public class ApiProblemFactory {
 	 * @param flags any additional flags for the kind
 	 * @return a new {@link IApiProblem}
 	 */
-	public static IApiProblem newApiProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int category, int element, int kind, int flags) {
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, createProblemId(category, element, kind, flags));
+	public static IApiProblem newApiProblem(String resourcepath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int category, int element, int kind, int flags) {
+		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, createProblemId(category, element, kind, flags));
 	}
 	
 	/**
 	 * Creates a new {@link IApiProblem}
 	 * @param resourcepath the path to the resource this problem was found in
+	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized message.
 	 * The arguments are passed into the string in the order they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
@@ -69,13 +71,14 @@ public class ApiProblemFactory {
 	 * @param id the composite id of the problem
 	 * @return a new {@link IApiProblem}
 	 */
-	public static IApiProblem newApiProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int id) {
-		return new ApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
+	public static IApiProblem newApiProblem(String resourcepath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int id) {
+		return new ApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 	
 	/**
 	 * Creates a new API usage {@link IApiProblem}
 	 * @param resourcepath the path to the resource this problem was found in
+	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized message.
 	 * The arguments are passed into the string in the order they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
@@ -87,14 +90,15 @@ public class ApiProblemFactory {
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for API usage
 	 */
-	public static IApiProblem newApiUsageProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
+	public static IApiProblem newApiUsageProblem(String resourcepath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_USAGE, element, kind, IApiProblem.NO_FLAGS);
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
+		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 
 	/**
 	 * Creates a new API usage {@link IApiProblem}
 	 * @param resourcepath the path to the resource this problem was found in
+	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized message.
 	 * The arguments are passed into the string in the order they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
@@ -107,14 +111,15 @@ public class ApiProblemFactory {
 	 * @param flags the flags
 	 * @return a new {@link IApiProblem} for API usage
 	 */
-	public static IApiProblem newApiUsageProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind, int flags) {
+	public static IApiProblem newApiUsageProblem(String resourcepath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind, int flags) {
 		int id = createProblemId(IApiProblem.CATEGORY_USAGE, element, kind, flags);
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
+		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 	
 	/**
 	 * Creates a new API usage {@link IApiProblem}
 	 * @param resourcepath the path to the resource this problem was found in
+	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized message.
 	 * The arguments are passed into the string in the order they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
@@ -126,14 +131,15 @@ public class ApiProblemFactory {
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for API usage
 	 */
-	public static IApiProblem newApiProfileProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
+	public static IApiProblem newApiProfileProblem(String resourcepath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_API_PROFILE, element, kind, IApiProblem.NO_FLAGS);
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
+		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 	
 	/**
 	 * Creates a new since tag {@link IApiProblem}
 	 * @param resourcepath the path to the resource this problem was found in
+	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized message.
 	 * The arguments are passed into the string in the order they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
@@ -145,14 +151,15 @@ public class ApiProblemFactory {
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for since tags
 	 */
-	public static IApiProblem newApiSinceTagProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
+	public static IApiProblem newApiSinceTagProblem(String resourcepath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_SINCETAGS, element, kind, IApiProblem.NO_FLAGS);
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
+		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 	
 	/**
 	 * Creates a new version number {@link IApiProblem}
 	 * @param resourcepath the path to the resource this problem was found in
+	 * @param typeName the type name this problem was found in
 	 * @param messageargs listing of arguments to pass in to the localized message.
 	 * The arguments are passed into the string in the order they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
@@ -164,9 +171,9 @@ public class ApiProblemFactory {
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for version numbers
 	 */
-	public static IApiProblem newApiVersionNumberProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
+	public static IApiProblem newApiVersionNumberProblem(String resourcepath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_VERSION, element, kind, IApiProblem.NO_FLAGS);
-		return newApiProblem(resourcepath, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
+		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
 	
 	/**

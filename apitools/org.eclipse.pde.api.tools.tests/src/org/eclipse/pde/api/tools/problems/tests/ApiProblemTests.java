@@ -33,9 +33,9 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that two problems are equal (when they are known to be)
 	 */
 	public void testProblemsEqual() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertNotNull("there should have been a new problem created", problem);
-		IApiProblem problem2 = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+		IApiProblem problem2 = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertNotNull("there should have been a new problem created", problem2);
 		assertEquals("the two problems should be equal", problem, problem2);
 	}
@@ -44,9 +44,9 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that two problems are not equal (when they are known not to be)
 	 */
 	public void testProblemsNotEqual() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertNotNull("there should have been a new problem created", problem);
-		IApiProblem problem2 = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem2 = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem2);
 		assertTrue("the two problems should not be equal", !problem.equals(problem2));
 	}
@@ -55,7 +55,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that a problem category is encoded and decoded properly from a problem id
 	 */
 	public void testGetCategory() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertNotNull("there should have been a new problem created", problem);
 		assertEquals("the category should be CATEGORY_BINARY", IApiProblem.CATEGORY_COMPATIBILITY, problem.getCategory());
 	}
@@ -64,7 +64,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that a problem id is encoded properly
 	 */
 	public void testGetId() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertNotNull("there should have been a new problem created", problem);
 		assertEquals("the problemids should match", problem.getId(), ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS));
 	}
@@ -73,7 +73,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that a problem kind is encoded and decoded properly from a problem id
 	 */
 	public void testGetKind() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertNotNull("there should have been a new problem created", problem);
 		assertEquals("the kind should be ILLEGAL_IMPLEMENT", problem.getKind(), IApiProblem.ILLEGAL_IMPLEMENT);
 	}
@@ -82,7 +82,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that problem flags are encoded and decoded properly
 	 */
 	public void testGetFlags() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertEquals("the kind should be ANNOTATION_DEFAULT_VALUE", problem.getFlags(), IDelta.ANNOTATION_DEFAULT_VALUE);
 	}
@@ -91,7 +91,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that a problem element kind is encoded and decoded properly
 	 */
 	public void testGetElementKind() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertEquals("the element kind should be T_FIELD", problem.getElementKind(), IElementDescriptor.T_FIELD);
 	}
@@ -100,7 +100,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests getting the resource path attribute
 	 */
 	public void testGetResourcePath() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("there should be a path set on the problem", problem.getResourcePath());
 	}
@@ -109,7 +109,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests getting a localized message for the problem
 	 */
 	public void testGetMessage() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("the message should be null", problem.getMessage());
 		assertTrue("the not found message should be displayed", problem.getMessage().startsWith("Message not found for id: "));
@@ -119,7 +119,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests getting the charstart attribute
 	 */
 	public void testGetCharStart() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, -1, 57, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, null, -1, 57, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertEquals("the charstart should be 57", problem.getCharStart(), 57);
 	}
@@ -128,7 +128,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests getting the charend attribute
 	 */
 	public void testGetCharEnd() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, -1, -1, 57, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, null, -1, -1, 57, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertEquals("the charend should be 57", problem.getCharEnd(), 57);
 	}
@@ -137,7 +137,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests getting the line number attribute
 	 */
 	public void testGetLineNumber() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, 57, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, null, 57, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertEquals("the line number should be 57", problem.getLineNumber(), 57);
 	}
@@ -146,7 +146,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that passing in null for problem arguments will return an empty array
 	 */
 	public void testGetExtraArgumentNamesNull() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("null passed in should return an emtpy array", problem.getExtraMarkerAttributeIds());
 		assertTrue("the argument ids array type should be string", problem.getExtraMarkerAttributeIds() instanceof String[]);
@@ -156,7 +156,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that passing in null for problem arguments will return an empty array
 	 */
 	public void testGetExtraArgumentValuesNull() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("null passed in should return an emtpy array", problem.getExtraMarkerAttributeValues());
 		assertTrue("the arguments array type should be object", problem.getExtraMarkerAttributeValues() instanceof Object[]);
@@ -167,7 +167,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * from a call to getExtramarkerAttributeIds (we have to have matching arrays for valid returns)
 	 */
 	public void tesGetExtraArgumentIdsNotNullValuesNull() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, new String[] {"test1", "test2", "test3"}, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, new String[] {"test1", "test2", "test3"}, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("argument ids should not be null", problem.getExtraMarkerAttributeIds());
 		assertTrue("the argument ids array type should be string", problem.getExtraMarkerAttributeIds() instanceof String[]);
@@ -179,7 +179,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * from a call to getExtraMarkerAttributeValues (we have to have matching arrays for valid returns)
 	 */
 	public void tesGetExtraArgumentNamesNotNullIdsNull() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, new String[] {"test1", "test2", "test3"}, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, new String[] {"test1", "test2", "test3"}, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("arguments should not be null", problem.getExtraMarkerAttributeValues());
 		assertTrue("the arguments array type should be object", problem.getExtraMarkerAttributeValues() instanceof Object[]);
@@ -191,7 +191,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * from a call to getExtraMarkerAttributeValues when the arrays are not the same size (we have to have matching arrays for valid returns)
 	 */
 	public void tesGetExtraArgumentsNotSameSize() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, new String[] {"id1", "id2"}, new String[] {"test1", "test2", "test3"}, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, new String[] {"id1", "id2"}, new String[] {"test1", "test2", "test3"}, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("argument ids should not be null", problem.getExtraMarkerAttributeValues());
 		assertNotNull("argument values should not be null", problem.getExtraMarkerAttributeValues());
@@ -206,7 +206,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * from a call to getExtraMarkerAttributeValues when the arrays are the same size (we have to have matching arrays for valid returns)
 	 */
 	public void tesGetExtraArgumentsSameSize() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, new String[] {"id1", "id2", "id3"}, new String[] {"value1", "value2", "value3"}, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, new String[] {"id1", "id2", "id3"}, new String[] {"value1", "value2", "value3"}, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("argument ids should not be null", problem.getExtraMarkerAttributeValues());
 		assertNotNull("argument values should not be null", problem.getExtraMarkerAttributeValues());
@@ -220,7 +220,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that passing in null for message arguments will return an empty array
 	 */
 	public void testGetMessageArgumentsNull() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("null passed in should return an emtpy array", problem.getMessageArguments());
 		assertTrue("the arguments array type should be string", problem.getMessageArguments() instanceof String[]);
@@ -230,7 +230,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that non-null message arguments passed a retrievable
 	 */
 	public void testGetMessageArgumentsNotNull() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), new String[] {"test1", "test2", "test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, new String[] {"test1", "test2", "test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("arguments should not be null", problem.getMessageArguments());
 		assertTrue("the arguments array type should be string", problem.getMessageArguments() instanceof String[]);
@@ -241,7 +241,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Tests that toString does not return null
 	 */
 	public void testToString() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertNotNull("there should be a string", problem.toString());
 	}
@@ -253,13 +253,13 @@ public class ApiProblemTests extends AbstractApiTest {
 		if(ApiPlugin.isRunningInFramework()) {
 			Preferences store = ApiPlugin.getDefault().getPluginPreferences();
 			store.setValue(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_IGNORE);
-			IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+			IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 			assertNotNull("there should have been a new problem created", problem);
 			assertEquals("the severity should be IGNORE", IMarker.SEVERITY_INFO, problem.getSeverity());
 			store.setValue(IApiProblemTypes.ILLEGAL_IMPLEMENT, store.getDefaultString(IApiProblemTypes.ILLEGAL_IMPLEMENT));
 		}
 		else {
-			IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+			IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 			assertNotNull("there should have been a new problem created", problem);
 			assertEquals("the severity should be WARNING (no framework running)", IMarker.SEVERITY_WARNING, problem.getSeverity());
 		}
@@ -269,7 +269,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	 * Regression test for the hash code of an {@link IApiProblem}.
 	 */
 	public void testGetHashCode() {
-		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), new String[] {"test1, test2, test3"}, null, null, 2, 2, 2, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, new String[] {"test1, test2, test3"}, null, null, 2, 2, 2, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE);
 		assertNotNull("there should have been a new problem created", problem);
 		assertEquals("the hashcode should be equal to the sum of: id, resourcepath.hashCode", 
 				problem.hashCode(), (problem.getId()

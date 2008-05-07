@@ -718,7 +718,7 @@ public class ClassFileComparator {
 				}
 			}
 			String superclassName = typeDescriptor.superName;
-			if (!Util.isJavaLangObject(superclassName)) {
+			if (superclassName != null && !Util.isJavaLangObject(superclassName)) {
 				String packageName = Util.getPackageName(superclassName);
 				IApiComponent[] components = profile.resolvePackage(apiComponent, packageName);
 				if (components == null) {

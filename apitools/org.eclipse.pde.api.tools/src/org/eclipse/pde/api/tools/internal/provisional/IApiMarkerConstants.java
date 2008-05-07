@@ -116,4 +116,10 @@ public interface IApiMarkerConstants {
 	 * Value is: <code>description</code>
 	 */
 	public static final String VERSION_NUMBERING_ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
+	/**
+	 * Constant representing the type name of the 'problem' attribute on api tooling markers.
+	 * Value is: <code>problemTypeName</code>
+	 */
+	public static final String MARKER_ATTR_PROBLEM_TYPE_NAME = "problemTypeName"; //$NON-NLS-1$
+
 }
