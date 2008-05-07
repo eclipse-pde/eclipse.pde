@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -84,7 +85,21 @@ public class TagValidator extends ASTVisitor {
 			case ASTNode.TYPE_DECLARATION: {
 				TypeDeclaration type = (TypeDeclaration) node;
 				IApiJavadocTag[] validtags = jtm.getTagsForType(type.isInterface() ? IApiJavadocTag.TYPE_INTERFACE : IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
-				String context = type.isInterface() ? BuilderMessages.TagValidator_an_interface : BuilderMessages.TagValidator_a_class;
+				String context = BuilderMessages.TagValidator_an_interface;
+				if(!type.isInterface()) {
+					context = BuilderMessages.TagValidator_an_abstract_class;
+					if(Flags.isAbstract(type.getModifiers())) {
+						context = BuilderMessages.TagValidator_a_class;
+						ArrayList vtags = new ArrayList(validtags.length);
+						for(int i = 0; i < validtags.length; i++) {
+							if(validtags[i].getTagName().equals("@noinstantiate")) { //$NON-NLS-1$
+								continue;
+							}
+							vtags.add(validtags[i]);
+						}
+						validtags = (IApiJavadocTag[]) vtags.toArray(new IApiJavadocTag[vtags.size()]);
+					}
+				}
 				processTags(tags, validtags, IElementDescriptor.T_REFERENCE_TYPE, context);
 				break;
 			}

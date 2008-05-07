@@ -229,7 +229,7 @@ public class ClassFileScannerTests extends TestCase {
 		List<IReference> refs = getRefSet("Test1");
 		IReference ref = findMemberReference("classes.Test1", null, "java.lang.Object", null, ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
-		ref = findMemberReference("classes.Test1", "<init>", "java.lang.Object", null, ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
+		ref = findMemberReference("classes.Test1", "<init>", "java.lang.Object", null, ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD, refs);
 		assertTrue("there should be a ref to java.lang.Object in the default constructor", ref != null);
 	}
 	
@@ -253,7 +253,7 @@ public class ClassFileScannerTests extends TestCase {
 		List<IReference> refs = getRefSet("Test3$Inner");
 		IReference ref = findMemberReference("classes.Test3$Inner", null, "java.lang.Object", null, ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
-		ref = findMemberReference("classes.Test3$Inner", "<init>", "java.lang.Object", null, ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
+		ref = findMemberReference("classes.Test3$Inner", "<init>", "java.lang.Object", null, ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD, refs);
 		assertTrue("there should be a ref to java.lang.Object in the default constructor of an inner class", ref != null);
 	}
 	
@@ -264,7 +264,7 @@ public class ClassFileScannerTests extends TestCase {
 		List<IReference> refs = getRefSet("Test3$Inner2");
 		IReference ref = findReference("classes.Test3$Inner2", "java.lang.Object", ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
-		ref = findReference("classes.Test3$Inner2", "java.lang.Object", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
+		ref = findReference("classes.Test3$Inner2", "java.lang.Object", ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD, refs);
 		assertTrue("there should be a ref to java.lang.Object in the default constructor of an inner class", ref != null);
 	}
 	
@@ -275,7 +275,7 @@ public class ClassFileScannerTests extends TestCase {
 		List<IReference> refs = getRefSet("Test3$Inner2$Inner3");
 		IReference ref = findReference("classes.Test3$Inner2$Inner3", "java.lang.Object", ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
-		ref = findReference("classes.Test3$Inner2$Inner3", "java.lang.Object", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
+		ref = findReference("classes.Test3$Inner2$Inner3", "java.lang.Object", ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD, refs);
 		assertTrue("there should be a ref to java.lang.Object in the default constructor of an inner class", ref != null);
 	}
 	
@@ -286,7 +286,7 @@ public class ClassFileScannerTests extends TestCase {
 		List<IReference> refs = getRefSet("Test3Outer");
 		IReference ref = findReference("classes.Test3Outer", "java.lang.Object", ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
-		ref = findReference("classes.Test3Outer", "java.lang.Object", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
+		ref = findReference("classes.Test3Outer", "java.lang.Object", ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD, refs);
 		assertTrue("there should be a ref to java.lang.Object in the default constructor of an inner class", ref != null);
 	}
 	
@@ -297,7 +297,7 @@ public class ClassFileScannerTests extends TestCase {
 		List<IReference> refs = getRefSet("Test3Outer$Inner");
 		IReference ref = findReference("classes.Test3Outer$Inner", "java.lang.Object", ReferenceModifiers.REF_EXTENDS, refs);
 		assertTrue("there should be an extends ref to java.lang.Object", ref != null);
-		ref = findReference("classes.Test3Outer$Inner", "java.lang.Object", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
+		ref = findReference("classes.Test3Outer$Inner", "java.lang.Object", ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD, refs);
 		assertTrue("there should be a ref to java.lang.Object in the default constructor of an inner class", ref != null);
 	}
 	
@@ -338,7 +338,7 @@ public class ClassFileScannerTests extends TestCase {
 		assertTrue("there should be an implements reference to java.lang.Iterable", ref != null);
 		ref = findReference("classes.Test5", "classes.ITest5", ReferenceModifiers.REF_IMPLEMENTS, refs);
 		assertTrue("there should be an implements reference to classes.ITest5", ref != null);
-		ref = findReference("classes.Test5", "java.util.ArrayList", ReferenceModifiers.REF_CONSTRUCTORMETHOD, refs);
+		ref = findReference("classes.Test5", "java.util.ArrayList", ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD, refs);
 		assertTrue("there should be a ref to java.lang.Object in the default constructor of an inner class", ref != null);
 	}
 	

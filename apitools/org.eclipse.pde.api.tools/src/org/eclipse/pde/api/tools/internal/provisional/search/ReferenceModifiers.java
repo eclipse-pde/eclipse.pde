@@ -164,12 +164,18 @@ public class ReferenceModifiers {
 	 * Value is <code>2^27</code>
 	 */
 	public static final int REF_INSTANTIATE = 0x1 << 27;
-	
 	/**
 	 * Constant representing a method overriding a method in a super type.
 	 * Value is <code>2^28</code>.
 	 */
 	public static final int REF_OVERRIDE = 0x1 << 28;
+	/**
+	 * Constant representing a constructor method was invoked on a direct superclass from 
+	 * a constructor.
+	 * 
+	 * Value is <code>2^29</code>
+	 */
+	public static final int REF_SUPER_CONSTRUCTORMETHOD = 0x1 << 29;
 	
 	/**
 	 * Bit mask used to indicate all kinds of references.

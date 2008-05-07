@@ -1872,6 +1872,12 @@ public final class Util {
 			}
 			buffer.append("OVERRIDE"); //$NON-NLS-1$
 		}
+		if((kind & ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("SUPER_CONSTRUCTORMETHOD"); //$NON-NLS-1$
+		}
 		return buffer.toString();
 	}	
 	

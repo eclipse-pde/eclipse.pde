@@ -76,6 +76,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 						fImageHandle = (imagedesc == null ? null : imagedesc.createImage());
 						int type = getType(element);
 						int member = IApiJavadocTag.MEMBER_NONE;
+						boolean isabstract = false;
 						switch(element.getElementType()) {
 							case IJavaElement.METHOD: {
 								IMethod method = (IMethod) element;
@@ -95,12 +96,18 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 								member = IApiJavadocTag.MEMBER_FIELD;
 								break;
 							}
+							case IJavaElement.TYPE: {
+								isabstract = Flags.isAbstract(((IType) element).getFlags());
+							}
 						}
 						IApiJavadocTag[] tags = ApiPlugin.getJavadocTagManager().getTagsForType(type, member);
 						String completiontext = null;
 						int tokenstart = corecontext.getTokenStart();
 						int length = offset - tokenstart;
 						for(int i = 0; i < tags.length; i++) {
+							if(isabstract && tags[i].getTagName().equals("@noinstantiate")) {//$NON-NLS-1$
+								continue;
+							}
 							completiontext = tags[i].getCompleteTag(type, member);
 							if(appliesToContext(jcontext.getDocument(), completiontext, tokenstart, (length > 0 ? length : 1))) {
 								list.add(new APIToolsJavadocCompletionProposal(corecontext, completiontext, tags[i].getTagName(), fImageHandle));
@@ -121,7 +128,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * Returns the type of the enclosing type.
 	 * 
 	 * @param element java element
-	 * @return class of interface constant
+	 * @return TYPE_INTERFACE, TYPE_CLASS or -1 
 	 * @throws JavaModelException
 	 */
 	private int getType(IJavaElement element) throws JavaModelException {
@@ -129,7 +136,8 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 			element = element.getParent();
 		}
 		if (element instanceof IType) {
-			if (((IType)element).isInterface()) {
+			IType type = (IType) element;
+			if (type.isInterface()) {
 				return IApiJavadocTag.TYPE_INTERFACE;
 			}
 		}

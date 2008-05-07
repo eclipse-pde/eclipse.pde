@@ -95,11 +95,17 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 */
 	public String getTagComment(int type, int member) {
 		initializeElements();
-		int i1 = 0;
+		int i1 = -1;
+		if(type == IApiJavadocTag.TYPE_CLASS) {
+			i1 = 0;
+		}
 		if(type == IApiJavadocTag.TYPE_INTERFACE) {
 			i1 = 1;
 		}
-		int i2 = 2;
+		int i2 = -1;
+		if(member == IApiJavadocTag.MEMBER_NONE) {
+			i2 = 2;
+		}
 		if(member == IApiJavadocTag.MEMBER_FIELD) {
 			i2 = 1;
 		}
@@ -108,6 +114,9 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		}
 		else if(member == IApiJavadocTag.MEMBER_CONSTRUCTOR) {
 			i2 = 3;
+		}
+		if(i1 < 0 || i2 < 0) {
+			return null;
 		}
 		return comments[i1][i2];
 	}

@@ -239,6 +239,7 @@ public class ClassFileVisitor extends ClassAdapter {
 		 * Most recent string literal encountered. Used to infer Class.forName("...") references.
 		 */
 		String stringLiteral;
+		String methodName;
 		int lastLineNumber;
 
 		LocalLineNumberMarker localVariableMarker;
@@ -255,6 +256,7 @@ public class ClassFileVisitor extends ClassAdapter {
 			this.linePositionTracker = new LinePositionTracker();
 			this.lastLineNumber = -1;
 			this.labelsToLocalMarkers = new HashMap();
+			this.methodName = name;
 		}
 		/* (non-Javadoc)
 		 * @see org.objectweb.asm.MethodAdapter#visitEnd()
@@ -337,9 +339,14 @@ public class ClassFileVisitor extends ClassAdapter {
 				case Opcodes.INVOKESPECIAL: {
 					kind = ("<init>".equals(name) ? ReferenceModifiers.REF_CONSTRUCTORMETHOD : ReferenceModifiers.REF_SPECIALMETHOD); //$NON-NLS-1$
 					if (kind == ReferenceModifiers.REF_CONSTRUCTORMETHOD) {
-						IReference reference = ClassFileVisitor.this.addTypeReference(declaringType, ReferenceModifiers.REF_INSTANTIATE);
-						if (reference != null) {
-							this.linePositionTracker.addLocation(reference.getSourceLocation());
+						if(this.methodName.equals("<init>") && !fSuperStack.isEmpty() && ((IReferenceTypeDescriptor)fSuperStack.peek()).getQualifiedName().equals(declaringType.getClassName())) { //$NON-NLS-1$
+							kind = ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD;
+						}
+						else {
+							IReference reference = ClassFileVisitor.this.addTypeReference(declaringType, ReferenceModifiers.REF_INSTANTIATE);
+							if (reference != null) {
+								this.linePositionTracker.addLocation(reference.getSourceLocation());
+							}
 						}
 					}
 					break;
