@@ -2601,6 +2601,13 @@ public final class Util {
 		return null;
 	}
 
+	/**
+	 * Returns if the given signatures match. Where signatures are considered to match
+	 * iff the return type, name and parameters are the same.
+	 * @param signature
+	 * @param signature2
+	 * @return true if the signatures are equal, false otherwise
+	 */
 	public static boolean matchesSignatures(String signature, String signature2) {
 		if (!matches(Signature.getReturnType(signature), Signature.getReturnType(signature2))) {
 			return false;
@@ -2617,6 +2624,14 @@ public final class Util {
 		}
 		return true;
 	}
+	
+	/**
+	 * Returns if the two types match. Types are considered to match 
+	 * iff the type name and array count (if any) are the same
+	 * @param type
+	 * @param type2
+	 * @return true if the type names match, false otherwise
+	 */
 	private static boolean matches(String type, String type2) {
 		if (type.length() == 1) {
 			if (type2.length() != 1) {
@@ -2652,13 +2667,23 @@ public final class Util {
 		return matches(typeChars, type2Chars);
 	}
 
+	/**
+	 * Returns if the two type names match. Type names are considered a match
+	 * iff the full name is the same OR the name of a Q-type is the same 
+	 * as the simple name of an L-type;
+	 * @param type
+	 * @param type2
+	 * @return
+	 */
 	private static boolean matches(char[] type, char[] type2) {
 		char[] typeName = Signature.toCharArray(type);
 		char[] typeName2 = Signature.toCharArray(type2);
 		if (CharOperation.lastIndexOf(Signature.C_DOLLAR, typeName2) == -1) {
 			// no member type
-			int index = CharOperation.indexOf(typeName, typeName2, true);
-			return index != -1 && ((index + typeName.length) == typeName2.length);
+			if(CharOperation.indexOf('.', typeName) > -1) {
+				return CharOperation.equals(typeName, typeName2);
+			}
+			return CharOperation.equals(typeName, Signature.getSimpleName(typeName2));
 		}
 		// member type
 		int index = CharOperation.indexOf(typeName, typeName2, true);
@@ -2674,6 +2699,11 @@ public final class Util {
 		return index != -1 && ((index + typeName.length) == typeName2.length);
 	}
 	
+	/**
+	 * Turns the given array of strings into a {@link HashSet}
+	 * @param values
+	 * @return a new {@link HashSet} of the string array
+	 */
 	public static Set convertAsSet(String[] values) {
 		Set set = new HashSet();
 		if (values != null && values.length != 0) {
