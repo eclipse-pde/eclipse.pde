@@ -10,20 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 
-public class AllDSModelTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for testing the ds model"); //$NON-NLS-1$
-		suite.addTestSuite(DSComponentTestCase.class);
-		suite.addTestSuite(DSServiceTestCase.class);
-		suite.addTestSuite(DSReferenceTestCase.class);
-		suite.addTestSuite(DSProvideTestCase.class);
-		suite.addTestSuite(DSPropertyTestCase.class);
-		suite.addTestSuite(DSPropertiesTestCase.class);
-		return suite;
+public class DSReferenceTestCase extends AbstractDSModelTestCase {
+	
+	public void testServiceReference() {
+		StringBuffer buffer = new StringBuffer();
+		setXMLContents(buffer, LF);
+		load();
+		
+		IDSComponent component = fModel.getDSComponent();
+		assertNotNull(component);
+		
+		// TODO fill in
 	}
+	
+	
 
 }
