@@ -14,7 +14,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
+import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -163,11 +165,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						checkCompatibility(changedtypes[i], reference, component);
 						updateMonitor(localMonitor);
 					}
-				}
-				else {
+				} else {
 					checkCompatibility(reference, component);
 					updateMonitor(localMonitor);
 				}
+			} else {
+				localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, component.getId()));
+				checkCompatibility(reference, component);
+				updateMonitor(localMonitor);
 			}
 			//usage checks
 			checkApiUsage(component, typenames, localMonitor);
@@ -966,7 +971,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				// only new API have been added
 				if (compversion.getMajor() != refversion.getMajor()) {
 					// major version should be identical
-					newversion = new Version(refversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
+					newversion = new Version(refversion.getMajor(), refversion.getMinor() + 1, 0, compversion.getQualifier());
 					problem = createVersionProblem(
 							IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
 							new String[] {
@@ -1000,12 +1005,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @return
 	 */
 	private String collectDetails(final IDelta[] deltas) {
-		StringBuffer buffer = new StringBuffer();
+		StringWriter writer = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(writer);
 		for (int i = 0, max = deltas.length; i < max ; i++) {
-			buffer.append("- "); //$NON-NLS-1$
-			buffer.append(deltas[i].getMessage());
+			printWriter.print("- "); //$NON-NLS-1$
+			printWriter.println(deltas[i].getMessage());
 		}
-		return buffer.toString();
+		printWriter.flush();
+		printWriter.close();
+		return String.valueOf(writer.getBuffer());
 	}
 	
 	/**
