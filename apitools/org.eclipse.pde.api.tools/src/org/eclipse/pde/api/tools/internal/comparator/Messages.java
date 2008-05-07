@@ -365,6 +365,40 @@ public class Messages extends NLS {
 						}
 					}
 				break;
+			case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
+				switch(delta.getKind()) {
+					case IDelta.ADDED :
+						switch(delta.getFlags()) {
+							case IDelta.CHECKED_EXCEPTION :
+								return 85;
+							case IDelta.TYPE_PARAMETERS :
+								return 64;
+							case IDelta.UNCHECKED_EXCEPTION :
+								return 86;
+							case IDelta.TYPE_ARGUMENTS :
+								return 18;
+						}
+						break;
+					case IDelta.CHANGED :
+						switch(delta.getFlags()) {
+							case IDelta.ARRAY_TO_VARARGS :
+								return 87;
+							case IDelta.FINAL_TO_NON_FINAL :
+								return 88;
+							case IDelta.INCREASE_ACCESS :
+								return 89;
+							case IDelta.TYPE_PARAMETER_NAME :
+								return 75;
+						}
+					case IDelta.REMOVED :
+						switch(delta.getFlags()) {
+							case IDelta.CHECKED_EXCEPTION :
+								return 90;
+							case IDelta.UNCHECKED_EXCEPTION :
+								return 91;
+						}
+					}
+				break;
 		}
 		return 0;
 	}
