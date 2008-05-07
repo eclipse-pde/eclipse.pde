@@ -166,10 +166,10 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 					ArchiveClassFile classFile = (ArchiveClassFile) cfIterator.next();
 					visitor.visit(pkg, classFile);
 					visitor.end(pkg, classFile);
-				}				
+				}
 			}
 			visitor.endVisitPackage(pkg);
-		}			
+		}
 	}
 
 	/* (non-Javadoc)
