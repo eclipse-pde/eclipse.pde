@@ -61,7 +61,7 @@ public class DSService extends DSObject implements IDSService {
 		removeChildNode((IDocumentElementNode) item, true);
 	}
 
-	public IDSProvide[] getProvidesElements() {
+	public IDSProvide[] getProvidedServices() {
 		return (IDSProvide[]) getChildNodesList(IDSProvide.class, true)
 				.toArray();
 	}

@@ -19,7 +19,7 @@ public interface IDSService extends IDSObject {
 
 	public void removeChild(IDSProvide item);
 	
-	public IDSProvide[] getProvidesElements();
+	public IDSProvide[] getProvidedServices();
 	
 
 }
