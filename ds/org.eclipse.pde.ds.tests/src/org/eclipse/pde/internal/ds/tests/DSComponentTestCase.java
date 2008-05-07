@@ -10,6 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
-public class DSRootTestCase extends AbstractDSModelTestCase {
+import org.eclipse.pde.internal.ds.core.IDSComponent;
+
+public class DSComponentTestCase extends AbstractDSModelTestCase {
+	
+	public void testServiceComponent() {
+		StringBuffer buffer = new StringBuffer();
+		setXMLContents(buffer, LF);
+		load();
+
+		IDSComponent component = fModel.getDSComponent();
+		assertNotNull(component);
+		
+		assertEquals(component.getName(), COMPONENT_NAME);
+	}
+	
+	
 
 }

@@ -17,7 +17,7 @@ public class AllDSModelTests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for testing the ds model"); //$NON-NLS-1$
-		suite.addTestSuite(DSRootTestCase.class);
+		suite.addTestSuite(DSComponentTestCase.class);
 		suite.addTestSuite(DSServiceTestCase.class);
 		return suite;
 	}
