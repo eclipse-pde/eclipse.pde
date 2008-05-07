@@ -22,3 +22,4 @@ Export-Package: org.eclipse.pde.internal.ds.ui;x-internal:="true",
   org.eclipse.pde.internal.ds.ui.editor.details;x-internal:="true",
   org.eclipse.pde.internal.ds.ui.editor.actions;x-internal:="true"
 Bundle-Localization: plugin
+Bundle-Vendor: %providerName

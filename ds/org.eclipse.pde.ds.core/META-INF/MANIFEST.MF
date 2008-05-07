@@ -14,3 +14,4 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.pde.internal.ds.core;x-friends:="org.eclipse.pde.ds.ui",
  org.eclipse.pde.internal.ds.core.builders;x-friends:="org.eclipse.pde.ds.ui",
  org.eclipse.pde.internal.ds.core.text;x-friends:="org.eclipse.pde.ds.ui"
+Bundle-Vendor: %providerName
