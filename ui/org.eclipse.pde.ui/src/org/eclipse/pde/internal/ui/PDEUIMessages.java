@@ -233,36 +233,23 @@ public class PDEUIMessages extends NLS {
 
 	public static String CompilersConfigurationTab_incompatEnv;
 
-	public static String CompilersConfigurationTab_missingBundleClasspathEntries;
-
 	public static String ContainerRenameParticipant_renameFolders;
-
 	public static String ContainerRenameParticipant_renameBundleId;
 
 	public static String ContentSection_addDialogButtonLabel;
 
 	public static String ControlValidationUtility_errorMsgFilterInvalidSyntax;
-
 	public static String ControlValidationUtility_errorMsgKeyNotFound;
-
 	public static String ControlValidationUtility_errorMsgNotOnClasspath;
-
 	public static String ControlValidationUtility_errorMsgPluginUnresolved;
-
 	public static String ControlValidationUtility_errorMsgValueMustBeSpecified;
-
 	public static String ControlValidationUtility_errorMsgValueNotExternalized;
 
 	public static String DirectorySelectionPage_add;
-
 	public static String DirectorySelectionPage_description;
-
 	public static String DirectorySelectionPage_label;
-
 	public static String DirectorySelectionPage_message;
-
 	public static String DirectorySelectionPage_remove;
-
 	public static String DirectorySelectionPage_title;
 
 	public static String CalculateUsesAction_jobName;
