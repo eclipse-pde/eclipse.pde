@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
+import java.util.ArrayList;
+
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
@@ -62,7 +64,11 @@ public class DSService extends DSObject implements IDSService {
 	}
 
 	public IDSProvide[] getProvidedServices() {
-		return (IDSProvide[]) getChildNodesList(IDSProvide.class, true)
-				.toArray();
+		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		IDSProvide[] providedServices = new IDSProvide[childNodesList.size()];
+		for (int i = 0; i < childNodesList.size(); i++) {
+			providedServices[i] = (IDSProvide) childNodesList.get(i);
+		}
+		return providedServices;
 	}
 }

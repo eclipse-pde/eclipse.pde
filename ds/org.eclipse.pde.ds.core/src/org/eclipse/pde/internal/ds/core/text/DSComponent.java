@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
+import java.util.ArrayList;
+
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
@@ -193,28 +195,48 @@ public class DSComponent extends DSObject implements IDSComponent {
 	}
 
 	public IDSImplementation[] getImplementations() {
-		return (IDSImplementation[]) getChildNodesList(IDSImplementation.class,
-				true).toArray();
+		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		IDSImplementation[] array = new IDSImplementation[childNodesList.size()];
+		for (int i = 0; i < childNodesList.size(); i++) {
+			array[i] = (IDSImplementation) childNodesList.get(i);
+		}
+		return array;
 	}
 
 	public IDSProperties[] getPropertiesElements() {
-		return (IDSProperties[]) getChildNodesList(IDSProperties.class, true)
-				.toArray();
+		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		IDSProperties[] array = new IDSProperties[childNodesList.size()];
+		for (int i = 0; i < childNodesList.size(); i++) {
+			array[i] = (IDSProperties) childNodesList.get(i);
+		}
+		return array;
 	}
 
 	public IDSProperty[] getPropertyElements() {
-		return (IDSProperty[]) getChildNodesList(IDSProperty.class, true)
-				.toArray();
+		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		IDSProperty[] array = new IDSProperty[childNodesList.size()];
+		for (int i = 0; i < childNodesList.size(); i++) {
+			array[i] = (IDSProperty) childNodesList.get(i);
+		}
+		return array;
 	}
 
 	public IDSReference[] getReferences() {
-		return (IDSReference[]) getChildNodesList(IDSReference.class, true)
-				.toArray();
+		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		IDSReference[] array = new IDSReference[childNodesList.size()];
+		for (int i = 0; i < childNodesList.size(); i++) {
+			array[i] = (IDSReference) childNodesList.get(i);
+		}
+		return array;
 	}
 
 	public IDSService[] getServices() {
-		return (IDSService[]) getChildNodesList(IDSService.class, true)
-				.toArray();
+		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		IDSService[] services = new IDSService[childNodesList.size()];
+		for (int i = 0; i < childNodesList.size(); i++) {
+			services[i] = (IDSService) childNodesList.get(i);
+		}
+		return services;
 	}
 
 }
