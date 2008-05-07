@@ -30,7 +30,7 @@ Export-Package:
  org.eclipse.pde.internal.ui.editor.ctxhelp.details;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.feature;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.outline;x-internal:=true,
- org.eclipse.pde.internal.ui.editor.plugin;x-internal:=true,
+ org.eclipse.pde.internal.ui.editor.plugin;x-friends:="org.eclipse.pde.runtime",
  org.eclipse.pde.internal.ui.editor.plugin.rows;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.product;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.schema;x-internal:=true,
