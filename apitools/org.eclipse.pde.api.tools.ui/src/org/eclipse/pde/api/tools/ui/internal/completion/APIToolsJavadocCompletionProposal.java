@@ -32,11 +32,10 @@ import org.eclipse.swt.graphics.Point;
  */
 public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposal, ICompletionProposalExtension2, ICompletionProposalExtension3 {
 	
-	int fOffset = 0;
-	String fReplaceText = null;
-	String fDisplayText = null;
-	Image fImage = null;
-	CompletionContext fContext = null;
+	private String fReplaceText = null;
+	private String fDisplayText = null;
+	private Image fImage = null;
+	private CompletionContext fContext = null;
 	
 	/**
 	 * Constructor
@@ -67,6 +66,10 @@ public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposa
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
 	 */
 	public String getAdditionalProposalInfo() {
+		int index = fReplaceText.indexOf(fDisplayText);
+		if(index > -1) {
+			return fReplaceText.substring(index + fDisplayText.length());
+		}
 		return null;
 	}
 
