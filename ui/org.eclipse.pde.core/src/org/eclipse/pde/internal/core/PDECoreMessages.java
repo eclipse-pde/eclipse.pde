@@ -189,7 +189,6 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_unecessaryDependencyDueToFragmentHost;
 	public static String BundleErrorReporter_missingPackagesInProject;
 	public static String BundleErrorReporter_noExecutionEnvironmentSet;
-	public static String BundleErrorReporter_missingBundleClassPathEntry;
 
 	public static String BundleErrorReporter_startHeader_autoStartDeprecated;
 

@@ -23,10 +23,8 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.util.*;
@@ -435,47 +433,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (header.getElements().length == 0) {
 				report(PDECoreMessages.BundleErrorReporter_ClasspathNotEmpty, header.getLineNumber() + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 			}
-		}
-		validateBundleClasspathMappings(header);
-	}
-
-	private void validateBundleClasspathMappings(IHeader header) {
-		IFile buildProperties = fProject.getFile("build.properties"); //$NON-NLS-1$
-		if (buildProperties != null && buildProperties.exists()) {
-			WorkspaceBuildModel wbm = new WorkspaceBuildModel(buildProperties);
-			wbm.load();
-			if (!wbm.isLoaded())
-				return;
-
-			IBuild build = wbm.getBuild();
-			if (build != null) {
-				ArrayList sourceEntries = PDEBuilderHelper.getSourceEntries(build);
-				// verify classpath entry <-> source entry mappings
-				for (int i = 0; i < sourceEntries.size(); i++) {
-					String entry = (String) sourceEntries.get(i);
-					validateMapping(header, entry, sourceEntries.size());
-				}
-
-			}
-		}
-	}
-
-	private void validateMapping(IHeader header, String entry, int sourceEntrySize) {
-		boolean match = false;
-		ManifestElement[] elements = header != null ? header.getElements() : new ManifestElement[0];
-		for (int i = 0; i < elements.length; i++) {
-			if (entry.equals(elements[i].getValue()))
-				match = true;
-		}
-		// if we have no match, report an error
-		if (!match) {
-			// however, catch the case when we have a source.. entry and no Bundle-ClassPath entry
-			if (entry.equals(".") && sourceEntrySize == 1) //$NON-NLS-1$
-				return;
-			int line = header != null ? header.getLineNumber() + 1 : 1;
-			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_missingBundleClassPathEntry, new Object[] {entry});
-			IMarker marker = report(message, line, CompilerFlags.P_MISSING_BUNDLE_CLASSPATH_ENTRIES, PDEMarkerFactory.M_MISSING_BUNDLE_CLASSPATH_ENTRY, PDEMarkerFactory.CAT_OTHER);
-			addMarkerAttribute(marker, "entry", entry); //$NON-NLS-1$
 		}
 	}
 
