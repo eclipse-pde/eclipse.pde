@@ -538,7 +538,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		// assume we're on the classpath already
 		boolean onClasspath = true;
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_CLASS);
-		if (severity != CompilerFlags.IGNORE) {
+		if (severity != CompilerFlags.IGNORE && javaProject.isOpen()) {
 			onClasspath = PDEJavaHelper.isOnClasspath(value, javaProject);
 			if (!onClasspath) {
 				report(NLS.bind(PDECoreMessages.Builders_Manifest_class, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNKNOWN_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_FATAL);
@@ -546,7 +546,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 
 		severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DISCOURAGED_CLASS);
-		if (severity != CompilerFlags.IGNORE) {
+		if (severity != CompilerFlags.IGNORE && javaProject.isOpen()) {
 			BundleDescription desc = fModel.getBundleDescription();
 			if (desc == null)
 				return;
