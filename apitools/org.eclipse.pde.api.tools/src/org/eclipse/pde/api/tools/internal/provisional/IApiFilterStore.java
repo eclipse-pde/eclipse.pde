@@ -43,10 +43,10 @@ public interface IApiFilterStore {
 	/**
 	 * Returns all filters for the specified project relative resource
 	 * 
-	 * @param resourcepath the project relative resource to get filters for
+	 * @param resource the project relative resource to get filters for
 	 * @return all filters for the given project relative resource or an empty array, never <code>null</code>
 	 */
-	public IApiProblemFilter[] getFilters(IResource resourc);
+	public IApiProblemFilter[] getFilters(IResource resource);
 	
 	/**
 	 * Returns all of the resource paths that have filters contained in this
