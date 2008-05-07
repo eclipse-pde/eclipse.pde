@@ -38,7 +38,7 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.PartInitException;
 
 /**
- * The operation for removing an unsupported API Javadoc tag form a member
+ * The operation for removing an unsupported API Javadoc tag from a member
  * 
  * @since 1.0.0
  */
@@ -56,7 +56,7 @@ public class RemoveUnsupportedTagOperation {
 	public RemoveUnsupportedTagOperation(IMarker marker) {
 		fBackingMarker = marker;
 	}
-
+	
 	/**
 	 * Runs the operation reporting progress to the supplied monitor
 	 * @param monitor
