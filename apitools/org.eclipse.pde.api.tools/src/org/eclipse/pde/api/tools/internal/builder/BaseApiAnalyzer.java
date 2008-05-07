@@ -18,7 +18,6 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +107,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * The backing list of problems found so far
 	 */
-	private HashSet fProblems = new HashSet(25);
+	private ArrayList fProblems = new ArrayList(25);
 	
 	/**
 	 * List of pending deltas for which the @since tags should be checked
@@ -456,10 +455,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (DEBUG) {
 				System.out.println("API usage scan: " + (end- start) + " ms\t" + illegal.length + " problems"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}		
-			if (illegal.length > 0) {
-				for (int i = 0; i < illegal.length; i++) {
-					addProblem(illegal[i]);
-				}
+			for (int i = 0; i < illegal.length; i++) {
+				addProblem(illegal[i]);
 			}
 			updateMonitor(localMonitor);
 		} 
