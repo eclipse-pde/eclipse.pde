@@ -76,8 +76,10 @@ public class MethodSearchCriteria extends SearchCriteria {
 						if(method.isConstructor()) {
 							return (ares & RestrictionModifiers.NO_REFERENCE) == 0;
 						}
-						return (ares & RestrictionModifiers.NO_OVERRIDE) == 0 ||
-								(ares & RestrictionModifiers.NO_REFERENCE) == 0; 
+						if((ares & RestrictionModifiers.NO_OVERRIDE) == 0) {
+							return (ares & RestrictionModifiers.NO_REFERENCE) != 0 && !Util.isFinal(method.getModifiers());
+						}
+						return  (ares & RestrictionModifiers.NO_REFERENCE) == 0; 
 					}
 					else {
 						return fSourceRestriction != 0;
