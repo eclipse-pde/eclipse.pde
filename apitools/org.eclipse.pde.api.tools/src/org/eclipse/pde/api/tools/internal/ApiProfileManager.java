@@ -709,6 +709,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 								ApiPlugin.log(e.getStatus());
 							}
 						}
+						disposeWorkspaceProfile();
 					}
 				}
 			}
