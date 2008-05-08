@@ -862,9 +862,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		int flags = delta.getFlags();
 		int kind = delta.getKind();
 		if (DeltaProcessor.isCompatible(delta)) {
-			if (flags != IDelta.EXECUTION_ENVIRONMENT) {
-				// we filter EXECUTION ENVIRONMENT deltas
-				fBuildState.addCompatibleChange(delta);
+			if (isNewAPI(delta)) {
+				this.fBuildState.addCompatibleChange(delta);
 			}
 			if (kind == IDelta.ADDED) {
 				int modifiers = delta.getModifiers();
@@ -939,6 +938,75 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 	
+	/**
+	 * This is called when the delta is a compatible delta. So 
+	 * @param delta
+	 * @return
+	 */
+	private boolean isNewAPI(IDelta delta) {
+		switch(delta.getKind()) {
+			case IDelta.ADDED :
+				switch(delta.getFlags()) {
+					case IDelta.EXECUTION_ENVIRONMENT :
+					case IDelta.OVERRIDEN_METHOD :
+					case IDelta.CLINIT :
+						return false;
+					case IDelta.TYPE_MEMBER :
+					case IDelta.METHOD :
+					case IDelta.CONSTRUCTOR :
+					case IDelta.ENUM_CONSTANT :
+					case IDelta.METHOD_WITH_DEFAULT_VALUE :
+					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+					case IDelta.FIELD :
+					case IDelta.TYPE :
+					case IDelta.TYPE_PARAMETERS :
+					case IDelta.TYPE_ARGUMENTS :
+					case IDelta.SUPERCLASS :
+					case IDelta.CHECKED_EXCEPTION :
+					case IDelta.UNCHECKED_EXCEPTION :
+						return Util.isVisible(delta);
+				}
+				break;
+			case IDelta.CHANGED :
+				switch(delta.getFlags()) {
+					case IDelta.NON_NATIVE_TO_NATIVE :
+					case IDelta.NON_SYNCHRONIZED_TO_SYNCHRONIZED :
+					case IDelta.NON_TRANSIENT_TO_TRANSIENT :
+					case IDelta.TRANSIENT_TO_NON_TRANSIENT :
+					case IDelta.NATIVE_TO_NON_NATIVE :
+					case IDelta.SYNCHRONIZED_TO_NON_SYNCHRONIZED :
+						return false;
+				}
+				switch(delta.getElementType()) {
+					case IDelta.FIELD_ELEMENT_TYPE :
+					case IDelta.METHOD_ELEMENT_TYPE :
+					case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
+						return Util.isVisible(delta);
+					default:
+						switch(delta.getFlags()) {
+							case IDelta.EXPANDED_SUPERCLASS_SET :
+							case IDelta.EXPANDED_SUPERINTERFACES_SET :
+							case IDelta.INCREASE_ACCESS :
+								return Util.isVisible(delta);
+							default :
+								return false;
+						}
+				}
+			default :
+				// IDelta.REMOVED
+				switch(delta.getFlags()) {
+					case IDelta.EXECUTION_ENVIRONMENT :
+					case IDelta.CLINIT :
+						return false;
+					case IDelta.METHOD_MOVED_UP :
+					case IDelta.FIELD_MOVED_UP :
+					case IDelta.CHECKED_EXCEPTION :
+					case IDelta.UNCHECKED_EXCEPTION :
+						return Util.isVisible(delta);
+				}
+		}
+		return false;
+	}
 	/**
 	 * Checks the version number of the API component and creates a problem markers as needed
 	 * @param reference
