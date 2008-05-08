@@ -240,7 +240,7 @@ public class ClassFileVisitor extends ClassAdapter {
 		String stringLiteral;
 		String methodName;
 		int lastLineNumber;
-
+		boolean implicitConstructor = false;
 		LocalLineNumberMarker localVariableMarker;
 
 		HashMap labelsToLocalMarkers;
@@ -261,6 +261,7 @@ public class ClassFileVisitor extends ClassAdapter {
 		 * @see org.objectweb.asm.MethodAdapter#visitEnd()
 		 */
 		public void visitEnd() {
+			this.implicitConstructor = false;
 			this.argumentcount = 0;
 			ClassFileVisitor.this.exitMember();
 			this.linePositionTracker.computeLineNumbers();
@@ -338,7 +339,8 @@ public class ClassFileVisitor extends ClassAdapter {
 				case Opcodes.INVOKESPECIAL: {
 					kind = ("<init>".equals(name) ? ReferenceModifiers.REF_CONSTRUCTORMETHOD : ReferenceModifiers.REF_SPECIALMETHOD); //$NON-NLS-1$
 					if (kind == ReferenceModifiers.REF_CONSTRUCTORMETHOD) {
-						if(this.methodName.equals("<init>") && !fSuperStack.isEmpty() && ((IReferenceTypeDescriptor)fSuperStack.peek()).getQualifiedName().equals(declaringType.getClassName())) { //$NON-NLS-1$
+						if(!implicitConstructor && this.methodName.equals("<init>") && !fSuperStack.isEmpty() && ((IReferenceTypeDescriptor)fSuperStack.peek()).getQualifiedName().equals(declaringType.getClassName())) { //$NON-NLS-1$
+							implicitConstructor = true;
 							kind = ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD;
 						}
 						else {
