@@ -18,10 +18,10 @@ import java.util.List;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.DocumentObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSObject;
-import org.eclipse.pde.internal.ds.core.IDSComponent;
 
 /**
  * All modeled objects of a declarative services xml file must extend from this
@@ -31,7 +31,8 @@ import org.eclipse.pde.internal.ds.core.IDSComponent;
  * @see DSModel
  * @see DSDocumentFactory
  */
-public abstract class DSObject extends DocumentObject implements IDSConstants, Serializable, IDSObject {
+public abstract class DSObject extends DocumentObject implements IDSConstants,
+		Serializable, IDSObject {
 
 	private static final long serialVersionUID = 1L;
 
@@ -99,7 +100,8 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 
 	//	public abstract boolean canAddSibling(int objectType);
 
-	public void addChild(DSObject newObject, DSObject targetSibling, boolean insertBefore) {
+	public void addChild(IDSObject newObject, IDSObject targetSibling,
+			boolean insertBefore) {
 		if (canAddChild(newObject.getType())) {
 			int currentIndex = indexOf(targetSibling);
 			if (!insertBefore) {
@@ -109,7 +111,10 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 		}
 	}
 
-	public void addChild(DSObject newObject) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#addChild(org.eclipse.pde.internal.ds.core.IDSObject)
+	 */
+	public void addChild(IDSObject newObject) {
 		if (canAddChild(newObject.getType())) {
 			addChildNode(newObject, true);
 		}
@@ -182,7 +187,10 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 		return true;
 	}
 
-	public void removeChild(DSObject object) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#removeChild(org.eclipse.pde.internal.ds.core.IDSObject)
+	 */
+	public void removeChild(IDSObject object) {
 		if (object.canBeRemoved()) {
 			removeChildNode(object, true);
 		}
@@ -191,7 +199,7 @@ public abstract class DSObject extends DocumentObject implements IDSConstants, S
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.toc.TocObject#moveChild(org.eclipse.pde.internal.core.toc.TocObject, int)
 	 */
-	public void moveChild(DSObject object, int newRelativeIndex) {
+	public void moveChild(IDSObject object, int newRelativeIndex) {
 		moveChildNode(object, newRelativeIndex, true);
 	}
 

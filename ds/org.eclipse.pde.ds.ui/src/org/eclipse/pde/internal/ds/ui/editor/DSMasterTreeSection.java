@@ -179,6 +179,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 				canMoveDown = true;
 			} else if (dsObject.getType() == IDSConstants.TYPE_PROVIDE) {
 				canRemove = true;
+				canAddProvide = true;
 			} else if (dsObject.getType() == IDSConstants.TYPE_SERVICE) {
 				canRemove = true;
 				canMoveUp = true;
@@ -257,7 +258,6 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			handleModelEventWorldChanged(event);
 		} else if (event.getChangeType() == IModelChangedEvent.INSERT) {
-			// FIXME unreached (handleAddAction() should raise this event)
 			handleModelInsertType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 			handleModelRemoveType(event);
@@ -377,35 +377,18 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		switch (index) {
 		case F_BUTTON_ADD_PROPERTIES:
 			handleAddAction(IDSConstants.TYPE_PROPERTIES);
-			// FIXME add actions should raise IModelChangedEvent.INSERT event,
-			// but it isn't raising (so I put this temporary 2-line code):
-			this.refresh();
-			fTreeViewer.setSelection(new StructuredSelection(fAddStepAction
-					.getFNewObject()));
 			break;
 		case F_BUTTON_ADD_PROPERTY:
 			handleAddAction(IDSConstants.TYPE_PROPERTY);
-			this.refresh();
-			fTreeViewer.setSelection(new StructuredSelection(fAddStepAction
-					.getFNewObject()));
 			break;
 		case F_BUTTON_ADD_PROVIDE:
 			handleAddAction(IDSConstants.TYPE_PROVIDE);
-			this.refresh();
-			fTreeViewer.setSelection(new StructuredSelection(fAddStepAction
-					.getFNewObject()));
 			break;
 		case F_BUTTON_ADD_REFERENCE:
 			handleAddAction(IDSConstants.TYPE_REFERENCE);
-			this.refresh();
-			fTreeViewer.setSelection(new StructuredSelection(fAddStepAction
-					.getFNewObject()));
 			break;
 		case F_BUTTON_ADD_SERVICE:
 			handleAddAction(IDSConstants.TYPE_SERVICE);
-			this.refresh();
-			fTreeViewer.setSelection(new StructuredSelection(fAddStepAction
-					.getFNewObject()));
 			break;
 		case F_BUTTON_REMOVE:
 			handleDeleteAction();
@@ -525,14 +508,10 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
 			if (dsObject.getType() == IDSConstants.TYPE_PROVIDE) {
 				canRemove = true;
-
+				canAddProvide = true;
 			} else if (dsObject.getType() == IDSConstants.TYPE_SERVICE) {
 				canRemove = true;
-				// if TYPE_Service has no child, can add one Provide component
-
-				if (dsObject.getChildCount() == 0) {
-					canAddProvide = true;
-				}
+				canAddProvide = true;
 			} else if ((dsObject.getType() == IDSConstants.TYPE_PROPERTIES)
 					|| (dsObject.getType() == IDSConstants.TYPE_PROPERTY)
 					|| (dsObject.getType() == IDSConstants.TYPE_REFERENCE)) {
@@ -540,7 +519,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 			}
 
 		}
-		
+
 		// Update Menus
 		DSAddItemAction addProperties = new DSAddItemAction();
 		DSAddItemAction addProperty = new DSAddItemAction();
@@ -548,7 +527,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		DSAddItemAction addService = new DSAddItemAction();
 		DSAddItemAction addImplementation = new DSAddItemAction();
 		DSAddItemAction addReference = new DSAddItemAction();
-		
+
 		if (canAddProperties) {
 			IDSObject object = getCurrentSelection();
 			if (object != null) {
@@ -560,7 +539,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 			addProperties.setEnabled(fModel.isEditable());
 			submenu.add(addProperties);
 		}
-		
+
 		if (canAddService) {
 			IDSObject object = getCurrentSelection();
 			if (object != null) {
@@ -618,8 +597,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 				Display.getCurrent().beep();
 			}
 			manager.add(fRemoveItemAction);
-		}		
-		
+		}
 
 		// Add clipboard operations
 		manager.add(new Separator());

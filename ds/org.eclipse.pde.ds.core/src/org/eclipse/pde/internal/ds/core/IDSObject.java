@@ -55,4 +55,12 @@ public interface IDSObject extends IDocumentElementNode {
 	
 	
 	public int getChildNodeCount(Class clazz);
+	
+	
+	public boolean canBeRemoved();
+	
+
+	public void addChild(IDSObject newObject);
+
+	public void removeChild(IDSObject object);
 }
