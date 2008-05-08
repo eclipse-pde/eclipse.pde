@@ -16,7 +16,11 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 
-	public static String DSAddItemAction_0;
+	public static String DSAddItemAction_1;
+	public static String DSAddItemAction_2;
+	public static String DSAddItemAction_3;
+	public static String DSAddItemAction_4;
+	public static String DSAddItemAction_5;
 
 	public static String DSComponentDetails_0;
 	public static String DSComponentDetails_1;

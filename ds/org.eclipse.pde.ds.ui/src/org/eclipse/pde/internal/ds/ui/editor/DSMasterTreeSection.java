@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.ISelection;
@@ -19,6 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.pde.internal.ds.core.IDSModel;
@@ -26,7 +30,6 @@ import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSReference;
-import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.actions.DSAddItemAction;
@@ -75,7 +78,15 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	private DSRemoveItemAction fRemoveItemAction;
 
 	private ControlDecoration fInfoDecoration;
-	
+
+	// booleans used to set up buttons and context menu options
+	private boolean canAddService;
+	private boolean canAddProperty;
+	private boolean canAddProperties;
+	private boolean canAddReference;
+	private boolean canAddProvide;
+	private boolean canRemove;
+
 	public DSMasterTreeSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {
 				Messages.DSMasterTreeSection_addService,
@@ -97,11 +108,9 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		// Get the model
 		fModel = (IDSModel) getPage().getModel();
-		// TODO Externalize Strings (use PDEUIMessages?)
 		section.setText(Messages.DSMasterTreeSection_client_text);
 		// Set section description
-		section
-				.setDescription(Messages.DSMasterTreeSection_client_description);
+		section.setDescription(Messages.DSMasterTreeSection_client_description);
 		// Create section client
 		Composite container = createClientContainer(section, 2, toolkit);
 
@@ -133,7 +142,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		});
 		// Add collapse action to the tool bar
 		fCollapseAction = new CollapseAction(fTreeViewer,
-				PDEUIMessages.ExtensionsPage_collapseAll, 1, fModel.getDSComponent());
+				PDEUIMessages.ExtensionsPage_collapseAll, 1, fModel
+						.getDSComponent());
 		toolBarManager.add(fCollapseAction);
 
 		toolBarManager.update(true);
@@ -154,15 +164,10 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		}
 		IDSObject dsObject = getCurrentSelection();
 
-		boolean canRemove = false;
 		boolean canMoveUp = false;
 		boolean canMoveDown = false;
 
-		boolean canAddService = false;
-		boolean canAddProperty = true;
-		boolean canAddProperties = true;
-		boolean canAddReference = true;
-		boolean canAddProvide = false;
+		cleanSetUpBooleans();
 
 		if (dsObject != null) {
 
@@ -174,16 +179,11 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 				canMoveDown = true;
 			} else if (dsObject.getType() == IDSConstants.TYPE_PROVIDE) {
 				canRemove = true;
-
 			} else if (dsObject.getType() == IDSConstants.TYPE_SERVICE) {
 				canRemove = true;
 				canMoveUp = true;
 				canMoveDown = true;
-				// if TYPE_Service has no child, can add one Provide component
-
-				if (dsObject.getChildCount() == 0) {
-					canAddProvide = true;
-				}
+				canAddProvide = true;
 			} else if ((dsObject.getType() == IDSConstants.TYPE_PROPERTIES)
 					|| (dsObject.getType() == IDSConstants.TYPE_PROPERTY)
 					|| (dsObject.getType() == IDSConstants.TYPE_REFERENCE)) {
@@ -194,11 +194,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
 			// DS Validity: if Root component has no service child, can add one
 			// Service component
-			int childNodeCount = dsObject.getModel().getDSComponent()
-					.getChildNodeCount(IDSService.class);
-			if (childNodeCount == 0) {
-				canAddService = true;
-			}
+
 		}
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_SERVICE, canAddService);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTY, canAddProperty);
@@ -211,6 +207,19 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		getTreePart().setButtonEnabled(F_BUTTON_UP, canMoveUp);
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
 
+	}
+
+	private void cleanSetUpBooleans() {
+		canAddProperty = true;
+		canAddProperties = true;
+		canAddReference = true;
+		canAddProvide = false;
+		canRemove = false;
+
+		IDSComponent component = (IDSComponent) fModel.getDSComponent();
+		// DS XML Files can have 0..1 Service Component
+		int servicesCount = component.getServices().length;
+		canAddService = (servicesCount == 0);
 	}
 
 	/**
@@ -300,8 +309,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		IDSObject object = (IDSObject) objects[0];
 		if (object != null) {
 			fTreeViewer.remove(object);
-			fTreeViewer.setSelection(
-					new StructuredSelection(fModel.getDSComponent()), true);
+			fTreeViewer.setSelection(new StructuredSelection(fModel
+					.getDSComponent()), true);
 		}
 	}
 
@@ -485,7 +494,6 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		updateButtons();
 	}
 
-
 	public boolean setFormInput(Object object) {
 		// This method allows the outline view to select items in the tree
 		// Invoked by
@@ -502,4 +510,131 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		return false;
 	}
 
+	protected void fillContextMenu(IMenuManager manager) {
+		// Get the current selection
+		IDSObject dsObject = getCurrentSelection();
+		// Create the "New" submenu
+		MenuManager submenu = new MenuManager(PDEUIMessages.Menus_new_label);
+		// Add the "New" submenu to the main context menu
+		manager.add(submenu);
+
+		cleanSetUpBooleans();
+
+		// Update Booleans
+		if ((dsObject != null)) {
+
+			if (dsObject.getType() == IDSConstants.TYPE_PROVIDE) {
+				canRemove = true;
+
+			} else if (dsObject.getType() == IDSConstants.TYPE_SERVICE) {
+				canRemove = true;
+				// if TYPE_Service has no child, can add one Provide component
+
+				if (dsObject.getChildCount() == 0) {
+					canAddProvide = true;
+				}
+			} else if ((dsObject.getType() == IDSConstants.TYPE_PROPERTIES)
+					|| (dsObject.getType() == IDSConstants.TYPE_PROPERTY)
+					|| (dsObject.getType() == IDSConstants.TYPE_REFERENCE)) {
+				canRemove = true;
+			}
+
+		}
+		
+		// Update Menus
+		DSAddItemAction addProperties = new DSAddItemAction();
+		DSAddItemAction addProperty = new DSAddItemAction();
+		DSAddItemAction addProvide = new DSAddItemAction();
+		DSAddItemAction addService = new DSAddItemAction();
+		DSAddItemAction addImplementation = new DSAddItemAction();
+		DSAddItemAction addReference = new DSAddItemAction();
+		
+		if (canAddProperties) {
+			IDSObject object = getCurrentSelection();
+			if (object != null) {
+				addProperties.setSelection(object);
+			} else {
+				addProperties.setSelection(fModel.getDSComponent());
+			}
+			addProperties.setType(IDSConstants.TYPE_PROPERTIES);
+			addProperties.setEnabled(fModel.isEditable());
+			submenu.add(addProperties);
+		}
+		
+		if (canAddService) {
+			IDSObject object = getCurrentSelection();
+			if (object != null) {
+				addService.setSelection(object);
+			} else {
+				addService.setSelection(fModel.getDSComponent());
+			}
+			addService.setType(IDSConstants.TYPE_SERVICE);
+			addService.setEnabled(fModel.isEditable());
+			submenu.add(addService);
+		}
+
+		if (canAddProperty) {
+			IDSObject object = getCurrentSelection();
+			if (object != null) {
+				addProperty.setSelection(object);
+			} else {
+				addProperty.setSelection(fModel.getDSComponent());
+			}
+			addProperty.setType(IDSConstants.TYPE_PROPERTY);
+			addProperty.setEnabled(fModel.isEditable());
+			submenu.add(addProperty);
+		}
+
+		if (canAddProvide) {
+			IDSObject object = getCurrentSelection();
+			if (object != null) {
+				addProvide.setSelection(object);
+			} else {
+				addProvide.setSelection(fModel.getDSComponent());
+			}
+			addProvide.setType(IDSConstants.TYPE_PROVIDE);
+			addProvide.setEnabled(fModel.isEditable());
+			submenu.add(addProvide);
+		}
+
+		if (canAddReference) {
+			IDSObject object = getCurrentSelection();
+			if (object != null) {
+				addReference.setSelection(object);
+			} else {
+				addReference.setSelection(fModel.getDSComponent());
+			}
+			addReference.setType(IDSConstants.TYPE_REFERENCE);
+			addReference.setEnabled(fModel.isEditable());
+			submenu.add(addReference);
+		}
+
+		if (canRemove) {
+			manager.add(new Separator());
+			IDSObject object = getCurrentSelection();
+			if (object != null) {
+				fRemoveItemAction.setItem(object);
+			} else {
+				Display.getCurrent().beep();
+			}
+			manager.add(fRemoveItemAction);
+		}		
+		
+
+		// Add clipboard operations
+		manager.add(new Separator());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
+	 */
+	// public boolean doGlobalAction(String actionId) {
+	// if (actionId.equals(ActionFactory.DELETE.getId())) {
+	// handleDeleteAction();
+	// return true;
+	// }
+	// return false;
+	// }
 }

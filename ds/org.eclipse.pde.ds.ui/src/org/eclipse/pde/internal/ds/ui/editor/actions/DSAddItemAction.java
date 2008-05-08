@@ -32,7 +32,6 @@ public class DSAddItemAction extends Action {
 	 * 
 	 */
 	public DSAddItemAction() {
-		setText(Messages.DSAddItemAction_0);
 		fType = -1;
 		fSelection = null;
 		fNewObject = null;
@@ -44,6 +43,29 @@ public class DSAddItemAction extends Action {
 
 	public void setType(int type) {
 		this.fType = type;
+		setTextbyType(type);
+	}
+
+	private void setTextbyType(int type) {
+		switch (type) {
+		case IDSConstants.TYPE_PROPERTIES:
+			setText(Messages.DSAddItemAction_1);
+			break;
+		case IDSConstants.TYPE_PROPERTY:
+			setText(Messages.DSAddItemAction_2);
+			break;
+		case IDSConstants.TYPE_PROVIDE:
+			setText(Messages.DSAddItemAction_3);
+			break;
+		case IDSConstants.TYPE_REFERENCE:
+			setText(Messages.DSAddItemAction_4);
+			break;
+		case IDSConstants.TYPE_SERVICE:
+			setText(Messages.DSAddItemAction_5);
+			break;
+		default:
+			break;
+		}
 	}
 
 	public void run() {
