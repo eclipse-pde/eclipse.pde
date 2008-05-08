@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.views.log.ILogFileProvider;
 import org.eclipse.ui.internal.views.log.LogFilesManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.osgi.framework.BundleContext;
+import org.osgi.framework.*;
 
 public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 
@@ -44,7 +44,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 
 	private BundleContext fBundleContext;
 
-	private java.util.Hashtable fCounters;
+	private Hashtable fCounters;
 
 	// Provides Launch Configurations log files to Log View
 	private ILogFileProvider fLogFileProvider;
@@ -52,7 +52,12 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	// Shared colors for all forms
 	private FormColors fFormColors;
 	private PDELabelProvider fLabelProvider;
-	private ILaunchConfigurationListener fLaunchConfigurationListener;
+
+	/**
+	 * Utility class to help setup the launch configuration listener
+	 * without loading the debug plugin
+	 */
+	private DebugPluginUtil fDebugPluginUtil;
 
 	/**
 	 * The shared text file document provider.
@@ -168,11 +173,37 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		this.fBundleContext = context;
-		fLaunchConfigurationListener = new LaunchConfigurationListener();
-		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(fLaunchConfigurationListener);
+		fBundleContext = context;
+		setupLaunchConfigurationListener();
 		fLogFileProvider = new PDELogFileProvider();
 		LogFilesManager.addLogFileProvider(fLogFileProvider);
+	}
+
+	/**
+	 * Add the launch configuration listener if the debug plugin
+	 * is started.  Otherwise, setup a bundle listener to install
+	 * the listener when the debug plugin loads.
+	 * @param context bundle context needed to get current bundles
+	 */
+	private void setupLaunchConfigurationListener() {
+		boolean listenerStarted = false;
+		Bundle bundle = Platform.getBundle("org.eclipse.debug.core"); //$NON-NLS-1$
+		if (bundle != null && bundle.getState() == Bundle.ACTIVE) {
+			fDebugPluginUtil = new DebugPluginUtil();
+			fDebugPluginUtil.addListener();
+			listenerStarted = true;
+		}
+		if (!listenerStarted) {
+			fBundleContext.addBundleListener(new BundleListener() {
+				public void bundleChanged(BundleEvent event) {
+					if (event.getType() == BundleEvent.STARTED && "org.eclipse.debug.core".equals(event.getBundle().getSymbolicName())) { //$NON-NLS-1$
+						fDebugPluginUtil = new DebugPluginUtil();
+						fDebugPluginUtil.addListener();
+						fBundleContext.removeBundleListener(this);
+					}
+				}
+			});
+		}
 	}
 
 	public BundleContext getBundleContext() {
@@ -193,9 +224,8 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			fLabelProvider.dispose();
 			fLabelProvider = null;
 		}
-		if (fLaunchConfigurationListener != null) {
-			DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(fLaunchConfigurationListener);
-			fLaunchConfigurationListener = null;
+		if (fDebugPluginUtil != null) {
+			fDebugPluginUtil.removeListener();
 		}
 		if (fLogFileProvider != null) {
 			LogFilesManager.removeLogFileProvider(fLogFileProvider);
@@ -238,5 +268,28 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		if (fTextFileDocumentProvider == null)
 			fTextFileDocumentProvider = new TextFileDocumentProvider();
 		return fTextFileDocumentProvider;
+	}
+
+	/**
+	 * Utility class that creates and controls a the PDE launch configuration listener.
+	 * This is done in a separate class to avoid loading the debug plugin.
+	 * @since 3.4
+	 */
+	private class DebugPluginUtil {
+		private ILaunchConfigurationListener fLaunchConfigurationListener;
+
+		public void addListener() {
+			if (fLaunchConfigurationListener == null) {
+				fLaunchConfigurationListener = new LaunchConfigurationListener();
+			}
+			DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(fLaunchConfigurationListener);
+		}
+
+		public void removeListener() {
+			if (fLaunchConfigurationListener != null) {
+				DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(fLaunchConfigurationListener);
+				fLaunchConfigurationListener = null;
+			}
+		}
 	}
 }

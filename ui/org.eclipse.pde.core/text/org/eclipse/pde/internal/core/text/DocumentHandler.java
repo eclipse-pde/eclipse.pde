@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class DocumentHandler extends DefaultHandler {
 
-	protected FindReplaceDocumentAdapter fFindReplaceAdapter;
 	protected Stack fDocumentNodeStack = new Stack();
 	protected int fHighestOffset = 0;
 	private Locator fLocator;
@@ -38,7 +37,6 @@ public abstract class DocumentHandler extends DefaultHandler {
 		fDocumentNodeStack.clear();
 		fHighestOffset = 0;
 		fLastError = null;
-		fFindReplaceAdapter = new FindReplaceDocumentAdapter(getDocument());
 	}
 
 	protected IDocumentElementNode getLastParsedDocumentNode() {
@@ -182,6 +180,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	}
 
 	private IRegion getAttributeRegion(String name, String value, int offset) throws BadLocationException {
+		FindReplaceDocumentAdapter fFindReplaceAdapter = new FindReplaceDocumentAdapter(getDocument());
 		IRegion nameRegion = fFindReplaceAdapter.find(offset, name + "\\s*=\\s*\"", true, true, false, true); //$NON-NLS-1$
 		if (nameRegion != null) {
 			if (getDocument().get(nameRegion.getOffset() + nameRegion.getLength(), value.length()).equals(value))
