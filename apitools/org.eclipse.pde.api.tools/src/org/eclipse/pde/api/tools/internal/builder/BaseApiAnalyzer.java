@@ -739,8 +739,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			} catch (BadLocationException e) {
 				ApiPlugin.log(e);
 			}
+			String qtn = null;
+			if (member instanceof IType) {
+				qtn = ((IType)member).getFullyQualifiedName();
+			} else {
+				qtn = member.getDeclaringType().getFullyQualifiedName();
+			}
 			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(),
-					member.getDeclaringType().getFullyQualifiedName(),
+					qtn,
 					messageargs,
 					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID, IApiMarkerConstants.MARKER_ATTR_HANDLE_ID},
 					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID), member.getHandleIdentifier()},
