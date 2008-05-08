@@ -140,7 +140,6 @@ public class ClassFileVisitor extends ClassAdapter {
 		 * @see org.objectweb.asm.signature.SignatureVisitor#visitTypeVariable(java.lang.String)
 		 */
 		public void visitTypeVariable(String name) {
-			this.processType(name);
 		}
 		/* (non-Javadoc)
 		 * @see org.objectweb.asm.signature.SignatureVisitor#visitInnerClassType(java.lang.String)

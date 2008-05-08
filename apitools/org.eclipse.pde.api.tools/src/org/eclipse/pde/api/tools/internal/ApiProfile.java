@@ -553,30 +553,32 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	}
 
 	private void resolvePackage0(IApiComponent component, String packageName, List componentsList) throws CoreException {
-		BundleDescription bundle = ((BundleApiComponent)component).getBundleDescription();
-		if (bundle != null) {
-			StateHelper helper = fState.getStateHelper();
-			ExportPackageDescription[] visiblePackages = helper.getVisiblePackages(bundle);
-			for (int i = 0; i < visiblePackages.length; i++) {
-				ExportPackageDescription pkg = visiblePackages[i];
-				if (packageName.equals(pkg.getName())) {
-					BundleDescription bundleDescription = pkg.getExporter();
-					IApiComponent exporter = this.getBundleDescription(bundleDescription);
-					if (exporter != null) {
-						if (pkg.isRoot()) {
-							componentsList.add(exporter);
-						} else {
-							resolvePackage0(exporter, packageName, componentsList);
+		if (component instanceof BundleApiComponent) {
+			BundleDescription bundle = ((BundleApiComponent)component).getBundleDescription();
+			if (bundle != null) {
+				StateHelper helper = fState.getStateHelper();
+				ExportPackageDescription[] visiblePackages = helper.getVisiblePackages(bundle);
+				for (int i = 0; i < visiblePackages.length; i++) {
+					ExportPackageDescription pkg = visiblePackages[i];
+					if (packageName.equals(pkg.getName())) {
+						BundleDescription bundleDescription = pkg.getExporter();
+						IApiComponent exporter = this.getBundleDescription(bundleDescription);
+						if (exporter != null) {
+							if (pkg.isRoot()) {
+								componentsList.add(exporter);
+							} else {
+								resolvePackage0(exporter, packageName, componentsList);
+							}
 						}
 					}
 				}
-			}
-			// check for package within the source component
-			String[] packageNames = component.getPackageNames();
-			// TODO: would be more efficient to have containsPackage(...) or something
-			for (int i = 0; i < packageNames.length; i++) {
-				if (packageName.equals(packageNames[i])) {
-					componentsList.add(component);
+				// check for package within the source component
+				String[] packageNames = component.getPackageNames();
+				// TODO: would be more efficient to have containsPackage(...) or something
+				for (int i = 0; i < packageNames.length; i++) {
+					if (packageName.equals(packageNames[i])) {
+						componentsList.add(component);
+					}
 				}
 			}
 		}

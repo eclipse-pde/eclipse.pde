@@ -16,6 +16,8 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.pde.api.tools.internal.builder.ApiUseAnalyzer;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
@@ -26,6 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
@@ -431,5 +434,28 @@ public class SearchEngineTests extends TestCase {
 		assertTrue("missing callLeafInterface", set.contains("callLeafInterface"));
 		assertEquals("Wrong number of illegal references", 2, refs.length);
 	}		
+	
+	/**
+	 * Tests analysis of a system component.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testSearchSystemLibrary() throws CoreException {
+		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiComponent[] components = profile.getApiComponents();
+		IApiComponent systemComp = null;
+		for (int i = 0; i < components.length; i++) {
+			IApiComponent component = components[i];
+			if (component.isSystemComponent()) {
+				systemComp = component;
+				break;
+			}
+		}
+		assertNotNull("missing system library", systemComp);
+		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
+		IApiSearchScope scope = Factory.newScope(systemComp, new IElementDescriptor[]{Factory.packageDescriptor("java.lang")});
+		IApiProblem[] problems = analyzer.findIllegalApiUse(systemComp, scope, new NullProgressMonitor());
+		assertEquals("Should be no problems from system library", 0, problems.length);
+	}
 }
 
