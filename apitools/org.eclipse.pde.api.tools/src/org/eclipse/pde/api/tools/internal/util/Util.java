@@ -1460,6 +1460,9 @@ public final class Util {
 			case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE: {
 				return "MAJOR_VERSION_CHANGE_NO_BREAKAGE"; //$NON-NLS-1$
 			}
+			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API: {
+				return "MINOR_VERSION_CHANGE_NO_NEW_API"; //$NON-NLS-1$
+			}
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$
 	}

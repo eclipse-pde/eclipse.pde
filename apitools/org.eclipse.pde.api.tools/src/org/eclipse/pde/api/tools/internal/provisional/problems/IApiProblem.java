@@ -125,6 +125,16 @@ public interface IApiProblem {
 	public static final int MAJOR_VERSION_CHANGE_NO_BREAKAGE = 3;
 	
 	/**
+	 * Constant representing the value of the minor version change (no new API) {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>4</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int MINOR_VERSION_CHANGE_NO_NEW_API = 4;
+	
+	
+	/**
 	 * Constant representing the value of an illegal extend {@link IApiProblem} kind.
 	 * <br>
 	 * Value is: <code>1</code>

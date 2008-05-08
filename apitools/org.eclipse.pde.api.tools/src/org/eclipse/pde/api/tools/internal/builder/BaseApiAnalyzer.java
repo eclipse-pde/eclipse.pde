@@ -1002,6 +1002,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							String.valueOf(newversion),
 							collectDetails(compatibleChanges));
 				}
+			} else if (compversion.getMinor() > refversion.getMinor()) {
+				// the minor version should not be incremented
+				problem = createVersionProblem(
+						IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API, 
+						new String[] {
+							compversionval,
+							refversionval
+						},
+						String.valueOf(refversion),
+						Util.EMPTY_STRING);
 			}
 		}
 		if(problem != null) {

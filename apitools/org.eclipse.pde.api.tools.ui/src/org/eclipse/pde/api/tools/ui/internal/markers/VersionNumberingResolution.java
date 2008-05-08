@@ -49,25 +49,17 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 			case IApiProblem.MAJOR_VERSION_CHANGE :
 				return NLS.bind(
 						MarkerMessages.VersionNumberingResolution_major0,
-						new String[] {
-							this.newVersionValue,
-							this.description
-						});
+						new String[] {this.description});
 			case IApiProblem.MINOR_VERSION_CHANGE :
 				return NLS.bind(
 						MarkerMessages.VersionNumberingResolution_minor0,
-						new String[] {
-								this.newVersionValue,
-								this.description
-						});
-			default :
-				// IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE :
+						new String[] {this.description});
+			case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE :
 				return NLS.bind(
 						MarkerMessages.VersionNumberingResolution_major0,
-						new String[] {
-								this.newVersionValue,
-								this.description
-						});
+						new String[] {this.description});
+			default :
+				return MarkerMessages.VersionNumberingResolution_minorNoNewAPI0;
 		}
 	}
 
@@ -87,9 +79,11 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
 			case IApiProblem.MINOR_VERSION_CHANGE :
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_minor1, this.newVersionValue);
-			default:
-				// IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE
+			case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE :
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
+			default:
+				// IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API
+				return NLS.bind(MarkerMessages.VersionNumberingResolution_minorNoNewAPI1, this.newVersionValue);
 		}
 	}
 
@@ -105,8 +99,11 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 			case IApiProblem.MINOR_VERSION_CHANGE :
 				title = NLS.bind(MarkerMessages.VersionNumberingResolution_minor2, this.newVersionValue);
 				break;
-			default :
+			case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE :
 				title = NLS.bind(MarkerMessages.VersionNumberingResolution_major2, this.newVersionValue);
+			default:
+				// IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API
+				title = NLS.bind(MarkerMessages.VersionNumberingResolution_minorNoNewAPI2, this.newVersionValue);
 		}
 		UIJob job  = new UIJob(title) {
 			/* (non-Javadoc)
