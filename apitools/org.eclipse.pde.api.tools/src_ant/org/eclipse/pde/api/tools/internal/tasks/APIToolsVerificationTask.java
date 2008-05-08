@@ -448,6 +448,9 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 					if (problems.length != 0) {
 						allProblems.put(name, problems);
 					}
+				} catch(RuntimeException e) {
+					ApiPlugin.log(e);
+					throw e;
 				} finally {
 					analyzer.dispose();
 				}
