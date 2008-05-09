@@ -17,10 +17,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface.text;bundle-version="3.4.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Export-Package: org.eclipse.pde.internal.ds.ui;x-internal:=true,
- org.eclipse.pde.internal.ds.ui.editor;x-internal:=true,
- org.eclipse.pde.internal.ds.ui.editor.actions;x-internal:=true,
- org.eclipse.pde.internal.ds.ui.editor.details;x-internal:=true,
- org.eclipse.pde.internal.ds.ui.wizards
+Export-Package: org.eclipse.pde.internal.ds.ui;x-internal:="true",
+ org.eclipse.pde.internal.ds.ui.editor;x-internal:="true",
+ org.eclipse.pde.internal.ds.ui.editor.actions;x-internal:="true",
+ org.eclipse.pde.internal.ds.ui.editor.details;x-internal:="true",
+ org.eclipse.pde.internal.ds.ui.wizards;x-internal:="true"
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName

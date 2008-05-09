@@ -15,5 +15,18 @@
          </contentTypeBinding>
       </editor>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.eclipse.pde.PDE"
+            class="org.eclipse.pde.internal.ds.ui.wizards.DSNewWizard"
+            icon="$nl$/icons/obj16/ds_wizard_obj.gif"
+            id="org.eclipse.pde.ds.ui.wizard"
+            name="%wizard.name">
+         <description>
+            %new.wizard.description
+         </description>
+      </wizard>
+   </extension>
 
 </plugin>
