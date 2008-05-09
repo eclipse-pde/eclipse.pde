@@ -367,7 +367,28 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_TAR_ARGS, ""); //$NON-NLS-1$
 
 		}
+
+		addP2MetadataProperties(fAntBuildProperties);
+
 		return fAntBuildProperties;
+	}
+
+	/**
+	 * Adds the standard p2 metadata generator properties to the given map.
+	 * @param map the map to add properties to
+	 */
+	private void addP2MetadataProperties(Map map) {
+		if (fInfo.toDirectory && fInfo.useJarFormat && fInfo.exportMetadata) {
+			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_PUBLISH_ARTIFACTS, IBuildPropertiesConstants.FALSE);
+			try {
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fInfo.destinationDirectory).toURL().toString());
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fInfo.destinationDirectory).toURL().toString());
+			} catch (MalformedURLException e) {
+				PDECore.log(e);
+			}
+		}
 	}
 
 	private String getOS(IFeature feature) {
