@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,6 +131,16 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		if (fJNLPTab == null || fTabFolder.getItemCount() < 4)
 			return null;
 		return fJNLPTab.getJNLPInfo();
+	}
+
+	/**
+	 * @return whether to generate p2 metadata on export
+	 */
+	protected boolean doExportMetadata() {
+		if (fOptionsTab instanceof FeatureOptionsTab) {
+			return ((FeatureOptionsTab) fOptionsTab).doExportMetadata();
+		}
+		return false;
 	}
 
 	public IWizardPage getNextPage() {

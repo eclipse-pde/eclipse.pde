@@ -184,6 +184,9 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		return fExportSource.getSelection();
 	}
 
+	/**
+	 * @return whether to generate p2 metadata on export
+	 */
 	protected boolean doExportMetadata() {
 		return fExportMetadata.getSelection();
 	}

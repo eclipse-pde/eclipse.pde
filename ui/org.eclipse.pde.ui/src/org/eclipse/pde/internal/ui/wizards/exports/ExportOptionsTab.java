@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 		addSourceOption(container);
 		addJAROption(container);
-		addCrossPlatformOption(container);
+		addAdditionalOptions(container);
 		addQualifierOption(container);
 		addAntSection(container);
 
@@ -76,7 +76,12 @@ public class ExportOptionsTab extends AbstractExportTab {
 		return PDEUIMessages.BaseExportWizardPage_packageJARs;
 	}
 
-	protected void addCrossPlatformOption(Composite comp) {
+	/**
+	 * Provides an opportunity for subclasses to add additional options 
+	 * to the composite.
+	 * @param comp
+	 */
+	protected void addAdditionalOptions(Composite comp) {
 	}
 
 	protected void addAntSection(Composite container) {
