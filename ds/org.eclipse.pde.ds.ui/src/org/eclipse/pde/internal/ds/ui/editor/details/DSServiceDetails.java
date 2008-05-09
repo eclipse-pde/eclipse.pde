@@ -35,18 +35,14 @@ import org.eclipse.ui.forms.widgets.Section;
 public class DSServiceDetails extends DSAbstractDetails {
 
 	private IDSService fService;
-
 	private Section fMainSection;
-
 	private ComboPart fServiceFactory;
-
 	private Label fLabelServiceFactory;
 
 	public DSServiceDetails(IDSMaster masterSection) {
 		super(masterSection, DSInputContext.CONTEXT_ID);
 		fService = null;
 		fMainSection = null;
-
 	}
 
 	public void createDetails(Composite parent) {
@@ -82,6 +78,11 @@ public class DSServiceDetails extends DSAbstractDetails {
 				Messages.DSServiceDetails_2, SWT.WRAP);
 		fLabelServiceFactory.setForeground(foreground);
 
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 20;
+		gd.horizontalSpan = 1;
+		gd.horizontalIndent = 3; // FormLayoutFactory.CONTROL_HORIZONTAL_INDENT
+		
 		// Attribute: ServiceFactory
 		fServiceFactory = new ComboPart();
 		fServiceFactory.createControl(mainSectionClient, getToolkit(),
@@ -89,6 +90,7 @@ public class DSServiceDetails extends DSAbstractDetails {
 		Control control = fServiceFactory.getControl();
 		String[] items = new String[] { "true", "false" }; //$NON-NLS-1$ //$NON-NLS-2$
 		fServiceFactory.setItems(items);
+		fServiceFactory.getControl().setLayoutData(gd);
 
 		// Bind widgets
 		getToolkit().paintBordersFor(mainSectionClient);

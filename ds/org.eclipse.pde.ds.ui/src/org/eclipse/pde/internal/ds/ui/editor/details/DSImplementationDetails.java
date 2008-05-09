@@ -22,10 +22,8 @@ import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
@@ -33,9 +31,7 @@ import org.eclipse.ui.forms.widgets.Section;
 public class DSImplementationDetails extends DSAbstractDetails {
 	
 	private IDSImplementation fImplementation;
-
 	private Section fMainSection;
-
 	private FormEntry fTitle;
 
 
@@ -44,13 +40,9 @@ public class DSImplementationDetails extends DSAbstractDetails {
 		fImplementation = null;
 		fMainSection = null;
 		fTitle = null;
-
 	}
 
 	public void createDetails(Composite parent) {
-
-		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
-
 		// Create main section
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
@@ -85,9 +77,6 @@ public class DSImplementationDetails extends DSAbstractDetails {
 		 getToolkit().paintBordersFor(mainSectionClient);
 		fMainSection.setClient(mainSectionClient);
 		markDetailsPart(fMainSection);
-
-
-		
 	}
 
 	public void hookListeners() {

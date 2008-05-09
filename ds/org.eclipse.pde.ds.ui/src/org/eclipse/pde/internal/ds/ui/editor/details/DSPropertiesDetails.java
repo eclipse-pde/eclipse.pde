@@ -21,19 +21,16 @@ import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class DSPropertiesDetails extends DSAbstractDetails {
+	
 	private IDSProperties fProperties;
-
 	private Section fMainSection;
-
 	private FormEntry fEntry;
 
 	public DSPropertiesDetails(IDSMaster masterSection) {
@@ -41,13 +38,9 @@ public class DSPropertiesDetails extends DSAbstractDetails {
 		fProperties = null;
 		fMainSection = null;
 		fEntry = null;
-
 	}
 
 	public void createDetails(Composite parent) {
-
-		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
-
 		// Create main section
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);

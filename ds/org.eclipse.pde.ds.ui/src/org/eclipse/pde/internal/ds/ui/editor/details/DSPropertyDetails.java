@@ -38,17 +38,11 @@ import org.eclipse.ui.forms.widgets.Section;
 public class DSPropertyDetails extends DSAbstractDetails {
 
 	private IDSProperty fProperty;
-
 	private FormEntry fName;
-
 	private FormEntry fType;
-
 	private FormEntry fValue;
-
 	private PDESourceViewer fContentViewer;
-
 	private Section fMainSection;
-
 	private boolean fBlockEvents;
 
 	/**

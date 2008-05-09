@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ds.ui.editor.details;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
@@ -37,19 +38,12 @@ import org.eclipse.ui.forms.widgets.Section;
 public class DSComponentDetails extends DSAbstractDetails {
 
 	private IDSComponent fComponent;
-
 	private Section fMainSection;
-
 	private FormEntry fName;
-
 	private FormEntry fFactory;
-
 	private ComboPart fEnabled;
-
 	private Label fLabelEnabled;
-
 	private ComboPart fImmediate;
-
 	private Label fLabelImmediate;
 
 	public DSComponentDetails(IDSMaster masterSection) {
@@ -96,6 +90,11 @@ public class DSComponentDetails extends DSAbstractDetails {
 		fFactory = new FormEntry(mainSectionClient, getToolkit(),
 				Messages.DSComponentDetails_3, SWT.NONE);
 
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 20;
+		gd.horizontalSpan = 1;
+		gd.horizontalIndent = 3; // FormLayoutFactory.CONTROL_HORIZONTAL_INDENT
+		
 		// Attribute: Enabled
 		fLabelEnabled = getToolkit().createLabel(mainSectionClient,
 				Messages.DSComponentDetails_4, SWT.WRAP);
@@ -103,8 +102,9 @@ public class DSComponentDetails extends DSAbstractDetails {
 		fEnabled = new ComboPart();
 		fEnabled.createControl(mainSectionClient, getToolkit(), SWT.READ_ONLY);
 		Control control = fEnabled.getControl();
-		String[] items = new String[] { "true", "false" }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[] items = new String[] { IConstants.TRUE, IConstants.FALSE }; //$NON-NLS-1$ //$NON-NLS-2$
 		fEnabled.setItems(items);
+		fEnabled.getControl().setLayoutData(gd);
 
 		// Attribute: Immediate
 		fLabelImmediate = getToolkit().createLabel(mainSectionClient,
@@ -114,6 +114,7 @@ public class DSComponentDetails extends DSAbstractDetails {
 		fImmediate
 				.createControl(mainSectionClient, getToolkit(), SWT.READ_ONLY);
 		fImmediate.setItems(items);
+		fImmediate.getControl().setLayoutData(gd);
 
 		// Bind widgets
 		getToolkit().paintBordersFor(mainSectionClient);
