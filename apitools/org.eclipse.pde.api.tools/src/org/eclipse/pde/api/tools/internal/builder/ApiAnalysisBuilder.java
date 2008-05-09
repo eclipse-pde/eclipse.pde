@@ -61,6 +61,7 @@ import org.eclipse.jdt.internal.core.builder.StringSet;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
@@ -79,48 +80,56 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	/**
-	 * Visits a resource delta to determine if the manifest has been modified.
+	 * Visits a resource delta to determine if the changes have been made that might required a rebuild:
+	 * - modification to the manifest file
+	 * - removal of the .api_filter file
 	 */
-	private class ManifestVisitor implements IResourceDeltaVisitor {
-		
-		private boolean fManifestModified = false;
+	private class ResourceDeltaVisitor implements IResourceDeltaVisitor {
+
+		private boolean fRequireFullBuild = false;
 
 		/**
-		 * Returns whether the manifest file was modified.
+		 * Returns whether a full build should be run.
 		 * 
-		 * @return whether the manifest file was modified
+		 * @return whether a full build should be run
 		 */
-		boolean isManifiestModified() {
-			return fManifestModified;
+		boolean shouldRunFullBuild() {
+			return fRequireFullBuild;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			switch (delta.getResource().getType()) {
-			case IResource.ROOT:
-			case IResource.PROJECT:
-				return !fManifestModified;
-			case IResource.FOLDER:
-				return !fManifestModified; 
-			case IResource.FILE:
-				if (delta.getResource().getProjectRelativePath().equals(MANIFEST_PATH)) {
-					fManifestModified = true;
-					break;
-				}
-				IResource resource = delta.getResource();
-				String fileName = resource.getName();
-				if (Util.isClassFile(fileName)) {
-					findAffectedSourceFiles(delta);
-				} else if (Util.isJavaFileName(fileName) && fCurrentProject.equals(resource.getProject())) {
-					fChangedTypes.add(resource);
-					fTypesToCheck.add(resource);
-				}
+				case IResource.ROOT:
+				case IResource.PROJECT:
+					return !fRequireFullBuild;
+				case IResource.FOLDER:
+					return !fRequireFullBuild; 
+				case IResource.FILE:
+					if (delta.getResource().getProjectRelativePath().equals(MANIFEST_PATH)) {
+						fRequireFullBuild = true;
+						break;
+					}
+					IResource resource = delta.getResource();
+					String fileName = resource.getName();
+					if (Util.isClassFile(fileName)) {
+						findAffectedSourceFiles(delta);
+					} else if (Util.isJavaFileName(fileName) && fCurrentProject.equals(resource.getProject())) {
+						fChangedTypes.add(resource);
+						fTypesToCheck.add(resource);
+					} else if (!fRequireFullBuild && IApiCoreConstants.API_FILTERS_XML_NAME.equals(fileName)) {
+						switch(delta.getKind()) {
+							case IResourceDelta.REMOVED :
+							case IResourceDelta.REPLACED :
+								fRequireFullBuild = true;
+						}
+					}
 			}
 			return false;
 		}
-		
+
 	}
 	/**
 	 * Constant used for controlling tracing in the API tool builder
@@ -295,16 +304,16 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				case AUTO_BUILD :
 				case INCREMENTAL_BUILD : {
 					IResourceDelta[] deltas = getDeltas(projects);
-					boolean manifestModified = false;
-					ManifestVisitor visitor = new ManifestVisitor();
+					boolean shouldRunFullBuild = false;
+					ResourceDeltaVisitor visitor = new ResourceDeltaVisitor();
 					for (int i = 0; i < deltas.length; i++) {
 						deltas[i].accept(visitor);
-						if (visitor.isManifiestModified()) {
-							manifestModified = true;
+						if (visitor.shouldRunFullBuild()) {
+							shouldRunFullBuild = true;
 							break;
 						}
 					}
-					if (manifestModified) {
+					if (shouldRunFullBuild) {
 						if (DEBUG) {
 							System.out.println("Performing full build since MANIFEST.MF was modified"); //$NON-NLS-1$
 						}
@@ -556,7 +565,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private void build(final State state, IProgressMonitor monitor) throws CoreException {
 		clearLastState(); // so if the build fails, a full build will be triggered
-		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
 		localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, fCurrentProject.getName()));
 		updateMonitor(localMonitor, 0);
@@ -581,6 +589,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					 cnames = new ArrayList(fChangedTypes.size());
 				collectAllQualifiedNames(fTypesToCheck, fChangedTypes, tnames, cnames, localMonitor);
 				updateMonitor(localMonitor, 1);
+				IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 				fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, (String[])tnames.toArray(new String[tnames.size()]), (String[])cnames.toArray(new String[cnames.size()]), localMonitor);
 				updateMonitor(localMonitor, 1);
 			}
