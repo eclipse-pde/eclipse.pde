@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.ds.ui.editor;
 
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -9,11 +10,11 @@ import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
 import org.eclipse.pde.internal.ds.ui.Messages;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 
 public class DSSourcePage extends XMLSourcePage {
+
 
 	public DSSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
@@ -32,7 +33,7 @@ public class DSSourcePage extends XMLSourcePage {
 	}
 
 	public ILabelProvider createOutlineLabelProvider() {
-		return PDEPlugin.getDefault().getLabelProvider();
+		return new DSLabelProvider();
 	}
 
 	/*
@@ -123,6 +124,21 @@ public class DSSourcePage extends XMLSourcePage {
 	 */
 	protected void setPartName(String partName) {
 		super.setPartName(Messages.DSSourcePage_0); //$NON-NLS-1$
+	}
+
+
+	public Object getAdapter(Class adapter) {
+		if (IHyperlinkDetector.class.equals(adapter))
+			return new DSHyperlinkDetector(this);
+		return super.getAdapter(adapter);
+	}
+
+	public void setActive(boolean active) {
+		super.setActive(active);
+		// Update the text selection if this page is being activated
+		if (active) {
+			updateTextSelection();
+		}
 	}
 
 }
