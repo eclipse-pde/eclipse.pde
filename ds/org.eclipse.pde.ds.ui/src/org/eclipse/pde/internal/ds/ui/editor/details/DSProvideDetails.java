@@ -12,18 +12,36 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.details;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
+import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
+import org.eclipse.pde.internal.ds.ui.SWTUtil;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
+import org.eclipse.pde.internal.ui.editor.schema.NewClassCreationWizard;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -31,14 +49,10 @@ public class DSProvideDetails extends DSAbstractDetails {
 
 	private IDSProvide fProvide;
 	private Section fMainSection;
-	private FormEntry fInterface;
+	private FormEntry fInterfaceEntry;
 
 	public DSProvideDetails(IDSMaster masterSection) {
 		super(masterSection, DSInputContext.CONTEXT_ID);
-		fProvide = null;
-		fMainSection = null;
-		fInterface = null;
-
 	}
 
 	public void createDetails(Composite parent) {
@@ -46,9 +60,9 @@ public class DSProvideDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText(Messages.DSProvideDetails_0);
+		fMainSection.setText(Messages.DSProvideDetails_mainSectionText);
 		fMainSection
-				.setDescription(Messages.DSProvideDetails_1);
+				.setDescription(Messages.DSProvideDetails_mainSectionDesc);
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
@@ -62,36 +76,73 @@ public class DSProvideDetails extends DSAbstractDetails {
 				fMainSection);
 
 		// Create container for main section
-		Composite mainSectionClient = getToolkit()
+		Composite client = getToolkit()
 				.createComposite(fMainSection);
-		mainSectionClient.setLayout(FormLayoutFactory
-				.createSectionClientGridLayout(false, 2));
+		client.setLayout(FormLayoutFactory
+				.createSectionClientGridLayout(false, 3));
 
-		// Attribute: title
-		fInterface = new FormEntry(mainSectionClient, getToolkit(),
-				Messages.DSProvideDetails_2, SWT.NONE);
-
+		fInterfaceEntry = new FormEntry(client, getToolkit(),
+				Messages.DSProvideDetails_interface, Messages.DSProvideDetails_browse,
+				isEditable(), 0);
+		
 		// Bind widgets
-		getToolkit().paintBordersFor(mainSectionClient);
-		fMainSection.setClient(mainSectionClient);
+		getToolkit().paintBordersFor(client);
+		fMainSection.setClient(client);
 		markDetailsPart(fMainSection);
 
 	}
 
 	public void hookListeners() {
-		// Attribute: title
-		fInterface.setFormEntryListener(new FormEntryAdapter(this) {
+		IActionBars actionBars = getPage().getPDEEditor().getEditorSite()
+				.getActionBars();
+		fInterfaceEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
-				// Ensure data object is defined
-				if (fProvide == null) {
-					return;
-				}
-				fProvide.setInterface(fInterface.getValue());
+				fProvide.setInterface(entry.getValue());
+			}
+
+			public void linkActivated(HyperlinkEvent e) {
+				String value = fInterfaceEntry.getValue();
+				value = handleLinkActivated(value, false);
+				if (value != null)
+					fInterfaceEntry.setValue(value);
+			}
+
+			public void browseButtonSelected(FormEntry entry) {
+				doOpenSelectionDialog(
+						IJavaElementSearchConstants.CONSIDER_INTERFACES,
+						fInterfaceEntry);
 			}
 		});
 	}
 
-	// }
+	private String handleLinkActivated(String value, boolean isInter) {
+		IProject project = getPage().getPDEEditor().getCommonProject();
+		try {
+			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject javaProject = JavaCore.create(project);
+				IJavaElement element = javaProject.findType(value.replace('$',
+						'.'));
+				if (element != null)
+					JavaUI.openInEditor(element);
+				else {
+					// TODO create our own wizard for reuse here
+					NewClassCreationWizard wizard = new NewClassCreationWizard(
+							project, isInter, value);
+					WizardDialog dialog = new WizardDialog(Activator
+							.getActiveWorkbenchShell(), wizard);
+					dialog.create();
+					SWTUtil.setDialogSize(dialog, 400, 500);
+					if (dialog.open() == Window.OK) {
+						return wizard.getQualifiedName();
+					}
+				}
+			}
+		} catch (PartInitException e1) {
+		} catch (CoreException e1) {
+		}
+		return null;
+	}
+	
 
 	public void updateFields() {
 
@@ -102,12 +153,12 @@ public class DSProvideDetails extends DSAbstractDetails {
 		}
 
 		if (fProvide.getInterface() == null) {
-			fInterface.setValue("", true); //$NON-NLS-1$
+			fInterfaceEntry.setValue("", true); //$NON-NLS-1$
 		} else {
 			// Attribute: interface
-			fInterface.setValue(fProvide.getInterface(), true);
+			fInterfaceEntry.setValue(fProvide.getInterface(), true);
 		}
-		fInterface.setEditable(editable);
+		fInterfaceEntry.setEditable(editable);
 
 	}
 
@@ -139,7 +190,25 @@ public class DSProvideDetails extends DSAbstractDetails {
 	 */
 	public void commit(boolean onSave) {
 		super.commit(onSave);
-		fInterface.commit();
+		fInterfaceEntry.commit();
+	}
+	
+	private void doOpenSelectionDialog(int scopeType, FormEntry entry) {
+		try {
+			String filter = entry.getValue();
+			filter = filter.substring(filter.lastIndexOf(".") + 1); //$NON-NLS-1$
+			SelectionDialog dialog = JavaUI.createTypeDialog(Activator
+					.getActiveWorkbenchShell(), PlatformUI.getWorkbench()
+					.getProgressService(), SearchEngine.createWorkspaceScope(),
+					scopeType, false, filter);
+			dialog.setTitle(Messages.DSProvideDetails_selectType);
+			if (dialog.open() == Window.OK) {
+				IType type = (IType) dialog.getResult()[0];
+				entry.setValue(type.getFullyQualifiedName('$'));
+				entry.commit();
+			}
+		} catch (CoreException e) {
+		}
 	}
 
 }

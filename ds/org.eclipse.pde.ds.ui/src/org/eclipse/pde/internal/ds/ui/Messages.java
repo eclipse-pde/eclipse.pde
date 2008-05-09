@@ -51,9 +51,11 @@ public class Messages extends NLS {
 	public static String DSPropertyDetails_4;
 	public static String DSPropertyDetails_5;
 
-	public static String DSProvideDetails_0;
-	public static String DSProvideDetails_1;
-	public static String DSProvideDetails_2;
+	public static String DSProvideDetails_mainSectionText;
+	public static String DSProvideDetails_mainSectionDesc;
+	public static String DSProvideDetails_interface;
+	public static String DSProvideDetails_browse;
+	public static String DSProvideDetails_selectType;
 
 	public static String DSServiceDetails_0;
 	public static String DSServiceDetails_1;
