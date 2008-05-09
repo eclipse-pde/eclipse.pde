@@ -81,4 +81,9 @@ public interface IApiToolsConstants {
 	 * Key for filter resolution image
 	 */
 	public static final String IMG_ELCL_FILTER = "IMG_ELCL_FILTER"; //$NON-NLS-1$
+	
+	/**
+	 * Key for enabled remove image
+	 */
+	public static final String IMG_ELCL_REMOVE = "IMG_ELCL_REMOVE"; //$NON-NLS-1$
 }
