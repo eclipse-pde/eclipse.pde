@@ -31,9 +31,9 @@ public interface IApiXmlConstants {
 	 */
 	public static final String API_PROFILE_CURRENT_VERSION = "1"; //$NON-NLS-1$
 	/**
-	 * Constant representing the current version for api problems xml file
+	 * Constant representing the current version for api report xml file
 	 */
-	public static final String API_PROBLEM_CURRENT_VERSION = "1"; //$NON-NLS-1$
+	public static final String API_REPORT_CURRENT_VERSION = "1"; //$NON-NLS-1$
 	/**
 	 * Constant representing the category attribute of an {@link IApiProblem} in xml.
 	 * Value is: <code>category</code>
@@ -100,7 +100,7 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_MODIFICATION_STAMP = "modificationStamp"; //$NON-NLS-1$
 	/**
-	 * Constant representing the name attribute for component, package, type, method and field xml nodes.
+	 * Constant representing the name attribute for component, package, type, method, field and bundle xml nodes.
 	 * Value is: <code>name</code>
 	 */
 	public static final String ATTR_NAME = "name"; //$NON-NLS-1$
@@ -342,4 +342,9 @@ public interface IApiXmlConstants {
 	 * Value is: <code>typeName</code>
 	 */
 	public static final String ATTR_TYPE_NAME = "typeName"; //$NON-NLS-1$
+	/**
+	 * Constant representing the bundle element for for a report element in xml.
+	 * Value is: <code>bundle</code>
+	 */
+	public static final String ELEMENT_BUNDLE = "bundle"; //$NON-NLS-1$
 }

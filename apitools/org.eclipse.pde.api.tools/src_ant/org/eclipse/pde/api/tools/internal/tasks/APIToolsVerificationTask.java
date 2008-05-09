@@ -14,10 +14,13 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.LineNumberReader;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +58,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class APIToolsVerificationTask extends CommonUtilsTask {
+	private static final Summary[] NO_SUMMARIES = new Summary[0];
 	
 	/**
 	 * This filter store is only used to filter problem using existing filters.
@@ -349,7 +353,9 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 	private String profileLocation;
 	private String reportLocation;
 	private String eeFileLocation;
+	private String excludeListLocation;
 	private String filterStoreRoot;
+	private Set excludedElement;	
 
 	public void setProfile(String profileLocation) {
 		this.profileLocation = profileLocation;
@@ -369,11 +375,27 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 	public void setFilterStoreRoot(String filterStoreRoot) {
 		this.filterStoreRoot = filterStoreRoot; 
 	}
+	public void setExcludeList(String excludeListLocation) {
+		this.excludeListLocation = excludeListLocation;
+	}
 	public void execute() throws BuildException {
 		if (this.debug) {
 			System.out.println("reference : " + this.referenceLocation); //$NON-NLS-1$
 			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
 			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
+			if (this.filterStoreRoot != null) {
+				System.out.println("filter store : " + this.filterStoreRoot); //$NON-NLS-1$
+			} else {
+				System.out.println("No filter store"); //$NON-NLS-1$
+			}
+			if (this.excludeListLocation != null) {
+				System.out.println("exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
+			} else {
+				System.out.println("No exclude list location"); //$NON-NLS-1$
+			}
+		}
+		if (this.excludeListLocation != null) {
+			initializeExcludedElement();
 		}
 		if (this.referenceLocation == null
 				|| this.profileLocation == null
@@ -417,10 +439,8 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			time = System.currentTimeMillis();
 		}
 		Map allProblems = new HashMap();
-		List allBundles = null;
-		if (this.debug) {
-			allBundles = new ArrayList();
-		}
+		List allNonApiBundles = new ArrayList();
+		List allApiBundles = new ArrayList();
 		try {
 			IApiComponent[] apiComponents = currentProfile.getApiComponents();
 			int length = apiComponents.length;
@@ -430,17 +450,13 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 				IApiComponent apiComponent = apiComponents[i];
 				String name = apiComponent.getId();
 				visitedApiComponentNames.add(name);
+				if (apiComponent.isSystemComponent()) continue;
 				if (!isApiToolsComponent(apiComponent)) {
-					if (debug) {
-						allBundles.add("NOT API TOOLS COMPONENT: " + apiComponent.getId()); //$NON-NLS-1$
-					}
+					allNonApiBundles.add(apiComponent.getId());
 					continue;
 				}
-				if (apiComponent.isSystemComponent()) continue;
 				apiToolsComponents++;
-				if (debug) {
-					allBundles.add("API TOOLS COMPONENT: " + name); //$NON-NLS-1$
-				}
+				allApiBundles.add(name);
 				BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 				try {
 					analyzer.analyzeComponent(null, getFilterStore(name), referenceProfile, apiComponent, null, null, new NullProgressMonitor());
@@ -456,20 +472,26 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 				}
 			}
 			if (debug) {
-				Collections.sort(allBundles);
-				for (Iterator iterator = allBundles.iterator(); iterator.hasNext(); ) {
+				System.out.println("Total number of components in current profile :" + length); //$NON-NLS-1$
+				System.out.println("Total number of api tools components in current profile :" + allApiBundles.size()); //$NON-NLS-1$
+				System.out.println("Details:"); //$NON-NLS-1$
+				Collections.sort(allApiBundles);
+				for (Iterator iterator = allApiBundles.iterator(); iterator.hasNext(); ) {
 					System.out.println(iterator.next());
 				}
-				System.out.println("Total number of components in current profile :" + length); //$NON-NLS-1$
-				System.out.println("Total number of api tools components in current profile :" + apiToolsComponents); //$NON-NLS-1$
-				System.out.println("Total number of non-api tools components in current profile :" + (length - apiToolsComponents)); //$NON-NLS-1$
+				System.out.println("=============================================================================="); //$NON-NLS-1$
+				System.out.println("Total number of non-api tools components in current profile :" + allNonApiBundles.size()); //$NON-NLS-1$
+				System.out.println("Details:"); //$NON-NLS-1$
+				Collections.sort(allNonApiBundles);
+				for (Iterator iterator = allNonApiBundles.iterator(); iterator.hasNext(); ) {
+					System.out.println(iterator.next());
+				}
 			}
 			IApiComponent[] baselineApiComponents = referenceProfile.getApiComponents();
 			for (int i = 0, max = baselineApiComponents.length; i < max; i++) {
 				IApiComponent apiComponent = baselineApiComponents[i];
 				String id = apiComponent.getId();
 				if (!visitedApiComponentNames.remove(id)) {
-//					if (!isApiToolsComponent(apiComponent) || apiComponent.isSystemComponent()) continue;
 					//remove component in the current profile
 					IApiProblem problem = ApiProblemFactory.newApiProblem(id,
 							null,
@@ -506,14 +528,20 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 				time = System.currentTimeMillis();
 			}
 		}
-		dumpAllProblems(allProblems);
+		Summary[] summaries = createAllSummaries(allProblems);
+
+		try {
+			dumpReport(summaries, allNonApiBundles);
+		} catch(RuntimeException e) {
+			ApiPlugin.log(e);
+			throw e;
+		}
 	}
 	private IApiFilterStore getFilterStore(String name) {
 		if (this.filterStoreRoot == null) return null;
 		return new AntFilterStore(this.debug, this.filterStoreRoot, name);
 	}
 	private boolean isApiToolsComponent(IApiComponent apiComponent) {
-		if (apiComponent.isSystemComponent()) return false;
 		File file = new File(apiComponent.getLocation());
 		if (file.exists()) {
 			if (file.isDirectory()) {
@@ -539,7 +567,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		}
 		return false;
 	}
-	private void dumpAllProblems(Map allProblems) {
+	private Summary[] createAllSummaries(Map allProblems) {
 		Set entrySet = allProblems.entrySet();
 		List allEntries = new ArrayList();
 		allEntries.addAll(entrySet);
@@ -552,7 +580,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		});
 		int size = allEntries.size();
 		if (size == 0) {
-			return;
+			return NO_SUMMARIES;
 		}
 		Summary[] summaries = new Summary[size];
 		int i = 0;
@@ -563,9 +591,9 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		if (this.debug) {
 			dumpSummaries(summaries);
 		}
-		dumpReport(summaries);
+		return summaries;
 	}
-	private void dumpReport(Summary[] summaries) {
+	private void dumpReport(Summary[] summaries, List bundlesNames) {
 		for (int i = 0, max = summaries.length; i < max; i++) {
 			Summary summary = summaries[i];
 			String contents = null;
@@ -573,7 +601,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			try {
 				Document document = Util.newDocument();
 				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
-				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_PROBLEM_CURRENT_VERSION);
+				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_REPORT_CURRENT_VERSION);
 				report.setAttribute(IApiXmlConstants.ATTR_COMPONENT_ID, componentID);
 				document.appendChild(report);
 				
@@ -603,6 +631,32 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			}
 			if (contents != null) {
 				saveReport(componentID, contents);
+			}
+		}
+		if (bundlesNames != null && bundlesNames.size() != 0) {
+			String contents = null;
+			try {
+				Document document = Util.newDocument();
+				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
+				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_REPORT_CURRENT_VERSION);
+				document.appendChild(report);
+				
+				for (Iterator iterator = bundlesNames.iterator(); iterator.hasNext();) {
+					String bundleName = (String) iterator.next();
+					if (this.excludedElement == null || !this.excludedElement.contains(bundleName)) {
+						Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
+						bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
+						report.appendChild(bundle);
+					}
+				}
+				contents = Util.serializeDocument(document);
+			} catch (DOMException e) {
+				throw new BuildException(e);
+			} catch (CoreException e) {
+				throw new BuildException(e);
+			}
+			if (contents != null) {
+				saveReport("allNonApiBundles", contents); //$NON-NLS-1$
 			}
 		}
 	}
@@ -699,6 +753,46 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 				element.appendChild(messageArgumentsElement);
 			}
 			apiProblems.appendChild(element);
+		}
+	}
+	private void initializeExcludedElement() {
+		this.excludedElement = new HashSet();
+		File file = new File(this.excludeListLocation);
+		if (!file.exists()) return;
+		InputStream stream = null;
+		char[] contents = null;
+		try {
+			stream = new BufferedInputStream(new FileInputStream(file));
+			contents = Util.getInputStreamAsCharArray(stream, -1, "ISO-8859-1"); //$NON-NLS-1$
+		} catch (FileNotFoundException e) {
+			// ignore
+		} catch (IOException e) {
+			// ignore
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+		if (contents == null) return;
+		LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));
+		String line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				if (line.startsWith("#")) continue; //$NON-NLS-1$
+				this.excludedElement.add(line);
+			}
+		} catch (IOException e) {
+			// ignore
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				// ignore
+			}
 		}
 	}
 }
