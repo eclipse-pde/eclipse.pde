@@ -133,7 +133,26 @@ public interface IApiProblem {
 	 */
 	public static final int MINOR_VERSION_CHANGE_NO_NEW_API = 4;
 	
-	
+	/**
+	 * Constant representing the value of the major version change {@link IApiProblem} kind as a
+	 * consequence of a major version change in a reexported bundle.
+	 * <br>
+	 * Value is: <code>5</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int REEXPORTED_MAJOR_VERSION_CHANGE = 5;
+
+	/**
+	 * Constant representing the value of the minor version change {@link IApiProblem} kind as a
+	 * consequence of a minor version change in a reexported bundle..
+	 * <br>
+	 * Value is: <code>6</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int REEXPORTED_MINOR_VERSION_CHANGE = 6;
+
 	/**
 	 * Constant representing the value of an illegal extend {@link IApiProblem} kind.
 	 * <br>

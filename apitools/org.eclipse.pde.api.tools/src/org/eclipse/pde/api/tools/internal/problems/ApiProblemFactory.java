@@ -346,6 +346,8 @@ public class ApiProblemFactory {
 					case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE: return 6;
 					case IApiProblem.MINOR_VERSION_CHANGE: return 7;
 					case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API: return 56;
+					case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE : return 19;
+					case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE : return 20;
 				}
 				break;
 			}

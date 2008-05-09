@@ -33,9 +33,16 @@ public interface IRequiredComponentDescription {
 	public IVersionRange getVersionRange();
 	
 	/**
-	 * Returns true of the required component is optional, false otherwise.
+	 * Returns whether the required component is optional.
 	 * 
-	 * @return true of the required component is optional, false otherwise.
+	 * @return whether the required component is optional.
 	 */
 	public boolean isOptional();
+	
+	/**
+	 * Returns whether the required component is re-exported by the declaring component.
+	 * 
+	 * @return whether the required component is re-exported by the declaring component
+	 */
+	public boolean isExported();
 }

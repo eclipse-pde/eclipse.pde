@@ -741,7 +741,10 @@ public class BundleApiComponent extends AbstractApiComponent {
 		IRequiredComponentDescription[] req = new IRequiredComponentDescription[requiredBundles.length];
 		for (int i = 0; i < requiredBundles.length; i++) {
 			BundleSpecification bundle = requiredBundles[i];
-			req[i] = new RequiredComponentDescription(bundle.getName(), new BundleVersionRange(bundle.getVersionRange()), bundle.isOptional());
+			req[i] = new RequiredComponentDescription(bundle.getName(),
+					new BundleVersionRange(bundle.getVersionRange()),
+					bundle.isOptional(),
+					bundle.isExported());
 		}
 		return req;
 	}

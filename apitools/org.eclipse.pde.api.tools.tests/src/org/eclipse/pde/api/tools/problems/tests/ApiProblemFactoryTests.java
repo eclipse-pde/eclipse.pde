@@ -116,7 +116,6 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MINOR_VERSION_CHANGE);
 		assertNotNull("there should be a new problem created", problem);
 		validateProblem(2, problem);
-		
 	}
 	
 	private void validateProblem(int argumentsSize, IApiProblem apiProblem) {

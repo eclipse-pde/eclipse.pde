@@ -80,4 +80,29 @@ public class ComponentManifestTests extends TestCase {
 		}
 		baseline.dispose();
 	}
+	
+	public void testReExport() throws FileNotFoundException, CoreException {
+		IPath path = TestSuiteHelper.getPluginDirectoryPath();
+		path = path.append("test-manifests");
+		File file = path.toFile();
+		assertTrue("Missing manifest directory", file.exists());
+		IApiProfile baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
+		IApiComponent component = baseline.newApiComponent(file.getAbsolutePath());
+		baseline.addApiComponents(new IApiComponent[] { component });
+		
+		boolean debugCoreExport = false;
+		boolean others = false;
+		IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();		
+		for (int i = 0; i < requiredComponents.length; i++) {
+			IRequiredComponentDescription description = requiredComponents[i];
+			if (description.getId().equals("org.eclipse.debug.core")) {
+				debugCoreExport = description.isExported();
+			} else {
+				others = others || description.isExported();
+			}
+		}
+		baseline.dispose();
+		assertTrue("org.eclipse.debug.core should be re-exported", debugCoreExport);
+		assertFalse("Other components should not be re-exported", others);
+	}
 }

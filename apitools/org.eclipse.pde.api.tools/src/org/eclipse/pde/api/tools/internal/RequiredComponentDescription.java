@@ -23,6 +23,7 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 	
 	private String fId;
 	private boolean fIsOptional;
+	private boolean fIsExprted;
 	private IVersionRange fRange;
 	
 	
@@ -35,7 +36,7 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 	 * @param range version range
 	 */
 	public RequiredComponentDescription(String id, IVersionRange range) {
-		this(id, range, false);
+		this(id, range, false, false);
 	}
 	
 	/**
@@ -44,12 +45,14 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 	 * 
 	 * @param id component's symbolic name
 	 * @param range version range
-	 * @param isOptional the optinal flag of the required component
+	 * @param isOptional the optional flag of the required component
+	 * @param isExported whether the required component is re-exported by the declaring component
 	 */
-	public RequiredComponentDescription(String id, IVersionRange range, boolean isOptional) {
+	public RequiredComponentDescription(String id, IVersionRange range, boolean isOptional, boolean isExported) {
 		fId = id;
 		fRange = range;
 		fIsOptional = isOptional;
+		fIsExprted = isExported;
 	}
 
 	/* (non-Javadoc)
@@ -99,6 +102,13 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 		buf.append(' ');
 		buf.append(fRange.toString());
 		return buf.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription#isExported()
+	 */
+	public boolean isExported() {
+		return fIsExprted;
 	}
 
 }

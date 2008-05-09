@@ -1463,6 +1463,12 @@ public final class Util {
 			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API: {
 				return "MINOR_VERSION_CHANGE_NO_NEW_API"; //$NON-NLS-1$
 			}
+			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE: {
+				return "REEXPORTED_MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
+			}
+			case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE: {
+				return "REEXPORTED_MINOR_VERSION_CHANGE"; //$NON-NLS-1$
+			}
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$
 	}

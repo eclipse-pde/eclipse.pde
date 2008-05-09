@@ -58,8 +58,13 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				return NLS.bind(
 						MarkerMessages.VersionNumberingResolution_major0,
 						new String[] {this.description});
-			default :
+			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API :
 				return MarkerMessages.VersionNumberingResolution_minorNoNewAPI0;
+			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE :
+				return MarkerMessages.VersionNumberingResolution_reexportedMajor0;
+			default :
+				// reexported minor
+				return MarkerMessages.VersionNumberingResolution_reexportedMinor0;
 		}
 	}
 
@@ -81,9 +86,13 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_minor1, this.newVersionValue);
 			case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE :
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
-			default:
-				// IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API
+			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API :
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_minorNoNewAPI1, this.newVersionValue);
+			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE :
+				return NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMajor1, this.newVersionValue);
+			default:
+				// IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE
+				return NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMinor1, this.newVersionValue);
 		}
 	}
 
@@ -101,9 +110,16 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				break;
 			case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE :
 				title = NLS.bind(MarkerMessages.VersionNumberingResolution_major2, this.newVersionValue);
-			default:
-				// IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API
+				break;
+			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API :
 				title = NLS.bind(MarkerMessages.VersionNumberingResolution_minorNoNewAPI2, this.newVersionValue);
+				break;
+			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE :
+				title = NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMajor2, this.newVersionValue);
+				break;
+			default :
+				// IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE
+				title = NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMajor2, this.newVersionValue);
 		}
 		UIJob job  = new UIJob(title) {
 			/* (non-Javadoc)
