@@ -47,6 +47,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -608,11 +609,11 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
-	// public boolean doGlobalAction(String actionId) {
-	// if (actionId.equals(ActionFactory.DELETE.getId())) {
-	// handleDeleteAction();
-	// return true;
-	// }
-	// return false;
-	// }
+	 public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
+			handleDeleteAction();
+			return true;
+		}
+		return false;
+	}
 }
