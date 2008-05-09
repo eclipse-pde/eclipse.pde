@@ -28,8 +28,7 @@ import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.wizards.ctxhelp.RegisterCtxHelpWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -62,14 +61,26 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		if (isShowInApplicable()) {
-			if (adapter == IShowInSource.class) {
+		if (adapter == IShowInSource.class) {
+			if (inUiThread() && isShowInApplicable()) {
 				return getShowInSource();
-			} else if (adapter == IShowInTargetList.class) {
-				return getShowInTargetList();
 			}
 		}
+		if (adapter == IShowInTargetList.class) {
+			return getShowInTargetList();
+		}
 		return super.getAdapter(adapter);
+	}
+
+	/**
+	 * @return return whether the current thread is the UI thread
+	 */
+	private boolean inUiThread() {
+		Display display = getSite().getWorkbenchWindow().getWorkbench().getDisplay();
+		if (display != null && !display.isDisposed()) {
+			return display.getThread() == Thread.currentThread();
+		}
+		return false;
 	}
 
 	/**
