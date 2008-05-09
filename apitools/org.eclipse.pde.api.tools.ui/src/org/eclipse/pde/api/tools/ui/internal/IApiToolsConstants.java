@@ -77,4 +77,8 @@ public interface IApiToolsConstants {
 	 */
 	public static final String ID_PROFILES_PREF_PAGE = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$
 	
+	/**
+	 * Key for filter resolution image
+	 */
+	public static final String IMG_ELCL_FILTER = "IMG_ELCL_FILTER"; //$NON-NLS-1$
 }
