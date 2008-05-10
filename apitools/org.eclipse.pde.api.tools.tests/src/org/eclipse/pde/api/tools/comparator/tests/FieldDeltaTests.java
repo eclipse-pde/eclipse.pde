@@ -27,7 +27,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 public class FieldDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
-		if (false) return new TestSuite(FieldDeltaTests.class);
+		if (true) return new TestSuite(FieldDeltaTests.class);
 		TestSuite suite = new TestSuite(FieldDeltaTests.class.getName());
 		suite.addTest(new FieldDeltaTests("test42"));
 		return suite;
@@ -474,7 +474,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
-	
+
 	/**
 	 * Decrease access
 	 */
