@@ -29,9 +29,9 @@ public class Messages extends NLS {
 	public static String DSComponentDetails_4;
 	public static String DSComponentDetails_7;
 
-	public static String DSImplementationDetails_0;
-	public static String DSImplementationDetails_1;
-	public static String DSImplementationDetails_2;
+	public static String DSImplementationDetails_mainSectionText;
+	public static String DSImplementationDetails_mainSectionDesc;
+	public static String DSImplementationDetails_label;
 
 	public static String DSPage_0;
 	public static String DSPage_1;

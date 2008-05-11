@@ -47,9 +47,9 @@ public class DSImplementationDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText(Messages.DSImplementationDetails_0);
+		fMainSection.setText(Messages.DSImplementationDetails_mainSectionText);
 		fMainSection
-				.setDescription(Messages.DSImplementationDetails_1);
+				.setDescription(Messages.DSImplementationDetails_mainSectionDesc);
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
@@ -70,7 +70,7 @@ public class DSImplementationDetails extends DSAbstractDetails {
 				.createSectionClientGridLayout(false, 2));
 
 		// Attribute: title
-		fTitle = new FormEntry(mainSectionClient, getToolkit(), Messages.DSImplementationDetails_2,
+		fTitle = new FormEntry(mainSectionClient, getToolkit(), Messages.DSImplementationDetails_label,
 				SWT.NONE);
 		
 		// Bind widgets
