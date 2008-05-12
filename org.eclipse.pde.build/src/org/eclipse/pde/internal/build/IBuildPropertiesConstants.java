@@ -86,10 +86,11 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_PUBLISH_ARTIFACTS = "p2.publish.artifacts"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ROOT_NAME = "p2.root.name"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ROOT_VERSION = "p2.root.version"; //$NON-NLS-1$
-	
+	public static final String PROPERTY_P2_FINAL_MODE_OVERRIDE = "p2.final.mode.override"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_FLAVOR = "p2.flavor"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_APPEND = "p2.append"; //$NON-NLS-1$
 	//Internal usage only
+	public static final String PROPERTY_P2_GENERATION_MODE = "p2.generation.mode"; //$NON-NLS-1$
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 
 	public static final String PROPERTY_PACKAGER_MODE = "packagerMode"; //$NON-NLS-1$

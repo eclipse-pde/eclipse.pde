@@ -171,4 +171,9 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			return new Object[] {getFinalName(feature), ShapeAdvisor.FOLDER};
 		return shapeAdvisor.getFinalShape(feature);
 	}
+	
+	protected void printP2GenerationModeCondition() {
+		// "final" if we are overriding, else "incremental"
+		script.printConditionIsSet(PROPERTY_P2_GENERATION_MODE, "final", PROPERTY_P2_FINAL_MODE_OVERRIDE, "incremental");  //$NON-NLS-1$//$NON-NLS-2$
+	}
 }
