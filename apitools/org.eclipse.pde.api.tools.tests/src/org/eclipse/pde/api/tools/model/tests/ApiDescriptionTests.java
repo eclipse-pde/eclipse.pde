@@ -275,7 +275,7 @@ public class ApiDescriptionTests extends TestCase {
 			ElementDescription B = new ElementDescription(defPkgDesc.getType("B"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE);
 				ElementDescription m1 = new ElementDescription(defPkgDesc.getType("B").getMethod("m1", Signature.createMethodSignature(new String[0],Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_OVERRIDE);
 			ElementDescription C = new ElementDescription(defPkgDesc.getType("C"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-			ElementDescription D = new ElementDescription(defPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
+			ElementDescription D = new ElementDescription(defPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
 				ElementDescription f1 = new ElementDescription(defPkgDesc.getType("D").getField("f1"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
 			ElementDescription IB = new ElementDescription(defPkgDesc.getType("IB"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
 		IPackageDescriptor abcPkgDesc = Factory.packageDescriptor("a.b.c");
@@ -293,7 +293,7 @@ public class ApiDescriptionTests extends TestCase {
 				ElementDescription spiCf4 = new ElementDescription(spiPkgDesc.getType("SpiC").getField("f4"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
 				ElementDescription spiCm4 = new ElementDescription(spiPkgDesc.getType("SpiC").getMethod("m4", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_OVERRIDE);
 			ElementDescription spiD = new ElementDescription(spiPkgDesc.getType("SpiD"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-			ElementDescription spiE = new ElementDescription(spiPkgDesc.getType("SpiE"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
+			ElementDescription spiE = new ElementDescription(spiPkgDesc.getType("SpiE"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
 			ElementDescription IspiB = new ElementDescription(spiPkgDesc.getType("ISpiB"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
 		IPackageDescriptor intPkgDesc = Factory.packageDescriptor("a.b.c.internal");
 		ElementDescription intPkg = new ElementDescription(intPkgDesc, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
@@ -339,7 +339,7 @@ public class ApiDescriptionTests extends TestCase {
 				ElementDescription expected = visitOrder.remove(0);
 				assertEquals("Wrong begin visit element", expected.fElement, element);
 				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility());
-				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions());
+				assertEquals("Wrong begin visit restrictions for ", expected.fRes, description.getRestrictions());
 				return true;
 			}
 		

@@ -658,23 +658,28 @@ public class ApiDescriptionProcessor {
 			}
 			case IElementDescriptor.T_REFERENCE_TYPE: {
 				IReferenceTypeDescriptor rtype = (IReferenceTypeDescriptor) descriptor;
+				res = annotateRestriction(element, IApiXmlConstants.ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, res);
+				res = annotateRestriction(element, IApiXmlConstants.ATTR_EXTEND, RestrictionModifiers.NO_EXTEND, res);
+				if(!RestrictionModifiers.isExtendRestriction(res)) {
+					res = annotateRestriction(element, IApiXmlConstants.ATTR_SUBCLASS, RestrictionModifiers.NO_EXTEND, res);
+				}
+				res = annotateRestriction(element, IApiXmlConstants.ATTR_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, res);
 				IType type = null;
 				if (project != null) {
 					try {
 						type = project.findType(rtype.getQualifiedName());
 						if (type != null) {
-							if(type.isInterface()) {
-								res = annotateRestriction(element, IApiXmlConstants.ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, res);
+							if(Flags.isInterface(type.getFlags())) {
+								res &= ~RestrictionModifiers.NO_EXTEND;
+								res &= ~RestrictionModifiers.NO_INSTANTIATE;
 							}
 							else {
-								if(!Flags.isFinal(type.getFlags())) {
-									res = annotateRestriction(element, IApiXmlConstants.ATTR_EXTEND, RestrictionModifiers.NO_EXTEND, res);
-									if(!RestrictionModifiers.isExtendRestriction(res)) {
-										res = annotateRestriction(element, IApiXmlConstants.ATTR_SUBCLASS, RestrictionModifiers.NO_EXTEND, res);
-									}
+								res &= ~RestrictionModifiers.NO_IMPLEMENT;
+								if(Flags.isFinal(type.getFlags())) {
+									res &= ~RestrictionModifiers.NO_EXTEND;
 								}
-								if(!Flags.isAbstract(type.getFlags())) {
-									res = annotateRestriction(element, IApiXmlConstants.ATTR_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, res);
+								if(Flags.isAbstract(type.getFlags())) {
+									res &= ~RestrictionModifiers.NO_INSTANTIATE;
 								}
 							}
 						}
