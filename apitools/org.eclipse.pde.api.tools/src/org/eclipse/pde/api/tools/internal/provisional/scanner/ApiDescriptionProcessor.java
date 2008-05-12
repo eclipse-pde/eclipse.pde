@@ -627,60 +627,63 @@ public class ApiDescriptionProcessor {
 		if (typeVis != -1) {
 			settings.setVisibility(descriptor, typeVis);
 		}
-		int restrictions = getRestrictions(element);
-		if(descriptor.getElementType() == IElementDescriptor.T_METHOD) {
-			if(RestrictionModifiers.isExtendRestriction(restrictions)) {
-				restrictions &= ~RestrictionModifiers.NO_EXTEND;
-				restrictions |= RestrictionModifiers.NO_OVERRIDE;
-			}
-		}
-		if (descriptor.getElementType() == IElementDescriptor.T_REFERENCE_TYPE) {
-			IReferenceTypeDescriptor referenceTypeDescriptor = (IReferenceTypeDescriptor) descriptor;
-			IType type = null;
-			if (project != null) {
-				try {
-					type = project.findType(referenceTypeDescriptor.getQualifiedName());
-					if (type != null) {
-						if ((restrictions & RestrictionModifiers.NO_INSTANTIATE) != 0) {
-							// don't set for abstract class or interface
-							if (type.isInterface() || Flags.isAbstract(type.getFlags())) {
-								restrictions &= ~RestrictionModifiers.NO_INSTANTIATE;
-							}
-						}
-						if ((restrictions & RestrictionModifiers.NO_IMPLEMENT) != 0) {
-							// don't set for class
-							if (type.isClass()) {
-								restrictions &= ~RestrictionModifiers.NO_IMPLEMENT;
-							}
-						}
-						if ((restrictions & RestrictionModifiers.NO_EXTEND) != 0) {
-							// don't set for class
-							if (type.isClass() && Flags.isFinal(type.getFlags())) {
-								restrictions &= ~RestrictionModifiers.NO_EXTEND;
-							}
-						}
-					}
-				} catch (JavaModelException e) {
-					// ignore
-				}
-			}
-		}
-		settings.setRestrictions(descriptor, restrictions);
+		settings.setRestrictions(descriptor, getRestrictions(project, element, descriptor));
 	}
 	
 	/**
 	 * Returns restriction settings described in the given element.
 	 * 
+	 * @param project the {@link IJavaProject} context
 	 * @param element XML element
+	 * @param descriptor the {@link IElementDescriptor} to get the restrictions for
 	 * @return restriction settings
 	 */
-	private static int getRestrictions(Element element) {
-		int res = annotateRestriction(element, IApiXmlConstants.ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, RestrictionModifiers.NO_RESTRICTIONS);
-		res = annotateRestriction(element, IApiXmlConstants.ATTR_EXTEND, RestrictionModifiers.NO_EXTEND, res);
-		res = annotateRestriction(element, IApiXmlConstants.ATTR_OVERRIDE, RestrictionModifiers.NO_OVERRIDE, res);
-		res = annotateRestriction(element, "subclass", RestrictionModifiers.NO_EXTEND, res); //$NON-NLS-1$
-		res = annotateRestriction(element, IApiXmlConstants.ATTR_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, res);
-		res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
+	private static int getRestrictions(final IJavaProject project, final Element element, final IElementDescriptor descriptor) {
+		int res = RestrictionModifiers.NO_RESTRICTIONS;
+		switch(descriptor.getElementType()) {
+			case IElementDescriptor.T_FIELD: {
+				IFieldDescriptor field = (IFieldDescriptor) descriptor;
+				if(!Flags.isFinal(field.getModifiers())) {
+					res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
+				}
+				break;
+			}
+			case IElementDescriptor.T_METHOD: {
+				IMethodDescriptor method  = (IMethodDescriptor) descriptor;
+				res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
+				if(!method.isConstructor()) {
+					res = annotateRestriction(element, IApiXmlConstants.ATTR_OVERRIDE, RestrictionModifiers.NO_OVERRIDE, res);
+				}
+				break;
+			}
+			case IElementDescriptor.T_REFERENCE_TYPE: {
+				IReferenceTypeDescriptor rtype = (IReferenceTypeDescriptor) descriptor;
+				IType type = null;
+				if (project != null) {
+					try {
+						type = project.findType(rtype.getQualifiedName());
+						if (type != null) {
+							if(type.isInterface()) {
+								res = annotateRestriction(element, IApiXmlConstants.ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, res);
+							}
+							else {
+								if(!Flags.isFinal(type.getFlags())) {
+									res = annotateRestriction(element, IApiXmlConstants.ATTR_EXTEND, RestrictionModifiers.NO_EXTEND, res);
+									if(!RestrictionModifiers.isExtendRestriction(res)) {
+										res = annotateRestriction(element, IApiXmlConstants.ATTR_SUBCLASS, RestrictionModifiers.NO_EXTEND, res);
+									}
+								}
+								if(!Flags.isAbstract(type.getFlags())) {
+									res = annotateRestriction(element, IApiXmlConstants.ATTR_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, res);
+								}
+							}
+						}
+					} 
+					catch (JavaModelException e) {}
+				}
+				break;
+			}
+		}
 		return res;
 	}
 	
