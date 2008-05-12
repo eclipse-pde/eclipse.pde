@@ -22,16 +22,19 @@ public class Messages extends NLS {
 	public static String DSAddItemAction_4;
 	public static String DSAddItemAction_5;
 
-	public static String DSComponentDetails_0;
-	public static String DSComponentDetails_1;
-	public static String DSComponentDetails_2;
-	public static String DSComponentDetails_3;
-	public static String DSComponentDetails_4;
-	public static String DSComponentDetails_7;
+	public static String DSComponentDetails_mainSectionTitle;
+	public static String DSComponentDetails_mainSectionDescription;
+	public static String DSComponentDetails_nameEntry;
+	public static String DSComponentDetails_factoryEntry;
+	public static String DSComponentDetails_enabledLabel;
+	public static String DSComponentDetails_immediateLabel;
+	public static String DSComponentDetails_browse;
 
-	public static String DSImplementationDetails_mainSectionText;
-	public static String DSImplementationDetails_mainSectionDesc;
-	public static String DSImplementationDetails_label;
+	public static String DSImplementationDetails_title;
+	public static String DSImplementationDetails_description;
+	public static String DSImplementationDetails_classEntry;
+	public static String DSImplementationDetails_browse;
+	public static String DSImplementationDetails_selectType;
 
 	public static String DSPage_0;
 	public static String DSPage_1;
@@ -75,17 +78,20 @@ public class Messages extends NLS {
 	public static String DSMasterTreeSection_client_text;
 	public static String DSMasterTreeSection_client_description;
 
-	public static String DSReferenceDetails_0;
-	public static String DSReferenceDetails_1;
-	public static String DSReferenceDetails_10;
-	public static String DSReferenceDetails_11;
-	public static String DSReferenceDetails_12;
-	public static String DSReferenceDetails_2;
-	public static String DSReferenceDetails_3;
-	public static String DSReferenceDetails_4;
-	public static String DSReferenceDetails_9;
+	public static String DSReferenceDetails_title;
+	public static String DSReferenceDetails_description;
+	public static String DSReferenceDetails_bindEntry;
+	public static String DSReferenceDetails_unbindEntry;
+	public static String DSReferenceDetails_policeLabel;
+	public static String DSReferenceDetails_nameEntry;
+	public static String DSReferenceDetails_interfaceEntry;
+	public static String DSReferenceDetails_cardinalityLabel;
+	public static String DSReferenceDetails_targetEntry;
+	public static String DSReferenceDetails_browse;
+	public static String DSReferenceDetails_selectType;
 
 	public static String DSRemoveItemAction_0;
+	
 
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$
 

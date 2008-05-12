@@ -12,14 +12,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.details;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ds.core.IDSReference;
+import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.Messages;
+import org.eclipse.pde.internal.ds.ui.SWTUtil;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
+import org.eclipse.pde.internal.ui.editor.schema.NewClassCreationWizard;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
@@ -29,8 +43,13 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -38,11 +57,11 @@ public class DSReferenceDetails extends DSAbstractDetails {
 
 	private IDSReference fReference;
 	private Section fMainSection;
-	private FormEntry fName;
-	private FormEntry fInterface;
-	private FormEntry fBind;
-	private FormEntry fUnBind;
-	private FormEntry fTarget;
+	private FormEntry fNameEntry;
+	private FormEntry fInterfaceEntry;
+	private FormEntry fBindEntry;
+	private FormEntry fUnBindEntry;
+	private FormEntry fTargetEntry;
 	private ComboPart fCardinality;
 	private Label fLabelCardinality;
 	private ComboPart fPolicy;
@@ -50,16 +69,6 @@ public class DSReferenceDetails extends DSAbstractDetails {
 
 	public DSReferenceDetails(IDSMaster masterSection) {
 		super(masterSection, DSInputContext.CONTEXT_ID);
-		fReference = null;
-		fMainSection = null;
-		fName = null;
-		fInterface = null;
-		fPolicy = null;
-		fLabelCardinality = null;
-		fLabelPolicy = null;
-		fTarget = null;
-		fBind = null;
-		fUnBind = null;
 	}
 
 	public void createDetails(Composite parent) {
@@ -70,9 +79,8 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText(Messages.DSReferenceDetails_0);
-		fMainSection
-				.setDescription(Messages.DSReferenceDetails_1);
+		fMainSection.setText(Messages.DSReferenceDetails_title);
+		fMainSection.setDescription(Messages.DSReferenceDetails_description);
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
@@ -89,24 +97,25 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		Composite mainSectionClient = getToolkit()
 				.createComposite(fMainSection);
 		mainSectionClient.setLayout(FormLayoutFactory
-				.createSectionClientGridLayout(false, 2));
+				.createSectionClientGridLayout(false, 3));
 
 		// Attribute: name
-		fName = new FormEntry(mainSectionClient, getToolkit(), Messages.DSReferenceDetails_2,
-				SWT.NONE);
+		fNameEntry = new FormEntry(mainSectionClient, getToolkit(),
+				Messages.DSReferenceDetails_nameEntry, SWT.NONE);
 
 		// Attribute: Interface
-		fInterface = new FormEntry(mainSectionClient, getToolkit(),
-				Messages.DSReferenceDetails_3, SWT.NONE);
+		fInterfaceEntry = new FormEntry(mainSectionClient, getToolkit(),
+				Messages.DSReferenceDetails_interfaceEntry,
+				Messages.DSReferenceDetails_browse, isEditable(), 0);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 20;
-		gd.horizontalSpan = 1;
+		gd.horizontalSpan = 2;
 		gd.horizontalIndent = 3; // FormLayoutFactory.CONTROL_HORIZONTAL_INDENT
-		
+
 		// Attribute: Cardinality
 		fLabelCardinality = getToolkit().createLabel(mainSectionClient,
-				Messages.DSReferenceDetails_4, SWT.WRAP);
+				Messages.DSReferenceDetails_cardinalityLabel, SWT.WRAP);
 		fLabelCardinality.setForeground(foreground);
 		fCardinality = new ComboPart();
 		fCardinality.createControl(mainSectionClient, getToolkit(),
@@ -114,25 +123,25 @@ public class DSReferenceDetails extends DSAbstractDetails {
 
 		String[] itemsCard = new String[] { IConstants.CARDINALITY_ZERO_ONE,
 				IConstants.CARDINALITY_ZERO_N, IConstants.CARDINALITY_ONE_ONE,
-				IConstants.CARDINALITY_ONE_N }; 
+				IConstants.CARDINALITY_ONE_N };
 		fCardinality.setItems(itemsCard);
 		fCardinality.getControl().setLayoutData(gd);
 
 		// Attribute: Target
-		fTarget = new FormEntry(mainSectionClient, getToolkit(), Messages.DSReferenceDetails_9,
-				SWT.NONE);
+		fTargetEntry = new FormEntry(mainSectionClient, getToolkit(),
+				Messages.DSReferenceDetails_targetEntry, SWT.NONE);
 
 		// Attribute: Bind
-		fBind = new FormEntry(mainSectionClient, getToolkit(), Messages.DSReferenceDetails_10,
-				SWT.NONE);
+		fBindEntry = new FormEntry(mainSectionClient, getToolkit(),
+				Messages.DSReferenceDetails_bindEntry, SWT.NONE);
 
 		// Attribute: UnBind
-		fUnBind = new FormEntry(mainSectionClient, getToolkit(), Messages.DSReferenceDetails_11,
-				SWT.NONE);
+		fUnBindEntry = new FormEntry(mainSectionClient, getToolkit(),
+				Messages.DSReferenceDetails_unbindEntry, SWT.NONE);
 
 		// Attribute: Policy
-		fLabelPolicy = getToolkit().createLabel(mainSectionClient, Messages.DSReferenceDetails_12,
-				SWT.WRAP);
+		fLabelPolicy = getToolkit().createLabel(mainSectionClient,
+				Messages.DSReferenceDetails_policeLabel, SWT.WRAP);
 		fLabelPolicy.setForeground(foreground);
 		fPolicy = new ComboPart();
 		fPolicy.createControl(mainSectionClient, getToolkit(), SWT.READ_ONLY);
@@ -149,58 +158,78 @@ public class DSReferenceDetails extends DSAbstractDetails {
 	}
 
 	public void hookListeners() {
+		IActionBars actionBars = getPage().getPDEEditor().getEditorSite()
+				.getActionBars();
+
 		// Attribute: name
-		fName.setFormEntryListener(new FormEntryAdapter(this) {
+		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fReference == null) {
 					return;
 				}
-				fReference.setReferenceName(fName.getValue());
+				fReference.setReferenceName(fNameEntry.getValue());
 			}
+
 		});
 
 		// Attribute: Interface
-		fInterface.setFormEntryListener(new FormEntryAdapter(this) {
+		fInterfaceEntry.setFormEntryListener(new FormEntryAdapter(this,
+				actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fReference == null) {
 					return;
 				}
-				fReference.setReferenceInterface(fInterface.getValue());
+				fReference.setReferenceInterface(fInterfaceEntry.getValue());
 			}
+			
+
+			public void linkActivated(HyperlinkEvent e) {
+				String value = fInterfaceEntry.getValue();
+				value = handleLinkActivated(value, false);
+				if (value != null)
+					fInterfaceEntry.setValue(value);
+			}
+
+			public void browseButtonSelected(FormEntry entry) {
+				doOpenSelectionDialog(
+						IJavaElementSearchConstants.CONSIDER_INTERFACES,
+						fInterfaceEntry);
+			}
+
 		});
 
 		// Attribute: Target
-		fTarget.setFormEntryListener(new FormEntryAdapter(this) {
+		fTargetEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fReference == null) {
 					return;
 				}
-				fReference.setReferenceTarget(fTarget.getValue());
+				fReference.setReferenceTarget(fTargetEntry.getValue());
 			}
 		});
 
 		// Attribute: Bind
-		fBind.setFormEntryListener(new FormEntryAdapter(this) {
+		fBindEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fReference == null) {
 					return;
 				}
-				fReference.setReferenceBind(fBind.getValue());
+				fReference.setReferenceBind(fBindEntry.getValue());
 			}
 		});
 
 		// Attribute: UnBind
-		fUnBind.setFormEntryListener(new FormEntryAdapter(this) {
+		fUnBindEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fReference == null) {
 					return;
 				}
-				fReference.setReferenceUnbind(fUnBind.getValue());
+				fReference.setReferenceUnbind(fUnBindEntry.getValue());
 			}
 		});
 
@@ -231,7 +260,51 @@ public class DSReferenceDetails extends DSAbstractDetails {
 
 	}
 
-	// }
+	private String handleLinkActivated(String value, boolean isInter) {
+		IProject project = getPage().getPDEEditor().getCommonProject();
+		try {
+			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject javaProject = JavaCore.create(project);
+				IJavaElement element = javaProject.findType(value.replace('$',
+						'.'));
+				if (element != null)
+					JavaUI.openInEditor(element);
+				else {
+					// TODO create our own wizard for reuse here
+					NewClassCreationWizard wizard = new NewClassCreationWizard(
+							project, isInter, value);
+					WizardDialog dialog = new WizardDialog(Activator
+							.getActiveWorkbenchShell(), wizard);
+					dialog.create();
+					SWTUtil.setDialogSize(dialog, 400, 500);
+					if (dialog.open() == Window.OK) {
+						return wizard.getQualifiedName();
+					}
+				}
+			}
+		} catch (PartInitException e1) {
+		} catch (CoreException e1) {
+		}
+		return null;
+	}
+
+	private void doOpenSelectionDialog(int scopeType, FormEntry entry) {
+		try {
+			String filter = entry.getValue();
+			filter = filter.substring(filter.lastIndexOf(".") + 1); //$NON-NLS-1$
+			SelectionDialog dialog = JavaUI.createTypeDialog(Activator
+					.getActiveWorkbenchShell(), PlatformUI.getWorkbench()
+					.getProgressService(), SearchEngine.createWorkspaceScope(),
+					scopeType, false, filter);
+			dialog.setTitle(Messages.DSReferenceDetails_selectType);
+			if (dialog.open() == Window.OK) {
+				IType type = (IType) dialog.getResult()[0];
+				entry.setValue(type.getFullyQualifiedName('$'));
+				entry.commit();
+			}
+		} catch (CoreException e) {
+		}
+	}
 
 	public void updateFields() {
 
@@ -242,35 +315,35 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		}
 
 		if (fReference.getReferenceName() == null) {
-			fName.setValue(""); //$NON-NLS-1$
+			fNameEntry.setValue(""); //$NON-NLS-1$
 		} else {
 			// Attribute: name
-			fName.setValue(fReference.getReferenceName(), true);
+			fNameEntry.setValue(fReference.getReferenceName(), true);
 		}
-		fName.setEditable(editable);
+		fNameEntry.setEditable(editable);
 
 		if (fReference.getReferenceInterface() == null) {
-			fInterface.setValue(""); //$NON-NLS-1$
+			fInterfaceEntry.setValue(""); //$NON-NLS-1$
 		} else {
 			// Attribute: Interface
-			fInterface.setValue(fReference.getReferenceInterface(), true);
+			fInterfaceEntry.setValue(fReference.getReferenceInterface(), true);
 		}
-		fInterface.setEditable(editable);
+		fInterfaceEntry.setEditable(editable);
 
 		// Attribute: Target
-		fTarget.setValue(fReference.getReferenceTarget(), true);
-		fTarget.setEditable(editable);
+		fTargetEntry.setValue(fReference.getReferenceTarget(), true);
+		fTargetEntry.setEditable(editable);
 
 		// Attribute: Bind
-		fBind.setValue(fReference.getReferenceBind(), true);
-		fBind.setEditable(editable);
+		fBindEntry.setValue(fReference.getReferenceBind(), true);
+		fBindEntry.setEditable(editable);
 
 		// Attribute: Unbind
-		fUnBind.setValue(fReference.getReferenceUnbind(), true);
-		fUnBind.setEditable(editable);
+		fUnBindEntry.setValue(fReference.getReferenceUnbind(), true);
+		fUnBindEntry.setEditable(editable);
 
 		// Attribute: Cardinality
-		if(fReference.getReferenceCardinality() != null)
+		if (fReference.getReferenceCardinality() != null)
 			fCardinality.setText(fReference.getReferenceCardinality());
 
 		// Attribute: Policy
@@ -307,10 +380,10 @@ public class DSReferenceDetails extends DSAbstractDetails {
 	 */
 	public void commit(boolean onSave) {
 		super.commit(onSave);
-		fName.commit();
-		fInterface.commit();
-		fBind.commit();
-		fUnBind.commit();
-		fTarget.commit();
+		fNameEntry.commit();
+		fInterfaceEntry.commit();
+		fBindEntry.commit();
+		fUnBindEntry.commit();
+		fTargetEntry.commit();
 	}
 }
