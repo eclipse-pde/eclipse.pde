@@ -42,7 +42,11 @@ public class BundleLauncherHelper {
 				IPluginModelBase[] models = entry.getWorkspaceModels();
 				for (int i = 0; i < models.length; i++) {
 					IPluginBase base = models[i].getPluginBase();
-					if (base.getVersion().equals(version) || version == null)
+					// match only if...
+					// a) if we have the same version
+					// b) no version
+					// c) all else fails, if there's just one bundle available, use it
+					if (base.getVersion().equals(version) || version == null || models.length == 1)
 						map.put(models[i], token.substring(index + 1));
 				}
 			}
@@ -94,7 +98,11 @@ public class BundleLauncherHelper {
 				IPluginModelBase[] models = entry.getExternalModels();
 				for (int i = 0; i < models.length; i++) {
 					IPluginBase base = models[i].getPluginBase();
-					if (base.getVersion().equals(version) || version == null)
+					// match only if...
+					// a) if we have the same version
+					// b) no version
+					// c) all else fails, if there's just one bundle available, use it
+					if (base.getVersion().equals(version) || version == null || models.length == 1)
 						map.put(models[i], token.substring(index + 1));
 				}
 			}
