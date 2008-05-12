@@ -174,6 +174,8 @@ public class Messages extends NLS {
 								return 23;
 							case IDelta.TYPE_PARAMETER_NAME :
 								return 24;
+							case IDelta.NON_FINAL_TO_FINAL :
+								return 94;
 						}
 						break;
 					case IDelta.REMOVED :

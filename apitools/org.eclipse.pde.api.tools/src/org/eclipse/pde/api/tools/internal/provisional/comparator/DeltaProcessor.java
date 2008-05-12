@@ -422,7 +422,6 @@ public class DeltaProcessor {
 					case IDelta.CLASS_BOUND :
 					case IDelta.INTERFACE_BOUND :
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
-					case IDelta.NON_FINAL_TO_FINAL:
 					case IDelta.TO_ANNOTATION :
 					case IDelta.TO_ENUM :
 					case IDelta.TO_INTERFACE :
@@ -430,6 +429,11 @@ public class DeltaProcessor {
 					case IDelta.STATIC_TO_NON_STATIC :
 					case IDelta.NON_STATIC_TO_STATIC :
 						return !Util.isVisible(delta);
+					case IDelta.NON_FINAL_TO_FINAL:
+						if (Util.isVisible(delta)) {
+							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+						}
+						return true; 
 					case IDelta.DECREASE_ACCESS :
 						return false;
 				}
