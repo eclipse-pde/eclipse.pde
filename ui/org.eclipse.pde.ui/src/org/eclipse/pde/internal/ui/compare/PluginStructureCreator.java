@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,7 @@ package org.eclipse.pde.internal.ui.compare;
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.plugin.*;
@@ -115,6 +114,9 @@ public class PluginStructureCreator extends StructureCreator {
 	private void parsePlugin(Object input, DocumentRangeNode rootNode, IDocument document, PDELabelProvider labelProvider, ResourceManager resources, IProgressMonitor monitor) throws CoreException {
 		boolean isFragment = isFragment(input);
 		PluginModelBase model = createModel(input, document, isFragment);
+		if (!model.isLoaded() && model.getStatus().getSeverity() == IStatus.ERROR)
+			throw new CoreException(model.getStatus());
+
 		try {
 			String id = isFragment ? "fragment" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
 			ImageDescriptor icon = isFragment ? PDEPluginImages.DESC_FRAGMENT_MF_OBJ : PDEPluginImages.DESC_PLUGIN_MF_OBJ;
