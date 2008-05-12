@@ -849,6 +849,8 @@ public final class Util {
 			case IDelta.VARARGS_TO_ARRAY : return "VARARGS_TO_ARRAY"; //$NON-NLS-1$
 			case IDelta.RESTRICTIONS : return "RESTRICTIONS"; //$NON-NLS-1$
 			case IDelta.API_TYPE : return "API_TYPE"; //$NON-NLS-1$
+			case IDelta.NON_VOLATILE_TO_VOLATILE : return "NON_VOLATILE_TO_VOLATILE"; //$NON-NLS-1$
+			case IDelta.VOLATILE_TO_NON_VOLATILE : return "VOLATILE_TO_NON_VOLATILE"; //$NON-NLS-1$
 		}
 		return UNKNOWN_FLAGS;
 	}

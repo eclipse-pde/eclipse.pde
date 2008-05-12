@@ -1077,4 +1077,47 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
+	/**
+	 * Check change field modifiers - volatile to non volatile
+	 */
+	public void test43() {
+		deployBundles("test43");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.VOLATILE_TO_NON_VOLATILE, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+
+	/**
+	 * Check change field modifiers - non volatile to volatile
+	 */
+	public void test44() {
+		deployBundles("test44");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.NON_VOLATILE_TO_VOLATILE, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
 }

@@ -1036,6 +1036,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					case IDelta.TRANSIENT_TO_NON_TRANSIENT :
 					case IDelta.NATIVE_TO_NON_NATIVE :
 					case IDelta.SYNCHRONIZED_TO_NON_SYNCHRONIZED :
+					case IDelta.NON_VOLATILE_TO_VOLATILE :
+					case IDelta.VOLATILE_TO_NON_VOLATILE :
 						return false;
 				}
 				switch(delta.getElementType()) {

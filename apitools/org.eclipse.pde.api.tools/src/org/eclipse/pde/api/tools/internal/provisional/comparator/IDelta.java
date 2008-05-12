@@ -747,6 +747,28 @@ public interface IDelta {
 	 */
 	public static final int API_TYPE = 56;
 	/**
+	 * Delta kind flag that denotes the volatile keyword has been added.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int NON_VOLATILE_TO_VOLATILE = 57;
+	/**
+	 * Delta kind flag that denotes the volatile keyword has been removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int VOLATILE_TO_NON_VOLATILE = 58;
+	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
 	 * 
 	 * @return true if the receiver has no children deltas, false otherwise.

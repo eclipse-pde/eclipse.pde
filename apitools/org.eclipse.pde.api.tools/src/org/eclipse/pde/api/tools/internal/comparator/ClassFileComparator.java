@@ -1518,6 +1518,31 @@ public class ClassFileComparator {
 					name,
 					new String[] {Util.getDescriptorName(this.descriptor1), name});
 		}
+		if (Util.isVolatile(access)) {
+			if (!Util.isVolatile(access2)) {
+				// report delta - volatile to non-volatile
+				this.addDelta(
+						IDelta.FIELD_ELEMENT_TYPE,
+						IDelta.CHANGED,
+						IDelta.VOLATILE_TO_NON_VOLATILE,
+						restrictions,
+						access2,
+						this.classFile,
+						name,
+						new String[] {Util.getDescriptorName(this.descriptor1), name});
+			}
+		} else if (Util.isVolatile(access2)) {
+			// report delta - non-volatile to volatile
+			this.addDelta(
+					IDelta.FIELD_ELEMENT_TYPE,
+					IDelta.CHANGED,
+					IDelta.NON_VOLATILE_TO_VOLATILE,
+					restrictions,
+					access2,
+					this.classFile,
+					name,
+					new String[] {Util.getDescriptorName(this.descriptor1), name});
+		}
 	}
 	private void getDeltaForMethodDescriptor(MethodDescriptor methodDescriptor) {
 		int access = methodDescriptor.access;

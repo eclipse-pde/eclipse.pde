@@ -261,6 +261,10 @@ public class Messages extends NLS {
 								return 51;
 							case IDelta.TYPE :
 								return 78;
+							case IDelta.NON_VOLATILE_TO_VOLATILE :
+								return 92;
+							case IDelta.VOLATILE_TO_NON_VOLATILE :
+								return 93;
 						}
 						break;
 					case IDelta.REMOVED :
