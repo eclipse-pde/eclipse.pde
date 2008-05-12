@@ -209,7 +209,7 @@
       <wizard
             category="org.eclipse.pde.userAssistance"
             class="org.eclipse.pde.internal.ui.wizards.toc.NewTocFileWizard"
-            icon="icons/obj16/toc_obj.gif"
+            icon="$nl$/icons/etool16/toc_wiz.gif"
             id="org.eclipse.pde.ui.NewTOCWizard"
             name="%new.toc.name">
          <description>
@@ -219,7 +219,7 @@
       <wizard
             category="org.eclipse.pde.userAssistance"
             class="org.eclipse.pde.internal.ui.wizards.ctxhelp.NewCtxHelpWizard"
-            icon="icons/obj16/toc_obj.gif"
+            icon="$nl$/icons/etool16/ctx_help_wiz.gif"
             id="org.eclipse.pde.ui.NewContextHelpWizard"
             name="%new.ctxhelp.name">
          <description>
