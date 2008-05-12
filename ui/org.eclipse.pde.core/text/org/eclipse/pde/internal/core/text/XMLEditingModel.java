@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-
+import java.io.*;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWritable;
@@ -32,6 +24,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class XMLEditingModel extends AbstractEditingModel {
+
+	private IStatus status;
 
 	public XMLEditingModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
@@ -43,14 +37,24 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	public void load(InputStream source, boolean outOfSync) {
 		try {
 			fLoaded = true;
+			status = new Status(IStatus.OK, PDECore.PLUGIN_ID, null);
 			SAXParserWrapper parser = new SAXParserWrapper();
 			parser.parse(source, createDocumentHandler(this, true));
 		} catch (SAXException e) {
 			fLoaded = false;
+			status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e);
 		} catch (IOException e) {
+			fLoaded = false;
 		} catch (ParserConfigurationException e) {
+			fLoaded = false;
 		} catch (FactoryConfigurationError e) {
+			fLoaded = false;
 		}
+	}
+
+	// TODO move this later when we re-work the text editing model
+	public IStatus getStatus() {
+		return status;
 	}
 
 	protected abstract DefaultHandler createDocumentHandler(IModel model, boolean reconciling);
