@@ -649,7 +649,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return;
 		}
 		IMember member = Util.getIMember(delta, fJavaProject);
-		if (member == null) {
+		if (member == null || member.isBinary()) {
 			return;
 		}
 		ICompilationUnit cunit = member.getCompilationUnit();
@@ -871,7 +871,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 				}
 				member = Util.getIMember(delta, fJavaProject);
-				if (member != null) {
+				if (member != null && !member.isBinary()) {
 					ISourceRange range = member.getNameRange();
 					charStart = range.getOffset();
 					charEnd = charStart + range.getLength();
