@@ -13,10 +13,11 @@
 package org.eclipse.pde.internal.ds.ui.editor.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSObject;
-import org.eclipse.pde.internal.ds.core.IDSProvide;
+import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.Messages;
 
 public class DSAddItemAction extends Action {
@@ -100,8 +101,8 @@ public class DSAddItemAction extends Action {
 			// only provide component isn't a child of DSRoot component.
 			// The user can select a IDSProvide or IDSService to add a new
 			// IDSProvide
-			fParent = fSelection instanceof IDSProvide ? fSelection.getParent()
-					: fSelection;
+			IDSService[] services = ((IDSComponent) fParent).getServices();
+			fParent = services[0];
 			break;
 		case IDSConstants.TYPE_REFERENCE:
 			fNewObject = factory.createReference();

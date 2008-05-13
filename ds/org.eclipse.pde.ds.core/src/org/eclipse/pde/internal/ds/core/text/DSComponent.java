@@ -87,7 +87,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	public boolean canAddChild(int objectType) {
 		return objectType == TYPE_IMPLEMENTATION
 				|| objectType == TYPE_PROPERTIES || objectType == TYPE_PROPERTY
-				|| objectType == TYPE_SERVICE;
+				|| objectType == TYPE_SERVICE || objectType == TYPE_REFERENCE;
 	}
 
 	/*

@@ -87,6 +87,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	private boolean canAddReference;
 	private boolean canAddProvide;
 	private boolean canRemove;
+	private boolean canMoveUp;
+	private boolean canMoveDown;
 
 	public DSMasterTreeSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {
@@ -165,33 +167,17 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		}
 		IDSObject dsObject = getCurrentSelection();
 
-		boolean canMoveUp = false;
-		boolean canMoveDown = false;
-
 		cleanSetUpBooleans();
 
 		if (dsObject != null) {
 
 			if (dsObject.getType() == IDSConstants.TYPE_ROOT) {
-				// no op
+				canMoveUp = false;
+				canMoveDown = false;
+				canRemove = false;
 
 			} else if (dsObject.getType() == IDSConstants.TYPE_IMPLEMENTATION) {
-				canMoveUp = true;
-				canMoveDown = true;
-			} else if (dsObject.getType() == IDSConstants.TYPE_PROVIDE) {
-				canRemove = true;
-				canAddProvide = true;
-			} else if (dsObject.getType() == IDSConstants.TYPE_SERVICE) {
-				canRemove = true;
-				canMoveUp = true;
-				canMoveDown = true;
-				canAddProvide = true;
-			} else if ((dsObject.getType() == IDSConstants.TYPE_PROPERTIES)
-					|| (dsObject.getType() == IDSConstants.TYPE_PROPERTY)
-					|| (dsObject.getType() == IDSConstants.TYPE_REFERENCE)) {
-				canRemove = true;
-				canMoveUp = true;
-				canMoveDown = true;
+				canRemove = false;
 			}
 
 			// DS Validity: if Root component has no service child, can add one
@@ -215,13 +201,15 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		canAddProperty = true;
 		canAddProperties = true;
 		canAddReference = true;
-		canAddProvide = false;
-		canRemove = false;
+		canRemove = true;
+		canMoveUp = true;
+		canMoveDown = true;
 
 		IDSComponent component = (IDSComponent) fModel.getDSComponent();
 		// DS XML Files can have 0..1 Service Component
 		int servicesCount = component.getServices().length;
 		canAddService = (servicesCount == 0);
+		canAddProvide = (servicesCount == 1);
 	}
 
 	/**
@@ -503,24 +491,20 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		manager.add(submenu);
 
 		cleanSetUpBooleans();
+		
+		// update Booleans
+		if (dsObject != null) {
 
-		// Update Booleans
-		if ((dsObject != null)) {
+			if (dsObject.getType() == IDSConstants.TYPE_ROOT) {
+				canMoveUp = false;
+				canMoveDown = false;
+				canRemove = false;
 
-			if (dsObject.getType() == IDSConstants.TYPE_PROVIDE) {
-				canRemove = true;
-				canAddProvide = true;
-			} else if (dsObject.getType() == IDSConstants.TYPE_SERVICE) {
-				canRemove = true;
-				canAddProvide = true;
-			} else if ((dsObject.getType() == IDSConstants.TYPE_PROPERTIES)
-					|| (dsObject.getType() == IDSConstants.TYPE_PROPERTY)
-					|| (dsObject.getType() == IDSConstants.TYPE_REFERENCE)) {
-				canRemove = true;
+			} else if (dsObject.getType() == IDSConstants.TYPE_IMPLEMENTATION) {
+				canRemove = false;
 			}
-
 		}
-
+			
 		// Update Menus
 		DSAddItemAction addProperties = new DSAddItemAction();
 		DSAddItemAction addProperty = new DSAddItemAction();
@@ -609,7 +593,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
-	 public boolean doGlobalAction(String actionId) {
+	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDeleteAction();
 			return true;
