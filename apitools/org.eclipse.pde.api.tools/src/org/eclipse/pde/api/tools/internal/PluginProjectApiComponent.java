@@ -212,7 +212,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	protected List createClassFileContainers() throws CoreException {
 		// first populate build.properties cache so we can create class file containers
 		// from bundle classpath entries
-		fPathToOutputContainers = new HashMap();
+		fPathToOutputContainers = new HashMap(8);
 		if (fProject.exists() && fProject.getProject().isOpen()) {
 			IFile prop = fProject.getProject().getFile("build.properties"); //$NON-NLS-1$
 			if (prop.exists()) {

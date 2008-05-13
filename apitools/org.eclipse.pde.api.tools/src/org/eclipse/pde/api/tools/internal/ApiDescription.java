@@ -218,11 +218,6 @@ public class ApiDescription implements IApiDescription {
 	 * </pre>
 	 */
 	protected HashMap fPackageMap = new HashMap();
-	
-	/**
-	 * Map of package visibility overrides per component id.
-	 */
-	protected HashMap fOverrides = new HashMap();
 
 	/**
 	 * Constructs an API description owned by the specified component.

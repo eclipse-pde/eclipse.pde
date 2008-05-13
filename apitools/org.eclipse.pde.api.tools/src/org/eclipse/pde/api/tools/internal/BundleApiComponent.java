@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -86,17 +85,6 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * Underlying bundle description (OSGi model of a bundle)
 	 */
 	private BundleDescription fBundleDescription;
-	
-	/**
-	 * Maps class file container to bundle it originated from.
-	 * Used for exporting. 
-	 */
-	private Map fContainerToBundle;
-	
-	/**
-	 * Maps class file container to its relative path in its bundle.
-	 */
-	private Map fContainerToPath;
 
 	/**
 	 * Constructs a new API component from the specified location in the file system
@@ -118,12 +106,6 @@ public class BundleApiComponent extends AbstractApiComponent {
 		try {
 			super.dispose();
 		} finally {
-			if (fContainerToBundle != null) {
-				fContainerToBundle.clear();
-			}
-			if (fContainerToPath != null) {
-				fContainerToPath.clear();
-			}
 			fManifest = null;
 			fBundleDescription = null;
 		}
@@ -360,9 +342,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * @see org.eclipse.pde.api.tools.internal.AbstractClassFileContainer#createClassFileContainers()
 	 */
 	protected List createClassFileContainers() throws CoreException {
-		List containers = new ArrayList();
-		fContainerToBundle = new HashMap();
-		fContainerToPath = new HashMap();
+		List containers = new ArrayList(5);
 		try {
 			List all = new ArrayList();
 			// build the classpath from bundle and all fragments
@@ -378,12 +358,12 @@ public class BundleApiComponent extends AbstractApiComponent {
 				}
 			}
 			Iterator iterator = all.iterator();
-			Set entryNames = new HashSet();
+			Set entryNames = new HashSet(5);
+			BundleApiComponent other = null;
 			while (iterator.hasNext()) {
 				BundleApiComponent component = (BundleApiComponent) iterator.next();
 				String[] paths = getClasspathEntries(component.getManifest());
 				for (int i = 0; i < paths.length; i++) {
-					BundleApiComponent origin = null;
 					String path = paths[i];
 					// don't re-process the same entry twice (except default entries ".")
 					if (!(".".equals(path))) { //$NON-NLS-1$
@@ -393,24 +373,15 @@ public class BundleApiComponent extends AbstractApiComponent {
 					}
 					IClassFileContainer container = component.createClassFileContainer(path);
 					if (container == null) {
-						Iterator others = all.iterator();
-						while (others.hasNext()) {
-							BundleApiComponent other = (BundleApiComponent) others.next();
+						for(Iterator iter = all.iterator(); iter.hasNext();) {
+							other = (BundleApiComponent) iter.next();
 							if (other != component) {
 								container = other.createClassFileContainer(path);
-								if (container != null) {
-									origin = other;
-									break;
-								}
 							}
 						}
-					} else {
-						origin = component;
 					}
 					if (container != null) {
-						fContainerToBundle.put(container, origin);
 						containers.add(container);
-						fContainerToPath.put(container, path);
 						if (!(".".equals(path))) { //$NON-NLS-1$
 							entryNames.add(path);
 						}

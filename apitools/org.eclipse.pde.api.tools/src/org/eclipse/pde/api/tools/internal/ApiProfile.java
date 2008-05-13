@@ -116,16 +116,6 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	private State fState;
 	
 	/**
-	 * Maps bundle descriptions to components 
-	 */
-	private Map fComponents = new HashMap();
-	
-	/**
-	 * Maps component id's to components
-	 */
-	private Map fComponentsById = new HashMap();
-	
-	/**
 	 * Next available bundle id
 	 */
 	private long fNextId = 0L; 
@@ -157,11 +147,24 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	private AnyValue ANY_VALUE = new AnyValue("*"); //$NON-NLS-1$
 	
 	/**
-	 * Cache of resolved packages. Map of <packageName> -> <Map of <componentName> -> <IApiComponent[]>>.
+	 * Cache of resolved packages. 
+	 * <p>Map of <code>PackageName -> Map(componentName -> IApiComponent[])</code></p>
 	 * For each package the cache contains a map of API components that provide that package,
 	 * by source component name (including the <code>null</code> component name).
 	 */
-	private HashMap fComponentsCache = new HashMap();
+	private HashMap fComponentsCache = null;
+	
+	/**
+	 * Maps bundle descriptions to components.
+	 * <p>Map of <code>BundleDescription.getSymbolicName() + BundleDescription.getVersion().toString() -> {@link IApiComponent}</code></p>
+	 */
+	private Map fComponents = null;
+	
+	/**
+	 * Maps component id's to components.
+	 * <p>Map of <code>componentId -> {@link IApiComponent}</code></p>
+	 */
+	private Map fComponentsById = null;
 	
 	/**
 	 * Cache of system package names
@@ -304,16 +307,43 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		dictionary.put("osgi.nl", ANY_VALUE); //$NON-NLS-1$
 		fState.setPlatformProperties(dictionary);
 		// clean up previous system library
-		if (fSystemLibraryComponent != null) {
+		if (fSystemLibraryComponent != null && fComponentsById != null) {
 			fComponentsById.remove(fSystemLibraryComponent.getId());
 		}
-		fSystemPackageNames = null;
-		fComponentsCache.clear();
+		if(fSystemPackageNames != null) {
+			fSystemPackageNames.clear();
+			fSystemPackageNames = null;
+		}
+		clearComponentsCache();
 		// set new system library
 		fSystemLibraryComponent = new SystemLibraryApiComponent(this, description, systemPackages);
-		fComponentsById.put(fSystemLibraryComponent.getId(), fSystemLibraryComponent);
+		addComponent(fSystemLibraryComponent);
 	}
 
+	/**
+	 * Clears the package -> components cache and sets it to <code>null</code>
+	 */
+	private void clearComponentsCache() {
+		if(fComponentsCache != null) {
+			fComponentsCache.clear();
+			fComponentsCache = null;
+		}
+	}
+	
+	/**
+	 * Adds an {@link IApiComponent} to the fComponentsById mapping
+	 * @param component
+	 */
+	private void addComponent(IApiComponent component) {
+		if(component == null) {
+			return;
+		}
+		if(fComponentsById == null) {
+			fComponentsById = new HashMap();
+		}
+		fComponentsById.put(component.getId(), component);
+	}
+	
 	/* (non-Javadoc)
 	 * @see IApiProfile#addApiComponents(org.eclipse.pde.api.tools.model.component.IApiComponent[], boolean)
 	 */
@@ -326,8 +356,8 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 			}
 			BundleDescription description = component.getBundleDescription();
 			fState.addBundle(description);
-			this.storeBundleDescription(description, component);
-			fComponentsById.put(component.getId(), component);
+			storeBundleDescription(description, component);
+			addComponent(component);
 			ees.addAll(Arrays.asList(component.getExecutionEnvironments()));
 		}
 		resolveSystemLibrary(ees);
@@ -489,6 +519,9 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	 * @see IApiProfile#getApiComponents()
 	 */
 	public IApiComponent[] getApiComponents() {
+		if(fComponentsById == null) {
+			return EMPTY_COMPONENTS;
+		}
 		Collection values = fComponentsById.values();
 		return (IApiComponent[]) values.toArray(new IApiComponent[values.size()]);
 	}
@@ -499,25 +532,18 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	public String getName() {
 		return fName;
 	}
-	
-	/* (non-Javadoc)
-	 * @see IApiProfile#removeApiComponents(org.eclipse.pde.api.tools.model.IApiComponent[])
-	 */
-	public void removeApiComponents(IApiComponent[] components) {
-		for (int i = 0; i < components.length; i++) {
-			BundleApiComponent component = (BundleApiComponent) components[i];
-			fState.removeBundle(component.getBundleDescription());
-			fComponents.remove(component);
-			fComponentsById.remove(component.getId());
-		}
-		fState.resolve();
-	}
 
 	/* (non-Javadoc)
-	 * @see IApiProfile#resolvePackage(org.eclipse.pde.api.tools.model.IApiComponent, java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfile#resolvePackage(org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String)
 	 */
 	public synchronized IApiComponent[] resolvePackage(IApiComponent sourceComponent, String packageName) throws CoreException {
-		HashMap componentsForPackage = (HashMap) this.fComponentsCache.get(packageName);
+		HashMap componentsForPackage = null;
+		if(fComponentsCache != null){
+			componentsForPackage = (HashMap) fComponentsCache.get(packageName);
+		}
+		else {
+			fComponentsCache = new HashMap(8);
+		}
 		IApiComponent[] cachedComponents = null;
 		if (componentsForPackage != null) {
 			cachedComponents = (IApiComponent[]) componentsForPackage.get(sourceComponent);
@@ -525,8 +551,8 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 				return cachedComponents;
 			}
 		} else {
-			componentsForPackage = new HashMap();
-			this.fComponentsCache.put(packageName, componentsForPackage);
+			componentsForPackage = new HashMap(8);
+			fComponentsCache.put(packageName, componentsForPackage);
 		}
 		// check system packages first
 		if (isSystemPackage(packageName)) {
@@ -552,6 +578,14 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		return cachedComponents;
 	}
 
+	/**
+	 * Resolves the listing of {@link IApiComponent}s that export the given package name. The collection 
+	 * of {@link IApiComponent}s is written into the specified list <code>componentList</code> 
+	 * @param component
+	 * @param packageName
+	 * @param componentsList
+	 * @throws CoreException
+	 */
 	private void resolvePackage0(IApiComponent component, String packageName, List componentsList) throws CoreException {
 		if (component instanceof BundleApiComponent) {
 			BundleDescription bundle = ((BundleApiComponent)component).getBundleDescription();
@@ -562,7 +596,7 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 					ExportPackageDescription pkg = visiblePackages[i];
 					if (packageName.equals(pkg.getName())) {
 						BundleDescription bundleDescription = pkg.getExporter();
-						IApiComponent exporter = this.getBundleDescription(bundleDescription);
+						IApiComponent exporter = getBundleDescription(bundleDescription);
 						if (exporter != null) {
 							if (pkg.isRoot()) {
 								componentsList.add(exporter);
@@ -673,11 +707,13 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		return ++fNextId;
 	}
 	
-
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiState#getApiComponent(java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfile#getApiComponent(java.lang.String)
 	 */
 	public IApiComponent getApiComponent(String id) {
+		if(fComponentsById == null) {
+			return null;
+		}
 		return (IApiComponent) fComponentsById.get(id);
 	}
 
@@ -807,11 +843,22 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		for (int i = 0; i < components.length; i++) {
 			components[i].dispose();
 		}
-		fComponents.clear();
-		fComponentsById.clear();
-		fComponentsCache.clear();
-		if (fSystemPackageNames != null) fSystemPackageNames.clear();
-		fSystemLibraryComponent = null;
+		if(fComponents != null) {
+			fComponents.clear();
+			fComponents = null;
+		}
+		clearComponentsCache();
+		if(fComponentsById != null) {
+			fComponentsById.clear();
+			fComponentsById = null;
+		}
+		if (fSystemPackageNames != null) {
+			fSystemPackageNames.clear();
+		}
+		if(fSystemLibraryComponent != null) {
+			fSystemLibraryComponent.dispose();
+			fSystemLibraryComponent = null;
+		}
 		fState = null;
 	}
 
@@ -951,29 +998,28 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		return getApiComponents(bundlesDescriptions);
 	}
 	
+	/**
+	 * Gets the {@link BundleDescription} from the cache, if present
+	 * @param bundleDescription
+	 * @return the {@link BundleDescription} or <code>null</code>
+	 */
 	private IApiComponent getBundleDescription(BundleDescription bundleDescription) {
-		return (IApiComponent) this.fComponents.get(bundleDescription.getSymbolicName() + bundleDescription.getVersion().toString());
-	}
-	
-	private void storeBundleDescription(BundleDescription bundleDescription, IApiComponent component) {
-		this.fComponents.put(bundleDescription.getSymbolicName() + bundleDescription.getVersion().toString(), component);
+		if(fComponents == null) {
+			return null;
+		}
+		return (IApiComponent) fComponents.get(bundleDescription.getSymbolicName() + bundleDescription.getVersion().toString());
 	}
 	
 	/**
-	 * Reset the given bundle.
-	 * 
+	 * Stores the given component in the cache keyed by {@link BundleDescription} symbolic name + version 
+	 * @param bundleDescription
 	 * @param component
-	 * @param description
-	 * @throws CoreException 
 	 */
-	protected synchronized void reset(BundleApiComponent component, BundleDescription description) throws CoreException {
-		fComponentsCache.clear();
-		if (description != null) {
-			fState.removeBundle(description);
+	private void storeBundleDescription(BundleDescription bundleDescription, IApiComponent component) {
+		if(fComponents == null) {
+			fComponents = new HashMap(8);
 		}
-		component.init(fState, nextId());
-		fState.addBundle(component.getBundleDescription());
-		fState.resolve();
+		fComponents.put(bundleDescription.getSymbolicName() + bundleDescription.getVersion().toString(), component);
 	}
 	
 	/**
@@ -982,7 +1028,9 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	 * @param packageName
 	 */
 	protected synchronized void clearPackage(String packageName) {
-		fComponents.remove(packageName);
+		if(fComponentsCache != null) {
+			fComponentsCache.remove(packageName);
+		}
 	}
 	
 	/* (non-Javadoc)

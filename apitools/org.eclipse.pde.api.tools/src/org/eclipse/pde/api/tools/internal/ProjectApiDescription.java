@@ -78,7 +78,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Associated manifest file
 	 */
-	IFile fManifestFile;
+	protected IFile fManifestFile;
 	
 	/**
 	 * Class file container cache used for tag scanning.
@@ -549,7 +549,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	private synchronized IClassFileContainer getClassFileContainer(IPackageFragmentRoot root) {
 		if (fClassFileContainers == null) {
-			fClassFileContainers = new HashMap();
+			fClassFileContainers = new HashMap(8);
 		}
 		IClassFileContainer container = (IClassFileContainer) fClassFileContainers.get(root);
 		if (container == null) {

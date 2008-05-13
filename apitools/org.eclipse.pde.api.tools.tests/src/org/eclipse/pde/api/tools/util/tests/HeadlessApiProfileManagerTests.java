@@ -97,17 +97,6 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests trying to remove an non-existent profile from the manager
-	 */
-	public void testRemoveNonExistentProfile() {
-		IApiProfile profile = Factory.newApiProfile("test2");
-		fManager.addApiProfile(profile);
-		boolean result = fManager.removeApiProfile("fooprofile");
-		assertFalse("no profiles should have been removed", result);
-		assertTrue("There should still be 1 profile still in the manager", fManager.getApiProfiles().length == 1);
-	}
-	
-	/**
 	 * Tests that isExistingProfileName(..) returns return true when expected to 
 	 */
 	public void testIsExistingName() {

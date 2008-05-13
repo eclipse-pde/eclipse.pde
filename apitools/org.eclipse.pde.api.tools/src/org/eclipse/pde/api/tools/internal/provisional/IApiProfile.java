@@ -57,19 +57,12 @@ public interface IApiProfile {
 	public void addApiComponents(IApiComponent[] components);
 	
 	/**
-	 * Removes the specified API components from this profile.
-	 * 
-	 * @param components components to remove
-	 */
-	public void removeApiComponents(IApiComponent[] components);
-	
-	/**
 	 * Returns the API components that provides the specified package when referenced from
-	 * the specified source component or <code>null</code> if none.
+	 * the specified source component or an empty array if none, never <code>null</code>.
 	 * 
 	 * @param sourceComponent component referencing the package
 	 * @param packageName name of referenced package
-	 * @return API components providing the package or <code>null</code>
+	 * @return API components providing the package or an empty array
 	 * @exception CoreException if an exception occurs
 	 */
 	public IApiComponent[] resolvePackage(IApiComponent sourceComponent, String packageName) throws CoreException;
