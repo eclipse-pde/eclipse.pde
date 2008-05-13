@@ -29,7 +29,11 @@ public class Messages extends NLS {
 	public static String DSComponentDetails_enabledLabel;
 	public static String DSComponentDetails_immediateLabel;
 	public static String DSComponentDetails_browse;
+	public static String DSCreationOperation_1;
 
+	public static String DSFileWizardPage_description;
+	public static String DSFileWizardPage_title;
+	
 	public static String DSImplementationDetails_title;
 	public static String DSImplementationDetails_description;
 	public static String DSImplementationDetails_classEntry;
@@ -47,12 +51,12 @@ public class Messages extends NLS {
 	public static String DSPropertiesDetails_1;
 	public static String DSPropertiesDetails_2;
 
-	public static String DSPropertyDetails_0;
-	public static String DSPropertyDetails_1;
-	public static String DSPropertyDetails_2;
-	public static String DSPropertyDetails_3;
-	public static String DSPropertyDetails_4;
-	public static String DSPropertyDetails_5;
+	public static String DSPropertyDetails_mainSectionText;
+	public static String DSPropertyDetails_mainSectionDescription;
+	public static String DSPropertyDetails_nameEntry;
+	public static String DSPropertyDetails_valueEntry;
+	public static String DSPropertyDetails_typeEntry;
+	public static String DSPropertyDetails_bodyLabel;
 
 	public static String DSProvideDetails_mainSectionText;
 	public static String DSProvideDetails_mainSectionDesc;
@@ -91,6 +95,7 @@ public class Messages extends NLS {
 	public static String DSReferenceDetails_selectType;
 
 	public static String DSRemoveItemAction_0;
+	
 	
 
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$

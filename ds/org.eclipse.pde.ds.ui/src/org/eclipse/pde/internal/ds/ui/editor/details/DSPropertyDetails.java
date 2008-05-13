@@ -38,9 +38,9 @@ import org.eclipse.ui.forms.widgets.Section;
 public class DSPropertyDetails extends DSAbstractDetails {
 
 	private IDSProperty fProperty;
-	private FormEntry fName;
-	private FormEntry fType;
-	private FormEntry fValue;
+	private FormEntry fNameEntry;
+	private FormEntry fTypeEntry;
+	private FormEntry fValueEntry;
 	private PDESourceViewer fContentViewer;
 	private Section fMainSection;
 	private boolean fBlockEvents;
@@ -50,14 +50,6 @@ public class DSPropertyDetails extends DSAbstractDetails {
 	 */
 	public DSPropertyDetails(IDSMaster section) {
 		super(section, DSInputContext.CONTEXT_ID);
-		fProperty = null;
-
-		fName = null;
-		fValue = null;
-		fType = null;
-		fContentViewer = null;
-		fMainSection = null;
-		fBlockEvents = false;
 
 	}
 
@@ -70,8 +62,9 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText(Messages.DSPropertyDetails_0);
-		fMainSection.setDescription(Messages.DSPropertyDetails_1);
+		fMainSection.setText(Messages.DSPropertyDetails_mainSectionText);
+		fMainSection
+				.setDescription(Messages.DSPropertyDetails_mainSectionDescription);
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -89,16 +82,18 @@ public class DSPropertyDetails extends DSAbstractDetails {
 				.createSectionClientGridLayout(false, 2));
 
 		// Attribute: title
-		fName = new FormEntry(mainSectionClient, getToolkit(), Messages.DSPropertyDetails_2,
+		fNameEntry = new FormEntry(mainSectionClient, getToolkit(),
+				Messages.DSPropertyDetails_nameEntry,
 				SWT.NONE);
 
 		// Attribute: value
-		fValue = new FormEntry(mainSectionClient, getToolkit(), Messages.DSPropertyDetails_3,
+		fValueEntry = new FormEntry(mainSectionClient, getToolkit(),
+				Messages.DSPropertyDetails_valueEntry,
 				SWT.NONE);
 
 		// Attribute: type
-		fType = new FormEntry(mainSectionClient, getToolkit(), Messages.DSPropertyDetails_4,
-				SWT.NONE);
+		fTypeEntry = new FormEntry(mainSectionClient, getToolkit(),
+				Messages.DSPropertyDetails_typeEntry, SWT.NONE);
 
 		// description: Content (Element)
 		createUIFieldContent(mainSectionClient);
@@ -128,7 +123,8 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		GridData data = null;
 		// Create the label
 		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
-		Label label = getToolkit().createLabel(parent, Messages.DSPropertyDetails_5, SWT.WRAP);
+		Label label = getToolkit().createLabel(parent,
+				Messages.DSPropertyDetails_bodyLabel, SWT.WRAP);
 		label.setForeground(foreground);
 		int style = GridData.VERTICAL_ALIGN_BEGINNING
 				| GridData.HORIZONTAL_ALIGN_END;
@@ -151,35 +147,35 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		// description: Content (Element)
 		createUIListenersContentViewer();
 		// Attribute: name
-		fName.setFormEntryListener(new FormEntryAdapter(this) {
+		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fProperty == null) {
 					return;
 				}
-				fProperty.setPropertyName(fName.getValue());
+				fProperty.setPropertyName(fNameEntry.getValue());
 			}
 		});
 
 		// Attribute: value
-		fValue.setFormEntryListener(new FormEntryAdapter(this) {
+		fValueEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fProperty == null) {
 					return;
 				}
-				fProperty.setPropertyValue(fValue.getValue());
+				fProperty.setPropertyValue(fValueEntry.getValue());
 			}
 		});
 
-		// Attribute: name
-		fType.setFormEntryListener(new FormEntryAdapter(this) {
+		// Attribute: type
+		fTypeEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fProperty == null) {
 					return;
 				}
-				fProperty.setPropertyType(fType.getValue());
+				fProperty.setPropertyType(fTypeEntry.getValue());
 			}
 		});
 
@@ -235,27 +231,27 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		}
 		// Attribute: name
 		if (fProperty.getPropertyName() != null) {
-			fName.setValue(fProperty.getPropertyName(), true);
+			fNameEntry.setValue(fProperty.getPropertyName(), true);
 		} else {
-			fName.setValue(""); //$NON-NLS-1$
+			fNameEntry.setValue(""); //$NON-NLS-1$
 		}
-		fName.setEditable(editable);
+		fNameEntry.setEditable(editable);
 
 		// Attribute: value
 		if (fProperty.getPropertyValue() != null) {
-			fValue.setValue(fProperty.getPropertyValue(), true);
+			fValueEntry.setValue(fProperty.getPropertyValue(), true);
 		} else {
-			fValue.setValue("", true); //$NON-NLS-1$
+			fValueEntry.setValue("", true); //$NON-NLS-1$
 		}
-		fValue.setEditable(editable);
+		fValueEntry.setEditable(editable);
 
 		// Attribute: type
 		if (fProperty.getPropertyType() != null) {
-			fType.setValue(fProperty.getPropertyType(), true);
+			fTypeEntry.setValue(fProperty.getPropertyType(), true);
 		} else {
-			fType.setValue("", true); //$NON-NLS-1$
+			fTypeEntry.setValue("", true); //$NON-NLS-1$
 		}
-		fType.setEditable(editable);
+		fTypeEntry.setEditable(editable);
 
 		if (fProperty.getPropertyElemBody() == null) {
 			fBlockEvents = true;
@@ -304,9 +300,9 @@ public class DSPropertyDetails extends DSAbstractDetails {
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
-		fName.commit();
-		fValue.commit();
-		fType.commit();
+		fNameEntry.commit();
+		fValueEntry.commit();
+		fTypeEntry.commit();
 		// No need to call for sub details, because they contain no form entries
 	}
 
