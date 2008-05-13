@@ -87,6 +87,7 @@ import com.ibm.icu.text.MessageFormat;
  * @since 1.0.0
  */
 public class BaseApiAnalyzer implements IApiAnalyzer {
+	private static final String QUALIFIER = "qualifier"; //$NON-NLS-1$
 	private static class ReexportedBundleVersionInfo {
 		String componentID;
 		int kind;
@@ -1096,7 +1097,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (breakingChanges.length != 0) {
 			// make sure that the major version has been incremented
 			if (compversion.getMajor() <= refversion.getMajor()) {
-				newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier());
+				newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier() != null ? QUALIFIER : null);
 				problem = createVersionProblem(
 						IApiProblem.MAJOR_VERSION_CHANGE,
 						new String[] {
@@ -1112,7 +1113,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				// only new API have been added
 				if (compversion.getMajor() != refversion.getMajor()) {
 					// major version should be identical
-					newversion = new Version(refversion.getMajor(), refversion.getMinor() + 1, 0, compversion.getQualifier());
+					newversion = new Version(refversion.getMajor(), refversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
 					problem = createVersionProblem(
 							IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
 							new String[] {
@@ -1123,7 +1124,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							collectDetails(compatibleChanges));
 				} else if (compversion.getMinor() <= refversion.getMinor()) {
 					// the minor version should be incremented
-					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
+					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
 					problem = createVersionProblem(
 							IApiProblem.MINOR_VERSION_CHANGE, 
 							new String[] {
@@ -1135,13 +1136,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 			} else if (compversion.getMinor() > refversion.getMinor()) {
 				// the minor version should not be incremented
+				newversion = new Version(refversion.getMajor(), refversion.getMinor(), refversion.getMicro(), refversion.getQualifier() != null ? QUALIFIER : null);
 				problem = createVersionProblem(
 						IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API, 
 						new String[] {
 							compversionval,
 							refversionval
 						},
-						String.valueOf(refversion),
+						String.valueOf(newversion),
 						Util.EMPTY_STRING);
 			}
 			// analyse version of required components
@@ -1161,7 +1163,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									break;
 								case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE :
 									// we should reset the major version and increment only the minor version
-									newversion = new Version(refversion.getMajor(), refversion.getMinor() + 1, 0, compversion.getQualifier());
+									newversion = new Version(refversion.getMajor(), refversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
 									problem = createVersionProblem(
 											IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE,
 											new String[] {
@@ -1180,7 +1182,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							switch(info.kind) {
 								case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE :
 									// we keep this problem
-									newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier());
+									newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier() != null ? QUALIFIER : null);
 									problem = createVersionProblem(
 											info.kind,
 											new String[] {
@@ -1202,7 +1204,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							switch(info.kind) {
 								case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE :
 									// we return this one
-									newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier());
+									newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier() != null ? QUALIFIER : null);
 									problem = createVersionProblem(
 											info.kind,
 											new String[] {
@@ -1226,7 +1228,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE :
 							// major version change
 							if (compversion.getMajor() <= refversion.getMajor()) {
-								newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier());
+								newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier() != null ? QUALIFIER : null);
 								problem = createVersionProblem(
 										info.kind,
 										new String[] {
