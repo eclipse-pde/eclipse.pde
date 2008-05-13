@@ -64,13 +64,27 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_KIND, Util.getDeltaKindName(delta));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE, Util.getDeltaElementType(delta));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_KEY, delta.getKey());
-		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_TYPE_NAME, delta.getTypeName());
+		String typeName = delta.getTypeName();
+		if (typeName != null) {
+			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_TYPE_NAME, typeName);
+		}
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_COMPATIBLE, Boolean.toString(DeltaProcessor.isCompatible(delta)));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_MODIFIERS, Integer.toString(delta.getModifiers()));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_RESTRICTIONS, Integer.toString(delta.getRestrictions()));
 		String apiComponentID = delta.getApiComponentID();
 		if (apiComponentID != null) {
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_COMPONENT_ID, apiComponentID);
+		}
+		String[] messageArguments = delta.getArguments();
+		int length = messageArguments.length;
+		if(length > 0) {
+			Element messageArgumentsElement = fDoc.createElement(IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS);
+			for (int j = 0; j < length; j++) {
+				Element messageArgumentElement = fDoc.createElement(IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENT);
+				messageArgumentElement.setAttribute(IApiXmlConstants.ATTR_VALUE, String.valueOf(messageArguments[j]));
+				messageArgumentsElement.appendChild(messageArgumentElement);
+			}
+			deltaElement.appendChild(messageArgumentsElement);
 		}
 		fDeltas.appendChild(deltaElement);
 	}

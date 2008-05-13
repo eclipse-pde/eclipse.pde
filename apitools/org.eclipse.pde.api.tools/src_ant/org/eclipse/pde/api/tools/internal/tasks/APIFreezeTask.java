@@ -55,39 +55,49 @@ public class APIFreezeTask extends CommonUtilsTask {
 		}
 		protected void processLeafDelta(IDelta delta) {
 			if (DeltaProcessor.isCompatible(delta)) {
-				if (delta.getKind() == IDelta.ADDED) {
-					int modifiers = delta.getModifiers();
-					if (Util.isPublic(modifiers)) {
-						// if public, we always want to check @since tags
+				switch(delta.getKind()) {
+					case IDelta.ADDED :
+						int modifiers = delta.getModifiers();
+						if (Util.isPublic(modifiers)) {
+							// if public, we always want to check @since tags
+							switch(delta.getFlags()) {
+								case IDelta.TYPE_MEMBER :
+								case IDelta.METHOD :
+								case IDelta.CONSTRUCTOR :
+								case IDelta.ENUM_CONSTANT :
+								case IDelta.METHOD_WITH_DEFAULT_VALUE :
+								case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+								case IDelta.FIELD :
+								case IDelta.TYPE :
+									if (!checkExclude(delta)) {
+										super.processLeafDelta(delta);
+									}
+									break;
+							}
+						} else if (Util.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
+							// if protected, we only want to check @since tags if the enclosing class can be subclassed
+							switch(delta.getFlags()) {
+								case IDelta.TYPE_MEMBER :
+								case IDelta.METHOD :
+								case IDelta.CONSTRUCTOR :
+								case IDelta.ENUM_CONSTANT :
+								case IDelta.FIELD :
+								case IDelta.TYPE :
+									if (!checkExclude(delta)) {
+										super.processLeafDelta(delta);
+									}
+									break;
+							}
+						}
+						break;
+					case IDelta.CHANGED :
 						switch(delta.getFlags()) {
-							case IDelta.TYPE_MEMBER :
-							case IDelta.METHOD :
-							case IDelta.CONSTRUCTOR :
-							case IDelta.ENUM_CONSTANT :
-							case IDelta.METHOD_WITH_DEFAULT_VALUE :
-							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-							case IDelta.FIELD :
-							case IDelta.TYPE :
+							case IDelta.MAJOR_VERSION :
+							case IDelta.MINOR_VERSION :
 								if (!checkExclude(delta)) {
 									super.processLeafDelta(delta);
 								}
-								break;
 						}
-					} else if (Util.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
-						// if protected, we only want to check @since tags if the enclosing class can be subclassed
-						switch(delta.getFlags()) {
-							case IDelta.TYPE_MEMBER :
-							case IDelta.METHOD :
-							case IDelta.CONSTRUCTOR :
-							case IDelta.ENUM_CONSTANT :
-							case IDelta.FIELD :
-							case IDelta.TYPE :
-								if (!checkExclude(delta)) {
-									super.processLeafDelta(delta);
-								}
-								break;
-						}
-					}
 				}
 			} else {
 				if (delta.getKind() == IDelta.ADDED) {
@@ -123,8 +133,11 @@ public class APIFreezeTask extends CommonUtilsTask {
 			if (componentId != null) {
 				buffer.append(componentId).append(':');
 			}
-			buffer.append(typeName);
-			switch(delta.getFlags()) {
+			if (typeName != null) {
+				buffer.append(typeName);
+			}
+			int flags = delta.getFlags();
+			switch(flags) {
 				case IDelta.TYPE_MEMBER :
 					buffer.append('.').append(delta.getKey());
 					break;
@@ -135,6 +148,13 @@ public class APIFreezeTask extends CommonUtilsTask {
 				case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 				case IDelta.FIELD :
 					buffer.append('#').append(delta.getKey());
+					break;
+				case IDelta.MAJOR_VERSION :
+				case IDelta.MINOR_VERSION :
+					buffer
+						.append(Util.getDeltaFlagsName(flags))
+						.append('_')
+						.append(Util.getDeltaKindName(delta.getKind()));
 					break;
 			}
 			String excludeListKey = String.valueOf(buffer);

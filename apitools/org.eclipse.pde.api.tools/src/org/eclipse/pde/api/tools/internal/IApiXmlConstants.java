@@ -352,4 +352,14 @@ public interface IApiXmlConstants {
 	 * Value is: <code>bundle</code>
 	 */
 	public static final String ELEMENT_BUNDLE = "bundle"; //$NON-NLS-1$
+	/**
+	 * Constant representing a message arguments element node for a delta element in xml.
+	 * Value is: <code>message_arguments</code>
+	 */
+	public static final String ELEMENT_DELTA_MESSAGE_ARGUMENTS = "message_arguments"; //$NON-NLS-1$
+	/**
+	 * Constant representing a message argument element node for a delta element in xml.
+	 * Value is: <code>message_argument</code>
+	 */
+	public static final String ELEMENT_DELTA_MESSAGE_ARGUMENT = "message_argument"; //$NON-NLS-1$
 }

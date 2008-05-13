@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.0
+Created-By: 1.6.0_05-ea-b04 (Sun Microsystems Inc.)
+Bundle-ManifestVersion: 2
+Bundle-Name: deltatest Plug-in
+Bundle-SymbolicName: deltatest1
+Bundle-Version: 1.1.0
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Export-Package: p,
+ p.internal;x-internal:=true

@@ -106,8 +106,10 @@ public class Messages extends NLS {
 						}
 						break;
 					case IDelta.CHANGED :
-						if (delta.getFlags() == IDelta.TYPE_VISIBILITY) {
-							return 4;
+						switch(delta.getFlags()) {
+							case IDelta.TYPE_VISIBILITY : return 4;
+							case IDelta.MAJOR_VERSION : return 95;
+							case IDelta.MINOR_VERSION : return 96;
 						}
 						break;
 					case IDelta.REMOVED :

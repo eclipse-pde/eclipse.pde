@@ -769,6 +769,28 @@ public interface IDelta {
 	 */
 	public static final int VOLATILE_TO_NON_VOLATILE = 58;
 	/**
+	 * Delta kind flag that denotes changing the major version of a bundle.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int MAJOR_VERSION = 59;
+	/**
+	 * Delta kind flag that denotes changing the minor version of a bundle.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int MINOR_VERSION = 60;
+	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
 	 * 
 	 * @return true if the receiver has no children deltas, false otherwise.

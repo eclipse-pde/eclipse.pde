@@ -37,6 +37,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.ibm.icu.text.MessageFormat;
+
 public class DeltaReportConversionTask extends Task {
 	static class Entry {
 		/*<delta
@@ -55,51 +57,69 @@ public class DeltaReportConversionTask extends Task {
 		String key;
 		String kind;
 		String typeName;
-		public Entry(String elementType, int flags, String key, String kind,
-				String typeName) {
+		String[] arguments;
+
+		public Entry(
+				String elementType, int flags, String key, String kind,
+				String typeName,
+				String[] arguments) {
 			this.elementType = elementType;
 			this.flags = flags;
 			this.key = key.replace('/', '.');
 			this.kind = kind;
-			this.typeName = typeName.replace('/', '.');
+			if (typeName != null) {
+				this.typeName = typeName.replace('/', '.');
+			}
+			this.arguments = arguments;
 		}
 		
 		public String getDisplayString() {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append(this.typeName);
-			switch(this.flags) {
-			case IDelta.METHOD :
-			case IDelta.METHOD_WITH_DEFAULT_VALUE :
-			case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-				int indexOf = key.indexOf('(');
-				if (indexOf == -1) {
-					return null;
+			if(this.typeName != null && this.typeName.length() != 0) {
+				buffer.append(this.typeName);
+				switch(this.flags) {
+					case IDelta.METHOD :
+					case IDelta.METHOD_WITH_DEFAULT_VALUE :
+					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+						int indexOf = key.indexOf('(');
+						if (indexOf == -1) {
+							return null;
+						}
+						int index = indexOf;
+						String selector = key.substring(0, index);
+						String descriptor = key.substring(index, key.length());
+						buffer.append('#');
+						buffer.append(Signature.toString(descriptor, selector, null, false, true));
+						break;
+					case IDelta.CONSTRUCTOR :
+						indexOf = key.indexOf('(');
+						if (indexOf == -1) {
+							return null;
+						}
+						index = indexOf;
+						selector = key.substring(0, index);
+						descriptor = key.substring(index, key.length());
+						buffer.append('#');
+						buffer.append(Signature.toString(descriptor, selector, null, false, false));
+						break;
+					case IDelta.FIELD :
+						buffer.append('#');
+						buffer.append(this.key);
+						break;
+					case IDelta.TYPE_MEMBER :
+						buffer.append('.');
+						buffer.append(this.key);
+						break;
 				}
-				int index = indexOf;
-				String selector = key.substring(0, index);
-				String descriptor = key.substring(index, key.length());
-				buffer.append('#');
-				buffer.append(Signature.toString(descriptor, selector, null, false, true));
-				break;
-			case IDelta.CONSTRUCTOR :
-				indexOf = key.indexOf('(');
-				if (indexOf == -1) {
-					return null;
+			} else {
+				switch(this.flags) {
+					case IDelta.MAJOR_VERSION :
+						buffer.append(MessageFormat.format("The major version has been changed (from {1} to {2})", this.arguments)); //$NON-NLS-1$
+						break;
+					case IDelta.MINOR_VERSION :
+						buffer.append(MessageFormat.format("The minor version has been changed (from {1} to {2})", this.arguments)); //$NON-NLS-1$
+						break;
 				}
-				index = indexOf;
-				selector = key.substring(0, index);
-				descriptor = key.substring(index, key.length());
-				buffer.append('#');
-				buffer.append(Signature.toString(descriptor, selector, null, false, false));
-				break;
-			case IDelta.FIELD :
-				buffer.append('#');
-				buffer.append(this.key);
-				break;
-			case IDelta.TYPE_MEMBER :
-				buffer.append('.');
-				buffer.append(this.key);
-				break;
 			}
 			return String.valueOf(buffer);
 		}
@@ -107,7 +127,15 @@ public class DeltaReportConversionTask extends Task {
 	static final class ConverterDefaultHandler extends DefaultHandler {
 		private Map map;
 		private boolean debug;
-		
+		private String[] arguments;
+		private String elementType;
+		private int flags;
+		private String kind;
+		private String typename;
+		private String key;
+		private String componentID;
+		private List argumentsList;
+
 		public ConverterDefaultHandler(boolean debug) {
 			this.map = new HashMap();
 			this.debug = debug;
@@ -137,14 +165,35 @@ public class DeltaReportConversionTask extends Task {
 				printAttribute(attributes, IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 			}
 			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
-				String componentID = attributes.getValue(IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
-				Object object = this.map.get(componentID);
+				componentID = attributes.getValue(IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
+				
+				elementType = attributes.getValue(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE);
+				flags = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_NAME_FLAGS));
+				kind = attributes.getValue(IApiXmlConstants.ATTR_NAME_KIND);
+				typename = attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
+				key = attributes.getValue(IApiXmlConstants.ATTR_NAME_KEY);
+			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
+				if (this.argumentsList == null) {
+					this.argumentsList = new ArrayList();
+				} else {
+					this.argumentsList.clear();
+				}
+			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENT.equals(name)) {
+				this.argumentsList.add(attributes.getValue(IApiXmlConstants.ATTR_VALUE));
+			}
+		}
+
+		public void endElement(String uri, String localName, String name)
+			throws SAXException {
+			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
 				Entry entry = new Entry(
-						attributes.getValue(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE),
-						Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_NAME_FLAGS)),
-						attributes.getValue(IApiXmlConstants.ATTR_NAME_KEY),
-						attributes.getValue(IApiXmlConstants.ATTR_NAME_KIND),
-						attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME));
+						elementType,
+						flags,
+						key,
+						kind,
+						typename,
+						this.arguments);
+				Object object = this.map.get(this.componentID);
 				if (object != null) {
 					((List) object).add(entry);
 				} else {
@@ -152,15 +201,19 @@ public class DeltaReportConversionTask extends Task {
 					value.add(entry);
 					this.map.put(componentID, value);
 				}
+			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
+				if (this.argumentsList != null && this.argumentsList.size() != 0) {
+					this.arguments = new String[this.argumentsList.size()];
+					this.argumentsList.toArray(this.arguments);
+				}
 			}
 		}
-
 		public Map getEntries() {
 			return this.map;
 		}
 
 		private void printAttribute(Attributes attributes, String name) {
-			System.out.println("\t" + name + " = " + attributes.getValue(name)); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("\t" + name + " = " + String.valueOf(attributes.getValue(name))); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	boolean debug;
@@ -259,6 +312,14 @@ public class DeltaReportConversionTask extends Task {
 						Entry entry2 = (Entry) o2;
 						String typeName1 = entry1.typeName;
 						String typeName2 = entry2.typeName;
+						if (typeName1 == null) {
+							if (typeName2 == null) {
+								return entry1.key.compareTo(entry2.key);
+							}
+							return -1;
+						} else if (typeName2 == null) {
+							return 1;
+						}
 						if (!typeName1.equals(typeName2)) {
 							return typeName1.compareTo(typeName2);
 						}
@@ -271,7 +332,9 @@ public class DeltaReportConversionTask extends Task {
 				for (Iterator iterator2 = ((List)value).iterator(); iterator2.hasNext(); ) {
 					Entry entry = (Entry) iterator2.next();
 					if (debug) {
-						System.out.print(entry.typeName);
+						if (entry.typeName != null) {
+							System.out.print(entry.typeName);
+						}
 						System.out.println(entry.key);
 					}
 					dumpEntry(buffer, entry);

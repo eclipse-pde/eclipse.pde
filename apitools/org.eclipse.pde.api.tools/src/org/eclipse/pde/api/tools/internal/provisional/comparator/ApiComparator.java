@@ -30,6 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.osgi.framework.Version;
 
 /**
  * This class defines a comparator to get a IDelta out of the comparison of two elements.
@@ -305,14 +306,17 @@ public class ApiComparator {
 								id);
 				} else {
 					apiComponentsIds.add(id);
-					if (!apiComponent.getVersion().equals(apiComponent2.getVersion())
+					String versionString = apiComponent.getVersion();
+					String versionString2 = apiComponent2.getVersion();
+					checkBundleVersionChanges(apiComponent2, id, versionString, versionString2, globalDelta);
+					if (!versionString.equals(versionString2)
 							|| force) {
 						long time = System.currentTimeMillis();
 						try {
 							delta = compare(apiComponent, apiComponent2, referenceProfile, profile, visibilityModifiers);
 						} finally {
 							if (DEBUG) {
-								System.out.println("Time spent for " + id+ " " + apiComponent.getVersion() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+								System.out.println("Time spent for " + id+ " " + versionString + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 							}
 						}
 					}
@@ -343,6 +347,56 @@ public class ApiComparator {
 		return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
 	}
 
+	private static void checkBundleVersionChanges(IApiComponent apiComponent2, String id, String apiComponentVersion, String apiComponentVersion2, Delta globalDelta) {
+		Version version = null;
+		try {
+			version = new Version(apiComponentVersion);
+		} catch (IllegalArgumentException e) {
+			// ignore
+		}
+		Version version2 = null;
+		try {
+			version2 = new Version(apiComponentVersion2);
+		} catch (IllegalArgumentException e) {
+			// ignore
+		}
+		if (version != null && version2 != null) {
+			// add check for bundle versions
+			if (version.getMajor() != version2.getMajor()) {
+				globalDelta.add(
+					new Delta(
+						Util.getDeltaComponentID(apiComponent2),
+						IDelta.API_COMPONENT_ELEMENT_TYPE,
+						IDelta.CHANGED,
+						IDelta.MAJOR_VERSION,
+						RestrictionModifiers.NO_RESTRICTIONS,
+						0,
+						null,
+						id,
+						new String[] {
+							id,
+							apiComponentVersion,
+							apiComponentVersion2
+						}));
+			} else if (version.getMinor() != version2.getMinor()) {
+				globalDelta.add(
+					new Delta(
+						Util.getDeltaComponentID(apiComponent2),
+						IDelta.API_COMPONENT_ELEMENT_TYPE,
+						IDelta.CHANGED,
+						IDelta.MINOR_VERSION,
+						RestrictionModifiers.NO_RESTRICTIONS,
+						0,
+						null,
+						id,
+						new String[] {
+							id,
+							apiComponentVersion,
+							apiComponentVersion2
+						}));
+			}
+		}
+	}
 	/**
 	 * Returns a delta that corresponds to the difference between the given component and the reference profile.
 	 * 
