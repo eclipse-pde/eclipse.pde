@@ -483,6 +483,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				continue;
 			}
 			String typeName = element.getAttribute(IApiXmlConstants.ATTR_TYPE);
+			if (typeName.length() == 0) {
+				typeName = null;
+			}
 			IProject project = (IProject) ResourcesPlugin.getWorkspace().getRoot().findMember(component);
 			if(project == null) {
 				continue;
