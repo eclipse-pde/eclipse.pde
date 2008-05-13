@@ -12,12 +12,50 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.wizards;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 
 public class DSNewWizard extends BasicNewFileResourceWizard {
+	protected DSFileWizardPage fMainPage;
 
+	/**
+	 * 
+	 */
 	public DSNewWizard() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#addPages()
+	 */
+	public void addPages() {
+		 fMainPage = new DSFileWizardPage(getSelection()); //$NON-NLS-1$
+		 addPage(fMainPage);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#performFinish()
+	 */
+	public boolean performFinish() {
+		try {
+
+			IRunnableWithProgress op = new DSCreationOperation(fMainPage
+					.createNewFile());
+
+			getContainer().run(false, true, op);
+		} catch (InvocationTargetException e) {
+			PDEPlugin.logException(e);
+			return false;
+		} catch (InterruptedException e) {
+			return false;
+		}
+		return true;
+	}
 }
