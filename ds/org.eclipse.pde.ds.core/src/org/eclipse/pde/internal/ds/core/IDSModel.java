@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 
@@ -19,5 +20,9 @@ public interface IDSModel extends IModelChangeProvider, IModel {
 	public abstract IDSDocumentFactory getFactory();
 
 	public abstract IDSComponent getDSComponent();
+
+	public abstract void setUnderlyingResource(IResource resource);
+
+	public abstract void save();
 
 }
