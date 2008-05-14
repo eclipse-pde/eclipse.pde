@@ -58,6 +58,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class APIToolsVerificationTask extends CommonUtilsTask {
+	public static final String BUNDLE_VERSION = "bundleVersion"; //$NON-NLS-1$
+	public static final String USAGE = "usage"; //$NON-NLS-1$
+	public static final String COMPATIBILITY = "compatibility"; //$NON-NLS-1$
 	private static final Summary[] NO_SUMMARIES = new Summary[0];
 	
 	/**
@@ -607,19 +610,19 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 				
 				Element category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
 				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_COMPATIBILITY));
-				category.setAttribute(IApiXmlConstants.ATTR_VALUE, "compatibility"); //$NON-NLS-1$
+				category.setAttribute(IApiXmlConstants.ATTR_VALUE, COMPATIBILITY);
 				insertAPIProblems(category, document, summary.apiCompatibilityProblems);
 				report.appendChild(category);
 
 				category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
 				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_USAGE));
-				category.setAttribute(IApiXmlConstants.ATTR_VALUE, "usage"); //$NON-NLS-1$
+				category.setAttribute(IApiXmlConstants.ATTR_VALUE, USAGE);
 				insertAPIProblems(category, document, summary.apiUsageProblems);
 				report.appendChild(category);
 				
 				category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
 				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_VERSION));
-				category.setAttribute(IApiXmlConstants.ATTR_VALUE, "bundleVersion"); //$NON-NLS-1$
+				category.setAttribute(IApiXmlConstants.ATTR_VALUE, BUNDLE_VERSION);
 				insertAPIProblems(category, document, summary.apiBundleVersionProblems);
 				report.appendChild(category);
 

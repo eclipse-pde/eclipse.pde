@@ -107,7 +107,16 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * Value is: <code>Error</code>
 	 */
 	public static final String VALUE_ERROR = "Error"; //$NON-NLS-1$
-	
+	/**
+	 * Constant representing the preference value 'disabled'.
+	 * Value is: <code>Disabled</code>
+	 */
+	public static final String VALUE_DISABLED = "Disabled"; //$NON-NLS-1$
+	/**
+	 * Constant representing the preference value 'enabled'.
+	 * Value is: <code>Enabled</code>
+	 */
+	public static final String VALUE_ENABLED = "Enabled"; //$NON-NLS-1$
 	/**
 	 * The identifier for the Api builder
 	 * Value is: <code>"org.eclipse.pde.api.tools.apiAnalysisBuilder"</code>
