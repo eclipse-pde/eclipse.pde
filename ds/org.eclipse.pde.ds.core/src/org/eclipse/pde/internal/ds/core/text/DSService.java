@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ds.core.text;
 import java.util.ArrayList;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
 
@@ -30,7 +31,10 @@ public class DSService extends DSObject implements IDSService {
 	}
 
 	public boolean canAddSibling(int objectType) {
-		return objectType == TYPE_REFERENCE; // TODO Should I consider any ordering? Or should I add here: Implementation and Properties too?
+		return objectType == TYPE_REFERENCE
+				|| objectType == TYPE_IMPLEMENTATION
+				|| objectType == TYPE_PROPERTIES || objectType == TYPE_PROPERTY
+				|| objectType == TYPE_REFERENCE;
 	}
 
 	public boolean canBeParent() {
@@ -38,24 +42,28 @@ public class DSService extends DSObject implements IDSService {
 	}
 
 	public String getName() {
-		return "Service";
+		return IDSConstants.ELEMENT_SERVICE;
 	}
 
 	public int getType() {
 		return TYPE_SERVICE;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSService#setServiceFactory(boolean)
 	 */
-	public void setServiceFactory(boolean bool){
+	public void setServiceFactory(boolean bool) {
 		setBooleanAttributeValue(ATTRIBUTE_SERVICE_FACTORY, bool);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSService#getServiceFactory()
 	 */
-	public boolean getServiceFactory(){
+	public boolean getServiceFactory() {
 		return getBooleanAttributeValue(ATTRIBUTE_SERVICE_FACTORY, false);
 	}
 
@@ -64,7 +72,7 @@ public class DSService extends DSObject implements IDSService {
 	}
 
 	public IDSProvide[] getProvidedServices() {
-		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		ArrayList childNodesList = getChildNodesList(IDSProvide.class, true);
 		IDSProvide[] providedServices = new IDSProvide[childNodesList.size()];
 		for (int i = 0; i < childNodesList.size(); i++) {
 			providedServices[i] = (IDSProvide) childNodesList.get(i);
