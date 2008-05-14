@@ -102,7 +102,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		if (postScript != null) {
 			try {
 				Map properties = new HashMap();
-				addP2MetadataProperties(properties);
+				setP2MetaDataProperties(properties);
 				runScript(postScript, null, properties, monitor);
 			} catch (InvocationTargetException e) {
 				throwCoreException(e);
@@ -490,17 +490,14 @@ public class ProductExportOperation extends FeatureExportOperation {
 		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, fRoot);
 		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, fRoot);
 
-		addP2MetadataProperties(properties);
-
 		return properties;
 	}
 
-	/**
-	 * Adds the standard p2 metadata generator properties to the given map.
-	 * @param map the map to add properties to
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setP2MetaDataProperties(java.util.Map)
 	 */
-	private void addP2MetadataProperties(Map map) {
-		if (fInfo.toDirectory && fInfo.exportMetadata) {
+	protected void setP2MetaDataProperties(Map map) {
+		if (fInfo.exportMetadata) {
 			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_PUBLISH_ARTIFACTS, IBuildPropertiesConstants.TRUE);

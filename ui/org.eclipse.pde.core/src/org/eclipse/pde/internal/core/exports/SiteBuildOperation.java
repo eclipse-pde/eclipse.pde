@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.core.exports;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.P2Utils;
@@ -40,11 +40,9 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#createAntBuildProperties(java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setP2MetaDataProperties(java.util.Map)
 	 */
-	protected HashMap createAntBuildProperties(String os, String ws, String arch) {
-		HashMap map = super.createAntBuildProperties(os, ws, arch);
-		// P2 Build Properties
+	protected void setP2MetaDataProperties(Map map) {
 		if (fInfo.toDirectory) {
 			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);
@@ -57,7 +55,6 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 				PDECore.log(e);
 			}
 		}
-		return map;
 	}
 
 }

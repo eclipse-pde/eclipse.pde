@@ -47,6 +47,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 
 	// Location where the build takes place
 	protected String fBuildTempLocation;
+	protected String fBuildTempMetadataLocation;
 	private String fDevProperties;
 
 	protected HashMap fAntBuildProperties;
@@ -82,6 +83,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 			qualifier = getDate();
 		QualifierReplacer.setGlobalQualifier(qualifier);
 		fBuildTempLocation = PDECore.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
+		fBuildTempMetadataLocation = PDECore.getDefault().getStateLocation().append("tempp2metadata").toString(); //$NON-NLS-1$
 	}
 
 	public void run(IProgressMonitor monitor) throws CoreException {
@@ -91,7 +93,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 			if (configurations == null)
 				configurations = new String[][] {null};
 
-			monitor.beginTask("", configurations.length * fInfo.items.length * 10); //$NON-NLS-1$
+			monitor.beginTask("", configurations.length * fInfo.items.length * 11); //$NON-NLS-1$
 			for (int i = 0; i < configurations.length; i++) {
 				for (int j = 0; j < fInfo.items.length; j++) {
 					if (monitor.isCanceled())
@@ -102,11 +104,74 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 						cleanup(configurations[i], new SubProgressMonitor(monitor, 1));
 					}
 				}
+				if (fInfo.exportMetadata && !fInfo.toDirectory) {
+					appendMetadataToArchive(configurations[i], new SubProgressMonitor(monitor, 1));
+				}
 			}
 		} catch (InvocationTargetException e) {
 			throwCoreException(e);
 		}
 		monitor.done();
+	}
+
+	/**
+	 * Takes the generated metadata and adds it to the destination zip.
+	 * This method should only be called if exporting to an archive file
+	 * and metadata was generated at fBuildMetadataLocation.
+	 * @param monitor progress monitor
+	 */
+	protected void appendMetadataToArchive(String[] configuration, IProgressMonitor monitor) {
+		String filename = fInfo.zipFileName;
+		if (configuration != null) {
+			int i = filename.lastIndexOf('.');
+			filename = filename.substring(0, i) + '.' + configuration[0] + '.' + configuration[1] + '.' + configuration[2] + filename.substring(i);
+		}
+		String archive = fInfo.destinationDirectory + File.separator + filename;
+		File scriptFile = null;
+		try {
+			scriptFile = createScriptFile("append.xml"); //$NON-NLS-1$
+
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			Document doc = factory.newDocumentBuilder().newDocument();
+
+			Element root = doc.createElement("project"); //$NON-NLS-1$
+			root.setAttribute("name", "temp"); //$NON-NLS-1$ //$NON-NLS-2$
+			root.setAttribute("default", "append"); //$NON-NLS-1$ //$NON-NLS-2$
+			root.setAttribute("basedir", "."); //$NON-NLS-1$ //$NON-NLS-2$
+			doc.appendChild(root);
+
+			Element target = doc.createElement("target"); //$NON-NLS-1$
+			target.setAttribute("name", "clean"); //$NON-NLS-1$ //$NON-NLS-2$
+			Element child = doc.createElement("delete"); //$NON-NLS-1$
+			child.setAttribute("dir", fBuildTempMetadataLocation); //$NON-NLS-1$
+			target.appendChild(child);
+			root.appendChild(target);
+
+			target = doc.createElement("target"); //$NON-NLS-1$
+			target.setAttribute("name", "append"); //$NON-NLS-1$ //$NON-NLS-2$
+			child = doc.createElement("zip"); //$NON-NLS-1$
+			child.setAttribute("zipfile", archive); //$NON-NLS-1$
+			child.setAttribute("basedir", fBuildTempMetadataLocation); //$NON-NLS-1$
+			child.setAttribute("update", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			target.appendChild(child);
+			root.appendChild(target);
+
+			XMLPrintHandler.writeFile(doc, scriptFile);
+
+			String[] targets = new String[] {"append", "clean"}; //$NON-NLS-1$ //$NON-NLS-2$
+			AntRunner runner = new AntRunner();
+			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
+			runner.setExecutionTargets(targets);
+			runner.run(new SubProgressMonitor(monitor, 1));
+		} catch (FactoryConfigurationError e) {
+		} catch (ParserConfigurationException e) {
+		} catch (CoreException e) {
+		} catch (IOException e) {
+		} finally {
+			if (scriptFile != null && scriptFile.exists())
+				scriptFile.delete();
+			monitor.done();
+		}
 	}
 
 	protected void throwCoreException(InvocationTargetException e) throws CoreException {
@@ -368,24 +433,31 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 
 		}
 
-		addP2MetadataProperties(fAntBuildProperties);
+		setP2MetaDataProperties(fAntBuildProperties);
 
 		return fAntBuildProperties;
 	}
 
 	/**
-	 * Adds the standard p2 metadata generator properties to the given map.
-	 * @param map the map to add properties to
-	 */
-	private void addP2MetadataProperties(Map map) {
-		if (fInfo.toDirectory && fInfo.useJarFormat && fInfo.exportMetadata) {
+	* Adds the necessary properties to invoke the p2 metadata generator.  This method will
+	* be called when creating the ant build properties map.
+	* 
+	* @param map the map to add generator properties to
+	*/
+	protected void setP2MetaDataProperties(Map map) {
+		if (fInfo.useJarFormat && fInfo.exportMetadata) {
 			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_PUBLISH_ARTIFACTS, IBuildPropertiesConstants.FALSE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FINAL_MODE_OVERRIDE, IBuildPropertiesConstants.TRUE);
 			try {
-				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fInfo.destinationDirectory).toURL().toString());
-				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fInfo.destinationDirectory).toURL().toString());
+				if (fInfo.toDirectory) {
+					map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fInfo.destinationDirectory).toURL().toString());
+					map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fInfo.destinationDirectory).toURL().toString());
+				} else {
+					map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fBuildTempMetadataLocation).toURL().toString());
+					map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fBuildTempMetadataLocation).toURL().toString());
+				}
 			} catch (MalformedURLException e) {
 				PDECore.log(e);
 			}
