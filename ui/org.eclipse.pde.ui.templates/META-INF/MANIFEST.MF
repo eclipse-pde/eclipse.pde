@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.ui;bundle-version="[3.3.0,4.0.0)",
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
 Bundle-Activator: org.eclipse.pde.internal.ui.templates.Activator
+Bundle-ActivationPolicy: lazy
