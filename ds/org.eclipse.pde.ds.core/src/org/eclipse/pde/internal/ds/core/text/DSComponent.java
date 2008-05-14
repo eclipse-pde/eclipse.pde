@@ -195,7 +195,8 @@ public class DSComponent extends DSObject implements IDSComponent {
 	}
 
 	public IDSImplementation[] getImplementations() {
-		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		ArrayList childNodesList = getChildNodesList(IDSImplementation.class,
+				true);
 		IDSImplementation[] array = new IDSImplementation[childNodesList.size()];
 		for (int i = 0; i < childNodesList.size(); i++) {
 			array[i] = (IDSImplementation) childNodesList.get(i);
@@ -204,7 +205,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	}
 
 	public IDSProperties[] getPropertiesElements() {
-		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		ArrayList childNodesList = getChildNodesList(IDSProperties.class, true);
 		IDSProperties[] array = new IDSProperties[childNodesList.size()];
 		for (int i = 0; i < childNodesList.size(); i++) {
 			array[i] = (IDSProperties) childNodesList.get(i);
@@ -213,7 +214,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	}
 
 	public IDSProperty[] getPropertyElements() {
-		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		ArrayList childNodesList = getChildNodesList(IDSProperty.class, true);
 		IDSProperty[] array = new IDSProperty[childNodesList.size()];
 		for (int i = 0; i < childNodesList.size(); i++) {
 			array[i] = (IDSProperty) childNodesList.get(i);
@@ -222,7 +223,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	}
 
 	public IDSReference[] getReferences() {
-		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
+		ArrayList childNodesList = getChildNodesList(IDSReference.class, true);
 		IDSReference[] array = new IDSReference[childNodesList.size()];
 		for (int i = 0; i < childNodesList.size(); i++) {
 			array[i] = (IDSReference) childNodesList.get(i);
