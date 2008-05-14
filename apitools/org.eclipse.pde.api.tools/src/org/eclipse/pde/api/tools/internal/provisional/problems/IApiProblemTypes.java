@@ -310,7 +310,6 @@ public interface IApiProblemTypes {
 	public static final String MALFORMED_SINCE_TAG = "malformed_since_tag"; //$NON-NLS-1$
 	public static final String INVALID_SINCE_TAG_VERSION = "invalid_since_tag_version"; //$NON-NLS-1$
 	public static final String INCOMPATIBLE_API_COMPONENT_VERSION = "incompatible_api_component_version"; //$NON-NLS-1$
-	public static final String INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE = "incompatible_api_component_version_include_minor_without_api_change"; //$NON-NLS-1$
 	
 	public static final String MISSING_DEFAULT_API_BASELINE = "missing_default_api_profile"; //$NON-NLS-1$
 	
