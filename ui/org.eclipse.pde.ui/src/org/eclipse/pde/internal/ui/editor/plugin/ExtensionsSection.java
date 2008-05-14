@@ -896,7 +896,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// Determine whether we can paste the source elements as children of
 		// the target object
 		if (sourceObjects.length > 1) {
-			return canPasteSourceElements((IPluginElement[]) sourceObjects, elementSet);
+			IPluginElement[] sourcePluginElements = new IPluginElement[sourceObjects.length];
+			System.arraycopy(sourceObjects, 0, sourcePluginElements, 0, sourceObjects.length);
+			return canPasteSourceElements(sourcePluginElements, elementSet);
 		}
 		return canPasteSourceElement((IPluginElement) sourceObjects[0], elementSet);
 	}
