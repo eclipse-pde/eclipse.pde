@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -33,6 +34,9 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -46,6 +50,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -514,6 +519,10 @@ public class ApiErrorsWarningsConfigurationBlock {
 		getApiToolsKey(IApiProblemTypes.INVALID_SINCE_TAG_VERSION);
 	private static final Key KEY_INCOMPATIBLE_API_COMPONENT_VERSION =
 		getApiToolsKey(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION);
+	private static final Key KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE =
+		getApiToolsKey(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE);
+	private static final Key KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE =
+		getApiToolsKey(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE);
 
 	private final int API_SCANNING_USAGE_PAGE_ID = 0;
 	private final int COMPATIBILITY_PAGE_ID = 1;
@@ -657,7 +666,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_CONSTRUCTOR_REMOVED_TYPE_PARAMETER,
 		KEY_CONSTRUCTOR_REMOVED_CLASS_BOUND,
 		KEY_CONSTRUCTOR_REMOVED_INTERFACE_BOUND,
-		KEY_CONSTRUCTOR_REMOVED_INTERFACE_BOUNDS,		
+		KEY_CONSTRUCTOR_REMOVED_INTERFACE_BOUNDS,
 	};
 
 	private static Key[] fgAllApiScanningKeys = {
@@ -838,6 +847,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_MALFORMED_SINCE_TAG,
 		KEY_INVALID_SINCE_TAG_VERSION,
 		KEY_INCOMPATIBLE_API_COMPONENT_VERSION,
+		KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE,
+		KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE,
 	};
 
 	/**
@@ -848,10 +859,19 @@ public class ApiErrorsWarningsConfigurationBlock {
 	/**
 	 * Constant representing the severity values presented in the combo boxes for each option
 	 */
-	private static final String[] SEVERITIES = {
+	private static final String[] SEVERITIES_LABELS = {
 		PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error,
 		PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning,
 		PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore
+	};
+	
+	/**
+	 * Constant representing the severity values presented in the combo boxes for each option
+	 */
+	private static final String[] SEVERITIES = {
+		ApiPlugin.VALUE_ERROR,
+		ApiPlugin.VALUE_WARNING,
+		ApiPlugin.VALUE_IGNORE,
 	};
 	
 	/**
@@ -859,16 +879,57 @@ public class ApiErrorsWarningsConfigurationBlock {
 	 */
 	private SelectionListener selectionlistener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			if(e.widget instanceof Combo) {
-				Combo combo = (Combo) e.widget;
-				ControlData data = (ControlData) combo.getData();
-				data.key.setStoredValue(fLookupOrder[0], combo.getText(), fManager);
-				fDirty = true;
-				fRebuildcount = 0;
+			Widget widget = e.widget;
+			ControlData data = (ControlData) widget.getData();
+			Key key = data.getKey();
+			String newValue= null;
+			if (widget instanceof Button) {
+				newValue= data.getValue(((Button)widget).getSelection());
+			} else if (widget instanceof Combo) {
+				newValue= data.getValue(((Combo)widget).getSelectionIndex());
+			} else {
+				return;
 			}
+			String oldValue= setValue(key, newValue);
+			validateSettings(key, oldValue, newValue);
 		}
 	};
 	
+	public void validateSettings(Key changedKey, String oldValue, String newValue) {
+		// we need to disable the two checkboxes if the key is for the bundle version
+		if (changedKey != null) {
+			if (KEY_INCOMPATIBLE_API_COMPONENT_VERSION.equals(changedKey)) {
+				updateEnableStates();
+			}
+		} else {
+			updateEnableStates();
+		}
+	}
+	protected boolean checkValue(Key key, String value) {
+		return value.equals(getValue(key));
+	}
+	protected String getValue(Key key) {
+		if (fOldProjectSettings != null) {
+			return (String) fOldProjectSettings.get(key);
+		}
+		return key.getStoredValue(fLookupOrder, false, fManager);
+	}
+	protected String setValue(Key key, String value) {
+		fDirty = true;
+		fRebuildcount = 0;
+		if (fOldProjectSettings != null) {
+			return (String) fOldProjectSettings.put(key, value);
+		}
+		String oldValue= getValue(key);
+		key.setStoredValue(fLookupOrder[0], value, fManager);
+		return oldValue;
+	}
+	private void updateEnableStates() {
+		boolean enableUnusedParams= !checkValue(KEY_INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_IGNORE);
+		getCheckBox(KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE).setEnabled(enableUnusedParams);
+		getCheckBox(KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE).setEnabled(enableUnusedParams);
+	}
+
 	class SetAllSelectionAdapter extends SelectionAdapter {
 		String newValue;
 		int kind;
@@ -903,6 +964,10 @@ public class ApiErrorsWarningsConfigurationBlock {
 	 */
 	private ArrayList fCombos = new ArrayList();
 	
+	/**
+	 * Listing of all of the {@link Checkbox}es added to the block
+	 */
+	private ArrayList fCheckBoxes = new ArrayList();
 	/**
 	 * The context of settings locations to search for values in
 	 */
@@ -1011,6 +1076,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				PreferenceMessages.ApiToolingNotificationsBlock_2,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_9); 
 		restoreExpansionState();
+		validateSettings(null, null, null);
 		return fMainComp;
 	}
 
@@ -1018,6 +1084,35 @@ public class ApiErrorsWarningsConfigurationBlock {
 		for (int i = 0, max = labels.length; i < max; i++) {
 			createComboControl(composite, labels[i], keys[i]);
 		}
+	}
+
+	public int convertWidthInCharsToPixels(Font font, int chars) {
+		GC gc = new GC(font.getDevice());
+		gc.setFont(font);
+		FontMetrics fontMetrics= gc.getFontMetrics();
+		gc.dispose();
+		return Dialog.convertWidthInCharsToPixels(fontMetrics, chars);
+	}	
+
+	protected Button addCheckBox(Composite parent, String label, Key key, String[] values, int indent) {
+		ControlData data= new ControlData(key, values);
+		Font dialogFont = JFaceResources.getDialogFont();
+		
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 3;
+		gd.horizontalIndent= convertWidthInCharsToPixels(dialogFont, indent);
+		
+		Button checkBox= new Button(parent, SWT.CHECK);
+		checkBox.setFont(dialogFont);
+		checkBox.setText(label);
+		checkBox.setData(data);
+		checkBox.setLayoutData(gd);
+		checkBox.addSelectionListener(this.selectionlistener);
+		
+		String currValue= key.getStoredValue(fLookupOrder, false, fManager);
+		checkBox.setSelection(data.getSelection(currValue) == 0);
+		fCheckBoxes.add(checkBox);
+		return checkBox;
 	}
 
 	/**
@@ -1111,6 +1206,18 @@ public class ApiErrorsWarningsConfigurationBlock {
 						KEY_INCOMPATIBLE_API_COMPONENT_VERSION
 					}
 				);
+				addCheckBox(
+					vcomp,
+					PreferenceMessages.VersionManagementReportInvalidApiComponentVersionIncludeMinorWithoutApiChange,
+					KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE,
+					new String[] { ApiPlugin.VALUE_DISABLED, ApiPlugin.VALUE_ENABLED },
+					2);
+				addCheckBox(
+					vcomp,
+					PreferenceMessages.VersionManagementReportInvalidApiComponentVersionIncludeMajorWithoutBreakingChange,
+					KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE,
+					new String[] { ApiPlugin.VALUE_DISABLED, ApiPlugin.VALUE_ENABLED },
+					2);
 				break;
 			case COMPATIBILITY_PAGE_ID :
 				// compatibility
@@ -1477,7 +1584,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 		for(int i = 0, max = keys.length; i < max; i++) {
 			keys[i].setStoredValue(fLookupOrder[0], newValue, fManager);
 		}
-		updateCombos();
+		updateControls();
+		validateSettings(null, null, null);
 		fDirty = true;
 		fRebuildcount = 0;
 	}
@@ -1611,26 +1719,30 @@ public class ApiErrorsWarningsConfigurationBlock {
 			defval = fgAllKeys[i].getStoredValue(fLookupOrder, true, fManager);
 			fgAllKeys[i].setStoredValue(fLookupOrder[0], defval, fManager);
 		}
-		updateCombos();
+		updateControls();
+		validateSettings(null, null, null);
 		fDirty = true;
 		fRebuildcount = 0;
 	}
 	
 	/**
-	 * Updates all of the registered {@link Combo}s on the page.
-	 * Registration implies that the {@link Combo} control was added to the listing 
-	 * of fCombos
+	 * Updates all of the registered {@link Control}s on the page.
+	 * Registration implies that the {@link Control} control was added to the listing 
+	 * of fCombos or fCheckBoxes
 	 */
-	private void updateCombos() {
-		Combo combo = null;
-		ControlData data = null;
+	private void updateControls() {
 		for(int i = 0; i < fCombos.size(); i++) {
-			combo = (Combo) fCombos.get(i);
-			data  = (ControlData) combo.getData();
-			combo.select(data.getSelection(data.getKey().getStoredValue(fLookupOrder, false, fManager)));
+			Combo combo = (Combo) fCombos.get(i);
+			ControlData data  = (ControlData) combo.getData();
+			combo.select(data.getSelection(getValue(data.getKey())));
+		}
+		for (int i= fCheckBoxes.size() - 1; i >= 0; i--) {
+			Button button = (Button) fCheckBoxes.get(i);
+			ControlData data= (ControlData) button.getData();
+			String currValue= getValue(data.getKey());
+			button.setSelection(data.getSelection(currValue) == 0);
 		}
 	}
-	
 	/**
 	 * recursive method to enable/disable all of the controls on the main page
 	 * @param ctrl
@@ -1655,6 +1767,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		fMainComp.getParent().dispose();
 		fExpComps.clear();
 		fCombos.clear();
+		fCheckBoxes.clear();
 	}
 	
 	/**
@@ -1672,7 +1785,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		gd = new GridData(GridData.END, GridData.CENTER, false, false);
 		ControlData data = new ControlData(key, SEVERITIES); 
 		combo.setData(data);
-		combo.setItems(SEVERITIES);
+		combo.setItems(SEVERITIES_LABELS);
 		combo.addSelectionListener(selectionlistener);
 		combo.select(data.getSelection(key.getStoredValue(fLookupOrder, false, fManager)));
 		fCombos.add(combo);
@@ -1716,9 +1829,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 					fgAllKeys[i].setStoredValue(fLookupOrder[0], (String) fOldProjectSettings.get(fgAllKeys[i]), fManager);
 				}
 				fOldProjectSettings = null;
-				updateCombos();
-			}
-			else {
+				updateControls();
+			} else {
 				fOldProjectSettings = new IdentityHashMap();
 				String old = null;
 				for(int i = 0; i < fgAllKeys.length; i++) {
@@ -1730,6 +1842,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 		}
 		fDirty = true;
 		enableControl(fMainComp, enable);
+		if (enable) {
+			validateSettings(null, null, null);
+		}
 	}
 	
 	/**
@@ -1754,14 +1869,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 	 * @param changes the {@link List} to collect changed keys into
 	 */
 	private void collectChanges(IScopeContext context, List changes) {
-		Key key = null;
-		String origval = null,
-			   newval = null;
 		boolean complete = fOldProjectSettings == null && fProject != null;
 		for(int i = 0; i < fgAllKeys.length; i++) {
-			key = fgAllKeys[i];
-			origval = key.getStoredValue(context, null);
-			newval = key.getStoredValue(context, fManager);
+			Key key = fgAllKeys[i];
+			String origval = key.getStoredValue(context, null);
+			String newval = key.getStoredValue(context, fManager);
 			if(newval == null) {
 				if(origval != null) {
 					changes.add(key);
@@ -1779,5 +1891,15 @@ public class ApiErrorsWarningsConfigurationBlock {
 	
 	public static Key[] getAllKeys() {
 		return fgAllKeys;
+	}
+	protected Button getCheckBox(Key key) {
+		for (int i= fCheckBoxes.size() - 1; i >= 0; i--) {
+			Button curr= (Button) fCheckBoxes.get(i);
+			ControlData data= (ControlData) curr.getData();
+			if (key.equals(data.getKey())) {
+				return curr;
+			}
+		}
+		return null;
 	}
 }

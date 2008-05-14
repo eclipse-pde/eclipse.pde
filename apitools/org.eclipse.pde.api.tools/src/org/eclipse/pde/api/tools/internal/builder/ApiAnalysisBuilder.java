@@ -62,6 +62,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
@@ -464,15 +465,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			IMarker marker = resource.createMarker(type);
 			marker.setAttributes(
-					new String[] {IMarker.MESSAGE,
+					new String[] {
+							IMarker.MESSAGE,
 							IMarker.SEVERITY,
 							IMarker.LINE_NUMBER,
 							IMarker.CHAR_START,
 							IMarker.CHAR_END,
 							IMarker.SOURCE_ID,
 							IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID},
-					new Object[] {problem.getMessage(),
-							new Integer(problem.getSeverity()),
+					new Object[] {
+							problem.getMessage(),
+							new Integer(ApiPlugin.getDefault().getSeverityLevel(ApiProblemFactory.getProblemSeverityId(problem), this.fCurrentProject)),
 							new Integer(problem.getLineNumber()),
 							new Integer(problem.getCharStart()),
 							new Integer(problem.getCharEnd()),

@@ -27,9 +27,6 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 	public ApiPluginPreferenceInitializer() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	public void initializeDefaultPreferences() {
 		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
 		
@@ -50,13 +47,15 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		for (int i = 0, max = ApiPlugin.AllCompatibilityKeys.length; i < max; i++) {
 			prefs.setDefault(ApiPlugin.AllCompatibilityKeys[i], ApiPlugin.VALUE_ERROR);
 		}
-
+	
 		// version management
 		prefs.setDefault(IApiProblemTypes.MISSING_SINCE_TAG, ApiPlugin.VALUE_ERROR);
 		prefs.setDefault(IApiProblemTypes.MALFORMED_SINCE_TAG, ApiPlugin.VALUE_ERROR);
 		prefs.setDefault(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, ApiPlugin.VALUE_ERROR);
 		prefs.setDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_ERROR);
-
+		prefs.setDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, ApiPlugin.VALUE_DISABLED);
+		prefs.setDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_DISABLED);
+		
 		prefs.setDefault(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, ApiPlugin.VALUE_WARNING);
 	}
 

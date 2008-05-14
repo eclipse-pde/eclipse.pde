@@ -419,7 +419,20 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
-	
+	private boolean ignoreMinorVersionCheckWithoutApiChange() {
+		if (fJavaProject == null) {
+			// we ignore it for non-OSGi case
+			return true;
+		}
+		return ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, fJavaProject.getProject().getProject()).equals(ApiPlugin.VALUE_DISABLED);
+	}
+	private boolean ignoreMajorVersionCheckWithoutBreakingChange() {
+		if (fJavaProject == null) {
+			// we ignore it for non-OSGi case
+			return true;
+		}
+		return ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, fJavaProject.getProject().getProject()).equals(ApiPlugin.VALUE_DISABLED);
+	}
 	/**
 	 * @return if the invalid tag check should be ignored
 	 */
@@ -1114,16 +1127,18 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (compatibleChanges.length != 0) {
 				// only new API have been added
 				if (compversion.getMajor() != refversion.getMajor()) {
-					// major version should be identical
-					newversion = new Version(refversion.getMajor(), refversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
-					problem = createVersionProblem(
-							IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
-							new String[] {
-								compversionval,
-								refversionval
-							},
-							String.valueOf(newversion),
-							collectDetails(compatibleChanges));
+					if (!ignoreMajorVersionCheckWithoutBreakingChange()) {
+						// major version should be identical
+						newversion = new Version(refversion.getMajor(), refversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
+						problem = createVersionProblem(
+								IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
+								new String[] {
+									compversionval,
+									refversionval
+								},
+								String.valueOf(newversion),
+								collectDetails(compatibleChanges));
+					}
 				} else if (compversion.getMinor() <= refversion.getMinor()) {
 					// the minor version should be incremented
 					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
@@ -1137,27 +1152,31 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							collectDetails(compatibleChanges));
 				}
 			} else if (compversion.getMajor() != refversion.getMajor()) {
-				// major version should be identical
-				newversion = new Version(refversion.getMajor(), refversion.getMinor(), refversion.getMicro(), refversion.getQualifier() != null ? QUALIFIER : null);
-				problem = createVersionProblem(
-						IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
-						new String[] {
-							compversionval,
-							refversionval
-						},
-						String.valueOf(newversion),
-						Util.EMPTY_STRING);
+				if (!ignoreMajorVersionCheckWithoutBreakingChange()) {
+					// major version should be identical
+					newversion = new Version(refversion.getMajor(), refversion.getMinor(), refversion.getMicro(), refversion.getQualifier() != null ? QUALIFIER : null);
+					problem = createVersionProblem(
+							IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
+							new String[] {
+								compversionval,
+								refversionval
+							},
+							String.valueOf(newversion),
+							Util.EMPTY_STRING);
+				}
 			} else if (compversion.getMinor() > refversion.getMinor()) {
 				// the minor version should not be incremented
-				newversion = new Version(refversion.getMajor(), refversion.getMinor(), refversion.getMicro(), refversion.getQualifier() != null ? QUALIFIER : null);
-				problem = createVersionProblem(
-						IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API, 
-						new String[] {
-							compversionval,
-							refversionval
-						},
-						String.valueOf(newversion),
-						Util.EMPTY_STRING);
+				if (!ignoreMinorVersionCheckWithoutApiChange()) {
+					newversion = new Version(refversion.getMajor(), refversion.getMinor(), refversion.getMicro(), refversion.getQualifier() != null ? QUALIFIER : null);
+					problem = createVersionProblem(
+							IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API, 
+							new String[] {
+								compversionval,
+								refversionval
+							},
+							String.valueOf(newversion),
+							Util.EMPTY_STRING);
+				}
 			}
 			// analyse version of required components
 			ReexportedBundleVersionInfo info = null;

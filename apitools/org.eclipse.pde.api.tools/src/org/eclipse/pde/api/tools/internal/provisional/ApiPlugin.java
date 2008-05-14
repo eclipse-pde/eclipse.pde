@@ -108,6 +108,16 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 */
 	public static final String VALUE_ERROR = "Error"; //$NON-NLS-1$
 	/**
+	 * Constant representing the preference value 'disabled'.
+	 * Value is: <code>Disabled</code>
+	 */
+	public static final String VALUE_DISABLED = "Disabled"; //$NON-NLS-1$
+	/**
+	 * Constant representing the preference value 'enabled'.
+	 * Value is: <code>Enabled</code>
+	 */
+	public static final String VALUE_ENABLED = "Enabled"; //$NON-NLS-1$
+	/**
 	 * The identifier for the Api builder
 	 * Value is: <code>"org.eclipse.pde.api.tools.apiAnalysisBuilder"</code>
 	 */
@@ -515,6 +525,29 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		return SEVERITY_IGNORE;
 	}
 
+	/**
+	 * Returns the enable state for the specific key from the given {@link IProject}.
+	 * If the project does not have project specific settings, the workspace preference
+	 * is returned. If <code>null</code> is passed in as the project the workspace
+	 * preferences are consulted.
+	 * 
+	 * @param prefkey the given preference key
+	 * @param project the given project or <code>null</code>
+	 * @return the enable state
+	 */
+	public String getEnableState(String prefkey, IProject project) {
+		IPreferencesService service = Platform.getPreferencesService();
+		List scopes = new ArrayList();
+		scopes.add(new InstanceScope());
+		if(project != null) {
+			scopes.add(new ProjectScope(project));
+		}
+		String value = service.getString(ApiPlugin.getPluginIdentifier(), prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
+		if(value == null) {
+			value = getPluginPreferences().getDefaultString(prefkey);
+		}
+		return value;
+	}
 	/**
 	 * Method to configure all of the debug options for this plugin
 	 */

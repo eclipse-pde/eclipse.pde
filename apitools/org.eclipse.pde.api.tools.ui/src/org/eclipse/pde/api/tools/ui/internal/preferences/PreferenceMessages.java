@@ -219,6 +219,8 @@ public class PreferenceMessages extends NLS {
 	public static String VersionManagementReportInvalidSinceTagVersion;
 	public static String VersionManagementReportInvalidApiComponentVersion;
 	public static String ApiErrorsWarningsConfigurationBlock_setAllto;
+	public static String VersionManagementReportInvalidApiComponentVersionIncludeMinorWithoutApiChange;
+	public static String VersionManagementReportInvalidApiComponentVersionIncludeMajorWithoutBreakingChange;
 
 	static {
 		// initialize resource bundle
