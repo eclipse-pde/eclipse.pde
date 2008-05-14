@@ -481,7 +481,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);
 			script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
-			
+			script.printProperty(PROPERTY_P2_METADATA_REPO_NAME, ""); //$NON-NLS-1$
+			script.printProperty(PROPERTY_P2_ARTIFACT_REPO_NAME, ""); //$NON-NLS-1$
+
 			if (havePDEUIState()) {
 				//during feature export we need to override the "mode"
 				printP2GenerationModeCondition();
@@ -492,11 +494,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
 			script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
 			script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
+			script.printAttribute("metadataRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
+			script.printAttribute("artifactRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
 			script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$ 
 			script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
 			if (!havePDEUIState() || rootFileProviders.size() > 0)
 				script.printAttribute("mode", "incremental", true); //$NON-NLS-1$ //$NON-NLS-2$
-			else 
+			else
 				script.printAttribute("mode", Utils.getPropertyFormat(PROPERTY_P2_GENERATION_MODE), true); //$NON-NLS-1$
 			script.println("/>"); //$NON-NLS-1$
 
@@ -507,10 +511,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
 				script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
 				script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
+				script.printAttribute("metadataRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
+				script.printAttribute("artifactRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
 				script.printAttribute("launcherConfig", configInfo.toString(), true); //$NON-NLS-1$
 				script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
 				script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$ 
-				if(!havePDEUIState())
+				if (!havePDEUIState())
 					script.printAttribute("mode", "incremental", true); //$NON-NLS-1$ //$NON-NLS-2$
 				else
 					script.printAttribute("mode", Utils.getPropertyFormat(PROPERTY_P2_GENERATION_MODE), true); //$NON-NLS-1$
@@ -527,7 +533,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	protected void printP2GenerationModeCondition() {
 		// "final" if not running packager and we are overriding, else "incremental"
-		script.print("<condition");  //$NON-NLS-1$
+		script.print("<condition"); //$NON-NLS-1$
 		script.printAttribute("property", PROPERTY_P2_GENERATION_MODE, true); //$NON-NLS-1$
 		script.printAttribute("value", "final", true); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printAttribute("else", "incremental", false); //$NON-NLS-1$ //$NON-NLS-2$
@@ -540,7 +546,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.println("\t</and>"); //$NON-NLS-1$
 		script.printEndTag("condition"); //$NON-NLS-1$
 	}
-	
+
 	public boolean haveP2Bundles() {
 		if (p2Bundles != null)
 			return p2Bundles.booleanValue();

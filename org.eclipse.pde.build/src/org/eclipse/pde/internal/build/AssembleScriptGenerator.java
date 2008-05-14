@@ -129,11 +129,15 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, PROPERTY_RUN_PACKAGER, null);
 			script.printConditionIsSet("mode", "incremental", PROPERTY_RUN_PACKAGER, "final"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
+			script.printProperty(PROPERTY_P2_METADATA_REPO_NAME, ""); //$NON-NLS-1$
+			script.printProperty(PROPERTY_P2_ARTIFACT_REPO_NAME, ""); //$NON-NLS-1$
 			script.print("<p2.generator "); //$NON-NLS-1$
 			script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
 			script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
 			script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
-			script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
+			script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$
+			script.printAttribute("metadataRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
+			script.printAttribute("artifactRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
 			script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$ 
 			script.printAttribute("mode", "${mode}", true); //$NON-NLS-1$ //$NON-NLS-2$
 

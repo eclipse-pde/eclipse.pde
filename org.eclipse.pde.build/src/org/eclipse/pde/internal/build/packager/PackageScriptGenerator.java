@@ -8,6 +8,8 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.build.packager;
 
+import org.eclipse.pde.internal.build.Utils;
+
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
@@ -84,6 +86,8 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		if (configScriptGenerator.haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);
 			script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
+			script.printProperty(PROPERTY_P2_METADATA_REPO_NAME, ""); //$NON-NLS-1$
+			script.printProperty(PROPERTY_P2_ARTIFACT_REPO_NAME, ""); //$NON-NLS-1$
 			ProductFile product = configScriptGenerator.getProductFile();
 			String versionAdvice = null;
 			if (versionsList && product != null) {
@@ -103,6 +107,8 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
 		script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
 		script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
+		script.printAttribute("metadataRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
+		script.printAttribute("artifactRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
 		script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$ 
 		script.printAttribute("mode", "final", true); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -162,6 +168,8 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 			p2Script.printProjectDeclaration("P2 Product IU Generation", "main", "."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			p2Script.println();
 			p2Script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
+			p2Script.printProperty(PROPERTY_P2_METADATA_REPO_NAME, ""); //$NON-NLS-1$
+			p2Script.printProperty(PROPERTY_P2_ARTIFACT_REPO_NAME, ""); //$NON-NLS-1$
 			p2Script.printTargetDeclaration("main", null, TARGET_P2_METADATA, null, "Generate the final Product IU"); //$NON-NLS-1$//$NON-NLS-2$
 			generateP2FinalCall(p2Script, productFileLocation, adviceFile != null ? adviceFile.getAbsolutePath() : null);
 			p2Script.printTargetEnd();
