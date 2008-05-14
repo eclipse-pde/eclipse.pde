@@ -281,8 +281,23 @@ public class ClassFileVisitor extends ClassAdapter {
 		 * @see org.objectweb.asm.MethodAdapter#visitFieldInsn(int, java.lang.String, java.lang.String, java.lang.String)
 		 */
 		public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-			if(opcode == Opcodes.PUTSTATIC || opcode == Opcodes.PUTFIELD || opcode == Opcodes.GETSTATIC || opcode == Opcodes.GETFIELD) {
-				IReference reference = ClassFileVisitor.this.addFieldReference(Type.getObjectType(owner), name, (opcode == Opcodes.PUTFIELD ? ReferenceModifiers.REF_PUTFIELD : ReferenceModifiers.REF_PUTSTATIC));
+			int refType = -1;
+			switch (opcode) {
+			case Opcodes.PUTSTATIC:
+				refType = ReferenceModifiers.REF_PUTSTATIC;
+				break;
+			case Opcodes.PUTFIELD:
+				refType = ReferenceModifiers.REF_PUTFIELD;
+				break;
+			case Opcodes.GETSTATIC:
+				refType = ReferenceModifiers.REF_GETSTATIC;
+				break;
+			case Opcodes.GETFIELD:
+				refType = ReferenceModifiers.REF_GETFIELD;
+				break;
+			}
+			if (refType != -1) {
+				IReference reference = ClassFileVisitor.this.addFieldReference(Type.getObjectType(owner), name, refType);
 				if (reference != null) {
 					this.linePositionTracker.addLocation(reference.getSourceLocation());
 				}
