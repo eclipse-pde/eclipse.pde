@@ -11,7 +11,10 @@
 package org.eclipse.pde.internal.ds.tests;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSObject;
+import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
 
@@ -45,14 +48,21 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		assertTrue(service.getServiceFactory() == true);
 
 		assertTrue(child.getChildCount() == 1);
-		IDocumentElementNode grandChild = child.getChildAt(0);
+		IDSProvide[] providedServices = service.getProvidedServices();
 
-		assertTrue(grandChild instanceof IDSProvide);
-		IDSProvide provide = (IDSProvide) grandChild;
+		IDSProvide provide = providedServices[0];
 
 		String interface1 = provide.getInterface();
 
 		assertTrue(interface1.equals("java.lang.Runnable"));
+		
+		service.setServiceFactory(false);
+		
+		String string = fModel.getDSComponent().toString();
+		System.out.println(string);
+		assertTrue(string.contains("servicefactory=\"false\""));
+		
+		assertTrue(service.getServiceFactory() == false);
 	}
 
 	/**
@@ -88,7 +98,6 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 
 		buffer.append("</service>");
 
-//		System.out.println(buffer);
 		setXMLContents(buffer, LF);
 		load();
 
@@ -137,4 +146,70 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		IDSService service = (IDSService) child;
 		assertTrue(service.getServiceFactory() == false);
 	}
+	
+	/**
+	 * Test to remove a provided service element from a service element.
+	 */
+	public void testRemoveChildService(){
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<service servicefactory=\"true\" >");
+		buffer.append(LF);
+		buffer.append("<provide interface=\"");
+		buffer.append("java.lang.Runnable\">");
+		buffer.append("</provide>");
+		buffer.append(LF);
+		buffer.append("</service>");
+
+		setXMLContents(buffer, LF);
+		load();
+
+		IDSComponent component = fModel.getDSComponent();
+		
+		IDSService[] services = component.getServices();
+		assertTrue(services.length == 1);
+		
+		IDSService service = services[0];
+		
+		IDSProvide[] providedServices = service.getProvidedServices();
+		assertTrue(providedServices.length==1);
+		
+		//Removing Provided Service
+		service.removeChild(providedServices[0]);
+		
+		services = component.getServices();
+		
+		assertTrue(services.length == 1);
+		
+		service = services[0];
+		
+		assertTrue(service.getProvidedServices().length == 0);
+
+	}
+	
+	/**
+	 * Tests to add a service by DSDocumentFactory
+	 */
+	public void testAddServiceFactory(){
+		StringBuffer buffer = new StringBuffer();
+		setXMLContents(buffer , LF);
+		load();
+		
+		IDSDocumentFactory factory = fModel.getFactory();
+		IDSService service = factory.createService();
+		service.setServiceFactory(true);
+		
+		IDSComponent component = fModel.getDSComponent();
+		component.addChild(service);
+		
+		String content = component.toString();
+		
+		assertTrue(content.contains("servicefactory=\"true\""));
+		
+		IDSService[] services = component.getServices();
+		IDSService service0 = services[0];
+		assertNotNull(service0);
+		assertTrue(service0.getServiceFactory());
+		
+	}
+
 }
