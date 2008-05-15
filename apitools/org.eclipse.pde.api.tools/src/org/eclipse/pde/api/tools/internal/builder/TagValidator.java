@@ -90,9 +90,9 @@ public class TagValidator extends ASTVisitor {
 				IApiJavadocTag[] validtags = jtm.getTagsForType(type.isInterface() ? IApiJavadocTag.TYPE_INTERFACE : IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
 				String context = BuilderMessages.TagValidator_an_interface;
 				if(!type.isInterface()) {
-					context = BuilderMessages.TagValidator_an_abstract_class;
+					context = BuilderMessages.TagValidator_a_class;
 					if(Flags.isAbstract(type.getModifiers())) {
-						context = BuilderMessages.TagValidator_a_class;
+						context = BuilderMessages.TagValidator_an_abstract_class;
 						ArrayList vtags = new ArrayList(validtags.length);
 						for(int i = 0; i < validtags.length; i++) {
 							if(validtags[i].getTagName().equals("@noinstantiate")) { //$NON-NLS-1$
