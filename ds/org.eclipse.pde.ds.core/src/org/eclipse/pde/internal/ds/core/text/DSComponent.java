@@ -13,10 +13,8 @@ package org.eclipse.pde.internal.ds.core.text;
 
 import java.util.ArrayList;
 
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
-import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSReference;
@@ -171,28 +169,6 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return getBooleanAttributeValue(ATTRIBUTE_IMMEDIATE, false);
 	}
 
-	public void addService(IDSService service) {
-		addChildNode((IDocumentElementNode) service, true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
-	 */
-	public void removeChild(IDSObject subitem) {
-		removeChildNode((IDocumentElementNode) subitem, true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#moveItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem,
-	 *      int)
-	 */
-	public void moveItem(IDSObject item, int newRelativeIndex) {
-		moveChildNode((IDocumentElementNode) item, newRelativeIndex, true);
-	}
 
 	public IDSImplementation[] getImplementations() {
 		ArrayList childNodesList = getChildNodesList(IDSImplementation.class,
