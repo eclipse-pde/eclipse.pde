@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Description of a method.
@@ -59,8 +60,9 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 		if (obj instanceof IMethodDescriptor) {
 			IMethodDescriptor method = (IMethodDescriptor) obj;
 			return getName().equals(method.getName())
-				&& getEnclosingType().equals(method.getEnclosingType())
-				&& getSignature().equals(method.getSignature());
+					&& getEnclosingType().equals(method.getEnclosingType())
+					&& (Util.matchesSignatures(getSignature(), method.getSignature())
+							|| Util.matchesSignatures(method.getSignature(), getSignature()));
 		}
 		return false;
 	}
@@ -69,7 +71,7 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getName().hashCode() + getEnclosingType().hashCode() + getSignature().hashCode();
+		return getName().hashCode() + getEnclosingType().hashCode();
 	}	
 	
 	/* (non-Javadoc)

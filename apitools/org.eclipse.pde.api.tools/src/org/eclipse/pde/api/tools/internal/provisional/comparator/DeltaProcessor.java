@@ -147,6 +147,9 @@ public class DeltaProcessor {
 					case IDelta.FIELD :
 					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 					case IDelta.METHOD_WITH_DEFAULT_VALUE :
+					case IDelta.API_FIELD :
+					case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE :
+					case IDelta.API_METHOD_WITH_DEFAULT_VALUE :
 					case IDelta.TYPE_MEMBER :
 					case IDelta.TYPE_PARAMETERS :
 					case IDelta.TYPE_PARAMETER :
@@ -340,6 +343,11 @@ public class DeltaProcessor {
 					case IDelta.CONSTRUCTOR :
 					case IDelta.TYPE_MEMBER :
 						return !Util.isVisible(delta);
+					case IDelta.API_FIELD :
+					case IDelta.API_ENUM_CONSTANT :
+					case IDelta.API_METHOD :
+					case IDelta.API_CONSTRUCTOR :
+						return false;
 				}
 				break;
 			case IDelta.CHANGED :
@@ -392,6 +400,8 @@ public class DeltaProcessor {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
 					case IDelta.FIELD :
+					case IDelta.API_FIELD :
+					case IDelta.API_METHOD :
 					case IDelta.METHOD :
 					case IDelta.TYPE_MEMBER :
 						if (Util.isVisible(delta)) {
@@ -400,6 +410,7 @@ public class DeltaProcessor {
 						}
 						return true;
 					case IDelta.CONSTRUCTOR :
+					case IDelta.API_CONSTRUCTOR :
 						if (Util.isVisible(delta)) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
 									&& (Util.isProtected(delta.getModifiers()) ||
@@ -465,6 +476,8 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.FIELD :
 					case IDelta.METHOD :
+					case IDelta.API_FIELD :
+					case IDelta.API_METHOD :
 					case IDelta.TYPE_MEMBER :
 					case IDelta.TYPE_PARAMETERS :
 					case IDelta.TYPE_PARAMETER :

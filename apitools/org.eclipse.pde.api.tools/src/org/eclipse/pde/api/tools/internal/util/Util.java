@@ -853,6 +853,12 @@ public final class Util {
 			case IDelta.VOLATILE_TO_NON_VOLATILE : return "VOLATILE_TO_NON_VOLATILE"; //$NON-NLS-1$
 			case IDelta.MINOR_VERSION : return "MINOR_VERSION"; //$NON-NLS-1$
 			case IDelta.MAJOR_VERSION : return "MAJOR_VERSION"; //$NON-NLS-1$
+			case IDelta.API_FIELD : return "API_FIELD"; //$NON-NLS-1$
+			case IDelta.API_METHOD : return "API_METHOD"; //$NON-NLS-1$
+			case IDelta.API_CONSTRUCTOR : return "API_CONSTRUCTOR"; //$NON-NLS-1$
+			case IDelta.API_ENUM_CONSTANT : return "API_ENUM_CONSTANT"; //$NON-NLS-1$
+			case IDelta.API_METHOD_WITH_DEFAULT_VALUE : return "API_METHOD_WITH_DEFAULT_VALUE"; //$NON-NLS-1$
+			case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE : return "API_METHOD_WITHOUT_DEFAULT_VALUE"; //$NON-NLS-1$
 		}
 		return UNKNOWN_FLAGS;
 	}
@@ -899,7 +905,29 @@ public final class Util {
 		StringBuffer buffer = new StringBuffer(Util.getDeltaElementType(elementType));
 		buffer.append('_').append(Util.getDeltaKindName(kind));
 		if (flags != -1) {
-			buffer.append('_').append(Util.getDeltaFlagsName(flags));
+			buffer.append('_');
+			switch(flags) {
+				case IDelta.API_FIELD :
+					buffer.append(Util.getDeltaFlagsName(IDelta.FIELD));
+					break;
+				case IDelta.API_ENUM_CONSTANT :
+					buffer.append(Util.getDeltaFlagsName(IDelta.ENUM_CONSTANT));
+					break;
+				case IDelta.API_CONSTRUCTOR :
+					buffer.append(Util.getDeltaFlagsName(IDelta.CONSTRUCTOR));
+					break;
+				case IDelta.API_METHOD :
+					buffer.append(Util.getDeltaFlagsName(IDelta.METHOD));
+					break;
+				case IDelta.API_METHOD_WITH_DEFAULT_VALUE :
+					buffer.append(Util.getDeltaFlagsName(IDelta.METHOD_WITH_DEFAULT_VALUE));
+					break;
+				case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE :
+					buffer.append(Util.getDeltaFlagsName(IDelta.METHOD_WITHOUT_DEFAULT_VALUE));
+					break;
+				default:
+					buffer.append(Util.getDeltaFlagsName(flags));
+			}
 		}
 		return String.valueOf(buffer);
 	}
@@ -1125,11 +1153,14 @@ public final class Util {
 					case IDelta.ADDED :
 						switch(delta.getFlags()) {
 							case IDelta.FIELD :
+							case IDelta.ENUM_CONSTANT :
 								IField field = type.getField(key);
 								if (field.exists()) {
 									return field;
 								}
 								break;
+							case IDelta.METHOD_WITH_DEFAULT_VALUE :
+							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 							case IDelta.METHOD :
 							case IDelta.CONSTRUCTOR :
 								int indexOf = key.indexOf('(');
@@ -1145,6 +1176,28 @@ public final class Util {
 								if (type2.exists()) {
 									return type2;
 								}
+						}
+					case IDelta.REMOVED :
+						switch(delta.getFlags()) {
+							case IDelta.API_FIELD :
+							case IDelta.API_ENUM_CONSTANT :
+								IField field = type.getField(key);
+								if (field.exists()) {
+									return field;
+								}
+								break;
+							case IDelta.API_METHOD_WITH_DEFAULT_VALUE :
+							case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE :
+							case IDelta.API_METHOD :
+							case IDelta.API_CONSTRUCTOR :
+								int indexOf = key.indexOf('(');
+								if (indexOf == -1) {
+									return null;
+								}
+								int index = indexOf;
+								String selector = key.substring(0, index);
+								String descriptor = key.substring(index, key.length());
+								return getMethod(type, selector, descriptor);
 						}
 				}
 				return type;

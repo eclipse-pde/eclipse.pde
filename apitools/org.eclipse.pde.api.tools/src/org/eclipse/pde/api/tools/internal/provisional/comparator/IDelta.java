@@ -736,7 +736,7 @@ public interface IDelta {
 	public static final int VARARGS_TO_ARRAY = 55;
 	/**
 	 * Delta kind flag that denotes changing the visibility of a type from VisibilityModifiers.API to another visibility.
-	 * As a consequence, the corresponding type is no longer an API.
+	 * As a consequence, the corresponding type is no longer an API type.
 	 * <br>
 	 * Applies to kinds:
 	 * <ul>
@@ -790,6 +790,78 @@ public interface IDelta {
 	 * @see #getFlags()
 	 */
 	public static final int MINOR_VERSION = 60;
+	/**
+	 * Delta kind flag that denotes adding @noreference restrictions to an API field.
+	 * As a consequence, the corresponding field is no longer an API field.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int API_FIELD = 61;
+	/**
+	 * Delta kind flag that denotes adding @noreference restrictions to an API method.
+	 * As a consequence, the corresponding method is no longer an API method.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int API_METHOD = 62;
+	/**
+	 * Delta kind flag that denotes adding @noreference restrictions to an API constructor.
+	 * As a consequence, the corresponding constructor is no longer an API constructor.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int API_CONSTRUCTOR = 63;
+	/**
+	 * Delta kind flag that denotes adding @noreference restrictions to an API enum constant.
+	 * As a consequence, the corresponding enum constant is no longer an API enum constant.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int API_ENUM_CONSTANT = 64;
+	/**
+	 * Delta kind flag that denotes adding @noreference restrictions to an API enum constant.
+	 * As a consequence, the corresponding enum constant is no longer an API enum constant.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int API_METHOD_WITH_DEFAULT_VALUE = 65;
+	/**
+	 * Delta kind flag that denotes adding @noreference restrictions to an API enum constant.
+	 * As a consequence, the corresponding enum constant is no longer an API enum constant.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int API_METHOD_WITHOUT_DEFAULT_VALUE = 66;
 	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
 	 * 

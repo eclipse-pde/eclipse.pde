@@ -185,10 +185,12 @@ public class Messages extends NLS {
 							case IDelta.CLINIT :
 								return 25;
 							case IDelta.CONSTRUCTOR :
+							case IDelta.API_CONSTRUCTOR :
 								return 26;
 							case IDelta.FIELD_MOVED_UP :
 								return 27;
 							case IDelta.FIELD :
+							case IDelta.API_FIELD :
 								if (Util.isProtected(delta.getModifiers())) {
 									return 28;
 								}
@@ -196,6 +198,7 @@ public class Messages extends NLS {
 							case IDelta.METHOD_MOVED_UP :
 								return 30;
 							case IDelta.METHOD :
+							case IDelta.API_METHOD :
 								if (Util.isProtected(delta.getModifiers())) {
 									return 31;
 								}
@@ -222,8 +225,10 @@ public class Messages extends NLS {
 						}
 						break;
 					case IDelta.REMOVED :
-						if (delta.getFlags() == IDelta.CONSTRUCTOR) {
-							return 38;
+						switch(delta.getFlags()) {
+							case IDelta.CONSTRUCTOR :
+							case IDelta.API_CONSTRUCTOR :
+								return 38;
 						}
 				}
 				break;

@@ -1248,6 +1248,26 @@ public class ClassFileComparator {
 					}
 				}
 				if (!found) {
+					if (this.visibilityModifiers == VisibilityModifiers.API) {
+						// check if this method should be removed because it is tagged as @noreference
+						IApiDescription apiDescription = null;
+						try {
+							apiDescription = this.component.getApiDescription();
+						} catch (CoreException e) {
+							ApiPlugin.log(e);
+						}
+						if (apiDescription != null) {
+							IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(fieldDescriptor.handle);
+							if (apiAnnotations != null) {
+								int restrictions = apiAnnotations.getRestrictions();
+								if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+									// if not found, but tagged as @noreference in reference we don't need to report 
+									// a removed field
+									return;
+								}
+							}
+						}
+					}
 					if (fieldDescriptor.isEnum()) {
 						// report delta (removal of an enum constant - not compatible)
 						this.addDelta(
@@ -1285,10 +1305,84 @@ public class ClassFileComparator {
 		} catch (CoreException e) {
 			// ignore
 		}
-		if (RestrictionModifiers.isUnrestricted(restrictions)) {
-			restrictions = this.currentDescriptorRestrictions; 
+		int referenceRestrictions = RestrictionModifiers.NO_RESTRICTIONS;
+		if (this.visibilityModifiers == VisibilityModifiers.API) {
+			// check if this method should be removed because it is tagged as @noreference
+			IApiDescription apiDescription = null;
+			try {
+				apiDescription = this.component.getApiDescription();
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
+			if (apiDescription != null) {
+				IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(fieldDescriptor.handle);
+				if (apiAnnotations != null) {
+					referenceRestrictions = apiAnnotations.getRestrictions();
+				}
+			}
 		}
+		
 		int access2 = fieldDescriptor2.access;
+		if (RestrictionModifiers.isReferenceRestriction(referenceRestrictions)) {
+			// tagged as @noreference in the reference component
+			if (!RestrictionModifiers.isReferenceRestriction(restrictions)) {
+				// no longer tagged as @noreference
+				// report a field addition
+				if (fieldDescriptor2.isEnum()) {
+					// report delta (addition of an enum constant - compatible
+					this.addDelta(
+							this.descriptor2.getElementType(),
+							IDelta.ADDED,
+							IDelta.ENUM_CONSTANT,
+							this.currentDescriptorRestrictions,
+							access2,
+							this.classFile,
+							name,
+							new String[] {Util.getDescriptorName(this.descriptor2), name});
+				} else {
+					if (Util.isFinal(descriptor2.access)) {
+						this.addDelta(
+								this.descriptor2.getElementType(),
+								IDelta.ADDED,
+								IDelta.FIELD,
+								this.currentDescriptorRestrictions | RestrictionModifiers.NO_EXTEND,
+								access2,
+								this.classFile,
+								name,
+								new String[] {Util.getDescriptorName(this.descriptor2), name});
+					} else {
+						this.addDelta(
+								this.descriptor2.getElementType(),
+								IDelta.ADDED,
+								IDelta.FIELD,
+								this.currentDescriptorRestrictions,
+								access2,
+								this.classFile,
+								name,
+								new String[] {Util.getDescriptorName(this.descriptor2), name});
+					}
+				}
+				return;
+			}
+		} else if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+			if ((Util.isPublic(access2) || Util.isProtected(access2))
+					&& visibilityModifiers == VisibilityModifiers.API) {
+				// report that it is no longer an API field
+				this.addDelta(
+						this.descriptor2.getElementType(),
+						IDelta.REMOVED,
+						fieldDescriptor2.isEnum() ? IDelta.API_ENUM_CONSTANT : IDelta.API_FIELD,
+						this.currentDescriptorRestrictions,
+						access2,
+						this.classFile,
+						name,
+						new String[] {Util.getDescriptorName(this.descriptor2), name});
+				return;
+			}
+		}
+
+		restrictions = this.currentDescriptorRestrictions;
+
 		if (!fieldDescriptor.descriptor.equals(fieldDescriptor2.descriptor)) {
 			// report delta
 			this.addDelta(
@@ -1642,6 +1736,26 @@ public class ClassFileComparator {
 				}
 			}
 			if (!found) {
+				if (this.visibilityModifiers == VisibilityModifiers.API) {
+					// check if this method should be removed because it is tagged as @noreference
+					IApiDescription apiDescription = null;
+					try {
+						apiDescription = this.component.getApiDescription();
+					} catch (CoreException e) {
+						ApiPlugin.log(e);
+					}
+					if (apiDescription != null) {
+						IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(methodDescriptor.handle);
+						if (apiAnnotations != null) {
+							int restrictions = apiAnnotations.getRestrictions();
+							if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+								// if not found, but tagged as @noreference in reference we don't need to report 
+								// a removed method
+								return;
+							}
+						}
+					}
+				}
 				if (this.descriptor1.isAnnotation()) {
 					this.addDelta(
 							this.descriptor1.getElementType(),
@@ -1675,6 +1789,143 @@ public class ClassFileComparator {
 			}
 		} catch (CoreException e) {
 			// ignore
+		}
+		int referenceRestrictions = RestrictionModifiers.NO_RESTRICTIONS;
+		int access2 = methodDescriptor2.access;
+		if (this.visibilityModifiers == VisibilityModifiers.API) {
+			// check if this method should be removed because it is tagged as @noreference
+			IApiDescription apiDescription = null;
+			try {
+				apiDescription = this.component.getApiDescription();
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
+			if (apiDescription != null) {
+				IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(methodDescriptor.handle);
+				if (apiAnnotations != null) {
+					referenceRestrictions = apiAnnotations.getRestrictions();
+				}
+			}
+			if (RestrictionModifiers.isReferenceRestriction(referenceRestrictions)) {
+				// tagged as @noreference in the reference component
+				if (!RestrictionModifiers.isReferenceRestriction(restrictions)) {
+					// no longer tagged as @noreference
+					// report a method addition
+					if (methodDescriptor.isConstructor()) {
+						this.addDelta(
+								this.descriptor2.getElementType(),
+								IDelta.ADDED,
+								IDelta.CONSTRUCTOR,
+								this.currentDescriptorRestrictions,
+								access2,
+								this.classFile,
+								getKeyForMethod(methodDescriptor, this.descriptor2),
+								new String[] {Util.getDescriptorName(this.descriptor2), methodDisplayName});
+					} else if (this.descriptor2.isAnnotation()) {
+						if (methodDescriptor.defaultValue != null) {
+							this.addDelta(
+									this.descriptor2.getElementType(),
+									IDelta.ADDED,
+									IDelta.METHOD_WITH_DEFAULT_VALUE,
+									this.currentDescriptorRestrictions,
+									access2,
+									this.classFile,
+									getKeyForMethod(methodDescriptor, this.descriptor2),
+									new String[] {Util.getDescriptorName(this.descriptor2), methodDisplayName });
+						} else {
+							this.addDelta(
+									this.descriptor2.getElementType(),
+									IDelta.ADDED,
+									IDelta.METHOD_WITHOUT_DEFAULT_VALUE,
+									this.currentDescriptorRestrictions,
+									access2,
+									this.classFile,
+									getKeyForMethod(methodDescriptor, this.descriptor2),
+									new String[] {Util.getDescriptorName(this.descriptor2), methodDisplayName });
+						}
+					} else {
+						// check superclass
+						// if null we need to walk the hierarchy of descriptor2
+						TypeDescriptor typeDescriptor2 = this.descriptor2;
+						boolean found = false;
+						if (this.component2 != null) {
+							if (this.descriptor1.isInterface()) {
+								Set interfacesSet = getInterfacesSet(typeDescriptor2, this.component2, this.apiProfile2);
+								if (interfacesSet != null) {
+									for (Iterator iterator = interfacesSet.iterator(); iterator.hasNext();) {
+										TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
+										MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
+										if (methodDescriptor3 == null) {
+											continue;
+										} else {
+											// interface method can only be public
+											// method has been move up in the hierarchy - report the delta and abort loop
+											found = true;
+											break;
+										}
+									}
+								}
+							} else {
+								Set superclassSet = getSuperclassSet(typeDescriptor2, this.component2, this.apiProfile2, true);
+								if (superclassSet != null) {
+									loop: for (Iterator iterator = superclassSet.iterator(); iterator.hasNext();) {
+										TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
+										MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
+										if (methodDescriptor3 == null) {
+											continue;
+										} else {
+											int access3 = methodDescriptor3.access;
+											if (Util.isPublic(access3)
+													|| Util.isProtected(access3)) {
+												// method has been move up in the hierarchy - report the delta and abort loop
+												// TODO need to make the distinction between methods that need to be reimplemented and methods that don't
+												found = true;
+												break loop;
+											}
+										}
+									}
+								}
+							}
+						}
+						this.addDelta(
+								this.descriptor2.getElementType(),
+								IDelta.ADDED,
+								found ? IDelta.OVERRIDEN_METHOD : IDelta.METHOD,
+								this.currentDescriptorRestrictions,
+								access2,
+								this.classFile,
+								getKeyForMethod(methodDescriptor, this.descriptor2),
+								new String[] {Util.getDescriptorName(this.descriptor2), methodDisplayName });
+					}
+					return;
+				}
+			} else if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+				if (Util.isPublic(access2) || Util.isProtected(access2)) {
+					// report that it is no longer an API method
+					if (this.descriptor2.isAnnotation()) {
+						this.addDelta(
+								this.descriptor2.getElementType(),
+								IDelta.REMOVED,
+								methodDescriptor.defaultValue != null ? IDelta.API_METHOD_WITH_DEFAULT_VALUE : IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE,
+								this.currentDescriptorRestrictions,
+								access2,
+								this.classFile,
+								getKeyForMethod(methodDescriptor2, this.descriptor2),
+								new String[] {Util.getDescriptorName(this.descriptor2), methodDisplayName});
+					} else {
+						this.addDelta(
+								this.descriptor2.getElementType(),
+								IDelta.REMOVED,
+								methodDescriptor.isConstructor() ? IDelta.API_CONSTRUCTOR : IDelta.API_METHOD,
+								Util.isAbstract(this.descriptor1.access) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions,
+								access2,
+								this.classFile,
+								getKeyForMethod(methodDescriptor2, this.descriptor2),
+								new String[] {Util.getDescriptorName(this.descriptor2), methodDisplayName});
+					}
+					return;
+				}
+			}
 		}
 		if (methodDescriptor.exceptions != null) {
 			if (methodDescriptor2.exceptions == null) {
@@ -1808,7 +2059,6 @@ public class ClassFileComparator {
 				}
 			}
 		}
-		int access2 = methodDescriptor2.access;
 		if (Util.isVarargs(access)) {
 			if (!Util.isVarargs(access2)) {
 				// report delta: conversion from T... to T[] - break compatibility 
@@ -2194,6 +2444,25 @@ public class ClassFileComparator {
 			// we ignore synthetic fields 
 			return;
 		}
+		if (this.visibilityModifiers == VisibilityModifiers.API) {
+			// check if this method should be removed because it is tagged as @noreference
+			IApiDescription apiDescription = null;
+			try {
+				apiDescription = this.component2.getApiDescription();
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
+			if (apiDescription != null) {
+				IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(fieldDescriptor.handle);
+				if (apiAnnotations != null) {
+					int restrictions = apiAnnotations.getRestrictions();
+					if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+						// such a method is not seen as an API method
+						return;
+					}
+				}
+			}
+		}
 		if (fieldDescriptor.isEnum()) {
 			// report delta (addition of an enum constant - compatible
 			this.addDelta(
@@ -2247,108 +2516,128 @@ public class ClassFileComparator {
 		if (Util.isSynthetic(access)) {
 			// we ignore synthetic method
 			return;
-		} else {
-			String methodDisplayName = getMethodDisplayName(methodDescriptor, typeDescriptor);
-			if (Util.isPublic(access) || Util.isProtected(access)) {
-				if (methodDescriptor.isConstructor()) {
+		}
+		if (this.visibilityModifiers == VisibilityModifiers.API) {
+			// check if this method should be removed because it is tagged as @noreference
+			IApiDescription apiDescription = null;
+			int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+			try {
+				apiDescription = this.component2.getApiDescription();
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
+			if (apiDescription != null) {
+				IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(methodDescriptor.handle);
+				if (apiAnnotations != null) {
+					restrictions = apiAnnotations.getRestrictions();
+				}
+			}
+			// check if this method should be removed because it is tagged as @noreference
+			if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+				// such a method is not seen as an API method
+				return;
+			}
+		}
+		String methodDisplayName = getMethodDisplayName(methodDescriptor, typeDescriptor);
+		if (Util.isPublic(access) || Util.isProtected(access)) {
+			if (methodDescriptor.isConstructor()) {
+				this.addDelta(
+						typeDescriptor.getElementType(),
+						IDelta.ADDED,
+						IDelta.CONSTRUCTOR,
+						this.currentDescriptorRestrictions,
+						access,
+						this.classFile,
+						getKeyForMethod(methodDescriptor, typeDescriptor),
+						new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName});
+			} else if (typeDescriptor.isAnnotation()) {
+				if (methodDescriptor.defaultValue != null) {
 					this.addDelta(
 							typeDescriptor.getElementType(),
 							IDelta.ADDED,
-							IDelta.CONSTRUCTOR,
+							IDelta.METHOD_WITH_DEFAULT_VALUE,
 							this.currentDescriptorRestrictions,
 							access,
 							this.classFile,
 							getKeyForMethod(methodDescriptor, typeDescriptor),
-							new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName});
-				} else if (typeDescriptor.isAnnotation()) {
-					if (methodDescriptor.defaultValue != null) {
-						this.addDelta(
-								typeDescriptor.getElementType(),
-								IDelta.ADDED,
-								IDelta.METHOD_WITH_DEFAULT_VALUE,
-								this.currentDescriptorRestrictions,
-								access,
-								this.classFile,
-								getKeyForMethod(methodDescriptor, typeDescriptor),
-								new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
-					} else {
-						this.addDelta(
-								typeDescriptor.getElementType(),
-								IDelta.ADDED,
-								IDelta.METHOD_WITHOUT_DEFAULT_VALUE,
-								this.currentDescriptorRestrictions,
-								typeDescriptor.access,
-								this.classFile,
-								getKeyForMethod(methodDescriptor, typeDescriptor),
-								new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
-					}
+							new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
 				} else {
-					// check superclass
-					// if null we need to walk the hierarchy of descriptor2
-					TypeDescriptor typeDescriptor2 = this.descriptor2;
-					boolean found = false;
-					if (this.component2 != null) {
-						String name = methodDescriptor.name;
-						String descriptor = methodDescriptor.descriptor;
-						if (this.descriptor1.isInterface()) {
-							Set interfacesSet = getInterfacesSet(typeDescriptor2, this.component2, this.apiProfile2);
-							if (interfacesSet != null) {
-								for (Iterator iterator = interfacesSet.iterator(); iterator.hasNext();) {
-									TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
-									MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
-									if (methodDescriptor3 == null) {
-										continue;
-									} else {
-										// interface method can only be public
-										// method has been move up in the hierarchy - report the delta and abort loop
-										found = true;
-										break;
-									}
-								}
-							}
-						} else {
-							Set superclassSet = getSuperclassSet(typeDescriptor2, this.component2, this.apiProfile2, true);
-							if (superclassSet != null) {
-								loop: for (Iterator iterator = superclassSet.iterator(); iterator.hasNext();) {
-									TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
-									MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
-									if (methodDescriptor3 == null) {
-										continue;
-									} else {
-										int access3 = methodDescriptor3.access;
-										if (Util.isPublic(access3)
-												|| Util.isProtected(access3)) {
-											// method has been move up in the hierarchy - report the delta and abort loop
-											// TODO need to make the distinction between methods that need to be reimplemented and methods that don't
-											found = true;
-											break loop;
-										}
-									}
-								}
-							}
-						}
-					}
 					this.addDelta(
 							typeDescriptor.getElementType(),
 							IDelta.ADDED,
-							found ? IDelta.OVERRIDEN_METHOD : IDelta.METHOD,
+							IDelta.METHOD_WITHOUT_DEFAULT_VALUE,
 							this.currentDescriptorRestrictions,
-							methodDescriptor.access,
+							typeDescriptor.access,
 							this.classFile,
 							getKeyForMethod(methodDescriptor, typeDescriptor),
 							new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
 				}
 			} else {
+				// check superclass
+				// if null we need to walk the hierarchy of descriptor2
+				TypeDescriptor typeDescriptor2 = this.descriptor2;
+				boolean found = false;
+				if (this.component2 != null) {
+					String name = methodDescriptor.name;
+					String descriptor = methodDescriptor.descriptor;
+					if (this.descriptor1.isInterface()) {
+						Set interfacesSet = getInterfacesSet(typeDescriptor2, this.component2, this.apiProfile2);
+						if (interfacesSet != null) {
+							for (Iterator iterator = interfacesSet.iterator(); iterator.hasNext();) {
+								TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
+								MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
+								if (methodDescriptor3 == null) {
+									continue;
+								} else {
+									// interface method can only be public
+									// method has been move up in the hierarchy - report the delta and abort loop
+									found = true;
+									break;
+								}
+							}
+						}
+					} else {
+						Set superclassSet = getSuperclassSet(typeDescriptor2, this.component2, this.apiProfile2, true);
+						if (superclassSet != null) {
+							loop: for (Iterator iterator = superclassSet.iterator(); iterator.hasNext();) {
+								TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
+								MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
+								if (methodDescriptor3 == null) {
+									continue;
+								} else {
+									int access3 = methodDescriptor3.access;
+									if (Util.isPublic(access3)
+											|| Util.isProtected(access3)) {
+										// method has been move up in the hierarchy - report the delta and abort loop
+										// TODO need to make the distinction between methods that need to be reimplemented and methods that don't
+										found = true;
+										break loop;
+									}
+								}
+							}
+						}
+					}
+				}
 				this.addDelta(
 						typeDescriptor.getElementType(),
 						IDelta.ADDED,
-						methodDescriptor.isConstructor() ? IDelta.CONSTRUCTOR : IDelta.METHOD,
+						found ? IDelta.OVERRIDEN_METHOD : IDelta.METHOD,
 						this.currentDescriptorRestrictions,
 						methodDescriptor.access,
 						this.classFile,
 						getKeyForMethod(methodDescriptor, typeDescriptor),
 						new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
 			}
+		} else {
+			this.addDelta(
+					typeDescriptor.getElementType(),
+					IDelta.ADDED,
+					methodDescriptor.isConstructor() ? IDelta.CONSTRUCTOR : IDelta.METHOD,
+					this.currentDescriptorRestrictions,
+					methodDescriptor.access,
+					this.classFile,
+					getKeyForMethod(methodDescriptor, typeDescriptor),
+					new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
 		}
 	}
 	

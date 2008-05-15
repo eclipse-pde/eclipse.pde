@@ -491,6 +491,12 @@ public class ApiProblemFactory {
 							case IDelta.TYPE_PARAMETERS: return 106;
 							case IDelta.VALUE : return 108;
 							case IDelta.API_TYPE: return 113;
+							case IDelta.API_FIELD: return 125;
+							case IDelta.API_METHOD: return 126;
+							case IDelta.API_CONSTRUCTOR: return 127;
+							case IDelta.API_ENUM_CONSTANT: return 128;
+							case IDelta.API_METHOD_WITH_DEFAULT_VALUE : return 129;
+							case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE: return 130;
 						}
 					}
 				}
