@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -28,8 +29,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(EnumDeltaTests.class);
 		TestSuite suite = new TestSuite(EnumDeltaTests.class.getName());
-		suite.addTest(new EnumDeltaTests("test3"));
-		suite.addTest(new EnumDeltaTests("test4"));
+		suite.addTest(new EnumDeltaTests("test12"));
 		return suite;
 	}
 
@@ -232,4 +232,86 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
+	/**
+	 * Added @noreference to an existing enum constant
+	 */
+	public void test9() {
+		deployBundles("test9");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertTrue("Not visible", Util.isVisible(child));
+		assertEquals("Wrong flag", IDelta.API_ENUM_CONSTANT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Added @noreference to a new enum constant
+	 */
+	public void test10() {
+		deployBundles("test10");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		assertTrue("Wrong delta", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * Added @noreference to a new enum constant
+	 */
+	public void test11() {
+		deployBundles("test11");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertTrue("Not visible", Util.isVisible(child));
+		assertEquals("Wrong flag", IDelta.ENUM_CONSTANT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Removed @noreference to a new enum constant
+	 */
+	public void test12() {
+		deployBundles("test12");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertTrue("Not visible", Util.isVisible(child));
+		assertEquals("Wrong flag", IDelta.ENUM_CONSTANT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
 }
+
