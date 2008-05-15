@@ -11,18 +11,38 @@
 package org.eclipse.pde.internal.ds.tests;
 
 import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.eclipse.pde.internal.ds.core.IDSProperty;
 
 public class DSPropertyTestCase extends AbstractDSModelTestCase {
 	
-	public void testProperty() {
+	public void testAddProperty() {
 		StringBuffer buffer = new StringBuffer();
+		buffer.append("<property ");
+		buffer.append("/>");
 		setXMLContents(buffer, LF);
 		load();
 
 		IDSComponent component = fModel.getDSComponent();
 		assertNotNull(component);
 		
-		// TODO fill in
+		IDSProperty[] propertyElements = fModel.getDSComponent().getPropertyElements();
+		assertTrue(propertyElements.length == 1);
+		IDSProperty property = propertyElements[0];
+
+		String name = "propertyName";
+		String type = "java.lang.String";
+		String value = "propertyValue";
+		String body = "propertyBody";
+		
+		property.setPropertyName(name);
+		property.setPropertyType(type);
+		property.setPropertyValue(value);
+		property.setPropertyElemBody(body);
+		
+		assertEquals(property.getPropertyName(), name);
+		assertEquals(property.getPropertyType(), type);
+		assertEquals(property.getPropertyValue(), value);
+		assertEquals(property.getPropertyElemBody(), body);
 	}
 	
 	

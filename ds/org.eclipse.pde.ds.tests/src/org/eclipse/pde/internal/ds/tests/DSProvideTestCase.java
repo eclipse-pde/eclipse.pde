@@ -45,7 +45,6 @@ public class DSProvideTestCase extends AbstractDSModelTestCase {
 		provide.setInterface(interfaceName);
 		
 		String content = fModel.getDSComponent().toString();
-		System.out.println(content);
 		assertTrue(content.contains(interfaceName));
 		
 	}
