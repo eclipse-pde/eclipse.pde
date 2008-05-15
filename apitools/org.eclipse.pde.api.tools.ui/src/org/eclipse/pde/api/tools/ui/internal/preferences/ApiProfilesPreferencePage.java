@@ -76,9 +76,9 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	
 	private IApiProfileManager manager = ApiPlugin.getDefault().getApiProfileManager();
 
-	private HashSet removed = new HashSet();
+	private static HashSet removed = new HashSet(8);
 	private CheckboxTableViewer tableviewer = null;
-	private ArrayList backingcollection = new ArrayList();
+	private ArrayList backingcollection = new ArrayList(8);
 	private String newdefault = null;
 	private Button newbutton = null, 
 				   removebutton = null, 
@@ -205,6 +205,15 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		block.createControl(comp, this);
 		SWTFactory.createVerticalSpacer(parent, 1);
 		return comp;
+	}
+	
+	/**
+	 * Returns if the {@link IApiProfile} with the given name has been removed, but not yet committed back to the manager
+	 * @param name the name of the {@link IApiProfile}
+	 * @return true if the {@link IApiProfile} has been removed from the page, false otherwise
+	 */
+	public static boolean isRemovedBaseline(String name) {
+		return removed.contains(name);
 	}
 	
 	/**

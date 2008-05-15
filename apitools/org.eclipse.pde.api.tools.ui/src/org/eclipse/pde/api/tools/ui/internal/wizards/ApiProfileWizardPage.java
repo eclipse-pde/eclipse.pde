@@ -48,6 +48,7 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
+import org.eclipse.pde.api.tools.ui.internal.preferences.ApiProfilesPreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -455,7 +456,8 @@ public class ApiProfileWizardPage extends WizardPage {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
 			return false;
 		}
-		if(!text.equals(originalname) && ((ApiProfileManager)ApiPlugin.getDefault().getApiProfileManager()).isExistingProfileName(text)) {
+		if(!text.equals(originalname) && (((ApiProfileManager)ApiPlugin.getDefault().getApiProfileManager()).isExistingProfileName(text) &&
+				!ApiProfilesPreferencePage.isRemovedBaseline(text))) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_profile_with_that_name_exists);
 			return false;
 		}
