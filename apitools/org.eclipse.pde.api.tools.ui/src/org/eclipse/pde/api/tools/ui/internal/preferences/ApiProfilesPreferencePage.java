@@ -160,6 +160,12 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 						backingcollection.add(profile);
 						tableviewer.refresh();
 						tableviewer.setSelection(new StructuredSelection(profile), true);
+						if(backingcollection.size() == 1) {
+							newdefault = profile.getName();
+							tableviewer.setCheckedElements(new Object[] {profile});
+							tableviewer.refresh(profile);
+						}
+						
 						dirty = true;
 					}
 				}
