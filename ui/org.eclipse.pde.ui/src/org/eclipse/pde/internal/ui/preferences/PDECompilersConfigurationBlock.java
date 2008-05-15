@@ -585,12 +585,12 @@ public class PDECompilersConfigurationBlock {
 		combo.setItems(SEVERITIES);
 		combo.addSelectionListener(selectionlistener);
 		int index = 0;
-		try {
-			index = Integer.parseInt(key.getStoredValue(fLookupOrder, false, fManager));
-		} catch (Exception e) {
-			//set the default if something goes wrong
-			index = Integer.parseInt(key.getStoredValue(fLookupOrder, true, fManager));
-		}
+		String value = key.getStoredValue(fLookupOrder, false, fManager);
+		if (value == null)
+			value = key.getStoredValue(fLookupOrder, true, fManager);
+
+		if (value != null)
+			index = Integer.parseInt(value);
 		combo.select(data.getSelection(SEVERITIES[index]));
 		Integer mapkey = new Integer(tabkind);
 		HashSet controls = (HashSet) fControlMap.get(mapkey);
