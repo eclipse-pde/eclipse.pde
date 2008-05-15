@@ -337,6 +337,7 @@ public class ApiProfileWizardPage extends WizardPage {
 					 * copy/paste with a path that points to a plugin directory
 					 */
 					locationcombo.setText(newPath);
+					setErrorMessage(null);
 					doReload();
 				}
 			}
