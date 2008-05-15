@@ -348,7 +348,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			fChangedTypes.clear();
 			fProjectToOutputLocations.clear();
 			updateMonitor(monitor, 0);
-			createMarkers();
 			fAnalyzer.dispose();
 			localMonitor.done();
 			if (fBuildState != null) {
@@ -391,6 +390,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			if(apiComponent != null) {
 				fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, null, null, localMonitor);
 				updateMonitor(localMonitor, 1);
+				createMarkers();
+				updateMonitor(localMonitor, 0);
 			}
 		}
 	}
@@ -595,6 +596,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 				fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, (String[])tnames.toArray(new String[tnames.size()]), (String[])cnames.toArray(new String[cnames.size()]), localMonitor);
 				updateMonitor(localMonitor, 1);
+				createMarkers();
+				updateMonitor(localMonitor, 0);
 			}
 		}
 	}
