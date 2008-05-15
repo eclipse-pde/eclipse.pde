@@ -291,7 +291,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			System.out.println("\nStarting build of " + fCurrentProject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		updateMonitor(monitor, 0);
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 2);
+		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 2);
 		IProject[] projects = getRequiredProjects(true);
 		try {
 			switch(kind) {
@@ -299,7 +299,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					if (DEBUG) {
 						System.out.println("Performing full build as requested by user"); //$NON-NLS-1$
 					}
-					buildAll(localMonitor);
+					buildAll(localMonitor.newChild(1));
 					break;
 				}
 				case AUTO_BUILD :
@@ -318,22 +318,22 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						if (DEBUG) {
 							System.out.println("Performing full build since MANIFEST.MF was modified"); //$NON-NLS-1$
 						}
-						buildAll(localMonitor);
+						buildAll(localMonitor.newChild(1));
 					} else if (deltas.length == 0) {
 						if (DEBUG) {
 							System.out.println("Performing full build since deltas are missing after incremental request"); //$NON-NLS-1$
 						}
-						buildAll(localMonitor);
+						buildAll(localMonitor.newChild(1));
 					} else {
 						State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(fCurrentProject, new NullProgressMonitor());
 						if (state == null) {
-							buildAll(localMonitor);
+							buildAll(localMonitor.newChild(1));
 						} else {
 							fBuildState = getLastBuiltState(fCurrentProject);
 							if (fBuildState == null) {
-								buildAll(localMonitor);
+								buildAll(localMonitor.newChild(1));
 							} else {
-								build(state, localMonitor);
+								build(state, localMonitor.newChild(1));
 							}
 						}
 					}
@@ -349,7 +349,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			fProjectToOutputLocations.clear();
 			updateMonitor(monitor, 0);
 			fAnalyzer.dispose();
-			localMonitor.done();
+			if(monitor != null) {
+				monitor.done();
+			}
 			if (fBuildState != null) {
 				saveBuiltState(fCurrentProject, fBuildState);
 				fBuildState = null;
@@ -366,32 +368,39 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param monitor
 	 */
 	private void buildAll(IProgressMonitor monitor) throws CoreException {
-		clearLastState();
-		fBuildState = new BuildState();
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 3);
-		localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_initializing_analyzer, fCurrentProject.getName()));
-		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
-		cleanupMarkers(fCurrentProject);
-		cleanupUnsupportedTagMarkers(fCurrentProject);
-		IPluginModelBase currentModel = getCurrentModel();
-		if (currentModel != null) {
-			localMonitor.subTask(BuilderMessages.building_workspace_profile);
-			IApiProfile wsprofile = getWorkspaceProfile();
-			updateMonitor(localMonitor, 1);
-			if (wsprofile == null) {
-				if (DEBUG) {
-					System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
-				}
-				return;
-			}
-			String id = currentModel.getBundleDescription().getSymbolicName();
-			// Compatibility checks
-			IApiComponent apiComponent = wsprofile.getApiComponent(id);
-			if(apiComponent != null) {
-				fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, null, null, localMonitor);
+		try {
+			clearLastState();
+			fBuildState = new BuildState();
+			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
+			localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_initializing_analyzer, fCurrentProject.getName()));
+			IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
+			cleanupMarkers(fCurrentProject);
+			cleanupUnsupportedTagMarkers(fCurrentProject);
+			IPluginModelBase currentModel = getCurrentModel();
+			if (currentModel != null) {
+				localMonitor.subTask(BuilderMessages.building_workspace_profile);
+				IApiProfile wsprofile = getWorkspaceProfile();
 				updateMonitor(localMonitor, 1);
-				createMarkers();
-				updateMonitor(localMonitor, 0);
+				if (wsprofile == null) {
+					if (DEBUG) {
+						System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
+					}
+					return;
+				}
+				String id = currentModel.getBundleDescription().getSymbolicName();
+				// Compatibility checks
+				IApiComponent apiComponent = wsprofile.getApiComponent(id);
+				if(apiComponent != null) {
+					fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, null, null, localMonitor.newChild(1));
+					updateMonitor(localMonitor, 1);
+					createMarkers();
+					updateMonitor(localMonitor, 1);
+				}
+			}
+		}
+		finally {
+			if(monitor != null) {
+				monitor.done();
 			}
 		}
 	}
@@ -568,36 +577,43 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param monitor
 	 */
 	private void build(final State state, IProgressMonitor monitor) throws CoreException {
-		clearLastState(); // so if the build fails, a full build will be triggered
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
-		localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, fCurrentProject.getName()));
-		updateMonitor(localMonitor, 0);
-		collectAffectedSourceFiles(state);
-		updateMonitor(localMonitor, 1);
-		if (fTypesToCheck.size() != 0) {
-			IPluginModelBase currentModel = getCurrentModel();
-			if (currentModel != null) {
-				IApiProfile wsprofile = getWorkspaceProfile();
-				if (wsprofile == null) {
-					if (DEBUG) {
-						System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
+		try {
+			clearLastState(); // so if the build fails, a full build will be triggered
+			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 6);
+			localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, fCurrentProject.getName()));
+			updateMonitor(localMonitor, 0);
+			collectAffectedSourceFiles(state);
+			updateMonitor(localMonitor, 1);
+			if (fTypesToCheck.size() != 0) {
+				IPluginModelBase currentModel = getCurrentModel();
+				if (currentModel != null) {
+					IApiProfile wsprofile = getWorkspaceProfile();
+					if (wsprofile == null) {
+						if (DEBUG) {
+							System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
+						}
+						return;
 					}
-					return;
+					String id = currentModel.getBundleDescription().getSymbolicName();
+					IApiComponent apiComponent = wsprofile.getApiComponent(id);
+					if(apiComponent == null) {
+						return;
+					}
+					List tnames = new ArrayList(fTypesToCheck.size()),
+						 cnames = new ArrayList(fChangedTypes.size());
+					collectAllQualifiedNames(fTypesToCheck, fChangedTypes, tnames, cnames, localMonitor.newChild(1));
+					updateMonitor(localMonitor, 1);
+					IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
+					fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, (String[])tnames.toArray(new String[tnames.size()]), (String[])cnames.toArray(new String[cnames.size()]), localMonitor.newChild(1));
+					updateMonitor(localMonitor, 1);
+					createMarkers();
+					updateMonitor(localMonitor, 1);
 				}
-				String id = currentModel.getBundleDescription().getSymbolicName();
-				IApiComponent apiComponent = wsprofile.getApiComponent(id);
-				if(apiComponent == null) {
-					return;
-				}
-				List tnames = new ArrayList(fTypesToCheck.size()),
-					 cnames = new ArrayList(fChangedTypes.size());
-				collectAllQualifiedNames(fTypesToCheck, fChangedTypes, tnames, cnames, localMonitor);
-				updateMonitor(localMonitor, 1);
-				IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
-				fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, (String[])tnames.toArray(new String[tnames.size()]), (String[])cnames.toArray(new String[cnames.size()]), localMonitor);
-				updateMonitor(localMonitor, 1);
-				createMarkers();
-				updateMonitor(localMonitor, 0);
+			}
+		}
+		finally {
+			if(monitor != null) {
+				monitor.done();
 			}
 		}
 	}

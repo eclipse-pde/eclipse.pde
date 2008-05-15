@@ -70,7 +70,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -201,13 +201,11 @@ public final class Util {
 			}
 			try {
 				if (fProjects != null) {
-					int length = fProjects.length;
-					monitor.beginTask(UtilMessages.Util_0, length);
-					for (int i = 0; i < length; i++) {
-						IProject project = fProjects[i];
-						monitor.subTask(NLS.bind(UtilMessages.Util_5, project.getName())); 
-						project.build(this.fBuildType, ApiPlugin.BUILDER_ID, null, new SubProgressMonitor(monitor,1));
-						monitor.worked(1);
+					SubMonitor localmonitor = SubMonitor.convert(monitor, UtilMessages.Util_0, fProjects.length*2);
+					for (int i = 0; i < fProjects.length; i++) {
+						localmonitor.subTask(NLS.bind(UtilMessages.Util_5, fProjects[i].getName())); 
+						fProjects[i].build(this.fBuildType, ApiPlugin.BUILDER_ID, null, localmonitor.newChild(1));
+						localmonitor.worked(1);
 					}
 				}
 			} catch (CoreException e) {

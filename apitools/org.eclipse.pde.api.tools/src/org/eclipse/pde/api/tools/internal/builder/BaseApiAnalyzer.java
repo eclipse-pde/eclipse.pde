@@ -155,21 +155,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(org.eclipse.pde.api.tools.internal.builder.BuildState, org.eclipse.pde.api.tools.internal.provisional.IApiProfile, org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String[], java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void analyzeComponent(
-			final BuildState state,
-			final IApiFilterStore filterStore,
-			final IApiProfile baseline,
-			final IApiComponent component,
-			final String[] typenames,
-			final String[] changedtypes,
-			IProgressMonitor monitor) {
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 3 + (typenames == null ? 0 : typenames.length));
+	public void analyzeComponent(final BuildState state, final IApiFilterStore filterStore, final IApiProfile baseline,	final IApiComponent component,
+			final String[] typenames, final String[] changedtypes, IProgressMonitor monitor) {
 		try {
+			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 6 + (changedtypes == null ? 0 : changedtypes.length));
 			fJavaProject = getJavaProject(component);
 			if(baseline == null) {
 				//check default baseline
 				checkDefaultBaselineSet();
-				updateMonitor(localMonitor, 3);
+				updateMonitor(localMonitor, 6);
 				return;
 			}
 			IApiComponent reference = baseline.getApiComponent(component.getId());
@@ -198,22 +192,24 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				updateMonitor(localMonitor);
 			}
 			//usage checks
-			checkApiUsage(component, typenames, localMonitor);
+			checkApiUsage(component, typenames, localMonitor.newChild(1));
 			updateMonitor(localMonitor);
 			//version checks
 			checkApiComponentVersion(reference, component);
 			updateMonitor(localMonitor);
 			//tag validation
-			checkTagValidation(changedtypes, component, localMonitor);
+			checkTagValidation(changedtypes, component, localMonitor.newChild(1));
 			updateMonitor(localMonitor);
 		}
 		finally {
-			localMonitor.done();
+			if(monitor != null) {
+				monitor.done();
+			}
 		}
 	}
 
 	/**
-	 * Check the version changes of reexported bundles to make sure that the given component
+	 * Check the version changes of re-exported bundles to make sure that the given component
 	 * version is modified accordingly.
 	 * 
 	 * @param reference the given reference api profile
@@ -449,12 +445,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param component
 	 * @param monitor
 	 */
-	private void checkTagValidation(String[] typenames, IApiComponent component, IProgressMonitor monitor) {
+	private void checkTagValidation(final String[] typenames, final IApiComponent component, IProgressMonitor monitor) {
 		if(ignoreInvalidTagCheck()) {
 			return;
 		}
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + (typenames == null ? component.getClassFileContainers().length : typenames.length));
 		try {
+			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + (typenames == null ? component.getClassFileContainers().length : typenames.length));
 			if(typenames == null) {
 				IClassFileContainer[] containers = component.getClassFileContainers();
 				ClassFileVisitor visitor = new ClassFileVisitor();
@@ -477,7 +473,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			updateMonitor(localMonitor);
 		}
 		finally {
-			localMonitor.done();
+			if(monitor != null) {
+				monitor.done();
+			}
 		}
 	}
 	
@@ -527,7 +525,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return;
 		} 
 		IApiSearchScope scope = getSearchScope(component, typenames);
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {component.getId()}), 2);
+		SubMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {component.getId()}), 2);
 		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
 		try {
 			long start = System.currentTimeMillis();
@@ -546,7 +544,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			ApiPlugin.log(e.getStatus());
 		}
 		finally {
-			localMonitor.done();
+			if(monitor != null) {
+				monitor.done();
+			}
 		}
 	}
 	
