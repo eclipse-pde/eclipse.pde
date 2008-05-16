@@ -109,7 +109,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 */
 	public void dispose() {
 		try {
-			if (hasApiDescription()) {
+			if (isApiDescriptionInitialized()) {
 				try {
 					IApiDescription description = getApiDescription();
 					if (description instanceof ProjectApiDescription) {
@@ -140,6 +140,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 		long time = System.currentTimeMillis();
 		IApiDescription apiDesc = null;
 		if(Util.isApiProject(getJavaProject())) {
+			setHasApiDescription(true);
 			apiDesc = ApiDescriptionManager.getDefault().getApiDescription(getJavaProject(), getBundleDescription());
 		}
 		else {

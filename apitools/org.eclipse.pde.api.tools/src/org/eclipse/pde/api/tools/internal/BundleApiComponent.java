@@ -77,6 +77,11 @@ public class BundleApiComponent extends AbstractApiComponent {
 	private Dictionary fManifest;
 	
 	/**
+	 * Whether there is an underlying .api_description file
+	 */
+	private boolean fHasApiDescription = false;
+	
+	/**
 	 * Root location of component in the file system
 	 */
 	private String fLocation;
@@ -203,6 +208,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 		initializeApiDescription(apiDesc, getBundleDescription(), getLocalPackageNames());
 		try {
 			String xml = loadApiDescription(new File(fLocation));
+			setHasApiDescription(xml != null);
 			if (xml != null) {
 				ApiDescriptionProcessor.annotateApiSettings(null, apiDesc, xml);
 			}
@@ -864,5 +870,26 @@ public class BundleApiComponent extends AbstractApiComponent {
 	
 	public String getOrigin() {
 		return this.getId();
+	}
+
+	/**
+	 * Sets whether this bundle has an underlying API description file.
+	 * 
+	 * @param hasApiDescription whether this bundle has an underlying API description file
+	 */
+	protected void setHasApiDescription(boolean hasApiDescription) {
+		fHasApiDescription = hasApiDescription;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#hasApiDescription()
+	 */
+	public boolean hasApiDescription() {
+		// ensure initialized
+		try {
+			getApiDescription();
+		} catch (CoreException e) {
+		}
+		return fHasApiDescription;
 	}
 }

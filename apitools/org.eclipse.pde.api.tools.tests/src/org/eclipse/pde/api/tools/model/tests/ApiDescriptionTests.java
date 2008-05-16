@@ -769,5 +769,22 @@ public class ApiDescriptionTests extends TestCase {
 	public void testBInternalPkg() {
 		resolveType("a.b.c.internal.PB", VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
 	}
-			
+		
+	/**
+	 * tests that a binary bundle with no .api_description file has no API description
+	 */
+	public void testBinaryHasNoApiDescription() throws CoreException {
+		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiComponent componentA = profile.getApiComponent("component.a");
+		assertFalse("Should have no .api_description file", componentA.hasApiDescription());
+	}
+	
+	/**
+	 * tests that a binary bundle with an .api_description file has an API description
+	 */
+	public void testBinaryHasApiDescription() throws CoreException {
+		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins-with-desc");
+		IApiComponent componentA = profile.getApiComponent("component.a");
+		assertTrue("Should have an .api_description file", componentA.hasApiDescription());
+	}	
 }

@@ -1364,7 +1364,7 @@ public class ClassFileComparator {
 				}
 				return;
 			}
-		} else if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+		} else if (RestrictionModifiers.isReferenceRestriction(restrictions) && component.hasApiDescription()) {
 			if ((Util.isPublic(access2) || Util.isProtected(access2))
 					&& visibilityModifiers == VisibilityModifiers.API) {
 				// report that it is no longer an API field
@@ -1899,7 +1899,7 @@ public class ClassFileComparator {
 					}
 					return;
 				}
-			} else if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+			} else if (RestrictionModifiers.isReferenceRestriction(restrictions) && component.hasApiDescription()) {
 				if (Util.isPublic(access2) || Util.isProtected(access2)) {
 					// report that it is no longer an API method
 					if (this.descriptor2.isAnnotation()) {

@@ -187,6 +187,9 @@ public class ClassFileScannerTests extends TestCase {
 			public IApiDescription getApiDescription() {
 				return null;
 			}
+			public boolean hasApiDescription() {
+				return false;
+			}
 			public boolean isSystemComponent() {
 				return false;
 			}

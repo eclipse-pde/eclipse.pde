@@ -196,4 +196,11 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	public String getOrigin() {
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#hasApiDescription()
+	 */
+	public boolean hasApiDescription() {
+		return false;
+	}
 }

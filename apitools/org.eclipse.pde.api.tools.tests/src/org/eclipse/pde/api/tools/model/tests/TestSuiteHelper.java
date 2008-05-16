@@ -151,6 +151,9 @@ public class TestSuiteHelper {
 			public IApiDescription getApiDescription() {
 				return description;
 			}
+			public boolean hasApiDescription() {
+				return false;
+			}
 			public boolean isSystemComponent() {
 				return false;
 			}

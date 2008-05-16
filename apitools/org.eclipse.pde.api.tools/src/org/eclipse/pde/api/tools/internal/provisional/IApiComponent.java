@@ -49,6 +49,16 @@ public interface IApiComponent extends IClassFileContainer {
 	public IApiDescription getApiDescription() throws CoreException;
 	
 	/**
+	 * Returns whether this component has an underlying API description. Even if a component
+	 * has no underlying description it will return one from {@link #getApiDescription()},
+	 * but it will be empty. This method allows clients to know if there was any thing used
+	 * to populate the description.
+	 * 
+	 * @return whether this component has an underlying API description
+	 */
+	public boolean hasApiDescription();
+	
+	/**
 	 * Returns this component's version identifier.
 	 * 
 	 * @return component version

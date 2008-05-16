@@ -185,7 +185,7 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 	 * 
 	 * @return whether this component has created an API description
 	 */
-	protected synchronized boolean hasApiDescription() {
+	protected synchronized boolean isApiDescriptionInitialized() {
 		return fApiDescription != null;
 	}
 
