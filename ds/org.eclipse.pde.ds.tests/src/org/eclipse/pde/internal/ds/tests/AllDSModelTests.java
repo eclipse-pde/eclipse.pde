@@ -23,6 +23,7 @@ public class AllDSModelTests {
 		suite.addTestSuite(DSProvideTestCase.class);
 		suite.addTestSuite(DSPropertyTestCase.class);
 		suite.addTestSuite(DSPropertiesTestCase.class);
+		suite.addTestSuite(DSImplementationTestCase.class);
 		return suite;
 	}
 
