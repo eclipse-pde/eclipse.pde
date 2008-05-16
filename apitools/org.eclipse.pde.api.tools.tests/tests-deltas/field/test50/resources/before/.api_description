@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="deltatest">
+<plugin id="deltatest" />
+
+<package name="">
+	<type name="X">
+		<field reference="false" name="i"/>
+	</type>
+</package>
+</component>
