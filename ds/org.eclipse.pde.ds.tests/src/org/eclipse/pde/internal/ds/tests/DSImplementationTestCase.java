@@ -22,7 +22,6 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 		buffer.append("<implementation class=\"");
 		buffer.append("org.example.ds.SampleCommandProvider1\">");
 		buffer.append("</implementation>");
-		System.out.println(buffer);
 		setXMLContents(buffer, LF);
 		load();
 
@@ -35,6 +34,8 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 		IDSImplementation implementation = implementationElements[0];
 		String className = implementation.getClassName();
 		assertTrue(className.equals("org.example.ds.SampleCommandProvider1"));
+		
+		assertEquals(implementation.getName(), className);
 	}
 
 

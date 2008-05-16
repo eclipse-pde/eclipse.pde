@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ds.tests;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
@@ -59,10 +60,11 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		service.setServiceFactory(false);
 		
 		String string = fModel.getDSComponent().toString();
-		System.out.println(string);
 		assertTrue(string.contains("servicefactory=\"false\""));
 		
 		assertTrue(service.getServiceFactory() == false);
+		
+		assertEquals(service.getName(), IDSConstants.ELEMENT_SERVICE);
 	}
 
 	/**

@@ -25,7 +25,6 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 		buffer.append("<properties entry=\"");
 		buffer.append("OSGI-INF/vendor.properties\">");
 		buffer.append("</properties>");
-		System.out.println(buffer);
 		setXMLContents(buffer, LF);
 		load();
 
@@ -38,6 +37,8 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 		IDSProperties properties = propertiesElements[0];
 		String entry = properties.getEntry();
 		assertTrue(entry.equals("OSGI-INF/vendor.properties"));
+		
+		assertEquals(entry, properties.getName());
 	}
 	
 	/**
