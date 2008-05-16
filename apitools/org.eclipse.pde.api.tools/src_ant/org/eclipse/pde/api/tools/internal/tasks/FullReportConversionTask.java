@@ -17,6 +17,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -279,6 +281,13 @@ public class FullReportConversionTask extends Task {
 									"<p>All bundles have been converted to API tools.</p>"//$NON-NLS-1$
 							}));
 			}
+			Arrays.sort(summaries, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					Summary summary1 = (Summary) o1; 
+					Summary summary2 = (Summary) o2;
+					return summary1.componentID.compareTo(summary2.componentID);
+				}
+			});
 			for (int i = 0, max = summaries.length; i < max; i++) {
 				dumpIndexEntry(i, writer, summaries[i]);
 			}
