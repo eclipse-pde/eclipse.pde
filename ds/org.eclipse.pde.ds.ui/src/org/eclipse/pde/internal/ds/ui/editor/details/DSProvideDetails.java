@@ -102,7 +102,7 @@ public class DSProvideDetails extends DSAbstractDetails {
 
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fInterfaceEntry.getValue();
-				value = handleLinkActivated(value, false);
+				value = handleLinkActivated(value, true);
 				if (value != null)
 					fInterfaceEntry.setValue(value);
 			}
