@@ -19,14 +19,14 @@ public class DSReference extends DSObject implements IDSReference {
 
 	public DSReference(DSModel model) {
 		super(model, ELEMENT_REFERENCE);
+		
+		// set default values
+		this.setReferenceCardinality("1..1");
+		this.setReferencePolicy("static");
 	}
 
 	public boolean canAddChild(int objectType) {
 		return false;
-	}
-
-	public boolean canAddSibling(int objectType) {
-		return objectType == TYPE_REFERENCE;
 	}
 
 	public boolean canBeParent() {

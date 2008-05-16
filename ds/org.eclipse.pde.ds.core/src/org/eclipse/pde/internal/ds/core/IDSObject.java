@@ -14,7 +14,6 @@ package org.eclipse.pde.internal.ds.core;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.ds.core.text.DSObject;
 
 public interface IDSObject extends IDocumentElementNode {
 
@@ -51,7 +50,7 @@ public interface IDSObject extends IDocumentElementNode {
 	public abstract IDSObject getParent();
 
 
-	public abstract boolean descendsFrom(DSObject obj);
+	public abstract boolean descendsFrom(IDSObject obj);
 	
 	
 	public int getChildNodeCount(Class clazz);
@@ -63,4 +62,6 @@ public interface IDSObject extends IDocumentElementNode {
 	public void addChild(IDSObject newObject);
 
 	public void removeChild(IDSObject object);
+
+	public abstract boolean canBeParent();
 }

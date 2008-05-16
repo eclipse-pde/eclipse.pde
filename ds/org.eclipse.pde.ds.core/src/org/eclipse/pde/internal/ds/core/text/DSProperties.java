@@ -25,12 +25,6 @@ public class DSProperties extends DSObject implements IDSProperties {
 		return false;
 	}
 
-	public boolean canAddSibling(int objectType) {
-		return objectType == TYPE_PROPERTY || objectType == TYPE_PROPERTIES
-				|| objectType == TYPE_REFERENCE || objectType == TYPE_SERVICE
-				|| objectType == TYPE_IMPLEMENTATION;
-	}
-
 	public boolean canBeParent() {
 		return false;
 	}

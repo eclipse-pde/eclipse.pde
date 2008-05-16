@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
-import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 
 public class DSProvide extends DSObject implements IDSProvide {
@@ -25,10 +24,6 @@ public class DSProvide extends DSObject implements IDSProvide {
 
 	public boolean canAddChild(int objectType) {
 		return false;
-	}
-
-	public boolean canAddSibling(int objectType) {
-		return objectType == IDSConstants.TYPE_PROVIDE;
 	}
 
 	public boolean canBeParent() {

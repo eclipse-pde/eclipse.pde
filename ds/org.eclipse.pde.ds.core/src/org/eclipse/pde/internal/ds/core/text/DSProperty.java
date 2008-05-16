@@ -19,14 +19,13 @@ public class DSProperty extends DSObject implements IDSProperty {
 
 	public DSProperty(DSModel model) {
 		super(model, ELEMENT_PROPERTY);
+		
+		// set Default Values
+		this.setPropertyType("String");
 	}
 
 	public boolean canAddChild(int objectType) {
 		return false;
-	}
-
-	public boolean canAddSibling(int objectType) {
-		return objectType == TYPE_PROPERTY || objectType == TYPE_PROPERTIES || objectType == TYPE_REFERENCE || objectType == TYPE_SERVICE;
 	}
 
 	public boolean canBeParent() {

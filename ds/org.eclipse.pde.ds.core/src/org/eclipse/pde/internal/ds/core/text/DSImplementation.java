@@ -26,10 +26,6 @@ public class DSImplementation extends DSObject implements IDSImplementation {
 		return false;
 	}
 
-	public boolean canAddSibling(int objectType) {
-		return objectType == TYPE_PROPERTY ||objectType == TYPE_PROPERTIES || objectType == TYPE_SERVICE || objectType == TYPE_REFERENCE;
-	}
-
 	public boolean canBeParent() {
 		return false;
 	}

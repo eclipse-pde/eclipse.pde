@@ -39,6 +39,9 @@ public class DSComponent extends DSObject implements IDSComponent {
 	public DSComponent(DSModel model) {
 		super(model, ELEMENT_ROOT);
 		setInTheModel(true);
+		
+		// set default values
+		this.setEnabled(true);
 	}
 
 	/*
@@ -88,14 +91,6 @@ public class DSComponent extends DSObject implements IDSComponent {
 				|| objectType == TYPE_SERVICE || objectType == TYPE_REFERENCE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canAddSibling(int)
-	 */
-	public boolean canAddSibling(int objectType) {
-		return false;
-	}
 
 	/*
 	 * (non-Javadoc)

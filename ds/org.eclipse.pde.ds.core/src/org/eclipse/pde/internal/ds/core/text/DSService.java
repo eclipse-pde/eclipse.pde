@@ -24,17 +24,13 @@ public class DSService extends DSObject implements IDSService {
 
 	public DSService(DSModel model) {
 		super(model, ELEMENT_SERVICE);
+		
+		// set Default Values
+		this.setServiceFactory(false);
 	}
 
 	public boolean canAddChild(int objectType) {
 		return objectType == TYPE_PROVIDE;
-	}
-
-	public boolean canAddSibling(int objectType) {
-		return objectType == TYPE_REFERENCE
-				|| objectType == TYPE_IMPLEMENTATION
-				|| objectType == TYPE_PROPERTIES || objectType == TYPE_PROPERTY
-				|| objectType == TYPE_REFERENCE;
 	}
 
 	public boolean canBeParent() {
