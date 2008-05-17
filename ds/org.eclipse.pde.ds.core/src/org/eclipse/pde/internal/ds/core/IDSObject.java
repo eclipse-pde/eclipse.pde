@@ -38,7 +38,10 @@ public interface IDSObject extends IDocumentElementNode {
 	public abstract String getName();
 
 	/**
-	 * Get the concrete type of this object, must be one of the TYPE constants defined in IDSConstants.
+	 * Get the concrete type of this object, must be one of the TYPE constants
+	 * defined in IDSConstants.
+	 * 
+	 * @return
 	 * @see IDSConstants
 	 */
 	public abstract int getType();
