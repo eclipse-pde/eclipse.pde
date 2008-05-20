@@ -615,7 +615,8 @@ public class PDECompilersConfigurationBlock {
 		ControlData data = new ControlData(key, new String[0]);
 		text.setData(data);
 		String value = data.key.getStoredValue(fLookupOrder, false, fManager);
-		text.setText(value);
+		if (value != null)
+			text.setText(value);
 		text.addModifyListener(modifylistener);
 		Integer mapkey = new Integer(tabkind);
 		HashSet controls = (HashSet) fControlMap.get(mapkey);
