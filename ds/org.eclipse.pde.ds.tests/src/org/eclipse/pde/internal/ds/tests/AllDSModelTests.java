@@ -24,6 +24,7 @@ public class AllDSModelTests {
 		suite.addTestSuite(DSPropertyTestCase.class);
 		suite.addTestSuite(DSPropertiesTestCase.class);
 		suite.addTestSuite(DSImplementationTestCase.class);
+		suite.addTestSuite(DSObjectTestCase.class);
 		return suite;
 	}
 
