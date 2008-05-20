@@ -120,14 +120,5 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 	 */
 	public abstract int getType();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#moveChild(org.eclipse.pde.internal.core.toc.TocObject,
-	 *      int)
-	 */
-	public void moveChild(IDSObject object, int newRelativeIndex) {
-		moveChildNode(object, newRelativeIndex, true);
-	}
 
 }

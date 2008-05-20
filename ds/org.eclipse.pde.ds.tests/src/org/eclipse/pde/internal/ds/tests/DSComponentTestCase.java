@@ -94,7 +94,7 @@ public class DSComponentTestCase extends AbstractDSModelTestCase {
 		component.addChildNode(reference);
 		
 		IDocumentElementNode childAt4 = component.getChildAt(4);
-		component.moveChild(reference, -1);
+		component.moveChildNode(reference, -1, true);
 		
 		IDocumentElementNode childAt3 = component.getChildAt(3);
 		

@@ -416,8 +416,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 					|| object instanceof IDSImplementation
 					|| object instanceof IDSProperties
 					|| object instanceof IDSReference) {
-				((IDSComponent) object.getParentNode()).moveChild(object,
-						upFlag);
+				((IDSComponent) object.getParentNode()).moveChildNode(object,
+						upFlag, true);
 				this.refresh();
 				fTreeViewer.setSelection(new StructuredSelection(object));
 			}
