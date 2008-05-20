@@ -729,7 +729,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							if (tagVersion.postfixString() != null) {
 								buffer.append(tagVersion.postfixString());
 							}
-							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED, new String[] {sinceVersion}, delta, member, String.valueOf(buffer));
+							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED, new String[] {sinceVersion, Util.getDeltaArgumentString(delta)}, delta, member, String.valueOf(buffer));
 						} else {
 							if(ignoreSinceTagCheck(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
 								if(DEBUG) {
