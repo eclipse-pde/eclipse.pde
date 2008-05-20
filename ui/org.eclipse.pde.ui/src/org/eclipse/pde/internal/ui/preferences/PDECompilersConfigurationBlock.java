@@ -467,6 +467,7 @@ public class PDECompilersConfigurationBlock {
 			createPage(CompilerFlags.FEATURE_FLAGS, main, PDEUIMessages.CompilersConfigurationBlock_features, PDEUIMessages.CompilersConfigurationBlock_label);
 		}
 		restoreExpansionState();
+		org.eclipse.jface.dialogs.Dialog.applyDialogFont(fParent);
 		return fMainComp;
 	}
 
@@ -613,7 +614,8 @@ public class PDECompilersConfigurationBlock {
 		Text text = SWTFactory.createSingleText(parent, 1);
 		ControlData data = new ControlData(key, new String[0]);
 		text.setData(data);
-		text.setText(data.key.getStoredValue(fLookupOrder, false, fManager));
+		String value = data.key.getStoredValue(fLookupOrder, false, fManager);
+		text.setText(value);
 		text.addModifyListener(modifylistener);
 		Integer mapkey = new Integer(tabkind);
 		HashSet controls = (HashSet) fControlMap.get(mapkey);
