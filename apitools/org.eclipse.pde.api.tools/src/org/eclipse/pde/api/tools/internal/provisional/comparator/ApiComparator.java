@@ -610,10 +610,18 @@ public class ApiComparator {
 
 		final Set classFileBaseLineNames = new HashSet();
 		final String id = component.getId();
-		IClassFileContainer[] classFileContainers = component.getClassFileContainers(id);
+		IClassFileContainer[] classFileContainers = null;
+		IClassFileContainer[] classFileContainers2 = null;
+		
+		final boolean isSWT = "org.eclipse.swt".equals(id); //$NON-NLS-1$
+		if (isSWT) {
+			classFileContainers = component.getClassFileContainers();
+			classFileContainers2 = component2.getClassFileContainers();
+		} else {
+			classFileContainers = component.getClassFileContainers(id);
+			classFileContainers2 = component2.getClassFileContainers(id);
+		}
 		final IApiDescription apiDescription = component.getApiDescription();
-
-		IClassFileContainer[] classFileContainers2 = component2.getClassFileContainers(id);
 		final IApiDescription apiDescription2 = component2.getApiDescription();
 
 		if (classFileContainers != null) {
@@ -634,9 +642,14 @@ public class ApiComparator {
 								if (elementDescription != null) {
 									visibility = elementDescription.getVisibility();
 								}
-								IClassFile classFile2 = component2.findClassFile(typeName, id);
+								IClassFile classFile2 = null;
+								if (isSWT) {
+									classFile2 = component2.findClassFile(typeName);
+								} else{
+									classFile2 = component2.findClassFile(typeName, id);
+								}
 								String deltaComponentID = Util.getDeltaComponentID(component2);
-								if (classFile2 == null) {
+								if(classFile2 == null) {
 									if ((visibility & visibilityModifiers) == 0) {
 										// we skip the class file according to their visibility
 										return;
@@ -743,6 +756,7 @@ public class ApiComparator {
 									// already processed
 									return;
 								}
+								classFileBaseLineNames.add(typeName);
 								String deltaComponentID = Util.getDeltaComponentID(component2);
 								globalDelta.add(
 										new Delta(
