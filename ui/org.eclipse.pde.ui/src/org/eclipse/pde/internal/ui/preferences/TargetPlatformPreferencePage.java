@@ -526,6 +526,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 	public void performDefaults() {
 		fHomeText.setText(TargetPlatform.getDefaultLocation());
+		fTargetRealization.setSelection(true);
+		fPreferences.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, true);
 		fPluginsTab.handleReload(new ArrayList());
 		fEnvironmentTab.performDefaults();
 		fArgumentsTab.performDefaults();
