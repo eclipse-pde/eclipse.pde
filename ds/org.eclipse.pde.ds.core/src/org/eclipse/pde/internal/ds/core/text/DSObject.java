@@ -12,12 +12,9 @@
 package org.eclipse.pde.internal.ds.core.text;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.DocumentObject;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSModel;
@@ -51,30 +48,6 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getChildren()
-	 */
-	public List getChildren() {
-		// Create a copy of the child list instead of
-		// returning the list itself. That way, our list
-		// of children cannot be altered from outside
-		ArrayList list = new ArrayList();
-
-		// Add children of this topic
-		IDocumentElementNode[] childNodes = getChildNodes();
-		if (childNodes.length > 0) {
-			for (int i = 0; i < childNodes.length; ++i) {
-				if (childNodes[i] instanceof DSObject) {
-					list.add(childNodes[i]);
-				}
-			}
-		}
-
-		return list;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.pde.internal.core.text.DocumentElementNode#getAttributeIndent()
 	 */
 	protected String getAttributeIndent() {
@@ -93,7 +66,8 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 	// /*
 	// * (non-Javadoc)
 	// *
-	// * @see org.eclipse.pde.internal.core.text.DocumentElementNode#isLeafNode()
+	// * @see
+	// org.eclipse.pde.internal.core.text.DocumentElementNode#isLeafNode()
 	// */
 	// public boolean isLeafNode() {
 	// return !canBeParent();
@@ -105,19 +79,6 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 	public abstract boolean canBeParent();
 
 	public abstract boolean canAddChild(int objectType);
-
-
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#addChild(org.eclipse.pde.internal.ds.core.IDSObject)
-	 */
-	public void addChild(IDSObject newObject) {
-		if (canAddChild(newObject.getType())) {
-			addChildNode(newObject, true);
-		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -158,55 +119,6 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
 	 */
 	public abstract int getType();
-
-	/**
-	 * @return the parent of this object, or <code>null</code> if there is no
-	 *         parent.
-	 */
-	public IDSObject getParent() {
-		IDocumentElementNode parent = getParentNode();
-		return parent instanceof IDSObject ? (IDSObject) parent : null;
-	}
-
-	/**
-	 * Check if the object is a direct or indirect descendant of the object
-	 * parameter.
-	 * 
-	 * @param obj
-	 *            The object to find in this object's ancestry
-	 * @return true iff obj is an ancestor of this object
-	 */
-	public boolean descendsFrom(IDSObject obj) {
-		if (this.equals(obj)) {
-			return true;
-		}
-		if (getParent() != null && obj.canBeParent()) {
-			return getParent().descendsFrom(obj);
-		}
-		return false;
-	}
-
-	/**
-	 * @return true iff a this object can be removed
-	 */
-	public boolean canBeRemoved() {
-		if (getType() == TYPE_ROOT) { // Semantic Rule: The root element can
-			// never be removed
-			return false;
-		}
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#removeChild(org.eclipse.pde.internal.ds.core.IDSObject)
-	 */
-	public void removeChild(IDSObject object) {
-		if (object.canBeRemoved()) {
-			removeChildNode(object, true);
-		}
-	}
 
 	/*
 	 * (non-Javadoc)

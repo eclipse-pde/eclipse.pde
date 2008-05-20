@@ -13,10 +13,9 @@
 package org.eclipse.pde.internal.ds.ui.editor.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSObject;
-import org.eclipse.pde.internal.ds.core.IDSProvide;
-import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.Messages;
 
@@ -47,19 +46,19 @@ public class DSRemoveItemAction extends Action {
 	public void run() {
 		if (fItem != null) {
 			// Determine parent type and remove accordingly
-			IDSObject parent = fItem.getParent();
+			IDSObject parent = (IDSObject) fItem.getParentNode();
 			if (parent.getType() == IDSConstants.TYPE_ROOT) {
 				// Parent is a component
 				IDSComponent item = (IDSComponent) parent;
 				fObjectToSelect = parent;
 				// Remove the subitem
-				item.removeChild(fItem);
+				item.removeChildNode(fItem, true);
 			} else if (parent.getType() == IDSConstants.TYPE_SERVICE) {
 				// Parent is a service
 				IDSService item = (IDSService) parent;
 				fObjectToSelect = parent;
 				// Remove the subitem
-				item.removeChild((IDSProvide) fItem);
+				item.removeChildNode(fItem, true);
 			}
 		}
 	}

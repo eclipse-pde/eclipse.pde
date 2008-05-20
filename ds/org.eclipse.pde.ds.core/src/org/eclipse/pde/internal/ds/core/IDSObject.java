@@ -11,16 +11,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
-import java.util.List;
+import org.eclipse.pde.internal.core.text.IDocumentObject;
 
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-
-public interface IDSObject extends IDocumentElementNode {
-
-	/**
-	 * @return the children of the object or an empty List if none exist.
-	 */
-	public abstract List getChildren();
+public interface IDSObject extends IDocumentObject {
 
 	/**
 	 * @return the root model object that is an ancestor to this object.
@@ -46,25 +39,8 @@ public interface IDSObject extends IDocumentElementNode {
 	 */
 	public abstract int getType();
 	
-	/**
-	 * @return the parent of this object, or <code>null</code> if there is no
-	 *         parent.
-	 */
-	public abstract IDSObject getParent();
 
-
-	public abstract boolean descendsFrom(IDSObject obj);
+	//	public abstract int getChildNodeCount(Class clazz);
 	
-	
-	public int getChildNodeCount(Class clazz);
-	
-	
-	public boolean canBeRemoved();
-	
-
-	public void addChild(IDSObject newObject);
-
-	public void removeChild(IDSObject object);
-
 	public abstract boolean canBeParent();
 }

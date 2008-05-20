@@ -17,8 +17,6 @@ public interface IDSService extends IDSObject {
 
 	public boolean getServiceFactory();
 
-	public void removeChild(IDSProvide item);
-	
 	public IDSProvide[] getProvidedServices();
 	
 

@@ -75,7 +75,7 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 		Implementation.setClassName(className);
 
 		IDSComponent component = fModel.getDSComponent();
-		component.addChild(Implementation);
+		component.addChildNode(Implementation);
 
 		String content = component.toString();
 

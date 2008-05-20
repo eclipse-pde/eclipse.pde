@@ -77,7 +77,7 @@ public class DSAddItemAction extends Action {
 			// Create the new item
 			IDSObject newItem = createNewItem();
 			// Insert the new item
-			fParent.addChild(newItem);
+			fParent.addChildNode(newItem, true);
 		}
 	}
 

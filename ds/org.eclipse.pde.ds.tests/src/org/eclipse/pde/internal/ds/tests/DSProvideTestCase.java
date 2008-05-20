@@ -64,11 +64,11 @@ public class DSProvideTestCase extends AbstractDSModelTestCase {
 			service.setServiceFactory(true);
 			
 			IDSComponent component = fModel.getDSComponent();
-			component.addChild(service);
+			component.addChildNode(service);
 			
 			IDSProvide provide = factory.createProvide();
 			provide.setInterface("java.lang.Runnable");
-			service.addChild(provide);
+			service.addChildNode(provide);
 			
 			String content = component.toString();
 			

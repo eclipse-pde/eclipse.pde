@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ds.core.text;
 
 import java.util.ArrayList;
 
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
@@ -61,10 +60,6 @@ public class DSService extends DSObject implements IDSService {
 	 */
 	public boolean getServiceFactory() {
 		return getBooleanAttributeValue(ATTRIBUTE_SERVICE_FACTORY, false);
-	}
-
-	public void removeChild(IDSProvide item) {
-		removeChildNode((IDocumentElementNode) item, true);
 	}
 
 	public IDSProvide[] getProvidedServices() {

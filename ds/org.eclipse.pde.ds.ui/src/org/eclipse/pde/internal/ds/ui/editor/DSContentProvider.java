@@ -26,7 +26,7 @@ public class DSContentProvider extends DefaultContentProvider implements
 		if (parentElement instanceof IDSModel) {
 			return new Object[] { ((IDSModel) parentElement).getDSComponent() };
 		} else if (parentElement instanceof IDSObject) {
-			List list = ((IDSObject) parentElement).getChildren();
+			List list = ((IDSObject) parentElement).getChildNodesList();
 			// List is never null
 			if (list.size() > 0) {
 				return list.toArray();
@@ -37,7 +37,7 @@ public class DSContentProvider extends DefaultContentProvider implements
 
 	public Object getParent(Object element) {
 		if (element instanceof IDSObject) {
-			return ((IDSObject) element).getParent();
+			return ((IDSObject) element).getParentNode();
 		}
 		return null;
 	}

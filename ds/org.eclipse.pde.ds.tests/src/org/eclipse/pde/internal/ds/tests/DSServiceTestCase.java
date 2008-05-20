@@ -176,7 +176,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		assertTrue(providedServices.length==1);
 		
 		//Removing Provided Service
-		service.removeChild(providedServices[0]);
+		service.removeChildNode(providedServices[0]);
 		
 		services = component.getServices();
 		
@@ -201,7 +201,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		service.setServiceFactory(true);
 		
 		IDSComponent component = fModel.getDSComponent();
-		component.addChild(service);
+		component.addChildNode(service);
 		
 		String content = component.toString();
 		

@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -81,7 +80,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 		// Element: implemenation
 		IDSImplementation implementation = factory.createImplementation();
 		
-		dsComponent.addChild(implementation);
+		dsComponent.addChildNode(implementation, true);
 
 		// Component Attributes
 		

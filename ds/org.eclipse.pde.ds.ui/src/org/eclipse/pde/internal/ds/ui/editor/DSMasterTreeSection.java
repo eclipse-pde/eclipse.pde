@@ -261,7 +261,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		IDSObject object = (IDSObject) objects[0];
 		if (object != null) {
 			// Refresh the parent element in the tree viewer
-			fTreeViewer.refresh(object.getParent());
+			fTreeViewer.refresh(object.getParentNode());
 			this.refresh();
 			// Select the new item in the tree
 			fTreeViewer.setSelection(new StructuredSelection(object), true);
@@ -345,8 +345,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTY, true);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROVIDE, false);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_REFERENCE, true);
-		boolean hasService = (fModel.getDSComponent().getChildNodeCount(
-				IDSService.class) == 1);
+		boolean hasService = (fModel.getDSComponent().getServices().length == 1);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_SERVICE, !hasService);
 
 		IDSComponent dsComponent = fModel.getDSComponent();
@@ -417,7 +416,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 					|| object instanceof IDSImplementation
 					|| object instanceof IDSProperties
 					|| object instanceof IDSReference) {
-				((IDSComponent) object.getParent()).moveChild(object, upFlag);
+				((IDSComponent) object.getParentNode()).moveChild(object,
+						upFlag);
 				this.refresh();
 				fTreeViewer.setSelection(new StructuredSelection(object));
 			}

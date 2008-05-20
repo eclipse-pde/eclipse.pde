@@ -29,8 +29,6 @@ public interface IDSComponent extends IDSObject {
 
 	public boolean getImmediate();
 	
-	public void removeChild(IDSObject obj);
-
 	public void moveChild(IDSObject item, int newRelativeIndex);
 	
 	public IDSImplementation[] getImplementations();
