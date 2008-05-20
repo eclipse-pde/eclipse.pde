@@ -972,7 +972,7 @@ public class LogView extends ViewPart implements ILogListener {
 			return;
 		}
 
-		if (fFirstEvent) {
+		if (fFirstEvent || (currentSession == null)) {
 			readLogFile();
 			asyncRefresh(true);
 			fFirstEvent = false;
