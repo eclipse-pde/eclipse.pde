@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
@@ -196,10 +197,19 @@ public class ApiProfilesConfigurationBlock {
 	/**
 	 * Constant representing the severity values presented in the combo boxes for each option
 	 */
-	private static final String[] SEVERITIES = {
+	private static final String[] SEVERITIES_LABELS = {
 		PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error,
 		PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning,
 		PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore
+	};
+	
+	/**
+	 * Constant representing the severity values presented in the combo boxes for each option
+	 */
+	private static final String[] SEVERITIES = {
+		ApiPlugin.VALUE_ERROR,
+		ApiPlugin.VALUE_WARNING,
+		ApiPlugin.VALUE_IGNORE,
 	};
 	
 	/**
@@ -281,6 +291,7 @@ public class ApiProfilesConfigurationBlock {
 		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		Group optionsProfileGroup = SWTFactory.createGroup(fMainComp, PreferenceMessages.ApiProfilesConfigurationBlock_options_group_title, 2, 1, GridData.FILL_BOTH);
 		this.fCombo = createComboControl(optionsProfileGroup, PreferenceMessages.ApiProfilesConfigurationBlock_missing_default_api_profile_message, KEY_MISSING_DEFAULT_API_PROFILE);
+		Dialog.applyDialogFont(fMainComp);
 		return fMainComp;
 	}
 
@@ -380,7 +391,7 @@ public class ApiProfilesConfigurationBlock {
 		gd = new GridData(GridData.END, GridData.CENTER, false, false);
 		ControlData data = new ControlData(key, SEVERITIES); 
 		combo.setData(data);
-		combo.setItems(SEVERITIES);
+		combo.setItems(SEVERITIES_LABELS);
 		combo.addSelectionListener(selectionlistener);
 		combo.select(data.getSelection(key.getStoredValue(fLookupOrder, false, fManager)));
 		return combo;

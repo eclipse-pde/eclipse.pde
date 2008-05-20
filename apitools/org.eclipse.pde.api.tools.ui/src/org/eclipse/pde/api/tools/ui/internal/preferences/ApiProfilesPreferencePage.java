@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -204,6 +205,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		block = new ApiProfilesConfigurationBlock((IWorkbenchPreferenceContainer)getContainer());
 		block.createControl(comp, this);
 		SWTFactory.createVerticalSpacer(parent, 1);
+		Dialog.applyDialogFont(comp);
 		return comp;
 	}
 	

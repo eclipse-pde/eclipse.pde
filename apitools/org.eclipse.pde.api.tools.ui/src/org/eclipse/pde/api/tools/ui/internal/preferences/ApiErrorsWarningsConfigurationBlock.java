@@ -1077,6 +1077,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_9); 
 		restoreExpansionState();
 		validateSettings(null, null, null);
+		Dialog.applyDialogFont(fMainComp);
 		return fMainComp;
 	}
 
