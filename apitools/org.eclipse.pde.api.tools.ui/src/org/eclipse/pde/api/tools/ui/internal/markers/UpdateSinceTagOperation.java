@@ -125,11 +125,20 @@ public class UpdateSinceTagOperation {
 						}
 						if (sinceTag != null) {
 							List fragments = sinceTag.fragments();
-							if (fragments.size() == 1) {
+							if (fragments.size() >= 1) {
 								TextElement textElement = (TextElement) fragments.get(0);
 								StringBuffer buffer = new StringBuffer();
 								buffer.append(' ').append(this.sinceTagVersion);
 								rewrite.set(textElement, TextElement.TEXT_PROPERTY, String.valueOf(buffer), null);
+							} else {
+								ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
+								// check the existing tags list
+								TagElement newtag = ast.newTagElement();
+								newtag.setTagName(TagElement.TAG_SINCE);
+								TextElement textElement = ast.newTextElement();
+								textElement.setText(this.sinceTagVersion);
+								newtag.fragments().add(textElement);
+								lrewrite.replace(sinceTag, newtag, null);
 							}
 						}
 					}

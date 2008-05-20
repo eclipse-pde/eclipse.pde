@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * An AST visitor used to find missing or incorrect @since tags
@@ -179,13 +180,15 @@ public class SinceTagChecker extends ASTVisitor {
 				if (TagElement.TAG_SINCE.equals(tagName)) {
 					// @since is present
 					// check if valid
+					found = true;
 					List fragments = element.fragments();
-					if (fragments.size() == 1) {
-						found = true;
+					if (fragments.size() >= 1) {
 						ASTNode fragment = (ASTNode) fragments.get(0);
 						if (fragment.getNodeType() == ASTNode.TEXT_ELEMENT) {
 							this.sinceVersion = ((TextElement) fragment).getText();
 						}
+					} else {
+						this.sinceVersion = Util.EMPTY_STRING;
 					}
 					break;
 				}

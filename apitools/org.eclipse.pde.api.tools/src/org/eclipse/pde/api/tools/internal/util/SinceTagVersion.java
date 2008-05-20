@@ -65,6 +65,9 @@ public class SinceTagVersion {
 			} catch (IllegalArgumentException e) {
 				// ignore - wrong format
 			}
+		} else if (value.length() != 0) {
+			// we consider the actual string as the postfix value
+			this.postfixString = value;
 		}
 	}
 
