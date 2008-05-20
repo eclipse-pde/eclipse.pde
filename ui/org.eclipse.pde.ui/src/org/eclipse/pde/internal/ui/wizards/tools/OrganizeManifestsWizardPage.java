@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 219513
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 219513, 232706
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
@@ -17,8 +17,7 @@ import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -278,20 +277,25 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	}
 
 	private void hookListeners() {
-		hookListener(new Button[] {fMarkInternal, fModifyDependencies}, new SelectionAdapter() {
+		hookSelectionListener(new Button[] {fMarkInternal, fModifyDependencies}, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setEnabledStates();
 				doProcessorSetting(e.getSource());
 			}
 		});
-		hookListener(fTopLevelButtons, new SelectionAdapter() {
+		hookSelectionListener(fTopLevelButtons, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setPageComplete();
 				doProcessorSetting(e.getSource());
 			}
 		});
-		hookListener(new Button[] {fRemoveImport, fOptionalImport}, new SelectionAdapter() {
+		hookSelectionListener(new Button[] {fRemoveImport, fOptionalImport}, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				doProcessorSetting(e.getSource());
+			}
+		});
+		hookTextListener(new Text[] {fPackageFilter}, new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
 				doProcessorSetting(e.getSource());
 			}
 		});
@@ -330,9 +334,16 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 			fProcessor.setUnusedKeys(fRemovedUnusedKeys.getSelection());
 	}
 
-	private void hookListener(Button[] buttons, SelectionAdapter adapter) {
+	private void hookSelectionListener(Button[] buttons, SelectionAdapter adapter) {
 		for (int i = 0; i < buttons.length; i++) {
 			buttons[i].addSelectionListener(adapter);
 		}
 	}
+
+	private void hookTextListener(Text[] texts, ModifyListener listener) {
+		for (int i = 0; i < texts.length; i++) {
+			texts[i].addModifyListener(listener);
+		}
+	}
+
 }
