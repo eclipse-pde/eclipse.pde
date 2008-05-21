@@ -2851,7 +2851,15 @@ public final class Util {
 			case IDelta.METHOD_WITH_DEFAULT_VALUE :
 			case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 			case IDelta.FIELD :
-				return arguments[1];
+			case IDelta.INCREASE_ACCESS :
+				switch(delta.getElementType()) {
+					case IDelta.FIELD_ELEMENT_TYPE :
+					case IDelta.METHOD_ELEMENT_TYPE :
+					case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
+						return arguments[1];
+					default:
+						return arguments[0];
+				}
 		}
 		return EMPTY_STRING;
 	}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.comparator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,7 +40,7 @@ public class TypeDescriptor extends ElementDescriptor {
 	Set interfaces;
 	Map methods;
 	String signature;
-	Set typeMembers;
+	List typeMembers;
 
 	String superName;
 	int version;
@@ -61,7 +62,7 @@ public class TypeDescriptor extends ElementDescriptor {
 
 	public void addTypeMember(String memberName, int access) {
 		if (this.typeMembers == null) {
-			this.typeMembers = new HashSet();
+			this.typeMembers = new ArrayList(4);
 		}
 		this.typeMembers.add(new MemberTypeDescriptor(memberName, access));
 	}

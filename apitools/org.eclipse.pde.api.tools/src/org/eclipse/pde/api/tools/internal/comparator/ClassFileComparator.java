@@ -270,8 +270,8 @@ public class ClassFileComparator {
 	}
 
 	private void checkTypeMembers() {
-		Set typeMembers = this.descriptor1.typeMembers;
-		Set typeMembers2 = this.descriptor2.typeMembers;
+		List typeMembers = this.descriptor1.typeMembers;
+		List typeMembers2 = this.descriptor2.typeMembers;
 		if (typeMembers != null) {
 			if (typeMembers2 == null) {
 				loop: for (Iterator iterator = typeMembers.iterator(); iterator.hasNext();) {
@@ -316,9 +316,11 @@ public class ClassFileComparator {
 			loop: for (Iterator iterator = typeMembers.iterator(); iterator.hasNext();) {
 				MemberTypeDescriptor typeMember = (MemberTypeDescriptor ) iterator.next();
 				String typeMemberName = ((IReferenceTypeDescriptor) typeMember.handle).getQualifiedName();
-				if (!typeMembers2.remove(typeMember)) {
+				MemberTypeDescriptor typeMember2 = retrieveTypeMember(typeMembers2, typeMember.name);
+				if (typeMember2 == null) {
 					removedTypeMembers.add(typeMember);
 				} else {
+					typeMembers2.remove(typeMember2);
 					// check deltas inside the type member
 					try {
 						IClassFile memberType1 = this.component.findClassFile(typeMemberName);
@@ -339,21 +341,14 @@ public class ClassFileComparator {
 						if (memberTypeElementDescription2 != null) {
 							memberTypeVisibility2 = memberTypeElementDescription2.getVisibility();
 						}
-						if (visibilityModifiers == VisibilityModifiers.API) {
-							// if the visibility is API, we only consider public and protected types
-							if (Util.isDefault(typeMember.access)
-										|| Util.isPrivate(typeMember.access)) {
-								continue loop;
-							}
-						}
 						String deltaComponentID = Util.getDeltaComponentID(component2);
-						if (((memberTypeVisibility & VisibilityModifiers.API) != 0) && ((memberTypeVisibility2 & VisibilityModifiers.API) == 0)) {
+						if (isAPI(memberTypeVisibility, typeMember) && !isAPI(memberTypeVisibility2, typeMember2)) {
 							this.addDelta(
 									new Delta(
 											deltaComponentID,
-											IDelta.API_COMPONENT_ELEMENT_TYPE,
+											this.descriptor2.getElementType(),
 											IDelta.REMOVED,
-											IDelta.API_TYPE,
+											IDelta.TYPE_MEMBER,
 											memberTypeElementDescription2 != null ? memberTypeElementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
 											typeMember.access,
 											typeMemberName,
@@ -366,14 +361,21 @@ public class ClassFileComparator {
 							this.addDelta(
 									new Delta(
 											deltaComponentID,
-											IDelta.API_COMPONENT_ELEMENT_TYPE,
+											this.descriptor2.getElementType(),
 											IDelta.CHANGED,
 											IDelta.TYPE_VISIBILITY,
 											memberTypeElementDescription2 != null ? memberTypeElementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-											typeMember.access,
+											typeMember2.access,
 											typeMemberName,
 											typeMemberName,
 											new String[] { typeMemberName.replace('$', '.'), deltaComponentID}));
+						}
+						if (visibilityModifiers == VisibilityModifiers.API) {
+							// if the visibility is API, we only consider public and protected types
+							if (Util.isDefault(typeMember2.access)
+										|| Util.isPrivate(typeMember2.access)) {
+								continue loop;
+							}
 						}
 						IClassFile memberType2 = this.component2.findClassFile(typeMemberName);
 						ClassFileComparator comparator = new ClassFileComparator(memberType1, memberType2, this.component, this.component2, this.apiProfile, this.apiProfile2, this.visibilityModifiers);
@@ -822,7 +824,7 @@ public class ClassFileComparator {
 							IDelta.CHANGED,
 							IDelta.DECREASE_ACCESS,
 							this.currentDescriptorRestrictions,
-							typeAccess,
+							typeAccess2,
 							this.classFile,
 							this.descriptor1.name,
 							Util.getDescriptorName(descriptor1));
@@ -834,7 +836,7 @@ public class ClassFileComparator {
 							IDelta.CHANGED,
 							IDelta.INCREASE_ACCESS,
 							this.currentDescriptorRestrictions,
-							typeAccess,
+							typeAccess2,
 							this.classFile,
 							this.descriptor1.name,
 							Util.getDescriptorName(descriptor1));
@@ -850,7 +852,7 @@ public class ClassFileComparator {
 						IDelta.CHANGED,
 						IDelta.DECREASE_ACCESS,
 						this.currentDescriptorRestrictions,
-						typeAccess,
+						typeAccess2,
 						this.classFile,
 						this.descriptor1.name,
 						Util.getDescriptorName(descriptor1));
@@ -863,7 +865,7 @@ public class ClassFileComparator {
 						IDelta.CHANGED,
 						IDelta.INCREASE_ACCESS,
 						this.currentDescriptorRestrictions,
-						typeAccess,
+						typeAccess2,
 						this.classFile,
 						this.descriptor1.name,
 						Util.getDescriptorName(descriptor1));
@@ -877,7 +879,7 @@ public class ClassFileComparator {
 						IDelta.CHANGED,
 						IDelta.INCREASE_ACCESS,
 						this.currentDescriptorRestrictions,
-						typeAccess,
+						typeAccess2,
 						this.classFile,
 						this.descriptor1.name,
 						Util.getDescriptorName(descriptor1));
@@ -2095,7 +2097,7 @@ public class ClassFileComparator {
 						IDelta.CHANGED,
 						IDelta.DECREASE_ACCESS,
 						restrictions,
-						methodDescriptor.access,
+						access2,
 						this.classFile,
 						key,
 						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
@@ -2106,7 +2108,7 @@ public class ClassFileComparator {
 						IDelta.CHANGED,
 						IDelta.INCREASE_ACCESS,
 						restrictions,
-						methodDescriptor.access,
+						access2,
 						this.classFile,
 						key,
 						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
@@ -2121,7 +2123,7 @@ public class ClassFileComparator {
 					IDelta.CHANGED,
 					IDelta.DECREASE_ACCESS,
 					restrictions,
-					methodDescriptor.access,
+					access2,
 					this.classFile,
 					key,
 					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
@@ -2133,7 +2135,7 @@ public class ClassFileComparator {
 					IDelta.CHANGED,
 					IDelta.INCREASE_ACCESS,
 					restrictions,
-					methodDescriptor.access,
+					access2,
 					this.classFile,
 					key,
 					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
@@ -2146,7 +2148,7 @@ public class ClassFileComparator {
 					IDelta.CHANGED,
 					IDelta.INCREASE_ACCESS,
 					restrictions,
-					methodDescriptor.access,
+					access2,
 					this.classFile,
 					key,
 					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
@@ -2159,7 +2161,7 @@ public class ClassFileComparator {
 						IDelta.CHANGED,
 						IDelta.ABSTRACT_TO_NON_ABSTRACT,
 						restrictions,
-						access,
+						access2,
 						this.classFile,
 						key,
 						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
@@ -2171,7 +2173,7 @@ public class ClassFileComparator {
 					IDelta.CHANGED,
 					IDelta.NON_ABSTRACT_TO_ABSTRACT,
 					restrictions,
-					methodDescriptor2.access,
+					access2,
 					this.classFile,
 					key,
 					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
@@ -2184,7 +2186,7 @@ public class ClassFileComparator {
 						IDelta.CHANGED,
 						IDelta.FINAL_TO_NON_FINAL,
 						restrictions,
-						methodDescriptor2.access,
+						access2,
 						this.classFile,
 						key,
 						new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
@@ -2203,7 +2205,7 @@ public class ClassFileComparator {
 					IDelta.CHANGED,
 					IDelta.NON_FINAL_TO_FINAL,
 					res,
-					methodDescriptor2.access,
+					access2,
 					this.classFile,
 					key,
 					new String[] {Util.getDescriptorName(this.descriptor2), getMethodDisplayName(methodDescriptor2, this.descriptor2)});
@@ -2308,7 +2310,7 @@ public class ClassFileComparator {
 					IDelta.REMOVED,
 					IDelta.ANNOTATION_DEFAULT_VALUE,
 					restrictions,
-					access,
+					access2,
 					this.classFile,
 					key,
 					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
@@ -2319,7 +2321,7 @@ public class ClassFileComparator {
 					IDelta.CHANGED,
 					IDelta.ANNOTATION_DEFAULT_VALUE,
 					restrictions,
-					access,
+					access2,
 					this.classFile,
 					key,
 					new String[] {Util.getDescriptorName(this.descriptor1), methodDisplayName});
@@ -2660,5 +2662,22 @@ public class ClassFileComparator {
 		}
 		buffer.append(methodDescriptor.descriptor);
 		return String.valueOf(buffer);
+	}
+
+	private static boolean isAPI(int visibility,
+			MemberTypeDescriptor memberTypeDescriptor) {
+		int access = memberTypeDescriptor.access;
+		return (visibility & VisibilityModifiers.API) != 0
+			&& (Util.isPublic(access) || Util.isProtected(access));
+	}
+
+	private MemberTypeDescriptor retrieveTypeMember(List typeMembers, String typeName) {
+		for (Iterator iterator = typeMembers.iterator(); iterator.hasNext();) {
+			MemberTypeDescriptor typeMember = (MemberTypeDescriptor) iterator.next();
+			if (typeMember.name.equals(typeName)) {
+				return typeMember;
+			}
+		}
+		return null;
 	}
 }

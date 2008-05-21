@@ -88,18 +88,18 @@ public class ApiComparator {
 		}
 
 		try {
-			TypeDescriptor typeDescriptor = new TypeDescriptor(classFile2);
-			if (typeDescriptor.isNestedType()) {
+			TypeDescriptor typeDescriptor2 = new TypeDescriptor(classFile2);
+			if (typeDescriptor2.isNestedType()) {
 				// we skip nested types (member, local and anonymous)
 				return NO_DELTA;
 			}
 			String typeName = classFile2.getTypeName();
 			IClassFile classFile = component.findClassFile(typeName);
-			final IApiDescription apiDescription = component2.getApiDescription();
-			IApiAnnotations elementDescription = apiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
+			final IApiDescription apiDescription2 = component2.getApiDescription();
+			IApiAnnotations elementDescription2 = apiDescription2.resolveAnnotations(Factory.typeDescriptor(typeName));
 			int visibility = 0;
-			if (elementDescription != null) {
-				visibility = elementDescription.getVisibility();
+			if (elementDescription2 != null) {
+				visibility = elementDescription2.getVisibility();
 			}
 			final IApiDescription referenceApiDescription = component.getApiDescription();
 			IApiAnnotations refElementDescription = referenceApiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
@@ -108,40 +108,56 @@ public class ApiComparator {
 				refVisibility = refElementDescription.getVisibility();
 			}
 			String deltaComponentID = Util.getDeltaComponentID(component2);
+			if (classFile == null) {
+				if (isAPI(visibility, typeDescriptor2)) {
+					return new Delta(
+							deltaComponentID,
+							IDelta.API_COMPONENT_ELEMENT_TYPE,
+							IDelta.ADDED,
+							IDelta.TYPE,
+							elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
+							typeDescriptor2.access,
+							typeName,
+							typeName,
+							new String[] { typeName, deltaComponentID});
+				}
+				return NO_DELTA;
+			}
+			TypeDescriptor typeDescriptor = new TypeDescriptor(classFile);
 			if ((visibility & visibilityModifiers) == 0) {
 				if ((refVisibility & visibilityModifiers) == 0) {
 					// no delta
 					return NO_DELTA;
 				}
-				if ((refVisibility & VisibilityModifiers.API) != 0) {
+				if (isAPI(refVisibility, typeDescriptor)) {
 					return new Delta(
 							deltaComponentID,
 							IDelta.API_COMPONENT_ELEMENT_TYPE,
 							IDelta.REMOVED,
 							IDelta.API_TYPE,
-							elementDescription != null ? elementDescription.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-							typeDescriptor.access,
+							elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
+							typeDescriptor2.access,
 							typeName,
 							typeName,
 							new String[] { typeName, deltaComponentID});
 				}
-			} else if (((refVisibility & VisibilityModifiers.API) == 0)
-					&& ((visibility & VisibilityModifiers.API) != 0)) {
+			} else if (!isAPI(refVisibility, typeDescriptor)
+					&& isAPI(visibility, typeDescriptor2)) {
 				return new Delta(
 						deltaComponentID,
 						IDelta.API_COMPONENT_ELEMENT_TYPE,
 						IDelta.ADDED,
 						IDelta.TYPE,
-						elementDescription != null ? elementDescription.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-						typeDescriptor.access,
+						elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
+						typeDescriptor2.access,
 						typeName,
 						typeName,
 						new String[] { typeName, deltaComponentID});
 			}
 			if (visibilityModifiers == VisibilityModifiers.API) {
 				// if the visibility is API, we only consider public and protected types
-				if (Util.isDefault(typeDescriptor.access)
-							|| Util.isPrivate(typeDescriptor.access)) {
+				if (Util.isDefault(typeDescriptor2.access)
+							|| Util.isPrivate(typeDescriptor2.access)) {
 					return NO_DELTA;
 				}
 			}
@@ -151,17 +167,24 @@ public class ApiComparator {
 						IDelta.API_COMPONENT_ELEMENT_TYPE,
 						IDelta.ADDED,
 						IDelta.TYPE,
-						elementDescription != null ? elementDescription.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-						typeDescriptor.access,
+						elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
+						typeDescriptor2.access,
 						typeName,
 						typeName,
 						new String[] { typeName, deltaComponentID});
 			}
-			ClassFileComparator comparator = new ClassFileComparator(classFile, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);
+			ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);
 			return comparator.getDelta();
 		} catch (CoreException e) {
 			return null;
 		}
+	}
+
+	private static boolean isAPI(int visibility,
+			TypeDescriptor typeDescriptor) {
+		int access = typeDescriptor.access;
+		return (visibility & VisibilityModifiers.API) != 0
+			&& (Util.isPublic(access) || Util.isProtected(access));
 	}
 
 	/**
@@ -690,7 +713,7 @@ public class ApiComparator {
 											return;
 										}
 									}
-									if (((visibility & VisibilityModifiers.API) != 0) && ((visibility2 & VisibilityModifiers.API) == 0)) {
+									if (isAPI(visibility, typeDescriptor) && !isAPI(visibility2, typeDescriptor2)) {
 										globalDelta.add(
 												new Delta(
 														deltaComponentID,

@@ -951,42 +951,37 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (isNewAPI(delta)) {
 				this.fBuildState.addCompatibleChange(delta);
 			}
-			if (kind == IDelta.ADDED) {
-				int modifiers = delta.getModifiers();
-				if (Util.isPublic(modifiers)) {
-					// if public, we always want to check @since tags
-					switch(flags) {
-						case IDelta.TYPE_MEMBER :
-						case IDelta.METHOD :
-						case IDelta.CONSTRUCTOR :
-						case IDelta.ENUM_CONSTANT :
-						case IDelta.METHOD_WITH_DEFAULT_VALUE :
-						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-						case IDelta.FIELD :
-						case IDelta.TYPE :
+			int modifiers = delta.getModifiers();
+			if (Util.isPublic(modifiers) || (Util.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions()))) {
+				// if protected, we only want to check @since tags if the enclosing class can be subclassed
+				switch(kind) {
+					case IDelta.ADDED :
+						// if public, we always want to check @since tags
+						switch(flags) {
+							case IDelta.TYPE_MEMBER :
+							case IDelta.METHOD :
+							case IDelta.CONSTRUCTOR :
+							case IDelta.ENUM_CONSTANT :
+							case IDelta.METHOD_WITH_DEFAULT_VALUE :
+							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+							case IDelta.FIELD :
+							case IDelta.TYPE :
+								if (DEBUG) {
+									String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
+									System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
+								}
+								fPendingDeltaInfos.add(delta);
+								break;
+						}
+						break;
+					case IDelta.CHANGED :
+						if (flags == IDelta.INCREASE_ACCESS) {
 							if (DEBUG) {
 								String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
 								System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
 							}
 							fPendingDeltaInfos.add(delta);
-							break;
-					}
-				} else if (Util.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
-					// if protected, we only want to check @since tags if the enclosing class can be subclassed
-					switch(flags) {
-						case IDelta.TYPE_MEMBER :
-						case IDelta.METHOD :
-						case IDelta.CONSTRUCTOR :
-						case IDelta.ENUM_CONSTANT :
-						case IDelta.FIELD :
-						case IDelta.TYPE :
-							if (DEBUG) {
-								String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
-								System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
-							}
-							fPendingDeltaInfos.add(delta);
-							break;
-					}
+						}
 				}
 			}
 		} else {
