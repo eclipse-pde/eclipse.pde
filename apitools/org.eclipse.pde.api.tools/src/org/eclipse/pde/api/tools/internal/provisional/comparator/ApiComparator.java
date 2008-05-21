@@ -161,18 +161,6 @@ public class ApiComparator {
 					return NO_DELTA;
 				}
 			}
-			if (classFile == null) {
-				return new Delta(
-						deltaComponentID,
-						IDelta.API_COMPONENT_ELEMENT_TYPE,
-						IDelta.ADDED,
-						IDelta.TYPE,
-						elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-						typeDescriptor2.access,
-						typeName,
-						typeName,
-						new String[] { typeName, deltaComponentID});
-			}
 			ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);
 			return comparator.getDelta();
 		} catch (CoreException e) {
