@@ -32,9 +32,8 @@ public class DSProvideTestCase extends AbstractDSModelTestCase {
 		IDSComponent component = fModel.getDSComponent();
 		assertNotNull(component);
 		
-		IDSService[] services = fModel.getDSComponent().getServices();
-		assertTrue(services.length == 1);
-		IDSService service = services[0];
+		IDSService service = fModel.getDSComponent().getService();
+		assertNotNull(service);
 		
 		IDSProvide[] providedServices = service.getProvidedServices();
 		assertTrue(providedServices.length == 1);
@@ -74,8 +73,7 @@ public class DSProvideTestCase extends AbstractDSModelTestCase {
 			
 			assertTrue(content.contains("interface=\"java.lang.Runnable\""));
 			
-			IDSService[] services = component.getServices();
-			IDSService service0 = services[0];
+			IDSService service0 = component.getService();
 			assertNotNull(service0);
 			assertTrue(service0.getServiceFactory());
 			IDSProvide[] providedServices = service.getProvidedServices();

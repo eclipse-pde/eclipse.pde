@@ -83,11 +83,11 @@ public interface IDSComponent extends IDSObject {
 	public boolean getImmediate();
 
 	/**
-	 * Returns all of the service implementation classes
+	 * Returns the service implementation class
 	 * 
-	 * @return IDSImplementation's array containing all Implementation elements
+	 * @return IDSImplementation containing the Implementation element
 	 */
-	public IDSImplementation[] getImplementations();
+	public IDSImplementation getImplementation();
 
 	/**
 	 * Returns all Property elements
@@ -104,11 +104,11 @@ public interface IDSComponent extends IDSObject {
 	public IDSProperties[] getPropertiesElements();
 
 	/**
-	 * Returns all Service elements
+	 * Returns the Service element
 	 * 
-	 * @return IDSService's array containing all Service elements
+	 * @return IDSService containing the Service element
 	 */
-	public IDSService[] getServices();
+	public IDSService getService();
 
 	/**
 	 * Returns all Reference elements

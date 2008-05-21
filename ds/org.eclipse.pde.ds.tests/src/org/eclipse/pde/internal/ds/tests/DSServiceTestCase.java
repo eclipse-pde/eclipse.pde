@@ -167,10 +167,8 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 
 		IDSComponent component = fModel.getDSComponent();
 		
-		IDSService[] services = component.getServices();
-		assertTrue(services.length == 1);
-		
-		IDSService service = services[0];
+		IDSService service = component.getService();
+		assertNotNull(service);
 		
 		IDSProvide[] providedServices = service.getProvidedServices();
 		assertTrue(providedServices.length==1);
@@ -178,11 +176,8 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		//Removing Provided Service
 		service.removeChildNode(providedServices[0]);
 		
-		services = component.getServices();
-		
-		assertTrue(services.length == 1);
-		
-		service = services[0];
+		service = component.getService();
+		assertNotNull(service);
 		
 		assertTrue(service.getProvidedServices().length == 0);
 
@@ -207,8 +202,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		
 		assertTrue(content.contains("servicefactory=\"true\""));
 		
-		IDSService[] services = component.getServices();
-		IDSService service0 = services[0];
+		IDSService service0 = component.getService();
 		assertNotNull(service0);
 		assertTrue(service0.getServiceFactory());
 		

@@ -28,10 +28,9 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 		IDSComponent component = fModel.getDSComponent();
 		assertNotNull(component);
 
-		IDSImplementation[] implementationElements = component.getImplementations();
-		assertTrue(implementationElements.length == 1);
+		IDSImplementation implementation = component.getImplementation();
+		assertTrue(implementation != null);
 
-		IDSImplementation implementation = implementationElements[0];
 		String className = implementation.getClassName();
 		assertTrue(className.equals("org.example.ds.SampleCommandProvider1"));
 		
@@ -54,10 +53,8 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 		IDSComponent component = fModel.getDSComponent();
 		assertNotNull(component);
 
-		IDSImplementation[] implementationElements = component.getImplementations();
-		assertTrue(implementationElements.length == 1);
-
-		IDSImplementation implementation = implementationElements[0];
+		IDSImplementation implementation = component.getImplementation();
+		assertNotNull(implementation);
 		assertTrue(implementation.getClassName() == null);
 	}
 
@@ -81,8 +78,7 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 
 		assertTrue(content.contains("class=\"" + className + "\""));
 
-		IDSImplementation[] ImplementationElements = component.getImplementations();
-		IDSImplementation Implementation0 = ImplementationElements[0];
+		IDSImplementation Implementation0 = component.getImplementation();
 		assertNotNull(Implementation0);
 		assertTrue(Implementation0.getClassName().equals(className));
 

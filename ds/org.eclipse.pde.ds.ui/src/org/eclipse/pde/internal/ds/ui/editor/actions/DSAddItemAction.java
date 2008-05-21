@@ -17,7 +17,6 @@ import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSObject;
-import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.Messages;
 
 public class DSAddItemAction extends Action {
@@ -101,8 +100,7 @@ public class DSAddItemAction extends Action {
 			// only provide component isn't a child of DSRoot component.
 			// The user can select a IDSProvide or IDSService to add a new
 			// IDSProvide
-			IDSService[] services = ((IDSComponent) fParent).getServices();
-			fParent = services[0];
+			fParent = ((IDSComponent) fParent).getService();
 			break;
 		case IDSConstants.TYPE_REFERENCE:
 			fNewObject = factory.createReference();

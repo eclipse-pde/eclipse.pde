@@ -207,9 +207,9 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
 		IDSComponent component = (IDSComponent) fModel.getDSComponent();
 		// DS XML Files can have 0..1 Service Component
-		int servicesCount = component.getServices().length;
-		canAddService = (servicesCount == 0);
-		canAddProvide = (servicesCount == 1);
+		boolean hasService = component.getService() != null;
+		canAddService = (!hasService);
+		canAddProvide = (hasService);
 	}
 
 	/**
@@ -345,7 +345,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTY, true);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROVIDE, false);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_REFERENCE, true);
-		boolean hasService = (fModel.getDSComponent().getServices().length == 1);
+		boolean hasService = (fModel.getDSComponent().getService() != null);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_SERVICE, !hasService);
 
 		IDSComponent dsComponent = fModel.getDSComponent();

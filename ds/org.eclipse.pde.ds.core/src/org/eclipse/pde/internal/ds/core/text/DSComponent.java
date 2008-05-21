@@ -39,7 +39,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	public DSComponent(DSModel model) {
 		super(model, ELEMENT_ROOT);
 		setInTheModel(true);
-		
+
 		// set default values
 		this.setEnabled(true);
 	}
@@ -90,7 +90,6 @@ public class DSComponent extends DSObject implements IDSComponent {
 				|| objectType == TYPE_PROPERTIES || objectType == TYPE_PROPERTY
 				|| objectType == TYPE_SERVICE || objectType == TYPE_REFERENCE;
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -164,15 +163,13 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return getBooleanAttributeValue(ATTRIBUTE_IMMEDIATE, false);
 	}
 
-
-	public IDSImplementation[] getImplementations() {
+	public IDSImplementation getImplementation() {
 		ArrayList childNodesList = getChildNodesList(IDSImplementation.class,
 				true);
-		IDSImplementation[] array = new IDSImplementation[childNodesList.size()];
-		for (int i = 0; i < childNodesList.size(); i++) {
-			array[i] = (IDSImplementation) childNodesList.get(i);
+		if (childNodesList.size() == 0) {
+			return null;
 		}
-		return array;
+		return (IDSImplementation) childNodesList.get(0);
 	}
 
 	public IDSProperties[] getPropertiesElements() {
@@ -202,13 +199,12 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return array;
 	}
 
-	public IDSService[] getServices() {
+	public IDSService getService() {
 		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
-		IDSService[] services = new IDSService[childNodesList.size()];
-		for (int i = 0; i < childNodesList.size(); i++) {
-			services[i] = (IDSService) childNodesList.get(i);
+		if (childNodesList.size() == 0) {
+			return null;
 		}
-		return services;
+		return (IDSService) childNodesList.get(0);
 	}
 
 }
