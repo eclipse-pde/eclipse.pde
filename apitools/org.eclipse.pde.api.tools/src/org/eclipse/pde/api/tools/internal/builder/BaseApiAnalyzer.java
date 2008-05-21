@@ -229,6 +229,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					String id = description.getId();
 					IApiComponent baselineRequiredApiComponent = baseline.getApiComponent(id);
 					IApiComponent currentRequiredApiComponent = profile.getApiComponent(id);
+					if (baselineRequiredApiComponent == null || currentRequiredApiComponent == null) {
+						// not possible to diagnose anything
+						continue loop;
+					}
 					Version baselineRequiredVersion = new Version(baselineRequiredApiComponent.getVersion());
 					Version currentRequiredVersion = new Version(currentRequiredApiComponent.getVersion());
 					if (DEBUG) {
@@ -241,7 +245,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						return new ReexportedBundleVersionInfo(id , IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE);
 					} else if (baselineRequiredVersion.getMinor() != currentRequiredVersion.getMinor()) {
 						// minor version was changed so the current plugin should also update its minor version
-						if (info != null)  {
+						if (info != null) {
 							// already found a reexported minor version change. No need to create a new one
 							continue loop;
 						}
@@ -713,6 +717,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					String sinceVersion = visitor.getSinceVersion();
 					if (sinceVersion != null) {
 						SinceTagVersion tagVersion = new SinceTagVersion(sinceVersion);
+						String postfixString = tagVersion.postfixString();
 						if (tagVersion.getVersion() == null || Util.getFragmentNumber(tagVersion.getVersionString()) > 2) {
 							if(ignoreSinceTagCheck(IApiProblemTypes.MALFORMED_SINCE_TAG)) {
 								if(DEBUG) {
@@ -726,8 +731,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							}
 							Version componentVersion = new Version(componentVersionString);
 							buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
-							if (tagVersion.postfixString() != null) {
-								buffer.append(tagVersion.postfixString());
+							if (postfixString != null) {
+								if (!Character.isWhitespace(postfixString.charAt(0))) {
+									buffer.append(' ');
+								}
+								buffer.append(postfixString);
 							}
 							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED, new String[] {sinceVersion, Util.getDeltaArgumentString(delta)}, delta, member, String.valueOf(buffer));
 						} else {
@@ -749,8 +757,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								}
 								Version version = new Version(accurateVersion);
 								buffer.append(version.getMajor()).append('.').append(version.getMinor());
-								if (tagVersion.postfixString() != null) {
-									buffer.append(tagVersion.postfixString());
+								if (postfixString != null) {
+									if (!Character.isWhitespace(postfixString.charAt(0))) {
+										buffer.append(' ');
+									}
+									buffer.append(postfixString);
 								}
 								String accurateSinceTagValue = String.valueOf(buffer);
 								problem = createSinceTagProblem(IApiProblem.SINCE_TAG_INVALID, new String[] {sinceVersion, accurateSinceTagValue, Util.getDeltaArgumentString(delta)}, delta, member, accurateSinceTagValue);
