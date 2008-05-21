@@ -601,6 +601,9 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			Summary summary = summaries[i];
 			String contents = null;
 			String componentID = summary.componentID;
+			if (this.excludedElement != null && this.excludedElement.contains(componentID)) {
+				continue;
+			}
 			try {
 				Document document = Util.newDocument();
 				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
