@@ -1131,7 +1131,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		tab.setControl(page);
 		
 		SWTFactory.createVerticalSpacer(page, 1);
-		SWTFactory.createWrapLabel(page, description, 2);
+		SWTFactory.createWrapLabel(page, description, 1);
 		SWTFactory.createVerticalSpacer(page, 1);
 		
 		switch(kind) {
