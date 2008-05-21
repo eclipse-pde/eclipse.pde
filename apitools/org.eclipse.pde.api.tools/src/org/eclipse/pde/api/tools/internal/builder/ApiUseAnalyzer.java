@@ -186,11 +186,11 @@ public class ApiUseAnalyzer {
 		 */
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("Problem Descriptor[");
-			buffer.append(Util.getProblemKind(IApiProblem.CATEGORY_USAGE, fKind)).append(", ");
-			buffer.append(Util.getProblemElementKind(IApiProblem.CATEGORY_USAGE, fElementType)).append(", ");
+			buffer.append("Problem Descriptor["); //$NON-NLS-1$
+			buffer.append(Util.getProblemKind(IApiProblem.CATEGORY_USAGE, fKind)).append(", "); //$NON-NLS-1$
+			buffer.append(Util.getProblemElementKind(IApiProblem.CATEGORY_USAGE, fElementType)).append(", "); //$NON-NLS-1$
 			buffer.append(Util.getProblemFlagsName(IApiProblem.CATEGORY_USAGE, fFlags));
-			buffer.append("]\n");
+			buffer.append("]\n"); //$NON-NLS-1$
 			return buffer.toString();
 		}
 	}
