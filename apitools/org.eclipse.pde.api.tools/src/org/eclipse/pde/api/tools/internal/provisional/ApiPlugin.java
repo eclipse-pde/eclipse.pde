@@ -156,7 +156,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	public final static String TRUE = "true"; //$NON-NLS-1$
 
 	public static String[] AllCompatibilityKeys = new String[] {
-		IApiProblemTypes.API_PROFILE_REMOVED_API_COMPONENT,
 		IApiProblemTypes.API_COMPONENT_REMOVED_TYPE,
 		IApiProblemTypes.API_COMPONENT_REMOVED_API_TYPE,
 		IApiProblemTypes.ANNOTATION_ADDED_TYPE_MEMBER,

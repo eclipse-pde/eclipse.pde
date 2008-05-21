@@ -37,7 +37,6 @@ public class PreferenceMessages extends NLS {
 	public static String ApiToolingNotificationsBlock_0;
 	public static String ApiToolingNotificationsBlock_1;
 	public static String ApiToolingNotificationsBlock_2;
-	public static String CompatibilityAPIProfileElement;
 	public static String CompatibilityAPIComponentElement;
 	public static String CompatibilityAnnotationElement;
 	public static String CompatibilityInterfaceElement;
@@ -70,7 +69,6 @@ public class PreferenceMessages extends NLS {
 	public static String ApiProfilesConfigurationBlock_options_group_title;
 	public static String ApiProfilesConfigurationBlock_missing_default_api_profile_message;
 
-	public static String API_PROFILE_REMOVED_API_COMPONENT;
 	public static String API_COMPONENT_REMOVED_API_TYPE;
 	public static String API_COMPONENT_REMOVED_TYPE;
 	public static String ANNOTATION_ADDED_FIELD;

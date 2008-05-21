@@ -221,8 +221,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final Key KEY_INVALID_JAVADOC_TAG = getApiToolsKey(IApiProblemTypes.INVALID_JAVADOC_TAG);
 	
 	//compatibility keys
-	private static final Key KEY_API_PROFILE_REMOVED_API_COMPONENT =
-		getApiToolsKey(IApiProblemTypes.API_PROFILE_REMOVED_API_COMPONENT);
 	private static final Key KEY_API_COMPONENT_REMOVED_API_TYPE =
 		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_API_TYPE);
 	private static final Key KEY_API_COMPONENT_REMOVED_TYPE =
@@ -529,7 +527,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private final int VERSION_MANAGEMENT_PAGE_ID = 2;
 	
 	private static Key[] fgAllCompatibilityKeys = {
-		KEY_API_PROFILE_REMOVED_API_COMPONENT,
 		KEY_API_COMPONENT_REMOVED_API_TYPE,
 		KEY_API_COMPONENT_REMOVED_TYPE,
 		KEY_ANNOTATION_ADDED_FIELD,
@@ -705,7 +702,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_LEAK_METHOD_PARAM,
 		KEY_LEAK_METHOD_RETURN_TYPE,
 		KEY_INVALID_JAVADOC_TAG,
-		KEY_API_PROFILE_REMOVED_API_COMPONENT,
 		KEY_API_COMPONENT_REMOVED_API_TYPE,
 		KEY_API_COMPONENT_REMOVED_TYPE,
 		KEY_ANNOTATION_ADDED_FIELD,
@@ -1235,10 +1231,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
 				scomp.setContent(sbody);
 				
-				Composite client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAPIProfileElement);
-				createComboControl(client, PreferenceMessages.API_PROFILE_REMOVED_API_COMPONENT, KEY_API_PROFILE_REMOVED_API_COMPONENT);
-				
-				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAPIComponentElement);
+				Composite client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAPIComponentElement);
 				initializeComboControls(
 						client,
 						new String[] {
