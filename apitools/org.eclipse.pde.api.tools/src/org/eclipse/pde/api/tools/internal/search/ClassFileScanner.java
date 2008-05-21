@@ -78,9 +78,9 @@ public class ClassFileScanner {
 		if (this.references == null || this.references == Collections.EMPTY_LIST) {
 			this.references = new ArrayList(100);
 		} else {
-			references.clear();
+			this.references.clear();
 		}
 		ClassReader reader = new ClassReader(classfile.getContents());
-		reader.accept(new ClassFileVisitor(component, references, referenceKinds), ClassReader.SKIP_FRAMES);
+		reader.accept(new ClassFileVisitor(component, this.references, referenceKinds), ClassReader.SKIP_FRAMES);
 	}
 }

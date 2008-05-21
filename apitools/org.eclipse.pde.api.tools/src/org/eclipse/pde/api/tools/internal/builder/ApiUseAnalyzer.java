@@ -180,6 +180,19 @@ public class ApiUseAnalyzer {
 		public int getFlags() {
 			return fFlags;
 		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("Problem Descriptor[");
+			buffer.append(Util.getProblemKind(IApiProblem.CATEGORY_USAGE, fKind)).append(", ");
+			buffer.append(Util.getProblemElementKind(IApiProblem.CATEGORY_USAGE, fElementType)).append(", ");
+			buffer.append(Util.getProblemFlagsName(IApiProblem.CATEGORY_USAGE, fFlags));
+			buffer.append("]\n");
+			return buffer.toString();
+		}
 	}
 	
 	/**

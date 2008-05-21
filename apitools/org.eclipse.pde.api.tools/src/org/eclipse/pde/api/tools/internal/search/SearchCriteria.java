@@ -551,6 +551,9 @@ public class SearchCriteria implements IApiSearchCriteria {
 		buffer.append("Reference Visibility Kinds: ").append(Util.getVisibilityKind(fVisibilityKinds)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append("Source Restriction Kinds: ").append(Util.getRestrictionKind(fSourceRestriction)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append("Source Visibility Kinds: ").append(Util.getVisibilityKind(fSourceVisibility)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		if(fUserData != null) {
+			buffer.append("User Data: ").append(fUserData.toString()); //$NON-NLS-1$
+		}
 		if(fPatterns != null) {
 			buffer.append("Patterns: ").append(fPatterns.toString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}

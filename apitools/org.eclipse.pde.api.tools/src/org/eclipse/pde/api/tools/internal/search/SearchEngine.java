@@ -358,23 +358,39 @@ public class SearchEngine implements IApiSearchEngine {
 		}
 		// 3. filter based on search conditions
 		localMonitor.subTask(SearchMessages.SearchEngine_3);
+		int emptyrefs = 0;
 		for (int i = 0; i < fPotentialMatches.length; i++) {
 			List references = fPotentialMatches[i];
 			if (!references.isEmpty()) {
 				IApiSearchCriteria condition = fConditions[i];
 				applyConditions(references, condition);
+				if(references.isEmpty()) {
+					emptyrefs++;
+				}
+			}
+			else {
+				emptyrefs++;
 			}
 			if (localMonitor.isCanceled()) {
 				return EMPTY_RESULT;
 			}
 		}
-		IApiSearchResult[] results = new IApiSearchResult[fPotentialMatches.length];
+		int size = fPotentialMatches.length-emptyrefs;
+		if(size <= 0) {
+			return EMPTY_RESULT;
+		}
+		IApiSearchResult[] results = new IApiSearchResult[size];
+		int index = 0;
 		for (int i = 0; i < fPotentialMatches.length; i++) {
 			List references = fPotentialMatches[i];
-			results[i] = new ApiSearchResult(fConditions[i], (IReference[]) references.toArray(new IReference[references.size()]));
+			if(references.isEmpty()) {
+				continue;
+			}
+			results[index++] = new ApiSearchResult(fConditions[i], (IReference[]) references.toArray(new IReference[references.size()]));
 			references.clear();
 		}
 		fCache.clear();
+		fPotentialMatches = null;
 		localMonitor.worked(1);
 		localMonitor.done();
 		return results;
