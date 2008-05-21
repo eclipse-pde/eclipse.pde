@@ -119,7 +119,7 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				break;
 			default :
 				// IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE
-				title = NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMajor2, this.newVersionValue);
+				title = NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMinor2, this.newVersionValue);
 		}
 		UIJob job  = new UIJob(title) {
 			/* (non-Javadoc)

@@ -18,7 +18,6 @@ public class Messages extends NLS {
 	public static String noProfile;
 	public static String cannotDeleteOutputFile;
 	public static String cannotCreateOutputFileParent;
-	public static String cannotFindPackageProperty;
 	public static String numberOfElements;
 	public static String numberOfUniqueElements;
 	public static String noJRELocation;
