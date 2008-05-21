@@ -1248,7 +1248,7 @@ public class ClassFileComparator {
 					}
 				}
 				if (!found) {
-					if (this.visibilityModifiers == VisibilityModifiers.API) {
+					if ((this.visibilityModifiers == VisibilityModifiers.API) && component.hasApiDescription()) {
 						// check if this method should be removed because it is tagged as @noreference
 						IApiDescription apiDescription = null;
 						try {
@@ -1296,17 +1296,20 @@ public class ClassFileComparator {
 			return;
 		}
 		int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
-		try {
-			IApiDescription apiDescription = this.component2.getApiDescription();
-			IApiAnnotations resolvedAPIDescription = apiDescription.resolveAnnotations(fieldDescriptor2.handle);
-			if (resolvedAPIDescription != null) {
-				restrictions = resolvedAPIDescription.getRestrictions();
-			}
-		} catch (CoreException e) {
-			// ignore
-		}
 		int referenceRestrictions = RestrictionModifiers.NO_RESTRICTIONS;
-		if (this.visibilityModifiers == VisibilityModifiers.API) {
+		int access2 = fieldDescriptor2.access;
+		if (this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription()) {
+			if (this.component2.hasApiDescription()) {
+				try {
+					IApiDescription apiDescription = this.component2.getApiDescription();
+					IApiAnnotations resolvedAPIDescription = apiDescription.resolveAnnotations(fieldDescriptor2.handle);
+					if (resolvedAPIDescription != null) {
+						restrictions = resolvedAPIDescription.getRestrictions();
+					}
+				} catch (CoreException e) {
+					// ignore
+				}
+			}
 			// check if this method should be removed because it is tagged as @noreference
 			IApiDescription apiDescription = null;
 			try {
@@ -1320,64 +1323,62 @@ public class ClassFileComparator {
 					referenceRestrictions = apiAnnotations.getRestrictions();
 				}
 			}
-		}
-		
-		int access2 = fieldDescriptor2.access;
-		if (RestrictionModifiers.isReferenceRestriction(referenceRestrictions)) {
-			// tagged as @noreference in the reference component
-			if (!RestrictionModifiers.isReferenceRestriction(restrictions)) {
-				// no longer tagged as @noreference
-				// report a field addition
-				if (fieldDescriptor2.isEnum()) {
-					// report delta (addition of an enum constant - compatible
-					this.addDelta(
-							this.descriptor2.getElementType(),
-							IDelta.ADDED,
-							IDelta.ENUM_CONSTANT,
-							this.currentDescriptorRestrictions,
-							access2,
-							this.classFile,
-							name,
-							new String[] {Util.getDescriptorName(this.descriptor2), name});
-				} else {
-					if (Util.isFinal(descriptor2.access)) {
+			if (RestrictionModifiers.isReferenceRestriction(referenceRestrictions)) {
+				// tagged as @noreference in the reference component
+				if (!RestrictionModifiers.isReferenceRestriction(restrictions)) {
+					// no longer tagged as @noreference
+					// report a field addition
+					if (fieldDescriptor2.isEnum()) {
+						// report delta (addition of an enum constant - compatible
 						this.addDelta(
 								this.descriptor2.getElementType(),
 								IDelta.ADDED,
-								IDelta.FIELD,
-								this.currentDescriptorRestrictions | RestrictionModifiers.NO_EXTEND,
-								access2,
-								this.classFile,
-								name,
-								new String[] {Util.getDescriptorName(this.descriptor2), name});
-					} else {
-						this.addDelta(
-								this.descriptor2.getElementType(),
-								IDelta.ADDED,
-								IDelta.FIELD,
+								IDelta.ENUM_CONSTANT,
 								this.currentDescriptorRestrictions,
 								access2,
 								this.classFile,
 								name,
 								new String[] {Util.getDescriptorName(this.descriptor2), name});
+					} else {
+						if (Util.isFinal(descriptor2.access)) {
+							this.addDelta(
+									this.descriptor2.getElementType(),
+									IDelta.ADDED,
+									IDelta.FIELD,
+									this.currentDescriptorRestrictions | RestrictionModifiers.NO_EXTEND,
+									access2,
+									this.classFile,
+									name,
+									new String[] {Util.getDescriptorName(this.descriptor2), name});
+						} else {
+							this.addDelta(
+									this.descriptor2.getElementType(),
+									IDelta.ADDED,
+									IDelta.FIELD,
+									this.currentDescriptorRestrictions,
+									access2,
+									this.classFile,
+									name,
+									new String[] {Util.getDescriptorName(this.descriptor2), name});
+						}
 					}
+					return;
 				}
-				return;
-			}
-		} else if (RestrictionModifiers.isReferenceRestriction(restrictions) && component.hasApiDescription()) {
-			if ((Util.isPublic(access2) || Util.isProtected(access2))
-					&& visibilityModifiers == VisibilityModifiers.API) {
-				// report that it is no longer an API field
-				this.addDelta(
-						this.descriptor2.getElementType(),
-						IDelta.REMOVED,
-						fieldDescriptor2.isEnum() ? IDelta.API_ENUM_CONSTANT : IDelta.API_FIELD,
-						this.currentDescriptorRestrictions,
-						access2,
-						this.classFile,
-						name,
-						new String[] {Util.getDescriptorName(this.descriptor2), name});
-				return;
+			} else if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+				if ((Util.isPublic(access2) || Util.isProtected(access2))
+						&& visibilityModifiers == VisibilityModifiers.API) {
+					// report that it is no longer an API field
+					this.addDelta(
+							this.descriptor2.getElementType(),
+							IDelta.REMOVED,
+							fieldDescriptor2.isEnum() ? IDelta.API_ENUM_CONSTANT : IDelta.API_FIELD,
+							this.currentDescriptorRestrictions,
+							access2,
+							this.classFile,
+							name,
+							new String[] {Util.getDescriptorName(this.descriptor2), name});
+					return;
+				}
 			}
 		}
 
@@ -1736,7 +1737,7 @@ public class ClassFileComparator {
 				}
 			}
 			if (!found) {
-				if (this.visibilityModifiers == VisibilityModifiers.API) {
+				if (this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription()) {
 					// check if this method should be removed because it is tagged as @noreference
 					IApiDescription apiDescription = null;
 					try {
@@ -1781,18 +1782,20 @@ public class ClassFileComparator {
 			return;
 		}
 		int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
-		try {
-			IApiDescription apiDescription = this.component2.getApiDescription();
-			IApiAnnotations resolvedAPIDescription = apiDescription.resolveAnnotations(methodDescriptor2.handle);
-			if (resolvedAPIDescription != null) {
-				restrictions = resolvedAPIDescription.getRestrictions();
+		if (component2.hasApiDescription()) {
+			try {
+				IApiDescription apiDescription = this.component2.getApiDescription();
+				IApiAnnotations resolvedAPIDescription = apiDescription.resolveAnnotations(methodDescriptor2.handle);
+				if (resolvedAPIDescription != null) {
+					restrictions = resolvedAPIDescription.getRestrictions();
+				}
+			} catch (CoreException e) {
+				// ignore
 			}
-		} catch (CoreException e) {
-			// ignore
 		}
 		int referenceRestrictions = RestrictionModifiers.NO_RESTRICTIONS;
 		int access2 = methodDescriptor2.access;
-		if (this.visibilityModifiers == VisibilityModifiers.API) {
+		if (this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription()) {
 			// check if this method should be removed because it is tagged as @noreference
 			IApiDescription apiDescription = null;
 			try {
@@ -1899,7 +1902,7 @@ public class ClassFileComparator {
 					}
 					return;
 				}
-			} else if (RestrictionModifiers.isReferenceRestriction(restrictions) && component.hasApiDescription()) {
+			} else if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
 				if (Util.isPublic(access2) || Util.isProtected(access2)) {
 					// report that it is no longer an API method
 					if (this.descriptor2.isAnnotation()) {
@@ -2444,7 +2447,7 @@ public class ClassFileComparator {
 			// we ignore synthetic fields 
 			return;
 		}
-		if (this.visibilityModifiers == VisibilityModifiers.API) {
+		if (this.visibilityModifiers == VisibilityModifiers.API && component2.hasApiDescription()) {
 			// check if this method should be removed because it is tagged as @noreference
 			IApiDescription apiDescription = null;
 			try {
@@ -2517,7 +2520,7 @@ public class ClassFileComparator {
 			// we ignore synthetic method
 			return;
 		}
-		if (this.visibilityModifiers == VisibilityModifiers.API) {
+		if (this.visibilityModifiers == VisibilityModifiers.API && component2.hasApiDescription()) {
 			// check if this method should be removed because it is tagged as @noreference
 			IApiDescription apiDescription = null;
 			int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
