@@ -11,10 +11,29 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
+/**
+ * Represents the provide element that define the service interfaces.
+ * 
+ * @since 3.4
+ * @see IDSService
+ * @see IDSObject
+ */
 public interface IDSProvide extends IDSObject {
 
+	/**
+	 * Sets the name of the interface that this service is registered under.
+	 * This name must be the fully qualified name of a Java class.
+	 * 
+	 * @param interfaceName
+	 *            new fully qualified name of a Java class.
+	 */
 	public void setInterface(String interfaceName);
 
+	/**
+	 * Returns the name of the interface that this service is registered under.
+	 * 
+	 * @return String containing a fully qualified name of a Java class.
+	 */
 	public String getInterface();
 
 }
