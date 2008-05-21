@@ -13,34 +13,49 @@ package org.eclipse.pde.internal.ds.core;
 
 import org.eclipse.pde.internal.core.text.IDocumentObject;
 
+/**
+ * Represents a general DS element of a DS xml file.
+ * 
+ */
 public interface IDSObject extends IDocumentObject {
 
 	/**
-	 * @return the root model object that is an ancestor to this object.
+	 * Returns the model object of this object.
+	 * 
+	 * @return IDSModel object containing the model.
 	 */
 	public abstract IDSModel getModel();
 
 	/**
-	 * @return the root element that is an ancestor to this object.
+	 * Returns the root element that is an ancestor to this object.
+	 * 
+	 * @return IDSComponent object containing the root element.
 	 */
 	public abstract IDSComponent getComponent();
 
 	/**
-	 * @return the identifier for this object to be used when displaying the element to the user
+	 * Returns the identifier for this object to be used when displaying the
+	 * element to the user
+	 * 
+	 * @return String containing the identifier
 	 */
 	public abstract String getName();
 
 	/**
-	 * Get the concrete type of this object, must be one of the TYPE constants
+	 * Returns the concrete type of this object, must be one of the TYPE constants
 	 * defined in IDSConstants.
 	 * 
-	 * @return
+	 * @return int value containing one of the TYPE constants defined in
+	 *         IDSConstants.
 	 * @see IDSConstants
 	 */
 	public abstract int getType();
 	
-
-	//	public abstract int getChildNodeCount(Class clazz);
-	
+	/**
+	 * Returns a boolean which represents if this object is capable of
+	 * containing children
+	 * 
+	 * @return true if this object can have children.
+	 */
 	public abstract boolean canBeParent();
 }
