@@ -353,14 +353,16 @@ public class BundleApiComponent extends AbstractApiComponent {
 			List all = new ArrayList();
 			// build the classpath from bundle and all fragments
 			all.add(this);
-			BundleDescription[] fragments = fBundleDescription.getFragments();
-			for (int i = 0; i < fragments.length; i++) {
-				BundleDescription fragment = fragments[i];
-				BundleApiComponent component = (BundleApiComponent) getProfile().getApiComponent(fragment.getSymbolicName());
-				if (component != null) {
-					// force initialization of the fragment so we can retrieve its class file containers
-					component.getClassFileContainers();
-					all.add(component);
+			if (isBinaryBundle() || !"org.eclipse.swt".equals(getId())) { //$NON-NLS-1$
+				BundleDescription[] fragments = fBundleDescription.getFragments();
+				for (int i = 0; i < fragments.length; i++) {
+					BundleDescription fragment = fragments[i];
+					BundleApiComponent component = (BundleApiComponent) getProfile().getApiComponent(fragment.getSymbolicName());
+					if (component != null) {
+						// force initialization of the fragment so we can retrieve its class file containers
+						component.getClassFileContainers();
+						all.add(component);
+					}
 				}
 			}
 			Iterator iterator = all.iterator();

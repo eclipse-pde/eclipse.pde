@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -79,6 +80,11 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 * A cache of bundle class path entries to class file containers.
 	 */
 	private Map fPathToOutputContainers = null;
+	
+	/**
+	 * A cache of output location paths to corresponding class file containers.
+	 */
+	private Map fOutputLocationToContainer = null;
 
 	/**
 	 * Constructs an API component for the given Java project in the specified profile.
@@ -123,6 +129,15 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 			}
 			if(hasApiFilterStore()) {
 				getFilterStore().dispose();
+			}
+			fModel = null;
+			if (fOutputLocationToContainer != null) {
+				fOutputLocationToContainer.clear();
+				fOutputLocationToContainer = null;
+			}
+			if (fPathToOutputContainers != null) {
+				fPathToOutputContainers.clear();
+				fPathToOutputContainers = null;
 			}
 		} 
 		catch(CoreException ce) {
@@ -213,7 +228,8 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	protected List createClassFileContainers() throws CoreException {
 		// first populate build.properties cache so we can create class file containers
 		// from bundle classpath entries
-		fPathToOutputContainers = new HashMap(8);
+		fPathToOutputContainers = new HashMap(4);
+		fOutputLocationToContainer = new HashMap(4);
 		if (fProject.exists() && fProject.getProject().isOpen()) {
 			IFile prop = fProject.getProject().getFile("build.properties"); //$NON-NLS-1$
 			if (prop.exists()) {
@@ -231,8 +247,8 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 							switch(classpathEntry.getEntryKind()) {
 								case IClasspathEntry.CPE_SOURCE :
 									String containerPath = classpathEntry.getPath().removeFirstSegments(1).toString();
-									IClassFileContainer container = getSourceFolderContainer(containerPath, this.getId());
-									if (container != null) {
+									IClassFileContainer container = getClassFileContainer(containerPath, this.getId());
+									if (container != null && !containers.contains(container)) {
 										containers.add(container);
 									}
 									break;
@@ -253,8 +269,14 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 									break;
 							}
 						}
-						if (containers.size() != 0) {
-							fPathToOutputContainers.put(".", new CompositeClassFileContainer(containers, this.getId())); //$NON-NLS-1$
+						if (!containers.isEmpty()) {
+							IClassFileContainer cfc = null;
+							if (containers.size() == 1) {
+								cfc = (IClassFileContainer) containers.get(0);
+							} else {
+								cfc = new CompositeClassFileContainer(containers, this.getId());
+							}
+							fPathToOutputContainers.put(".", cfc); //$NON-NLS-1$
 						}
 					}
 				} else {
@@ -266,7 +288,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 							String jar = buildEntry.getName().substring(IBuildEntry.JAR_PREFIX.length());
 							String[] tokens = buildEntry.getTokens();
 							if (tokens.length == 1) {
-								IClassFileContainer container = getSourceFolderContainer(tokens[0], this.getId());
+								IClassFileContainer container = getClassFileContainer(tokens[0], this.getId());
 								if (container != null) {
 									fPathToOutputContainers.put(jar, container);
 								}
@@ -274,13 +296,19 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 								List containers = new ArrayList();
 								for (int j = 0; j < tokens.length; j++) {
 									String currentToken = tokens[j];
-									IClassFileContainer container = getSourceFolderContainer(currentToken, this.getId());
-									if (container != null) {
+									IClassFileContainer container = getClassFileContainer(currentToken, this.getId());
+									if (container != null && !containers.contains(container)) {
 										containers.add(container);
 									}
 								}
 								if (!containers.isEmpty()) {
-									fPathToOutputContainers.put(jar, new CompositeClassFileContainer(containers, this.getId()));
+									IClassFileContainer cfc = null;
+									if (containers.size() == 1) {
+										cfc = (IClassFileContainer) containers.get(0);
+									} else {
+										cfc = new CompositeClassFileContainer(containers, this.getId());
+									}
+									fPathToOutputContainers.put(jar, cfc);
 								}
 							}
 						}
@@ -325,22 +353,37 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	
 	/** 
 	 * Finds and returns a class file container for the specified
-	 * source folder, or <code>null</code> if it does not exist.
+	 * source folder, or <code>null</code> if it does not exist. If the
+	 * source folder shares an output location with a previous source
+	 * folder, the output location is shared (a new one is not created).
 	 * 
 	 * @param location project relative path to the source folder
 	 * @return class file container or <code>null</code>
 	 */
-	private IClassFileContainer getSourceFolderContainer(String location, String id) {
+	private IClassFileContainer getClassFileContainer(String location, String id) throws CoreException {
 		IResource res = fProject.getProject().findMember(new Path(location));
 		if (res != null) {
 			IPackageFragmentRoot root = fProject.getPackageFragmentRoot(res);
 			if (root.exists()) {
-				return new SourceFolderClassFileContainer(root, id);
+				IClasspathEntry entry = root.getRawClasspathEntry();
+				IPath outputLocation = entry.getOutputLocation();
+				if (outputLocation == null) {
+					outputLocation = fProject.getOutputLocation();
+				}
+				IClassFileContainer cfc = (IClassFileContainer) fOutputLocationToContainer.get(outputLocation);
+				if (cfc == null) {
+					IContainer container = fProject.getProject().getWorkspace().getRoot().getFolder(outputLocation);
+					if (container.exists()) {
+						cfc = new FolderClassFileContainer(container, id);
+						fOutputLocationToContainer.put(outputLocation, cfc);
+					}
+				}
+				return cfc;
 			}
 		}
 		return null;
 	}	
-	
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#getName()
 	 */

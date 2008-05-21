@@ -19,9 +19,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarFile;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -82,7 +84,7 @@ public class ProjectApiDescription extends ApiDescription {
 	
 	/**
 	 * Class file container cache used for tag scanning.
-	 * Maps package fragment roots to containers.
+	 * Maps output locations to containers.
 	 * 
 	 * TODO: these could become out of date with class path changes.
 	 */
@@ -542,19 +544,27 @@ public class ProjectApiDescription extends ApiDescription {
 	}
 
 	/**
-	 * Returns a class file container for the given package fragment root.
+	 * Returns a class file container for the given package fragment root, or <code>null</code>
+	 * if none.
 	 * 
 	 * @param root package fragment root
-	 * @return class file container
+	 * @return class file container or <code>null</code> if none
 	 */
-	private synchronized IClassFileContainer getClassFileContainer(IPackageFragmentRoot root) {
+	private synchronized IClassFileContainer getClassFileContainer(IPackageFragmentRoot root) throws CoreException {
 		if (fClassFileContainers == null) {
 			fClassFileContainers = new HashMap(8);
 		}
-		IClassFileContainer container = (IClassFileContainer) fClassFileContainers.get(root);
+		IPath location = root.getRawClasspathEntry().getOutputLocation();
+		if (location == null) {
+			location = root.getJavaProject().getOutputLocation();
+		}
+		IClassFileContainer container = (IClassFileContainer) fClassFileContainers.get(location);
 		if (container == null) {
-			container = new SourceFolderClassFileContainer(root, getJavaProject().getElementName());
-			fClassFileContainers.put(root, container);
+			IContainer folder = root.getJavaProject().getProject().getWorkspace().getRoot().getFolder(location);
+			if (folder.exists()) {
+				container = new FolderClassFileContainer(folder, getJavaProject().getElementName());
+				fClassFileContainers.put(location, container);
+			}
 		}
 		return container;
 	}
