@@ -19,11 +19,12 @@
 			pluginpath="${thisPlugin}"
 			forceContextQualifier="z${DSTAMP}${TSTAMP}"
 			/>
-		<delete file="lib/pdebuild-ant.jar"/>
+		<delete file="lib/pdebuild-ant.jar" failonerror="false"/>
 		<ant antfile="build.xml" target="lib/pdebuild-ant.jar"/>
 	</target>
 	<target name="workspaceBinaries" description="Jar up the binaries that were compiled by the jdt builder" >
-		<delete file="lib/pdebuild-ant.jar"/>
+		<mkdir dir="lib" />
+		<delete file="lib/pdebuild-ant.jar" failonerror="false"/>
 		<jar destfile="lib/pdebuild-ant.jar" basedir="bin_ant"/>
 	</target>
 </project>
