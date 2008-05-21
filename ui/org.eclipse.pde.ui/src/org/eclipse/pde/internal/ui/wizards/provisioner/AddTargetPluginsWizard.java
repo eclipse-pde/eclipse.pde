@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class AddTargetPluginsWizard extends NewWizard {
 			try {
 				fWizard = (IProvisionerWizard) ((WizardElement) list.getChildren()[0]).createExecutableExtension();
 			} catch (CoreException e) {
+				PDEPlugin.log(e);
 				MessageDialog.openError(getContainer().getShell(), PDEUIMessages.Errors_CreationError, PDEUIMessages.Errors_CreationError_NoWizard);
 			}
 			fWizard.addPages();
