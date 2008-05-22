@@ -40,6 +40,10 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.part.*;
 
+/**
+ * Editor for table of contents xml files (for user assistance).  Provides a graphical way to
+ * view and edit the xml files, as well as a source viewer.
+ */
 public class TocEditor extends MultiSourceEditor {
 
 	private ImageHyperlink fImageHyperlinkRegisterTOC;
@@ -123,12 +127,16 @@ public class TocEditor extends MultiSourceEditor {
 
 							if (!resourcePath.isEmpty()) {
 								TocModel model = (TocModel) getAggregateModel();
-
-								IPath pluginPath = model.getUnderlyingResource().getProject().getFullPath();
-								IResource resource = root.findMember(pluginPath.append(resourcePath));
-
-								if (resource != null) {
-									resourceList.add(resource);
+								IResource underlyingResource = model.getUnderlyingResource();
+								if (underlyingResource != null) {
+									IProject project = underlyingResource.getProject();
+									if (project != null) {
+										IPath pluginPath = project.getFullPath();
+										IResource resource = root.findMember(pluginPath.append(resourcePath));
+										if (resource != null) {
+											resourceList.add(resource);
+										}
+									}
 								}
 							}
 						}
@@ -299,9 +307,6 @@ public class TocEditor extends MultiSourceEditor {
 			manager.add(createUIControlConRegisterCS());
 	}
 
-	/**
-	 * @return
-	 */
 	private ControlContribution createUIControlConRegisterCS() {
 		return new ControlContribution("Register") { //$NON-NLS-1$
 			protected Control createControl(Composite parent) {
