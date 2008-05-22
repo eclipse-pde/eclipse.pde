@@ -63,6 +63,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 		if (installedBaseLocation != null && !installedBaseLocation.equals("")) { //$NON-NLS-1$
 			if (!new File(installedBaseLocation).exists()) {
 				String message = NLS.bind(Messages.error_incorrectDirectoryEntry, installedBaseLocation);
+				installedBaseLocation = null;
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, message, null));
 			}
 
