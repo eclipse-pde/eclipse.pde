@@ -64,7 +64,10 @@ public class PluginImportOperation extends JarImportOperation {
 	private IImportQuery fExecutionQuery;
 
 	private boolean fLaunchedConfigurations = false;
-	private ArrayList fAffectedPlugins;
+	/**
+	 * A list of plugins that were unable to be deleted
+	 */
+	private ArrayList fUnableToDeletePlugins;
 
 	public interface IImportQuery {
 		public static final int CANCEL = 0;
@@ -86,7 +89,7 @@ public class PluginImportOperation extends JarImportOperation {
 		fImportType = importType;
 		fReplaceQuery = replaceQuery;
 		fExecutionQuery = executionQuery;
-		fAffectedPlugins = new ArrayList(models.length);
+		fUnableToDeletePlugins = new ArrayList();
 	}
 
 	/**
@@ -131,14 +134,14 @@ public class PluginImportOperation extends JarImportOperation {
 				throw new CoreException(multiStatus);
 		} finally {
 			monitor.done();
-			if (!fAffectedPlugins.isEmpty()) {
+			if (!fUnableToDeletePlugins.isEmpty()) {
 				final Display display = Display.getDefault();
 				display.syncExec(new Runnable() {
 					public void run() {
 						PluginImportFinishDialog dialog = new PluginImportFinishDialog(display.getActiveShell());
 						dialog.setTitle(PDEUIMessages.PluginImportInfoDialog_title);
 						dialog.setMessage(PDEUIMessages.PluginImportInfoDialog_message);
-						dialog.setInput(fAffectedPlugins);
+						dialog.setInput(fUnableToDeletePlugins);
 						dialog.open();
 					}
 
@@ -224,14 +227,13 @@ public class PluginImportOperation extends JarImportOperation {
 				if (!project.exists())
 					project.create(new SubProgressMonitor(monitor, 1));
 				if (!safeDeleteCheck(project, monitor)) {
-					fAffectedPlugins.add(model);
+					fUnableToDeletePlugins.add(model);
 					return;
 				}
-				//bug 212755
 				try {
 					project.delete(true, true, monitor);
 				} catch (CoreException e) {
-					fAffectedPlugins.add(model);
+					fUnableToDeletePlugins.add(model);
 					return;
 				}
 			}

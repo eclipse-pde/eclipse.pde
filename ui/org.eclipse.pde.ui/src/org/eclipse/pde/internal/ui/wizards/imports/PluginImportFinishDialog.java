@@ -41,7 +41,10 @@ public class PluginImportFinishDialog extends TitleAreaDialog {
 		fPluginListViewer.setLabelProvider(new PDELabelProvider());
 		fPluginListViewer.setContentProvider(new PluginImportTableContentProvider());
 		fPluginListViewer.setInput(fPluginList);
-		fPluginListViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = 100;
+		data.heightHint = 200;
+		fPluginListViewer.getTable().setLayoutData(data);
 		fConfigured = true;
 		return composite;
 
