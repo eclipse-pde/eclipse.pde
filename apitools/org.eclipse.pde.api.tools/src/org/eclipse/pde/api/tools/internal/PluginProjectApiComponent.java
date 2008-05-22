@@ -109,6 +109,13 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	protected boolean isBinaryBundle() {
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#isApiEnabled()
+	 */
+	protected boolean isApiEnabled() {
+		return Util.isApiProject(fProject);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#dispose()

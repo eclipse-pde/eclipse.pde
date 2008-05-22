@@ -353,7 +353,12 @@ public class BundleApiComponent extends AbstractApiComponent {
 			List all = new ArrayList();
 			// build the classpath from bundle and all fragments
 			all.add(this);
-			if (isBinaryBundle() || !"org.eclipse.swt".equals(getId())) { //$NON-NLS-1$
+			boolean considerFragments = true;
+			if ("org.eclipse.swt".equals(getId())) { //$NON-NLS-1$
+				// if SWT is a project to be built/analyzed don't consider its fragments
+				considerFragments = !isApiEnabled();
+			}
+			if (considerFragments) { 
 				BundleDescription[] fragments = fBundleDescription.getFragments();
 				for (int i = 0; i < fragments.length; i++) {
 					BundleDescription fragment = fragments[i];
@@ -402,6 +407,15 @@ public class BundleApiComponent extends AbstractApiComponent {
 			abort("Unable to initialize class file containers", e); //$NON-NLS-1$
 		}
 		return containers;
+	}
+	
+	/**
+	 * Returns whether this API component is enabled for API analysis by the API builder.
+	 * 
+	 * @return whether this API component is enabled for API analysis by the API builder.
+	 */
+	protected boolean isApiEnabled() {
+		return false;
 	}
 	
 	/**
