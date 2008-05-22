@@ -444,6 +444,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		dialog.setInitialSelection(fContainer);
+		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.CONTAINER_SELECTION);
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
 			if (elements.length > 0) {

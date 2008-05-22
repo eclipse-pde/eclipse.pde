@@ -12,9 +12,9 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class FeatureSelectionDialog extends ElementListSelectionDialog {
@@ -30,6 +30,14 @@ public class FeatureSelectionDialog extends ElementListSelectionDialog {
 		setElements(models);
 		setMultipleSelection(multiSelect);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.FEATURE_SELECTION);
 	}
 
 	public boolean close() {

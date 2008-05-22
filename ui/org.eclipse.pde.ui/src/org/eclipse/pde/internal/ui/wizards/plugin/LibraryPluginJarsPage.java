@@ -74,13 +74,14 @@ public class LibraryPluginJarsPage extends WizardPage {
 
 	private void chooseWorkspaceFile() {
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(true);
 		dialog.setTitle(PDEUIMessages.LibraryPluginJarsPage_SelectionDialog_title);
 		dialog.setMessage(PDEUIMessages.LibraryPluginJarsPage_SelectionDialog_message);
 		dialog.addFilter(new FileExtensionFilter("jar")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
+		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.JAR_SELECTION);
 
 		if (dialog.open() == Window.OK) {
 			Object[] files = dialog.getResult();

@@ -373,6 +373,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		if (target != null)
 			dialog.setInitialSelection(target);
 
+		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.TARGET_SELECTION_DIALOG);
 		if (dialog.open() == Window.OK) {
 			IFile file = (IFile) dialog.getFirstResult();
 			try {

@@ -32,8 +32,7 @@ import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
@@ -46,8 +45,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -420,6 +418,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		ExportPackageObject first = (ExportPackageObject) selected[0];
 		DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(), first);
 		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXPORTED_PACKAGE_PROPERTIES);
 		SWTUtil.setDialogSize(dialog, 400, -1);
 		if (selected.length == 1)
 			dialog.setTitle(((ExportPackageObject) selected[0]).getName());
@@ -472,6 +471,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 						dialog.setMessage(PDEUIMessages.PackageSelectionDialog_label);
 						dialog.setTitle(PDEUIMessages.ExportPackageSection_title);
 						dialog.create();
+						PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXPORT_PACKAGES);
 						SWTUtil.setDialogSize(dialog, 400, 500);
 					}
 				};

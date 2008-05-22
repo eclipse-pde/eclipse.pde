@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PlatformUI;
 
 public class FilterDialog extends TrayDialog {
 
@@ -50,6 +51,14 @@ public class FilterDialog extends TrayDialog {
 	public FilterDialog(Shell parentShell, IMemento memento) {
 		super(parentShell);
 		this.memento = memento;
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.LOG_FILTER);
 	}
 
 	protected Control createDialogArea(Composite parent) {

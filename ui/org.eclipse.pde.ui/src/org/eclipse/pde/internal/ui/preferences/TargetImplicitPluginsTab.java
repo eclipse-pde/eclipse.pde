@@ -168,6 +168,8 @@ public class TargetImplicitPluginsTab {
 		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title);
 		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
 		dialog.setMultipleSelection(true);
+		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.IMPLICIT_PLUGINS_SELECTION_DIALOG);
 		if (dialog.open() == Window.OK) {
 			Object[] bundles = dialog.getResult();
 			for (int i = 0; i < bundles.length; i++) {

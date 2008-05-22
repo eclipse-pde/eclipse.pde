@@ -27,8 +27,7 @@ import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginDocumentNodeFactory;
 import org.eclipse.pde.internal.core.util.VersionUtil;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
@@ -44,6 +43,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -194,6 +194,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 
 		DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(), importObject);
 		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.IMPORTED_PLUGIN_PROPERTIES);
 		SWTUtil.setDialogSize(dialog, 400, -1);
 		dialog.setTitle(importObject.getId());
 		if (dialog.open() == Window.OK && isEditable()) {

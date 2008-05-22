@@ -25,8 +25,7 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.plugin.PluginLibrary;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -39,6 +38,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -328,6 +328,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		NewRuntimeLibraryDialog dialog = new NewRuntimeLibraryDialog(getPage().getSite().getShell(), model.getPluginBase().getLibraries());
 		dialog.create();
 		dialog.getShell().setText(PDEUIMessages.ManifestEditor_LibrarySection_newLibraryEntry);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.NEW_LIBRARY);
 		SWTUtil.setDialogSize(dialog, 250, 175);
 
 		if (dialog.open() == Window.OK) {
@@ -442,7 +443,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
 		dialog.setInput(project);
 		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
-
+		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.ADD_LIBRARY);
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
 			String[] filePaths = new String[elements.length];

@@ -314,6 +314,8 @@ public class ContentSection extends TableSection {
 		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title);
 		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
 		dialog.setMultipleSelection(true);
+		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.PLUGIN_SELECTION);
 		if (dialog.open() == Window.OK) {
 			Object[] bundles = dialog.getResult();
 			ITarget target = getTarget();

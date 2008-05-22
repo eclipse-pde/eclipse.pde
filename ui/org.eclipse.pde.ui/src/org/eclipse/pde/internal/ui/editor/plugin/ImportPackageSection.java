@@ -380,6 +380,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		ImportPackageObject first = (ImportPackageObject) selected[0];
 		DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(), first);
 		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.IMPORTED_PACKAGE_PROPERTIES);
 		SWTUtil.setDialogSize(dialog, 400, -1);
 		if (selected.length == 1)
 			dialog.setTitle(((ImportPackageObject) selected[0]).getName());
@@ -414,6 +415,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 				dialog.setMessage(PDEUIMessages.ImportPackageSection_exported);
 				dialog.setTitle(PDEUIMessages.ImportPackageSection_selection);
 				dialog.create();
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.IMPORT_PACKAGES);
 				SWTUtil.setDialogSize(dialog, 400, 500);
 			}
 		};

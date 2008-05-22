@@ -22,11 +22,13 @@ public interface IHelpContextIds {
 	public static final String TARGET_PLUGINS_PREFERENCE_PAGE = PREFIX + "target_plugins_preference_page"; //$NON-NLS-1$
 	public static final String TARGET_PROVISIONERS_PREFERENCE_PAGE = PREFIX + "target_provisioners_preference_page"; //$NON-NLS-1$
 	public static final String IMPLICIT_PLUGINS_PREFERENCE_PAGE = PREFIX + "implicit_plugins_preference_page"; //$NON-NLS-1$
+	public static final String IMPLICIT_PLUGINS_SELECTION_DIALOG = PREFIX + "implicit_plugins_selection_dialog"; //$NON-NLS-1$
 	public static final String LAUNCHING_ARGS_PREFERENCE_PAGE = PREFIX + "launching_args_preference_page"; //$NON-NLS-1$
 	public static final String COMPILERS_PREFERENCE_PAGE = PREFIX + "compilers_preference_page"; //$NON-NLS-1$
 	public static final String PROJECT_SELECTION_DIALOG = PREFIX + "project_selection_dialog"; //$NON-NLS-1$
 	public static final String TARGET_ENVIRONMENT_PREFERENCE_PAGE = PREFIX + "target_environment_preference_page"; //$NON-NLS-1$
 	public static final String TARGET_PLATFORM_PREFERENCE_PAGE = PREFIX + "target_platform_preference_page"; //$NON-NLS-1$
+	public static final String TARGET_SELECTION_DIALOG = PREFIX + "target_selection_dialog"; //$NON-NLS-1$
 
 	// Property Pages
 	public static final String SELFHOSTING_PROPERTY_PAGE = PREFIX + "selfhosting_property_page"; //$NON-NLS-1$
@@ -125,6 +127,21 @@ public interface IHelpContextIds {
 	public static final String LAUNCHER_ADVANCED = PREFIX + "launcher_advanced"; //$NON-NLS-1$
 	public static final String LAUNCHER_TRACING = PREFIX + "launcher_tracing"; //$NON-NLS-1$
 	public static final String LAUNCHER_CONFIGURATION = PREFIX + "launcher_configuration"; //$NON-NLS-1$
+	public static final String PLUGIN_SELECTION = PREFIX + "plugin_selection"; //$NON-NLS-1$
+	public static final String FEATURE_SELECTION = PREFIX + "feature_selection"; //$NON-NLS-1$
+	public static final String PRODUCT_CONFIGURATION_SELECTION = PREFIX + "product_configuration_selection"; //$NON-NLS-1$
+	public static final String EXECUTION_ENVIRONMENT_SELECTION = PREFIX + "execution_environment_selection"; //$NON-NLS-1$
+	public static final String IMPORT_PACKAGES = PREFIX + "import_packages"; //$NON-NLS-1$
+	public static final String EXPORT_PACKAGES = PREFIX + "export_packages"; //$NON-NLS-1$
+	public static final String BROWSE_EXTENSION_POINTS_SCHEMAS = PREFIX + "browse_extension_points_schemas"; //$NON-NLS-1$
+	public static final String CONTAINER_SELECTION = PREFIX + "container_selection"; //$NON-NLS-1$
+	public static final String JAR_SELECTION = PREFIX + "jar_selection"; //$NON-NLS-1$
+	public static final String ADD_LIBRARY = PREFIX + "add_library"; //$NON-NLS-1$
+	public static final String NEW_LIBRARY = PREFIX + "new_library"; //$NON-NLS-1$
+
+	public static final String IMPORTED_PACKAGE_PROPERTIES = PREFIX + "imported_package_properties"; //$NON-NLS-1$
+	public static final String EXPORTED_PACKAGE_PROPERTIES = PREFIX + "exported_package_properties"; //$NON-NLS-1$
+	public static final String IMPORTED_PLUGIN_PROPERTIES = PREFIX + "imported_plugin_properties"; //$NON-NLS-1$
 
 	// Generic source page
 	public static final String MANIFEST_SOURCE_PAGE = PREFIX + "manifest_source_page"; //$NON-NLS-1$

@@ -20,9 +20,9 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.osgi.framework.Constants;
 
@@ -39,6 +39,14 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 		setElements(models);
 		setMultipleSelection(multipleSelection);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.PLUGIN_SELECTION);
 	}
 
 	public boolean close() {

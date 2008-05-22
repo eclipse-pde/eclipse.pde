@@ -31,8 +31,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.forms.IFormPart;
@@ -193,6 +192,8 @@ public class ExtensionPointDetails extends PDEDetails {
 					dialog.setInitialSelection(project.getFile(new Path(filePath)));
 				else
 					dialog.setInitialSelection(null);
+				dialog.create();
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.BROWSE_EXTENSION_POINTS_SCHEMAS);
 				if (dialog.open() == Window.OK) {
 					Object[] elements = dialog.getResult();
 					if (elements.length > 0) {

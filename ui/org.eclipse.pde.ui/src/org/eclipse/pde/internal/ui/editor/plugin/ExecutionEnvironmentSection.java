@@ -38,6 +38,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.IFormColors;
@@ -279,6 +280,8 @@ public class ExecutionEnvironmentSection extends TableSection {
 		dialog.setMultipleSelection(true);
 		dialog.setTitle(PDEUIMessages.RequiredExecutionEnvironmentSection_dialog_title);
 		dialog.setMessage(PDEUIMessages.RequiredExecutionEnvironmentSection_dialogMessage);
+		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXECUTION_ENVIRONMENT_SELECTION);
 		if (dialog.open() == Window.OK) {
 			addExecutionEnvironments(dialog.getResult());
 		}

@@ -107,6 +107,14 @@ public class EventDetailsDialog extends TrayDialog {
 		stackFilterPatterns = getFilters();
 	}
 
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.LOG_EVENTDETAILS);
+	}
+
 	private void initialize() {
 		parentEntry = (AbstractEntry) entry.getParent(entry);
 		if (isChild(entry)) {

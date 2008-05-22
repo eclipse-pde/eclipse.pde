@@ -22,6 +22,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -84,7 +85,8 @@ public class ProductConfigurationSection {
 		IFile product = getProductFile();
 		if (product != null)
 			dialog.setInitialSelection(product);
-
+		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.PRODUCT_CONFIGURATION_SELECTION);
 		if (dialog.open() == Window.OK) {
 			IFile file = (IFile) dialog.getFirstResult();
 			String value = file.getFullPath().toString();
