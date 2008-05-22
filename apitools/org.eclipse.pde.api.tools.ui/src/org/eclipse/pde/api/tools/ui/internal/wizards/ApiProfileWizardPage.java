@@ -19,6 +19,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -442,6 +444,9 @@ public class ApiProfileWizardPage extends WizardPage {
 	 */
 	protected boolean pageValid() {
 		setErrorMessage(null);
+		if(!isNameValid(nametext.getText().trim())) {
+			return false;
+		}
 		String text = locationcombo.getText().trim();
 		if(text.length() < 1) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_23);
@@ -451,16 +456,6 @@ public class ApiProfileWizardPage extends WizardPage {
 		if(!new Path(text).toFile().exists()) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_24);
 			reloadbutton.setEnabled(false);
-			return false;
-		}
-		text = nametext.getText().trim();
-		if(text.length() < 1) {
-			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
-			return false;
-		}
-		if(!text.equals(originalname) && (((ApiProfileManager)ApiPlugin.getDefault().getApiProfileManager()).isExistingProfileName(text) &&
-				!ApiProfilesPreferencePage.isRemovedBaseline(text))) {
-			setErrorMessage(WizardMessages.ApiProfileWizardPage_profile_with_that_name_exists);
 			return false;
 		}
 		if(fProfile != null) {	
@@ -476,6 +471,28 @@ public class ApiProfileWizardPage extends WizardPage {
 		}
 		else {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_location_needs_reset);
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * @param name
+	 * @return
+	 */
+	private boolean isNameValid(String name) {
+		if(name.length() < 1) {
+			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
+			return false;
+		}
+		if(!name.equals(originalname) && (((ApiProfileManager)ApiPlugin.getDefault().getApiProfileManager()).isExistingProfileName(name) &&
+				!ApiProfilesPreferencePage.isRemovedBaseline(name))) {
+			setErrorMessage(WizardMessages.ApiProfileWizardPage_profile_with_that_name_exists);
+			return false;
+		}
+		IStatus status = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);
+		if(!status.isOK()) {
+			setErrorMessage(status.getMessage());
 			return false;
 		}
 		return true;
