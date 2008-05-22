@@ -38,6 +38,7 @@ import org.apache.tools.ant.BuildException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.BaseApiAnalyzer;
@@ -225,9 +226,80 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			if (filters == null) return false;
 			for (Iterator iterator = filters.iterator(); iterator.hasNext();) {
 				IApiProblemFilter filter = (IApiProblemFilter) iterator.next();
-				if (filter.getUnderlyingProblem().equals(problem)) {
+				if (problem.getCategory() == IApiProblem.CATEGORY_USAGE) {
+					// write our own matching implementation
+					return matchUsageProblem(filter.getUnderlyingProblem(), problem);
+				} else if (filter.getUnderlyingProblem().equals(problem)) {
 					return true;
 				}
+			}
+			return false;
+		}
+
+		private boolean matchUsageProblem(IApiProblem filterProblem, IApiProblem problem) {
+			if (problem.getId() == filterProblem.getId()) {
+				// check arguments
+				String problemPath = problem.getResourcePath();
+				String filterProblemPath = filterProblem.getResourcePath();
+				if (problemPath == null) {
+					if (filterProblemPath != null) {
+						return false;
+					}
+				} else if (filterProblemPath == null) {
+					return false;
+				} else if (!new Path(problemPath).equals(new Path(filterProblemPath))) {
+					return false;
+				}
+				String problemTypeName = problem.getTypeName();
+				String filterProblemTypeName = filterProblem.getTypeName();
+				if (problemTypeName == null) {
+					if (filterProblemTypeName != null) {
+						return false;
+					}
+				} else if (filterProblemTypeName == null) {
+					return false;
+				} else if (!problemTypeName.equals(filterProblemTypeName)) {
+					return false;
+				}
+				return argumentsEquals(problem.getMessageArguments(), filterProblem.getMessageArguments());
+			}
+			return false;
+		}
+
+		private boolean argumentsEquals(String[] problemMessageArguments,
+				String[] filterProblemMessageArguments) {
+			// filter problems message arguments are always simple name
+			// problem message arguments are fully qualified name outside the IDE
+			int length = problemMessageArguments.length;
+			if (length == filterProblemMessageArguments.length) {
+				for (int i = 0; i < length; i++) {
+					String problemMessageArgument = problemMessageArguments[i];
+					String filterProblemMessageArgument = filterProblemMessageArguments[i];
+					if (problemMessageArgument.equals(filterProblemMessageArgument)) {
+						continue;
+					}
+					int index = problemMessageArgument.lastIndexOf('.');
+					int filterProblemIndex = filterProblemMessageArgument.lastIndexOf('.');
+					if (index == -1) {
+						if (filterProblemIndex == -1) {
+							return false; // simple names should match
+						}
+						if (filterProblemMessageArgument.substring(filterProblemIndex + 1).equals(problemMessageArgument)) {
+							continue;
+						} else {
+							return false;
+						}
+					} else if (filterProblemIndex != -1) {
+						return false; // fully qualified name should match
+					} else {
+						if (problemMessageArgument.substring(index + 1).equals(filterProblemMessageArgument)) {
+							continue;
+						} else {
+							return false;
+						}
+					}
+				}
+				return true;
 			}
 			return false;
 		}
