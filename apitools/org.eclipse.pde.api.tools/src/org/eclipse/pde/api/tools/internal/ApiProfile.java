@@ -861,6 +861,16 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		}
 		fState = null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfile#close()
+	 */
+	public void close() throws CoreException {
+		IApiComponent[] components = getApiComponents();
+		for (int i = 0; i < components.length; i++) {
+			components[i].close();
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiProfile#writeProfileDescription(java.io.OutputStream)

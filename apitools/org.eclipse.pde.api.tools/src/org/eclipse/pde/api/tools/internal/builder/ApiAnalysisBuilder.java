@@ -356,6 +356,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				saveBuiltState(fCurrentProject, fBuildState);
 				fBuildState = null;
 			}
+			IApiProfile wsprofile = getWorkspaceProfile();
+			if (wsprofile != null) {
+				wsprofile.close();
+			}
 		}
 		if (DEBUG) {
 			System.out.println("Finished build of " + fCurrentProject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$

@@ -132,6 +132,15 @@ public interface IApiProfile {
 	public void dispose();
 	
 	/**
+	 * Closes all components in this profile. The profile may still be used after closing,
+	 * but clients should close the profile when they are done with it to free
+	 * system resources.
+	 * 
+	 * @throws CoreException if closing fails
+	 */
+	public void close() throws CoreException;	
+	
+	/**
 	 * Writes a description of this profile to the given output stream.
 	 * The profile can be recreated using the {@link Factory}.
 	 * 

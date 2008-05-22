@@ -227,9 +227,9 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	 * @throws CoreException
 	 */
 	private synchronized void init() throws CoreException {
+		ZipFile zipFile = open();
 		if (fPackages == null) {
 			fPackages = new HashMap();
-			ZipFile zipFile = open();
 			Enumeration entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = (ZipEntry) entries.nextElement();
