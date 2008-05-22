@@ -33,8 +33,11 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IParent;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeRoot;
@@ -53,7 +56,6 @@ import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
@@ -61,7 +63,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -95,18 +96,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		ReexportedBundleVersionInfo(String componentID, int kind) {
 			this.componentID = componentID;
 			this.kind = kind;
-		}
-	}
-
-	/**
-	 * Visitor for validating Javadoc tags in {@link IClassFile}s 
-	 */
-	class ClassFileVisitor extends ClassFileContainerVisitor {
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor#visit(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.IClassFile)
-		 */
-		public void visit(String packageName, IClassFile classFile) {
-			processType(classFile.getTypeName());
 		}
 	}
 	
@@ -456,15 +445,18 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		try {
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + (typenames == null ? component.getClassFileContainers().length : typenames.length));
 			if(typenames == null) {
-				IClassFileContainer[] containers = component.getClassFileContainers();
-				ClassFileVisitor visitor = new ClassFileVisitor();
-				for(int i = 0; i < containers.length; i++) {
-					try {
-						localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, containers[i].getOrigin()));
-						containers[i].accept(visitor);
-						updateMonitor(localMonitor);
+				try {
+					IPackageFragmentRoot[] roots = fJavaProject.getPackageFragmentRoots();
+					for(int i = 0; i < roots.length; i++) {
+						if(roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
+							localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, roots[i].getPath().toOSString()));
+							scanSource(roots[i], localMonitor.newChild(1));
+							updateMonitor(localMonitor);
+						}
 					}
-					catch(CoreException ce) {}
+				}
+				catch(JavaModelException jme) {
+					ApiPlugin.log(jme);
 				}
 			}
 			else {
@@ -484,6 +476,41 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 	
 	/**
+	 * Recursively finds all source in the given project and scans it for invalid tags 
+	 * @param element
+	 * @param monitor
+	 * @throws JavaModelException
+	 */
+	private void scanSource(IJavaElement element, IProgressMonitor monitor) throws JavaModelException {
+		try {
+			switch(element.getElementType()) {
+				case IJavaElement.PACKAGE_FRAGMENT_ROOT:
+				case IJavaElement.PACKAGE_FRAGMENT: {
+					IParent parent = (IParent) element;
+					IJavaElement[] children = parent.getChildren();
+					for (int i = 0; i < children.length; i++) {
+						scanSource(children[i], monitor);
+						updateMonitor(monitor, 0);
+					}
+					break;
+				}
+				case IJavaElement.COMPILATION_UNIT: {
+					ICompilationUnit unit = (ICompilationUnit) element;
+					processType(unit);
+					updateMonitor(monitor, 0);
+					break;
+				}
+			}
+		}
+		finally {
+			if(monitor != null) {
+				updateMonitor(monitor);
+				monitor.done();
+			}
+		}
+	}
+	
+	/**
 	 * Processes the given type name for invalid Javadoc tags
 	 * @param typename
 	 */
@@ -493,22 +520,29 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if(type != null) {
 				ICompilationUnit cunit = type.getCompilationUnit();
 				if(cunit != null) {
-					TagValidator tv = new TagValidator(cunit);
-					CompilationUnit comp = createAST(cunit, 0);
-					if(comp == null) {
-						return;
-					}
-					comp.accept(tv);
-					IApiProblem[] tagProblems = tv.getTagProblems();
-					for (int i = 0; i < tagProblems.length; i++) {
-						IApiProblem apiProblem = tagProblems[i];
-						addProblem(apiProblem);
-					}
+					processType(cunit);
 				}
 			}
 		} 
 		catch (JavaModelException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Processes the given {@link ICompilationUnit} for invalid tags
+	 * @param cunit
+	 */
+	private void processType(ICompilationUnit cunit) {
+		TagValidator tv = new TagValidator(cunit);
+		CompilationUnit comp = createAST(cunit, 0);
+		if(comp == null) {
+			return;
+		}
+		comp.accept(tv);
+		IApiProblem[] tagProblems = tv.getTagProblems();
+		for (int i = 0; i < tagProblems.length; i++) {
+			addProblem(tagProblems[i]);
 		}
 	}
 	
