@@ -356,10 +356,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				saveBuiltState(fCurrentProject, fBuildState);
 				fBuildState = null;
 			}
-			IApiProfile wsprofile = getWorkspaceProfile();
-			if (wsprofile != null) {
-				wsprofile.close();
-			}
 		}
 		if (DEBUG) {
 			System.out.println("Finished build of " + fCurrentProject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
@@ -372,6 +368,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param monitor
 	 */
 	private void buildAll(IProgressMonitor monitor) throws CoreException {
+		IApiProfile wsprofile = null;
 		try {
 			clearLastState();
 			fBuildState = new BuildState();
@@ -383,7 +380,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			IPluginModelBase currentModel = getCurrentModel();
 			if (currentModel != null) {
 				localMonitor.subTask(BuilderMessages.building_workspace_profile);
-				IApiProfile wsprofile = getWorkspaceProfile();
+				wsprofile = getWorkspaceProfile();
 				updateMonitor(localMonitor, 1);
 				if (wsprofile == null) {
 					if (DEBUG) {
@@ -403,6 +400,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		finally {
+			if(wsprofile != null) {
+				wsprofile.close();
+			}
 			if(monitor != null) {
 				monitor.done();
 			}
@@ -581,6 +581,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param monitor
 	 */
 	private void build(final State state, IProgressMonitor monitor) throws CoreException {
+		IApiProfile wsprofile = null;
 		try {
 			clearLastState(); // so if the build fails, a full build will be triggered
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 6);
@@ -591,7 +592,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			if (fTypesToCheck.size() != 0) {
 				IPluginModelBase currentModel = getCurrentModel();
 				if (currentModel != null) {
-					IApiProfile wsprofile = getWorkspaceProfile();
+					wsprofile = getWorkspaceProfile();
 					if (wsprofile == null) {
 						if (DEBUG) {
 							System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
@@ -616,6 +617,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		finally {
+			if(wsprofile != null) {
+				wsprofile.close();
+			}
 			if(monitor != null) {
 				monitor.done();
 			}
