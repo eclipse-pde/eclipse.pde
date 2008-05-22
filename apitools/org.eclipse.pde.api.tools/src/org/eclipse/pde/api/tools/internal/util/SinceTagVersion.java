@@ -28,6 +28,7 @@ public class SinceTagVersion {
 	private String postfixString;
 	private static final Pattern VERSION_PATTERN = Pattern.compile("\\s([0-9]+\\.?[0-9]?\\.?[0-9]?\\.?[A-Za-z0-9]*)\\s");; //$NON-NLS-1$
 	private static final Pattern NO_SPACE_VERSION_PATTERN = Pattern.compile("([0-9]+\\.?[0-9]?\\.?[0-9]?\\.?[A-Za-z0-9]*)");; //$NON-NLS-1$
+	private static final Pattern NO_LEADING_SPACE_VERSION_PATTERN = Pattern.compile("([0-9]+\\.?[0-9]?\\.?[0-9]?\\.?[A-Za-z0-9]*)\\s");; //$NON-NLS-1$
 
 	/**
 	 * Creates a new instance.
@@ -42,6 +43,11 @@ public class SinceTagVersion {
 		Matcher m = VERSION_PATTERN.matcher(value);
 		if (m.find()) {
 			this.versionString = m.group(1);
+			// check for a version that would start the value string
+			m = NO_LEADING_SPACE_VERSION_PATTERN.matcher(value);
+			if (m.find()) {
+				this.versionString = m.group(1);
+			}
 		} else {
 			m = NO_SPACE_VERSION_PATTERN.matcher(value);
 			if (m.find()) {
