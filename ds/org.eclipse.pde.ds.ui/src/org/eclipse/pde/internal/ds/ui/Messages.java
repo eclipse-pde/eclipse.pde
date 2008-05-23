@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
+ *     Rafael Oliveira Nï¿½brega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui;
 
@@ -47,9 +47,12 @@ public class Messages extends NLS {
 
 	public static String DSPage_title;
 
-	public static String DSPropertiesDetails_0;
-	public static String DSPropertiesDetails_1;
-	public static String DSPropertiesDetails_2;
+	public static String DSPropertiesDetails_sectionTitle;
+	public static String DSPropertiesDetails_sectionDescription;
+	public static String DSPropertiesDetails_entry;
+	public static String DSPropertiesDetails_browse;
+	public static String DSPropertiesDetails_dialogTitle;
+	public static String DSPropertiesDetails_dialogMessage;
 
 	public static String DSPropertyDetails_mainSectionText;
 	public static String DSPropertyDetails_mainSectionDescription;
@@ -95,6 +98,7 @@ public class Messages extends NLS {
 	public static String DSReferenceDetails_selectType;
 
 	public static String DSRemoveItemAction_0;
+	
 	
 	
 
