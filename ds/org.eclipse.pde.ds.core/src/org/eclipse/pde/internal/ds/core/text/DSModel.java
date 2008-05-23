@@ -16,9 +16,9 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.text.XMLEditingModel;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSModel;
-import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -55,9 +55,6 @@ public class DSModel extends XMLEditingModel implements IDSModel {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ITocModel#getFactory()
-	 */
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSModel#getFactory()
 	 */
 	public IDSDocumentFactory getFactory() {
@@ -67,9 +64,6 @@ public class DSModel extends XMLEditingModel implements IDSModel {
 		return fFactory;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ITocModel#getToc()
-	 */
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSModel#getDSRoot()
 	 */

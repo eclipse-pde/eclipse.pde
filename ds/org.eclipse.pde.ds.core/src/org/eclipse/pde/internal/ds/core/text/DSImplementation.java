@@ -11,8 +11,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
+import org.eclipse.pde.internal.ds.core.IDSObject;
 
+/**
+ * Represents the component implementation class
+ * 
+ * @since 3.4
+ * @see IDSComponent
+ * @see IDSObject
+ * 
+ */
 public class DSImplementation extends DSObject implements IDSImplementation {
 
 	private static final long serialVersionUID = 1L;
@@ -22,18 +32,38 @@ public class DSImplementation extends DSObject implements IDSImplementation {
 		super(model, ELEMENT_IMPLEMENTATION);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
+	 */
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#canBeParent()
+	 */
 	public boolean canBeParent() {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getName()
+	 */
 	public String getName() {
 		return getClassName(); 
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
+	 */
 	public int getType() {
 		return TYPE_IMPLEMENTATION;
 	}

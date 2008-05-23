@@ -24,19 +24,38 @@ public class DSReference extends DSObject implements IDSReference {
 		this.setReferenceCardinality("1..1");
 		this.setReferencePolicy("static");
 	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
+	 */
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canBeParent()
+	 */
 	public boolean canBeParent() {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#getName()
+	 */
 	public String getName() {
 		return getReferenceName();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#getType()
+	 */
 	public int getType() {
 		return TYPE_REFERENCE;
 	}

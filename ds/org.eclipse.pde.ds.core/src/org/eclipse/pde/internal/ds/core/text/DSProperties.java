@@ -13,6 +13,14 @@ package org.eclipse.pde.internal.ds.core.text;
 
 import org.eclipse.pde.internal.ds.core.IDSProperties;
 
+/**
+ * Represents a set of properties from a bundle entry
+ * 
+ * @since 3.4
+ * @see DSObject
+ * @see DSComponent
+ * @see DSModel
+ */
 public class DSProperties extends DSObject implements IDSProperties {
 
 	private static final long serialVersionUID = 1L;
@@ -21,18 +29,38 @@ public class DSProperties extends DSObject implements IDSProperties {
 		super(model, ELEMENT_PROPERTIES);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
+	 */
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#canBeParent()
+	 */
 	public boolean canBeParent() {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getName()
+	 */
 	public String getName() {
 		return getEntry();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
+	 */
 	public int getType() {
 		return TYPE_PROPERTIES;
 	}

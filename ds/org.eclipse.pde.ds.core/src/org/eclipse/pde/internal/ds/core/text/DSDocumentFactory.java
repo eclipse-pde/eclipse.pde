@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ds.core.text;
 import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
@@ -20,7 +21,6 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSReference;
-import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSService;
 
 /**
@@ -38,8 +38,11 @@ public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentN
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String,
+	 *      org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
 	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent) {
 		if (isRoot(name)) { // Root
@@ -109,13 +112,14 @@ public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentN
 		return new DSImplementation(fModel);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createRoot()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createComponent()
 	 */
 	public IDSComponent createComponent() {
 		return new DSComponent(fModel);
 	}
-
 
 	private boolean isReference(String name) {
 		return name.equals(IDSConstants.ELEMENT_REFERENCE);

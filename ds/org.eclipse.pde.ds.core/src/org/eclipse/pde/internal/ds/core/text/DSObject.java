@@ -63,21 +63,18 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 		return ""; //$NON-NLS-1$
 	}
 
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// org.eclipse.pde.internal.core.text.DocumentElementNode#isLeafNode()
-	// */
-	// public boolean isLeafNode() {
-	// return !canBeParent();
-	// }
-
-	/**
-	 * @return true iff this object is capable of containing children.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#canBeParent()
 	 */
 	public abstract boolean canBeParent();
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
+	 */
 	public abstract boolean canAddChild(int objectType);
 
 	/*

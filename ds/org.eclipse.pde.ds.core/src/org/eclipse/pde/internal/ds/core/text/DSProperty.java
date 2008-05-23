@@ -24,18 +24,38 @@ public class DSProperty extends DSObject implements IDSProperty {
 		this.setPropertyType("String");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
+	 */
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#canBeParent()
+	 */
 	public boolean canBeParent() {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getName()
+	 */
 	public String getName() {
 		return getPropertyName();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
+	 */
 	public int getType() {
 		return TYPE_PROPERTY;
 	}
@@ -85,7 +105,7 @@ public class DSProperty extends DSObject implements IDSProperty {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperty#getPropertyElemBody()
 	 */
-	public String getPropertyElemBody(){ // TODO Confirm if this method is correct
+	public String getPropertyElemBody() {
 		return getXMLContent(); 
 	}
 	

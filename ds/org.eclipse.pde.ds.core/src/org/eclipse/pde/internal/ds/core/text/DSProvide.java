@@ -20,20 +20,39 @@ public class DSProvide extends DSObject implements IDSProvide {
 	public DSProvide(DSModel model) {
 		super(model, ELEMENT_PROVIDE);
 	}
-	
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
+	 */
 	public boolean canAddChild(int objectType) {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canBeParent()
+	 */
 	public boolean canBeParent() {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#getName()
+	 */
 	public String getName() {
 		return getInterface();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#getType()
+	 */
 	public int getType() {
 		return TYPE_PROVIDE;
 	}

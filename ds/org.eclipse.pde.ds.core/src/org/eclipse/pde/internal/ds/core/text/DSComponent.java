@@ -56,7 +56,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#getType()
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
 	 */
 	public int getType() {
 		return TYPE_ROOT;
@@ -65,7 +65,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canBeParent()
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#canBeParent()
 	 */
 	public boolean canBeParent() {
 		return true;
@@ -74,7 +74,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#getName()
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getName()
 	 */
 	public String getName() {
 		return this.getAttributeName();
@@ -83,7 +83,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canAddChild(org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject)
+	 * @see org.eclipse.pde.internal.ds.core.text.DSObject#canAddChild(int)
 	 */
 	public boolean canAddChild(int objectType) {
 		return objectType == TYPE_IMPLEMENTATION
@@ -94,7 +94,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setAttributeName(java.lang.String)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setAttributeName(java.lang.String)
 	 */
 	public void setAttributeName(String name) {
 		setXMLAttribute(ATTRIBUTE_COMPONENT_NAME, name);
@@ -103,7 +103,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getAttributeName()
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#getAttributeName()
 	 */
 	public String getAttributeName() {
 		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_NAME);
@@ -112,7 +112,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setEnabled(boolean)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean bool) {
 		setBooleanAttributeValue(ATTRIBUTE_ENABLED, bool);
@@ -139,7 +139,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getFactory()
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#getFactory()
 	 */
 	public String getFactory() {
 		return getXMLAttributeValue(ATTRIBUTE_FACTORY);
@@ -148,7 +148,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setImmediate(boolean)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setImmediate(boolean)
 	 */
 	public void setImmediate(boolean bool) {
 		setBooleanAttributeValue(ATTRIBUTE_IMMEDIATE, bool);
@@ -163,6 +163,11 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return getBooleanAttributeValue(ATTRIBUTE_IMMEDIATE, false);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getImplemention()
+	 */
 	public IDSImplementation getImplementation() {
 		ArrayList childNodesList = getChildNodesList(IDSImplementation.class,
 				true);
@@ -172,6 +177,12 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return (IDSImplementation) childNodesList.get(0);
 	}
 
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getPropertiesElements()
+	 */
 	public IDSProperties[] getPropertiesElements() {
 		ArrayList childNodesList = getChildNodesList(IDSProperties.class, true);
 		IDSProperties[] array = new IDSProperties[childNodesList.size()];
@@ -181,6 +192,11 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return array;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getPropertyElements()
+	 */
 	public IDSProperty[] getPropertyElements() {
 		ArrayList childNodesList = getChildNodesList(IDSProperty.class, true);
 		IDSProperty[] array = new IDSProperty[childNodesList.size()];
@@ -190,6 +206,11 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return array;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getReferences()
+	 */
 	public IDSReference[] getReferences() {
 		ArrayList childNodesList = getChildNodesList(IDSReference.class, true);
 		IDSReference[] array = new IDSReference[childNodesList.size()];
@@ -199,6 +220,11 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return array;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getService()
+	 */
 	public IDSService getService() {
 		ArrayList childNodesList = getChildNodesList(IDSService.class, true);
 		if (childNodesList.size() == 0) {
