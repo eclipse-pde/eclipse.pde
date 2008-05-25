@@ -18,5 +18,16 @@
          </describer>
       </content-type>
    </extension>
-
+   
+      <extension
+         id="org.eclipse.pde.ds.core.DSBuilder"
+         name="%builders.dsBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.ds.core.builders.DSBuilder">
+         </run>
+      </builder>
+   
+   </extension>
 </plugin>
