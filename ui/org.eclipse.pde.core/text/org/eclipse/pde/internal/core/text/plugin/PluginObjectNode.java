@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,24 +11,13 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangeProvider;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
-import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentRange;
-import org.eclipse.pde.internal.core.text.IEditingModel;
-import org.eclipse.pde.internal.core.text.DocumentElementNode;
+import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 public class PluginObjectNode extends DocumentElementNode implements IPluginObject, IWritableDelimiter {
@@ -186,6 +175,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 				attr = new PluginAttribute();
 				attr.setName(name);
 				attr.setEnclosingElement(this);
+				attr.setModel(getModel());
 				getNodeAttributesMap().put(name, attr);
 			}
 			attr.setValue(value == null ? "" : value); //$NON-NLS-1$
