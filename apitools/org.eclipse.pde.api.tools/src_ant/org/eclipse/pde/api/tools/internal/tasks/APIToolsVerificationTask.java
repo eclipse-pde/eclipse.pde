@@ -58,6 +58,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+/**
+ * Ant task to run the API tool verification during Eclipse build.
+ */
 public class APIToolsVerificationTask extends CommonUtilsTask {
 	public static final String BUNDLE_VERSION = "bundleVersion"; //$NON-NLS-1$
 	public static final String USAGE = "usage"; //$NON-NLS-1$

@@ -41,6 +41,9 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
+/**
+ * Ant task to run the API freeze check during Eclipse build.
+ */
 public class APIFreezeTask extends CommonUtilsTask {
 	
 	public static class APIFreezeDeltaVisitor extends DeltaXmlVisitor {

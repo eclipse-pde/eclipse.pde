@@ -32,6 +32,9 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
+/**
+ * Ant task to compare API profiles.
+ */
 public class CompareProfilesTask extends Task {
 	
 	private static final String REPORT_XML_FILE_NAME = "compare.xml"; //$NON-NLS-1$

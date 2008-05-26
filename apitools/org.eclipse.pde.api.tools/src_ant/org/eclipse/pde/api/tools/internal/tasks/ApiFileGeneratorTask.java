@@ -46,6 +46,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * Ant task to generate the .api_description file during the Eclipse build.
+ */
 public class ApiFileGeneratorTask extends Task {
 
 	static class APIToolsNatureDefaultHandler extends DefaultHandler {

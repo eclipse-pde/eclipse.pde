@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
 import java.io.File;
@@ -14,6 +24,10 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
+/**
+ * Common code for ant task.
+ *
+ */
 public abstract class CommonUtilsTask extends Task {
 	private static final String PLUGINS_FOLDER_NAME = "plugins"; //$NON-NLS-1$
 	private static final String ECLIPSE_FOLDER_NAME = "eclipse"; //$NON-NLS-1$
