@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223739
+ *     Rafael Oliveira Nï¿½brega <rafael.oliveira@gmail.com> - bug 223739
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
@@ -35,7 +35,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class DSPage extends PDEFormPage implements IModelChangedListener {
 
-	public static final String PAGE_ID = Messages.DSPage_0;
+	public static final String PAGE_ID = Messages.DSPage_pageId;
 
 	private DSBlock fBlock;
 
@@ -100,8 +100,8 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 				e = ((AbstractModel) model).getException();
 			}
 			// Create a formatted error page
-			createFormErrorContent(managedForm, Messages.DSPage_1,
-					Messages.DSPage_2, e);
+			createFormErrorContent(managedForm, Messages.DSPage_errorTitle,
+					Messages.DSPage_errorMessage, e);
 			return;
 		}
 		// Create the rest of the actions in the form title area
@@ -112,7 +112,7 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 		if (title.length() > 0) {
 			form.setText(title);
 		} else {
-			form.setText(Messages.DSPage_3);
+			form.setText(Messages.DSPage_formTitle);
 		}
 
 		// decorate the form heading

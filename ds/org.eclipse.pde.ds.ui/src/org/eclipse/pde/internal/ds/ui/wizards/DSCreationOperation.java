@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
+ *     Rafael Oliveira Nï¿½brega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.wizards;
 
@@ -25,8 +25,8 @@ import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
+import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -54,7 +54,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	 */
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
-		monitor.beginTask(Messages.DSCreationOperation_1, 2);
+		monitor.beginTask(Messages.DSCreationOperation_title, 2);
 		createContent();
 		monitor.worked(1);
 		openFile();
@@ -71,23 +71,23 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	/**
-	 * @param dsComponent
+	 * @param component
 	 * @param file
 	 */
-	protected void initializeDS(IDSComponent dsComponent, IFile file) {
-		IDSDocumentFactory factory = dsComponent.getModel().getFactory();
+	protected void initializeDS(IDSComponent component, IFile file) {
+		IDSDocumentFactory factory = component.getModel().getFactory();
 
 		// Element: implemenation
 		IDSImplementation implementation = factory.createImplementation();
 		
-		dsComponent.addChildNode(implementation, true);
+		component.addChildNode(implementation, true);
 
 		// Component Attributes
 		
 		String name = fFile.getName().substring(0,
 				fFile.getName().lastIndexOf(".")); //$NON-NLS-1$
 		
-		dsComponent.setAttributeName(name);
+		component.setAttributeName(name);
 		
 	}
 
@@ -97,7 +97,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	private void openFile() {
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
-				IWorkbenchWindow window = PDEPlugin.getActiveWorkbenchWindow();
+				IWorkbenchWindow window = Activator.getActiveWorkbenchWindow();
 				if (window == null) {
 					return;
 				}

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> 
+ *     Rafael Oliveira Nï¿½brega <rafael.oliveira@gmail.com> 
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.actions;
 
@@ -50,19 +50,19 @@ public class DSAddItemAction extends Action {
 	private void setTextbyType(int type) {
 		switch (type) {
 		case IDSConstants.TYPE_PROPERTIES:
-			setText(Messages.DSAddItemAction_1);
+			setText(Messages.DSAddItemAction_addProperties);
 			break;
 		case IDSConstants.TYPE_PROPERTY:
-			setText(Messages.DSAddItemAction_2);
+			setText(Messages.DSAddItemAction_addProperty);
 			break;
 		case IDSConstants.TYPE_PROVIDE:
-			setText(Messages.DSAddItemAction_3);
+			setText(Messages.DSAddItemAction_addProvide);
 			break;
 		case IDSConstants.TYPE_REFERENCE:
-			setText(Messages.DSAddItemAction_4);
+			setText(Messages.DSAddItemAction_addService);
 			break;
 		case IDSConstants.TYPE_SERVICE:
-			setText(Messages.DSAddItemAction_5);
+			setText(Messages.DSAddItemAction_addComponent);
 			break;
 		default:
 			break;

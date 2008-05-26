@@ -16,11 +16,11 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 
-	public static String DSAddItemAction_1;
-	public static String DSAddItemAction_2;
-	public static String DSAddItemAction_3;
-	public static String DSAddItemAction_4;
-	public static String DSAddItemAction_5;
+	public static String DSAddItemAction_addProperties;
+	public static String DSAddItemAction_addProperty;
+	public static String DSAddItemAction_addProvide;
+	public static String DSAddItemAction_addService;
+	public static String DSAddItemAction_addComponent;
 
 	public static String DSComponentDetails_mainSectionTitle;
 	public static String DSComponentDetails_mainSectionDescription;
@@ -29,7 +29,8 @@ public class Messages extends NLS {
 	public static String DSComponentDetails_enabledLabel;
 	public static String DSComponentDetails_immediateLabel;
 	public static String DSComponentDetails_browse;
-	public static String DSCreationOperation_1;
+	
+	public static String DSCreationOperation_title;
 
 	public static String DSFileWizardPage_description;
 	public static String DSFileWizardPage_title;
@@ -40,10 +41,10 @@ public class Messages extends NLS {
 	public static String DSImplementationDetails_browse;
 	public static String DSImplementationDetails_selectType;
 
-	public static String DSPage_0;
-	public static String DSPage_1;
-	public static String DSPage_2;
-	public static String DSPage_3;
+	public static String DSPage_pageId;
+	public static String DSPage_errorTitle;
+	public static String DSPage_errorMessage;
+	public static String DSPage_formTitle;
 
 	public static String DSPage_title;
 
@@ -67,11 +68,11 @@ public class Messages extends NLS {
 	public static String DSProvideDetails_browse;
 	public static String DSProvideDetails_selectType;
 
-	public static String DSServiceDetails_0;
-	public static String DSServiceDetails_1;
-	public static String DSServiceDetails_2;
+	public static String DSServiceDetails_sectionTitle;
+	public static String DSServiceDetails_sectionDescription;
+	public static String DSServiceDetails_serviceFactoryLabel;
 
-	public static String DSSourcePage_0;
+	public static String DSSourcePage_partName;
 
 	public static String DSMasterTreeSection_addService;
 	public static String DSMasterTreeSection_addProperty;
@@ -97,7 +98,7 @@ public class Messages extends NLS {
 	public static String DSReferenceDetails_browse;
 	public static String DSReferenceDetails_selectType;
 
-	public static String DSRemoveItemAction_0;
+	public static String DSRemoveItemAction_actionText;
 	
 	
 	

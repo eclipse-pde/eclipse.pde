@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> 
+ *     Rafael Oliveira Nï¿½brega <rafael.oliveira@gmail.com> 
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.actions;
 
@@ -27,7 +27,7 @@ public class DSRemoveItemAction extends Action {
 	 * 
 	 */
 	public DSRemoveItemAction() {
-		setText(Messages.DSRemoveItemAction_0);
+		setText(Messages.DSRemoveItemAction_actionText);
 		fItem = null;
 	}
 

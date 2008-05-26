@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223739
+ *     Rafael Oliveira Nï¿½brega <rafael.oliveira@gmail.com> - bug 223739
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.details;
 
@@ -53,8 +53,8 @@ public class DSServiceDetails extends DSAbstractDetails {
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fMainSection.setText(Messages.DSServiceDetails_0);
-		fMainSection.setDescription(Messages.DSServiceDetails_1);
+		fMainSection.setText(Messages.DSServiceDetails_sectionTitle);
+		fMainSection.setDescription(Messages.DSServiceDetails_sectionDescription);
 
 		fMainSection.setLayout(FormLayoutFactory
 				.createClearGridLayout(false, 1));
@@ -75,7 +75,7 @@ public class DSServiceDetails extends DSAbstractDetails {
 
 		// Attribute: LabelServiceFactory
 		fLabelServiceFactory = getToolkit().createLabel(mainSectionClient,
-				Messages.DSServiceDetails_2, SWT.WRAP);
+				Messages.DSServiceDetails_serviceFactoryLabel, SWT.WRAP);
 		fLabelServiceFactory.setForeground(foreground);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);

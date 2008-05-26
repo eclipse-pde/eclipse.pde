@@ -123,7 +123,7 @@ public class DSSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.ui.part.EditorPart#setPartName(java.lang.String)
 	 */
 	protected void setPartName(String partName) {
-		super.setPartName(Messages.DSSourcePage_0); //$NON-NLS-1$
+		super.setPartName(Messages.DSSourcePage_partName); //$NON-NLS-1$
 	}
 
 
