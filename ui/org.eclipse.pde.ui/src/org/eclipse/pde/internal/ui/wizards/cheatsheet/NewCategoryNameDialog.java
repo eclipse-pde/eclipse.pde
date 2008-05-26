@@ -13,11 +13,13 @@ package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * NewCategoryNameDialog
@@ -37,6 +39,14 @@ public class NewCategoryNameDialog extends TrayDialog {
 
 		fNameText = null;
 		fNameTextValue = null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.NEW_CS_CATEGORY_NAME_DIALOG);
 	}
 
 	/* (non-Javadoc)

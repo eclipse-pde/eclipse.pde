@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -20,6 +21,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.NewFolderDialog;
 import org.eclipse.ui.views.navigator.ResourceComparator;
@@ -32,6 +34,14 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 	public FolderSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider) {
 		super(parent, labelProvider, contentProvider);
 		setComparator(new ResourceComparator(ResourceComparator.NAME));
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.FOLDER_SELECTION_DIALOG);
 	}
 
 	/* (non-Javadoc)

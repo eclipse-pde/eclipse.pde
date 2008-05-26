@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 public class AddLibraryDialog extends SelectionStatusDialog {
@@ -140,6 +141,14 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		libraryViewer.setInput(model);
 		applyDialogFont(container);
 		return container;
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.BUILD_ADD_LIBRARY_DIALOG);
 	}
 
 	public int open() {

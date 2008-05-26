@@ -15,9 +15,11 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.FormDialog;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -106,6 +108,7 @@ public class CommandComposerDialog extends FormDialog {
 	protected void configureShell(Shell newShell) {
 		newShell.setText(PDEUIMessages.CommandSerializerPart_name);
 		super.configureShell(newShell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.COMMAND_COMPOSER_DIALOG);
 	}
 
 	public void okPressed() {

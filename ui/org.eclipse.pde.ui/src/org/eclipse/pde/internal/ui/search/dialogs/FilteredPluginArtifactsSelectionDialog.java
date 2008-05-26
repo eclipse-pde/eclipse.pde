@@ -23,8 +23,7 @@ import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -261,6 +260,14 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		setListLabelProvider(searchLabelProvider);
 		setListSelectionLabelDecorator(searchLabelProvider);
 		setDetailsLabelProvider(detailsLabelProvider);
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.FILTERED_PLUGIN_ARTIFACTS_DIALOG);
 	}
 
 	/* (non-Javadoc)

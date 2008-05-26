@@ -15,8 +15,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
-import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
+import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.pde.internal.runtime.spy.sections.*;
 import org.eclipse.swt.SWT;
@@ -56,6 +55,14 @@ public class SpyDialog extends PopupDialog {
 		this.event = event;
 		this.fAnchor = point;
 		this.toolkit = new SpyFormToolkit(this);
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.SPY_DIALOG);
 	}
 
 	protected Control createContents(Composite parent) {

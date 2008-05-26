@@ -328,7 +328,6 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		NewRuntimeLibraryDialog dialog = new NewRuntimeLibraryDialog(getPage().getSite().getShell(), model.getPluginBase().getLibraries());
 		dialog.create();
 		dialog.getShell().setText(PDEUIMessages.ManifestEditor_LibrarySection_newLibraryEntry);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.NEW_LIBRARY);
 		SWTUtil.setDialogSize(dialog, 250, 175);
 
 		if (dialog.open() == Window.OK) {

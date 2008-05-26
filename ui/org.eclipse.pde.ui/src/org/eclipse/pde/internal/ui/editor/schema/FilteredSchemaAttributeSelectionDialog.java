@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 
 public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelectionDialog {
@@ -79,6 +80,14 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 		setListLabelProvider(listLabelProvider);
 		setListSelectionLabelDecorator(listLabelProvider);
 		setDetailsLabelProvider(detailsLabelProvider);
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.FILTERED_SCHEMA_ATTRIBUTE_SELECTION_DIALOG);
 	}
 
 	private class SchemaListLabelProvider extends LabelProvider implements ILabelDecorator {

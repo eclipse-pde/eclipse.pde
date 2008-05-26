@@ -17,14 +17,14 @@ import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.itarget.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 public class LocationDialog extends StatusDialog {
 
@@ -38,6 +38,14 @@ public class LocationDialog extends StatusDialog {
 		super(parent);
 		fTarget = target;
 		fLocation = location;
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.TARGET_LOCATION_DIALOG);
 	}
 
 	protected Control createDialogArea(Composite parent) {

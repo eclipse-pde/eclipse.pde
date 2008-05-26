@@ -14,11 +14,13 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 public class ApplicationSelectionDialog extends TrayDialog {
 
@@ -31,6 +33,14 @@ public class ApplicationSelectionDialog extends TrayDialog {
 		super(parentShell);
 		fMode = mode;
 		fApplicationNames = applicationNames;
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.LAUNCHER_APPLICATION_SELECTION);
 	}
 
 	/* (non-Javadoc)

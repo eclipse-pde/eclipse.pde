@@ -14,14 +14,14 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
@@ -64,6 +64,14 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
 	protected void computeResult() {
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.NEW_LIBRARY);
 	}
 
 	/* (non-Javadoc)

@@ -13,12 +13,12 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import java.util.List;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This is a simple info dialog capable to display list of given plugins. The list should 
@@ -54,6 +54,7 @@ public class PluginImportFinishDialog extends TitleAreaDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(PDEUIMessages.ImportWizard_title);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.PLUGIN_IMPORT_FINISH_DIALOG);
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {

@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreeMessageDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 public class TargetErrorDialog extends TreeMessageDialog {
 
@@ -91,6 +92,14 @@ public class TargetErrorDialog extends TreeMessageDialog {
 		dialog.setLabelProvider(getLabelProvider());
 		dialog.setInput(new Object());
 		dialog.open();
+	}
+
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.TARGET_ERROR_DIALOG);
 	}
 
 	protected static LabelProvider getLabelProvider() {

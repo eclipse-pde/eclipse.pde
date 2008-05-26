@@ -122,26 +122,49 @@ public interface IHelpContextIds {
 	// dialogs
 	public static final String FRAGMENT_ADD_TARGET = PREFIX + "fragment_add_target"; //$NON-NLS-1$
 	public static final String SCHEMA_TYPE_RESTRICTION = PREFIX + "schema_type_restriction"; //$NON-NLS-1$
+	public static final String NEW_RESTRICTION_DIALOG = PREFIX + "new_restriction_dialog"; //$NON-NLS-1$
+	public static final String FILTERED_SCHEMA_ATTRIBUTE_SELECTION_DIALOG = PREFIX + "filtered_schema_attribute_selection_dialog"; //$NON-NLS-1$
 	public static final String SEARCH_PAGE = PREFIX + "search_page"; //$NON-NLS-1$
 	public static final String LAUNCHER_BASIC = PREFIX + "launcher_basic"; //$NON-NLS-1$
 	public static final String LAUNCHER_ADVANCED = PREFIX + "launcher_advanced"; //$NON-NLS-1$
 	public static final String LAUNCHER_TRACING = PREFIX + "launcher_tracing"; //$NON-NLS-1$
 	public static final String LAUNCHER_CONFIGURATION = PREFIX + "launcher_configuration"; //$NON-NLS-1$
+	public static final String LAUNCHER_APPLICATION_SELECTION = PREFIX + "launcher_application_selection"; //$NON-NLS-1$
+	public static final String PLUGIN_STATUS_DIALOG = PREFIX + "plugin_status_dialog"; //$NON-NLS-1$
 	public static final String PLUGIN_SELECTION = PREFIX + "plugin_selection"; //$NON-NLS-1$
 	public static final String FEATURE_SELECTION = PREFIX + "feature_selection"; //$NON-NLS-1$
 	public static final String PRODUCT_CONFIGURATION_SELECTION = PREFIX + "product_configuration_selection"; //$NON-NLS-1$
 	public static final String EXECUTION_ENVIRONMENT_SELECTION = PREFIX + "execution_environment_selection"; //$NON-NLS-1$
 	public static final String IMPORT_PACKAGES = PREFIX + "import_packages"; //$NON-NLS-1$
 	public static final String EXPORT_PACKAGES = PREFIX + "export_packages"; //$NON-NLS-1$
+	public static final String PACKAGE_SELECTIONN = PREFIX + "package_selection"; //$NON-NLS-1$
 	public static final String BROWSE_EXTENSION_POINTS_SCHEMAS = PREFIX + "browse_extension_points_schemas"; //$NON-NLS-1$
 	public static final String CONTAINER_SELECTION = PREFIX + "container_selection"; //$NON-NLS-1$
 	public static final String JAR_SELECTION = PREFIX + "jar_selection"; //$NON-NLS-1$
 	public static final String ADD_LIBRARY = PREFIX + "add_library"; //$NON-NLS-1$
 	public static final String NEW_LIBRARY = PREFIX + "new_library"; //$NON-NLS-1$
+	public static final String UNUSED_IMPORTS_DIALOG = PREFIX + "unused_imports_dialog"; //$NON-NLS-1$
 
 	public static final String IMPORTED_PACKAGE_PROPERTIES = PREFIX + "imported_package_properties"; //$NON-NLS-1$
 	public static final String EXPORTED_PACKAGE_PROPERTIES = PREFIX + "exported_package_properties"; //$NON-NLS-1$
 	public static final String IMPORTED_PLUGIN_PROPERTIES = PREFIX + "imported_plugin_properties"; //$NON-NLS-1$
+
+	public static final String FOLDER_SELECTION_DIALOG = PREFIX + "folder_selection_dialog"; //$NON-NLS-1$
+
+	public static final String COMMAND_COMPOSER_DIALOG = PREFIX + "command_composer_dialog"; //$NON-NLS-1$
+
+	public static final String LOOP_DIALOG = PREFIX + "loop_dialog"; //$NON-NLS-1$
+
+	public static final String RENAME_DIALOG = PREFIX + "rename_dialog"; //$NON-NLS-1$
+
+	public static final String NEW_CS_CATEGORY_NAME_DIALOG = PREFIX + "new_cs_category_name_dialog"; //$NON-NLS-1$
+
+	public static final String TARGET_ERROR_DIALOG = PREFIX + "target_error_dialog"; //$NON-NLS-1$
+	public static final String TARGET_LOCATION_DIALOG = PREFIX + "target_location_dialog"; //$NON-NLS-1$
+
+	public static final String PLUGIN_IMPORT_FINISH_DIALOG = PREFIX + "plugin_import_finish_dialog"; //$NON-NLS-1$
+
+	public static final String FILTERED_PLUGIN_ARTIFACTS_DIALOG = PREFIX + "filtered_plugin_artifacts_dialog"; //$NON-NLS-1$
 
 	// Generic source page
 	public static final String MANIFEST_SOURCE_PAGE = PREFIX + "manifest_source_page"; //$NON-NLS-1$
@@ -162,6 +185,7 @@ public interface IHelpContextIds {
 
 	// Build Properties Editor
 	public static final String BUILD_PAGE = PREFIX + "build_page"; //$NON-NLS-1$
+	public static final String BUILD_ADD_LIBRARY_DIALOG = PREFIX + "build_add_library_dialog"; //$NON-NLS-1$
 
 	// Schema Editor
 	public static final String SCHEMA_EDITOR_MAIN = PREFIX + "schema_editor_main"; //$NON-NLS-1$

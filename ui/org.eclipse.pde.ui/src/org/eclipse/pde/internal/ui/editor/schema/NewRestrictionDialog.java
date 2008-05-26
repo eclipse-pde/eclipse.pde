@@ -12,11 +12,13 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 public class NewRestrictionDialog extends MessageDialog {
 
@@ -25,7 +27,14 @@ public class NewRestrictionDialog extends MessageDialog {
 
 	public NewRestrictionDialog(Shell parent) {
 		super(parent, PDEUIMessages.NewRestrictionDialog_title, null, PDEUIMessages.NewRestrictionDialog_message, QUESTION, new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
+	}
 
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.NEW_RESTRICTION_DIALOG);
 	}
 
 	protected Control createCustomArea(Composite parent) {
