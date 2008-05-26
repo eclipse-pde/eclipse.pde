@@ -207,7 +207,7 @@ public class PDECompilersConfigurationBlock {
 	private static final Key KEY_S_DOC_FOLDER = getPDEPrefKey(CompilerFlags.S_DOC_FOLDER);
 	private static final Key KEY_S_OPEN_TAGS = getPDEPrefKey(CompilerFlags.S_OPEN_TAGS);
 
-	private static String[] SEVERITIES = {IPreferenceConstants.VALUE_ERROR, IPreferenceConstants.VALUE_WARNING, IPreferenceConstants.VALUE_IGNORE};
+	private static String[] SEVERITIES = {PDEUIMessages.PDECompilersConfigurationBlock_error, PDEUIMessages.PDECompilersConfigurationBlock_warning, PDEUIMessages.PDECompilersConfigurationBlock_ignore};
 
 	private static Key[] fgAllKeys = {KEY_F_UNRESOLVED_FEATURES, KEY_F_UNRESOLVED_PLUGINS, KEY_P_BUILD, KEY_P_INTERNAL, KEY_P_DEPRECATED, KEY_P_DISCOURAGED_CLASS, KEY_P_INCOMPATIBLE_ENV, KEY_P_MISSING_EXPORT_PKGS, KEY_P_NO_REQUIRED_ATT, KEY_P_NOT_EXTERNALIZED, KEY_P_UNKNOWN_ATTRIBUTE, KEY_P_UNKNOWN_CLASS, KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_IDENTIFIER, KEY_P_UNKNOWN_RESOURCE, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_UNRESOLVED_IMPORTS, KEY_S_CREATE_DOCS, KEY_S_DOC_FOLDER, KEY_S_OPEN_TAGS};
 

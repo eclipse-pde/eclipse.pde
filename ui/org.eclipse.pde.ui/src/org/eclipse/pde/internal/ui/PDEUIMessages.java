@@ -3226,4 +3226,8 @@ public class PDEUIMessages extends NLS {
 	public static String ProjectSelectionDialog_message;
 	public static String ProjectSelectionDialog_settingsTitle;
 
+	public static String PDECompilersConfigurationBlock_error;
+	public static String PDECompilersConfigurationBlock_warning;
+	public static String PDECompilersConfigurationBlock_ignore;
+
 }

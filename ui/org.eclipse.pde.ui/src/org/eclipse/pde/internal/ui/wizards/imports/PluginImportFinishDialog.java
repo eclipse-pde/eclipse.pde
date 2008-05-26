@@ -14,6 +14,7 @@ import java.util.List;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -48,6 +49,11 @@ public class PluginImportFinishDialog extends TitleAreaDialog {
 		fConfigured = true;
 		return composite;
 
+	}
+
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText(PDEUIMessages.ImportWizard_title);
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {

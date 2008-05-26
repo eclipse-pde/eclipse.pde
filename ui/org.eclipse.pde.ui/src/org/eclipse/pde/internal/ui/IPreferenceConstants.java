@@ -17,11 +17,6 @@ package org.eclipse.pde.internal.ui;
  */
 public interface IPreferenceConstants {
 
-	//compiler options
-	public static final String VALUE_ERROR = "Error"; //$NON-NLS-1$
-	public static final String VALUE_WARNING = "Warning"; //$NON-NLS-1$
-	public static final String VALUE_IGNORE = "Ignore"; //$NON-NLS-1$
-
 	// Main preference page	
 	public static final String PROP_SHOW_OBJECTS = "Preferences.MainPage.showObjects"; //$NON-NLS-1$
 	public static final String VALUE_USE_IDS = "useIds"; //$NON-NLS-1$
