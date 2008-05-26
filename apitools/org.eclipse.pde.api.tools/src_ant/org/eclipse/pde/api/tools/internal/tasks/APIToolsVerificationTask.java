@@ -603,7 +603,6 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			Util.delete(profileInstallDir);
 			if (this.debug) {
 				System.out.println("Cleanup : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				time = System.currentTimeMillis();
 			}
 		}
 		Summary[] summaries = createAllSummaries(allProblems);
@@ -647,6 +646,10 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 	}
 	private Summary[] createAllSummaries(Map allProblems) {
 		Set entrySet = allProblems.entrySet();
+		int size = entrySet.size();
+		if (size == 0) {
+			return NO_SUMMARIES;
+		}
 		List allEntries = new ArrayList();
 		allEntries.addAll(entrySet);
 		Collections.sort(allEntries, new Comparator() {
@@ -656,10 +659,6 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 				return ((String) entry1.getKey()).compareTo(entry2.getKey());
 			}
 		});
-		int size = allEntries.size();
-		if (size == 0) {
-			return NO_SUMMARIES;
-		}
 		Summary[] summaries = new Summary[size];
 		int i = 0;
 		for (Iterator iterator = allEntries.iterator(); iterator.hasNext();) {

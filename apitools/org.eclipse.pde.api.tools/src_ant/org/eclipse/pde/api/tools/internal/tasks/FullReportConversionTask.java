@@ -271,7 +271,7 @@ public class FullReportConversionTask extends Task {
 					MessageFormat.format(
 						Messages.fullReportTask_indexheader,
 						new String[] {
-								"<p>List of all <a href=\"" + allNonApiBundleSummary.link + "\">non API bundles</a>.</p>" //$NON-NLS-1$ //$NON-NLS-2$
+								"<p>List of <a href=\"" + allNonApiBundleSummary.link + "\">bundles not configured for API analysis</a>.</p>" //$NON-NLS-1$ //$NON-NLS-2$
 						}));
 			} else {
 				writer.println(
@@ -353,7 +353,7 @@ public class FullReportConversionTask extends Task {
 				// generate compatibility category
 				dumpProblems(writer, "Compatibility", report.getProblems(APIToolsVerificationTask.COMPATIBILITY)); //$NON-NLS-1$
 				writer.println(Messages.fullReportTask_categoryseparator);
-				dumpProblems(writer, "Api Usage", report.getProblems(APIToolsVerificationTask.USAGE)); //$NON-NLS-1$
+				dumpProblems(writer, "API Usage", report.getProblems(APIToolsVerificationTask.USAGE)); //$NON-NLS-1$
 				writer.println(Messages.fullReportTask_categoryseparator);
 				dumpProblems(writer, "Bundle Version", report.getProblems(APIToolsVerificationTask.BUNDLE_VERSION)); //$NON-NLS-1$
 				dumpFooter(writer);
