@@ -20,6 +20,9 @@ public class Activator extends Plugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.pde.ds.core"; //$NON-NLS-1$
+	
+	// The content type ID
+	public static final String CONTENT_TYPE_ID = "org.eclipse.pde.ds.core.content-type"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;

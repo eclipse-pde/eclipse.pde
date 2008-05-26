@@ -18,10 +18,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ds.core.Activator;
 import org.eclipse.pde.internal.ds.core.Messages;
 
 public class DSBuilder extends IncrementalProjectBuilder {
@@ -65,6 +69,35 @@ public class DSBuilder extends IncrementalProjectBuilder {
 
 	}
 
+	class ResourceVisitor implements IResourceVisitor {
+		private IProgressMonitor monitor;
+
+		public ResourceVisitor(IProgressMonitor monitor) {
+			this.monitor = monitor;
+		}
+		
+		public boolean visit(IResource resource) {
+			if (resource instanceof IProject) {
+				// TODO only check PDE projects...
+				IProject project = (IProject) resource;
+				try {
+					return (project.hasNature(PDE_NATURE));
+				} catch (CoreException e) {
+					// TODO log exception
+					return false;
+				}
+			}
+			if (resource instanceof IFile) {
+				// see if this is it
+				IFile candidate = (IFile) resource;
+				if (isDSFile(candidate)) {
+					checkFile(candidate, monitor);
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException {
@@ -75,10 +108,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 		if (delta == null || kind == FULL_BUILD) {
 			// Full build
 			IProject project = getProject();
-			IFile file = project.getFile("site.xml"); //$NON-NLS-1$
-			if (file.exists()) {
-				checkFile(file, monitor);
-			}
+			project.accept(new ResourceVisitor(monitor));
 		} else {
 			delta.accept(new DeltaVisitor(monitor));
 		}
@@ -86,15 +116,20 @@ public class DSBuilder extends IncrementalProjectBuilder {
 	}
 
 	private boolean isDSFile(IFile candidate) {
-		// TODO Auto-generated method stub
-		return true;
+		try {
+			IContentDescription description = candidate.getContentDescription();
+			IContentType type = description.getContentType();
+			return Activator.CONTENT_TYPE_ID.equals(type.getId());
+		} catch (CoreException e) {
+			return false;
+		}
 	}
 
 	private void checkFile(IFile file, IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
-		String message = NLS.bind(Messages.DSBuilder_verifying,
-				file.getFullPath().toString());
+		String message = NLS.bind(Messages.DSBuilder_verifying, file
+				.getFullPath().toString());
 		monitor.subTask(message);
 
 		DSErrorReporter reporter = new DSErrorReporter(file);
