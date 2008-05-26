@@ -365,7 +365,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#isInsertOnResolve(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
 	 */
 	protected boolean isInsertOnResolve(IElementDescriptor elementDescriptor) {
-		return elementDescriptor.getElementType() != IElementDescriptor.T_METHOD ||
+		return elementDescriptor.getElementType() != IElementDescriptor.T_METHOD &&
 				elementDescriptor.getElementType() != IElementDescriptor.T_FIELD;
 	}
 	
