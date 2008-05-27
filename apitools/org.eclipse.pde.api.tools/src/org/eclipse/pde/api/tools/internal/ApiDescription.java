@@ -284,10 +284,10 @@ public class ApiDescription implements IApiDescription {
 	 * and a node is not present. Default visibility for packages is API, and for types is inherited.
 	 * 
 	 * @param element element
-	 * @param insert whether to insert a new node
+	 * @param write <code>true</code> if setting a node, <code>false</code> if getting a node
 	 * @return manifest node or <code>null</code>
 	 */
-	protected ManifestNode findNode(IElementDescriptor element, boolean insert) {
+	protected ManifestNode findNode(IElementDescriptor element, boolean write) {
 		IElementDescriptor[] path = element.getPath();
 		Map map = fPackageMap;
 		ManifestNode parentNode = null;
@@ -297,7 +297,7 @@ public class ApiDescription implements IApiDescription {
 			parentNode = node;
 			node = (ManifestNode) map.get(current);
 			if (node == null) {
-				if (insert) {
+				if (write || (isInsertOnResolve(current))) {
 					node = createNode(parentNode, current);
 					if (node != null) {
 						map.put(current, node);
@@ -320,7 +320,7 @@ public class ApiDescription implements IApiDescription {
 	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#resolveAPIDescription(java.lang.String, org.eclipse.pde.api.tools.model.component.IElementDescriptor)
 	 */
 	public IApiAnnotations resolveAnnotations(IElementDescriptor element) {
-		ManifestNode node = findNode(element, isInsertOnResolve(element));
+		ManifestNode node = findNode(element, false);
 		if (node != null) {
 			return resolveAnnotations(node, element);
 		}

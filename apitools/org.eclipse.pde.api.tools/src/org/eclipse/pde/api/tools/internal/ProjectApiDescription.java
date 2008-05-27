@@ -306,7 +306,7 @@ public class ProjectApiDescription extends ApiDescription {
 					}
 					IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragments[j].getElementName());
 					// visit package
-					ManifestNode pkgNode = findNode(packageDescriptor, isInsertOnResolve(packageDescriptor));
+					ManifestNode pkgNode = findNode(packageDescriptor, false);
 					if (pkgNode != null) {
 						IApiAnnotations annotations = resolveAnnotations(pkgNode, packageDescriptor);
 						if (visitor.visitElement(packageDescriptor, annotations)) {
@@ -348,7 +348,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	private void visit(ApiDescriptionVisitor visitor, IType type) {
 		IElementDescriptor element = getElementDescriptor(type);
-		ManifestNode typeNode = findNode(element, isInsertOnResolve(element));
+		ManifestNode typeNode = findNode(element, false);
 		if (typeNode != null) {
 			IApiAnnotations annotations = resolveAnnotations(typeNode, element);
 			if (visitor.visitElement(element, annotations)) {
@@ -365,8 +365,16 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#isInsertOnResolve(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
 	 */
 	protected boolean isInsertOnResolve(IElementDescriptor elementDescriptor) {
-		return elementDescriptor.getElementType() != IElementDescriptor.T_METHOD &&
-				elementDescriptor.getElementType() != IElementDescriptor.T_FIELD;
+		switch (elementDescriptor.getElementType()) {
+			case IElementDescriptor.T_METHOD:
+			case IElementDescriptor.T_FIELD:
+				return false;
+			case IElementDescriptor.T_REFERENCE_TYPE:
+				// no need to insert member types
+				return ((IReferenceTypeDescriptor) elementDescriptor).getEnclosingType() == null;
+			default:
+				return true;
+		}
 	}
 	
 	/* (non-Javadoc)
