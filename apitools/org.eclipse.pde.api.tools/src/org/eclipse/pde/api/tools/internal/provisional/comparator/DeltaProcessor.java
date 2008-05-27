@@ -332,7 +332,7 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.FIELD :
 					case IDelta.METHOD :
-						return !Util.isVisible(delta) || RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+						return !Util.isVisible(delta);
 				}
 				break;
 			case IDelta.REMOVED :

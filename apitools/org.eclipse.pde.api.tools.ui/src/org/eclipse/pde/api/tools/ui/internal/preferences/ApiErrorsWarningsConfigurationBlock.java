@@ -325,10 +325,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		getApiToolsKey(IApiProblemTypes.INTERFACE_CHANGED_RESTRICTIONS);
 
 	// enum key constant
-	private static final Key KEY_ENUM_ADDED_FIELD =
-		getApiToolsKey(IApiProblemTypes.ENUM_ADDED_FIELD);
-	private static final Key KEY_ENUM_ADDED_METHOD =
-		getApiToolsKey(IApiProblemTypes.ENUM_ADDED_METHOD);
 	private static final Key KEY_ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
 		getApiToolsKey(IApiProblemTypes.ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET);
 	private static final Key KEY_ENUM_CHANGED_TO_ANNOTATION =
@@ -343,8 +339,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		getApiToolsKey(IApiProblemTypes.ENUM_REMOVED_ENUM_CONSTANT);
 	private static final Key KEY_ENUM_REMOVED_METHOD =
 		getApiToolsKey(IApiProblemTypes.ENUM_REMOVED_METHOD);
-	private static final Key KEY_ENUM_REMOVED_CONSTRUCTOR =
-		getApiToolsKey(IApiProblemTypes.ENUM_REMOVED_CONSTRUCTOR);
 	private static final Key KEY_ENUM_REMOVED_TYPE_MEMBER =
 		getApiToolsKey(IApiProblemTypes.ENUM_REMOVED_TYPE_MEMBER);
 	private static final Key KEY_ENUM_CHANGED_RESTRICTIONS =
@@ -577,8 +571,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_INTERFACE_CHANGED_TO_ANNOTATION,
 		KEY_INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
 		KEY_INTERFACE_CHANGED_RESTRICTIONS,
-		KEY_ENUM_ADDED_FIELD,
-		KEY_ENUM_ADDED_METHOD,
 		KEY_ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
 		KEY_ENUM_CHANGED_TO_ANNOTATION,
 		KEY_ENUM_CHANGED_TO_CLASS,
@@ -587,7 +579,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_ENUM_REMOVED_FIELD,
 		KEY_ENUM_REMOVED_ENUM_CONSTANT,
 		KEY_ENUM_REMOVED_METHOD,
-		KEY_ENUM_REMOVED_CONSTRUCTOR,
 		KEY_ENUM_REMOVED_TYPE_MEMBER,
 		KEY_CLASS_ADDED_FIELD,
 		KEY_CLASS_ADDED_METHOD,
@@ -752,8 +743,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_INTERFACE_CHANGED_TO_ANNOTATION,
 		KEY_INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
 		KEY_INTERFACE_CHANGED_RESTRICTIONS,
-		KEY_ENUM_ADDED_FIELD,
-		KEY_ENUM_ADDED_METHOD,
 		KEY_ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
 		KEY_ENUM_CHANGED_TO_ANNOTATION,
 		KEY_ENUM_CHANGED_TO_CLASS,
@@ -762,7 +751,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_ENUM_REMOVED_FIELD,
 		KEY_ENUM_REMOVED_ENUM_CONSTANT,
 		KEY_ENUM_REMOVED_METHOD,
-		KEY_ENUM_REMOVED_CONSTRUCTOR,
 		KEY_ENUM_REMOVED_TYPE_MEMBER,
 		KEY_CLASS_ADDED_FIELD,
 		KEY_CLASS_ADDED_METHOD,
@@ -1356,8 +1344,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 				initializeComboControls(
 					client,
 					new String[] {
-						PreferenceMessages.ENUM_ADDED_FIELD,
-						PreferenceMessages.ENUM_ADDED_METHOD,
 						PreferenceMessages.ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
 						PreferenceMessages.ENUM_CHANGED_TO_ANNOTATION,
 						PreferenceMessages.ENUM_CHANGED_TO_CLASS,
@@ -1366,12 +1352,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 						PreferenceMessages.ENUM_REMOVED_FIELD,
 						PreferenceMessages.ENUM_REMOVED_ENUM_CONSTANT,
 						PreferenceMessages.ENUM_REMOVED_METHOD,
-						PreferenceMessages.ENUM_REMOVED_CONSTRUCTOR,
 						PreferenceMessages.ENUM_REMOVED_TYPE_MEMBER,
 					},
 					new Key[] {
-						KEY_ENUM_ADDED_FIELD,
-						KEY_ENUM_ADDED_METHOD,
 						KEY_ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
 						KEY_ENUM_CHANGED_TO_ANNOTATION,
 						KEY_ENUM_CHANGED_TO_CLASS,
@@ -1380,7 +1363,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 						KEY_ENUM_REMOVED_FIELD,
 						KEY_ENUM_REMOVED_ENUM_CONSTANT,
 						KEY_ENUM_REMOVED_METHOD,
-						KEY_ENUM_REMOVED_CONSTRUCTOR,
 						KEY_ENUM_REMOVED_TYPE_MEMBER,
 					});
 				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityClassElement);

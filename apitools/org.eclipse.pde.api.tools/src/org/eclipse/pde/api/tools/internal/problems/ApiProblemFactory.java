@@ -390,17 +390,10 @@ public class ApiProblemFactory {
 									case IDelta.METHOD: return 41;
 								}
 							}
-							case IDelta.ENUM_ELEMENT_TYPE: {
-								switch(flags) {
-									case IDelta.FIELD: return 38;
-									case IDelta.TYPE_MEMBER: return 48;
-								}
-							}
 							case IDelta.ANNOTATION_ELEMENT_TYPE: {
 								switch(flags) {
 									case IDelta.FIELD: return 39;
 									case IDelta.METHOD: return 43;
-									case IDelta.TYPE_MEMBER: return 46;
 								}
 							}
 							case IDelta.INTERFACE_ELEMENT_TYPE: {
