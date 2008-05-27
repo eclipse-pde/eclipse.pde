@@ -1379,7 +1379,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FIELD_MOVED_UP, child.getFlags());
@@ -1499,7 +1499,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Extend restrictions", !RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1902,7 +1902,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FIELD_MOVED_UP, child.getFlags());

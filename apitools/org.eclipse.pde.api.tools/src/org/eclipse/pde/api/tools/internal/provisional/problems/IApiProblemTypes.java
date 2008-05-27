@@ -143,8 +143,6 @@ public interface IApiProblemTypes {
 	public static final String ENUM_REMOVED_TYPE_MEMBER =
 		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_MEMBER);
 	// class key constant
-	public static final String CLASS_ADDED_FIELD =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD);
 	public static final String CLASS_ADDED_METHOD =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
 	public static final String CLASS_ADDED_TYPE_PARAMETER =

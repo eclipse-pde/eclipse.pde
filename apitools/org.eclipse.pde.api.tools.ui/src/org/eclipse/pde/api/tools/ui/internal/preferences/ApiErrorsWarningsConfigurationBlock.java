@@ -345,8 +345,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		getApiToolsKey(IApiProblemTypes.ENUM_CHANGED_RESTRICTIONS);
 
 	// class key constant
-	private static final Key KEY_CLASS_ADDED_FIELD =
-		getApiToolsKey(IApiProblemTypes.CLASS_ADDED_FIELD);
 	private static final Key KEY_CLASS_ADDED_METHOD =
 		getApiToolsKey(IApiProblemTypes.CLASS_ADDED_METHOD);
 	private static final Key KEY_CLASS_ADDED_TYPE_PARAMETER =
@@ -580,7 +578,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_ENUM_REMOVED_ENUM_CONSTANT,
 		KEY_ENUM_REMOVED_METHOD,
 		KEY_ENUM_REMOVED_TYPE_MEMBER,
-		KEY_CLASS_ADDED_FIELD,
 		KEY_CLASS_ADDED_METHOD,
 		KEY_CLASS_ADDED_TYPE_PARAMETER,
 		KEY_CLASS_ADDED_CLASS_BOUND,
@@ -752,7 +749,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_ENUM_REMOVED_ENUM_CONSTANT,
 		KEY_ENUM_REMOVED_METHOD,
 		KEY_ENUM_REMOVED_TYPE_MEMBER,
-		KEY_CLASS_ADDED_FIELD,
 		KEY_CLASS_ADDED_METHOD,
 		KEY_CLASS_ADDED_TYPE_PARAMETER,
 		KEY_CLASS_ADDED_CLASS_BOUND,
@@ -1369,7 +1365,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 				initializeComboControls(
 					client,
 					new String[] {
-						PreferenceMessages.CLASS_ADDED_FIELD,
 						PreferenceMessages.CLASS_ADDED_METHOD,
 						PreferenceMessages.CLASS_ADDED_TYPE_PARAMETER,
 						PreferenceMessages.CLASS_ADDED_CLASS_BOUND,
@@ -1398,7 +1393,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 						PreferenceMessages.CLASS_REMOVED_INTERFACE_BOUNDS,
 					},
 					new Key[] {
-						KEY_CLASS_ADDED_FIELD,
 						KEY_CLASS_ADDED_METHOD,
 						KEY_CLASS_ADDED_TYPE_PARAMETER,
 						KEY_CLASS_ADDED_CLASS_BOUND,

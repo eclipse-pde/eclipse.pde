@@ -1177,7 +1177,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
 	 * Removing @noreference on an existing field
@@ -1198,7 +1198,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
 	 * Removing field tagged as @noreference
@@ -1276,7 +1276,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
 	 * Removing @noreference on an existing field

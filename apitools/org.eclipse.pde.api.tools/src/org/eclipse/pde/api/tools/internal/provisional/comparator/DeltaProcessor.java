@@ -378,12 +378,6 @@ public class DeltaProcessor {
 			case IDelta.ADDED:
 				switch(delta.getFlags()) {
 					case IDelta.FIELD :
-						if (Util.isVisible(delta)) {
-							if (Util.isStatic(delta.getModifiers())) {
-								return true;
-							}
-							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions()) || Util.isProtected(delta.getModifiers());
-						}
 						return true; 
 					case IDelta.METHOD :
 						if (Util.isVisible(delta)) {

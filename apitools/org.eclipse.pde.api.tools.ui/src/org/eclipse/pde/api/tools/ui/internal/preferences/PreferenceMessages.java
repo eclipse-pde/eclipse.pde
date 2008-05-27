@@ -129,8 +129,7 @@ public class PreferenceMessages extends NLS {
 	public static String ENUM_REMOVED_ENUM_CONSTANT;
 	public static String ENUM_REMOVED_METHOD;
 	public static String ENUM_REMOVED_TYPE_MEMBER;
-	
-	public static String CLASS_ADDED_FIELD;
+
 	public static String CLASS_ADDED_METHOD;
 	public static String CLASS_ADDED_TYPE_PARAMETER;
 	public static String CLASS_ADDED_CLASS_BOUND;

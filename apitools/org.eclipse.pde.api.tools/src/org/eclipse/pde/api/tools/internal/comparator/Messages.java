@@ -141,7 +141,7 @@ public class Messages extends NLS {
 								if (Util.isStatic(delta.getModifiers())) {
 									return 10;
 								}
-								if (RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
+								if (Util.isPublic(delta.getModifiers())) {
 									return 11;
 								}
 								return 80;
