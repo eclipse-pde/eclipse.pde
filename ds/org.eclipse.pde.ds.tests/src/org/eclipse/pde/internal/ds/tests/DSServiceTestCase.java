@@ -60,7 +60,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		service.setServiceFactory(false);
 		
 		String string = fModel.getDSComponent().toString();
-		assertTrue(string.contains("servicefactory=\"false\""));
+		assertTrue(string.indexOf("servicefactory=\"false\"") != -1);
 		
 		assertTrue(service.getServiceFactory() == false);
 		
@@ -200,7 +200,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		
 		String content = component.toString();
 		
-		assertTrue(content.contains("servicefactory=\"true\""));
+		assertTrue(content.indexOf("servicefactory=\"true\"") != -1);
 		
 		IDSService service0 = component.getService();
 		assertNotNull(service0);
