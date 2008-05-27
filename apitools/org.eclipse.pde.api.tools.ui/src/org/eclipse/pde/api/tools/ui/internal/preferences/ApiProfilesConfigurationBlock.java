@@ -389,6 +389,7 @@ public class ApiProfilesConfigurationBlock {
 		lbl.setText(label);
 		Combo combo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
 		gd = new GridData(GridData.END, GridData.CENTER, false, false);
+		combo.setLayoutData(gd);
 		ControlData data = new ControlData(key, SEVERITIES); 
 		combo.setData(data);
 		combo.setItems(SEVERITIES_LABELS);
