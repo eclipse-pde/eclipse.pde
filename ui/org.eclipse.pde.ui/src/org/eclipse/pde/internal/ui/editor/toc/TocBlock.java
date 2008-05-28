@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.toc;
 
+import org.eclipse.jface.viewers.StructuredSelection;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -118,19 +120,13 @@ public class TocBlock extends PDEMasterDetailsBlock implements IModelChangedList
 		return object.getClass();
 	}
 
-	/**TODO: Comment
-	 * @return
-	 */
 	public ISelection getSelection() {
 		if (fMasterSection != null) {
 			return fMasterSection.getSelection();
 		}
-		return null;
+		return StructuredSelection.EMPTY;
 	}
 
-	/**TODO: Comment
-	 * @return
-	 */
 	public TocTreeSection getMasterSection() {
 		return fMasterSection;
 	}
