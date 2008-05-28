@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.ManifestElement;
@@ -99,6 +100,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 
 			private void createFragmentPlugin() {
 				NewPluginProjectWizard wizard = new NewPluginProjectWizard("Equinox"); //$NON-NLS-1$
+				wizard.init(PDEPlugin.getActiveWorkbenchWindow().getWorkbench(), new StructuredSelection());
 				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 400, 500);

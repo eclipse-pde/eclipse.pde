@@ -115,7 +115,8 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			getContainer().run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
 
 			IWorkingSet[] workingSets = fMainPage.getSelectedWorkingSets();
-			getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(), workingSets);
+			if (workingSets.length > 0)
+				getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(), workingSets);
 
 			return true;
 		} catch (InvocationTargetException e) {
@@ -124,7 +125,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		}
 		return false;
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#dispose()
