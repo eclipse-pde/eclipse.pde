@@ -282,22 +282,33 @@ public class BrandingIron implements IXMLConstants {
 	}
 
 	private void copyMacIni(String initialRoot, String target, String iconName) {
+		// 3 possibilities, in order of preference:
+		// rcp.app/Contents/MacOS/rcp.ini   		(targetFile)
+		// Eclipse.app/Contents/MacOS/rcp.ini		(brandedIni)
+		// Eclipse.app/Contents/MacOs/eclipse.ini	(ini)
+		File targetFile = new File(target, "/MacOS/" + name + ".ini"); //$NON-NLS-1$//$NON-NLS-2$
 		File brandedIni = new File(initialRoot, "/MacOS/" + name + ".ini"); //$NON-NLS-1$ //$NON-NLS-2$
-
 		File ini = new File(initialRoot, "/MacOS/eclipse.ini"); //$NON-NLS-1$
-		if (!ini.exists() && !brandedIni.exists())
-			return;
-
-		if (brandedIni.exists() && ini.exists()) {
+		
+		if (targetFile.exists()) {
+			//an ini already exists at the target, use that
+			if (brandedIni.exists() && !brandedIni.equals(targetFile))
+				brandedIni.delete();
+			if (ini.exists() && !ini.equals(targetFile))
+				ini.delete();
+			ini = targetFile;
+		} else if (brandedIni.exists()) {
 			//take the one that is already branded
-			ini.delete();
+			if( ini.exists() && !ini.equals(brandedIni))
+				ini.delete();
 			ini = brandedIni;
+		} else if (!ini.exists()) {
+			return;
 		}
 
 		StringBuffer buffer;
 		try {
 			buffer = readFile(ini);
-			ini.delete();
 		} catch (IOException e) {
 			System.out.println("Impossible to brand ini file"); //$NON-NLS-1$
 			return;
@@ -312,8 +323,9 @@ public class BrandingIron implements IXMLConstants {
 		}
 
 		try {
-			File targetFile = new File(target, "/MacOS/" + name + ".ini"); //$NON-NLS-1$//$NON-NLS-2$
 			transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(targetFile));
+			if (!ini.equals(targetFile))
+				ini.delete();
 		} catch (FileNotFoundException e) {
 			System.out.println("Impossible to brand ini file"); //$NON-NLS-1$
 			return;

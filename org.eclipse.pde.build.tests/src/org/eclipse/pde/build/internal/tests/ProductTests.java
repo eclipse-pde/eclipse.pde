@@ -93,4 +93,24 @@ public class ProductTests extends PDETestCase {
 		props = Utils.loadProperties(linuxConfig);
 		assertEquals("linux", props.getProperty("os"));
 	}
+	
+	public void test234032() throws Exception {
+		IFolder buildFolder = newTest("234032");
+		
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", "test.product");
+		properties.put("configs", "macosx,carbon,ppc");
+		properties.put("archivesFormat", "macosx,carbon,ppc-folder");
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		Utils.storeBuildProperties(buildFolder, properties);
+		
+		runProductBuild(buildFolder);
+		
+		IFile iniFile = buildFolder.getFile("tmp/eclipse/test.app/Contents/MacOS/test.ini");
+		assertLogContainsLine(iniFile, "-Dfoo=bar");
+	}
 }
