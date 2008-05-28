@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.ctxhelp;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.text.ctxhelp.*;
@@ -102,7 +101,7 @@ public class CtxHelpBlock extends PDEMasterDetailsBlock implements IModelChanged
 		if (fMasterSection != null) {
 			return fMasterSection.getSelection();
 		}
-		return null;
+		return StructuredSelection.EMPTY;
 	}
 
 	/**
