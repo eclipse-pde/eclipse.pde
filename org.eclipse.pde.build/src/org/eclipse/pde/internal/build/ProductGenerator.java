@@ -233,7 +233,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private void printUpdateBundles(StringBuffer buffer, int style) {
 		buffer.append("osgi.bundles="); //$NON-NLS-1$
-		if (style == CONFIG_STYLE_REFACTORED) {
+		if ((style & CONFIG_STYLE_REFACTORED) > 0) {
 			//start levels for eclipse 3.2
 			//org.eclipse.equinox.common@2:start,  
 			buffer.append(BUNDLE_EQUINOX_COMMON);
