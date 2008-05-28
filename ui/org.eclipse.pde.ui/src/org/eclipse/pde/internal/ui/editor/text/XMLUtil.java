@@ -21,6 +21,9 @@ import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
+/**
+ * Utility class for XML operations and editors.
+ */
 public abstract class XMLUtil {
 
 	/**
@@ -119,9 +122,12 @@ public abstract class XMLUtil {
 	}
 
 	/**
-	 * @param project
-	 * @param attInfo
-	 * @param counter
+	 * Creates a default class name including package prefix.  Uses the schema attribute
+	 * to determine a default name, prepends a default package name based on the project
+	 * and appends the counter if more than one such class exists.
+	 * @param project project that the class name is being generated for
+	 * @param attInfo the schema attribute describing the new class
+	 * @param counter used to make each generated name unique
 	 */
 	public static String createDefaultClassName(IProject project, ISchemaAttribute attInfo, int counter) {
 		String tag = attInfo.getParent().getName();
@@ -132,8 +138,6 @@ public abstract class XMLUtil {
 			buf.setCharAt(0, Character.toUpperCase(tag.charAt(0)));
 			className = buf.toString();
 		} else {
-			// package will be the same as the plugin ID
-			// class name will be generated based on the required interface
 			className = expectedType;
 			int dotLoc = className.lastIndexOf('.');
 			if (dotLoc != -1)
@@ -147,35 +151,20 @@ public abstract class XMLUtil {
 	}
 
 	/**
-	 * @param id
-	 * @param className
+	 * Creates a default package name based on the name of the project.  If the project name is
+	 * not a valid java identifier, this method will return the given class name converted to lower
+	 * case.
+	 * 
+	 * @param project the project to generate the package name from
+	 * @param className class name to use as package name if project name fails
 	 */
 	public static String createDefaultPackageName(IProject project, String className) {
-		String id = project.getName();
-		StringBuffer buffer = new StringBuffer();
-		IStatus status;
-		for (int i = 0; i < id.length(); i++) {
-			char ch = id.charAt(i);
-			if (buffer.length() == 0) {
-				if (Character.isJavaIdentifierStart(ch))
-					buffer.append(Character.toLowerCase(ch));
-			} else {
-				if (Character.isJavaIdentifierPart(ch))
-					buffer.append(ch);
-				else if (ch == '.') {
-					status = JavaConventions.validatePackageName(buffer.toString(), PDEJavaHelper.getJavaSourceLevel(project), PDEJavaHelper.getJavaComplianceLevel(project));
-					if (status.getSeverity() == IStatus.ERROR)
-						buffer.append(className.toLowerCase(Locale.ENGLISH));
-					buffer.append(ch);
-				}
-			}
-		}
-
-		status = JavaConventions.validatePackageName(buffer.toString(), PDEJavaHelper.getJavaSourceLevel(project), PDEJavaHelper.getJavaComplianceLevel(project));
+		String id = project.getName().toLowerCase(Locale.ENGLISH);
+		IStatus status = JavaConventions.validatePackageName(id, PDEJavaHelper.getJavaSourceLevel(project), PDEJavaHelper.getJavaComplianceLevel(project));
 		if (status.getSeverity() == IStatus.ERROR)
-			buffer.append(className.toLowerCase(Locale.ENGLISH));
+			return className.toLowerCase(Locale.ENGLISH);
 
-		return buffer.toString();
+		return id;
 	}
 
 	/**
