@@ -1681,7 +1681,7 @@ public class ClassFileComparator {
 			// if null we need to walk the hierarchy of descriptor2
 			TypeDescriptor typeDescriptor = this.descriptor2;
 			boolean found = false;
-			if (this.component2 != null) {
+			if (this.component2 != null && !methodDescriptor.isConstructor()) {
 				if (this.descriptor1.isInterface()) {
 					Set interfacesSet = getInterfacesSet(typeDescriptor, this.component2, this.apiProfile2);
 					if (interfacesSet != null) {
@@ -1708,7 +1708,7 @@ public class ClassFileComparator {
 						}
 					}
 				} else {
-					Set superclassSet = getSuperclassSet(typeDescriptor, this.component2, this.apiProfile2);
+					Set superclassSet = getSuperclassSet(typeDescriptor, this.component2, this.apiProfile2, true);
 					if (superclassSet != null) {
 						loop: for (Iterator iterator = superclassSet.iterator(); iterator.hasNext();) {
 							TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
