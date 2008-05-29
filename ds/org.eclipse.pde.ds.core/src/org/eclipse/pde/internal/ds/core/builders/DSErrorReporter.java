@@ -11,19 +11,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.builders;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.builders.CompilerFlags;
-import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
-import org.eclipse.pde.internal.core.builders.XMLErrorReporter;
-import org.eclipse.pde.internal.ds.core.IDSConstants;
-import org.eclipse.pde.internal.ds.core.Messages;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ds.core.Activator;
+import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.eclipse.pde.internal.ds.core.IDSImplementation;
+import org.eclipse.pde.internal.ds.core.IDSModel;
+import org.eclipse.pde.internal.ds.core.IDSProperties;
+import org.eclipse.pde.internal.ds.core.IDSProperty;
+import org.eclipse.pde.internal.ds.core.IDSReference;
+import org.eclipse.pde.internal.ds.core.IDSService;
+import org.eclipse.pde.internal.ds.core.text.DSModel;
 
 public class DSErrorReporter extends XMLErrorReporter {
 
@@ -35,87 +35,55 @@ public class DSErrorReporter extends XMLErrorReporter {
 	 * @see org.eclipse.pde.internal.builders.XMLErrorReporter#validateContent(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void validateContent(IProgressMonitor monitor) {
-		List elements = new ArrayList();
 	
-
-		//		validateXMLSyntax();
-		
-		Element component = getDocumentRoot();
-		//		validateRoot(component);
-		
-
-		// NodeList implementations = component
-		// .getElementsByTagName(IDSConstants.ELEMENT_IMPLEMENTATION);
-		// validateImplementation(implementations);
-		//		
-		// NodeList propertiesElements = component
-		// .getElementsByTagName(IDSConstants.ELEMENT_PROPERTIES);
-		// validateProperties(propertiesElements);
-		//		
-		// NodeList propertyElements = component
-		// .getElementsByTagName(IDSConstants.ELEMENT_PROPERTY);
-		// validateProperty(propertyElements);
-		//		
-		// NodeList provides = component
-		// .getElementsByTagName(IDSConstants.ELEMENT_PROVIDE);
-		// validateProvides(provides);
-		//		
-		// NodeList references = component
-		// .getElementsByTagName(IDSConstants.ELEMENT_REFERENCE);
-		// validateReferences(references);
-
-		NodeList services = component
-				.getElementsByTagName(IDSConstants.ELEMENT_SERVICE);
-		validateServices(services);
+		try {
+			IDSModel model = new DSModel(CoreUtility.getTextDocument(fFile
+					.getContents()), false);
+			model.setUnderlyingResource(fFile);	
+			
+			IDSComponent component = model.getDSComponent();
+			
+			validateComponent(component);
+			validateService(component.getService());
+			validateImplementation(component.getImplementation());
+			validatePropertyElements(component.getPropertyElements());
+			validateProperties(component.getPropertiesElements());
+			validateReferences(component.getReferences());
+			
+		} catch (CoreException e) {
+			Activator.log(e);
+		}	
 	
 	}
 
-	private void validateServices(NodeList services) {
-		// Multiple Elements validation
-		if (services.getLength() > 1) {
-			Element element = (Element) services.item(1);
-			reportMultipleElementsForbidden(element,
-					IDSConstants.ELEMENT_SERVICE);
-		}
-	}
-
-	private void reportMultipleElementsForbidden(Element element,
-			String elementType) {
-		// FIXME change message
-		report(NLS.bind(Messages.DSErrorReporter_multipleElements, element
-				.getNodeName()), getLine(element), CompilerFlags.ERROR,
-				PDEMarkerFactory.CAT_OTHER);
-
-	}
-
-	private void validateReferences(NodeList references) {
+	private void validateReferences(IDSReference[] references) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private void validateProvides(NodeList provides) {
+	private void validateProperties(IDSProperties[] propertiesElements) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private void validateProperty(NodeList propertyElements) {
+	private void validatePropertyElements(IDSProperty[] propertyElements) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private void validateProperties(NodeList propertiesElements) {
+	private void validateImplementation(IDSImplementation implementation) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private void validateImplementation(NodeList implementations) {
+	private void validateComponent(IDSComponent component) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private void validateRoot(Element component) {
-		// TODO Auto-generated method stub
-
+	private void validateService(IDSService service) {
+		// TODO
 	}
+
 
 }
