@@ -118,8 +118,14 @@ public class LaunchConfigurationHelper {
 			URL bundlesTxt = P2Utils.writeBundlesTxt(map.values(), directory);
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
+
+				// if we have simple configurator and update configurator together, ensure update doesn't reconcile
+				if (map.get("org.eclipse.update.configurator") != null) { //$NON-NLS-1$
+					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 		}
+
 		setBundleLocations(map, properties);
 
 		save(new File(directory, "config.ini"), properties); //$NON-NLS-1$
@@ -154,15 +160,14 @@ public class LaunchConfigurationHelper {
 	 * @return string list of osgi bundles
 	 */
 	private static String computeOSGiBundles(String bundleList, Map map) {
-	
+
 		// if p2 and only simple configurator and 
 		// if simple configurator isn't selected & isn't in bundle list... hack it
 
 		// if using p2's simple configurator, a bundles.txt will be written, so we only need simple configurator in the config.ini
 		if (map.get("org.eclipse.equinox.simpleconfigurator") != null) //$NON-NLS-1$
 			return "org.eclipse.equinox.simpleconfigurator@1:start"; //$NON-NLS-1$
-	
-	
+
 		StringBuffer buffer = new StringBuffer();
 		Set initialBundleSet = new HashSet();
 		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$

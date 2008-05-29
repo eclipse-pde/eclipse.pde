@@ -76,6 +76,9 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 			URL bundlesTxt = P2Utils.writeBundlesTxt(fModels, start, autostart, getConfigDir(configuration));
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
+				if (fAllBundles.get("org.eclipse.update.configurator") != null) { //$NON-NLS-1$
+					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 			StringBuffer buffer = new StringBuffer();
 			IPluginModelBase model = (IPluginModelBase) fAllBundles.get("org.eclipse.equinox.simpleconfigurator"); //$NON-NLS-1$
