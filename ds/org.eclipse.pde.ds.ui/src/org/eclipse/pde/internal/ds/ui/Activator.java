@@ -12,8 +12,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -97,6 +105,33 @@ public class Activator extends AbstractUIPlugin {
 
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}
+	
+	public static void logException(Throwable e, final String title,
+			String message) {
+		if (e instanceof InvocationTargetException) {
+			e = ((InvocationTargetException) e).getTargetException();
+		}
+		IStatus status = null;
+		if (e instanceof CoreException)
+			status = ((CoreException) e).getStatus();
+		else {
+			if (message == null)
+				message = e.getMessage();
+			if (message == null)
+				message = e.toString();
+			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
+					message, e);
+		}
+		ResourcesPlugin.getPlugin().getLog().log(status);
+		Display display = Display.getCurrent() == null ? Display.getCurrent()
+				: Display.getDefault();
+		final IStatus fstatus = status;
+		display.asyncExec(new Runnable() {
+			public void run() {
+				ErrorDialog.openError(null, title, null, fstatus);
+			}
+		});
 	}
 
 

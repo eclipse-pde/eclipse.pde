@@ -20,7 +20,7 @@
    </extension>
    
       <extension
-         id="org.eclipse.pde.ds.core.DSBuilder"
+         id="org.eclipse.pde.ds.core.builder"
          name="%builders.dsBuilder.name"
          point="org.eclipse.core.resources.builders">
       <builder>

@@ -15,7 +15,7 @@ package org.eclipse.pde.internal.ds.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 
 public class DSNewWizard extends BasicNewFileResourceWizard {
@@ -34,7 +34,7 @@ public class DSNewWizard extends BasicNewFileResourceWizard {
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#addPages()
 	 */
 	public void addPages() {
-		 fMainPage = new DSFileWizardPage(getSelection()); //$NON-NLS-1$
+		 fMainPage = new DSFileWizardPage(getSelection());
 		 addPage(fMainPage);
 	}
 
@@ -51,7 +51,7 @@ public class DSNewWizard extends BasicNewFileResourceWizard {
 
 			getContainer().run(false, true, op);
 		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
+			Activator.logException(e, null, null);
 			return false;
 		} catch (InterruptedException e) {
 			return false;

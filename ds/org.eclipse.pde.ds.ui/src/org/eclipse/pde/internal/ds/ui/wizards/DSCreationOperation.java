@@ -14,7 +14,10 @@ package org.eclipse.pde.internal.ds.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
@@ -26,6 +29,7 @@ import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
 import org.eclipse.pde.internal.ds.ui.Activator;
+import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
@@ -79,8 +83,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 
 		// Element: implemenation
 		IDSImplementation implementation = factory.createImplementation();
-		
-		component.addChildNode(implementation, true);
+		component.setImplementation(implementation);
 
 		// Component Attributes
 		
@@ -88,6 +91,33 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 				fFile.getName().lastIndexOf(".")); //$NON-NLS-1$
 		
 		component.setAttributeName(name);
+		
+
+		try {
+			// Add builder
+			IProject project = file.getProject();
+			IProjectDescription description = project.getDescription();
+			ICommand[] commands = description.getBuildSpec();
+
+			for (int i = 0; i < commands.length; ++i) {
+				if (commands[i].getBuilderName().equals(
+						IConstants.ID_BUILDER)) {
+					return;
+				}
+			}
+
+			ICommand[] newCommands = new ICommand[commands.length + 1];
+			System.arraycopy(commands, 0, newCommands, 0, commands.length);
+			ICommand command = description.newCommand();
+			command.setBuilderName(IConstants.ID_BUILDER);
+			newCommands[newCommands.length - 1] = command;
+			description.setBuildSpec(newCommands);
+			project.setDescription(description, null);
+
+		} catch (CoreException e) {
+			Activator.logException(e, null, null);
+		}
+		
 		
 	}
 
