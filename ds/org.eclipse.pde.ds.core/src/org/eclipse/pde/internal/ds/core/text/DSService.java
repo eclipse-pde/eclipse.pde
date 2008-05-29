@@ -96,4 +96,23 @@ public class DSService extends DSObject implements IDSService {
 		}
 		return providedServices;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSService#addProvidedService(org.eclipse.pde.internal.ds.core.IDSProvide)
+	 */
+	public void addProvidedService(IDSProvide provide) {
+		this.addChildNode(provide, true);
+	}
+
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSService#removeProvidedService(org.eclipse.pde.internal.ds.core.IDSProvide)
+	 */
+	public void removeProvidedService(IDSProvide provide) {
+		this.removeChildNode(provide, true);
+	}
 }

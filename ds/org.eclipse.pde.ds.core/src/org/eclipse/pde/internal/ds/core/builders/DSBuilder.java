@@ -33,42 +33,6 @@ public class DSBuilder extends IncrementalProjectBuilder {
 	private static String PDE_NATURE = "org.eclipse.pde.PluginNature"; //$NON-NLS-1$
 	private static IProject[] EMPTY_LIST = new IProject[0];
 
-	class DeltaVisitor implements IResourceDeltaVisitor {
-		private IProgressMonitor monitor;
-
-		public DeltaVisitor(IProgressMonitor monitor) {
-			this.monitor = monitor;
-		}
-
-		public boolean visit(IResourceDelta delta) {
-			IResource resource = delta.getResource();
-
-			if (resource instanceof IProject) {
-				// TODO only check PDE projects...
-				IProject project = (IProject) resource;
-				try {
-					return (project.hasNature(PDE_NATURE));
-				} catch (CoreException e) {
-					// TODO log exception
-					return false;
-				}
-			}
-			if (resource instanceof IFile) {
-				// see if this is it
-				IFile candidate = (IFile) resource;
-				if (isDSFile(candidate)) {
-					// That's it, but only check it if it has been added or changed
-					if (delta.getKind() != IResourceDelta.REMOVED) {
-						checkFile(candidate, monitor);
-						return true;
-					}
-				}
-			}
-			return true;
-		}
-
-	}
-
 	class ResourceVisitor implements IResourceVisitor {
 		private IProgressMonitor monitor;
 
@@ -97,6 +61,42 @@ public class DSBuilder extends IncrementalProjectBuilder {
 			}
 			return false;
 		}
+	}
+
+	class DeltaVisitor implements IResourceDeltaVisitor {
+		private IProgressMonitor monitor;
+	
+		public DeltaVisitor(IProgressMonitor monitor) {
+			this.monitor = monitor;
+		}
+	
+		public boolean visit(IResourceDelta delta) {
+			IResource resource = delta.getResource();
+	
+			if (resource instanceof IProject) {
+				// TODO only check PDE projects...
+				IProject project = (IProject) resource;
+				try {
+					return (project.hasNature(PDE_NATURE));
+				} catch (CoreException e) {
+					// TODO log exception
+					return false;
+				}
+			}
+			if (resource instanceof IFile) {
+				// see if this is it
+				IFile candidate = (IFile) resource;
+				if (isDSFile(candidate)) {
+					// That's it, but only check it if it has been added or changed
+					if (delta.getKind() != IResourceDelta.REMOVED) {
+						checkFile(candidate, monitor);
+						return true;
+					}
+				}
+			}
+			return true;
+		}
+	
 	}
 
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)

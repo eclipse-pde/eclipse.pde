@@ -62,4 +62,18 @@ public interface IDSService extends IDSObject {
 	 */
 	public IDSProvide[] getProvidedServices();
 
+	/**
+	 * Adds a provide element with information about a service`s interface
+	 * 
+	 * @param provide IDSProvide object
+	 */
+	public void addProvidedService(IDSProvide provide);
+	
+	/**
+	 * Removes a provide element
+	 * 
+	 * @param provide IDSProvide object
+	 */
+	public void removeProvidedService(IDSProvide provide);
+
 }

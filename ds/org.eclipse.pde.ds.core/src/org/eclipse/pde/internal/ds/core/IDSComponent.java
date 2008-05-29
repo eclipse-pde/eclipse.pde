@@ -14,11 +14,7 @@ package org.eclipse.pde.internal.ds.core;
 /**
  * A component is a normal Java class contained within a bundle
  * 
- * <component> ::=
- * 	<implementation> 
- * 	<properties> * 
- * 	<service> ? 
- * 	<reference> *
+ * <component> ::= <implementation> <properties> * <service> ? <reference> *
  */
 public interface IDSComponent extends IDSObject {
 
@@ -116,5 +112,76 @@ public interface IDSComponent extends IDSObject {
 	 * @return IDSReference's array containing all Reference elements
 	 */
 	public IDSReference[] getReferences();
+
+	/**
+	 * Sets the implementation element with information about the component
+	 * implementation class
+	 * 
+	 * 
+	 * @param implementation
+	 *            IDSImplementation object
+	 */
+	public void setImplementation(IDSImplementation implementation);
+
+	/**
+	 * Sets the service element with information to be used when a component
+	 * configuration is to be registered as a service.
+	 * 
+	 * @param service
+	 *            IDSService object
+	 */
+	public void setService(IDSService service);
+
+	/**
+	 * Adds a property element with information about a single property file
+	 * 
+	 * @param property
+	 *            IDSProperty object
+	 */
+	public void addPropertyElement(IDSProperty property);
+
+	/**
+	 * Adds a properties element with information about a set of properties from
+	 * a bundle entry
+	 * 
+	 * @param properties
+	 *            IDSProperties object
+	 * 
+	 */
+	public void addPropertiesElement(IDSProperties properties);
+
+	/**
+	 * Add a reference element with information about the reference of a bound
+	 * service
+	 * 
+	 * @param reference
+	 *            IDSReference object
+	 */
+	public void addReference(IDSReference reference);
+
+	/**
+	 * Removes a property element
+	 * 
+	 * @param property
+	 *            IDSProperty object
+	 */
+	public void removePropertyElement(IDSProperty property);
+
+	/**
+	 * Removes a properties element
+	 * 
+	 * @param properties
+	 *            IDSProperties object
+	 * 
+	 */
+	public void removePropertiesElement(IDSProperties properties);
+
+	/**
+	 * Add a reference element
+	 * 
+	 * @param reference
+	 *            IDSReference object
+	 */
+	public void removeReference(IDSReference reference);
 
 }

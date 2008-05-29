@@ -177,7 +177,6 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return (IDSImplementation) childNodesList.get(0);
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -231,6 +230,85 @@ public class DSComponent extends DSObject implements IDSComponent {
 			return null;
 		}
 		return (IDSService) childNodesList.get(0);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#addPropertiesElement(org.eclipse.pde.internal.ds.core.IDSProperties)
+	 */
+	public void addPropertiesElement(IDSProperties properties) {
+		this.addChildNode(properties, true);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#addPropertyElement(org.eclipse.pde.internal.ds.core.IDSProperty)
+	 */
+	public void addPropertyElement(IDSProperty property) {
+		this.addChildNode(property, true);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#addReference(org.eclipse.pde.internal.ds.core.IDSReference)
+	 */
+	public void addReference(IDSReference reference) {
+		this.addChildNode(reference, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#removePropertiesElement(org.eclipse.pde.internal.ds.core.IDSProperties)
+	 */
+	public void removePropertiesElement(IDSProperties properties) {
+		this.removeChildNode(properties, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#removePropertyElement(org.eclipse.pde.internal.ds.core.IDSProperty)
+	 */
+	public void removePropertyElement(IDSProperty property) {
+		this.removeChildNode(property, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#removeReference(org.eclipse.pde.internal.ds.core.IDSReference)
+	 */
+	public void removeReference(IDSReference reference) {
+		this.removeChildNode(reference, true);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setImplementation(org.eclipse.pde.internal.ds.core.IDSImplementation)
+	 */
+	public void setImplementation(IDSImplementation implementation) {
+		if (this.getImplementation() == null) {
+			this.addChildNode(implementation, true);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.setService(org.eclipse.pde.internal.ds.core.IDSService)
+	 */
+	public void setService(IDSService service) {
+		if (this.getService() == null) {
+			this.addChildNode(service, true);
+		}
 	}
 
 }
