@@ -358,6 +358,8 @@ public class RegistryBrowserListener implements IRegistryChangeListener, BundleL
 				if (name == null)
 					return;
 				TreeItem bundleItem = findBundleItem(name);
+				if (bundleItem == null)
+					return;
 				PluginAdapter bundleAdapter = ((PluginAdapter) bundleItem.getData());
 				Object[] folders = bundleAdapter.getChildren();
 
