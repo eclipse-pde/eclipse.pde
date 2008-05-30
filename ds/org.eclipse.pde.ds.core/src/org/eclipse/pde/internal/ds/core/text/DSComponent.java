@@ -303,12 +303,21 @@ public class DSComponent extends DSObject implements IDSComponent {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.ds.core.text.setService(org.eclipse.pde.internal.ds.core.IDSService)
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setService(org.eclipse.pde.internal.ds.core.IDSService)
 	 */
 	public void setService(IDSService service) {
 		if (this.getService() == null) {
 			this.addChildNode(service, true);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#removeService(org.eclipse.pde.internal.ds.core.IDSService)
+	 */
+	public void removeService(IDSService service) {
+		this.removeChildNode(service, true);
 	}
 
 }

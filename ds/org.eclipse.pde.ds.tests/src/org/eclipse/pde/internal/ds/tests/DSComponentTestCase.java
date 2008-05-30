@@ -71,27 +71,27 @@ public class DSComponentTestCase extends AbstractDSModelTestCase {
 		
 		IDSImplementation implementation = factory.createImplementation();
 		implementation.setClassName("ImplementationClassName");
-		component.addChildNode(implementation);
+		component.setImplementation(implementation);
 		
 		IDSProperties properties = factory.createProperties();
 		properties.setEntry("PropertiesEntry");
-		component.addChildNode(properties);
+		component.addPropertiesElement(properties);
 		
 		IDSProperty property = factory.createProperty();
 		property.setPropertyElemBody("Body Values");
 		property.setPropertyType("java.lang.String");
-		component.addChildNode(property);
+		component.addPropertyElement(property);
 		
 		IDSService service = factory.createService();
 		service.setServiceFactory(true);
-		component.addChildNode(service);
+		component.setService(service);
 		
 		IDSReference reference = factory.createReference();
 		reference.setReferenceBind("methodBind");
 		reference.setReferenceUnbind("methodUnBind");
 		reference.setReferenceInterface("ReferenceInterface");
 		reference.setReferenceName("ReferenceName");
-		component.addChildNode(reference);
+		component.addReference(reference);
 		
 		IDocumentElementNode childAt4 = component.getChildAt(4);
 		component.moveChildNode(reference, -1, true);
@@ -108,7 +108,7 @@ public class DSComponentTestCase extends AbstractDSModelTestCase {
 		assertTrue(component.getService() != null);
 		assertTrue(component.getReferences().length == 1);
 		
-		component.removeChildNode(reference);
+		component.removeReference(reference);
 		assertTrue(component.getChildCount() == 4);
 		assertTrue(component.getImplementation() != null);
 		assertTrue(component.getPropertyElements().length == 1);
@@ -117,8 +117,8 @@ public class DSComponentTestCase extends AbstractDSModelTestCase {
 		assertTrue(component.getReferences().length == 0);
 		
 
-		component.removeChildNode(service);
-		component.removeChildNode(properties);
+		component.removeService(service);
+		component.removePropertiesElement(properties);
 		assertTrue(component.getChildCount() == 2);
 		assertTrue(component.getImplementation() != null);
 		assertTrue(component.getPropertyElements().length == 1);
@@ -128,7 +128,7 @@ public class DSComponentTestCase extends AbstractDSModelTestCase {
 		
 
 		component.removeChildNode(implementation);
-		component.removeChildNode(property);
+		component.removePropertyElement(property);
 		assertTrue(component.getChildCount() == 0);
 		assertTrue(component.getImplementation() == null);
 		assertTrue(component.getPropertyElements().length == 0);

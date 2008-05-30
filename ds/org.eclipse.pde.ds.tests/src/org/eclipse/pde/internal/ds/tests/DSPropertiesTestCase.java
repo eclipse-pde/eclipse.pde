@@ -121,7 +121,7 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 		Properties.setEntry(entry);
 		
 		IDSComponent component = fModel.getDSComponent();
-		component.addChildNode(Properties);
+		component.addPropertiesElement(Properties);
 		
 		String content = component.toString();
 		

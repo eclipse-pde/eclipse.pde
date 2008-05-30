@@ -36,27 +36,27 @@ public class DSObjectTestCase extends AbstractDSModelTestCase {
 		
 		IDSImplementation implementation = factory.createImplementation();
 		implementation.setClassName("ImplementationClassName");
-		component.addChildNode(implementation);
+		component.setImplementation(implementation);
 		
 		IDSProperties properties = factory.createProperties();
 		properties.setEntry("PropertiesEntry");
-		component.addChildNode(properties);
+		component.addPropertiesElement(properties);
 		
 		IDSProperty property = factory.createProperty();
 		property.setPropertyElemBody("Body Values");
 		property.setPropertyType("java.lang.String");
-		component.addChildNode(property);
+		component.addPropertyElement(property);
 		
 		IDSService service = factory.createService();
 		service.setServiceFactory(true);
-		component.addChildNode(service);
+		component.setService(service);
 		
 		IDSReference reference = factory.createReference();
 		reference.setReferenceBind("methodBind");
 		reference.setReferenceUnbind("methodUnBind");
 		reference.setReferenceInterface("ReferenceInterface");
 		reference.setReferenceName("ReferenceName");
-		component.addChildNode(reference);
+		component.addReference(reference);
 		
 		List children = component.getChildNodesList();
 		assertTrue(children.size() == 5);

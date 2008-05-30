@@ -40,7 +40,7 @@ public class DSReferenceTestCase extends AbstractDSModelTestCase {
 
 		reference.setReferenceTarget(target);
 
-		component.addChildNode(reference);
+		component.addReference(reference);
 
 		IDSReference[] references = component.getReferences();
 
@@ -66,7 +66,7 @@ public class DSReferenceTestCase extends AbstractDSModelTestCase {
 		IDSComponent component = fModel.getDSComponent();
 		assertNotNull(component);
 		IDSReference reference = fModel.getFactory().createReference();
-		component.addChildNode(reference);
+		component.addReference(reference);
 
 		IDSReference[] references = component.getReferences();
 

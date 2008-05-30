@@ -151,7 +151,7 @@ public interface IDSComponent extends IDSObject {
 	public void addPropertiesElement(IDSProperties properties);
 
 	/**
-	 * Add a reference element with information about the reference of a bound
+	 * Adds a reference element with information about the reference of a bound
 	 * service
 	 * 
 	 * @param reference
@@ -177,11 +177,19 @@ public interface IDSComponent extends IDSObject {
 	public void removePropertiesElement(IDSProperties properties);
 
 	/**
-	 * Add a reference element
+	 * Removes a reference element
 	 * 
 	 * @param reference
 	 *            IDSReference object
 	 */
 	public void removeReference(IDSReference reference);
+
+	/**
+	 * Removes a service element
+	 * 
+	 * @param service
+	 *            IDSService object
+	 */
+	public void removeService(IDSService service);
 
 }
