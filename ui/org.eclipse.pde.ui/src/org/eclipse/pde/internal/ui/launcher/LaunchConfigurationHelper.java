@@ -115,7 +115,7 @@ public class LaunchConfigurationHelper {
 		String osgiBundles = properties.getProperty(PROP_OSGI_BUNDLES);
 		// if we are launching using P2, write out P2 files (bundles.txt) and add P2 property to config.ini
 		if (osgiBundles != null && osgiBundles.indexOf("org.eclipse.equinox.simpleconfigurator") != -1 && map.containsKey("org.eclipse.equinox.simpleconfigurator")) { //$NON-NLS-1$ //$NON-NLS-2$
-			URL bundlesTxt = P2Utils.writeBundlesTxt(map.values(), directory);
+			URL bundlesTxt = P2Utils.writeBundlesTxt(map.values(), osgiBundles, directory);
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
 
