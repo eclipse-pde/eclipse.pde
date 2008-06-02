@@ -1,16 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.pde.core">
+<schema targetNamespace="org.eclipse.pde.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.pde.core" id="javadoc" name="Javadoc Attachments"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point associates plug-ins with the javadoc location of the code they contain.  PDE uses these mappings to automatically attach javadoc to plug-in libraries when it computes a plug-in&apos;s classpath.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="javadoc" minOccurs="1" maxOccurs="unbounded"/>
@@ -34,9 +39,9 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -77,18 +82,18 @@
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of the &lt;code&gt;javadoc&lt;/code&gt; extension:
 &lt;pre&gt;
@@ -108,7 +113,7 @@
   &lt;/extension&gt;
 &lt;/pre&gt;
 
-In this example, the javadoc for two plug-ins: &lt;code&gt;com.example.abc&lt;/code&gt; and &lt;code&gt;com.example.xyz&lt;/code&gt; have their javadoc located in a &lt;code&gt;references/api/&lt;/code&gt; directory inside a &lt;code&gt;doc.zip&lt;/code&gt; ZIP file in the plug-in declaring this extension.
+In this example, the javadoc for two plug-ins: &lt;code&gt;com.example.abc&lt;/code&gt; and &lt;code&gt;com.example.def&lt;/code&gt; have their javadoc located in a &lt;code&gt;references/api/&lt;/code&gt; directory inside a &lt;code&gt;doc.zip&lt;/code&gt; ZIP file in the plug-in declaring this extension.
 
 The javadoc for plug-in &lt;code&gt;com.example.ghi&lt;/code&gt; is located at &lt;code&gt;http://www.sample-url.org/doc/&lt;/code&gt;.
 
@@ -117,27 +122,27 @@ The javadoc for plug-in &lt;code&gt;com.example.jkl&lt;/code&gt; is located in d
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          No Java code is requied for this extension point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Eclipse SDK comes with ISV documentation plug-ins that use this extension point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2005 IBM Corporation and others.
 &lt;br&gt;
