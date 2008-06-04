@@ -14,6 +14,7 @@
 /**
  * Constants for the files usually manipulated by the fetch factory.
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface Constants {
 	/** Constant for the string <code>feature.xml</code> */
