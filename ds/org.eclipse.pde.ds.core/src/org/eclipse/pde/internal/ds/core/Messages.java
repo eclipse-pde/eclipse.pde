@@ -18,10 +18,14 @@ public class Messages extends NLS {
 
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.core.messages"; //$NON-NLS-1$
 
-	public static String DSErrorReporter_multipleElements;
+	public static String DSErrorReporter_cannotResolveResource;
+	public static String DSErrorReporter_requiredElement;
+	public static String DSErrorReporter_requiredAttribute;
 	
 	public static String DSBuilder_verifying;
 	public static String DSBuilder_updating;
+
+	
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

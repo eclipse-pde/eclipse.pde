@@ -18,6 +18,10 @@
          </describer>
       </content-type>
    </extension>
+
+<!-- ================================================================================= -->
+<!-- Builders 																		   -->
+<!-- ================================================================================= -->
    
       <extension
          id="org.eclipse.pde.ds.core.builder"
@@ -30,4 +34,19 @@
       </builder>
    
    </extension>
+   
+<!-- ================================================================================= -->
+<!-- Markers                                                                           -->
+<!-- ================================================================================= -->
+   <extension
+         id="problem"
+         name="%builders.marker.label"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <attribute name="id"/>
+      <attribute name="categoryId"/>
+      <persistent value="true"/>
+   </extension>
+   
 </plugin>

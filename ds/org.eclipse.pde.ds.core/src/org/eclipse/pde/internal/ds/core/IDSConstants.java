@@ -20,7 +20,7 @@ public interface IDSConstants {
 
 	// Elements
 
-	public static final String ELEMENT_ROOT = "component"; //$NON-NLS-1$
+	public static final String ELEMENT_COMPONENT = "component"; //$NON-NLS-1$
 
 	public static final String ELEMENT_IMPLEMENTATION = "implementation"; //$NON-NLS-1$
 

@@ -37,7 +37,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	private static final long serialVersionUID = 1L;
 
 	public DSComponent(DSModel model) {
-		super(model, ELEMENT_ROOT);
+		super(model, ELEMENT_COMPONENT);
 		setInTheModel(true);
 
 		// set default values

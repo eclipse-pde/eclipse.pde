@@ -138,7 +138,7 @@ public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentN
 	}
 
 	private boolean isRoot(String name) {
-		return name.equals(IDSConstants.ELEMENT_ROOT); 
+		return name.equals(IDSConstants.ELEMENT_COMPONENT); 
 	}
 
 	private boolean isProperty(String name) {
