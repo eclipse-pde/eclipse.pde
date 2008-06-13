@@ -11,24 +11,33 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSObject;
+import org.eclipse.pde.internal.ds.ui.SharedImages;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
 public class DSCompletionProposal implements ICompletionProposal {
 
 	IDSObject fObject;
+	int fStartOffset;
 
-	public DSCompletionProposal(IDSObject object) {
+	public DSCompletionProposal(IDSObject object, int startOffset) {
 		fObject = object;
+		fStartOffset = startOffset;
 	}
 
 	public void apply(IDocument document) {
-		// TODO Auto-generated method stub
+		try {
+			document.replace(fStartOffset, 0, fObject.toString());
+		} catch (BadLocationException e) {
+			// DEBUG
+			// e.printStackTrace();
+		}
 	}
 
 	public String getAdditionalProposalInfo() {
@@ -69,18 +78,31 @@ public class DSCompletionProposal implements ICompletionProposal {
 			return IDSConstants.ELEMENT_COMPONENT;
 
 		default:
-			return fObject.getName();
+			return fObject.getName(); // TODO REMOVE!!!
 		}
 	}
 
 	public Image getImage() {
-		// TODO Auto-generated method stub
+		if (fObject.getType() == IDSConstants.TYPE_IMPLEMENTATION) {
+			return SharedImages.getImage(SharedImages.DESC_IMPLEMENTATION);
+		} else if (fObject.getType() == IDSConstants.TYPE_PROPERTIES) {
+			return SharedImages.getImage(SharedImages.DESC_PROPERTIES);
+		} else if (fObject.getType() == IDSConstants.TYPE_PROPERTY) {
+			return SharedImages.getImage(SharedImages.DESC_PROPERTY);
+		} else if (fObject.getType() == IDSConstants.TYPE_PROVIDE) {
+			return SharedImages.getImage(SharedImages.DESC_PROVIDE);
+		} else if (fObject.getType() == IDSConstants.TYPE_REFERENCE) {
+			return SharedImages.getImage(SharedImages.DESC_REFERENCE);
+		} else if (fObject.getType() == IDSConstants.TYPE_ROOT) {
+			return SharedImages.getImage(SharedImages.DESC_ROOT);
+		} else if (fObject.getType() == IDSConstants.TYPE_SERVICE) {
+			return SharedImages.getImage(SharedImages.DESC_SERVICE);
+		}
 		return null;
 	}
 
 	public Point getSelection(IDocument document) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Point(fStartOffset + fObject.toString().length(), 0);
 	}
 
 }

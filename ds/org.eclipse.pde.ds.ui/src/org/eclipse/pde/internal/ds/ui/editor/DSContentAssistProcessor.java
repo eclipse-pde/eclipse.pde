@@ -30,11 +30,14 @@ import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
 import org.eclipse.pde.internal.ds.core.text.DSObject;
+import org.eclipse.pde.internal.ds.ui.IConstants;
+import org.eclipse.pde.internal.ds.ui.editor.contentassist.TypeCompletionProposal;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.contentassist.TypePackageCompletionProcessor;
 
@@ -68,7 +71,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			int offset) {
 		IDocument doc = viewer.getDocument();
 		IBaseModel model = fSourcePage.getInputContext().getModel();
-		
+
 		if (model instanceof AbstractEditingModel && fSourcePage.isDirty()
 				&& ((AbstractEditingModel) model).isStale() && fRange == null) {
 			((AbstractEditingModel) model).reconciled(doc);
@@ -100,20 +103,19 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		DSContentAssistText caText = DSContentAssistText.parse(offset, doc);
 
 		if (caText != null) {
-			return stubProposals(model, "CAText");
+			return stubProposals(model, "CAText", offset);
 			// return computeCATextProposal(doc, offset, caText);
 		} else if (fRange instanceof IDocumentAttributeNode) {
-			// return stubProposals(model, "Attribute");
 			return computeCompletionProposal((IDocumentAttributeNode) fRange,
 					offset, doc);
 		} else if (fRange instanceof IDocumentElementNode) {
-			// return stubProposals(model, "Element");
-			 return computeCompletionProposal((IDocumentElementNode) fRange,
+			return computeCompletionProposal((IDocumentElementNode) fRange,
 					offset, doc);
 		} else if (fRange instanceof IDocumentTextNode) {
-			return stubProposals(model, "Text");
+			// TODO How do I reach here?! by rafael
+			return stubProposals(model, "Text", offset);
 		}
-				
+
 		return null;
 	}
 
@@ -125,20 +127,125 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		String[] guess = guessContentRequest(offests, doc, false);
 		if (guess == null)
 			return null;
-		
-		 String element = guess[0];
+
+		String element = guess[0];
 		String attribute = guess[1];
 		String attrValue = guess[2];
-		
-		
-		// TODO What should we do here? Should we show the restricted values
-		// attributes`s values? Reference.Cardinality (Should we show the
-		
-		
+		int attrValueLength = attrValue == null ? 0 : attrValue.length();
+		int startOffset = offests[2] + 1;
 
+		if (element != null && element.equals(IDSConstants.ELEMENT_COMPONENT)) {
+			boolean isAttrImmediate = attribute == null ? false : attribute
+					.equals(IDSConstants.ATTRIBUTE_IMMEDIATE);
+			boolean isAttrEnabled = attribute == null ? false : attribute
+					.equals(IDSConstants.ATTRIBUTE_ENABLED);
+			if ((isAttrImmediate || isAttrEnabled)) {
+
+				return this.getCompletionBooleans(startOffset, attrValueLength);
+			}
+		} else if (element != null
+				&& element.equals(IDSConstants.ELEMENT_SERVICE)) {
+			boolean isAttrServFactory = attribute == null ? false : attribute
+					.equals(IDSConstants.ATTRIBUTE_SERVICE_FACTORY);
+			if (isAttrServFactory) {
+				return this.getCompletionBooleans(startOffset, attrValueLength);
+			}
+		} else if (element != null
+				&& element.equals(IDSConstants.ELEMENT_REFERENCE)) {
+			boolean isAttrCardinality = attribute == null ? false : attribute
+					.equals(IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY);
+			boolean isAttrPolicy = attribute == null ? false : attribute
+					.equals(IDSConstants.ATTRIBUTE_REFERENCE_POLICY);
+			if (isAttrCardinality) {
+				return getReferenceCardinalityValues(attrValueLength, startOffset);
+			} else if (isAttrPolicy) {
+				return getReferencePolicyValues(attrValueLength, startOffset);
+
+			}
+		} else if (element != null
+				&& element.equals(IDSConstants.ELEMENT_PROPERTY)) {
+			boolean isAttrType = attribute == null ? false : attribute
+					.equals(IDSConstants.ATTRIBUTE_PROPERTY_TYPE);
+			if (isAttrType) {
+				return getPropertyTypeValues(attrValueLength, startOffset);
+			}
+
+		}
 		return null;
 	}
-	
+
+	private ICompletionProposal[] getReferencePolicyValues(int attrValueLength,
+			int startOffset) {
+		return new ICompletionProposal[] {
+				new TypeCompletionProposal(IConstants.REFERENCE_STATIC, null,
+						IConstants.REFERENCE_STATIC,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.REFERENCE_DYNAMIC, null,
+						IConstants.REFERENCE_DYNAMIC,
+						startOffset, attrValueLength) };
+	}
+
+	private ICompletionProposal[] getReferenceCardinalityValues(
+			int attrValueLength, int startOffset) {
+		return new ICompletionProposal[] {
+				new TypeCompletionProposal(IConstants.CARDINALITY_ZERO_ONE,
+						null, IConstants.CARDINALITY_ZERO_ONE,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.CARDINALITY_ZERO_N, null,
+						IConstants.CARDINALITY_ZERO_N,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.CARDINALITY_ONE_ONE,
+						null, IConstants.CARDINALITY_ONE_ONE,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.CARDINALITY_ONE_N, null,
+						IConstants.CARDINALITY_ONE_N,
+						startOffset, attrValueLength) };
+	}
+
+	private ICompletionProposal[] getPropertyTypeValues(int attrValueLength,
+			int startOffset) {
+		return new ICompletionProposal[] {
+				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_STRING,
+						null, IConstants.PROPERTY_TYPE_STRING,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_LONG, null,
+						IConstants.PROPERTY_TYPE_LONG,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_DOUBLE,
+						null, IConstants.PROPERTY_TYPE_DOUBLE,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_FLOAT,
+						null, IConstants.PROPERTY_TYPE_FLOAT,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_INTEGER,
+						null, IConstants.PROPERTY_TYPE_INTEGER,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_BYTE, null,
+						IConstants.PROPERTY_TYPE_BYTE,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_CHAR, null,
+						IConstants.PROPERTY_TYPE_CHAR,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_BOOLEAN,
+						null, IConstants.PROPERTY_TYPE_BOOLEAN,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_SHORT,
+						null, IConstants.PROPERTY_TYPE_SHORT,
+						startOffset, attrValueLength) };
+	}
+
+	private ICompletionProposal[] getCompletionBooleans(int startOffset,
+			int attrValueLength) {
+
+		return new ICompletionProposal[] {
+				new TypeCompletionProposal(IConstants.TRUE, null,
+						IConstants.TRUE, startOffset,
+						attrValueLength),
+				new TypeCompletionProposal(IConstants.FALSE, null,
+						IConstants.FALSE, startOffset,
+						attrValueLength) };
+	}
+
 	private ICompletionProposal[] computeCompletionProposal(
 			IDocumentElementNode node, int offset, IDocument doc) {
 		int prop_type = determineAssistType(node, doc, offset);
@@ -148,16 +255,15 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			// offset,
 			// doc, null, node.getXMLTagName());
 			return stubProposals((DSModel) fSourcePage.getInputContext()
-					.getModel(), "Add_Attribute");
+					.getModel(), "Add_Attribute", offset);
 		case F_OPEN_TAG:
 			return stubProposals((DSModel) fSourcePage.getInputContext()
-					.getModel(), "Open Tag");
+					.getModel(), "Open Tag", offset);
 		case F_ADD_CHILD:
 			return computeAddChildProposal(node, offset, doc, null);
 		}
 		return null;
 	}
-	
 
 	private ICompletionProposal[] computeAddChildProposal(
 			IDocumentElementNode node, int offset, IDocument doc, String filter) {
@@ -167,40 +273,45 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		} else if (node instanceof IDSService) {
 			DSModel model = (DSModel) fSourcePage.getInputContext().getModel();
 			IDSProvide provide = model.getFactory().createProvide();
-			return new DSCompletionProposal [] {new DSCompletionProposal(provide)};
+			return new DSCompletionProposal[] { new DSCompletionProposal(
+					provide, offset) };
 		} else {
-			return null;			
+			return null;
 		}
 	}
 
-private ICompletionProposal[] computeRootNodeProposals(IDocumentElementNode node, int offset, String filter) {
-	ArrayList proposals = new ArrayList();
-	IDSModel model = (DSModel) fSourcePage.getInputContext().getModel();
-	
-	IDSComponent component = model.getDSComponent();
+	private ICompletionProposal[] computeRootNodeProposals(
+			IDocumentElementNode node, int offset, String filter) {
+		ArrayList proposals = new ArrayList();
+		IDSModel model = (DSModel) fSourcePage.getInputContext().getModel();
 
-	proposals.add(new DSCompletionProposal(model.getFactory().createProperty()));
-	proposals.add(new DSCompletionProposal(model.getFactory().createProperties()));
-	proposals.add(new DSCompletionProposal(model.getFactory().createReference()));
-	boolean hasService = component.getService() != null;
-	if(!hasService){
-		proposals.add(new DSCompletionProposal(model.getFactory().createService()));
-	}
-	if(hasService){
-		proposals.add(new DSCompletionProposal(model.getFactory().createProvide()));
-	}
+		IDSComponent component = model.getDSComponent();
 
-	if (component.getImplementation() == null) {
-		proposals.add(new DSCompletionProposal(model.getFactory().createImplementation()));
-	}
+		proposals.add(new DSCompletionProposal(model.getFactory()
+				.createProperty(), offset));
+		proposals.add(new DSCompletionProposal(model.getFactory()
+				.createProperties(), offset));
+		proposals.add(new DSCompletionProposal(model.getFactory()
+				.createReference(), offset));
+		boolean hasService = component.getService() != null;
+		if (!hasService) {
+			proposals.add(new DSCompletionProposal(model.getFactory()
+					.createService(), offset));
+		}
 
-	ICompletionProposal[] proposalsArray = new DSCompletionProposal[proposals.size()];
-	for (int i = 0; i < proposalsArray.length; i++) {
-		proposalsArray[i] = (ICompletionProposal)proposals.get(i);
+		if (component.getImplementation() == null) {
+			proposals.add(new DSCompletionProposal(model.getFactory()
+					.createImplementation(), offset));
+		}
+
+		ICompletionProposal[] proposalsArray = new DSCompletionProposal[proposals
+				.size()];
+		for (int i = 0; i < proposalsArray.length; i++) {
+			proposalsArray[i] = (ICompletionProposal) proposals.get(i);
+		}
+		return proposalsArray;
+
 	}
-	return proposalsArray;
-	
-}
 
 	private int determineAssistType(IDocumentElementNode node, IDocument doc,
 			int offset) {
@@ -224,7 +335,7 @@ private ICompletionProposal[] computeRootNodeProposals(IDocumentElementNode node
 				ind = eleValue.lastIndexOf('<');
 				if (ind == 0 && offset == len - 1)
 					return F_OPEN_TAG; // childless node - check if it can be
-										// cracked open
+				// cracked open
 				if (ind + 1 < len && eleValue.charAt(ind + 1) == '/'
 						&& offset <= ind)
 					return F_ADD_CHILD;
@@ -233,7 +344,6 @@ private ICompletionProposal[] computeRootNodeProposals(IDocumentElementNode node
 		}
 		return F_NO_ASSIST;
 	}
-	
 
 	private boolean canInsertAttrib(String eleValue, int offset) {
 		// character before offset must be whitespace
@@ -308,7 +418,8 @@ private ICompletionProposal[] computeRootNodeProposals(IDocumentElementNode node
 	 * @param string
 	 * @return
 	 */
-	private DSCompletionProposal[] stubProposals(IBaseModel model, String string) {
+	private DSCompletionProposal[] stubProposals(IBaseModel model,
+			String string, int offset) {
 		DSObject component = new DSObject((DSModel) model, "Stub:" + string) {
 
 			public boolean canAddChild(int objectType) {
@@ -329,9 +440,8 @@ private ICompletionProposal[] computeRootNodeProposals(IDocumentElementNode node
 				return -1;
 			}
 		};
-// component.setPropertyName(string);
 		DSCompletionProposal[] proposals = new DSCompletionProposal[] { new DSCompletionProposal(
-				component) };
+				component, offset) };
 		return proposals;
 	}
 
@@ -357,7 +467,7 @@ private ICompletionProposal[] computeRootNodeProposals(IDocumentElementNode node
 	public void dispose() {
 
 	}
-	
+
 	protected ITextSelection getCurrentSelection() {
 		ISelection sel = fSourcePage.getSelectionProvider().getSelection();
 		if (sel instanceof ITextSelection)

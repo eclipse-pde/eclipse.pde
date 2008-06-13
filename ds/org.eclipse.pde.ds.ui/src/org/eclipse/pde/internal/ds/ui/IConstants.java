@@ -25,6 +25,16 @@ public interface IConstants {
 	public static final String CARDINALITY_ONE_ONE = "1..1"; //$NON-NLS-1$
 	public static final String CARDINALITY_ONE_N = "0..n"; //$NON-NLS-1$
 	
+	public static final String PROPERTY_TYPE_STRING = "String"; //$NON-NLS-1$
+	public static final String PROPERTY_TYPE_LONG = "Long"; //$NON-NLS-1$
+	public static final String PROPERTY_TYPE_FLOAT = "Float"; //$NON-NLS-1$
+	public static final String PROPERTY_TYPE_DOUBLE = "Double"; //$NON-NLS-1$
+	public static final String PROPERTY_TYPE_INTEGER = "Integer"; //$NON-NLS-1$
+	public static final String PROPERTY_TYPE_BYTE = "Byte"; //$NON-NLS-1$
+	public static final String PROPERTY_TYPE_CHAR = "Char"; //$NON-NLS-1$
+	public static final String PROPERTY_TYPE_BOOLEAN = "Boolean"; //$NON-NLS-1$
+	public static final String PROPERTY_TYPE_SHORT = "Short"; //$NON-NLS-1$
+	
 	public static final String TRUE = "true"; //$NON-NLS-1$
 	public static final String FALSE = "false"; //$NON-NLS-1$
 	
