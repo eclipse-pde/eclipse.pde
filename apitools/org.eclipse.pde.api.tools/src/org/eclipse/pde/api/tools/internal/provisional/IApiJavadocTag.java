@@ -30,6 +30,19 @@ public interface IApiJavadocTag {
 	 * Values is <code>2</code>
 	 */
 	public static final int TYPE_INTERFACE = 0x1 << 1;
+	
+	/**
+	 * Type constant representing the tag applies to a Java enum.
+	 * Values is <code>64</code>
+	 */
+	public static final int TYPE_ENUM = 0x1 << 6;
+	
+	/**
+	 * Type constant representing the tag applies to a Java enum.
+	 * Values is <code>128</code>
+	 */
+	public static final int TYPE_ANNOTATION = 0x1 << 7;
+	
 	/**
 	 * Member constant representing the tag applies to a Java method.
 	 * Values is <code>4</code>
@@ -53,6 +66,12 @@ public interface IApiJavadocTag {
 	 * Values is <code>32</code>
 	 */
 	public static final int MEMBER_CONSTRUCTOR = 0x1 << 5;
+	
+	/**
+	 * Member constant representing the tag applies to a Java enum constant
+	 * Values is <code>256</code>
+	 */
+	public static final int MEMBER_ENUM_CONSTANT = 0x1 << 8;
 	
 	/**
 	 * Constant representing the id of the @noreference Javadoc tag.

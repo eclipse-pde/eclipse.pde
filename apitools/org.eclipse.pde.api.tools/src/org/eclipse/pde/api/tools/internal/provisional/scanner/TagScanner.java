@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Javadoc;
@@ -268,6 +269,13 @@ public class TagScanner {
 		 */
 		public void endVisit(TypeDeclaration node) {
 			exitType();
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
+		 */
+		public boolean visit(AnnotationTypeDeclaration node) {
+			enterType(node.getName());
+			return isContinue();
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)

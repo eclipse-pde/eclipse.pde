@@ -93,7 +93,12 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 								if(Flags.isFinal(field.getFlags())) {
 									return Collections.EMPTY_LIST;
 								}
-								member = IApiJavadocTag.MEMBER_FIELD;
+								if(field.isEnumConstant()) {
+									member = IApiJavadocTag.MEMBER_ENUM_CONSTANT;
+								}
+								else {
+									member = IApiJavadocTag.MEMBER_FIELD;
+								}
 								break;
 							}
 							case IJavaElement.TYPE: {
@@ -128,7 +133,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * Returns the type of the enclosing type.
 	 * 
 	 * @param element java element
-	 * @return TYPE_INTERFACE, TYPE_CLASS or -1 
+	 * @return TYPE_INTERFACE, TYPE_CLASS, TYPE_ENUM, TYPE_ANNOTATION or -1 
 	 * @throws JavaModelException
 	 */
 	private int getType(IJavaElement element) throws JavaModelException {
@@ -137,8 +142,14 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 		}
 		if (element instanceof IType) {
 			IType type = (IType) element;
-			if (type.isInterface()) {
+			if(type.isAnnotation()) {
+				return IApiJavadocTag.TYPE_ANNOTATION;
+			}
+			else if (type.isInterface()) {
 				return IApiJavadocTag.TYPE_INTERFACE;
+			}
+			else if(type.isEnum()) {
+				return IApiJavadocTag.TYPE_ENUM;
 			}
 		}
 		return IApiJavadocTag.TYPE_CLASS;

@@ -96,24 +96,46 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	public String getTagComment(int type, int member) {
 		initializeElements();
 		int i1 = -1;
-		if(type == IApiJavadocTag.TYPE_CLASS) {
-			i1 = 0;
-		}
-		if(type == IApiJavadocTag.TYPE_INTERFACE) {
-			i1 = 1;
+		switch(type) {
+			case IApiJavadocTag.TYPE_CLASS: {
+				i1 = 0;
+				break;
+			}
+			case IApiJavadocTag.TYPE_INTERFACE: {
+				i1 = 1;
+				break;
+			}
+			case IApiJavadocTag.TYPE_ENUM: {
+				i1 = 2;
+				break;
+			}
+			case IApiJavadocTag.TYPE_ANNOTATION: {
+				i1 = 3;
+				break;
+			}
 		}
 		int i2 = -1;
-		if(member == IApiJavadocTag.MEMBER_NONE) {
-			i2 = 2;
-		}
-		if(member == IApiJavadocTag.MEMBER_FIELD) {
-			i2 = 1;
-		}
-		else if(member == IApiJavadocTag.MEMBER_METHOD) {
-			i2 = 0;
-		}
-		else if(member == IApiJavadocTag.MEMBER_CONSTRUCTOR) {
-			i2 = 3;
+		switch(member) {
+			case IApiJavadocTag.MEMBER_NONE: {
+				i2 = 2;
+				break;
+			}
+			case IApiJavadocTag.MEMBER_FIELD: {
+				i2 = 1;
+				break;
+			}
+			case IApiJavadocTag.MEMBER_METHOD: {
+				i2 = 0;
+				break;
+			}
+			case IApiJavadocTag.MEMBER_CONSTRUCTOR: {
+				i2 = 3;
+				break;
+			}
+			case IApiJavadocTag.MEMBER_ENUM_CONSTANT: {
+				i2 = 4;
+				break;
+			}
 		}
 		if(i1 < 0 || i2 < 0) {
 			return null;
@@ -126,13 +148,16 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 */
 	private void initializeElements() {
 		if(comments == null) {
-			comments = new String[2][4];
+			comments = new String[4][5];
 			for(int i = 0; i < fElements.length; i++) {
 				boolean clazz = (IApiJavadocTag.TYPE_CLASS & fElements[i]) != 0;
 				boolean inter = (IApiJavadocTag.TYPE_INTERFACE & fElements[i]) != 0;
 				boolean method = (IApiJavadocTag.MEMBER_METHOD & fElements[i]) != 0;
 				boolean field = (IApiJavadocTag.MEMBER_FIELD & fElements[i]) != 0;
 				boolean constructor = (IApiJavadocTag.MEMBER_CONSTRUCTOR & fElements[i]) != 0;
+				boolean isenum = (IApiJavadocTag.TYPE_ENUM & fElements[i]) != 0;
+				boolean annot = (IApiJavadocTag.TYPE_ANNOTATION & fElements[i]) != 0;
+				boolean enumconst = (IApiJavadocTag.MEMBER_ENUM_CONSTANT & fElements[i]) != 0;
 				if(clazz) {
 					if(constructor) {
 						comments[0][3] = fComments[i];
@@ -156,6 +181,31 @@ public class ApiJavadocTag implements IApiJavadocTag {
 					}
 					if(!field & !method) {
 						comments[1][2] = fComments[i];
+					}
+				}
+				if(isenum) {
+					if (method) {
+						comments[2][0] = fComments[i];
+					}
+					if (field) {
+						comments[2][1] = fComments[i];
+					}
+					if(enumconst) {
+						comments[2][4] = fComments[i];
+					}
+					if(!field & !method & !enumconst) {
+						comments[2][2] = fComments[i];
+					}
+				}
+				if(annot) {
+					if (method) {
+						comments[3][0] = fComments[i];
+					}
+					if (field) {
+						comments[3][1] = fComments[i];
+					}
+					if(!field & !method) {
+						comments[3][2] = fComments[i];
 					}
 				}
 			}

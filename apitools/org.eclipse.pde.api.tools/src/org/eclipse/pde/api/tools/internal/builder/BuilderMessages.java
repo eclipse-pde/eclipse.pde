@@ -37,7 +37,14 @@ public class BuilderMessages extends NLS {
 	public static String TagValidator_a_final_field;
 	public static String TagValidator_a_method;
 	public static String TagValidator_an_abstract_class;
+	public static String TagValidator_an_annotation;
+	public static String TagValidator_an_annotation_method;
+	public static String TagValidator_an_enum;
+	public static String TagValidator_an_enum_constant;
+	public static String TagValidator_an_enum_method;
 	public static String TagValidator_an_interface;
+	public static String TagValidator_annotation_field;
+	public static String TagValidator_enum_field;
 
 	static {
 		// initialize resource bundle

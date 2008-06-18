@@ -22,7 +22,11 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -106,18 +110,68 @@ public class TagValidator extends ASTVisitor {
 				processTags(getTypeName(type), tags, validtags, IElementDescriptor.T_REFERENCE_TYPE, context);
 				break;
 			}
+			case ASTNode.ENUM_DECLARATION: {
+				EnumDeclaration enumm = (EnumDeclaration) node;
+				IApiJavadocTag[] validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE);
+				processTags(getTypeName(enumm), tags, validtags, IElementDescriptor.T_REFERENCE_TYPE, BuilderMessages.TagValidator_an_enum);
+				break;
+			}
+			case ASTNode.ENUM_CONSTANT_DECLARATION: {
+				EnumConstantDeclaration decl = (EnumConstantDeclaration) node;
+				IApiJavadocTag[] validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_ENUM_CONSTANT);
+				processTags(getTypeName(decl), tags, validtags, IElementDescriptor.T_FIELD, BuilderMessages.TagValidator_an_enum_constant);
+				break;
+			}
+			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
+				AnnotationTypeDeclaration annot = (AnnotationTypeDeclaration) node;
+				IApiJavadocTag[] validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE);
+				processTags(getTypeName(annot), tags, validtags, IElementDescriptor.T_REFERENCE_TYPE, BuilderMessages.TagValidator_an_annotation);
+				break;
+			}
 			case ASTNode.METHOD_DECLARATION: {
 				MethodDeclaration method = (MethodDeclaration) node;
-				IApiJavadocTag[] validtags = jtm.getTagsForType(getParentKind(node), method.isConstructor() ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
-				String context = method.isConstructor() ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
+				int pkind = getParentKind(node);
+				String context = null;
+				switch(pkind) {
+					case IApiJavadocTag.TYPE_ENUM: {
+						context = BuilderMessages.TagValidator_an_enum_method;
+						break;
+					}
+					default: {
+						context = method.isConstructor() ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
+						break;
+					}
+				}
+				IApiJavadocTag[] validtags = jtm.getTagsForType(pkind, method.isConstructor() ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
 				processTags(getTypeName(method), tags, validtags, IElementDescriptor.T_METHOD, context);
+				break;
+			}
+			case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION: {
+				AnnotationTypeMemberDeclaration decl = (AnnotationTypeMemberDeclaration) node;
+				IApiJavadocTag[] validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_METHOD);
+				processTags(getTypeName(decl), tags, validtags, IElementDescriptor.T_METHOD, BuilderMessages.TagValidator_an_annotation_method);
 				break;
 			}
 			case ASTNode.FIELD_DECLARATION: {
 				FieldDeclaration field = (FieldDeclaration) node;
-				IApiJavadocTag[] validtags = jtm.getTagsForType(getParentKind(node), IApiJavadocTag.MEMBER_FIELD);
+				int pkind = getParentKind(node);
+				String context = null;
 				boolean isfinal = Flags.isFinal(field.getModifiers());
-				String context = isfinal ? BuilderMessages.TagValidator_a_final_field : BuilderMessages.TagValidator_a_field;
+				switch(pkind) {
+					case IApiJavadocTag.TYPE_ANNOTATION: {
+						context = BuilderMessages.TagValidator_annotation_field;
+						break;
+					}
+					case IApiJavadocTag.TYPE_ENUM: {
+						context = BuilderMessages.TagValidator_enum_field;
+						break;
+					}
+					default: {
+						context = isfinal ? BuilderMessages.TagValidator_a_final_field : BuilderMessages.TagValidator_a_field;
+						break;
+					}
+				}
+				IApiJavadocTag[] validtags = jtm.getTagsForType(pkind, IApiJavadocTag.MEMBER_FIELD);
 				processTags(getTypeName(field), tags, isfinal ? new IApiJavadocTag[0] : validtags, IElementDescriptor.T_FIELD, context);
 				break;
 			}
@@ -246,6 +300,12 @@ public class TagValidator extends ASTVisitor {
 		}
 		if(node instanceof TypeDeclaration) {
 			return ((TypeDeclaration)node).isInterface() ? IApiJavadocTag.TYPE_INTERFACE : IApiJavadocTag.TYPE_CLASS;
+		}
+		else if(node instanceof AnnotationTypeDeclaration) {
+			return IApiJavadocTag.TYPE_ANNOTATION;
+		}
+		else if(node instanceof EnumDeclaration) {
+			return IApiJavadocTag.TYPE_ENUM;
 		}
 		return getParentKind(node.getParent());
 	}
