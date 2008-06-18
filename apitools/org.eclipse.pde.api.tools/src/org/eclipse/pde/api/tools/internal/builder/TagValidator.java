@@ -50,7 +50,7 @@ public class TagValidator extends ASTVisitor {
 	/**
 	 * backing collection of tag problems, if any
 	 */
-	private HashSet fTagProblems = null;
+	private ArrayList fTagProblems = null;
 	
 	private ICompilationUnit fCompilationUnit = null;
 	
@@ -124,25 +124,42 @@ public class TagValidator extends ASTVisitor {
 		}
 	}
 	
+	/**
+	 * Returns the fully qualified name of the enclosing type for the given node
+	 * @param node
+	 * @return the fully qualified name of the enclosing type
+	 */
 	private String getTypeName(ASTNode node) {
 		return getTypeName(node, new StringBuffer());
 	}
 	
+	/**
+	 * Constructs the qualified name of the enclosing parent type
+	 * @param node the node to get the parent name for
+	 * @param buffer the buffer to write the name into
+	 * @return the fully qualified name of the parent 
+	 */
 	private String getTypeName(ASTNode node, StringBuffer buffer) {
 		switch(node.getNodeType()) {
-		case ASTNode.COMPILATION_UNIT :
-			CompilationUnit unit = (CompilationUnit) node;
-			PackageDeclaration packageDeclaration = unit.getPackage();
-			if (packageDeclaration != null) {
-				buffer.insert(0, '.');
-				buffer.insert(0, packageDeclaration.getName().getFullyQualifiedName());
+			case ASTNode.COMPILATION_UNIT : {
+				CompilationUnit unit = (CompilationUnit) node;
+				PackageDeclaration packageDeclaration = unit.getPackage();
+				if (packageDeclaration != null) {
+					buffer.insert(0, '.');
+					buffer.insert(0, packageDeclaration.getName().getFullyQualifiedName());
+				}
+				return String.valueOf(buffer);
 			}
-			return String.valueOf(buffer);
-		default :
-			if (node instanceof AbstractTypeDeclaration) {
-				AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) node;
-				if (typeDeclaration.isPackageMemberTypeDeclaration()) {
-					buffer.append(typeDeclaration.getName().getIdentifier());
+			default : {
+				if (node instanceof AbstractTypeDeclaration) {
+					AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) node;
+					if (typeDeclaration.isPackageMemberTypeDeclaration()) {
+						buffer.insert(0, typeDeclaration.getName().getIdentifier());
+					}
+					else {
+						buffer.insert(0, typeDeclaration.getName().getFullyQualifiedName());
+						buffer.insert(0, '$');
+					}
 				}
 			}
 		}
@@ -186,7 +203,7 @@ public class TagValidator extends ASTVisitor {
 	 */
 	private void processTagProblem(String typeName, TagElement tag, int element, String context) {
 		if(fTagProblems == null) {
-			fTagProblems = new HashSet(10);
+			fTagProblems = new ArrayList(10);
 		}
 		int charstart = tag.getStartPosition();
 		int charend = charstart + tag.getTagName().length();
