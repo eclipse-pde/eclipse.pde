@@ -30,6 +30,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
@@ -40,6 +41,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -158,6 +160,35 @@ public class ApiFileGeneratorTask extends Task {
 				return (path.isFile() && Util.isJavaFileName(path.getName())) || path.isDirectory();
 			}
 		});
+		File manifestFile = null;
+		Map manifestMap = null;
+		if (targetProjectFolder.exists() && targetProjectFolder.isDirectory()) {
+			File manifestDir = new File(targetProjectFolder, "META-INF"); //$NON-NLS-1$
+			if (manifestDir.exists() && manifestDir.isDirectory()) {
+				manifestFile = new File(manifestDir, "MANIFEST.MF"); //$NON-NLS-1$
+			}
+			if (manifestFile.exists()) {
+				BufferedInputStream inputStream = null;
+				try {
+					inputStream = new BufferedInputStream(new FileInputStream(manifestFile));
+					manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
+				} catch (FileNotFoundException e) {
+					ApiPlugin.log(e);
+				} catch (IOException e) {
+					ApiPlugin.log(e);
+				} catch (BundleException e) {
+					ApiPlugin.log(e);
+				} finally {
+					if (inputStream != null) {
+						try {
+							inputStream.close();
+						} catch(IOException e) {
+							// ignore
+						}
+					}
+				}
+			}
+		}
 		ApiDescription apiDescription = new ApiDescription(this.projectName);
 		TagScanner tagScanner = TagScanner.newScanner();
 		if (allFiles != null) {
@@ -167,7 +198,11 @@ public class ApiFileGeneratorTask extends Task {
 					System.out.println("Unit name[" + i + "] : " + unit.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
-					tagScanner.scan(unit, apiDescription, classFileContainer);
+					//default to highest, since we have no EE context
+					//TODO should use EE context to resolve a compliance level
+					Map options = JavaCore.getOptions();
+					options.put(JavaCore.COMPILER_COMPLIANCE, resolveCompliance(manifestMap));
+					tagScanner.scan(unit, apiDescription, classFileContainer, options);
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
 				}
@@ -176,74 +211,46 @@ public class ApiFileGeneratorTask extends Task {
 		// check the manifest file
 		String componentName = this.projectName;
 		String componentID = this.projectName;
-		if (targetProjectFolder.exists() && targetProjectFolder.isDirectory()) {
-			File manifestDir = new File(targetProjectFolder, "META-INF"); //$NON-NLS-1$
-			if (manifestDir.exists() && manifestDir.isDirectory()) {
-				File manifestFile = new File(manifestDir, "MANIFEST.MF"); //$NON-NLS-1$
-				if (manifestFile.exists()) {
-					BufferedInputStream inputStream = null;
-					Map manifestMap = null;
-					try {
-						inputStream = new BufferedInputStream(new FileInputStream(manifestFile));
-						manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
-					} catch (FileNotFoundException e) {
-						ApiPlugin.log(e);
-					} catch (IOException e) {
-						ApiPlugin.log(e);
-					} catch (BundleException e) {
-						ApiPlugin.log(e);
-					} finally {
-						if (inputStream != null) {
-							try {
-								inputStream.close();
-							} catch(IOException e) {
-								// ignore
-							}
-						}
-					}
-					if (manifestMap != null && DEBUG) {
-						for (Iterator iterator = manifestMap.keySet().iterator(); iterator.hasNext(); ) {
-							Object key = iterator.next();
-							System.out.print("key = " + key); //$NON-NLS-1$
-							System.out.println(" value = " + manifestMap.get(key)); //$NON-NLS-1$
-						}
-					}
-					String localization = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_LOCALIZATION);
-					String name = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_NAME);
-					String nameKey = (name != null && name.startsWith("%")) ? name.substring(1) : null; //$NON-NLS-1$;
-					if (nameKey != null) {
-						Properties properties = new Properties();
-						inputStream = null;
+		if (manifestMap != null && DEBUG) {
+			for (Iterator iterator = manifestMap.keySet().iterator(); iterator.hasNext(); ) {
+				Object key = iterator.next();
+				System.out.print("key = " + key); //$NON-NLS-1$
+				System.out.println(" value = " + manifestMap.get(key)); //$NON-NLS-1$
+			}
+			String localization = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_LOCALIZATION);
+			String name = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_NAME);
+			String nameKey = (name != null && name.startsWith("%")) ? name.substring(1) : null; //$NON-NLS-1$;
+			if (nameKey != null) {
+				Properties properties = new Properties();
+				BufferedInputStream inputStream = null;
+				try {
+					inputStream = new BufferedInputStream(new FileInputStream(new File(targetProjectFolder, localization + ".properties"))); //$NON-NLS-1$
+					properties.load(inputStream);
+				} catch(IOException e) {
+					ApiPlugin.log(e);
+				} finally {
+					if (inputStream != null) {
 						try {
-							inputStream = new BufferedInputStream(new FileInputStream(new File(targetProjectFolder, localization + ".properties"))); //$NON-NLS-1$
-							properties.load(inputStream);
+							inputStream.close();
 						} catch(IOException e) {
-							ApiPlugin.log(e);
-						} finally {
-							if (inputStream != null) {
-								try {
-									inputStream.close();
-								} catch(IOException e) {
-									// ignore
-								}
-							}
-						}
-						String property = properties.getProperty(nameKey);
-						if (property != null) {
-							componentName = property.trim();
-						}
-					} else {
-						componentName = name;
-					}
-					String symbolicName = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME);
-					if (symbolicName != null) {
-						int indexOf = symbolicName.indexOf(';');
-						if (indexOf == -1) {
-							componentID = symbolicName.trim();
-						} else {
-							componentID = symbolicName.substring(0, indexOf).trim();
+							// ignore
 						}
 					}
+				}
+				String property = properties.getProperty(nameKey);
+				if (property != null) {
+					componentName = property.trim();
+				}
+			} else {
+				componentName = name;
+			}
+			String symbolicName = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME);
+			if (symbolicName != null) {
+				int indexOf = symbolicName.indexOf(';');
+				if (indexOf == -1) {
+					componentID = symbolicName.trim();
+				} else {
+					componentID = symbolicName.substring(0, indexOf).trim();
 				}
 			}
 		}
@@ -260,6 +267,36 @@ public class ApiFileGeneratorTask extends Task {
 		}
 	}
 
+	/**
+	 * Resolves the compiler compliance based on the BREE entry in the MANIFEST.MF file
+	 * @param manifestmap
+	 * @return The derived {@link JavaCore#COMPILER_COMPLIANCE} from the BREE in the manifest map, 
+	 * or {@link JavaCore#VERSION_1_3} if there is no BREE entry in the map or if the BREE entry does not directly map 
+	 * to one of {"1.3", "1.4", "1.5", "1.6"}.
+	 */
+	private String resolveCompliance(Map manifestmap) {
+		if(manifestmap != null) {
+			String eename = (String) manifestmap.get(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+			if(eename != null) {
+				if("J2SE-1.4".equals(eename)) { //$NON-NLS-1$
+					return JavaCore.VERSION_1_4;
+				}
+				if("J2SE-1.5".equals(eename)) { //$NON-NLS-1$
+					return JavaCore.VERSION_1_5;
+				}
+				if("JavaSE-1.6".equals(eename)) { //$NON-NLS-1$
+					return JavaCore.VERSION_1_6;
+				}
+			}
+		}
+		return JavaCore.VERSION_1_3;
+	}
+	
+	/**
+	 * Resolves if the '.project' file belongs to an API enabled project or not
+	 * @param dotProjectFile
+	 * @return true if the '.project' file is for an API enabled project, false otherwise
+	 */
 	private boolean isAPIToolsNature(File dotProjectFile) {
 		if (!dotProjectFile.exists()) return false;
 		BufferedInputStream stream = null;

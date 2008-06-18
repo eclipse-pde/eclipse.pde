@@ -196,18 +196,16 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 		}
 		TagScanner scanner = TagScanner.newScanner();
 		Iterator iterator = sourceRoots.iterator();
+		ICompilationUnit[] units = null;
+		IJavaElement[] pkgs = null;
 		while (iterator.hasNext()) {
-			IPackageFragmentRoot root = (IPackageFragmentRoot) iterator.next();
-			IJavaElement[] pkgs = root.getChildren();
+			pkgs = ((IPackageFragmentRoot) iterator.next()).getChildren();
 			for (int i = 0; i < pkgs.length; i++) {
 				if (pkgs[i] instanceof IPackageFragment) {
-					IPackageFragment pkg = (IPackageFragment) pkgs[i];
-					ICompilationUnit[] units = pkg.getCompilationUnits();
+					units = ((IPackageFragment) pkgs[i]).getCompilationUnits();
 					for (int j = 0; j < units.length; j++) {
-						ICompilationUnit unit = units[j];
-						CompilationUnit cu = new CompilationUnit(unit.getResource().getLocation().toOSString());
 						try {
-							scanner.scan(cu, apiDescription, this);
+							scanner.scan(units[j], apiDescription, this);
 						} catch (CoreException e) {
 							abort("Unable to initialize from Javadoc tags", e); //$NON-NLS-1$
 						}

@@ -227,7 +227,7 @@ public class ProjectApiDescription extends ApiDescription {
 							restrictions = RestrictionModifiers.NO_RESTRICTIONS;
 							fTimeStamp = resource.getModificationStamp();
 							try {
-								TagScanner.newScanner().scan(new CompilationUnit(unit), ProjectApiDescription.this,
+								TagScanner.newScanner().scan(unit, ProjectApiDescription.this,
 									getClassFileContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()));
 							} catch (CoreException e) {
 								ApiPlugin.log(e.getStatus());

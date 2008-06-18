@@ -79,7 +79,7 @@ public class TagScannerTests extends TestCase {
 	 */
 	protected void doScan(String name, IApiDescription manifest, IClassFileContainer cfc) {
 		try {
-			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, cfc);
+			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, cfc, null);
 		}
 		catch(CoreException e) {
 			fail(MessageFormat.format("Error scanning: {0}", new String[] {name}));
@@ -93,7 +93,7 @@ public class TagScannerTests extends TestCase {
 	 */
 	protected void doScan(String name, IApiDescription manifest) {
 		try {
-			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, null);
+			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, null, null);
 		}
 		catch(CoreException e) {
 			fail(MessageFormat.format("Error scanning: {0}", new String[] {name}));
@@ -152,7 +152,7 @@ public class TagScannerTests extends TestCase {
 		};
 		IApiDescription manifest = newDescription();
 		try { 
-			TagScanner.newScanner().scan(getCompilationUnit("a/b/c/TestMethod10.java"), manifest, container);
+			TagScanner.newScanner().scan(getCompilationUnit("a/b/c/TestMethod10.java"), manifest, container, null);
 		} catch (CoreException e) {
 			return;
 		}

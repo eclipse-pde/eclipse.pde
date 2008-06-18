@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.AST;
@@ -461,7 +462,7 @@ public class TagScanner {
 	private TagScanner() {}
 	
 	/**
-	 * Scans the specified source {@linkplain CompilationUnit} for contributed API javadoc tags.
+	 * Scans the specified source {@linkplain CompilationUnit} for contributed API Javadoc tags.
 	 * Tags on methods will have unresolved signatures.
 	 * 
 	 * @param source the source file to scan for tags
@@ -469,20 +470,37 @@ public class TagScanner {
 	 * @throws CoreException
 	 */
 	public void scan(CompilationUnit source, IApiDescription description) throws CoreException {
-		scan(source, description, null);
+		scan(source, description, null, null);
+	}
+	
+	/**
+	 * Scans the specified {@link ICompilationUnit} for contributed API Javadoc tags.
+	 * Tags on methods will have unresolved signatures.
+	 * @param unit the compilation unit source
+	 * @param description the API description to annotate with any new tag rules found
+	 * @param container optional class file container containing the class file for the given source
+	 * 	that can be used to resolve method signatures if required (for tags on methods). If 
+	 * 	not provided (<code>null</code>), method signatures will be unresolved.
+	 * @throws CoreException
+	 */
+	public void scan(ICompilationUnit unit, IApiDescription description, IClassFileContainer container) throws CoreException {
+		scan(new CompilationUnit(unit), description, container, unit.getJavaProject().getOptions(true));
 	}
 	
 	/**
 	 * Scans the specified source {@linkplain CompilationUnit} for contributed API javadoc tags.
+	 * Tags on methods will have unresolved signatures.
 	 * 
 	 * @param source the source file to scan for tags
 	 * @param description the API description to annotate with any new tag rules found
 	 * @param container optional class file container containing the class file for the given source
 	 * 	that can be used to resolve method signatures if required (for tags on methods). If 
 	 * 	not provided (<code>null</code>), method signatures will be unresolved.
+	 * @param options a map of Java compiler options to use when creating the AST to scan
+	 * 
 	 * @throws CoreException 
 	 */
-	public void scan(CompilationUnit source, IApiDescription description, IClassFileContainer container) throws CoreException {
+	public void scan(CompilationUnit source, IApiDescription description, IClassFileContainer container, Map options) throws CoreException {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		InputStream inputStream = null;
 		try {
@@ -506,7 +524,9 @@ public class TagScanner {
 				}
 			}
 		}
-		Map options = JavaCore.getOptions();
+		if(options == null) {
+			options = JavaCore.getOptions();
+		}
 		options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 		parser.setCompilerOptions(options);
 		org.eclipse.jdt.core.dom.CompilationUnit cunit = (org.eclipse.jdt.core.dom.CompilationUnit) parser.createAST(new NullProgressMonitor());
