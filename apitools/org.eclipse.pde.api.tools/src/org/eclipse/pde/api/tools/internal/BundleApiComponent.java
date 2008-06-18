@@ -311,28 +311,25 @@ public class BundleApiComponent extends AbstractApiComponent {
 	protected static void annotateExportedPackages(IApiDescription apiDesc, ExportPackageDescription[] exportedPackages) {
 		for(int i = 0; i < exportedPackages.length; i++) {
 			ExportPackageDescription pkg = exportedPackages[i];
-			//TODO remove this? all pkg exports are roots according to the doc
-			if (pkg.isRoot()) {
-				boolean internal = ((Boolean) pkg.getDirective("x-internal")).booleanValue(); //$NON-NLS-1$
-				String[] friends = (String[]) pkg.getDirective("x-friends"); //$NON-NLS-1$
-				String pkgName = pkg.getName();
-				if (pkgName.equals(".")) { //$NON-NLS-1$
-					// default package
-					pkgName = ""; //$NON-NLS-1$
-				}
-				IPackageDescriptor pkgDesc = Factory.packageDescriptor(pkgName);
-				if(internal) {
-					apiDesc.setVisibility(pkgDesc, VisibilityModifiers.PRIVATE);
-				}
-				if (friends != null) {
-					apiDesc.setVisibility(pkgDesc, VisibilityModifiers.PRIVATE);
-				}
-				if (!internal && friends == null) {
-					//there could have been directives that have nothing to do with
-					//visibility, so we need to add the package as API in that case
-					apiDesc.setVisibility(pkgDesc, VisibilityModifiers.API);
-				}
-			}				
+			boolean internal = ((Boolean) pkg.getDirective("x-internal")).booleanValue(); //$NON-NLS-1$
+			String[] friends = (String[]) pkg.getDirective("x-friends"); //$NON-NLS-1$
+			String pkgName = pkg.getName();
+			if (pkgName.equals(".")) { //$NON-NLS-1$
+				// default package
+				pkgName = ""; //$NON-NLS-1$
+			}
+			IPackageDescriptor pkgDesc = Factory.packageDescriptor(pkgName);
+			if(internal) {
+				apiDesc.setVisibility(pkgDesc, VisibilityModifiers.PRIVATE);
+			}
+			if (friends != null) {
+				apiDesc.setVisibility(pkgDesc, VisibilityModifiers.PRIVATE);
+			}
+			if (!internal && friends == null) {
+				//there could have been directives that have nothing to do with
+				//visibility, so we need to add the package as API in that case
+				apiDesc.setVisibility(pkgDesc, VisibilityModifiers.API);
+			}			
 		}
 	}
 	

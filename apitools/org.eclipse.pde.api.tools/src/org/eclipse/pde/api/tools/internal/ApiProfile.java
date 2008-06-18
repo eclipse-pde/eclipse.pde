@@ -598,11 +598,7 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 						BundleDescription bundleDescription = pkg.getExporter();
 						IApiComponent exporter = getBundleDescription(bundleDescription);
 						if (exporter != null) {
-							if (pkg.isRoot()) {
-								componentsList.add(exporter);
-							} else {
-								resolvePackage0(exporter, packageName, componentsList);
-							}
+							componentsList.add(exporter);
 						}
 					}
 				}
