@@ -149,42 +149,43 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		try {
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 6 + (changedtypes == null ? 0 : changedtypes.length));
 			fJavaProject = getJavaProject(component);
-			if(baseline == null) {
-				//check default baseline
-				checkDefaultBaselineSet();
-				updateMonitor(localMonitor, 6);
-				return;
-			}
-			IApiComponent reference = baseline.getApiComponent(component.getId());
-			this.fBuildState = state;
-			if(fBuildState == null) {
-				fBuildState = getBuildState();
-			}
-			if (filterStore != null) {
-				this.fFilterStore = filterStore;
-			}
-			//compatibility checks
-			if(reference != null) {
-				localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, reference.getId()));
-				if(changedtypes != null) {
-					for(int i = 0; i < changedtypes.length; i++) {
-						checkCompatibility(changedtypes[i], reference, component);
+			if(baseline != null) {
+				IApiComponent reference = baseline.getApiComponent(component.getId());
+				this.fBuildState = state;
+				if(fBuildState == null) {
+					fBuildState = getBuildState();
+				}
+				if (filterStore != null) {
+					this.fFilterStore = filterStore;
+				}
+				//compatibility checks
+				if(reference != null) {
+					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {reference.getId(), baseline.getName()}));
+					if(changedtypes != null) {
+						for(int i = 0; i < changedtypes.length; i++) {
+							checkCompatibility(changedtypes[i], reference, component);
+							updateMonitor(localMonitor);
+						}
+					} else {
+						checkCompatibility(reference, component);
 						updateMonitor(localMonitor);
 					}
 				} else {
+					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {component.getId(), baseline.getName()}));
 					checkCompatibility(reference, component);
 					updateMonitor(localMonitor);
 				}
-			} else {
-				localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, component.getId()));
-				checkCompatibility(reference, component);
+				//version checks
+				checkApiComponentVersion(reference, component);
+				updateMonitor(localMonitor);
+			}
+			else {
+				//check default baseline
+				checkDefaultBaselineSet();
 				updateMonitor(localMonitor);
 			}
 			//usage checks
 			checkApiUsage(component, typenames, localMonitor.newChild(1));
-			updateMonitor(localMonitor);
-			//version checks
-			checkApiComponentVersion(reference, component);
 			updateMonitor(localMonitor);
 			//tag validation
 			checkTagValidation(changedtypes, component, localMonitor.newChild(1));
