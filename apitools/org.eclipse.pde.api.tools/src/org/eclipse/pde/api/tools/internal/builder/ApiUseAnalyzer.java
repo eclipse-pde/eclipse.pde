@@ -498,6 +498,19 @@ public class ApiUseAnalyzer {
 									qname = "this."+name; //$NON-NLS-1$
 									first = line.indexOf(qname);
 								}
+								if(first < 0) {
+									//try a pattern [.*fieldname] 
+									//the field might be ref'd via a constant, e.g. enum constant
+									int idx = line.indexOf(name);
+									while(idx > -1) {
+										if(line.charAt(idx-1) == '.') {
+											first = idx;
+											qname = name;
+											break;
+										}
+										idx = line.indexOf(name, idx+1);
+									}
+								}
 								if(first > -1) {
 									charStart = offset + first;
 									charEnd = charStart + qname.length();

@@ -90,15 +90,10 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 							}
 							case IJavaElement.FIELD: {
 								IField field  = (IField) element;
-								if(Flags.isFinal(field.getFlags())) {
+								if(Flags.isFinal(field.getFlags()) || field.isEnumConstant()) {
 									return Collections.EMPTY_LIST;
 								}
-								if(field.isEnumConstant()) {
-									member = IApiJavadocTag.MEMBER_ENUM_CONSTANT;
-								}
-								else {
-									member = IApiJavadocTag.MEMBER_FIELD;
-								}
+								member = IApiJavadocTag.MEMBER_FIELD;
 								break;
 							}
 							case IJavaElement.TYPE: {

@@ -68,12 +68,6 @@ public interface IApiJavadocTag {
 	public static final int MEMBER_CONSTRUCTOR = 0x1 << 5;
 	
 	/**
-	 * Member constant representing the tag applies to a Java enum constant
-	 * Values is <code>256</code>
-	 */
-	public static final int MEMBER_ENUM_CONSTANT = 0x1 << 8;
-	
-	/**
 	 * Constant representing the id of the @noreference Javadoc tag.
 	 * Value is: <code>org.eclipse.pde.api.tools.noreference</code>
 	 */

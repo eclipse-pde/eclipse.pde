@@ -132,10 +132,6 @@ public class ApiJavadocTag implements IApiJavadocTag {
 				i2 = 3;
 				break;
 			}
-			case IApiJavadocTag.MEMBER_ENUM_CONSTANT: {
-				i2 = 4;
-				break;
-			}
 		}
 		if(i1 < 0 || i2 < 0) {
 			return null;
@@ -148,7 +144,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 */
 	private void initializeElements() {
 		if(comments == null) {
-			comments = new String[4][5];
+			comments = new String[4][4];
 			for(int i = 0; i < fElements.length; i++) {
 				boolean clazz = (IApiJavadocTag.TYPE_CLASS & fElements[i]) != 0;
 				boolean inter = (IApiJavadocTag.TYPE_INTERFACE & fElements[i]) != 0;
@@ -157,7 +153,6 @@ public class ApiJavadocTag implements IApiJavadocTag {
 				boolean constructor = (IApiJavadocTag.MEMBER_CONSTRUCTOR & fElements[i]) != 0;
 				boolean isenum = (IApiJavadocTag.TYPE_ENUM & fElements[i]) != 0;
 				boolean annot = (IApiJavadocTag.TYPE_ANNOTATION & fElements[i]) != 0;
-				boolean enumconst = (IApiJavadocTag.MEMBER_ENUM_CONSTANT & fElements[i]) != 0;
 				if(clazz) {
 					if(constructor) {
 						comments[0][3] = fComments[i];
@@ -190,10 +185,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 					if (field) {
 						comments[2][1] = fComments[i];
 					}
-					if(enumconst) {
-						comments[2][4] = fComments[i];
-					}
-					if(!field & !method & !enumconst) {
+					if(!field & !method) {
 						comments[2][2] = fComments[i];
 					}
 				}

@@ -93,7 +93,6 @@ public class JavadocTagManager {
 					new int[] {IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.TYPE_INTERFACE | IApiJavadocTag.MEMBER_METHOD,
 								IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.TYPE_INTERFACE | IApiJavadocTag.MEMBER_FIELD,
 								IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.MEMBER_CONSTRUCTOR,
-								IApiJavadocTag.TYPE_ENUM | IApiJavadocTag.MEMBER_ENUM_CONSTANT,
 								IApiJavadocTag.TYPE_ENUM | IApiJavadocTag.MEMBER_FIELD,
 								IApiJavadocTag.TYPE_ENUM | IApiJavadocTag.MEMBER_METHOD,
 								IApiJavadocTag.TYPE_ANNOTATION | IApiJavadocTag.MEMBER_FIELD,
@@ -101,7 +100,6 @@ public class JavadocTagManager {
 					new String[] {"This method is not intended to be referenced by clients.", //$NON-NLS-1$ 
 									"This field is not intended to be referenced by clients.", //$NON-NLS-1$
 									"This constructor is not intended to be referenced by clients.", //$NON-NLS-1$
-									"This enum constant is not intended to be referenced by clients.", //$NON-NLS-1$
 									"This enum field is not intended to be referenced by clients.", //$NON-NLS-1$
 									"This enum method is not intended to be referenced by clients.", //$NON-NLS-1$
 									"This annotation field is not intended to be referenced by clients.", //$NON-NLS-1$

@@ -118,8 +118,7 @@ public class TagValidator extends ASTVisitor {
 			}
 			case ASTNode.ENUM_CONSTANT_DECLARATION: {
 				EnumConstantDeclaration decl = (EnumConstantDeclaration) node;
-				IApiJavadocTag[] validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_ENUM_CONSTANT);
-				processTags(getTypeName(decl), tags, validtags, IElementDescriptor.T_FIELD, BuilderMessages.TagValidator_an_enum_constant);
+				processTags(getTypeName(decl), tags, new IApiJavadocTag[0], IElementDescriptor.T_FIELD, BuilderMessages.TagValidator_an_enum_constant);
 				break;
 			}
 			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
