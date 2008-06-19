@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,12 @@ import org.osgi.framework.Version;
  * @since 3.3
  */
 public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate {
+
+	/**
+	 * To avoid duplicating variable substitution (and duplicate prompts)
+	 * this variable will store the substituted workspace location.
+	 */
+	private String fWorkspaceLocation;
 
 	protected File fConfigDir = null;
 
@@ -131,10 +137,12 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		}
 
 		// Specify the location of the runtime workbench
-		String targetWorkspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
-		if (targetWorkspace.length() > 0) {
+		if (fWorkspaceLocation == null) {
+			fWorkspaceLocation = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
+		}
+		if (fWorkspaceLocation.length() > 0) {
 			programArgs.add("-data"); //$NON-NLS-1$
-			programArgs.add(targetWorkspace);
+			programArgs.add(fWorkspaceLocation);
 		}
 
 		// Create the platform configuration for the runtime workbench
@@ -350,6 +358,8 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// Get the list of plug-ins to run
 		fPluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
 
+		fWorkspaceLocation = null;
+
 		// implicitly add the plug-ins required for JUnit testing if necessary
 		String[] requiredPlugins = getRequiredPlugins(configuration);
 		for (int i = 0; i < requiredPlugins.length; i++) {
@@ -405,9 +415,11 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * @since 3.3
 	 */
 	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
+		if (fWorkspaceLocation == null) {
+			fWorkspaceLocation = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
+		}
 		// Clear workspace and prompt, if necessary
-		if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {
+		if (!LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, new SubProgressMonitor(monitor, 1))) {
 			monitor.setCanceled(true);
 			return;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,14 @@ import org.osgi.framework.Bundle;
 
 public class LaunchArgumentsHelper {
 
+	/**
+	 * Returns the location that will be used as the workspace when launching.  Will
+	 * replace variables, so this method should only be called
+	 * when variable substitution (may prompt the user) is appropriate.
+	 * @param configuration the launch configuration to get the workspace value for
+	 * @return workspace location path as a string
+	 * @throws CoreException if there is a problem with the configuration
+	 */
 	public static String getWorkspaceLocation(ILaunchConfiguration configuration) throws CoreException {
 		String location = configuration.getAttribute(IPDELauncherConstants.LOCATION, (String) null);
 		if (location == null) {

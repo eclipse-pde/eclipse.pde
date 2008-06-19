@@ -36,6 +36,12 @@ import org.osgi.framework.Version;
  */
 public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
+	/**
+	 * To avoid duplicating variable substitution (and duplicate prompts)
+	 * this variable will store the substituted workspace location.
+	 */
+	private String fWorkspaceLocation;
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
@@ -54,10 +60,12 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 
 		// specify the workspace location for the runtime workbench
-		String targetWorkspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
-		if (targetWorkspace.length() > 0) {
+		if (fWorkspaceLocation == null) {
+			fWorkspaceLocation = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
+		}
+		if (fWorkspaceLocation.length() > 0) {
 			programArgs.add("-data"); //$NON-NLS-1$
-			programArgs.add(targetWorkspace);
+			programArgs.add(fWorkspaceLocation);
 		}
 
 		boolean showSplash = true;
@@ -204,9 +212,11 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 * @since 3.3
 	 */
 	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
+		if (fWorkspaceLocation == null) {
+			fWorkspaceLocation = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
+		}
 		// Clear workspace and prompt, if necessary
-		if (!LauncherUtils.clearWorkspace(configuration, workspace, monitor))
+		if (!LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, monitor))
 			throw new CoreException(Status.CANCEL_STATUS);
 
 		// clear config area, if necessary
@@ -218,6 +228,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		fWorkspaceLocation = null;
 		validateConfigIni(configuration);
 		super.preLaunchCheck(configuration, launch, monitor);
 	}
