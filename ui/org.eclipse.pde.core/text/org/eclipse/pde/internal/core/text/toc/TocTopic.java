@@ -58,7 +58,7 @@ public class TocTopic extends TocObject {
 		IPath path = file.getFullPath();
 		if (file.getProject().equals(getSharedModel().getUnderlyingResource().getProject())) { //If the file is from the same project,
 			//remove the project name segment
-			setFieldRef(path.removeFirstSegments(1).toString()); //$NON-NLS-1$
+			setFieldRef(path.removeFirstSegments(1).toString());
 		} else { //If the file is from another project, add ".."
 			//to traverse outside this model's project
 			setFieldRef(".." + path.toString()); //$NON-NLS-1$
