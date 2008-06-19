@@ -18,6 +18,11 @@ public class TestField9 {
 	Object field = null;
 	
 	/**
+	 * @noreference
+	 */
+	Object field1 = null;
+	
+	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {

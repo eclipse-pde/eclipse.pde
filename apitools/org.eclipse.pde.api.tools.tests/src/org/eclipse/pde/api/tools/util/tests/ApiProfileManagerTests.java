@@ -36,7 +36,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -175,8 +174,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	private IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("a").append("b").append("c");
 	private IPath PLUGIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-plugins");
 	private IApiProfileManager fPMmanager = ApiPlugin.getDefault().getApiProfileManager();
-	private static IJavaProject fProject = null;
-	private static IPackageFragmentRoot fSrcroot = null;
+	private final String TESTING_PACKAGE = "a.b.c";
 	
 	/**
 	 * @return the {@link IApiDescription} for the testing project
@@ -272,110 +270,241 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests creating a modifiable project, and making sure it is added to the workspace
-	 * profile
-	 * 
-	 * @throws CoreException
+	 * Used to ensure the testing project is available
 	 */
-	public void testWPUpdateProjectCreation() throws CoreException {
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		// delete any pre-existing project
-        IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(TESTING_PLUGIN_PROJECT_NAME);
-        if (pro.exists()) {
-            pro.delete(true, true, monitor);
-        }
-        JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.ADDED, 0, IJavaElement.JAVA_PROJECT);
-        // create project and import source
-        fProject = ProjectUtils.createPluginProject(TESTING_PLUGIN_PROJECT_NAME, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
-        Object obj = waiter.waitForEvent();
-        assertNotNull("the added event was not received", obj);
-        assertNotNull("The java project must have been created", fProject);
-        fSrcroot = ProjectUtils.addSourceContainer(fProject, ProjectUtils.SRC_FOLDER);
-        assertNotNull("the src root must have been created", fSrcroot);
-        IPackageFragment fragment = fSrcroot.createPackageFragment("a.b.c", true, monitor);
-		assertNotNull("the package fragment a.b.c cannot be null", fragment);
-        
-        // add rt.jar
-        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-        assertNotNull("No default JRE", vm);
-        ProjectUtils.addContainerEntry(fProject, new Path(JavaRuntime.JRE_CONTAINER));
-        IApiProfile profile = getWorkspaceProfile();
-        assertNotNull("the workspace profile cannot be null", profile);
-        IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
-        assertNotNull("the test project api component must exist in the workspace profile", component);
+	public IJavaProject assertProject() {
+		IJavaProject project = null;
+		try {
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			// delete any pre-existing project
+	        IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(TESTING_PLUGIN_PROJECT_NAME);
+	        if (pro.exists()) {
+	        	JavaModelEventWaiter waiter = null;
+	        	if(!pro.isAccessible()) {
+	        		waiter = new JavaModelEventWaiter("", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT, IJavaElement.JAVA_MODEL);
+	        	}
+	        	else {
+	        		waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.REMOVED, 0, IJavaElement.JAVA_PROJECT);
+	        	}
+	            pro.delete(true, true, monitor);
+	            Object obj = waiter.waitForEvent();
+	            assertNotNull("the project delete event did not arrive", obj);
+	        }
+	        JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.ADDED, 0, IJavaElement.JAVA_PROJECT);
+	        // create project and import source
+	        project = ProjectUtils.createPluginProject(TESTING_PLUGIN_PROJECT_NAME, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
+	        Object obj = waiter.waitForEvent();
+	        assertNotNull("the added event was not received", obj);
+	        assertNotNull("The java project must have been created", project);
+	        IPackageFragmentRoot root = ProjectUtils.addSourceContainer(project, ProjectUtils.SRC_FOLDER);
+	        assertNotNull("the src root must have been created", root);
+	        IPackageFragment fragment = root.createPackageFragment("a.b.c", true, monitor);
+			assertNotNull("the package fragment a.b.c cannot be null", fragment);
+	        
+	        // add rt.jar
+	        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+	        assertNotNull("No default JRE", vm);
+	        ProjectUtils.addContainerEntry(project, new Path(JavaRuntime.JRE_CONTAINER));
+	        IApiProfile profile = getWorkspaceProfile();
+	        assertNotNull("the workspace profile cannot be null", profile);
+	        IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+	        assertNotNull("the test project api component must exist in the workspace profile", component);
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+		return project;
 	}
 	
 	/**
-	 * Tests that closing an api aware project causes the workspace description to be updated
+	 * Adds the given source to the given package in the given fragment root
+	 * @param root the root to add the source to
+	 * @param packagename the name of the package e.g. a.b.c
+	 * @param sourcename the name of the source file without an extension e.g. TestClass1
 	 */
-	public void testWPUpdateProjectClosed() {
+	public void assertTestSource(IPackageFragmentRoot root, String packagename, String sourcename) {
 		try {
-			assertNotNull("the workspace profile must not be null", getWorkspaceProfile());
-			IApiComponent component  = getWorkspaceProfile().getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
-			assertNotNull("the change project api component must exist in the workspace profile", component);
-			JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.CHANGED, IJavaElementDelta.F_CLOSED, IJavaElement.JAVA_PROJECT);
-			fProject.getProject().close(new NullProgressMonitor());
-			//might need a waiter to ensure the model changed event has been processed
+			IPackageFragment fragment = root.getPackageFragment(packagename);
+			JavaModelEventWaiter waiter = new JavaModelEventWaiter(sourcename+".java", IJavaElementDelta.ADDED, 0, IJavaElement.COMPILATION_UNIT);
+			FileUtils.importFileFromDirectory(SRC_LOC.append(sourcename+".java").toFile(), fragment.getPath(), new NullProgressMonitor());
 			Object obj = waiter.waitForEvent();
-			assertNotNull("the closed event was not received", obj);
-			component = getWorkspaceProfile().getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
-			assertNull("the test project api component should no longer exist in the workspace profile", component);
-		} catch (CoreException e) {
+			assertNotNull("the added event for the compilation unit was not received", obj);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		} 
+	}
+	
+	/**
+	 * Adds the package with the given name to the given package fragment root
+	 * @param the project to add the package to
+	 * @param srcroot the absolute path to the package fragment root to add the new package to
+	 * @param packagename the name of the new package
+	 * @return the new {@link IPackageFragment} or <code>null</code>
+	 */
+	public IPackageFragment assertTestPackage(IJavaProject project, IPath srcroot, String packagename) {
+		IPackageFragment fragment = null;
+		try {
+			IPackageFragmentRoot root = project.findPackageFragmentRoot(srcroot);
+			assertNotNull("the 'src' package fragment root must exist", root);
+			JavaModelEventWaiter waiter = new JavaModelEventWaiter(packagename, IJavaElementDelta.ADDED, 0, IJavaElement.PACKAGE_FRAGMENT);
+			fragment = root.createPackageFragment(packagename, true, new NullProgressMonitor());
+			assertNotNull("the new package '"+packagename+"' should have been created", fragment);
+			Object obj = waiter.waitForEvent();
+			assertNotNull("the added event for the package fragment "+packagename+" was not received", obj);
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+		return fragment;
+	}
+	
+	/**
+	 * Adds a test library with the given name to the test projects' class path. The library is imported from 
+	 * the {@link #PLUGIN_LOC} location.
+	 * @param project the project to add the library classpath entry to
+	 * @param folderpath the path in the project where the library should be imported to
+	 * @param libname the name of the library
+	 */
+	public IFolder assertTestLibrary(IJavaProject project, IPath folderpath, String libname) {
+		IFolder folder = null;
+		try {
+			//add to project
+			JavaModelEventWaiter waiter = new JavaModelEventWaiter(libname, IJavaElementDelta.CHANGED, IJavaElementDelta.F_ADDED_TO_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
+			folder = project.getProject().getFolder(folderpath);
+			folder.create(false, true, null);
+			FileUtils.importFileFromDirectory(PLUGIN_LOC.append(libname).toFile(), folder.getFullPath(), null);
+			IPath libPath = folder.getFullPath().append(libname);
+			IClasspathEntry entry = JavaCore.newLibraryEntry(libPath, null, null);
+			ProjectUtils.addToClasspath(project, entry);
+			Object obj = waiter.waitForEvent();
+			assertNotNull("the event for class path addition of "+libname+" not received", obj);
+			
+			// add to manifest bundle classpath
+			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
+			assertNotNull("the plugin model for the testing project must exist", model);
+			IFile file = (IFile) model.getUnderlyingResource();
+			assertNotNull("the underlying model file must exist", file);
+			WorkspaceBundleModel manifest = new WorkspaceBundleModel(file);
+			manifest.getBundle().setHeader(Constants.BUNDLE_CLASSPATH, ".," + libPath.removeFirstSegments(1).toString());
+			PluginModelEventWaiter waiter2 = new PluginModelEventWaiter(PluginModelDelta.CHANGED);
+			manifest.save();
+			Object object = waiter2.waitForEvent();
+			assertNotNull("the event for manifest modification was not received", object);
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+		return folder;
+	}
+	
+	/**
+	 * Asserts if the given restriction is on the specified source
+	 * @param packagename
+	 * @param sourcename
+	 */
+	public void assertSourceResctriction(String packagename, String sourcename, int restriction) {
+		try {
+			IApiDescription desc = getTestProjectApiDescription();
+			assertNotNull("the testing project api description must exist", desc);
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor(packagename+"."+sourcename));
+			assertNotNull("the annotations for "+packagename+"."+sourcename+" cannot be null", annot);
+			assertTrue("there must be a noinstantiate setting for TestClass1", annot.getRestrictions() == restriction);
+		}
+		catch(Exception e) {
 			fail(e.getMessage());
 		}
 	}
 	
 	/**
-	 * Tests that opening an api aware project causes the workspace description to be updated
+	 * Tests creating a modifiable project, and making sure it is added to the workspace
+	 * profile
+	 * 
+	 * @throws CoreException
+	 */
+	public void testWPUpdateProjectCreation() {
+		try {
+			assertProject();
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Tests that closing an API aware project causes the workspace description to be updated
+	 */
+	public void testWPUpdateProjectClosed() {
+		try {
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			assertNotNull("the workspace profile must not be null", getWorkspaceProfile());
+			IApiComponent component  = getWorkspaceProfile().getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+			assertNotNull("the change project api component must exist in the workspace profile", component);
+			JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.CHANGED, IJavaElementDelta.F_CLOSED, IJavaElement.JAVA_PROJECT);
+			project.getProject().close(new NullProgressMonitor());
+			//might need a waiter to ensure the model changed event has been processed
+			Object obj = waiter.waitForEvent();
+			assertNotNull("the closed event was not received", obj);
+			component = getWorkspaceProfile().getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+			assertNull("the test project api component should no longer exist in the workspace profile", component);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Tests that opening an API aware project causes the workspace description to be updated
 	 */
 	public void testWPUpdateProjectOpen() {
 		try {
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			if(project.getProject().isAccessible()) {
+				project.getProject().close(new NullProgressMonitor());
+			}
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.CHANGED, IJavaElementDelta.F_OPENED, IJavaElement.JAVA_PROJECT);
-			fProject.getProject().open(new NullProgressMonitor());
+			project.getProject().open(new NullProgressMonitor());
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the opened event was not received", obj);
 			IApiProfile profile = getWorkspaceProfile();
 			assertNotNull("the workspace profile must not be null", profile);
 			IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 			assertNotNull("the test project api component must exist in the workspace profile", component);
-		} catch (CoreException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
 	
 	/**
-	 * Tests that adding a source file to an api aware project causes the workspace description
+	 * Tests that adding a source file to an API aware project causes the workspace description
 	 * to be updated
-	 * This test adds <code>a.b.c.TestClass1</code> to the plugin project
+	 * This test adds <code>a.b.c.TestClass1</code> to the plug-in project
 	 */
 	public void testWPUpdateSourceAdded() {
 		try {
-			IPackageFragment fragment = fSrcroot.getPackageFragment("a.b.c");
-			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass1.java", IJavaElementDelta.ADDED, 0, IJavaElement.COMPILATION_UNIT);
-			FileUtils.importFileFromDirectory(SRC_LOC.append("TestClass1.java").toFile(), fragment.getPath(), new NullProgressMonitor());
-			Object obj = waiter.waitForEvent();
-			assertNotNull("the added event for the compilation unit was not received", obj);
-			IApiDescription desc = getTestProjectApiDescription();
-			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass1"));
-			assertNotNull("the annotations for a.b.c.TestClass1 cannot be null", annot);
-			assertTrue("there must be a noinstantiate setting for TestClass1", annot.getRestrictions() == RestrictionModifiers.NO_INSTANTIATE);
-		} catch (InvocationTargetException e) {
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute().makeAbsolute());
+			assertNotNull("the 'src' package fragment root must exist", root);
+			assertTestSource(root, TESTING_PACKAGE, "TestClass1");
+			assertSourceResctriction(TESTING_PACKAGE, "TestClass1", RestrictionModifiers.NO_INSTANTIATE);
+		} catch (Exception e) {
 			fail(e.getMessage());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
+		} 
 	}
 	
 	/**
-	 * Tests that removing a source file from an api aware project causes the workspace description
+	 * Tests that removing a source file from an API aware project causes the workspace description
 	 * to be updated
 	 */
 	public void testWPUpdateSourceRemoved() {
 		try {
-			IJavaElement element = fProject.findElement(new Path("a/b/c/TestClass1.java"));
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+			assertNotNull("the 'src' package fragment root must exist", root);
+			assertTestSource(root, TESTING_PACKAGE, "TestClass1");
+			IJavaElement element = project.findElement(new Path("a/b/c/TestClass1.java"));
 			assertNotNull("the class a.b.c.TestClass1 must exist in the project", element);
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass1.java", IJavaElementDelta.REMOVED, 0, IJavaElement.COMPILATION_UNIT);
 			element.getResource().delete(true, new NullProgressMonitor());
@@ -385,12 +514,9 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the testing project api description must exist", desc);
 			IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass1"));
 			assertNull("the annotations for a.b.c.TestClass1 should no longer be present", annot);
-		} catch (JavaModelException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
-		
+		} 
 	}
 	
 	/**
@@ -428,18 +554,22 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that making javadoc changes to the source file TestClass2 cause the workspace profile to be 
+	 * Tests that making Javadoc changes to the source file TestClass2 cause the workspace profile to be 
 	 * updated. 
 	 * 
-	 * This test adds a @noinstatiate tag to the source file TestClass2
+	 * This test adds a @noinstantiate tag to the source file TestClass2
 	 */
 	public void testWPUpdateSourceTypeChanged() {
-		try {			
+		try {		
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+			assertNotNull("the 'src' package fragment root must exist", root);
 			NullProgressMonitor monitor = new NullProgressMonitor();
-			IPackageFragment fragment = fSrcroot.getPackageFragment("a.b.c");
+			IPackageFragment fragment = root.getPackageFragment("a.b.c");
 			FileUtils.importFileFromDirectory(SRC_LOC.append("TestClass2.java").toFile(), fragment.getPath(), monitor);
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass2.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
-			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestClass2.java"));
+			ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestClass2.java"));
 			assertNotNull("TestClass2 must exist in the test project", element);
 			updateTagInSource(element, "TestClass2", null, "@noinstantiate", false);
 			Object obj = waiter.waitForEvent();
@@ -451,15 +581,9 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertTrue("there must be a noinstantiate setting for TestClass2", (annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE) != 0);
 			assertTrue("there must be a noextend setting for TestClass2", (annot.getRestrictions() & RestrictionModifiers.NO_EXTEND) != 0);
 		}
-		catch(CoreException e) {
+		catch(Exception e) {
 			fail(e.getMessage());
-		} catch (InvocationTargetException e) {
-			fail(e.getMessage());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		} catch(BadLocationException e) {
-			fail(e.getMessage());
-		}
+		} 
 	}
 	
 	/**
@@ -469,11 +593,13 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateSourceInnerTypeChanged() {
 		try {
-			NullProgressMonitor monitor = new NullProgressMonitor();
-			IPackageFragment fragment = fSrcroot.getPackageFragment("a.b.c");
-			FileUtils.importFileFromDirectory(SRC_LOC.append("TestClass3.java").toFile(), fragment.getPath(), monitor);
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+			assertNotNull("the 'src' package fragment root must exist", root);
+			assertTestSource(root, TESTING_PACKAGE, "TestClass3");
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass3.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
-			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestClass3.java"));
+			ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestClass3.java"));
 			assertNotNull("TestClass3 must exist in the test project", element);
 			updateTagInSource(element, "InnerTestClass3", null, "@noinstantiate", false);
 			Object obj = waiter.waitForEvent();
@@ -485,19 +611,9 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertTrue("there must be a noinstantiate setting for TestClass3$InnerTestClass3", (annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE) != 0);
 			assertTrue("there must be a noextend setting for TestClass3$InnerTestClass3", (annot.getRestrictions() & RestrictionModifiers.NO_EXTEND) != 0);
 		}
-		catch (InvocationTargetException e) {
+		catch (Exception e) {
 			fail(e.getMessage());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		} catch (JavaModelException e) {
-			fail(e.getMessage());
-		} catch (MalformedTreeException e) {
-			fail(e.getMessage());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		} catch (BadLocationException e) {
-			fail(e.getMessage());
-		}
+		} 
 	}
 	
 	/**
@@ -507,11 +623,13 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateSourceMethodChanged() {
 		try {
-			NullProgressMonitor monitor = new NullProgressMonitor();
-			IPackageFragment fragment = fSrcroot.getPackageFragment("a.b.c");
-			FileUtils.importFileFromDirectory(SRC_LOC.append("TestClass1.java").toFile(), fragment.getPath(), monitor);
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+			assertNotNull("the 'src' package fragment root must exist", root);
+			assertTestSource(root, TESTING_PACKAGE, "TestClass1");
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass1.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
-			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestClass1.java"));
+			ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestClass1.java"));
 			assertNotNull("TestClass1 must exist in the test project", element);
 			updateTagInSource(element, "foo", "()V", "@nooverride", false);
 			Object obj = waiter.waitForEvent();
@@ -522,19 +640,9 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the annotations for foo() cannot be null", annot);
 			assertTrue("there must be a nooverride setting for foo()", (annot.getRestrictions() & RestrictionModifiers.NO_OVERRIDE) != 0);
 		}
-		catch (InvocationTargetException e) {
+		catch (Exception e) {
 			fail(e.getMessage());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		} catch (JavaModelException e) {
-			fail(e.getMessage());
-		} catch (MalformedTreeException e) {
-			fail(e.getMessage());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		} catch (BadLocationException e) {
-			fail(e.getMessage());
-		}
+		} 
 	}
 	
 	/**
@@ -544,11 +652,13 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateSourceFieldChanged() {
 		try {
-			NullProgressMonitor monitor = new NullProgressMonitor();
-			IPackageFragment fragment = fSrcroot.getPackageFragment("a.b.c");
-			FileUtils.importFileFromDirectory(SRC_LOC.append("TestField9.java").toFile(), fragment.getPath(), monitor);
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+			assertNotNull("the 'src' package fragment root must exist", root);
+			assertTestSource(root, TESTING_PACKAGE, "TestField9");
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestField9.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
-			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestField9.java"));
+			ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestField9.java"));
 			assertNotNull("TestField9 must exist in the test project", element);
 			updateTagInSource(element, "field", null, "@noreference", false);
 			Object obj = waiter.waitForEvent();
@@ -559,19 +669,9 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the annotations for 'field' cannot be null", annot);
 			assertTrue("there must be a noreference setting for 'field'", (annot.getRestrictions() & RestrictionModifiers.NO_REFERENCE) != 0);
 		}
-		catch (InvocationTargetException e) {
+		catch (Exception e) {
 			fail(e.getMessage());
-		} catch (IOException e) {
-			fail(e.getMessage());
-		} catch (JavaModelException e) {
-			fail(e.getMessage());
-		} catch (MalformedTreeException e) {
-			fail(e.getMessage());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		} catch (BadLocationException e) {
-			fail(e.getMessage());
-		}
+		} 
 	}
 	
 	/**
@@ -581,8 +681,13 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateSourceMethodRemoveTag() {
 		try {
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+			assertNotNull("the 'src' package fragment root must exist", root);
+			assertTestSource(root, TESTING_PACKAGE, "TestClass1");
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass1.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
-			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestClass1.java"));
+			ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestClass1.java"));
 			assertNotNull("TestClass1 must exist in the test project", element);
 			updateTagInSource(element, "foo", "()V", "@nooverride", true);
 			Object obj = waiter.waitForEvent();
@@ -593,15 +698,9 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the annotations for foo() cannot be null", annot);
 			assertTrue("there must be no restrictions for foo()", annot.getRestrictions() == 0);
 		}
-		catch (JavaModelException e) {
+		catch (Exception e) {
 			fail(e.getMessage());
-		} catch (MalformedTreeException e) {
-			fail(e.getMessage());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		} catch (BadLocationException e) {
-			fail(e.getMessage());
-		}
+		} 
 	}
 	
 	/**
@@ -611,10 +710,15 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateSourceTypeRemoveTag() {
 		try {
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+			assertNotNull("the 'src' package fragment root must exist", root);
+			assertTestSource(root, TESTING_PACKAGE, "TestClass3");
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestClass3.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
-			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestClass3.java"));
+			ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestClass3.java"));
 			assertNotNull("TestClass3 must exist in the test project", element);
-			updateTagInSource(element, "InnerTestClass3", null, "@noinstantiate", true);
+			updateTagInSource(element, "InnerTestClass3", null, "@noextend", true);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the content changed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
@@ -623,15 +727,9 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the annotations for 'InnerTestClass3' cannot be null", annot);
 			assertTrue("there must be a no restrictions for 'InnerTestClass3'", (annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE) == 0);
 		}
-		catch (JavaModelException e) {
+		catch (Exception e) {
 			fail(e.getMessage());
-		} catch (MalformedTreeException e) {
-			fail(e.getMessage());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		} catch (BadLocationException e) {
-			fail(e.getMessage());
-		}
+		} 
 	}
 	
 	/**
@@ -641,10 +739,15 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateSourceFieldRemoveTag() {
 		try {
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+			assertNotNull("the 'src' package fragment root must exist", root);
+			assertTestSource(root, TESTING_PACKAGE, "TestField9");
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("TestField9.java", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_PRIMARY_RESOURCE, IJavaElement.COMPILATION_UNIT);
-			ICompilationUnit element = (ICompilationUnit) fProject.findElement(new Path("a/b/c/TestField9.java"));
+			ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestField9.java"));
 			assertNotNull("TestField9 must exist in the test project", element);
-			updateTagInSource(element, "field", null, "@noreference", true);
+			updateTagInSource(element, "field1", null, "@noreference", true);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the content changed event for the compilation unit was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
@@ -653,15 +756,9 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("the annotations for 'field' cannot be null", annot);
 			assertTrue("there must be a no restrictions for 'field'", annot.getRestrictions() == 0);
 		}
-		catch (JavaModelException e) {
+		catch (Exception e) {
 			fail(e.getMessage());
-		} catch (MalformedTreeException e) {
-			fail(e.getMessage());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		} catch (BadLocationException e) {
-			fail(e.getMessage());
-		}
+		} 
 	}
 	
 	/**
@@ -673,35 +770,21 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateLibraryAddedToClasspath() throws InvocationTargetException, IOException, CoreException {
 		try {
-			IFolder folder = fProject.getProject().getFolder("libx");
-			folder.create(false, true, null);
-			FileUtils.importFileFromDirectory(PLUGIN_LOC.append("component.a_1.0.0.jar").toFile(), folder.getFullPath(), null);
-			IPath libPath = folder.getFullPath().append("component.a_1.0.0.jar");
-			IClasspathEntry entry = JavaCore.newLibraryEntry(libPath, null, null);
-			IApiComponent component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IApiComponent component = getWorkspaceProfile().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getClassFileContainers().length;
+			
 			// add to classpath
-			JavaModelEventWaiter waiter = new JavaModelEventWaiter("component.a_1.0.0.jar", IJavaElementDelta.CHANGED, IJavaElementDelta.F_ADDED_TO_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
-			ProjectUtils.addToClasspath(fProject, entry);
-			Object obj = waiter.waitForEvent();
-			assertNotNull("the event for class path addition not received", obj);
-			// add to manifest bundle classpath
-			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
-			assertNotNull("the plugin model for the testing project must exist", model);
-			IFile file = (IFile) model.getUnderlyingResource();
-			assertNotNull("the underlying model file must exist", file);
-			WorkspaceBundleModel manifest = new WorkspaceBundleModel(file);
-			manifest.getBundle().setHeader(Constants.BUNDLE_CLASSPATH, ".," + libPath.removeFirstSegments(1).toString());
-			PluginModelEventWaiter waiter2 = new PluginModelEventWaiter(PluginModelDelta.CHANGED);
-			manifest.save();
-			Object object = waiter2.waitForEvent();
-			assertNotNull("the event for manifest modification was not received", object);
+			IFolder folder = assertTestLibrary(project, new Path("libx"), "component.a_1.0.0.jar");
+			assertNotNull("The new library path should not be null", folder);
+			
 			// re-retrieve updated component
-			component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			component = getWorkspaceProfile().getApiComponent(project.getElementName());
 			assertTrue("there must be more containers after the addition", before < component.getClassFileContainers().length);
 		}
-		catch(JavaModelException e) {
+		catch(Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -711,18 +794,24 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateLibraryRemovedFromClasspath() {
 		try {
-			IFile lib = fProject.getProject().getFolder("libx").getFile("component.a_1.0.0.jar");
-			IClasspathEntry entry = JavaCore.newLibraryEntry(lib.getFullPath(), null, null);
-			IApiComponent component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			
+			//add to classpath
+			IFolder folder = assertTestLibrary(project, new Path("libx"), "component.a_1.0.0.jar");
+			IApiComponent component = getWorkspaceProfile().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getClassFileContainers().length;
-			// remove classpath entry
+			IPath libPath = folder.getFullPath().append("component.a_1.0.0.jar");
+			
+			//remove classpath entry
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("component.a_1.0.0.jar", IJavaElementDelta.CHANGED, IJavaElementDelta.F_REMOVED_FROM_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
-			ProjectUtils.removeFromClasspath(fProject, entry);
+			ProjectUtils.removeFromClasspath(project, JavaCore.newLibraryEntry(libPath, null, null));
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the added event for the package fragment was not received", obj);
+			
 			// remove from bundle class path
-			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
+			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 			assertNotNull("the plugin model for the testing project must exist", model);
 			IFile file = (IFile) model.getUnderlyingResource();
 			assertNotNull("the underlying model file must exist", file);
@@ -732,11 +821,12 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			manifest.save();
 			Object object = waiter2.waitForEvent();
 			assertNotNull("the event for the manifest modification was not received", object);
+			
 			// retrieve updated component
-			component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
-			assertTrue("there must be more containers after the addition", before > component.getClassFileContainers().length);
+			component = getWorkspaceProfile().getApiComponent(project.getElementName());
+			assertTrue("there must be less containers after the removal", before > component.getClassFileContainers().length);
 		}
-		catch(JavaModelException e) {
+		catch(Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -747,19 +837,21 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateDefaultOutputFolderChanged() {
 		try {
-			IContainer container = ProjectUtils.addFolderToProject(fProject.getProject(), "bin2");
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IContainer container = ProjectUtils.addFolderToProject(project.getProject(), "bin2");
 			assertNotNull("the new output folder cannot be null", container);
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED | IJavaElementDelta.F_CLASSPATH_CHANGED, IJavaElement.JAVA_PROJECT);
-			IApiComponent component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			IApiComponent component = getWorkspaceProfile().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getClassFileContainers().length;
-			fProject.setOutputLocation(container.getFullPath(), new NullProgressMonitor());
+			project.setOutputLocation(container.getFullPath(), new NullProgressMonitor());
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the changed event for the project (classpath) was not received", obj);
 			assertTrue("there must be the same number of containers after the change", before == component.getClassFileContainers().length);
-			assertTrue("the new output location should be 'bin2'", "bin2".equalsIgnoreCase(fProject.getOutputLocation().toFile().getName()));
+			assertTrue("the new output location should be 'bin2'", "bin2".equalsIgnoreCase(project.getOutputLocation().toFile().getName()));
 		}
-		catch(CoreException e) {
+		catch(Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -770,21 +862,23 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateOutputFolderSrcFolderChanged() {
 		try {
-			IContainer container = ProjectUtils.addFolderToProject(fProject.getProject(), "bin3");
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			IContainer container = ProjectUtils.addFolderToProject(project.getProject(), "bin3");
 			assertNotNull("the new output location cannot be null", container);
-			IPackageFragmentRoot src2 = ProjectUtils.addSourceContainer(fProject, "src2");
+			IPackageFragmentRoot src2 = ProjectUtils.addSourceContainer(project, "src2");
 			assertNotNull("the new source folder cannot be null", src2);
 			assertNull("the default output location should be 'bin2' (implicit as null)", src2.getRawClasspathEntry().getOutputLocation());
 			IClasspathEntry entry = JavaCore.newSourceEntry(src2.getPath(), new IPath[]{}, container.getFullPath());
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("src2", IJavaElementDelta.CHANGED, IJavaElementDelta.F_ADDED_TO_CLASSPATH | IJavaElementDelta.F_REMOVED_FROM_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
-			IApiComponent component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			IApiComponent component = getWorkspaceProfile().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getClassFileContainers().length;
-			ProjectUtils.addToClasspath(fProject, entry);
+			ProjectUtils.addToClasspath(project, entry);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the changed event for the package fragment root (classpath) was not received", obj);
 			// add to bundle class path
-			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
+			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 			assertNotNull("the plugin model for the testing project must exist", model);
 			IFile file = (IFile) model.getUnderlyingResource();
 			assertNotNull("the underlying model file must exist", file);
@@ -795,7 +889,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			Object object = waiter2.waitForEvent();
 			assertNotNull("the event for manifest modification was not received", object);
 			// add to build.properties
-			WorkspaceBuildModel prop = new WorkspaceBuildModel(fProject.getProject().getFile("build.properties"));
+			WorkspaceBuildModel prop = new WorkspaceBuildModel(project.getProject().getFile("build.properties"));
 			IBuildEntry newEntry = prop.getFactory().createEntry("source.next.jar");
 			newEntry.addToken("src2/");
 			prop.getBuild().add(newEntry);
@@ -804,11 +898,11 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			Object object3 = waiter3.waitForEvent();
 			assertNotNull("the event for biuld.properties modification was not received", object3);
 			// retrieve updated component
-			component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			component = getWorkspaceProfile().getApiComponent(project.getElementName());
 			assertTrue("there must be one more container after the change", before < component.getClassFileContainers().length);
 			assertTrue("the class file container for src2 must be 'bin3'", "bin3".equals(src2.getRawClasspathEntry().getOutputLocation().toFile().getName()));
 		}
-		catch(CoreException e) {
+		catch(Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -818,22 +912,20 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdatePackageAdded() {
 		try {
-			JavaModelEventWaiter waiter = new JavaModelEventWaiter("x.y.z", IJavaElementDelta.ADDED, 0, IJavaElement.PACKAGE_FRAGMENT);
-			fSrcroot.createPackageFragment("x.y.z", true, new NullProgressMonitor());
-			Object obj = waiter.waitForEvent();
-			assertNotNull("the added event for the package fragment was not received", obj);
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			
+			//add the package
+			assertTestPackage(project, new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "a.test1.c.d");
+			
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(Factory.packageDescriptor("x.y.z"));
-			assertNotNull("the annotations for package 'x.y.z' should exist", annot);
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.packageDescriptor("a.test1.c.d"));
+			assertNotNull("the annotations for package "+TESTING_PACKAGE+" should exist", annot);
 		}
-		catch (JavaModelException e) {
+		catch (Exception e) {
 			fail(e.getMessage());
-		} catch (MalformedTreeException e) {
-			fail(e.getMessage());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		} 
+		}
 	}
 	
 	/**
@@ -843,24 +935,27 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdatePackageRemoved() {
 		try {
-			JavaModelEventWaiter waiter = new JavaModelEventWaiter("a.b.c", IJavaElementDelta.REMOVED, 0, IJavaElement.PACKAGE_FRAGMENT);
-			IPackageFragment fragment = fSrcroot.getPackageFragment("a.b.c");
-			assertNotNull("the package a.b.c must exist", fragment);
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			
+			//add the package
+			IPath srcroot = new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute();
+			IPackageFragment fragment = assertTestPackage(project, srcroot, "a.test2");
+			assertNotNull("the package "+TESTING_PACKAGE+" must exist", fragment);
+			
+			//remove the package
+			JavaModelEventWaiter waiter = new JavaModelEventWaiter("a.test2", IJavaElementDelta.REMOVED, 0, IJavaElement.PACKAGE_FRAGMENT);
 			fragment.delete(true, new NullProgressMonitor());
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the removed event for the package fragment was not received", obj);
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
-			IApiAnnotations annot = desc.resolveAnnotations(Factory.packageDescriptor("a.b.c"));
-			assertNull("the annotations for package 'a.b.c' should not exist", annot);
+			IApiAnnotations annot = desc.resolveAnnotations(Factory.packageDescriptor("a.test2"));
+			assertNull("the annotations for package "+TESTING_PACKAGE+" should not exist", annot);
 		}
-		catch (JavaModelException e) {
+		catch (Exception e) {
 			fail(e.getMessage());
-		} catch (MalformedTreeException e) {
-			fail(e.getMessage());
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		} 
+		}
 	}
 	
 	/**
@@ -869,19 +964,21 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateExportPackageAdded() {
 		try {
-			IPackageFragment fragment = fSrcroot.createPackageFragment("export1", true, new NullProgressMonitor());
-			assertNotNull("the new package 'export1' must exist", fragment);
-			setPackageToApi("export1");
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			
+			//add package
+			assertTestPackage(project, new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "export1");
+			
+			//update
+			setPackageToApi(project, "export1");
 			IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(Factory.packageDescriptor("export1"));
 			assertNotNull("there must be an annotation for the new exported package", annot);
 			assertTrue("the newly exported package must be API visibility", annot.getVisibility() == VisibilityModifiers.API);
 		}
-		catch(JavaModelException e) {
-			fail(e.getMessage());
-		} catch (CoreException e) {
+		catch(Exception e) {
 			fail(e.getMessage());
 		}
-		
 	}
 	
 	/**
@@ -890,7 +987,14 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUPdateExportPackageDirectiveChangedToInternal() {
 		try {
-			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			
+			//add package
+			assertTestPackage(project, new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "export1");
+			
+			//update the model
+			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 			assertNotNull("the plugin model for the testing project must exist", model);
 			IFile file = (IFile) model.getUnderlyingResource();
 			assertNotNull("the underlying model file must exist", file);
@@ -904,7 +1008,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("there must be an annotation for the new exported package", annot);
 			assertTrue("the changed exported package must be PRIVATE visibility", annot.getVisibility() == VisibilityModifiers.PRIVATE);
 		}
-		catch(CoreException e) {
+		catch(Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -915,11 +1019,17 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateExportPackageRemoved() {
 		try {
-			setPackageToApi("export1");
+			IJavaProject project = assertProject();
+			assertNotNull("The testing project must exist", project);
+			
+			//add package
+			assertTestPackage(project, new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "export1");
+			
+			setPackageToApi(project, "export1");
 			IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(Factory.packageDescriptor("export1"));
 			assertNotNull("there must be an annotation for the new exported package", annot);
 			assertTrue("the newly exported package must be API visibility", annot.getVisibility() == VisibilityModifiers.API);
-			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
+			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 			assertNotNull("the plugin model for the testing project must exist", model);
 			IFile file = (IFile) model.getUnderlyingResource();
 			assertNotNull("the underlying model file must exist", file);
@@ -933,7 +1043,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNotNull("should still be an annotation for the package", annot);
 			assertTrue("unexported package must be private", VisibilityModifiers.isPrivate(annot.getVisibility()));
 		}
-		catch(CoreException e) {
+		catch(Exception e) {
 			fail(e.getMessage());
 		}
 	}
@@ -942,8 +1052,8 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 * sets the given package name to be an Exported-Package
 	 * @param name
 	 */
-	private void setPackageToApi(String name) {
-		IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
+	private void setPackageToApi(IJavaProject project, String name) {
+		IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 		assertNotNull("the plugin model for the testing project must exist", model);
 		IFile file = (IFile) model.getUnderlyingResource();
 		assertNotNull("the underlying model file must exist", file);

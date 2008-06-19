@@ -70,7 +70,12 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 	 */
 	protected boolean accept(ElementChangedEvent event) {
 		if(event.getSource() instanceof IJavaElementDelta) {
-			return processDelta(((IJavaElementDelta) event.getSource()).getAffectedChildren());
+			IJavaElementDelta delta = (IJavaElementDelta) event.getSource(); 
+			IJavaElementDelta[] deltas = delta.getAffectedChildren();
+			if(deltas.length == 0) {
+				deltas = new IJavaElementDelta[] {delta};
+			}
+			return processDelta(deltas);
 		}
 		return false;
 	}
