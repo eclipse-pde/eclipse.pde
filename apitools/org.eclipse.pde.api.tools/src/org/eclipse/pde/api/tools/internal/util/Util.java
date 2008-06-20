@@ -2330,6 +2330,23 @@ public final class Util {
 	}
 
 	/**
+	 * Returns the contents of the given file as a string, or <code>null</code>
+	 * @param file the file to get the contents for
+	 * @return the contents of the file as a {@link String} or <code>null</code>
+	 */
+	public static String getFileContentAsString(File file) {
+		String contents = null;
+		try {
+			char[] array = getInputStreamAsCharArray(new FileInputStream(file), -1, IApiCoreConstants.UTF_8);
+			contents = new String(array);
+		}
+		catch(IOException ioe) {
+			ApiPlugin.log(ioe);
+		}
+		return contents;
+	}
+	
+	/**
 	 * Returns the given string as an {@link InputStream}. It is up to the caller to close
 	 * the new stream.
 	 * @param string the string to convert

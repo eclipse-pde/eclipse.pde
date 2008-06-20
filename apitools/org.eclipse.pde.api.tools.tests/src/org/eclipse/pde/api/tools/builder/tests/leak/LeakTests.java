@@ -8,19 +8,68 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.builder.tests;
+package org.eclipse.pde.api.tools.builder.tests.leak;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
+
+import junit.framework.Test;
 
 /**
- * Tests usage scanning with and without noreference tags in source
- * @since 1.0.0 
+ * Tests the builder to make sure it correctly reports 
+ * non-API type leaks
+ * 
+ * @since 3.4
  */
-public class UsageLeakTests extends ApiBuilderTests {
+public class LeakTests extends ApiBuilderTest {
 
 	/**
 	 * Constructor
 	 */
-	public UsageLeakTests() {
-		super("API usage leak tests");
+	public LeakTests() {
+		super("API Leak tests");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions()
+	 */
+	protected void setBuilderOptions() {
+		enableUnsupportedTagOptions(false);
+		enableBaselineOptions(false);
+		enableCompatibilityOptions(false);
+		enableLeakOptions(true);
+		enableSinceTagOptions(false);
+		enableUsageOptions(false);
+		enableVersionNumberOptions(false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
+	 */
+	protected IPath getTestSourcePath() {
+		return new Path("usage").append("leak");
+	}
+	
+	/**
+	 * @return the tests for this class
+	 */
+	public static Test suite() {
+		return buildTestSuite(LeakTests.class);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestProblemIds()
+	 */
+	protected int[] getTestProblemIds() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
+	 */
+	protected String getTestingProjectName() {
+		return "leaktests";
 	}
 	
 	/**

@@ -14,12 +14,14 @@ package org.eclipse.pde.api.tools.builder.tests;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.tests.builder.TestingEnvironment;
@@ -39,10 +41,14 @@ import org.eclipse.pde.internal.core.natures.PDE;
  */
 public class ApiTestingEnvironment extends TestingEnvironment {
 	
+	protected static final IMarker[] NO_MARKERS = new IMarker[0];
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#addProject(java.lang.String, java.lang.String)
 	 */
 	public IPath addProject(String projectName, String compliance) throws UnsupportedOperationException {
+		IJavaProject javaProject = createProject(projectName);
+		IProject project  = javaProject.getProject();
 		int requiredComplianceFlag = 0;
 		String compilerVersion = null;
 		if (CompilerOptions.VERSION_1_5.equals(compliance)) {
@@ -60,26 +66,40 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		else if (!CompilerOptions.VERSION_1_4.equals(compliance) && !CompilerOptions.VERSION_1_3.equals(compliance)) {
 			throw new UnsupportedOperationException("Test framework doesn't support compliance level: " + compliance);
 		}
-		IProject project = null;
 		if (requiredComplianceFlag != 0) {
-			if ((AbstractCompilerTest.getPossibleComplianceLevels() & requiredComplianceFlag) == 0)
+			if ((AbstractCompilerTest.getPossibleComplianceLevels() & requiredComplianceFlag) == 0) {
 				throw new RuntimeException("This test requires a " + compliance + " JRE");
-			try {
-				IJavaProject javaProject = ProjectUtils.createPluginProject(projectName, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
-				project = javaProject.getProject();
-				
-				HashMap<String, String> options = new HashMap<String, String>();
-				options.put(CompilerOptions.OPTION_Compliance, compilerVersion);
-				options.put(CompilerOptions.OPTION_Source, compilerVersion);
-				options.put(CompilerOptions.OPTION_TargetPlatform, compilerVersion);
-				javaProject.setOptions(options);
-				addProject(project);
 			}
-			catch(CoreException ce) {
-				//ignore
-			}
+			HashMap<String, String> options = new HashMap<String, String>();
+			options.put(CompilerOptions.OPTION_Compliance, compilerVersion);
+			options.put(CompilerOptions.OPTION_Source, compilerVersion);
+			options.put(CompilerOptions.OPTION_TargetPlatform, compilerVersion);
+			javaProject.setOptions(options);
 		}
 		return project != null ? project.getFullPath() : Path.EMPTY;
+	}
+	
+	/**
+	 * Creates a new plugin project with the given name.
+	 * If a project with the same name already exists in the testing workspace
+	 * it will be deleted and new project created.
+	 * @param projectName
+	 * @return the newly created {@link IJavaProject}
+	 */
+	protected IJavaProject createProject(String projectName) {
+		IJavaProject jproject = null;
+		try {
+			IProject project = getWorkspace().getRoot().getProject(projectName);
+			if(project.exists()) {
+				project.delete(true, new NullProgressMonitor());
+			}
+			jproject = ProjectUtils.createPluginProject(projectName, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
+			addProject(jproject.getProject());
+		}
+		catch(CoreException ce) {
+			ApiPlugin.log(ce);
+		}
+		return jproject;
 	}
 	
 	/**
@@ -90,12 +110,28 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 */
 	protected IMarker[] getAllUsageMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
-			return new IMarker[0];
+			return NO_MARKERS;
 		}
 		if(!resource.isAccessible()) {
-			return new IMarker[0];
+			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+	}
+	
+	/**
+	 * Returns all of the unsupported Javadoc tag markers on the specified resource
+	 * and all of its children.
+	 * @param resource
+	 * @return
+	 */
+	protected IMarker[] getAllUnsupportedTagMarkers(IResource resource) throws CoreException {
+		if(resource == null) {
+			return NO_MARKERS;
+		}
+		if(!resource.isAccessible()) {
+			return NO_MARKERS;
+		}
+		return resource.findMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
 	
 	/**
@@ -106,10 +142,10 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 */
 	protected IMarker[] getAllCompatibilityMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
-			return new IMarker[0];
+			return NO_MARKERS;
 		}
 		if(!resource.isAccessible()) {
-			return new IMarker[0];
+			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
@@ -122,10 +158,10 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 */
 	protected IMarker[] getAllAPIProfileMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
-			return new IMarker[0];
+			return NO_MARKERS;
 		}
 		if(!resource.isAccessible()) {
-			return new IMarker[0];
+			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
@@ -138,10 +174,10 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 */
 	protected IMarker[] getAllSinceTagMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
-			return new IMarker[0];
+			return NO_MARKERS;
 		}
 		if(!resource.isAccessible()) {
-			return new IMarker[0];
+			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
@@ -154,10 +190,10 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 */
 	protected IMarker[] getAllVersionMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
-			return new IMarker[0];
+			return NO_MARKERS;
 		}
 		if(!resource.isAccessible()) {
-			return new IMarker[0];
+			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
@@ -201,11 +237,12 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		}
 		try {
 			ArrayList<IMarker> problems = new ArrayList<IMarker>();
-			problems.addAll(Arrays.asList(getAllUsageMarkers(resource)));
-			problems.addAll(Arrays.asList(getAllCompatibilityMarkers(resource)));
-			problems.addAll(Arrays.asList(getAllAPIProfileMarkers(resource)));
-			problems.addAll(Arrays.asList(getAllSinceTagMarkers(resource)));
-			problems.addAll(Arrays.asList(getAllVersionMarkers(resource)));
+			addToList(problems, getAllUsageMarkers(resource));
+			addToList(problems, getAllCompatibilityMarkers(resource));
+			addToList(problems, getAllAPIProfileMarkers(resource));
+			addToList(problems, getAllSinceTagMarkers(resource));
+			addToList(problems, getAllVersionMarkers(resource));
+			addToList(problems, getAllUnsupportedTagMarkers(resource));
 			
 			//additional markers
 			if(additionalMarkerType != null) {
@@ -216,6 +253,18 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			// ignore
 		}
 		return new IMarker[0];
+	}
+	
+	private void addToList(List list, Object[] objects) {
+		if(list == null || objects == null) {
+			return;
+		}
+		if(objects.length == 0) {
+			return;
+		}
+		for(int i = 0; i < objects.length; i++) {
+			list.add(objects[i]);
+		}
 	}
 	
 	/* (non-Javadoc)
