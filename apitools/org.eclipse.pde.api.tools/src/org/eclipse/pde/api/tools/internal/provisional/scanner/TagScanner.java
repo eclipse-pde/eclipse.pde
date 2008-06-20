@@ -505,6 +505,7 @@ public class TagScanner {
 	 * 	that can be used to resolve method signatures if required (for tags on methods). If 
 	 * 	not provided (<code>null</code>), method signatures will be unresolved.
 	 * @param options a map of Java compiler options to use when creating the AST to scan
+	 *  or <code>null</code> if default options should be used 
 	 * 
 	 * @throws CoreException 
 	 */
