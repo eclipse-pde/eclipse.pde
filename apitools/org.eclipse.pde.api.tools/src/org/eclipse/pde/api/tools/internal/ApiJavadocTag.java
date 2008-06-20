@@ -109,10 +109,6 @@ public class ApiJavadocTag implements IApiJavadocTag {
 				i1 = 2;
 				break;
 			}
-			case IApiJavadocTag.TYPE_ANNOTATION: {
-				i1 = 3;
-				break;
-			}
 		}
 		int i2 = -1;
 		switch(member) {
@@ -144,7 +140,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 */
 	private void initializeElements() {
 		if(comments == null) {
-			comments = new String[4][4];
+			comments = new String[3][4];
 			for(int i = 0; i < fElements.length; i++) {
 				boolean clazz = (IApiJavadocTag.TYPE_CLASS & fElements[i]) != 0;
 				boolean inter = (IApiJavadocTag.TYPE_INTERFACE & fElements[i]) != 0;
@@ -152,7 +148,6 @@ public class ApiJavadocTag implements IApiJavadocTag {
 				boolean field = (IApiJavadocTag.MEMBER_FIELD & fElements[i]) != 0;
 				boolean constructor = (IApiJavadocTag.MEMBER_CONSTRUCTOR & fElements[i]) != 0;
 				boolean isenum = (IApiJavadocTag.TYPE_ENUM & fElements[i]) != 0;
-				boolean annot = (IApiJavadocTag.TYPE_ANNOTATION & fElements[i]) != 0;
 				if(clazz) {
 					if(constructor) {
 						comments[0][3] = fComments[i];
@@ -187,17 +182,6 @@ public class ApiJavadocTag implements IApiJavadocTag {
 					}
 					if(!field & !method) {
 						comments[2][2] = fComments[i];
-					}
-				}
-				if(annot) {
-					if (method) {
-						comments[3][0] = fComments[i];
-					}
-					if (field) {
-						comments[3][1] = fComments[i];
-					}
-					if(!field & !method) {
-						comments[3][2] = fComments[i];
 					}
 				}
 			}

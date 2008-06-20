@@ -53,9 +53,8 @@ public class JavadocTagManager {
 			ApiJavadocTag newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.noimplement",  //$NON-NLS-1$
 					"noimplement", //$NON-NLS-1$
 					RestrictionModifiers.NO_IMPLEMENT,
-					new int[] {IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.TYPE_ANNOTATION}, 
-					new String[] {"This interface is not intended to be implemented by clients.", //$NON-NLS-1$
-								  "This annotation is not intended to be implemented by clients."}); //$NON-NLS-1$ 
+					new int[] {IApiJavadocTag.TYPE_INTERFACE}, 
+					new String[] {"This interface is not intended to be implemented by clients."}); //$NON-NLS-1$ 
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			
@@ -95,14 +94,12 @@ public class JavadocTagManager {
 								IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.MEMBER_CONSTRUCTOR,
 								IApiJavadocTag.TYPE_ENUM | IApiJavadocTag.MEMBER_FIELD,
 								IApiJavadocTag.TYPE_ENUM | IApiJavadocTag.MEMBER_METHOD,
-								IApiJavadocTag.TYPE_ANNOTATION | IApiJavadocTag.MEMBER_FIELD,
 								IApiJavadocTag.TYPE_ANNOTATION | IApiJavadocTag.MEMBER_METHOD}, 
 					new String[] {"This method is not intended to be referenced by clients.", //$NON-NLS-1$ 
 									"This field is not intended to be referenced by clients.", //$NON-NLS-1$
 									"This constructor is not intended to be referenced by clients.", //$NON-NLS-1$
 									"This enum field is not intended to be referenced by clients.", //$NON-NLS-1$
 									"This enum method is not intended to be referenced by clients.", //$NON-NLS-1$
-									"This annotation field is not intended to be referenced by clients.", //$NON-NLS-1$
 									"This annotation method is not intended to be referenced by clients."}); //$NON-NLS-1$
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
