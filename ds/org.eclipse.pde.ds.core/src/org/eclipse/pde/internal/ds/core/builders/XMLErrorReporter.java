@@ -33,10 +33,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
-import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -145,46 +142,6 @@ public class XMLErrorReporter extends DefaultHandler {
 		}
 	}
 
-	public void report(String message, int line, int severity, int fixId, Element element, String attrName, String category) {
-		IMarker marker = report(message, line, severity, fixId, category);
-		if (marker == null)
-			return;
-		try {
-			marker.setAttribute(PDEMarkerFactory.MPK_LOCATION_PATH,
-					generateLocationPath(element, attrName));
-		} catch (CoreException e) {
-		}
-	}
-
-	private String generateLocationPath(Node node, String attrName) {
-		if (node == null)
-			return new String();
-
-		int childIndex = 0;
-		for (Node previousSibling = node.getPreviousSibling(); previousSibling != null; previousSibling = previousSibling.getPreviousSibling())
-			childIndex += 1;
-
-		StringBuffer sb = new StringBuffer();
-		Node parent = node.getParentNode();
-		if (parent != null && !(parent instanceof Document)) {
-			sb.append(generateLocationPath(parent, null));
-			sb.append(F_CHILD_SEP);
-		}
-		composeNodeString(node, childIndex, attrName, sb);
-		return sb.toString();
-	}
-
-	private String composeNodeString(Node node, int index, String attrName, StringBuffer sb) {
-		sb.append('(');
-		sb.append(index);
-		sb.append(')');
-		sb.append(node.getNodeName());
-		if (attrName != null) {
-			sb.append(F_ATT_PREFIX);
-			sb.append(attrName);
-		}
-		return sb.toString();
-	}
 
 	public IMarker report(String message, int line, int severity, int fixId, String category) {
 		if (severity == CompilerFlags.ERROR)

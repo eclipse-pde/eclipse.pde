@@ -47,7 +47,7 @@ public class DSRemoveItemAction extends Action {
 		if (fItem != null) {
 			// Determine parent type and remove accordingly
 			IDSObject parent = (IDSObject) fItem.getParentNode();
-			if (parent.getType() == IDSConstants.TYPE_ROOT) {
+			if (parent.getType() == IDSConstants.TYPE_COMPONENT) {
 				// Parent is a component
 				IDSComponent item = (IDSComponent) parent;
 				fObjectToSelect = parent;

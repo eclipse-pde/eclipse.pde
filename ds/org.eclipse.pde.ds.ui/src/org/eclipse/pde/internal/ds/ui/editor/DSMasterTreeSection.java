@@ -171,7 +171,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
 		if (dsObject != null) {
 
-			if (dsObject.getType() == IDSConstants.TYPE_ROOT) {
+			if (dsObject.getType() == IDSConstants.TYPE_COMPONENT) {
 				canMoveUp = false;
 				canMoveDown = false;
 				canRemove = false;
@@ -283,7 +283,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 				|| (object.getType() == IDSConstants.TYPE_PROPERTY)
 				|| (object.getType() == IDSConstants.TYPE_PROVIDE)
 				|| (object.getType() == IDSConstants.TYPE_REFERENCE)
-				|| (object.getType() == IDSConstants.TYPE_ROOT)
+				|| (object.getType() == IDSConstants.TYPE_COMPONENT)
 				|| (object.getType() == IDSConstants.TYPE_SERVICE)) {
 			// Refresh the element in the tree viewer
 			fTreeViewer.update(object, null);
@@ -495,7 +495,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		// update Booleans
 		if (dsObject != null) {
 
-			if (dsObject.getType() == IDSConstants.TYPE_ROOT) {
+			if (dsObject.getType() == IDSConstants.TYPE_COMPONENT) {
 				canMoveUp = false;
 				canMoveDown = false;
 				canRemove = false;

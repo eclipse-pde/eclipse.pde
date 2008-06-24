@@ -59,7 +59,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
 	 */
 	public int getType() {
-		return TYPE_ROOT;
+		return TYPE_COMPONENT;
 	}
 
 	/*
@@ -115,7 +115,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean bool) {
-		setBooleanAttributeValue(ATTRIBUTE_ENABLED, bool);
+		setBooleanAttributeValue(ATTRIBUTE_COMPONENT_ENABLED, bool);
 	}
 
 	/*
@@ -124,7 +124,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getEnabled()
 	 */
 	public boolean getEnabled() {
-		return getBooleanAttributeValue(ATTRIBUTE_ENABLED, true);
+		return getBooleanAttributeValue(ATTRIBUTE_COMPONENT_ENABLED, true);
 	}
 
 	/*
@@ -133,7 +133,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#setFactory(java.lang.String)
 	 */
 	public void setFactory(String factory) {
-		setXMLAttribute(ATTRIBUTE_FACTORY, factory);
+		setXMLAttribute(ATTRIBUTE_COMPONENT_FACTORY, factory);
 	}
 
 	/*
@@ -142,7 +142,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#getFactory()
 	 */
 	public String getFactory() {
-		return getXMLAttributeValue(ATTRIBUTE_FACTORY);
+		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_FACTORY);
 	}
 
 	/*
@@ -151,7 +151,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSComponent#setImmediate(boolean)
 	 */
 	public void setImmediate(boolean bool) {
-		setBooleanAttributeValue(ATTRIBUTE_IMMEDIATE, bool);
+		setBooleanAttributeValue(ATTRIBUTE_COMPONENT_IMMEDIATE, bool);
 	}
 
 	/*
@@ -160,7 +160,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSRoot#getImmediate()
 	 */
 	public boolean getImmediate() {
-		return getBooleanAttributeValue(ATTRIBUTE_IMMEDIATE, false);
+		return getBooleanAttributeValue(ATTRIBUTE_COMPONENT_IMMEDIATE, false);
 	}
 
 	/*

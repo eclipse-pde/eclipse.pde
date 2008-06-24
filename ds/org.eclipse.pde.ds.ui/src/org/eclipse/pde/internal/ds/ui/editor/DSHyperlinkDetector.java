@@ -64,7 +64,7 @@ public class DSHyperlinkDetector extends PDEHyperlinkDetector {
 		if (node instanceof IDSImplementation) {
 			link[0] = new JavaHyperlink(linkRegion, attrValue, res);
 		} else if (node instanceof IDSComponent) {
-			if (attr.getAttributeName().equals(IDSConstants.ATTRIBUTE_FACTORY)) {
+			if (attr.getAttributeName().equals(IDSConstants.ATTRIBUTE_COMPONENT_FACTORY)) {
 				link[0] = new JavaHyperlink(linkRegion, attrValue, res);
 			}
 		} else if (node instanceof IDSReference) {
@@ -85,7 +85,7 @@ public class DSHyperlinkDetector extends PDEHyperlinkDetector {
 
 			// Resource Hyperlink
 		} else if (node instanceof IDSProperties) {
-			if (attr.getAttributeName().equals(IDSConstants.ATTRIBUTE_ENTRY)) {
+			if (attr.getAttributeName().equals(IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY)) {
 				link[0] = new ResourceHyperlink(linkRegion, attrValue, res);
 			}
 

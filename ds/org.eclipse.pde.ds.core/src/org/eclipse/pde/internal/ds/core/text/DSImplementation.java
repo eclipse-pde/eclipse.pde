@@ -72,14 +72,14 @@ public class DSImplementation extends DSObject implements IDSImplementation {
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSImplementation#setClassName(java.lang.String)
 	 */
 	public void setClassName(String className){
-		setXMLAttribute(ATTRIBUTE_CLASS, className);
+		setXMLAttribute(ATTRIBUTE_IMPLEMENTATION_CLASS, className);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSImplementation#getClassName()
 	 */
 	public String getClassName(){
-		return getXMLAttributeValue(ATTRIBUTE_CLASS);
+		return getXMLAttributeValue(ATTRIBUTE_IMPLEMENTATION_CLASS);
 	}
 	
 

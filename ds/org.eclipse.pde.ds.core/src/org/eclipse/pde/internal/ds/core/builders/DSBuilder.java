@@ -131,7 +131,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 		String message = NLS.bind(Messages.DSBuilder_verifying, file
 				.getFullPath().toString());
 		monitor.subTask(message);
-
+		
 		DSErrorReporter reporter = new DSErrorReporter(file);
 		if (reporter != null) {
 			reporter.validateContent(monitor);
@@ -139,4 +139,5 @@ public class DSBuilder extends IncrementalProjectBuilder {
 		}
 		monitor.done();
 	}
+	
 }

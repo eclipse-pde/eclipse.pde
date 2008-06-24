@@ -59,7 +59,7 @@ public class DSPage extends PDEFormPage implements IModelChangedListener {
 			IDSObject object = (IDSObject) objects[0];
 			if (object == null) {
 				// Ignore
-			} else if (object.getType() == IDSConstants.TYPE_ROOT) {
+			} else if (object.getType() == IDSConstants.TYPE_COMPONENT) {
 				String changeProperty = event.getChangedProperty();
 				if ((changeProperty != null)
 						&& changeProperty

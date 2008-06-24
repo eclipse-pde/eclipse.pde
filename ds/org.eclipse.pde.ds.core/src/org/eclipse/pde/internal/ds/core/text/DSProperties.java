@@ -69,13 +69,13 @@ public class DSProperties extends DSObject implements IDSProperties {
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperties#setEntry(java.lang.String)
 	 */
 	public void setEntry(String entry){
-		setXMLAttribute(ATTRIBUTE_ENTRY, entry);
+		setXMLAttribute(ATTRIBUTE_PROPERTIES_ENTRY, entry);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSProperties#getEntry()
 	 */
 	public String getEntry(){
-		return getXMLAttributeValue(ATTRIBUTE_ENTRY);
+		return getXMLAttributeValue(ATTRIBUTE_PROPERTIES_ENTRY);
 	}
 }

@@ -86,7 +86,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			File f = new File(className);
 			if (!f.exists()) {
 				reportResourceNotFound(IDSConstants.ELEMENT_IMPLEMENTATION,
-						IDSConstants.ATTRIBUTE_CLASS, className);
+						IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS, className);
 			}
 		}
 

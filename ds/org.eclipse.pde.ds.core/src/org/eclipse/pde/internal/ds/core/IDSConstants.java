@@ -37,14 +37,14 @@ public interface IDSConstants {
 	//Component Attributes
 	public static final String ATTRIBUTE_COMPONENT_NAME = "name"; //$NON-NLS-1$
 	
-	public static final String ATTRIBUTE_ENABLED = "enabled"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_COMPONENT_ENABLED = "enabled"; //$NON-NLS-1$
 	
-	public static final String ATTRIBUTE_FACTORY = "factory"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_COMPONENT_FACTORY = "factory"; //$NON-NLS-1$
 	
-	public static final String ATTRIBUTE_IMMEDIATE = "immediate"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_COMPONENT_IMMEDIATE = "immediate"; //$NON-NLS-1$
 	
 	//Implementation Attributes
-	public static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_IMPLEMENTATION_CLASS = "class"; //$NON-NLS-1$
 	
 	//Property Attributes
 	public static final String ATTRIBUTE_PROPERTY_NAME = "name"; //$NON-NLS-1$
@@ -55,7 +55,7 @@ public interface IDSConstants {
 	
 	
 	//Properties Attributes
-	public static final String ATTRIBUTE_ENTRY = "entry"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_PROPERTIES_ENTRY = "entry"; //$NON-NLS-1$
 	
 	//Service Attributes
 	public static final String ATTRIBUTE_SERVICE_FACTORY = "servicefactory"; //$NON-NLS-1$
@@ -80,7 +80,7 @@ public interface IDSConstants {
 		
 	
 	//Types
-	public static final int TYPE_ROOT = 0;
+	public static final int TYPE_COMPONENT = 0;
 
 	public static final int TYPE_IMPLEMENTATION = 1;
 
