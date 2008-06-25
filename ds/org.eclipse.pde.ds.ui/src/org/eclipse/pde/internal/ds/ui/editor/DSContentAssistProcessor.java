@@ -136,9 +136,9 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 		if (element != null && element.equals(IDSConstants.ELEMENT_COMPONENT)) {
 			boolean isAttrImmediate = attribute == null ? false : attribute
-					.equals(IDSConstants.ATTRIBUTE_IMMEDIATE);
+					.equals(IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE);
 			boolean isAttrEnabled = attribute == null ? false : attribute
-					.equals(IDSConstants.ATTRIBUTE_ENABLED);
+					.equals(IDSConstants.ATTRIBUTE_COMPONENT_ENABLED);
 			if ((isAttrImmediate || isAttrEnabled)) {
 
 				return this.getCompletionBooleans(startOffset, attrValueLength);
@@ -157,7 +157,8 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			boolean isAttrPolicy = attribute == null ? false : attribute
 					.equals(IDSConstants.ATTRIBUTE_REFERENCE_POLICY);
 			if (isAttrCardinality) {
-				return getReferenceCardinalityValues(attrValueLength, startOffset);
+				return getReferenceCardinalityValues(attrValueLength,
+						startOffset);
 			} else if (isAttrPolicy) {
 				return getReferencePolicyValues(attrValueLength, startOffset);
 
@@ -178,60 +179,60 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			int startOffset) {
 		return new ICompletionProposal[] {
 				new TypeCompletionProposal(IConstants.REFERENCE_STATIC, null,
-						IConstants.REFERENCE_STATIC,
-						startOffset, attrValueLength),
+						IConstants.REFERENCE_STATIC, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.REFERENCE_DYNAMIC, null,
-						IConstants.REFERENCE_DYNAMIC,
-						startOffset, attrValueLength) };
+						IConstants.REFERENCE_DYNAMIC, startOffset,
+						attrValueLength) };
 	}
 
 	private ICompletionProposal[] getReferenceCardinalityValues(
 			int attrValueLength, int startOffset) {
 		return new ICompletionProposal[] {
 				new TypeCompletionProposal(IConstants.CARDINALITY_ZERO_ONE,
-						null, IConstants.CARDINALITY_ZERO_ONE,
-						startOffset, attrValueLength),
+						null, IConstants.CARDINALITY_ZERO_ONE, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.CARDINALITY_ZERO_N, null,
-						IConstants.CARDINALITY_ZERO_N,
-						startOffset, attrValueLength),
+						IConstants.CARDINALITY_ZERO_N, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.CARDINALITY_ONE_ONE,
-						null, IConstants.CARDINALITY_ONE_ONE,
-						startOffset, attrValueLength),
+						null, IConstants.CARDINALITY_ONE_ONE, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.CARDINALITY_ONE_N, null,
-						IConstants.CARDINALITY_ONE_N,
-						startOffset, attrValueLength) };
+						IConstants.CARDINALITY_ONE_N, startOffset,
+						attrValueLength) };
 	}
 
 	private ICompletionProposal[] getPropertyTypeValues(int attrValueLength,
 			int startOffset) {
 		return new ICompletionProposal[] {
 				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_STRING,
-						null, IConstants.PROPERTY_TYPE_STRING,
-						startOffset, attrValueLength),
+						null, IConstants.PROPERTY_TYPE_STRING, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_LONG, null,
-						IConstants.PROPERTY_TYPE_LONG,
-						startOffset, attrValueLength),
+						IConstants.PROPERTY_TYPE_LONG, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_DOUBLE,
-						null, IConstants.PROPERTY_TYPE_DOUBLE,
-						startOffset, attrValueLength),
+						null, IConstants.PROPERTY_TYPE_DOUBLE, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_FLOAT,
-						null, IConstants.PROPERTY_TYPE_FLOAT,
-						startOffset, attrValueLength),
+						null, IConstants.PROPERTY_TYPE_FLOAT, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_INTEGER,
-						null, IConstants.PROPERTY_TYPE_INTEGER,
-						startOffset, attrValueLength),
+						null, IConstants.PROPERTY_TYPE_INTEGER, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_BYTE, null,
-						IConstants.PROPERTY_TYPE_BYTE,
-						startOffset, attrValueLength),
+						IConstants.PROPERTY_TYPE_BYTE, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_CHAR, null,
-						IConstants.PROPERTY_TYPE_CHAR,
-						startOffset, attrValueLength),
+						IConstants.PROPERTY_TYPE_CHAR, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_BOOLEAN,
-						null, IConstants.PROPERTY_TYPE_BOOLEAN,
-						startOffset, attrValueLength),
+						null, IConstants.PROPERTY_TYPE_BOOLEAN, startOffset,
+						attrValueLength),
 				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_SHORT,
-						null, IConstants.PROPERTY_TYPE_SHORT,
-						startOffset, attrValueLength) };
+						null, IConstants.PROPERTY_TYPE_SHORT, startOffset,
+						attrValueLength) };
 	}
 
 	private ICompletionProposal[] getCompletionBooleans(int startOffset,
@@ -239,11 +240,9 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 		return new ICompletionProposal[] {
 				new TypeCompletionProposal(IConstants.TRUE, null,
-						IConstants.TRUE, startOffset,
-						attrValueLength),
+						IConstants.TRUE, startOffset, attrValueLength),
 				new TypeCompletionProposal(IConstants.FALSE, null,
-						IConstants.FALSE, startOffset,
-						attrValueLength) };
+						IConstants.FALSE, startOffset, attrValueLength) };
 	}
 
 	private ICompletionProposal[] computeCompletionProposal(
@@ -251,11 +250,8 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		int prop_type = determineAssistType(node, doc, offset);
 		switch (prop_type) {
 		case F_ADD_ATTRIB:
-			// return computeAddAttributeProposal(F_INFER_BY_OBJECT, node,
-			// offset,
-			// doc, null, node.getXMLTagName());
-			return stubProposals((DSModel) fSourcePage.getInputContext()
-					.getModel(), "Add_Attribute", offset);
+			return computeAddAttributeProposal(node, offset, doc, null, node
+					.getXMLTagName());
 		case F_OPEN_TAG:
 			return stubProposals((DSModel) fSourcePage.getInputContext()
 					.getModel(), "Open Tag", offset);
@@ -263,6 +259,54 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			return computeAddChildProposal(node, offset, doc, null);
 		}
 		return null;
+	}
+
+	private ICompletionProposal[] computeAddAttributeProposal(
+			IDocumentElementNode node, int offset, IDocument doc,
+			String filter, String tag) {
+
+		ArrayList proposals = new ArrayList();
+		String[] attributesList = this.getAttributesList(tag);
+		
+		if (attributesList == null || attributesList.length == 0) {
+			return null;
+		} else {
+			for (int i = 0; i < attributesList.length; i++) {
+				String attribute = attributesList[i];
+				// Lists all attributes already in use
+				IDocumentAttributeNode[] nodeAttributes = node
+						.getNodeAttributes();
+				boolean EqualToAnyItem = false;
+				for (int j = 0; j < nodeAttributes.length; j++) {
+					IDocumentAttributeNode documentAttributeNode = nodeAttributes[j];
+					EqualToAnyItem |= attribute.equals(documentAttributeNode
+							.getAttributeName());
+
+				}
+				// If the attribute is not in use, add it in the
+				// CompletionProposal
+				if (EqualToAnyItem == false) {
+					DSAttrCompletionProposal dsAttrCompletionProposal = new DSAttrCompletionProposal(
+							attributesList[i], offset, 0);
+					proposals.add(dsAttrCompletionProposal);	
+				}
+				
+
+			}
+		}
+
+		// cast the proposal elements to ICompletionProposal
+		if (proposals.size() > 0) {
+			ICompletionProposal proposalsArray[] = new ICompletionProposal[proposals
+					.size()];
+			for (int i = 0; i < proposals.size(); i++) {
+				proposalsArray[i] = (ICompletionProposal) proposals.get(i);
+
+			}
+			return proposalsArray;
+		} else {
+			return null;
+		}
 	}
 
 	private ICompletionProposal[] computeAddChildProposal(
@@ -278,6 +322,47 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		} else {
 			return null;
 		}
+	}
+	
+	private String[] getAttributesList(String element) {
+		String[] attributes = null;
+		if (element != null) {
+			if (element.equals(IDSConstants.ELEMENT_COMPONENT)) {
+				attributes = new String[] {
+						IDSConstants.ATTRIBUTE_COMPONENT_ENABLED,
+						IDSConstants.ATTRIBUTE_COMPONENT_FACTORY,
+						IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE,
+						IDSConstants.ATTRIBUTE_COMPONENT_NAME };
+			} else if (element.equals(IDSConstants.ELEMENT_IMPLEMENTATION)) {
+				attributes = new String[] { IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS };
+
+			} else if (element.equals(IDSConstants.ELEMENT_PROPERTIES)) {
+				attributes = new String[] { IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY };
+
+			} else if (element.equals(IDSConstants.ELEMENT_PROPERTY)) {
+				attributes = new String[] {
+						IDSConstants.ATTRIBUTE_PROPERTY_NAME,
+						IDSConstants.ATTRIBUTE_PROPERTY_TYPE,
+						IDSConstants.ATTRIBUTE_PROPERTY_VALUE };
+
+			} else if (element.equals(IDSConstants.ELEMENT_PROVIDE)) {
+				attributes = new String[] { IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE };
+
+			} else if (element.equals(IDSConstants.ELEMENT_REFERENCE)) {
+				attributes = new String[] {
+						IDSConstants.ATTRIBUTE_REFERENCE_BIND,
+						IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY,
+						IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE,
+						IDSConstants.ATTRIBUTE_REFERENCE_NAME,
+						IDSConstants.ATTRIBUTE_REFERENCE_POLICY,
+						IDSConstants.ATTRIBUTE_REFERENCE_TARGET,
+						IDSConstants.ATTRIBUTE_REFERENCE_UNBIND };
+
+			} else if (element.equals(IDSConstants.ELEMENT_SERVICE)) {
+				attributes = new String[] { IDSConstants.ATTRIBUTE_SERVICE_FACTORY };
+			}
+		}
+		return attributes;
 	}
 
 	private ICompletionProposal[] computeRootNodeProposals(

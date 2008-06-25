@@ -74,7 +74,7 @@ public class DSCompletionProposal implements ICompletionProposal {
 		case IDSConstants.TYPE_IMPLEMENTATION:
 			return IDSConstants.ELEMENT_IMPLEMENTATION;
 
-		case IDSConstants.TYPE_ROOT:
+		case IDSConstants.TYPE_COMPONENT:
 			return IDSConstants.ELEMENT_COMPONENT;
 
 		default:
@@ -93,7 +93,7 @@ public class DSCompletionProposal implements ICompletionProposal {
 			return SharedImages.getImage(SharedImages.DESC_PROVIDE);
 		} else if (fObject.getType() == IDSConstants.TYPE_REFERENCE) {
 			return SharedImages.getImage(SharedImages.DESC_REFERENCE);
-		} else if (fObject.getType() == IDSConstants.TYPE_ROOT) {
+		} else if (fObject.getType() == IDSConstants.TYPE_COMPONENT) {
 			return SharedImages.getImage(SharedImages.DESC_ROOT);
 		} else if (fObject.getType() == IDSConstants.TYPE_SERVICE) {
 			return SharedImages.getImage(SharedImages.DESC_SERVICE);
