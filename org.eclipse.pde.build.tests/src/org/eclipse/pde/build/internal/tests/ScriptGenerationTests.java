@@ -544,4 +544,11 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertResourceFile(featureFolder, "F_1.0.0.jar");
 		assertResourceFile(fooFolder, "foo_1.0.0.jar");
 	}
+	
+	public void testBug237475() throws Exception {
+		IFolder buildFolder = newTest("237475");
+		
+		Utils.generateFeature(buildFolder, "f", new String[] {"opt;optional=true"}, new String[] { "org.eclipse.osgi"} );
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f"));
+	}
 }

@@ -207,9 +207,9 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 				nestedFeature = getSite(false).findFeature(extraEntries[0], featureVersion, true);
 				generateSourceFeature(nestedFeature, featureId, extraEntries);
 			}
-			nestedFeature = getSite(false).findFeature(featureId, featureVersion, true);
 
 			try {
+				nestedFeature = getSite(false).findFeature(featureId, featureVersion, true);
 				generate(nestedFeature, false);
 			} catch (CoreException exception) {
 				absorbExceptionIfOptionalFeature(referencedFeatures[i], exception);
