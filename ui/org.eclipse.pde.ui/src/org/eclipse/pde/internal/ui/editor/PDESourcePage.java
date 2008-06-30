@@ -127,7 +127,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	private ISortableContentOutlinePage fOutlinePage;
 	private ISelectionChangedListener fOutlineSelectionChangedListener;
 	private Object fSelection;
-	private KeyBindingSupportForAssistant fKeyBindingSupportForAssistant;
 
 	public PDESourcePage(PDEFormEditor editor, String id, String title) {
 		fId = id;
@@ -159,11 +158,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		}
 		if (isSelectionListener())
 			getEditor().getSite().getSelectionProvider().removeSelectionChangedListener(this);
-
-		if (fKeyBindingSupportForAssistant != null) {
-			fKeyBindingSupportForAssistant.dispose();
-			fKeyBindingSupportForAssistant = null;
-		}
 
 		super.dispose();
 	}
@@ -427,12 +421,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		contentAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssist", contentAssist); //$NON-NLS-1$
 		markAsStateDependentAction("ContentAssist", true); //$NON-NLS-1$
-		ISourceViewer sourceViewer = getSourceViewer();
-		if (sourceViewer instanceof ISourceViewerExtension4) {
-			ContentAssistantFacade contentAssistantFacade = ((ISourceViewerExtension4) sourceViewer).getContentAssistantFacade();
-			if (contentAssistantFacade != null)
-				fKeyBindingSupportForAssistant = new KeyBindingSupportForAssistant(contentAssistantFacade);
-		}
 	}
 
 	public final void selectionChanged(SelectionChangedEvent event) {
