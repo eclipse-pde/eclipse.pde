@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
 
 /**
@@ -77,5 +78,14 @@ public class DSProperties extends DSObject implements IDSProperties {
 	 */
 	public String getEntry(){
 		return getXMLAttributeValue(ATTRIBUTE_PROPERTIES_ENTRY);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.IDSObject#getAttributesNames()
+	 */
+	public String[] getAttributesNames() {
+		return new String[] { IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY };
 	}
 }

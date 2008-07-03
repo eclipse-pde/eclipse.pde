@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ds.core.text;
 
 import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.pde.internal.ds.core.IDSObject;
 
@@ -80,6 +81,15 @@ public class DSImplementation extends DSObject implements IDSImplementation {
 	 */
 	public String getClassName(){
 		return getXMLAttributeValue(ATTRIBUTE_IMPLEMENTATION_CLASS);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getClassName()
+	 */
+	public String[] getAttributesNames() {
+		return new String[] { IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS };
 	}
 	
 

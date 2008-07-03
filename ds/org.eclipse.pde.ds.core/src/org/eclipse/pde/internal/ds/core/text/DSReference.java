@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSReference;
 
 public class DSReference extends DSObject implements IDSReference {
@@ -160,5 +161,19 @@ public class DSReference extends DSObject implements IDSReference {
 	 */
 	public String getReferenceUnbind(){
 		return getXMLAttributeValue(ATTRIBUTE_REFERENCE_UNBIND);
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.IDSObject#getAttributesNames()
+	 */
+	public String[] getAttributesNames() {
+		return new String[] { IDSConstants.ATTRIBUTE_REFERENCE_BIND,
+				IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY,
+				IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE,
+				IDSConstants.ATTRIBUTE_REFERENCE_NAME,
+				IDSConstants.ATTRIBUTE_REFERENCE_POLICY,
+				IDSConstants.ATTRIBUTE_REFERENCE_TARGET,
+				IDSConstants.ATTRIBUTE_REFERENCE_UNBIND };
 	}
 }

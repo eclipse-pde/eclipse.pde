@@ -115,4 +115,13 @@ public class DSService extends DSObject implements IDSService {
 	public void removeProvidedService(IDSProvide provide) {
 		this.removeChildNode(provide, true);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.IDSObject#getAttributesNames()
+	 */
+	public String[] getAttributesNames() {
+		return new String[] { IDSConstants.ATTRIBUTE_SERVICE_FACTORY };
+	}
 }

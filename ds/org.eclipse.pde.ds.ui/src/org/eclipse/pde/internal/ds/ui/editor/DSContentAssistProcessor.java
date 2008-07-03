@@ -32,10 +32,10 @@ import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSModel;
+import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
-import org.eclipse.pde.internal.ds.core.text.DSObject;
 import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.editor.contentassist.TypeCompletionProposal;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
@@ -103,17 +103,31 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		DSContentAssistText caText = DSContentAssistText.parse(offset, doc);
 
 		if (caText != null) {
-			return stubProposals(model, "CAText", offset);
-			// return computeCATextProposal(doc, offset, caText);
+			return computeCATextProposal(doc, offset, caText);
 		} else if (fRange instanceof IDocumentAttributeNode) {
 			return computeCompletionProposal((IDocumentAttributeNode) fRange,
 					offset, doc);
 		} else if (fRange instanceof IDocumentElementNode) {
 			return computeCompletionProposal((IDocumentElementNode) fRange,
 					offset, doc);
-		} else if (fRange instanceof IDocumentTextNode) {
-			// TODO How do I reach here?! by rafael
-			return stubProposals(model, "Text", offset);
+			// } else if (fRange instanceof IDocumentTextNode) {
+			// return stubProposals(model, "Text", offset);
+		}
+
+		return null;
+	}
+
+	private ICompletionProposal[] computeCATextProposal(IDocument doc,
+			int offset, DSContentAssistText caText) {
+		fRange = fSourcePage.getRangeElement(offset, true);
+		if ((fRange != null) && (fRange instanceof IDocumentTextNode)) {
+			// We have a text node.
+			// Get its parent element
+			fRange = ((IDocumentTextNode) fRange).getEnclosingElement();
+		}
+		if ((fRange != null) && (fRange instanceof IDocumentElementNode)) {
+			return computeAddChildProposal((IDocumentElementNode) fRange,
+					caText.getStartOffset(), doc, caText.getText());
 		}
 
 		return null;
@@ -128,12 +142,17 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		if (guess == null)
 			return null;
 
+		// Element name
 		String element = guess[0];
+		// Attr name
 		String attribute = guess[1];
+		// Attr value
 		String attrValue = guess[2];
+		
 		int attrValueLength = attrValue == null ? 0 : attrValue.length();
 		int startOffset = offests[2] + 1;
 
+		// Component
 		if (element != null && element.equals(IDSConstants.ELEMENT_COMPONENT)) {
 			boolean isAttrImmediate = attribute == null ? false : attribute
 					.equals(IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE);
@@ -143,6 +162,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 				return this.getCompletionBooleans(startOffset, attrValueLength);
 			}
+			// Service
 		} else if (element != null
 				&& element.equals(IDSConstants.ELEMENT_SERVICE)) {
 			boolean isAttrServFactory = attribute == null ? false : attribute
@@ -150,6 +170,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			if (isAttrServFactory) {
 				return this.getCompletionBooleans(startOffset, attrValueLength);
 			}
+			// Reference
 		} else if (element != null
 				&& element.equals(IDSConstants.ELEMENT_REFERENCE)) {
 			boolean isAttrCardinality = attribute == null ? false : attribute
@@ -163,6 +184,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 				return getReferencePolicyValues(attrValueLength, startOffset);
 
 			}
+			// Property
 		} else if (element != null
 				&& element.equals(IDSConstants.ELEMENT_PROPERTY)) {
 			boolean isAttrType = attribute == null ? false : attribute
@@ -175,6 +197,14 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		return null;
 	}
 
+	/**
+	 * Returns completion proposal with permitted values for Reference`s policy
+	 * attribute
+	 * 
+	 * @param attrValueLength
+	 * @param startOffset
+	 * @return ICompletionProposal array with completion proposals
+	 */
 	private ICompletionProposal[] getReferencePolicyValues(int attrValueLength,
 			int startOffset) {
 		return new ICompletionProposal[] {
@@ -252,9 +282,9 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		case F_ADD_ATTRIB:
 			return computeAddAttributeProposal(node, offset, doc, null, node
 					.getXMLTagName());
-		case F_OPEN_TAG:
-			return stubProposals((DSModel) fSourcePage.getInputContext()
-					.getModel(), "Open Tag", offset);
+			// case F_OPEN_TAG:
+			// return stubProposals((DSModel) fSourcePage.getInputContext()
+			// .getModel(), "Open Tag", offset);
 		case F_ADD_CHILD:
 			return computeAddChildProposal(node, offset, doc, null);
 		}
@@ -266,8 +296,12 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			String filter, String tag) {
 
 		ArrayList proposals = new ArrayList();
-		String[] attributesList = this.getAttributesList(tag);
-		
+
+		if (!(node instanceof IDSObject)) {
+			return null;
+		}
+		String[] attributesList = ((IDSObject) node).getAttributesNames();
+
 		if (attributesList == null || attributesList.length == 0) {
 			return null;
 		} else {
@@ -288,9 +322,9 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 				if (EqualToAnyItem == false) {
 					DSAttrCompletionProposal dsAttrCompletionProposal = new DSAttrCompletionProposal(
 							attributesList[i], offset, 0);
-					proposals.add(dsAttrCompletionProposal);	
+					addFilteredProposal(offset, proposals,
+							dsAttrCompletionProposal, filter);
 				}
-				
 
 			}
 		}
@@ -323,47 +357,6 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			return null;
 		}
 	}
-	
-	private String[] getAttributesList(String element) {
-		String[] attributes = null;
-		if (element != null) {
-			if (element.equals(IDSConstants.ELEMENT_COMPONENT)) {
-				attributes = new String[] {
-						IDSConstants.ATTRIBUTE_COMPONENT_ENABLED,
-						IDSConstants.ATTRIBUTE_COMPONENT_FACTORY,
-						IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE,
-						IDSConstants.ATTRIBUTE_COMPONENT_NAME };
-			} else if (element.equals(IDSConstants.ELEMENT_IMPLEMENTATION)) {
-				attributes = new String[] { IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS };
-
-			} else if (element.equals(IDSConstants.ELEMENT_PROPERTIES)) {
-				attributes = new String[] { IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY };
-
-			} else if (element.equals(IDSConstants.ELEMENT_PROPERTY)) {
-				attributes = new String[] {
-						IDSConstants.ATTRIBUTE_PROPERTY_NAME,
-						IDSConstants.ATTRIBUTE_PROPERTY_TYPE,
-						IDSConstants.ATTRIBUTE_PROPERTY_VALUE };
-
-			} else if (element.equals(IDSConstants.ELEMENT_PROVIDE)) {
-				attributes = new String[] { IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE };
-
-			} else if (element.equals(IDSConstants.ELEMENT_REFERENCE)) {
-				attributes = new String[] {
-						IDSConstants.ATTRIBUTE_REFERENCE_BIND,
-						IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY,
-						IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE,
-						IDSConstants.ATTRIBUTE_REFERENCE_NAME,
-						IDSConstants.ATTRIBUTE_REFERENCE_POLICY,
-						IDSConstants.ATTRIBUTE_REFERENCE_TARGET,
-						IDSConstants.ATTRIBUTE_REFERENCE_UNBIND };
-
-			} else if (element.equals(IDSConstants.ELEMENT_SERVICE)) {
-				attributes = new String[] { IDSConstants.ATTRIBUTE_SERVICE_FACTORY };
-			}
-		}
-		return attributes;
-	}
 
 	private ICompletionProposal[] computeRootNodeProposals(
 			IDocumentElementNode node, int offset, String filter) {
@@ -372,21 +365,21 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 		IDSComponent component = model.getDSComponent();
 
-		proposals.add(new DSCompletionProposal(model.getFactory()
-				.createProperty(), offset));
-		proposals.add(new DSCompletionProposal(model.getFactory()
-				.createProperties(), offset));
-		proposals.add(new DSCompletionProposal(model.getFactory()
-				.createReference(), offset));
+		addFilteredProposal(offset, proposals, new DSCompletionProposal(model
+				.getFactory().createProperty(), offset), filter);
+		addFilteredProposal(offset, proposals, new DSCompletionProposal(model
+				.getFactory().createProperties(), offset), filter);
+		addFilteredProposal(offset, proposals, new DSCompletionProposal(model
+				.getFactory().createReference(), offset), filter);
 		boolean hasService = component.getService() != null;
 		if (!hasService) {
-			proposals.add(new DSCompletionProposal(model.getFactory()
-					.createService(), offset));
+			addFilteredProposal(offset, proposals, new DSCompletionProposal(
+					model.getFactory().createService(), offset), filter);
 		}
 
 		if (component.getImplementation() == null) {
-			proposals.add(new DSCompletionProposal(model.getFactory()
-					.createImplementation(), offset));
+			addFilteredProposal(offset, proposals, new DSCompletionProposal(
+					model.getFactory().createImplementation(), offset), filter);
 		}
 
 		ICompletionProposal[] proposalsArray = new DSCompletionProposal[proposals
@@ -396,6 +389,28 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		}
 		return proposalsArray;
 
+	}
+
+	private void addFilteredProposal(int offset, ArrayList proposals,
+			DSCompletionProposal proposal, String filter) {
+		if (filter == null || filter.length() == 0) {
+			proposals.add(proposal);
+		} else {
+			if (filter.regionMatches(true, 0, proposal.getDisplayString(), 0,
+					filter.length()))
+				proposals.add(proposal);
+		}
+	}
+
+	private void addFilteredProposal(int offset, ArrayList proposals,
+			DSAttrCompletionProposal proposal, String filter) {
+		if (filter == null || filter.length() == 0) {
+			proposals.add(proposal);
+		} else {
+			if (filter.regionMatches(true, 0, proposal.getDisplayString(), 0,
+					filter.length()))
+				proposals.add(proposal);
+		}
 	}
 
 	private int determineAssistType(IDocumentElementNode node, IDocument doc,
@@ -495,40 +510,46 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		return new String[] { node, attr, attVal };
 	}
 
-	/**
-	 * This is a temporary method to help tracking the Content Assist Range
-	 * (Should be remove before this class is done)
-	 * 
-	 * @param model
-	 * @param string
-	 * @return
-	 */
-	private DSCompletionProposal[] stubProposals(IBaseModel model,
-			String string, int offset) {
-		DSObject component = new DSObject((DSModel) model, "Stub:" + string) {
-
-			public boolean canAddChild(int objectType) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			public boolean canBeParent() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			public String getName() {
-				return this.getXMLTagName();
-			}
-
-			public int getType() {
-				return -1;
-			}
-		};
-		DSCompletionProposal[] proposals = new DSCompletionProposal[] { new DSCompletionProposal(
-				component, offset) };
-		return proposals;
-	}
+// /**
+// * This is a temporary method to help tracking the Content Assist Range
+	// * (Should be remove before this class is done)
+	// *
+	// * @param model
+	// * @param string
+	// * @return
+	// */
+	// private DSCompletionProposal[] stubProposals(IBaseModel model,
+	// String string, int offset) {
+	// DSObject component = new DSObject((DSModel) model, "Stub:" + string) {
+	//
+	// public boolean canAddChild(int objectType) {
+	// // TODO Auto-generated method stub
+	// return false;
+	// }
+	//
+	// public boolean canBeParent() {
+	// // TODO Auto-generated method stub
+	// return false;
+	// }
+	//
+	// public String getName() {
+	// return this.getXMLTagName();
+	// }
+	//
+	// public int getType() {
+	// return -1;
+	// }
+	//
+	// public String[] getAttributesNames() {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
+	// };
+	// DSCompletionProposal[] proposals = new DSCompletionProposal[] { new
+	// DSCompletionProposal(
+	// component, offset) };
+	// return proposals;
+	// }
 
 	private void assignRange(int offset) {
 		fRange = fSourcePage.getRangeElement(offset, true);

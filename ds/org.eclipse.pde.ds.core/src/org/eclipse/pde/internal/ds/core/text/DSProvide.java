@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 
 public class DSProvide extends DSObject implements IDSProvide {
@@ -69,5 +70,14 @@ public class DSProvide extends DSObject implements IDSProvide {
 	 */
 	public String getInterface(){
 		return getXMLAttributeValue(ATTRIBUTE_PROVIDE_INTERFACE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.IDSObject#getAttributesNames()
+	 */
+	public String[] getAttributesNames() {
+		return new String[] { IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE };
 	}
 }

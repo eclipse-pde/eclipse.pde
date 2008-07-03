@@ -58,4 +58,12 @@ public interface IDSObject extends IDocumentObject {
 	 * @return true if this object can have children.
 	 */
 	public abstract boolean canBeParent();
+	
+	
+	/**
+	 * Returns all attributes` names of this element
+	 * 
+	 * @return an array of String containing all attributes` names
+	 */
+	public abstract String[] getAttributesNames();
 }

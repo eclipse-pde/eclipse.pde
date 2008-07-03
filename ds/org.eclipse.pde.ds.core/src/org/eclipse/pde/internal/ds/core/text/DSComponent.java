@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ds.core.text;
 import java.util.ArrayList;
 
 import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
@@ -318,6 +319,18 @@ public class DSComponent extends DSObject implements IDSComponent {
 	 */
 	public void removeService(IDSService service) {
 		this.removeChildNode(service, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ds.core.IDSObject#getAttributesNames()
+	 */
+	public String[] getAttributesNames() {
+		return new String[] { IDSConstants.ATTRIBUTE_COMPONENT_ENABLED,
+				IDSConstants.ATTRIBUTE_COMPONENT_FACTORY,
+				IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE,
+				IDSConstants.ATTRIBUTE_COMPONENT_NAME };
 	}
 
 }

@@ -78,7 +78,7 @@ public class DSCompletionProposal implements ICompletionProposal {
 			return IDSConstants.ELEMENT_COMPONENT;
 
 		default:
-			return fObject.getName(); // TODO REMOVE!!!
+			return null; 
 		}
 	}
 
