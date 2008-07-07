@@ -23,17 +23,23 @@ import org.eclipse.swt.graphics.Point;
 
 public class DSCompletionProposal implements ICompletionProposal {
 
-	IDSObject fObject;
-	int fStartOffset;
+	private IDSObject fObject;
+	private int fStartOffset;
+	private int fLength;
 
 	public DSCompletionProposal(IDSObject object, int startOffset) {
+		this(object, startOffset, 0);
+	}
+
+	public DSCompletionProposal(IDSObject object, int startOffset, int length) {
 		fObject = object;
 		fStartOffset = startOffset;
+		fLength = length;
 	}
 
 	public void apply(IDocument document) {
 		try {
-			document.replace(fStartOffset, 0, fObject.toString());
+			document.replace(fStartOffset, fLength, fObject.toString());
 		} catch (BadLocationException e) {
 			// DEBUG
 			// e.printStackTrace();
@@ -78,7 +84,7 @@ public class DSCompletionProposal implements ICompletionProposal {
 			return IDSConstants.ELEMENT_COMPONENT;
 
 		default:
-			return null; 
+			return null;
 		}
 	}
 

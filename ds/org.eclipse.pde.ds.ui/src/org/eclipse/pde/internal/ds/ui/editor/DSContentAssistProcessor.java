@@ -365,21 +365,26 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 		IDSComponent component = model.getDSComponent();
 
+		int length = filter != null ? filter.length() : 0;
+		
 		addFilteredProposal(offset, proposals, new DSCompletionProposal(model
-				.getFactory().createProperty(), offset), filter);
+				.getFactory().createProperty(), offset, length),
+				filter);
 		addFilteredProposal(offset, proposals, new DSCompletionProposal(model
-				.getFactory().createProperties(), offset), filter);
+				.getFactory().createProperties(), offset, length),
+				filter);
 		addFilteredProposal(offset, proposals, new DSCompletionProposal(model
-				.getFactory().createReference(), offset), filter);
+				.getFactory().createReference(), offset, length),
+				filter);
 		boolean hasService = component.getService() != null;
 		if (!hasService) {
 			addFilteredProposal(offset, proposals, new DSCompletionProposal(
-					model.getFactory().createService(), offset), filter);
+					model.getFactory().createService(), offset, length), filter);
 		}
 
 		if (component.getImplementation() == null) {
 			addFilteredProposal(offset, proposals, new DSCompletionProposal(
-					model.getFactory().createImplementation(), offset), filter);
+					model.getFactory().createImplementation(), offset, length), filter);
 		}
 
 		ICompletionProposal[] proposalsArray = new DSCompletionProposal[proposals
