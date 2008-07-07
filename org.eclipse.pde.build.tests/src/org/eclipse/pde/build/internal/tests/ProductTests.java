@@ -13,9 +13,12 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 
+import org.apache.tools.ant.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.build.internal.tests.ant.AntUtils;
+import org.eclipse.pde.build.internal.tests.ant.TestBrandTask;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 
@@ -112,5 +115,33 @@ public class ProductTests extends PDETestCase {
 		
 		IFile iniFile = buildFolder.getFile("tmp/eclipse/test.app/Contents/MacOS/test.ini");
 		assertLogContainsLine(iniFile, "-Dfoo=bar");
+	}
+	
+	public void test237922() throws Exception {
+		IFolder buildFolder = newTest("237922");
+		
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"rcp"});
+		
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "F");
+		properties.put("product", "/rcp/rcp.product");
+		properties.put("configs", "win32,win32,x86");
+		
+		generateScripts(buildFolder, properties);
+		
+			
+		IFile assembleScript = buildFolder.getFile("assemble.F.win32.win32.x86.xml");
+		
+		Map alternateTasks = new HashMap();
+		alternateTasks.put("eclipse.brand", "org.eclipse.pde.build.internal.tests.ant.TestBrandTask");
+		Project antProject = assertValidAntScript(assembleScript, alternateTasks);
+		Target main = (Target) antProject.getTargets().get("main");
+		assertNotNull(main);
+		TestBrandTask brand = (TestBrandTask) AntUtils.getFirstChildByName(main, "eclipse.brand");
+		assertNotNull(brand);
+		
+		assertTrue(brand.icons.indexOf("mail.ico") > 0);
 	}
 }

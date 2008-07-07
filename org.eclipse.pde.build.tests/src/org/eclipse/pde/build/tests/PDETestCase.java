@@ -26,7 +26,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifier;
 import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
-import org.eclipse.pde.build.internal.tests.AntUtils;
+import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
@@ -280,7 +280,11 @@ public abstract class PDETestCase extends TestCase {
 	 * @param buildXML
 	 * @throws Exception
 	 */
+	
 	public static Project assertValidAntScript(IFile buildXML) throws Exception {
+		return assertValidAntScript(buildXML, null);
+	}
+	public static Project assertValidAntScript(IFile buildXML, Map alternateTasks) throws Exception {
 		assertResourceFile((IFolder) buildXML.getParent(), buildXML.getName());
 
 		// Parse the build file using ant
@@ -293,7 +297,7 @@ public abstract class PDETestCase extends TestCase {
 		project.addReference("ant.targets", context.getTargets());
 		context.setCurrentTargets(new HashMap());
 
-		AntUtils.setupProject(project);
+		AntUtils.setupProject(project, alternateTasks);
 		project.init();
 
 		// this will throw an exception if it is not a valid ant script

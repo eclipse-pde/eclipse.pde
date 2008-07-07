@@ -365,6 +365,12 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	public ProductFile loadProduct(String product) throws CoreException {
+		//the ProductFile uses the OS to determine which icons to return, we don't care so can use null
+		//this is better since this generator may be used for multiple OS's
+		return loadProduct(product, null);
+	}	
+	
+	public ProductFile loadProduct(String product, String os) throws CoreException {
 		if (product == null || product.startsWith("${")) { //$NON-NLS-1$
 			return null;
 		}
@@ -383,10 +389,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 				}
 			}
 		}
-
-		//the ProductFile uses the OS to determine which icons to return, we don't care so can use null
-		//this is better since this generator may be used for multiple OS's
-		return new ProductFile(f.getAbsolutePath(), null);
+		return new ProductFile(f.getAbsolutePath(), os);
 	}
 	
 	//Find a file in a bundle or a feature.

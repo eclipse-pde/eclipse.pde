@@ -96,7 +96,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	public void generate() {
 		try {
-			productFile = loadProduct(product);
+			// Note that we must pass the OS information in to load product
+			// so that any icon files can be calculated for the 
+			// generateBrandingCalls.
+			productFile = loadProduct(product, configInfo.getOs());
 		} catch (CoreException e) {
 			//ignore
 		}
