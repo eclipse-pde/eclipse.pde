@@ -133,6 +133,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 		monitor.subTask(message);
 		
 		DSErrorReporter reporter = new DSErrorReporter(file);
+		DefaultSAXParser.parse(file, reporter);
 		if (reporter != null) {
 			reporter.validateContent(monitor);
 			monitor.subTask(Messages.DSBuilder_updating);
