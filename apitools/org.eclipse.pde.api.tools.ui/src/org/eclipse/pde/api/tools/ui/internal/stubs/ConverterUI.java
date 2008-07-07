@@ -140,118 +140,123 @@ public class ConverterUI extends Dialog {
 	}
 
 	protected void buttonPressed(int buttonId) {
-		switch(buttonId) {
-			case KEEP_PRIVATE_ID :
-			case KEEP_PROTECTED_ID :
-			case KEEP_PUBLIC_ID :
-			case KEEP_PACKAGE_ID :
-			case KEEP_SYNTHETIC_ID :
-			case KEEP_ALL_ID :
-			case KEEP_NONE_ID :
-				
-				break;
-			case OUTPUT_ID :
-				DirectoryDialog directoryDialog = new DirectoryDialog(new Shell(), SWT.PRIMARY_MODAL);
-				String result = directoryDialog.open();
-				this.outputText.setText(result == null ? "" : result); //$NON-NLS-1$
-				this.output = result;
-				this.getShell().setFocus();
-				break;
-			case INPUT_ID :
-				result = null;
-				if (this.isFileInput) {
-					FileDialog fileDialog = new FileDialog(new Shell(), SWT.PRIMARY_MODAL);
-					result = fileDialog.open();
-				} else {
-					directoryDialog = new DirectoryDialog(new Shell(), SWT.PRIMARY_MODAL);
-					result = directoryDialog.open();
-				}
-				this.inputText.setText(result == null ? "" : result); //$NON-NLS-1$
-				this.input = result;
-				this.getShell().setFocus();
-				break;
-			case VERBOSE_ID :
-			case COMPRESS_ID :
-			case RECURSE_ID :
-			case REFS_ID :
-			case SKIP_RESOURCE_FILES_ID :
-			case ALL_ID :
-				String commandLineOption = getCommandLineOptions(buttonId);
-				Button button = (Button) this.options.get(new Integer(buttonId));
-				if (button.getSelection()) {
-					if (!this.commandLine.contains(commandLineOption)) {
-						this.addToCommandLine(commandLineOption);
-					}
-				} else if (this.commandLine.contains(commandLineOption)) {
-					this.removeFromCommandLine(commandLineOption);
-				}
-				break;
-			case CLASS_FILES_ID :
-				commandLineOption = getCommandLineOptions(buttonId);
-				button = (Button) this.options.get(new Integer(buttonId));
-				if (button.getSelection()) {
-					// check if archives option is set
-					Button button2 = (Button) this.options.get(new Integer(ARCHIVE_FILES_ID));
-					if (button2.getSelection()) {
-						this.removeFromCommandLine(getCommandLineOptions(ARCHIVE_FILES_ID));
-						this.removeFromCommandLine(getCommandLineOptions(CLASS_FILES_ID));
-						this.addToCommandLine(getCommandLineOptions(ALL_ID));
+		Shell parent = new Shell();
+		try {
+			switch(buttonId) {
+				case KEEP_PRIVATE_ID :
+				case KEEP_PROTECTED_ID :
+				case KEEP_PUBLIC_ID :
+				case KEEP_PACKAGE_ID :
+				case KEEP_SYNTHETIC_ID :
+				case KEEP_ALL_ID :
+				case KEEP_NONE_ID :
+					
+					break;
+				case OUTPUT_ID :
+					DirectoryDialog directoryDialog = new DirectoryDialog(parent, SWT.PRIMARY_MODAL);
+					String result = directoryDialog.open();
+					this.outputText.setText(result == null ? "" : result); //$NON-NLS-1$
+					this.output = result;
+					this.getShell().setFocus();
+					break;
+				case INPUT_ID :
+					result = null;
+					if (this.isFileInput) {
+						FileDialog fileDialog = new FileDialog(parent, SWT.PRIMARY_MODAL);
+						result = fileDialog.open();
 					} else {
-						this.addToCommandLine(getCommandLineOptions(CLASS_FILES_ID));
+						directoryDialog = new DirectoryDialog(parent, SWT.PRIMARY_MODAL);
+						result = directoryDialog.open();
 					}
-				} else {
-					this.removeFromCommandLine(getCommandLineOptions(CLASS_FILES_ID));
-				}
-				break;
-			case ARCHIVE_FILES_ID :
-				commandLineOption = getCommandLineOptions(buttonId);
-				button = (Button) this.options.get(new Integer(buttonId));
-				if (button.getSelection()) {
-					// check if archives option is set
-					Button button2 = (Button) this.options.get(new Integer(CLASS_FILES_ID));
-					if (button2.getSelection()) {
-						this.removeFromCommandLine(getCommandLineOptions(ARCHIVE_FILES_ID));
-						this.removeFromCommandLine(getCommandLineOptions(CLASS_FILES_ID));
-						this.addToCommandLine(getCommandLineOptions(ALL_ID));
+					this.inputText.setText(result == null ? "" : result); //$NON-NLS-1$
+					this.input = result;
+					this.getShell().setFocus();
+					break;
+				case VERBOSE_ID :
+				case COMPRESS_ID :
+				case RECURSE_ID :
+				case REFS_ID :
+				case SKIP_RESOURCE_FILES_ID :
+				case ALL_ID :
+					String commandLineOption = getCommandLineOptions(buttonId);
+					Button button = (Button) this.options.get(new Integer(buttonId));
+					if (button.getSelection()) {
+						if (!this.commandLine.contains(commandLineOption)) {
+							this.addToCommandLine(commandLineOption);
+						}
+					} else if (this.commandLine.contains(commandLineOption)) {
+						this.removeFromCommandLine(commandLineOption);
+					}
+					break;
+				case CLASS_FILES_ID :
+					commandLineOption = getCommandLineOptions(buttonId);
+					button = (Button) this.options.get(new Integer(buttonId));
+					if (button.getSelection()) {
+						// check if archives option is set
+						Button button2 = (Button) this.options.get(new Integer(ARCHIVE_FILES_ID));
+						if (button2.getSelection()) {
+							this.removeFromCommandLine(getCommandLineOptions(ARCHIVE_FILES_ID));
+							this.removeFromCommandLine(getCommandLineOptions(CLASS_FILES_ID));
+							this.addToCommandLine(getCommandLineOptions(ALL_ID));
+						} else {
+							this.addToCommandLine(getCommandLineOptions(CLASS_FILES_ID));
+						}
 					} else {
-						this.addToCommandLine(getCommandLineOptions(ARCHIVE_FILES_ID));
+						this.removeFromCommandLine(getCommandLineOptions(CLASS_FILES_ID));
 					}
-				} else {
-					this.removeFromCommandLine(getCommandLineOptions(ARCHIVE_FILES_ID));
-				}
-				break;
-			case IDialogConstants.OK_ID :
-				// run button
-				// build up the command line
-				String text = this.outputText.getText();
-				if (text != null && this.output == null) {
-					this.output = text;
-				}
-				text = this.inputText.getText();
-				if (text != null && this.input == null) {
-					this.input = text;
-				}
-				if (this.input != null) {
-					this.addToCommandLine(getCommandLineOptions(INPUT_ID));
-					this.addToCommandLine(this.input);
-				}
-				if (this.output != null) {
-					this.addToCommandLine(getCommandLineOptions(OUTPUT_ID));
-					this.addToCommandLine(this.output);
-				}
-				String[] cmd = new String[this.commandLine.size()];
-				this.commandLine.toArray(cmd);
-				for (int i = 0, max = cmd.length; i < max; i++) {
-					System.out.println(cmd[i]);
-				}
-				try {
-					Converter.main(cmd);
-				} catch (RuntimeException e) {
-					ApiUIPlugin.log(e);
-				}
-			case IDialogConstants.CANCEL_ID :
-				// this is call in case of OK_ID and CANCEL_ID
-				super.buttonPressed(buttonId);
+					break;
+				case ARCHIVE_FILES_ID :
+					commandLineOption = getCommandLineOptions(buttonId);
+					button = (Button) this.options.get(new Integer(buttonId));
+					if (button.getSelection()) {
+						// check if archives option is set
+						Button button2 = (Button) this.options.get(new Integer(CLASS_FILES_ID));
+						if (button2.getSelection()) {
+							this.removeFromCommandLine(getCommandLineOptions(ARCHIVE_FILES_ID));
+							this.removeFromCommandLine(getCommandLineOptions(CLASS_FILES_ID));
+							this.addToCommandLine(getCommandLineOptions(ALL_ID));
+						} else {
+							this.addToCommandLine(getCommandLineOptions(ARCHIVE_FILES_ID));
+						}
+					} else {
+						this.removeFromCommandLine(getCommandLineOptions(ARCHIVE_FILES_ID));
+					}
+					break;
+				case IDialogConstants.OK_ID :
+					// run button
+					// build up the command line
+					String text = this.outputText.getText();
+					if (text != null && this.output == null) {
+						this.output = text;
+					}
+					text = this.inputText.getText();
+					if (text != null && this.input == null) {
+						this.input = text;
+					}
+					if (this.input != null) {
+						this.addToCommandLine(getCommandLineOptions(INPUT_ID));
+						this.addToCommandLine(this.input);
+					}
+					if (this.output != null) {
+						this.addToCommandLine(getCommandLineOptions(OUTPUT_ID));
+						this.addToCommandLine(this.output);
+					}
+					String[] cmd = new String[this.commandLine.size()];
+					this.commandLine.toArray(cmd);
+					for (int i = 0, max = cmd.length; i < max; i++) {
+						System.out.println(cmd[i]);
+					}
+					try {
+						Converter.main(cmd);
+					} catch (RuntimeException e) {
+						ApiUIPlugin.log(e);
+					}
+				case IDialogConstants.CANCEL_ID :
+					// this is call in case of OK_ID and CANCEL_ID
+					super.buttonPressed(buttonId);
+			}
+		} finally {
+			parent.dispose();
 		}
 	}
 	
