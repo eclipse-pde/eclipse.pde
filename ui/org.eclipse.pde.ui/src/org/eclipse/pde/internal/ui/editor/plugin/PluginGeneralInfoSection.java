@@ -63,7 +63,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
 		createClassEntry(parent, toolkit, actionBars);
 		FormEditor formEditor = getPage().getEditor();
-		if (isBundle() && (formEditor instanceof ManifestEditor) && ((ManifestEditor) formEditor).isEquinox()) {
+		if (isBundle() && (formEditor instanceof ManifestEditor)) {
 			createLazyStart(parent, toolkit, actionBars);
 			createSingleton(parent, toolkit, actionBars, PDEUIMessages.PluginGeneralInfoSection_singleton);
 		}
