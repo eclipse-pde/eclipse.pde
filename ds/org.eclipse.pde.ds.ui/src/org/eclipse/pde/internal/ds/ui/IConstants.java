@@ -23,7 +23,7 @@ public interface IConstants {
 	public static final String CARDINALITY_ZERO_ONE = "0..1"; //$NON-NLS-1$
 	public static final String CARDINALITY_ZERO_N = "0..n"; //$NON-NLS-1$
 	public static final String CARDINALITY_ONE_ONE = "1..1"; //$NON-NLS-1$
-	public static final String CARDINALITY_ONE_N = "0..n"; //$NON-NLS-1$
+	public static final String CARDINALITY_ONE_N = "1..n"; //$NON-NLS-1$
 	
 	public static final String PROPERTY_TYPE_STRING = "String"; //$NON-NLS-1$
 	public static final String PROPERTY_TYPE_LONG = "Long"; //$NON-NLS-1$

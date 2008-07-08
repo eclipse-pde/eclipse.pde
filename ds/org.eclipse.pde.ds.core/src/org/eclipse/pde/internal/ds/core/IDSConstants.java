@@ -110,5 +110,5 @@ public interface IDSConstants {
 	public static final String VALUE_REFERENCE_CARDINALITY_ZERO_ONE = "0..1"; //$NON-NLS-1$
 	public static final String VALUE_REFERENCE_CARDINALITY_ZERO_N = "0..n"; //$NON-NLS-1$
 	public static final String VALUE_REFERENCE_CARDINALITY_ONE_ONE = "1..1"; //$NON-NLS-1$
-	public static final String VALUE_REFERENCE_CARDINALITY_ONE_N = "0..n"; //$NON-NLS-1$
+	public static final String VALUE_REFERENCE_CARDINALITY_ONE_N = "1..n"; //$NON-NLS-1$
 }

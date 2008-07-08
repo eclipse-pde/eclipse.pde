@@ -120,7 +120,7 @@ public class DSImplementationDetails extends DSAbstractDetails {
 			
 			public void browseButtonSelected(FormEntry entry) {
 				doOpenSelectionDialog(
-						IJavaElementSearchConstants.CONSIDER_INTERFACES,
+						IJavaElementSearchConstants.CONSIDER_CLASSES,
 						fClassEntry);
 			}
 			
