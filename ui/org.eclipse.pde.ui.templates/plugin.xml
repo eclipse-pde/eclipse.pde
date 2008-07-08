@@ -38,6 +38,16 @@
          </description>
       </wizard>
       <wizard
+            category="templates"
+            icon="$nl$/icons/etool16/newex_wiz.gif"
+            id="org.eclipse.pde.ui.newExtension.commonNavigator"
+            name="%newExtension.template.commonNavigator.name"
+            template="org.eclipse.pde.ui.templates.commonNavigator">
+         <description>
+            %newExtension.template.commonNavigator.desc
+         </description>
+      </wizard>
+      <wizard
             name="%newExtension.templates.multiPageEditor.name"
             template="org.eclipse.pde.ui.templates.multiPageEditor"
             icon="$nl$/icons/etool16/newex_wiz.gif"
@@ -211,6 +221,12 @@
             name="%template.popupMenus.name"
             class="org.eclipse.pde.internal.ui.templates.ide.PopupMenuTemplate"
             id="org.eclipse.pde.ui.templates.popup">
+      </template>
+      <template
+            class="org.eclipse.pde.internal.ui.templates.ide.CommonNavigatorTemplate"
+            contributingId="org.eclipse.ui.navigator.viewer"
+            id="org.eclipse.pde.ui.templates.commonNavigator"
+            name="%newExtension.template.commonNavigator.name">
       </template>
       <template
             contributingId="org.eclipse.ui.views"

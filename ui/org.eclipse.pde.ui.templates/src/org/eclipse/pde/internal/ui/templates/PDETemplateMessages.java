@@ -300,4 +300,12 @@ public class PDETemplateMessages extends NLS {
 	public static String OSGiSimpleLogServiceTemplate_startLogMessage;
 	public static String OSGiSimpleLogServiceTemplate_stopLogMessage;
 
+	//Common Navigator Template
+	public static String CommonNavigatorTemplate_viewId;
+	public static String CommonNavigatorTemplate_viewName;
+	public static String CommonNavigatorTemplate_addToPerspective;
+	public static String CommonNavigatorTemplate_defaultViewName;
+	public static String CommonNavigatorTemplate_pagedescription;
+	public static String CommonNavigatorTemplate_pagetitle;
+
 }
