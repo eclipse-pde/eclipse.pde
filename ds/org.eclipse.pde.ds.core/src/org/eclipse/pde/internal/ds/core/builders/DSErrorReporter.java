@@ -14,6 +14,8 @@ package org.eclipse.pde.internal.ds.core.builders;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
@@ -57,8 +59,8 @@ public class DSErrorReporter extends XMLErrorReporter {
 			IDSComponent component = model.getDSComponent();
 
 			validateComponent(component);
-			validateService(component.getService());
 			validateImplementation(component.getImplementation());
+			validateService(component.getService());
 			validatePropertyElements(component.getPropertyElements());
 			validateProperties(component.getPropertiesElements());
 			validateReferences(component.getReferences());
@@ -68,11 +70,13 @@ public class DSErrorReporter extends XMLErrorReporter {
 		}
 
 	}
-	
+
 	private void validateBoolean(Element element, Attr attr) {
-		String value = attr.getValue();
-		if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) //$NON-NLS-1$ //$NON-NLS-2$
-			reportIllegalAttributeValue(element, attr);
+		if (attr != null) {
+			String value = attr.getValue();
+			if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) //$NON-NLS-1$ //$NON-NLS-2$
+				reportIllegalAttributeValue(element, attr);
+		}
 	}
 
 	private void reportIllegalAttributeValue(Element element, Attr attr) {
@@ -82,42 +86,89 @@ public class DSErrorReporter extends XMLErrorReporter {
 				DSMarkerFactory.CAT_OTHER);
 	}
 
-	private void validateReferences(IDSReference[] references) {
+	public void validateReferences(IDSReference[] references) {
 		for (int i = 0; i < references.length; i++) {
 			IDSReference reference = references[i];
-
+			Element element = (Element) getDocumentRoot().getElementsByTagName(
+					reference.getXMLTagName()).item(i);
 			// Validate Required Attributes
 			if (reference.getName() == null) {
-				Element element = (Element) getDocumentRoot()
-						.getElementsByTagName(reference.getXMLTagName())
-						.item(i);
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_REFERENCE_NAME,
 						CompilerFlags.ERROR);
 			}
 
+			// Validate Required Attributes
 			if (reference.getReferenceInterface() == null) {
-				Element element = (Element) getDocumentRoot()
-						.getElementsByTagName(reference.getXMLTagName())
-						.item(i);
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE,
 						CompilerFlags.ERROR);
+			}else{
+				// Validate Resource Existence
+				validateResourceExistence(reference.getReferenceInterface(),
+						IDSConstants.ELEMENT_REFERENCE,
+						IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE, i);
 			}
+
+			// Validate Allowed Values
+			validateReferenceCardinality(element);
+			// Validate Allowed Values
+			validateReferencePolicy(element);
 
 		}
 
 	}
 
-	private void validateProperties(IDSProperties[] propertiesElements) {
+	private void validateReferencePolicy(Element element) {
+		String attribute = element
+				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_POLICY);
+		String allowedValues[] = new String[] {
+				IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC,
+				IDSConstants.VALUE_REFERENCE_POLICY_STATIC };
+
+		if (attribute != null) {
+			for (int i = 0; i < allowedValues.length; i++) {
+				if (allowedValues[i].equalsIgnoreCase(attribute)) {
+					return;
+				}
+			}
+			reportIllegalAttributeValue(element, element
+					.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_POLICY));
+		}
+
+	}
+
+	private void validateReferenceCardinality(Element element) {
+		String attribute = element
+				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY);
+		String allowedValues[] = new String[] {
+				IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N,
+				IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE,
+				IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N,
+				IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE };
+
+		if (attribute != null) {
+			for (int i = 0; i < allowedValues.length; i++) {
+				if (allowedValues[i].equalsIgnoreCase(attribute)) {
+					return;
+				}
+			}
+			reportIllegalAttributeValue(
+					element,
+					element
+							.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY));
+		}
+
+	}
+
+	public void validateProperties(IDSProperties[] propertiesElements) {
 		for (int i = 0; i < propertiesElements.length; i++) {
 			IDSProperties properties = propertiesElements[i];
-
+			Element element = (Element) getDocumentRoot().getElementsByTagName(
+					properties.getXMLTagName()).item(i);
+			
 			// Validate Required Attributes
 			if (properties.getEntry() == null) {
-				Element element = (Element) getDocumentRoot()
-						.getElementsByTagName(properties.getXMLTagName()).item(
-								i);
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY,
 						CompilerFlags.ERROR);
@@ -127,71 +178,98 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	}
 
-	private void validatePropertyElements(IDSProperty[] propertyElements) {
+	public void validatePropertyElements(IDSProperty[] propertyElements) {
 		for (int i = 0; i < propertyElements.length; i++) {
 			IDSProperty property = propertyElements[i];
-			
+			Element element = (Element) getDocumentRoot().getElementsByTagName(
+					property.getXMLTagName()).item(i);
+
 			// Validate Required Attributes
 			if (property.getName() == null) {
-				Element element = (Element) getDocumentRoot()
-						.getElementsByTagName(property.getXMLTagName()).item(i);
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_PROPERTY_NAME,
 						CompilerFlags.ERROR);
 			}
+			// Validate Allowed Values
+			validatePropertyTypeValues(element);
 
 		}
 	}
 
-	private void validateImplementation(IDSImplementation implementation) {
+	private void validatePropertyTypeValues(Element element) {
+		String attribute = element
+				.getAttribute(IDSConstants.ATTRIBUTE_PROPERTY_TYPE);
+		String allowedValues[] = new String[] {
+				IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN,
+				IDSConstants.VALUE_PROPERTY_TYPE_BYTE,
+				IDSConstants.VALUE_PROPERTY_TYPE_CHAR,
+				IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE,
+				IDSConstants.VALUE_PROPERTY_TYPE_FLOAT,
+				IDSConstants.VALUE_PROPERTY_TYPE_INTEGER,
+				IDSConstants.VALUE_PROPERTY_TYPE_LONG,
+				IDSConstants.VALUE_PROPERTY_TYPE_SHORT,
+				IDSConstants.VALUE_PROPERTY_TYPE_STRING };
+
+		if (attribute != null) {
+			for (int i = 0; i < allowedValues.length; i++) {
+				if (allowedValues[i].equalsIgnoreCase(attribute)) {
+					return;
+				}
+			}
+			reportIllegalAttributeValue(element, element
+					.getAttributeNode(IDSConstants.ATTRIBUTE_PROPERTY_TYPE));
+		}
+
+	}
+
+	public void validateImplementation(IDSImplementation implementation) {
 		if (implementation != null) {
 			String className = implementation.getClassName();
+			Element element = (Element) getDocumentRoot().getElementsByTagName(
+					implementation.getXMLTagName()).item(0);
+			
 			if (className == null) {
 				// Validate Required Attributes
-				Element element = (Element) getDocumentRoot()
-						.getElementsByTagName(implementation.getXMLTagName())
-						.item(0);
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS,
 						CompilerFlags.ERROR);
 			} else {
-				// Validate Resource existence - FIXME Not Working yet.
-// IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-// IProject[] projects = myWorkspaceRoot.getProjects();
-// IResource member = null;
-// System.out.println(className);
-				// for (int i = 0; i < projects.length; i++) {
-				// IResource temp = projects[i].findMember(className);
-				// if (temp != null) {
-				// member = temp;
-				// }
-				// }
-				//				
-				// System.out.println(member);
-				// if (member == null) {
-				// reportResourceNotFound(IDSConstants.ELEMENT_IMPLEMENTATION,
-				// IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS,
-				// className);
-				// }
+				// validate Resource Existence
+				validateResourceExistence(className,
+						IDSConstants.ELEMENT_IMPLEMENTATION,
+						IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS, 0);
 			}
 		}
 
 	}
 
-	protected void reportMissingRequiredAttribute(Element element,
-			String attName, int severity) {
+	private void validateResourceExistence(String fullyQualifiedName,
+			String elementName, String attrName, int index) {
+		try {
+			if (fProject.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject jp = JavaCore.create(fProject);
+				if (!DSJavaHelper.isOnClasspath(fullyQualifiedName, (jp))) {
+					reportResourceNotFound(elementName, attrName,
+							fullyQualifiedName, index);
+				}
+			}
+		} catch (CoreException e) {
+		}
+	}
 
+	private void reportMissingRequiredAttribute(Element element,
+			String attName, int severity) {
 		String message = NLS.bind(Messages.DSErrorReporter_requiredAttribute,
-				(new String[] { attName, element.getNodeName() })); //			
+				(new String[] { attName, element.getNodeName() }));			
 		report(message, getLine(element), severity, DSMarkerFactory.CAT_OTHER);
 	}
 
 	private void reportResourceNotFound(String elementConstant,
-			String attributeConstant, String resource) {
+			String attributeConstant, String resource, int index) {
 		Element documentRoot = getDocumentRoot();
 		NodeList elementsByTagName = documentRoot
 				.getElementsByTagName(elementConstant);
-		Element element = (Element) elementsByTagName.item(0);
+		Element element = (Element) elementsByTagName.item(index);
 
 		String[] binds = new String[] { resource, attributeConstant };
 
@@ -200,13 +278,11 @@ public class DSErrorReporter extends XMLErrorReporter {
 				DSMarkerFactory.CAT_OTHER);
 	}
 
-	private void validateComponent(IDSComponent component) {
+	public void validateComponent(IDSComponent component) {
 		if (component != null) {
+			Element element = getDocumentRoot();
 			// Validate Required Attributes
 			if (component.getAttributeName() == null) {
-				Element element = (Element) getDocumentRoot()
-						.getElementsByTagName(component.getXMLTagName())
-						.item(0);
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_COMPONENT_NAME,
 						CompilerFlags.ERROR);
@@ -220,29 +296,45 @@ public class DSErrorReporter extends XMLErrorReporter {
 						DSMarkerFactory.CAT_OTHER);
 			}
 
+			// validate boolean values
+			validateBoolean(
+					element,
+					element
+							.getAttributeNode(IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE));
+			validateBoolean(element, element
+					.getAttributeNode(IDSConstants.ATTRIBUTE_COMPONENT_ENABLED));
+
 		}
 	}
 
-	private void validateService(IDSService service) {
+	public void validateService(IDSService service) {
 		if (service != null) {
-			
-			
-			
+			Element element = (Element) getDocumentRoot().getElementsByTagName(
+					service.getXMLTagName()).item(0);
+
+			validateBoolean(element, element
+					.getAttributeNode(IDSConstants.ATTRIBUTE_SERVICE_FACTORY));
+
 			validateProvide(service.getProvidedServices());
 		}
 	}
 
-	private void validateProvide(IDSProvide[] providedServices) {
+	public void validateProvide(IDSProvide[] providedServices) {
 		for (int i = 0; i < providedServices.length; i++) {
 			IDSProvide provide = providedServices[i];
 
+			Element element = (Element) getDocumentRoot().getElementsByTagName(
+					provide.getXMLTagName()).item(i);
+			
 			// Validate Required Attributes
 			if (provide.getInterface() == null) {
-				Element element = (Element) getDocumentRoot()
-						.getElementsByTagName(provide.getXMLTagName()).item(i);
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE,
 						CompilerFlags.ERROR);
+			} else {
+				validateResourceExistence(provide.getInterface(),
+						IDSConstants.ELEMENT_PROVIDE,
+						IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE, i);
 			}
 		}
 	}

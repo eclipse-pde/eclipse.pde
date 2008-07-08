@@ -94,4 +94,21 @@ public interface IDSConstants {
 
 	public static final int TYPE_REFERENCE = 6;
 
+	public static final String VALUE_PROPERTY_TYPE_STRING = "String"; //$NON-NLS-1$
+	public static final String VALUE_PROPERTY_TYPE_LONG = "Long"; //$NON-NLS-1$
+	public static final String VALUE_PROPERTY_TYPE_FLOAT = "Float"; //$NON-NLS-1$
+	public static final String VALUE_PROPERTY_TYPE_DOUBLE = "Double"; //$NON-NLS-1$
+	public static final String VALUE_PROPERTY_TYPE_INTEGER = "Integer"; //$NON-NLS-1$
+	public static final String VALUE_PROPERTY_TYPE_BYTE = "Byte"; //$NON-NLS-1$
+	public static final String VALUE_PROPERTY_TYPE_CHAR = "Char"; //$NON-NLS-1$
+	public static final String VALUE_PROPERTY_TYPE_BOOLEAN = "Boolean"; //$NON-NLS-1$
+	public static final String VALUE_PROPERTY_TYPE_SHORT = "Short"; //$NON-NLS-1$
+
+	public static final String VALUE_REFERENCE_POLICY_STATIC = "static"; //$NON-NLS-1$
+	public static final String VALUE_REFERENCE_POLICY_DYNAMIC = "dynamic"; //$NON-NLS-1$
+
+	public static final String VALUE_REFERENCE_CARDINALITY_ZERO_ONE = "0..1"; //$NON-NLS-1$
+	public static final String VALUE_REFERENCE_CARDINALITY_ZERO_N = "0..n"; //$NON-NLS-1$
+	public static final String VALUE_REFERENCE_CARDINALITY_ONE_ONE = "1..1"; //$NON-NLS-1$
+	public static final String VALUE_REFERENCE_CARDINALITY_ONE_N = "0..n"; //$NON-NLS-1$
 }
