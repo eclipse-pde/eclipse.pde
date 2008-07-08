@@ -274,16 +274,6 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY);
 	public static final String CONSTRUCTOR_CHANGED_DECREASE_ACCESS =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.DECREASE_ACCESS);
-	public static final String CONSTRUCTOR_CHANGED_NON_ABSTRACT_TO_ABSTRACT =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_ABSTRACT_TO_ABSTRACT);
-	public static final String CONSTRUCTOR_CHANGED_NON_STATIC_TO_STATIC =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_STATIC_TO_STATIC);
-	public static final String CONSTRUCTOR_CHANGED_STATIC_TO_NON_STATIC =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.STATIC_TO_NON_STATIC);
-	public static final String CONSTRUCTOR_CHANGED_NON_FINAL_TO_FINAL =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_FINAL_TO_FINAL);
-	public static final String CONSTRUCTOR_REMOVED_ANNOTATION_DEFAULT_VALUE =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.REMOVED, IDelta.ANNOTATION_DEFAULT_VALUE);
 	public static final String CONSTRUCTOR_REMOVED_TYPE_PARAMETERS =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETERS);
 	public static final String CONSTRUCTOR_REMOVED_TYPE_PARAMETER =
