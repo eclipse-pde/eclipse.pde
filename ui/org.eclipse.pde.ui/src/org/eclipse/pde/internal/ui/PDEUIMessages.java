@@ -3159,7 +3159,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String VMHelper_cannotFindExecEnv;
 
-	public static String VMHelper_noJreForExecEnv;
 	public static String HyperlinkActionOpenResource;
 	public static String HyperlinkActionOpenSchema;
 	public static String HyperlinkActionOpenTranslation;

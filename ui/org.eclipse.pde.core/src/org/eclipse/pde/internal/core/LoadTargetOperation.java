@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,43 +12,19 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-
+import java.util.*;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
-import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
-import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
-import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
-import org.eclipse.pde.internal.core.itarget.ILocationInfo;
-import org.eclipse.pde.internal.core.itarget.ITarget;
-import org.eclipse.pde.internal.core.itarget.ITargetFeature;
-import org.eclipse.pde.internal.core.itarget.ITargetJRE;
-import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.itarget.*;
+import org.eclipse.pde.internal.core.util.VMUtil;
 
 public class LoadTargetOperation implements IWorkspaceRunnable {
 
@@ -124,23 +100,11 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			IVMInstall install = JavaRuntime.getDefaultVMInstall();
 			if (install != null && !jre.equals(install.getName()))
 				try {
-					JavaRuntime.setDefaultVMInstall(getVMInstall(jre), null);
+					JavaRuntime.setDefaultVMInstall(VMUtil.getVMInstall(jre), null);
 				} catch (CoreException e) {
 				}
 		}
 		monitor.done();
-	}
-
-	private IVMInstall getVMInstall(String name) {
-		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-		for (int i = 0; i < types.length; i++) {
-			IVMInstall[] installs = types[i].getVMInstalls();
-			for (int k = 0; k < installs.length; k++) {
-				if (installs[i].getName().equals(name))
-					return installs[i];
-			}
-		}
-		return JavaRuntime.getDefaultVMInstall();
 	}
 
 	protected void loadImplicitPlugins(Preferences pref, IProgressMonitor monitor) {

@@ -21,8 +21,8 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -145,7 +145,7 @@ public class PluginContentPage extends ContentPage {
 		fEEChoice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Gather EEs 
-		IExecutionEnvironment[] exeEnvs = VMHelper.getExecutionEnvironments();
+		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
 		TreeSet availableEEs = new TreeSet();
 		for (int i = 0; i < exeEnvs.length; i++) {
 			availableEEs.add(exeEnvs[i].getId());
@@ -165,7 +165,7 @@ public class PluginContentPage extends ContentPage {
 		String[] EEChoices = fEEChoice.getItems();
 		for (int i = 0; i < EEChoices.length; i++) {
 			if (!EEChoices[i].equals(NO_EXECUTION_ENVIRONMENT)) {
-				if (VMHelper.getExecutionEnvironment(EEChoices[i]).isStrictlyCompatible(defaultVM)) {
+				if (VMUtil.getExecutionEnvironment(EEChoices[i]).isStrictlyCompatible(defaultVM)) {
 					fEEChoice.select(i);
 					break;
 				}
@@ -349,7 +349,7 @@ public class PluginContentPage extends ContentPage {
 		if (errorMessage == null) {
 			String eeid = fEEChoice.getText();
 			if (fEEChoice.isEnabled()) {
-				IExecutionEnvironment ee = VMHelper.getExecutionEnvironment(eeid);
+				IExecutionEnvironment ee = VMUtil.getExecutionEnvironment(eeid);
 				if (ee != null && ee.getCompatibleVMs().length == 0) {
 					errorMessage = PDEUIMessages.NewProjectCreationPage_invalidEE;
 				}

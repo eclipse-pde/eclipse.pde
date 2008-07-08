@@ -16,9 +16,9 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.itarget.*;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -86,7 +86,7 @@ public class JRESection extends PDESection {
 		fNamedJREsCombo = new ComboPart();
 		fNamedJREsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER);
 		fNamedJREsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		String[] installs = VMHelper.getVMInstallNames();
+		String[] installs = VMUtil.getVMInstallNames();
 		fNamedJREsCombo.setItems(installs);
 		fNamedJREsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -228,7 +228,7 @@ public class JRESection extends PDESection {
 			fExecEnvsCombo.setText(fExecEnvChoices.first().toString());
 
 		if (fNamedJREsCombo.getSelectionIndex() == -1)
-			fNamedJREsCombo.setText(VMHelper.getDefaultVMInstallName());
+			fNamedJREsCombo.setText(VMUtil.getDefaultVMInstallName());
 
 		updateWidgets();
 		super.refresh();
@@ -239,7 +239,7 @@ public class JRESection extends PDESection {
 		fBlockChanges = true;
 		PreferencesUtil.createPreferenceDialogOn(getPage().getEditor().getEditorSite().getShell(), pageID, new String[] {pageID}, null).open();
 		// reset JRE select because either JDT preference page allows user to add/remove JREs
-		fNamedJREsCombo.setItems(VMHelper.getVMInstallNames());
+		fNamedJREsCombo.setItems(VMUtil.getVMInstallNames());
 		fBlockChanges = false;
 	}
 

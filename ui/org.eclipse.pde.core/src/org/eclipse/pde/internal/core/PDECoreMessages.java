@@ -279,4 +279,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String SourceLocationManager_problemProcessingBundleManifestSourceHeader;
 
+	public static String VMHelper_noJreForExecEnv;
+
 }

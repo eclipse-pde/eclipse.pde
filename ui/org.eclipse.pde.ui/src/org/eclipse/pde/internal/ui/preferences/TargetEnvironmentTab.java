@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.itarget.*;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.util.LocaleUtil;
@@ -140,8 +141,8 @@ public class TargetEnvironmentTab {
 
 		fJRECombo = new Combo(group, SWT.SINGLE | SWT.READ_ONLY);
 		fJRECombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fJRECombo.setItems(VMHelper.getVMInstallNames());
-		fDefaultJRE = VMHelper.getDefaultVMInstallName();
+		fJRECombo.setItems(VMUtil.getVMInstallNames());
+		fDefaultJRE = VMUtil.getDefaultVMInstallName();
 		fJRECombo.setText(fDefaultJRE);
 
 		label = new Label(group, SWT.WRAP);
@@ -249,7 +250,7 @@ public class TargetEnvironmentTab {
 		fWSCombo.setText(preferences.getDefaultString(ICoreConstants.WS));
 		fNLCombo.setText(LocaleUtil.expandLocaleName(preferences.getDefaultString(ICoreConstants.NL)));
 		fArchCombo.setText(preferences.getDefaultString(ICoreConstants.ARCH));
-		fJRECombo.setText(VMHelper.getDefaultVMInstallName());
+		fJRECombo.setText(VMUtil.getDefaultVMInstallName());
 	}
 
 	public boolean performOk() {
@@ -260,10 +261,10 @@ public class TargetEnvironmentTab {
 
 	private void applyJREGroup() {
 		try {
-			if (!fDefaultJRE.equals(VMHelper.getDefaultVMInstallName()))
+			if (!fDefaultJRE.equals(VMUtil.getDefaultVMInstallName()))
 				return;
 
-			if (!VMHelper.getDefaultVMInstallName().equals(fJRECombo.getText()))
+			if (!VMUtil.getDefaultVMInstallName().equals(fJRECombo.getText()))
 				JavaRuntime.setDefaultVMInstall(VMHelper.getVMInstall(fJRECombo.getText()), null);
 		} catch (CoreException e) {
 		}
