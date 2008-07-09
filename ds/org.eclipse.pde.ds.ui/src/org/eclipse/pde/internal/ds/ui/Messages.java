@@ -34,6 +34,11 @@ public class Messages extends NLS {
 
 	public static String DSFileWizardPage_description;
 	public static String DSFileWizardPage_title;
+	public static String DSFileWizardPage_group;
+	public static String DSFileWizardPage_component_name;
+	public static String DSFileWizardPage_implementation_class;
+	public static String DSFileWizardPage_browse;
+	public static String DSFileWizardPage_selectType;
 	
 	public static String DSImplementationDetails_title;
 	public static String DSImplementationDetails_description;
@@ -99,6 +104,10 @@ public class Messages extends NLS {
 	public static String DSReferenceDetails_selectType;
 
 	public static String DSRemoveItemAction_actionText;
+
+	
+	
+	
 	
 	
 	

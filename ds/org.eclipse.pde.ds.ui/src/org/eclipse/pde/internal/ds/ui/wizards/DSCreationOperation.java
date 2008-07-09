@@ -43,12 +43,17 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 public class DSCreationOperation extends WorkspaceModifyOperation {
 
 	protected IFile fFile;
+	private String fComponentName;
+	private String fImplementationClass;
 
 	/**
 	 * 
 	 */
-	public DSCreationOperation(IFile file) {
+	public DSCreationOperation(IFile file, String componentName,
+			String implementationClass) {
 		fFile = file;
+		fComponentName = componentName;
+		fImplementationClass = implementationClass;
 	}
 
 	/*
@@ -83,14 +88,12 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 
 		// Element: implemenation
 		IDSImplementation implementation = factory.createImplementation();
+		implementation.setClassName(fImplementationClass);
 		component.setImplementation(implementation);
 
 		// Component Attributes
 		
-		String name = fFile.getName().substring(0,
-				fFile.getName().lastIndexOf(".")); //$NON-NLS-1$
-		
-		component.setAttributeName(name);
+		component.setAttributeName(fComponentName);
 		
 
 		try {

@@ -47,7 +47,8 @@ public class DSNewWizard extends BasicNewFileResourceWizard {
 		try {
 
 			IRunnableWithProgress op = new DSCreationOperation(fMainPage
-					.createNewFile());
+					.createNewFile(), fMainPage.getDSComponentNameValue(),
+					fMainPage.getDSImplementationClassValue());
 
 			getContainer().run(false, true, op);
 		} catch (InvocationTargetException e) {
