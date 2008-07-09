@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pierre Carlson <mpcarl@us.ibm.com> - bug 233029
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
@@ -23,6 +23,7 @@ public class TargetPlatformResetJob extends Job {
 	public TargetPlatformResetJob(PDEState newState) {
 		super(PDECoreMessages.TargetPlatformResetJob_resetTarget);
 		fState = newState;
+		setRule(ResourcesPlugin.getWorkspace().getRoot());
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
