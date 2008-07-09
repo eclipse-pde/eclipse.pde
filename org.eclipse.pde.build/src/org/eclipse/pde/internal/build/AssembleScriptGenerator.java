@@ -71,6 +71,8 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		script.printConditionIsSet("customOrDefault.@{config}", "assemble.@{element}@{dot}@{config}", "assemble.@{element}@{dot}@{config}", "${defaultAssemble.@{config}}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		Properties properties = new Properties();
 		properties.put("assembleScriptName", "@{scriptPrefix}.@{element}@{dot}@{config}.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("element", "@{element}");  //$NON-NLS-1$//$NON-NLS-2$
+		properties.put("config", "@{config}");  //$NON-NLS-1$//$NON-NLS-2$
 		script.printAntTask(Utils.getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, "${customOrDefault.@{config}}", null, null, properties); //$NON-NLS-1$
 		script.printEndMacroDef();
 	}

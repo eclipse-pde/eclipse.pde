@@ -144,4 +144,35 @@ public class ProductTests extends PDETestCase {
 		
 		assertTrue(brand.icons.indexOf("mail.ico") > 0);
 	}
+	
+	public void test237747() throws Exception {
+		IFolder buildFolder = newTest("237747");
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		IFolder fooFolder = Utils.createFolder(buildFolder, "plugins/foo");
+		Utils.generateBundle(fooFolder, "foo");
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<product name=\"Foo\" id=\"foo.product\" application=\"org.eclipse.ant.core.antRunner\" useFeatures=\"false\">");
+		buffer.append("  <configIni use=\"default\"/>");
+		buffer.append("  <plugins>");
+		buffer.append("    <plugin id=\"org.eclipse.osgi\"/>");
+		buffer.append("  </plugins>");
+		buffer.append("</product> ");
+		Utils.writeBuffer(buildFolder.getFile("plugins/foo/foo.product"), buffer);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", "/foo/foo.product");
+		properties.put("configs", "win32,win32,x86_64 & hpux, motif, ia64_32");
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		Utils.storeBuildProperties(buildFolder, properties);
+		
+		runProductBuild(buildFolder);
+		
+		assertResourceFile(buildFolder, "I.TestBuild/eclipse-hpux.motif.ia64_32.zip");
+		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86_64.zip");
+	}
 }
