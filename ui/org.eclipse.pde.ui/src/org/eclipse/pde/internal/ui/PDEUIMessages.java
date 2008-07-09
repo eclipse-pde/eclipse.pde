@@ -531,7 +531,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String LibrarySection_addDialogButton;
 
+	public static String MainPreferencePage_exportingGroup;
 	public static String MainPreferencePage_group2;
+	public static String MainPreferencePage_promptBeforeOverwrite;
 	public static String MainPreferencePage_updateStale;
 	public static String MainPreferencePage_targetPlatformRealization;
 
@@ -3196,6 +3198,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddExportPackageResolution_Label;
 	public static String AddBundleClassPathResolution_add;
+
+	public static String AntGeneratingExportWizard_0;
+	public static String AntGeneratingExportWizard_1;
+	public static String AntGeneratingExportWizard_2;
 
 	public static String PluginVersionPart_groupTitle;
 	public static String PluginVersionPart_buttonTitle;

@@ -22,6 +22,7 @@ public interface IPreferenceConstants {
 	public static final String VALUE_USE_IDS = "useIds"; //$NON-NLS-1$
 	public static final String VALUE_USE_NAMES = "useNames"; //$NON-NLS-1$
 	public static final String PROP_AUTO_MANAGE = "Preferences.MainPage.automanageDependencies"; //$NON-NLS-1$
+	public static final String OVERWRITE_BUILD_FILES_ON_EXPORT = "Preferences.MainPage.overwriteBuildFilesOnExport"; //$NON-NLS-1$
 
 	// Editor Outline
 	public static final String PROP_OUTLINE_SORTING = "PDEMultiPageContentOutline.SortingAction.isChecked"; //$NON-NLS-1$
