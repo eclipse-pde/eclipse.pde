@@ -77,7 +77,10 @@ class FilteredCheckboxTree extends FilteredTree {
 	public void resetFilter() {
 		// Set the next to the initial Text, stop any outstanding jobs
 		// and call the refresh job to run synchronously.
-		getFilterControl().setText(this.initialText);
+		Text filterText = getFilterControl();
+		if (filterText != null) {
+			filterText.setText(this.initialText);
+		}
 		refreshJob.cancel();
 		refreshJob.runInUIThread(new NullProgressMonitor());
 	}
@@ -90,7 +93,12 @@ class FilteredCheckboxTree extends FilteredTree {
 	 */
 	int getTreeLocationOffset() {
 		GridLayout layout = (GridLayout) getLayout();
-		return layout.horizontalSpacing + layout.marginTop + ((GridData) getLayoutData()).verticalIndent + getFilterControl().getSize().y + 1;
+		int space = layout.horizontalSpacing + layout.marginTop + ((GridData) getLayoutData()).verticalIndent + 1;
+		Text filterText = getFilterControl();
+		if (filterText != null) {
+			space += filterText.getSize().y;
+		}
+		return space;
 	}
 
 	/**

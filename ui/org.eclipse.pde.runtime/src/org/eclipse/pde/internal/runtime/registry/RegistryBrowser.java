@@ -314,7 +314,10 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	public void setFocus() {
-		fFilteredTree.getFilterControl().setFocus();
+		Text filterText = fFilteredTree.getFilterControl();
+		if (filterText != null) {
+			filterText.setFocus();
+		}
 	}
 
 	/*

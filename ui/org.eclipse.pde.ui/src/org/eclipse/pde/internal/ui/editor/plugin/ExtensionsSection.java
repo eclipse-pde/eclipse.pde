@@ -220,13 +220,16 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		createSectionToolbar(section, toolkit);
 		// Create the adapted listener for the filter entry field
 		fFilteredTree.createUIListenerEntryFilter(this);
-		fFilteredTree.getFilterControl().addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				StructuredViewer viewer = getStructuredViewerPart().getViewer();
-				IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
-				updateButtons(ssel.size() != 1 ? null : ssel);
-			}
-		});
+		Text filterText = fFilteredTree.getFilterControl();
+		if (filterText != null) {
+			filterText.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					StructuredViewer viewer = getStructuredViewerPart().getViewer();
+					IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+					updateButtons(ssel.size() != 1 ? null : ssel);
+				}
+			});
+		}
 	}
 
 	/**

@@ -224,10 +224,13 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		// need to give filter Textbox some space from the border
-		Layout filterLayout = fFilteredTree.getFilterControl().getParent().getLayout();
-		if (filterLayout instanceof GridLayout) {
-			((GridLayout) filterLayout).marginHeight = 4;
-			((GridLayout) filterLayout).marginWidth = 3;
+		Text filterText = fFilteredTree.getFilterControl();
+		if (filterText != null) {
+			Layout filterLayout = filterText.getParent().getLayout();
+			if (filterLayout instanceof GridLayout) {
+				((GridLayout) filterLayout).marginHeight = 4;
+				((GridLayout) filterLayout).marginWidth = 3;
+			}
 		}
 
 		fTreeViewer = fFilteredTree.getViewer();
@@ -259,7 +262,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 	public void setFocus() {
 		if (fFilteredTree != null) {
 			Control c = fFilteredTree.getFilterControl();
-			if (!c.isFocusControl()) {
+			if (c != null && !c.isFocusControl()) {
 				c.setFocus();
 			}
 		}
