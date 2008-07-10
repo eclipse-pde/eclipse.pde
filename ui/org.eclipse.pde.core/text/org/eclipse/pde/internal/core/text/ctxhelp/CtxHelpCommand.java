@@ -77,7 +77,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 	 * @param serialization new value
 	 */
 	public void setSerialization(String serialization) {
-		setXMLAttribute(ATTRIBUTE_HREF, serialization);
+		setXMLAttribute(ATTRIBUTE_SERIAL, serialization);
 	}
 
 	/* (non-Javadoc)
