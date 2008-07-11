@@ -135,6 +135,10 @@ public class Activator extends AbstractUIPlugin {
 			}
 		});
 	}
+	
+	public static void logException(Throwable e) {
+		logException(e, null, null);
+	}
 
 
 }
