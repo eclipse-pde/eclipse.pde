@@ -110,18 +110,20 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		launch(mode);
 	}
 
-	/**
-	 * @since 3.4
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#findLaunchConfiguration(java.lang.String)
 	 */
 	protected ILaunchConfiguration findLaunchConfiguration(String mode) {
 		ILaunchConfiguration config = super.findLaunchConfiguration(mode);
-		try {
-			if (!(config.getAttribute(IPDELauncherConstants.USE_DEFAULT, false)) && (config.getAttribute(IPDEUIConstants.GENERATED_CONFIG, false))) {
-				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-				initializePluginsList(wc);
-				return wc.doSave();
+		if (config != null) {
+			try {
+				if (!(config.getAttribute(IPDELauncherConstants.USE_DEFAULT, false)) && (config.getAttribute(IPDEUIConstants.GENERATED_CONFIG, false))) {
+					ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+					initializePluginsList(wc);
+					return wc.doSave();
+				}
+			} catch (CoreException e) {
 			}
-		} catch (CoreException e) {
 		}
 		return config;
 	}
