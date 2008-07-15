@@ -493,7 +493,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 			workspaceprofile = null;
 		}
 	}
-		
+
 	/**
 	 * Creates a workspace {@link IApiProfile}
 	 * @return a new workspace {@link IApiProfile} or <code>null</code>
@@ -553,25 +553,35 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 						IJavaProject proj = (IJavaProject) delta.getElement();
 						IProject pj = proj.getProject();
 						if (acceptProject(pj)) {
+							int flags = delta.getFlags();
 							switch (delta.getKind()) {
 								//process the project changed only if the project is API aware
-							case IJavaElementDelta.CHANGED:
-								int flags = delta.getFlags();
-								if( (flags & IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED) != 0 ||
-									(flags & IJavaElementDelta.F_CLASSPATH_CHANGED) != 0 ||
-									(flags & IJavaElementDelta.F_CLOSED) != 0 ||
-									(flags & IJavaElementDelta.F_OPENED) != 0) {
+								case IJavaElementDelta.CHANGED: {
+									if( (flags & IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED) != 0 ||
+										(flags & IJavaElementDelta.F_CLASSPATH_CHANGED) != 0 ||
+										(flags & IJavaElementDelta.F_CLOSED) != 0 ||
+										(flags & IJavaElementDelta.F_OPENED) != 0) {
+											if(DEBUG) {
+												System.out.println("--> processing CLASSPATH CHANGE/CLOSE/OPEN project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+											}
+											disposeWorkspaceProfile();
+									} else if((flags & IJavaElementDelta.F_CHILDREN) != 0) {
 										if(DEBUG) {
-											System.out.println("--> processing CLASSPATH CHANGE/CLOSE/OPEN project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+											System.out.println("--> processing child deltas of project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+										}
+										processJavaElementDeltas(delta.getAffectedChildren(), proj);
+									}
+									break;
+								}
+								case IJavaElementDelta.REMOVED: {
+									if((flags & IJavaElementDelta.F_MOVED_TO) != 0) {
+										if(DEBUG) {
+											System.out.println("--> processing PROJECT RENAME: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 										}
 										disposeWorkspaceProfile();
-								} else if((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-									if(DEBUG) {
-										System.out.println("--> processing child deltas of project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 									}
-									processJavaElementDeltas(delta.getAffectedChildren(), proj);
+									break;
 								}
-								break;
 							}
 						}
 						break;
