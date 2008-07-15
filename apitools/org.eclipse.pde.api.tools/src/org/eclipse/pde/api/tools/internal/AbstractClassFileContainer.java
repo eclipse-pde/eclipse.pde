@@ -34,10 +34,9 @@ public abstract class AbstractClassFileContainer implements IClassFileContainer 
 	 * Collection of class file containers
 	 */
 	private List fClassFileContainers = null;	
-		
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#accept(org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor)
 	 */
 	public void accept(ClassFileContainerVisitor visitor) throws CoreException {
 		IClassFileContainer[] containers = getClassFileContainers();
@@ -47,7 +46,7 @@ public abstract class AbstractClassFileContainer implements IClassFileContainer 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#close()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#close()
 	 */
 	public synchronized void close() throws CoreException {
 		if (fClassFileContainers == null) {
@@ -79,7 +78,7 @@ public abstract class AbstractClassFileContainer implements IClassFileContainer 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#findClassFile(java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#findClassFile(java.lang.String)
 	 */
 	public IClassFile findClassFile(String qualifiedName) throws CoreException {
 		IClassFileContainer[] containers = getClassFileContainers();
@@ -93,7 +92,7 @@ public abstract class AbstractClassFileContainer implements IClassFileContainer 
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#findClassFile(java.lang.String,java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#findClassFile(java.lang.String, java.lang.String)
 	 */
 	public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
 		IClassFileContainer[] containers = getClassFileContainers();
@@ -115,7 +114,7 @@ public abstract class AbstractClassFileContainer implements IClassFileContainer 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#getPackageNames()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#getPackageNames()
 	 */
 	public String[] getPackageNames() throws CoreException {
 		List names = new ArrayList();
