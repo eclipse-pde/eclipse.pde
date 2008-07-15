@@ -39,7 +39,7 @@ public class JavadocLocationManager {
 		return getEntry(model);
 	}
 
-	private String getEntry(IPluginModelBase model) {
+	private synchronized String getEntry(IPluginModelBase model) {
 		initialize();
 		BundleDescription desc = model.getBundleDescription();
 		if (desc != null) {
