@@ -10,15 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
+ * Test unsupported javadoc tags on methods in classes, interfaces, enums and annotations
  * 
+ * @since 3.5
  */
 public class InvalidMethodTagTests extends TagTest {
 
@@ -34,7 +41,9 @@ public class InvalidMethodTagTests extends TagTest {
 	 * @return the tests for this class
 	 */
 	public static Test suite() {
-		return buildTestSuite(InvalidMethodTagTests.class);
+		TestSuite suite = new TestSuite(InvalidMethodTagTests.class.getName());
+		collectTests(suite);
+		return suite;
 	}
 	
 	/* (non-Javadoc)
@@ -49,5 +58,58 @@ public class InvalidMethodTagTests extends TagTest {
 	 */
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_METHOD, IApiProblem.UNSUPPORTED_TAG_USE, IApiProblem.NO_FLAGS);
+	}
+	
+	/**
+	 * @return all of the child test classes of this class
+	 */
+	private static Class[] getAllTestClasses() {
+		Class[] classes = new Class[] {
+			InvalidAnnotationMethodTagTests.class,
+			InvalidEnumMethodTagTests.class,
+			InvalidClassMethodTagTests.class,
+			InvalidInterfaceMethodTagTests.class
+		};
+		return classes;
+	}
+	
+	/**
+	 * Collects tests from the getAllTestClasses() method into the given suite
+	 * @param suite
+	 */
+	private static void collectTests(TestSuite suite) {
+		// Hack to load all classes before computing their suite of test cases
+		// this allow to reset test cases subsets while running all Builder tests...
+		Class[] classes = getAllTestClasses();
+
+		// Reset forgotten subsets of tests
+		TestCase.TESTS_PREFIX = null;
+		TestCase.TESTS_NAMES = null;
+		TestCase.TESTS_NUMBERS = null;
+		TestCase.TESTS_RANGE = null;
+		TestCase.RUN_ONLY_ID = null;
+
+		/* tests */
+		for (int i = 0, length = classes.length; i < length; i++) {
+			Class clazz = classes[i];
+			Method suiteMethod;
+			try {
+				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				continue;
+			}
+			Object test;
+			try {
+				test = suiteMethod.invoke(null, new Object[0]);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				continue;
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+				continue;
+			}
+			suite.addTest((Test) test);
+		}
 	}
 }
