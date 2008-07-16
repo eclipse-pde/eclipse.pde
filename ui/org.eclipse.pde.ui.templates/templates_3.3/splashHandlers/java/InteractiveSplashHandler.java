@@ -141,8 +141,8 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		} else {
 			MessageDialog.openError(
 					getSplash(),
-					"Authentication Failed",  //$NON-NLS-1$
-					"A username and password must be specified to login.");  //$NON-NLS-1$
+					"Authentication Failed",  //$$NON-NLS-1$$
+					"A username and password must be specified to login.");  //$$NON-NLS-1$$
 		}
 	}
 	
@@ -176,7 +176,7 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 	private void createUIButtonCancel() {
 		// Create the button
 		fButtonCancel = new Button(fCompositeLogin, SWT.PUSH);
-		fButtonCancel.setText("Cancel"); //$NON-NLS-1$
+		fButtonCancel.setText("Cancel"); //$$NON-NLS-1$$
 		// Configure layout data
 		GridData data = new GridData(SWT.NONE, SWT.NONE, false, false);
 		data.widthHint = F_BUTTON_WIDTH_HINT;	
@@ -190,7 +190,7 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 	private void createUIButtonOK() {
 		// Create the button
 		fButtonOK = new Button(fCompositeLogin, SWT.PUSH);
-		fButtonOK.setText("OK"); //$NON-NLS-1$
+		fButtonOK.setText("OK"); //$$NON-NLS-1$$
 		// Configure layout data
 		GridData data = new GridData(SWT.NONE, SWT.NONE, false, false);
 		data.widthHint = F_BUTTON_WIDTH_HINT;
@@ -226,7 +226,7 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 	private void createUILabelPassword() {
 		// Create the label
 		Label label = new Label(fCompositeLogin, SWT.NONE);
-		label.setText("&Password:"); //$NON-NLS-1$
+		label.setText("&Password:"); //$$NON-NLS-1$$
 		// Configure layout data
 		GridData data = new GridData();
 		data.horizontalIndent = F_LABEL_HORIZONTAL_INDENT;
@@ -252,7 +252,7 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 	private void createUILabelUserName() {
 		// Create the label
 		Label label = new Label(fCompositeLogin, SWT.NONE);
-		label.setText("&User Name:"); //$NON-NLS-1$
+		label.setText("&User Name:"); //$$NON-NLS-1$$
 		// Configure layout data
 		GridData data = new GridData();
 		data.horizontalIndent = F_LABEL_HORIZONTAL_INDENT;
