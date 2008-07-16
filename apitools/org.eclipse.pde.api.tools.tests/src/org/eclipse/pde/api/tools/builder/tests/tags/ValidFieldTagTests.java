@@ -41,7 +41,6 @@ public class ValidFieldTagTests extends InvalidFieldTagTests {
 		Class[] classes = new Class[] {
 			ValidClassFieldTagTests.class,
 			ValidInterfaceFieldTagTests.class,
-			ValidAnnotationFieldTagTests.class,
 			ValidEnumFieldTagTests.class
 		};
 		return classes;

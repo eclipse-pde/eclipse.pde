@@ -11,12 +11,45 @@
 package a.b.c;
 
 /**
- * Tests valid field tags on an outer enum
+ * Tests the valid use of @noreference field tags on inner / outer enums
  * 
  * @since 3.4
  */
-public enum test2 {
-
+public enum test4 {
+	
+	A,
+	B;
+	
+	/**
+	 * @noreference This enum field is not intended to be referenced by clients.
+	 */
+	public Object f1 = null;
+	/**
+	 * @noreference This enum field is not intended to be referenced by clients.
+	 */
+	protected int f2 = 0;
+	/**
+	 * @noreference This enum field is not intended to be referenced by clients.
+	 */
+	private char[] f3 = {};
+	
+	enum inner {
+		A,
+		B;
+		
+		/**
+		 * @noreference This enum field is not intended to be referenced by clients.
+		 */
+		public Object f1 = null;
+		/**
+		 * @noreference This enum field is not intended to be referenced by clients.
+		 */
+		protected int f2 = 0;
+		/**
+		 * @noreference This enum field is not intended to be referenced by clients.
+		 */
+		private char[] f3 = {};
+	}
 }
 
 enum outer {
