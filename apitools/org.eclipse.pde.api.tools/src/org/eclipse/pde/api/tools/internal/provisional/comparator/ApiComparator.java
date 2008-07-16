@@ -697,7 +697,7 @@ public class ApiComparator {
 									if (visibilityModifiers == VisibilityModifiers.API) {
 										// if the visibility is API, we only consider public and protected types
 										if (Util.isDefault(typeDescriptor.access)
-													|| Util.isPrivate(typeDescriptor.access)) {
+												|| Util.isPrivate(typeDescriptor.access)) {
 											return;
 										}
 									}
