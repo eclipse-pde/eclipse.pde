@@ -29,9 +29,8 @@ public class AssembleTests extends PDETestCase {
 		suite.addTestSuite(AssembleTests.class);
 
 		//If running the intermittent tests:
-		if (System.getProperties().get("pde.build.intermittent") != null) {
-			suite.addTest(TestSuite.createTest(AssembleTests.class, "_testBug196754"));
-		}
+//		if (System.getProperties().get("pde.build.intermittent") != null) {
+//		}
 		return suite;
 	}
 	
@@ -117,7 +116,7 @@ public class AssembleTests extends PDETestCase {
 		assertResourceFile(buildFolder, "I.TestBuild/MyCustomName.zip");
 	}
 
-	public void _testBug196754() throws Exception {
+	public void testBug196754() throws Exception {
 		IFolder buildFolder = newTest("196754");
 
 		// pde.build and equinox.launcher.win32.win32.x86 exist as signed folders in the base location,
