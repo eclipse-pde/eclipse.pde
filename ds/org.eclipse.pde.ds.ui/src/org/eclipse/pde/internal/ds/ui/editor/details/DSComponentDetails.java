@@ -30,19 +30,18 @@ import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
+import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.schema.NewClassCreationWizard;
-import org.eclipse.pde.internal.ui.parts.ComboPart;
-import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ds.ui.parts.ComboPart;
+import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
@@ -89,8 +88,7 @@ public class DSComponentDetails extends DSAbstractDetails {
 
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(),
-				fMainSection);
+		alignSectionHeaders(fMainSection);
 
 		// Create container for main section
 		Composite mainSectionClient = getToolkit()
@@ -118,8 +116,8 @@ public class DSComponentDetails extends DSAbstractDetails {
 		fLabelEnabled.setForeground(foreground);
 		fEnabledCombo = new ComboPart();
 		fEnabledCombo.createControl(mainSectionClient, getToolkit(), SWT.READ_ONLY);
-		Control control = fEnabledCombo.getControl();
-		String[] items = new String[] { IConstants.TRUE, IConstants.FALSE }; //$NON-NLS-1$ //$NON-NLS-2$
+
+		String[] items = new String[] { IConstants.TRUE, IConstants.FALSE };
 		fEnabledCombo.setItems(items);
 		fEnabledCombo.getControl().setLayoutData(gd);
 
@@ -140,6 +138,8 @@ public class DSComponentDetails extends DSAbstractDetails {
 
 	}
 
+
+
 	public void hookListeners() {
 		// Attribute: name
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
@@ -151,7 +151,7 @@ public class DSComponentDetails extends DSAbstractDetails {
 				fComponent.setAttributeName(fNameEntry.getValue());
 			}
 		});
-		IActionBars actionBars = getPage().getPDEEditor().getEditorSite()
+		IActionBars actionBars = getPDEEditor().getEditorSite()
 				.getActionBars();
 		// Attribute: factory
 		fFactoryEntry.setFormEntryListener(new FormEntryAdapter(this,
@@ -207,8 +207,10 @@ public class DSComponentDetails extends DSAbstractDetails {
 
 	}
 
+
+
 	private String handleLinkActivated(String value, boolean isInter) {
-		IProject project = getPage().getPDEEditor().getCommonProject();
+		IProject project = getCommonProject();
 		try {
 			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
@@ -218,7 +220,7 @@ public class DSComponentDetails extends DSAbstractDetails {
 					JavaUI.openInEditor(element);
 				else {
 					// TODO create our own wizard for reuse here
-					NewClassCreationWizard wizard = new NewClassCreationWizard(
+					DSNewClassCreationWizard wizard = new DSNewClassCreationWizard(
 							project, isInter, value);
 					WizardDialog dialog = new WizardDialog(Activator
 							.getActiveWorkbenchShell(), wizard);

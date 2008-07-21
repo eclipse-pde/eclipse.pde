@@ -30,11 +30,11 @@ import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
+import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.schema.NewClassCreationWizard;
-import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
@@ -75,8 +75,8 @@ public class DSImplementationDetails extends DSAbstractDetails {
 		
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(),
-				fMainSection);
+		alignSectionHeaders(fMainSection);
+		
 
 		// Create container for main section
 		 Composite mainSectionClient = getToolkit()
@@ -97,7 +97,7 @@ public class DSImplementationDetails extends DSAbstractDetails {
 	}
 
 	public void hookListeners() {
-		IActionBars actionBars = getPage().getPDEEditor().getEditorSite()
+		IActionBars actionBars = getPDEEditor().getEditorSite()
 				.getActionBars();
 		// Attribute: title
 		fClassEntry
@@ -128,7 +128,7 @@ public class DSImplementationDetails extends DSAbstractDetails {
 	}
 	
 	private String handleLinkActivated(String value, boolean isInter) {
-		IProject project = getPage().getPDEEditor().getCommonProject();
+		IProject project = getCommonProject();
 		try {
 			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
@@ -138,7 +138,7 @@ public class DSImplementationDetails extends DSAbstractDetails {
 					JavaUI.openInEditor(element);
 				else {
 					// TODO create our own wizard for reuse here
-					NewClassCreationWizard wizard = new NewClassCreationWizard(
+					DSNewClassCreationWizard wizard = new DSNewClassCreationWizard(
 							project, isInter, value);
 					WizardDialog dialog = new WizardDialog(Activator
 							.getActiveWorkbenchShell(), wizard);

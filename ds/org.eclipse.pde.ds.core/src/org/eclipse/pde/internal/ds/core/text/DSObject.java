@@ -12,9 +12,12 @@
 package org.eclipse.pde.internal.ds.core.text;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.DocumentObject;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSModel;
@@ -117,5 +120,45 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 	 */
 	public abstract int getType();
 
+	public void setXMLAttribute(IDocumentAttributeNode attribute) {
+		super.setXMLAttribute(attribute);
+	}
+
+	public boolean setBooleanAttributeValue(String name, boolean value) {
+		return super.setBooleanAttributeValue(name, value);
+	}
+
+	public boolean setXMLAttribute(String name, String newValue) {
+		return super.setXMLAttribute(name, newValue);
+	}
+
+	public String getXMLAttributeValue(String name) {
+		return super.getXMLAttributeValue(name);
+	}
+
+	public boolean getBooleanAttributeValue(String name, boolean defaultValue) {
+		return super.getBooleanAttributeValue(name, defaultValue);
+	}
+
+	public ArrayList getChildNodesList(Class clazz, boolean match) {
+		return super.getChildNodesList(clazz, match);
+	}
+
+	public void addChildNode(IDocumentElementNode child, boolean fireEvent) {
+		super.addChildNode(child, fireEvent);
+	}
+	
+	public IDocumentElementNode removeChildNode(IDocumentElementNode child,
+			boolean fireEvent) {
+		return super.removeChildNode(child, fireEvent);
+	}
+	
+	public String getXMLContent() {
+		return super.getXMLContent();
+	}
+	
+	public boolean setXMLContent(String text) {
+		return super.setXMLContent(text);
+	}
 
 }

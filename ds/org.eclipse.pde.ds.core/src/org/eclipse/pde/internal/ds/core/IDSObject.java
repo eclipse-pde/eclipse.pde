@@ -66,4 +66,13 @@ public interface IDSObject extends IDocumentObject {
 	 * @return an array of String containing all attributes` names
 	 */
 	public abstract String[] getAttributesNames();
+	
+	/**
+	 * Returns the XML Tag Name of this element
+	 * 
+	 * @return a String containing the XML Tag Name
+	 */
+	public abstract String getXMLTagName();
+	
+	
 }

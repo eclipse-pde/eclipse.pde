@@ -22,7 +22,7 @@ public class DSProperty extends DSObject implements IDSProperty {
 		super(model, ELEMENT_PROPERTY);
 		
 		// set Default Values
-		this.setPropertyType("String");
+		this.setPropertyType(IDSConstants.VALUE_PROPERTY_TYPE_STRING);
 	}
 
 	/*

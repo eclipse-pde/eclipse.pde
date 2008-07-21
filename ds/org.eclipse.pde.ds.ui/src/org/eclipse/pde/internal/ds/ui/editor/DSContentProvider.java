@@ -14,12 +14,13 @@ package org.eclipse.pde.internal.ds.ui.editor;
 
 import java.util.List;
 
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSObject;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 
-public class DSContentProvider extends DefaultContentProvider implements
+public class DSContentProvider implements IContentProvider,
 		ITreeContentProvider {
 
 	public Object[] getChildren(Object parentElement) {
@@ -48,6 +49,14 @@ public class DSContentProvider extends DefaultContentProvider implements
 
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
+	}
+
+	public void dispose() {
+
+	}
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+
 	}
 
 }

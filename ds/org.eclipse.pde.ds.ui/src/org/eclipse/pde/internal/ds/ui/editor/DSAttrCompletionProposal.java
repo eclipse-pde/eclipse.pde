@@ -49,23 +49,29 @@ public class DSAttrCompletionProposal extends TypeCompletionProposal implements
 		if (displayString == null) {
 			return null;
 		}
+		String string1 = "=\""; //$NON-NLS-1$
+		String string2 = "\""; //$NON-NLS-1$
+		
 		if (displayString.equals(IDSConstants.ATTRIBUTE_COMPONENT_ENABLED)) {
-			replacementString = displayString + "=\"" + IConstants.TRUE + "\"";
+			replacementString = displayString + string1 + IConstants.TRUE
+					+ string2;
 		} else if (displayString.equals(IDSConstants.ATTRIBUTE_PROPERTY_TYPE)) {
-			replacementString = displayString + "=\""
-					+ IConstants.PROPERTY_TYPE_STRING + "\"";
+			replacementString = displayString + string1
+					+ IConstants.PROPERTY_TYPE_STRING + string2;
 		} else if (displayString.equals(IDSConstants.ATTRIBUTE_SERVICE_FACTORY)) {
-			replacementString = displayString + "=\"" + IConstants.FALSE + "\"";
+			replacementString = displayString + string1 + IConstants.FALSE
+					+ string2;
 		} else if (displayString
 				.equals(IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY)) {
-			replacementString = displayString + "=\""
-					+ IConstants.CARDINALITY_ONE_ONE + "\"";
+			replacementString = displayString + string1
+					+ IConstants.CARDINALITY_ONE_ONE + string2;
 		} else if (displayString
 				.equals(IDSConstants.ATTRIBUTE_REFERENCE_POLICY)) {
-			replacementString = displayString + "=\""
-					+ IConstants.REFERENCE_STATIC + "\"";
+			replacementString = displayString + string1
+					+ IConstants.REFERENCE_STATIC + string2;
 		} else {
-			replacementString = displayString + "=\"" + displayString + "\"";
+			replacementString = displayString + string1 + displayString
+					+ string2;
 		}
 		return replacementString;
 	}

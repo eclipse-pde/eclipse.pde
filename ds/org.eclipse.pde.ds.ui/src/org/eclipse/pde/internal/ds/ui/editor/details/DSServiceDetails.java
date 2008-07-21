@@ -16,9 +16,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
+import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.parts.ComboPart;
+import org.eclipse.pde.internal.ds.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -64,8 +64,7 @@ public class DSServiceDetails extends DSAbstractDetails {
 
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(),
-				fMainSection);
+		alignSectionHeaders(fMainSection);
 
 		// Create container for main section
 		Composite mainSectionClient = getToolkit()

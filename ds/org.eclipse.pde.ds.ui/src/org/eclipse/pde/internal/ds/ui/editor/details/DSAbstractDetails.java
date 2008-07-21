@@ -12,16 +12,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.details;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
 public abstract class DSAbstractDetails extends PDEDetails {
 	private IDSMaster fMasterSection;
@@ -80,7 +84,7 @@ public abstract class DSAbstractDetails extends PDEDetails {
 	 */
 	public void fireSaveNeeded() {
 		markDirty();
-		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
+		getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 
 	/* (non-Javadoc)
@@ -144,5 +148,23 @@ public abstract class DSAbstractDetails extends PDEDetails {
 			return null;
 		}
 		return structuredSel.getFirstElement();
+	}
+	
+	protected void markDetailsPart(Control control) {
+		super.markDetailsPart(control);
+	}
+	
+
+	protected IProject getCommonProject() {
+		return getPDEEditor().getCommonProject();
+	}
+	
+	protected PDEFormEditor getPDEEditor() {
+		return getPage().getPDEEditor();
+	}
+	
+	protected void alignSectionHeaders(Section mainSection) {
+		getPage().alignSectionHeaders(getMasterSection().getSection(),
+				mainSection);
 	}
 }

@@ -27,10 +27,10 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
+import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
@@ -75,8 +75,7 @@ public class DSPropertiesDetails extends DSAbstractDetails {
 
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(),
-				fMainSection);
+		alignSectionHeaders(fMainSection);
 
 		// Create container for main section
 		Composite mainSectionClient = getToolkit()
@@ -97,7 +96,7 @@ public class DSPropertiesDetails extends DSAbstractDetails {
 	}
 
 	public void hookListeners() {
-		IActionBars actionBars = getPage().getPDEEditor().getEditorSite()
+		IActionBars actionBars = getPDEEditor().getEditorSite()
 				.getActionBars();
 
 		// Attribute: title
@@ -136,7 +135,7 @@ public class DSPropertiesDetails extends DSAbstractDetails {
 	}
 
 	private void doOpenSelectionDialog(FormEntry entry) {
-		final IProject project = getPage().getPDEEditor().getCommonProject();
+		final IProject project = getCommonProject();
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
 				Activator.getActiveWorkbenchShell(),
 				new WorkbenchLabelProvider(), new WorkbenchContentProvider());
@@ -230,9 +229,10 @@ public class DSPropertiesDetails extends DSAbstractDetails {
 		String value = fEntry.getValue();
 		if (value.length() == 0)
 			return null;
-		IProject project = getPage().getPDEEditor().getCommonProject();
+		IProject project = getCommonProject();
 		IPath path = project.getFullPath().append(value);
 		return project.getWorkspace().getRoot().findMember(path);
 	}
+
 
 }

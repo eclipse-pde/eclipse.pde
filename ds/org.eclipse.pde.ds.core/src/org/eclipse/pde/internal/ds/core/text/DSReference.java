@@ -22,8 +22,9 @@ public class DSReference extends DSObject implements IDSReference {
 		super(model, ELEMENT_REFERENCE);
 		
 		// set default values
-		this.setReferenceCardinality("1..1");
-		this.setReferencePolicy("static");
+		this
+				.setReferenceCardinality(IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE);
+		this.setReferencePolicy(IDSConstants.VALUE_REFERENCE_POLICY_STATIC);
 	}
 	/*
 	 * (non-Javadoc)
