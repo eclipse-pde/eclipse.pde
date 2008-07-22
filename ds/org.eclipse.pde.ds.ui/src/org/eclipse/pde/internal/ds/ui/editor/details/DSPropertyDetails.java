@@ -208,7 +208,7 @@ public class DSPropertyDetails extends DSAbstractDetails {
 						// Get the text from the event
 						String text = document.get().trim();
 
-						if (fProperty.getPropertyElemBody() != null) {
+						if (text != null) {
 							fProperty.setPropertyElemBody(text);
 						}
 					}
