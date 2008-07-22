@@ -17,4 +17,11 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.pde.build.internal.tests;x-internal:=true,
+ org.eclipse.pde.build.internal.tests.ant;x-internal:=true,
+ org.eclipse.pde.build.internal.tests.p2;x-internal:=true,
  org.eclipse.pde.build.tests
+Import-Package: org.eclipse.equinox.internal.provisional.p2.core,
+ org.eclipse.equinox.internal.provisional.p2.metadata,
+ org.eclipse.equinox.internal.provisional.p2.metadata.query,
+ org.eclipse.equinox.internal.provisional.p2.metadata.repository,
+ org.eclipse.equinox.internal.provisional.p2.query

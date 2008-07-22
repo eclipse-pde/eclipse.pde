@@ -22,7 +22,7 @@ public class PDEBuildTestSuite {
 		suite.addTestSuite(FetchTests.class);
 		suite.addTestSuite(ScriptGenerationTests.class);
 		suite.addTestSuite(ProductTests.class);
-		
+		suite.addTestSuite(P2Tests.class);
 		suite.addTest(AssembleTests.suite());
 		return suite;
 	}
