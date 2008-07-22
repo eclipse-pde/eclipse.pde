@@ -74,9 +74,11 @@ public class DSInputContext extends XMLInputContext {
 			} else {
 				model.setCharset(getDefaultCharset());
 			}
-
+			
 			model.load();
-
+			
+			model.save();
+			
 			return model;
 		}
 
