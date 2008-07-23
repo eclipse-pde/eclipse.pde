@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import com.ibm.icu.text.MessageFormat;
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.build.BaseBuildAction;
 import org.w3c.dom.Document;
 
@@ -34,7 +42,64 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 
 	protected abstract BaseExportWizardPage createPage1();
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizard#performPreliminaryChecks()
+	 */
 	protected boolean performPreliminaryChecks() {
+		// Check if we are going to overwrite an existing build.xml file
+		if (!MessageDialogWithToggle.ALWAYS.equals(PDEPlugin.getDefault().getPreferenceStore().getString(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT))) {
+			Object[] objects = fPage.getSelectedItems();
+			List problemModels = new ArrayList();
+			for (int i = 0; i < objects.length; i++) {
+				Object object = objects[i];
+				String installLocation = null;
+				IResource underlyingResource = null;
+				if (object instanceof WorkspacePluginModelBase) {
+					installLocation = ((WorkspacePluginModelBase) object).getInstallLocation();
+					underlyingResource = ((WorkspacePluginModelBase) object).getUnderlyingResource();
+				} else if (object instanceof WorkspaceFeatureModel) {
+					installLocation = ((WorkspaceFeatureModel) object).getInstallLocation();
+					underlyingResource = ((WorkspaceFeatureModel) object).getUnderlyingResource();
+				}
+				if (installLocation != null && underlyingResource != null) {
+					File file = new File(installLocation, "build.xml"); //$NON-NLS-1$
+					if (file.exists()) {
+						try {
+							IFile buildFile = underlyingResource.getProject().getFile("build.properties"); //$NON-NLS-1$
+							IBuildModel buildModel = new WorkspaceBuildModel(buildFile);
+							buildModel.load();
+							if (buildModel != null) {
+								IBuildEntry entry = buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
+								if (entry == null || !entry.contains(IBuildPropertiesConstants.TRUE)) {
+									problemModels.add(object);
+								}
+							}
+						} catch (CoreException e) {
+							PDEPlugin.log(e);
+						}
+					}
+				}
+			}
+			if (problemModels.size() > 0) {
+				StringBuffer buf = new StringBuffer();
+				PDELabelProvider labelProvider = new PDELabelProvider();
+				int maxCount = 10;
+				for (Iterator iterator = problemModels.iterator(); iterator.hasNext();) {
+					buf.append(labelProvider.getText(iterator.next()));
+					buf.append('\n');
+					maxCount--;
+					if (maxCount <= 0) {
+						buf.append(Dialog.ELLIPSIS);
+						break;
+					}
+				}
+
+				MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(getShell(), PDEUIMessages.AntGeneratingExportWizard_0, MessageFormat.format(PDEUIMessages.AntGeneratingExportWizard_1, new String[] {buf.toString()}), PDEUIMessages.AntGeneratingExportWizard_2, false, PDEPlugin.getDefault().getPreferenceStore(), IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT);
+				if (dialog.getReturnCode() == Window.CANCEL) {
+					return false;
+				}
+			}
+		}
 		if (fPage.doGenerateAntFile())
 			generateAntBuildFile(fPage.getAntBuildFileName());
 		return true;

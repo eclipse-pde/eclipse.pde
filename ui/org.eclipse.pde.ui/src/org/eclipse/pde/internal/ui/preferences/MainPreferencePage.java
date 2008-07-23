@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.ui.*;
@@ -24,6 +27,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fUseID;
 	private Button fUseName;
 	private Button fAutoManage;
+	private Button fOverwriteBuildFiles;
 
 	public MainPreferencePage() {
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
@@ -38,10 +42,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		layout.verticalSpacing = 15;
 		composite.setLayout(layout);
 
-		Group group = new Group(composite, SWT.NONE);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEUIMessages.Preferences_MainPage_showObjects);
-		group.setLayout(new GridLayout());
+		Group group = SWTFactory.createGroup(composite, PDEUIMessages.Preferences_MainPage_showObjects, 1, 1, GridData.FILL_HORIZONTAL);
 
 		fUseID = new Button(group, SWT.RADIO);
 		fUseID.setText(PDEUIMessages.Preferences_MainPage_useIds);
@@ -55,14 +56,18 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			fUseName.setSelection(true);
 		}
 
-		group = new Group(composite, SWT.NONE);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setLayout(new GridLayout());
-		group.setText(PDEUIMessages.MainPreferencePage_group2);
+		group = SWTFactory.createGroup(composite, PDEUIMessages.MainPreferencePage_group2, 1, 1, GridData.FILL_HORIZONTAL);
 
 		fAutoManage = new Button(group, SWT.CHECK);
 		fAutoManage.setText(PDEUIMessages.MainPreferencePage_updateStale);
 		fAutoManage.setSelection(store.getBoolean(IPreferenceConstants.PROP_AUTO_MANAGE));
+
+		group = SWTFactory.createGroup(composite, PDEUIMessages.MainPreferencePage_exportingGroup, 1, 1, GridData.FILL_HORIZONTAL);
+
+		fOverwriteBuildFiles = new Button(group, SWT.CHECK);
+		fOverwriteBuildFiles.setText(PDEUIMessages.MainPreferencePage_promptBeforeOverwrite);
+		fOverwriteBuildFiles.setSelection(!MessageDialogWithToggle.ALWAYS.equals(store.getString(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT)));
+
 		return composite;
 	}
 
@@ -80,6 +85,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			store.setValue(IPreferenceConstants.PROP_SHOW_OBJECTS, IPreferenceConstants.VALUE_USE_NAMES);
 		}
 		store.setValue(IPreferenceConstants.PROP_AUTO_MANAGE, fAutoManage.getSelection());
+		store.setValue(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT, fOverwriteBuildFiles.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS);
 		PDEPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
@@ -94,6 +100,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			fUseName.setSelection(true);
 		}
 		fAutoManage.setSelection(false);
+		fOverwriteBuildFiles.setSelection(true);
 	}
 
 	/*

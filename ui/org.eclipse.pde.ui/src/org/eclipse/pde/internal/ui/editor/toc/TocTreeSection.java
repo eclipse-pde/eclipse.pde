@@ -355,12 +355,13 @@ public class TocTreeSection extends TreeSection {
 				}
 
 				TocObject parent = tocObject.getParent();
-				if (sel.size() == 1 && (tocObject.getType() == ITocConstants.TYPE_TOC || parent.getType() == ITocConstants.TYPE_TOPIC || parent.getType() == ITocConstants.TYPE_TOC)) { /* Semantic rule: 
-																	 * As long as the selection is a child of a 
-																	 * TOC root or a topic, or the selection itself
-																	 * is a TOC root, then a new object can be added
-																	 * either to the selection or to the parent
-																	 */
+				if (sel.size() == 1 && (tocObject.getType() == ITocConstants.TYPE_TOC || parent.getType() == ITocConstants.TYPE_TOPIC || parent.getType() == ITocConstants.TYPE_TOC)) {
+				/* Semantic rule: 
+				 * As long as the selection is a child of a 
+				 * TOC root or a topic, or the selection itself
+				 * is a TOC root, then a new object can be added
+				 * either to the selection or to the parent
+				 */
 					canAddObject = true;
 				}
 
@@ -545,7 +546,11 @@ public class TocTreeSection extends TreeSection {
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		Object selected = selection.getFirstElement();
 		if (selected instanceof TocObject) {
-			open((TocObject) selected);
+			if (((TocObject) selected).hasXMLChildren()) {
+				fTocTree.setExpandedState(selected, !fTocTree.getExpandedState(selected));
+			} else {
+				open((TocObject) selected);
+			}
 		}
 	}
 
@@ -555,7 +560,8 @@ public class TocTreeSection extends TreeSection {
 	 * @param path a path to a resource, relative to this TOC's root project
 	 */
 	private void open(TocObject obj) {
-		Path resourcePath = new Path(obj.getPath());
+		String path = obj.getPath();
+		Path resourcePath = path != null ? new Path(path) : null;
 		if (!isEditable() || resourcePath == null || resourcePath.isEmpty()) {
 			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath);
 			return;

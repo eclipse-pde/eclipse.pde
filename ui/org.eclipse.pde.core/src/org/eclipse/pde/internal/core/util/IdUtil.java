@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,8 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.util.StringTokenizer;
-
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 
 public class IdUtil {
@@ -29,6 +23,21 @@ public class IdUtil {
 		for (int i = 0; i < name.length(); i++) {
 			char c = name.charAt(i);
 			if ((c < 'A' || 'Z' < c) && (c < 'a' || 'z' < c) && (c < '0' || '9' < c) && c != '_') {
+				if (i == 0 || i == name.length() - 1 || c != '.') {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	public static boolean isValidCompositeID3_0(String name) {
+		if (name.length() <= 0) {
+			return false;
+		}
+		for (int i = 0; i < name.length(); i++) {
+			char c = name.charAt(i);
+			if ((c < 'A' || 'Z' < c) && (c < 'a' || 'z' < c) && (c < '0' || '9' < c) && c != '_' && c != '-') {
 				if (i == 0 || i == name.length() - 1 || c != '.') {
 					return false;
 				}

@@ -22,9 +22,9 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.parts.ComboViewerPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -147,7 +147,7 @@ public class JRESection extends PDESection {
 		fJREsCombo = new ComboViewerPart();
 		fJREsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fJREsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fJREsCombo.setItems(VMHelper.getAllVMInstances());
+		fJREsCombo.setItems(VMUtil.getAllVMInstances());
 		fJREsCombo.setLabelProvider(new JRELabelProvider());
 		fJREsCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -184,7 +184,7 @@ public class JRESection extends PDESection {
 		fEEsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fEEsCombo.setLabelProvider(new EELabelProvider());
 		fEEsCombo.setComparator(new ViewerComparator());
-		fEEsCombo.setItems(VMHelper.getExecutionEnvironments());
+		fEEsCombo.setItems(VMUtil.getExecutionEnvironments());
 		fEEsCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (!fBlockChanges) {
@@ -265,7 +265,7 @@ public class JRESection extends PDESection {
 		IPath jrePath = getJVMLocations().getJREContainerPath(getOS(fLastTab));
 		if (jrePath != null) {
 			String eeID = JavaRuntime.getExecutionEnvironmentId(jrePath);
-			IExecutionEnvironment env = VMHelper.getExecutionEnvironment(eeID);
+			IExecutionEnvironment env = VMUtil.getExecutionEnvironment(eeID);
 			if (env != null) {
 				if (!fEEsCombo.getItems().contains(env))
 					fEEsCombo.addItem(env);

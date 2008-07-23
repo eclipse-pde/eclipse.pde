@@ -19,6 +19,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -94,12 +95,12 @@ public class JREBlock {
 			public void widgetSelected(SelectionEvent e) {
 				String currentVM = fJreCombo.getText();
 				String currentEE = parseEESelection(fEeCombo.getText());
-				boolean useDefault = VMHelper.getDefaultVMInstallName().equals(currentVM);
+				boolean useDefault = VMUtil.getDefaultVMInstallName().equals(currentVM);
 				String[] pageIDs = new String[] {"org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"}; //$NON-NLS-1$
 				if (PDEPreferencesUtil.showPreferencePage(pageIDs, fTab.getControl().getShell())) {
 					setJRECombo();
 					if (useDefault || fJreCombo.indexOf(currentVM) == -1)
-						fJreCombo.setText(VMHelper.getDefaultVMInstallName());
+						fJreCombo.setText(VMUtil.getDefaultVMInstallName());
 					else
 						fJreCombo.setText(currentVM);
 					setEECombo();
@@ -209,7 +210,7 @@ public class JREBlock {
 		}
 		fJreCombo.setText(vmInstallName);
 		if (fJreCombo.getSelectionIndex() == -1)
-			fJreCombo.setText(VMHelper.getDefaultVMInstallName());
+			fJreCombo.setText(VMUtil.getDefaultVMInstallName());
 
 		setEECombo();
 		setEEComboSelection(eeId);
@@ -270,7 +271,7 @@ public class JREBlock {
 			}
 		} else {
 			if (fEeCombo.getSelectionIndex() != -1) {
-				IExecutionEnvironment environment = VMHelper.getExecutionEnvironment(parseEESelection(fEeCombo.getText()));
+				IExecutionEnvironment environment = VMUtil.getExecutionEnvironment(parseEESelection(fEeCombo.getText()));
 				if (environment != null) {
 					jrePath = JavaRuntime.newJREContainerPath(environment);
 				}
@@ -294,18 +295,18 @@ public class JREBlock {
 	}
 
 	private void setJRECombo() {
-		String[] jres = VMHelper.getVMInstallNames();
+		String[] jres = VMUtil.getVMInstallNames();
 		Arrays.sort(jres, getComparator());
 		fJreCombo.setItems(jres);
 	}
 
 	private void setEECombo() {
-		IExecutionEnvironment[] eeObjects = VMHelper.getExecutionEnvironments();
+		IExecutionEnvironment[] eeObjects = VMUtil.getExecutionEnvironments();
 		String[] ees = new String[eeObjects.length];
 		for (int i = 0; i < eeObjects.length; i++) {
 			String vm;
 			try {
-				vm = VMHelper.getVMInstallName(eeObjects[i]);
+				vm = VMUtil.getVMInstallName(eeObjects[i]);
 			} catch (CoreException e) {
 				vm = PDEUIMessages.BasicLauncherTab_unbound;
 			}

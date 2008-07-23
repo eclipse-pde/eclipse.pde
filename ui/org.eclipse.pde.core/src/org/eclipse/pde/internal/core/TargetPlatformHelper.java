@@ -177,13 +177,15 @@ public class TargetPlatformHelper {
 	private static boolean hasChanged(IPluginModelBase model, long timestamp) {
 		if (model.getUnderlyingResource() != null) {
 			File[] files = new File(model.getInstallLocation()).listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isDirectory())
-					continue;
-				String name = files[i].getName();
-				if (name.startsWith("plugin") && name.endsWith(".properties") //$NON-NLS-1$ //$NON-NLS-2$
-						&& files[i].lastModified() > timestamp) {
-					return true;
+			if (files != null) {
+				for (int i = 0; i < files.length; i++) {
+					if (files[i].isDirectory())
+						continue;
+					String name = files[i].getName();
+					if (name.startsWith("plugin") && name.endsWith(".properties") //$NON-NLS-1$ //$NON-NLS-2$
+							&& files[i].lastModified() > timestamp) {
+						return true;
+					}
 				}
 			}
 		}

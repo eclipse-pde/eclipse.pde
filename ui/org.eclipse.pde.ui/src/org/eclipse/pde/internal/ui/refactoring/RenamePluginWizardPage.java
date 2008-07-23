@@ -55,7 +55,7 @@ public class RenamePluginWizardPage extends GeneralRenameIDWizardPage {
 	}
 
 	protected String validateId(String id) {
-		return IdUtil.isValidCompositeID(id) ? null : PDEUIMessages.RenamePluginWizardPage_invalidId;
+		return IdUtil.isValidCompositeID3_0(id) ? null : PDEUIMessages.RenamePluginWizardPage_invalidId;
 	}
 
 }
