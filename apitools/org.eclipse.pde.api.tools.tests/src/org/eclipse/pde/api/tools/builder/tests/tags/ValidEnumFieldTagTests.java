@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 
 /**
  * Tests valid use of @noreference tags in an enum
@@ -41,5 +42,12 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 */
 	public static Test suite() {
 		return buildTestSuite(ValidEnumFieldTagTests.class);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
+	 */
+	protected String getTestCompliance() {
+		return CompilerOptions.VERSION_1_5;
 	}
 }

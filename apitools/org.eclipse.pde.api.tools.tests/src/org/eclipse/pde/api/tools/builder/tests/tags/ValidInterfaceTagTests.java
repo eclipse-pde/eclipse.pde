@@ -47,7 +47,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * Tests that @noimplement is a valid tag on an interface in the 
 	 * the testing package a.b.c using an incremental build
 	 */
-	public void test1I() {
+	public void testValidInterfaceTag1I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
 	}
 
@@ -55,7 +55,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * Tests that @noimplement is a valid tag on an interface in the 
 	 * the testing package a.b.c using a full build
 	 */
-	public void test1F() {
+	public void testValidInterfaceTag1F() {
 		deployFullBuildTest(TESTING_PACKAGE, "test1", false);
 	}
 	
@@ -63,7 +63,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * Tests that @noimplement is a valid tag on an interface in the 
 	 * the testing package a.b.c using an incremental build
 	 */
-	public void test2I() {
+	public void testValidInterfaceTag2I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", false);
 	}
 
@@ -71,7 +71,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * Tests that @noimplement is a valid tag on an interface in the 
 	 * the testing package a.b.c using a full build
 	 */
-	public void test2F() {
+	public void testValidInterfaceTag2F() {
 		deployFullBuildTest(TESTING_PACKAGE, "test2", false);
 	}
 	
@@ -79,7 +79,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * Tests that @noimplement is a valid tag on an interface in the 
 	 * the testing package a.b.c using an incremental build
 	 */
-	public void test3I() {
+	public void testValidInterfaceTag3I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", false);
 	}
 
@@ -87,7 +87,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * Tests that @noimplement is a valid tag on an interface in the 
 	 * the testing package a.b.c using a full build
 	 */
-	public void test3F() {
+	public void testValidInterfaceTag3F() {
 		deployFullBuildTest(TESTING_PACKAGE, "test3", false);
 	}
 	
@@ -95,7 +95,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * Tests that @noimplement is a valid tag on a variety of inner / outer / top-level interfaces in the 
 	 * the testing package a.b.c using an incremental build
 	 */
-	public void test4I() {
+	public void testValidInterfaceTag4I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", false);
 	}
 
@@ -103,7 +103,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * Tests that @noimplement is a valid tag on a variety of inner / outer / top-level interfaces in the 
 	 * the testing package a.b.c using a full build
 	 */
-	public void test4F() {
+	public void testValidInterfaceTag4F() {
 		deployFullBuildTest(TESTING_PACKAGE, "test4", false);
 	}
 	
@@ -111,7 +111,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * Tests that @noimplement is a valid tag on an interface in the 
 	 * the testing package a.b.c using an incremental build
 	 */
-	public void test5I() {
+	public void testValidInterfaceTag5I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", false);
 	}
 
@@ -119,7 +119,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * Tests that @noimplement is a valid tag on an interface in the 
 	 * the testing package a.b.c using a full build
 	 */
-	public void test5F() {
+	public void testValidInterfaceTag5F() {
 		deployFullBuildTest(TESTING_PACKAGE, "test5", false);
 	}
 }

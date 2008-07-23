@@ -47,7 +47,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on interface methods
 	 * using an incremental build
 	 */
-	public void test1I() {
+	public void testValidInterfaceMethodTag1I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
 	
@@ -55,7 +55,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on interface methods
 	 * using a full build
 	 */
-	public void test1F() {
+	public void testValidInterfaceMethodTag1F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
 	
@@ -63,7 +63,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on outer interface methods
 	 * using an incremental build
 	 */
-	public void test2I() {
+	public void testValidInterfaceMethodTag2I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
 	
@@ -71,7 +71,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on outer interface methods
 	 * using a full build
 	 */
-	public void test2F() {
+	public void testValidInterfaceMethodTag2F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
 	
@@ -79,7 +79,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on inner interface methods
 	 * using an incremental build
 	 */
-	public void test3I() {
+	public void testValidInterfaceMethodTag3I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
 	
@@ -87,7 +87,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on inner interface methods
 	 * using a full build
 	 */
-	public void test3F() {
+	public void testValidInterfaceMethodTag3F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
 	
@@ -95,7 +95,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on a variety of inner / outer interface methods
 	 * using an incremental build
 	 */
-	public void test4I() {
+	public void testValidInterfaceMethodTag4I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
 	
@@ -103,7 +103,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on a variety of inner / outer interface methods
 	 * using a full build
 	 */
-	public void test4F() {
+	public void testValidInterfaceMethodTag4F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
 	
@@ -111,7 +111,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on interface methods in the default package
 	 * using an incremental build
 	 */
-	public void test5I() {
+	public void testValidInterfaceMethodTag5I() {
 		deployIncrementalBuildTest("", "test5", true);
 	}
 	
@@ -119,7 +119,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on interface methods in the default package
 	 * using a full build
 	 */
-	public void test5F() {
+	public void testValidInterfaceMethodTag5F() {
 		deployIncrementalBuildTest("", "test5", true);
 	}
 }

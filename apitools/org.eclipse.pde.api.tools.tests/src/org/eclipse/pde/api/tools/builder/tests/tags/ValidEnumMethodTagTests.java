@@ -55,7 +55,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on enum methods
 	 * using an incremental build
 	 */
-	public void test1I() {
+	public void testValidEnumMethodTag1I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
 	
@@ -63,7 +63,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on enum methods
 	 * using a full build
 	 */
-	public void test1F() {
+	public void testValidEnumMethodTag1F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
 	
@@ -71,7 +71,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on outer enum methods
 	 * using an incremental build
 	 */
-	public void test2I() {
+	public void testValidEnumMethodTag2I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
 	
@@ -79,7 +79,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on outer enum methods
 	 * using a full build
 	 */
-	public void test2F() {
+	public void testValidEnumMethodTag2F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
 	
@@ -87,7 +87,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on inner enum methods
 	 * using an incremental build
 	 */
-	public void test3I() {
+	public void testValidEnumMethodTag3I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
 	
@@ -95,7 +95,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on inner enum methods
 	 * using a full build
 	 */
-	public void test3F() {
+	public void testValidEnumMethodTag3F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
 	
@@ -103,7 +103,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on a variety of inner / outer enum methods
 	 * using an incremental build
 	 */
-	public void test4I() {
+	public void testValidEnumMethodTag4I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
 	
@@ -111,7 +111,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on a variety of inner / outer enum methods
 	 * using a full build
 	 */
-	public void test4F() {
+	public void testValidEnumMethodTag4F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
 	
@@ -119,7 +119,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on enum methods in the default package
 	 * using an incremental build
 	 */
-	public void test5I() {
+	public void testValidEnumMethodTag5I() {
 		deployIncrementalBuildTest("", "test5", true);
 	}
 	
@@ -127,7 +127,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on enum methods in the default package
 	 * using a full build
 	 */
-	public void test5F() {
+	public void testValidEnumMethodTag5F() {
 		deployIncrementalBuildTest("", "test5", true);
 	}
 }

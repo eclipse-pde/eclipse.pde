@@ -47,7 +47,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three fields in a class
 	 * using an incremental build
 	 */
-	public void test1I() {
+	public void testValidClassFieldTag1I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
 	}
 	
@@ -55,7 +55,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three fields in a class
 	 * using a full build
 	 */
-	public void test1F() {
+	public void testValidClassFieldTag1F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
 	}
 	
@@ -63,7 +63,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three static fields in a class
 	 * using an incremental build
 	 */
-	public void test2I() {
+	public void testValidClassFieldTag2I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", false);
 	}
 	
@@ -71,7 +71,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three static fields in a class
 	 * using a full build
 	 */
-	public void test2F() {
+	public void testValidClassFieldTag2F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", false);
 	}
 	
@@ -80,7 +80,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three fields in an outer class
 	 * using an incremental build
 	 */
-	public void test3I() {
+	public void testValidClassFieldTag3I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", false);
 	}
 	
@@ -88,7 +88,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three fields in an outer class
 	 * using a full build
 	 */
-	public void test3F() {
+	public void testValidClassFieldTag3F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", false);
 	}
 	
@@ -96,7 +96,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three static fields in an outer class
 	 * using an incremental build
 	 */
-	public void test4I() {
+	public void testValidClassFieldTag4I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", false);
 	}
 	
@@ -104,7 +104,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three static fields in an outer class
 	 * using a full build
 	 */
-	public void test4F() {
+	public void testValidClassFieldTag4F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", false);
 	}
 	
@@ -112,7 +112,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three fields in an inner class
 	 * using an incremental build
 	 */
-	public void test5I() {
+	public void testValidClassFieldTag5I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", false);
 	}
 	
@@ -120,7 +120,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three fields in an inner class
 	 * using a full build
 	 */
-	public void test5F() {
+	public void testValidClassFieldTag5F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", false);
 	}
 	
@@ -128,7 +128,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three static fields in an inner class
 	 * using an incremental build
 	 */
-	public void test6I() {
+	public void testValidClassFieldTag6I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", false);
 	}
 	
@@ -136,7 +136,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three static fields in an inner class
 	 * using a full build
 	 */
-	public void test6F() {
+	public void testValidClassFieldTag6F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", false);
 	}
 	
@@ -144,7 +144,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on a variety of fields in inner and outer classes
 	 * using an incremental build
 	 */
-	public void test7I() {
+	public void testValidClassFieldTag7I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", false);
 	}
 	
@@ -152,7 +152,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on a variety of fields in inner and outer classes
 	 * using a full build
 	 */
-	public void test7F() {
+	public void testValidClassFieldTag7F() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", false);
 	}
 	
@@ -160,7 +160,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three fields in a class in the default package
 	 * using an incremental build
 	 */
-	public void test8I() {
+	public void testValidClassFieldTag8I() {
 		deployIncrementalBuildTest("", "test8", false);
 	}
 	
@@ -168,7 +168,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * Tests a valid @noreference tag on three fields in a class in the default package
 	 * using a full build
 	 */
-	public void test8F() {
+	public void testValidClassFieldTag8F() {
 		deployIncrementalBuildTest("", "test8", false);
 	}
 }

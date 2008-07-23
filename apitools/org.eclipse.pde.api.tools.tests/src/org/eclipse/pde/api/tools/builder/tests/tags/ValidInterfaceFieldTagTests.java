@@ -47,7 +47,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on a field in an interface
 	 * using an incremental build
 	 */
-	public void test1I() {
+	public void testValidInterfaceFieldTag1I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
 	}
 	
@@ -55,7 +55,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on a field in an interface
 	 * using a full build
 	 */
-	public void test1F() {
+	public void testValidInterfaceFieldTag1F() {
 		deployFullBuildTest(TESTING_PACKAGE, "test1", false);
 	}
 	
@@ -63,7 +63,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on a field in an outer interface
 	 * using an incremental build
 	 */
-	public void test2I() {
+	public void testValidInterfaceFieldTag2I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", false);
 	}
 	
@@ -71,7 +71,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on a field in an outer interface
 	 * using a full build
 	 */
-	public void test2F() {
+	public void testValidInterfaceFieldTag2F() {
 		deployFullBuildTest(TESTING_PACKAGE, "test2", false);
 	}
 	
@@ -79,7 +79,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on a field in an inner interface
 	 * using an incremental build
 	 */
-	public void test3I() {
+	public void testValidInterfaceFieldTag3I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", false);
 	}
 	
@@ -87,7 +87,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on a field in an inner interface
 	 * using a full build
 	 */
-	public void test3F() {
+	public void testValidInterfaceFieldTag3F() {
 		deployFullBuildTest(TESTING_PACKAGE, "test3", false);
 	}
 	
@@ -95,7 +95,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on fields in inner / outer interfaces
 	 * using an incremental build
 	 */
-	public void test4I() {
+	public void testValidInterfaceFieldTag4I() {
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", false);
 	}
 	
@@ -103,7 +103,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on fields in inner / outer interfaces
 	 * using a full build
 	 */
-	public void test4F() {
+	public void testValidInterfaceFieldTag4F() {
 		deployFullBuildTest(TESTING_PACKAGE, "test4", false);
 	}
 }
