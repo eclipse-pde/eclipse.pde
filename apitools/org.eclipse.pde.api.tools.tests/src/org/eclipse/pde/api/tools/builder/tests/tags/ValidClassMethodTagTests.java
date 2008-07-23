@@ -40,6 +40,6 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * @return the test for this class
 	 */
 	public static Test suite() {
-		return buildTestSuite(InvalidInterfaceMethodTagTests.class);
+		return buildTestSuite(ValidClassMethodTagTests.class);
 	}
 }

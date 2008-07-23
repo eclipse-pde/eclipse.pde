@@ -43,6 +43,7 @@ public class BuilderMessages extends NLS {
 	public static String TagValidator_an_enum_constant;
 	public static String TagValidator_an_enum_method;
 	public static String TagValidator_an_interface;
+	public static String TagValidator_an_interface_method;
 	public static String TagValidator_annotation_field;
 	public static String TagValidator_enum_field;
 

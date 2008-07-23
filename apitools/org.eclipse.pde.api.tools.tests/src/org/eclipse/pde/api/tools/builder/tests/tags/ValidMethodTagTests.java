@@ -56,7 +56,8 @@ public class ValidMethodTagTests extends InvalidMethodTagTests {
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
 			ValidClassMethodTagTests.class,
-			ValidInterfaceMethodTagTests.class
+			ValidInterfaceMethodTagTests.class,
+			ValidEnumMethodTagTests.class
 		};
 		return classes;
 	}

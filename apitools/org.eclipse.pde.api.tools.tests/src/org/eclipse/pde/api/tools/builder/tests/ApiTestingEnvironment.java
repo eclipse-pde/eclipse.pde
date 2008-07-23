@@ -293,4 +293,36 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		}
 		return (ApiProblem[]) problems.toArray(new ApiProblem[problems.size()]);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#removeProject(org.eclipse.core.runtime.IPath)
+	 */
+	public void removeProject(IPath projectPath) {
+		IJavaProject project = getJavaProject(projectPath);
+		if(project != null) {
+			try {
+				project.getProject().delete(true, new NullProgressMonitor());
+			}
+			catch(CoreException ce) {
+				
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#resetWorkspace()
+	 */
+	public void resetWorkspace() {
+		super.resetWorkspace();
+		//clean up any left over projects from other tests
+		IProject[] projects = getWorkspace().getRoot().getProjects();
+		for(int i = 0; i < projects.length; i++) {
+			try {
+				projects[i].delete(true, new NullProgressMonitor());
+			}
+			catch(CoreException ce) {
+				
+			}
+		}
+	}
 }

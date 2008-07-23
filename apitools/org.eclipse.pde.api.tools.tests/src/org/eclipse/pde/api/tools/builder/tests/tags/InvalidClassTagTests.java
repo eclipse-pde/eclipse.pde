@@ -58,7 +58,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noreference tag on a class in package a.b.c
 	 * using an incremental build
 	 */
-	public void test1I() {
+	public void testInvalidClassTag1I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -67,7 +67,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noreference tag on a class in package a.b.c
 	 * using a full build
 	 */
-	public void test1F() {
+	public void testInvalidClassTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -76,7 +76,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noreference tag on an outer type class in package a.b.c
 	 * using an incremental build
 	 */
-	public void test2I() {
+	public void testInvalidClassTag2I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -85,7 +85,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noreference tag on an outer type class in package a.b.c
 	 * using a full build
 	 */
-	public void test2F() {
+	public void testInvalidClassTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -94,7 +94,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noreference tag on an inner type class in package a.b.c
 	 * using an incremental build
 	 */
-	public void test3I() {
+	public void testInvalidClassTag3I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -103,7 +103,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noreference tag on an inner type class in package a.b.c
 	 * using a full build
 	 */
-	public void test3F() {
+	public void testInvalidClassTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -112,7 +112,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noreference tag on a variety of inner / outer / top-level classes in package a.b.c
 	 * using an incremental build
 	 */
-	public void test4I() {
+	public void testInvalidClassTag4I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -121,7 +121,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noreference tag on a variety of inner / outer / top-level classes in package a.b.c
 	 * using a full build
 	 */
-	public void test4F() {
+	public void testInvalidClassTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -130,7 +130,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noreference tag on a class in the default package
 	 * using an incremental build
 	 */
-	public void test5I() {
+	public void testInvalidClassTag5I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test5", true);
 	}
@@ -139,7 +139,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noreference tag on a class in the default package
 	 * using a full build
 	 */
-	public void test5F() {
+	public void testInvalidClassTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest("", "test5", true);
 	}
@@ -148,7 +148,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noimplement tag on a class in package a.b.c
 	 * using an incremental build
 	 */
-	public void test6I() {
+	public void testInvalidClassTag6I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -157,7 +157,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noimplement tag on a class in package a.b.c
 	 * using a full build
 	 */
-	public void test6F() {
+	public void testInvalidClassTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -166,7 +166,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an outer class in package a.b.c
 	 * using an incremental build
 	 */
-	public void test7I() {
+	public void testInvalidClassTag7I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -175,7 +175,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an outer class in package a.b.c
 	 * using a full build
 	 */
-	public void test7F() {
+	public void testInvalidClassTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -184,7 +184,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an inner class in package a.b.c
 	 * using an incremental build
 	 */
-	public void test8I() {
+	public void testInvalidClassTag8I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -193,7 +193,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an inner class in package a.b.c
 	 * using a full build
 	 */
-	public void test8F() {
+	public void testInvalidClassTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -202,7 +202,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noimplement tag on a variety of inner / outer / top-level classes in package a.b.c
 	 * using an incremental build
 	 */
-	public void test9I() {
+	public void testInvalidClassTag9I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -211,7 +211,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noimplement tag on a variety of inner / outer / top-level classes in package a.b.c
 	 * using a full build
 	 */
-	public void test9F() {
+	public void testInvalidClassTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -220,7 +220,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noimplement tag on a class in the default package
 	 * using an incremental build
 	 */
-	public void test10I() {
+	public void testInvalidClassTag10I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test10", true);
 	}
@@ -229,7 +229,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @noimplement tag on a class in the default package
 	 * using a full build
 	 */
-	public void test10F() {
+	public void testInvalidClassTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test10", true);
 	}
@@ -238,7 +238,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @nooverride tag on a class in package a.b.c
 	 * using an incremental build
 	 */
-	public void test11I() {
+	public void testInvalidClassTag11I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -247,7 +247,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @nooverride tag on a class in package a.b.c
 	 * using a full build
 	 */
-	public void test11F() {
+	public void testInvalidClassTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -256,7 +256,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an outer class in package a.b.c
 	 * using an incremental build
 	 */
-	public void test12I() {
+	public void testInvalidClassTag12I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -265,7 +265,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an outer class in package a.b.c
 	 * using a full build
 	 */
-	public void test12F() {
+	public void testInvalidClassTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -274,7 +274,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an inner class in package a.b.c
 	 * using an incremental build
 	 */
-	public void test13I() {
+	public void testInvalidClassTag13I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -283,7 +283,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an inner class in package a.b.c
 	 * using a full build
 	 */
-	public void test13F() {
+	public void testInvalidClassTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -292,7 +292,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @nooverride tag on a variety of inner / outer / top-level classes in package a.b.c
 	 * using an incremental build
 	 */
-	public void test14I() {
+	public void testInvalidClassTag14I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -301,7 +301,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @nooverride tag on a variety of inner / outer / top-level classes in package a.b.c
 	 * using a full build
 	 */
-	public void test14F() {
+	public void testInvalidClassTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -310,7 +310,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @nooverride tag on a class in the default package
 	 * using an incremental build
 	 */
-	public void test15I() {
+	public void testInvalidClassTag15I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test15", true);
 	}
@@ -319,7 +319,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having an @nooverride tag on a class in the default package
 	 * using a full build
 	 */
-	public void test15F() {
+	public void testInvalidClassTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test15", true);
 	}
@@ -328,7 +328,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having more than one invalid tag on a class in the testing package a.b.c
 	 * using an incremental build
 	 */
-	public void test16I() {
+	public void testInvalidClassTag16I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -337,7 +337,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having more than one invalid tag on a class in the testing package a.b.c
 	 * using a full build
 	 */
-	public void test16F() {
+	public void testInvalidClassTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployFullBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -346,7 +346,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an outer class in the testing package a.b.c
 	 * using an incremental build
 	 */
-	public void test17I() {
+	public void testInvalidClassTag17I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -355,7 +355,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an outer class in the testing package a.b.c
 	 * using a full build
 	 */
-	public void test17F() {
+	public void testInvalidClassTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployFullBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -364,7 +364,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an inner class in the testing package a.b.c
 	 * using an incremental build
 	 */
-	public void test18I() {
+	public void testInvalidClassTag18I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -373,7 +373,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an inner class in the testing package a.b.c
 	 * using a full build
 	 */
-	public void test18F() {
+	public void testInvalidClassTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployFullBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -382,7 +382,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having a variety of invalid tags on a variety of inner / outer / top-level classes in package a.b.c
 	 * using an incremental build
 	 */
-	public void test19I() {
+	public void testInvalidClassTag19I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -391,7 +391,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having a variety of invalid tags on a variety of inner / outer / top-level classes in package a.b.c
 	 * using a full build
 	 */
-	public void test19F() {
+	public void testInvalidClassTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployFullBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -400,7 +400,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having more than one invalid tag on a class in the default package
 	 * using an incremental build
 	 */
-	public void test20I() {
+	public void testInvalidClassTag20I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest("", "test20", true);
 	}
@@ -409,7 +409,7 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests having more than one invalid tag on a class in the default package
 	 * using a full build
 	 */
-	public void test20F() {
+	public void testInvalidClassTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployFullBuildTest("", "test20", true);
 	}

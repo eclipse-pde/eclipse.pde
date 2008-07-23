@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 
 /**
  * Tests invalid javadoc tags on class methods
@@ -34,6 +35,15 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("class");
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
+	 */
+	protected void assertProblems(ApiProblem[] problems) {
+		for(int i = 0; i < problems.length; i++) {
+			assertTrue("the message does not end correctly", problems[i].getMessage().endsWith("a method"));
+		}
 	}
 	
 	/**

@@ -136,6 +136,10 @@ public class TagValidator extends ASTVisitor {
 						context = BuilderMessages.TagValidator_an_enum_method;
 						break;
 					}
+					case IApiJavadocTag.TYPE_INTERFACE: {
+						context = BuilderMessages.TagValidator_an_interface_method;
+						break;
+					}
 					default: {
 						context = method.isConstructor() ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
 						break;

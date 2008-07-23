@@ -19,7 +19,9 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
+ * Tests unsupported javadoc tags for annotations
  * 
+ * @since 3.5
  */
 public class InvalidAnnotationTagTests extends TagTest {
 
@@ -63,7 +65,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on an annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test1I() {
+	public void testInvalidAnnotationTag1I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -72,7 +74,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on an annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test1F() {
+	public void testInvalidAnnotationTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -81,7 +83,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on an outer annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test2I() {
+	public void testInvalidAnnotationTag2I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -90,7 +92,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on an outer annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test2F() {
+	public void testInvalidAnnotationTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -99,7 +101,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on an inner annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test3I() {
+	public void testInvalidAnnotationTag3I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -108,7 +110,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on an inner annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test3F() {
+	public void testInvalidAnnotationTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -117,7 +119,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using an incremental build
 	 */
-	public void test4I() {
+	public void testInvalidAnnotationTag4I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -126,7 +128,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using a full build
 	 */
-	public void test4F() {
+	public void testInvalidAnnotationTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -135,7 +137,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on an annotation in the default package
 	 * using an incremental build
 	 */
-	public void test5I() {
+	public void testInvalidAnnotationTag5I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test5", true);
 	}
@@ -144,7 +146,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on an annotation in the default package
 	 * using a full build
 	 */
-	public void test5F() {
+	public void testInvalidAnnotationTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest("", "test5", true);
 	}
@@ -153,7 +155,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noextend tag on an annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test6I() {
+	public void testInvalidAnnotationTag6I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -162,7 +164,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noextend tag on an annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test6F() {
+	public void testInvalidAnnotationTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -171,7 +173,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noextend tag on an outer annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test7I() {
+	public void testInvalidAnnotationTag7I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -180,7 +182,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noextend tag on an outer annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test7F() {
+	public void testInvalidAnnotationTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -189,7 +191,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noextend tag on an inner annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test8I() {
+	public void testInvalidAnnotationTag8I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -198,7 +200,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noextend tag on an inner annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test8F() {
+	public void testInvalidAnnotationTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -207,7 +209,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noextend tag on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using an incremental build
 	 */
-	public void test9I() {
+	public void testInvalidAnnotationTag9I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -216,7 +218,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noextend tag on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using a full build
 	 */
-	public void test9F() {
+	public void testInvalidAnnotationTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -225,7 +227,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noextend tag on an annotation in the default package
 	 * using an incremental build
 	 */
-	public void test10I() {
+	public void testInvalidAnnotationTag10I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test10", true);
 	}
@@ -234,7 +236,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noextend tag on an annotation in the default package
 	 * using a full build
 	 */
-	public void test10F() {
+	public void testInvalidAnnotationTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test10", true);
 	}
@@ -243,7 +245,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test11I() {
+	public void testInvalidAnnotationTag11I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -252,7 +254,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test11F() {
+	public void testInvalidAnnotationTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -261,7 +263,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an outer annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test12I() {
+	public void testInvalidAnnotationTag12I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -270,7 +272,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an outer annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test12F() {
+	public void testInvalidAnnotationTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -279,7 +281,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an inner annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test13I() {
+	public void testInvalidAnnotationTag13I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -288,7 +290,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an inner annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test13F() {
+	public void testInvalidAnnotationTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -297,7 +299,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @nooverride tag on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using an incremental build
 	 */
-	public void test14I() {
+	public void testInvalidAnnotationTag14I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -306,7 +308,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @nooverride tag on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using a full build
 	 */
-	public void test14F() {
+	public void testInvalidAnnotationTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -315,7 +317,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an annotation in the default package
 	 * using an incremental build
 	 */
-	public void test15I() {
+	public void testInvalidAnnotationTag15I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test15", true);
 	}
@@ -324,7 +326,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an annotation in the default package
 	 * using a full build
 	 */
-	public void test15F() {
+	public void testInvalidAnnotationTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test15", true);
 	}
@@ -333,7 +335,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an annotation in the testing package a.b.c
 	 * using an incremental build
 	 */
-	public void test16I() {
+	public void testInvalidAnnotationTag16I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -342,7 +344,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an annotation in the testing package a.b.c
 	 * using a full build
 	 */
-	public void test16F() {
+	public void testInvalidAnnotationTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -351,7 +353,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an outer annotation in the testing package a.b.c
 	 * using an incremental build
 	 */
-	public void test17I() {
+	public void testInvalidAnnotationTag17I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -360,7 +362,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an outer annotation in the testing package a.b.c
 	 * using a full build
 	 */
-	public void test17F() {
+	public void testInvalidAnnotationTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -369,7 +371,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an inner annotation in the testing package a.b.c
 	 * using an incremental build
 	 */
-	public void test18I() {
+	public void testInvalidAnnotationTag18I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -414,7 +416,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an annotation in the default package
 	 * using a full build
 	 */
-	public void test20F() {
+	public void testInvalidAnnotationTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test20", true);
 	}
@@ -423,7 +425,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test21I() {
+	public void testInvalidAnnotationTag21I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -432,7 +434,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test21F() {
+	public void testInvalidAnnotationTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -441,7 +443,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an outer annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test22I() {
+	public void testInvalidAnnotationTag22I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -450,7 +452,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an outer annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test22F() {
+	public void testInvalidAnnotationTag22F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -459,7 +461,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an inner annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test23I() {
+	public void testInvalidAnnotationTag23I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -468,7 +470,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an inner annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test23F() {
+	public void testInvalidAnnotationTag23F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -477,7 +479,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using an incremental build
 	 */
-	public void test24I() {
+	public void testInvalidAnnotationTag24I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -486,7 +488,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using a full build
 	 */
-	public void test24F() {
+	public void testInvalidAnnotationTag24F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -495,7 +497,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an annotation in the default package
 	 * using an incremental build
 	 */
-	public void test25I() {
+	public void testInvalidAnnotationTag25I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test25", true);
 	}
@@ -504,7 +506,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an annotation in the default package
 	 * using a full build
 	 */
-	public void test25F() {
+	public void testInvalidAnnotationTag25F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest("", "test25", true);
 	}
@@ -513,7 +515,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test26I() {
+	public void testInvalidAnnotationTag26I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test26", true);
 	}
@@ -522,7 +524,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test26F() {
+	public void testInvalidAnnotationTag26F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test26", true);
 	}
@@ -531,7 +533,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an outer annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test27I() {
+	public void testInvalidAnnotationTag27I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test27", true);
 	}
@@ -540,7 +542,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an outer annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test27F() {
+	public void testInvalidAnnotationTag27F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test27", true);
 	}
@@ -549,7 +551,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an inner annotation in package a.b.c
 	 * using an incremental build
 	 */
-	public void test28I() {
+	public void testInvalidAnnotationTag28I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test28", true);
 	}
@@ -558,7 +560,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an inner annotation in package a.b.c
 	 * using a full build
 	 */
-	public void test28F() {
+	public void testInvalidAnnotationTag28F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test28", true);
 	}
@@ -567,7 +569,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noimplement tag on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using an incremental build
 	 */
-	public void test29I() {
+	public void testInvalidAnnotationTag29I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test29", true);
 	}
@@ -576,7 +578,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noimplement tag on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using a full build
 	 */
-	public void test29F() {
+	public void testInvalidAnnotationTag29F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test29", true);
 	}
@@ -585,7 +587,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an annotation in the default package
 	 * using an incremental build
 	 */
-	public void test30I() {
+	public void testInvalidAnnotationTag30I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test30", true);
 	}
@@ -594,7 +596,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an annotation in the default package
 	 * using a full build
 	 */
-	public void test30F() {
+	public void testInvalidAnnotationTag30F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest("", "test30", true);
 	}

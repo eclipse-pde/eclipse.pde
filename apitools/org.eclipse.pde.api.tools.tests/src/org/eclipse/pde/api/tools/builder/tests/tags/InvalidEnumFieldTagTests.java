@@ -55,7 +55,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three final fields in an enum
 	 * using an incremental build
 	 */
-	public void test1I() {
+	public void testInvalidEnumFieldTag1I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -64,7 +64,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three final fields in an enum
 	 * using a full build
 	 */
-	public void test1F() {
+	public void testInvalidEnumFieldTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -73,7 +73,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three final fields in an outer enum
 	 * using an incremental build
 	 */
-	public void test2I() {
+	public void testInvalidEnumFieldTag2I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -82,7 +82,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on three final fields in an outer enum
 	 * using a full build
 	 */
-	public void test2F() {
+	public void testInvalidEnumFieldTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -91,7 +91,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three final fields in an inner enum
 	 * using an incremental build
 	 */
-	public void test3I() {
+	public void testInvalidEnumFieldTag3I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -100,7 +100,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on three final fields in an inner enum
 	 * using a full build
 	 */
-	public void test3F() {
+	public void testInvalidEnumFieldTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -109,7 +109,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on final fields in inner / outer enums
 	 * using an incremental build
 	 */
-	public void test4I() {
+	public void testInvalidEnumFieldTag4I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -118,7 +118,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on final fields in inner /outer enums
 	 * using a full build
 	 */
-	public void test4F() {
+	public void testInvalidEnumFieldTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -127,7 +127,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on three final fields in an enum in the default package
 	 * using an incremental build
 	 */
-	public void test5I() {
+	public void testInvalidEnumFieldTag5I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", true);
 	}
@@ -136,7 +136,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on three final fields in an enum in the default package
 	 * using a full build
 	 */
-	public void test5F() {
+	public void testInvalidEnumFieldTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", true);
 	}
@@ -145,7 +145,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three static final fields in an enum
 	 * using an incremental build
 	 */
-	public void test6I() {
+	public void testInvalidEnumFieldTag6I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -154,7 +154,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three static final fields in an enum
 	 * using a full build
 	 */
-	public void test6F() {
+	public void testInvalidEnumFieldTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -163,7 +163,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three static final fields in an outer enum
 	 * using an incremental build
 	 */
-	public void test7I() {
+	public void testInvalidEnumFieldTag7I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -172,7 +172,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on three static final fields in an outer enum
 	 * using a full build
 	 */
-	public void test7F() {
+	public void testInvalidEnumFieldTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -181,7 +181,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three static final fields in an inner enum
 	 * using an incremental build
 	 */
-	public void test8I() {
+	public void testInvalidEnumFieldTag8I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -190,7 +190,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on three static final fields in an inner enum
 	 * using a full build
 	 */
-	public void test8F() {
+	public void testInvalidEnumFieldTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -199,7 +199,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on static final fields in inner / outer enums
 	 * using an incremental build
 	 */
-	public void test9I() {
+	public void testInvalidEnumFieldTag9I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -208,7 +208,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on static final fields in inner /outer enums
 	 * using a full build
 	 */
-	public void test9F() {
+	public void testInvalidEnumFieldTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -217,7 +217,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on three static final fields in an enum in the default package
 	 * using an incremental build
 	 */
-	public void test10I() {
+	public void testInvalidEnumFieldTag10I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test10", true);
 	}
@@ -226,7 +226,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on three static final fields in an enum in the default package
 	 * using a full build
 	 */
-	public void test10F() {
+	public void testInvalidEnumFieldTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test10", true);
 	}
@@ -235,7 +235,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noextend tag on three fields in an enum
 	 * using an incremental build
 	 */
-	public void test11I() {
+	public void testInvalidEnumFieldTag11I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -244,7 +244,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noextend tag on three fields in an enum
 	 * using a full build
 	 */
-	public void test11F() {
+	public void testInvalidEnumFieldTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -253,7 +253,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noextend tag on three fields in an outer enum
 	 * using an incremental build
 	 */
-	public void test12I() {
+	public void testInvalidEnumFieldTag12I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -262,7 +262,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noextend tag on three fields in an outer enum
 	 * using a full build
 	 */
-	public void test12F() {
+	public void testInvalidEnumFieldTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -271,7 +271,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noextend tag on three fields in an inner enum
 	 * using an incremental build
 	 */
-	public void test13I() {
+	public void testInvalidEnumFieldTag13I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -280,7 +280,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noextend tag on three fields in an inner enum
 	 * using a full build
 	 */
-	public void test13F() {
+	public void testInvalidEnumFieldTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -289,7 +289,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noextend tag on fields in inner / outer enums
 	 * using an incremental build
 	 */
-	public void test14I() {
+	public void testInvalidEnumFieldTag14I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -298,7 +298,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noextend tag on fields in inner /outer enums
 	 * using a full build
 	 */
-	public void test14F() {
+	public void testInvalidEnumFieldTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -307,7 +307,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noextend tag on three fields in an enum in the default package
 	 * using an incremental build
 	 */
-	public void test15I() {
+	public void testInvalidEnumFieldTag15I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test15", true);
 	}
@@ -316,7 +316,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noextend tag on three fields in an enum in the default package
 	 * using a full build
 	 */
-	public void test15F() {
+	public void testInvalidEnumFieldTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test15", true);
 	}
@@ -325,7 +325,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noimplement tag on three fields in an enum
 	 * using an incremental build
 	 */
-	public void test16I() {
+	public void testInvalidEnumFieldTag16I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -334,7 +334,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noimplement tag on three fields in an enum
 	 * using a full build
 	 */
-	public void test16F() {
+	public void testInvalidEnumFieldTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -343,7 +343,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noimplement tag on three fields in an outer enum
 	 * using an incremental build
 	 */
-	public void test17I() {
+	public void testInvalidEnumFieldTag17I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -352,7 +352,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noimplement tag on three fields in an outer enum
 	 * using a full build
 	 */
-	public void test17F() {
+	public void testInvalidEnumFieldTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -361,7 +361,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noimplement tag on three fields in an inner enum
 	 * using an incremental build
 	 */
-	public void test18I() {
+	public void testInvalidEnumFieldTag18I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -370,7 +370,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noimplement tag on three fields in an inner enum
 	 * using a full build
 	 */
-	public void test18F() {
+	public void testInvalidEnumFieldTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -379,7 +379,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noimplement tag on fields in inner / outer enums
 	 * using an incremental build
 	 */
-	public void test19I() {
+	public void testInvalidEnumFieldTag19I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -388,7 +388,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noimplement tag on fields in inner /outer enums
 	 * using a full build
 	 */
-	public void test19F() {
+	public void testInvalidEnumFieldTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -397,7 +397,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noimplement tag on three fields in an enum in the default package
 	 * using an incremental build
 	 */
-	public void test20I() {
+	public void testInvalidEnumFieldTag20I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test20", true);
 	}
@@ -406,7 +406,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noimplement tag on three fields in an enum in the default package
 	 * using a full build
 	 */
-	public void test20F() {
+	public void testInvalidEnumFieldTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test20", true);
 	}
@@ -415,7 +415,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @nooverride tag on three fields in an enum
 	 * using an incremental build
 	 */
-	public void test21I() {
+	public void testInvalidEnumFieldTag21I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -424,7 +424,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @nooverride tag on three fields in an enum
 	 * using a full build
 	 */
-	public void test21F() {
+	public void testInvalidEnumFieldTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -433,7 +433,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @nooverride tag on three fields in an outer enum
 	 * using an incremental build
 	 */
-	public void test22I() {
+	public void testInvalidEnumFieldTag22I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -442,7 +442,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @nooverride tag on three fields in an outer enum
 	 * using a full build
 	 */
-	public void test22F() {
+	public void testInvalidEnumFieldTag22F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -451,7 +451,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @nooverride tag on three fields in an inner enum
 	 * using an incremental build
 	 */
-	public void test23I() {
+	public void testInvalidEnumFieldTag23I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -460,7 +460,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @nooverride tag on three fields in an inner enum
 	 * using a full build
 	 */
-	public void test23F() {
+	public void testInvalidEnumFieldTag23F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -469,7 +469,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @nooverride tag on fields in inner / outer enums
 	 * using an incremental build
 	 */
-	public void test24I() {
+	public void testInvalidEnumFieldTag24I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -478,7 +478,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @nooverride tag on fields in inner /outer enums
 	 * using a full build
 	 */
-	public void test24F() {
+	public void testInvalidEnumFieldTag24F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -487,7 +487,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @nooverride tag on three fields in an enum in the default package
 	 * using an incremental build
 	 */
-	public void test25I() {
+	public void testInvalidEnumFieldTag25I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test25", true);
 	}
@@ -496,7 +496,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @nooverride tag on three fields in an enum in the default package
 	 * using a full build
 	 */
-	public void test25F() {
+	public void testInvalidEnumFieldTag25F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test25", true);
 	}
@@ -505,7 +505,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noinstantiate tag on three fields in an enum
 	 * using an incremental build
 	 */
-	public void test26I() {
+	public void testInvalidEnumFieldTag26I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test26", true);
 	}
@@ -514,7 +514,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noinstantiate tag on three fields in an enum
 	 * using a full build
 	 */
-	public void test26F() {
+	public void testInvalidEnumFieldTag26F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test26", true);
 	}
@@ -523,7 +523,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noinstantiate tag on three fields in an outer enum
 	 * using an incremental build
 	 */
-	public void test27I() {
+	public void testInvalidEnumFieldTag27I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test27", true);
 	}
@@ -532,7 +532,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noinstantiate tag on three fields in an outer enum
 	 * using a full build
 	 */
-	public void test27F() {
+	public void testInvalidEnumFieldTag27F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test27", true);
 	}
@@ -541,7 +541,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noinstantiate tag on three fields in an inner enum
 	 * using an incremental build
 	 */
-	public void test28I() {
+	public void testInvalidEnumFieldTag28I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test28", true);
 	}
@@ -550,7 +550,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noinstantiate tag on three fields in an inner enum
 	 * using a full build
 	 */
-	public void test28F() {
+	public void testInvalidEnumFieldTag28F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test28", true);
 	}
@@ -559,7 +559,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noinstantiate tag on fields in inner / outer enums
 	 * using an incremental build
 	 */
-	public void test29I() {
+	public void testInvalidEnumFieldTag29I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test29", true);
 	}
@@ -568,7 +568,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noinstantiate tag on fields in inner /outer enums
 	 * using a full build
 	 */
-	public void test29F() {
+	public void testInvalidEnumFieldTag29F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test29", true);
 	}
@@ -577,7 +577,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noinstantiate tag on three fields in an enum in the default package
 	 * using an incremental build
 	 */
-	public void test30I() {
+	public void testInvalidEnumFieldTag30I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test30", true);
 	}
@@ -586,7 +586,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noinstantiate tag on three fields in an enum in the default package
 	 * using a full build
 	 */
-	public void test30F() {
+	public void testInvalidEnumFieldTag30F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test30", true);
 	}

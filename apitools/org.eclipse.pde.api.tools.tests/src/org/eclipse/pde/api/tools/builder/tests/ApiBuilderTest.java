@@ -191,7 +191,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			IPath sourcepath = path.append(sourcename+JAVA_EXTENSION);
 			if(expectingproblems) {
 				expectingOnlySpecificProblemsFor(sourcepath, getExpectedProblemIds());
-				assertProblems(sourcepath);
+				assertProblems(getEnv().getProblems());
 			}
 			else {
 				expectingNoProblemsFor(sourcepath);
@@ -216,7 +216,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			IPath sourcepath = path.append(sourcename+JAVA_EXTENSION);
 			if(expectingproblems) {
 				expectingOnlySpecificProblemsFor(sourcepath, getExpectedProblemIds());
-				assertProblems(sourcepath);
+				assertProblems(getEnv().getProblems());
 			}
 			else {
 				expectingNoProblemsFor(sourcepath);
@@ -235,19 +235,10 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	}
 	
 	/**
-	 * Checks that the message for the backing API problem is correct
-	 * @param marker
-	 * @param expected the message we expect to get
-	 */
-	protected void assertProblemMessage(IMarker marker, String expected) {
-		
-	}
-	
-	/**
 	 * Method that can be overridden for custom assertion of the problems after the build
-	 * @param sourcepath the path of the source we were expecting to see problems in
+	 * @param problems the complete listing of problems from the testing environment
 	 */
-	protected void assertProblems(IPath sourcepath) {}
+	protected void assertProblems(ApiProblem[] problems) {}
 	
 	/**
 	 * Sets the ids of the problems you expect to see from deploying a builder test

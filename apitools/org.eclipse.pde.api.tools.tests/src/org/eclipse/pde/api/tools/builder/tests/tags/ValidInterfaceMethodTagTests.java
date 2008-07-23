@@ -42,4 +42,84 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	public static Test suite() {
 		return buildTestSuite(ValidInterfaceMethodTagTests.class);
 	}
+	
+	/**
+	 * Tests the supported @noreference tag on interface methods
+	 * using an incremental build
+	 */
+	public void test1I() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
+	}
+	
+	/**
+	 * Tests the supported @noreference tag on interface methods
+	 * using a full build
+	 */
+	public void test1F() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
+	}
+	
+	/**
+	 * Tests the supported @noreference tag on outer interface methods
+	 * using an incremental build
+	 */
+	public void test2I() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
+	}
+	
+	/**
+	 * Tests the supported @noreference tag on outer interface methods
+	 * using a full build
+	 */
+	public void test2F() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
+	}
+	
+	/**
+	 * Tests the supported @noreference tag on inner interface methods
+	 * using an incremental build
+	 */
+	public void test3I() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
+	}
+	
+	/**
+	 * Tests the supported @noreference tag on inner interface methods
+	 * using a full build
+	 */
+	public void test3F() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
+	}
+	
+	/**
+	 * Tests the supported @noreference tag on a variety of inner / outer interface methods
+	 * using an incremental build
+	 */
+	public void test4I() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
+	}
+	
+	/**
+	 * Tests the supported @noreference tag on a variety of inner / outer interface methods
+	 * using a full build
+	 */
+	public void test4F() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
+	}
+	
+	/**
+	 * Tests the supported @noreference tag on interface methods in the default package
+	 * using an incremental build
+	 */
+	public void test5I() {
+		deployIncrementalBuildTest("", "test5", true);
+	}
+	
+	/**
+	 * Tests the supported @noreference tag on interface methods in the default package
+	 * using a full build
+	 */
+	public void test5F() {
+		deployIncrementalBuildTest("", "test5", true);
+	}
 }

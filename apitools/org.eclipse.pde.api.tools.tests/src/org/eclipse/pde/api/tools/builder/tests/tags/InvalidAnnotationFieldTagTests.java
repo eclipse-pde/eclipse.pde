@@ -55,7 +55,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noextend tag on an annotation field
 	 * using an incremental build
 	 */
-	public void test1I() {
+	public void testInvalidAnnotationFieldTag1I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -64,7 +64,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noextend tag on an annotation field
 	 * using a full build
 	 */
-	public void test1F() {
+	public void testInvalidAnnotationFieldTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -73,7 +73,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noextend tag on an outer annotation field
 	 * using an incremental build
 	 */
-	public void test2I() {
+	public void testInvalidAnnotationFieldTag2I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -82,7 +82,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noextend tag on an outer annotation field
 	 * using a full build
 	 */
-	public void test2F() {
+	public void testInvalidAnnotationFieldTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -91,7 +91,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noextend tag on an inner annotation field
 	 * using an incremental build
 	 */
-	public void test3I() {
+	public void testInvalidAnnotationFieldTag3I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -100,7 +100,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noextend tag on an inner annotation field
 	 * using a full build
 	 */
-	public void test3F() {
+	public void testInvalidAnnotationFieldTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -109,7 +109,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noextend tag on a variety of inner / outer annotation fields
 	 * using an incremental build
 	 */
-	public void test4I() {
+	public void testInvalidAnnotationFieldTag4I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -118,7 +118,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noextend tag on a variety of inner / outer annotation fields
 	 * using a full build
 	 */
-	public void test4F() {
+	public void testInvalidAnnotationFieldTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -127,7 +127,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noextend tag on an annotation field in the default package
 	 * using an incremental build
 	 */
-	public void test5I() {
+	public void testInvalidAnnotationFieldTag5I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test5", true);
 	}
@@ -136,7 +136,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noextend tag on an annotation field in the default package
 	 * using a full build
 	 */
-	public void test5F() {
+	public void testInvalidAnnotationFieldTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test5", true);
 	}
@@ -145,7 +145,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noinstantiate tag on an annotation field
 	 * using an incremental build
 	 */
-	public void test6I() {
+	public void testInvalidAnnotationFieldTag6I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -154,7 +154,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noinstantiate tag on an annotation field
 	 * using a full build
 	 */
-	public void test6F() {
+	public void testInvalidAnnotationFieldTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -163,7 +163,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noinstantiate tag on an outer annotation field
 	 * using an incremental build
 	 */
-	public void test7I() {
+	public void testInvalidAnnotationFieldTag7I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -172,7 +172,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noinstantiate tag on an outer annotation field
 	 * using a full build
 	 */
-	public void test7F() {
+	public void testInvalidAnnotationFieldTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -181,7 +181,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noinstantiate tag on an inner annotation field
 	 * using an incremental build
 	 */
-	public void test8I() {
+	public void testInvalidAnnotationFieldTag8I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -190,7 +190,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noinstantiate tag on an inner annotation field
 	 * using a full build
 	 */
-	public void test8F() {
+	public void testInvalidAnnotationFieldTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -199,7 +199,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer annotation fields
 	 * using an incremental build
 	 */
-	public void test9I() {
+	public void testInvalidAnnotationFieldTag9I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -208,7 +208,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer annotation fields
 	 * using a full build
 	 */
-	public void test9F() {
+	public void testInvalidAnnotationFieldTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -217,7 +217,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noinstantiate tag on an annotation field in the default package
 	 * using an incremental build
 	 */
-	public void test10I() {
+	public void testInvalidAnnotationFieldTag10I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test10", true);
 	}
@@ -226,7 +226,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noinstantiate tag on an annotation field in the default package
 	 * using a full build
 	 */
-	public void test10F() {
+	public void testInvalidAnnotationFieldTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test10", true);
 	}
@@ -235,7 +235,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noimplement tag on an annotation field
 	 * using an incremental build
 	 */
-	public void test11I() {
+	public void testInvalidAnnotationFieldTag11I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -244,7 +244,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noimplement tag on an annotation field
 	 * using a full build
 	 */
-	public void test11F() {
+	public void testInvalidAnnotationFieldTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -253,7 +253,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noimplement tag on an outer annotation field
 	 * using an incremental build
 	 */
-	public void test12I() {
+	public void testInvalidAnnotationFieldTag12I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -262,7 +262,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noimplement tag on an outer annotation field
 	 * using a full build
 	 */
-	public void test12F() {
+	public void testInvalidAnnotationFieldTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -271,7 +271,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noimplement tag on an inner annotation field
 	 * using an incremental build
 	 */
-	public void test13I() {
+	public void testInvalidAnnotationFieldTag13I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -280,7 +280,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noimplement tag on an inner annotation field
 	 * using a full build
 	 */
-	public void test13F() {
+	public void testInvalidAnnotationFieldTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -289,7 +289,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noimplement tag on a variety of inner / outer annotation fields
 	 * using an incremental build
 	 */
-	public void test14I() {
+	public void testInvalidAnnotationFieldTag14I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -298,7 +298,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noimplement tag on a variety of inner / outer annotation fields
 	 * using a full build
 	 */
-	public void test14F() {
+	public void testInvalidAnnotationFieldTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -307,7 +307,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noimplement tag on an annotation field in the default package
 	 * using an incremental build
 	 */
-	public void test15I() {
+	public void testInvalidAnnotationFieldTag15I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test15", true);
 	}
@@ -316,7 +316,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noimplement tag on an annotation field in the default package
 	 * using a full build
 	 */
-	public void test15F() {
+	public void testInvalidAnnotationFieldTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test15", true);
 	}
@@ -325,7 +325,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @nooverride tag on an annotation field
 	 * using an incremental build
 	 */
-	public void test16I() {
+	public void testInvalidAnnotationFieldTag16I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -334,7 +334,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @nooverride tag on an annotation field
 	 * using a full build
 	 */
-	public void test16F() {
+	public void testInvalidAnnotationFieldTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -343,7 +343,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @nooverride tag on an outer annotation field
 	 * using an incremental build
 	 */
-	public void test17I() {
+	public void testInvalidAnnotationFieldTag17I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -352,7 +352,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @nooverride tag on an outer annotation field
 	 * using a full build
 	 */
-	public void test17F() {
+	public void testInvalidAnnotationFieldTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -361,7 +361,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @nooverride tag on an inner annotation field
 	 * using an incremental build
 	 */
-	public void test18I() {
+	public void testInvalidAnnotationFieldTag18I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -370,7 +370,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @nooverride tag on an inner annotation field
 	 * using a full build
 	 */
-	public void test18F() {
+	public void testInvalidAnnotationFieldTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -379,7 +379,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @nooverride tag on a variety of inner / outer annotation fields
 	 * using an incremental build
 	 */
-	public void test19I() {
+	public void testInvalidAnnotationFieldTag19I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -388,7 +388,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @nooverride tag on a variety of inner / outer annotation fields
 	 * using a full build
 	 */
-	public void test19F() {
+	public void testInvalidAnnotationFieldTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -397,7 +397,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @nooverride tag on an annotation field in the default package
 	 * using an incremental build
 	 */
-	public void test20I() {
+	public void testInvalidAnnotationFieldTag20I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test20", true);
 	}
@@ -406,7 +406,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @nooverride tag on an annotation field in the default package
 	 * using a full build
 	 */
-	public void test20F() {
+	public void testInvalidAnnotationFieldTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test20", true);
 	}
@@ -415,7 +415,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests all the unsupported tags on a variety of annotation fields
 	 * using an incremental build
 	 */
-	public void test21I() {
+	public void testInvalidAnnotationFieldTag21I() {
 		setExpectedProblemIds(getDefaultProblemSet(15));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -424,7 +424,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests all the unsupported tags on a variety of annotation fields
 	 * using a full build
 	 */
-	public void test21F() {
+	public void testInvalidAnnotationFieldTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(15));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -433,7 +433,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noreference tag on a final annotation field
 	 * using an incremental build
 	 */
-	public void test22I() {
+	public void testInvalidAnnotationFieldTag22I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -442,7 +442,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noreference tag on a final annotation field
 	 * using a full build
 	 */
-	public void test22F() {
+	public void testInvalidAnnotationFieldTag22F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -451,7 +451,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noreference tag on a final outer annotation field
 	 * using an incremental build
 	 */
-	public void test23I() {
+	public void testInvalidAnnotationFieldTag23I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -460,7 +460,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noreference tag on a final outer annotation field
 	 * using a full build
 	 */
-	public void test23F() {
+	public void testInvalidAnnotationFieldTag23F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -469,7 +469,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noreference tag on a final inner annotation field
 	 * using an incremental build
 	 */
-	public void test24I() {
+	public void testInvalidAnnotationFieldTag24I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -478,7 +478,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noreference tag on a final inner annotation field
 	 * using a full build
 	 */
-	public void test24F() {
+	public void testInvalidAnnotationFieldTag24F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -487,7 +487,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noreference tag on a variety of final inner / outer annotation fields
 	 * using an incremental build
 	 */
-	public void test25I() {
+	public void testInvalidAnnotationFieldTag25I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test25", true);
 	}
@@ -496,7 +496,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noreference tag on a variety of final inner / outer annotation fields
 	 * using a full build
 	 */
-	public void test25F() {
+	public void testInvalidAnnotationFieldTag25F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test25", true);
 	}
@@ -505,7 +505,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noreference tag on a final annotation field in the default package
 	 * using an incremental build
 	 */
-	public void test26I() {
+	public void testInvalidAnnotationFieldTag26I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test26", true);
 	}
@@ -514,7 +514,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 * Tests the unsupported @noreference tag on a final annotation field in the default package
 	 * using a full build
 	 */
-	public void test26F() {
+	public void testInvalidAnnotationFieldTag26F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test26", true);
 	}

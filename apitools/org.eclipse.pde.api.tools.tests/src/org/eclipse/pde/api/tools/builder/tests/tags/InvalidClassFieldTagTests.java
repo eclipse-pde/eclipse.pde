@@ -47,7 +47,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three final fields in a class
 	 * using an incremental build
 	 */
-	public void test1I() {
+	public void testInvalidClassFieldTag1I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -56,7 +56,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three final fields in a class
 	 * using a full build
 	 */
-	public void test1F() {
+	public void testInvalidClassFieldTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -65,7 +65,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three final fields in an outer class
 	 * using an incremental build
 	 */
-	public void test2I() {
+	public void testInvalidClassFieldTag2I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -74,7 +74,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on three final fields in an outer class
 	 * using a full build
 	 */
-	public void test2F() {
+	public void testInvalidClassFieldTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -83,7 +83,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three final fields in an inner class
 	 * using an incremental build
 	 */
-	public void test3I() {
+	public void testInvalidClassFieldTag3I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -92,7 +92,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on three final fields in an inner class
 	 * using a full build
 	 */
-	public void test3F() {
+	public void testInvalidClassFieldTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -101,7 +101,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on final fields in inner / outer classes
 	 * using an incremental build
 	 */
-	public void test4I() {
+	public void testInvalidClassFieldTag4I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -110,7 +110,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on final fields in inner /outer class
 	 * using a full build
 	 */
-	public void test4F() {
+	public void testInvalidClassFieldTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -119,7 +119,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on three final fields in a class in the default package
 	 * using an incremental build
 	 */
-	public void test5I() {
+	public void testInvalidClassFieldTag5I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", true);
 	}
@@ -128,7 +128,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on three final fields in a class in the default package
 	 * using a full build
 	 */
-	public void test5F() {
+	public void testInvalidClassFieldTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", true);
 	}
@@ -137,7 +137,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three static final fields in a class
 	 * using an incremental build
 	 */
-	public void test6I() {
+	public void testInvalidClassFieldTag6I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -146,7 +146,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three static final fields in a class
 	 * using a full build
 	 */
-	public void test6F() {
+	public void testInvalidClassFieldTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -155,7 +155,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three static final fields in an outer class
 	 * using an incremental build
 	 */
-	public void test7I() {
+	public void testInvalidClassFieldTag7I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -164,7 +164,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on three static final fields in an outer class
 	 * using a full build
 	 */
-	public void test7F() {
+	public void testInvalidClassFieldTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -173,7 +173,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three static final fields in an inner class
 	 * using an incremental build
 	 */
-	public void test8I() {
+	public void testInvalidClassFieldTag8I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -182,7 +182,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on three static final fields in an inner class
 	 * using a full build
 	 */
-	public void test8F() {
+	public void testInvalidClassFieldTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -191,7 +191,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on static final fields in inner / outer classes
 	 * using an incremental build
 	 */
-	public void test9I() {
+	public void testInvalidClassFieldTag9I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -200,7 +200,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on static final fields in inner /outer class
 	 * using a full build
 	 */
-	public void test9F() {
+	public void testInvalidClassFieldTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -209,7 +209,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on three static final fields in a class in the default package
 	 * using an incremental build
 	 */
-	public void test10I() {
+	public void testInvalidClassFieldTag10I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test10", true);
 	}
@@ -218,7 +218,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on three static final fields in a class in the default package
 	 * using a full build
 	 */
-	public void test10F() {
+	public void testInvalidClassFieldTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test10", true);
 	}
@@ -227,7 +227,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noextend tag on three fields in a class
 	 * using an incremental build
 	 */
-	public void test11I() {
+	public void testInvalidClassFieldTag11I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -236,7 +236,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noextend tag on three fields in a class
 	 * using a full build
 	 */
-	public void test11F() {
+	public void testInvalidClassFieldTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -245,7 +245,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noextend tag on three fields in an outer class
 	 * using an incremental build
 	 */
-	public void test12I() {
+	public void testInvalidClassFieldTag12I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -254,7 +254,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noextend tag on three fields in an outer class
 	 * using a full build
 	 */
-	public void test12F() {
+	public void testInvalidClassFieldTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -263,7 +263,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noextend tag on three fields in an inner class
 	 * using an incremental build
 	 */
-	public void test13I() {
+	public void testInvalidClassFieldTag13I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -272,7 +272,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noextend tag on three fields in an inner class
 	 * using a full build
 	 */
-	public void test13F() {
+	public void testInvalidClassFieldTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -281,7 +281,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noextend tag on fields in inner / outer classes
 	 * using an incremental build
 	 */
-	public void test14I() {
+	public void testInvalidClassFieldTag14I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -290,7 +290,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noextend tag on fields in inner /outer class
 	 * using a full build
 	 */
-	public void test14F() {
+	public void testInvalidClassFieldTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -299,7 +299,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noextend tag on three fields in a class in the default package
 	 * using an incremental build
 	 */
-	public void test15I() {
+	public void testInvalidClassFieldTag15I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test15", true);
 	}
@@ -308,7 +308,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noextend tag on three fields in a class in the default package
 	 * using a full build
 	 */
-	public void test15F() {
+	public void testInvalidClassFieldTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test15", true);
 	}
@@ -317,7 +317,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noimplement tag on three fields in a class
 	 * using an incremental build
 	 */
-	public void test16I() {
+	public void testInvalidClassFieldTag16I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -326,7 +326,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noimplement tag on three fields in a class
 	 * using a full build
 	 */
-	public void test16F() {
+	public void testInvalidClassFieldTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -335,7 +335,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noimplement tag on three fields in an outer class
 	 * using an incremental build
 	 */
-	public void test17I() {
+	public void testInvalidClassFieldTag17I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -344,7 +344,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noimplement tag on three fields in an outer class
 	 * using a full build
 	 */
-	public void test17F() {
+	public void testInvalidClassFieldTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -353,7 +353,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noimplement tag on three fields in an inner class
 	 * using an incremental build
 	 */
-	public void test18I() {
+	public void testInvalidClassFieldTag18I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -362,7 +362,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noimplement tag on three fields in an inner class
 	 * using a full build
 	 */
-	public void test18F() {
+	public void testInvalidClassFieldTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -371,7 +371,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noimplement tag on fields in inner / outer classes
 	 * using an incremental build
 	 */
-	public void test19I() {
+	public void testInvalidClassFieldTag19I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -380,7 +380,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noimplement tag on fields in inner /outer class
 	 * using a full build
 	 */
-	public void test19F() {
+	public void testInvalidClassFieldTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -389,7 +389,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noimplement tag on three fields in a class in the default package
 	 * using an incremental build
 	 */
-	public void test20I() {
+	public void testInvalidClassFieldTag20I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test20", true);
 	}
@@ -398,7 +398,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noimplement tag on three fields in a class in the default package
 	 * using a full build
 	 */
-	public void test20F() {
+	public void testInvalidClassFieldTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test20", true);
 	}
@@ -407,7 +407,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @nooverride tag on three fields in a class
 	 * using an incremental build
 	 */
-	public void test21I() {
+	public void testInvalidClassFieldTag21I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -416,7 +416,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @nooverride tag on three fields in a class
 	 * using a full build
 	 */
-	public void test21F() {
+	public void testInvalidClassFieldTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -425,7 +425,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @nooverride tag on three fields in an outer class
 	 * using an incremental build
 	 */
-	public void test22I() {
+	public void testInvalidClassFieldTag22I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -434,7 +434,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @nooverride tag on three fields in an outer class
 	 * using a full build
 	 */
-	public void test22F() {
+	public void testInvalidClassFieldTag22F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -443,7 +443,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @nooverride tag on three fields in an inner class
 	 * using an incremental build
 	 */
-	public void test23I() {
+	public void testInvalidClassFieldTag23I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -452,7 +452,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @nooverride tag on three fields in an inner class
 	 * using a full build
 	 */
-	public void test23F() {
+	public void testInvalidClassFieldTag23F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -461,7 +461,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @nooverride tag on fields in inner / outer classes
 	 * using an incremental build
 	 */
-	public void test24I() {
+	public void testInvalidClassFieldTag24I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -470,7 +470,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @nooverride tag on fields in inner /outer class
 	 * using a full build
 	 */
-	public void test24F() {
+	public void testInvalidClassFieldTag24F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -479,7 +479,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @nooverride tag on three fields in a class in the default package
 	 * using an incremental build
 	 */
-	public void test25I() {
+	public void testInvalidClassFieldTag25I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test25", true);
 	}
@@ -488,7 +488,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @nooverride tag on three fields in a class in the default package
 	 * using a full build
 	 */
-	public void test25F() {
+	public void testInvalidClassFieldTag25F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test25", true);
 	}
@@ -497,7 +497,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noinstantiate tag on three fields in a class
 	 * using an incremental build
 	 */
-	public void test26I() {
+	public void testInvalidClassFieldTag26I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test26", true);
 	}
@@ -506,7 +506,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noinstantiate tag on three fields in a class
 	 * using a full build
 	 */
-	public void test26F() {
+	public void testInvalidClassFieldTag26F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test26", true);
 	}
@@ -515,7 +515,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noinstantiate tag on three fields in an outer class
 	 * using an incremental build
 	 */
-	public void test27I() {
+	public void testInvalidClassFieldTag27I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test27", true);
 	}
@@ -524,7 +524,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noinstantiate tag on three fields in an outer class
 	 * using a full build
 	 */
-	public void test27F() {
+	public void testInvalidClassFieldTag27F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test27", true);
 	}
@@ -533,7 +533,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noinstantiate tag on three fields in an inner class
 	 * using an incremental build
 	 */
-	public void test28I() {
+	public void testInvalidClassFieldTag28I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test28", true);
 	}
@@ -542,7 +542,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noinstantiate tag on three fields in an inner class
 	 * using a full build
 	 */
-	public void test28F() {
+	public void testInvalidClassFieldTag28F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test28", true);
 	}
@@ -551,7 +551,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noinstantiate tag on fields in inner / outer classes
 	 * using an incremental build
 	 */
-	public void test29I() {
+	public void testInvalidClassFieldTag29I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test29", true);
 	}
@@ -560,7 +560,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noinstantiate tag on fields in inner /outer class
 	 * using a full build
 	 */
-	public void test29F() {
+	public void testInvalidClassFieldTag29F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test29", true);
 	}
@@ -569,7 +569,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noinstantiate tag on three fields in a class in the default package
 	 * using an incremental build
 	 */
-	public void test30I() {
+	public void testInvalidClassFieldTag30I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test30", true);
 	}
@@ -578,7 +578,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noinstantiate tag on three fields in a class in the default package
 	 * using a full build
 	 */
-	public void test30F() {
+	public void testInvalidClassFieldTag30F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test30", true);
 	}

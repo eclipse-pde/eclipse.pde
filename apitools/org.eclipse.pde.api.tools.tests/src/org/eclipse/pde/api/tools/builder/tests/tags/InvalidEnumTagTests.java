@@ -65,7 +65,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on an enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test1I() {
+	public void testInvalidEnumTag1I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -74,7 +74,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on an enum in package a.b.c
 	 * using a full build
 	 */
-	public void test1F() {
+	public void testInvalidEnumTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -83,7 +83,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on an outer enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test2I() {
+	public void testInvalidEnumTag2I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -92,7 +92,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on an outer enum in package a.b.c
 	 * using a full build
 	 */
-	public void test2F() {
+	public void testInvalidEnumTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -101,7 +101,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on an inner enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test3I() {
+	public void testInvalidEnumTag3I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -110,7 +110,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on an inner enum in package a.b.c
 	 * using a full build
 	 */
-	public void test3F() {
+	public void testInvalidEnumTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -119,7 +119,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on a variety of inner / outer / top-level enums in package a.b.c
 	 * using an incremental build
 	 */
-	public void test4I() {
+	public void testInvalidEnumTag4I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -128,7 +128,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on a variety of inner / outer / top-level enums in package a.b.c
 	 * using a full build
 	 */
-	public void test4F() {
+	public void testInvalidEnumTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -137,7 +137,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on an enum in the default package
 	 * using an incremental build
 	 */
-	public void test5I() {
+	public void testInvalidEnumTag5I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test5", true);
 	}
@@ -146,7 +146,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on an enum in the default package
 	 * using a full build
 	 */
-	public void test5F() {
+	public void testInvalidEnumTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest("", "test5", true);
 	}
@@ -155,7 +155,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noextend tag on an enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test6I() {
+	public void testInvalidEnumTag6I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -164,7 +164,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noextend tag on an enum in package a.b.c
 	 * using a full build
 	 */
-	public void test6F() {
+	public void testInvalidEnumTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -173,7 +173,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noextend tag on an outer enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test7I() {
+	public void testInvalidEnumTag7I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -182,7 +182,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noextend tag on an outer enum in package a.b.c
 	 * using a full build
 	 */
-	public void test7F() {
+	public void testInvalidEnumTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -191,7 +191,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noextend tag on an inner enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test8I() {
+	public void testInvalidEnumTag8I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -200,7 +200,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noextend tag on an inner enum in package a.b.c
 	 * using a full build
 	 */
-	public void test8F() {
+	public void testInvalidEnumTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -209,7 +209,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noextend tag on a variety of inner / outer / top-level enums in package a.b.c
 	 * using an incremental build
 	 */
-	public void test9I() {
+	public void testInvalidEnumTag9I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -218,7 +218,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noextend tag on a variety of inner / outer / top-level enums in package a.b.c
 	 * using a full build
 	 */
-	public void test9F() {
+	public void testInvalidEnumTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -227,7 +227,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noextend tag on an enum in the default package
 	 * using an incremental build
 	 */
-	public void test10I() {
+	public void testInvalidEnumTag10I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test10", true);
 	}
@@ -236,7 +236,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noextend tag on an enum in the default package
 	 * using a full build
 	 */
-	public void test10F() {
+	public void testInvalidEnumTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test10", true);
 	}
@@ -245,7 +245,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test11I() {
+	public void testInvalidEnumTag11I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -254,7 +254,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an enum in package a.b.c
 	 * using a full build
 	 */
-	public void test11F() {
+	public void testInvalidEnumTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -263,7 +263,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an outer enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test12I() {
+	public void testInvalidEnumTag12I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -272,7 +272,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an outer enum in package a.b.c
 	 * using a full build
 	 */
-	public void test12F() {
+	public void testInvalidEnumTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -281,7 +281,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an inner enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test13I() {
+	public void testInvalidEnumTag13I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -290,7 +290,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an inner enum in package a.b.c
 	 * using a full build
 	 */
-	public void test13F() {
+	public void testInvalidEnumTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -299,7 +299,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @nooverride tag on a variety of inner / outer / top-level enums in package a.b.c
 	 * using an incremental build
 	 */
-	public void test14I() {
+	public void testInvalidEnumTag14I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -308,7 +308,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @nooverride tag on a variety of inner / outer / top-level enums in package a.b.c
 	 * using a full build
 	 */
-	public void test14F() {
+	public void testInvalidEnumTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -317,7 +317,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an enum in the default package
 	 * using an incremental build
 	 */
-	public void test15I() {
+	public void testInvalidEnumTag15I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test15", true);
 	}
@@ -326,7 +326,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @nooverride tag on an enum in the default package
 	 * using a full build
 	 */
-	public void test15F() {
+	public void testInvalidEnumTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test15", true);
 	}
@@ -335,7 +335,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an enum in the testing package a.b.c
 	 * using an incremental build
 	 */
-	public void test16I() {
+	public void testInvalidEnumTag16I() {
 		setExpectedProblemIds(getDefaultProblemSet(5));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -344,7 +344,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an enum in the testing package a.b.c
 	 * using a full build
 	 */
-	public void test16F() {
+	public void testInvalidEnumTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(5));
 		deployFullBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -353,7 +353,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an outer enum in the testing package a.b.c
 	 * using an incremental build
 	 */
-	public void test17I() {
+	public void testInvalidEnumTag17I() {
 		setExpectedProblemIds(getDefaultProblemSet(5));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -362,7 +362,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an outer enum in the testing package a.b.c
 	 * using a full build
 	 */
-	public void test17F() {
+	public void testInvalidEnumTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(5));
 		deployFullBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -371,7 +371,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an inner enum in the testing package a.b.c
 	 * using an incremental build
 	 */
-	public void test18I() {
+	public void testInvalidEnumTag18I() {
 		setExpectedProblemIds(getDefaultProblemSet(5));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -380,7 +380,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an inner enum in the testing package a.b.c
 	 * using a full build
 	 */
-	public void test18F() {
+	public void testInvalidEnumTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(5));
 		deployFullBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -389,7 +389,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having a variety of invalid tags on a variety of inner / outer / top-level enums in package a.b.c
 	 * using an incremental build
 	 */
-	public void test19I() {
+	public void testInvalidEnumTag19I() {
 		setExpectedProblemIds(getDefaultProblemSet(20));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -398,7 +398,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having a variety of invalid tags on a variety of inner / outer / top-level enums in package a.b.c
 	 * using a full build
 	 */
-	public void test19F() {
+	public void testInvalidEnumTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(20));
 		deployFullBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -407,7 +407,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an enum in the default package
 	 * using an incremental build
 	 */
-	public void test20I() {
+	public void testInvalidEnumTag20I() {
 		setExpectedProblemIds(getDefaultProblemSet(5));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test20", true);
 	}
@@ -416,7 +416,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an enum in the default package
 	 * using a full build
 	 */
-	public void test20F() {
+	public void testInvalidEnumTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(5));
 		deployFullBuildTest(TESTING_PACKAGE, "test20", true);
 	}
@@ -425,7 +425,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test21I() {
+	public void testInvalidEnumTag21I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -434,7 +434,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an enum in package a.b.c
 	 * using a full build
 	 */
-	public void test21F() {
+	public void testInvalidEnumTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -443,7 +443,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an outer enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test22I() {
+	public void testInvalidEnumTag22I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -452,7 +452,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an outer enum in package a.b.c
 	 * using a full build
 	 */
-	public void test22F() {
+	public void testInvalidEnumTag22F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -461,7 +461,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an inner enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test23I() {
+	public void testInvalidEnumTag23I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -470,7 +470,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an inner enum in package a.b.c
 	 * using a full build
 	 */
-	public void test23F() {
+	public void testInvalidEnumTag23F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -479,7 +479,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on a variety of inner / outer / top-level enums in package a.b.c
 	 * using an incremental build
 	 */
-	public void test24I() {
+	public void testInvalidEnumTag24I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -488,7 +488,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on a variety of inner / outer / top-level enums in package a.b.c
 	 * using a full build
 	 */
-	public void test24F() {
+	public void testInvalidEnumTag24F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -497,7 +497,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an enum in the default package
 	 * using an incremental build
 	 */
-	public void test25I() {
+	public void testInvalidEnumTag25I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test25", true);
 	}
@@ -506,7 +506,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noinstantiate tag on an enum in the default package
 	 * using a full build
 	 */
-	public void test25F() {
+	public void testInvalidEnumTag25F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest("", "test25", true);
 	}
@@ -515,7 +515,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test26I() {
+	public void testInvalidEnumTag26I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test26", true);
 	}
@@ -524,7 +524,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an enum in package a.b.c
 	 * using a full build
 	 */
-	public void test26F() {
+	public void testInvalidEnumTag26F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test26", true);
 	}
@@ -533,7 +533,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an outer enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test27I() {
+	public void testInvalidEnumTag27I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test27", true);
 	}
@@ -542,7 +542,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an outer enum in package a.b.c
 	 * using a full build
 	 */
-	public void test27F() {
+	public void testInvalidEnumTag27F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test27", true);
 	}
@@ -551,7 +551,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an inner enum in package a.b.c
 	 * using an incremental build
 	 */
-	public void test28I() {
+	public void testInvalidEnumTag28I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test28", true);
 	}
@@ -560,7 +560,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an inner enum in package a.b.c
 	 * using a full build
 	 */
-	public void test28F() {
+	public void testInvalidEnumTag28F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest(TESTING_PACKAGE, "test28", true);
 	}
@@ -569,7 +569,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noimplement tag on a variety of inner / outer / top-level enums in package a.b.c
 	 * using an incremental build
 	 */
-	public void test29I() {
+	public void testInvalidEnumTag29I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test29", true);
 	}
@@ -578,7 +578,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noimplement tag on a variety of inner / outer / top-level enums in package a.b.c
 	 * using a full build
 	 */
-	public void test29F() {
+	public void testInvalidEnumTag29F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test29", true);
 	}
@@ -587,7 +587,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an enum in the default package
 	 * using an incremental build
 	 */
-	public void test30I() {
+	public void testInvalidEnumTag30I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployIncrementalBuildTest("", "test30", true);
 	}
@@ -596,7 +596,7 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noimplement tag on an enum in the default package
 	 * using a full build
 	 */
-	public void test30F() {
+	public void testInvalidEnumTag30F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployFullBuildTest("", "test30", true);
 	}

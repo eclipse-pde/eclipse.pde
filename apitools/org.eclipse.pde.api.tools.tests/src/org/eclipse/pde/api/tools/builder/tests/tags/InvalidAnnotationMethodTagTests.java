@@ -14,6 +14,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 
 /**
  * Tests invalid tags on annotation methods.
@@ -44,6 +45,17 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		return super.getTestSourcePath().append("annotation");
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
+	 */
+	protected void assertProblems(ApiProblem[] problems) {
+		String message = null;
+		for(int i = 0; i < problems.length; i++) {
+			message = problems[i].getMessage();
+			assertTrue("the message does not end correctly: "+message, message.endsWith("an annotation method"));
+		}
+	}
+	
 	/**
 	 * @return the test for this class
 	 */
@@ -55,7 +67,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noextend tag on annotation methods
 	 * using an incremental build
 	 */
-	public void test1I() {
+	public void testInvalidAnnotationMethodTag1I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -64,7 +76,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noextend tag on annotation methods
 	 * using a full build
 	 */
-	public void test1F() {
+	public void testInvalidAnnotationMethodTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
 	}
@@ -73,7 +85,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noextend tag on outer annotation methods
 	 * using an incremental build
 	 */
-	public void test2I() {
+	public void testInvalidAnnotationMethodTag2I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -82,7 +94,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noextend tag on outer annotation methods
 	 * using a full build
 	 */
-	public void test2F() {
+	public void testInvalidAnnotationMethodTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
 	}
@@ -91,7 +103,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noextend tag on inner annotation methods
 	 * using an incremental build
 	 */
-	public void test3I() {
+	public void testInvalidAnnotationMethodTag3I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -100,7 +112,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noextend tag on inner annotation methods
 	 * using a full build
 	 */
-	public void test3F() {
+	public void testInvalidAnnotationMethodTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
 	}
@@ -109,7 +121,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noextend tag on a variety of inner / outer annotation methods
 	 * using an incremental build
 	 */
-	public void test4I() {
+	public void testInvalidAnnotationMethodTag4I() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -118,7 +130,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noextend tag on a variety of inner / outer annotation methods
 	 * using a full build
 	 */
-	public void test4F() {
+	public void testInvalidAnnotationMethodTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
 	}
@@ -127,7 +139,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noextend tag on annotation methods in the default package
 	 * using an incremental build
 	 */
-	public void test5I() {
+	public void testInvalidAnnotationMethodTag5I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest("", "test5", true);
 	}
@@ -136,7 +148,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noextend tag on annotation methods in the default package
 	 * using a full build
 	 */
-	public void test5F() {
+	public void testInvalidAnnotationMethodTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest("", "test5", true);
 	}
@@ -145,7 +157,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noinstantiate tag on annotation methods
 	 * using an incremental build
 	 */
-	public void test6I() {
+	public void testInvalidAnnotationMethodTag6I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -154,7 +166,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noinstantiate tag on annotation methods
 	 * using a full build
 	 */
-	public void test6F() {
+	public void testInvalidAnnotationMethodTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
 	}
@@ -163,7 +175,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noinstantiate tag on outer annotation methods
 	 * using an incremental build
 	 */
-	public void test7I() {
+	public void testInvalidAnnotationMethodTag7I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -172,7 +184,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noinstantiate tag on on outer annotation methods
 	 * using a full build
 	 */
-	public void test7F() {
+	public void testInvalidAnnotationMethodTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
 	}
@@ -181,7 +193,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noinstantiate tag on inner annotation methods
 	 * using an incremental build
 	 */
-	public void test8I() {
+	public void testInvalidAnnotationMethodTag8I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -190,7 +202,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noinstantiate tag on inner annotation methods
 	 * using a full build
 	 */
-	public void test8F() {
+	public void testInvalidAnnotationMethodTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
 	}
@@ -199,7 +211,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer annotation methods
 	 * using an incremental build
 	 */
-	public void test9I() {
+	public void testInvalidAnnotationMethodTag9I() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -208,7 +220,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer annotation methods
 	 * using a full build
 	 */
-	public void test9F() {
+	public void testInvalidAnnotationMethodTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
 	}
@@ -217,7 +229,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noinstantiate tag on annotation methods in the default package
 	 * using an incremental build
 	 */
-	public void test10I() {
+	public void testInvalidAnnotationMethodTag10I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest("", "test10", true);
 	}
@@ -226,7 +238,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noinstantiate tag on annotation methods in the default package
 	 * using a full build
 	 */
-	public void test10F() {
+	public void testInvalidAnnotationMethodTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest("", "test10", true);
 	}
@@ -235,7 +247,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noimplement tag on annotation methods
 	 * using an incremental build
 	 */
-	public void test11I() {
+	public void testInvalidAnnotationMethodTag11I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -244,7 +256,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noimplement tag on annotation methods
 	 * using a full build
 	 */
-	public void test11F() {
+	public void testInvalidAnnotationMethodTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
 	}
@@ -253,7 +265,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noimplement tag on outer annotation methods
 	 * using an incremental build
 	 */
-	public void test12I() {
+	public void testInvalidAnnotationMethodTag12I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -262,7 +274,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noimplement tag on outer annotation methods
 	 * using a full build
 	 */
-	public void test12F() {
+	public void testInvalidAnnotationMethodTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
 	}
@@ -271,7 +283,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noimplement tag on inner annotation methods
 	 * using an incremental build
 	 */
-	public void test13I() {
+	public void testInvalidAnnotationMethodTag13I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -280,7 +292,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noimplement tag on inner annotation methods
 	 * using a full build
 	 */
-	public void test13F() {
+	public void testInvalidAnnotationMethodTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
 	}
@@ -289,7 +301,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noimplement tag on a variety of inner / outer annotation methods
 	 * using an incremental build
 	 */
-	public void test14I() {
+	public void testInvalidAnnotationMethodTag14I() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -298,7 +310,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noimplement tag on a variety of inner / outer annotation methods
 	 * using a full build
 	 */
-	public void test14F() {
+	public void testInvalidAnnotationMethodTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
 	}
@@ -307,7 +319,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noimplement tag on annotation methods in the default package
 	 * using an incremental build
 	 */
-	public void test15I() {
+	public void testInvalidAnnotationMethodTag15I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest("", "test15", true);
 	}
@@ -316,7 +328,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noimplement tag on annotation methods in the default package
 	 * using a full build
 	 */
-	public void test15F() {
+	public void testInvalidAnnotationMethodTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest("", "test15", true);
 	}
@@ -325,7 +337,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on annotation methods
 	 * using an incremental build
 	 */
-	public void test16I() {
+	public void testInvalidAnnotationMethodTag16I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -334,7 +346,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on annotation methods
 	 * using a full build
 	 */
-	public void test16F() {
+	public void testInvalidAnnotationMethodTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
 	}
@@ -343,7 +355,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on outer annotation methods
 	 * using an incremental build
 	 */
-	public void test17I() {
+	public void testInvalidAnnotationMethodTag17I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -352,7 +364,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on outer annotation methods
 	 * using a full build
 	 */
-	public void test17F() {
+	public void testInvalidAnnotationMethodTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
 	}
@@ -361,7 +373,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on inner annotation methods
 	 * using an incremental build
 	 */
-	public void test18I() {
+	public void testInvalidAnnotationMethodTag18I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -370,7 +382,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on inner annotation methods
 	 * using a full build
 	 */
-	public void test18F() {
+	public void testInvalidAnnotationMethodTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -379,7 +391,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on a variety of inner / outer annotation methods
 	 * using an incremental build
 	 */
-	public void test19I() {
+	public void testInvalidAnnotationMethodTag19I() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -388,7 +400,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on a variety of inner / outer annotation methods
 	 * using a full build
 	 */
-	public void test19F() {
+	public void testInvalidAnnotationMethodTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -397,7 +409,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on annotation methods in the default package
 	 * using an incremental build
 	 */
-	public void test20I() {
+	public void testInvalidAnnotationMethodTag20I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest("", "test20", true);
 	}
@@ -406,7 +418,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on annotation methods in the default package
 	 * using a full build
 	 */
-	public void test20F() {
+	public void testInvalidAnnotationMethodTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest("", "test20", true);
 	}
@@ -415,7 +427,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests all the unsupported tags on a variety of annotation methods
 	 * using an incremental build
 	 */
-	public void test21I() {
+	public void testInvalidAnnotationMethodTag21I() {
 		setExpectedProblemIds(getDefaultProblemSet(30));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -424,7 +436,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests all the unsupported tags on a variety of annotation methods
 	 * using a full build
 	 */
-	public void test21F() {
+	public void testInvalidAnnotationMethodTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(30));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
 	}
@@ -433,7 +445,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noreference tag on annotation methods
 	 * using an incremental build
 	 */
-	public void test22I() {
+	public void testInvalidAnnotationMethodTag22I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -442,7 +454,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noreference tag on annotation methods
 	 * using a full build
 	 */
-	public void test22F() {
+	public void testInvalidAnnotationMethodTag22F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
 	}
@@ -451,7 +463,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noreference tag on outer annotation methods
 	 * using an incremental build
 	 */
-	public void test23I() {
+	public void testInvalidAnnotationMethodTag23I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -460,7 +472,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noreference tag on outer annotation methods
 	 * using a full build
 	 */
-	public void test23F() {
+	public void testInvalidAnnotationMethodTag23F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
 	}
@@ -469,7 +481,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noreference tag on annotation methods
 	 * using an incremental build
 	 */
-	public void test24I() {
+	public void testInvalidAnnotationMethodTag24I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -478,7 +490,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noreference tag on annotation methods
 	 * using a full build
 	 */
-	public void test24F() {
+	public void testInvalidAnnotationMethodTag24F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
 	}
@@ -487,7 +499,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noreference tag on a variety of inner / outer annotation methods
 	 * using an incremental build
 	 */
-	public void test25I() {
+	public void testInvalidAnnotationMethodTag25I() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test25", true);
 	}
@@ -496,7 +508,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noreference tag on a variety of inner / outer annotation methods
 	 * using a full build
 	 */
-	public void test25F() {
+	public void testInvalidAnnotationMethodTag25F() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test25", true);
 	}
@@ -505,7 +517,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noreference tag on annotation methods in the default package
 	 * using an incremental build
 	 */
-	public void test26I() {
+	public void testInvalidAnnotationMethodTag26I() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest("", "test26", true);
 	}
@@ -514,7 +526,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @noreference tag on annotation methods in the default package
 	 * using a full build
 	 */
-	public void test26F() {
+	public void testInvalidAnnotationMethodTag26F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		deployIncrementalBuildTest("", "test26", true);
 	}
@@ -523,7 +535,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported tags on an annotation method with a default value
 	 * using an incremental build
 	 */
-	public void test27I() {
+	public void testInvalidAnnotationMethodTag27I() {
 		setExpectedProblemIds(getDefaultProblemSet(15));
 		deployIncrementalBuildTest("", "test27", true);
 	}
@@ -532,7 +544,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported tags on an annotation method with a default value
 	 * using a full build
 	 */
-	public void test27F() {
+	public void testInvalidAnnotationMethodTag27F() {
 		setExpectedProblemIds(getDefaultProblemSet(15));
 		deployIncrementalBuildTest("", "test27", true);
 	}
@@ -541,7 +553,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported tags on an annotation method in the default package
 	 * using an incremental build
 	 */
-	public void test28I() {
+	public void testInvalidAnnotationMethodTag28I() {
 		setExpectedProblemIds(getDefaultProblemSet(15));
 		deployIncrementalBuildTest("", "test28", true);
 	}
@@ -550,7 +562,7 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported tags on an annotation method in the default package
 	 * using a full build
 	 */
-	public void test28F() {
+	public void testInvalidAnnotationMethodTag28F() {
 		setExpectedProblemIds(getDefaultProblemSet(15));
 		deployIncrementalBuildTest("", "test28", true);
 	}
