@@ -38,6 +38,7 @@ public class P2Tests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		String p2Config = Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch();
+		String launcherConfig = Platform.getOS().equals("macosx") ? Platform.getWS() + '.' + Platform.getOS()  : p2Config;
 		IMetadataRepository repository = loadMetadataRepository(repoLocation);
 		assertNotNull(repository);
 
@@ -59,7 +60,7 @@ public class P2Tests extends P2TestCase {
 
 		//product settings
 		getIU(repository, "toolingtest.product.ini." + p2Config);
-		
+
 		iu = getIU(repository, "toolingtest.product.config." + p2Config);
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:test.application);");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:test.product);");
@@ -69,14 +70,14 @@ public class P2Tests extends P2TestCase {
 		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher");
 		assertTouchpoint(iu, "configure", "addProgramArg(programArg:-startup);addProgramArg(programArg:@artifact);");
 		ius.add(iu);
-		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher." + p2Config);
+		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher." + launcherConfig);
 		assertTouchpoint(iu, "configure", "addProgramArg(programArg:--launcher.library);addProgramArg(programArg:@artifact);");
 		ius.add(iu);
-		
+
 		iu = getIU(repository, "test.product.launcher." + p2Config);
 		assertProvides(iu, "toolingtest.product", "test.product.launcher");
-		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.launcher." + p2Config);
-		
+		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.launcher." + launcherConfig);
+
 		//And the main product IU
 		iu = getIU(repository, "test.product");
 		assertRequires(iu, "toolingtest.product", "test.product.launcher");
