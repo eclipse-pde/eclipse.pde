@@ -1,6 +1,0 @@
-bin
-build.xml
-tests.jar
-tests.jar.bin.log
-org.eclipse.pde.ui.tests_*
-temp.folder
