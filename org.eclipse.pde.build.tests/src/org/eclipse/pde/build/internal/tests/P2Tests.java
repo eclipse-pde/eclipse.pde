@@ -85,5 +85,44 @@ public class P2Tests extends P2TestCase {
 		assertRequires(iu, "toolingtest.product", "test.product.config");
 		assertRequires(iu, ius, true);
 	}
+	
+	public void testBug237096() throws Exception {
+		IFolder buildFolder = newTest("237096");
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+		
+		Utils.generateFeature(buildFolder, "F", null, new String [] { "org.eclipse.osgi;unpack=false", "org.eclipse.core.runtime;unpack=false" });
+		Properties featureProperties = new Properties();
+		featureProperties.put("root", "rootfiles");
+		Utils.storeBuildProperties(buildFolder.getFolder("features/F"), featureProperties);
+		IFolder rootFiles = Utils.createFolder(buildFolder.getFolder("features/F"), "rootfiles");
+		StringBuffer buffer = new StringBuffer("This is a notice.html");
+		Utils.writeBuffer(rootFiles.getFile("notice.html"), buffer);
+		
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		properties.put("topLevelElementId", "F");
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.flavor", "tooling");
+		properties.put("p2.publish.artifacts", "true");
+		properties.put("p2.root.name", "FRoot");
+		properties.put("p2.root.version", "1.0.0");
+		Utils.storeBuildProperties(buildFolder, properties);
+		
+		runBuild(buildFolder);
+		
+		IMetadataRepository repository = loadMetadataRepository(repoLocation);
+		assertNotNull(repository);
+		
+		ArrayList ius = new ArrayList();
+		ius.add(getIU(repository, "org.eclipse.osgi"));
+		ius.add(getIU(repository, "org.eclipse.core.runtime"));
+		ius.add(getIU(repository, "org.eclipse.launcher.ANY.ANY.ANY"));
+		ius.add(getIU(repository, "toolingorg.eclipse.launcher.ANY.ANY.ANY"));
+		
+		IInstallableUnit iu = getIU(repository, "FRoot");
+		assertRequires(iu, ius, true);
+	}
 
 }
