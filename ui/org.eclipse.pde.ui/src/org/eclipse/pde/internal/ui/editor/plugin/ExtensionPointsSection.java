@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ketan Padegaonkar <KetanPadegaonkar@gmail.com> - bug 233682
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -23,10 +24,12 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
@@ -206,6 +209,21 @@ public class ExtensionPointsSection extends TableSection {
 			handleNew();
 	}
 
+	protected void handleDoubleClick(IStructuredSelection selection) {
+		if (!selection.isEmpty()) {
+			PluginExtensionPointNode extensionPoint = (PluginExtensionPointNode) selection.getFirstElement();
+			String pointID = extensionPoint.getId();
+			// For some stupid reason extensionPoint.getFullId() does not return the full id.
+			IBaseModel model = getPage().getPDEEditor().getAggregateModel();
+			String basePointID = ((IPluginModelBase) model).getPluginBase().getId();
+			pointID = basePointID + '.' + pointID;
+
+			OpenSchemaAction action = new OpenSchemaAction();
+			action.setInput(pointID);
+			action.run();
+		}
+	}
+
 	private void handleDelete() {
 		Object[] selection = ((IStructuredSelection) pointTable.getSelection()).toArray();
 		for (int i = 0; i < selection.length; i++) {
@@ -273,8 +291,8 @@ public class ExtensionPointsSection extends TableSection {
 	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// By default, fragment.xml does not exist until the first extension
-		// or extension point is created.  
-		// Ensure the file exists before pasting because the model will be 
+		// or extension point is created.
+		// Ensure the file exists before pasting because the model will be
 		// null and the paste will fail if it does not exist
 		((ManifestEditor) getPage().getEditor()).ensurePluginContextPresence();
 		// Get the model
@@ -285,8 +303,8 @@ public class ExtensionPointsSection extends TableSection {
 		}
 		IPluginBase pluginBase = model.getPluginBase();
 		try {
-			// Paste all source objects 
-			// Since, the extension points are a flat non-hierarchical list, 
+			// Paste all source objects
+			// Since, the extension points are a flat non-hierarchical list,
 			// the target object is not needed
 			for (int i = 0; i < sourceObjects.length; i++) {
 				Object sourceObject = sourceObjects[i];
