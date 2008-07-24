@@ -118,22 +118,16 @@ public class DSPropertyDetails extends DSAbstractDetails {
 	 * @param parent
 	 */
 	private void createUIFieldContent(Composite parent) {
-		GridData data = null;
 		// Create the label
 		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
 		Label label = getToolkit().createLabel(parent,
 				Messages.DSPropertyDetails_bodyLabel, SWT.WRAP);
 		label.setForeground(foreground);
-		int style = GridData.VERTICAL_ALIGN_BEGINNING
-				| GridData.HORIZONTAL_ALIGN_END;
-		data = new GridData(style);
-		label.setLayoutData(data);
-		// Create the source viewer
 		fContentViewer = new PDESourceViewer(getPage());
 		fContentViewer.createUI(parent, 90, 60);
-		// Needed to align vertically with form entry field and allow space
-		// for a possible field decoration
-		((GridData) fContentViewer.getViewer().getTextWidget().getLayoutData()).horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
+		
+		GridData gridData = (GridData) fContentViewer.getViewer().getTextWidget().getLayoutData();
+		gridData.horizontalIndent = 4;
 	}
 
 	/*
