@@ -14,9 +14,10 @@ import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 
 /**
- * Tests the use of invalid tags on enum fields and constants
+ * Tests the use of invalid tags on enum fields
  * 
  * @since 3.4
  */
@@ -42,6 +43,17 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public static Test suite() {
 		return buildTestSuite(InvalidEnumFieldTagTests.class);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
+	 */
+	protected void assertProblems(ApiProblem[] problems) {
+		String message = null;
+		for(int i = 0; i < problems.length; i++) {
+			message = problems[i].getMessage();
+			assertTrue("The problem message is not correct: "+message, message.endsWith("an enum field") || message.endsWith("an enum constant"));
+		}
 	}
 	
 	/* (non-Javadoc)

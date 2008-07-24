@@ -48,8 +48,10 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
 	 */
 	protected void assertProblems(ApiProblem[] problems) {
+		String message = null;
 		for(int i = 0; i < problems.length; i++) {
-			assertTrue("the message does not end correctly", problems[i].getMessage().endsWith("an interface method"));
+			message = problems[i].getMessage();
+			assertTrue("The problem message is not correct: "+message, message.endsWith("an interface method"));
 		}
 	}
 	

@@ -30,4 +30,8 @@ public enum test3 {
 	 * @noreference This enum field is not intended to be referenced by clients.
 	 */
 	private char[] f3 = {};
+	/**
+	 * @noreference This enum field is not intended to be referenced by clients.
+	 */
+	protected static char g = 'd';
 }

@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 
 /**
  * Tests invalid tag use on interface fields
@@ -36,6 +37,17 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 		return super.getTestSourcePath().append("interface");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
+	 */
+	protected void assertProblems(ApiProblem[] problems) {
+		String message = null;
+		for(int i = 0; i < problems.length; i++) {
+			message = problems[i].getMessage();
+			assertTrue("The problem message is not correct: "+message, message.endsWith("a field") || message.endsWith("a final field"));
+		}
+	}
+	
 	/**
 	 * @return the test for this class
 	 */

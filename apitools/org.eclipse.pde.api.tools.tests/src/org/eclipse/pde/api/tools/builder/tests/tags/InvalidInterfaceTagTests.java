@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -51,6 +52,17 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.UNSUPPORTED_TAG_USE, IApiProblem.NO_FLAGS);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
+	 */
+	protected void assertProblems(ApiProblem[] problems) {
+		String message = null;
+		for(int i = 0; i < problems.length; i++) {
+			message = problems[i].getMessage();
+			assertTrue("The problem message is not correct: "+message, message.endsWith("an interface"));
+		}
 	}
 	
 	/**

@@ -10,9 +10,9 @@
  *******************************************************************************/
 
 /**
- * Test unsupported @noextend tag on a field in an interface in the default package
+ * Test unsupported @noextend tag on a field in an annotation in the default package
  */
-public interface test5 {
+public @interface test5 {
 	/**
 	 * @noextend
 	 */

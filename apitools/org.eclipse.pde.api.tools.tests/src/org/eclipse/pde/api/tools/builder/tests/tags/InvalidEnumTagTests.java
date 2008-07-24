@@ -14,6 +14,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -59,6 +60,17 @@ public class InvalidEnumTagTests extends TagTest {
 	 */
 	protected String getTestCompliance() {
 		return CompilerOptions.VERSION_1_5;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
+	 */
+	protected void assertProblems(ApiProblem[] problems) {
+		String message = null;
+		for(int i = 0; i < problems.length; i++) {
+			message = problems[i].getMessage();
+			assertTrue("The problem message is not correct: "+message, message.endsWith("an enum"));
+		}
 	}
 	
 	/**

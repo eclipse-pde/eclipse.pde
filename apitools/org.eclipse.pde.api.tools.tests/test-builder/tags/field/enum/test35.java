@@ -10,22 +10,12 @@
  *******************************************************************************/
 
 /**
- * Test unsupported @noreference tag on final fields in an enum in the default package
+ * Test unsupported @noreference tag on an enum constant in an enum in the default package
  */
-public enum test5 {
+public enum test35 {
 	
+	/**
+	 * @noreference
+	 */
 	A;
-	
-	/**
-	 * @noreference
-	 */
-	public final Object f1 = null;
-	/**
-	 * @noreference
-	 */
-	protected final int f2 = 0;
-	/**
-	 * @noreference
-	 */
-	private final char[] f3 = {};
 }

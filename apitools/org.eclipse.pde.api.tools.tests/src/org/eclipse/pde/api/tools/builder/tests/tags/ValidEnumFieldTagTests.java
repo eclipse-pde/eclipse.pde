@@ -50,4 +50,83 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	protected String getTestCompliance() {
 		return CompilerOptions.VERSION_1_5;
 	}
+	
+	/**
+	 * Tests that @noreference is valid for non-final, non-static-final enum fields
+	 * using an incremental build
+	 */
+	public void testValidEnumFieldTag1I() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+	}
+	
+	/**
+	 * Tests that @noreference is valid for non-final, non-static-final enum fields
+	 * using a full build
+	 */
+	public void testValidEnumFieldTag1F() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+	}
+	
+	/**
+	 * Tests that @noreference is valid for non-final, non-static-final fields
+	 * in an outer enum using an incremental build
+	 */
+	public void testValidEnumFieldTag2I() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", false);
+	}
+	
+	/**
+	 * Tests that @noreference is valid for non-final, non-static-final fields
+	 * in an outer enum using a full build
+	 */
+	public void testValidEnumFieldTag2F() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", false);
+	}
+	/**
+	 * Tests that @noreference is valid for non-final, non-static-final fields
+	 * in an inner enum using an incremental build
+	 */
+	public void testValidEnumFieldTag4I() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+	}
+	
+	/**
+	 * Tests that @noreference is valid for non-final, non-static-final fields
+	 * in an inner enum using a full build
+	 */
+	public void testValidEnumFieldTag4F() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+	}
+	
+	/**
+	 * Tests that @noreference is valid for non-final, non-static-final fields
+	 * in an enum in the default package using an incremental build
+	 */
+	public void testValidEnumFieldTag3I() {
+		deployIncrementalBuildTest("", "test1", false);
+	}
+	
+	/**
+	 * Tests that @noreference is valid for non-final, non-static-final fields
+	 * in an enum in the default package using a full build
+	 */
+	public void testValidEnumFieldTag3F() {
+		deployIncrementalBuildTest("", "test1", false);
+	}
+	
+	/**
+	 * Tests that @noreference is valid for non-final, non-static-final fields
+	 * in a variety of inner / outer enums using an incremental build
+	 */
+	public void testValidEnumFieldTag5I() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+	}
+	
+	/**
+	 * Tests that @noreference is valid for non-final, non-static-final fields
+	 * in a variety of inner / outer enums using a full build
+	 */
+	public void testValidEnumFieldTag5F() {
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+	}
 }

@@ -14,6 +14,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -59,6 +60,17 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 */
 	protected String getTestCompliance() {
 		return CompilerOptions.VERSION_1_5;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
+	 */
+	protected void assertProblems(ApiProblem[] problems) {
+		String message = null;
+		for(int i = 0; i < problems.length; i++) {
+			message = problems[i].getMessage();
+			assertTrue("The problem message is not correct: "+message, message.endsWith("an annotation"));
+		}
 	}
 	
 	/**
@@ -380,7 +392,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an inner annotation in the testing package a.b.c
 	 * using a full build
 	 */
-	public void test18F() {
+	public void testInvalidAnnotationTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployFullBuildTest(TESTING_PACKAGE, "test18", true);
 	}
@@ -389,7 +401,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having a variety of invalid tags on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using an incremental build
 	 */
-	public void test19I() {
+	public void testInvalidAnnotationTag19I() {
 		setExpectedProblemIds(getDefaultProblemSet(16));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -398,7 +410,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having a variety of invalid tags on a variety of inner / outer / top-level annotations in package a.b.c
 	 * using a full build
 	 */
-	public void test19F() {
+	public void testInvalidAnnotationTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(16));
 		deployFullBuildTest(TESTING_PACKAGE, "test19", true);
 	}
@@ -407,7 +419,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an annotation in the default package
 	 * using an incremental build
 	 */
-	public void test20I() {
+	public void testInvalidAnnotationTag20I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		deployIncrementalBuildTest(TESTING_PACKAGE, "test20", true);
 	}

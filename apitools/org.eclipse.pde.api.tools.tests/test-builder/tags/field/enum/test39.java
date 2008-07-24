@@ -8,24 +8,37 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package a.b.c;
 
 /**
- * Test unsupported @noreference tag on final fields in an enum in the default package
+ * Test unsupported @noextend tag on enum constants in inner / outer enums
  */
-public enum test5 {
+public enum test39 {
 	
+	/**
+	 * @noextend
+	 */
 	A;
+	static enum inner {
+		
+		/**
+		 * @noextend
+		 */
+		A;
+		enum inner2 {
+			
+			/**
+			 * @noextend
+			 */
+			A;
+		}
+	}
+}
+
+enum outer {
 	
 	/**
-	 * @noreference
+	 * @noextend
 	 */
-	public final Object f1 = null;
-	/**
-	 * @noreference
-	 */
-	protected final int f2 = 0;
-	/**
-	 * @noreference
-	 */
-	private final char[] f3 = {};
+	A;
 }

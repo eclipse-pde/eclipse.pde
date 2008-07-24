@@ -68,7 +68,8 @@ public class InvalidFieldTagTests extends TagTest {
 			InvalidClassFieldTagTests.class,
 			InvalidInterfaceFieldTagTests.class,
 			InvalidAnnotationFieldTagTests.class,
-			InvalidEnumFieldTagTests.class
+			InvalidEnumFieldTagTests.class,
+			InvalidEnumConstantTagTests.class
 		};
 		return classes;
 	}
