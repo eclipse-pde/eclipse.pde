@@ -80,6 +80,9 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 						switch(element.getElementType()) {
 							case IJavaElement.METHOD: {
 								IMethod method = (IMethod) element;
+								if(Flags.isPrivate(method.getFlags())) {
+									return Collections.EMPTY_LIST;
+								}
 								if(method.isConstructor()) {
 									member = IApiJavadocTag.MEMBER_CONSTRUCTOR;
 								}
