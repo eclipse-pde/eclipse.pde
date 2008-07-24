@@ -52,7 +52,8 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 		String message = null;
 		for(int i = 0; i < problems.length; i++) {
 			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("an enum field") || message.endsWith("an enum constant"));
+			assertTrue("The problem message is not correct: "+message, message.endsWith("an enum field") || message.endsWith("an enum constant")
+					|| message.endsWith("a private enum field"));
 		}
 	}
 	

@@ -22,8 +22,4 @@ public class test2 {
 	 * @noreference
 	 */
 	protected static int f2;
-	/**
-	 * @noreference
-	 */
-	private static char[] f3;
 }

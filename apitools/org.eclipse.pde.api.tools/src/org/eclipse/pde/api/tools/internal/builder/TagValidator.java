@@ -132,6 +132,7 @@ public class TagValidator extends ASTVisitor {
 				int pkind = getParentKind(node);
 				String context = null;
 				boolean isprivate = Flags.isPrivate(method.getModifiers());
+				boolean isconstructor = method.isConstructor();
 				switch(pkind) {
 					case IApiJavadocTag.TYPE_ENUM: {
 						context = isprivate ? BuilderMessages.TagValidator_private_enum_method : BuilderMessages.TagValidator_an_enum_method;
@@ -143,17 +144,17 @@ public class TagValidator extends ASTVisitor {
 					}
 					default: {
 						if(isprivate) {
-							context = method.isConstructor() ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method;
+							context = isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method;
 						}
 						else {
-							context = method.isConstructor() ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
+							context = isconstructor ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
 						}
 						break;
 					}
 				}
 				IApiJavadocTag[] validtags = new IApiJavadocTag[0];
 				if(!isprivate) {
-					validtags = jtm.getTagsForType(pkind, method.isConstructor() ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
+					validtags = jtm.getTagsForType(pkind, isconstructor ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
 				}
 				processTags(getTypeName(method), tags, validtags, IElementDescriptor.T_METHOD, context);
 				break;
@@ -169,21 +170,30 @@ public class TagValidator extends ASTVisitor {
 				int pkind = getParentKind(node);
 				String context = null;
 				boolean isfinal = Flags.isFinal(field.getModifiers());
+				boolean isprivate = Flags.isPrivate(field.getModifiers());
 				switch(pkind) {
 					case IApiJavadocTag.TYPE_ANNOTATION: {
 						context = BuilderMessages.TagValidator_annotation_field;
 						break;
 					}
 					case IApiJavadocTag.TYPE_ENUM: {
-						context = BuilderMessages.TagValidator_enum_field;
+						context = isprivate ? BuilderMessages.TagValidator_private_enum_field : BuilderMessages.TagValidator_enum_field;
 						break;
 					}
 					default: {
-						context = isfinal ? BuilderMessages.TagValidator_a_final_field : BuilderMessages.TagValidator_a_field;
+						if(isprivate) {
+							context = BuilderMessages.TagValidator_private_field;
+						}
+						else {
+							context = isfinal ? BuilderMessages.TagValidator_a_final_field : BuilderMessages.TagValidator_a_field;
+						}
 						break;
 					}
 				}
-				IApiJavadocTag[] validtags = jtm.getTagsForType(pkind, IApiJavadocTag.MEMBER_FIELD);
+				IApiJavadocTag[] validtags = new IApiJavadocTag[0];
+				if(!isprivate) {
+					validtags = jtm.getTagsForType(pkind, IApiJavadocTag.MEMBER_FIELD);
+				}
 				processTags(getTypeName(field), tags, isfinal ? new IApiJavadocTag[0] : validtags, IElementDescriptor.T_FIELD, context);
 				break;
 			}

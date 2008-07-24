@@ -24,9 +24,5 @@ public class test5 {
 		 * @noreference
 		 */
 		protected int f2;
-		/**
-		 * @noreference
-		 */
-		private char[] f3;
 	}
 }

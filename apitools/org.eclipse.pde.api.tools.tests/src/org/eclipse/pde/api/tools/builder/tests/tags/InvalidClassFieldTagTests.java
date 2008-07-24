@@ -51,7 +51,8 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		String message = null;
 		for(int i = 0; i < problems.length; i++) {
 			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("a field") || message.endsWith("a final field"));
+			assertTrue("The problem message is not correct: "+message, message.endsWith("a field") || message.endsWith("a final field") 
+					|| message.endsWith("a private field"));
 		}
 	}
 	

@@ -25,10 +25,6 @@ public class test7 {
 		protected static int f2 = 0;
 		
 		class inner2 {
-			/**
-			 * @noreference
-			 */
-			private char[] f3 = {};
 		}
 	}
 }
@@ -38,8 +34,4 @@ class outer {
 	 * @noreference
 	 */
 	public static Object f1 = null;
-	/**
-	 * @noreference
-	 */
-	private char[] f3;
 }
