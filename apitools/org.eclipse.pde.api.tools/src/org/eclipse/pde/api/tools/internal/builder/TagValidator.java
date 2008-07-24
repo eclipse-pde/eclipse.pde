@@ -134,7 +134,7 @@ public class TagValidator extends ASTVisitor {
 				boolean isprivate = Flags.isPrivate(method.getModifiers());
 				switch(pkind) {
 					case IApiJavadocTag.TYPE_ENUM: {
-						context = isprivate ? "a private enum method" : BuilderMessages.TagValidator_an_enum_method;
+						context = isprivate ? BuilderMessages.TagValidator_private_enum_method : BuilderMessages.TagValidator_an_enum_method;
 						break;
 					}
 					case IApiJavadocTag.TYPE_INTERFACE: {
@@ -143,7 +143,7 @@ public class TagValidator extends ASTVisitor {
 					}
 					default: {
 						if(isprivate) {
-							context = method.isConstructor() ? "a private constructor" : "a private method";
+							context = method.isConstructor() ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method;
 						}
 						else {
 							context = method.isConstructor() ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
