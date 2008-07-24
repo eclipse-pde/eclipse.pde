@@ -56,7 +56,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag1F() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+		deployFullBuildTest(TESTING_PACKAGE, "test1", false);
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag2F() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", false);
+		deployFullBuildTest(TESTING_PACKAGE, "test2", false);
 	}
 	
 	
@@ -89,7 +89,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag3F() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", false);
+		deployFullBuildTest(TESTING_PACKAGE, "test3", false);
 	}
 	
 	/**
@@ -105,7 +105,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag4F() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", false);
+		deployFullBuildTest(TESTING_PACKAGE, "test4", false);
 	}
 	
 	/**
@@ -121,7 +121,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag5F() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", false);
+		deployFullBuildTest(TESTING_PACKAGE, "test5", false);
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag6F() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", false);
+		deployFullBuildTest(TESTING_PACKAGE, "test6", false);
 	}
 	
 	/**
@@ -153,7 +153,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag7F() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", false);
+		deployFullBuildTest(TESTING_PACKAGE, "test7", false);
 	}
 	
 	/**
@@ -169,6 +169,6 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag8F() {
-		deployIncrementalBuildTest("", "test8", false);
+		deployFullBuildTest("", "test8", false);
 	}
 }

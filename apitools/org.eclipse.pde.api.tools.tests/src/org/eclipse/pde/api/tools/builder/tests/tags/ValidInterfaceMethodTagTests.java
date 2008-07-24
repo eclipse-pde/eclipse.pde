@@ -56,7 +56,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceMethodTag1F() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test1", true);
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceMethodTag2F() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test2", true);
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceMethodTag3F() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test3", true);
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceMethodTag4F() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test4", true);
 	}
 	
 	/**
@@ -120,6 +120,6 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceMethodTag5F() {
-		deployIncrementalBuildTest("", "test5", true);
+		deployFullBuildTest("", "test5", true);
 	}
 }

@@ -70,7 +70,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test1", true);
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test2", true);
 	}
 	
 	/**
@@ -106,7 +106,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test3", true);
 	}
 	
 	/**
@@ -124,7 +124,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test4", true);
 	}
 	
 	/**
@@ -142,7 +142,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest("", "test5", true);
+		deployFullBuildTest("", "test5", true);
 	}
 	
 	/**
@@ -160,7 +160,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test6", true);
 	}
 	
 	/**
@@ -178,7 +178,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test7", true);
 	}
 	
 	/**
@@ -196,7 +196,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test8", true);
 	}
 	
 	/**
@@ -214,7 +214,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test9", true);
 	}
 	
 	/**
@@ -232,7 +232,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest("", "test10", true);
+		deployFullBuildTest("", "test10", true);
 	}
 	
 	/**
@@ -250,7 +250,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test11", true);
 	}
 	
 	/**
@@ -268,7 +268,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test12", true);
 	}
 	
 	/**
@@ -286,7 +286,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test13", true);
 	}
 	
 	/**
@@ -304,7 +304,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test14", true);
 	}
 	
 	/**
@@ -322,7 +322,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest("", "test15", true);
+		deployFullBuildTest("", "test15", true);
 	}
 	
 	/**
@@ -340,7 +340,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test16", true);
 	}
 	
 	/**
@@ -358,7 +358,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test17", true);
 	}
 	
 	/**
@@ -376,7 +376,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test18", true);
 	}
 	
 	/**
@@ -394,7 +394,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test19", true);
 	}
 	
 	/**
@@ -412,7 +412,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployIncrementalBuildTest("", "test20", true);
+		deployFullBuildTest("", "test20", true);
 	}
 	
 	/**
@@ -430,6 +430,6 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidInterfaceMethodTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(24));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test21", true);
 	}
 }

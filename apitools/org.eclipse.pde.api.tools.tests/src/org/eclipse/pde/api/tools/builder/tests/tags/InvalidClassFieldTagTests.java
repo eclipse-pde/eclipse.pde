@@ -71,7 +71,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test1", true);
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test2", true);
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test3", true);
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test4", true);
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test5", true);
 	}
 	
 	/**
@@ -161,7 +161,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test6", true);
 	}
 	
 	/**
@@ -179,7 +179,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test7", true);
 	}
 	
 	/**
@@ -197,7 +197,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test8", true);
 	}
 	
 	/**
@@ -215,7 +215,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test9", true);
 	}
 	
 	/**
@@ -233,7 +233,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test10", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test10", true);
 	}
 	
 	/**
@@ -251,7 +251,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test11", true);
 	}
 	
 	/**
@@ -269,7 +269,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test12", true);
 	}
 	
 	/**
@@ -287,7 +287,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test13", true);
 	}
 	
 	/**
@@ -305,7 +305,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test14", true);
 	}
 	
 	/**
@@ -323,7 +323,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test15", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test15", true);
 	}
 	
 	/**
@@ -341,7 +341,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test16", true);
 	}
 	
 	/**
@@ -359,7 +359,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test17", true);
 	}
 	
 	/**
@@ -377,7 +377,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test18", true);
 	}
 	
 	/**
@@ -395,7 +395,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test19", true);
 	}
 	
 	/**
@@ -413,7 +413,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test20", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test20", true);
 	}
 	
 	/**
@@ -431,7 +431,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test21", true);
 	}
 	
 	/**
@@ -449,7 +449,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag22F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test22", true);
 	}
 	
 	/**
@@ -467,7 +467,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag23F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test23", true);
 	}
 	
 	/**
@@ -485,7 +485,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag24F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test24", true);
 	}
 	
 	/**
@@ -503,7 +503,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag25F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test25", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test25", true);
 	}
 	
 	/**
@@ -521,7 +521,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag26F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test26", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test26", true);
 	}
 	
 	/**
@@ -539,7 +539,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag27F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test27", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test27", true);
 	}
 	
 	/**
@@ -557,7 +557,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag28F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test28", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test28", true);
 	}
 	
 	/**
@@ -575,7 +575,7 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag29F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test29", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test29", true);
 	}
 	
 	/**
@@ -593,6 +593,6 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidClassFieldTag30F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test30", true);
+		deployFullBuildTest(TESTING_PACKAGE, "test30", true);
 	}
 }
