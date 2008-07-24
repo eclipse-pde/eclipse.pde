@@ -17,12 +17,13 @@ import org.eclipse.pde.internal.ds.core.IDSProperty;
 public class DSProperty extends DSObject implements IDSProperty {
 
 	private static final long serialVersionUID = 1L;
-
 	public DSProperty(DSModel model) {
 		super(model, ELEMENT_PROPERTY);
 		
 		// set Default Values
 		this.setPropertyType(IDSConstants.VALUE_PROPERTY_TYPE_STRING);
+		int property_count = model.getDSComponent().getPropertyElements().length + 1;
+		this.setPropertyName(IDSConstants.ELEMENT_PROPERTY + property_count);
 	}
 
 	/*

@@ -25,6 +25,14 @@ public class DSReference extends DSObject implements IDSReference {
 		this
 				.setReferenceCardinality(IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE);
 		this.setReferencePolicy(IDSConstants.VALUE_REFERENCE_POLICY_STATIC);
+		
+		// set generic values
+		int ref_count = model.getDSComponent().getReferences().length + 1;
+		this
+				.setReferenceName(IDSConstants.ELEMENT_REFERENCE
+						+ ref_count);
+		this.setReferenceInterface(IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE
+				+ ref_count);
 	}
 	/*
 	 * (non-Javadoc)

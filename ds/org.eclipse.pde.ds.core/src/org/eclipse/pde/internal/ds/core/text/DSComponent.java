@@ -43,6 +43,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 
 		// set default values
 		this.setEnabled(true);
+		this.setAttributeName(IDSConstants.ELEMENT_COMPONENT);
 	}
 
 	/*

@@ -28,9 +28,9 @@ public class DSImplementation extends DSObject implements IDSImplementation {
 
 	private static final long serialVersionUID = 1L;
 
-	
 	public DSImplementation(DSModel model) {
 		super(model, ELEMENT_IMPLEMENTATION);
+		this.setClassName(IDSConstants.ELEMENT_IMPLEMENTATION);
 	}
 
 	/*
@@ -57,9 +57,9 @@ public class DSImplementation extends DSObject implements IDSImplementation {
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getName()
 	 */
 	public String getName() {
-		return getClassName(); 
+		return getClassName();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -69,17 +69,21 @@ public class DSImplementation extends DSObject implements IDSImplementation {
 		return TYPE_IMPLEMENTATION;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSImplementation#setClassName(java.lang.String)
 	 */
-	public void setClassName(String className){
+	public void setClassName(String className) {
 		setXMLAttribute(ATTRIBUTE_IMPLEMENTATION_CLASS, className);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSImplementation#getClassName()
 	 */
-	public String getClassName(){
+	public String getClassName() {
 		return getXMLAttributeValue(ATTRIBUTE_IMPLEMENTATION_CLASS);
 	}
 
@@ -91,6 +95,5 @@ public class DSImplementation extends DSObject implements IDSImplementation {
 	public String[] getAttributesNames() {
 		return new String[] { IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS };
 	}
-	
 
 }

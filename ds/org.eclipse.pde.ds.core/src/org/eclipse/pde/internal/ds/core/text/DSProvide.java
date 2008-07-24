@@ -17,9 +17,14 @@ import org.eclipse.pde.internal.ds.core.IDSProvide;
 public class DSProvide extends DSObject implements IDSProvide {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	public DSProvide(DSModel model) {
 		super(model, ELEMENT_PROVIDE);
+		
+		int prov_count = model.getDSComponent().getService()
+				.getProvidedServices().length + 1;
+		this.setInterface(IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE
+				+ prov_count);
 	}
 
 	/*

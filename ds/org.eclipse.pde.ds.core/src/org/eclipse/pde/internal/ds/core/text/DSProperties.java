@@ -25,9 +25,12 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 public class DSProperties extends DSObject implements IDSProperties {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	public DSProperties(DSModel model) {
 		super(model, ELEMENT_PROPERTIES);
+		int number = model.getDSComponent().getPropertiesElements().length + 1;
+		this.setEntry(IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY
+				+ number);
 	}
 
 	/*
