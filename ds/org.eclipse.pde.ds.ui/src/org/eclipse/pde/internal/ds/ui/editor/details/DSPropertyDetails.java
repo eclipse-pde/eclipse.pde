@@ -17,15 +17,19 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
+import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ds.ui.editor.IDSMaster;
+import org.eclipse.pde.internal.ds.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.parts.PDESourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -39,11 +43,12 @@ public class DSPropertyDetails extends DSAbstractDetails {
 
 	private IDSProperty fProperty;
 	private FormEntry fNameEntry;
-	private FormEntry fTypeEntry;
+	private ComboPart fTypeCombo;
 	private FormEntry fValueEntry;
 	private PDESourceViewer fContentViewer;
 	private Section fMainSection;
 	private boolean fBlockEvents;
+	private Label fTypeLabel;
 
 	/**
 	 * @param section
@@ -90,9 +95,22 @@ public class DSPropertyDetails extends DSAbstractDetails {
 				SWT.NONE);
 
 		// Attribute: type
-		fTypeEntry = new FormEntry(mainSectionClient, getToolkit(),
-				Messages.DSPropertyDetails_typeEntry, SWT.NONE);
+		fTypeLabel = getToolkit().createLabel(mainSectionClient,
+				Messages.DSPropertyDetails_typeEntry, SWT.WRAP);
+		fTypeCombo = new ComboPart();
+		fTypeCombo
+				.createControl(mainSectionClient, getToolkit(), SWT.READ_ONLY);
 
+		String[] itemsCard = new String[] { IConstants.PROPERTY_TYPE_BOOLEAN,
+				IConstants.PROPERTY_TYPE_BYTE, IConstants.PROPERTY_TYPE_CHAR,
+				IConstants.PROPERTY_TYPE_DOUBLE,
+				IConstants.PROPERTY_TYPE_FLOAT,
+				IConstants.PROPERTY_TYPE_INTEGER,
+				IConstants.PROPERTY_TYPE_LONG, IConstants.PROPERTY_TYPE_SHORT,
+				IConstants.PROPERTY_TYPE_STRING };
+		fTypeCombo.setItems(itemsCard);
+		fTypeCombo.getControl().setLayoutData(data);
+		
 		// description: Content (Element)
 		createUIFieldContent(mainSectionClient);
 
@@ -161,14 +179,15 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		});
 
 		// Attribute: type
-		fTypeEntry.setFormEntryListener(new FormEntryAdapter(this) {
-			public void textValueChanged(FormEntry entry) {
+		fTypeCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
 				// Ensure data object is defined
 				if (fProperty == null) {
 					return;
 				}
-				fProperty.setPropertyType(fTypeEntry.getValue());
+				fProperty.setPropertyType(fTypeCombo.getSelection());
 			}
+
 		});
 
 	}
@@ -238,12 +257,8 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		fValueEntry.setEditable(editable);
 
 		// Attribute: type
-		if (fProperty.getPropertyType() != null) {
-			fTypeEntry.setValue(fProperty.getPropertyType(), true);
-		} else {
-			fTypeEntry.setValue("", true); //$NON-NLS-1$
-		}
-		fTypeEntry.setEditable(editable);
+		if (fProperty.getPropertyType() != null)
+			fTypeCombo.setText(fProperty.getPropertyType());
 
 		if (fProperty.getPropertyElemBody() == null) {
 			fBlockEvents = true;
@@ -294,7 +309,6 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		// Only required for form entries
 		fNameEntry.commit();
 		fValueEntry.commit();
-		fTypeEntry.commit();
 		// No need to call for sub details, because they contain no form entries
 	}
 
