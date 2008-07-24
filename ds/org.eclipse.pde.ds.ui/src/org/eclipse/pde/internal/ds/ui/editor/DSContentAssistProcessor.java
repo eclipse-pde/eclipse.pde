@@ -58,9 +58,11 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 	}
 
 	public void assistSessionEnded(ContentAssistEvent event) {
+		fRange = null;
 	}
 
 	public void assistSessionStarted(ContentAssistEvent event) {
+		fAssistSessionStarted = true;
 	}
 
 	public void selectionChanged(ICompletionProposal proposal,
@@ -283,8 +285,8 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			return computeAddAttributeProposal(node, offset, doc, null, node
 					.getXMLTagName());
 			// case F_OPEN_TAG:
-			// return stubProposals((DSModel) fSourcePage.getInputContext()
-			// .getModel(), "Open Tag", offset);
+			// return new ICompletionProposal[] { new TypeCompletionProposal(
+			// "Open Tag", null, "Open Tag", offset, 0) };
 		case F_ADD_CHILD:
 			return computeAddChildProposal(node, offset, doc, null);
 		}
@@ -514,47 +516,6 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 		return new String[] { node, attr, attVal };
 	}
-
-// /**
-// * This is a temporary method to help tracking the Content Assist Range
-	// * (Should be remove before this class is done)
-	// *
-	// * @param model
-	// * @param string
-	// * @return
-	// */
-	// private DSCompletionProposal[] stubProposals(IBaseModel model,
-	// String string, int offset) {
-	// DSObject component = new DSObject((DSModel) model, "Stub:" + string) {
-	//
-	// public boolean canAddChild(int objectType) {
-	// // TODO Auto-generated method stub
-	// return false;
-	// }
-	//
-	// public boolean canBeParent() {
-	// // TODO Auto-generated method stub
-	// return false;
-	// }
-	//
-	// public String getName() {
-	// return this.getXMLTagName();
-	// }
-	//
-	// public int getType() {
-	// return -1;
-	// }
-	//
-	// public String[] getAttributesNames() {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
-	// };
-	// DSCompletionProposal[] proposals = new DSCompletionProposal[] { new
-	// DSCompletionProposal(
-	// component, offset) };
-	// return proposals;
-	// }
 
 	private void assignRange(int offset) {
 		fRange = fSourcePage.getRangeElement(offset, true);
