@@ -248,6 +248,10 @@ public class DeltaProcessor {
 			case IDelta.CHANGED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE :
+						if (Util.isProtected(delta.getModifiers())) {
+							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+						}
+						return !Util.isVisible(delta);
 					case IDelta.TYPE_ARGUMENTS :
 					case IDelta.NON_FINAL_TO_FINAL :
 					case IDelta.STATIC_TO_NON_STATIC :
