@@ -14,7 +14,6 @@ package org.eclipse.pde.internal.ds.ui.editor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
-import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.SharedImages;
 import org.eclipse.pde.internal.ds.ui.editor.contentassist.TypeCompletionProposal;
 import org.eclipse.swt.graphics.Point;
@@ -53,22 +52,25 @@ public class DSAttrCompletionProposal extends TypeCompletionProposal implements
 		String string2 = "\""; //$NON-NLS-1$
 		
 		if (displayString.equals(IDSConstants.ATTRIBUTE_COMPONENT_ENABLED)) {
-			replacementString = displayString + string1 + IConstants.TRUE
+			replacementString = displayString + string1
+					+ IDSConstants.VALUE_TRUE
 					+ string2;
 		} else if (displayString.equals(IDSConstants.ATTRIBUTE_PROPERTY_TYPE)) {
 			replacementString = displayString + string1
-					+ IConstants.PROPERTY_TYPE_STRING + string2;
+					+ IDSConstants.VALUE_PROPERTY_TYPE_STRING + string2;
 		} else if (displayString.equals(IDSConstants.ATTRIBUTE_SERVICE_FACTORY)) {
-			replacementString = displayString + string1 + IConstants.FALSE
+			replacementString = displayString + string1
+					+ IDSConstants.VALUE_FALSE
 					+ string2;
 		} else if (displayString
 				.equals(IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY)) {
 			replacementString = displayString + string1
-					+ IConstants.CARDINALITY_ONE_ONE + string2;
+					+ IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE
+					+ string2;
 		} else if (displayString
 				.equals(IDSConstants.ATTRIBUTE_REFERENCE_POLICY)) {
 			replacementString = displayString + string1
-					+ IConstants.REFERENCE_STATIC + string2;
+					+ IDSConstants.VALUE_REFERENCE_POLICY_STATIC + string2;
 		} else {
 			replacementString = displayString + string1 + displayString
 					+ string2;

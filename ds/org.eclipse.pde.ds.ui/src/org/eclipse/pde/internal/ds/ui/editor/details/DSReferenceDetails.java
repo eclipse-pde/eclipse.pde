@@ -24,9 +24,9 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.ui.Activator;
-import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
@@ -120,9 +120,11 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		fCardinality.createControl(mainSectionClient, getToolkit(),
 				SWT.READ_ONLY);
 
-		String[] itemsCard = new String[] { IConstants.CARDINALITY_ZERO_ONE,
-				IConstants.CARDINALITY_ZERO_N, IConstants.CARDINALITY_ONE_ONE,
-				IConstants.CARDINALITY_ONE_N };
+		String[] itemsCard = new String[] {
+				IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE,
+				IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N,
+				IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE,
+				IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N };
 		fCardinality.setItems(itemsCard);
 		fCardinality.getControl().setLayoutData(gd);
 
@@ -144,8 +146,9 @@ public class DSReferenceDetails extends DSAbstractDetails {
 		fLabelPolicy.setForeground(foreground);
 		fPolicy = new ComboPart();
 		fPolicy.createControl(mainSectionClient, getToolkit(), SWT.READ_ONLY);
-		String[] itemsPolicy = new String[] { IConstants.REFERENCE_STATIC,
-				IConstants.REFERENCE_DYNAMIC };
+		String[] itemsPolicy = new String[] {
+				IDSConstants.VALUE_REFERENCE_POLICY_STATIC,
+				IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC };
 		fPolicy.setItems(itemsPolicy);
 		fPolicy.getControl().setLayoutData(gd);
 

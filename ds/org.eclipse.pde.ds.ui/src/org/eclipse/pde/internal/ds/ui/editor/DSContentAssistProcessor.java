@@ -36,7 +36,6 @@ import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
-import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.editor.contentassist.TypeCompletionProposal;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.contentassist.TypePackageCompletionProcessor;
@@ -210,60 +209,82 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 	private ICompletionProposal[] getReferencePolicyValues(int attrValueLength,
 			int startOffset) {
 		return new ICompletionProposal[] {
-				new TypeCompletionProposal(IConstants.REFERENCE_STATIC, null,
-						IConstants.REFERENCE_STATIC, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_REFERENCE_POLICY_STATIC, null,
+						IDSConstants.VALUE_REFERENCE_POLICY_STATIC,
+						startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.REFERENCE_DYNAMIC, null,
-						IConstants.REFERENCE_DYNAMIC, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC, null,
+						IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC,
+						startOffset,
 						attrValueLength) };
 	}
 
 	private ICompletionProposal[] getReferenceCardinalityValues(
 			int attrValueLength, int startOffset) {
 		return new ICompletionProposal[] {
-				new TypeCompletionProposal(IConstants.CARDINALITY_ZERO_ONE,
-						null, IConstants.CARDINALITY_ZERO_ONE, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE,
+						null,
+						IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE,
+						startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.CARDINALITY_ZERO_N, null,
-						IConstants.CARDINALITY_ZERO_N, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N, null,
+						IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N,
+						startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.CARDINALITY_ONE_ONE,
-						null, IConstants.CARDINALITY_ONE_ONE, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE, null,
+						IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE,
+						startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.CARDINALITY_ONE_N, null,
-						IConstants.CARDINALITY_ONE_N, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N, null,
+						IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N,
+						startOffset,
 						attrValueLength) };
 	}
 
 	private ICompletionProposal[] getPropertyTypeValues(int attrValueLength,
 			int startOffset) {
 		return new ICompletionProposal[] {
-				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_STRING,
-						null, IConstants.PROPERTY_TYPE_STRING, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_PROPERTY_TYPE_STRING, null,
+						IDSConstants.VALUE_PROPERTY_TYPE_STRING, startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_LONG, null,
-						IConstants.PROPERTY_TYPE_LONG, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_PROPERTY_TYPE_LONG, null,
+						IDSConstants.VALUE_PROPERTY_TYPE_LONG, startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_DOUBLE,
-						null, IConstants.PROPERTY_TYPE_DOUBLE, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE, null,
+						IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE, startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_FLOAT,
-						null, IConstants.PROPERTY_TYPE_FLOAT, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_PROPERTY_TYPE_FLOAT, null,
+						IDSConstants.VALUE_PROPERTY_TYPE_FLOAT, startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_INTEGER,
-						null, IConstants.PROPERTY_TYPE_INTEGER, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_PROPERTY_TYPE_INTEGER, null,
+						IDSConstants.VALUE_PROPERTY_TYPE_INTEGER, startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_BYTE, null,
-						IConstants.PROPERTY_TYPE_BYTE, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_PROPERTY_TYPE_BYTE, null,
+						IDSConstants.VALUE_PROPERTY_TYPE_BYTE, startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_CHAR, null,
-						IConstants.PROPERTY_TYPE_CHAR, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_PROPERTY_TYPE_CHAR, null,
+						IDSConstants.VALUE_PROPERTY_TYPE_CHAR, startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_BOOLEAN,
-						null, IConstants.PROPERTY_TYPE_BOOLEAN, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN, null,
+						IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN, startOffset,
 						attrValueLength),
-				new TypeCompletionProposal(IConstants.PROPERTY_TYPE_SHORT,
-						null, IConstants.PROPERTY_TYPE_SHORT, startOffset,
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_PROPERTY_TYPE_SHORT, null,
+						IDSConstants.VALUE_PROPERTY_TYPE_SHORT, startOffset,
 						attrValueLength) };
 	}
 
@@ -271,10 +292,10 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			int attrValueLength) {
 
 		return new ICompletionProposal[] {
-				new TypeCompletionProposal(IConstants.TRUE, null,
-						IConstants.TRUE, startOffset, attrValueLength),
-				new TypeCompletionProposal(IConstants.FALSE, null,
-						IConstants.FALSE, startOffset, attrValueLength) };
+				new TypeCompletionProposal(IDSConstants.VALUE_TRUE, null,
+						IDSConstants.VALUE_TRUE, startOffset, attrValueLength),
+				new TypeCompletionProposal(IDSConstants.VALUE_FALSE, null,
+						IDSConstants.VALUE_FALSE, startOffset, attrValueLength) };
 	}
 
 	private ICompletionProposal[] computeCompletionProposal(

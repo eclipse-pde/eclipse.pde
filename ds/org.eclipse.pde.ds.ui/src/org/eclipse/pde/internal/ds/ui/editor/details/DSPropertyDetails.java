@@ -16,8 +16,8 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
-import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
 import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
@@ -101,14 +101,19 @@ public class DSPropertyDetails extends DSAbstractDetails {
 		fTypeCombo
 				.createControl(mainSectionClient, getToolkit(), SWT.READ_ONLY);
 
-		String[] itemsCard = new String[] { IConstants.PROPERTY_TYPE_BOOLEAN,
-				IConstants.PROPERTY_TYPE_BYTE, IConstants.PROPERTY_TYPE_CHAR,
-				IConstants.PROPERTY_TYPE_DOUBLE,
-				IConstants.PROPERTY_TYPE_FLOAT,
-				IConstants.PROPERTY_TYPE_INTEGER,
-				IConstants.PROPERTY_TYPE_LONG, IConstants.PROPERTY_TYPE_SHORT,
-				IConstants.PROPERTY_TYPE_STRING };
+		String[] itemsCard = new String[] {
+				IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN,
+				IDSConstants.VALUE_PROPERTY_TYPE_BYTE,
+				IDSConstants.VALUE_PROPERTY_TYPE_CHAR,
+				IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE,
+				IDSConstants.VALUE_PROPERTY_TYPE_FLOAT,
+				IDSConstants.VALUE_PROPERTY_TYPE_INTEGER,
+				IDSConstants.VALUE_PROPERTY_TYPE_LONG,
+				IDSConstants.VALUE_PROPERTY_TYPE_SHORT,
+				IDSConstants.VALUE_PROPERTY_TYPE_STRING };
 		fTypeCombo.setItems(itemsCard);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalIndent = 3;
 		fTypeCombo.getControl().setLayoutData(data);
 		
 		// description: Content (Element)

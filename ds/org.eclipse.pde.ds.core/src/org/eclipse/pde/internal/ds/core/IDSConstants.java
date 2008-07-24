@@ -19,28 +19,18 @@ package org.eclipse.pde.internal.ds.core;
 public interface IDSConstants {
 
 	// Elements
-
 	public static final String ELEMENT_COMPONENT = "component"; //$NON-NLS-1$
-
 	public static final String ELEMENT_IMPLEMENTATION = "implementation"; //$NON-NLS-1$
-
 	public static final String ELEMENT_PROPERTIES = "properties"; //$NON-NLS-1$
-	
 	public static final String ELEMENT_PROPERTY = "property"; //$NON-NLS-1$
-
 	public static final String ELEMENT_SERVICE = "service"; //$NON-NLS-1$
-	
 	public static final String ELEMENT_PROVIDE = "provide"; //$NON-NLS-1$
-
 	public static final String ELEMENT_REFERENCE = "reference"; //$NON-NLS-1$
 	
 	//Component Attributes
 	public static final String ATTRIBUTE_COMPONENT_NAME = "name"; //$NON-NLS-1$
-	
 	public static final String ATTRIBUTE_COMPONENT_ENABLED = "enabled"; //$NON-NLS-1$
-	
 	public static final String ATTRIBUTE_COMPONENT_FACTORY = "factory"; //$NON-NLS-1$
-	
 	public static final String ATTRIBUTE_COMPONENT_IMMEDIATE = "immediate"; //$NON-NLS-1$
 	
 	//Implementation Attributes
@@ -48,9 +38,7 @@ public interface IDSConstants {
 	
 	//Property Attributes
 	public static final String ATTRIBUTE_PROPERTY_NAME = "name"; //$NON-NLS-1$
-	
 	public static final String ATTRIBUTE_PROPERTY_VALUE = "value"; //$NON-NLS-1$
-	
 	public static final String ATTRIBUTE_PROPERTY_TYPE = "type"; //$NON-NLS-1$
 	
 	
@@ -65,33 +53,21 @@ public interface IDSConstants {
 	
 	//Reference Attributes
 	public static final String ATTRIBUTE_REFERENCE_NAME = "name"; //$NON-NLS-1$
-	
 	public static final String ATTRIBUTE_REFERENCE_INTERFACE = "interface"; //$NON-NLS-1$
-	
 	public static final String ATTRIBUTE_REFERENCE_CARDINALITY = "cardinality"; //$NON-NLS-1$
-	
 	public static final String ATTRIBUTE_REFERENCE_POLICY= "policy"; //$NON-NLS-1$
-	
 	public static final String ATTRIBUTE_REFERENCE_TARGET= "target"; //$NON-NLS-1$
-	
 	public static final String ATTRIBUTE_REFERENCE_BIND= "bind"; //$NON-NLS-1$
-	
 	public static final String ATTRIBUTE_REFERENCE_UNBIND= "unbind"; //$NON-NLS-1$
 		
 	
 	//Types
 	public static final int TYPE_COMPONENT = 0;
-
 	public static final int TYPE_IMPLEMENTATION = 1;
-
 	public static final int TYPE_PROPERTIES = 2;
-	
 	public static final int TYPE_PROPERTY = 3;
-
 	public static final int TYPE_SERVICE = 4;
-	
 	public static final int TYPE_PROVIDE = 5;
-
 	public static final int TYPE_REFERENCE = 6;
 
 	public static final String VALUE_PROPERTY_TYPE_STRING = "String"; //$NON-NLS-1$
@@ -111,4 +87,9 @@ public interface IDSConstants {
 	public static final String VALUE_REFERENCE_CARDINALITY_ZERO_N = "0..n"; //$NON-NLS-1$
 	public static final String VALUE_REFERENCE_CARDINALITY_ONE_ONE = "1..1"; //$NON-NLS-1$
 	public static final String VALUE_REFERENCE_CARDINALITY_ONE_N = "1..n"; //$NON-NLS-1$
+	
+	public static final String VALUE_TRUE = "true"; //$NON-NLS-1$
+	public static final String VALUE_FALSE = "false"; //$NON-NLS-1$
+	
+	
 }
