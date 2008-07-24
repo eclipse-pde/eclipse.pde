@@ -16,20 +16,20 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 
 /**
- * Tests invalid javadoc tags on class methods
+ * Tests unsupported javadoc tags on class constructors
  * 
  * @since 3.5
  */
-public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
+public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 
 	/**
 	 * Constructor
 	 * @param name
 	 */
-	public InvalidClassMethodTagTests(String name) {
+	public InvalidClassConstructorTagTests(String name) {
 		super(name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
@@ -44,7 +44,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		String message = null;
 		for(int i = 0; i < problems.length; i++) {
 			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("a method") || message.endsWith("a private method"));
+			assertTrue("The problem message is not correct: "+message, message.endsWith("a constructor") || message.endsWith("a private constructor"));
 		}
 	}
 	
@@ -52,6 +52,6 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 * @return the test for this class
 	 */
 	public static Test suite() {
-		return buildTestSuite(InvalidClassMethodTagTests.class);
+		return buildTestSuite(InvalidClassConstructorTagTests.class);
 	}
 }

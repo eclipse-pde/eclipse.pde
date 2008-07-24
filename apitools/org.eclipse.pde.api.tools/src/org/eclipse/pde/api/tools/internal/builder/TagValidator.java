@@ -131,9 +131,10 @@ public class TagValidator extends ASTVisitor {
 				MethodDeclaration method = (MethodDeclaration) node;
 				int pkind = getParentKind(node);
 				String context = null;
+				boolean isprivate = Flags.isPrivate(method.getModifiers());
 				switch(pkind) {
 					case IApiJavadocTag.TYPE_ENUM: {
-						context = BuilderMessages.TagValidator_an_enum_method;
+						context = isprivate ? "a private enum method" : BuilderMessages.TagValidator_an_enum_method;
 						break;
 					}
 					case IApiJavadocTag.TYPE_INTERFACE: {
@@ -141,11 +142,19 @@ public class TagValidator extends ASTVisitor {
 						break;
 					}
 					default: {
-						context = method.isConstructor() ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
+						if(isprivate) {
+							context = method.isConstructor() ? "a private constructor" : "a private method";
+						}
+						else {
+							context = method.isConstructor() ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
+						}
 						break;
 					}
 				}
-				IApiJavadocTag[] validtags = jtm.getTagsForType(pkind, method.isConstructor() ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
+				IApiJavadocTag[] validtags = new IApiJavadocTag[0];
+				if(!isprivate) {
+					validtags = jtm.getTagsForType(pkind, method.isConstructor() ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
+				}
 				processTags(getTypeName(method), tags, validtags, IElementDescriptor.T_METHOD, context);
 				break;
 			}

@@ -52,7 +52,7 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		String message = null;
 		for(int i = 0; i < problems.length; i++) {
 			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("an enum method"));
+			assertTrue("The problem message is not correct: "+message, message.endsWith("an enum method") || message.endsWith("a pivate enum method"));
 		}
 	}
 	

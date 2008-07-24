@@ -68,6 +68,7 @@ public class InvalidMethodTagTests extends TagTest {
 			InvalidAnnotationMethodTagTests.class,
 			InvalidEnumMethodTagTests.class,
 			InvalidClassMethodTagTests.class,
+			InvalidClassConstructorTagTests.class,
 			InvalidInterfaceMethodTagTests.class
 		};
 		return classes;
