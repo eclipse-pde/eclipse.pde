@@ -37,36 +37,42 @@ public class P2Utils {
 	/**
 	 * Returns bundles defined by the 'bundles.info' file in the
 	 * specified location, or <code>null</code> if none. The "bundles.info" file
-	 * is assumed to be at a fixed relative location to the specified file.  This 
-	 * method will also look for a "source.info".  If available, any source
-	 * bundles found will also be added to the returned list.
+	 * is assumed to be at a fixed location relative to the configuration area URL.
+	 * This method will also look for a "source.info".  If available, any source
+	 * bundles found will also be added to the returned list.  If bundle URLs found
+	 * in the bundles.txt are relative, they will be appended to platformHome to
+	 * make them absolute.
 	 * 
 	 * @param platformHome absolute path in the local file system to an installation
+	 * @param configurationArea url location of the configuration directory to search for bundles.info and source.info
 	 * @return URLs of all bundles in the installation or <code>null</code> if not able
 	 * 	to locate a bundles.info
 	 */
-	public static URL[] readBundlesTxt(String platformHome) {
-
+	public static URL[] readBundlesTxt(String platformHome, URL configurationArea) {
 		Path basePath = new Path(platformHome);
-
-		File configArea = TargetWeaver.getConfigurationArea(platformHome);
-		File bundlesTxt = new File(configArea, BUNDLE_TXT_PATH);
-		List bundles = getBundlesFromFile(bundlesTxt, basePath);
-
-		if (bundles == null) {
+		if (configurationArea == null) {
 			return null;
 		}
+		try {
+			URL bundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(BUNDLE_TXT_PATH));
+			List bundles = getBundlesFromFile(bundlesTxt, basePath);
 
-		File srcBundlesTxt = new File(configArea, SRC_BUNDLE_TXT_PATH);
-		List srcBundles = getBundlesFromFile(srcBundlesTxt, basePath);
+			if (bundles == null) {
+				return null;
+			}
 
-		if (srcBundles == null) {
+			URL srcBundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(SRC_BUNDLE_TXT_PATH));
+			List srcBundles = getBundlesFromFile(srcBundlesTxt, basePath);
+
+			if (srcBundles != null) {
+				bundles.addAll(srcBundles);
+			}
 			return (URL[]) bundles.toArray(new URL[bundles.size()]);
+
+		} catch (MalformedURLException e) {
+			PDECore.log(e);
+			return null;
 		}
-
-		bundles.addAll(srcBundles);
-		return (URL[]) bundles.toArray(new URL[bundles.size()]);
-
 	}
 
 	/**
@@ -75,23 +81,14 @@ public class P2Utils {
 	 * Returns a list of URL locations, one for each bundle entry or <code>
 	 * null</code> if there is a problem reading the file.
 	 * 
-	 * @param file the file to read
+	 * @param file the URL of the file to read
 	 * @param basePath the path describing the base location of the platform install
 	 * @return list containing URL locations or <code>null</code>
 	 */
-	private static List getBundlesFromFile(File file, Path basePath) {
-		if (!file.exists()) {
-			return null;
-		}
-		URL url = null;
-		try {
-			url = file.toURL();
-		} catch (MalformedURLException e) {
-			return null;
-		}
+	private static List getBundlesFromFile(URL fileURL, Path basePath) {
 		List bundles = new ArrayList();
 		try {
-			BufferedReader r = new BufferedReader(new InputStreamReader(url.openStream()));
+			BufferedReader r = new BufferedReader(new InputStreamReader(fileURL.openStream()));
 
 			String line;
 			try {
@@ -156,8 +153,10 @@ public class P2Utils {
 				}
 			}
 		} catch (MalformedURLException e) {
+			PDECore.log(e);
 			return null;
 		} catch (IOException e) {
+			PDECore.log(e);
 			return null;
 		}
 		return bundles;

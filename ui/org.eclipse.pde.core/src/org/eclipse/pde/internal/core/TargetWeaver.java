@@ -15,10 +15,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.osgi.framework.Constants;
 
 /**
@@ -40,11 +38,6 @@ public class TargetWeaver {
 	private static String fgDevPropertiesURL = null;
 
 	/**
-	 * Location of configuration area
-	 */
-	private static String fgConfigAreaURL = null;
-
-	/**
 	 * Property file corresponding to dev.properties
 	 */
 	private static Properties fgDevProperties = null;
@@ -56,39 +49,7 @@ public class TargetWeaver {
 		fgIsDev = Platform.inDevelopmentMode();
 		if (fgIsDev) {
 			fgDevPropertiesURL = System.getProperty("osgi.dev"); //$NON-NLS-1$
-			fgConfigAreaURL = System.getProperty("osgi.configuration.area"); //$NON-NLS-1$
 		}
-	}
-
-	/**
-	 * Returns the configuration area for the platform as a directory. The default
-	 * location is the 'configuration' directory in the home location but can be
-	 * overridden with the -configuration command line argument.
-	 * 
-	 * @param platformHome absolute path in the local file system to an installation
-	 * @return configuration area
-	 */
-	public static File getConfigurationArea(String platformHome) {
-		// only weave in development mode
-		if (fgIsDev && fgConfigAreaURL != null) {
-			if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation()))) {
-				// only point to dev config area for default target platform
-				try {
-					URL url = new URL(fgConfigAreaURL);
-					String file = url.getFile();
-					if (file != null && file.length() > 0) {
-						File area = new File(file);
-						if (area != null && area.exists()) {
-							return area;
-						}
-					}
-				} catch (MalformedURLException e) {
-					PDECore.log(e);
-				}
-			}
-		}
-		// default
-		return new File(platformHome, "configuration"); //$NON-NLS-1$
 	}
 
 	/**

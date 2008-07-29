@@ -17,6 +17,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
@@ -85,14 +86,34 @@ public class PluginPathFinder {
 	}
 
 	public static URL[] getPluginPaths(String platformHome) {
+		// If we don't care about installed bundles, simply scan the location
 		Preferences store = PDECore.getDefault().getPluginPreferences();
 		if (!store.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION))
 			return scanLocations(getSites(platformHome, false));
 
-		URL[] urls = P2Utils.readBundlesTxt(platformHome);
+		// See if we can find a bundles.info to get installed bundles from
+		URL[] urls = null;
+		if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation()))) {
+			// Pointing at default install, so use the actual configuration area
+			Location configArea = Platform.getConfigurationLocation();
+			if (configArea != null) {
+				urls = P2Utils.readBundlesTxt(platformHome, configArea.getURL());
+			}
+		} else {
+			// Pointing at a folder, so try to guess the configuration area
+			File configurationArea = new File(platformHome, "configuration"); //$NON-NLS-1$
+			if (configurationArea.exists()) {
+				try {
+					urls = P2Utils.readBundlesTxt(platformHome, configurationArea.toURL());
+				} catch (MalformedURLException e) {
+					PDECore.log(e);
+				}
+			}
+		}
 		if (urls != null) {
 			return urls;
 		}
+
 		if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation())) && !isDevLaunchMode())
 			return ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
 
