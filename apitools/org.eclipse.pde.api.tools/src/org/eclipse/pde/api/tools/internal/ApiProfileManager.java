@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IElementChangedListener;
@@ -256,8 +257,12 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		if(savelocation == null) {
 			return;
 		}
+		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
 		if(defaultprofile != null) {
-			ApiPlugin.getDefault().getPluginPreferences().setValue(DEFAULT_PROFILE, defaultprofile);
+			prefs.setValue(DEFAULT_PROFILE, defaultprofile);
+		}
+		else {
+			prefs.setToDefault(DEFAULT_PROFILE);
 		}
 		if(profilecache != null) {
 			File dir = new File(savelocation.toOSString());
