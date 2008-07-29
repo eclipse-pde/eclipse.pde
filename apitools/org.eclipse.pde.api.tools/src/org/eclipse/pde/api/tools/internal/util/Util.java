@@ -82,8 +82,11 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.ArrayType;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedType;
@@ -254,7 +257,7 @@ public final class Util {
 	private static boolean DELETE_DEBUG = false;
 	/**
 	 * Maximum of time in ms to wait in deletion operation while running JDT/Core tests.
-	 * Default is 10 seconds. This number cannot exceed 1 minute (ie. 60000).
+	 * Default is 10 seconds. This number cannot exceed 1 minute (i.e. 60000).
 	 * <br>
 	 * To avoid too many loops while waiting, the ten first ones are done waiting
 	 * 10ms before repeating, the ten loops after are done waiting 100ms and
@@ -1581,7 +1584,7 @@ public final class Util {
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Creates a method signature from a specified {@link MethodDeclaration}
 	 * @param node
@@ -1604,11 +1607,47 @@ public final class Util {
 			else {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("<init>"); //$NON-NLS-1$
+				collectSyntheticParam(node, rparams);
 				buffer.append(Signature.createMethodSignature((String[]) rparams.toArray(new String[rparams.size()]), Signature.SIG_VOID));
 				return buffer.toString();
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Collects the synthetic parameter of the fully qualified name of the enclosing context for a constructor of an inner type 
+	 * @param method the constructor declaration
+	 * @param rparams the listing of parameters to add to
+	 */
+	private static void collectSyntheticParam(final MethodDeclaration method, List rparams) {
+		Assert.isNotNull(method);
+		ASTNode parent = method.getParent();
+		StringBuffer name = new StringBuffer();
+		while(parent != null) {
+			parent = parent.getParent();
+			if(parent instanceof AbstractTypeDeclaration) {
+				AbstractTypeDeclaration type = (AbstractTypeDeclaration) parent;
+				name.insert(0, type.getName().getFullyQualifiedName());
+				if(type.isMemberTypeDeclaration()) {
+					name.insert(0, '$');
+				}
+				continue;
+			}
+			if(parent instanceof CompilationUnit) {
+				CompilationUnit cunit = (CompilationUnit) parent;
+				PackageDeclaration pdec = cunit.getPackage();
+				if(pdec != null) {
+					name.insert(0, '.');
+					name.insert(0, cunit.getPackage().getName().getFullyQualifiedName());
+				}
+			}
+		}
+		name.insert(0, "L"); //$NON-NLS-1$
+		name.append(';');
+		if(name.length() > 2) {
+			rparams.add(0, name.toString());
+		}
 	}
 	
 	/**
@@ -1622,7 +1661,7 @@ public final class Util {
 		String pname = null;
 		for(Iterator iter = rawparams.iterator(); iter.hasNext();) {
 			param = (SingleVariableDeclaration) iter.next();
-			pname = Util.getTypeSignature(param.getType());
+			pname = getTypeSignature(param.getType());
 			if(pname != null) {
 				rparams.add(pname);
 			}

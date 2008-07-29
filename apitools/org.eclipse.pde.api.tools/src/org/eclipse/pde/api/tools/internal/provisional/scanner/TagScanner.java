@@ -342,12 +342,14 @@ public class TagScanner {
 						if (object2 instanceof IMethodDescriptor) {
 							return (IMethodDescriptor) object2;
 						}
-						// this is a list of method descriptors and we need to find the better match
-						List methodList = (List) object2;
-						for (Iterator iterator = methodList.iterator(); iterator.hasNext(); ) {
-							IMethodDescriptor methodDescriptor = (IMethodDescriptor) iterator.next();
-							if (matches(descriptor, methodDescriptor)) {
-								return methodDescriptor;
+						if(object2 != null) {
+							// this is a list of method descriptors and we need to find the better match
+							List methodList = (List) object2;
+							for (Iterator iterator = methodList.iterator(); iterator.hasNext(); ) {
+								IMethodDescriptor methodDescriptor = (IMethodDescriptor) iterator.next();
+								if (matches(descriptor, methodDescriptor)) {
+									return methodDescriptor;
+								}
 							}
 						}
 					}
