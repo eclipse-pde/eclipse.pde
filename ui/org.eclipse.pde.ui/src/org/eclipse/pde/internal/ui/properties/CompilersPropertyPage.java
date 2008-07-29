@@ -151,13 +151,15 @@ public class CompilersPropertyPage extends PropertyPage {
 		return fPageData == null || !Boolean.TRUE.equals(fPageData.get(CompilersPreferencePage.NO_LINK));
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
 	public void applyData(Object data) {
 		if (data instanceof HashMap) {
 			fPageData = (HashMap) data;
-			fWorkspaceLink.setVisible(!Boolean.TRUE.equals(fPageData.get(CompilersPreferencePage.NO_LINK)));
+			if (fWorkspaceLink != null) {
+				fWorkspaceLink.setVisible(!Boolean.TRUE.equals(fPageData.get(CompilersPreferencePage.NO_LINK)));
+			}
 		}
 	}
 }
