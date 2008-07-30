@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,10 @@ import java.util.*;
  * WARNING! This class is not part of SWT API. It is NOT API. It is an internal
  * tool that may be changed or removed at anytime.
  * 
- * Based on MSDN "An In-Depth Look into the Win32 Portable Executable File Format"
+ * Based on MSDN "An In-Depth Look into the Win32 Portable Executable File Format".
+ * 
+ * Win x64 support (Bug #238001) based on MSDN "x64 Primer: Everything You Need To 
+ * Know To Start Programming 64-Bit Windows Systems".
  */
 public class IconExe {
 	
@@ -34,14 +37,15 @@ public class IconExe {
 	 * Note 1. Write access to the executable program is required. As a result, that
 	 * program must not be currently running or edited elsewhere.
 	 * 
-	 * Note 2.  The Eclipse 3.1 launcher requires a .ico file with the following 6 images
-	 * 1. 32x32, 4 bit (Windows 16 colors palette)
-	 * 2. 16x16, 4 bit (Windows 16 colors palette)
-	 * 3. 16x16, 8 bit (256 colors)
-	 * 4. 32x32, 8 bit (256 colors)
-	 * 5. 48x48, 4 bit (Windows 16 colors palette)
-	 * 6. 48x48, 8 bit (256 colors)
-	 * A user icon matching exactly the width/height/depth of an executable icon will be written
+     * Note 2. The Eclipse 3.4 launcher requires an .ico file with the following 7 images (in any order).
+     * 1. 48x48, 32 bit (RGB / Alpha Channel)
+     * 2. 32x32, 32 bit (RGB / Alpha Channel)
+     * 3. 16x16, 32 bit (RGB / Alpha Channel)
+     * 4. 48x48, 8 bit (256 colors)
+     * 5. 32x32, 8 bit (256 colors)
+     * 6. 24x24, 8 bit (256 colors)
+     * 7. 16x16, 8 bit (256 colors)	 
+     * A user icon matching exactly the width/height/depth of an executable icon will be written
 	 * to the executable and will replace that executable icon. If an executable icon
 	 * does not match a user icon, it is silently left as is.
 	 * 
@@ -81,13 +85,14 @@ public class IconExe {
 	 * Retrieve the Desktop icons provided in the Windows executable program.
 	 * These icons are typically shown in various places of the Windows desktop.
 	 * 
-	 * Note.  The Eclipse 3.1 launcher returns the following 6 images
-	 * 1. 32x32, 4 bit (Windows 16 colors palette)
-	 * 2. 16x16, 4 bit (Windows 16 colors palette)
-	 * 3. 16x16, 8 bit (256 colors)
-	 * 4. 32x32, 8 bit (256 colors)
-	 * 5. 48x48, 4 bit (Windows 16 colors palette)
-	 * 6. 48x48, 8 bit (256 colors)
+     * Note. The Eclipse 3.4 launcher returns the following 7 images (in any order).
+     * 1. 48x48, 32 bit (RGB / Alpha Channel)
+     * 2. 32x32, 32 bit (RGB / Alpha Channel)
+     * 3. 16x16, 32 bit (RGB / Alpha Channel)
+     * 4. 48x48, 8 bit (256 colors)
+     * 5. 32x32, 8 bit (256 colors)
+     * 6. 24x24, 8 bit (256 colors)
+     * 7. 16x16, 8 bit (256 colors)
 	 * 
 	 * @param program the Windows executable e.g c:/eclipse/eclipse.exe
 	 */	
@@ -116,13 +121,14 @@ public class IconExe {
 	 * the number of icons to write. Finally, use loadIcons after this operation
 	 * to verify the icons have changed as expected.
 	 * 
-	 * Note 3. The Eclipse 3.1 launcher requires the following 6 images (in any order).
-	 * 1. 32x32, 4 bit (Windows 16 colors palette)
-	 * 2. 16x16, 4 bit (Windows 16 colors palette)
-	 * 3. 16x16, 8 bit (256 colors)
-	 * 4. 32x32, 8 bit (256 colors)
-	 * 5. 48x48, 4 bit (Windows 16 colors palette)
-	 * 6. 48x48, 8 bit (256 colors)
+	 * Note 3. The Eclipse 3.4 launcher requires the following 7 images (in any order).
+	 * 1. 48x48, 32 bit (RGB / Alpha Channel)
+	 * 2. 32x32, 32 bit (RGB / Alpha Channel)
+	 * 3. 16x16, 32 bit (RGB / Alpha Channel)
+     * 4. 48x48, 8 bit (256 colors)
+	 * 5. 32x32, 8 bit (256 colors)
+     * 6. 24x24, 8 bit (256 colors)
+     * 7. 16x16, 8 bit (256 colors)
 	 * 
 	 * Note 4. This function modifies the content of the executable program and may cause
 	 * its corruption. 
@@ -135,6 +141,12 @@ public class IconExe {
 		RandomAccessFile raf = new RandomAccessFile(program, "rw"); //$NON-NLS-1$
 		IconExe iconExe = new IconExe();
 		IconResInfo[] iconInfo = iconExe.getIcons(raf);
+		// Display an error if  no icons found in target executable.
+		if (iconInfo.length == 0) {
+		    System.err.println("Warning - no icons detected in \"" + program + "\"."); //$NON-NLS-1$ //$NON-NLS-2$
+		    raf.close();
+		    return 0;
+		}
 		int cnt = 0;
 		for (int i = 0; i < iconInfo.length; i++) {
 			for (int j = 0; j < icons.length; j++) {
@@ -169,16 +181,15 @@ public class IconExe {
 		iconCnt = 0;
 		IMAGE_DOS_HEADER imageDosHeader = new IMAGE_DOS_HEADER();
 		read(raf, imageDosHeader);
-		if (imageDosHeader.e_magic != IMAGE_DOS_SIGNATURE) return null;
+		if (imageDosHeader.e_magic != IMAGE_DOS_SIGNATURE) return new IconResInfo[0];
 		int imageNtHeadersOffset = imageDosHeader.e_lfanew;
 		raf.seek(imageNtHeadersOffset);
 		IMAGE_NT_HEADERS imageNtHeaders = new IMAGE_NT_HEADERS();
 		read(raf, imageNtHeaders);
-		if (imageNtHeaders.Signature != IMAGE_NT_SIGNATURE) return null;
-		
+		if (imageNtHeaders.Signature != IMAGE_NT_SIGNATURE) return new IconResInfo[0];
 		// DumpResources
 		int resourcesRVA = imageNtHeaders.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress;
-		if (resourcesRVA == 0) return null;
+		if (resourcesRVA == 0) return new IconResInfo[0];
 		if (DEBUG) System.out.println("* Resources (RVA= "+resourcesRVA+")"); //$NON-NLS-1$ //$NON-NLS-2$
 		IMAGE_SECTION_HEADER imageSectionHeader = new IMAGE_SECTION_HEADER();
 		int firstSectionOffset = imageNtHeadersOffset + IMAGE_NT_HEADERS.FIELD_OFFSET_OptionalHeader + imageNtHeaders.FileHeader.SizeOfOptionalHeader;
@@ -192,7 +203,7 @@ public class IconExe {
 				break;
 			}
 		}
-		if (!found) return null;
+		if (!found) return new IconResInfo[0];
 		int delta = imageSectionHeader.VirtualAddress - imageSectionHeader.PointerToRawData;
 		int imageResourceDirectoryOffset = resourcesRVA - delta;
 		dumpResourceDirectory(raf, imageResourceDirectoryOffset, imageResourceDirectoryOffset, delta, 0, 0, false);
@@ -475,6 +486,8 @@ static final int RES_ICON = 1;
 static final int RT_ICON = 3;
 static final int RT_GROUP_ICON = 14;
 static final int BMPHeaderFixedSize = 40;
+static final int IMAGE_NT_OPTIONAL_HDR64_MAGIC = 0x20b;
+static final int IMAGE_NT_OPTIONAL_HDR32_MAGIC = 0x10b;
 	
 public static class IMAGE_DOS_HEADER {
 	int e_magic; // WORD
@@ -514,38 +527,40 @@ public static class IMAGE_DATA_DIRECTORY {
 }
 
 public static class IMAGE_OPTIONAL_HEADER {
-	int Magic; // WORD
-	int MajorLinkerVersion; // BYTE
-	int MinorLinkerVersion; // BYTE
-	int SizeOfCode; // DWORD
-	int SizeOfInitializedData; // DWORD
-	int SizeOfUninitializedData; // DWORD
-	int AddressOfEntryPoint; // DWORD
-	int BaseOfCode; // DWORD
-	int BaseOfData; // DWORD
-	int ImageBase; // DWORD
-	int SectionAlignment; // DWORD
-	int FileAlignment; // DWORD
-	int MajorOperatingSystemVersion; // WORD
-	int MinorOperatingSystemVersion; // WORD
-	int MajorImageVersion; // WORD
-	int MinorImageVersion; // WORD
-	int MajorSubsystemVersion; // WORD
-	int MinorSubsystemVersion; // WORD
-	int Win32VersionValue; // DWORD
-	int SizeOfImage; // DWORD
-	int SizeOfHeaders; // DWORD
-	int CheckSum; // DWORD
-	int Subsystem; // WORD
-	int DllCharacteristics; // WORD
-	int SizeOfStackReserve; // DWORD
-	int SizeOfStackCommit; // DWORD
-	int SizeOfHeapReserve; // DWORD
-	int SizeOfHeapCommit; // DWORD
-	int LoaderFlags; // DWORD
-	int NumberOfRvaAndSizes; // DWORD
-	IMAGE_DATA_DIRECTORY[] DataDirectory = new IMAGE_DATA_DIRECTORY[16];
+    // Allocate enough storage for the 64 bit version of the header.
+    int Magic; // WORD
+    int MajorLinkerVersion; // BYTE
+    int MinorLinkerVersion; // BYTE
+    int SizeOfCode; // DWORD
+    int SizeOfInitializedData; // DWORD
+    int SizeOfUninitializedData; // DWORD
+    int AddressOfEntryPoint; // DWORD
+    int BaseOfCode; // DWORD
+    int BaseOfData; // DWORD
+    long ImageBase; // ULONGLONG
+    int SectionAlignment; // DWORD
+    int FileAlignment; // DWORD
+    int MajorOperatingSystemVersion; // WORD
+    int MinorOperatingSystemVersion; // WORD
+    int MajorImageVersion; // WORD
+    int MinorImageVersion; // WORD
+    int MajorSubsystemVersion; // WORD
+    int MinorSubsystemVersion; // WORD
+    int Win32VersionValue; // DWORD
+    int SizeOfImage; // DWORD
+    int SizeOfHeaders; // DWORD
+    int CheckSum; // DWORD
+    int Subsystem; // WORD
+    int DllCharacteristics; // WORD
+    long SizeOfStackReserve; // ULONGLONG
+    long SizeOfStackCommit; // ULONGLONG
+    long SizeOfHeapReserve; // ULONGLONG
+    long SizeOfHeapCommit; // ULONGLONG
+    int LoaderFlags; // DWORD
+    int NumberOfRvaAndSizes; // DWORD
+    IMAGE_DATA_DIRECTORY[] DataDirectory = new IMAGE_DATA_DIRECTORY[16];
 }
+
 public static class IMAGE_NT_HEADERS {
 	int Signature; // DWORD
 	IMAGE_FILE_HEADER FileHeader = new IMAGE_FILE_HEADER();
@@ -676,6 +691,17 @@ static int read4(RandomAccessFile raf) throws IOException {
 	int b3 = raf.readByte() & 0xFF;
 	return b3 << 24 | b2 << 16 | b1 << 8 | b0;
 }
+static long read8(RandomAccessFile raf) throws IOException {
+    int b0 = raf.readByte() & 0xFF;
+    int b1 = raf.readByte() & 0xFF;
+    int b2 = raf.readByte() & 0xFF;
+    int b3 = raf.readByte() & 0xFF;
+    int b4 = raf.readByte() & 0xFF;
+    int b5 = raf.readByte() & 0xFF;
+    int b6 = raf.readByte() & 0xFF;
+    int b7 = raf.readByte() & 0xFF;
+    return b7 << 56 | b6 << 48 | b5 << 40 | b4 << 32 | b3 << 24 | b2 << 16 | b1 << 8 | b0;
+}
 static void write4(RandomAccessFile raf, int value) throws IOException {
 	raf.write(value & 0xFF);
 	raf.write((value >> 8) & 0xFF);
@@ -722,6 +748,10 @@ static void read(RandomAccessFile raf, IMAGE_DATA_DIRECTORY idd) throws IOExcept
 }
 static void read(RandomAccessFile raf, IMAGE_OPTIONAL_HEADER ioh) throws IOException {
 	ioh.Magic = readU2(raf);
+	
+	// Assume file is 32bit executable unless x64 magic is present
+	boolean is32 = !(ioh.Magic == IMAGE_NT_OPTIONAL_HDR64_MAGIC);
+	
 	ioh.MajorLinkerVersion = raf.read();
 	ioh.MinorLinkerVersion = raf.read();
 	ioh.SizeOfCode = read4(raf);
@@ -729,8 +759,18 @@ static void read(RandomAccessFile raf, IMAGE_OPTIONAL_HEADER ioh) throws IOExcep
 	ioh.SizeOfUninitializedData = read4(raf);
 	ioh.AddressOfEntryPoint = read4(raf);
 	ioh.BaseOfCode = read4(raf);
-	ioh.BaseOfData = read4(raf);
-	ioh.ImageBase = read4(raf);
+	
+	if (is32)
+	{
+	    ioh.BaseOfData = read4(raf);
+	    ioh.ImageBase = read4(raf);
+	}
+	else
+	{
+	    // BaseOfData deleted in the 64 bit version PE32+
+	    ioh.ImageBase = read8(raf);
+	}
+	
 	ioh.SectionAlignment = read4(raf);
 	ioh.FileAlignment = read4(raf);
 	ioh.MajorOperatingSystemVersion = readU2(raf);
@@ -745,10 +785,22 @@ static void read(RandomAccessFile raf, IMAGE_OPTIONAL_HEADER ioh) throws IOExcep
 	ioh.CheckSum = read4(raf);
 	ioh.Subsystem = readU2(raf);
 	ioh.DllCharacteristics = readU2(raf);
-	ioh.SizeOfStackReserve = read4(raf);
-	ioh.SizeOfStackCommit = read4(raf);
-	ioh.SizeOfHeapReserve = read4(raf);
-	ioh.SizeOfHeapCommit = read4(raf);
+	
+	if (is32)
+	{
+    	ioh.SizeOfStackReserve = read4(raf);
+    	ioh.SizeOfStackCommit = read4(raf);
+    	ioh.SizeOfHeapReserve = read4(raf);
+    	ioh.SizeOfHeapCommit = read4(raf);
+	}
+	else 
+	{
+        ioh.SizeOfStackReserve = read8(raf);
+        ioh.SizeOfStackCommit = read8(raf);
+        ioh.SizeOfHeapReserve = read8(raf);
+        ioh.SizeOfHeapCommit = read8(raf);	    
+	}
+
 	ioh.LoaderFlags = read4(raf);
 	ioh.NumberOfRvaAndSizes = read4(raf);
 	for (int i = 0 ; i < ioh.DataDirectory.length; i++) {

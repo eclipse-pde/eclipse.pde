@@ -9,18 +9,17 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import java.io.File;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
 import org.apache.tools.ant.*;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.build.internal.tests.ant.TestBrandTask;
-import org.eclipse.pde.build.tests.BuildConfiguration;
-import org.eclipse.pde.build.tests.PDETestCase;
+import org.eclipse.pde.build.tests.*;
+import org.eclipse.pde.internal.swt.tools.IconExe;
 
 public class ProductTests extends PDETestCase {
 
@@ -166,5 +165,45 @@ public class ProductTests extends PDETestCase {
 		
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-hpux.motif.ia64_32.zip");
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86_64.zip");
+	}
+
+	public void testBug238001() throws Exception {
+		IFolder buildFolder = newTest("238001");
+		
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		FilenameFilter filter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.startsWith("org.eclipse.equinox.executable");
+			}
+		};
+		File[] files = new File(delta, "features").listFiles(filter);
+
+		File win32Exe = new File(files[0], "bin/win32/win32/x86/launcher.exe");
+		assertTrue(win32Exe.exists());
+		File win64Exe = new File(files[0], "bin/win32/win32/x86_64/launcher.exe");
+		assertTrue(win64Exe.exists());
+
+		IFile win32File = buildFolder.getFile("win32.exe");
+		win32File.create(new BufferedInputStream(new FileInputStream(win32Exe)), IResource.FORCE, null);
+		IFile win64File = buildFolder.getFile("win64.exe");
+		win64File.create(new BufferedInputStream(new FileInputStream(win64Exe)), IResource.FORCE, null);
+
+		//steal the icons from test 237922
+		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/237922/rcp/icons/mail.ico"), null);
+		IFile icoFile = buildFolder.getFile("mail.ico");
+		icoFile.create(ico.openStream(), IResource.FORCE, null);
+		
+		//IconExe prints to stderr, redirect that to a file
+		PrintStream oldErr = System.err;
+		PrintStream newErr = new PrintStream(new FileOutputStream(buildFolder.getLocation().toOSString() + "/out.out"));
+		System.setErr(newErr);
+		IconExe.main(new String[] {win32File.getLocation().toOSString(), icoFile.getLocation().toOSString()});
+		IconExe.main(new String[] {win64File.getLocation().toOSString(), icoFile.getLocation().toOSString()});
+		System.setErr(oldErr);
+		newErr.close();
+
+		assertEquals(new File(buildFolder.getLocation().toOSString(), "out.out").length(), 0);
 	}
 }
