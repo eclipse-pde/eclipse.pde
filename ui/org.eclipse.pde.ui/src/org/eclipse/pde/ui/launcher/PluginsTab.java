@@ -200,6 +200,6 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.launch.tab.plugins"; //$NON-NLS-1$
+		return IPDELauncherConstants.TAB_PLUGINS_ID;
 	}
 }

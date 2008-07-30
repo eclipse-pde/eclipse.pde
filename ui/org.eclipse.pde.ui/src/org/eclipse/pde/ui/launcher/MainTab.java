@@ -196,7 +196,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.launch.tab.main"; //$NON-NLS-1$
+		return IPDELauncherConstants.TAB_MAIN_ID;
 	}
 
 }

@@ -149,6 +149,6 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.launch.tab.configuration"; //$NON-NLS-1$
+		return IPDELauncherConstants.TAB_CONFIGURATION_ID;
 	}
 }

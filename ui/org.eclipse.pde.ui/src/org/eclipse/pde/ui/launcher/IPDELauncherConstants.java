@@ -312,4 +312,60 @@ public interface IPDELauncherConstants {
 	 * @since 3.4
 	 */
 	String SHOW_SELECTED_ONLY = "show_selected_only"; //$NON-NLS-1$
+
+	/**
+	 * The unique tab identifier for the bundles tab
+	 * 
+	 * @since 3.4
+	 * @see {@link BundlesTab}
+	 */
+	String TAB_BUNDLES_ID = "org.eclipse.pde.ui.launch.tab.osgi.bundles"; //$NON-NLS-1$
+
+	/**
+	 * The unique tab identifier for the configuration tab
+	 * 
+	 * @since 3.4
+	 * @see {@link ConfigurationTab}
+	 */
+	String TAB_CONFIGURATION_ID = "org.eclipse.pde.ui.launch.tab.configuration"; //$NON-NLS-1$
+
+	/**
+	 * The unique tab identifier for the main tab
+	 * 
+	 * @since 3.4
+	 * @see {@link MainTab}
+	 */
+	String TAB_MAIN_ID = "org.eclipse.pde.ui.launch.tab.main"; //$NON-NLS-1$
+
+	/**
+	 * The unique tab identifier for the osgi settings tab
+	 * 
+	 * @since 3.4
+	 * @see {@link OSGiSettingsTab}
+	 */
+	String TAB_OSGI_SETTINGS_ID = "org.eclipse.pde.ui.launch.tab.osgi.settings"; //$NON-NLS-1$
+
+	/**
+	 * The unique tab identifier for the plug-in junit tab
+	 * 
+	 * @since 3.4
+	 * @see {@link PluginJUnitMainTab}
+	 */
+	String TAB_PLUGIN_JUNIT_MAIN_ID = "org.eclipse.pde.ui.launch.tab.junit.main"; //$NON-NLS-1$
+
+	/**
+	 * The unique tab identifier for the plug-ins tab
+	 * 
+	 * @since 3.4
+	 * @see {@link PluginsTab}
+	 */
+	String TAB_PLUGINS_ID = "org.eclipse.pde.ui.launch.tab.plugins"; //$NON-NLS-1$
+
+	/**
+	 * The unique tab identifier for the tracing tab
+	 * 
+	 * @since 3.4
+	 * @see {@link TracingTab}
+	 */
+	String TAB_TRACING_ID = "org.eclipse.pde.ui.launch.tab.tracing"; //$NON-NLS-1$
 }

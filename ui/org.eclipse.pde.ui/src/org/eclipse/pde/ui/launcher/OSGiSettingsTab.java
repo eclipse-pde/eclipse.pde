@@ -142,6 +142,6 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.launch.tab.osgi.settings"; //$NON-NLS-1$
+		return IPDELauncherConstants.TAB_OSGI_SETTINGS_ID;
 	}
 }

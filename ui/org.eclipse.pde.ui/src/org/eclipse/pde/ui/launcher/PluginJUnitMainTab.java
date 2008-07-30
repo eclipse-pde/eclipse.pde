@@ -46,7 +46,7 @@ public class PluginJUnitMainTab extends MainTab {
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.launch.tab.junit.main"; //$NON-NLS-1$
+		return IPDELauncherConstants.TAB_PLUGIN_JUNIT_MAIN_ID;
 	}
 
 }
