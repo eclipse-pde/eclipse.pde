@@ -160,4 +160,27 @@ public class P2Tests extends P2TestCase {
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:org.eclipse.equinox.simpleconfigurator.configUrl, propValue:file:org.eclipse.equinox.simpleconfigurator");
 	}
 
+	public void testBug222962() throws Exception {
+		IFolder buildFolder = newTest("222962");
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"org.eclipse.osgi;unpack=false", "org.eclipse.core.runtime;unpack=false"});
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		properties.put("topLevelElementId", "F");
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.flavor", "tooling");
+		properties.put("p2.publish.artifacts", "true");
+		properties.put("p2.compress", "true");
+
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runBuild(buildFolder);
+		
+		assertResourceFile(buildFolder, "repo/content.jar");
+		assertResourceFile(buildFolder, "repo/artifacts.jar");
+	}
 }
