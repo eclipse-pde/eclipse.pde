@@ -19,30 +19,30 @@ public class test4 {
 	/**
 	 * @noreference
 	 */
-	class InnerNoRef4 {
+	class inner {
 		
 	}
 	
-	class InnerNoRef4_1 {
+	class inner2 {
 		/**
 		 * @noreference
 		 */
-		class Inner2NoRef4 {
+		class inner3 {
 			
 		}
 	}
 	
-	class InnerNoRef4_2 {
+	class inner4 {
 		
 	}
 }
 
-class OuterNoRef4 {
+class outer {
 	
 	/**
 	 * @noreference
 	 */
-	class InnerNoRef4 {
+	class inner {
 		
 	}
 }

@@ -21,6 +21,6 @@ public class test2 {
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-class OuterNoRef2 {
+class outer {
 	
 }

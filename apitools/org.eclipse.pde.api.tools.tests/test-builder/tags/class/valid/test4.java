@@ -21,32 +21,28 @@ public class test4 {
 	 * @noextend This class is not intended to be subclassed by clients.
 	 * @noinstantiate This class is not intended to be instantiated by clients.
 	 */
-	class InnerNoRef4 {
+	class inner {
 		
 	}
 	
-	class InnerNoRef4_1 {
+	class inner2 {
 		/**
 		 * @noextend This class is not intended to be subclassed by clients.
 		 * @noinstantiate This class is not intended to be instantiated by clients.
 		 */
-		class Inner2NoRef4 {
+		class inner3 {
 			
 		}
 	}
-	
-	class InnerNoRef4_2 {
-		
-	}
 }
 
-class OuterNoRef4 {
+class outer {
 	
 	/**
 	 * @noextend This class is not intended to be subclassed by clients.
 	 * @noinstantiate This class is not intended to be instantiated by clients.
 	 */
-	class InnerNoRef4 {
+	class inner {
 		
 	}
 }

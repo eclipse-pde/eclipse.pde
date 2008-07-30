@@ -62,7 +62,8 @@ public class InvalidClassTagTests extends TagTest {
 		String message = null;
 		for(int i = 0; i < problems.length; i++) {
 			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("a class"));
+			assertTrue("The problem message is not correct: " + message, message.endsWith("a class") ||
+					message.endsWith("a final class"));
 		}
 	}
 	
@@ -424,5 +425,95 @@ public class InvalidClassTagTests extends TagTest {
 	public void testInvalidClassTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployFullBuildTest("", "test20", true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on a final class in the default package
+	 * using an incremental build
+	 */
+	public void testInvalidClassTag21I() {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		deployIncrementalBuildTest("", "test21", true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on a final class in the default package
+	 * using a full build
+	 */
+	public void testInvalidClassTag21F() {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		deployFullBuildTest("", "test21", true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on a final class
+	 * using an incremental build
+	 */
+	public void testInvalidClassTag22I() {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on a final class
+	 * using a full build
+	 */
+	public void testInvalidClassTag22F() {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		deployFullBuildTest(TESTING_PACKAGE, "test22", true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on an outer final class
+	 * using an incremental build
+	 */
+	public void testInvalidClassTag23I() {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on an outer final class
+	 * using a full build
+	 */
+	public void testInvalidClassTag23F() {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		deployFullBuildTest(TESTING_PACKAGE, "test23", true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on an inner final class
+	 * using an incremental build
+	 */
+	public void testInvalidClassTag24I() {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on an inner final class
+	 * using a full build
+	 */
+	public void testInvalidClassTag24F() {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		deployFullBuildTest(TESTING_PACKAGE, "test24", true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on a variety of inner / outer final classes
+	 * using an incremental build
+	 */
+	public void testInvalidClassTag25I() {
+		setExpectedProblemIds(getDefaultProblemSet(3));
+		deployIncrementalBuildTest(TESTING_PACKAGE, "test25", true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on a variety of inner / outer final classes
+	 * using a full build
+	 */
+	public void testInvalidClassTag25F() {
+		setExpectedProblemIds(getDefaultProblemSet(3));
+		deployFullBuildTest(TESTING_PACKAGE, "test25", true);
 	}
 }

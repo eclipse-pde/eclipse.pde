@@ -8,18 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
+
 
 /**
- * Tests invalid @noreference tag on an outer class
+ * Test unsupported @noextend tag on a final class in the default package
+ * @noextend
  */
-public class test2 {
+public final class test21 {
 
-}
-
-/**
- * @noreference
- */
-class outer {
-	
 }

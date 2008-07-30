@@ -18,7 +18,6 @@ public class test4 {
 		
 		/**
 		 * @noreference This method is not intended to be referenced by clients.
-		 * @nooverride This method is not intended to be re-implemented or extended by clients.
 		 * @return
 		 */
 		public final char m2() {
@@ -53,7 +52,6 @@ public class test4 {
 			
 			/**
 			 * @noreference This method is not intended to be referenced by clients.
-			 * @nooverride This method is not intended to be re-implemented or extended by clients.
 			 * @return
 			 */
 			public final char m2() {
@@ -92,7 +90,6 @@ class outer {
 	
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @return
 	 */
 	public final char m2() {

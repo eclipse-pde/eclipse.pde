@@ -11,15 +11,40 @@
 package a.b.c;
 
 /**
- * Tests invalid @noreference tag on an outer class
+ * Test supported @noinstantiate tag on class methods
  */
-public class test2 {
-
-}
-
-/**
- * @noreference
- */
-class outer {
+public class test13 {
 	
+	static class inner {
+		/**
+		 * @noinstantiate
+		 * @return
+		 */
+		public int m1() {
+			return 0;
+		}
+		
+		/**
+		 * @noinstantiate
+		 * @return
+		 */
+		public final char m2() {
+			return 's';
+		}
+		
+		/**
+		 * @noinstantiate
+		 */
+		protected void m3() {
+			
+		}
+		
+		/**
+		 * @noinstantiate
+		 * @return
+		 */
+		protected static Object m4() {
+			return null;
+		}
+	}
 }

@@ -58,6 +58,8 @@ public class TagValidator extends ASTVisitor {
 	
 	private ICompilationUnit fCompilationUnit = null;
 	
+	private static final IApiJavadocTag[] NO_TAGS = new IApiJavadocTag[0];
+	
 	/**
 	 * Constructor
 	 * @param parent
@@ -92,20 +94,29 @@ public class TagValidator extends ASTVisitor {
 			case ASTNode.TYPE_DECLARATION: {
 				TypeDeclaration type = (TypeDeclaration) node;
 				IApiJavadocTag[] validtags = jtm.getTagsForType(type.isInterface() ? IApiJavadocTag.TYPE_INTERFACE : IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
+				HashSet invalidtags = new HashSet(validtags.length);
 				String context = BuilderMessages.TagValidator_an_interface;
 				if(!type.isInterface()) {
 					context = BuilderMessages.TagValidator_a_class;
+					
 					if(Flags.isAbstract(type.getModifiers())) {
 						context = BuilderMessages.TagValidator_an_abstract_class;
-						ArrayList vtags = new ArrayList(validtags.length);
-						for(int i = 0; i < validtags.length; i++) {
-							if(validtags[i].getTagName().equals("@noinstantiate")) { //$NON-NLS-1$
-								continue;
-							}
-							vtags.add(validtags[i]);
-						}
-						validtags = (IApiJavadocTag[]) vtags.toArray(new IApiJavadocTag[vtags.size()]);
+						invalidtags.add("@noinstantiate"); //$NON-NLS-1$
 					}
+					if(Flags.isFinal(type.getModifiers())) {
+						context = BuilderMessages.TagValidator_a_final_class;
+						invalidtags.add("@noextend"); //$NON-NLS-1$
+					}
+				}
+				if(invalidtags.size() > 0) {
+					ArrayList vtags = new ArrayList(validtags.length);
+					for(int i = 0; i < validtags.length; i++) {
+						if(invalidtags.contains(validtags[i].getTagName())) {
+							continue;
+						}
+						vtags.add(validtags[i]);
+					}
+					validtags = (IApiJavadocTag[]) vtags.toArray(new IApiJavadocTag[vtags.size()]);
 				}
 				processTags(getTypeName(type), tags, validtags, IElementDescriptor.T_REFERENCE_TYPE, context);
 				break;
@@ -133,6 +144,7 @@ public class TagValidator extends ASTVisitor {
 				String context = null;
 				boolean isprivate = Flags.isPrivate(method.getModifiers());
 				boolean isconstructor = method.isConstructor();
+				boolean isfinal = Flags.isFinal(method.getModifiers());
 				switch(pkind) {
 					case IApiJavadocTag.TYPE_ENUM: {
 						context = isprivate ? BuilderMessages.TagValidator_private_enum_method : BuilderMessages.TagValidator_an_enum_method;
@@ -146,15 +158,27 @@ public class TagValidator extends ASTVisitor {
 						if(isprivate) {
 							context = isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method;
 						}
+						else if (isfinal) {
+							context = BuilderMessages.TagValidator_a_final_method;
+						}
 						else {
 							context = isconstructor ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
 						}
 						break;
 					}
 				}
-				IApiJavadocTag[] validtags = new IApiJavadocTag[0];
+				IApiJavadocTag[] validtags = NO_TAGS;
 				if(!isprivate) {
 					validtags = jtm.getTagsForType(pkind, isconstructor ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
+				}
+				if(isfinal) {
+					ArrayList ttags = new ArrayList(validtags.length);
+					for(int i = 0; i < validtags.length; i++) {
+						if(!validtags[i].getTagName().equals("@nooverride")) { //$NON-NLS-1$
+							ttags.add(validtags[i]);
+						}
+					}
+					validtags = (IApiJavadocTag[]) ttags.toArray(new IApiJavadocTag[ttags.size()]);
 				}
 				processTags(getTypeName(method), tags, validtags, IElementDescriptor.T_METHOD, context);
 				break;
@@ -190,11 +214,11 @@ public class TagValidator extends ASTVisitor {
 						break;
 					}
 				}
-				IApiJavadocTag[] validtags = new IApiJavadocTag[0];
-				if(!isprivate) {
+				IApiJavadocTag[] validtags = NO_TAGS;
+				if(!isprivate && !isfinal) {
 					validtags = jtm.getTagsForType(pkind, IApiJavadocTag.MEMBER_FIELD);
 				}
-				processTags(getTypeName(field), tags, isfinal ? new IApiJavadocTag[0] : validtags, IElementDescriptor.T_FIELD, context);
+				processTags(getTypeName(field), tags, validtags, IElementDescriptor.T_FIELD, context);
 				break;
 			}
 		}

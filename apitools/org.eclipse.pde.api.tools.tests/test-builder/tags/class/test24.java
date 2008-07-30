@@ -11,15 +11,14 @@
 package a.b.c;
 
 /**
- * Tests invalid @noreference tag on an outer class
+ * Tests an invalid @noextend tag on a final member class
  */
-public class test2 {
+public class test24 {
 
-}
-
-/**
- * @noreference
- */
-class outer {
-	
+	/**
+	 * @noextend
+	 */
+	final class inner {
+		
+	}
 }

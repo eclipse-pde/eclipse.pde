@@ -11,15 +11,40 @@
 package a.b.c;
 
 /**
- * Tests invalid @noreference tag on an outer class
+ * Test supported @noimplement tag on class methods
  */
-public class test2 {
-
-}
-
-/**
- * @noreference
- */
-class outer {
+public class test3 {
 	
+	static class inner {
+		/**
+		 * @noimplement
+		 * @return
+		 */
+		public int m1() {
+			return 0;
+		}
+		
+		/**
+		 * @noimplement
+		 * @return
+		 */
+		public final char m2() {
+			return 's';
+		}
+		
+		/**
+		 * @noimplement
+		 */
+		protected void m3() {
+			
+		}
+		
+		/**
+		 * @noimplement
+		 * @return
+		 */
+		protected static Object m4() {
+			return null;
+		}
+	}
 }

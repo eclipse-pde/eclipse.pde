@@ -11,15 +11,14 @@
 package a.b.c;
 
 /**
- * Tests invalid @noreference tag on an outer class
+ * Test unsupported @noreference tag on private class methods
  */
-public class test2 {
-
-}
-
-/**
- * @noreference
- */
-class outer {
-	
+public class test26 {
+	/**
+	 * @noreference 
+	 * @return
+	 */
+	private int m1() {
+		return 0;
+	}
 }

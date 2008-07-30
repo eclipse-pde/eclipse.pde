@@ -10,12 +10,11 @@
  *******************************************************************************/
 
 /**
- * Test supported @noreference tag on class methods in the default package
+ * Test supported @noinstantiate tag on class methods in the default package
  */
-public class test5 {
+public class test15 {
 	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noinstantiate
 	 * @return
 	 */
 	public int m1() {
@@ -23,7 +22,7 @@ public class test5 {
 	}
 	
 	/**
-	 * @noreference This method is not intended to be referenced by clients.
+	 * @noinstantiate
 	 * @return
 	 */
 	public final char m2() {
@@ -31,16 +30,14 @@ public class test5 {
 	}
 	
 	/**
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 * @noreference This method is not intended to be referenced by clients.
+	 * @noinstantiate
 	 */
 	protected void m3() {
 		
 	}
 	
 	/**
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 * @noreference This method is not intended to be referenced by clients.
+	 * @noinstantiate
 	 * @return
 	 */
 	protected static Object m4() {

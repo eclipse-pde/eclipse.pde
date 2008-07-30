@@ -8,18 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
 
 /**
- * Tests invalid @noreference tag on an outer class
+ * Test supported @noreference tag on private class methods in the default package
  */
-public class test2 {
-
-}
-
-/**
- * @noreference
- */
-class outer {
-	
+public class test30 {
+	/**
+	 * @noreference 
+	 * @return
+	 */
+	private int m1() {
+		return 0;
+	}
 }

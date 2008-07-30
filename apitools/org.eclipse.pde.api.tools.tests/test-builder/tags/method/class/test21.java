@@ -11,15 +11,14 @@
 package a.b.c;
 
 /**
- * Tests invalid @noreference tag on an outer class
+ * Test unsupported @nooverride tag on final class methods
  */
-public class test2 {
-
-}
-
-/**
- * @noreference
- */
-class outer {
-	
+public class test21 {
+	/**
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @return
+	 */
+	public final int m1() {
+		return 0;
+	}
 }

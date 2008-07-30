@@ -18,7 +18,7 @@ public class test3 {
 	/**
 	 * @noreference
 	 */
-	class InnerNoRef3 {
+	class inner {
 		
 	}
 }

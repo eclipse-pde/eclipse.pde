@@ -76,8 +76,8 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 						fImageHandle = (imagedesc == null ? null : imagedesc.createImage());
 						int type = getType(element);
 						int member = IApiJavadocTag.MEMBER_NONE;
-						boolean isabstract = false;
-						switch(element.getElementType()) {
+						int elementtype = element.getElementType();
+						switch(elementtype) {
 							case IJavaElement.METHOD: {
 								IMethod method = (IMethod) element;
 								if(Flags.isPrivate(method.getFlags())) {
@@ -93,15 +93,12 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 							}
 							case IJavaElement.FIELD: {
 								IField field  = (IField) element;
-								if(Flags.isFinal(field.getFlags()) || field.isEnumConstant() ||
-										Flags.isPrivate(field.getFlags())) {
+								int flags = field.getFlags();
+								if(Flags.isFinal(flags) || field.isEnumConstant() || Flags.isPrivate(flags)) {
 									return Collections.EMPTY_LIST;
 								}
 								member = IApiJavadocTag.MEMBER_FIELD;
 								break;
-							}
-							case IJavaElement.TYPE: {
-								isabstract = Flags.isAbstract(((IType) element).getFlags());
 							}
 						}
 						IApiJavadocTag[] tags = ApiPlugin.getJavadocTagManager().getTagsForType(type, member);
@@ -109,7 +106,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 						int tokenstart = corecontext.getTokenStart();
 						int length = offset - tokenstart;
 						for(int i = 0; i < tags.length; i++) {
-							if(isabstract && tags[i].getTagName().equals("@noinstantiate")) {//$NON-NLS-1$
+							if(!acceptTag(tags[i], element)) {
 								continue;
 							}
 							completiontext = tags[i].getCompleteTag(type, member);
@@ -126,6 +123,32 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 			}
 		}
 		return Collections.EMPTY_LIST;
+	}
+	
+	/**
+	 * Method to post process returned flags from the {@link org.eclipse.pde.api.tools.internal.JavadocTagManager}
+	 * @param tag the tag to process
+	 * @param element the {@link IJavaElement} the tag will appear on
+	 * @return true if the tag should be included in completion proposals, false otherwise
+	 */
+	private boolean acceptTag(IApiJavadocTag tag, IJavaElement element) throws JavaModelException {
+		switch(element.getElementType()) {
+			case IJavaElement.TYPE: {
+				IType type = (IType) element;
+				int flags = type.getFlags();
+				String tagname = tag.getTagName();
+				if(Flags.isAbstract(flags)) {
+					return !tagname.equals("@noinstantiate");  //$NON-NLS-1$
+				}
+				if(Flags.isFinal(flags)) {
+					return !tagname.equals("@noextend");  //$NON-NLS-1$
+				}
+			}
+			case IJavaElement.METHOD: {
+				return !(Flags.isFinal(((IMethod)element).getFlags()) && tag.getTagName().equals("@nooverride")); //$NON-NLS-1$
+			}
+		}
+		return true;
 	}
 	
 	/**

@@ -8,14 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package a.b.c;
 
 /**
- * Test supported @noreference tag on class methods in the default package
+ * Test supported @noimplement tag on outer class methods
  */
-public class test5 {
+public class test2 {
+	
+}
+
+class outer {
 	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noimplement
 	 * @return
 	 */
 	public int m1() {
@@ -23,7 +27,7 @@ public class test5 {
 	}
 	
 	/**
-	 * @noreference This method is not intended to be referenced by clients.
+	 * @noimplement
 	 * @return
 	 */
 	public final char m2() {
@@ -31,16 +35,14 @@ public class test5 {
 	}
 	
 	/**
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 * @noreference This method is not intended to be referenced by clients.
+	 * @noimplement
 	 */
 	protected void m3() {
 		
 	}
 	
 	/**
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 * @noreference This method is not intended to be referenced by clients.
+	 * @noimplement
 	 * @return
 	 */
 	protected static Object m4() {
