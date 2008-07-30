@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,8 @@ import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Shell;
 
 public class CreateFeatureProjectFromLaunchOperation extends CreateFeatureProjectOperation {
@@ -44,10 +46,10 @@ public class CreateFeatureProjectFromLaunchOperation extends CreateFeatureProjec
 			ILaunchConfigurationType type = fLaunchConfig.getType();
 			String id = type.getIdentifier();
 			// if it is an Eclipse launch
-			if (id.equals("org.eclipse.pde.ui.RuntimeWorkbench")) //$NON-NLS-1$
+			if (id.equals(EclipseLaunchShortcut.CONFIGURATION_TYPE))
 				models = LaunchPluginValidator.getPluginList(fLaunchConfig);
 			// else if it is an OSGi launch
-			else if (id.equals("org.eclipse.pde.ui.EquinoxLauncher")) //$NON-NLS-1$
+			else if (id.equals(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE))
 				models = BundleLauncherHelper.getMergedBundles(fLaunchConfig);
 		} catch (CoreException e) {
 		}

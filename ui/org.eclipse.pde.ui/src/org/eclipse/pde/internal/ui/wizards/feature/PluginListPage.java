@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,8 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -134,7 +136,7 @@ public class PluginListPage extends BasePluginListPage {
 		TreeSet launcherNames = new TreeSet(Collator.getInstance());
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			String[] types = new String[] {"org.eclipse.pde.ui.RuntimeWorkbench", "org.eclipse.pde.ui.EquinoxLauncher"}; //$NON-NLS-1$ //$NON-NLS-2$
+			String[] types = new String[] {EclipseLaunchShortcut.CONFIGURATION_TYPE, IPDELauncherConstants.OSGI_CONFIGURATION_TYPE};
 			for (int j = 0; j < 2; j++) {
 				ILaunchConfigurationType type = manager.getLaunchConfigurationType(types[j]);
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
@@ -155,7 +157,7 @@ public class PluginListPage extends BasePluginListPage {
 		String configName = fLaunchConfigsCombo.getText();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			String[] types = new String[] {"org.eclipse.pde.ui.RuntimeWorkbench", "org.eclipse.pde.ui.EquinoxLauncher"}; //$NON-NLS-1$ //$NON-NLS-2$
+			String[] types = new String[] {EclipseLaunchShortcut.CONFIGURATION_TYPE, IPDELauncherConstants.OSGI_CONFIGURATION_TYPE};
 			for (int j = 0; j < 2; j++) {
 				ILaunchConfigurationType type = manager.getLaunchConfigurationType(types[j]);
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);

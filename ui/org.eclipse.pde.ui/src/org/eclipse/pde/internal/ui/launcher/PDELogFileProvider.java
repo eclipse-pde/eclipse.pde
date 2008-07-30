@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.ui.internal.views.log.ILogFileProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -46,7 +47,7 @@ public class PDELogFileProvider implements ILogFileProvider {
 			ILaunchConfigurationType type;
 			try {
 				type = configuration.getType();
-				if ("org.eclipse.pde.ui.RuntimeWorkbench".equals(type.getIdentifier())) { //$NON-NLS-1$
+				if (EclipseLaunchShortcut.CONFIGURATION_TYPE.equals(type.getIdentifier())) {
 					String name = configuration.getName();
 					File configFile = LaunchListener.getMostRecentLogFile(configuration);
 

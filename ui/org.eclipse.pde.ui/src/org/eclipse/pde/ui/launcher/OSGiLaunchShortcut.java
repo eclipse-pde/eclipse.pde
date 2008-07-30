@@ -47,7 +47,7 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#getLaunchConfigurationTypeName()
 	 */
 	protected String getLaunchConfigurationTypeName() {
-		return "org.eclipse.pde.ui.EquinoxLauncher"; //$NON-NLS-1$
+		return IPDELauncherConstants.OSGI_CONFIGURATION_TYPE;
 	}
 
 	/**
