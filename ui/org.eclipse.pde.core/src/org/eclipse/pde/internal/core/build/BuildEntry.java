@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.build;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
@@ -82,7 +81,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 	}
 
 	public String toString() {
-		return name;
+		return name + " = " + tokens;
 	}
 
 	public void write(String indent, PrintWriter writer) {
