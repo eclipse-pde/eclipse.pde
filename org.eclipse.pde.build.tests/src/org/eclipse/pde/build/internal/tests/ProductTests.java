@@ -153,15 +153,7 @@ public class ProductTests extends PDETestCase {
 		
 		IFolder fooFolder = Utils.createFolder(buildFolder, "plugins/foo");
 		Utils.generateBundle(fooFolder, "foo");
-
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("<product name=\"Foo\" id=\"foo.product\" application=\"org.eclipse.ant.core.antRunner\" useFeatures=\"false\">");
-		buffer.append("  <configIni use=\"default\"/>");
-		buffer.append("  <plugins>");
-		buffer.append("    <plugin id=\"org.eclipse.osgi\"/>");
-		buffer.append("  </plugins>");
-		buffer.append("</product> ");
-		Utils.writeBuffer(buildFolder.getFile("plugins/foo/foo.product"), buffer);
+		Utils.generateProduct(buildFolder.getFile("plugins/foo/foo.product"), "foo.product", "1.0.0", new String [] { "org.eclipse.osgi" }, false);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "/foo/foo.product");

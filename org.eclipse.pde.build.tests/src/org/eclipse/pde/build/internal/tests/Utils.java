@@ -137,6 +137,39 @@ public class Utils {
 		generator.generate();
 	}
 
+	static public void generateProduct(IFile productFile, String id, String version, String[] entryList, boolean features) throws CoreException, IOException {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<product name=\"");
+		buffer.append(id);
+		buffer.append("\" id=\"");
+		buffer.append(id);
+		buffer.append("\" application=\"org.eclipse.ant.core.antRunner\" useFeatures=\"");
+		buffer.append(new Boolean(features).toString());
+		buffer.append("\">\n");
+		buffer.append("  <configIni use=\"default\"/>\n");
+		if (features) {
+			buffer.append("  <features>\n");
+			for (int i = 0; i < entryList.length; i++) {
+				buffer.append("    <feature id=\"");
+				buffer.append(entryList[i]);
+				buffer.append("\"/>\n");	
+			}
+			buffer.append("  </features>\n");
+		} else {
+			buffer.append("  <plugins>\n");
+			for (int i = 0; i < entryList.length; i++) {
+				buffer.append("    <plugin id=\"");
+				buffer.append(entryList[i]);
+				buffer.append("\"/>\n");	
+			}
+			buffer.append("  </plugins>\n");
+		}
+		buffer.append("</product>\n");
+		
+		Utils.writeBuffer(productFile, buffer);
+		productFile.refreshLocal(IResource.DEPTH_INFINITE, null);
+	}
+
 	/**
 	 * Creates a IFolder resources.  Will create any folders necessary under parent
 	 */

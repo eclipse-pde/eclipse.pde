@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
@@ -38,7 +39,7 @@ public class P2Tests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		String p2Config = Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch();
-		String launcherConfig = Platform.getOS().equals("macosx") ? Platform.getWS() + '.' + Platform.getOS()  : p2Config;
+		String launcherConfig = Platform.getOS().equals("macosx") ? Platform.getWS() + '.' + Platform.getOS() : p2Config;
 		IMetadataRepository repository = loadMetadataRepository(repoLocation);
 		assertNotNull(repository);
 
@@ -85,19 +86,19 @@ public class P2Tests extends P2TestCase {
 		assertRequires(iu, "toolingtest.product", "test.product.config");
 		assertRequires(iu, ius, true);
 	}
-	
+
 	public void testBug237096() throws Exception {
 		IFolder buildFolder = newTest("237096");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
-		
-		Utils.generateFeature(buildFolder, "F", null, new String [] { "org.eclipse.osgi;unpack=false", "org.eclipse.core.runtime;unpack=false" });
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"org.eclipse.osgi;unpack=false", "org.eclipse.core.runtime;unpack=false"});
 		Properties featureProperties = new Properties();
 		featureProperties.put("root", "rootfiles");
 		Utils.storeBuildProperties(buildFolder.getFolder("features/F"), featureProperties);
 		IFolder rootFiles = Utils.createFolder(buildFolder.getFolder("features/F"), "rootfiles");
 		StringBuffer buffer = new StringBuffer("This is a notice.html");
 		Utils.writeBuffer(rootFiles.getFile("notice.html"), buffer);
-		
+
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		properties.put("topLevelElementId", "F");
@@ -109,20 +110,54 @@ public class P2Tests extends P2TestCase {
 		properties.put("p2.root.name", "FRoot");
 		properties.put("p2.root.version", "1.0.0");
 		Utils.storeBuildProperties(buildFolder, properties);
-		
+
 		runBuild(buildFolder);
-		
+
 		IMetadataRepository repository = loadMetadataRepository(repoLocation);
 		assertNotNull(repository);
-		
+
 		ArrayList ius = new ArrayList();
 		ius.add(getIU(repository, "org.eclipse.osgi"));
 		ius.add(getIU(repository, "org.eclipse.core.runtime"));
 		ius.add(getIU(repository, "org.eclipse.launcher.ANY.ANY.ANY"));
 		ius.add(getIU(repository, "toolingorg.eclipse.launcher.ANY.ANY.ANY"));
-		
+
 		IInstallableUnit iu = getIU(repository, "FRoot");
 		assertRequires(iu, ius, true);
+	}
+
+	public void testBug242346() throws Exception {
+		IFolder buildFolder = newTest("237096");
+		IFile productFile = buildFolder.getFile("rcp.product");
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false);
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("configs", "win32,win32,x86");
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.flavor", "tooling");
+		properties.put("p2.publish.artifacts", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		IMetadataRepository repository = loadMetadataRepository(repoLocation);
+		assertNotNull(repository);
+
+		IInstallableUnit iu = getIU(repository, "toolingrcp.product.config.win32.win32.x86");
+		//testing relative paths, just check that the value starts with org.eclipse.equinox..., don't bother worrying about dir separator
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:org.eclipse.equinox.simpleconfigurator.configUrl, propValue:file:org.eclipse.equinox.simpleconfigurator");
 	}
 
 }
