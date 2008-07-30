@@ -163,7 +163,9 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage implements IWork
 	public void applyData(Object data) {
 		if(data instanceof HashMap) {
 			fPageData = (HashMap) data;
-			link.setVisible(!Boolean.TRUE.equals(fPageData.get(ApiErrorsWarningsPreferencePage.NO_LINK)));
+			if(link != null) {
+				link.setVisible(!Boolean.TRUE.equals(fPageData.get(ApiErrorsWarningsPreferencePage.NO_LINK)));
+			}
 		}
 	}
 }
