@@ -50,7 +50,7 @@
 <!-- Content Types                                                                     -->
 <!-- ================================================================================= -->
    <extension 
-   		 point="org.eclipse.core.runtime.contentTypes">
+   		 point="org.eclipse.core.contenttype.contentTypes">
       <content-type 
       		id="pluginManifest" 
       		name="%pluginManifestName" 
