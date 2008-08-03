@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.pde.internal.core.*;
 
 /**
@@ -61,10 +62,13 @@ public class TargetPlatform {
 	 * @return the location of the default target platform
 	 */
 	public static String getDefaultLocation() {
-		URL installURL = Platform.getInstallLocation().getURL();
-		IPath path = new Path(installURL.getFile()).removeTrailingSeparator();
-		return path.toOSString();
-
+		Location location = Platform.getInstallLocation();
+		if (location != null) {
+			URL url = Platform.getInstallLocation().getURL();
+			IPath path = new Path(url.getFile()).removeTrailingSeparator();
+			return path.toOSString();
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
