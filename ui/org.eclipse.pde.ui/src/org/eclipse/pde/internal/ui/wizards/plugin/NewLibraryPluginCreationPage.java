@@ -12,14 +12,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import java.util.TreeSet;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.util.IdUtil;
-import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.eclipse.pde.internal.core.util.*;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -29,9 +32,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
+
+	private Label fEELabel;
+	private Button fExeEnvButton;
+	private Combo fEEChoice;
+
+	private final static String NO_EXECUTION_ENVIRONMENT = PDEUIMessages.PluginContentPage_noEE;
 
 	class PropertiesListener implements ModifyListener {
 		private boolean fBlocked = false;
@@ -158,41 +168,98 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		});
 	}
 
+	/**
+	 * Creates all of the EE widgets
+	 * @param container
+	 */
+	private void createExecutionEnvironmentControls(Composite container) {
+		// Create label
+		fEELabel = new Label(container, SWT.NONE);
+		fEELabel.setText(PDEUIMessages.NewProjectCreationPage_executionEnvironments_label);
+
+		// Create combo
+		fEEChoice = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		fEEChoice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		// Gather EEs 
+		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
+		TreeSet availableEEs = new TreeSet();
+		for (int i = 0; i < exeEnvs.length; i++) {
+			availableEEs.add(exeEnvs[i].getId());
+		}
+		availableEEs.add(NO_EXECUTION_ENVIRONMENT);
+
+		// Set data 
+		fEEChoice.setItems((String[]) availableEEs.toArray(new String[availableEEs.size() - 1]));
+		fEEChoice.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				validatePage();
+			}
+		});
+
+		// Set default EE based on strict match to default VM
+		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
+		String[] EEChoices = fEEChoice.getItems();
+		for (int i = 0; i < EEChoices.length; i++) {
+			if (!EEChoices[i].equals(NO_EXECUTION_ENVIRONMENT)) {
+				if (VMUtil.getExecutionEnvironment(EEChoices[i]).isStrictlyCompatible(defaultVM)) {
+					fEEChoice.select(i);
+					break;
+				}
+			}
+		}
+
+		// Create button
+		fExeEnvButton = new Button(container, SWT.PUSH);
+		fExeEnvButton.setLayoutData(new GridData());
+		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);
+		fExeEnvButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
+						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$ 
+			}
+		});
+	}
+
 	private void createPluginPropertiesGroup(Composite container) {
 		Group propertiesGroup = new Group(container, SWT.NONE);
-		propertiesGroup.setLayout(new GridLayout(2, false));
+		propertiesGroup.setLayout(new GridLayout(3, false));
 		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		propertiesGroup.setText(PDEUIMessages.NewLibraryPluginCreationPage_pGroup);
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pid);
-		fIdText = createText(propertiesGroup, fPropertiesListener);
+		fIdText = createText(propertiesGroup, fPropertiesListener, 2);
 
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pversion);
-		fVersionText = createText(propertiesGroup, fPropertiesListener);
+		fVersionText = createText(propertiesGroup, fPropertiesListener, 2);
 		fPropertiesListener.setBlocked(true);
 		fVersionText.setText("1.0.0"); //$NON-NLS-1$
 		fPropertiesListener.setBlocked(false);
 
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pname);
-		fNameText = createText(propertiesGroup, fPropertiesListener);
+		fNameText = createText(propertiesGroup, fPropertiesListener, 2);
 
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pprovider);
-		fProviderText = createText(propertiesGroup, fPropertiesListener);
+		fProviderText = createText(propertiesGroup, fPropertiesListener, 2);
 
 		fFindDependencies = new Button(propertiesGroup, SWT.CHECK);
 		fFindDependencies.setText(PDEUIMessages.NewLibraryPluginCreationPage_pdependencies);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
+		data.horizontalSpan = 3;
 		fFindDependencies.setLayoutData(data);
+
+		createExecutionEnvironmentControls(propertiesGroup);
 	}
 
-	protected Text createText(Composite parent, ModifyListener listener) {
+	protected Text createText(Composite parent, ModifyListener listener, int horizSpan) {
 		Text text = new Text(parent, SWT.BORDER | SWT.SINGLE);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = horizSpan;
+		text.setLayoutData(data);
 		text.addModifyListener(listener);
 		return text;
 	}
@@ -239,6 +306,12 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		data.setUIPlugin(false);
 		data.setDoGenerateClass(false);
 		data.setRCPApplicationPlugin(false);
+
+		if (fEEChoice.isEnabled() && !fEEChoice.getText().equals(NO_EXECUTION_ENVIRONMENT)) {
+			fData.setExecutionEnvironment(fEEChoice.getText().trim());
+		} else {
+			fData.setExecutionEnvironment(null);
+		}
 	}
 
 	private String validateId() {
@@ -254,6 +327,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 	protected boolean validatePage() {
 		String id = IdUtil.getValidId(getProjectName());
+
 		// properties group
 		if (!fPropertiesListener.isChanged() && fIdText != null) {
 			fPropertiesListener.setBlocked(true);
@@ -265,7 +339,17 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		if (!super.validatePage())
 			return false;
 		setMessage(null);
+
 		String errorMessage = validateProperties();
+		if (errorMessage == null) {
+			String eeid = fEEChoice.getText();
+			if (fEEChoice.isEnabled()) {
+				IExecutionEnvironment ee = VMUtil.getExecutionEnvironment(eeid);
+				if (ee != null && ee.getCompatibleVMs().length == 0) {
+					errorMessage = PDEUIMessages.NewProjectCreationPage_invalidEE;
+				}
+			}
+		}
 		setErrorMessage(errorMessage);
 		return errorMessage == null;
 	}
