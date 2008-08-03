@@ -503,6 +503,8 @@ public class PluginModelManager implements IModelProviderListener {
 		ModelEntry entry = (ModelEntry) entries.get(desc.getSymbolicName());
 		if (entry != null) {
 			IPluginModelBase base = entry.getModel(desc);
+			if (base == null)
+				return false;
 			return ClasspathUtilCore.isPatchFragment(base);
 		}
 		return false;
