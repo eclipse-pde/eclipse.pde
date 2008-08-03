@@ -255,7 +255,8 @@ public class LogView extends ViewPart implements ILogListener {
 
 		fActivateViewAction = createActivateViewAction();
 		mgr.add(fActivateViewAction);
-		mgr.add(createShowTextFilter());
+		if (fFilteredTree.getFilterControl() != null)
+			mgr.add(createShowTextFilter());
 
 		fPropertiesAction = createPropertiesAction();
 
