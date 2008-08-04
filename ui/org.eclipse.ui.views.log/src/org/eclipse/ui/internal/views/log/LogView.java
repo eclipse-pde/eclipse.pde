@@ -175,7 +175,7 @@ public class LogView extends ViewPart implements ILogListener {
 		makeHoverShell();
 
 		Platform.addLogListener(this);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(fTree, IHelpContextIds.LOG_VIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fFilteredTree, IHelpContextIds.LOG_VIEW);
 		getSite().getWorkbenchWindow().addPerspectiveListener(new IPerspectiveListener2() {
 
 			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
