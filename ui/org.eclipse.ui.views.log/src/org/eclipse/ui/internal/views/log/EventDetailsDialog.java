@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.views.log;
 
 import java.io.*;
-import java.text.Collator;
+import java.text.*;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
@@ -81,6 +81,8 @@ public class EventDetailsDialog extends TrayDialog {
 	private Point dialogLocation;
 	private Point dialogSize;
 	private int[] sashWeights;
+
+	private DateFormat dateFormat = new SimpleDateFormat();
 
 	/**
 	 * 
@@ -335,7 +337,7 @@ public class EventDetailsDialog extends TrayDialog {
 		if (entry instanceof LogEntry) {
 			LogEntry logEntry = (LogEntry) entry;
 
-			String strDate = logEntry.getFormattedDate();
+			String strDate = dateFormat.format(logEntry.getDate());
 			dateLabel.setText(strDate);
 			severityImageLabel.setImage(labelProvider.getColumnImage(entry, 0));
 			severityLabel.setText(logEntry.getSeverityText());
