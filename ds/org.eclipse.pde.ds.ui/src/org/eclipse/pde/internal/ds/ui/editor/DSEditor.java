@@ -39,6 +39,7 @@ public class DSEditor extends MultiSourceEditor {
 
 	protected void addEditorPages() {
 		try {
+			addPage(new DSOverviewPage(this));
 			addPage(new DSPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);

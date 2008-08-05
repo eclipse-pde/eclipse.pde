@@ -104,7 +104,30 @@ public class Messages extends NLS {
 	public static String DSReferenceDetails_selectType;
 
 	public static String DSRemoveItemAction_actionText;
-
+	
+	public static String DSSimpPage_pageId;
+	public static String DSSimpPage_title;
+	
+	public static String DSReferenceSection_title;
+	public static String DSReferenceSection_description;
+	
+	public static String DSProvideSection_title;
+	public static String DSProvideSection_description;
+	
+	public static String DSSection_title;
+	public static String DSSection_description;
+	
+	public static String DSReferenceSection_add;
+	public static String DSReferenceSection_remove;
+	public static String DSReferenceSection_dialog_title;
+	public static String DSReferenceSection_dialogMessage;
+	
+	public static String DSProvideSection_add;
+	public static String DSProvideSection_remove;
+	public static String DSProvideSection_dialog_title;
+	public static String DSProvideSection_dialogMessage;
+	
+	
 	
 	
 	
