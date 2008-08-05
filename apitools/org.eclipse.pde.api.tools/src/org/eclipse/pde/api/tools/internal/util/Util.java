@@ -1445,6 +1445,9 @@ public final class Util {
 					case IApiProblem.LEAK_METHOD_PARAMETER: {
 						return "LEAK_METHOD_PARAMETER"; //$NON-NLS-1$
 					}
+					case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: {
+						return "LEAK_CONSTRUCTOR_PARAMETER"; //$NON-NLS-1$
+					}
 					case IApiProblem.LEAK_RETURN_TYPE: {
 						return "LEAK_RETURN_TYPE"; //$NON-NLS-1$
 					}
