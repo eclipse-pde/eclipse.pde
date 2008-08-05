@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,8 @@ import org.eclipse.ui.forms.widgets.Section;
  * 
  */
 public class DescriptionSection extends PDESection {
+
+	private FormEntry fNameEntry;
 	private FormEntry fURLEntry;
 	private FormEntry fDescEntry;
 
@@ -39,13 +41,13 @@ public class DescriptionSection extends PDESection {
 	}
 
 	public void commit(boolean onSave) {
+		fNameEntry.commit();
 		fURLEntry.commit();
 		fDescEntry.commit();
 		super.commit(onSave);
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
@@ -53,6 +55,14 @@ public class DescriptionSection extends PDESection {
 
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
+
+		fNameEntry = new FormEntry(container, toolkit, PDEUIMessages.DescriptionSection_nameLabel, null, false);
+		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry text) {
+				setName(text.getValue());
+			}
+		});
+		fNameEntry.setEditable(isEditable());
 
 		fURLEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DescriptionSection_urlLabel, null, false);
 		fURLEntry.setFormEntryListener(new FormEntryAdapter(this) {
@@ -78,6 +88,25 @@ public class DescriptionSection extends PDESection {
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		initialize();
+	}
+
+	private void setName(String text) {
+		ISiteModel model = (ISiteModel) getPage().getModel();
+		ISite site = model.getSite();
+		ISiteDescription description = site.getDescription();
+		boolean defined = false;
+		if (description == null) {
+			description = model.getFactory().createDescription(null);
+			defined = true;
+		}
+		try {
+			description.setName(text);
+			if (defined) {
+				site.setDescription(description);
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 
 	private void setDescriptionURL(String text) {
@@ -136,8 +165,8 @@ public class DescriptionSection extends PDESection {
 	}
 
 	public void setFocus() {
-		if (fURLEntry != null)
-			fURLEntry.getText().setFocus();
+		if (fNameEntry != null)
+			fNameEntry.getText().setFocus();
 	}
 
 	private void setIfDefined(FormEntry formText, String value) {
@@ -149,19 +178,21 @@ public class DescriptionSection extends PDESection {
 	public void refresh() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
 		ISite site = model.getSite();
+		setIfDefined(fNameEntry, site.getDescription() != null ? site.getDescription().getName() : null);
 		setIfDefined(fURLEntry, site.getDescription() != null ? site.getDescription().getURL() : null);
 		setIfDefined(fDescEntry, site.getDescription() != null ? site.getDescription().getText() : null);
 		super.refresh();
 	}
 
 	public void cancelEdit() {
+		fNameEntry.cancelEdit();
 		fURLEntry.cancelEdit();
 		fDescEntry.cancelEdit();
 		super.cancelEdit();
 	}
 
-	/**
-	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#canPaste(org.eclipse.swt.dnd.Clipboard)
 	 */
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();

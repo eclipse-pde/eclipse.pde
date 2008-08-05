@@ -3114,6 +3114,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String DependencyManagementSection_jobName;
 
+	public static String DescriptionSection_nameLabel;
+
 	public static String OrganizeManifestsOperation_additionalDeps;
 
 	public static String OrganizeManifestsWizardPage_addDependencies;

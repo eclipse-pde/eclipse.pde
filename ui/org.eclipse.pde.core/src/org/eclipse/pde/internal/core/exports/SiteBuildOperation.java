@@ -17,6 +17,8 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.isite.ISiteDescription;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
 
 /**
  * Performs a site build operation that will build any features needed by the site and generate
@@ -27,8 +29,11 @@ import org.eclipse.pde.internal.core.PDECore;
  */
 public class SiteBuildOperation extends FeatureBasedExportOperation {
 
-	public SiteBuildOperation(FeatureExportInfo info) {
+	private ISiteModel fSiteModel;
+
+	public SiteBuildOperation(FeatureExportInfo info, ISiteModel siteModel) {
 		super(info);
+		fSiteModel = siteModel;
 	}
 
 	/* (non-Javadoc)
@@ -48,6 +53,13 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_PUBLISH_ARTIFACTS, IBuildPropertiesConstants.FALSE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FINAL_MODE_OVERRIDE, IBuildPropertiesConstants.TRUE);
+			if (fSiteModel != null) {
+				ISiteDescription description = fSiteModel.getSite().getDescription();
+				if (description != null && description.getName() != null && description.getName().length() > 0) {
+					map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO_NAME, description.getName());
+					map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO_NAME, description.getName());
+				}
+			}
 			try {
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fInfo.destinationDirectory).toURL().toString());
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fInfo.destinationDirectory).toURL().toString());
