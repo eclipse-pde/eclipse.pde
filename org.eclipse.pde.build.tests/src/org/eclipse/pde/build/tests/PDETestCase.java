@@ -37,7 +37,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 public abstract class PDETestCase extends TestCase {
-	public static final String PROJECT_NAME = "org.eclipse.pde.build.tests.builder";
+	public static final String PROJECT_NAME = "pde.build";
 
 	private IFolder buildFolder = null;
 
