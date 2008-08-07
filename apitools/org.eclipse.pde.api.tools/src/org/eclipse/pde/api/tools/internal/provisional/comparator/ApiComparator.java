@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.comparator.TypeDescriptor;
@@ -162,7 +163,12 @@ public class ApiComparator {
 				}
 			}
 			ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);
-			return comparator.getDelta();
+			IDelta delta = comparator.getDelta();
+			IStatus status = comparator.getStatus();
+			if(status != null) {
+				ApiPlugin.log(status);
+			}
+			return delta;
 		} catch (CoreException e) {
 			return null;
 		}
@@ -186,7 +192,7 @@ public class ApiComparator {
 	 * @param profile the given API profile from which the given component <code>component2</code> is coming from
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
 	 *
-	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
+	 * @return a delta, an empty delta if no difference is found or <code>null</code> if the delta detection failed
 	 * @exception IllegalArgumentException if:<ul>
 	 * <li>one of the given components is null</li>
 	 * <li>one of the given profiles is null</li>
@@ -210,16 +216,27 @@ public class ApiComparator {
 		if (referenceProfile == null || profile == null) {
 			throw new IllegalArgumentException("One of the given profiles is null"); //$NON-NLS-1$
 		}
-		ClassFileComparator comparator =
-			new ClassFileComparator(
-					classFile,
-					classFile2,
-					component,
-					component2,
-					referenceProfile,
-					profile,
-					visibilityModifiers);
-		return comparator.getDelta();
+		IDelta delta = null;
+		try {
+			ClassFileComparator comparator =
+				new ClassFileComparator(
+						classFile,
+						classFile2,
+						component,
+						component2,
+						referenceProfile,
+						profile,
+						visibilityModifiers);
+			delta = comparator.getDelta();
+			IStatus status = comparator.getStatus();
+			if(status != null) {
+				ApiPlugin.log(status);
+			}
+		}
+		catch(CoreException e) {
+			ApiPlugin.log(e);
+		}
+		return delta;
 	}
 
 	/**
@@ -732,6 +749,10 @@ public class ApiComparator {
 									classFileBaseLineNames.add(typeName);
 									ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);
 									IDelta delta = comparator.getDelta();
+									IStatus status = comparator.getStatus();
+									if(status != null) {
+										ApiPlugin.log(status);
+									}
 									if (delta != null && delta != NO_DELTA) {
 										globalDelta.add(delta);
 									}

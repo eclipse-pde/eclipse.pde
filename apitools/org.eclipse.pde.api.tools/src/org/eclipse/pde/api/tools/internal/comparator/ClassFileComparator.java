@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -32,6 +35,8 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.signature.SignatureReader;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Compares class files from the workspace to those in the default {@link IApiProfile}
@@ -51,7 +56,76 @@ public class ClassFileComparator {
 		DEBUG = debugValue || Util.DEBUG;
 	}
 
-	private static boolean isCheckedException(IApiProfile profile, IApiComponent apiComponent, String exceptionName) {
+	private IApiProfile apiProfile = null;
+	private IApiProfile apiProfile2 = null;
+	private IClassFile classFile = null;
+
+	private IApiComponent component = null;
+	private IApiComponent component2 = null;
+	private TypeDescriptor descriptor1 = null;
+	private TypeDescriptor descriptor2 = null;
+	private Delta delta = null;
+	private int visibilityModifiers;
+	private int currentDescriptorRestrictions;
+	private int initialDescriptorRestrictions;
+	
+	private MultiStatus status = null;
+
+	/**
+	 * Constructor
+	 * @param classFile the class file from the workspace to compare
+	 * @param classFile2 the class file from the baseline to compare to
+	 * @param component the API component from the workspace
+	 * @param component2 the API component from the baseline
+	 * @param apiState the workspace API profile
+	 * @param apiState2 the baseline API profile
+	 * @param visibilityModifiers any modifiers from the class file
+	 * @throws CoreException if the contents of the specified class files cannot be acquired
+	 */
+	public ClassFileComparator(IClassFile classFile, IClassFile classFile2, IApiComponent component, IApiComponent component2, IApiProfile apiState, IApiProfile apiState2, int visibilityModifiers) throws CoreException {
+		this.component = component;
+		this.component2 = component2;
+		this.descriptor1 = new TypeDescriptor(classFile.getContents());
+		this.descriptor2 = new TypeDescriptor(classFile2.getContents());
+		this.apiProfile = apiState;
+		this.apiProfile2 = apiState2;
+		this.classFile = classFile;
+		this.visibilityModifiers = visibilityModifiers;
+	}
+
+	/**
+	 * Constructor
+	 * @param typeDescriptor the {@link TypeDescriptor} from the workspace to compare
+	 * @param classFile2 the class file from the baseline to compare to
+	 * @param component the API component from the workspace
+	 * @param component2 the API component from the baseline
+	 * @param apiState the workspace API profile
+	 * @param apiState2 the baseline API profile
+	 * @param visibilityModifiers any modifiers from the class file
+	 * @throws CoreException if the contents of the specified class file cannot be acquired
+	 */
+	public ClassFileComparator(TypeDescriptor typeDescriptor, IClassFile classFile2, IApiComponent component, IApiComponent component2, IApiProfile apiState, IApiProfile apiState2, int visibilityModifiers) throws CoreException {
+		this.component = component;
+		this.component2 = component2;
+		this.descriptor1 = typeDescriptor;
+		this.descriptor2 = new TypeDescriptor(classFile2.getContents());
+		this.apiProfile = apiState;
+		this.apiProfile2 = apiState2;
+		this.classFile = typeDescriptor.classFile;
+		this.visibilityModifiers = visibilityModifiers;
+	}
+	
+	private void addDelta(IDelta delta) {
+		this.delta.add(delta);
+	}
+	private void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String data) {
+		this.delta.add(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, data));
+	}
+	private void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String[] datas) {
+		this.delta.add(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, datas));
+	}
+	
+	private boolean isCheckedException(IApiProfile profile, IApiComponent apiComponent, String exceptionName) {
 		if (profile == null) {
 			return true;
 		}
@@ -85,73 +159,21 @@ public class ClassFileComparator {
 			}
 		} catch (CoreException e) {
 			// by default exception are considered as checked exception 
-			ApiPlugin.log(e);
+			reportStatus(e);
 		}
 		return true;
 	}
-
-	IApiProfile apiProfile;
-	IApiProfile apiProfile2;
-
-	IClassFile classFile;
-	IClassFile classFile2;
 	
-	IApiComponent component;
-	IApiComponent component2;
-
-	Delta delta;
-	TypeDescriptor descriptor1;
-
-	TypeDescriptor descriptor2;
-	
-	int visibilityModifiers;
-	int currentDescriptorRestrictions;
-	int initialDescriptorRestrictions;
-
-	public ClassFileComparator(IClassFile classFile, IClassFile classFile2, IApiComponent component, IApiComponent component2, IApiProfile apiState, IApiProfile apiState2, int visibilityModifiers) {
-		try {
-			this.component = component;
-			this.component2 = component2;
-			this.descriptor1 = new TypeDescriptor(classFile.getContents());
-			this.descriptor2 = new TypeDescriptor(classFile2.getContents());
-			this.apiProfile = apiState;
-			this.apiProfile2 = apiState2;
-			this.classFile = classFile;
-			this.classFile2 = classFile2;
-			this.visibilityModifiers = visibilityModifiers;
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		}
-	}
-
-	public ClassFileComparator(TypeDescriptor typeDescriptor, IClassFile classFile2, IApiComponent component, IApiComponent component2, IApiProfile apiState, IApiProfile apiState2, int visibilityModifiers) {
-		try {
-			this.component = component;
-			this.component2 = component2;
-			this.descriptor1 = typeDescriptor;
-			this.descriptor2 = new TypeDescriptor(classFile2.getContents());
-			this.apiProfile = apiState;
-			this.apiProfile2 = apiState2;
-			this.classFile = typeDescriptor.classFile;
-			this.classFile2 = classFile2;
-			this.visibilityModifiers = visibilityModifiers;
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		}
-	}
-	private void addDelta(IDelta delta) {
-		this.delta.add(delta);
-	}
-	private void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String data) {
-		this.delta.add(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, data));
-	}
-	private void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String[] datas) {
-		this.delta.add(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, datas));
-	}
+	/**
+	 * Checks if the super-class set has been change in any way compared to the baseline (grown or reduced or types changed)
+	 */
 	private void checkSuperclass() {
 		// check superclass set
 		Set superclassSet1 = getSuperclassSet(this.descriptor1, this.component, this.apiProfile);
 		Set superclassSet2 = getSuperclassSet(this.descriptor2, this.component2, this.apiProfile2);
+		if(!isStatusOk()) {
+			return;
+		}
 		if (superclassSet1 == null) {
 			if (superclassSet2 != null) {
 				// this means the direct super class of descriptor1 is java.lang.Object
@@ -208,15 +230,57 @@ public class ClassFileComparator {
 					this.descriptor1.name,
 					Util.getDescriptorName(descriptor1));
 		}
-		
-		// TODO check super class if they are not checked anyway
-		// case where an API type inherits from a non-API type that contains public methods/fields
 	}
 
+	/**
+	 * reports problem status to the comparators' complete status
+	 * @param newstatus
+	 */
+	protected void reportStatus(IStatus newstatus) {
+		if(this.status == null) {
+			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_0, new String[] {this.descriptor1.name});
+			this.status = new MultiStatus(ApiPlugin.PLUGIN_ID, Status.ERROR, msg, null);
+		}
+		this.status.add(newstatus);
+	}
+	
+	/**
+	 * Report problem to the comparators' status
+	 * @param e
+	 */
+	private void reportStatus(Exception e) {
+		reportStatus(e);
+	}
+	
+	/**
+	 * @return if the status of the compare is ok
+	 */
+	private boolean isStatusOk() {
+		return this.status == null;
+	}
+	
+	/**
+	 * @return the status of the compare and delta creation
+	 */
+	public IStatus getStatus() {
+		return this.status;
+	}
+	
+	/**
+	 * Checks if there are any changes to the super-interface set for the current type descriptor context.
+	 * A change is one of:
+	 * <ul>
+	 * <li>An interface has been added to the current super-interface set compared to the current baseline</li>
+	 * <li>An interface has been removed from the current super-interface set compared to the current baseline</li>
+	 * <li>An interface has changed (same number of interfaces, but different types) compared to the current baseline</li>
+	 * </ul>
+	 */
 	private void checkSuperInterfaces() {
 		Set superinterfacesSet1 = getInterfacesSet(this.descriptor1, this.component, this.apiProfile);
 		Set superinterfacesSet2 = getInterfacesSet(this.descriptor2, this.component2, this.apiProfile2);
-
+		if(!isStatusOk()) {
+			return;
+		}
 		if (superinterfacesSet1 == null) {
 			if (superinterfacesSet2 != null) {
 				this.addDelta(
@@ -306,7 +370,7 @@ public class ClassFileComparator {
 								typeMember.name,
 								typeMember.name.replace('$', '.'));
 					} catch (CoreException e) {
-						ApiPlugin.log(e);
+						reportStatus(e);
 					}
 				}
 				return;
@@ -384,7 +448,7 @@ public class ClassFileComparator {
 							this.addDelta(delta2);
 						}
 					} catch (CoreException e) {
-						ApiPlugin.log(e);
+						reportStatus(e);
 					}
 				}
 			}
@@ -420,7 +484,7 @@ public class ClassFileComparator {
 							typeMember.name,
 							new String[] { typeMemberName.replace('$', '.'), Util.getDeltaComponentID(component2)});
 				} catch (CoreException e) {
-					ApiPlugin.log(e);
+					reportStatus(e);
 				}
 			}
 		}
@@ -460,7 +524,7 @@ public class ClassFileComparator {
 						typeMember.name,
 						typeMember.name.replace('$', '.'));
 			} catch (CoreException e) {
-				ApiPlugin.log(e);
+				reportStatus(e);
 			}
 		}
 	}
@@ -691,28 +755,39 @@ public class ClassFileComparator {
 		}
 	}
 
+	/**
+	 * Recursively collects all of the super-interfaces of the given type descriptor within the scope of 
+	 * the given API component
+	 * @param typeDescriptor
+	 * @param apiComponent
+	 * @param profile
+	 * @param set
+	 */
 	private void collectAllInterfaces(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile, Set set) {
+		Set interfaces = typeDescriptor.interfaces;
 		try {
-			Set interfaces = typeDescriptor.interfaces;
 			if (interfaces != null) {
 				for (Iterator iterator = interfaces.iterator(); iterator.hasNext();) {
 					String interfaceName = (String) iterator.next();
 					String packageName = Util.getPackageName(interfaceName);
 					IApiComponent[] components = profile.resolvePackage(apiComponent, packageName);
 					if (components == null) {
-						// TODO should we report this failure ?
+						String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), apiComponent.getId()});
 						if (DEBUG) {
-							System.err.println("SUPERINTERFACES LOOKUP: Could not find package " + packageName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
 						}
-						continue;
+						reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
+						return;
 					}
 					IClassFile superinterface = Util.getClassFile(components, interfaceName);
 					if (superinterface == null) {
-						// TODO should we report this failure ?
+						String msg = ComparatorMessages.ClassFileComparator_2;
+						msg = MessageFormat.format(msg, new String[] {interfaceName, profile.getName(), apiComponent.getId()});
 						if (DEBUG) {
-							System.err.println("SUPERINTERFACES LOOKUP: Could not find interface " + interfaceName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
 						}
-						continue;
+						reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
+						return;
 					}
 					TypeDescriptor typeDescriptor2 = new TypeDescriptor(superinterface.getContents());
 					set.add(typeDescriptor2);
@@ -724,25 +799,29 @@ public class ClassFileComparator {
 				String packageName = Util.getPackageName(superclassName);
 				IApiComponent[] components = profile.resolvePackage(apiComponent, packageName);
 				if (components == null) {
-					// TODO should we report this failure ?
+					String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), apiComponent.getId()});
 					if (DEBUG) {
-						System.err.println("SUPERINTERFACES LOOKUP: Could not find package " + packageName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
 					}
+					reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
 					return;
 				}
 				IClassFile superclass = Util.getClassFile(components, superclassName);
 				if (superclass == null) {
-					// TODO should we report this failure ?
+					String msg = ComparatorMessages.ClassFileComparator_4;
+					msg = MessageFormat.format(msg, new String[] {superclassName, profile.getName(), apiComponent.getId()});
 					if (DEBUG) {
-						System.err.println("SUPERINTERFACES LOOKUP: Could not find class " + superclassName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
 					}
+					reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
 					return;
 				}
 				TypeDescriptor typeDescriptor2 = new TypeDescriptor(superclass.getContents());
 				collectAllInterfaces(typeDescriptor2, apiComponent, profile, set);
 			}
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
+		}
+		catch(CoreException e) {
+			reportStatus(e);
 		}
 	}
 	
@@ -768,9 +847,22 @@ public class ClassFileComparator {
 		return null;
 	}
 
+	/**
+	 * Returns a new {@link Delta} to use, and resets the status of creating a delta
+	 * @return
+	 */
+	private Delta createDelta() {
+		this.status = null;
+		return new Delta();
+	}
+	
+	/**
+	 * Returns the change(s) between the type descriptor and its equivalent in the current baseline.
+	 * @return the changes in the type descriptor or <code>null</code>
+	 */
 	public IDelta getDelta() {
 		try {
-			this.delta = new Delta();
+			this.delta = createDelta();
 			// check visibility
 			int typeAccess = this.descriptor1.access;
 			final IApiDescription component2ApiDescription = component2.getApiDescription();
@@ -1166,7 +1258,7 @@ public class ClassFileComparator {
 			checkTypeMembers();
 			return this.delta.isEmpty() ? ApiComparator.NO_DELTA : this.delta;
 		} catch (CoreException e) {
-			ApiPlugin.log(e);
+			reportStatus(e);
 			return null;
 		}
 	}
@@ -1221,7 +1313,7 @@ public class ClassFileComparator {
 						}
 					} else {
 						Set superclassSet = getSuperclassSet(this.descriptor2, this.component2, this.apiProfile2);
-						if (superclassSet != null) {
+						if (superclassSet != null && isStatusOk()) {
 							loop: for (Iterator iterator = superclassSet.iterator(); iterator.hasNext();) {
 								TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
 								FieldDescriptor fieldDescriptor3 = getFieldDescriptor(superTypeDescriptor, name);
@@ -1256,7 +1348,7 @@ public class ClassFileComparator {
 						try {
 							apiDescription = this.component.getApiDescription();
 						} catch (CoreException e) {
-							ApiPlugin.log(e);
+							reportStatus(e);
 						}
 						if (apiDescription != null) {
 							IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(fieldDescriptor.handle);
@@ -1317,7 +1409,7 @@ public class ClassFileComparator {
 			try {
 				apiDescription = this.component.getApiDescription();
 			} catch (CoreException e) {
-				ApiPlugin.log(e);
+				reportStatus(e);
 			}
 			if (apiDescription != null) {
 				IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(fieldDescriptor.handle);
@@ -1604,7 +1696,7 @@ public class ClassFileComparator {
 						new String[] {Util.getDescriptorName(this.descriptor1), name});
 			}
 		} else if (Util.isTransient(access2)) {
-			// report delta - non-tansient to transient
+			// report delta - non-transient to transient
 			this.addDelta(
 					IDelta.FIELD_ELEMENT_TYPE,
 					IDelta.CHANGED,
@@ -1684,7 +1776,7 @@ public class ClassFileComparator {
 			if (this.component2 != null && !methodDescriptor.isConstructor()) {
 				if (this.descriptor1.isInterface()) {
 					Set interfacesSet = getInterfacesSet(typeDescriptor, this.component2, this.apiProfile2);
-					if (interfacesSet != null) {
+					if (interfacesSet != null && isStatusOk()) {
 						for (Iterator iterator = interfacesSet.iterator(); iterator.hasNext();) {
 							TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
 							MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
@@ -1720,7 +1812,7 @@ public class ClassFileComparator {
 								if (Util.isPublic(access3)
 										|| Util.isProtected(access3)) {
 									// method has been move up in the hierarchy - report the delta and abort loop
-									// TODO need to make the distinction between methods that need to be reimplemented and methods that don't
+									// TODO need to make the distinction between methods that need to be re-implemented and methods that don't
 									this.addDelta(
 											this.descriptor1.getElementType(),
 											IDelta.REMOVED,
@@ -1745,7 +1837,7 @@ public class ClassFileComparator {
 					try {
 						apiDescription = this.component.getApiDescription();
 					} catch (CoreException e) {
-						ApiPlugin.log(e);
+						reportStatus(e);
 					}
 					if (apiDescription != null) {
 						IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(methodDescriptor.handle);
@@ -1803,7 +1895,7 @@ public class ClassFileComparator {
 			try {
 				apiDescription = this.component.getApiDescription();
 			} catch (CoreException e) {
-				ApiPlugin.log(e);
+				reportStatus(e);
 			}
 			if (apiDescription != null) {
 				IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(methodDescriptor.handle);
@@ -1856,7 +1948,7 @@ public class ClassFileComparator {
 						if (this.component2 != null) {
 							if (this.descriptor1.isInterface()) {
 								Set interfacesSet = getInterfacesSet(typeDescriptor2, this.component2, this.apiProfile2);
-								if (interfacesSet != null) {
+								if (interfacesSet != null && isStatusOk()) {
 									for (Iterator iterator = interfacesSet.iterator(); iterator.hasNext();) {
 										TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
 										MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
@@ -1883,7 +1975,7 @@ public class ClassFileComparator {
 											if (Util.isPublic(access3)
 													|| Util.isProtected(access3)) {
 												// method has been move up in the hierarchy - report the delta and abort loop
-												// TODO need to make the distinction between methods that need to be reimplemented and methods that don't
+												// TODO need to make the distinction between methods that need to be re-implemented and methods that don't
 												found = true;
 												break loop;
 											}
@@ -2336,10 +2428,20 @@ public class ClassFileComparator {
 		return fieldDescriptor;
 	}
 
+	/**
+	 * Returns the complete super-interface set for the given type descriptor or null, if it could not be
+	 * computed
+	 * @param typeDescriptor
+	 * @param apiComponent
+	 * @param profile
+	 * @return the complete super-interface set for the given descriptor, or <code>null</code>
+	 */
 	private Set getInterfacesSet(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile) {
 		HashSet set = new HashSet();
 		collectAllInterfaces(typeDescriptor, apiComponent, profile, set);
-		if (set.isEmpty()) return null;
+		if (set.isEmpty()) {
+			return null;
+		}
 		return set;
 	}
 
@@ -2393,9 +2495,26 @@ public class ClassFileComparator {
 		signatureReader.accept(new SignatureDecoder(signatureDescriptor));
 		return signatureDescriptor;
 	}
+	
+	/**
+	 * Returns the complete super-class set for the given type descriptor in the given API component scope, from the given {@link IApiProfile}
+	 * @param typeDescriptor
+	 * @param apiComponent
+	 * @param profile
+	 * @return the complete super-class set or <code>null</code>
+	 */
 	private Set getSuperclassSet(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile) {
 		return getSuperclassSet(typeDescriptor, apiComponent, profile, false);
 	}
+	
+	/**
+	 * Returns the complete super-class set for the given type descriptor
+	 * @param typeDescriptor
+	 * @param apiComponent
+	 * @param profile
+	 * @param includeObject
+	 * @return the complete super-class set for the given descriptor or <code>null</code>
+	 */
 	private Set getSuperclassSet(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile, boolean includeObject) {
 		TypeDescriptor descriptor = typeDescriptor;
 		String superName = descriptor.superName;
@@ -2405,38 +2524,42 @@ public class ClassFileComparator {
 		HashSet set = new HashSet();
 		IApiComponent sourceComponent = apiComponent; 
 		try {
-			loop: while (superName != null && (!Util.isJavaLangObject(superName) || includeObject)) {
+			while (superName != null && (!Util.isJavaLangObject(superName) || includeObject)) {
 				String packageName = Util.getPackageName(superName);
 				IApiComponent[] components = profile.resolvePackage(sourceComponent, packageName);
 				if (components == null) {
-					// TODO should we report this failure ?
+					String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_5, new String[] {packageName, profile.getName(), apiComponent.getId()});
 					if (DEBUG) {
-						System.err.println("SUPERCLASS LOOKUP: Could not find package " + packageName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
 					}
-					break loop;
+					reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
+					return null;
 				}
 				sourceComponent = Util.getComponent(components, superName);
 				if (sourceComponent == null) {
-					// TODO should we report this failure ?
+					String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_5, new String[] {packageName, profile.getName(), apiComponent.getId()});
 					if (DEBUG) {
-						System.err.println("SUPERCLASS LOOKUP: Could not find package " + packageName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
 					}
-					break loop;
+					reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
+					return null;
 				}
 				IClassFile superclass = sourceComponent.findClassFile(superName);
 				if (superclass == null) {
-					// TODO should we report this failure ?
+					String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_7, new String[] {superName, profile.getName(), apiComponent.getId()});
 					if (DEBUG) {
-						System.err.println("SUPERCLASS LOOKUP: Could not find class " + superName + " in profile " + profile.getName() + " from component " + sourceComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
 					}
-					break loop;
+					reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
+					return null;
 				}
 				descriptor = new TypeDescriptor(superclass.getContents());
 				set.add(descriptor);
 				superName = descriptor.superName;
 			}
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
+		}
+		catch(CoreException e) {
+			reportStatus(e);
 		}
 		return set;
 	}
@@ -2455,7 +2578,7 @@ public class ClassFileComparator {
 			try {
 				apiDescription = this.component2.getApiDescription();
 			} catch (CoreException e) {
-				ApiPlugin.log(e);
+				reportStatus(e);
 			}
 			if (apiDescription != null) {
 				IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(fieldDescriptor.handle);
@@ -2529,7 +2652,7 @@ public class ClassFileComparator {
 			try {
 				apiDescription = this.component2.getApiDescription();
 			} catch (CoreException e) {
-				ApiPlugin.log(e);
+				reportStatus(e);
 			}
 			if (apiDescription != null) {
 				IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(methodDescriptor.handle);
@@ -2587,7 +2710,7 @@ public class ClassFileComparator {
 					String descriptor = methodDescriptor.descriptor;
 					if (this.descriptor1.isInterface()) {
 						Set interfacesSet = getInterfacesSet(typeDescriptor2, this.component2, this.apiProfile2);
-						if (interfacesSet != null) {
+						if (interfacesSet != null && isStatusOk()) {
 							for (Iterator iterator = interfacesSet.iterator(); iterator.hasNext();) {
 								TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
 								MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
@@ -2614,7 +2737,7 @@ public class ClassFileComparator {
 									if (Util.isPublic(access3)
 											|| Util.isProtected(access3)) {
 										// method has been move up in the hierarchy - report the delta and abort loop
-										// TODO need to make the distinction between methods that need to be reimplemented and methods that don't
+										// TODO need to make the distinction between methods that need to be re-implemented and methods that don't
 										found = true;
 										break loop;
 									}
