@@ -30,7 +30,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(FieldDeltaTests.class);
 		TestSuite suite = new TestSuite(FieldDeltaTests.class.getName());
-		suite.addTest(new FieldDeltaTests("test53"));
+		suite.addTest(new FieldDeltaTests("test59"));
 		return suite;
 	}
 
@@ -1321,5 +1321,95 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Remove method from internal super class with protected members (extend restriction)
+	 */
+	public void test55() {
+		deployBundles("test55");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * Remove method from internal super class with protected members (extend restriction)
+	 */
+	public void test56() {
+		deployBundles("test56");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
+		assertTrue("Not visible", Util.isVisible(child));
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Remove method from internal super class with protected members (extend restriction)
+	 */
+	public void test57() {
+		deployBundles("test57");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * Remove method from internal super class with protected members (extend restriction)
+	 * Two levels
+	 */
+	public void test58() {
+		deployBundles("test58");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * Remove method from internal super class with protected members (extend restriction)
+	 */
+	public void test59() {
+		deployBundles("test59");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
+		assertTrue("Not visible", Util.isVisible(child));
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 }
