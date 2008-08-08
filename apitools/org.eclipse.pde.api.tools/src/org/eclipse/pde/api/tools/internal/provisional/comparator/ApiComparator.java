@@ -696,7 +696,7 @@ public class ApiComparator {
 													IDelta.REMOVED,
 													IDelta.TYPE,
 													RestrictionModifiers.NO_RESTRICTIONS,
-													0,
+													typeDescriptor.access,
 													typeName,
 													typeName,
 													new String[] { typeName, deltaComponentID}));
