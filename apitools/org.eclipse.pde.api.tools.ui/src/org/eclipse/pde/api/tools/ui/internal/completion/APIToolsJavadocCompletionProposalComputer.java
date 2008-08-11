@@ -143,6 +143,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				if(Flags.isFinal(flags)) {
 					return !tagname.equals("@noextend");  //$NON-NLS-1$
 				}
+				break;
 			}
 			case IJavaElement.METHOD: {
 				return !(Flags.isFinal(((IMethod)element).getFlags()) && tag.getTagName().equals("@nooverride")); //$NON-NLS-1$
