@@ -14,16 +14,26 @@ package org.eclipse.pde.internal.ds.ui.editor;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
+import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -35,7 +45,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -44,6 +56,7 @@ public class DSProvideSection extends TableSection {
 	private TableViewer fProvidesTable;
 	private Action fRemoveAction;
 	private Action fAddAction;
+	private Action fEditAction;
 
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object inputElement) {
@@ -62,16 +75,18 @@ public class DSProvideSection extends TableSection {
 			return new Object[0];
 		}
 	}
-	
+
 	public DSProvideSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] { "Add",
-				"Remove" });
+		super(page, parent, Section.DESCRIPTION, new String[] {
+				Messages.DSProvideSection_add,
+				Messages.DSProvideSection_remove,
+				Messages.DSProvideSection_edit });
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(Messages.DSProvideSection_title);
-		section.setDescription(Messages.DSProvideSection_title);
+		section.setDescription(Messages.DSProvideSection_description);
 
 		section.setLayout(FormLayoutFactory
 				.createClearTableWrapLayout(false, 1));
@@ -92,7 +107,7 @@ public class DSProvideSection extends TableSection {
 		fProvidesTable.setContentProvider(new ContentProvider());
 		fProvidesTable.setLabelProvider(new DSLabelProvider());
 
-		 makeActions();
+		makeActions();
 
 		IDSModel model = getDSModel();
 		if (model != null) {
@@ -122,7 +137,28 @@ public class DSProvideSection extends TableSection {
 		case 1:
 			handleRemove();
 			break;
+		case 2:
+			handleEdit();
+			break;
 		}
+	}
+
+	private void handleEdit() {
+
+		ISelection selection = fProvidesTable.getSelection();
+		if (selection != null) {
+
+			int selectionIndex = fProvidesTable.getTable().getSelectionIndex();
+			if (selectionIndex != -1) {
+				DSEditProvideDialog dialog = new DSEditProvideDialog(PDEPlugin
+						.getActiveWorkbenchShell(), (IDSProvide) fProvidesTable
+						.getElementAt(selectionIndex), this);
+				dialog.setTitle(Messages.DSEditProvideDialog_dialog_title);
+				dialog.open();
+			}
+
+		}
+
 	}
 
 	private void makeActions() {
@@ -139,6 +175,13 @@ public class DSProvideSection extends TableSection {
 			}
 		};
 		fRemoveAction.setEnabled(isEditable());
+
+		fEditAction = new Action(Messages.DSProvideSection_edit) {
+			public void run() {
+				handleEdit();
+			}
+		};
+		fEditAction.setEnabled(isEditable());
 
 	}
 
@@ -171,51 +214,45 @@ public class DSProvideSection extends TableSection {
 	}
 
 	private void handleAdd() {
-		// ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-		// PDEPlugin.getActiveWorkbenchShell(), new DSLabelProvider());
-		// // dialog.setElements(getEnvironments());
-		// dialog.setAllowDuplicates(false);
-		// dialog.setMultipleSelection(true);
-		// dialog
-		// .setTitle(Messages.DSProvideSection_dialog_title);
-		// dialog
-		// .setMessage(Messages.DSProvideSection_dialogMessage);
-		// if (dialog.open() == Window.OK) {
-		// addExecutionEnvironments(dialog.getResult());
-		// }
-
+		doOpenSelectionDialog(IJavaElementSearchConstants.CONSIDER_INTERFACES);
 	}
 
-	//
-	// private void addExecutionEnvironments(Object[] result) {
-	// // IManifestHeader header = getHeader();
-	// // if (header == null) {
-	// // StringBuffer buffer = new StringBuffer();
-	// // for (int i = 0; i < result.length; i++) {
-	// // String id = null;
-	// // if (result[i] instanceof IExecutionEnvironment)
-	// // id = ((IExecutionEnvironment) result[i]).getId();
-	// // else if (result[i] instanceof ExecutionEnvironment)
-	// // id = ((ExecutionEnvironment) result[i]).getName();
-	// // else
-	// // continue;
-	// // if (buffer.length() > 0) {
-	// // buffer.append(","); //$NON-NLS-1$
-	// // buffer.append(getLineDelimiter());
-	// // buffer.append(" "); //$NON-NLS-1$
-	// // }
-	// // buffer.append(id);
-	// // }
-	// // getDS().setHeader(
-	// // Constants.DS_REQUIREDEXECUTIONENVIRONMENT,
-	// // buffer.toString());
-	// // } else {
-	// // RequiredExecutionEnvironmentHeader ee =
-	// // (RequiredExecutionEnvironmentHeader)
-	// // header;
-	// // ee.addExecutionEnvironments(result);
-	// // }
-	// }
+	private void doOpenSelectionDialog(int scopeType) {
+		try {
+			String filter = "";
+			filter = filter.substring(filter.lastIndexOf(".") + 1); //$NON-NLS-1$
+			SelectionDialog dialog = JavaUI.createTypeDialog(Activator
+					.getActiveWorkbenchShell(), PlatformUI.getWorkbench()
+					.getProgressService(), SearchEngine.createWorkspaceScope(),
+					scopeType, false, filter);
+			dialog.setTitle(Messages.DSProvideDetails_selectType);
+			if (dialog.open() == Window.OK) {
+				IType type = (IType) dialog.getResult()[0];
+				String fullyQualifiedName = type.getFullyQualifiedName('$');
+				addProvide(fullyQualifiedName);
+			}
+		} catch (CoreException e) {
+		}
+	}
+
+	private void addProvide(String fullyQualifiedName) {
+
+		IDSDocumentFactory factory = getDSModel().getFactory();
+		IDSComponent component = getDSModel().getDSComponent();
+		
+		IDSService service = component.getService();
+		if (service == null) {
+			service = factory.createService();
+			component.setService(service);
+		}
+
+		IDSProvide provide = factory.createProvide();
+		// set interface attribute
+		provide.setInterface(fullyQualifiedName);
+
+		// add provide
+		service.addProvidedService(provide);
+	}
 
 	private String getLineDelimiter() {
 		DSInputContext inputContext = getDSContext();
@@ -241,7 +278,7 @@ public class DSProvideSection extends TableSection {
 					}
 				}
 			}
-			 updateButtons();
+			updateButtons();
 		} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 			Object[] objects = e.getChangedObjects();
 			if (objects.length > 0) {
@@ -249,7 +286,10 @@ public class DSProvideSection extends TableSection {
 				fProvidesTable.setSelection(new StructuredSelection(
 						objects[objects.length - 1]));
 			}
-			 updateButtons();
+			updateButtons();
+		} else {
+			fProvidesTable.refresh();
+			updateButtons();
 		}
 	}
 
@@ -270,7 +310,7 @@ public class DSProvideSection extends TableSection {
 		}
 
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			 handleRemove();
+			handleRemove();
 			return true;
 		}
 

@@ -108,31 +108,30 @@ public class Messages extends NLS {
 	public static String DSSimpPage_pageId;
 	public static String DSSimpPage_title;
 	
-	public static String DSReferenceSection_title;
-	public static String DSReferenceSection_description;
-	
-	public static String DSProvideSection_title;
-	public static String DSProvideSection_description;
-	
 	public static String DSSection_title;
 	public static String DSSection_description;
 	
+	public static String DSReferenceSection_title;
+	public static String DSReferenceSection_description;
 	public static String DSReferenceSection_add;
 	public static String DSReferenceSection_remove;
-	public static String DSReferenceSection_dialog_title;
-	public static String DSReferenceSection_dialogMessage;
+	public static String DSReferenceSection_edit;
 	
+	public static String DSProvideSection_title;
+	public static String DSProvideSection_description;
 	public static String DSProvideSection_add;
 	public static String DSProvideSection_remove;
-	public static String DSProvideSection_dialog_title;
-	public static String DSProvideSection_dialogMessage;
+	public static String DSProvideSection_edit;
 	
-	
-	
-	
-	
-	
-	
+	public static String DSEditReferenceDialog_OK;
+	public static String DSEditReferenceDialog_Cancel;
+	public static String DSEditReferenceDialog_dialog_title;
+	public static String DSEditReferenceDialog_dialogMessage;
+
+	public static String DSEditProvideDialog_OK;
+	public static String DSEditProvideDialog_Cancel;
+	public static String DSEditProvideDialog_dialog_title;
+	public static String DSEditProvideDialog_dialogMessage;
 	
 
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$

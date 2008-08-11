@@ -14,15 +14,24 @@ package org.eclipse.pde.internal.ds.ui.editor;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSReference;
+import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -34,7 +43,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -43,6 +54,7 @@ public class DSReferenceSection extends TableSection {
 	private TableViewer fReferencesTable;
 	private Action fRemoveAction;
 	private Action fAddAction;
+	private Action fEditAction;
 
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object inputElement) {
@@ -60,13 +72,14 @@ public class DSReferenceSection extends TableSection {
 	public DSReferenceSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {
 				Messages.DSReferenceSection_add,
-				Messages.DSReferenceSection_remove });
+				Messages.DSReferenceSection_remove,
+				Messages.DSReferenceSection_edit });
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(Messages.DSReferenceSection_title);
-		section.setDescription(Messages.DSReferenceSection_title);
+		section.setDescription(Messages.DSReferenceSection_description);
 
 		section.setLayout(FormLayoutFactory
 				.createClearTableWrapLayout(false, 1));
@@ -87,7 +100,7 @@ public class DSReferenceSection extends TableSection {
 		fReferencesTable.setContentProvider(new ContentProvider());
 		fReferencesTable.setLabelProvider(new DSLabelProvider());
 
-		 makeActions();
+		makeActions();
 
 		IDSModel model = getDSModel();
 		if (model != null) {
@@ -117,7 +130,29 @@ public class DSReferenceSection extends TableSection {
 		case 1:
 			handleRemove();
 			break;
+		case 2:
+			handleEdit();
+			break;
 		}
+	}
+
+	private void handleEdit() {
+		
+				ISelection selection = fReferencesTable.getSelection();
+				if(selection != null){
+					
+					int selectionIndex = fReferencesTable.getTable().getSelectionIndex();
+					if (selectionIndex != -1) {
+				DSEditReferenceDialog dialog = new DSEditReferenceDialog(PDEPlugin
+						.getActiveWorkbenchShell(),
+						(IDSReference) fReferencesTable
+								.getElementAt(selectionIndex), this);
+				dialog.setTitle(Messages.DSEditReferenceDialog_dialog_title);
+				dialog.open();
+			}
+		
+				}
+				
 	}
 
 	private void makeActions() {
@@ -135,9 +170,16 @@ public class DSReferenceSection extends TableSection {
 		};
 		fRemoveAction.setEnabled(isEditable());
 
+		fEditAction = new Action(Messages.DSReferenceSection_edit) {
+			public void run() {
+				handleEdit();
+			}
+		};
+		fEditAction.setEnabled(isEditable());
+
 	}
 
-	 private void updateButtons() {
+	private void updateButtons() {
 		Table table = fReferencesTable.getTable();
 		int count = table.getItemCount();
 
@@ -149,7 +191,7 @@ public class DSReferenceSection extends TableSection {
 				&& table.getSelection().length > 0);
 	}
 
-	 private void handleRemove() {
+	private void handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection) fReferencesTable
 				.getSelection();
 		if (ssel.size() > 0) {
@@ -165,52 +207,43 @@ public class DSReferenceSection extends TableSection {
 	}
 
 	private void handleAdd() {
-// ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-// PDEPlugin.getActiveWorkbenchShell(), new DSLabelProvider());
-// // dialog.setElements(getEnvironments());
-		// dialog.setAllowDuplicates(false);
-		// dialog.setMultipleSelection(true);
-		// dialog
-		// .setTitle(Messages.DSReferenceSection_dialog_title);
-		// dialog
-		// .setMessage(Messages.DSReferenceSection_dialogMessage);
-		// if (dialog.open() == Window.OK) {
-		// addExecutionEnvironments(dialog.getResult());
-		// }
-
+		doOpenSelectionDialog(IJavaElementSearchConstants.CONSIDER_INTERFACES);
 	}
 
+	private void doOpenSelectionDialog(int scopeType) {
+		try {
+			String filter = "";
+			filter = filter.substring(filter.lastIndexOf(".") + 1); //$NON-NLS-1$
+			SelectionDialog dialog = JavaUI.createTypeDialog(Activator
+					.getActiveWorkbenchShell(), PlatformUI.getWorkbench()
+					.getProgressService(), SearchEngine.createWorkspaceScope(),
+					scopeType, false, filter);
+			dialog.setTitle(Messages.DSReferenceDetails_selectType);
+			if (dialog.open() == Window.OK) {
+				IType type = (IType) dialog.getResult()[0];
+				String fullyQualifiedName = type.getFullyQualifiedName('$');
+				addReference(fullyQualifiedName);
+			}
+		} catch (CoreException e) {
+		}
+	}
 
-	//
-	// private void addExecutionEnvironments(Object[] result) {
-	// // IManifestHeader header = getHeader();
-	// // if (header == null) {
-	// // StringBuffer buffer = new StringBuffer();
-	// // for (int i = 0; i < result.length; i++) {
-	// // String id = null;
-	// // if (result[i] instanceof IExecutionEnvironment)
-	// // id = ((IExecutionEnvironment) result[i]).getId();
-	// // else if (result[i] instanceof ExecutionEnvironment)
-	// // id = ((ExecutionEnvironment) result[i]).getName();
-	// // else
-	// // continue;
-	// // if (buffer.length() > 0) {
-	// // buffer.append(","); //$NON-NLS-1$
-	// // buffer.append(getLineDelimiter());
-	// // buffer.append(" "); //$NON-NLS-1$
-	// // }
-	// // buffer.append(id);
-	// // }
-	// // getDS().setHeader(
-	// // Constants.DS_REQUIREDEXECUTIONENVIRONMENT,
-	// // buffer.toString());
-	// // } else {
-	// // RequiredExecutionEnvironmentHeader ee =
-	// // (RequiredExecutionEnvironmentHeader)
-	// // header;
-	// // ee.addExecutionEnvironments(result);
-	// // }
-	// }
+	private void addReference(String fullyQualifiedName) {
+	
+		IDSReference reference = getDSModel().getFactory().createReference();
+		// set interface attribute
+		reference.setReferenceInterface(fullyQualifiedName);
+		
+		// set name attribute
+		int index = fullyQualifiedName.lastIndexOf(".");
+		if (index != -1) {
+			fullyQualifiedName = fullyQualifiedName.substring(index + 1);
+		}
+		reference.setReferenceName(fullyQualifiedName);
+		
+		// add reference
+		getDSModel().getDSComponent().addReference(reference);
+	}
 
 	private String getLineDelimiter() {
 		DSInputContext inputContext = getDSContext();
@@ -236,7 +269,7 @@ public class DSReferenceSection extends TableSection {
 					}
 				}
 			}
-			 updateButtons();
+			updateButtons();
 		} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 			Object[] objects = e.getChangedObjects();
 			if (objects.length > 0) {
@@ -244,7 +277,10 @@ public class DSReferenceSection extends TableSection {
 				fReferencesTable.setSelection(new StructuredSelection(
 						objects[objects.length - 1]));
 			}
-			 updateButtons();
+			updateButtons();
+		} else {
+			fReferencesTable.refresh();
+			updateButtons();
 		}
 	}
 
@@ -265,7 +301,7 @@ public class DSReferenceSection extends TableSection {
 		}
 
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			 handleRemove();
+			handleRemove();
 			return true;
 		}
 
