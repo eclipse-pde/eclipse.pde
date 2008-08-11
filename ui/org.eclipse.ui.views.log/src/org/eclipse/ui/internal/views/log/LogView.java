@@ -230,7 +230,7 @@ public class LogView extends ViewPart implements ILogListener {
 		final Action importLogAction = createImportLogAction();
 		toolBarManager.add(importLogAction);
 
-		toolBarManager.add(new Separator());
+		toolBarManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
 		final Action clearAction = createClearAction();
 		toolBarManager.add(clearAction);
