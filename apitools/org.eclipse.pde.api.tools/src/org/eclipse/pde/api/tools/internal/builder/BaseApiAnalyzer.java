@@ -1065,6 +1065,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				switch(delta.getFlags()) {
 					case IDelta.EXECUTION_ENVIRONMENT :
 					case IDelta.OVERRIDEN_METHOD :
+					case IDelta.METHOD_MOVED_DOWN :
 					case IDelta.CLINIT :
 						return false;
 					case IDelta.TYPE_MEMBER :

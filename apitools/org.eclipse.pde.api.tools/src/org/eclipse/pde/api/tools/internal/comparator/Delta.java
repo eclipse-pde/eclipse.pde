@@ -103,15 +103,7 @@ public class Delta implements IDelta {
 	 * @param data
 	 */
 	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int modifiers, String typeName, String key, String data) {
-		this.componentID = componentID;
-		this.elementType = elementType;
-		this.kind = kind;
-		this.flags = flags;
-		this.modifiers = modifiers;
-		this.typeName = typeName == null ? Util.EMPTY_STRING : typeName;
-		this.restrictions = restrictions;
-		this.key = key;
-		this.datas = new String[] {data};
+		this(componentID, elementType, kind, flags, restrictions, modifiers, typeName, key, new String[] {data});
 	}
 
 	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int modifiers, String typeName, String key, String[] datas) {

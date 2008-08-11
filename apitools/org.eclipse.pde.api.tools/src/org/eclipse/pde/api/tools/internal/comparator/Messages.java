@@ -160,6 +160,8 @@ public class Messages extends NLS {
 								return 17;
 							case IDelta.TYPE_ARGUMENTS :
 								return 18;
+							case IDelta.METHOD_MOVED_DOWN :
+								return 97;
 						}
 						break;
 					case IDelta.CHANGED :
@@ -301,6 +303,8 @@ public class Messages extends NLS {
 								return 58;
 							case IDelta.TYPE_ARGUMENTS :
 								return 18;
+							case IDelta.METHOD_MOVED_DOWN :
+								return 97;
 						}
 						break;
 					case IDelta.CHANGED :

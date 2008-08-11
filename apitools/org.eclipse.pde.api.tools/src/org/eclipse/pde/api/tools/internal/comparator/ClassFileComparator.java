@@ -246,7 +246,7 @@ public class ClassFileComparator {
 				if (!VisibilityModifiers.isAPI(currentTypeVisibility)) {
 					// super class is not an API type so we need to check it for visible members
 					// if this is an API, it will be checked when the supertype is checked
-					boolean checkProtected = !RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions);
+					boolean ignoreProtected = RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions) || Util.isFinal(this.descriptor1.access);
 					String superTypeName = ((IReferenceTypeDescriptor) superclassTypeDescriptor.handle).getQualifiedName();
 					IClassFile superclassType1 = this.component.findClassFile(superTypeName);
 					IClassFile superclassType2 = this.component2.findClassFile(superTypeName);
@@ -254,7 +254,7 @@ public class ClassFileComparator {
 						ClassFileComparator comparator = new ClassFileComparator(superclassType1, superclassType2, this.component, this.component2, this.apiProfile, this.apiProfile2, this.visibilityModifiers);
 						IDelta delta2 = comparator.getDelta();
 						if (delta2 != null && delta2 != ApiComparator.NO_DELTA) {
-							if (!checkProtected) {
+							if (ignoreProtected) {
 								// filter all protected members changes
 								delta2.accept(new DeltaVisitor() {
 									public boolean visit(IDelta delta) {
@@ -2785,15 +2785,70 @@ public class ClassFileComparator {
 						}
 					}
 				}
-				this.addDelta(
-						typeDescriptor.getElementType(),
-						IDelta.ADDED,
-						found ? IDelta.OVERRIDEN_METHOD : IDelta.METHOD,
-						this.currentDescriptorRestrictions,
-						methodDescriptor.access,
-						this.classFile,
-						getKeyForMethod(methodDescriptor, typeDescriptor),
-						new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
+				if (!found) {
+					// check if the method has been pushed down
+					// if null we need to walk the hierarchy of descriptor
+					if (this.component != null) {
+						String name = methodDescriptor.name;
+						String descriptor = methodDescriptor.descriptor;
+						if (this.descriptor1.isInterface()) {
+							Set interfacesSet = getInterfacesSet(typeDescriptor, this.component, this.apiProfile);
+							if (interfacesSet != null && isStatusOk()) {
+								for (Iterator iterator = interfacesSet.iterator(); iterator.hasNext();) {
+									TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
+									MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
+									if (methodDescriptor3 == null) {
+										continue;
+									} else {
+										// interface method can only be public
+										// method has been move up in the hierarchy - report the delta and abort loop
+										found = true;
+										break;
+									}
+								}
+							}
+						} else {
+							List superclassList = getSuperclassList(typeDescriptor, this.component, this.apiProfile, true);
+							if (superclassList != null && isStatusOk()) {
+								loop: for (Iterator iterator = superclassList.iterator(); iterator.hasNext();) {
+									TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
+									MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
+									if (methodDescriptor3 == null) {
+										continue;
+									} else {
+										int access3 = methodDescriptor3.access;
+										if (Util.isPublic(access3)
+												|| Util.isProtected(access3)) {
+											// method has been pushed down in the hierarchy - report the delta and abort loop
+											// TODO need to make the distinction between methods that need to be re-implemented and methods that don't
+											found = true;
+											break loop;
+										}
+									}
+								}
+							}
+						}
+					}
+					this.addDelta(
+							typeDescriptor.getElementType(),
+							IDelta.ADDED,
+							found ? IDelta.METHOD_MOVED_DOWN : IDelta.METHOD,
+							this.currentDescriptorRestrictions,
+							methodDescriptor.access,
+							this.classFile,
+							getKeyForMethod(methodDescriptor, typeDescriptor),
+							new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
+			} else {
+					this.addDelta(
+							typeDescriptor.getElementType(),
+							IDelta.ADDED,
+							found ? IDelta.OVERRIDEN_METHOD : IDelta.METHOD,
+							this.currentDescriptorRestrictions,
+							methodDescriptor.access,
+							this.classFile,
+							getKeyForMethod(methodDescriptor, typeDescriptor),
+							new String[] {Util.getDescriptorName(typeDescriptor), methodDisplayName });
+				}
 			}
 		} else {
 			this.addDelta(

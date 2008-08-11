@@ -863,6 +863,17 @@ public interface IDelta {
 	 */
 	public static final int API_METHOD_WITHOUT_DEFAULT_VALUE = 66;
 	/**
+	 * Delta kind flag that denotes a method has moved down in the type hierarchy.
+	 *  <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int METHOD_MOVED_DOWN = 67;
+	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
 	 * 
 	 * @return true if the receiver has no children deltas, false otherwise.
