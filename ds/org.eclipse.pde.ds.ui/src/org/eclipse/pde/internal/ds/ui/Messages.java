@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira N�brega <rafael.oliveira@gmail.com> - bug 223738
+ *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui;
 
@@ -18,9 +18,9 @@ public class Messages extends NLS {
 
 	public static String DSAddItemAction_addProperties;
 	public static String DSAddItemAction_addProperty;
-	public static String DSAddItemAction_addProvide;
+	public static String DSAddItemAction_addProvidedService;
+	public static String DSAddItemAction_addReferencedService;
 	public static String DSAddItemAction_addService;
-	public static String DSAddItemAction_addComponent;
 
 	public static String DSComponentDetails_mainSectionTitle;
 	public static String DSComponentDetails_mainSectionDescription;

@@ -510,7 +510,6 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		DSAddItemAction addProperty = new DSAddItemAction();
 		DSAddItemAction addProvide = new DSAddItemAction();
 		DSAddItemAction addService = new DSAddItemAction();
-		DSAddItemAction addImplementation = new DSAddItemAction();
 		DSAddItemAction addReference = new DSAddItemAction();
 
 		if (canAddProperties) {

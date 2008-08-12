@@ -56,13 +56,13 @@ public class DSAddItemAction extends Action {
 			setText(Messages.DSAddItemAction_addProperty);
 			break;
 		case IDSConstants.TYPE_PROVIDE:
-			setText(Messages.DSAddItemAction_addProvide);
+			setText(Messages.DSAddItemAction_addProvidedService);
 			break;
 		case IDSConstants.TYPE_REFERENCE:
-			setText(Messages.DSAddItemAction_addService);
+			setText(Messages.DSAddItemAction_addReferencedService);
 			break;
 		case IDSConstants.TYPE_SERVICE:
-			setText(Messages.DSAddItemAction_addComponent);
+			setText(Messages.DSAddItemAction_addService);
 			break;
 		default:
 			break;
