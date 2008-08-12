@@ -15,8 +15,8 @@ package org.eclipse.pde.internal.ds.ui.editor;
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.IConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -42,7 +42,7 @@ public class DSEditor extends MultiSourceEditor {
 			addPage(new DSOverviewPage(this));
 			addPage(new DSPage(this));
 		} catch (PartInitException e) {
-			PDEPlugin.logException(e);
+			Activator.logException(e);
 		}
 		// Add source page
 		addSourcePage(DSInputContext.CONTEXT_ID);

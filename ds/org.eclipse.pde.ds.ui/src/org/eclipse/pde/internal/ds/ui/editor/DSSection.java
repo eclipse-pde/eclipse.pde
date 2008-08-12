@@ -64,9 +64,7 @@ public class DSSection extends PDESection {
 		initializeAttributes();
 		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridData data = new GridData(GridData.BEGINNING);
-		data.widthHint = 350;
-		data.heightHint = 100;
+		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
 		section.setText(Messages.DSSection_title);
 		section.setDescription(Messages.DSSection_description);

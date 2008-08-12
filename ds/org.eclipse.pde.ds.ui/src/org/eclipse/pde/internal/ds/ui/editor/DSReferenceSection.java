@@ -84,10 +84,7 @@ public class DSReferenceSection extends TableSection {
 		section.setLayout(FormLayoutFactory
 				.createClearTableWrapLayout(false, 1));
 
-		// TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
-		GridData data = new GridData(GridData.BEGINNING);
-		data.widthHint = 350;
-		data.heightHint = 150;
+		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
 
 		Composite container = createClientContainer(section, 2, toolkit);

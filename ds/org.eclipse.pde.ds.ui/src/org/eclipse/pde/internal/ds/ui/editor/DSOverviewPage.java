@@ -30,7 +30,6 @@ public class DSOverviewPage extends PDEFormPage implements
 	public static final String PAGE_ID = Messages.DSSimpPage_pageId;
 
 	public DSOverviewPage(FormEditor editor) {
-
 		super(editor, PAGE_ID, Messages.DSSimpPage_title);
 	}
 
@@ -52,7 +51,6 @@ public class DSOverviewPage extends PDEFormPage implements
 		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 
 		// Sections
-		
 		managedForm.addPart(new DSSection(this, body));
 		managedForm.addPart(new DSReferenceSection(this, body));
 		managedForm.addPart(new DSProvideSection(this, body));
