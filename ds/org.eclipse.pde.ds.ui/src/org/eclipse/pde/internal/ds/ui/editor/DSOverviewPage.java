@@ -51,7 +51,7 @@ public class DSOverviewPage extends PDEFormPage implements
 		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 
 		// Sections
-		managedForm.addPart(new DSSection(this, body));
+		managedForm.addPart(new DSServiceComponentSection(this, body));
 		managedForm.addPart(new DSReferenceSection(this, body));
 		managedForm.addPart(new DSProvideSection(this, body));
 	}

@@ -56,7 +56,6 @@ public class DSProvideSection extends TableSection {
 	private TableViewer fProvidesTable;
 	private Action fRemoveAction;
 	private Action fAddAction;
-	private Action fEditAction;
 
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object inputElement) {
@@ -79,8 +78,7 @@ public class DSProvideSection extends TableSection {
 	public DSProvideSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {
 				Messages.DSProvideSection_add,
-				Messages.DSProvideSection_remove,
-				Messages.DSProvideSection_edit });
+				Messages.DSProvideSection_remove });
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
@@ -135,9 +133,6 @@ public class DSProvideSection extends TableSection {
 		case 1:
 			handleRemove();
 			break;
-		case 2:
-			handleEdit();
-			break;
 		}
 	}
 
@@ -173,14 +168,6 @@ public class DSProvideSection extends TableSection {
 			}
 		};
 		fRemoveAction.setEnabled(isEditable());
-
-		fEditAction = new Action(Messages.DSProvideSection_edit) {
-			public void run() {
-				handleEdit();
-			}
-		};
-		fEditAction.setEnabled(isEditable());
-
 	}
 
 	private void updateButtons() {
@@ -190,8 +177,6 @@ public class DSProvideSection extends TableSection {
 		TablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(0, isEditable());
 		tablePart.setButtonEnabled(1, isEditable()
-				&& table.getSelection().length > 0);
-		tablePart.setButtonEnabled(2, isEditable()
 				&& table.getSelection().length > 0);
 	}
 
@@ -217,7 +202,7 @@ public class DSProvideSection extends TableSection {
 
 	private void doOpenSelectionDialog(int scopeType) {
 		try {
-			String filter = "";
+			String filter = ""; //$NON-NLS-1$
 			filter = filter.substring(filter.lastIndexOf(".") + 1); //$NON-NLS-1$
 			SelectionDialog dialog = JavaUI.createTypeDialog(Activator
 					.getActiveWorkbenchShell(), PlatformUI.getWorkbench()
@@ -250,14 +235,6 @@ public class DSProvideSection extends TableSection {
 
 		// add provide
 		service.addProvidedService(provide);
-	}
-
-	private String getLineDelimiter() {
-		DSInputContext inputContext = getDSContext();
-		if (inputContext != null) {
-			return inputContext.getLineDelimiter();
-		}
-		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
 
 	public void modelChanged(IModelChangedEvent e) {

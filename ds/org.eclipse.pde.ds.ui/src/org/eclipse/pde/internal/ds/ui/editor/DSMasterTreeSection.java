@@ -319,7 +319,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	 */
 	public void refresh() {
 		// Get the form page
-		DSPage page = (DSPage) getPage();
+		DSDetailsPage page = (DSDetailsPage) getPage();
 		// Replace the current dirty model with the model reloaded from
 		// file
 		fModel = (IDSModel) page.getModel();

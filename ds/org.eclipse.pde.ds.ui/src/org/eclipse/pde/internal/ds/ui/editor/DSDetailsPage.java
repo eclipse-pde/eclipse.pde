@@ -33,13 +33,13 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-public class DSPage extends PDEFormPage implements IModelChangedListener {
+public class DSDetailsPage extends PDEFormPage implements IModelChangedListener {
 
 	public static final String PAGE_ID = Messages.DSPage_pageId;
 
 	private DSBlock fBlock;
 
-	public DSPage(FormEditor editor) {
+	public DSDetailsPage(FormEditor editor) {
 		super(editor, PAGE_ID, Messages.DSPage_title);
 
 		fBlock = new DSBlock(this);

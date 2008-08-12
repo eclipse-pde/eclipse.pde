@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 242028
+ *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
@@ -46,7 +46,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class DSSection extends PDESection {
+public class DSServiceComponentSection extends PDESection {
 
 	private IDSComponent fComponent;
 	private IDSImplementation fImplementation;
@@ -54,7 +54,7 @@ public class DSSection extends PDESection {
 	private FormEntry fNameEntry;
 	private IDSModel fModel;
 
-	public DSSection(PDEFormPage page, Composite parent) {
+	public DSServiceComponentSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}

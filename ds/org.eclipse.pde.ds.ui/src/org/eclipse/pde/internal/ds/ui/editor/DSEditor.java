@@ -15,6 +15,8 @@ package org.eclipse.pde.internal.ds.ui.editor;
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
@@ -29,9 +31,9 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
 
-// see TOCEditor or SimpleCSEditor as an example in org.eclipse.pde.ui
-
 public class DSEditor extends MultiSourceEditor {
+	
+	private Action fDetailsAction;
 
 	public DSEditor() {
 		super();
@@ -40,13 +42,17 @@ public class DSEditor extends MultiSourceEditor {
 	protected void addEditorPages() {
 		try {
 			addPage(new DSOverviewPage(this));
-			addPage(new DSPage(this));
+			addPage(new DSDetailsPage(this));
 		} catch (PartInitException e) {
 			Activator.logException(e);
 		}
 		// Add source page
 		addSourcePage(DSInputContext.CONTEXT_ID);
 
+	}
+	
+	public void contributeToToolbar(IToolBarManager manager) {
+		// TODO add help icon here maybe?
 	}
 
 	protected ISortableContentOutlinePage createContentOutline() {
