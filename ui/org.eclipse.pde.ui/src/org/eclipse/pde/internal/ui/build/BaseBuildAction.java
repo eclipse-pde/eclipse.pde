@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,8 @@ package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut;
-import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -195,7 +194,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate {
 			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String) null);
 			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
 			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
-			launchCopy.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, (String) null);
+			launchCopy.setAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, (String) null);
 			launchCopy.doSave();
 		} catch (CoreException e) {
 		}
