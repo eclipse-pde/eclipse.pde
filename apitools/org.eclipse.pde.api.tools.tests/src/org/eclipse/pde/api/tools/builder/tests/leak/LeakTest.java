@@ -49,7 +49,7 @@ public abstract class LeakTest extends ApiBuilderTest {
 		enableCompatibilityOptions(false);
 		enableLeakOptions(true);
 		enableSinceTagOptions(false);
-		enableUsageOptions(true);
+		enableUsageOptions(false);
 		enableVersionNumberOptions(false);
 	}
 	

@@ -23,6 +23,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Preferences;
@@ -274,6 +275,43 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	}
 	
 	/**
+	 * Performs the specified type of build on the given path, or the workspace if the path is <code>null</code>
+	 * @param type the type of build. One of:
+	 * <ol>
+	 * <li>IncrementalProjectBuilder#FULL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#INCREMENTAL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#CLEAN_BUILD</li>
+	 * </ol>
+	 * @param path the path of the project to build or <code>null</code> if the workspace should be built
+	 */
+	private void doBuild(int type, IPath path) {
+		switch(type) {
+			case IncrementalProjectBuilder.FULL_BUILD: {
+				if(path == null) {
+					fullBuild();
+				}
+				else {
+					fullBuild(path);
+				}
+				break;
+			}
+			case IncrementalProjectBuilder.INCREMENTAL_BUILD: {
+				if(path == null) {
+					incrementalBuild();
+				}
+				else {
+					incrementalBuild(path);
+				}
+				break;
+			}
+			case IncrementalProjectBuilder.CLEAN_BUILD: {
+				cleanBuild();
+				break;
+			}
+		}
+	}
+	
+	/**
 	 * Deploys a full build with the given package and source names, where: 
 	 * <ol>
 	 * <li>the listing of internal package names will set all those packages that exist to be x-internal=true in the manifest</li>
@@ -286,33 +324,17 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @param internalpnames the names of packages to mark as x-internal=true in the manifest of the project
 	 * @param expectingproblemson the fully qualified names of the types we are expecting to see problems on
 	 * @param expectingproblems the problem ids we expect to see on each of the types specified in the expectingproblemson array
+	 * @param buildtype the type of build to run. One of:
+	 * <ol>
+	 * <li>IncrementalProjectBuilder#FULL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#INCREMENTAL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#CLEAN_BUILD</li>
+	 * </ol>
 	 */
-	protected void deployFullBuildLeakTest(String[] packagenames, String[] sourcenames, String[] internalpnames, String[] expectingproblemson, boolean expectingproblems) {
+	protected void deployLeakTest(String[] packagenames, String[] sourcenames, String[] internalpnames, String[] expectingproblemson, boolean expectingproblems, int buildtype, boolean buildworkspace) {
 		try {
 			IPath path = assertProject(sourcenames, packagenames, internalpnames);
-			fullBuild();
-			if(expectingproblems) {
-				IJavaProject jproject = getEnv().getJavaProject(path);
-				for(int i = 0; i < expectingproblemson.length; i++) {
-					IType type = jproject.findType(expectingproblemson[i]);
-					assertNotNull("The type "+expectingproblemson[i]+" must exist", type);
-					expectingOnlySpecificProblemsFor(type.getPath(), getExpectedProblemIds());
-				}
-				assertProblems(getEnv().getProblems());
-			}
-			else {
-				expectingNoProblems();
-			}
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
-	}
-	
-	protected void deployIncrementalBuildLeakTest(String[] packagenames, String[] sourcenames, String[] internalpnames, String[] expectingproblemson, boolean expectingproblems) {
-		try {
-			IPath path = assertProject(sourcenames, packagenames, internalpnames);
-			incrementalBuild();
+			doBuild(buildtype, (buildworkspace ? null : path));
 			if(expectingproblems) {
 				IJavaProject jproject = getEnv().getJavaProject(path);
 				for(int i = 0; i < expectingproblemson.length; i++) {
