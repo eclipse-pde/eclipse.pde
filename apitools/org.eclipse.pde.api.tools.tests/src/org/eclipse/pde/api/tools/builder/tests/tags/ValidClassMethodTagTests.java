@@ -48,7 +48,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassMethodTag1I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 	
 	/**
@@ -56,7 +56,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidClassMethodTag1F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test1", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassMethodTag2I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", false);
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidClassMethodTag2F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test2", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test2", false);
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassMethodTag3I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test3", false);
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidClassMethodTag3F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test3", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test3", false);
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassMethodTag4I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test4", false);
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidClassMethodTag4F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test4", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test4", false);
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassMethodTag5I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test5", false);
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidClassMethodTag5F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test5", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test5", false);
 	}
 	
 	/**
@@ -128,7 +128,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassMethodTag6I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test6", false);
 	}
 	
 	/**
@@ -136,7 +136,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidClassMethodTag6F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test6", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test6", false);
 	}
 	
 	/**
@@ -144,7 +144,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassMethodTag7I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test7", false);
 	}
 	
 	/**
@@ -152,7 +152,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidClassMethodTag7F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test7", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test7", false);
 	}
 	
 	/**
@@ -160,7 +160,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassMethodTag8I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test8", false);
 	}
 	
 	/**
@@ -168,7 +168,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidClassMethodTag8F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test8", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test8", false);
 	}
 	
 	/**
@@ -176,7 +176,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassMethodTag9I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test9", false);
 	}
 	
 	/**
@@ -184,7 +184,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidClassMethodTag9F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test9", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test9", false);
 	}
 	
 	/**
@@ -192,7 +192,7 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassMethodTag10I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test10", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test10", false);
 	}
 	
 	/**
@@ -200,6 +200,6 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidClassMethodTag10F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test10", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test10", false);
 	}
 }

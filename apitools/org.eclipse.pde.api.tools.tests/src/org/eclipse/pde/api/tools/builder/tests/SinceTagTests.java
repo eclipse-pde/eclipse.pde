@@ -49,10 +49,10 @@ public class SinceTagTests extends ApiBuilderTest {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestProblemIds()
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
-	protected int[] getTestProblemIds() {
-		return null;
+	protected int getDefaultProblemId() {
+		return 0;
 	}
 
 	/* (non-Javadoc)

@@ -141,11 +141,6 @@ public abstract class TagTest extends ApiBuilderTest {
 		return array;
 	}
 	
-	/**
-	 * @return the default problem id for the given tag test
-	 */
-	protected abstract int getDefaultProblemId();
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */

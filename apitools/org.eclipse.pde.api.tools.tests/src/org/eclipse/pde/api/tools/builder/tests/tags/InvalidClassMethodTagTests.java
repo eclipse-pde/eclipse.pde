@@ -62,7 +62,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag1I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", true);
 	}
 	
 	/**
@@ -71,7 +71,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest(TESTING_PACKAGE, "test1", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test1", true);
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag2I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", true);
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest(TESTING_PACKAGE, "test2", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test2", true);
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag3I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test3", true);
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest(TESTING_PACKAGE, "test3", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test3", true);
 	}
 	
 	/**
@@ -116,7 +116,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag4I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test4", true);
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployFullBuildTest(TESTING_PACKAGE, "test4", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test4", true);
 	}
 	
 	/**
@@ -134,7 +134,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag5I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest("", "test5", true);
+		deployIncrementalBuildTagTest("", "test5", true);
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest("", "test5", true);
+		deployFullBuildTagTest("", "test5", true);
 	}
 	
 	/**
@@ -152,7 +152,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag6I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test6", true);
 	}
 	
 	/**
@@ -161,7 +161,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest(TESTING_PACKAGE, "test6", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test6", true);
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag7I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test7", true);
 	}
 	
 	/**
@@ -179,7 +179,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest(TESTING_PACKAGE, "test7", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test7", true);
 	}
 	
 	/**
@@ -188,7 +188,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag8I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test8", true);
 	}
 	
 	/**
@@ -197,7 +197,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest(TESTING_PACKAGE, "test8", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test8", true);
 	}
 	
 	/**
@@ -206,7 +206,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag9I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test9", true);
 	}
 	
 	/**
@@ -215,7 +215,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployFullBuildTest(TESTING_PACKAGE, "test9", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test9", true);
 	}
 	
 	/**
@@ -224,7 +224,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag10I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest("", "test10", true);
+		deployIncrementalBuildTagTest("", "test10", true);
 	}
 	
 	/**
@@ -233,7 +233,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest("", "test10", true);
+		deployFullBuildTagTest("", "test10", true);
 	}
 	
 	/**
@@ -242,7 +242,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag11I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test11", true);
 	}
 	
 	/**
@@ -251,7 +251,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest(TESTING_PACKAGE, "test11", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test11", true);
 	}
 	
 	/**
@@ -260,7 +260,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag12I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test12", true);
 	}
 	
 	/**
@@ -269,7 +269,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest(TESTING_PACKAGE, "test12", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test12", true);
 	}
 	
 	/**
@@ -278,7 +278,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag13I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test13", true);
 	}
 	
 	/**
@@ -287,7 +287,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest(TESTING_PACKAGE, "test13", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test13", true);
 	}
 	
 	/**
@@ -296,7 +296,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag14I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test14", true);
 	}
 	
 	/**
@@ -305,7 +305,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployFullBuildTest(TESTING_PACKAGE, "test14", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test14", true);
 	}
 	
 	/**
@@ -314,7 +314,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag15I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTest("", "test15", true);
+		deployIncrementalBuildTagTest("", "test15", true);
 	}
 	
 	/**
@@ -323,7 +323,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTest("", "test15", true);
+		deployFullBuildTagTest("", "test15", true);
 	}
 	
 	/**
@@ -332,7 +332,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag16I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test16", true);
 	}
 	
 	/**
@@ -341,7 +341,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest(TESTING_PACKAGE, "test16", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test16", true);
 	}
 	
 	/**
@@ -350,7 +350,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag17I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test17", true);
 	}
 	
 	/**
@@ -359,7 +359,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest(TESTING_PACKAGE, "test17", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test17", true);
 	}
 	
 	/**
@@ -368,7 +368,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag18I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test18", true);
 	}
 	
 	/**
@@ -377,7 +377,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest(TESTING_PACKAGE, "test18", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test18", true);
 	}
 	
 	/**
@@ -386,7 +386,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag19I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test19", true);
 	}
 	
 	/**
@@ -395,7 +395,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test19", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test19", true);
 	}
 	
 	/**
@@ -404,7 +404,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag20I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest("", "test20", true);
+		deployIncrementalBuildTagTest("", "test20", true);
 	}
 	
 	/**
@@ -413,7 +413,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest("", "test20", true);
+		deployFullBuildTagTest("", "test20", true);
 	}
 	
 	/**
@@ -422,7 +422,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag21I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test21", true);
 	}
 	
 	/**
@@ -431,7 +431,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest(TESTING_PACKAGE, "test21", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test21", true);
 	}
 	
 	/**
@@ -440,7 +440,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag22I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test22", true);
 	}
 	
 	/**
@@ -449,7 +449,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag22F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest(TESTING_PACKAGE, "test22", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test22", true);
 	}
 	
 	/**
@@ -458,7 +458,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag23I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test23", true);
 	}
 	
 	/**
@@ -467,7 +467,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag23F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest(TESTING_PACKAGE, "test23", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test23", true);
 	}
 	
 	/**
@@ -476,7 +476,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag24I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test24", true);
 	}
 	
 	/**
@@ -485,7 +485,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag24F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test24", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test24", true);
 	}
 	
 	/**
@@ -494,7 +494,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag25I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest("", "test25", true);
+		deployIncrementalBuildTagTest("", "test25", true);
 	}
 	
 	/**
@@ -503,7 +503,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag25F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest("", "test25", true);
+		deployFullBuildTagTest("", "test25", true);
 	}
 	
 	/**
@@ -512,7 +512,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag26I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test26", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test26", true);
 	}
 	
 	/**
@@ -521,7 +521,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag26F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest(TESTING_PACKAGE, "test26", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test26", true);
 	}
 	
 	/**
@@ -530,7 +530,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag27I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test27", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test27", true);
 	}
 	
 	/**
@@ -539,7 +539,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag27F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest(TESTING_PACKAGE, "test27", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test27", true);
 	}
 	
 	/**
@@ -548,7 +548,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag28I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test28", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test28", true);
 	}
 	
 	/**
@@ -557,7 +557,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag28F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest(TESTING_PACKAGE, "test28", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test28", true);
 	}
 	
 	/**
@@ -566,7 +566,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag29I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test29", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test29", true);
 	}
 	
 	/**
@@ -575,7 +575,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag29F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test29", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test29", true);
 	}
 	
 	/**
@@ -584,7 +584,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag30I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTest("", "test30", true);
+		deployIncrementalBuildTagTest("", "test30", true);
 	}
 	
 	/**
@@ -593,6 +593,6 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 */
 	public void testInvalidClassMethodTag30F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTest("", "test30", true);
+		deployFullBuildTagTest("", "test30", true);
 	}
 }

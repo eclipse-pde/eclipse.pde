@@ -56,7 +56,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidEnumMethodTag1I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", true);
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidEnumMethodTag1F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test1", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test1", true);
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidEnumMethodTag2I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", true);
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidEnumMethodTag2F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test2", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test2", true);
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidEnumMethodTag3I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test3", true);
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidEnumMethodTag3F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test3", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test3", true);
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidEnumMethodTag4I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test4", true);
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidEnumMethodTag4F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test4", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test4", true);
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidEnumMethodTag5I() {
-		deployIncrementalBuildTest("", "test5", true);
+		deployIncrementalBuildTagTest("", "test5", true);
 	}
 	
 	/**
@@ -128,6 +128,6 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidEnumMethodTag5F() {
-		deployFullBuildTest("", "test5", true);
+		deployFullBuildTagTest("", "test5", true);
 	}
 }

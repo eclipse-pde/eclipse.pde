@@ -22,21 +22,27 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.tests.builder.BuilderTests;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.builder.tests.compatibility.CompatibilityTest;
-import org.eclipse.pde.api.tools.builder.tests.leak.LeakTests;
+import org.eclipse.pde.api.tools.builder.tests.leak.LeakTest;
 import org.eclipse.pde.api.tools.builder.tests.tags.TagTest;
-import org.eclipse.pde.api.tools.builder.tests.usage.UsageTests;
+import org.eclipse.pde.api.tools.builder.tests.usage.UsageTest;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Base class for API builder tests
@@ -65,13 +71,13 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	
 	/**
 	 * Returns the contents of the source file in the given category with the given name
-	 * @param testcategory the path to the folder containing the test source
-	 * @param testname the name of the test (which is the name of the file)
+	 * @param srcpath the path to the folder containing the test source
+	 * @param srcname the name of the test (which is the name of the file)
 	 * @return the contents of the source file as a string, or <code>null</code>
 	 */
-	protected String getSourceContents(IPath testcategory, String testname) {
+	protected String getSourceContents(IPath srcpath, String srcname) {
 		String contents = null;
-		IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(testcategory).append(testname+JAVA_EXTENSION);
+		IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(srcpath).append(srcname+JAVA_EXTENSION);
 		File file = path.toFile();
 		if(file.exists()) {
 			contents = Util.getFileContentAsString(file);
@@ -161,7 +167,11 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Sets up the project for a given test using the specified source.
 	 * 
-	 * @param sourcename
+	 * @param sourcename the name of the source file to create in the project
+	 * @param packagename the name of the package to create in the project in the default 'src' package
+	 * fragment root
+	 * 
+	 * @return the path to the package defined by packagename
 	 */
 	protected IPath assertProject(String sourcename, String packagename) throws JavaModelException {
 		IPath ppath = getEnv().addProject(getTestingProjectName(), getTestCompliance());
@@ -178,13 +188,13 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	}
 	
 	/**
-	 * Deploys a full build test using the given source file in the specified package,
-	 * looking for problems specified in the implementation of {@link #getTestProblemId()}
+	 * Deploys a full build test for API Javadoc tags using the given source file in the specified package,
+	 * looking for problems specified from {@link #getExpectedProblemIds()()}
 	 * @param packagename
 	 * @param sourcename
 	 * @param expectingproblems
 	 */
-	protected void deployFullBuildTest(String packagename, String sourcename, boolean expectingproblems) {
+	protected void deployFullBuildTagTest(String packagename, String sourcename, boolean expectingproblems) {
 		try {
 			IPath path = assertProject(sourcename, packagename);
 			fullBuild();
@@ -203,13 +213,13 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	}
 	
 	/**
-	 * Deploys an incremental build test using the given source file in the specified package,
-	 * looking for problems specified in the implementation of {@link #getTestProblemId()}
+	 * Deploys an incremental build test for API Javadoc tags using the given source file in the specified package,
+	 * looking for problems specified from {@link #getExpectedProblemIds()()}
 	 * @param packagename
 	 * @param sourcename
 	 * @param expectingproblems
 	 */
-	protected void deployIncrementalBuildTest(String packagename, String sourcename, boolean expectingproblems) {
+	protected void deployIncrementalBuildTagTest(String packagename, String sourcename, boolean expectingproblems) {
 		try {
 			IPath path = assertProject(sourcename, packagename);
 			incrementalBuild();
@@ -220,6 +230,100 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			}
 			else {
 				expectingNoProblemsFor(sourcepath);
+			}
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Sets up the project for a given test using the specified source.
+	 * The listing of source names and package names must be equal in size, as each source name will be
+	 * placed in the the corresponding package listed in packagenames
+	 * 
+	 * @param sourcenames listing of source names to deploy in the test project
+	 * @param packagenames listing of package name to deploy in the 'src' root of the project
+	 * @param internalpackages listing of the name of packages to make internal in the testing project (set x-internal to true)
+	 * 
+	 * @return the path to the new project
+	 */
+	protected IPath assertProject(String[] sourcenames, String[] packagenames, String[] internalpackages) throws JavaModelException, CoreException {
+		assertTrue("source and package name lists must be the same size", sourcenames.length == packagenames.length);
+		IPath ppath = getEnv().addProject(getTestingProjectName(), getTestCompliance());
+		assertTrue("The path for '"+getTestingProjectName()+"' must exist", !ppath.isEmpty());
+		IPath frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
+		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
+		IProject project = getEnv().getProject(ppath);
+		for(int i = 0; i < sourcenames.length; i++) {
+			IPath packpath = getEnv().addPackage(frpath, packagenames[i]);
+			assertTrue("The path for '"+packagenames[i]+"' must exist", !packpath.isEmpty());
+			String contents = getSourceContents(getTestSourcePath(), sourcenames[i]);
+			assertNotNull("the source contents for '"+sourcenames[i]+"' must exist", contents);
+			IPath cpath = getEnv().addClass(packpath, sourcenames[i], contents);
+			assertTrue("The path for '"+sourcenames[i]+"' must exist", !cpath.isEmpty());
+			ProjectUtils.addExportedPackage(project, packagenames[i], false, null);
+		}
+		for(int i = 0; i < internalpackages.length; i++) {
+			IPackageFragment pack = getEnv().getJavaProject(ppath).findPackageFragment(getEnv().getPackagePath(frpath, internalpackages[i]));
+			if(pack != null) {
+				ProjectUtils.addExportedPackage(project, internalpackages[i], true, null);
+			}
+		}
+		return ppath;
+	}
+	
+	/**
+	 * Deploys a full build with the given package and source names, where: 
+	 * <ol>
+	 * <li>the listing of internal package names will set all those packages that exist to be x-internal=true in the manifest</li>
+	 * <li>the listing of fully qualified type names will each be checked for set expected problem id</li>
+	 * <li>all other packages specified in packagenames that do not appear in internalpnames will be set to exported</li>
+	 * </ol>
+	 * @param packagenames the names of the packages to create in the testing project
+	 * @param sourcenames the names of the source files to create in the testing project. Each source will be placed in the 
+	 * corresponding package from the packagnames array, i.e. sourcenames[0] will be placed in packagenames[0]
+	 * @param internalpnames the names of packages to mark as x-internal=true in the manifest of the project
+	 * @param expectingproblemson the fully qualified names of the types we are expecting to see problems on
+	 * @param expectingproblems the problem ids we expect to see on each of the types specified in the expectingproblemson array
+	 */
+	protected void deployFullBuildLeakTest(String[] packagenames, String[] sourcenames, String[] internalpnames, String[] expectingproblemson, boolean expectingproblems) {
+		try {
+			IPath path = assertProject(sourcenames, packagenames, internalpnames);
+			fullBuild();
+			if(expectingproblems) {
+				IJavaProject jproject = getEnv().getJavaProject(path);
+				for(int i = 0; i < expectingproblemson.length; i++) {
+					IType type = jproject.findType(expectingproblemson[i]);
+					assertNotNull("The type "+expectingproblemson[i]+" must exist", type);
+					expectingOnlySpecificProblemsFor(type.getPath(), getExpectedProblemIds());
+				}
+				assertProblems(getEnv().getProblems());
+			}
+			else {
+				expectingNoProblems();
+			}
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	protected void deployIncrementalBuildLeakTest(String[] packagenames, String[] sourcenames, String[] internalpnames, String[] expectingproblemson, boolean expectingproblems) {
+		try {
+			IPath path = assertProject(sourcenames, packagenames, internalpnames);
+			incrementalBuild();
+			if(expectingproblems) {
+				IJavaProject jproject = getEnv().getJavaProject(path);
+				for(int i = 0; i < expectingproblemson.length; i++) {
+					IType type = jproject.findType(expectingproblemson[i]);
+					assertNotNull("The type "+expectingproblemson[i]+" must exist", type);
+					expectingOnlySpecificProblemsFor(type.getPath(), getExpectedProblemIds());
+				}
+				assertProblems(getEnv().getProblems());
+			}
+			else {
+				expectingNoProblems();
 			}
 		}
 		catch(Exception e) {
@@ -252,6 +356,11 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @return the name of the testing project for the implementing test suite 
 	 */
 	protected abstract String getTestingProjectName();
+	
+	/**
+	 * @return the default problem id for the given test
+	 */
+	protected abstract int getDefaultProblemId();
 	
 	/**
 	 * @return the ids of the {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem} we are
@@ -624,8 +733,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			VersionNumberingTests.class,
 			BaselineProblemTests.class,
 			CompatibilityTest.class,
-			UsageTests.class,	
-			LeakTests.class,
+			UsageTest.class,	
+			LeakTest.class,
 			TagTest.class
 		};
 		return classes;

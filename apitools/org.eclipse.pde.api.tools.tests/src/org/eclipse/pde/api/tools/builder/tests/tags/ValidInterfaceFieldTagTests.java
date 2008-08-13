@@ -48,7 +48,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceFieldTag1I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 	
 	/**
@@ -56,7 +56,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceFieldTag1F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test1", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceFieldTag2I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", false);
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceFieldTag2F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test2", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test2", false);
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceFieldTag3I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test3", false);
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceFieldTag3F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test3", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test3", false);
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceFieldTag4I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test4", false);
 	}
 	
 	/**
@@ -104,6 +104,6 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceFieldTag4F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test4", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test4", false);
 	}
 }

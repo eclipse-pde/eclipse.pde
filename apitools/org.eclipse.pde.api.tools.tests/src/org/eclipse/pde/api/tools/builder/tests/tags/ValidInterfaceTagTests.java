@@ -48,7 +48,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * the testing package a.b.c using an incremental build
 	 */
 	public void testValidInterfaceTag1I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * the testing package a.b.c using a full build
 	 */
 	public void testValidInterfaceTag1F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test1", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * the testing package a.b.c using an incremental build
 	 */
 	public void testValidInterfaceTag2I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", false);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * the testing package a.b.c using a full build
 	 */
 	public void testValidInterfaceTag2F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test2", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test2", false);
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * the testing package a.b.c using an incremental build
 	 */
 	public void testValidInterfaceTag3I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test3", false);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * the testing package a.b.c using a full build
 	 */
 	public void testValidInterfaceTag3F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test3", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test3", false);
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * the testing package a.b.c using an incremental build
 	 */
 	public void testValidInterfaceTag4I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test4", false);
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * the testing package a.b.c using a full build
 	 */
 	public void testValidInterfaceTag4F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test4", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test4", false);
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * the testing package a.b.c using an incremental build
 	 */
 	public void testValidInterfaceTag5I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test5", false);
 	}
 
 	/**
@@ -120,6 +120,6 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	 * the testing package a.b.c using a full build
 	 */
 	public void testValidInterfaceTag5F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test5", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test5", false);
 	}
 }

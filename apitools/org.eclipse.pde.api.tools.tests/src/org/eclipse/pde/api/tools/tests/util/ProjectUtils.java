@@ -88,7 +88,7 @@ public class ProjectUtils {
 		}
 		
 		public String getId() {return pname;}
-		public String getLibraryName() {return org.eclipse.pde.api.tools.internal.util.Util.getDefaultEEId();}
+		public String getLibraryName() {return null;}
 		public String getName() {return pname;}
 		public String getOutputFolderName() {return binfolder;}
 		public String getProvider() {return "ibm";}
@@ -96,7 +96,7 @@ public class ProjectUtils {
 		public String getVersion() {return "1.0.0";}
 		public boolean hasBundleStructure() {return true;}
 		public boolean isLegacy() {return false;}
-		public boolean isSimple() {return true;}
+		public boolean isSimple() {return false;}
 		public String getTargetVersion() {return "3.4";}
 	}
 	

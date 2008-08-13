@@ -56,7 +56,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidEnumFieldTag1I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidEnumFieldTag1F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test1", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in an outer enum using an incremental build
 	 */
 	public void testValidEnumFieldTag2I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", false);
 	}
 	
 	/**
@@ -80,14 +80,14 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in an outer enum using a full build
 	 */
 	public void testValidEnumFieldTag2F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test2", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test2", false);
 	}
 	/**
 	 * Tests that @noreference is valid for non-final, non-static-final fields
 	 * in an inner enum using an incremental build
 	 */
 	public void testValidEnumFieldTag4I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in an inner enum using a full build
 	 */
 	public void testValidEnumFieldTag4F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test1", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in an enum in the default package using an incremental build
 	 */
 	public void testValidEnumFieldTag3I() {
-		deployIncrementalBuildTest("", "test1", false);
+		deployIncrementalBuildTagTest("", "test1", false);
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in an enum in the default package using a full build
 	 */
 	public void testValidEnumFieldTag3F() {
-		deployFullBuildTest("", "test1", false);
+		deployFullBuildTagTest("", "test1", false);
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in a variety of inner / outer enums using an incremental build
 	 */
 	public void testValidEnumFieldTag5I() {
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", false);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 	
 	/**
@@ -127,6 +127,6 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in a variety of inner / outer enums using a full build
 	 */
 	public void testValidEnumFieldTag5F() {
-		deployFullBuildTest(TESTING_PACKAGE, "test1", false);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test1", false);
 	}
 }

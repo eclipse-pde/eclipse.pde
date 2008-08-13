@@ -70,7 +70,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag1I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test1", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", true);
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test1", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test1", true);
 	}
 	
 	/**
@@ -88,7 +88,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag2I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test2", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", true);
 	}
 	
 	/**
@@ -97,7 +97,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test2", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test2", true);
 	}
 	
 	/**
@@ -106,7 +106,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag3I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test3", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test3", true);
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test3", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test3", true);
 	}
 	
 	/**
@@ -124,7 +124,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag4I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test4", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test4", true);
 	}
 	
 	/**
@@ -133,7 +133,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployFullBuildTest(TESTING_PACKAGE, "test4", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test4", true);
 	}
 	
 	/**
@@ -142,7 +142,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag5I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test5", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test5", true);
 	}
 	
 	/**
@@ -151,7 +151,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test5", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test5", true);
 	}
 	
 	/**
@@ -160,7 +160,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag6I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test6", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test6", true);
 	}
 	
 	/**
@@ -169,7 +169,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test6", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test6", true);
 	}
 	
 	/**
@@ -178,7 +178,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag7I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test7", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test7", true);
 	}
 	
 	/**
@@ -187,7 +187,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test7", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test7", true);
 	}
 	
 	/**
@@ -196,7 +196,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag8I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test8", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test8", true);
 	}
 	
 	/**
@@ -205,7 +205,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test8", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test8", true);
 	}
 	
 	/**
@@ -214,7 +214,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag9I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test9", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test9", true);
 	}
 	
 	/**
@@ -223,7 +223,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployFullBuildTest(TESTING_PACKAGE, "test9", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test9", true);
 	}
 	
 	/**
@@ -232,7 +232,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag10I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test10", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test10", true);
 	}
 	
 	/**
@@ -241,7 +241,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test10", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test10", true);
 	}
 	
 	/**
@@ -250,7 +250,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag11I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test11", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test11", true);
 	}
 	
 	/**
@@ -259,7 +259,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test11", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test11", true);
 	}
 	
 	/**
@@ -268,7 +268,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag12I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test12", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test12", true);
 	}
 	
 	/**
@@ -277,7 +277,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test12", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test12", true);
 	}
 	
 	/**
@@ -286,7 +286,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag13I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test13", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test13", true);
 	}
 	
 	/**
@@ -295,7 +295,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test13", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test13", true);
 	}
 	
 	/**
@@ -304,7 +304,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag14I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test14", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test14", true);
 	}
 	
 	/**
@@ -313,7 +313,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployFullBuildTest(TESTING_PACKAGE, "test14", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test14", true);
 	}
 	
 	/**
@@ -322,7 +322,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag15I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test15", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test15", true);
 	}
 	
 	/**
@@ -331,7 +331,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test15", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test15", true);
 	}
 	
 	/**
@@ -340,7 +340,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag16I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test16", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test16", true);
 	}
 	
 	/**
@@ -349,7 +349,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test16", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test16", true);
 	}
 	
 	/**
@@ -358,7 +358,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag17I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test17", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test17", true);
 	}
 	
 	/**
@@ -367,7 +367,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test17", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test17", true);
 	}
 	
 	/**
@@ -376,7 +376,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag18I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test18", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test18", true);
 	}
 	
 	/**
@@ -385,7 +385,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test18", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test18", true);
 	}
 	
 	/**
@@ -394,7 +394,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag19I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test19", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test19", true);
 	}
 	
 	/**
@@ -403,7 +403,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployFullBuildTest(TESTING_PACKAGE, "test19", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test19", true);
 	}
 	
 	/**
@@ -412,7 +412,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag20I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test20", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test20", true);
 	}
 	
 	/**
@@ -421,7 +421,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test20", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test20", true);
 	}
 	
 	/**
@@ -430,7 +430,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag21I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test21", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test21", true);
 	}
 	
 	/**
@@ -439,7 +439,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test21", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test21", true);
 	}
 	
 	/**
@@ -448,7 +448,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag22I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test22", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test22", true);
 	}
 	
 	/**
@@ -457,7 +457,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag22F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test22", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test22", true);
 	}
 	
 	/**
@@ -466,7 +466,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag23I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test23", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test23", true);
 	}
 	
 	/**
@@ -475,7 +475,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag23F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test23", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test23", true);
 	}
 	
 	/**
@@ -484,7 +484,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag24I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test24", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test24", true);
 	}
 	
 	/**
@@ -493,7 +493,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag24F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployFullBuildTest(TESTING_PACKAGE, "test24", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test24", true);
 	}
 	
 	/**
@@ -502,7 +502,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag25I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test25", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test25", true);
 	}
 	
 	/**
@@ -511,7 +511,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag25F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test25", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test25", true);
 	}
 	
 	/**
@@ -520,7 +520,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag26I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test26", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test26", true);
 	}
 	
 	/**
@@ -529,7 +529,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag26F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test26", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test26", true);
 	}
 	
 	/**
@@ -538,7 +538,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag27I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test27", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test27", true);
 	}
 	
 	/**
@@ -547,7 +547,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag27F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test27", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test27", true);
 	}
 	
 	/**
@@ -556,7 +556,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag28I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test28", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test28", true);
 	}
 	
 	/**
@@ -565,7 +565,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag28F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test28", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test28", true);
 	}
 	
 	/**
@@ -574,7 +574,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag29I() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test29", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test29", true);
 	}
 	
 	/**
@@ -583,7 +583,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag29F() {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployFullBuildTest(TESTING_PACKAGE, "test29", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test29", true);
 	}
 	
 	/**
@@ -592,7 +592,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag30I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTest(TESTING_PACKAGE, "test30", true);
+		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test30", true);
 	}
 	
 	/**
@@ -601,7 +601,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidEnumFieldTag30F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTest(TESTING_PACKAGE, "test30", true);
+		deployFullBuildTagTest(TESTING_PACKAGE, "test30", true);
 	}
 
 }
