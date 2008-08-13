@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 
@@ -56,7 +57,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidEnumMethodTag1I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", true);
+		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -64,7 +65,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidEnumMethodTag1F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test1", true);
+		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -72,7 +73,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidEnumMethodTag2I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", true);
+		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -80,7 +81,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidEnumMethodTag2F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test2", true);
+		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -88,7 +89,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidEnumMethodTag3I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test3", true);
+		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -96,7 +97,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidEnumMethodTag3F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test3", true);
+		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -104,7 +105,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidEnumMethodTag4I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test4", true);
+		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -112,7 +113,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidEnumMethodTag4F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test4", true);
+		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -120,7 +121,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidEnumMethodTag5I() {
-		deployIncrementalBuildTagTest("", "test5", true);
+		deployTagTest("", "test5", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -128,6 +129,6 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidEnumMethodTag5F() {
-		deployFullBuildTagTest("", "test5", true);
+		deployTagTest("", "test5", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 }

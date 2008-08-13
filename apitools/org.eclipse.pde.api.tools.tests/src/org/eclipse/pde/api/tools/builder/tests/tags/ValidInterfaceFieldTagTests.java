@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -48,7 +49,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceFieldTag1I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", false);
+		deployTagTest(TESTING_PACKAGE, "test1", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -56,7 +57,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceFieldTag1F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test1", false);
+		deployTagTest(TESTING_PACKAGE, "test1", false, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -64,7 +65,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceFieldTag2I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", false);
+		deployTagTest(TESTING_PACKAGE, "test2", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -72,7 +73,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceFieldTag2F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test2", false);
+		deployTagTest(TESTING_PACKAGE, "test2", false, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -80,7 +81,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceFieldTag3I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test3", false);
+		deployTagTest(TESTING_PACKAGE, "test3", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -88,7 +89,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceFieldTag3F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test3", false);
+		deployTagTest(TESTING_PACKAGE, "test3", false, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -96,7 +97,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceFieldTag4I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test4", false);
+		deployTagTest(TESTING_PACKAGE, "test4", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -104,6 +105,6 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceFieldTag4F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test4", false);
+		deployTagTest(TESTING_PACKAGE, "test4", false, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 }

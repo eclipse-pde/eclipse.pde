@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -71,7 +72,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag1I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", true);
+		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -80,7 +81,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test1", true);
+		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -89,7 +90,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag2I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", true);
+		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -98,7 +99,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test2", true);
+		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -107,7 +108,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag3I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test3", true);
+		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -116,7 +117,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test3", true);
+		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -125,7 +126,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag4I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test4", true);
+		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -134,7 +135,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test4", true);
+		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -143,7 +144,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag5I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest("", "test5", true);
+		deployTagTest("", "test5", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -152,7 +153,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest("", "test5", true);
+		deployTagTest("", "test5", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -161,7 +162,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag6I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test6", true);
+		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -170,7 +171,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test6", true);
+		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 
 	/**
@@ -179,7 +180,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag7I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test7", true);
+		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -188,7 +189,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test7", true);
+		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -197,7 +198,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag8I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test8", true);
+		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -206,7 +207,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test8", true);
+		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -215,7 +216,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag9I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test9", true);
+		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -224,7 +225,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test9", true);
+		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -233,7 +234,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag10I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test10", true);
+		deployTagTest(TESTING_PACKAGE, "test10", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -242,7 +243,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test10", true);
+		deployTagTest(TESTING_PACKAGE, "test10", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -251,7 +252,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag11I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test11", true);
+		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -260,7 +261,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test11", true);
+		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -269,7 +270,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag12I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test12", true);
+		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -278,7 +279,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test12", true);
+		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -287,7 +288,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag13I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test13", true);
+		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -296,7 +297,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test13", true);
+		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -305,7 +306,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag14I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test14", true);
+		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -314,7 +315,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test14", true);
+		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -323,7 +324,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag15I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test15", true);
+		deployTagTest(TESTING_PACKAGE, "test15", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -332,7 +333,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test15", true);
+		deployTagTest(TESTING_PACKAGE, "test15", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -341,7 +342,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag16I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test16", true);
+		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -350,7 +351,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test16", true);
+		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -359,7 +360,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag17I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test17", true);
+		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -368,7 +369,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test17", true);
+		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -377,7 +378,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag18I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test18", true);
+		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -386,7 +387,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test18", true);
+		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -395,7 +396,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag19I() {
 		setExpectedProblemIds(getDefaultProblemSet(16));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test19", true);
+		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -404,7 +405,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(16));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test19", true);
+		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -413,7 +414,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag20I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test20", true);
+		deployTagTest(TESTING_PACKAGE, "test20", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -422,7 +423,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test20", true);
+		deployTagTest(TESTING_PACKAGE, "test20", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -431,7 +432,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag21I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test21", true);
+		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -440,7 +441,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test21", true);
+		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -449,7 +450,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag22I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test22", true);
+		deployTagTest(TESTING_PACKAGE, "test22", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -458,7 +459,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag22F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test22", true);
+		deployTagTest(TESTING_PACKAGE, "test22", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -467,7 +468,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag23I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test23", true);
+		deployTagTest(TESTING_PACKAGE, "test23", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -476,7 +477,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag23F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test23", true);
+		deployTagTest(TESTING_PACKAGE, "test23", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -485,7 +486,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag24I() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test24", true);
+		deployTagTest(TESTING_PACKAGE, "test24", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -494,7 +495,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag24F() {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test24", true);
+		deployTagTest(TESTING_PACKAGE, "test24", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -503,7 +504,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag25I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest("", "test25", true);
+		deployTagTest("", "test25", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -512,6 +513,6 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 */
 	public void testInvalidInterfaceTag25F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest("", "test25", true);
+		deployTagTest("", "test25", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 }

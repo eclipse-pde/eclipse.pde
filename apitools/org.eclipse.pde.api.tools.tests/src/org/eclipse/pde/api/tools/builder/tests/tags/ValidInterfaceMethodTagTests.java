@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -48,7 +49,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceMethodTag1I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", true);
+		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -56,7 +57,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceMethodTag1F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test1", true);
+		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -64,7 +65,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceMethodTag2I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", true);
+		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -72,7 +73,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceMethodTag2F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test2", true);
+		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -80,7 +81,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceMethodTag3I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test3", true);
+		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -88,7 +89,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceMethodTag3F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test3", true);
+		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -96,7 +97,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceMethodTag4I() {
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test4", true);
+		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -104,7 +105,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceMethodTag4F() {
-		deployFullBuildTagTest(TESTING_PACKAGE, "test4", true);
+		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -112,7 +113,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using an incremental build
 	 */
 	public void testValidInterfaceMethodTag5I() {
-		deployIncrementalBuildTagTest("", "test5", true);
+		deployTagTest("", "test5", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -120,6 +121,6 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * using a full build
 	 */
 	public void testValidInterfaceMethodTag5F() {
-		deployFullBuildTagTest("", "test5", true);
+		deployTagTest("", "test5", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 }

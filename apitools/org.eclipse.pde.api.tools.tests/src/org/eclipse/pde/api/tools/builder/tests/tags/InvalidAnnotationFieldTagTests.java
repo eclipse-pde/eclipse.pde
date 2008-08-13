@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
@@ -69,7 +70,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag1I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test1", true);
+		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -78,7 +79,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag1F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test1", true);
+		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -87,7 +88,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag2I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test2", true);
+		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -96,7 +97,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag2F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test2", true);
+		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -105,7 +106,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag3I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test3", true);
+		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -114,7 +115,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag3F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test3", true);
+		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -123,7 +124,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag4I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test4", true);
+		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -132,7 +133,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag4F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test4", true);
+		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -141,7 +142,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag5I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest("", "test5", true);
+		deployTagTest("", "test5", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -150,7 +151,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag5F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest("", "test5", true);
+		deployTagTest("", "test5", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -159,7 +160,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag6I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test6", true);
+		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -168,7 +169,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag6F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test6", true);
+		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -177,7 +178,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag7I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test7", true);
+		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -186,7 +187,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag7F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test7", true);
+		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -195,7 +196,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag8I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test8", true);
+		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -204,7 +205,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag8F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test8", true);
+		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -213,7 +214,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag9I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test9", true);
+		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -222,7 +223,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag9F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test9", true);
+		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -231,7 +232,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag10I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest("", "test10", true);
+		deployTagTest("", "test10", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -240,7 +241,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag10F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest("", "test10", true);
+		deployTagTest("", "test10", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -249,7 +250,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag11I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test11", true);
+		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -258,7 +259,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag11F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test11", true);
+		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -267,7 +268,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag12I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test12", true);
+		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -276,7 +277,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag12F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test12", true);
+		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -285,7 +286,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag13I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test13", true);
+		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -294,7 +295,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag13F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test13", true);
+		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -303,7 +304,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag14I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test14", true);
+		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -312,7 +313,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag14F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test14", true);
+		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -321,7 +322,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag15I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest("", "test15", true);
+		deployTagTest("", "test15", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -330,7 +331,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag15F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest("", "test15", true);
+		deployTagTest("", "test15", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -339,7 +340,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag16I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test16", true);
+		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -348,7 +349,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag16F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test16", true);
+		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -357,7 +358,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag17I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test17", true);
+		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -366,7 +367,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag17F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test17", true);
+		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -375,7 +376,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag18I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test18", true);
+		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -384,7 +385,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag18F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test18", true);
+		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -393,7 +394,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag19I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test19", true);
+		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -402,7 +403,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag19F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test19", true);
+		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -411,7 +412,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag20I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest("", "test20", true);
+		deployTagTest("", "test20", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -420,7 +421,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag20F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest("", "test20", true);
+		deployTagTest("", "test20", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -429,7 +430,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag21I() {
 		setExpectedProblemIds(getDefaultProblemSet(15));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test21", true);
+		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -438,7 +439,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag21F() {
 		setExpectedProblemIds(getDefaultProblemSet(15));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test21", true);
+		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -447,7 +448,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag22I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test22", true);
+		deployTagTest(TESTING_PACKAGE, "test22", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -456,7 +457,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag22F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test22", true);
+		deployTagTest(TESTING_PACKAGE, "test22", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -465,7 +466,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag23I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test23", true);
+		deployTagTest(TESTING_PACKAGE, "test23", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -474,7 +475,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag23F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test23", true);
+		deployTagTest(TESTING_PACKAGE, "test23", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -483,7 +484,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag24I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test24", true);
+		deployTagTest(TESTING_PACKAGE, "test24", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -492,7 +493,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag24F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test24", true);
+		deployTagTest(TESTING_PACKAGE, "test24", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -501,7 +502,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag25I() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployIncrementalBuildTagTest(TESTING_PACKAGE, "test25", true);
+		deployTagTest(TESTING_PACKAGE, "test25", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -510,7 +511,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag25F() {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployFullBuildTagTest(TESTING_PACKAGE, "test25", true);
+		deployTagTest(TESTING_PACKAGE, "test25", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -519,7 +520,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag26I() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployIncrementalBuildTagTest("", "test26", true);
+		deployTagTest("", "test26", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -528,6 +529,6 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	public void testInvalidAnnotationFieldTag26F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployFullBuildTagTest("", "test26", true);
+		deployTagTest("", "test26", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 }

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests;
 
+import junit.framework.Test;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.Test;
 
 /**
  * Tests that the build correctly finds and reports problems 

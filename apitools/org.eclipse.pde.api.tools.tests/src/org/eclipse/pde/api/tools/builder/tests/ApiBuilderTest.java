@@ -172,7 +172,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @param packagename the name of the package to create in the project in the default 'src' package
 	 * fragment root
 	 * 
-	 * @return the path to the package defined by packagename
+	 * @return the path to the new project
 	 */
 	protected IPath assertProject(String sourcename, String packagename) throws JavaModelException {
 		IPath ppath = getEnv().addProject(getTestingProjectName(), getTestCompliance());
@@ -185,7 +185,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		assertNotNull("the source contents for '"+sourcename+"' must exist", contents);
 		IPath cpath = getEnv().addClass(packpath, sourcename, contents);
 		assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
-		return packpath;
+		return ppath;
 	}
 	
 	/**
@@ -194,37 +194,22 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @param packagename
 	 * @param sourcename
 	 * @param expectingproblems
+	 * @param buildtype the type of build to perform. One of:
+	 * <ol>
+	 * <li>IncrementalProjectBuilder#FULL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#INCREMENTAL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#CLEAN_BUILD</li>
+	 * </ol>
+	 * @param buildworkspace true if the workspace should be built, false if the created project should be built
 	 */
-	protected void deployFullBuildTagTest(String packagename, String sourcename, boolean expectingproblems) {
+	protected void deployTagTest(String packagename, String sourcename, boolean expectingproblems, int buildtype, boolean buildworkspace) {
 		try {
 			IPath path = assertProject(sourcename, packagename);
-			fullBuild();
-			IPath sourcepath = path.append(sourcename+JAVA_EXTENSION);
-			if(expectingproblems) {
-				expectingOnlySpecificProblemsFor(sourcepath, getExpectedProblemIds());
-				assertProblems(getEnv().getProblems());
-			}
-			else {
-				expectingNoProblemsFor(sourcepath);
-			}
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
-	}
-	
-	/**
-	 * Deploys an incremental build test for API Javadoc tags using the given source file in the specified package,
-	 * looking for problems specified from {@link #getExpectedProblemIds()()}
-	 * @param packagename
-	 * @param sourcename
-	 * @param expectingproblems
-	 */
-	protected void deployIncrementalBuildTagTest(String packagename, String sourcename, boolean expectingproblems) {
-		try {
-			IPath path = assertProject(sourcename, packagename);
-			incrementalBuild();
-			IPath sourcepath = path.append(sourcename+JAVA_EXTENSION);
+			doBuild(buildtype, (buildworkspace ? null : path));
+			IJavaProject jproject = getEnv().getJavaProject(path);
+			IType type = jproject.findType(packagename, sourcename);
+			assertNotNull("The type "+sourcename+" from package "+packagename+" must exist", type);
+			IPath sourcepath = type.getPath();
 			if(expectingproblems) {
 				expectingOnlySpecificProblemsFor(sourcepath, getExpectedProblemIds());
 				assertProblems(getEnv().getProblems());
@@ -330,6 +315,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * <li>IncrementalProjectBuilder#INCREMENTAL_BUILD</li>
 	 * <li>IncrementalProjectBuilder#CLEAN_BUILD</li>
 	 * </ol>
+	 * @param buildworkspace true if the entire workspace should be built, false if only the created project should be built
 	 */
 	protected void deployLeakTest(String[] packagenames, String[] sourcenames, String[] internalpnames, String[] expectingproblemson, boolean expectingproblems, int buildtype, boolean buildworkspace) {
 		try {
