@@ -92,7 +92,7 @@ public interface IApiProblemTypes {
 	public static final String INTERFACE_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
 	public static final String INTERFACE_REMOVED_TYPE_PARAMETER =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
+		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETER);
 	public static final String INTERFACE_REMOVED_TYPE_PARAMETERS =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETERS);
 	public static final String INTERFACE_REMOVED_CLASS_BOUND =
