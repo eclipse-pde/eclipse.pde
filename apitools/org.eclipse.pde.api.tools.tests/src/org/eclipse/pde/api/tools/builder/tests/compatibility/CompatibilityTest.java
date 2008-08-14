@@ -202,7 +202,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			File[] files = dir.listFiles();
 			for (int i = 0; i < files.length; i++) {
 				File file = files[i];
-				if (file.isDirectory()) {
+				if (file.isDirectory() && !file.getName().equals("CVS")) {
 					createExistingProject(file);
 				}
 			}
