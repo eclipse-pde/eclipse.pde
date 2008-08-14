@@ -101,6 +101,45 @@ public class ClassCompatibilityTests extends CompatibilityTest {
 	}
 	
 	/**
+	 * Tests the removal of 2 public methods from an API class - incremental.
+	 */
+	public void testRemoveTwoPublicAPIMethodsI() throws Exception {
+		xRemoveTwoPublicAPIMethods(true);
+	}	
+	
+	/**
+	 * Tests the removal of 2 public methods from an API class - full.
+	 */
+	public void testRemoveTwoPublicAPIMethodsF() throws Exception {
+		xRemoveTwoPublicAPIMethods(false);
+	}	
+	
+	/**
+	 * Tests the removal of a public method from an API class - incremental.
+	 */
+	private void xRemoveTwoPublicAPIMethods(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTwoPublicMethods.java");
+		int[] ids = new int[] {
+			ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.CLASS_ELEMENT_TYPE,
+				IDelta.REMOVED,
+				IDelta.METHOD),
+			ApiProblemFactory.createProblemId(
+					IApiProblem.CATEGORY_COMPATIBILITY,
+					IDelta.CLASS_ELEMENT_TYPE,
+					IDelta.REMOVED,
+					IDelta.METHOD)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[2][];
+		args[0] = new String[]{"a.classes.RemoveTwoPublicMethods", "methodOne(String)"};
+		args[1] = new String[]{"a.classes.RemoveTwoPublicMethods", "methodTwo(int)"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	/**
 	 * Tests the removal of a protected method from an API class.
 	 */
 	private void xRemoveProtectedAPIMethod(boolean incremental) throws Exception {
