@@ -61,6 +61,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected final int[] NO_PROBLEM_IDS = new int[0];
 	
 	private int[] fProblems = null;
+	private String[][] fMessageArgs = null;
 	
 	/**
 	 * Constructor
@@ -361,6 +362,15 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	}
 	
 	/**
+	 * Sets the message arguments for corresponding problem ids.
+	 * 
+	 * @param messageArgs message arguments - an array of String for each expected problem.
+	 */
+	protected void setExpectedMessageArgs(String[][] messageArgs) {
+		fMessageArgs = messageArgs;
+	}
+	
+	/**
 	 * @return the name of the testing project for the implementing test suite 
 	 */
 	protected abstract String getTestingProjectName();
@@ -383,6 +393,16 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			return NO_PROBLEM_IDS;
 		}
 		return fProblems;
+	}
+	
+	/**
+	 * Returns the expected message arguments corresponding to expected problem ids, 
+	 * or <code>null</code> if unspecified.
+	 * 
+	 * @return message arguments for each expected problem or <code>null</code> if unspecified
+	 */
+	protected String[][] getExpectedMessageArgs() {
+		return fMessageArgs;
 	}
 	
 	/** 

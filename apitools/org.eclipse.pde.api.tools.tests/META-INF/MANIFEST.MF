@@ -29,3 +29,5 @@ Export-Package: org.eclipse.pde.api.tools.builder.tests,
  org.eclipse.pde.api.tools.tests,
  org.eclipse.pde.api.tools.tests.util,
  org.eclipse.pde.api.tools.util.tests;uses:="junit.framework"
+Bundle-Activator: org.eclipse.pde.api.tools.tests.ApiTestsPlugin
+Bundle-ActivationPolicy: lazy
