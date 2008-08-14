@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -341,7 +342,7 @@ public class ApiUseAnalyzer {
 			} else {
 				lookupName = refType.getQualifiedName().replace('$', '.');
 			}
-			IType type = project.findType(lookupName);
+			IType type = project.findType(lookupName, new NullProgressMonitor());
 			if (type == null) {
 				return null;
 			}
