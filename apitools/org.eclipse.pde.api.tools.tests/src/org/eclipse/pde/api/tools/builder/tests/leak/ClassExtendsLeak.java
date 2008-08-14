@@ -69,7 +69,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak1F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test1", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test1", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test1"}, 
 				true, 
@@ -84,7 +84,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak1I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test1", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test1", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test1"}, 
 				true, 
@@ -99,7 +99,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak2F() {
 		expectingNoProblems();
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test2", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test2", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test2"}, 
 				true, 
@@ -114,7 +114,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak2I() {
 		expectingNoProblems();
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test2", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test2", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test2"}, 
 				true, 
@@ -129,7 +129,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak3F() {
 		expectingNoProblems();
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test3", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test3", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test3"}, 
 				true, 
@@ -144,7 +144,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak3I() {
 		expectingNoProblems();
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test3", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test3", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test3"}, 
 				true, 
@@ -159,7 +159,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak4F() {
 		expectingNoProblems();
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test4", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test4", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test4"}, 
 				true, 
@@ -174,7 +174,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak4I() {
 		expectingNoProblems();
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test4", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test4", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test4"}, 
 				true, 
@@ -189,7 +189,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak5F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test5", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test5", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test5"}, 
 				true, 
@@ -204,7 +204,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak5I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test5", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test5", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test5"}, 
 				true, 
@@ -219,7 +219,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak6F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test6", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test6", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test6"}, 
 				true, 
@@ -234,7 +234,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak6I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test6", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test6", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test6"}, 
 				true, 
@@ -249,7 +249,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak7F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test7", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test7", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test7"}, 
 				true, 
@@ -264,7 +264,7 @@ public class ClassExtendsLeak extends LeakTest {
 	public void testClassExtendsLeak7I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test7", TESTING_INTERNAL_SOURCE_NAME}, 
+				new String[] {"test7", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+".test7"}, 
 				true, 

@@ -31,7 +31,8 @@ public abstract class LeakTest extends ApiBuilderTest {
 
 	protected final String TESTING_PACKAGE = "x.y.z";
 	protected final String TESTING_PACKAGE_INTERNAL = "internal.x.y.z";
-	protected final String TESTING_INTERNAL_SOURCE_NAME = "internal";
+	protected final String TESTING_INTERNAL_CLASS_NAME = "internal";
+	protected final String TESTING_INTERNAL_INTERFACE_NAME = "Iinternal";
 	
 	/**
 	 * Constructor
