@@ -8,19 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.classes;
+package a.classes.methods;
 
 /**
- * Tests removing two API methods.
+ * @noextend This class is not intended to be subclassed by clients.
  */
-public class RemoveTwoPublicMethods {
+public class RemovePublicMethodNoExtend {
 	
-	public int methodOne(String arg) {
+	public int publicMethod(String arg) {
 		return -1;
-	}
-	
-	public String methodTwo(int foo) {
-		return "";
 	}
 	
 }

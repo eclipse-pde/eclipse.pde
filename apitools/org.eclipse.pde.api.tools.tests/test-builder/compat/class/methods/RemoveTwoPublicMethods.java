@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.classes;
+package a.classes.methods;
 
 /**
- * Tests removing an API method.
+ * Tests removing two API methods.
  */
-public class RemovePublicMethod {
-		
+public class RemoveTwoPublicMethods {
+	
+	
 }

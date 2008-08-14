@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
-import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -24,13 +26,63 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  * 
  * @since 3.4
  */
-public class ClassCompatibilityTests extends CompatibilityTest {
+public abstract class ClassCompatibilityTests extends CompatibilityTest {
 	
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
 	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("org.eclipse.api.tools.tests.compatability.a/src/a/classes");
 
+	/**
+	 * Collects tests from the getAllTestClasses() method into the given suite
+	 * @param suite
+	 */
+	private static void collectTests(TestSuite suite) {
+		// Hack to load all classes before computing their suite of test cases
+		// this allow to reset test cases subsets while running all Builder tests...
+		Class[] classes = getAllTestClasses();
+
+		// Reset forgotten subsets of tests
+		TestCase.TESTS_PREFIX = null;
+		TestCase.TESTS_NAMES = null;
+		TestCase.TESTS_NUMBERS = null;
+		TestCase.TESTS_RANGE = null;
+		TestCase.RUN_ONLY_ID = null;
+
+		/* tests */
+		for (int i = 0, length = classes.length; i < length; i++) {
+			Class clazz = classes[i];
+			Method suiteMethod;
+			try {
+				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				continue;
+			}
+			Object test;
+			try {
+				test = suiteMethod.invoke(null, new Object[0]);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				continue;
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+				continue;
+			}
+			suite.addTest((Test) test);
+		}
+	}
+	
+	/**
+	 * @return all of the child test classes of this class
+	 */
+	private static Class[] getAllTestClasses() {
+		Class[] classes = new Class[] {
+			ClassCompatibilityMethodTests.class
+		};
+		return classes;
+	}	
+	
 	/**
 	 * Constructor
 	 * @param name
@@ -50,14 +102,9 @@ public class ClassCompatibilityTests extends CompatibilityTest {
 	 * @return the tests for this class
 	 */
 	public static Test suite() {
-		return buildTestSuite(ClassCompatibilityTests.class);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
-	 */
-	protected int getDefaultProblemId() {
-		return 0;
+		TestSuite suite = new TestSuite(ClassCompatibilityTests.class.getName());
+		collectTests(suite);
+		return suite;
 	}
 
 	/* (non-Javadoc)
@@ -66,132 +113,5 @@ public class ClassCompatibilityTests extends CompatibilityTest {
 	protected String getTestingProjectName() {
 		return "classcompat";
 	}
-	
-	/**
-	 * Tests the removal of a public method from an API class - incremental.
-	 */
-	private void xRemovePublicAPIMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethod.java");
-		int[] ids = new int[] {
-			ApiProblemFactory.createProblemId(
-				IApiProblem.CATEGORY_COMPATIBILITY,
-				IDelta.CLASS_ELEMENT_TYPE,
-				IDelta.REMOVED,
-				IDelta.METHOD)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{"a.classes.RemovePublicMethod", "publicMethod(String)"};
-		setExpectedMessageArgs(args);
-		performCompatibilityTest(filePath, incremental);
-	}
-	
-	/**
-	 * Tests the removal of a public method from an API class - incremental.
-	 */
-	public void testRemovePublicAPIMethodI() throws Exception {
-		xRemovePublicAPIMethod(true);
-	}	
-	
-	/**
-	 * Tests the removal of a public method from an API class - full.
-	 */
-	public void testRemovePublicAPIMethodF() throws Exception {
-		xRemovePublicAPIMethod(false);
-	}
-	
-	/**
-	 * Tests the removal of 2 public methods from an API class - incremental.
-	 */
-	public void testRemoveTwoPublicAPIMethodsI() throws Exception {
-		xRemoveTwoPublicAPIMethods(true);
-	}	
-	
-	/**
-	 * Tests the removal of 2 public methods from an API class - full.
-	 */
-	public void testRemoveTwoPublicAPIMethodsF() throws Exception {
-		xRemoveTwoPublicAPIMethods(false);
-	}	
-	
-	/**
-	 * Tests the removal of a public method from an API class - incremental.
-	 */
-	private void xRemoveTwoPublicAPIMethods(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTwoPublicMethods.java");
-		int[] ids = new int[] {
-			ApiProblemFactory.createProblemId(
-				IApiProblem.CATEGORY_COMPATIBILITY,
-				IDelta.CLASS_ELEMENT_TYPE,
-				IDelta.REMOVED,
-				IDelta.METHOD),
-			ApiProblemFactory.createProblemId(
-					IApiProblem.CATEGORY_COMPATIBILITY,
-					IDelta.CLASS_ELEMENT_TYPE,
-					IDelta.REMOVED,
-					IDelta.METHOD)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[2][];
-		args[0] = new String[]{"a.classes.RemoveTwoPublicMethods", "methodOne(String)"};
-		args[1] = new String[]{"a.classes.RemoveTwoPublicMethods", "methodTwo(int)"};
-		setExpectedMessageArgs(args);
-		performCompatibilityTest(filePath, incremental);
-	}
-	
-	/**
-	 * Tests the removal of a protected method from an API class.
-	 */
-	private void xRemoveProtectedAPIMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethod.java");
-		int[] ids = new int[] {
-			ApiProblemFactory.createProblemId(
-				IApiProblem.CATEGORY_COMPATIBILITY,
-				IDelta.CLASS_ELEMENT_TYPE,
-				IDelta.REMOVED,
-				IDelta.METHOD)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{"a.classes.RemoveProtectedMethod", "protectedMethod(String)"};
-		setExpectedMessageArgs(args);
-		performCompatibilityTest(filePath, incremental);
-	}
-	
-	/**
-	 * Tests the removal of a protected method from an API class - incremental.
-	 */
-	public void testRemoveProtectedAPIMethodI() throws Exception {
-		xRemoveProtectedAPIMethod(true);
-	}	
-	
-	/**
-	 * Tests the removal of a protected method from an API class - full.
-	 */
-	public void testRemoveProtectedAPIMethodF() throws Exception {
-		xRemoveProtectedAPIMethod(false);
-	}
-	
-	/**
-	 * Tests the removal of a private method from an API class.
-	 */
-	private void xRemovePrivateAPIMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePrivateMethod.java");
-		// there are no expected problems
-		performCompatibilityTest(filePath, incremental);
-	}
-	
-	/**
-	 * Tests the removal of a protected method from an API class - incremental.
-	 */
-	public void testRemovePrivateAPIMethodI() throws Exception {
-		xRemovePrivateAPIMethod(true);
-	}	
-	
-	/**
-	 * Tests the removal of a protected method from an API class - full.
-	 */
-	public void testRemovePrivateAPIMethodF() throws Exception {
-		xRemovePrivateAPIMethod(false);
-	}	
+
 }

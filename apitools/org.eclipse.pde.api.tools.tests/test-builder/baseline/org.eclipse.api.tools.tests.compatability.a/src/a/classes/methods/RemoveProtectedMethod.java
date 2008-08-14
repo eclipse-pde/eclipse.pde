@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.classes;
+package a.classes.methods;
 
 /**
- * Tests removing an API method.
+ * Tests removing a protected API method.
  */
-public class RemovePublicMethod {
+public class RemoveProtectedMethod {
 	
-	public int publicMethod(String arg) {
+	protected int protectedMethod(String arg) {
 		return -1;
 	}
 	

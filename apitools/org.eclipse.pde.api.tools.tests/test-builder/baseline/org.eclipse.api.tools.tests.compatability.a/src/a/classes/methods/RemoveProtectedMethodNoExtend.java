@@ -8,16 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.classes;
+package a.classes.methods;
 
 /**
- * Tests removing private method.
+ * @noextend This class is not intended to be subclassed by clients.
  */
-public class RemovePrivateMethod {
+public class RemoveProtectedMethodNoExtend {
 	
-	public int publicMethod(String arg) {
+	protected int protectedMethod(String arg) {
 		return -1;
 	}
-
 	
 }
