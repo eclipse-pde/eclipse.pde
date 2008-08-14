@@ -239,4 +239,62 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	public void testRemoveProtectedAPIMethodNoExtendF() throws Exception {
 		xRemoveProtectedAPIMethodNoExtend(false);
 	}	
+	
+	/**
+	 * Tests the removal of a public method from an API class annotated as noinstantiate - incremental.
+	 */
+	private void xRemovePublicAPIMethodNoInstantiate(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethodNoInstantiate.java");
+		int[] ids = new int[] {
+			getDefaultProblemId()
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicMethodNoInstantiate", "publicMethod(String)"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	/**
+	 * Tests the removal of a public method from an API class annotated as noinstantiate - incremental.
+	 */
+	public void testRemovePublicAPIMethodNoInstantiateI() throws Exception {
+		xRemovePublicAPIMethodNoInstantiate(true);
+	}	
+	
+	/**
+	 * Tests the removal of a public method from an API class annotated as noinstantiate - full.
+	 */
+	public void testRemovePublicAPIMethodNoInstantiateF() throws Exception {
+		xRemovePublicAPIMethodNoInstantiate(false);
+	}
+		
+	/**
+	 * Tests the removal of a protected method from an API class annotated as noinstantiate.
+	 */
+	private void xRemoveProtectedAPIMethodNoInstantiate(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoInstantiate.java");
+		int[] ids = new int[] {
+				getDefaultProblemId()
+			};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedMethodNoInstantiate", "protectedMethod(String)"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	/**
+	 * Tests the removal of a protected method from an API class annotated as noinstantiate - incremental.
+	 */
+	public void testRemoveProtectedAPIMethodNoInstantiateI() throws Exception {
+		xRemoveProtectedAPIMethodNoInstantiate(true);
+	}	
+	
+	/**
+	 * Tests the removal of a protected method from an API class annotated as noinstantiate - full.
+	 */
+	public void testRemoveProtectedAPIMethodNoInstantiateF() throws Exception {
+		xRemoveProtectedAPIMethodNoInstantiate(false);
+	}		
 }
