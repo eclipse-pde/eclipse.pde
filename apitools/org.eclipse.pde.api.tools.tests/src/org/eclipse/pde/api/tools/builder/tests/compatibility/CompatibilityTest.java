@@ -198,13 +198,12 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	protected void createInitialWorkspace() throws Exception {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("baseline");
 		File dir = path.toFile();
-		if(dir.exists()) {
-			File[] files = dir.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				File file = files[i];
-				if (file.isDirectory() && !file.getName().equals("CVS")) {
-					createExistingProject(file);
-				}
+		assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists());
+		File[] files = dir.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			File file = files[i];
+			if (file.isDirectory() && !file.getName().equals("CVS")) {
+				createExistingProject(file);
 			}
 		}
 		fullBuild();
@@ -308,34 +307,31 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		URI locationURI = description.getLocationURI();
 		// if location is null, project already exists in this location or
 		// some error condition occured.
-		if (locationURI != null) {
-			importSource = new File(locationURI);
-			IProjectDescription desc = workspace.newProjectDescription(projectName);
-			desc.setBuildSpec(description.getBuildSpec());
-			desc.setComment(description.getComment());
-			desc.setDynamicReferences(description.getDynamicReferences());
-			desc.setNatureIds(description.getNatureIds());
-			desc.setReferencedProjects(description.getReferencedProjects());
-			description = desc;
-		}
+		assertNotNull("project description location is null", locationURI);
+		importSource = new File(locationURI);
+		IProjectDescription desc = workspace.newProjectDescription(projectName);
+		desc.setBuildSpec(description.getBuildSpec());
+		desc.setComment(description.getComment());
+		desc.setDynamicReferences(description.getDynamicReferences());
+		desc.setNatureIds(description.getNatureIds());
+		desc.setReferencedProjects(description.getReferencedProjects());
+		description = desc;
 
 		project.create(description, null);
 		project.open(null);
 
 		// import operation to import project files
-		if (importSource != null) {
-			List filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
-			ImportOperation operation = new ImportOperation(
-					project.getFullPath(), importSource,
-					FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
-						public String queryOverwrite(String pathString) {
-							return IOverwriteQuery.ALL;
-						}
-					}, filesToImport);
-			operation.setOverwriteResources(true);
-			operation.setCreateContainerStructure(false);
-			operation.run(new NullProgressMonitor());
-		}
+		List filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
+		ImportOperation operation = new ImportOperation(
+				project.getFullPath(), importSource,
+				FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
+					public String queryOverwrite(String pathString) {
+						return IOverwriteQuery.ALL;
+					}
+				}, filesToImport);
+		operation.setOverwriteResources(true);
+		operation.setCreateContainerStructure(false);
+		operation.run(new NullProgressMonitor());
 	}	
 	
 	/**
