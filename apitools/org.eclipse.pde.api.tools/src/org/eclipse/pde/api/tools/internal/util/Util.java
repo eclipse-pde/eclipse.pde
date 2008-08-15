@@ -93,6 +93,7 @@ import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -1625,6 +1626,9 @@ public final class Util {
 	 */
 	private static void collectSyntheticParam(final MethodDeclaration method, List rparams) {
 		Assert.isNotNull(method);
+		if(isInTopLevelType(method)) {
+			return;
+		}
 		ASTNode parent = method.getParent();
 		StringBuffer name = new StringBuffer();
 		while(parent != null) {
@@ -1651,6 +1655,16 @@ public final class Util {
 		if(name.length() > 2) {
 			rparams.add(0, name.toString());
 		}
+	}
+	
+	/**
+	 * Determines if the given {@link MethodDeclaration} is present in a top level type
+	 * @param method
+	 * @return
+	 */
+	private static boolean isInTopLevelType(final MethodDeclaration method) {
+		TypeDeclaration type = (TypeDeclaration) method.getParent();
+		return type != null && type.isPackageMemberTypeDeclaration();
 	}
 	
 	/**
