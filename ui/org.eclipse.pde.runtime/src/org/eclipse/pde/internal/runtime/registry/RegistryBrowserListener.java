@@ -72,21 +72,9 @@ public class RegistryBrowserListener implements IRegistryChangeListener, BundleL
 		// TODO fix this method (and addToTree/removeFromTree)
 		// bug 130655
 		if (delta.getKind() == IExtensionDelta.ADDED) {
-			System.out.println("adding "); //$NON-NLS-1$
-			if (ext != null)
-				System.out.println("ext: " + ext.getUniqueIdentifier() + "/" + ext.getLabel() + " : " + ext.getExtensionPointUniqueIdentifier()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if (extPoint != null)
-				System.out.println("extPoint: " + extPoint.getUniqueIdentifier()); //$NON-NLS-1$
 			addExtensionObjectToTree(ext, extOnly);
 			addExtensionObjectToTree(extPoint, extOnly);
-			//			addToTree(ext);
-			//			addToTree(extPoint);
 		} else if (delta.getKind() == IExtensionDelta.REMOVED) {
-			System.out.println("removing "); //$NON-NLS-1$
-			if (ext != null)
-				System.out.println("ext: " + ext.getUniqueIdentifier() + " : " + ext.getExtensionPointUniqueIdentifier()); //$NON-NLS-1$ //$NON-NLS-2$
-			if (extPoint != null)
-				System.out.println("extPoint: " + extPoint.getUniqueIdentifier()); //$NON-NLS-1$
 			removeFromTree(ext);
 			removeFromTree(extPoint);
 		}
