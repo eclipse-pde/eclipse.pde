@@ -53,18 +53,17 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
-	private static final int F_BUTTON_ADD_SERVICE = 0;
-	private static final int F_BUTTON_ADD_PROPERTY = 1;
-	private static final int F_BUTTON_ADD_REFERENCE = 2;
+	private static final int F_BUTTON_ADD_REFERENCE = 0;
+	private static final int F_BUTTON_ADD_PROVIDE = 1;
+	private static final int F_BUTTON_ADD_PROPERTY = 2;
 	private static final int F_BUTTON_ADD_PROPERTIES = 3;
-	private static final int F_BUTTON_ADD_PROVIDE = 4;
 
 	// 5 and 6 constants missing due to null, null parameters at Class
 	// Constructor
 
-	private static final int F_BUTTON_REMOVE = 7;
-	private static final int F_BUTTON_UP = 8;
-	private static final int F_BUTTON_DOWN = 9;
+	private static final int F_BUTTON_REMOVE = 6;
+	private static final int F_BUTTON_UP = 7;
+	private static final int F_BUTTON_DOWN = 8;
 
 	private static final int F_UP_FLAG = -1;
 	private static final int F_DOWN_FLAG = 1;
@@ -81,22 +80,20 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 	private ControlDecoration fInfoDecoration;
 
 	// booleans used to set up buttons and context menu options
-	private boolean canAddService;
+	private boolean canAddProvide;
 	private boolean canAddProperty;
 	private boolean canAddProperties;
 	private boolean canAddReference;
-	private boolean canAddProvide;
 	private boolean canRemove;
 	private boolean canMoveUp;
 	private boolean canMoveDown;
 
 	public DSMasterTreeSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {
-				Messages.DSMasterTreeSection_addService,
-				Messages.DSMasterTreeSection_addProperty,
 				Messages.DSMasterTreeSection_addReference,
-				Messages.DSMasterTreeSection_addProperties,
-				Messages.DSMasterTreeSection_addProvide, null, null,
+				Messages.DSMasterTreeSection_addProvide,
+				Messages.DSMasterTreeSection_addProperty,
+				Messages.DSMasterTreeSection_addProperties, null, null,
 				Messages.DSMasterTreeSection_remove,
 				Messages.DSMasterTreeSection_up,
 				Messages.DSMasterTreeSection_down });
@@ -184,7 +181,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 			// Service component
 
 		}
-		getTreePart().setButtonEnabled(F_BUTTON_ADD_SERVICE, canAddService);
+		// getTreePart().setButtonEnabled(F_BUTTON_ADD_SERVICE, canAddService);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTY, canAddProperty);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_REFERENCE, canAddReference);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTIES,
@@ -201,15 +198,12 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		canAddProperty = true;
 		canAddProperties = true;
 		canAddReference = true;
+		canAddProvide = true;
 		canRemove = true;
 		canMoveUp = true;
 		canMoveDown = true;
 
 		IDSComponent component = (IDSComponent) fModel.getDSComponent();
-		// DS XML Files can have 0..1 Service Component
-		boolean hasService = component.getService() != null;
-		canAddService = (!hasService);
-		canAddProvide = (hasService);
 	}
 
 	/**
@@ -343,10 +337,8 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTIES, true);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROPERTY, true);
-		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROVIDE, false);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_PROVIDE, true);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_REFERENCE, true);
-		boolean hasService = (fModel.getDSComponent().getService() != null);
-		getTreePart().setButtonEnabled(F_BUTTON_ADD_SERVICE, !hasService);
 
 		IDSComponent dsComponent = fModel.getDSComponent();
 		// Select the ds node in the tree
@@ -375,9 +367,6 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		case F_BUTTON_ADD_REFERENCE:
 			handleAddAction(IDSConstants.TYPE_REFERENCE);
 			break;
-		case F_BUTTON_ADD_SERVICE:
-			handleAddAction(IDSConstants.TYPE_SERVICE);
-			break;
 		case F_BUTTON_REMOVE:
 			handleDeleteAction();
 			break;
@@ -395,16 +384,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		fAddStepAction.setType(type);
 
 		IDSObject object = getCurrentSelection();
-		if (object != null) {
-			fAddStepAction.setSelection(object);
-
-		} else {
-			if (type != IDSConstants.TYPE_PROVIDE) {
-				fAddStepAction.setSelection(fModel.getDSComponent());
-			} else {
-				return;
-			}
-		}
+		fAddStepAction.setSelection(fModel.getDSComponent());
 		// Execute the action
 		fAddStepAction.run();
 	}
@@ -491,7 +471,7 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 		manager.add(submenu);
 
 		cleanSetUpBooleans();
-		
+
 		// update Booleans
 		if (dsObject != null) {
 
@@ -504,12 +484,11 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 				canRemove = false;
 			}
 		}
-			
+
 		// Update Menus
 		DSAddItemAction addProperties = new DSAddItemAction();
 		DSAddItemAction addProperty = new DSAddItemAction();
 		DSAddItemAction addProvide = new DSAddItemAction();
-		DSAddItemAction addService = new DSAddItemAction();
 		DSAddItemAction addReference = new DSAddItemAction();
 
 		if (canAddProperties) {
@@ -522,18 +501,6 @@ public class DSMasterTreeSection extends TreeSection implements IDSMaster {
 			addProperties.setType(IDSConstants.TYPE_PROPERTIES);
 			addProperties.setEnabled(fModel.isEditable());
 			submenu.add(addProperties);
-		}
-
-		if (canAddService) {
-			IDSObject object = getCurrentSelection();
-			if (object != null) {
-				addService.setSelection(object);
-			} else {
-				addService.setSelection(fModel.getDSComponent());
-			}
-			addService.setType(IDSConstants.TYPE_SERVICE);
-			addService.setEnabled(fModel.isEditable());
-			submenu.add(addService);
 		}
 
 		if (canAddProperty) {

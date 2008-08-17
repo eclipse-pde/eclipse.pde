@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSObject;
+import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.Messages;
 
 public class DSAddItemAction extends Action {
@@ -61,9 +62,6 @@ public class DSAddItemAction extends Action {
 		case IDSConstants.TYPE_REFERENCE:
 			setText(Messages.DSAddItemAction_addReferencedService);
 			break;
-		case IDSConstants.TYPE_SERVICE:
-			setText(Messages.DSAddItemAction_addService);
-			break;
 		default:
 			break;
 		}
@@ -96,11 +94,7 @@ public class DSAddItemAction extends Action {
 			fNewObject = factory.createProperty();
 			break;
 		case IDSConstants.TYPE_PROVIDE:
-			fNewObject = factory.createProvide();
-			// only provide component isn't a child of DSRoot component.
-			// The user can select a IDSProvide or IDSService to add a new
-			// IDSProvide
-			fParent = ((IDSComponent) fParent).getService();
+			createProvidedService(factory);
 			break;
 		case IDSConstants.TYPE_REFERENCE:
 			fNewObject = factory.createReference();
@@ -108,6 +102,23 @@ public class DSAddItemAction extends Action {
 		}
 		return fNewObject;
 
+	}
+
+	private void createProvidedService(IDSDocumentFactory factory) {
+		IDSComponent component = (IDSComponent) fParent;
+		// if DSComponent has no service element
+		if(component.getService() == null) {
+			// create service element
+			IDSService service = factory.createService();
+			// add service element
+			fParent.addChildNode(service, true);
+		}
+		// Create Provided Service Element
+		fNewObject = factory.createProvide();
+		// only provide component isn't a child of DSRoot component.
+		// The user can select a IDSProvide or IDSService to add a new
+		// IDSProvide
+		fParent = ((IDSComponent) fParent).getService();
 	}
 
 	public IDSObject getFNewObject() {
