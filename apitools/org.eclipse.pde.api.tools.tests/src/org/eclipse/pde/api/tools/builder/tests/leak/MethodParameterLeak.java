@@ -22,6 +22,8 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public class MethodParameterLeak extends LeakTest {
 
+	private int pid = -1;
+	
 	/**
 	 * Constructor
 	 * @param name
@@ -34,7 +36,10 @@ public class MethodParameterLeak extends LeakTest {
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
 	protected int getDefaultProblemId() {
-		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_METHOD, IApiProblem.API_LEAK, IApiProblem.LEAK_METHOD_PARAMETER);
+		if(pid == -1) {
+			pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_METHOD, IApiProblem.API_LEAK, IApiProblem.LEAK_METHOD_PARAMETER);
+		}
+		return pid;
 	}
 
 }

@@ -15,7 +15,7 @@ import internal.x.y.z.Iinternal;
 /**
  * 
  */
-public interface test5 {
+public interface Etest5 {
 
 }
 

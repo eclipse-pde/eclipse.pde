@@ -741,7 +741,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		}
 		setBuilderOptions();
 		super.setUp();
-
 	}
 	
 	/* (non-Javadoc)
@@ -750,6 +749,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected void tearDown() throws Exception {
 		resetBuilderOptions();
 		fProblems = null;
+		fMessageArgs = null;
 		super.tearDown();
 	}
 	

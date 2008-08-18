@@ -26,6 +26,8 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public class ClassExtendsLeak extends LeakTest {
 
+	private int pid = -1;
+	
 	/**
 	 * Constructor
 	 * @param name
@@ -38,7 +40,10 @@ public class ClassExtendsLeak extends LeakTest {
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
 	protected int getDefaultProblemId() {
-		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.API_LEAK, IApiProblem.ILLEGAL_EXTEND);
+		if(pid == -1) {
+			pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.API_LEAK, IApiProblem.ILLEGAL_EXTEND);
+		}
+		return pid;
 	}
 	
 	/* (non-Javadoc)
@@ -68,6 +73,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 */
 	public void testClassExtendsLeak1F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"internal", "test1"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test1", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -83,6 +89,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 */
 	public void testClassExtendsLeak1I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"internal", "test1"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test1", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -188,6 +195,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 */
 	public void testClassExtendsLeak5F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"internal", "test5"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test5", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -203,6 +211,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 */
 	public void testClassExtendsLeak5I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"internal", "test5"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test5", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -218,6 +227,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 */
 	public void testClassExtendsLeak6F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"internal", "test6"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test6", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -233,6 +243,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 */
 	public void testClassExtendsLeak6I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"internal", "test6"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test6", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -248,6 +259,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 */
 	public void testClassExtendsLeak7F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"internal", "test7"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test7", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -263,6 +275,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 */
 	public void testClassExtendsLeak7I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"internal", "test7"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test7", TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 

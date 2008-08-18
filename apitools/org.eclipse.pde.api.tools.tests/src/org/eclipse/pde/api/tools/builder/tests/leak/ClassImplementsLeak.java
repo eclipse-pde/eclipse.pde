@@ -26,6 +26,8 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public class ClassImplementsLeak extends LeakTest {
 
+	private int pid = -1;
+	
 	/**
 	 * Constructor
 	 * @param name
@@ -38,7 +40,10 @@ public class ClassImplementsLeak extends LeakTest {
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
 	protected int getDefaultProblemId() {
-		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.API_LEAK, IApiProblem.LEAK_IMPLEMENTS);
+		if(pid == -1) {
+			pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.API_LEAK, IApiProblem.LEAK_IMPLEMENTS);
+		}
+		return pid;
 	}
 
 	/* (non-Javadoc)
@@ -61,6 +66,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 */
 	public void testClassImplementsLeak1F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"Iinternal", "test8"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test8", TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -76,6 +82,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 */
 	public void testClassImplementsLeak1I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"Iinternal", "test8"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test8", TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -181,6 +188,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 */
 	public void testClassImplementsLeak5F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"Iinternal", "test12"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test12", TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -196,6 +204,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 */
 	public void testClassImplementsLeak5I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"Iinternal", "test12"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test12", TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -211,6 +220,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 */
 	public void testClassImplementsLeak6F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"Iinternal", "test13"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test13", TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -226,6 +236,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 */
 	public void testClassImplementsLeak6I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"Iinternal", "test13"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test13", TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -241,6 +252,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 */
 	public void testClassImplementsLeak7F() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"Iinternal", "test14"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test14", TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -256,6 +268,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 */
 	public void testClassImplementsLeak7I() {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		setExpectedMessageArgs(new String[][] {{"Iinternal", "test14"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {"test14", TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 

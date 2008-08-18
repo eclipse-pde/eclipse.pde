@@ -13,10 +13,8 @@ package x.y.z;
 import internal.x.y.z.Iinternal;
 
 /**
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface test4 {
-	static interface inner extends Iinternal {
-		
-	}
+public interface Etest6 extends Iinternal {
+
 }

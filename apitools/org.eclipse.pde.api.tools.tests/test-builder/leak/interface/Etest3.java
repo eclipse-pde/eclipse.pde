@@ -15,10 +15,8 @@ import internal.x.y.z.Iinternal;
 /**
  * 
  */
-public interface test2 {
-
-}
-
-interface outer extends Iinternal {
-	
+public interface Etest3 {
+	interface inner extends Iinternal {
+		
+	}
 }
