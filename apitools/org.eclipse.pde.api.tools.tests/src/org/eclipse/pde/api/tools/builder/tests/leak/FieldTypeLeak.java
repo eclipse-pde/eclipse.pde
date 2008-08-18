@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.leak;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -40,6 +43,13 @@ public class FieldTypeLeak extends LeakTest {
 			pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_FIELD, IApiProblem.API_LEAK, IApiProblem.LEAK_FIELD);
 		}
 		return pid;
+	}
+	
+	/**
+	 * Currently empty.
+	 */
+	public static Test suite() {
+		return new TestSuite(FieldTypeLeak.class.getName());
 	}
 
 }

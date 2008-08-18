@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.leak;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -42,4 +45,10 @@ public class ConstructorParameterLeak extends LeakTest {
 		return pid;
 	}
 
+	/**
+	 * Currently empty.
+	 */
+	public static Test suite() {
+		return new TestSuite(ConstructorParameterLeak.class.getName());
+	}
 }
