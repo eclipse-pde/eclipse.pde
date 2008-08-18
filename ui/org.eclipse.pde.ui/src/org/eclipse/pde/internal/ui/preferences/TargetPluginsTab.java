@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -249,6 +250,8 @@ public class TargetPluginsTab extends SharedPartWithButtons {
 
 		initializeView();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TARGET_PLUGINS_PREFERENCE_PAGE);
+		validateTargetPlatform();
+
 		return container;
 	}
 
@@ -567,6 +570,7 @@ public class TargetPluginsTab extends SharedPartWithButtons {
 			fPage.getSourceBlock().resetExtensionLocations(getCurrentModels());
 		}
 		fPage.resetNeedsReload();
+		validateTargetPlatform();
 	}
 
 	/**
@@ -1138,6 +1142,14 @@ public class TargetPluginsTab extends SharedPartWithButtons {
 		if (fCurrentRegistry == null)
 			fCurrentRegistry = new PDEExtensionRegistry(getCurrentModels());
 		return fCurrentRegistry;
+	}
+
+	public void validateTargetPlatform() {
+		if (TargetPlatformHelper.getTargetVersion() > TargetPlatformHelper.getHostVersion()) {
+			fPage.setMessage(PDEUIMessages.TargetPluginsTab_newerTargetPlatform, IMessageProvider.WARNING);
+		} else {
+			fPage.setMessage(null);
+		}
 	}
 
 }

@@ -337,7 +337,7 @@ public class TargetPlatformHelper {
 	public static String getTargetVersionString() {
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.osgi"); //$NON-NLS-1$
 		if (model == null)
-			return ICoreConstants.TARGET34;
+			return ICoreConstants.TARGET35;
 
 		String version = model.getPluginBase().getVersion();
 		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
@@ -352,8 +352,35 @@ public class TargetPlatformHelper {
 				return ICoreConstants.TARGET32;
 			if (major == 3 && minor == 3)
 				return ICoreConstants.TARGET33;
+			if (major == 3 && minor == 4)
+				return ICoreConstants.TARGET34;
 		}
-		return ICoreConstants.TARGET34;
+		return ICoreConstants.TARGET35;
+	}
+
+	public static double getHostVersion() {
+		BundleContext context = PDECore.getDefault().getBundleContext();
+		Bundle bundle = context.getBundle(0);
+		String version = (String) bundle.getHeaders().get(Constants.BUNDLE_VERSION);
+		if (version == null)
+			return Double.parseDouble(ICoreConstants.TARGET35);
+
+		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
+			Version vid = new Version(version);
+			int major = vid.getMajor();
+			int minor = vid.getMinor();
+			if (major == 3 && minor == 0)
+				return Double.parseDouble(ICoreConstants.TARGET30);
+			if (major == 3 && minor == 1)
+				return Double.parseDouble(ICoreConstants.TARGET31);
+			if (major == 3 && minor == 2)
+				return Double.parseDouble(ICoreConstants.TARGET32);
+			if (major == 3 && minor == 3)
+				return Double.parseDouble(ICoreConstants.TARGET33);
+			if (major == 3 && minor == 4)
+				return Double.parseDouble(ICoreConstants.TARGET34);
+		}
+		return Double.parseDouble(ICoreConstants.TARGET35);
 	}
 
 	public static double getTargetVersion() {
