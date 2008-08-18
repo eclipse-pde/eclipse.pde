@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -56,9 +55,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * @return the tests for this class
 	 */
 	public static Test suite() {
-		// for now, return an empty suite until cause of failures is determined
-		return new TestSuite(ClassCompatibilityMethodTests.class.getName());
-		// return buildTestSuite(ClassCompatibilityMethodTests.class);
+		return buildTestSuite(ClassCompatibilityMethodTests.class);
 	}
 
 	/* (non-Javadoc)
