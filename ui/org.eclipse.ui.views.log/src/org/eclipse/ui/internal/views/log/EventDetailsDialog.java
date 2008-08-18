@@ -21,6 +21,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -541,18 +543,33 @@ public class EventDetailsDialog extends TrayDialog {
 		backButton.setLayoutData(gd);
 		backButton.setToolTipText(Messages.EventDetailsDialog_previous);
 		backButton.setImage(SharedImages.getImage(SharedImages.DESC_PREV_EVENT));
+		backButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = Messages.EventDetailsDialog_previous;
+			}
+		});
 
 		copyButton = createButton(container, COPY_ID, "", false); //$NON-NLS-1$
 		gd = new GridData();
 		copyButton.setLayoutData(gd);
 		copyButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
 		copyButton.setToolTipText(Messages.EventDetailsDialog_copy);
+		copyButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = Messages.EventDetailsDialog_copy;
+			}
+		});
 
 		nextButton = createButton(container, IDialogConstants.NEXT_ID, "", false); //$NON-NLS-1$
 		gd = new GridData();
 		nextButton.setLayoutData(gd);
 		nextButton.setToolTipText(Messages.EventDetailsDialog_next);
 		nextButton.setImage(SharedImages.getImage(SharedImages.DESC_NEXT_EVENT));
+		nextButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = Messages.EventDetailsDialog_next;
+			}
+		});
 
 		Button button = new Button(container, SWT.NONE);
 		button.setToolTipText(Messages.EventDetailsDialog_ShowFilterDialog);
@@ -569,6 +586,11 @@ public class EventDetailsDialog extends TrayDialog {
 					// update filters and currently displayed stack trace
 					stackFilterPatterns = getFilters();
 				updateProperties();
+			}
+		});
+		button.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = Messages.EventDetailsDialog_FilterDialog;
 			}
 		});
 
