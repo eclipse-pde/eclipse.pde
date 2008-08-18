@@ -54,7 +54,7 @@ class LogReader {
 					break;
 				line = line.trim();
 
-				if (line.startsWith("!SESSION")) { //$NON-NLS-1$
+				if (line.startsWith(LogSession.SESSION)) {
 					state = SESSION_STATE;
 				} else if (line.startsWith("!ENTRY")) { //$NON-NLS-1$
 					state = ENTRY_STATE;

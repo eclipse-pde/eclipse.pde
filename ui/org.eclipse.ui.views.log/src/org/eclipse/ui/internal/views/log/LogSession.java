@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,13 @@ import java.util.Date;
  * Group of entries with additional Session data.
  */
 public class LogSession extends Group {
+
+	/**
+	 * Describes the !SESSION header name
+	 * 
+	 * @since 3.5
+	 */
+	public static final String SESSION = "!SESSION"; //$NON-NLS-1$
 	private String sessionData;
 	private Date date;
 
@@ -50,13 +57,15 @@ public class LogSession extends Group {
 
 	public void processLogLine(String line) {
 		// process "!SESSION <dateUnknownFormat> ----------------------------"
-		line = line.substring(9); // strip "!SESSION "
-		int delim = line.indexOf("----"); //$NON-NLS-1$ // single "-" may be in date, so take few for sure
-		if (delim == -1)
-			return;
-
-		String dateBuffer = line.substring(0, delim).trim();
-		setDate(dateBuffer);
+		if (line.startsWith(SESSION)) {
+			line = line.substring(SESSION.length()).trim(); // strip "!SESSION "
+			int delim = line.indexOf("----"); //$NON-NLS-1$ // single "-" may be in date, so take few for sure
+			if (delim == -1) {
+				return;
+			}
+			String dateBuffer = line.substring(0, delim).trim();
+			setDate(dateBuffer);
+		}
 	}
 
 	public void write(PrintWriter writer) {
