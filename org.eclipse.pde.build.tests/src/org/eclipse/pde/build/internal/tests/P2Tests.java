@@ -183,4 +183,38 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(buildFolder, "repo/content.jar");
 		assertResourceFile(buildFolder, "repo/artifacts.jar");
 	}
+	
+	public void testBug237662() throws Exception {
+		IFolder buildFolder = newTest("237662");
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+		IFile productFile = buildFolder.getFile("rcp.product");
+		
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.eclipse.osgi", "org.eclipse.core.runtime", "org.eclipse.equinox.simpleconfigurator"}, false);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("configs", Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch());
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.flavor", "tooling");
+		properties.put("p2.publish.artifacts", "true");
+
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+		
+		String p2Config = Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch();
+		IMetadataRepository repository = loadMetadataRepository(repoLocation);
+		assertNotNull(repository);
+		
+		IInstallableUnit iu = getIU(repository, "tooling" + p2Config + "org.eclipse.core.runtime");
+		assertTouchpoint(iu, "configure", "markStarted(started: true);");
+	}
 }
