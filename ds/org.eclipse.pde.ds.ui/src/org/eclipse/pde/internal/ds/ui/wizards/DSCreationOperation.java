@@ -20,8 +20,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
@@ -31,6 +35,8 @@ import org.eclipse.pde.internal.ds.core.text.DSModel;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.Messages;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -45,6 +51,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	protected IFile fFile;
 	private String fComponentName;
 	private String fImplementationClass;
+
 
 	/**
 	 * 
@@ -67,7 +74,43 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 		createContent();
 		monitor.worked(1);
 		openFile();
+		writeDSPropIntoManifest(fFile.getProject(), new SubProgressMonitor(
+				monitor, 1));
 		monitor.done();
+	}
+
+	private void writeDSPropIntoManifest(IProject project,
+			SubProgressMonitor monitor) {
+		
+		PDEModelUtility.modifyModel(new ModelModification(project) {
+			
+			protected void modifyModel(IBaseModel model,
+					IProgressMonitor monitor) throws CoreException {
+				
+				if (model instanceof IBundlePluginModelBase)
+					updateManifest((IBundlePluginModelBase) model, monitor);
+			}
+		}, monitor);
+		monitor.done();
+
+	}
+
+
+	private void updateManifest(IBundlePluginModelBase model,
+			IProgressMonitor monitor) throws CoreException {
+		IBundleModel bundleModel = model.getBundleModel();
+		String filePath = fFile.getFullPath().toOSString();
+		
+		// gets the second index of "\" (the first is index=0)
+		filePath = filePath.substring(1);
+		int index = filePath.indexOf("\\"); //$NON-NLS-1$
+		// TODO we need to deal with this header if there are existing entries
+		if (index > -1) {
+			String dsFilePath = filePath.substring(index + 1);
+			bundleModel.getBundle().setHeader(
+					"Service-Component", dsFilePath); //$NON-NLS-1$
+		}
+
 	}
 
 	protected void createContent() throws CoreException {
@@ -92,9 +135,8 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 		component.setImplementation(implementation);
 
 		// Component Attributes
-		
+
 		component.setAttributeName(fComponentName);
-		
 
 		try {
 			// Add builder
@@ -103,8 +145,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 			ICommand[] commands = description.getBuildSpec();
 
 			for (int i = 0; i < commands.length; ++i) {
-				if (commands[i].getBuilderName().equals(
-						IConstants.ID_BUILDER)) {
+				if (commands[i].getBuilderName().equals(IConstants.ID_BUILDER)) {
 					return;
 				}
 			}
@@ -120,8 +161,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 		} catch (CoreException e) {
 			Activator.logException(e, null, null);
 		}
-		
-		
+
 	}
 
 	/**
