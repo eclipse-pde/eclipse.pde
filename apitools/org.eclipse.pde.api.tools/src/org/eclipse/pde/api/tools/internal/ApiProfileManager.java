@@ -56,7 +56,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.IPluginModelListener;
 import org.eclipse.pde.internal.core.PDECore;
@@ -668,30 +667,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		if(!ApiPlugin.isRunningInFramework()) {
 			return;
 		}
-		ModelEntry[] entries = null;
-		switch(delta.getKind()) {
-			case PluginModelDelta.ADDED: {
-				entries = delta.getAddedEntries();
-				break;
-			}
-			case PluginModelDelta.REMOVED: {
-				entries = delta.getRemovedEntries();
-				break;
-			}
-			case PluginModelDelta.CHANGED: {
-				entries = delta.getChangedEntries();
-				break;
-			}
-		}
-		if(entries != null) {
-			IPluginModelBase model = null;
-			for(int i = 0; i < entries.length; i++) {
-				model = entries[i].getModel();
-				if(model != null) {
-					disposeWorkspaceProfile();
-				}
-			}
-		}
+		disposeWorkspaceProfile();
 	}
 
 	/* (non-Javadoc)
