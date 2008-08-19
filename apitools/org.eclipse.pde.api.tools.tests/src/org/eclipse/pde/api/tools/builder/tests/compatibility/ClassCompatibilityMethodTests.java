@@ -459,4 +459,55 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	public void testRemoveProtectedAPIMethodNoOverrideF() throws Exception {
 		xRemoveProtectedAPIMethodNoOverride(false);
 	}	
+	
+	/**
+	 * Tests the addition of a private method in an API class.
+	 */
+	private void xAddPrivateAPIMethod(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPrivateMethod.java");
+		// there are no expected problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddPrivateAPIMethodI() throws Exception {
+		xAddPrivateAPIMethod(true);
+	}	
+	
+	public void testAddPrivateAPIMethodF() throws Exception {
+		xAddPrivateAPIMethod(false);
+	}
+	
+	/**
+	 * Tests the addition of a protected method in an API class.
+	 */
+	private void xAddProtectedAPIMethod(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddProtectedMethod.java");
+		// there are no expected problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddProtectedAPIMethodI() throws Exception {
+		xAddProtectedAPIMethod(true);
+	}	
+	
+	public void testAddProtectedAPIMethodF() throws Exception {
+		xAddProtectedAPIMethod(false);
+	}	
+	
+	/**
+	 * Tests the addition of a protected method in an API class.
+	 */
+	private void xAddPublicAPIMethod(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPublicMethod.java");
+		// there are no expected problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddPublicAPIMethodI() throws Exception {
+		xAddPublicAPIMethod(true);
+	}	
+	
+	public void testAddPublicAPIMethodF() throws Exception {
+		xAddPublicAPIMethod(false);
+	}		
 }
