@@ -91,36 +91,24 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a public method from an API class - incremental.
-	 */
 	public void testRemovePublicAPIMethodI() throws Exception {
 		xRemovePublicAPIMethod(true);
-	}	
+	}
 	
-	/**
-	 * Tests the removal of a public method from an API class - full.
-	 */
 	public void testRemovePublicAPIMethodF() throws Exception {
 		xRemovePublicAPIMethod(false);
 	}
 	
-	/**
-	 * Tests the removal of 2 public methods from an API class - incremental.
-	 */
 	public void testRemoveTwoPublicAPIMethodsI() throws Exception {
 		xRemoveTwoPublicAPIMethods(true);
 	}	
 	
-	/**
-	 * Tests the removal of 2 public methods from an API class - full.
-	 */
 	public void testRemoveTwoPublicAPIMethodsF() throws Exception {
 		xRemoveTwoPublicAPIMethods(false);
 	}	
 	
 	/**
-	 * Tests the removal of a public method from an API class - incremental.
+	 * Tests the removal of a public methods from an API class - incremental.
 	 */
 	private void xRemoveTwoPublicAPIMethods(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTwoPublicMethods.java");
@@ -151,16 +139,10 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a protected method from an API class - incremental.
-	 */
 	public void testRemoveProtectedAPIMethodI() throws Exception {
 		xRemoveProtectedAPIMethod(true);
 	}	
 	
-	/**
-	 * Tests the removal of a protected method from an API class - full.
-	 */
 	public void testRemoveProtectedAPIMethodF() throws Exception {
 		xRemoveProtectedAPIMethod(false);
 	}
@@ -174,18 +156,29 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a protected method from an API class - incremental.
-	 */
 	public void testRemovePrivateAPIMethodI() throws Exception {
 		xRemovePrivateAPIMethod(true);
 	}	
 	
-	/**
-	 * Tests the removal of a protected method from an API class - full.
-	 */
 	public void testRemovePrivateAPIMethodF() throws Exception {
 		xRemovePrivateAPIMethod(false);
+	}
+	
+	/**
+	 * Tests the removal of a package protected method from an API class.
+	 */
+	private void xRemovePackageMethod(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePackageMethod.java");
+		// there are no expected problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemovePackageMethodI() throws Exception {
+		xRemovePackageMethod(true);
+	}	
+	
+	public void testRemovePackageMethodF() throws Exception {
+		xRemovePackageMethod(false);
 	}	
 	
 	/**
@@ -203,16 +196,10 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a public method from an API class annotated as noextend - incremental.
-	 */
 	public void testRemovePublicAPIMethodNoExtendI() throws Exception {
 		xRemovePublicAPIMethodNoExtend(true);
 	}	
 	
-	/**
-	 * Tests the removal of a public method from an API class annotated as noextend - full.
-	 */
 	public void testRemovePublicAPIMethodNoExtendF() throws Exception {
 		xRemovePublicAPIMethodNoExtend(false);
 	}
@@ -226,16 +213,10 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a protected method from an API class annotated as noextend - incremental.
-	 */
 	public void testRemoveProtectedAPIMethodNoExtendI() throws Exception {
 		xRemoveProtectedAPIMethodNoExtend(true);
 	}	
 	
-	/**
-	 * Tests the removal of a protected method from an API class annotated as noextend - full.
-	 */
 	public void testRemoveProtectedAPIMethodNoExtendF() throws Exception {
 		xRemoveProtectedAPIMethodNoExtend(false);
 	}	
@@ -255,16 +236,10 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a public method from an API class annotated as noinstantiate - incremental.
-	 */
 	public void testRemovePublicAPIMethodNoInstantiateI() throws Exception {
 		xRemovePublicAPIMethodNoInstantiate(true);
 	}	
 	
-	/**
-	 * Tests the removal of a public method from an API class annotated as noinstantiate - full.
-	 */
 	public void testRemovePublicAPIMethodNoInstantiateF() throws Exception {
 		xRemovePublicAPIMethodNoInstantiate(false);
 	}
@@ -284,16 +259,10 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a protected method from an API class annotated as noinstantiate - incremental.
-	 */
 	public void testRemoveProtectedAPIMethodNoInstantiateI() throws Exception {
 		xRemoveProtectedAPIMethodNoInstantiate(true);
 	}	
 	
-	/**
-	 * Tests the removal of a protected method from an API class annotated as noinstantiate - full.
-	 */
 	public void testRemoveProtectedAPIMethodNoInstantiateF() throws Exception {
 		xRemoveProtectedAPIMethodNoInstantiate(false);
 	}
@@ -314,24 +283,16 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a public method from an API class annotated as noextend 
-	 * and noinstantiate - incremental.
-	 */
 	public void testRemovePublicAPIMethodNoExtendNoInstantiateI() throws Exception {
 		xRemovePublicAPIMethodNoExtendNoInstatiate(true);
 	}	
 	
-	/**
-	 * Tests the removal of a public method from an API class annotated as noextend
-	 * and noinstantiate - full.
-	 */
 	public void testRemovePublicAPIMethodNoExtendNoInstantiateF() throws Exception {
 		xRemovePublicAPIMethodNoExtendNoInstatiate(false);
 	}
 	
 	/**
-	 * Tests the removal of a public method from an API class annotated as
+	 * Tests the removal of a protected method from an API class annotated as
 	 * noextend and noinstantiate.
 	 */
 	private void xRemoveProtectedAPIMethodNoExtendNoInstatiate(boolean incremental) throws Exception {
@@ -340,18 +301,10 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a public method from an API class annotated as noextend 
-	 * and noinstantiate - incremental.
-	 */
 	public void testRemoveProtectedAPIMethodNoExtendNoInstantiateI() throws Exception {
 		xRemoveProtectedAPIMethodNoExtendNoInstatiate(true);
 	}	
 	
-	/**
-	 * Tests the removal of a public method from an API class annotated as noextend
-	 * and noinstantiate - full.
-	 */
 	public void testRemoveProtectedAPIMethodNoExtendNoInstantiateF() throws Exception {
 		xRemoveProtectedAPIMethodNoExtendNoInstatiate(false);
 	}	
@@ -365,16 +318,10 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a public method from an API class tagged noreference - incremental.
-	 */
 	public void testRemovePublicAPIMethodNoReferenceI() throws Exception {
 		xRemovePublicAPIMethodNoReference(true);
 	}	
 	
-	/**
-	 * Tests the removal of a public method from an API class tagged noreference - full.
-	 */
 	public void testRemovePublicAPIMethodNoReferencF() throws Exception {
 		xRemovePublicAPIMethodNoReference(false);
 	}
@@ -388,16 +335,10 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a protected method from an API class tagged noreference - incremental.
-	 */
 	public void testRemoveProtectedAPIMethodNoReferenceI() throws Exception {
 		xRemoveProtectedAPIMethodNoReference(true);
 	}	
 	
-	/**
-	 * Tests the removal of a protected method from an API class tagged noreference - full.
-	 */
 	public void testRemoveProtectedAPIMethodNoReferencF() throws Exception {
 		xRemoveProtectedAPIMethodNoReference(false);
 	}
@@ -417,16 +358,10 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a public method from an API class tagged no override - incremental.
-	 */
 	public void testRemovePublicAPIMethodNoOverrideI() throws Exception {
 		xRemovePublicAPIMethodNoOverride(true);
 	}	
-	
-	/**
-	 * Tests the removal of a public method from an API class tagged no override - full.
-	 */
+
 	public void testRemovePublicAPIMethodNoOverrideF() throws Exception {
 		xRemovePublicAPIMethodNoOverride(false);
 	}	
@@ -446,16 +381,10 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	/**
-	 * Tests the removal of a protected method from an API class tagged no override - incremental.
-	 */
 	public void testRemoveProtectedAPIMethodNoOverrideI() throws Exception {
 		xRemoveProtectedAPIMethodNoOverride(true);
 	}	
 	
-	/**
-	 * Tests the removal of a protected method from an API class tagged no override - full.
-	 */
 	public void testRemoveProtectedAPIMethodNoOverrideF() throws Exception {
 		xRemoveProtectedAPIMethodNoOverride(false);
 	}	
