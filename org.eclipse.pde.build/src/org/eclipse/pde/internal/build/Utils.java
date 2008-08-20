@@ -476,6 +476,27 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return getArrayFromString(header);
 	}
 
+	/**
+	 * Given a newly generated old-style source bundle for which there was a previously existing
+	 * version in the target, return the location of the src folder in that earlier version
+	 * @param bundle
+	 * @return the old version's src folder, or null
+	 */
+	public static File getOldSourceLocation(BundleDescription bundle) {
+		Properties props = (Properties) bundle.getUserObject();
+		if (props == null || !props.containsKey(OLD_BUNDLE_LOCATION))
+			return null;
+
+		String oldBundleLocation = props.getProperty(OLD_BUNDLE_LOCATION);
+		if (oldBundleLocation != null) {
+			File previousSrcRoot = new File(oldBundleLocation, "src"); //$NON-NLS-1$
+			if (previousSrcRoot.exists())
+				return previousSrcRoot;
+		}
+
+		return null;
+	}
+
 	public static Map parseSourceBundleEntry(BundleDescription bundle) {
 		String[] header = getSourceBundleHeader(bundle);
 		if (header.length > 0) {

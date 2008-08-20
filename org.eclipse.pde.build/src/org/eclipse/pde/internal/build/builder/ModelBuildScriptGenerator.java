@@ -33,12 +33,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	static protected class CompiledEntry {
 		static final byte JAR = 0;
 		static final byte FOLDER = 1;
-		private String name;
+		private final String name;
 		private String resolvedName;
-		private String[] source;
-		private String[] output;
-		private String[] extraClasspath;
-		private String excludedFromJar;
+		private final String[] source;
+		private final String[] output;
+		private final String[] extraClasspath;
+		private final String excludedFromJar;
 		byte type;
 
 		protected CompiledEntry(String entryName, String[] entrySource, String[] entryOutput, String[] entryExtraClasspath, String excludedFromJar, byte entryType) {
@@ -127,8 +127,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		// If the the plugin we want to generate is a source plugin, and the feature that required the generation of this plugin is not being asked to build the source
 		// we want to leave. This is particularly usefull for the case of the pde.source building (at least for now since the source of pde is not in a feature)
-//		if (featureGenerator != null && featureGenerator.getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + model.getSymbolicName()))
-//			return;
+		//		if (featureGenerator != null && featureGenerator.getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + model.getSymbolicName()))
+		//			return;
 
 		if (!AbstractScriptGenerator.isBuildingOSGi())
 			checkBootAndRuntime();
@@ -290,16 +290,35 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration(TARGET_BUILD_JARS, null, null, null, null);
 		compiledJarNames = new ArrayList(0);
 
+		if (Utils.isSourceBundle(model)) {
+			//We are an individual source bundle, source gathering is done in gather.bin.parts via gather.individual.sources
+			script.printTargetEnd();
+			return;
+		}
+
+		File previousSrcRoot = Utils.getOldSourceLocation(model);
 		Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
 		if (pluginsToGatherSourceFrom != null) {
 			for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
 				BundleDescription plugin = (BundleDescription) iter.next();
-				if (plugin.getSymbolicName().equals(model.getSymbolicName())) // We are not trying to gather the source from ourself since we are generated and we know we don't have source...
+				// We are not trying to gather the source from ourself since we are generated and we know we don't have source...
+				if (plugin.getSymbolicName().equals(model.getSymbolicName()))
 					continue;
 
-				IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
-				if (!Utils.isSourceBundle(model)) {
-					// The two steps are required, because some plugins (xerces, junit, ...) don't build their source: the source already comes zipped
+				if (Utils.isBinary(plugin)) {
+					// this plug-in wasn't compiled, take source from the previous source plug-in
+					if (previousSrcRoot != null) {
+						File previousSrc = new File(previousSrcRoot, plugin.getSymbolicName() + '_' + plugin.getVersion());
+						if (previousSrc.exists()) {
+							FileSet[] fileSets = new FileSet[1];
+							fileSets[0] = new FileSet(previousSrc.getAbsolutePath(), null, "**/*", null, null, null, null); //$NON-NLS-1$
+							script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/src/" + previousSrc.getName(), fileSets, true, false); //$NON-NLS-1$
+						}
+					}
+				} else {
+					// gather up source that was built for this plug-in
+					// The two steps are required, because some plug-ins (xerces, junit, ...) don't build their source: the source already comes zipped
+					IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
 					script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
 					HashMap params = new HashMap(1);
 					params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/src"); //$NON-NLS-1$
@@ -1158,7 +1177,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		return extractEntriesToCompile(properties, model);
 	}
 
-	public static CompiledEntry [] extractEntriesToCompile(Properties properties, BundleDescription model) throws CoreException {
+	public static CompiledEntry[] extractEntriesToCompile(Properties properties, BundleDescription model) throws CoreException {
 		List result = new ArrayList(5);
 		int prefixLength = PROPERTY_SOURCE_PREFIX.length();
 		for (Iterator iterator = properties.entrySet().iterator(); iterator.hasNext();) {
@@ -1214,10 +1233,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration("copy." + srcName, null, null, null, null); //$NON-NLS-1$
 		if (count != 0) {
 			String dest = null;
-			if(srcName.equals(SRC_ZIP) )
-				dest = new Path(srcName).removeLastSegments(1).toString();  //src.zip can go in the root
+			if (srcName.equals(SRC_ZIP))
+				dest = new Path(srcName).removeLastSegments(1).toString(); //src.zip can go in the root
 			else
-				dest = srcName.substring(0, srcName.length() - 4 ); //remove .zip, the rest go in folders
+				dest = srcName.substring(0, srcName.length() - 4); //remove .zip, the rest go in folders
 			String toDir = Utils.getPropertyFormat(PROPERTY_SOURCE_DESTINATION_FOLDER) + '/' + dest;
 			script.printCopyTask(null, toDir, fileSets, true, true);
 		}

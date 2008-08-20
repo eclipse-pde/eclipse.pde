@@ -27,12 +27,12 @@ import org.osgi.framework.Version;
  * against which the code must be compiled. Moreover this site provide access to
  * a pluginRegistry.
  */
-public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLConstants {
-	private BuildTimeFeatureFactory			factory = new BuildTimeFeatureFactory();
-	private	Map  /*of BuildTimeFeature*/	featureCache = new HashMap();
-	private List /*of FeatureReference*/	featureReferences;
-	private BuildTimeSiteContentProvider 	contentProvider;
-	
+public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLConstants {
+	private final BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
+	private final Map /*of BuildTimeFeature*/featureCache = new HashMap();
+	private List /*of FeatureReference*/featureReferences;
+	private BuildTimeSiteContentProvider contentProvider;
+
 	private PDEState state;
 	private Properties repositoryVersions; //version for the features
 	private boolean reportResolutionErrors;
@@ -46,9 +46,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	public void setReportResolutionErrors(boolean value) {
 		reportResolutionErrors = value;
 	}
-	
+
 	public void setPlatformPropeties(Properties platformProperties) {
-		this.platformProperties  = platformProperties;
+		this.platformProperties = platformProperties;
 	}
 
 	public Properties getFeatureVersions() {
@@ -76,7 +76,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	private PDEState createConverter() {
 		return new PluginRegistryConverter();
 	}
-	
+
 	public PDEState getRegistry() throws CoreException {
 		if (state == null) {
 			// create the registry according to the site where the code to
@@ -141,20 +141,20 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		return state;
 	}
 
-	public IStatus missingPlugin(String id, String version, boolean throwException ) throws CoreException {
+	public IStatus missingPlugin(String id, String version, boolean throwException) throws CoreException {
 		BundleDescription bundle = state.getBundle(id, version, false);
-		if(bundle == null){
+		if (bundle == null) {
 			String message = NLS.bind(Messages.exception_missingPlugin, id + "_" + version); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null);
-			if(throwException)
+			if (throwException)
 				throw new CoreException(status);
 			return status;
 		}
-		
+
 		//we expect this bundle to not be resolved, but just in case...
-		if(bundle.isResolved())
+		if (bundle.isResolved())
 			return null;
-		
+
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		ResolverError[] resolutionErrors = state.getState().getResolverErrors(bundle);
 		VersionConstraint[] versionErrors = helper.getUnsatisfiedConstraints(bundle);
@@ -164,13 +164,13 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		for (int j = 0; j < versionErrors.length; j++) {
 			message += '\t' + BuildTimeSite.getResolutionFailureMessage(versionErrors[j]) + '\n';
 		}
-		
+
 		IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null);
 		if (throwException)
 			throw new CoreException(status);
 		return status;
 	}
-	
+
 	//Return whether the resolution error is caused because we are not building for the proper configurations.
 	private boolean isConfigError(BundleDescription bundle, ResolverError[] errors, List configs) {
 		Dictionary environment = new Hashtable(3);
@@ -261,6 +261,10 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	}
 
 	public void addFeatureReferenceModel(File featureXML) {
+		addFeatureReferenceModel(featureXML, false);
+	}
+
+	public void addFeatureReferenceModel(File featureXML, boolean first) {
 		URL featureURL;
 		FeatureReference featureRef;
 		if (featureXML.exists()) {
@@ -274,21 +278,27 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 				featureRef = new FeatureReference();
 				featureRef.setSiteModel(this);
 				featureRef.setURLString(featureURL.toExternalForm());
-//				featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
-				addFeatureReferenceModel(featureRef);
+				addFeatureReferenceModel(featureRef, first);
 			} catch (MalformedURLException e) {
 				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, NLS.bind(Messages.warning_cannotLocateSource, featureXML.getAbsolutePath()), e));
 			}
 		}
 	}
-	
+
 	public void addFeatureReferenceModel(FeatureReference featureReference) {
+		addFeatureReferenceModel(featureReference, false);
+	}
+
+	public void addFeatureReferenceModel(FeatureReference featureReference, boolean first) {
 		//assertIsWriteable();
 		if (this.featureReferences == null)
 			this.featureReferences = new ArrayList();
 		// PERF: do not check if already present 
 		//if (!this.featureReferences.contains(featureReference))
-		this.featureReferences.add(featureReference);
+		if (first)
+			this.featureReferences.add(0, featureReference);
+		else
+			this.featureReferences.add(featureReference);
 	}
 
 	private SortedSet findAllReferencedPlugins() throws CoreException {
@@ -342,16 +352,12 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	public void setRootPluginsForFiler(List rootPluginsForFiler) {
 		this.rootPluginsForFiler = rootPluginsForFiler;
 	}
-	
+
 	public FeatureReference[] getFeatureReferences() {
-		// only filter local site
-//		if (getCurrentConfiguredSite()!=null)
-//			return filterFeatures(getRawFeatureReferences());
-//		else 
-			return getRawFeatureReferences();
-		
+		return getRawFeatureReferences();
+
 	}
-	
+
 	public FeatureReference[] getRawFeatureReferences() {
 		if (featureReferences == null || featureReferences.size() == 0)
 			return new FeatureReference[0];
@@ -360,14 +366,13 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 
 	public void addPluginEntry(FeatureEntry pluginEntry) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public Feature createFeature(URL url) throws CoreException {
 		BuildTimeFeature feature = (BuildTimeFeature) featureCache.get(url);
 		if (feature != null)
 			return feature;
-		
+
 		feature = factory.createFeature(url, this);
 		feature.setFeatureContentProvider(getSiteContentProvider());
 		featureCache.put(url, feature);
@@ -377,7 +382,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	public BuildTimeSiteContentProvider getSiteContentProvider() {
 		return contentProvider;
 	}
-	
+
 	public void setSiteContentProvider(BuildTimeSiteContentProvider siteContentProvider) {
 		this.contentProvider = siteContentProvider;
 	}

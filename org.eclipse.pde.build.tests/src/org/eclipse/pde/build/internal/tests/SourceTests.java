@@ -21,6 +21,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
@@ -378,4 +379,61 @@ public class SourceTests extends PDETestCase {
 		assertTrue(attr.getValue("Eclipse-SourceBundle").startsWith("bundleA;version=\"1.0.0\""));
 	}
 
+	public void test243475_243227() throws Exception {
+		IFolder buildFolder = newTest("243475");
+		IFolder bundleFolder = Utils.createFolder(buildFolder, "plugins/a.bundle");
+		IFolder sdkFolder = Utils.createFolder(buildFolder, "features/sdk");
+
+		Utils.generateBundleManifest(bundleFolder, "a.bundle", "1.0.0", null);
+		Properties props = new Properties();
+		props.put("src.includes", "about.html");
+		Utils.generatePluginBuildProperties(bundleFolder, props);
+		//add some source to a.bundle
+		File src = new File(bundleFolder.getLocation().toFile(), "src/a.java");
+		src.getParentFile().mkdir();
+		FileOutputStream stream = new FileOutputStream(src);
+		stream.write("//L33T CODEZ\n".getBytes());
+		stream.close();
+		//add the about.html
+		File about = new File(bundleFolder.getLocation().toFile(), "about.html");
+		stream = new FileOutputStream(about);
+		stream.write("about\n".getBytes());
+		stream.close();
+		
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"a.bundle"}, "1.0.0.qualifier");
+
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, null);
+		Properties properties = new Properties();
+		properties.put("generate.feature@rcp.source", "rcp");
+		Utils.storeBuildProperties(sdkFolder, properties);
+
+		Utils.generateAllElements(buildFolder, "sdk");
+		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
+		buildProperties.put("archivesFormat", "*,*,*-folder");
+		buildProperties.put("forceContextQualifier", "123");
+		Utils.storeBuildProperties(buildFolder, buildProperties);
+		runBuild(buildFolder);
+		
+		assertResourceFile(buildFolder, "tmp/eclipse/plugins/rcp.source_1.0.0.123/src/a.bundle_1.0.0/about.html");
+		assertResourceFile(buildFolder, "tmp/eclipse/plugins/rcp.source_1.0.0.123/src/a.bundle_1.0.0/src.zip");
+		
+		//build again using the binaries output from the first build
+		IFolder build2 = Utils.createFolder(buildFolder, "2");
+		
+		//top level feature must be in buildDirectory
+		Utils.createFolder(build2, "features");
+		sdkFolder.move(new Path("../2/features/sdk"), true, null);
+		
+		String oldBuild = buildFolder.getLocation().toOSString();
+		Utils.generateAllElements(build2, "sdk");
+		buildProperties = BuildConfiguration.getBuilderProperties(build2);
+		buildProperties.put("archivesFormat", "*,*,*-folder");
+		buildProperties.put("pluginPath", oldBuild + "/tmp/eclipse;" + oldBuild + "/features/rcp");
+		buildProperties.put("forceContextQualifier", "124");
+		Utils.storeBuildProperties(build2, buildProperties);
+		runBuild(build2);
+		
+		assertResourceFile(build2, "tmp/eclipse/plugins/rcp.source_1.0.0.124/src/a.bundle_1.0.0/about.html");
+		assertResourceFile(build2, "tmp/eclipse/plugins/rcp.source_1.0.0.124/src/a.bundle_1.0.0/src.zip");
+	}
 }

@@ -114,10 +114,14 @@ public class Utils {
 	}
 
 	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList) throws CoreException {
-		generateFeature(workingDirectory, id, featureList, pluginList, null, false, false);
+		generateFeature(workingDirectory, id, featureList, pluginList, null, false, false, null);
+	}
+	
+	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList, String version) throws CoreException {
+		generateFeature(workingDirectory, id, featureList, pluginList, null, false, false, version);
 	}
 
-	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList, String product, boolean includeLaunchers, boolean verify) throws CoreException {
+	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList, String product, boolean includeLaunchers, boolean verify, String version) throws CoreException {
 		FeatureGenerator generator = new FeatureGenerator();
 		if (verify) {
 			FeatureGenerator.setConfigInfo("*,*,*");
@@ -130,6 +134,7 @@ public class Utils {
 		generator.setIncludeLaunchers(includeLaunchers);
 		generator.setVerify(verify);
 		generator.setFeatureId(id);
+		generator.setVersion(version);
 		generator.setProductFile(product);
 		generator.setFeatureList(featureList);
 		generator.setPluginList(pluginList);

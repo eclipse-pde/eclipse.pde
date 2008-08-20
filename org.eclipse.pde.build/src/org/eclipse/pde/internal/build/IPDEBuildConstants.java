@@ -101,6 +101,7 @@ public interface IPDEBuildConstants {
 	//User object keys. BundleDescription.getUserObject()
 	public final static String IS_COMPILED = "isCompiler"; //$NON-NLS-1$
 	public final static String PLUGIN_ENTRY = "pluginEntry"; //$NON-NLS-1$
+	public final static String OLD_BUNDLE_LOCATION = "oldBundleLocation"; //$NON-NLS-1$
 	public final static String WITH_DOT = "withDot"; //$NON-NLS-1$
 
 	//Filter properties

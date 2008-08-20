@@ -31,7 +31,7 @@ public class ProductTests extends PDETestCase {
 		assertNotNull(delta);
 
 		// Exporting from the UI gives the container feature some /Eclipse.App root files
-		Utils.generateFeature(buildFolder, "org.eclipse.pde.build.container.feature", null, null, "/rcp/rcp.product", true, true);
+		Utils.generateFeature(buildFolder, "org.eclipse.pde.build.container.feature", null, null, "/rcp/rcp.product", true, true, null);
 		Properties featureProperties = new Properties();
 		featureProperties.put("root", "/temp/");
 		Utils.storeBuildProperties(containerFeature, featureProperties);

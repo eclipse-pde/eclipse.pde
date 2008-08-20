@@ -20,7 +20,6 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.AbstractScriptGenerator.MissingProperties;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator.CompiledEntry;
 import org.eclipse.pde.internal.build.site.*;
 import org.eclipse.pde.internal.build.site.compatibility.*;
@@ -103,13 +102,6 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	}
 
 	private void collectSourcePlugins(BuildTimeFeature feature, FeatureEntry pluginEntry, BundleDescription model) throws CoreException {
-		//Do not collect plug-ins for which we are not generating build.xml
-		try {
-			if (AbstractScriptGenerator.readProperties(model.getLocation(), PROPERTIES_FILE, IStatus.OK) == MissingProperties.getInstance())
-				return;
-		} catch (CoreException e) {
-			return;
-		}
 		//don't gather if we are doing individual source bundles
 		if (AbstractScriptGenerator.getPropertyAsBoolean("individualSourceBundles")) //$NON-NLS-1$
 			return;
@@ -530,7 +522,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 		File buildProperty = new File(sourceFeatureDir + '/' + PROPERTIES_FILE);
 		if (buildProperty.exists()) {//If a build.properties file already exist then we don't override it.
-			getSite().addFeatureReferenceModel(sourceDir);
+			getSite().addFeatureReferenceModel(sourceDir, true);
 			return;
 		}
 		copiedFiles.add(Constants.FEATURE_FILENAME_DESCRIPTOR); //Because the feature.xml is not copied, we need to add it to the file
@@ -551,7 +543,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
-		getSite().addFeatureReferenceModel(sourceDir);
+		getSite().addFeatureReferenceModel(sourceDir, true);
 	}
 
 	private void replaceXMLAttribute(String location, String tag, String attr, String newValue) {
@@ -857,9 +849,27 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 		PDEState state = getSite().getRegistry();
 		BundleDescription oldBundle = state.getResolvedBundle(result.getId());
-		if (oldBundle != null)
+		String oldBundleLocation = null;
+		if (oldBundle != null) {
+			oldBundleLocation = oldBundle.getLocation();
 			state.getState().removeBundle(oldBundle);
+		}
 		state.addBundle(sourcePluginDir);
+
+		if (oldBundleLocation != null) {
+			state.getState().resolve(true);
+			BundleDescription newBundle = state.getResolvedBundle(result.getId(), result.getVersion());
+			//the old location is only interesting if it is different from the new one
+			if (newBundle != null && !newBundle.getLocation().equals(oldBundleLocation)) {
+				Properties bundleProperties = (Properties) newBundle.getUserObject();
+				if (bundleProperties == null) {
+					bundleProperties = new Properties();
+					newBundle.setUserObject(bundleProperties);
+				}
+
+				bundleProperties.setProperty(OLD_BUNDLE_LOCATION, oldBundleLocation);
+			}
+		}
 
 		return result;
 	}

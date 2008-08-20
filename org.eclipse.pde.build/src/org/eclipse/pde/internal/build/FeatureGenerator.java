@@ -62,6 +62,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	private static final String BUNDLE_LAUNCHER = "org.eclipse.equinox.launcher"; //$NON-NLS-1$
 
 	private String featureId = null;
+	private String version = null;
 	private String productFile = null;
 	private String[] pluginList = null;
 	private String[] fragmentList = null;
@@ -155,6 +156,10 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 	public void setFeatureId(String featureId) {
 		this.featureId = featureId;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
 	public void setIncludeLaunchers(boolean includeLaunchers) {
@@ -281,7 +286,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			Dictionary environment = new Hashtable(3);
 
 			parameters.put(ID, feature);
-			parameters.put(VERSION, "1.0.0"); //$NON-NLS-1$ 
+			parameters.put(VERSION, version != null ? version : "1.0.0"); //$NON-NLS-1$ 
 			writer.startTag(FEATURE, parameters, true);
 
 			boolean fragment = false;
