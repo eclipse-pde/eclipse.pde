@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,16 @@ public class TracingBlock {
 				fTab.updateLaunchConfigurationDialog();
 			}
 		});
+		fPluginViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				CheckboxTableViewer tableViewer = (CheckboxTableViewer) event.getSource();
+				Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
+				boolean addingCheck = !tableViewer.getChecked(selection);
+				tableViewer.setChecked(selection, addingCheck);
+				pluginSelected(getSelectedModel(), addingCheck);
+				fTab.updateLaunchConfigurationDialog();
+			}
+		});
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 125;
 		gd.heightHint = 100;
@@ -130,6 +140,7 @@ public class TracingBlock {
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fPluginViewer.setAllChecked(true);
+				pluginSelected(getSelectedModel(), true);
 				fTab.updateLaunchConfigurationDialog();
 			}
 		});
@@ -141,6 +152,7 @@ public class TracingBlock {
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fPluginViewer.setAllChecked(false);
+				pluginSelected(getSelectedModel(), false);
 				fTab.updateLaunchConfigurationDialog();
 			}
 		});
@@ -274,14 +286,15 @@ public class TracingBlock {
 
 	private void pluginSelected(IPluginModelBase model, boolean checked) {
 		TracingPropertySource source = getPropertySource(model);
-		if (source == null || checked == false) {
+		if (source == null) {
 			fPageBook.showEmptyPage();
 		} else {
-			if (!fPageBook.hasPage(model)) {
-				Composite parent = fPageBook.createPage(model);
-				source.createContents(parent);
+			PageBookKey key = new PageBookKey(model, checked);
+			if (!fPageBook.hasPage(key)) {
+				Composite parent = fPageBook.createPage(key);
+				source.createContents(parent, checked);
 			}
-			fPageBook.showPage(model);
+			fPageBook.showPage(key);
 		}
 	}
 
@@ -335,5 +348,27 @@ public class TracingBlock {
 		}
 		fPropertySources.clear();
 	}
+	
+	private class PageBookKey {
+		IPluginModelBase fModel;
+		boolean fEnabled;
+
+		PageBookKey(IPluginModelBase model, boolean enabled) {
+			fModel = model;
+			fEnabled = enabled;
+		}
+
+		public boolean equals(Object object) {
+			if (object instanceof PageBookKey) {
+				return fEnabled == ((PageBookKey) object).fEnabled && fModel.equals(((PageBookKey) object).fModel);
+			}
+			return false;
+		}
+
+		public int hashCode() {
+			return fModel.hashCode() + (fEnabled ? 1 : 0);
+		}
+	}
+	
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class TracingPropertySource {
 			return label;
 		}
 
-		abstract void create(Composite parent);
+		abstract void create(Composite parent, boolean enabled);
 
 		abstract void update();
 
@@ -68,11 +68,12 @@ public class TracingPropertySource {
 			super(key, label);
 		}
 
-		public void create(Composite parent) {
+		public void create(Composite parent, boolean enabled) {
 			checkbox = fBlock.getToolkit().createButton(parent, getLabel(), SWT.CHECK);
 			TableWrapData td = new TableWrapData();
 			td.colspan = 2;
 			checkbox.setLayoutData(td);
+			checkbox.setEnabled(enabled);
 		}
 
 		public void update() {
@@ -98,8 +99,9 @@ public class TracingPropertySource {
 			super(key, label);
 		}
 
-		public void create(Composite parent) {
+		public void create(Composite parent, boolean enabled) {
 			Label label = fBlock.getToolkit().createLabel(parent, getLabel());
+			label.setEnabled(enabled);
 			TableWrapData td = new TableWrapData();
 			td.valign = TableWrapData.MIDDLE;
 			label.setLayoutData(td);
@@ -107,6 +109,7 @@ public class TracingPropertySource {
 			td = new TableWrapData(TableWrapData.FILL_GRAB);
 			//gd.widthHint = 100;
 			text.setLayoutData(td);
+			text.setEnabled(enabled);
 		}
 
 		public void update() {
@@ -159,7 +162,7 @@ public class TracingPropertySource {
 		return s1.compareTo(s2);
 	}
 
-	public void createContents(Composite parent) {
+	public void createContents(Composite parent, boolean enabled) {
 		fDescriptors = new Vector();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
@@ -195,7 +198,7 @@ public class TracingPropertySource {
 				}
 				bordersNeeded = true;
 			}
-			editor.create(parent);
+			editor.create(parent, enabled);
 			editor.initialize();
 			fDescriptors.add(editor);
 			if (bordersNeeded)
