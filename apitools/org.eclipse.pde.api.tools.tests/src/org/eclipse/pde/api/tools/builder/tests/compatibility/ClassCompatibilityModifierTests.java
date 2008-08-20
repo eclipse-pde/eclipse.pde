@@ -262,18 +262,22 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 */
 	private void xPublicToPackageVisibility(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackageVisibility.java");
-		// TODO: DECREASE_ACCESS problem expected
-//		int[] ids = new int[] {
-//			getChangedProblemId(IDelta.DECREASE_ACCESS)
-//		};
-//		setExpectedProblemIds(ids);
-//		String[][] args = new String[1][];
-//		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackageVisibility"};
-//		setExpectedMessageArgs(args);
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.CLASS_ELEMENT_TYPE,
+						IDelta.REMOVED,
+						IDelta.API_TYPE)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackageVisibility", "org.eclipse.api.tools.tests.compatability.a_1.0.0"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
 	public void testPublicToPackageVisibilityI() throws Exception {
+		// TODO: incremental build case does not work - full build does.
 		xPublicToPackageVisibility(true);
 	}	
 	
