@@ -80,7 +80,8 @@ public abstract class ClassCompatibilityTests extends CompatibilityTest {
 		Class[] classes = new Class[] {
 			ClassCompatibilityMethodTests.class,
 			ClassCompatibilityFieldTests.class,
-			ClassCompatibilityHierarchyTests.class
+			ClassCompatibilityHierarchyTests.class,
+			ClassCompatibilityConstructorTests.class
 		};
 		return classes;
 	}	
