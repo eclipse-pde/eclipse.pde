@@ -19,18 +19,18 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	protected BuildTimeFeature feature;
 	protected Properties buildProperties;
 	//protected boolean analyseIncludedFeatures = false;
-//	private boolean generateJnlp = false;
-//	private boolean signJars = false;
-//	private String product = null;
+	//	private boolean generateJnlp = false;
+	//	private boolean signJars = false;
+	//	private String product = null;
 	private BuildDirector director;
 	private boolean generateProductFiles = true;
-	
+
 	protected String featureFolderName;
 	protected String featureTempFolder;
 	protected String featureFullName;
 	protected String featureRootLocation;
 	protected String sourceFeatureFullNameVersioned;
-	
+
 	private String customFeatureCallbacks = null;
 	private String customCallbacksBuildpath = null;
 	private String customCallbacksFailOnError = null;
@@ -38,7 +38,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 	public FeatureBuildScriptGenerator(BuildTimeFeature feature) {
 		this.feature = feature;
-		
+
 		if (featureRootLocation == null) {
 			featureRootLocation = feature.getURL().getPath();
 			int i = featureRootLocation.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
@@ -46,11 +46,11 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 				featureRootLocation = featureRootLocation.substring(0, i);
 		}
 	}
-	
+
 	public void setDirector(BuildDirector director) {
 		this.director = director;
 	}
-	
+
 	private void initializeVariables() throws CoreException {
 		featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
 		featureFolderName = DEFAULT_FEATURE_LOCATION + '/' + featureFullName;
@@ -70,14 +70,14 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	public void generate() throws CoreException {
 		if (feature.isBinary())
 			return;
-				
+
 		if (getBuildProperties() == MissingProperties.getInstance() || AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE)) {
 			feature.setBinary(true);
 			return;
 		}
 
 		initializeVariables();
-		
+
 		// if the feature defines its own custom script, we do not generate a
 		// new one but we do try to update the version number
 		boolean custom = TRUE.equalsIgnoreCase((String) getBuildProperties().get(PROPERTY_CUSTOM));
@@ -111,7 +111,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			}
 		}
 	}
-	
+
 	private void absorbExceptionIfOptionalFeature(FeatureEntry entry, CoreException toAbsorb) throws CoreException {
 		if (toAbsorb.getStatus().getCode() != EXCEPTION_FEATURE_MISSING || (toAbsorb.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && !entry.isOptional()))
 			throw toAbsorb;
@@ -300,10 +300,10 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printAntCallTask(TARGET_CHILDREN, true, params);
 
 		if (include != null) {
-//			if (include != null || exclude != null) {
-				FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
-				script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
-//			}
+			//			if (include != null || exclude != null) {
+			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
+			script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
+			//			}
 			// Generate the parameters for the Id Replacer.
 			String featureVersionInfo = ""; //$NON-NLS-1$
 			// Here we get all the included features (independently of the config being built so the version numbers in the feature can be replaced)
@@ -361,7 +361,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	private void generateRootFilesAndPermissionsCalls() {
 		Map param = new HashMap(1);
-		param.put(TARGET_ROOT_TARGET, TARGET_ROOTFILES_PREFIX + Utils.getPropertyFormat(PROPERTY_OS) + '_' + Utils.getPropertyFormat(PROPERTY_WS) + '_' + Utils.getPropertyFormat(PROPERTY_ARCH));		
+		param.put(TARGET_ROOT_TARGET, TARGET_ROOTFILES_PREFIX + Utils.getPropertyFormat(PROPERTY_OS) + '_' + Utils.getPropertyFormat(PROPERTY_WS) + '_' + Utils.getPropertyFormat(PROPERTY_ARCH));
 		script.printAntCallTask(TARGET_ROOTFILES_PREFIX, true, param);
 	}
 
@@ -385,12 +385,12 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 				//TODO Log warning/error
 			}
 		}
-		
+
 		script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX, null, null, PROPERTY_OMIT_ROOTFILES, null);
 		script.printAntCallTask(Utils.getPropertyFormat(TARGET_ROOT_TARGET), true, null);
 		script.printTargetEnd();
 		script.println();
-		
+
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config aConfig = (Config) iter.next();
 			script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX + aConfig.toString("_"), null, null, null, null); //$NON-NLS-1$
@@ -493,7 +493,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		params.put(PROPERTY_ARCH, feature.getArch() == null ? Config.ANY : feature.getArch());
 		params.put(PROPERTY_NL, feature.getNL() == null ? Config.ANY : feature.getNL());
 		params.put(PROPERTY_OMIT_ROOTFILES, "true"); //$NON-NLS-1$
-		
+
 		// Be sure to call the gather with children turned off. The only way to
 		// do this is
 		// to clear all inherited values. Must remember to setup anything that
@@ -617,33 +617,33 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		}
 		return computedElements;
 	}
-	
+
 	private void generateAllFeaturesTarget() throws CoreException {
 		script.printTargetDeclaration(TARGET_ALL_FEATURES, TARGET_INIT, null, null, null);
 		//if (analyseIncludedFeatures) {
-			FeatureEntry[] features = feature.getIncludedFeatureReferences();
-			for (int i = 0; i < features.length; i++) {
-				String featureId = features[i].getId();
-				String versionId = features[i].getVersion();
-				BuildTimeFeature includedFeature = getSite(false).findFeature(featureId, versionId, false);
-				if (includedFeature == null) {
-					if (features[i].isOptional())
-						continue;
-					String message = NLS.bind(Messages.exception_missingFeature, featureId + ' ' + versionId);
-					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
-				}
-
-				if (includedFeature.isBinary())
+		FeatureEntry[] features = feature.getIncludedFeatureReferences();
+		for (int i = 0; i < features.length; i++) {
+			String featureId = features[i].getId();
+			String versionId = features[i].getVersion();
+			BuildTimeFeature includedFeature = getSite(false).findFeature(featureId, versionId, false);
+			if (includedFeature == null) {
+				if (features[i].isOptional())
 					continue;
-
-				String includedFeatureDirectory = includedFeature.getURL().getPath();
-				int j = includedFeatureDirectory.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
-				if (j != -1)
-					includedFeatureDirectory = includedFeatureDirectory.substring(0, j);
-				IPath location;
-				location = Utils.makeRelative(new Path(includedFeatureDirectory), new Path(featureRootLocation));
-				script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toString(), Utils.getPropertyFormat(PROPERTY_TARGET), null, null, null);
+				String message = NLS.bind(Messages.exception_missingFeature, featureId + ' ' + versionId);
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 			}
+
+			if (includedFeature.isBinary())
+				continue;
+
+			String includedFeatureDirectory = includedFeature.getURL().getPath();
+			int j = includedFeatureDirectory.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
+			if (j != -1)
+				includedFeatureDirectory = includedFeatureDirectory.substring(0, j);
+			IPath location;
+			location = Utils.makeRelative(new Path(includedFeatureDirectory), new Path(featureRootLocation));
+			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toString(), Utils.getPropertyFormat(PROPERTY_TARGET), null, null, null);
+		}
 		//}
 		script.printTargetEnd();
 	}
@@ -678,7 +678,6 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 * 
 	 * @return Properties the feature's build.properties
 	 * @throws CoreException
-	 * @see Feature
 	 */
 	protected Properties getBuildProperties() throws CoreException {
 		if (buildProperties == null)

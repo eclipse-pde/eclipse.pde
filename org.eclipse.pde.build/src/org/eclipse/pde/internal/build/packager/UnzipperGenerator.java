@@ -22,7 +22,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	private static final byte ARCHIVE_NAME = 0;
 	private static final byte FOLDER = 1;
 	private static final byte CONFIGS = 2;
-	
+
 	// The name the file containing the list of zips
 	private String directoryLocation = DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR;
 	// The list of zips. The key is the name of the zipfile, and the first property is the place to extract it
@@ -85,14 +85,14 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateUncompressionCommands() throws CoreException {
-		zipsList = readProperties(workingDirectory, directoryLocation, IStatus.ERROR); 
+		zipsList = readProperties(workingDirectory, directoryLocation, IStatus.ERROR);
 
-		String zipEntries = zipsList.getProperty("toUnzip",""); //$NON-NLS-1$	//$NON-NLS-2$
+		String zipEntries = zipsList.getProperty("toUnzip", ""); //$NON-NLS-1$	//$NON-NLS-2$
 
 		List toUnzipWithOrder = new ArrayList(unzipOrder.length);
-		String[] allZipEntries = Utils.getArrayFromString(zipEntries, ENTRY_SEPARATOR); 
+		String[] allZipEntries = Utils.getArrayFromString(zipEntries, ENTRY_SEPARATOR);
 		for (int i = 0; i < allZipEntries.length; i++) {
-			String[] entryDetail = Utils.getArrayFromString(allZipEntries[i], DATA_SEPARATOR); 
+			String[] entryDetail = Utils.getArrayFromString(allZipEntries[i], DATA_SEPARATOR);
 			script.printComment("Uncompress " + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$
 
 			if (!entryDetail[FOLDER].equals(".")) //$NON-NLS-1$
@@ -145,13 +145,13 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 		if (entryDetail.length == 2) {
 			applyingConfigs = getConfigInfos();
 		} else {
-			String[] configs = Utils.getArrayFromString(entryDetail[CONFIGS], "&");
+			String[] configs = Utils.getArrayFromString(entryDetail[CONFIGS], "&"); //$NON-NLS-1$
 			applyingConfigs = new ArrayList(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				applyingConfigs.add(new Config(configs[i]));
 			}
 		}
-		return applyingConfigs;	
+		return applyingConfigs;
 	}
 
 	private void generateUnzipArchive(String[] entryDetail) {
@@ -167,23 +167,22 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 		for (Iterator iter = getMatchingConfig(entryDetail).iterator(); iter.hasNext();) {
 			Config config = (Config) iter.next();
 			List parameters = new ArrayList(3);
-			String rootFilesFolder = "${tempDirectory}/" + config.toString(".") + '/' +  entryDetail[FOLDER];
+			String rootFilesFolder = "${tempDirectory}/" + config.toString(".") + '/' + entryDetail[FOLDER]; //$NON-NLS-1$ //$NON-NLS-2$
 			script.printMkdirTask(rootFilesFolder);
 			parameters.add("-o -X ${unzipArgs} "); //$NON-NLS-1$
 			parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ 
-			parameters.add("-x " + (entryDetail[FOLDER].equals(".") ? "eclipse/" : "") + "features/*"  + " " + (entryDetail[FOLDER].equals(".") ? "eclipse/" : "") + "plugins/*");
+			parameters.add("-x " + (entryDetail[FOLDER].equals(".") ? "eclipse/" : "") + "features/*" + " " + (entryDetail[FOLDER].equals(".") ? "eclipse/" : "") + "plugins/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 			script.printExecTask("unzip", rootFilesFolder, parameters, null); //$NON-NLS-1$
 		}
 	}
-	
-	
+
 	private void generateUntarArchice(String[] entryDetail) {
 		List parameters = new ArrayList(2);
 		parameters.add("-" + (entryDetail[ARCHIVE_NAME].endsWith(".gz") ? "z" : "") + "pxvf"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ 
 		script.printExecTask("tar", "${tempDirectory}/" + entryDetail[FOLDER], parameters, null); //$NON-NLS-1$//$NON-NLS-2$	
 	}
-	
+
 	private void generateUntarRootFiles(String[] entryDetail) {
 		//Unzip the root files in a "config specific folder" for all the configurations that matched this entry
 		for (Iterator iter = getMatchingConfig(entryDetail).iterator(); iter.hasNext();) {

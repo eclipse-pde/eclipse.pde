@@ -22,7 +22,7 @@ import org.osgi.framework.Version;
 public class FeatureGenerator extends AbstractScriptGenerator {
 
 	private static class Entry {
-		private String id;
+		private final String id;
 		private Map attributes;
 
 		public Entry(String id) {
@@ -280,9 +280,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			Map parameters = new LinkedHashMap();
 			Dictionary environment = new Hashtable(3);
 
-			parameters.put("id", feature); //$NON-NLS-1$
-			parameters.put("version", "1.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
-			writer.startTag("feature", parameters, true); //$NON-NLS-1$
+			parameters.put(ID, feature);
+			parameters.put(VERSION, "1.0.0"); //$NON-NLS-1$ 
+			writer.startTag(FEATURE, parameters, true);
 
 			boolean fragment = false;
 			List configs = getConfigInfos();
@@ -341,8 +341,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 					if (writeBundle) {
 						parameters.clear();
 
-						parameters.put("id", name); //$NON-NLS-1$
-						parameters.put("version", "0.0.0"); //$NON-NLS-1$//$NON-NLS-2$
+						parameters.put(ID, name);
+						parameters.put(VERSION, "0.0.0"); //$NON-NLS-1$
 						parameters.put("unpack", guessedUnpack ? "true" : "false"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						if (!currentConfig.equals(Config.genericConfig())) {
 							parameters.put("os", currentConfig.getOs()); //$NON-NLS-1$
@@ -350,12 +350,12 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 							parameters.put("arch", currentConfig.getArch()); //$NON-NLS-1$
 						}
 						if (fragment)
-							parameters.put("fragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+							parameters.put(FRAGMENT, "true"); //$NON-NLS-1$
 
 						//add the attributes from the entry, these override values we set above
 						parameters.putAll(entry.getAttributes());
 
-						writer.printTag("plugin", parameters, true, true, true); //$NON-NLS-1$
+						writer.printTag(PLUGIN, parameters, true, true, true);
 					}
 
 					if (!fragment && !listIter.hasNext() && fragments.size() > 0) {
@@ -382,12 +382,12 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 					getSite(false).findFeature(name, null, true);
 				}
 				parameters.clear();
-				parameters.put("id", name); //$NON-NLS-1$
-				parameters.put("version", "0.0.0"); //$NON-NLS-1$//$NON-NLS-2$
+				parameters.put(ID, name);
+				parameters.put(VERSION, "0.0.0"); //$NON-NLS-1$
 				parameters.putAll(entry.getAttributes());
 				writer.printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 			}
-			writer.endTag("feature"); //$NON-NLS-1$
+			writer.endTag(FEATURE);
 		} finally {
 			writer.close();
 		}

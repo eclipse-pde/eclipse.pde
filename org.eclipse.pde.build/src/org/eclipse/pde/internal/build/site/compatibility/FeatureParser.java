@@ -70,7 +70,7 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants 
 
 	public void startElement(String uri, String localName, String qName, Attributes attributes) {
 		//		Utils.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if ("plugin".equals(localName)) { //$NON-NLS-1$
+		if (PLUGIN.equals(localName)) {
 			processPlugin(attributes);
 		} else if ("description".equals(localName)) { //$NON-NLS-1$
 			processDescription(attributes);
@@ -78,7 +78,7 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants 
 			processLicense(attributes);
 		} else if ("copyright".equals(localName)) { //$NON-NLS-1$
 			processCopyright(attributes);
-		} else if ("feature".equals(localName)) { //$NON-NLS-1$
+		} else if (FEATURE.equals(localName)) {
 			processFeature(attributes);
 		} else if ("import".equals(localName)) { //$NON-NLS-1$
 			processImport(attributes);
@@ -94,20 +94,20 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants 
 	}
 
 	private void processImport(Attributes attributes) {
-		String id = attributes.getValue("feature"); //$NON-NLS-1$
+		String id = attributes.getValue(FEATURE);
 		FeatureEntry entry = null;
 		if (id != null) {
-			entry = FeatureEntry.createRequires(id, attributes.getValue("version"), attributes.getValue("match"), attributes.getValue("filter"), false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			entry = FeatureEntry.createRequires(id, attributes.getValue(VERSION), attributes.getValue("match"), attributes.getValue("filter"), false); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			id = attributes.getValue("plugin"); //$NON-NLS-1$
-			entry = FeatureEntry.createRequires(id, attributes.getValue("version"), attributes.getValue("match"), attributes.getValue("filter"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			id = attributes.getValue(PLUGIN);
+			entry = FeatureEntry.createRequires(id, attributes.getValue(VERSION), attributes.getValue("match"), attributes.getValue("filter"), true); //$NON-NLS-1$ //$NON-NLS-2$ 
 		}
 		hasImports = true;
 		result.addEntry(entry);
 	}
 
 	private void processIncludes(Attributes attributes) {
-		FeatureEntry entry = new FeatureEntry(attributes.getValue("id"), attributes.getValue("version"), false); //$NON-NLS-1$ //$NON-NLS-2$
+		FeatureEntry entry = new FeatureEntry(attributes.getValue(ID), attributes.getValue(VERSION), false);
 		String flag = attributes.getValue("unpack"); //$NON-NLS-1$
 		if (flag != null)
 			entry.setUnpack(Boolean.valueOf(flag).booleanValue());
@@ -146,8 +146,8 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants 
 	}
 
 	protected void processFeature(Attributes attributes) {
-		String id = attributes.getValue("id"); //$NON-NLS-1$
-		String ver = attributes.getValue("version"); //$NON-NLS-1$
+		String id = attributes.getValue(ID);
+		String ver = attributes.getValue(VERSION);
 
 		if (id == null || id.trim().equals("") //$NON-NLS-1$
 				|| ver == null || ver.trim().equals("")) { //$NON-NLS-1$
@@ -173,14 +173,14 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants 
 			result.setProviderName(attributes.getValue("provider-name")); //$NON-NLS-1$
 			result.setLabel(attributes.getValue("label")); //$NON-NLS-1$
 			result.setImage(attributes.getValue("image")); //$NON-NLS-1$
-			result.setBrandingPlugin(attributes.getValue("plugin")); //$NON-NLS-1$
+			result.setBrandingPlugin(attributes.getValue(PLUGIN));
 			//			Utils.debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 
 	private void processPlugin(Attributes attributes) {
-		String id = attributes.getValue("id"); //$NON-NLS-1$
-		String version = attributes.getValue("version"); //$NON-NLS-1$
+		String id = attributes.getValue(ID);
+		String version = attributes.getValue(VERSION);
 
 		if (id == null || id.trim().equals("") || version == null || version.trim().equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
 			error(NLS.bind(Messages.feature_parse_invalidIdOrVersion, (new String[] {id, version})));
@@ -190,7 +190,7 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants 
 			String unpack = attributes.getValue("unpack"); //$NON-NLS-1$
 			if (unpack != null)
 				plugin.setUnpack(Boolean.valueOf(unpack).booleanValue());
-			String fragment = attributes.getValue("fragment"); //$NON-NLS-1$
+			String fragment = attributes.getValue(FRAGMENT);
 			if (fragment != null)
 				plugin.setFragment(Boolean.valueOf(fragment).booleanValue());
 			String filter = attributes.getValue("filter"); //$NON-NLS-1$

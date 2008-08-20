@@ -1,5 +1,5 @@
 /*
- * $Header: /cvshome/build/org.osgi.framework/src/org/osgi/framework/Version.java,v 1.16 2006/06/16 16:31:18 hargrave Exp $
+ * $Header: /cvsroot/eclipse/org.eclipse.pde.build/src_ant/org/eclipse/pde/internal/build/tasks/Version.java,v 1.1 2007/02/04 17:03:16 prapicau Exp $
  * 
  * Copyright (c) OSGi Alliance (2004, 2006). All Rights Reserved.
  * 
@@ -37,22 +37,22 @@ import java.util.StringTokenizer;
  * <p>
  * <code>Version</code> objects are immutable.
  * 
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.1 $
  * @since 1.3
  */
 
 public class Version implements Comparable {
-	private final int			major;
-	private final int			minor;
-	private final int			micro;
-	private final String		qualifier;
-	private static final String	SEPARATOR		= ".";					//$NON-NLS-1$
+	private final int major;
+	private final int minor;
+	private final int micro;
+	private final String qualifier;
+	private static final String SEPARATOR = "."; //$NON-NLS-1$
 
 	/**
 	 * The empty version "0.0.0". Equivalent to calling
 	 * <code>new Version(0,0,0)</code>.
 	 */
-	public static final Version	emptyVersion	= new Version(0, 0, 0);
+	public static final Version emptyVersion = new Version(0, 0, 0);
 
 	/**
 	 * Creates a version identifier from the specified numerical components.
@@ -117,26 +117,26 @@ public class Version implements Comparable {
 	 *         formatted.
 	 */
 	public Version(String version) {
-		int major = 0;
-		int minor = 0;
-		int micro = 0;
-		String qualifier = ""; //$NON-NLS-1$
+		int parsedMajor = 0;
+		int parsedMinor = 0;
+		int parsedMicro = 0;
+		String parsedQualifier = ""; //$NON-NLS-1$
 
 		try {
 			StringTokenizer st = new StringTokenizer(version, SEPARATOR, true);
-			major = Integer.parseInt(st.nextToken());
+			parsedMajor = Integer.parseInt(st.nextToken());
 
 			if (st.hasMoreTokens()) {
 				st.nextToken(); // consume delimiter
-				minor = Integer.parseInt(st.nextToken());
+				parsedMinor = Integer.parseInt(st.nextToken());
 
 				if (st.hasMoreTokens()) {
 					st.nextToken(); // consume delimiter
-					micro = Integer.parseInt(st.nextToken());
+					parsedMicro = Integer.parseInt(st.nextToken());
 
 					if (st.hasMoreTokens()) {
 						st.nextToken(); // consume delimiter
-						qualifier = st.nextToken();
+						parsedQualifier = st.nextToken();
 
 						if (st.hasMoreTokens()) {
 							throw new IllegalArgumentException("invalid format"); //$NON-NLS-1$
@@ -144,15 +144,14 @@ public class Version implements Comparable {
 					}
 				}
 			}
-		}
-		catch (NoSuchElementException e) {
+		} catch (NoSuchElementException e) {
 			throw new IllegalArgumentException("invalid format"); //$NON-NLS-1$
 		}
 
-		this.major = major;
-		this.minor = minor;
-		this.micro = micro;
-		this.qualifier = qualifier;
+		this.major = parsedMajor;
+		this.minor = parsedMinor;
+		this.micro = parsedMicro;
+		this.qualifier = parsedQualifier;
 		validate();
 	}
 
@@ -256,12 +255,10 @@ public class Version implements Comparable {
 	 */
 	public String toString() {
 		String base = major + SEPARATOR + minor + SEPARATOR + micro;
-		if (qualifier.length() == 0) { //$NON-NLS-1$
+		if (qualifier.length() == 0) {
 			return base;
 		}
-		else {
-			return base + SEPARATOR + qualifier;
-		}
+		return base + SEPARATOR + qualifier;
 	}
 
 	/**
@@ -270,8 +267,7 @@ public class Version implements Comparable {
 	 * @return An integer which is a hash code value for this object.
 	 */
 	public int hashCode() {
-		return (major << 24) + (minor << 16) + (micro << 8)
-				+ qualifier.hashCode();
+		return (major << 24) + (minor << 16) + (micro << 8) + qualifier.hashCode();
 	}
 
 	/**
@@ -297,8 +293,7 @@ public class Version implements Comparable {
 		}
 
 		Version other = (Version) object;
-		return (major == other.major) && (minor == other.minor)
-				&& (micro == other.micro) && qualifier.equals(other.qualifier);
+		return (major == other.major) && (minor == other.minor) && (micro == other.micro) && qualifier.equals(other.qualifier);
 	}
 
 	/**

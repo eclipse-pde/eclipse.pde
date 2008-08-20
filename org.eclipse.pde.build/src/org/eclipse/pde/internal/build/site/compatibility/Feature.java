@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class Feature implements IPlatformEntry {
 
-	private String id;
+	private final String id;
 	private String version;
 	private String label;
 	private String image;
@@ -228,14 +228,14 @@ public class Feature implements IPlatformEntry {
 		return null;
 	}
 
-	public void addDiscoverySite(String label, String url) {
-		if (label == null && url == null)
+	public void addDiscoverySite(String discoveryLabel, String url) {
+		if (discoveryLabel == null && url == null)
 			return;
 
 		if (this.discoverySites == null)
 			this.discoverySites = new ArrayList();
 
-		URLEntry entry = new URLEntry(url, label);
+		URLEntry entry = new URLEntry(url, discoveryLabel);
 		this.discoverySites.add(entry);
 	}
 
@@ -269,16 +269,17 @@ public class Feature implements IPlatformEntry {
 	}
 
 	public void setURL(String value) {
+		// nothing for now
 	}
 
 	public void setBrandingPlugin(String brandingPlugin) {
 		this.brandingPlugin = brandingPlugin;
 	}
-	
+
 	public String getBrandingPlugin() {
 		return brandingPlugin;
 	}
-	
+
 	/**
 	 * For debugging purposes only.
 	 */

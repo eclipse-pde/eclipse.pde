@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.IAntScript;
 import org.eclipse.pde.build.IFetchFactory;
 import org.eclipse.pde.internal.build.*;
@@ -89,7 +90,7 @@ public class GETFetchFactory implements IFetchFactory {
 				int index = token.indexOf('=');
 				if (index == -1) {
 					// invalid format...we require key=value...log and continue
-					IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, "Problems parsing map file entry: " + rawEntry);
+					IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, NLS.bind(Messages.warning_problemsParsingMapFileEntry, rawEntry));
 					BundleHelper.getDefault().getLog().log(status);
 				} else {
 					String key = token.substring(0, index).trim();
@@ -101,7 +102,7 @@ public class GETFetchFactory implements IFetchFactory {
 		try {
 			new URL(url);
 		} catch (MalformedURLException e) {
-			throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, "Invalid URL in map file entry: " + rawEntry));
+			throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, NLS.bind(Messages.error_invalidURLInMapFileEntry, rawEntry)));
 		}
 		entryInfos.put(ATTRIBUTE_SRC, url);
 	}

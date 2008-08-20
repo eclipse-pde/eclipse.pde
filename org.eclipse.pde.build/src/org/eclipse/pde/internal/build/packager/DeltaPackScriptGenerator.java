@@ -11,19 +11,18 @@
 
 package org.eclipse.pde.internal.build.packager;
 
-import java.util.*;
-
+import java.util.Collection;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.AssemblyInformation;
 import org.eclipse.pde.internal.build.Config;
 
 public class DeltaPackScriptGenerator extends PackageScriptGenerator {
-	public DeltaPackScriptGenerator(String directory, AssemblyInformation assemblageInformation, String featureId) throws CoreException {
+	public DeltaPackScriptGenerator(String directory, AssemblyInformation assemblageInformation, String featureId) {
 		super(directory, assemblageInformation, featureId);
 		groupConfigs = true;
 	}
 
 	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
-		super.basicGenerateAssembleConfigFileTargetCall(new Config("delta", "delta", "delta"), binaryPlugins, binaryFeatures, allFeatures, rootFiles);
+		super.basicGenerateAssembleConfigFileTargetCall(new Config("delta", "delta", "delta"), binaryPlugins, binaryFeatures, allFeatures, rootFiles); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

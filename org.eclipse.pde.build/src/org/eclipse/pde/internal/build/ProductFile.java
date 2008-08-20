@@ -36,7 +36,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private static final String VM_ARGS_MAC = "vmArgsMac"; //$NON-NLS-1$
 	private static final String VM_ARGS_SOLARIS = "vmArgsSol"; //$NON-NLS-1$
 	private static final String VM_ARGS_WIN = "vmArgsWin"; //$NON-NLS-1$
-	
+
 	private static final String SOLARIS_LARGE = "solarisLarge"; //$NON-NLS-1$
 	private static final String SOLARIS_MEDIUM = "solarisMedium"; //$NON-NLS-1$
 	private static final String SOLARIS_SMALL = "solarisSmall"; //$NON-NLS-1$
@@ -48,7 +48,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private static final String WIN32_32_HIGH = "winMediumHigh"; //$NON-NLS-1$
 	private static final String WIN32_48_LOW = "winLargeLow"; //$NON-NLS-1$
 	private static final String WIN32_48_HIGH = "winLargeHigh"; //$NON-NLS-1$
-	
+
 	private static final String PRODUCT = "product"; //$NON-NLS-1$
 	private static final String CONFIG_INI = "configIni"; //$NON-NLS-1$
 	private static final String LAUNCHER = "launcher"; //$NON-NLS-1$
@@ -57,7 +57,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private static final String FEATURES = "features"; //$NON-NLS-1$
 	private static final String SPLASH = "splash"; //$NON-NLS-1$
 	private static final String P_USE_ICO = "useIco"; //$NON-NLS-1$
-	
+
 	//These constants form a small state machine to parse the .product file
 	private static final int STATE_START = 0;
 	private static final int STATE_PRODUCT = 1;
@@ -82,7 +82,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private SAXParser parser;
 	private String currentOS = null;
 	private boolean useIco = false;
-	private ArrayList result = new ArrayList(6);
+	private final ArrayList result = new ArrayList(6);
 	private String launcherName = null;
 	private String icons[] = null;
 	private String configPath = null;
@@ -100,8 +100,8 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private String location = null;
 	private String version = null;
 
-	private Properties  launcherArgs = new Properties();
-	
+	private Properties launcherArgs = new Properties();
+
 	private static String normalize(String text) {
 		if (text == null || text.trim().length() == 0)
 			return ""; //$NON-NLS-1$
@@ -109,7 +109,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 		text = text.replaceAll("\\r|\\n|\\f|\\t", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		return text.replaceAll("\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Constructs a feature parser.
 	 */
@@ -136,20 +136,20 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	public String getLauncherName() {
 		return launcherName;
 	}
-	
+
 	public String getLocation() {
 		return location;
 	}
-	
+
 	public List getPlugins() {
 		return getPlugins(true);
 	}
-	
+
 	public List getPlugins(boolean includeFragments) {
 		List p = plugins != null ? plugins : Collections.EMPTY_LIST;
-		if(!includeFragments)
+		if (!includeFragments)
 			return p;
-		
+
 		List f = fragments != null ? fragments : Collections.EMPTY_LIST;
 		int size = p.size() + f.size();
 		if (size == 0)
@@ -160,19 +160,19 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 		both.addAll(f);
 		return both;
 	}
-	
+
 	public List getFragments() {
-		if(fragments == null)
+		if (fragments == null)
 			return Collections.EMPTY_LIST;
 		return fragments;
 	}
-	
+
 	public List getFeatures() {
-		if(features == null)
+		if (features == null)
 			return Collections.EMPTY_LIST;
 		return features;
 	}
-	
+
 	public boolean containsPlugin(String plugin) {
 		return (plugins != null && plugins.contains(plugin)) || (fragments != null && fragments.contains(plugin));
 	}
@@ -198,7 +198,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	public String getConfigIniPath() {
 		return configPath;
 	}
-	
+
 	public String getConfigIniPath(String os) {
 		String specific = (String) platformSpecificConfigPaths.get(os);
 		return specific == null ? configPath : specific;
@@ -207,7 +207,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	public String getId() {
 		return id;
 	}
-	
+
 	public String getSplashLocation() {
 		return splashLocation;
 	}
@@ -215,11 +215,11 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	public String getProductName() {
 		return productName;
 	}
-	
+
 	public String getApplication() {
 		return application;
 	}
-	
+
 	public boolean useFeatures() {
 		return useFeatures;
 	}
@@ -230,50 +230,50 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 
 	public String getVMArguments(String os) {
 		String key = null;
-		if( os.equals(Platform.OS_WIN32)){
+		if (os.equals(Platform.OS_WIN32)) {
 			key = VM_ARGS_WIN;
-		} else if( os.equals(Platform.OS_LINUX)) {
+		} else if (os.equals(Platform.OS_LINUX)) {
 			key = VM_ARGS_LINUX;
-		} else if( os.equals(Platform.OS_MACOSX)) {
+		} else if (os.equals(Platform.OS_MACOSX)) {
 			key = VM_ARGS_MAC;
-		} else if(os.equals(Platform.OS_SOLARIS)) {
+		} else if (os.equals(Platform.OS_SOLARIS)) {
 			key = VM_ARGS_SOLARIS;
 		}
-		
+
 		String prefix = launcherArgs.getProperty(VM_ARGS);
 		String platform = null, args = null;
 		if (key != null)
 			platform = launcherArgs.getProperty(key);
 		if (prefix != null)
-			args =  platform != null ? prefix + " " + platform : prefix; //$NON-NLS-1$
-		else 
+			args = platform != null ? prefix + " " + platform : prefix; //$NON-NLS-1$
+		else
 			args = platform != null ? platform : ""; //$NON-NLS-1$
 		return normalize(args);
 	}
-	
+
 	public String getProgramArguments(String os) {
 		String key = null;
-		if( os.equals(Platform.OS_WIN32)){
+		if (os.equals(Platform.OS_WIN32)) {
 			key = PROGRAM_ARGS_WIN;
-		} else if( os.equals(Platform.OS_LINUX)) {
+		} else if (os.equals(Platform.OS_LINUX)) {
 			key = PROGRAM_ARGS_LINUX;
-		} else if( os.equals(Platform.OS_MACOSX)) {
+		} else if (os.equals(Platform.OS_MACOSX)) {
 			key = PROGRAM_ARGS_MAC;
-		} else if(os.equals(Platform.OS_SOLARIS)) {
+		} else if (os.equals(Platform.OS_SOLARIS)) {
 			key = PROGRAM_ARGS_SOLARIS;
 		}
-		
+
 		String prefix = launcherArgs.getProperty(PROGRAM_ARGS);
 		String platform = null, args = null;
 		if (key != null)
 			platform = launcherArgs.getProperty(key);
 		if (prefix != null)
-			args =  platform != null ? prefix + " " + platform : prefix; //$NON-NLS-1$
-		else 
+			args = platform != null ? prefix + " " + platform : prefix; //$NON-NLS-1$
+		else
 			args = platform != null ? platform : ""; //$NON-NLS-1$
 		return normalize(args);
 	}
-	
+
 	public void startElement(String uri, String localName, String qName, Attributes attributes) {
 		switch (state) {
 			case STATE_START :
@@ -347,13 +347,13 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 				break;
 
 			case STATE_PLUGINS :
-				if ("plugin".equals(localName)) { //$NON-NLS-1$
+				if (PLUGIN.equals(localName)) {
 					processPlugin(attributes);
 				}
 				break;
 
 			case STATE_FEATURES :
-				if ("feature".equals(localName)) { //$NON-NLS-1$
+				if (FEATURE.equals(localName)) {
 					processFeature(attributes);
 				}
 				break;
@@ -391,8 +391,8 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 			case STATE_VM_ARGS_WIN :
 				state = STATE_LAUNCHER_ARGS;
 				break;
-				
-			case STATE_CONFIG_INI:
+
+			case STATE_CONFIG_INI :
 				if (CONFIG_INI.equals(localName))
 					state = STATE_PRODUCT;
 				else
@@ -400,7 +400,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 				break;
 		}
 	}
-	
+
 	public void characters(char[] ch, int start, int length) {
 		switch (state) {
 			case STATE_PROGRAM_ARGS :
@@ -433,53 +433,54 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 			case STATE_VM_ARGS_WIN :
 				addLaunchArgumentToMap(VM_ARGS_WIN, String.valueOf(ch, start, length));
 				break;
-			case STATE_CONFIG_INI:
+			case STATE_CONFIG_INI :
 				if (platformConfigPath != null)
 					platformConfigPath += String.valueOf(ch, start, length);
 				break;
 		}
 	}
-	
+
 	private void addLaunchArgumentToMap(String key, String value) {
 		if (launcherArgs == null)
 			launcherArgs = new Properties();
-		
+
 		String oldValue = launcherArgs.getProperty(key);
 		if (oldValue != null)
 			launcherArgs.setProperty(key, oldValue + value);
 		else
 			launcherArgs.setProperty(key, value);
 	}
+
 	private void processPlugin(Attributes attributes) {
-		String fragment = attributes.getValue("fragment"); //$NON-NLS-1$
+		String fragment = attributes.getValue(FRAGMENT);
 		if (fragment != null && new Boolean(fragment).booleanValue()) {
 			if (fragments == null)
 				fragments = new ArrayList();
-			fragments.add(attributes.getValue("id")); //$NON-NLS-1$
+			fragments.add(attributes.getValue(ID));
 		} else {
 			if (plugins == null)
 				plugins = new ArrayList();
-			plugins.add(attributes.getValue("id")); //$NON-NLS-1$
+			plugins.add(attributes.getValue(ID));
 		}
 	}
-	
+
 	private void processFeature(Attributes attributes) {
 		if (features == null)
 			features = new ArrayList();
-		features.add(attributes.getValue("id")); //$NON-NLS-1$
+		features.add(attributes.getValue(ID));
 	}
 
 	private void processProduct(Attributes attributes) {
-		id = attributes.getValue("id"); //$NON-NLS-1$
+		id = attributes.getValue(ID);
 		productName = attributes.getValue("name"); //$NON-NLS-1$
 		application = attributes.getValue("application"); //$NON-NLS-1$
 		String use = attributes.getValue("useFeatures"); //$NON-NLS-1$
 		if (use != null)
 			useFeatures = IBuildPropertiesConstants.TRUE.equalsIgnoreCase(use);
-		version = attributes.getValue("version"); //$NON-NLS-1$
+		version = attributes.getValue(VERSION);
 	}
 
-	private void processConfigIni(Attributes attributes) {		
+	private void processConfigIni(Attributes attributes) {
 		String path = null;
 		if ("custom".equals(attributes.getValue("use"))) { //$NON-NLS-1$//$NON-NLS-2$
 			path = attributes.getValue("path"); //$NON-NLS-1$
@@ -491,7 +492,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 				platformSpecificConfigPaths.put(os, path);
 		} else if (path != null) {
 			configPath = path;
- 		}
+		}
 	}
 
 	private void processConfigIniPlatform(String key, boolean begin) {
@@ -532,13 +533,13 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	}
 
 	private void processIco(Attributes attributes) {
-		if (!osMatch(Platform.OS_WIN32) || !useIco) 
+		if (!osMatch(Platform.OS_WIN32) || !useIco)
 			return;
 		result.add(attributes.getValue("path")); //$NON-NLS-1$
 	}
 
 	private void processBmp(Attributes attributes) {
-		if (!osMatch(Platform.OS_WIN32) || useIco) 
+		if (!osMatch(Platform.OS_WIN32) || useIco)
 			return;
 		result.add(attributes.getValue(WIN32_16_HIGH));
 		result.add(attributes.getValue(WIN32_16_LOW));
@@ -550,13 +551,13 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	}
 
 	private void processLinux(Attributes attributes) {
-		if (!osMatch(Platform.OS_LINUX)) 
+		if (!osMatch(Platform.OS_LINUX))
 			return;
 		result.add(attributes.getValue("icon")); //$NON-NLS-1$
 	}
 
 	private void processMac(Attributes attributes) {
-		if (!osMatch(Platform.OS_MACOSX)) 
+		if (!osMatch(Platform.OS_MACOSX))
 			return;
 		result.add(attributes.getValue("icon")); //$NON-NLS-1$
 	}

@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.util.Locale;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -25,7 +24,7 @@ public class JNLPGeneratorTask extends Task {
 	private Locale locale = Locale.getDefault();
 	private boolean generateOfflineAllowed = true;
 	private String configs = null;
-	
+
 	/**
 	 * The URL location of a feature.xml file.  This can be either a jar: URL to the feature.xml,
 	 * or a file: url to the feature.
@@ -70,22 +69,22 @@ public class JNLPGeneratorTask extends Task {
 	/**
 	 * The locale in which the jnlp file generated should be translated into.
 	 *The translation values are read from the feature_<locale>.properties file.
-	 * @param the locale in which to generate the jnlp files.
+	 * @param nlsString - the locale in which to generate the jnlp files.
 	 * */
 	public void setLocale(String nlsString) {
 		String[] strings = nlsString.split("_"); //$NON-NLS-1$
 		if (nlsString.charAt(0) == '$')
 			return;
-		
+
 		if (strings != null) {
 			switch (strings.length) {
-				case 1:
+				case 1 :
 					locale = new Locale(strings[0]);
 					break;
-				case 2:
+				case 2 :
 					locale = new Locale(strings[0], strings[1]);
 					break;
-				case 3:
+				case 3 :
 					locale = new Locale(strings[0], strings[1], strings[2]);
 					break;
 			}
@@ -96,16 +95,16 @@ public class JNLPGeneratorTask extends Task {
 		JNLPGenerator generator = new JNLPGenerator(feature, jnlp, codebase, j2se, locale, generateOfflineAllowed, configs);
 		generator.process();
 	}
-	
+
 	public void setGenerateOfflineAllowed(String generateOfflineAllowed) {
 		if (generateOfflineAllowed.equalsIgnoreCase("false")) //$NON-NLS-1$
 			this.generateOfflineAllowed = false;
 		if (generateOfflineAllowed.equalsIgnoreCase("true")) //$NON-NLS-1$
 			this.generateOfflineAllowed = false;
 	}
-	
+
 	public void setConfigInfo(String configs) {
 		this.configs = configs;
 	}
-	
+
 }

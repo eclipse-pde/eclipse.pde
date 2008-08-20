@@ -14,6 +14,8 @@ public class URLEntry {
 	private String url;
 
 	public URLEntry() {
+		this.annotation = ""; //$NON-NLS-1$
+		this.url = ""; //$NON-NLS-1$
 	}
 
 	public URLEntry(String url, String annotation) {

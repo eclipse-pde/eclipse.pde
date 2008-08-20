@@ -32,15 +32,15 @@ public class SourceFeatureWriter extends FeatureWriter {
 			if (features[i].isRequires() || features[i].isPlugin())
 				continue;
 			parameters.clear();
-			parameters.put("id", features[i].getId()); //$NON-NLS-1$
-			parameters.put("version", features[i].getVersion()); //$NON-NLS-1$
+			parameters.put(ID, features[i].getId());
+			parameters.put(VERSION, features[i].getVersion());
 			if (features[i].isOptional())
 				parameters.put("optional", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-			if(features[i].getArch() != null)
+			if (features[i].getArch() != null)
 				parameters.put("arch", features[i].getArch()); //$NON-NLS-1$
-			if(features[i].getWS() != null)
+			if (features[i].getWS() != null)
 				parameters.put("ws", features[i].getWS()); //$NON-NLS-1$
-			if(features[i].getOS() != null)
+			if (features[i].getOS() != null)
 				parameters.put("os", features[i].getOS()); //$NON-NLS-1$
 			printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 		}

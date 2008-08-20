@@ -13,8 +13,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.internal.runtime.PlatformURLFragmentConnection;
-import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
@@ -23,7 +21,7 @@ import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.PDEState;
 
 public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConstants, IXMLConstants, IBuildPropertiesConstants {
-	private ModelBuildScriptGenerator generator;
+	private final ModelBuildScriptGenerator generator;
 
 	public ClasspathComputer2_1(ModelBuildScriptGenerator modelGenerator) {
 		this.generator = modelGenerator;
@@ -260,10 +258,10 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 		// A valid platform url for a plugin has a leat 3 segments.
 		if (urlfragments.length > 2 && urlfragments[0].equals(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR)) {
 			String modelLocation = null;
-			if (urlfragments[1].equalsIgnoreCase(PlatformURLPluginConnection.PLUGIN))
+			if (urlfragments[1].equalsIgnoreCase(PLUGIN))
 				modelLocation = generator.getLocation(generator.getSite(false).getRegistry().getResolvedBundle(urlfragments[2]));
 
-			if (urlfragments[1].equalsIgnoreCase(PlatformURLFragmentConnection.FRAGMENT))
+			if (urlfragments[1].equalsIgnoreCase(FRAGMENT))
 				modelLocation = generator.getLocation(generator.getSite(false).getRegistry().getResolvedBundle(urlfragments[2]));
 
 			if (urlfragments[1].equalsIgnoreCase("resource")) { //$NON-NLS-1$
@@ -285,7 +283,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 		try {
 			URL extraURL = new URL(url);
 			try {
-				relativePath = Utils.makeRelative(new Path(Platform.resolve(extraURL).getFile()), new Path(location)).toOSString();
+				relativePath = Utils.makeRelative(new Path(FileLocator.resolve(extraURL).getFile()), new Path(location)).toOSString();
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.exception_url, generator.getPropertiesFileName() + "::" + url); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, e));

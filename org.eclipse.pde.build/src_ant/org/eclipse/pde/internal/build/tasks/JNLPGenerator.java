@@ -27,10 +27,10 @@ import org.xml.sax.helpers.DefaultHandler;
 public class JNLPGenerator extends DefaultHandler {
 
 	private SAXParser parser;
-	private File featureRoot;
+	private final File featureRoot;
 
-	private String codebase;
-	private String j2se;
+	private final String codebase;
+	private final String j2se;
 
 	/**
 	 * id = ???
@@ -55,7 +55,7 @@ public class JNLPGenerator extends DefaultHandler {
 	private String currentArch = null;
 	private Locale locale = null;
 	private PropertyResourceBundle nlsBundle = null;
-	private boolean generateOfflineAllowed;
+	private final boolean generateOfflineAllowed;
 	private Config[] configs;
 
 	/**
@@ -361,6 +361,7 @@ public class JNLPGenerator extends DefaultHandler {
 	}
 
 	private void processDescription(Attributes attributes) {
+		// ignoring for now
 	}
 
 	private void processIncludes(Attributes attributes) throws IOException {
@@ -485,7 +486,7 @@ public class JNLPGenerator extends DefaultHandler {
 	}
 
 	private boolean isValidEnvironment(String os, String ws, String arch) {
-		if (configs.length==0)
+		if (configs.length == 0)
 			return true;
 		for (int i = 0; i < configs.length; i++) {
 			if (isMatching(os, configs[i].getOs()) && isMatching(ws, configs[i].getWs()) && isMatching(arch, configs[i].getArch()))

@@ -68,7 +68,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	public void generateRetrieveElementCall(Map entryInfos, IPath destination, IAntScript script) {
 		String type = (String) entryInfos.get(KEY_ELEMENT_TYPE);
 		String element = (String) entryInfos.get(KEY_ELEMENT_NAME);
-		boolean prebuilt = "true".equalsIgnoreCase((String) entryInfos.get(KEY_PREBUILT));
+		boolean prebuilt = Boolean.valueOf((String) entryInfos.get(KEY_PREBUILT)).booleanValue();
 
 		Map params = new HashMap(5);
 		// we directly export the CVS content into the destination. if we have a pre-built JAR then
@@ -115,7 +115,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		params.put(PROP_FILETOCHECK, locationToCheck.toString());
 
 		printAvailableTask(locationToCheck.toString(), locationToCheck.toString(), script);
-		if (!prebuilt&& (type.equals(IFetchFactory.ELEMENT_TYPE_PLUGIN) || type.equals(IFetchFactory.ELEMENT_TYPE_FRAGMENT))) {
+		if (!prebuilt && (type.equals(IFetchFactory.ELEMENT_TYPE_PLUGIN) || type.equals(IFetchFactory.ELEMENT_TYPE_FRAGMENT))) {
 			printAvailableTask(locationToCheck.toString(), locationToCheck.removeLastSegments(1).append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toString(), script);
 		}
 
@@ -137,8 +137,8 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 			String tag = (String) entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG);
 			String cvsRoot = (String) entryInfos.get(KEY_CVSROOT);
 			String dest = "true".equalsIgnoreCase((String) entryInfos.get(KEY_PREBUILT)) ? destination.removeLastSegments(1).toString() : destination.toString(); //$NON-NLS-1$
-			printCVSTask("export -r " + tag + ' ' + filePath.toString(), cvsRoot, dest, null, null, "true", null, null, "${fetch.failonerror}", script);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			script.println("<move file=\"" + destination + '/' + filePath + "\"" + " tofile=\"" + destination.append(file) + "\" failonerror=\"false\" />");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			printCVSTask("export -r " + tag + ' ' + filePath.toString(), cvsRoot, dest, null, null, "true", null, null, "${fetch.failonerror}", script); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			script.println("<move file=\"" + destination + '/' + filePath + "\"" + " tofile=\"" + destination.append(file) + "\" failonerror=\"false\" />"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
 
@@ -151,7 +151,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	/*
 	 * Handle the old file format:
 	 * Map file arguments:
- 	 * <code>&lt;TAG&gt;,&lt;CVSROOT&gt;[,&lt;PASSWORD&gt;[,&lt;PATH&gt;[,&lt;CVSPASSFILE&gt;]]]</code>
+	 * <code>&lt;TAG&gt;,&lt;CVSROOT&gt;[,&lt;PASSWORD&gt;[,&lt;PATH&gt;[,&lt;CVSPASSFILE&gt;]]]</code>
 	 */
 	private void legacyParseMapFileEntry(String[] arguments, Properties overrideTags, Map entryInfos) {
 		String overrideTag = overrideTags != null ? overrideTags.getProperty(OVERRIDE_TAG) : null;
@@ -171,7 +171,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 
 		// build up the table of arguments in the map file entry
 		Map table = new HashMap();
-		for (int i=0; i<arguments.length; i++) {
+		for (int i = 0; i < arguments.length; i++) {
 			String arg = arguments[i];
 			// if we have at least one arg without an equals sign, then
 			// revert back to the legacy parsing
@@ -181,7 +181,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 				return;
 			}
 			String key = arg.substring(0, index);
-			String value = arg.substring(index+1);
+			String value = arg.substring(index + 1);
 			table.put(key, value);
 		}
 
@@ -238,7 +238,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		script.printAttribute("failonerror", failOnError, false); //$NON-NLS-1$
 		script.println("/>"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Print a <code>cvspass</code> task to the Ant script.
 	 * 

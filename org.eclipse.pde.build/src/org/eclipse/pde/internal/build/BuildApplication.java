@@ -113,13 +113,10 @@ public class BuildApplication implements IApplication {
 		return doPlatformRunnable(ee, args);
 	}
 
-	/**
+	/*
 	 * If the Executable Extension is an old IPlatformRunnable, use this method to run it to 
 	 * avoid the warnings about deprecation.
 	 * @deprecated
-	 * @param ee
-	 * @param args
-	 * @return
 	 * @throws Exception
 	 */
 	private Object doPlatformRunnable(Object ee, Object args) throws Exception {

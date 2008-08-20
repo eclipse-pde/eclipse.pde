@@ -173,7 +173,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private byte determineConfigStyle(Config config) throws CoreException {
 		byte result = 0;
-		
+
 		PDEState state = getSite(false).getRegistry();
 		Collection bundles = director.getAssemblyData().getPlugins(config);
 
@@ -215,13 +215,13 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		buffer.append(BUNDLE_SIMPLE_CONFIGURATOR);
 		buffer.append(START_LEVEL_1);
 		buffer.append("\n"); //$NON-NLS-1$
-		
+
 		Collection plugins = null;
 		if (productFile.useFeatures())
 			plugins = director.getAssemblyData().getPlugins(config);
 		else
 			plugins = getBundlesFromProductFile();
-		
+
 		URL bundlesTxt = P2Utils.writeBundlesTxt(plugins, configDir, (style & CONFIG_STYLE_REFACTORED) > 0);
 		if (bundlesTxt != null) {
 			buffer.append(SIMPLE_CONFIGURATOR_CONFIG_URL);
@@ -257,10 +257,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			buffer.append('\n');
 		}
 	}
-	
+
 	private void printAllBundles(StringBuffer buffer, Config config, byte style) throws CoreException {
 		buffer.append("osgi.bundles="); //$NON-NLS-1$
-		
+
 		//When the plugins are all listed.
 		Dictionary environment = new Hashtable(3);
 		environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
@@ -353,11 +353,11 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (productFile.getProductName() != null)
 			properties.put("name", productFile.getProductName()); //$NON-NLS-1$
 		if (productFile.getId() != null)
-			properties.put("id", productFile.getId()); //$NON-NLS-1$
+			properties.put(ID, productFile.getId());
 
 		BundleDescription bundle = getSite(false).getRegistry().getResolvedBundle(getBrandingPlugin());
 		if (bundle != null)
-			properties.put("version", bundle.getVersion().toString()); //$NON-NLS-1$
+			properties.put(VERSION, bundle.getVersion().toString());
 
 		OutputStream stream = null;
 		try {

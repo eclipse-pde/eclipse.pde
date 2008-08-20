@@ -1112,7 +1112,7 @@ public RGB[] getRGBs() {
  * @param mask the mask to compute the shift for
  * @return the shift amount
  *
- * @see PaletteData
+ * @see IconExe.PaletteData
  */
 int shiftForMask(int mask) {
 	for (int i = 31; i >= 0; i--) { 
@@ -1196,7 +1196,7 @@ void reset() {
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if the stream is null</li>
  * </ul>
- * @exception SWTException <ul>
+ * @exception RuntimeException <ul>
  *    <li>ERROR_INVALID_IMAGE - if the image file contains invalid data</li>
  *    <li>ERROR_IO - if an input/output error occurs while reading data</li>
  *    <li>ERROR_UNSUPPORTED_FORMAT - if the image file contains an unrecognized format</li>
@@ -1221,7 +1221,7 @@ public ImageData[] load(InputStream stream) {
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
  * </ul>
- * @exception SWTException <ul>
+ * @exception RuntimeException <ul>
  *    <li>ERROR_INVALID_IMAGE - if the image file contains invalid data</li>
  *    <li>ERROR_IO - if an IO error occurs while reading data</li>
  *    <li>ERROR_UNSUPPORTED_FORMAT - if the image file contains an unrecognized format</li>
@@ -1511,7 +1511,7 @@ public ImageData(int width, int height, int depth, PaletteData palette, int scan
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
  * </ul>
- * @exception SWTException <ul>
+ * @exception RuntimeException <ul>
  *    <li>ERROR_INVALID_IMAGE - if the image file contains invalid data</li>
  *    <li>ERROR_IO if an IO error occurs while reading data</li>
  *    <li>ERROR_UNSUPPORTED_FORMAT - if the image file contains an unrecognized format</li>
@@ -1692,7 +1692,7 @@ static byte[] checkData(byte [] data) {
  *    <li>ERROR_INVALID_ARGUMENT - if x or y is out of bounds</li>
  *    <li>ERROR_INVALID_ARGUMENT - if getWidth is negative</li>
  * </ul>
- * @exception SWTException <ul>
+ * @exception RuntimeException <ul>
  *    <li>ERROR_UNSUPPORTED_DEPTH - if the depth is not one of 1, 2, 4 or 8
  *        (For higher depths, use the int[] version of this method.)</li>
  * </ul>
@@ -1843,7 +1843,7 @@ public void getPixels(int x, int y, int getWidth, byte[] pixels, int startIndex)
  *    <li>ERROR_INVALID_ARGUMENT - if x or y is out of bounds</li>
  *    <li>ERROR_INVALID_ARGUMENT - if getWidth is negative</li>
  * </ul>
- * @exception SWTException <ul>
+ * @exception RuntimeException <ul>
  *    <li>ERROR_UNSUPPORTED_DEPTH - if the depth is not one of 1, 2, 4, 8, 16, 24 or 32</li>
  * </ul>
  */
@@ -2034,7 +2034,7 @@ public void getPixels(int x, int y, int getWidth, int[] pixels, int startIndex) 
  *
  * @return the RGB values for the image or null if direct color
  *
- * @see PaletteData#getRGBs()
+ * @see IconExe.PaletteData#getRGBs()
  */
 public RGB[] getRGBs() {
 	return palette.getRGBs();
@@ -2093,7 +2093,7 @@ int getByteOrder() {
  *    <li>ERROR_INVALID_ARGUMENT - if x or y is out of bounds</li>
  *    <li>ERROR_INVALID_ARGUMENT - if putWidth is negative</li>
  * </ul>
- * @exception SWTException <ul>
+ * @exception RuntimeException <ul>
  *    <li>ERROR_UNSUPPORTED_DEPTH if the depth is not one of 1, 2, 4, 8
  *        (For higher depths, use the int[] version of this method.)</li>
  * </ul>
@@ -2220,7 +2220,7 @@ public void setPixels(int x, int y, int putWidth, byte[] pixels, int startIndex)
  *    <li>ERROR_INVALID_ARGUMENT - if x or y is out of bounds</li>
  *    <li>ERROR_INVALID_ARGUMENT - if putWidth is negative</li>
  * </ul>
- * @exception SWTException <ul>
+ * @exception RuntimeException <ul>
  *    <li>ERROR_UNSUPPORTED_DEPTH if the depth is not one of 1, 2, 4, 8, 16, 24 or 32</li>
  * </ul>
  */

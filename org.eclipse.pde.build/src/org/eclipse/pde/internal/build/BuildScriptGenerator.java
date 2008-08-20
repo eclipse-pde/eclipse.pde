@@ -116,9 +116,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			int index = elements[i].indexOf('@');
 			String type = elements[i].substring(0, index);
 			String element = elements[i].substring(index + 1);
-			if (type.equals("plugin") || type.equals("fragment")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (type.equals(PLUGIN) || type.equals(FRAGMENT))
 				plugins.add(element);
-			else if (type.equals("feature")) //$NON-NLS-1$
+			else if (type.equals(FEATURE))
 				features.add(element);
 		}
 	}

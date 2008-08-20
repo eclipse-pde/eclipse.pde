@@ -21,8 +21,8 @@ import org.eclipse.pde.internal.build.site.compatibility.*;
 
 public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	protected Feature feature;
-	private BuildTimeSite site;
-	private Map parameters = new LinkedHashMap(10);
+	private final BuildTimeSite site;
+	private final Map parameters = new LinkedHashMap(10);
 
 	public FeatureWriter(OutputStream out, Feature feature, BuildTimeSite site) throws IOException {
 		super(out);
@@ -41,14 +41,14 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		printRequires();
 		printPlugins();
 		printData();
-		endTag("feature"); //$NON-NLS-1$
+		endTag(FEATURE);
 		super.close();
 	}
 
 	public void printFeatureDeclaration() {
 		parameters.clear();
-		parameters.put("id", feature.getId()); //$NON-NLS-1$
-		parameters.put("version", feature.getVersion()); //$NON-NLS-1$
+		parameters.put(ID, feature.getId());
+		parameters.put(VERSION, feature.getVersion());
 		parameters.put("label", feature.getLabel()); //$NON-NLS-1$
 		parameters.put("provider-name", feature.getProviderName()); //$NON-NLS-1$
 		parameters.put("image", feature.getImage()); //$NON-NLS-1$
@@ -56,11 +56,11 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		parameters.put("arch", feature.getArch()); //$NON-NLS-1$
 		parameters.put("ws", feature.getWS()); //$NON-NLS-1$
 		parameters.put("nl", feature.getNL()); //$NON-NLS-1$
-//		parameters.put("colocation-affinity", feature.getAffinityFeature()); //$NON-NLS-1$
-//		parameters.put("primary", new Boolean(feature.isPrimary())); //$NON-NLS-1$
-//		parameters.put("application", feature.getApplication()); //$NON-NLS-1$
+		//		parameters.put("colocation-affinity", feature.getAffinityFeature()); //$NON-NLS-1$
+		//		parameters.put("primary", new Boolean(feature.isPrimary())); //$NON-NLS-1$
+		//		parameters.put("application", feature.getApplication()); //$NON-NLS-1$
 
-		startTag("feature", parameters, true); //$NON-NLS-1$
+		startTag(FEATURE, parameters, true);
 	}
 
 	public void printInstallHandler() {
@@ -144,9 +144,9 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 
 			parameters.clear();
 			try {
-				parameters.put("id", entries[i].getId()); //$NON-NLS-1$
+				parameters.put(ID, entries[i].getId());
 				BuildTimeFeature tmpFeature = site.findFeature(entries[i].getId(), null, true);
-				parameters.put("version", tmpFeature.getVersion()); //$NON-NLS-1$
+				parameters.put(VERSION, tmpFeature.getVersion());
 			} catch (CoreException e) {
 				String message = NLS.bind(Messages.exception_missingFeature, entries[i].getId());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
@@ -170,12 +170,12 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			}
 			parameters.clear();
 			if (entries[i].isPlugin()) {
-				parameters.put("plugin", entries[i].getId()); //$NON-NLS-1$
-				parameters.put("version", entries[i].getVersion()); //$NON-NLS-1$
+				parameters.put(PLUGIN, entries[i].getId());
+				parameters.put(VERSION, entries[i].getVersion());
 			} else {
 				//The import refers to a feature
-				parameters.put("feature", entries[i].getId()); //$NON-NLS-1$
-				parameters.put("version", entries[i].getVersion()); //$NON-NLS-1$
+				parameters.put(FEATURE, entries[i].getId());
+				parameters.put(VERSION, entries[i].getVersion());
 			}
 			parameters.put("match", entries[i].getMatch()); //$NON-NLS-1$
 			printTag("import", parameters, true, true, true); //$NON-NLS-1$
@@ -184,25 +184,25 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			endTag("requires"); //$NON-NLS-1$
 	}
 
-//	/**
-//	 * Method getStringForMatchingRule.
-//	 * @param ruleNumber
-//	 */
-//	private String getStringForMatchingRule(int ruleNumber) {
-//		switch (ruleNumber) {
-//			case 1 :
-//				return "perfect"; //$NON-NLS-1$
-//			case 2 :
-//				return "equivalent"; //$NON-NLS-1$
-//			case 3 :
-//				return "compatible"; //$NON-NLS-1$
-//			case 4 :
-//				return "greaterOrEqual"; //$NON-NLS-1$
-//			case 0 :
-//			default :
-//				return ""; //$NON-NLS-1$
-//		}
-//	}
+	//	/**
+	//	 * Method getStringForMatchingRule.
+	//	 * @param ruleNumber
+	//	 */
+	//	private String getStringForMatchingRule(int ruleNumber) {
+	//		switch (ruleNumber) {
+	//			case 1 :
+	//				return "perfect"; //$NON-NLS-1$
+	//			case 2 :
+	//				return "equivalent"; //$NON-NLS-1$
+	//			case 3 :
+	//				return "compatible"; //$NON-NLS-1$
+	//			case 4 :
+	//				return "greaterOrEqual"; //$NON-NLS-1$
+	//			case 0 :
+	//			default :
+	//				return ""; //$NON-NLS-1$
+	//		}
+	//	}
 
 	public void printPlugins() throws CoreException {
 		FeatureEntry[] entries = feature.getEntries();
@@ -210,7 +210,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			if (entries[i].isRequires() || !entries[i].isPlugin())
 				continue;
 			parameters.clear();
-			parameters.put("id", entries[i].getId()); //$NON-NLS-1$
+			parameters.put(ID, entries[i].getId());
 
 			String versionRequested = entries[i].getVersion();
 			BundleDescription effectivePlugin = null;
@@ -224,32 +224,32 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 				String message = NLS.bind(Messages.exception_missingPlugin, entries[i].getId() + "_" + entries[i].getVersion()); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			}
-			parameters.put("version", effectivePlugin.getVersion()); //$NON-NLS-1$
+			parameters.put(VERSION, effectivePlugin.getVersion());
 			if (entries[i].isFragment())
-				parameters.put("fragment", new Boolean(entries[i].isFragment())); //$NON-NLS-1$
+				parameters.put(FRAGMENT, new Boolean(entries[i].isFragment()));
 			parameters.put("os", entries[i].getOS()); //$NON-NLS-1$
 			parameters.put("arch", entries[i].getArch()); //$NON-NLS-1$
 			parameters.put("ws", entries[i].getWS()); //$NON-NLS-1$
 			parameters.put("nl", entries[i].getNL()); //$NON-NLS-1$
 			if (!entries[i].isUnpack())
 				parameters.put("unpack", Boolean.FALSE.toString()); //$NON-NLS-1$
-//			parameters.put("download-size", new Long(entries[i].getDownloadSize() != -1 ? entries[i].getDownloadSize() : 0)); //$NON-NLS-1$
-//			parameters.put("install-size", new Long(entries[i].getInstallSize() != -1 ? entries[i].getInstallSize() : 0)); //$NON-NLS-1$
-			printTag("plugin", parameters, true, true, true); //$NON-NLS-1$
+			//			parameters.put("download-size", new Long(entries[i].getDownloadSize() != -1 ? entries[i].getDownloadSize() : 0)); //$NON-NLS-1$
+			//			parameters.put("install-size", new Long(entries[i].getInstallSize() != -1 ? entries[i].getInstallSize() : 0)); //$NON-NLS-1$
+			printTag(PLUGIN, parameters, true, true, true);
 		}
 	}
 
 	private void printData() {
-//		INonPluginEntry[] entries = feature.getNonPluginEntries();
-//		for (int i = 0; i < entries.length; i++) {
-//			parameters.put("id", entries[i].getIdentifier()); //$NON-NLS-1$
-//			parameters.put("os", entries[i].getOS()); //$NON-NLS-1$
-//			parameters.put("arch", entries[i].getOSArch()); //$NON-NLS-1$
-//			parameters.put("ws", entries[i].getWS()); //$NON-NLS-1$
-//			parameters.put("nl", entries[i].getNL()); //$NON-NLS-1$
-//			parameters.put("download-size", new Long(entries[i].getDownloadSize() != -1 ? entries[i].getDownloadSize() : 0)); //$NON-NLS-1$
-//			parameters.put("install-size", new Long(entries[i].getInstallSize() != -1 ? entries[i].getInstallSize() : 0)); //$NON-NLS-1$
-//			printTag("data", parameters, true, true, true); //$NON-NLS-1$
-//		}
+		//		INonPluginEntry[] entries = feature.getNonPluginEntries();
+		//		for (int i = 0; i < entries.length; i++) {
+		//			parameters.put(ID, entries[i].getIdentifier());
+		//			parameters.put("os", entries[i].getOS()); //$NON-NLS-1$
+		//			parameters.put("arch", entries[i].getOSArch()); //$NON-NLS-1$
+		//			parameters.put("ws", entries[i].getWS()); //$NON-NLS-1$
+		//			parameters.put("nl", entries[i].getNL()); //$NON-NLS-1$
+		//			parameters.put("download-size", new Long(entries[i].getDownloadSize() != -1 ? entries[i].getDownloadSize() : 0)); //$NON-NLS-1$
+		//			parameters.put("install-size", new Long(entries[i].getInstallSize() != -1 ? entries[i].getInstallSize() : 0)); //$NON-NLS-1$
+		//			printTag("data", parameters, true, true, true); //$NON-NLS-1$
+		//		}
 	}
 }

@@ -131,7 +131,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	/**
 	 * Method generateSourceFeature.
-	 * @throws Exception 
+	 * @throws CoreException 
 	 */
 	public BuildTimeFeature generateSourceFeature(BuildTimeFeature feature, String sourceFeatureName) throws CoreException {
 		initialize(feature, sourceFeatureName);
@@ -183,13 +183,13 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			Map items = Utils.parseExtraBundlesString(extraEntries[i], true);
 			String id = (String) items.get(Utils.EXTRA_ID);
 			Version version = (Version) items.get(Utils.EXTRA_VERSION);
-			
+
 			// see if we have a plug-in or a fragment
 			if (extraEntries[i].startsWith("feature@")) { //$NON-NLS-1$
 				entry = new FeatureEntry(id, version.toString(), false);
 				if (items.containsKey(Utils.EXTRA_OPTIONAL))
-					entry.setOptional(((Boolean)items.get(Utils.EXTRA_OPTIONAL)).booleanValue());
-				entry.setEnvironment((String)items.get(Utils.EXTRA_OS), (String)items.get(Utils.EXTRA_WS), (String)items.get(Utils.EXTRA_ARCH), null);
+					entry.setOptional(((Boolean) items.get(Utils.EXTRA_OPTIONAL)).booleanValue());
+				entry.setEnvironment((String) items.get(Utils.EXTRA_OS), (String) items.get(Utils.EXTRA_WS), (String) items.get(Utils.EXTRA_ARCH), null);
 				sourceFeature.addEntry(entry);
 			} else if (extraEntries[i].startsWith("plugin@")) { //$NON-NLS-1$
 				model = getSite().getRegistry().getResolvedBundle((String) items.get(Utils.EXTRA_ID), ((Version) items.get(Utils.EXTRA_VERSION)).toString());
@@ -200,12 +200,12 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				}
 				entry = new FeatureEntry(model.getSymbolicName(), model.getVersion().toString(), true);
 				entry.setUnpack(((Boolean) items.get(Utils.EXTRA_UNPACK)).booleanValue());
-				entry.setEnvironment((String)items.get(Utils.EXTRA_OS), (String)items.get(Utils.EXTRA_WS), (String)items.get(Utils.EXTRA_ARCH), null);
+				entry.setEnvironment((String) items.get(Utils.EXTRA_OS), (String) items.get(Utils.EXTRA_WS), (String) items.get(Utils.EXTRA_ARCH), null);
 				sourceFeature.addEntry(entry);
 			} else if (extraEntries[i].startsWith("exclude@")) { //$NON-NLS-1$
 				if (excludedEntries == null)
 					excludedEntries = new HashMap();
-				
+
 				if (excludedEntries.containsKey(id)) {
 					((List) excludedEntries.get(id)).add(version);
 				} else {
@@ -646,7 +646,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 					//it is a source bundle, check that it is for bundle
 					Map headerMap = Utils.parseSourceBundleEntry(sourceBundle);
 					Map entryMap = (Map) headerMap.get(bundle.getSymbolicName());
-					if (entryMap != null && bundle.getVersion().toString().equals(entryMap.get("version"))) { //$NON-NLS-1$
+					if (entryMap != null && bundle.getVersion().toString().equals(entryMap.get(VERSION))) {
 						sourceEntry.setUnpack(new File(sourceBundle.getLocation()).isDirectory());
 
 						FeatureEntry existingEntry = sourceFeature.findPluginEntry(sourceEntry.getId(), sourceEntry.getVersion());
@@ -728,7 +728,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		String nameKey = (name != null && name.startsWith("%")) ? name.substring(1) : null; //$NON-NLS-1$;
 
 		if (localization == null)
-			localization = "plugin"; //$NON-NLS-1$
+			localization = PLUGIN;
 		else {
 			//read the localization properties from original bundle
 			Properties localizationProperties = null;

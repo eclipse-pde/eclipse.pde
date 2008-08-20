@@ -18,7 +18,10 @@ public interface IPDEBuildConstants {
 	/** from PlatformURLPluginConnection and PlatformURLFragmentConnection **/
 	public static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	public static final String FRAGMENT = "fragment"; //$NON-NLS-1$
-	
+	public static final String FEATURE = "feature"; //$NON-NLS-1$
+	public static final String VERSION = "version"; //$NON-NLS-1$
+	public static final String ID = "id"; //$NON-NLS-1$
+
 	/** PDE Core plug-in id */
 	public static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
 	public static final String PI_BOOT_JAR_NAME = "boot.jar"; //$NON-NLS-1$
@@ -62,14 +65,14 @@ public interface IPDEBuildConstants {
 	public final static String DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX = "finalPluginsVersions"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURE_VERSION_FILENAME_PREFIX = "finalFeaturesVersions"; //$NON-NLS-1$
 	public final static String PROPERTIES_FILE_SUFFIX = ".properties"; //$NON-NLS-1$
-	
+
 	// Tag replaced in files
 	public final static String REPLACED_PLUGIN_ID = "PLUGIN_ID"; //$NON-NLS-1$
 	public final static String REPLACED_PLUGIN_VERSION = "PLUGIN_VERSION"; //$NON-NLS-1$
 	public final static String REPLACED_FRAGMENT_VERSION = "FRAGMENT_VERSION"; //$NON-NLS-1$ 
 	public final static String REPLACED_FRAGMENT_ID = "FRAGMENT_ID"; //$NON-NLS-1$
 	public final static String REPLACED_PLATFORM_FILTER = "PLATFORM_FILTER"; //$NON-NLS-1$
-	
+
 	// status constants	
 	public final static int EXCEPTION_FEATURE_MISSING = 1;
 	public final static int EXCEPTION_BUILDDIRECTORY_LOCATION_MISSING = 2;
@@ -94,30 +97,30 @@ public interface IPDEBuildConstants {
 	public final static int EXCEPTION_PRODUCT_FORMAT = 23;
 	public final static int EXCEPTION_PRODUCT_FILE = 24;
 	public final static int WARNING_PLUGIN_ALTERED = 25;
-	
+
 	//User object keys. BundleDescription.getUserObject()
 	public final static String IS_COMPILED = "isCompiler"; //$NON-NLS-1$
 	public final static String PLUGIN_ENTRY = "pluginEntry"; //$NON-NLS-1$
-	public final static String WITH_DOT = "withDot";  //$NON-NLS-1$
-	
+	public final static String WITH_DOT = "withDot"; //$NON-NLS-1$
+
 	//Filter properties
-	public final static String OSGI_WS = "osgi.ws";  //$NON-NLS-1$
-	public final static String OSGI_OS = "osgi.os";  //$NON-NLS-1$
-	public final static String OSGI_ARCH = "osgi.arch";  //$NON-NLS-1$
-	public final static String OSGI_NL = "osgi.nl";  //$NON-NLS-1$
-	
+	public final static String OSGI_WS = "osgi.ws"; //$NON-NLS-1$
+	public final static String OSGI_OS = "osgi.os"; //$NON-NLS-1$
+	public final static String OSGI_ARCH = "osgi.arch"; //$NON-NLS-1$
+	public final static String OSGI_NL = "osgi.nl"; //$NON-NLS-1$
+
 	//Eclipse specific manifest headers
-	public final static String EXTENSIBLE_API = "Eclipse-ExtensibleAPI";  //$NON-NLS-1$
+	public final static String EXTENSIBLE_API = "Eclipse-ExtensibleAPI"; //$NON-NLS-1$
 	public final static String PATCH_FRAGMENT = "Eclipse-PatchFragment"; //$NON-NLS-1$
 	public final static String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
 	public final static String ECLIPSE_PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
-	
+
 	// fetch task extension point
 	public final static String EXT_FETCH_TASK_FACTORIES = "org.eclipse.pde.build.fetchFactories"; //$NON-NLS-1$
 	public final static String ATTR_ID = "id"; //$NON-NLS-1$
 	public final static String ATTR_CLASS = "class"; //$NON-NLS-1$
 	public final static String ELEM_FACTORY = "factory"; //$NON-NLS-1$
-	
+
 	//container feature used in building .product files
 	public final static String CONTAINER_FEATURE = "org.eclipse.pde.build.container.feature"; //$NON-NLS-1$
 }

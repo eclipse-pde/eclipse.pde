@@ -18,7 +18,8 @@ public class Messages extends NLS {
 	public static String warning_cannotLocateSource;
 	public static String warning_missingPassword;
 	public static String warning_fallBackVersion;
-	
+	public static String warning_problemsParsingMapFileEntry;
+
 	// error
 	public static String error_pluginCycle;
 	public static String error_missingDirectoryEntry;
@@ -36,6 +37,7 @@ public class Messages extends NLS {
 	public static String error_missingSourceFolder;
 	public static String error_noCorrespondingFactory;
 	public static String error_retrieveFailed;
+	public static String error_invalidURLInMapFileEntry;
 
 	// exception
 	public static String exception_missingElement;
@@ -56,7 +58,7 @@ public class Messages extends NLS {
 	public static String exception_cannotAcquireService;
 	public static String exception_hostNotFound;
 	public static String exception_missing_pdebuild_folder;
-	
+
 	// build.xml
 	public static String build_plugin_buildJars;
 	public static String build_plugin_jar;
@@ -75,21 +77,20 @@ public class Messages extends NLS {
 	public static String build_compilerSetting;
 	public static String invalid_archivesFormat;
 	public static String error_loading_platform_properties;
-	
+
 	// assemble.xml
 	public static String assemble_jarUp;
 	public static String sign_Jar;
-	
+
 	// unsatisfied constraints
 	public static String unsatisfied_import;
 	public static String unsatisfied_required;
 	public static String unsatisfied_optionalBundle;
 	public static String unsatisfied_host;
 
-	
 	public static String feature_parse_invalidIdOrVersion;
 	public static String feature_parse_emptyRequires;
-	
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
