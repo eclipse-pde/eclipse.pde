@@ -9,4 +9,5 @@ Export-Package: a.classes.constructors,
  a.classes.hierarchy,
  a.classes.membertypes,
  a.classes.methods,
- a.classes.modifiers
+ a.classes.modifiers,
+ a.classes.restrictions
