@@ -41,7 +41,11 @@ public class ClassExtendsLeak extends LeakTest {
 	 */
 	protected int getDefaultProblemId() {
 		if(pid == -1) {
-			pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.API_LEAK, IApiProblem.ILLEGAL_EXTEND);
+			pid = ApiProblemFactory.createProblemId(
+					IApiProblem.CATEGORY_USAGE, 
+					IElementDescriptor.T_REFERENCE_TYPE, 
+					IApiProblem.API_LEAK, 
+					IApiProblem.ILLEGAL_EXTEND);
 		}
 		return pid;
 	}
@@ -72,15 +76,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as leaking using a full build
 	 */
 	public void testClassExtendsLeak1F() {
-		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"internal", "test1"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test1", TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test1"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x1(false);
 	}
 	
 	/**
@@ -88,14 +84,19 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as leaking using an incremental build
 	 */
 	public void testClassExtendsLeak1I() {
+		x1(true);
+	}
+	
+	private void x1(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"internal", "test1"}});
+		String typename = "test1";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, typename}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test1", TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test1"}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
-				IncrementalProjectBuilder.INCREMENTAL_BUILD, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -104,14 +105,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak using a full build
 	 */
 	public void testClassExtendsLeak2F() {
-		expectingNoProblems();
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test2", TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test2"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x2(false);	
 	}
 	
 	/**
@@ -119,13 +113,18 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak using an incremental build
 	 */
 	public void testClassExtendsLeak2I() {
+		x2(true);
+	}
+	
+	private void x2(boolean inc) {
 		expectingNoProblems();
+		String typename = "test2";
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test2", TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test2"}, 
-				true, 
-				IncrementalProjectBuilder.INCREMENTAL_BUILD, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -134,14 +133,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak using a full build
 	 */
 	public void testClassExtendsLeak3F() {
-		expectingNoProblems();
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test3", TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test3"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x3(false);
 	}
 	
 	/**
@@ -149,13 +141,18 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak using an incremental build
 	 */
 	public void testClassExtendsLeak3I() {
+		x3(true);
+	}
+	
+	private void x3(boolean inc) {
 		expectingNoProblems();
+		String typename = "test3";
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test3", TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test3"}, 
-				true, 
-				IncrementalProjectBuilder.INCREMENTAL_BUILD, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -164,14 +161,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak using a full build
 	 */
 	public void testClassExtendsLeak4F() {
-		expectingNoProblems();
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test4", TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test4"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x4(false);
 	}
 	
 	/**
@@ -179,13 +169,18 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak using an incremental build
 	 */
 	public void testClassExtendsLeak4I() {
+		x4(true);
+	}
+	
+	private void x4(boolean inc) {
 		expectingNoProblems();
+		String typename = "test4";
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test4", TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test4"}, 
-				true, 
-				IncrementalProjectBuilder.INCREMENTAL_BUILD, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -194,15 +189,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak even with an @noextend tag being used using a full build
 	 */
 	public void testClassExtendsLeak5F() {
-		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"internal", "test5"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test5", TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test5"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x5(false);
 	}
 	
 	/**
@@ -210,14 +197,19 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak even with an @noextend tag being used using an incremental build
 	 */
 	public void testClassExtendsLeak5I() {
+		x5(true);
+	}
+	
+	private void x5(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"internal", "test5"}});
+		String typename = "test5";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, typename}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test5", TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test5"}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
-				IncrementalProjectBuilder.INCREMENTAL_BUILD, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -226,15 +218,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak even with an @noinstantiate tag being used using a full build
 	 */
 	public void testClassExtendsLeak6F() {
-		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"internal", "test6"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test6", TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test6"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x6(false);
 	}
 	
 	/**
@@ -242,14 +226,19 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak even with an @noinstantiate tag being used using an incremental build
 	 */
 	public void testClassExtendsLeak6I() {
+		x6(true);
+	}
+	
+	private void x6(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"internal", "test6"}});
+		String typename = "test6";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, typename}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test6", TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test6"}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
-				IncrementalProjectBuilder.INCREMENTAL_BUILD, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -258,15 +247,7 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak even with @noextend and @noinstantiate tags being used using a full build
 	 */
 	public void testClassExtendsLeak7F() {
-		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"internal", "test7"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test7", TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test7"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x7(false);
 	}
 	
 	/**
@@ -274,14 +255,80 @@ public class ClassExtendsLeak extends LeakTest {
 	 * as a leak even with @noextend and @noinstantiate tags being used using an incremental build
 	 */
 	public void testClassExtendsLeak7I() {
+		x7(true);
+	}
+	
+	private void x7(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"internal", "test7"}});
+		String typename = "test7";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, typename}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test7", TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test7"}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
-				IncrementalProjectBuilder.INCREMENTAL_BUILD, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that a public static internal class that extends an internal type in an API class is flagged 
+	 * as a leak even with @noextend and @noinstantiate tags being used using a full build
+	 */
+	public void testClassExtendsLeak8F() {
+		x8(false);
+	}
+	
+	/**
+	 * Tests that a public static internal class that extends an internal type in an API class is flagged 
+	 * as a leak even with @noextend and @noinstantiate tags being used using an incremental build
+	 */
+	public void testClassExtendsLeak8I() {
+		x8(true);
+	}
+	
+	private void x8(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		String typename = "test15";
+		String innertype = "inner";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, innertype}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that more than one public static internal class that extends an internal type in an API class is flagged 
+	 * as a leak even with @noextend and @noinstantiate tags being used using a full build
+	 */
+	public void testClassExtendsLeak9F() {
+		x9(false);
+	}
+	
+	/**
+	 * Tests that more than one public static internal class that extends an internal type in an API class is flagged 
+	 * as a leak even with @noextend and @noinstantiate tags being used using an incremental build
+	 */
+	public void testClassExtendsLeak9I() {
+		x9(true);
+	}
+	
+	private void x9(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId()});
+		String typename = "test16";
+		String innertype1 = "inner";
+		String innertype2 = "inner2";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, innertype1}, {TESTING_INTERNAL_CLASS_NAME, innertype2}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 }

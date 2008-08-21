@@ -41,7 +41,11 @@ public class ClassImplementsLeak extends LeakTest {
 	 */
 	protected int getDefaultProblemId() {
 		if(pid == -1) {
-			pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.API_LEAK, IApiProblem.LEAK_IMPLEMENTS);
+			pid = ApiProblemFactory.createProblemId(
+					IApiProblem.CATEGORY_USAGE, 
+					IElementDescriptor.T_REFERENCE_TYPE, 
+					IApiProblem.API_LEAK, 
+					IApiProblem.LEAK_IMPLEMENTS);
 		}
 		return pid;
 	}
@@ -65,15 +69,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using a full build
 	 */
 	public void testClassImplementsLeak1F() {
-		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"Iinternal", "test8"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test8", TESTING_INTERNAL_INTERFACE_NAME},
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test8"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x1(false);
 	}
 	
 	/**
@@ -81,14 +77,19 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using an incremental build
 	 */
 	public void testClassImplementsLeak1I() {
+		x1(true);
+	}
+	
+	private void x1(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"Iinternal", "test8"}});
+		String typename = "test8";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test8", TESTING_INTERNAL_INTERFACE_NAME},
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test8"}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -97,14 +98,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using a full build
 	 */
 	public void testClassImplementsLeak2F() {
-		expectingNoProblems();
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test9", TESTING_INTERNAL_INTERFACE_NAME},
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test9"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x2(false);
 	}
 	
 	/**
@@ -112,13 +106,18 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using an incremental build
 	 */
 	public void testClassImplementsLeak2I() {
+		x2(true);
+	}
+	
+	private void x2(boolean inc) {
 		expectingNoProblems();
+		String typename = "test9";
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test9", TESTING_INTERNAL_INTERFACE_NAME},
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test9"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -127,14 +126,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using a full build
 	 */
 	public void testClassImplementsLeak3F() {
-		expectingNoProblems();
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test10", TESTING_INTERNAL_INTERFACE_NAME},
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test10"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x3(false);	
 	}
 	
 	/**
@@ -142,13 +134,18 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using an incremental build
 	 */
 	public void testClassImplementsLeak3I() {
+		x3(true);
+	}
+	
+	private void x3(boolean inc) {
 		expectingNoProblems();
+		String typename = "test10";
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test10", TESTING_INTERNAL_INTERFACE_NAME},
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test10"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -157,14 +154,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using a full build
 	 */
 	public void testClassImplementsLeak4F() {
-		expectingNoProblems();
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test11", TESTING_INTERNAL_INTERFACE_NAME},
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test11"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x4(false);
 	}
 	
 	/**
@@ -172,13 +162,18 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using an incremental build
 	 */
 	public void testClassImplementsLeak4I() {
+		x4(true);
+	}
+	
+	private void x4(boolean inc) {
 		expectingNoProblems();
+		String typename = "test11";
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test11", TESTING_INTERNAL_INTERFACE_NAME},
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test11"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -187,15 +182,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using a full build even with an @noextend tag
 	 */
 	public void testClassImplementsLeak5F() {
-		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"Iinternal", "test12"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test12", TESTING_INTERNAL_INTERFACE_NAME},
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test12"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x5(false);
 	}
 	
 	/**
@@ -203,14 +190,19 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using an incremental build even with an @noextend tag
 	 */
 	public void testClassImplementsLeak5I() {
+		x5(true);
+	}
+	
+	private void x5(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"Iinternal", "test12"}});
+		String typename = "test12";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test12", TESTING_INTERNAL_INTERFACE_NAME},
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test12"}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -219,15 +211,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using a full build even with an @noinstantiate tag
 	 */
 	public void testClassImplementsLeak6F() {
-		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"Iinternal", "test13"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test13", TESTING_INTERNAL_INTERFACE_NAME},
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test13"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x6(false);
 	}
 	
 	/**
@@ -235,14 +219,19 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using an incremental build even with an @noinstantiate tag
 	 */
 	public void testClassImplementsLeak6I() {
+		x6(true);
+	}
+	
+	private void x6(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"Iinternal", "test13"}});
+		String typename = "test13";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test13", TESTING_INTERNAL_INTERFACE_NAME},
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test13"}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 	
@@ -251,15 +240,7 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using a full build even with an @noinstantiate and an @noextend tag
 	 */
 	public void testClassImplementsLeak7F() {
-		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"Iinternal", "test14"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test14", TESTING_INTERNAL_INTERFACE_NAME},
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test14"}, 
-				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		x7(false);
 	}
 	
 	/**
@@ -267,14 +248,19 @@ public class ClassImplementsLeak extends LeakTest {
 	 * using an incremental build even with an @noinstantiate and an @noextend tag
 	 */
 	public void testClassImplementsLeak7I() {
+		x7(true);
+	}
+	
+	private void x7(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		setExpectedMessageArgs(new String[][] {{"Iinternal", "test14"}});
+		String typename = "test14";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {"test14", TESTING_INTERNAL_INTERFACE_NAME},
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+".test14"}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
-				IncrementalProjectBuilder.FULL_BUILD, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
 }

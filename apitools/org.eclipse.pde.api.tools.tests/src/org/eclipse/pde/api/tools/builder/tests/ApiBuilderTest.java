@@ -322,7 +322,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		try {
 			IPath path = assertProject(sourcenames, packagenames, internalpnames);
 			doBuild(buildtype, (buildworkspace ? null : path));
-			if(expectingproblems) {
+			if(expectingproblems || expectingproblemson != null) {
 				IJavaProject jproject = getEnv().getJavaProject(path);
 				for(int i = 0; i < expectingproblemson.length; i++) {
 					IType type = jproject.findType(expectingproblemson[i]);
