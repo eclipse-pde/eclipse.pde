@@ -72,7 +72,7 @@ public class InterfaceCompatibilityTests extends CompatibilityTest {
 	 */
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
-			
+			InterfaceCompatibilityMemberTests.class
 		};
 		return classes;
 	}		

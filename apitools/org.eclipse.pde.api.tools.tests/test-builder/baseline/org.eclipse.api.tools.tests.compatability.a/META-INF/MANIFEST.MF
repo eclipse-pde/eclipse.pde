@@ -10,4 +10,5 @@ Export-Package: a.classes.constructors,
  a.classes.membertypes,
  a.classes.methods,
  a.classes.modifiers,
- a.classes.restrictions
+ a.classes.restrictions,
+ a.interfaces.members
