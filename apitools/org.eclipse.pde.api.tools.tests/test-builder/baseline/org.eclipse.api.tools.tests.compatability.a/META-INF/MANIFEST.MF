@@ -7,5 +7,6 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: a.classes.constructors,
  a.classes.fields,
  a.classes.hierarchy,
+ a.classes.membertypes,
  a.classes.methods,
  a.classes.modifiers
