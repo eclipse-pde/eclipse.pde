@@ -16,7 +16,6 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SharedImages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
