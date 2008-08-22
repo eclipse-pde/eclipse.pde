@@ -410,7 +410,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			// compare id's
 			Set<Integer> set = new HashSet<Integer>();
 			for (int i = 0; i < problems.length; i++) {
-				set.add(new Integer(problems[i].getProblemId()));				
+				set.add(new Integer(problems[i].getProblemId()));
 			}
 			for (int i = 0; i < expectedProblemIds.length; i++) {
 				assertTrue("Missing expected problem: " + expectedProblemIds[i], set.remove(new Integer(expectedProblemIds[i])));
