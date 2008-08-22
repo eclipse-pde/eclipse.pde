@@ -771,6 +771,8 @@ public final class Util {
 				return "FIELD_ELEMENT_TYPE"; //$NON-NLS-1$
 			case IDelta.CLASS_ELEMENT_TYPE :
 				return "CLASS_ELEMENT_TYPE"; //$NON-NLS-1$
+			case IDelta.TYPE_PARAMETER_ELEMENT_TYPE :
+				return "TYPE_PARAMETER_ELEMENT_TYPE"; //$NON-NLS-1$
 		}
 		return UNKNOWN_ELEMENT_TYPE;
 	}
@@ -818,7 +820,6 @@ public final class Util {
 			case IDelta.FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT : return "FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT"; //$NON-NLS-1$
 			case IDelta.INCREASE_ACCESS : return "INCREASE_ACCESS"; //$NON-NLS-1$
 			case IDelta.INTERFACE_BOUND : return "INTERFACE_BOUND"; //$NON-NLS-1$
-			case IDelta.INTERFACE_BOUNDS : return "INTERFACE_BOUNDS"; //$NON-NLS-1$
 			case IDelta.METHOD : return "METHOD"; //$NON-NLS-1$
 			case IDelta.METHOD_MOVED_UP : return "METHOD_MOVED_UP"; //$NON-NLS-1$
 			case IDelta.METHOD_WITH_DEFAULT_VALUE : return "METHOD_WITH_DEFAULT_VALUE"; //$NON-NLS-1$
@@ -861,6 +862,7 @@ public final class Util {
 			case IDelta.API_ENUM_CONSTANT : return "API_ENUM_CONSTANT"; //$NON-NLS-1$
 			case IDelta.API_METHOD_WITH_DEFAULT_VALUE : return "API_METHOD_WITH_DEFAULT_VALUE"; //$NON-NLS-1$
 			case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE : return "API_METHOD_WITHOUT_DEFAULT_VALUE"; //$NON-NLS-1$
+			case IDelta.TYPE_ARGUMENT : return "TYPE_ARGUMENT"; //$NON-NLS-1$
 		}
 		return UNKNOWN_FLAGS;
 	}

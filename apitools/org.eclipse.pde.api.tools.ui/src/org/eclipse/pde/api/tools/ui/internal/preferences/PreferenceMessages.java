@@ -44,6 +44,7 @@ public class PreferenceMessages extends NLS {
 	public static String CompatibilityFieldElement;
 	public static String CompatibilityMethodElement;
 	public static String CompatibilityConstructorElement;
+	public static String CompatibilityTypeParameterElement;
 
 	public static String ApiErrorsWarningsConfigurationBlock_error;
 	public static String ApiErrorsWarningsConfigurationBlock_warning;
@@ -74,22 +75,12 @@ public class PreferenceMessages extends NLS {
 	public static String ANNOTATION_ADDED_METHOD;
 	public static String ANNOTATION_ADDED_TYPE_MEMBER;
 	public static String ANNOTATION_ADDED_TYPE_PARAMETER;
-	public static String ANNOTATION_ADDED_CLASS_BOUND;
-	public static String ANNOTATION_ADDED_INTERFACE_BOUND;
-	public static String ANNOTATION_ADDED_INTERFACE_BOUNDS;
 	public static String ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE;
 	public static String ANNOTATION_REMOVED_FIELD;
 	public static String ANNOTATION_REMOVED_METHOD_DEFAULT_VALUE;
 	public static String ANNOTATION_REMOVED_METHOD_NO_DEFAULT_VALUE;
 	public static String ANNOTATION_REMOVED_TYPE_MEMBER;
-	public static String ANNOTATION_REMOVED_TYPE_PARAMETERS;
 	public static String ANNOTATION_REMOVED_TYPE_PARAMETER;
-	public static String ANNOTATION_REMOVED_CLASS_BOUND;
-	public static String ANNOTATION_REMOVED_INTERFACE_BOUND;
-	public static String ANNOTATION_REMOVED_INTERFACE_BOUNDS;
-	public static String ANNOTATION_CHANGED_INTERFACE_BOUNDS;
-	public static String ANNOTATION_CHANGED_CLASS_BOUND;
-	public static String ANNOTATION_CHANGED_INTERFACE_BOUND;
 	public static String ANNOTATION_CHANGED_TO_CLASS;
 	public static String ANNOTATION_CHANGED_TO_ENUM;
 	public static String ANNOTATION_CHANGED_TO_INTERFACE;
@@ -99,21 +90,11 @@ public class PreferenceMessages extends NLS {
 	public static String INTERFACE_ADDED_FIELD;
 	public static String INTERFACE_ADDED_METHOD;
 	public static String INTERFACE_ADDED_TYPE_MEMBER;
-	public static String INTERFACE_ADDED_CLASS_BOUND;
-	public static String INTERFACE_ADDED_INTERFACE_BOUND;
-	public static String INTERFACE_ADDED_INTERFACE_BOUNDS;
 	public static String INTERFACE_ADDED_TYPE_PARAMETER;
 	public static String INTERFACE_REMOVED_TYPE_PARAMETER;
-	public static String INTERFACE_REMOVED_TYPE_PARAMETERS;
-	public static String INTERFACE_REMOVED_CLASS_BOUND;
-	public static String INTERFACE_REMOVED_INTERFACE_BOUND;
-	public static String INTERFACE_REMOVED_INTERFACE_BOUNDS;
 	public static String INTERFACE_REMOVED_FIELD;
 	public static String INTERFACE_REMOVED_METHOD;
 	public static String INTERFACE_REMOVED_TYPE_MEMBER;
-	public static String INTERFACE_CHANGED_CLASS_BOUND;
-	public static String INTERFACE_CHANGED_INTERFACE_BOUND;
-	public static String INTERFACE_CHANGED_INTERFACE_BOUNDS;
 	public static String INTERFACE_CHANGED_TO_CLASS;
 	public static String INTERFACE_CHANGED_TO_ENUM;
 	public static String INTERFACE_CHANGED_TO_ANNOTATION;
@@ -132,14 +113,9 @@ public class PreferenceMessages extends NLS {
 
 	public static String CLASS_ADDED_METHOD;
 	public static String CLASS_ADDED_TYPE_PARAMETER;
-	public static String CLASS_ADDED_CLASS_BOUND;
-	public static String CLASS_ADDED_INTERFACE_BOUND;
-	public static String CLASS_ADDED_INTERFACE_BOUNDS;
 	public static String CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
 	public static String CLASS_CHANGED_CONTRACTED_SUPERCLASS_SET;
 	public static String CLASS_CHANGED_SUPERCLASS;
-	public static String CLASS_CHANGED_CLASS_BOUND;
-	public static String CLASS_CHANGED_INTERFACE_BOUND;
 	public static String CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT;
 	public static String CLASS_CHANGED_NON_FINAL_TO_FINAL;
 	public static String CLASS_CHANGED_TO_ANNOTATION;
@@ -152,10 +128,6 @@ public class PreferenceMessages extends NLS {
 	public static String CLASS_REMOVED_CONSTRUCTOR;
 	public static String CLASS_REMOVED_TYPE_MEMBER;
 	public static String CLASS_REMOVED_TYPE_PARAMETER;
-	public static String CLASS_REMOVED_TYPE_PARAMETERS;
-	public static String CLASS_REMOVED_CLASS_BOUND;
-	public static String CLASS_REMOVED_INTERFACE_BOUND;
-	public static String CLASS_REMOVED_INTERFACE_BOUNDS;
 
 	public static String FIELD_ADDED_VALUE;
 	public static String FIELD_CHANGED_TYPE;
@@ -168,12 +140,7 @@ public class PreferenceMessages extends NLS {
 	public static String FIELD_REMOVED_VALUE;
 	public static String FIELD_REMOVED_TYPE_ARGUMENTS;
 	
-	public static String METHOD_ADDED_CLASS_BOUND;
-	public static String METHOD_ADDED_INTERFACE_BOUND;
-	public static String METHOD_ADDED_INTERFACE_BOUNDS;
 	public static String METHOD_ADDED_TYPE_PARAMETER;
-	public static String METHOD_CHANGED_CLASS_BOUND;
-	public static String METHOD_CHANGED_INTERFACE_BOUND;
 	public static String METHOD_CHANGED_TYPE_PARAMETER;
 	public static String METHOD_CHANGED_VARARGS_TO_ARRAY;
 	public static String METHOD_CHANGED_DECREASE_ACCESS;
@@ -182,26 +149,20 @@ public class PreferenceMessages extends NLS {
 	public static String METHOD_CHANGED_STATIC_TO_NON_STATIC;
 	public static String METHOD_CHANGED_NON_FINAL_TO_FINAL;
 	public static String METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE;
-	public static String METHOD_REMOVED_TYPE_PARAMETERS;
 	public static String METHOD_REMOVED_TYPE_PARAMETER;
-	public static String METHOD_REMOVED_CLASS_BOUND;
-	public static String METHOD_REMOVED_INTERFACE_BOUND;
-	public static String METHOD_REMOVED_INTERFACE_BOUNDS;
 
-	public static String CONSTRUCTOR_ADDED_CLASS_BOUND;
-	public static String CONSTRUCTOR_ADDED_INTERFACE_BOUND;
-	public static String CONSTRUCTOR_ADDED_INTERFACE_BOUNDS;
 	public static String CONSTRUCTOR_ADDED_TYPE_PARAMETER;
-	public static String CONSTRUCTOR_CHANGED_CLASS_BOUND;
-	public static String CONSTRUCTOR_CHANGED_INTERFACE_BOUND;
 	public static String CONSTRUCTOR_CHANGED_TYPE_PARAMETER;
 	public static String CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY;
 	public static String CONSTRUCTOR_CHANGED_DECREASE_ACCESS;
-	public static String CONSTRUCTOR_REMOVED_TYPE_PARAMETERS;
 	public static String CONSTRUCTOR_REMOVED_TYPE_PARAMETER;
-	public static String CONSTRUCTOR_REMOVED_CLASS_BOUND;
-	public static String CONSTRUCTOR_REMOVED_INTERFACE_BOUND;
-	public static String CONSTRUCTOR_REMOVED_INTERFACE_BOUNDS;
+
+	public static String TYPE_PARAMETER_ADDED_CLASS_BOUND;
+	public static String TYPE_PARAMETER_ADDED_INTERFACE_BOUND;
+	public static String TYPE_PARAMETER_CHANGED_CLASS_BOUND;
+	public static String TYPE_PARAMETER_CHANGED_INTERFACE_BOUND;
+	public static String TYPE_PARAMETER_REMOVED_CLASS_BOUND;
+	public static String TYPE_PARAMETER_REMOVED_INTERFACE_BOUND;
 
 	public static String VersionManagementReportMissingSinceTag;
 	public static String VersionManagementReportMalformedSinceTags;

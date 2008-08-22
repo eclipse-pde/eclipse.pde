@@ -35,10 +35,10 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testCreateProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, 
-				 IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
+				IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
 		assertNotNull("a new problem should have been created with null attributes", problem);
 		problem = ApiProblemFactory.newApiProblem("path", null, new String[0], new String[0], new Object[0], -1, -1, -1, 
-				 IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
+				IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
 		assertNotNull("a new problem should have been created with non-null attributes", problem);
 	}
 
@@ -94,9 +94,9 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		assertTrue("the kind should be illegal instantiate", kind == IApiProblem.ILLEGAL_INSTANTIATE);
 		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ANNOTATION_CHANGED_CONTRACTED_SUPERINTERFACES_SET);
 		assertTrue("the kind should be CHANGED", kind == IDelta.CHANGED);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ANNOTATION_ADDED_CLASS_BOUND);
+		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.TYPE_PARAMETER_ADDED_CLASS_BOUND);
 		assertTrue("the kind should be ADDED", kind == IDelta.ADDED);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ANNOTATION_REMOVED_INTERFACE_BOUND);
+		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.TYPE_PARAMETER_REMOVED_INTERFACE_BOUND);
 		assertTrue("the kind should be REMOVED", kind == IDelta.REMOVED);
 	}
 	

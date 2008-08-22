@@ -40,24 +40,10 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.METHOD_WITHOUT_DEFAULT_VALUE);
 	public static final String ANNOTATION_REMOVED_TYPE_MEMBER =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_MEMBER);
-	public static final String ANNOTATION_REMOVED_TYPE_PARAMETERS =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETERS);
 	public static final String ANNOTATION_REMOVED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETER);
-	public static final String ANNOTATION_REMOVED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.CLASS_BOUND);
-	public static final String ANNOTATION_REMOVED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUND);
-	public static final String ANNOTATION_REMOVED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUNDS);
-	public static final String ANNOTATION_CHANGED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.INTERFACE_BOUNDS);
 	public static final String ANNOTATION_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET);
-	public static final String ANNOTATION_CHANGED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CLASS_BOUND);
-	public static final String ANNOTATION_CHANGED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.INTERFACE_BOUND);
 	public static final String ANNOTATION_CHANGED_TO_CLASS =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_CLASS);
 	public static final String ANNOTATION_CHANGED_TO_ENUM =
@@ -68,12 +54,6 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.RESTRICTIONS);
 	public static final String ANNOTATION_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
-	public static final String ANNOTATION_ADDED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.CLASS_BOUND);
-	public static final String ANNOTATION_ADDED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.INTERFACE_BOUND);
-	public static final String ANNOTATION_ADDED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.INTERFACE_BOUNDS);
 	public static final String ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD_WITHOUT_DEFAULT_VALUE);
 	// interface key constant
@@ -83,36 +63,16 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
 	public static final String INTERFACE_ADDED_TYPE_MEMBER =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_MEMBER);
-	public static final String INTERFACE_ADDED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.CLASS_BOUND);
-	public static final String INTERFACE_ADDED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.INTERFACE_BOUND);
-	public static final String INTERFACE_ADDED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.INTERFACE_BOUNDS);
 	public static final String INTERFACE_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
 	public static final String INTERFACE_REMOVED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETER);
-	public static final String INTERFACE_REMOVED_TYPE_PARAMETERS =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETERS);
-	public static final String INTERFACE_REMOVED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.CLASS_BOUND);
-	public static final String INTERFACE_REMOVED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUND);
-	public static final String INTERFACE_REMOVED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUNDS);
 	public static final String INTERFACE_REMOVED_FIELD =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.FIELD);
 	public static final String INTERFACE_REMOVED_METHOD =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.METHOD);
 	public static final String INTERFACE_REMOVED_TYPE_MEMBER =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_MEMBER);
-	public static final String INTERFACE_CHANGED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CLASS_BOUND);
-	public static final String INTERFACE_CHANGED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.CHANGED, IDelta.INTERFACE_BOUND);
-	public static final String INTERFACE_CHANGED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.CHANGED, IDelta.INTERFACE_BOUNDS);
 	public static final String INTERFACE_CHANGED_TO_CLASS =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_CLASS);
 	public static final String INTERFACE_CHANGED_TO_ENUM =
@@ -147,22 +107,12 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
 	public static final String CLASS_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
-	public static final String CLASS_ADDED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.CLASS_BOUND);
-	public static final String CLASS_ADDED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.INTERFACE_BOUND);
-	public static final String CLASS_ADDED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.INTERFACE_BOUNDS);
 	public static final String CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET);
 	public static final String CLASS_CHANGED_CONTRACTED_SUPERCLASS_SET =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CONTRACTED_SUPERCLASS_SET);
 	public static final String CLASS_CHANGED_SUPERCLASS =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.SUPERCLASS);
-	public static final String CLASS_CHANGED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CLASS_BOUND);
-	public static final String CLASS_CHANGED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.INTERFACE_BOUND);
 	public static final String CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_ABSTRACT_TO_ABSTRACT);
 	public static final String CLASS_CHANGED_NON_FINAL_TO_FINAL =
@@ -187,14 +137,7 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_MEMBER);
 	public static final String CLASS_REMOVED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETER);
-	public static final String CLASS_REMOVED_TYPE_PARAMETERS =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETERS);
-	public static final String CLASS_REMOVED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.REMOVED, IDelta.CLASS_BOUND);
-	public static final String CLASS_REMOVED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUND);
-	public static final String CLASS_REMOVED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUNDS);
+
 	// field key constant
 	public static final String FIELD_ADDED_VALUE =
 		Util.getDeltaPrefererenceKey(IDelta.FIELD_ELEMENT_TYPE, IDelta.ADDED, IDelta.VALUE);
@@ -217,18 +160,8 @@ public interface IApiProblemTypes {
 	public static final String FIELD_REMOVED_TYPE_ARGUMENTS =
 		Util.getDeltaPrefererenceKey(IDelta.FIELD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_ARGUMENTS);
 	// method key constant
-	public static final String METHOD_ADDED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.ADDED, IDelta.CLASS_BOUND);
-	public static final String METHOD_ADDED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.ADDED, IDelta.INTERFACE_BOUND);
-	public static final String METHOD_ADDED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.ADDED, IDelta.INTERFACE_BOUNDS);
 	public static final String METHOD_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
-	public static final String METHOD_CHANGED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CLASS_BOUND);
-	public static final String METHOD_CHANGED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.INTERFACE_BOUND);
 	public static final String METHOD_CHANGED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_PARAMETER);
 	public static final String METHOD_CHANGED_VARARGS_TO_ARRAY =
@@ -245,45 +178,33 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_FINAL_TO_FINAL);
 	public static final String METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.ANNOTATION_DEFAULT_VALUE);
-	public static final String METHOD_REMOVED_TYPE_PARAMETERS =
-		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETERS);
 	public static final String METHOD_REMOVED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETER);
-	public static final String METHOD_REMOVED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.CLASS_BOUND);
-	public static final String METHOD_REMOVED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUND);
-	public static final String METHOD_REMOVED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUNDS);
 	// constructor key constant
-	public static final String CONSTRUCTOR_ADDED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.ADDED, IDelta.CLASS_BOUND);
-	public static final String CONSTRUCTOR_ADDED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.ADDED, IDelta.INTERFACE_BOUND);
-	public static final String CONSTRUCTOR_ADDED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.ADDED, IDelta.INTERFACE_BOUNDS);
 	public static final String CONSTRUCTOR_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
-	public static final String CONSTRUCTOR_CHANGED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CLASS_BOUND);
-	public static final String CONSTRUCTOR_CHANGED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.INTERFACE_BOUND);
 	public static final String CONSTRUCTOR_CHANGED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_PARAMETER);
 	public static final String CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY);
 	public static final String CONSTRUCTOR_CHANGED_DECREASE_ACCESS =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.DECREASE_ACCESS);
-	public static final String CONSTRUCTOR_REMOVED_TYPE_PARAMETERS =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETERS);
 	public static final String CONSTRUCTOR_REMOVED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETER);
-	public static final String CONSTRUCTOR_REMOVED_CLASS_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.REMOVED, IDelta.CLASS_BOUND);
-	public static final String CONSTRUCTOR_REMOVED_INTERFACE_BOUND =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUND);
-	public static final String CONSTRUCTOR_REMOVED_INTERFACE_BOUNDS =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUNDS);
+
+
+	public static final String TYPE_PARAMETER_ADDED_CLASS_BOUND =
+		Util.getDeltaPrefererenceKey(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, IDelta.ADDED, IDelta.CLASS_BOUND);
+	public static final String TYPE_PARAMETER_CHANGED_CLASS_BOUND =
+		Util.getDeltaPrefererenceKey(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CLASS_BOUND);
+	public static final String TYPE_PARAMETER_REMOVED_CLASS_BOUND =
+		Util.getDeltaPrefererenceKey(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, IDelta.REMOVED, IDelta.CLASS_BOUND);
+	public static final String TYPE_PARAMETER_ADDED_INTERFACE_BOUND =
+		Util.getDeltaPrefererenceKey(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, IDelta.ADDED, IDelta.INTERFACE_BOUND);
+	public static final String TYPE_PARAMETER_CHANGED_INTERFACE_BOUND =
+		Util.getDeltaPrefererenceKey(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, IDelta.CHANGED, IDelta.INTERFACE_BOUND);
+	public static final String TYPE_PARAMETER_REMOVED_INTERFACE_BOUND =
+		Util.getDeltaPrefererenceKey(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUND);
 
 	// Version numbering problems
 	public static final String MISSING_SINCE_TAG = "missing_since_tag"; //$NON-NLS-1$

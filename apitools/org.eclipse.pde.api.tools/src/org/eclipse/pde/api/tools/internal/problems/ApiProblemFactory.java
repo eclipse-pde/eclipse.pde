@@ -407,9 +407,9 @@ public class ApiProblemFactory {
 							case IDelta.CLASS_BOUND: return 21;
 							case IDelta.CONSTRUCTOR: return 23;
 							case IDelta.INTERFACE_BOUND: return 26;
-							case IDelta.INTERFACE_BOUNDS: return 27;
 							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE: return 29;
 							case IDelta.TYPE_PARAMETER: return 32;
+							case IDelta.TYPE_ARGUMENT: return 106;
 							case IDelta.VALUE: return 36;
 						}
 						break;
@@ -459,7 +459,7 @@ public class ApiProblemFactory {
 							case IDelta.TO_ENUM: return 78;
 							case IDelta.TO_INTERFACE: return 79;
 							case IDelta.VARARGS_TO_ARRAY: return 85;
-							case IDelta.TYPE_ARGUMENTS: return 124;
+							case IDelta.TYPE_ARGUMENT: return 124;
 						}
 						break;
 					}
@@ -472,7 +472,6 @@ public class ApiProblemFactory {
 							case IDelta.ENUM_CONSTANT: return 92;
 							case IDelta.FIELD: return 94;
 							case IDelta.INTERFACE_BOUND: return 96;
-							case IDelta.INTERFACE_BOUNDS: return 97;
 							case IDelta.METHOD: return 98;
 							case IDelta.METHOD_WITH_DEFAULT_VALUE: return 100;
 							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE: return 101;
@@ -480,7 +479,6 @@ public class ApiProblemFactory {
 							case IDelta.TYPE_ARGUMENTS: return 103;
 							case IDelta.TYPE_MEMBER: return 104;
 							case IDelta.TYPE_PARAMETER: return 105;
-							case IDelta.TYPE_PARAMETERS: return 106;
 							case IDelta.VALUE : return 108;
 							case IDelta.API_TYPE: return 113;
 							case IDelta.API_FIELD: return 125;
@@ -489,6 +487,7 @@ public class ApiProblemFactory {
 							case IDelta.API_ENUM_CONSTANT: return 128;
 							case IDelta.API_METHOD_WITH_DEFAULT_VALUE : return 129;
 							case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE: return 130;
+							case IDelta.TYPE_ARGUMENT: return 107;
 						}
 					}
 				}

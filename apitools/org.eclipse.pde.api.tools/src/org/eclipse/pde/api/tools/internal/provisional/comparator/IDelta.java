@@ -96,15 +96,19 @@ public interface IDelta {
 	 * @see #getElementType()
 	 */
 	public static final int MEMBER_ELEMENT_TYPE = 9;
-
 	/**
 	 * Element type constant indicating that the delta is reported against a method declaration.
 	 * 
 	 * @see #getElementType()
 	 */
 	public static final int METHOD_ELEMENT_TYPE = 10;
-
-
+	/**
+	 * Element type constant indicating that the delta is reported against a type parameter.
+	 * 
+	 * @see #getElementType()
+	 */
+	public static final int TYPE_PARAMETER_ELEMENT_TYPE = 11;
+	
 	/**
 	 * Delta kind flag that denotes removing the abstract keyword from a member.
 	 *  <br>
@@ -370,18 +374,6 @@ public interface IDelta {
 	 */
 	public static final int INTERFACE_BOUND = 23;
 	/**
-	 * Delta kind flag that denotes Java 1.5 interface bounds have changed.
-	 * <br>
-	 * Applies to kinds:
-	 * <ul>
-	 * <li>{@link #ADDED}</li>
-	 * <li>{@link #REMOVED}</li>
-	 * </ul>
-	 * 
-	 * @see #getFlags()
-	 */
-	public static final int INTERFACE_BOUNDS = 24;
-	/**
 	 * Delta kind flag that denotes a method has been added or removed.
 	 * <br>
 	 * Applies to kinds:
@@ -635,7 +627,6 @@ public interface IDelta {
 	 * Applies to kinds:
 	 * <ul>
 	 * <li>{@link #ADDED}</li>
-	 * <li>{@link #REMOVED}</li>
 	 * </ul>
 	 * 
 	 * @see #getFlags()
@@ -681,7 +672,6 @@ public interface IDelta {
 	 * Applies to kinds:
 	 * <ul>
 	 * <li>{@link #ADDED}</li>
-	 * <li>{@link #REMOVED}</li>
 	 * </ul>
 	 * 
 	 * @see #getFlags()
@@ -873,6 +863,19 @@ public interface IDelta {
 	 * @see #getFlags()
 	 */
 	public static final int METHOD_MOVED_DOWN = 67;
+	/**
+	 * Delta kind flag that denotes that a type argument has been added or removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #CHANGED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int TYPE_ARGUMENT = 68;
 	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
 	 * 

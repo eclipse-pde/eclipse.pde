@@ -34,9 +34,11 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class ClassDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
-		if (true) return new TestSuite(ClassDeltaTests.class);
+		if (false) return new TestSuite(ClassDeltaTests.class);
 		TestSuite suite = new TestSuite(ClassDeltaTests.class.getName());
-		suite.addTest(new ClassDeltaTests("test126"));
+		suite.addTest(new ClassDeltaTests("test46"));
+		suite.addTest(new ClassDeltaTests("test47"));
+		suite.addTest(new ClassDeltaTests("test48"));
 		return suite;
 	}
 
@@ -687,7 +689,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertEquals("Wrong flag", IDelta.TYPE_PARAMETERS, child.getFlags());
+		assertEquals("Wrong flag", IDelta.TYPE_PARAMETER, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -710,7 +712,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE_PARAMETER_NAME, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
@@ -732,12 +734,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CLASS_BOUND, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertEquals("Wrong flag", IDelta.INTERFACE_BOUNDS, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertEquals("Wrong flag", IDelta.INTERFACE_BOUND, child.getFlags());
+		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
@@ -758,8 +760,8 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
-		assertEquals("Wrong flag", IDelta.INTERFACE_BOUNDS, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertEquals("Wrong flag", IDelta.INTERFACE_BOUND, child.getFlags());
+		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
@@ -781,7 +783,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CLASS_BOUND, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType());
 	}
 	
 	/**
@@ -1047,12 +1049,12 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CLASS_BOUND, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
 	/**
-	 * Add interface bound from type parameter
+	 * Add interface bound to a type parameter
 	 */
 	public void test46() {
 		deployBundles("test46");
@@ -1069,7 +1071,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.INTERFACE_BOUND, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
@@ -1091,7 +1093,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.INTERFACE_BOUND, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	
@@ -1109,11 +1111,16 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.INTERFACE_BOUND, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.INTERFACE_BOUND, child.getFlags());
+		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 

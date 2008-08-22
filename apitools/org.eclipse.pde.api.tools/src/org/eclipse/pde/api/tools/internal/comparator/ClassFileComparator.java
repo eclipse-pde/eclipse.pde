@@ -592,7 +592,8 @@ public class ClassFileComparator {
 				// added type parameter from scratch (none before)
 				// report delta as compatible
 				SignatureDescriptor signatureDescriptor2 = getSignatureDescritor(signature2);
-				if (signatureDescriptor2.getTypeParameterDescriptors().length != 0) {
+				TypeParameterDescriptor[] typeParameterDescriptors = signatureDescriptor2.getTypeParameterDescriptors();
+				if (typeParameterDescriptors.length != 0) {
 					this.addDelta(
 							elementDescriptor1.getElementType(),
 							IDelta.ADDED,
@@ -617,26 +618,38 @@ public class ClassFileComparator {
 		} else if (signature2 == null) {
 			// removed type parameters
 			SignatureDescriptor signatureDescriptor = getSignatureDescritor(signature1);
-			if (signatureDescriptor.getTypeParameterDescriptors().length != 0) {
-				this.addDelta(
-						elementDescriptor1.getElementType(),
-						IDelta.REMOVED,
-						IDelta.TYPE_PARAMETERS,
-						this.currentDescriptorRestrictions,
-						elementDescriptor1.access,
-						this.classFile,
-						elementDescriptor1.name,
-						new String[] {getDataFor(elementDescriptor1, this.descriptor1)});
-			} else if (signatureDescriptor.getTypeArguments().length != 0) {
-				this.addDelta(
-						elementDescriptor1.getElementType(),
-						IDelta.REMOVED,
-						IDelta.TYPE_ARGUMENTS,
-						this.currentDescriptorRestrictions,
-						elementDescriptor1.access,
-						this.classFile,
-						elementDescriptor1.name,
-						new String[] {getDataFor(elementDescriptor1, descriptor1)});
+			TypeParameterDescriptor[] typeParameterDescriptors = signatureDescriptor.getTypeParameterDescriptors();
+			int length = typeParameterDescriptors.length;
+			if (length != 0) {
+				for (int i = 0; i < length; i++) {
+					TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptors[i];
+					this.addDelta(
+							elementDescriptor1.getElementType(),
+							IDelta.REMOVED,
+							IDelta.TYPE_PARAMETER,
+							this.currentDescriptorRestrictions,
+							elementDescriptor1.access,
+							this.classFile,
+							elementDescriptor1.name,
+							new String[] {getDataFor(elementDescriptor1, descriptor1), typeParameterDescriptor.name});
+				}
+			} else  {
+				String[] typeArguments = signatureDescriptor.getTypeArguments();
+				length = typeArguments.length;
+				if (length != 0) {
+					for (int i = 0; i < length; i++) {
+						String typeArgument = typeArguments[i];
+							this.addDelta(
+								elementDescriptor1.getElementType(),
+								IDelta.REMOVED,
+								IDelta.TYPE_ARGUMENT,
+								this.currentDescriptorRestrictions,
+								elementDescriptor1.access,
+								this.classFile,
+								elementDescriptor1.name,
+								new String[] {getDataFor(elementDescriptor1, descriptor1), typeArgument});
+					}
+				}
 			}
 		} else {
 			// both types have generic signature
@@ -645,41 +658,23 @@ public class ClassFileComparator {
 			SignatureDescriptor signatureDescriptor2 = getSignatureDescritor(signature2);
 			
 			TypeParameterDescriptor[] typeParameterDescriptors1 = signatureDescriptor.getTypeParameterDescriptors();
-			int typeParameterDescriptorsLength1 = typeParameterDescriptors1.length;
 			TypeParameterDescriptor[] typeParameterDescriptors2 = signatureDescriptor2.getTypeParameterDescriptors();
-			int typeParameterDescriptorsLength2 = typeParameterDescriptors2.length;
-			if (typeParameterDescriptorsLength1 < typeParameterDescriptorsLength2) {
-				// report delta: incompatible
-				this.addDelta(
-						elementDescriptor1.getElementType(),
-						IDelta.ADDED,
-						IDelta.TYPE_PARAMETER,
-						this.currentDescriptorRestrictions,
-						elementDescriptor1.access,
-						this.classFile,
-						elementDescriptor1.name,
-						new String[] {getDataFor(elementDescriptor1, descriptor1)});
-				return;
-			} else if (typeParameterDescriptorsLength1 > typeParameterDescriptorsLength2) {
-				this.addDelta(
-						elementDescriptor1.getElementType(),
-						IDelta.REMOVED,
-						IDelta.TYPE_PARAMETER,
-						this.currentDescriptorRestrictions,
-						elementDescriptor1.access,
-						this.classFile,
-						elementDescriptor1.name,
-						new String[] {getDataFor(elementDescriptor1, descriptor1)});
-				return;
+			int length = typeParameterDescriptors1.length;
+			int length2 =  typeParameterDescriptors2.length;
+			int min = length;
+			int max = length2;
+			if (length > length2) {
+				min = length2;
+				max = length;
 			}
-			// same number of type parameter descriptors
-			for (int i = 0; i < typeParameterDescriptorsLength1; i++) {
+			int i = 0;
+			for (;i < min; i++) {
 				TypeParameterDescriptor parameterDescriptor1 = typeParameterDescriptors1[i];
 				TypeParameterDescriptor parameterDescriptor2 = typeParameterDescriptors2[i];
 				String name = parameterDescriptor1.name;
 				if (!name.equals(parameterDescriptor2.name)) {
 					this.addDelta(
-							elementDescriptor1.getElementType(),
+							IDelta.TYPE_PARAMETER_ELEMENT_TYPE,
 							IDelta.CHANGED,
 							IDelta.TYPE_PARAMETER_NAME,
 							this.currentDescriptorRestrictions,
@@ -691,7 +686,8 @@ public class ClassFileComparator {
 				if (parameterDescriptor1.classBound == null) {
 					if (parameterDescriptor2.classBound != null) {
 						// report delta added class bound of a type parameter
-						this.addDelta(elementDescriptor1.getElementType(),
+						this.addDelta(
+								IDelta.TYPE_PARAMETER_ELEMENT_TYPE,
 								IDelta.ADDED,
 								IDelta.CLASS_BOUND,
 								this.currentDescriptorRestrictions,
@@ -703,7 +699,7 @@ public class ClassFileComparator {
 				} else if (parameterDescriptor2.classBound == null) {
 					// report delta removed class bound of a type parameter
 					this.addDelta(
-							elementDescriptor1.getElementType(),
+							IDelta.TYPE_PARAMETER_ELEMENT_TYPE,
 							IDelta.REMOVED,
 							IDelta.CLASS_BOUND,
 							this.currentDescriptorRestrictions,
@@ -714,7 +710,7 @@ public class ClassFileComparator {
 				} else if (!parameterDescriptor1.classBound.equals(parameterDescriptor2.classBound)) {
 					// report delta changed class bound of a type parameter
 					this.addDelta(
-							elementDescriptor1.getElementType(),
+							IDelta.TYPE_PARAMETER_ELEMENT_TYPE,
 							IDelta.CHANGED,
 							IDelta.CLASS_BOUND,
 							this.currentDescriptorRestrictions,
@@ -727,86 +723,136 @@ public class ClassFileComparator {
 				List interfaceBounds2 = parameterDescriptor2.interfaceBounds;
 				if (interfaceBounds1 == null) {
 					if (interfaceBounds2 != null) {
+						for (Iterator iterator = interfaceBounds2.iterator(); iterator.hasNext(); ) {
+							// report delta added interface bounds
+							this.addDelta(
+									IDelta.TYPE_PARAMETER_ELEMENT_TYPE,
+									IDelta.ADDED,
+									IDelta.INTERFACE_BOUND,
+									this.currentDescriptorRestrictions,
+									elementDescriptor1.access,
+									this.classFile,
+									name,
+									new String[] {getDataFor(elementDescriptor1, descriptor1), name, (String) iterator.next()});
+						}
+					}
+				} else if (interfaceBounds2 == null) {
+					// report delta removed interface bounds
+					for (Iterator iterator = interfaceBounds1.iterator(); iterator.hasNext(); ) {
 						// report delta added interface bounds
 						this.addDelta(
-								elementDescriptor1.getElementType(),
-								IDelta.ADDED,
-								IDelta.INTERFACE_BOUNDS,
+								IDelta.TYPE_PARAMETER_ELEMENT_TYPE,
+								IDelta.REMOVED,
+								IDelta.INTERFACE_BOUND,
 								this.currentDescriptorRestrictions,
 								elementDescriptor1.access,
 								this.classFile,
 								name,
-								new String[] {getDataFor(elementDescriptor1, descriptor1), name});
+								new String[] {getDataFor(elementDescriptor1, descriptor1), name, (String) iterator.next()});
 					}
-				} else if (interfaceBounds2 == null) {
-					// report delta removed interface bounds
-					this.addDelta(
-							elementDescriptor1.getElementType(),
-							IDelta.REMOVED,
-							IDelta.INTERFACE_BOUNDS,
-							this.currentDescriptorRestrictions,
-							elementDescriptor1.access,
-							this.classFile,
-							name,
-							new String[] {getDataFor(elementDescriptor1, descriptor1), name});
-				} else if (interfaceBounds1.size() < interfaceBounds2.size()) {
-					// report delta added some interface bounds
-					this.addDelta(
-							elementDescriptor1.getElementType(),
-							IDelta.ADDED,
-							IDelta.INTERFACE_BOUND,
-							this.currentDescriptorRestrictions,
-							elementDescriptor1.access,
-							this.classFile,
-							name,
-							new String[] {getDataFor(elementDescriptor1, descriptor1), name});
-				} else if (interfaceBounds1.size() > interfaceBounds2.size()) {
-					// report delta removed some interface bounds
-					this.addDelta(
-							elementDescriptor1.getElementType(),
-							IDelta.REMOVED,
-							IDelta.INTERFACE_BOUND,
-							this.currentDescriptorRestrictions,
-							elementDescriptor1.access,
-							this.classFile,
-							name,
-							new String[] {getDataFor(elementDescriptor1, descriptor1), name});
 				} else {
-					loop: for (int j = 0, max = interfaceBounds1.size(); j < max; j++) {
-						if (!interfaceBounds1.get(j).equals(interfaceBounds2.get(j))) {
+					int size1 = interfaceBounds1.size();
+					int size2 = interfaceBounds2.size();
+					int boundsMin = size1;
+					int boundsMax = size2;
+					if (size1 > size2) {
+						boundsMin = size2;
+						boundsMax = size1;
+					}
+					int index = 0;
+					for (;index < boundsMin; index++) {
+						String currentInterfaceBound = (String) interfaceBounds1.get(index);
+						if (!currentInterfaceBound.equals(interfaceBounds2.get(index))) {
 							// report delta: different interface bounds (or reordered interface bound)
 							this.addDelta(
-									elementDescriptor1.getElementType(),
+									IDelta.TYPE_PARAMETER_ELEMENT_TYPE,
 									IDelta.CHANGED,
 									IDelta.INTERFACE_BOUND,
 									this.currentDescriptorRestrictions,
 									elementDescriptor1.access,
 									this.classFile,
 									name,
-									new String[] {getDataFor(elementDescriptor1, descriptor1), name});
-							break loop;
+									new String[] {getDataFor(elementDescriptor1, descriptor1), name, currentInterfaceBound});
+						}
+					}
+					if (boundsMin != boundsMax) {
+						// if max = length2 => addition of type parameter descriptor
+						// if max = length => removal of type parameter descriptor
+						boolean added = boundsMax == size2;
+						for (; index < boundsMax; index++) {
+							String currentInterfaceBound = added ? (String) interfaceBounds2.get(index) : (String) interfaceBounds1.get(index);
+							this.addDelta(
+									IDelta.TYPE_PARAMETER_ELEMENT_TYPE,
+									added ? IDelta.ADDED : IDelta.REMOVED,
+									IDelta.INTERFACE_BOUND,
+									this.currentDescriptorRestrictions,
+									elementDescriptor1.access,
+									this.classFile,
+									elementDescriptor1.name,
+									new String[] {getDataFor(elementDescriptor1, descriptor1), name, currentInterfaceBound});
 						}
 					}
 				}
 			}
-
-			if (typeParameterDescriptorsLength2 > 0 || typeParameterDescriptorsLength1 > 0) return;
-			String[] typeArguments = signatureDescriptor.getTypeArguments();
-			String[] typeArguments2 = signatureDescriptor2.getTypeArguments();
-			int length = typeArguments.length;
-			// typeArguments length and typeArguments2 length are identical
-			for (int i = 0; i < length; i++) {
-				if (!typeArguments[i].equals(typeArguments2[i])) {
+			if (min != max) {
+				// if max = length2 => addition of type parameter descriptor
+				// if max = length => removal of type parameter descriptor
+				boolean added = max == length2;
+				for (; i < max; i++) {
+					TypeParameterDescriptor currentTypeParameter = added ? typeParameterDescriptors2[i] : typeParameterDescriptors1[i];
 					this.addDelta(
 							elementDescriptor1.getElementType(),
-							IDelta.CHANGED,
-							IDelta.TYPE_ARGUMENTS,
+							added ? IDelta.ADDED : IDelta.REMOVED,
+							IDelta.TYPE_PARAMETER,
 							this.currentDescriptorRestrictions,
 							elementDescriptor1.access,
 							this.classFile,
 							elementDescriptor1.name,
-							new String[] {getDataFor(elementDescriptor1, descriptor1)});
-					return;
+							new String[] {getDataFor(elementDescriptor1, descriptor1), currentTypeParameter.name});
+				}
+			}
+			if (length2 > 0 || length > 0) return;
+			String[] typeArguments = signatureDescriptor.getTypeArguments();
+			String[] typeArguments2 = signatureDescriptor2.getTypeArguments();
+			length = typeArguments.length;
+			length2 = typeArguments2.length;
+			min = length;
+			max = length2;
+			if (length > length2) {
+				min = length2;
+				max = length;
+			}
+			i = 0;
+			for (;i < min; i++) {
+				String currentTypeArgument = typeArguments[i];
+				String newTypeArgument = typeArguments2[i];
+				if (!currentTypeArgument.equals(newTypeArgument)) {
+					this.addDelta(
+							elementDescriptor1.getElementType(),
+							IDelta.CHANGED,
+							IDelta.TYPE_ARGUMENT,
+							this.currentDescriptorRestrictions,
+							elementDescriptor1.access,
+							this.classFile,
+							elementDescriptor1.name,
+							new String[] {getDataFor(elementDescriptor1, descriptor1), currentTypeArgument, newTypeArgument});
+				}
+			}
+			if (min != max) {
+				// if max = length2 => addition of type arguments
+				// if max = length => removal of type arguments
+				boolean added = max == length2;
+				for (; i < max; i++) {
+					String currentTypeArgument = added ? typeArguments2[i] : typeArguments[i];
+					this.addDelta(
+							elementDescriptor1.getElementType(),
+							added ? IDelta.ADDED : IDelta.REMOVED,
+							IDelta.TYPE_ARGUMENT,
+							this.currentDescriptorRestrictions,
+							elementDescriptor1.access,
+							this.classFile,
+							elementDescriptor1.name,
+							new String[] {getDataFor(elementDescriptor1, descriptor1), currentTypeArgument});
 				}
 			}
 		}
