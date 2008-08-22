@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 242028
+ *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
@@ -33,7 +33,6 @@ import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -143,7 +142,7 @@ public class DSProvideSection extends TableSection {
 
 			int selectionIndex = fProvidesTable.getTable().getSelectionIndex();
 			if (selectionIndex != -1) {
-				DSEditProvideDialog dialog = new DSEditProvideDialog(PDEPlugin
+				DSEditProvideDialog dialog = new DSEditProvideDialog(Activator
 						.getActiveWorkbenchShell(), (IDSProvide) fProvidesTable
 						.getElementAt(selectionIndex), this);
 				dialog.setTitle(Messages.DSEditProvideDialog_dialog_title);
@@ -172,8 +171,6 @@ public class DSProvideSection extends TableSection {
 
 	private void updateButtons() {
 		Table table = fProvidesTable.getTable();
-		int count = table.getItemCount();
-
 		TablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(0, isEditable());
 		tablePart.setButtonEnabled(1, isEditable()
