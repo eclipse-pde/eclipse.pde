@@ -365,5 +365,33 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	
 	public void testReduceSuperInterfaceABtoEmptyF() throws Exception {
 		xReduceSuperInterfaceABtoEmpty(false);
-	}		
+	}	
+	
+	/**
+	 * Tests adding a noimplement restriction
+	 */
+	private void xAddNoImplement(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoImplement.java");
+		// TODO: expect problem
+//		int[] ids = new int[] {
+//				ApiProblemFactory.createProblemId(
+//						IApiProblem.CATEGORY_COMPATIBILITY,
+//						IDelta.INTERFACE_ELEMENT_TYPE,
+//						IDelta.CHANGED,
+//						IDelta.RESTRICTIONS)
+//		};
+//		setExpectedProblemIds(ids);
+//		String[][] args = new String[1][];
+//		args[0] = new String[]{PACKAGE_PREFIX + "AddNoImplement"};
+//		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddNoImplementI() throws Exception {
+		xAddNoImplement(true);
+	}	
+	
+	public void testAddNoImplementF() throws Exception {
+		xAddNoImplement(false);
+	}	
 }
