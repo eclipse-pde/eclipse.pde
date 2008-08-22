@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 242028
+ *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ds.ui.editor;
@@ -35,19 +35,19 @@ import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.forms.FormDialog;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
 
-public class DSEditReferenceDialog extends SelectionDialog {
+public class DSEditReferenceDialog extends FormDialog {
 
 	private IDSReference fReference;
 	private FormEntry fNameEntry;
@@ -66,79 +66,58 @@ public class DSEditReferenceDialog extends SelectionDialog {
 		super(parentShell);
 		fReference = reference;
 		fReferenceSection = referenceSection;
-
 	}
 
-	protected Control createContents(Composite parent) {
-		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-		Composite mainContainer = toolkit.createComposite(parent);
-		mainContainer.setLayout(FormLayoutFactory.createClearGridLayout(false,
-				1));
+	protected void createFormContent(IManagedForm mform) {
+		mform.getForm().setText(Messages.DSEditReferenceDialog_dialog_title);
 
-		GridData data2 = new GridData(GridData.FILL_BOTH);
-		mainContainer.setLayoutData(data2);
-
-		Section section = addSection(toolkit, mainContainer);
-
-		Composite container3 = toolkit.createComposite(section);
-		container3.setLayout(FormLayoutFactory.createSectionClientGridLayout(
+		Composite container = mform.getForm().getBody();
+		container.setLayout(new GridLayout());
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		FormToolkit toolkit = mform.getToolkit();
+		
+		Composite entryContainer = toolkit.createComposite(container);
+		entryContainer.setLayout(FormLayoutFactory.createSectionClientGridLayout(
 				false, 3));
+		entryContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Attribute: name
-		fNameEntry = new FormEntry(container3, toolkit,
+		fNameEntry = new FormEntry(entryContainer, toolkit,
 				Messages.DSReferenceDetails_nameEntry, SWT.NONE);
 
 		// Attribute: Interface
-		fInterfaceEntry = new FormEntry(container3, toolkit,
+		fInterfaceEntry = new FormEntry(entryContainer, toolkit,
 				Messages.DSReferenceDetails_interfaceEntry,
 				Messages.DSReferenceDetails_browse, true, 0);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 20;
 		gd.horizontalSpan = 2;
-		gd.horizontalIndent = 3; // FormLayoutFactory.CONTROL_HORIZONTAL_INDENT
+		gd.horizontalIndent = 3;
 
 		// Attribute: Cardinality
-		addCardinalityEntry(toolkit, container3, gd);
+		addCardinalityEntry(toolkit, entryContainer, gd);
 
 		// Attribute: Target
-		fTargetEntry = new FormEntry(container3, toolkit,
+		fTargetEntry = new FormEntry(entryContainer, toolkit,
 				Messages.DSReferenceDetails_targetEntry, SWT.NONE);
 
 		// Attribute: Bind
-		fBindEntry = new FormEntry(container3, toolkit,
+		fBindEntry = new FormEntry(entryContainer, toolkit,
 				Messages.DSReferenceDetails_bindEntry, SWT.NONE);
 
 		// Attribute: UnBind
-		fUnBindEntry = new FormEntry(container3, toolkit,
+		fUnBindEntry = new FormEntry(entryContainer, toolkit,
 				Messages.DSReferenceDetails_unbindEntry, SWT.NONE);
 
 		// Attribute: Policy
-		addPolicyEntry(toolkit, container3, gd);
+		addPolicyEntry(toolkit, entryContainer, gd);
 
-		// Bind widgets
-		toolkit.paintBordersFor(container3);
-		section.setClient(container3);
 		// Update Fields with fReference`s attributes values
 		updateFields();
 
 		setInterfaceEntryListeners();
-
-		addButtonBar(toolkit, mainContainer);
-
-		return mainContainer;
 	}
 
-	private Section addSection(FormToolkit toolkit, Composite mainContainer) {
-		Section section = toolkit.createSection(mainContainer,
-				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(Messages.DSEditReferenceDialog_dialog_title);
-		section.setDescription(Messages.DSEditReferenceDialog_dialogMessage);
-
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		return section;
-	}
 
 	private void addCardinalityEntry(FormToolkit toolkit, Composite container3,
 			GridData gd) {

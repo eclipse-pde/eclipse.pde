@@ -31,7 +31,6 @@ import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -140,11 +139,12 @@ public class DSReferenceSection extends TableSection {
 					
 					int selectionIndex = fReferencesTable.getTable().getSelectionIndex();
 					if (selectionIndex != -1) {
-				DSEditReferenceDialog dialog = new DSEditReferenceDialog(PDEPlugin
-						.getActiveWorkbenchShell(),
+				DSEditReferenceDialog dialog = new DSEditReferenceDialog(
+						Activator.getActiveWorkbenchShell(),
 						(IDSReference) fReferencesTable
 								.getElementAt(selectionIndex), this);
-				dialog.setTitle(Messages.DSEditReferenceDialog_dialog_title);
+				dialog.create();
+				dialog.getShell().setSize(500, 400);
 				dialog.open();
 			}
 		
