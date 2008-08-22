@@ -39,6 +39,7 @@ public class Messages extends NLS {
 	public static String DSFileWizardPage_implementation_class;
 	public static String DSFileWizardPage_browse;
 	public static String DSFileWizardPage_selectType;
+	public static String DSFileWizardPage_not_OSGI_folder;
 	
 	public static String DSImplementationDetails_title;
 	public static String DSImplementationDetails_description;
@@ -52,6 +53,7 @@ public class Messages extends NLS {
 	public static String DSPage_formTitle;
 
 	public static String DSPage_title;
+	public static String DSPluginTemplateWizard_title;
 
 	public static String DSPropertiesDetails_sectionTitle;
 	public static String DSPropertiesDetails_sectionDescription;
@@ -132,6 +134,20 @@ public class Messages extends NLS {
 	public static String DSEditProvideDialog_Cancel;
 	public static String DSEditProvideDialog_dialog_title;
 	public static String DSEditProvideDialog_dialogMessage;
+	
+	public static String DSPropertiesSection_title;
+	public static String DSPropertiesSection_description;
+	public static String DSPropertiesSection_addProperties;
+	public static String DSPropertiesSection_addProperty;
+	public static String DSPropertiesSection_remove;
+	public static String DSPropertiesSection_edit;
+
+
+	public static String DSEditPropertiesDialog_OK;
+	public static String DSEditPropertiesDialog_Cancel;
+	public static String DSEditPropertiesDialog_dialog_title;
+	public static String DSEditPropertiesDialog_dialogMessage;
+	
 	
 
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$

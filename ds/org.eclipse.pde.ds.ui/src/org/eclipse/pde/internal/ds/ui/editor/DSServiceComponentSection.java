@@ -32,11 +32,11 @@ import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
 import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
@@ -63,16 +63,16 @@ public class DSServiceComponentSection extends PDESection {
 
 		initializeAttributes();
 		
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		section.setLayout(new GridLayout());
 		GridData data = new GridData(GridData.FILL_BOTH);
+		data.horizontalSpan = 2;
 		section.setLayoutData(data);
 		section.setText(Messages.DSSection_title);
 		section.setDescription(Messages.DSSection_description);
 
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false,
-				3));
-		client.setLayoutData(new GridData(GridData.FILL_BOTH));
+		client.setLayout(new GridLayout(3, false));
+		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Attribute: name
 		fNameEntry = new FormEntry(client, toolkit,

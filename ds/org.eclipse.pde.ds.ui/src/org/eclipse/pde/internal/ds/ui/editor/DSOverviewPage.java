@@ -44,16 +44,20 @@ public class DSOverviewPage extends PDEFormPage implements
 		form.setImage(SharedImages.getImage(SharedImages.DESC_DS));
 		form.setText(Messages.DSSimpPage_title);
 		fillBody(managedForm, toolkit);
+
+		// PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody()C,
+		// IHelpContextIds.TOC_EDITOR);
 	}
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
+		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 2));
 
 		// Sections
 		managedForm.addPart(new DSServiceComponentSection(this, body));
 		managedForm.addPart(new DSReferenceSection(this, body));
 		managedForm.addPart(new DSProvideSection(this, body));
+		managedForm.addPart(new DSPropertiesSection(this, body));
 	}
 
 }
