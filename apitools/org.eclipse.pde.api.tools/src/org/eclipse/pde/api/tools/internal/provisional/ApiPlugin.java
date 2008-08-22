@@ -38,12 +38,10 @@ import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
-import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.search.ClassFileVisitor;
 import org.eclipse.pde.api.tools.internal.search.SearchEngine;
-import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.BundleContext;
 
 /**
