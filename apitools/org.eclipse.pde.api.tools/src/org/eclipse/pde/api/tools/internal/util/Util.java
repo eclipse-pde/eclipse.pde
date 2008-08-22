@@ -835,10 +835,7 @@ public final class Util {
 			case IDelta.STATIC_TO_NON_STATIC : return "STATIC_TO_NON_STATIC"; //$NON-NLS-1$
 			case IDelta.SUPERCLASS : return "SUPERCLASS"; //$NON-NLS-1$
 			case IDelta.SYNCHRONIZED_TO_NON_SYNCHRONIZED : return "SYNCHRONIZED_TO_NON_SYNCHRONIZED"; //$NON-NLS-1$
-			case IDelta.TO_ANNOTATION : return "TO_ANNOTATION"; //$NON-NLS-1$
-			case IDelta.TO_CLASS : return "TO_CLASS"; //$NON-NLS-1$
-			case IDelta.TO_ENUM : return "TO_ENUM"; //$NON-NLS-1$
-			case IDelta.TO_INTERFACE : return "TO_INTERFACE"; //$NON-NLS-1$
+			case IDelta.TYPE_CONVERSION : return "TYPE_CONVERSION"; //$NON-NLS-1$
 			case IDelta.TRANSIENT_TO_NON_TRANSIENT : return "TRANSIENT_TO_NON_TRANSIENT"; //$NON-NLS-1$
 			case IDelta.TYPE : return "TYPE"; //$NON-NLS-1$
 			case IDelta.TYPE_ARGUMENTS : return "TYPE_ARGUMENTS"; //$NON-NLS-1$

@@ -158,9 +158,7 @@ public class DeltaProcessor {
 			case IDelta.CHANGED :
 				switch(delta.getFlags()) {
 					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
-					case IDelta.TO_CLASS :
-					case IDelta.TO_ENUM :
-					case IDelta.TO_INTERFACE :
+					case IDelta.TYPE_CONVERSION :
 					case IDelta.RESTRICTIONS :
 						return false;
 				}
@@ -336,10 +334,7 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
-					case IDelta.TO_ANNOTATION :
-					case IDelta.TO_CLASS :
-					case IDelta.TO_ENUM :
-					case IDelta.TO_INTERFACE :
+					case IDelta.TYPE_CONVERSION :
 					case IDelta.RESTRICTIONS :
 						return !Util.isVisible(delta);
 					case IDelta.DECREASE_ACCESS :
@@ -400,9 +395,7 @@ public class DeltaProcessor {
 					case IDelta.CONTRACTED_SUPERCLASS_SET :
 					case IDelta.SUPERCLASS :
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
-					case IDelta.TO_ANNOTATION :
-					case IDelta.TO_ENUM :
-					case IDelta.TO_INTERFACE :
+					case IDelta.TYPE_CONVERSION :
 					case IDelta.RESTRICTIONS :
 					case IDelta.STATIC_TO_NON_STATIC :
 					case IDelta.NON_STATIC_TO_STATIC :
@@ -480,9 +473,7 @@ public class DeltaProcessor {
 			case IDelta.CHANGED :
 				switch(delta.getFlags()) {
 					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
-					case IDelta.TO_ANNOTATION :
-					case IDelta.TO_CLASS :
-					case IDelta.TO_ENUM :
+					case IDelta.TYPE_CONVERSION :
 					case IDelta.RESTRICTIONS :
 						return false;
 				}

@@ -554,7 +554,8 @@ public interface IDelta {
 	 */
 	public static final int SYNCHRONIZED_TO_NON_SYNCHRONIZED = 40;
 	/**
-	 * Delta kind flag that denotes a type has changed to an annotation.
+	 * Delta kind flag that denotes a type has been converted to a different kind. For example, from a class
+	 * to an annotation.
 	 * <br>
 	 * Applies to kinds:
 	 * <ul>
@@ -563,40 +564,7 @@ public interface IDelta {
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int TO_ANNOTATION = 41;
-	/**
-	 * Delta kind flag that denotes a type has changed to a class.
-	 * <br>
-	 * Applies to kinds:
-	 * <ul>
-	 * <li>{@link #CHANGED}</li>
-	 * </ul>
-	 * 
-	 * @see #getFlags()
-	 */
-	public static final int TO_CLASS = 42;
-	/**
-	 * Delta kind flag that denotes a type has changed to an enum.
-	 * <br>
-	 * Applies to kinds:
-	 * <ul>
-	 * <li>{@link #CHANGED}</li>
-	 * </ul>
-	 * 
-	 * @see #getFlags()
-	 */
-	public static final int TO_ENUM = 43;
-	/**
-	 * Delta kind flag that denotes a type has changed to an interface.
-	 * <br>
-	 * Applies to kinds:
-	 * <ul>
-	 * <li>{@link #CHANGED}</li>
-	 * </ul>
-	 * 
-	 * @see #getFlags()
-	 */
-	public static final int TO_INTERFACE = 44;
+	public static final int TYPE_CONVERSION = 41;
 	/**
 	 * Delta kind flag that denotes the transient keyword has been removed.
 	 * <br>

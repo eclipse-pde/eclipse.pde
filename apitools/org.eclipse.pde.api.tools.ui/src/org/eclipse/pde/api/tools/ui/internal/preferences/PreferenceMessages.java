@@ -81,9 +81,7 @@ public class PreferenceMessages extends NLS {
 	public static String ANNOTATION_REMOVED_METHOD_NO_DEFAULT_VALUE;
 	public static String ANNOTATION_REMOVED_TYPE_MEMBER;
 	public static String ANNOTATION_REMOVED_TYPE_PARAMETER;
-	public static String ANNOTATION_CHANGED_TO_CLASS;
-	public static String ANNOTATION_CHANGED_TO_ENUM;
-	public static String ANNOTATION_CHANGED_TO_INTERFACE;
+	public static String ANNOTATION_CHANGED_TYPE_CONVERSION;
 	public static String ANNOTATION_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
 	public static String ANNOTATION_CHANGED_RESTRICTIONS;
 	
@@ -95,16 +93,12 @@ public class PreferenceMessages extends NLS {
 	public static String INTERFACE_REMOVED_FIELD;
 	public static String INTERFACE_REMOVED_METHOD;
 	public static String INTERFACE_REMOVED_TYPE_MEMBER;
-	public static String INTERFACE_CHANGED_TO_CLASS;
-	public static String INTERFACE_CHANGED_TO_ENUM;
-	public static String INTERFACE_CHANGED_TO_ANNOTATION;
+	public static String INTERFACE_CHANGED_TYPE_CONVERSION;
 	public static String INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
 	public static String INTERFACE_CHANGED_RESTRICTIONS;
 
 	public static String ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
-	public static String ENUM_CHANGED_TO_ANNOTATION;
-	public static String ENUM_CHANGED_TO_CLASS;
-	public static String ENUM_CHANGED_TO_INTERFACE;
+	public static String ENUM_CHANGED_TYPE_CONVERSION;
 	public static String ENUM_CHANGED_RESTRICTIONS;
 	public static String ENUM_REMOVED_FIELD;
 	public static String ENUM_REMOVED_ENUM_CONSTANT;
@@ -118,9 +112,7 @@ public class PreferenceMessages extends NLS {
 	public static String CLASS_CHANGED_SUPERCLASS;
 	public static String CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT;
 	public static String CLASS_CHANGED_NON_FINAL_TO_FINAL;
-	public static String CLASS_CHANGED_TO_ANNOTATION;
-	public static String CLASS_CHANGED_TO_ENUM;
-	public static String CLASS_CHANGED_TO_INTERFACE;
+	public static String CLASS_CHANGED_TYPE_CONVERSION;
 	public static String CLASS_CHANGED_DECREASE_ACCESS;
 	public static String CLASS_CHANGED_RESTRICTIONS;
 	public static String CLASS_REMOVED_FIELD;

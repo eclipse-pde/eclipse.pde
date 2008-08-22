@@ -1088,34 +1088,46 @@ public class ClassFileComparator {
 						this.addDelta(
 								IDelta.ANNOTATION_ELEMENT_TYPE,
 								IDelta.CHANGED,
-								IDelta.TO_INTERFACE,
+								IDelta.TYPE_CONVERSION,
 								this.currentDescriptorRestrictions,
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								Util.getDescriptorName(descriptor1));
+								new String[] {
+										Util.getDescriptorName(descriptor1),
+										Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE),
+										Integer.toString(IDelta.INTERFACE_ELEMENT_TYPE)
+									});
 					} else if (Util.isEnum(typeAccess2)) {
 						// report conversion from annotation to enum
 						this.addDelta(
 								IDelta.ANNOTATION_ELEMENT_TYPE,
 								IDelta.CHANGED,
-								IDelta.TO_ENUM,
+								IDelta.TYPE_CONVERSION,
 								this.currentDescriptorRestrictions,
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								Util.getDescriptorName(descriptor1));
+								new String[] {
+										Util.getDescriptorName(descriptor1),
+										Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE),
+										Integer.toString(IDelta.ENUM_ELEMENT_TYPE)
+								});
 					} else {
 						// report conversion from annotation to class
 						this.addDelta(
 								IDelta.ANNOTATION_ELEMENT_TYPE,
 								IDelta.CHANGED,
-								IDelta.TO_CLASS,
+								IDelta.TYPE_CONVERSION,
 								this.currentDescriptorRestrictions,
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								Util.getDescriptorName(descriptor1));
+								new String[] {
+										Util.getDescriptorName(descriptor1),
+										Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE),
+										Integer.toString(IDelta.CLASS_ELEMENT_TYPE)
+								});
 					}
 					return this.delta;
 				}
@@ -1125,12 +1137,16 @@ public class ClassFileComparator {
 					this.addDelta(
 							IDelta.INTERFACE_ELEMENT_TYPE,
 							IDelta.CHANGED,
-							IDelta.TO_ANNOTATION,
+							IDelta.TYPE_CONVERSION,
 							this.currentDescriptorRestrictions,
 							typeAccess2,
 							this.classFile,
 							this.descriptor1.name,
-							Util.getDescriptorName(descriptor1));
+							new String[] {
+								Util.getDescriptorName(descriptor1),
+								Integer.toString(IDelta.INTERFACE_ELEMENT_TYPE),
+								Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE)
+							});
 					return this.delta;
 				} else if (!Util.isInterface(typeAccess2)) {
 					if (Util.isEnum(typeAccess2)) {
@@ -1138,23 +1154,31 @@ public class ClassFileComparator {
 						this.addDelta(
 								IDelta.INTERFACE_ELEMENT_TYPE,
 								IDelta.CHANGED,
-								IDelta.TO_ENUM,
+								IDelta.TYPE_CONVERSION,
 								this.currentDescriptorRestrictions,
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								Util.getDescriptorName(descriptor1));
+								new String[] {
+										Util.getDescriptorName(descriptor1),
+										Integer.toString(IDelta.INTERFACE_ELEMENT_TYPE),
+										Integer.toString(IDelta.ENUM_ELEMENT_TYPE)
+								});
 					} else {
 						// conversion from interface to class
 						this.addDelta(
 								IDelta.INTERFACE_ELEMENT_TYPE,
 								IDelta.CHANGED,
-								IDelta.TO_CLASS,
+								IDelta.TYPE_CONVERSION,
 								this.currentDescriptorRestrictions,
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								Util.getDescriptorName(descriptor1));
+								new String[] {
+										Util.getDescriptorName(descriptor1),
+										Integer.toString(IDelta.INTERFACE_ELEMENT_TYPE),
+										Integer.toString(IDelta.CLASS_ELEMENT_TYPE)
+								});
 					}
 					return this.delta;
 				}
@@ -1165,34 +1189,46 @@ public class ClassFileComparator {
 						this.addDelta(
 								IDelta.ENUM_ELEMENT_TYPE,
 								IDelta.CHANGED,
-								IDelta.TO_ANNOTATION,
+								IDelta.TYPE_CONVERSION,
 								this.currentDescriptorRestrictions,
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								Util.getDescriptorName(descriptor1));
+								new String[] {
+										Util.getDescriptorName(descriptor1),
+										Integer.toString(IDelta.ENUM_ELEMENT_TYPE),
+										Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE)
+								});
 					} else if (Util.isInterface(typeAccess2)) {
 						// report conversion from enum to interface
 						this.addDelta(
 								IDelta.ENUM_ELEMENT_TYPE,
 								IDelta.CHANGED,
-								IDelta.TO_INTERFACE,
+								IDelta.TYPE_CONVERSION,
 								this.currentDescriptorRestrictions,
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								Util.getDescriptorName(descriptor1));
+								new String[] {
+										Util.getDescriptorName(descriptor1),
+										Integer.toString(IDelta.ENUM_ELEMENT_TYPE),
+										Integer.toString(IDelta.INTERFACE_ELEMENT_TYPE)
+								});
 					} else {
 						// report conversion from enum to class
 						this.addDelta(
 								IDelta.ENUM_ELEMENT_TYPE,
 								IDelta.CHANGED,
-								IDelta.TO_CLASS,
+								IDelta.TYPE_CONVERSION,
 								this.currentDescriptorRestrictions,
 								typeAccess2,
 								this.classFile,
 								this.descriptor1.name,
-								Util.getDescriptorName(descriptor1));
+								new String[] {
+										Util.getDescriptorName(descriptor1),
+										Integer.toString(IDelta.ENUM_ELEMENT_TYPE),
+										Integer.toString(IDelta.CLASS_ELEMENT_TYPE)
+								});
 					}
 					return this.delta;
 				}
@@ -1202,34 +1238,46 @@ public class ClassFileComparator {
 					this.addDelta(
 							IDelta.CLASS_ELEMENT_TYPE,
 							IDelta.CHANGED,
-							IDelta.TO_ANNOTATION,
+							IDelta.TYPE_CONVERSION,
 							this.currentDescriptorRestrictions,
 							typeAccess2,
 							this.classFile,
 							this.descriptor1.name,
-							Util.getDescriptorName(descriptor1));
+							new String[] {
+									Util.getDescriptorName(descriptor1),
+									Integer.toString(IDelta.CLASS_ELEMENT_TYPE),
+									Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE)
+							});
 				} else if (Util.isInterface(typeAccess2)) {
 					// report conversion from class to interface
 					this.addDelta(
 							IDelta.CLASS_ELEMENT_TYPE,
 							IDelta.CHANGED,
-							IDelta.TO_INTERFACE,
+							IDelta.TYPE_CONVERSION,
 							this.currentDescriptorRestrictions,
 							typeAccess2,
 							this.classFile,
 							this.descriptor1.name,
-							Util.getDescriptorName(descriptor1));
+							new String[] {
+									Util.getDescriptorName(descriptor1),
+									Integer.toString(IDelta.CLASS_ELEMENT_TYPE),
+									Integer.toString(IDelta.INTERFACE_ELEMENT_TYPE)
+							});
 				} else {
 					// report conversion from class to enum
 					this.addDelta(
 							IDelta.CLASS_ELEMENT_TYPE,
 							IDelta.CHANGED,
-							IDelta.TO_ENUM,
+							IDelta.TYPE_CONVERSION,
 							this.currentDescriptorRestrictions,
 							typeAccess2,
 							this.classFile,
 							this.descriptor1.name,
-							Util.getDescriptorName(descriptor1));
+							new String[] {
+									Util.getDescriptorName(descriptor1),
+									Integer.toString(IDelta.CLASS_ELEMENT_TYPE),
+									Integer.toString(IDelta.ENUM_ELEMENT_TYPE)
+							});
 				}
 				return this.delta;
 			}

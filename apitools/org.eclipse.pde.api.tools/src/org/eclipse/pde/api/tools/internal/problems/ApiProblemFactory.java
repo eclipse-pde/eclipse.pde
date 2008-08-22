@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.problems;
 
+import java.text.ChoiceFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -31,6 +32,8 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ApiProblemFactory {
 	
+	public static final int TYPE_CONVERSION_ID = 76;
+
 	/**
 	 * The current mapping of problem id to message
 	 */
@@ -200,11 +203,34 @@ public class ApiProblemFactory {
 		if(fMessages == null) {
 			fMessages = loadMessageTemplates(Locale.getDefault());
 		}
-		String message = (String) fMessages.get(new Integer(messageid));
-		if(message == null) {
+		String pattern = (String) fMessages.get(new Integer(messageid));
+		if(pattern == null) {
 			return MessageFormat.format(BuilderMessages.ApiProblemFactory_problem_message_not_found, new String[] {Integer.toString(messageid)});
 		}
-		return MessageFormat.format(message, messageargs);
+		if (messageid == TYPE_CONVERSION_ID) {
+			MessageFormat messageFormat = new MessageFormat(pattern);
+			double[] typeElementTypes = {
+				IDelta.ANNOTATION_ELEMENT_TYPE,
+				IDelta.CLASS_ELEMENT_TYPE,
+				IDelta.ENUM_ELEMENT_TYPE,
+				IDelta.INTERFACE_ELEMENT_TYPE,
+			};
+			String [] typeElementTypesStrings = {
+					(String) fMessages.get(Util.getDeltaElementType(IDelta.ANNOTATION_ELEMENT_TYPE)),
+					(String) fMessages.get(Util.getDeltaElementType(IDelta.CLASS_ELEMENT_TYPE)),
+					(String) fMessages.get(Util.getDeltaElementType(IDelta.ENUM_ELEMENT_TYPE)),
+					(String) fMessages.get(Util.getDeltaElementType(IDelta.INTERFACE_ELEMENT_TYPE)),
+			};
+			ChoiceFormat choiceFormat = new ChoiceFormat(typeElementTypes, typeElementTypesStrings);
+			messageFormat.setFormatByArgumentIndex(1, choiceFormat);
+			messageFormat.setFormatByArgumentIndex(2, choiceFormat);
+			Object[] args = new Object[messageargs.length];
+			args[0] = messageargs[0];
+			args[1] = Integer.decode(messageargs[1]);
+			args[2] = Integer.decode(messageargs[2]);
+			return messageFormat.format(args);
+		}
+		return MessageFormat.format(pattern, messageargs);
 	}
 	
 	/**
@@ -230,7 +256,8 @@ public class ApiProblemFactory {
 		        int messageID = Integer.parseInt(key);
 				templates.put(new Integer(messageID), bundle.getString(key));
 		    } catch(NumberFormatException e) {
-		        // key ill-formed
+		        // key is not a number
+		    	templates.put(key, bundle.getString(key));
 			} catch (MissingResourceException e) {
 				// available ID
 		    }
@@ -454,10 +481,8 @@ public class ApiProblemFactory {
 							case IDelta.RESTRICTIONS: return 72;
 							case IDelta.STATIC_TO_NON_STATIC: return 73;
 							case IDelta.SUPERCLASS: return  74;
-							case IDelta.TO_ANNOTATION: return 76;
-							case IDelta.TO_CLASS: return 77;
-							case IDelta.TO_ENUM: return 78;
-							case IDelta.TO_INTERFACE: return 79;
+							case IDelta.TYPE_CONVERSION:
+								return TYPE_CONVERSION_ID;
 							case IDelta.VARARGS_TO_ARRAY: return 85;
 							case IDelta.TYPE_ARGUMENT: return 124;
 						}

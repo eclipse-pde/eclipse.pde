@@ -44,12 +44,8 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETER);
 	public static final String ANNOTATION_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET);
-	public static final String ANNOTATION_CHANGED_TO_CLASS =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_CLASS);
-	public static final String ANNOTATION_CHANGED_TO_ENUM =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_ENUM);
-	public static final String ANNOTATION_CHANGED_TO_INTERFACE =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_INTERFACE);
+	public static final String ANNOTATION_CHANGED_TYPE_CONVERSION =
+		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_CONVERSION);
 	public static final String ANNOTATION_CHANGED_RESTRICTIONS =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.RESTRICTIONS);
 	public static final String ANNOTATION_ADDED_TYPE_PARAMETER =
@@ -73,12 +69,8 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.METHOD);
 	public static final String INTERFACE_REMOVED_TYPE_MEMBER =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_MEMBER);
-	public static final String INTERFACE_CHANGED_TO_CLASS =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_CLASS);
-	public static final String INTERFACE_CHANGED_TO_ENUM =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_ENUM);
-	public static final String INTERFACE_CHANGED_TO_ANNOTATION =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_ANNOTATION);
+	public static final String INTERFACE_CHANGED_TYPE_CONVERSION =
+		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_CONVERSION);
 	public static final String INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET);
 	public static final String INTERFACE_CHANGED_RESTRICTIONS =
@@ -86,12 +78,8 @@ public interface IApiProblemTypes {
 	// enum key constant
 	public static final String ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
 		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET);
-	public static final String ENUM_CHANGED_TO_ANNOTATION =
-		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_ANNOTATION);
-	public static final String ENUM_CHANGED_TO_CLASS =
-		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_CLASS);
-	public static final String ENUM_CHANGED_TO_INTERFACE =
-		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_INTERFACE);
+	public static final String ENUM_CHANGED_TYPE_CONVERSION =
+		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_CONVERSION);
 	public static final String ENUM_CHANGED_RESTRICTIONS =
 		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.CHANGED, IDelta.RESTRICTIONS);
 	public static final String ENUM_REMOVED_FIELD =
@@ -117,12 +105,8 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_ABSTRACT_TO_ABSTRACT);
 	public static final String CLASS_CHANGED_NON_FINAL_TO_FINAL =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_FINAL_TO_FINAL);
-	public static final String CLASS_CHANGED_TO_ANNOTATION =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_ANNOTATION);
-	public static final String CLASS_CHANGED_TO_ENUM =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_ENUM);
-	public static final String CLASS_CHANGED_TO_INTERFACE =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TO_INTERFACE);
+	public static final String CLASS_CHANGED_TYPE_CONVERSION =
+		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_CONVERSION);
 	public static final String CLASS_CHANGED_DECREASE_ACCESS =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.DECREASE_ACCESS);
 	public static final String CLASS_CHANGED_RESTRICTIONS =
