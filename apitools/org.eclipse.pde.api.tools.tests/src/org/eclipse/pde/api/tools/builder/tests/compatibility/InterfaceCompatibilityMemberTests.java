@@ -278,4 +278,92 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	public void testRemoveMemberTypeF() throws Exception {
 		xRemoveMemberType(false);
 	}	
+	
+	/**
+	 * Tests adding a super interface
+	 */
+	private void xAddSuperInterfaceA(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceA.java");
+		// TODO: should be problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddSuperInterfaceAI() throws Exception {
+		xAddSuperInterfaceA(true);
+	}	
+	
+	public void testAddSuperInterfaceAF() throws Exception {
+		xAddSuperInterfaceA(false);
+	}	
+	
+	/**
+	 * Tests adding a super interface to a noimplement interface
+	 */
+	private void xAddSuperInterfaceANoImplement(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceANoImplement.java");
+		// no problems expected
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddSuperInterfaceANoImplementI() throws Exception {
+		xAddSuperInterfaceANoImplement(true);
+	}	
+	
+	public void testAddSuperInterfaceANoImplementF() throws Exception {
+		xAddSuperInterfaceANoImplement(false);
+	}	
+	
+	/**
+	 * Tests removing a super interface
+	 */
+	private void xReduceSuperInterfaceABtoA(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromABtoA.java");
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.INTERFACE_ELEMENT_TYPE,
+						IDelta.CHANGED,
+						IDelta.CONTRACTED_SUPERINTERFACES_SET)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromABtoA"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testReduceSuperInterfaceABtoAI() throws Exception {
+		xReduceSuperInterfaceABtoA(true);
+	}	
+	
+	public void testReduceSuperInterfaceABtoAF() throws Exception {
+		xReduceSuperInterfaceABtoA(false);
+	}	
+	
+	/**
+	 * Tests removing all super interfaces
+	 */
+	private void xReduceSuperInterfaceABtoEmpty(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromABtoEmpty.java");
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.INTERFACE_ELEMENT_TYPE,
+						IDelta.CHANGED,
+						IDelta.CONTRACTED_SUPERINTERFACES_SET)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromABtoEmpty"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testReduceSuperInterfaceABtoEmptyI() throws Exception {
+		xReduceSuperInterfaceABtoEmpty(true);
+	}	
+	
+	public void testReduceSuperInterfaceABtoEmptyF() throws Exception {
+		xReduceSuperInterfaceABtoEmpty(false);
+	}		
 }
