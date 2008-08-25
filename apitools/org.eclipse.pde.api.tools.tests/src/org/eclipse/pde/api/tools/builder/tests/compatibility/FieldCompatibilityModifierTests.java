@@ -485,4 +485,179 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	public void testPublicToProtectedF() throws Exception {
 		xPublicToProtected(false);
 	}	
+	
+	/**
+	 * Tests changing the value of a constant
+	 */
+	private void xModifyValue(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ModifyValue.java");
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.VALUE)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "ModifyValue", "CONSTANT", "VALUE_1"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testModifyValueI() throws Exception {
+		xModifyValue(true);
+	}	
+	
+	public void testModifyValueF() throws Exception {
+		xModifyValue(false);
+	}	
+	
+	/**
+	 * Tests changing the type of a field
+	 */
+	private void xChangeType(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeType.java");
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.TYPE)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "ChangeType", "FIELD"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testChangeTypeI() throws Exception {
+		xChangeType(true);
+	}	
+	
+	public void testChangeTypeF() throws Exception {
+		xChangeType(false);
+	}	
+	
+	/**
+	 * Tests changing the type of a protected field with a no-extend class
+	 */
+	private void xChangeTypeNoExtend(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeTypeNoExtend.java");
+		// should be no problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testChangeTypeNoExtendI() throws Exception {
+		xChangeTypeNoExtend(true);
+	}	
+	
+	public void testChangeTypeNoExtendF() throws Exception {
+		xChangeTypeNoExtend(false);
+	}
+	
+	/**
+	 * Tests changing the type of a protected field annotated no-reference
+	 */
+	private void xChangeTypeNoReference(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeTypeNoReference.java");
+		// TODO: should be no problems
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.TYPE)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "ChangeTypeNoReference", "FIELD"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testChangeTypeNoReferenceI() throws Exception {
+		xChangeTypeNoReference(true);
+	}	
+	
+	public void testChangeTypeNoReferenceF() throws Exception {
+		xChangeTypeNoReference(false);
+	}	
+	
+	/**
+	 * Tests generalizing the type of a field
+	 */
+	private void xGeneralizeType(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("GeneralizeType.java");
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.TYPE)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "GeneralizeType", "FIELD"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testGeneralizeTypeI() throws Exception {
+		xGeneralizeType(true);
+	}	
+	
+	public void testGeneralizeTypeF() throws Exception {
+		xGeneralizeType(false);
+	}	
+	
+	/**
+	 * Tests generalizing the type of a protected field with a no-extend class
+	 */
+	private void xGeneralizeTypeNoExtend(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("GeneralizeTypeNoExtend.java");
+		// should be no problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testGeneralizeTypeNoExtendI() throws Exception {
+		xGeneralizeTypeNoExtend(true);
+	}	
+	
+	public void testGeneralizeTypeNoExtendF() throws Exception {
+		xGeneralizeTypeNoExtend(false);
+	}
+	
+	/**
+	 * Tests generalizing the type of a protected field annotated no-reference
+	 */
+	private void xGeneralizeTypeNoReference(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("GeneralizeTypeNoReference.java");
+		// TODO: should be no problems
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.TYPE)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "GeneralizeTypeNoReference", "FIELD"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testGeneralizeTypeNoReferenceI() throws Exception {
+		xGeneralizeTypeNoReference(true);
+	}	
+	
+	public void testGeneralizeTypeNoReferenceF() throws Exception {
+		xGeneralizeTypeNoReference(false);
+	}	
+	
+	/**
+	 * Tests specializing the type of a field
+	 */
+	private void xSpecializeType(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("SpecializeType.java");
+		// TODO: should be no problems
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.TYPE)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "SpecializeType", "FIELD"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testSpecializeTypeI() throws Exception {
+		xSpecializeType(true);
+	}	
+	
+	public void testSpecializeTypeF() throws Exception {
+		xSpecializeType(false);
+	}	
 }
