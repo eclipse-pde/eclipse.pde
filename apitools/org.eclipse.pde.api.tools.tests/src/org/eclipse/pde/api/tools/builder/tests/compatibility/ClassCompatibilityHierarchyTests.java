@@ -284,11 +284,11 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	public void testPushMethodUpI() throws Exception {
+	public void ZZZtestPushMethodUpI() throws Exception {
 		xPushMethodUp(true);
 	}	
 	
-	public void testPushMethodUpF() throws Exception {
+	public void ZZZtestPushMethodUpF() throws Exception {
 		xPushMethodUp(false);
 	}	
 	
