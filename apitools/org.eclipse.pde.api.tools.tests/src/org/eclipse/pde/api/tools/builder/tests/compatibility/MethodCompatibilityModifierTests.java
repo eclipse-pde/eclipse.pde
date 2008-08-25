@@ -104,6 +104,29 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	}
 	
 	/**
+	 * Tests making a non-abstract method abstract
+	 */
+	private void xAddAbstract(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstract.java");
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.NON_ABSTRACT_TO_ABSTRACT)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstract", "method()"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddAbstractI() throws Exception {
+		xAddAbstract(true);
+	}	
+	
+	public void testAddAbstractF() throws Exception {
+		xAddAbstract(false);
+	}	
+	
+	/**
 	 * Tests making a non-final no-override method final
 	 */
 	private void xAddFinalNoOverride(boolean incremental) throws Exception {
