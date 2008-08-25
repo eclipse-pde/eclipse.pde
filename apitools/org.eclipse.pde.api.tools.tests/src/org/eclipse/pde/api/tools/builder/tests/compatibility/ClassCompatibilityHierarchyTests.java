@@ -259,6 +259,39 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		xAddInterfaceA(false);
 	}
 	
+	/**
+	 * Tests pushing a method up the hierarchy
+	 */
+	private void xPushMethodUp(boolean incremental) throws Exception {
+		// modify two files
+		IPath file1 = WORKSPACE_CLASSES_PACKAGE_A.append("SuperClazz.java");
+		updateWorkspaceFile(
+				file1,
+				getUpdateFilePath(file1.lastSegment()));
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("SubClazz.java");
+		// TODO: no problems expected
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+					IApiProblem.CATEGORY_COMPATIBILITY,
+					IDelta.CLASS_ELEMENT_TYPE,
+					IDelta.REMOVED,
+					IDelta.METHOD)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "SubClazz", "pushUp()"};
+		setExpectedMessageArgs(args);		
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testPushMethodUpI() throws Exception {
+		xPushMethodUp(true);
+	}	
+	
+	public void testPushMethodUpF() throws Exception {
+		xPushMethodUp(false);
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
