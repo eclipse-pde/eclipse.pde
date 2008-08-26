@@ -84,7 +84,8 @@ public abstract class ClassCompatibilityTests extends CompatibilityTest {
 			ClassCompatibilityConstructorTests.class,
 			ClassCompatibilityModifierTests.class,
 			ClassCompatibilityMemberTypeTests.class,
-			ClassCompatibilityRestrictionTests.class
+			ClassCompatibilityRestrictionTests.class,
+			ClassCompatibilityTypeParameterTests.class
 		};
 		return classes;
 	}	
