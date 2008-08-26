@@ -309,4 +309,79 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	public void testChangeInterfaceBoundF() throws Exception {
 		xChangeClassBound(false);
 	}		
+	
+	/**
+	 * Tests changing a class to an annotation
+	 */
+	private void xConvertToAnnotation(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ConvertToAnnotation.java");
+		int[] ids = new int[] {
+				getProblemId(IDelta.CHANGED, IDelta.TYPE_CONVERSION)
+			};
+			setExpectedProblemIds(ids);
+			String[][] args = new String[1][];
+			args[0] = new String[]{PACKAGE_PREFIX + "ConvertToAnnotation",
+					Integer.toString(IDelta.CLASS_ELEMENT_TYPE),
+					Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE)};
+			setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testConvertToAnnotationI() throws Exception {
+		xConvertToAnnotation(true);
+	}
+	
+	public void testConvertToAnnotationF() throws Exception {
+		xConvertToAnnotation(false);
+	}
+	
+	/**
+	 * Tests changing a class to an enum
+	 */
+	private void xConvertToEnum(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ConvertToEnum.java");
+		int[] ids = new int[] {
+				getProblemId(IDelta.CHANGED, IDelta.TYPE_CONVERSION)
+			};
+			setExpectedProblemIds(ids);
+			String[][] args = new String[1][];
+			args[0] = new String[]{PACKAGE_PREFIX + "ConvertToEnum",
+					Integer.toString(IDelta.CLASS_ELEMENT_TYPE),
+					Integer.toString(IDelta.ENUM_ELEMENT_TYPE)};
+			setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testConvertToEnumI() throws Exception {
+		xConvertToEnum(true);
+	}
+	
+	public void testConvertToEnumF() throws Exception {
+		xConvertToEnum(false);
+	}	
+	
+	/**
+	 * Tests changing a class to an interface
+	 */
+	private void xConvertToInterface(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ConvertToInterface.java");
+		int[] ids = new int[] {
+				getProblemId(IDelta.CHANGED, IDelta.TYPE_CONVERSION)
+			};
+			setExpectedProblemIds(ids);
+			String[][] args = new String[1][];
+			args[0] = new String[]{PACKAGE_PREFIX + "ConvertToInterface",
+					Integer.toString(IDelta.CLASS_ELEMENT_TYPE),
+					Integer.toString(IDelta.INTERFACE_ELEMENT_TYPE)};
+			setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testConvertToInterfaceI() throws Exception {
+		xConvertToInterface(true);
+	}
+	
+	public void testConvertToInterfaceF() throws Exception {
+		xConvertToInterface(false);
+	}		
 }
