@@ -642,7 +642,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xSpecializeType(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("SpecializeType.java");
-		// TODO: should be no problems
+		// should be a problem - @see bug 245150
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.TYPE)
 		};
