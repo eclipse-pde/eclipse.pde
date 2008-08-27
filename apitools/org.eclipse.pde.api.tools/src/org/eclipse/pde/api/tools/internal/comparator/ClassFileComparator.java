@@ -161,10 +161,10 @@ public class ClassFileComparator {
 		this.delta.add(delta);
 	}
 	private void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String data) {
-		this.delta.add(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, data));
+		this.addDelta(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, data));
 	}
 	private void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, String[] datas) {
-		this.delta.add(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, datas));
+		this.addDelta(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, classFile.getTypeName(), key, datas));
 	}
 	/**
 	 * Checks if the super-class set has been change in any way compared to the baseline (grown or reduced or types changed)
@@ -1543,18 +1543,18 @@ public class ClassFileComparator {
 		int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
 		int referenceRestrictions = RestrictionModifiers.NO_RESTRICTIONS;
 		int access2 = fieldDescriptor2.access;
-		if (this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription()) {
-			if (this.component2.hasApiDescription()) {
-				try {
-					IApiDescription apiDescription = this.component2.getApiDescription();
-					IApiAnnotations resolvedAPIDescription = apiDescription.resolveAnnotations(fieldDescriptor2.handle);
-					if (resolvedAPIDescription != null) {
-						restrictions = resolvedAPIDescription.getRestrictions();
-					}
-				} catch (CoreException e) {
-					// ignore
+		if (this.component2.hasApiDescription()) {
+			try {
+				IApiDescription apiDescription = this.component2.getApiDescription();
+				IApiAnnotations resolvedAPIDescription = apiDescription.resolveAnnotations(fieldDescriptor2.handle);
+				if (resolvedAPIDescription != null) {
+					restrictions = resolvedAPIDescription.getRestrictions();
 				}
+			} catch (CoreException e) {
+				// ignore
 			}
+		}
+		if (this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription()) {
 			// check if this method should be removed because it is tagged as @noreference
 			IApiDescription apiDescription = null;
 			try {
@@ -1610,24 +1610,24 @@ public class ClassFileComparator {
 					return;
 				}
 			} else if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
-				if ((Util.isPublic(access2) || Util.isProtected(access2))
+				if (((Util.isPublic(access2) || Util.isProtected(access2)) && (Util.isPublic(access) || Util.isProtected(access)))
 						&& visibilityModifiers == VisibilityModifiers.API) {
 					// report that it is no longer an API field
 					this.addDelta(
 							this.descriptor2.getElementType(),
 							IDelta.REMOVED,
 							fieldDescriptor2.isEnum() ? IDelta.API_ENUM_CONSTANT : IDelta.API_FIELD,
-							this.currentDescriptorRestrictions,
+							restrictions,
 							access2,
 							this.classFile,
 							name,
 							new String[] {Util.getDescriptorName(this.descriptor2), name});
-					return;
 				}
+				return;
 			}
 		}
 
-		restrictions = this.currentDescriptorRestrictions;
+		restrictions |= this.currentDescriptorRestrictions;
 
 		if (!fieldDescriptor.descriptor.equals(fieldDescriptor2.descriptor)) {
 			// report delta
@@ -2160,7 +2160,7 @@ public class ClassFileComparator {
 								this.classFile,
 								getKeyForMethod(methodDescriptor2, this.descriptor2),
 								new String[] {Util.getDescriptorName(this.descriptor2), methodDisplayName});
-					} else {
+					} else if (Util.isPublic(access) || Util.isProtected(access)) {
 						this.addDelta(
 								this.descriptor2.getElementType(),
 								IDelta.REMOVED,
