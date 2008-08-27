@@ -71,18 +71,12 @@ public class PreferenceMessages extends NLS {
 
 	public static String API_COMPONENT_REMOVED_API_TYPE;
 	public static String API_COMPONENT_REMOVED_TYPE;
-	public static String ANNOTATION_ADDED_FIELD;
-	public static String ANNOTATION_ADDED_METHOD;
-	public static String ANNOTATION_ADDED_TYPE_MEMBER;
-	public static String ANNOTATION_ADDED_TYPE_PARAMETER;
+
 	public static String ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE;
 	public static String ANNOTATION_REMOVED_FIELD;
-	public static String ANNOTATION_REMOVED_METHOD_DEFAULT_VALUE;
-	public static String ANNOTATION_REMOVED_METHOD_NO_DEFAULT_VALUE;
+	public static String ANNOTATION_REMOVED_METHOD;
 	public static String ANNOTATION_REMOVED_TYPE_MEMBER;
-	public static String ANNOTATION_REMOVED_TYPE_PARAMETER;
 	public static String ANNOTATION_CHANGED_TYPE_CONVERSION;
-	public static String ANNOTATION_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
 	public static String ANNOTATION_CHANGED_RESTRICTIONS;
 	
 	public static String INTERFACE_ADDED_FIELD;

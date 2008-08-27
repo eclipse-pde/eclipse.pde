@@ -26,30 +26,16 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE);
 	public static final String API_COMPONENT_REMOVED_API_TYPE =
 		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_TYPE);
-	public static final String ANNOTATION_ADDED_TYPE_MEMBER =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_MEMBER);
-	public static final String ANNOTATION_ADDED_FIELD =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD);
-	public static final String ANNOTATION_ADDED_METHOD =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
 	public static final String ANNOTATION_REMOVED_FIELD =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.FIELD);
-	public static final String ANNOTATION_REMOVED_METHOD_DEFAULT_VALUE =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.METHOD_WITH_DEFAULT_VALUE);
-	public static final String ANNOTATION_REMOVED_METHOD_NO_DEFAULT_VALUE =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.METHOD_WITHOUT_DEFAULT_VALUE);
+	public static final String ANNOTATION_REMOVED_METHOD =
+		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.METHOD);
 	public static final String ANNOTATION_REMOVED_TYPE_MEMBER =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_MEMBER);
-	public static final String ANNOTATION_REMOVED_TYPE_PARAMETER =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETER);
-	public static final String ANNOTATION_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET);
 	public static final String ANNOTATION_CHANGED_TYPE_CONVERSION =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_CONVERSION);
 	public static final String ANNOTATION_CHANGED_RESTRICTIONS =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.RESTRICTIONS);
-	public static final String ANNOTATION_ADDED_TYPE_PARAMETER =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
 	public static final String ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD_WITHOUT_DEFAULT_VALUE);
 	// interface key constant

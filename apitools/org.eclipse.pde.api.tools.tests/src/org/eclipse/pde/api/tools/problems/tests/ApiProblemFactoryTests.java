@@ -92,7 +92,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		assertTrue("the kind should be illegal implement", kind == IApiProblem.ILLEGAL_IMPLEMENT);
 		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ILLEGAL_INSTANTIATE);
 		assertTrue("the kind should be illegal instantiate", kind == IApiProblem.ILLEGAL_INSTANTIATE);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ANNOTATION_CHANGED_CONTRACTED_SUPERINTERFACES_SET);
+		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ANNOTATION_CHANGED_TYPE_CONVERSION);
 		assertTrue("the kind should be CHANGED", kind == IDelta.CHANGED);
 		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.TYPE_PARAMETER_ADDED_CLASS_BOUND);
 		assertTrue("the kind should be ADDED", kind == IDelta.ADDED);

@@ -921,10 +921,32 @@ public final class Util {
 					buffer.append(Util.getDeltaFlagsName(IDelta.METHOD));
 					break;
 				case IDelta.API_METHOD_WITH_DEFAULT_VALUE :
-					buffer.append(Util.getDeltaFlagsName(IDelta.METHOD_WITH_DEFAULT_VALUE));
+					if (kind == IDelta.REMOVED) {
+						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD));
+					} else {
+						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD_WITH_DEFAULT_VALUE));
+					}
 					break;
 				case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE :
-					buffer.append(Util.getDeltaFlagsName(IDelta.METHOD_WITHOUT_DEFAULT_VALUE));
+					if (kind == IDelta.REMOVED) {
+						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD));
+					} else {
+						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD_WITHOUT_DEFAULT_VALUE));
+					}
+					break;
+				case IDelta.METHOD_WITH_DEFAULT_VALUE :
+					if (kind == IDelta.REMOVED) {
+						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD));
+					} else {
+						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD_WITH_DEFAULT_VALUE));
+					}
+					break;
+				case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+					if (kind == IDelta.REMOVED) {
+						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD));
+					} else {
+						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD_WITHOUT_DEFAULT_VALUE));
+					}
 					break;
 				default:
 					buffer.append(Util.getDeltaFlagsName(flags));
