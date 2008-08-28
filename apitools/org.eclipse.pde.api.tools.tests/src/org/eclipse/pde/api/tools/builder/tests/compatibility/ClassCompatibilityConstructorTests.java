@@ -316,7 +316,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		xRemovePublicAPIConstructorNoReference(true);
 	}	
 	
-	public void testRemovePublicAPIConstructorNoReferencF() throws Exception {
+	public void testRemovePublicAPIConstructorNoReferenceF() throws Exception {
 		xRemovePublicAPIConstructorNoReference(false);
 	}
 	
