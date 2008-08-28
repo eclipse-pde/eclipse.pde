@@ -151,36 +151,25 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	
 	public void testAddMethodNoImplementF() throws Exception {
 		xAddMethodNoImplement(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests adding a  member type to an interface
 	 */
 	private void xAddMemberType(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMemberType.java");
-		// TODO: expecting a problem
-//		int[] ids = new int[] {
-//				ApiProblemFactory.createProblemId(
-//						IApiProblem.CATEGORY_COMPATIBILITY,
-//						IDelta.INTERFACE_ELEMENT_TYPE,
-//						IDelta.ADDED,
-//						IDelta.MEMBER_ELEMENT_TYPE)
-//		};
-//		setExpectedProblemIds(ids);
-//		String[][] args = new String[1][];
-//		args[0] = new String[]{PACKAGE_PREFIX + "AddMemberType", "MemberType"};
-//		setExpectedMessageArgs(args);
+		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddMemberTypeI() throws Exception {
 		xAddMemberType(true);
-	}	
+	}
 	
 	public void testAddMemberTypeF() throws Exception {
 		xAddMemberType(false);
-	}	
-		
+	}
+
 	/**
 	 * Tests adding a  member type to a noimplement interface
 	 */

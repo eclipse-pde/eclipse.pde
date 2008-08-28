@@ -43,8 +43,6 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD);
 	public static final String INTERFACE_ADDED_METHOD =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
-	public static final String INTERFACE_ADDED_TYPE_MEMBER =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_MEMBER);
 	public static final String INTERFACE_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
 	public static final String INTERFACE_REMOVED_TYPE_PARAMETER =

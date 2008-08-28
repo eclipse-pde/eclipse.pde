@@ -81,7 +81,6 @@ public class PreferenceMessages extends NLS {
 	
 	public static String INTERFACE_ADDED_FIELD;
 	public static String INTERFACE_ADDED_METHOD;
-	public static String INTERFACE_ADDED_TYPE_MEMBER;
 	public static String INTERFACE_ADDED_TYPE_PARAMETER;
 	public static String INTERFACE_REMOVED_TYPE_PARAMETER;
 	public static String INTERFACE_REMOVED_FIELD;

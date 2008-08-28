@@ -166,7 +166,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		IApiProblemTypes.ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE,
 		IApiProblemTypes.INTERFACE_ADDED_FIELD,
 		IApiProblemTypes.INTERFACE_ADDED_METHOD,
-		IApiProblemTypes.INTERFACE_ADDED_TYPE_MEMBER,
 		IApiProblemTypes.INTERFACE_ADDED_TYPE_PARAMETER,
 		IApiProblemTypes.INTERFACE_REMOVED_TYPE_PARAMETER,
 		IApiProblemTypes.INTERFACE_REMOVED_FIELD,
