@@ -418,6 +418,23 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	}	
 	
 	/**
+	 * Tests changing a private method to public, no-reference
+	 */
+	private void xPrivateToPublic(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PrivateToPublicNoReference.java");
+		// no problems expected
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testPrivateToPublicI() throws Exception {
+		xPrivateToPublic(true);
+	}	
+	
+	public void testPrivateToPublicF() throws Exception {
+		xPrivateToPublic(false);
+	}		
+	
+	/**
 	 * Tests changing a public method to private
 	 */
 	private void xPublicToPrivateNoReference(boolean incremental) throws Exception {
