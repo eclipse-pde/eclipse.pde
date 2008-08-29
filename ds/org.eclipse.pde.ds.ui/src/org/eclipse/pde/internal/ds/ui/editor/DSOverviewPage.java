@@ -62,12 +62,12 @@ public class DSOverviewPage extends PDEFormPage implements
 		
 		Composite left = toolkit.createComposite(body);
 		left.setLayout(new GridLayout());
-		left.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
+		left.setLayoutData(GridDataFactory.fillDefaults().grab(true, true)
 				.span(3, 1).create());
 		
 		Composite right = toolkit.createComposite(body);
 		right.setLayout(new GridLayout());
-		right.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
+		right.setLayoutData(GridDataFactory.fillDefaults().grab(true, true)
 				.span(2, 1).create());
 		
 		Composite bottom = toolkit.createComposite(body);
