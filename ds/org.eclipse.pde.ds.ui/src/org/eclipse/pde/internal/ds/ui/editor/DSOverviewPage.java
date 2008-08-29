@@ -12,11 +12,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SharedImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -50,13 +53,33 @@ public class DSOverviewPage extends PDEFormPage implements
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 2));
+		body.setLayout(FormLayoutFactory.createFormGridLayout(true, 5));
+		
+		Composite top = toolkit.createComposite(body);
+		top.setLayout(GridLayoutFactory.fillDefaults().create());
+		top.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
+				.span(5, 1).create());
+		
+		Composite left = toolkit.createComposite(body);
+		left.setLayout(new GridLayout());
+		left.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
+				.span(3, 1).create());
+		
+		Composite right = toolkit.createComposite(body);
+		right.setLayout(new GridLayout());
+		right.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
+				.span(2, 1).create());
+		
+		Composite bottom = toolkit.createComposite(body);
+		bottom.setLayout(new GridLayout());
+		bottom.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
+				.span(5, 1).create());
 
 		// Sections
-		managedForm.addPart(new DSServiceComponentSection(this, body));
-		managedForm.addPart(new DSReferenceSection(this, body));
-		managedForm.addPart(new DSProvideSection(this, body));
-		managedForm.addPart(new DSPropertiesSection(this, body));
+		managedForm.addPart(new DSServiceComponentSection(this, top));
+		managedForm.addPart(new DSReferenceSection(this, left));
+		managedForm.addPart(new DSProvideSection(this, right));
+		managedForm.addPart(new DSPropertiesSection(this, bottom));
 	}
 
 }

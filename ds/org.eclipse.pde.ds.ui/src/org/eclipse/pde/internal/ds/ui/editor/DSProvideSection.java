@@ -33,7 +33,6 @@ import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -84,10 +83,7 @@ public class DSProvideSection extends TableSection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(Messages.DSProvideSection_title);
 		section.setDescription(Messages.DSProvideSection_description);
-
-		section.setLayout(FormLayoutFactory
-				.createClearTableWrapLayout(false, 1));
-
+		
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
 
