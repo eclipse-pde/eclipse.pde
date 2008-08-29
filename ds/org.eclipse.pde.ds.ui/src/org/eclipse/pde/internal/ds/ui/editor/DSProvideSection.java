@@ -84,6 +84,8 @@ public class DSProvideSection extends TableSection {
 		section.setText(Messages.DSProvideSection_title);
 		section.setDescription(Messages.DSProvideSection_description);
 		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
 

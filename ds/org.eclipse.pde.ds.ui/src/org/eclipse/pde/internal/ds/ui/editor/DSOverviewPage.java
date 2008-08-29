@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 242028
+ *     Code 9 Corporation - initial API and implementation
+ *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
@@ -29,7 +28,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class DSOverviewPage extends PDEFormPage implements
 		IModelChangedListener {
 
-	public static final String PAGE_ID = Messages.DSSimpPage_pageId;
+	public static final String PAGE_ID = "dsSimpPage"; //$NON-NLS-1$
 
 	public DSOverviewPage(FormEditor editor) {
 		super(editor, PAGE_ID, Messages.DSSimpPage_title);

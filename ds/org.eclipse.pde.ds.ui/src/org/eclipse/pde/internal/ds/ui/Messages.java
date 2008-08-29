@@ -107,7 +107,6 @@ public class Messages extends NLS {
 
 	public static String DSRemoveItemAction_actionText;
 	
-	public static String DSSimpPage_pageId;
 	public static String DSSimpPage_title;
 	
 	public static String DSSection_title;

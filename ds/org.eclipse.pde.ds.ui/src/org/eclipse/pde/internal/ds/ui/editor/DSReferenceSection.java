@@ -78,6 +78,8 @@ public class DSReferenceSection extends TableSection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(Messages.DSReferenceSection_title);
 		section.setDescription(Messages.DSReferenceSection_description);
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);

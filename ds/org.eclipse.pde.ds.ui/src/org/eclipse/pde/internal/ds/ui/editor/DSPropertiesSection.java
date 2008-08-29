@@ -93,9 +93,8 @@ public class DSPropertiesSection extends TableSection {
 		section.setDescription(Messages.DSPropertiesSection_description);
 
 		section.setLayout(FormLayoutFactory
-				.createClearTableWrapLayout(false, 1));
-
-		// TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+				.createClearGridLayout(false, 1));
+		
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		section.setLayoutData(data);
