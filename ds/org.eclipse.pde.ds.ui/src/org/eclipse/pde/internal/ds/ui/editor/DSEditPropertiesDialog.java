@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
- *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 244997
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
@@ -45,9 +44,7 @@ import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.forms.FormDialog;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -66,7 +63,7 @@ public class DSEditPropertiesDialog extends FormDialog {
 	}
 
 	protected void createFormContent(IManagedForm mform) {
-		mform.getForm().setText(Messages.DSEditReferenceDialog_dialog_title);
+		mform.getForm().setText(Messages.DSEditPropertiesDialog_dialog_title);
 
 		Composite container = mform.getForm().getBody();
 		container.setLayout(new GridLayout());
@@ -82,7 +79,7 @@ public class DSEditPropertiesDialog extends FormDialog {
 		// Attribute: title
 		fEntry = new FormEntry(entryContainer, toolkit,
 				Messages.DSPropertiesDetails_entry,
-				Messages.DSPropertiesDetails_browse, true, 0);
+				Messages.DSPropertiesDetails_browse, false, 0);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 20;
@@ -92,16 +89,6 @@ public class DSEditPropertiesDialog extends FormDialog {
 		updateFields();
 
 		setEntryListeners();
-	}
-
-	private Section addSection(FormToolkit toolkit, Composite mainContainer) {
-		Section section = toolkit.createSection(mainContainer,
-				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(Messages.DSEditPropertiesDialog_dialog_title);
-		section.setDescription(Messages.DSEditPropertiesDialog_dialogMessage);
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		return section;
 	}
 
 	public boolean isHelpAvailable() {

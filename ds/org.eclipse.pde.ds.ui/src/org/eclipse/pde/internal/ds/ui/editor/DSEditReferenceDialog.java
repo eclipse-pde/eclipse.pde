@@ -88,7 +88,7 @@ public class DSEditReferenceDialog extends FormDialog {
 		// Attribute: Interface
 		fInterfaceEntry = new FormEntry(entryContainer, toolkit,
 				Messages.DSReferenceDetails_interfaceEntry,
-				Messages.DSReferenceDetails_browse, true, 0);
+				Messages.DSReferenceDetails_browse, false, 0);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;

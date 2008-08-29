@@ -48,7 +48,7 @@ public class DSLabelProvider extends LabelProvider {
 		} else if (obj.getType() == IDSConstants.TYPE_PROPERTY) {
 			return SharedImages.getImage(SharedImages.DESC_PROPERTY);
 		} else if (obj.getType() == IDSConstants.TYPE_PROVIDE) {
-			return SharedImages.getImage(SharedImages.DESC_PROVIDE);
+			return SharedImages.getImage(SharedImages.DESC_SERVICE);
 		} else if (obj.getType() == IDSConstants.TYPE_REFERENCE) {
 			return SharedImages.getImage(SharedImages.DESC_REFERENCE);
 		} else if (obj.getType() == IDSConstants.TYPE_COMPONENT) {
