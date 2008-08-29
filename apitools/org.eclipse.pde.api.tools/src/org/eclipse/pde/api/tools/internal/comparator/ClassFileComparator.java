@@ -463,6 +463,10 @@ public class ClassFileComparator {
 							memberTypeVisibility2 = memberTypeElementDescription2.getVisibility();
 						}
 						String deltaComponentID = Util.getDeltaComponentID(component2);
+						int restrictions = memberTypeElementDescription2 != null ? memberTypeElementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
+						if (Util.isFinal(this.descriptor2.access)) {
+							restrictions |= RestrictionModifiers.NO_EXTEND;
+						}
 						if (isAPI(memberTypeVisibility, typeMember) && !isAPI(memberTypeVisibility2, typeMember2)) {
 							this.addDelta(
 									new Delta(
@@ -470,7 +474,7 @@ public class ClassFileComparator {
 											this.descriptor2.getElementType(),
 											IDelta.REMOVED,
 											IDelta.TYPE_MEMBER,
-											memberTypeElementDescription2 != null ? memberTypeElementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
+											restrictions,
 											typeMember.access,
 											typeMemberName,
 											typeMemberName,
@@ -485,7 +489,7 @@ public class ClassFileComparator {
 											this.descriptor2.getElementType(),
 											IDelta.CHANGED,
 											IDelta.TYPE_VISIBILITY,
-											memberTypeElementDescription2 != null ? memberTypeElementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
+											restrictions,
 											typeMember2.access,
 											typeMemberName,
 											typeMemberName,
@@ -547,7 +551,6 @@ public class ClassFileComparator {
 		}
 		if (typeMembers2 == null) return;
 		// report remaining types in type members2 as addition
-		int currentTypeApiRestrictions = this.currentDescriptorRestrictions;
 		// Report delta as a breakage
 		loop: for (Iterator iterator = typeMembers2.iterator(); iterator.hasNext();) {
 			try {
@@ -575,7 +578,7 @@ public class ClassFileComparator {
 						this.descriptor1.getElementType(),
 						IDelta.ADDED,
 						IDelta.TYPE_MEMBER,
-						currentTypeApiRestrictions,
+						this.currentDescriptorRestrictions,
 						typeMember.access,
 						this.classFile,
 						typeMember.name,
@@ -1011,6 +1014,19 @@ public class ClassFileComparator {
 			// annotation with annotation and enum with enums
 			int typeAccess2 = this.descriptor2.access;
 
+			if (Util.isFinal(typeAccess2)) {
+				this.currentDescriptorRestrictions |= RestrictionModifiers.NO_EXTEND;
+			}
+			if (Util.isAbstract(typeAccess2)) {
+				this.currentDescriptorRestrictions |= RestrictionModifiers.NO_INSTANTIATE;
+			}
+			if (Util.isFinal(typeAccess)) {
+				this.initialDescriptorRestrictions |= RestrictionModifiers.NO_EXTEND;
+			}
+			if (Util.isAbstract(typeAccess)) {
+				this.initialDescriptorRestrictions |= RestrictionModifiers.NO_INSTANTIATE;
+			}
+
 			if (Util.isProtected(typeAccess)) {
 				if (Util.isPrivate(typeAccess2) || Util.isDefault(typeAccess2)) {
 					// report delta - decrease access: protected to default or private
@@ -1318,7 +1334,7 @@ public class ClassFileComparator {
 			// checks remaining fields (added fields)
 			for (Iterator iterator = this.descriptor2.fields.values().iterator(); iterator.hasNext();) {
 				FieldDescriptor fieldDescriptor = (FieldDescriptor) iterator.next();
-				reportFieldAddition(fieldDescriptor, this.descriptor1);
+				reportFieldAddition(fieldDescriptor, this.descriptor2);
 			}
 			
 			// checks methods
@@ -1394,7 +1410,7 @@ public class ClassFileComparator {
 						this.descriptor1.getElementType(),
 						IDelta.CHANGED,
 						IDelta.NON_FINAL_TO_FINAL,
-						this.currentDescriptorRestrictions,
+						this.initialDescriptorRestrictions,
 						typeAccess,
 						this.classFile,
 						this.descriptor1.name,
@@ -1585,27 +1601,15 @@ public class ClassFileComparator {
 								name,
 								new String[] {Util.getDescriptorName(this.descriptor2), name});
 					} else {
-						if (Util.isFinal(descriptor2.access)) {
-							this.addDelta(
-									this.descriptor2.getElementType(),
-									IDelta.ADDED,
-									IDelta.FIELD,
-									this.currentDescriptorRestrictions | RestrictionModifiers.NO_EXTEND,
-									access2,
-									this.classFile,
-									name,
-									new String[] {Util.getDescriptorName(this.descriptor2), name});
-						} else {
-							this.addDelta(
-									this.descriptor2.getElementType(),
-									IDelta.ADDED,
-									IDelta.FIELD,
-									this.currentDescriptorRestrictions,
-									access2,
-									this.classFile,
-									name,
-									new String[] {Util.getDescriptorName(this.descriptor2), name});
-						}
+						this.addDelta(
+								this.descriptor2.getElementType(),
+								IDelta.ADDED,
+								IDelta.FIELD,
+								this.currentDescriptorRestrictions,
+								access2,
+								this.classFile,
+								name,
+								new String[] {Util.getDescriptorName(this.descriptor2), name});
 					}
 					return;
 				}
@@ -1660,28 +1664,15 @@ public class ClassFileComparator {
 						new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor.value)});
 			} else if (!fieldDescriptor.value.equals(fieldDescriptor2.value)) {
 				// report delta - modified constant value
-				if (Util.isFinal(this.descriptor2.access)) {
-					// we make the restriction, non extend restrictions
-					this.addDelta(
-							IDelta.FIELD_ELEMENT_TYPE,
-							IDelta.CHANGED,
-							IDelta.VALUE,
-							restrictions | RestrictionModifiers.NO_EXTEND,
-							access2,
-							this.classFile,
-							name,
-							new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor.value)});
-				} else {
-					this.addDelta(
-							IDelta.FIELD_ELEMENT_TYPE,
-							IDelta.CHANGED,
-							IDelta.VALUE,
-							restrictions,
-							access2,
-							this.classFile,
-							name,
-							new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor.value)});
-				}
+				this.addDelta(
+						IDelta.FIELD_ELEMENT_TYPE,
+						IDelta.CHANGED,
+						IDelta.VALUE,
+						restrictions,
+						access2,
+						this.classFile,
+						name,
+						new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor.value)});
 			}
 		} else if (fieldDescriptor2.value != null) {
 			// report delta
@@ -2017,7 +2008,7 @@ public class ClassFileComparator {
 							this.descriptor1.getElementType(),
 							IDelta.REMOVED,
 							methodDescriptor.isConstructor() ? IDelta.CONSTRUCTOR : IDelta.METHOD,
-							Util.isAbstract(this.descriptor1.access) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions,
+							this.currentDescriptorRestrictions,
 							methodDescriptor.access,
 							this.classFile,
 							this.descriptor1.name,
@@ -2736,27 +2727,15 @@ public class ClassFileComparator {
 					name,
 					new String[] {Util.getDescriptorName(descriptor), name});
 		} else {
-			if (Util.isFinal(descriptor.access)) {
-				this.addDelta(
-						descriptor.getElementType(),
-						IDelta.ADDED,
-						IDelta.FIELD,
-						this.currentDescriptorRestrictions | RestrictionModifiers.NO_EXTEND,
-						fieldDescriptor.access,
-						this.classFile,
-						name,
-						new String[] {Util.getDescriptorName(descriptor), name});
-			} else {
-				this.addDelta(
-						descriptor.getElementType(),
-						IDelta.ADDED,
-						IDelta.FIELD,
-						this.currentDescriptorRestrictions,
-						fieldDescriptor.access,
-						this.classFile,
-						name,
-						new String[] {Util.getDescriptorName(descriptor), name});
-			}
+			this.addDelta(
+					descriptor.getElementType(),
+					IDelta.ADDED,
+					IDelta.FIELD,
+					this.currentDescriptorRestrictions,
+					fieldDescriptor.access,
+					this.classFile,
+					name,
+					new String[] {Util.getDescriptorName(descriptor), name});
 		}
 	}
 	private void reportMethodAddition(MethodDescriptor methodDescriptor, TypeDescriptor typeDescriptor) {
@@ -2800,13 +2779,17 @@ public class ClassFileComparator {
 			}
 		}
 		String methodDisplayName = getMethodDisplayName(methodDescriptor, typeDescriptor);
+		int restrictionsForMethodAddition = this.currentDescriptorRestrictions;
+		if (Util.isFinal(this.descriptor2.access)) {
+			restrictionsForMethodAddition |= RestrictionModifiers.NO_EXTEND;
+		}
 		if (Util.isPublic(access) || Util.isProtected(access)) {
 			if (methodDescriptor.isConstructor()) {
 				this.addDelta(
 						typeDescriptor.getElementType(),
 						IDelta.ADDED,
 						IDelta.CONSTRUCTOR,
-						this.currentDescriptorRestrictions,
+						restrictionsForMethodAddition,
 						access,
 						this.classFile,
 						getKeyForMethod(methodDescriptor, typeDescriptor),
@@ -2817,7 +2800,7 @@ public class ClassFileComparator {
 							typeDescriptor.getElementType(),
 							IDelta.ADDED,
 							IDelta.METHOD_WITH_DEFAULT_VALUE,
-							this.currentDescriptorRestrictions,
+							restrictionsForMethodAddition,
 							access,
 							this.classFile,
 							getKeyForMethod(methodDescriptor, typeDescriptor),
@@ -2827,7 +2810,7 @@ public class ClassFileComparator {
 							typeDescriptor.getElementType(),
 							IDelta.ADDED,
 							IDelta.METHOD_WITHOUT_DEFAULT_VALUE,
-							this.currentDescriptorRestrictions,
+							restrictionsForMethodAddition,
 							typeDescriptor.access,
 							this.classFile,
 							getKeyForMethod(methodDescriptor, typeDescriptor),
@@ -2927,7 +2910,7 @@ public class ClassFileComparator {
 							typeDescriptor.getElementType(),
 							IDelta.ADDED,
 							found ? IDelta.METHOD_MOVED_DOWN : IDelta.METHOD,
-							this.currentDescriptorRestrictions,
+							restrictionsForMethodAddition,
 							methodDescriptor.access,
 							this.classFile,
 							getKeyForMethod(methodDescriptor, typeDescriptor),
@@ -2937,7 +2920,7 @@ public class ClassFileComparator {
 							typeDescriptor.getElementType(),
 							IDelta.ADDED,
 							found ? IDelta.OVERRIDEN_METHOD : IDelta.METHOD,
-							this.currentDescriptorRestrictions,
+							restrictionsForMethodAddition,
 							methodDescriptor.access,
 							this.classFile,
 							getKeyForMethod(methodDescriptor, typeDescriptor),
@@ -2949,7 +2932,7 @@ public class ClassFileComparator {
 					typeDescriptor.getElementType(),
 					IDelta.ADDED,
 					methodDescriptor.isConstructor() ? IDelta.CONSTRUCTOR : IDelta.METHOD,
-					this.currentDescriptorRestrictions,
+					restrictionsForMethodAddition,
 					methodDescriptor.access,
 					this.classFile,
 					getKeyForMethod(methodDescriptor, typeDescriptor),
