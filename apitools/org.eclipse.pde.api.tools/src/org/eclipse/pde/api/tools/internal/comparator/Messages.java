@@ -94,6 +94,9 @@ public class Messages extends NLS {
 				if (delta.getKind() == IDelta.ADDED && delta.getFlags() == IDelta.METHOD_WITH_DEFAULT_VALUE) {
 					return 1;
 				}
+				if (delta.getKind() == IDelta.CHANGED && delta.getFlags() == IDelta.DECREASE_ACCESS) {
+					return 101;
+				}
 				break;
 			case IDelta.API_COMPONENT_ELEMENT_TYPE :
 				switch(delta.getKind()) {
@@ -178,6 +181,8 @@ public class Messages extends NLS {
 								return 23;
 							case IDelta.NON_FINAL_TO_FINAL :
 								return 94;
+							case IDelta.DECREASE_ACCESS :
+								return 101;
 						}
 						break;
 					case IDelta.REMOVED :
@@ -229,6 +234,12 @@ public class Messages extends NLS {
 							case IDelta.CONSTRUCTOR :
 							case IDelta.API_CONSTRUCTOR :
 								return 38;
+						}
+						break;
+					case IDelta.CHANGED :
+						switch(delta.getFlags()) {
+							case IDelta.DECREASE_ACCESS :
+								return 101;
 						}
 				}
 				break;
@@ -314,6 +325,8 @@ public class Messages extends NLS {
 						switch(delta.getFlags()) {
 							case IDelta.EXPANDED_SUPERINTERFACES_SET :
 								return 79;
+							case IDelta.DECREASE_ACCESS :
+								return 101;
 						}
 						break;
 					case IDelta.REMOVED :

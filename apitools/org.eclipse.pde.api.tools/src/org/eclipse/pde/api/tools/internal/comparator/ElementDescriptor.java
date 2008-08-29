@@ -34,4 +34,8 @@ public abstract class ElementDescriptor {
 	}
 	
 	abstract int getElementType();
+	
+	public boolean isMemberType() {
+		return false;
+	}
 }

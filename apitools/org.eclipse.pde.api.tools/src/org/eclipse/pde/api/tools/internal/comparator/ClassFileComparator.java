@@ -263,7 +263,6 @@ public class ClassFileComparator {
 											// leaf node
 											if (Util.isProtected(delta.getModifiers())) {
 												switch(delta.getElementType()) {
-													case IDelta.MEMBER_ELEMENT_TYPE :
 													case IDelta.METHOD_ELEMENT_TYPE : 
 													case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
 													case IDelta.FIELD_ELEMENT_TYPE :
@@ -425,7 +424,7 @@ public class ClassFileComparator {
 								typeMember.access,
 								this.classFile,
 								typeMember.name,
-								typeMember.name.replace('$', '.'));
+								new String[] { typeMemberName.replace('$', '.'), Util.getDeltaComponentID(component2)});
 					} catch (CoreException e) {
 						reportStatus(e);
 					}
@@ -471,14 +470,14 @@ public class ClassFileComparator {
 							this.addDelta(
 									new Delta(
 											deltaComponentID,
-											this.descriptor2.getElementType(),
-											IDelta.REMOVED,
-											IDelta.TYPE_MEMBER,
-											restrictions,
+											typeMember.getElementType(),
+											IDelta.CHANGED,
+											IDelta.DECREASE_ACCESS,
+											restrictions | this.currentDescriptorRestrictions,
 											typeMember.access,
 											typeMemberName,
 											typeMemberName,
-											new String[] { typeMemberName.replace('$', '.'), deltaComponentID}));
+											new String[] { typeMemberName.replace('$', '.') }));
 							continue;
 						}
 						if ((memberTypeVisibility2 & visibilityModifiers) == 0) {
@@ -486,14 +485,14 @@ public class ClassFileComparator {
 							this.addDelta(
 									new Delta(
 											deltaComponentID,
-											this.descriptor2.getElementType(),
+											typeMember.getElementType(),
 											IDelta.CHANGED,
 											IDelta.TYPE_VISIBILITY,
-											restrictions,
+											restrictions | this.currentDescriptorRestrictions,
 											typeMember2.access,
 											typeMemberName,
 											typeMemberName,
-											new String[] { typeMemberName.replace('$', '.'), deltaComponentID}));
+											new String[] { typeMemberName.replace('$', '.') }));
 						}
 						if (visibilityModifiers == VisibilityModifiers.API) {
 							// if the visibility is API, we only consider public and protected types
@@ -937,14 +936,15 @@ public class ClassFileComparator {
 			case IDelta.INTERFACE_ELEMENT_TYPE :
 			case IDelta.ANNOTATION_ELEMENT_TYPE :
 			case IDelta.ENUM_ELEMENT_TYPE :
+				if (descriptor.isMemberType()) {
+					return descriptor.name.replace('$', '.');
+				}
 				return descriptor.name;
 			case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
 			case IDelta.METHOD_ELEMENT_TYPE :
 				StringBuffer buffer = new StringBuffer();
 				buffer.append(typeDescriptor.name).append('.').append(getMethodDisplayName((MethodDescriptor) descriptor, typeDescriptor));
 				return String.valueOf(buffer);
-			case IDelta.MEMBER_ELEMENT_TYPE :
-				return descriptor.name.replace('$', '.');
 			case IDelta.FIELD_ELEMENT_TYPE :
 				buffer = new StringBuffer();
 				buffer.append(typeDescriptor.name).append('.').append(descriptor.name);

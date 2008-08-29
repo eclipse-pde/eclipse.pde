@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.comparator;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.objectweb.asm.Opcodes;
 
 public class MemberTypeDescriptor extends ElementDescriptor {
 	public MemberTypeDescriptor(String name, int access) {
@@ -31,11 +32,23 @@ public class MemberTypeDescriptor extends ElementDescriptor {
 	}
 
 	int getElementType() {
-		return IDelta.MEMBER_ELEMENT_TYPE;
+		if ((this.access & Opcodes.ACC_ENUM) != 0) {
+			return IDelta.ENUM_ELEMENT_TYPE;
+		}
+		if ((this.access & Opcodes.ACC_ANNOTATION) != 0) {
+			return IDelta.ANNOTATION_ELEMENT_TYPE;
+		}
+		if ((this.access & Opcodes.ACC_INTERFACE) != 0) {
+			return IDelta.INTERFACE_ELEMENT_TYPE;
+		}
+		return IDelta.CLASS_ELEMENT_TYPE;
 	}
 
 	public int hashCode() {
 		return this.name.hashCode();
+	}
+	public boolean isMemberType() {
+		return true;
 	}
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();

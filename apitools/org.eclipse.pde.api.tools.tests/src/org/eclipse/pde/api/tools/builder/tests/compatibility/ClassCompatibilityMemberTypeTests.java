@@ -220,7 +220,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	private void xPublicToPackage(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackageVisibility.java");
 		int[] ids = new int[] {
-			getDefaultProblemId() // TODO: should be reduced?
+			getReducedVisibilityId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
@@ -231,11 +231,11 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	
 	public void testPublicToPackageI() throws Exception {
 		xPublicToPackage(true);
-	}	
+	}
 	
 	public void testPublicToPackageF() throws Exception {
 		xPublicToPackage(false);
-	}	
+	}
 	
 	/**
 	 * Tests reducing visibility from public to private
@@ -243,7 +243,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	private void xPublicToPrivate(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateVisibility.java");
 		int[] ids = new int[] {
-			getDefaultProblemId() // TODO: should be reduced visibility?
+			getReducedVisibilityId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
@@ -266,7 +266,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	private void xProtectedToPackage(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageVisibility.java");
 		int[] ids = new int[] {
-			getDefaultProblemId() // TODO: should be reduced?
+			getReducedVisibilityId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
@@ -289,7 +289,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	private void xProtectedToPrivate(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateVisibility.java");
 		int[] ids = new int[] {
-			getDefaultProblemId() // TODO: should be reduced?
+			getReducedVisibilityId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
@@ -328,14 +328,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 */
 	private void xProtectedToPackageNoExtend(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageVisibilityNoExtend.java");
-		// TODO: no problems expected
-		int[] ids = new int[] {
-			getDefaultProblemId()
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackageVisibilityNoExtend.ProtectedToPackage"};
-		setExpectedMessageArgs(args);
+		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -352,14 +345,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 */
 	private void xProtectedToPrivateNoExtend(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateVisibilityNoExtend.java");
-		// TODO: no problems expected
-		int[] ids = new int[] {
-			getDefaultProblemId()
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivateVisibilityNoExtend.ProtectedToPrivate"};
-		setExpectedMessageArgs(args);		
+		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	

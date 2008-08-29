@@ -91,23 +91,17 @@ public interface IDelta {
 	public static final int INTERFACE_ELEMENT_TYPE = 8;
 
 	/**
-	 * Element type constant indicating that the delta is reported against a member type.
-	 * 
-	 * @see #getElementType()
-	 */
-	public static final int MEMBER_ELEMENT_TYPE = 9;
-	/**
 	 * Element type constant indicating that the delta is reported against a method declaration.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int METHOD_ELEMENT_TYPE = 10;
+	public static final int METHOD_ELEMENT_TYPE = 9;
 	/**
 	 * Element type constant indicating that the delta is reported against a type parameter.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int TYPE_PARAMETER_ELEMENT_TYPE = 11;
+	public static final int TYPE_PARAMETER_ELEMENT_TYPE = 10;
 	
 	/**
 	 * Delta kind flag that denotes removing the abstract keyword from a member.

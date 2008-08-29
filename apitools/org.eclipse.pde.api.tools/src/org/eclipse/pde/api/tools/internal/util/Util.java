@@ -763,8 +763,6 @@ public final class Util {
 				return "API_PROFILE_ELEMENT_TYPE"; //$NON-NLS-1$
 			case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
 				return "CONSTRUCTOR_ELEMENT_TYPE"; //$NON-NLS-1$
-			case IDelta.MEMBER_ELEMENT_TYPE :
-				return "MEMBER_ELEMENT_TYPE"; //$NON-NLS-1$
 			case IDelta.METHOD_ELEMENT_TYPE :
 				return "METHOD_ELEMENT_TYPE"; //$NON-NLS-1$
 			case IDelta.FIELD_ELEMENT_TYPE :
@@ -981,9 +979,6 @@ public final class Util {
 			case IDelta.METHOD_ELEMENT_TYPE:
 				buffer.append("method"); //$NON-NLS-1$
 				break;
-			case IDelta.MEMBER_ELEMENT_TYPE :
-				buffer.append("member"); //$NON-NLS-1$
-				break;
 			case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
 				buffer.append("constructor"); //$NON-NLS-1$
 				break;
@@ -1170,7 +1165,6 @@ public final class Util {
 			case IDelta.ANNOTATION_ELEMENT_TYPE :
 			case IDelta.INTERFACE_ELEMENT_TYPE :
 			case IDelta.ENUM_ELEMENT_TYPE :
-			case IDelta.MEMBER_ELEMENT_TYPE :
 				// we report the marker on the type
 				switch(delta.getKind()) {
 					case IDelta.ADDED :
