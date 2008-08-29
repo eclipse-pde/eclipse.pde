@@ -2017,19 +2017,19 @@ public class ClassFileComparator {
 			}
 			return;
 		}
-		int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+		int restrictions = this.currentDescriptorRestrictions;
 		if (component2.hasApiDescription()) {
 			try {
 				IApiDescription apiDescription = this.component2.getApiDescription();
 				IApiAnnotations resolvedAPIDescription = apiDescription.resolveAnnotations(methodDescriptor2.handle);
 				if (resolvedAPIDescription != null) {
-					restrictions = resolvedAPIDescription.getRestrictions();
+					restrictions |= resolvedAPIDescription.getRestrictions();
 				}
 			} catch (CoreException e) {
 				// ignore
 			}
 		}
-		int referenceRestrictions = RestrictionModifiers.NO_RESTRICTIONS;
+		int referenceRestrictions = this.initialDescriptorRestrictions;
 		int access2 = methodDescriptor2.access;
 		if (this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription()) {
 			// check if this method should be removed because it is tagged as @noreference
@@ -2042,7 +2042,7 @@ public class ClassFileComparator {
 			if (apiDescription != null) {
 				IApiAnnotations apiAnnotations = apiDescription.resolveAnnotations(methodDescriptor.handle);
 				if (apiAnnotations != null) {
-					referenceRestrictions = apiAnnotations.getRestrictions();
+					referenceRestrictions |= apiAnnotations.getRestrictions();
 				}
 			}
 			if (RestrictionModifiers.isReferenceRestriction(referenceRestrictions)) {

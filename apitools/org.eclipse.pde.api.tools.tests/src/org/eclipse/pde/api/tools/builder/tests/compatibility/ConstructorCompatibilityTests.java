@@ -162,25 +162,18 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 */
 	private void xProtectedToPrivateNoExtend(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateNoExtend.java");
-		// TODO: should be no errors
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.DECREASE_ACCESS)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivateNoExtend", "ProtectedToPrivateNoExtend()"};
-		setExpectedMessageArgs(args);
+		// no expected errors
 		performCompatibilityTest(filePath, incremental);
 	}
 	
 	public void testProtectedToPrivateNoExtendI() throws Exception {
 		xProtectedToPrivateNoExtend(true);
-	}	
+	}
 	
 	public void testProtectedToPrivateNoExtendF() throws Exception {
 		xProtectedToPrivateNoExtend(false);
 	}
-		
+
 	/**
 	 * Tests changing a public method to package
 	 */

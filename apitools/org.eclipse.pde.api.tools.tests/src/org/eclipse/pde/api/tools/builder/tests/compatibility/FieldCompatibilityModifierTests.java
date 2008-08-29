@@ -374,14 +374,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xProtectedToPrivateNoExtend(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateNoExtend.java");
-		// TODO: should be no errors
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.DECREASE_ACCESS)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivateNoExtend", "FIELD"};
-		setExpectedMessageArgs(args);
+		// expected no error
 		performCompatibilityTest(filePath, incremental);
 	}
 	

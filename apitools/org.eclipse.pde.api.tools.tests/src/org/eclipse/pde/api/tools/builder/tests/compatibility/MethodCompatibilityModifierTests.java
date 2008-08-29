@@ -329,20 +329,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 */
 	private void xProtectedToPrivateNoExtend(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateNoExtend.java");
-		// TODO: should be no errors
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.DECREASE_ACCESS)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivateNoExtend", "method()"};
-		setExpectedMessageArgs(args);
+		// no expected errors
 		performCompatibilityTest(filePath, incremental);
 	}
 	
 	public void testProtectedToPrivateNoExtendI() throws Exception {
 		xProtectedToPrivateNoExtend(true);
-	}	
+	}
 	
 	public void testProtectedToPrivateNoExtendF() throws Exception {
 		xProtectedToPrivateNoExtend(false);

@@ -272,6 +272,8 @@ public class Messages extends NLS {
 								return 92;
 							case IDelta.VOLATILE_TO_NON_VOLATILE :
 								return 93;
+							case IDelta.DECREASE_ACCESS :
+								return 98;
 						}
 						break;
 					case IDelta.REMOVED :
@@ -369,6 +371,8 @@ public class Messages extends NLS {
 								return 83;
 							case IDelta.NON_STATIC_TO_STATIC :
 								return 84;
+							case IDelta.DECREASE_ACCESS :
+								return 99;
 						}
 					case IDelta.REMOVED :
 						switch(delta.getFlags()) {
@@ -401,6 +405,8 @@ public class Messages extends NLS {
 								return 88;
 							case IDelta.INCREASE_ACCESS :
 								return 89;
+							case IDelta.DECREASE_ACCESS :
+								return 100;
 						}
 					case IDelta.REMOVED :
 						switch(delta.getFlags()) {

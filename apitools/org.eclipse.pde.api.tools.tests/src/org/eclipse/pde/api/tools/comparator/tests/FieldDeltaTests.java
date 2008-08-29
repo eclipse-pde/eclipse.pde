@@ -30,7 +30,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(FieldDeltaTests.class);
 		TestSuite suite = new TestSuite(FieldDeltaTests.class.getName());
-		suite.addTest(new FieldDeltaTests("test63"));
+		suite.addTest(new FieldDeltaTests("test64"));
 		return suite;
 	}
 
@@ -1504,6 +1504,28 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertTrue("Not visible", Util.isVisible(child));
 		assertTrue("Not @noreferece restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244995
+	 */
+	public void test64() {
+		deployBundles("test64");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
+		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
