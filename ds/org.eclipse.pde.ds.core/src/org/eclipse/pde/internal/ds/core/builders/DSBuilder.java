@@ -118,6 +118,8 @@ public class DSBuilder extends IncrementalProjectBuilder {
 	private boolean isDSFile(IFile candidate) {
 		try {
 			IContentDescription description = candidate.getContentDescription();
+			if (description == null)
+				return false;
 			IContentType type = description.getContentType();
 			return Activator.CONTENT_TYPE_ID.equals(type.getId());
 		} catch (CoreException e) {
