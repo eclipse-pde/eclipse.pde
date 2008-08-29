@@ -88,7 +88,6 @@ public class DSProvideSection extends TableSection {
 		section.setLayout(FormLayoutFactory
 				.createClearTableWrapLayout(false, 1));
 
-		// TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
 

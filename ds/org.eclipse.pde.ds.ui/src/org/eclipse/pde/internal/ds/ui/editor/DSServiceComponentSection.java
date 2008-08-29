@@ -64,7 +64,7 @@ public class DSServiceComponentSection extends PDESection {
 		initializeAttributes();
 		
 		section.setLayout(new GridLayout());
-		GridData data = new GridData(GridData.FILL_BOTH);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		section.setLayoutData(data);
 		section.setText(Messages.DSSection_title);

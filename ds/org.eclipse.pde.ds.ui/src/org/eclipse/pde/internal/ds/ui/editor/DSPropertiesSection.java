@@ -96,7 +96,7 @@ public class DSPropertiesSection extends TableSection {
 				.createClearTableWrapLayout(false, 1));
 
 		// TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
-		GridData data = new GridData(GridData.FILL_BOTH);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		section.setLayoutData(data);
 
@@ -180,6 +180,21 @@ public class DSPropertiesSection extends TableSection {
 			}
 		};
 		fAddPropertiesAction.setEnabled(isEditable());
+		
+		fAddPropertyAction = new Action(
+				Messages.DSPropertiesSection_addProperty) {
+			public void run() {
+				handleAddProperty();
+			}
+		};
+		fAddPropertyAction.setEnabled(isEditable());
+
+		fEditAction = new Action(Messages.DSPropertiesSection_edit) {
+			public void run() {
+				handleEdit();
+			}
+		};
+		fEditAction.setEnabled(isEditable());
 
 		fRemoveAction = new Action(Messages.DSPropertiesSection_remove) {
 			public void run() {
@@ -191,12 +206,12 @@ public class DSPropertiesSection extends TableSection {
 
 	private void updateButtons() {
 		Table table = fPropertiessTable.getTable();
-		int count = table.getItemCount();
-
 		TablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(0, isEditable());
-		tablePart.setButtonEnabled(1, isEditable()
+		tablePart.setButtonEnabled(1, isEditable());
+		tablePart.setButtonEnabled(2, isEditable()
 				&& table.getSelection().length > 0);
+		tablePart.setButtonEnabled(3, isEditable());
 	}
 
 	private void handleRemove() {

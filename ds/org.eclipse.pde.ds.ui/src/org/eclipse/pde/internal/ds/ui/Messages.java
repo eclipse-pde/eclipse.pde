@@ -148,6 +148,9 @@ public class Messages extends NLS {
 	public static String DSEditPropertiesDialog_dialog_title;
 	public static String DSEditPropertiesDialog_dialogMessage;
 	
+	public static String DSEditPropertyDialog_dialog_title;
+	public static String DSEditPropertyDialog_dialogMessage;
+	
 	
 
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$
