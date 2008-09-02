@@ -19,7 +19,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ds.core.Activator;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
@@ -38,6 +37,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class DSErrorReporter extends XMLErrorReporter {
+	
+	public static final int ERROR = 0;
+	public static final int WARNING = 1;
+	public static final int IGNORE = 2;
 
 	public DSErrorReporter(IFile file) {
 		super(file);
@@ -83,7 +86,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void reportIllegalAttributeValue(Element element, Attr attr) {
 		String message = NLS.bind(Messages.DSErrorReporter_attrValue,
 				(new String[] { attr.getValue(), attr.getName() }));
-		report(message, getLine(element, attr.getName()), CompilerFlags.ERROR,
+		report(message, getLine(element, attr.getName()), ERROR,
 				DSMarkerFactory.CAT_OTHER);
 	}
 
@@ -96,14 +99,14 @@ public class DSErrorReporter extends XMLErrorReporter {
 			if (reference.getName() == null) {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_REFERENCE_NAME,
-						CompilerFlags.ERROR);
+						ERROR);
 			}
 
 			// Validate Required Attributes
 			if (reference.getReferenceInterface() == null) {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE,
-						CompilerFlags.ERROR);
+						ERROR);
 			} else {
 				// Validate Resource Existence
 				validateJavaElement(
@@ -173,7 +176,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			if (properties.getEntry() == null) {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY,
-						CompilerFlags.ERROR);
+						ERROR);
 			}
 			
 			validateResource(properties.getEntry(),
@@ -194,7 +197,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			if (property.getName() == null) {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_PROPERTY_NAME,
-						CompilerFlags.ERROR);
+						ERROR);
 			}
 			// Validate Allowed Values
 			validatePropertyTypeValues(element);
@@ -238,7 +241,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				// Validate Required Attributes
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS,
-						CompilerFlags.ERROR);
+						ERROR);
 			} else {
 				// validate Resource Existence
 				validateJavaElement(className,
@@ -299,7 +302,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		String[] binds = new String[] { resource, attributeConstant };
 
 		report(NLS.bind(Messages.DSErrorReporter_cannotResolveResource, binds),
-				getLine(element), CompilerFlags.WARNING,
+				getLine(element), WARNING,
 				DSMarkerFactory.CAT_OTHER);
 	}
 
@@ -310,14 +313,14 @@ public class DSErrorReporter extends XMLErrorReporter {
 			if (component.getAttributeName() == null) {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_COMPONENT_NAME,
-						CompilerFlags.ERROR);
+						ERROR);
 
 			}
 			// Validate Required Children
 			if (component.getImplementation() == null) {
 				report(NLS.bind(Messages.DSErrorReporter_requiredElement,
 						IDSConstants.ELEMENT_IMPLEMENTATION),
-						getLine(getDocumentRoot()), CompilerFlags.ERROR,
+						getLine(getDocumentRoot()), ERROR,
 						DSMarkerFactory.CAT_OTHER);
 			}
 
@@ -355,7 +358,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			if (provide.getInterface() == null) {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE,
-						CompilerFlags.ERROR);
+						ERROR);
 			} else {
 				validateJavaElement(provide.getInterface(),
 						IDSConstants.ELEMENT_PROVIDE,
