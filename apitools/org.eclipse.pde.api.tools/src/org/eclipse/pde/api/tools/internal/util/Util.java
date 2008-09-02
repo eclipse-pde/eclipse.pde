@@ -523,6 +523,7 @@ public final class Util {
 	
 	/**
 	 * Creates an EE file for the given JRE and specified EE id
+	 * @param jre
 	 * @param eeid
 	 * @return
 	 * @throws IOException
@@ -2516,11 +2517,12 @@ public final class Util {
 	 * @return
 	 */
 	public static File getEEDescriptionFile() {
-		// generate a fake 1.5 ee file
+		// generate a fake 1.6 ee file
 		File fakeEEFile = null;
 		PrintWriter writer = null;
 		try {
 			fakeEEFile = File.createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
+			fakeEEFile.deleteOnExit();
 			writer = new PrintWriter(new BufferedWriter(new FileWriter(fakeEEFile)));
 			writer.print("-Djava.home="); //$NON-NLS-1$
 			writer.println(System.getProperty("java.home")); //$NON-NLS-1$
