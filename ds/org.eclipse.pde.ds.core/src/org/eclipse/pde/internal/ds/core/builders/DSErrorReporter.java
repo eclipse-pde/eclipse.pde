@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - initial API and implementation
  *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 230232
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.builders;
@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ds.core.builders;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.Document;
@@ -103,9 +104,10 @@ public class DSErrorReporter extends XMLErrorReporter {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE,
 						CompilerFlags.ERROR);
-			}else{
+			} else {
 				// Validate Resource Existence
-				validateResourceExistence(reference.getReferenceInterface(),
+				validateJavaResourceExistence(
+						reference.getReferenceInterface(),
 						IDSConstants.ELEMENT_REFERENCE,
 						IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE, i);
 			}
@@ -173,6 +175,10 @@ public class DSErrorReporter extends XMLErrorReporter {
 						IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY,
 						CompilerFlags.ERROR);
 			}
+			
+			validateEntryResourceExistence(properties.getEntry(),
+					IDSConstants.ELEMENT_PROPERTIES,
+					IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY, i);
 
 		}
 
@@ -227,7 +233,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			String className = implementation.getClassName();
 			Element element = (Element) getDocumentRoot().getElementsByTagName(
 					implementation.getXMLTagName()).item(0);
-			
+
 			if (className == null) {
 				// Validate Required Attributes
 				reportMissingRequiredAttribute(element,
@@ -235,7 +241,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 						CompilerFlags.ERROR);
 			} else {
 				// validate Resource Existence
-				validateResourceExistence(className,
+				validateJavaResourceExistence(className,
 						IDSConstants.ELEMENT_IMPLEMENTATION,
 						IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS, 0);
 			}
@@ -243,7 +249,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	}
 
-	private void validateResourceExistence(String fullyQualifiedName,
+	private void validateJavaResourceExistence(String fullyQualifiedName,
 			String elementName, String attrName, int index) {
 		try {
 			if (fProject.hasNature(JavaCore.NATURE_ID)) {
@@ -257,13 +263,32 @@ public class DSErrorReporter extends XMLErrorReporter {
 		}
 	}
 
+
+	private void validateEntryResourceExistence(String fullyQualifiedName,
+			String elementName, String attrName, int index) {
+		if (!fProject.exists(new Path(fullyQualifiedName))) {
+			reportResourceNotFound(elementName, attrName,
+					fullyQualifiedName, index);
+		}
+	}
 	private void reportMissingRequiredAttribute(Element element,
 			String attName, int severity) {
 		String message = NLS.bind(Messages.DSErrorReporter_requiredAttribute,
-				(new String[] { attName, element.getNodeName() }));			
+				(new String[] { attName, element.getNodeName() }));
 		report(message, getLine(element), severity, DSMarkerFactory.CAT_OTHER);
 	}
 
+	/**
+	 * 
+	 * @param elementConstant
+	 *            element name
+	 * @param attributeConstant
+	 *            attribute name
+	 * @param resource
+	 *            resource qualified name
+	 * @param index
+	 *            used to select an element among many from the same type
+	 */
 	private void reportResourceNotFound(String elementConstant,
 			String attributeConstant, String resource, int index) {
 		Element documentRoot = getDocumentRoot();
@@ -325,14 +350,14 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 			Element element = (Element) getDocumentRoot().getElementsByTagName(
 					provide.getXMLTagName()).item(i);
-			
+
 			// Validate Required Attributes
 			if (provide.getInterface() == null) {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE,
 						CompilerFlags.ERROR);
 			} else {
-				validateResourceExistence(provide.getInterface(),
+				validateJavaResourceExistence(provide.getInterface(),
 						IDSConstants.ELEMENT_PROVIDE,
 						IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE, i);
 			}
