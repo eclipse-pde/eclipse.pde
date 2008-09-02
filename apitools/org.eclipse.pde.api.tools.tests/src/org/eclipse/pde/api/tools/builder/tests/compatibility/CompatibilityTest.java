@@ -352,6 +352,17 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	}
 	
 	/**
+	 * Deletes the workspace file at the specified location (full path).
+	 * 
+	 * @param workspaceLocation
+	 */
+	protected void deleteWorkspaceFile(IPath workspaceLocation) throws Exception {
+		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
+		assertTrue("Workspace file does not exist: " + workspaceLocation.toString(), file.exists());
+		file.delete(false, null);
+	}	
+	
+	/**
 	 * Returns a path in the local file system to an updated file based on this tests source path
 	 * and filename.
 	 * 
@@ -384,6 +395,27 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			ApiProblem[] problems = getEnv().getProblemsFor(workspaceFile, null);
 			assertProblems(problems);
 	}
+	
+	/**
+	 * Performs a compatibility test. The workspace file at the specified (full workspace path)
+	 * location is deleted. A build is performed and problems are compared against the expected
+	 * problems for the associated resource.
+	 * 
+	 * @param workspaceFile file to update
+	 * @param incremental whether to perform an incremental (<code>true</code>) or
+	 * 	full (<code>false</code>) build
+	 * @throws Exception
+	 */
+	protected void performDeletionCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
+			deleteWorkspaceFile(workspaceFile);
+			if (incremental) {
+				incrementalBuild();
+			} else {
+				fullBuild();
+			}
+			ApiProblem[] problems = getEnv().getProblems();
+			assertProblems(problems);
+	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
