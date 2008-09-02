@@ -98,11 +98,8 @@ import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.TypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -473,53 +470,6 @@ public final class Util {
 		}
 		return false;
 	}
-
-	/**
-	 * Creates an ee file using the default ee id set in the workspace, or 'JavaSE 1.6' if there
-	 * is no default ee id set or the framework is not running
-	 * 
-	 * @return a new ee file
-	 * @throws IOException
-	 * @throws CoreException
-	 */
-	public static File createDefaultEEFile() throws IOException, CoreException {
-		return createEEFile(getDefaultEEId());
-	}
-	
-	/**
-	 * Resolves an EE file given the id of the environment
-	 * @param eeid
-	 * @return
-	 * @throws IOException
-	 */
-	public static File createEEFile(String eeid) throws IOException, CoreException {
-		if (ApiPlugin.isRunningInFramework()) {
-			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-			IExecutionEnvironment environment = manager.getEnvironment(eeid);
-			IVMInstall[] compatibleVMs = environment.getCompatibleVMs();
-			IVMInstall jre = null;
-			for (int i = 0; i < compatibleVMs.length; i++) {
-				IVMInstall install = compatibleVMs[i];
-				if (environment.isStrictlyCompatible(install)) {
-					jre = install;
-					break;
-				}
-			}
-			if (jre == null && compatibleVMs.length > 0) {
-				jre = compatibleVMs[0];
-			}
-			if (jre == null) {
-				jre = JavaRuntime.getDefaultVMInstall();
-			}
-			return createEEFile(jre, eeid);
-		} else {
-			String fileName = System.getProperty("ee.file"); //$NON-NLS-1$
-			if (fileName == null) {
-				abort("Could not retrieve the ee.file property", null); //$NON-NLS-1$
-			}
-			return new File(fileName);
-		}
-	}
 	
 	/**
 	 * Creates an EE file for the given JRE and specified EE id
@@ -594,19 +544,6 @@ public final class Util {
 			return result;
 		}
 		return null;
-	}
-
-	/**
-	 * Returns XML for the component's current API description.
-	 * 
-	 * @param apiComponent API component
-	 * @return XML for the API description
-	 * @throws CoreException if something goes terribly wrong 
-	 */
-	public static String getApiDescriptionXML(IApiComponent apiComponent) throws CoreException {
-		ApiSettingsXmlVisitor xmlVisitor = new ApiSettingsXmlVisitor(apiComponent);
-		apiComponent.getApiDescription().accept(xmlVisitor);
-		return xmlVisitor.getXML();
 	}
 
 	/**
@@ -693,24 +630,6 @@ public final class Util {
 	}
 
 	/**
-	 * @return the id of the default execution environment specified in the workspace,
-	 * or 'JavaSE-1.6' if none can be derived 
-	 */
-	public static String getDefaultEEId() {
-		String eeid = "JavaSE-1.6"; //$NON-NLS-1$
-		IVMInstall install = JavaRuntime.getDefaultVMInstall();
-		if (install != null) {
-			IExecutionEnvironment[] environments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-			for (int i = 0; i < environments.length; i++) {
-				if (environments[i].isStrictlyCompatible(install)) {
-					return environments[i].getId();
-				}
-			}
-		}
-		return eeid;
-	}
-	
-	/**
 	 * Return a string that represents the element type of the given delta.
 	 * Returns {@link #UNKNOWN_ELEMENT_TYPE} if the element type cannot be determined.
 	 * 
@@ -774,17 +693,6 @@ public final class Util {
 				return "TYPE_PARAMETER_ELEMENT_TYPE"; //$NON-NLS-1$
 		}
 		return UNKNOWN_ELEMENT_TYPE;
-	}
-
-	/**
-	 * Return a string that represents the flags of the given delta.
-	 * Returns {@link #UNKNOWN_FLAGS} if the flags cannot be determined.
-	 * 
-	 * @param delta the given delta
-	 * @return a string that represents the flags of the given delta.
-	 */
-	public static String getDeltaFlagsName(IDelta delta) {
-		return getDeltaFlagsName(delta.getFlags());
 	}
 	
 	/**
@@ -1062,47 +970,7 @@ public final class Util {
 		}
 		return null;
 	}
-
-	/**
-	 * Retrieve EE properties for the given ee name.
-	 * @param eeName the given ee name
-	 *
-	 * @return the corresponding properties or null if none
-	 */
-	public static Properties getEEProfile(String eeName) {
-		if (eeName == null) {
-			return null;
-		}
-		String profileName = eeName + ".profile"; //$NON-NLS-1$
-		InputStream stream = Util.class.getResourceAsStream("profiles/" + profileName); //$NON-NLS-1$
-		if (stream != null) {
-			try {
-				Properties profile = new Properties();
-				profile.load(stream);
-				return profile;
-			} catch (IOException e) {
-				ApiPlugin.log(e);
-			} finally {
-				try {
-					stream.close();
-				} catch(IOException e) {
-					ApiPlugin.log(e);
-				}
-			}
-		}
-		return null;
-	}
-	/**
-	 * Returns the number of fragments for the given since tag version, -1 if the format is unknown.
-	 * The version is formed like: [optional plugin name] major.minor.micro.qualifier [optional comment].
-	 * 
-	 * @param version the given version value
-	 * @return the number of fragments for the given version value or -1 if the format is unknown
-	 * @throws IllegalArgumentException if version is null
-	 */
-	public static final int getFragmentNumber(SinceTagVersion version) {
-		return getFragmentNumber(version.getVersionString());
-	}
+	
 	/**
 	 * Returns the number of fragments for the given version value, -1 if the format is unknown.
 	 * The version is formed like: [optional plugin name] major.minor.micro.qualifier.
@@ -2135,15 +2003,6 @@ public final class Util {
 	}
 	
 	/**
-	 * Returns if the flags are for a bridge
-	 * @param accessFlags
-	 * @return
-	 */
-	public static boolean isBridge(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_BRIDGE) != 0;
-	}
-	
-	/**
 	 * Returns if the flags are for a class
 	 * @param accessFlags
 	 * @return
@@ -2170,11 +2029,6 @@ public final class Util {
 		|	Opcodes.ACC_PUBLIC)) == 0;
 	}
 	
-	public static boolean isDeprecated(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_DEPRECATED) != 0;
-	}
-
-
 	public static boolean isEnum(int accessFlags) {
 		return (accessFlags & Opcodes.ACC_ENUM) != 0;
 	}
@@ -2183,39 +2037,6 @@ public final class Util {
 		return (accessFlags & Opcodes.ACC_FINAL) != 0;
 	}
 	
-	public static final boolean isGreatherVersion(String versionToBeChecked, String referenceVersion) {
-		SinceTagVersion sinceTagVersion1 = null;
-		SinceTagVersion sinceTagVersion2 = null;
-		try {
-			sinceTagVersion1 = new SinceTagVersion(versionToBeChecked);
-			sinceTagVersion2 = new SinceTagVersion(referenceVersion);
-		} catch (IllegalArgumentException e) {
-			// We cannot compare the two versions as their format is unknown
-			// TODO (olivier) should we report these as malformed tags?
-			return false;
-		}
-		Version version1 = sinceTagVersion1.getVersion();
-		Version version2 = sinceTagVersion2.getVersion();
-		if (version1.getMajor() > version2.getMajor()) {
-			return true;
-		}
-		if (version1.getMinor() > version2.getMinor()) {
-			return true;
-		}
-		if (version1.getMicro() > version2.getMicro()) {
-			return true;
-		}
-		String qualifier1 = version1.getQualifier();
-		String qualifier2 = version2.getQualifier();
-		if (qualifier1 == null) {
-			return false;
-		} else if (qualifier2 == null) {
-			return true;
-		} else {
-			return qualifier1.compareTo(qualifier2) > 0;
-		}
-	}
-
 	public static final boolean isDifferentVersion(String versionToBeChecked, String referenceVersion) {
 		SinceTagVersion sinceTagVersion1 = null;
 		SinceTagVersion sinceTagVersion2 = null;
@@ -2294,10 +2115,6 @@ public final class Util {
 		return (accessFlags & Opcodes.ACC_STATIC) != 0;
 	}
 
-	public static boolean isStrict(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_STRICT) != 0;
-	}
-	
 	public static boolean isSynchronized(int accessFlags) {
 		return (accessFlags & Opcodes.ACC_SYNCHRONIZED) != 0;
 	}
@@ -2896,30 +2713,7 @@ public final class Util {
 		}
 		return String.valueOf(buffer);
 	}
-
-	public static String getDeltaRestrictions(int restrictions) {
-		StringBuffer buffer = new StringBuffer();
-		if (RestrictionModifiers.isExtendRestriction(restrictions)) {
-			buffer.append("NO_EXTEND"); //$NON-NLS-1$
-		}
-		if (RestrictionModifiers.isImplementRestriction(restrictions)) {
-			buffer.append("NO_IMPLEMENT"); //$NON-NLS-1$
-		}
-		if (RestrictionModifiers.isOverrideRestriction(restrictions)) {
-			buffer.append("NO_OVERRIDEN"); //$NON-NLS-1$
-		}
-		if (RestrictionModifiers.isInstantiateRestriction(restrictions)) {
-			buffer.append("NO_INSTANTIATE"); //$NON-NLS-1$
-		}
-		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
-			buffer.append("NO_REFERENCE"); //$NON-NLS-1$
-		}
-		if (RestrictionModifiers.isUnrestricted(restrictions)) {
-			buffer.append("NO_RESTRICTIONS"); //$NON-NLS-1$
-		}
-		return String.valueOf(buffer);
-	}
-
+	
 	public static String getDescriptorName(TypeDescriptor descriptor) {
 		String typeName = descriptor.name;
 		int index = typeName.lastIndexOf('$');

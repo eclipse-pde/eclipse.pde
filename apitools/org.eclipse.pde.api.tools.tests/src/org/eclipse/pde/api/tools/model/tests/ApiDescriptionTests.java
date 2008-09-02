@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
+import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -358,6 +359,19 @@ public class ApiDescriptionTests extends TestCase {
 	}
 	
 	/**
+	 * Returns XML for the component's current API description.
+	 * 
+	 * @param apiComponent API component
+	 * @return XML for the API description
+	 * @throws CoreException if something goes terribly wrong 
+	 */
+	private String getApiDescriptionXML(IApiComponent apiComponent) throws CoreException {
+		ApiSettingsXmlVisitor xmlVisitor = new ApiSettingsXmlVisitor(apiComponent);
+		apiComponent.getApiDescription().accept(xmlVisitor);
+		return xmlVisitor.getXML();
+	}
+	
+	/**
 	 * Reads XML from disk, annotates settings, then persists and re-creates settings
 	 * to ensure we read/write equivalent XML.
 	 *
@@ -390,7 +404,7 @@ public class ApiDescriptionTests extends TestCase {
 		
 		// write back to XML and then re-create
 		IApiComponent component = TestSuiteHelper.createTestingApiComponent("test", "test", settings);
-		String writeXML = Util.getApiDescriptionXML(component);
+		String writeXML = getApiDescriptionXML(component);
 		
 		IApiDescription restored = new ApiDescription(null); 
 		ApiDescriptionProcessor.annotateApiSettings(null, restored, writeXML);
