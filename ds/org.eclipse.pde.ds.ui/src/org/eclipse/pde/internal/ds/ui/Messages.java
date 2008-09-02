@@ -150,6 +150,9 @@ public class Messages extends NLS {
 	public static String DSEditPropertyDialog_dialog_title;
 	public static String DSEditPropertyDialog_dialogMessage;
 	
+	public static String DSServiceComponentSection_immediateButtonMessage;
+	public static String DSServiceComponentSection_enabledButtonMessage;
+	
 	
 
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$

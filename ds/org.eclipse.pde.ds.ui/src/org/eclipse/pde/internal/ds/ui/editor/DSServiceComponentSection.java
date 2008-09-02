@@ -35,8 +35,11 @@ import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
@@ -53,6 +56,8 @@ public class DSServiceComponentSection extends PDESection {
 	private FormEntry fClassEntry;
 	private FormEntry fNameEntry;
 	private IDSModel fModel;
+	private Button fImmediateButton;
+	private Button fEnabledButton;
 
 	public DSServiceComponentSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -83,12 +88,45 @@ public class DSServiceComponentSection extends PDESection {
 				Messages.DSImplementationDetails_classEntry,
 				Messages.DSImplementationDetails_browse, isEditable(), 0);
 
+		createButtons(client, toolkit);
+		
 		setListeners();
 		updateUIFields();
 
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
+		
+		
 
+	}
+
+	private void createButtons(Composite parent, FormToolkit toolkit) {
+		fEnabledButton = toolkit.createButton(parent,
+				Messages.DSServiceComponentSection_enabledButtonMessage,
+				SWT.CHECK);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		fEnabledButton.setLayoutData(data);
+		fEnabledButton.setEnabled(isEditable());
+		fEnabledButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fModel.getDSComponent().setEnabled(
+						fEnabledButton.getSelection());
+			}
+		});
+		
+		
+		fImmediateButton = toolkit.createButton(parent,
+				Messages.DSServiceComponentSection_immediateButtonMessage,
+				SWT.CHECK);
+		fImmediateButton.setLayoutData(data);
+		fImmediateButton.setEnabled(isEditable());
+		fImmediateButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fModel.getDSComponent().setImmediate(
+						fImmediateButton.getSelection());
+			}
+		});		
 	}
 
 	private void initializeAttributes() {
@@ -122,6 +160,14 @@ public class DSServiceComponentSection extends PDESection {
 			} else {
 				// Attribute: name
 				fNameEntry.setValue(fComponent.getAttributeName(), true);
+			}
+			
+			if (fComponent.getEnabled()) {
+				fEnabledButton.setSelection(true);
+			}
+			
+			if (fComponent.getImmediate()) {
+				fImmediateButton.setSelection(true);
 			}
 			fNameEntry.setEditable(isEditable());
 
