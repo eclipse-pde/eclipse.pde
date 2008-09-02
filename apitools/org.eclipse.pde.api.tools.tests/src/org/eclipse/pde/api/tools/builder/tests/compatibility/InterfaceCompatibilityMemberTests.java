@@ -255,18 +255,18 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"MemberType"};
+		args[0] = new String[]{"a.interfaces.members.RemoveMemberType.MemberType", "org.eclipse.api.tools.tests.compatability.a_1.0.0"};
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
 	public void testRemoveMemberTypeI() throws Exception {
 		xRemoveMemberType(true);
-	}	
+	}
 	
 	public void testRemoveMemberTypeF() throws Exception {
 		xRemoveMemberType(false);
-	}	
+	}
 	
 	/**
 	 * Tests adding a super interface
