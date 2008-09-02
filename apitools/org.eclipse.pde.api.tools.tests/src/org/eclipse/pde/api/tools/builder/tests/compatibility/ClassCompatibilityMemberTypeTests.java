@@ -103,7 +103,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"PublicType"};
+		args[0] = new String[]{"a.classes.membertypes.RemovePublicMemberType.PublicType", "org.eclipse.api.tools.tests.compatability.a"};
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -126,7 +126,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"ProtectedType"};
+		args[0] = new String[]{"a.classes.membertypes.RemoveProtectedMemberType.ProtectedType", "org.eclipse.api.tools.tests.compatability.a"};
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
