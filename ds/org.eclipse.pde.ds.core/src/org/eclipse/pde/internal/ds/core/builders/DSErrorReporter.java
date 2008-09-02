@@ -106,7 +106,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 						CompilerFlags.ERROR);
 			} else {
 				// Validate Resource Existence
-				validateJavaResourceExistence(
+				validateJavaElement(
 						reference.getReferenceInterface(),
 						IDSConstants.ELEMENT_REFERENCE,
 						IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE, i);
@@ -176,7 +176,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 						CompilerFlags.ERROR);
 			}
 			
-			validateEntryResourceExistence(properties.getEntry(),
+			validateResource(properties.getEntry(),
 					IDSConstants.ELEMENT_PROPERTIES,
 					IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY, i);
 
@@ -241,7 +241,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 						CompilerFlags.ERROR);
 			} else {
 				// validate Resource Existence
-				validateJavaResourceExistence(className,
+				validateJavaElement(className,
 						IDSConstants.ELEMENT_IMPLEMENTATION,
 						IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS, 0);
 			}
@@ -249,7 +249,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	}
 
-	private void validateJavaResourceExistence(String fullyQualifiedName,
+	private void validateJavaElement(String fullyQualifiedName,
 			String elementName, String attrName, int index) {
 		try {
 			if (fProject.hasNature(JavaCore.NATURE_ID)) {
@@ -264,11 +264,11 @@ public class DSErrorReporter extends XMLErrorReporter {
 	}
 
 
-	private void validateEntryResourceExistence(String fullyQualifiedName,
+	private void validateResource(String path,
 			String elementName, String attrName, int index) {
-		if (!fProject.exists(new Path(fullyQualifiedName))) {
+		if (!fProject.exists(new Path(path))) {
 			reportResourceNotFound(elementName, attrName,
-					fullyQualifiedName, index);
+					path, index);
 		}
 	}
 	private void reportMissingRequiredAttribute(Element element,
@@ -357,7 +357,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 						IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE,
 						CompilerFlags.ERROR);
 			} else {
-				validateJavaResourceExistence(provide.getInterface(),
+				validateJavaElement(provide.getInterface(),
 						IDSConstants.ELEMENT_PROVIDE,
 						IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE, i);
 			}
