@@ -10,7 +10,7 @@
  *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 244997
  *******************************************************************************/
-package org.eclipse.pde.internal.ds.ui.editor;
+package org.eclipse.pde.internal.ds.ui.editor.dialogs;
 
 import java.util.StringTokenizer;
 
@@ -35,6 +35,9 @@ import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
+import org.eclipse.pde.internal.ds.ui.editor.DSPropertiesSection;
+import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ds.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
@@ -67,11 +70,7 @@ public class DSEditPropertyDialog extends FormDialog {
 
 	private static final String EMPTY = ""; //$NON-NLS-1$
 
-	// user
-
-	// clicks on cancel button.
-
-	protected DSEditPropertyDialog(Shell parentShell, IDSProperty property,
+	public DSEditPropertyDialog(Shell parentShell, IDSProperty property,
 			DSPropertiesSection propertiesSection, boolean addDialog) {
 		super(parentShell);
 		fProperty = property;

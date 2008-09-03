@@ -11,7 +11,7 @@
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ds.ui.editor;
+package org.eclipse.pde.internal.ds.ui.editor.dialogs;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -29,6 +29,9 @@ import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
+import org.eclipse.pde.internal.ds.ui.editor.DSReferenceSection;
+import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ds.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
@@ -61,7 +64,7 @@ public class DSEditReferenceDialog extends FormDialog {
 	private Label fLabelPolicy;
 	private DSReferenceSection fReferenceSection;
 
-	protected DSEditReferenceDialog(Shell parentShell, IDSReference reference,
+	public DSEditReferenceDialog(Shell parentShell, IDSReference reference,
 			DSReferenceSection referenceSection) {
 		super(parentShell);
 		fReference = reference;

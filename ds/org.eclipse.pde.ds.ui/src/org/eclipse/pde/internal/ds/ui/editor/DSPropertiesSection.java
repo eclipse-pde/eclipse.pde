@@ -37,6 +37,8 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
+import org.eclipse.pde.internal.ds.ui.editor.dialogs.DSEditPropertiesDialog;
+import org.eclipse.pde.internal.ds.ui.editor.dialogs.DSEditPropertyDialog;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -191,12 +193,16 @@ public class DSPropertiesSection extends TableSection {
 				DSEditPropertiesDialog dialog = new DSEditPropertiesDialog(
 						Activator.getActiveWorkbenchShell(),
 						(IDSProperties) selectionElement, this);
+				dialog.create();
+				dialog.getShell().setSize(500, 200);
 				dialog.open();
 				
 				} else if (selectionElement instanceof IDSProperty) {
 					DSEditPropertyDialog dialog = new DSEditPropertyDialog(
 							Activator.getActiveWorkbenchShell(),
 							(IDSProperty) selectionElement, this, false);
+					dialog.create();
+					dialog.getShell().setSize(500, 300);
 					dialog.open();
 				}
 			}

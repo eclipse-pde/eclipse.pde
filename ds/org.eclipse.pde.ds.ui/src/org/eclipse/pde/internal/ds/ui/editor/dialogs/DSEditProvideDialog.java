@@ -11,7 +11,7 @@
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ds.ui.editor;
+package org.eclipse.pde.internal.ds.ui.editor.dialogs;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -28,52 +28,54 @@ import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
+import org.eclipse.pde.internal.ds.ui.editor.DSProvideSection;
+import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.forms.FormDialog;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
 
-public class DSEditProvideDialog extends SelectionDialog {
+public class DSEditProvideDialog extends FormDialog {
 
 	private IDSProvide fProvide;
 	private FormEntry fInterfaceEntry;
 	private DSProvideSection fProvideSection;
 
-	protected DSEditProvideDialog(Shell parentShell, IDSProvide provide,
+	public DSEditProvideDialog(Shell parentShell, IDSProvide provide,
 			DSProvideSection provideSection) {
 		super(parentShell);
 		fProvide = provide;
 		fProvideSection = provideSection;
 
 	}
+	
+	protected void createFormContent(IManagedForm mform) {
+		mform.getForm().setText(Messages.DSEditProvideDialog_dialog_title);
+		
+		Composite container = mform.getForm().getBody();
+		container.setLayout(new GridLayout());
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		FormToolkit toolkit = mform.getToolkit();
 
-	protected Control createContents(Composite parent) {
-		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-		Composite mainComposite = toolkit.createComposite(parent);
-		mainComposite.setLayout(FormLayoutFactory.createClearGridLayout(false,
-				1));
-		GridData data2 = new GridData(GridData.FILL_BOTH);
-		mainComposite.setLayoutData(data2);
-
-		Section section = addSection(toolkit, mainComposite);
-
-		Composite sectionComposite = toolkit.createComposite(section);
-		sectionComposite.setLayout(FormLayoutFactory
+		Composite composite = toolkit.createComposite(container);
+		composite.setLayout(FormLayoutFactory
 				.createSectionClientGridLayout(
 				false, 3));
-
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
 		// Attribute: Interface
-		fInterfaceEntry = new FormEntry(sectionComposite, toolkit,
+		fInterfaceEntry = new FormEntry(composite, toolkit,
 				Messages.DSProvideDetails_interface,
 				Messages.DSProvideDetails_browse, true, 0);
 
@@ -82,30 +84,11 @@ public class DSEditProvideDialog extends SelectionDialog {
 		gd.horizontalSpan = 2;
 		gd.horizontalIndent = 3; // FormLayoutFactory.CONTROL_HORIZONTAL_INDENT
 
-
 		// Bind widgets
-		toolkit.paintBordersFor(sectionComposite);
-		section.setClient(sectionComposite);
-		// Update Fields with fProvide`s attributes values
+		toolkit.paintBordersFor(composite);
 		updateFields();
 
 		setInterfaceEntryListeners();
-		Composite buttonBar = (Composite) createButtonBar(mainComposite);
-		GridData layoutData = (GridData) buttonBar.getLayoutData();
-		layoutData.horizontalSpan = 3;
-		buttonBar.setBackground(toolkit.getColors().getBackground());
-
-		return mainComposite;
-	}
-
-	private Section addSection(FormToolkit toolkit, Composite mainContainer) {
-		Section section = toolkit.createSection(mainContainer,
-				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(Messages.DSEditProvideDialog_dialog_title);
-		section.setDescription(Messages.DSEditProvideDialog_dialogMessage);
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		return section;
 	}
 
 	public boolean isHelpAvailable() {

@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
+import org.eclipse.pde.internal.ds.ui.editor.dialogs.DSEditProvideDialog;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -54,6 +55,7 @@ public class DSProvideSection extends TableSection {
 	private TableViewer fProvidesTable;
 	private Action fRemoveAction;
 	private Action fAddAction;
+	private Action fEditAction;
 
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object inputElement) {
@@ -76,7 +78,8 @@ public class DSProvideSection extends TableSection {
 	public DSProvideSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {
 				Messages.DSProvideSection_add,
-				Messages.DSProvideSection_remove });
+				Messages.DSProvideSection_remove,
+				Messages.DSProvideSection_edit });
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
@@ -129,6 +132,9 @@ public class DSProvideSection extends TableSection {
 		case 1:
 			handleRemove();
 			break;
+		case 2:
+			handleEdit();
+			break;	
 		}
 	}
 
@@ -142,7 +148,8 @@ public class DSProvideSection extends TableSection {
 				DSEditProvideDialog dialog = new DSEditProvideDialog(Activator
 						.getActiveWorkbenchShell(), (IDSProvide) fProvidesTable
 						.getElementAt(selectionIndex), this);
-				dialog.setTitle(Messages.DSEditProvideDialog_dialog_title);
+				dialog.create();
+				dialog.getShell().setSize(500, 200);
 				dialog.open();
 			}
 
@@ -164,6 +171,13 @@ public class DSProvideSection extends TableSection {
 			}
 		};
 		fRemoveAction.setEnabled(isEditable());
+		
+		fEditAction = new Action(Messages.DSProvideSection_edit) {
+			public void run() {
+				handleRemove();
+			}
+		};
+		fEditAction.setEnabled(isEditable());
 	}
 
 	private void updateButtons() {
@@ -172,6 +186,8 @@ public class DSProvideSection extends TableSection {
 		tablePart.setButtonEnabled(0, isEditable());
 		tablePart.setButtonEnabled(1, isEditable()
 				&& table.getSelection().length > 0);
+		tablePart.setButtonEnabled(2, isEditable()
+				&& table.getSelection().length == 1);
 	}
 
 	private void handleRemove() {

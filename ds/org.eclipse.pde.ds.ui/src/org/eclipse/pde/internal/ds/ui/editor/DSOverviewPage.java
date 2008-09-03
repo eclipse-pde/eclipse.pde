@@ -28,7 +28,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class DSOverviewPage extends PDEFormPage implements
 		IModelChangedListener {
 
-	public static final String PAGE_ID = "dsSimpPage"; //$NON-NLS-1$
+	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 
 	public DSOverviewPage(FormEditor editor) {
 		super(editor, PAGE_ID, Messages.DSSimpPage_title);

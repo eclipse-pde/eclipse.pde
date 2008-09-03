@@ -22,6 +22,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.pde.internal.ds.ui;x-internal:=true,
  org.eclipse.pde.internal.ds.ui.editor;x-internal:=true,
  org.eclipse.pde.internal.ds.ui.editor.contentassist;x-internal:=true,
+ org.eclipse.pde.internal.ds.ui.editor.dialogs;x-internal:=true,
  org.eclipse.pde.internal.ds.ui.parts;x-internal:=true,
  org.eclipse.pde.internal.ds.ui.wizards;x-internal:=true
 Bundle-Localization: plugin

@@ -9,7 +9,7 @@
  *     Code 9 Corporation - initial API and implementation
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 244997
  *******************************************************************************/
-package org.eclipse.pde.internal.ds.ui.editor;
+package org.eclipse.pde.internal.ds.ui.editor.dialogs;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -31,6 +31,9 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
+import org.eclipse.pde.internal.ds.ui.editor.DSPropertiesSection;
+import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -54,7 +57,7 @@ public class DSEditPropertiesDialog extends FormDialog {
 	private DSPropertiesSection fPropertiesSection;
 	private FormEntry fEntry;
 
-	protected DSEditPropertiesDialog(Shell parentShell,
+	public DSEditPropertiesDialog(Shell parentShell,
 			IDSProperties properties, DSPropertiesSection provideSection) {
 		super(parentShell);
 		fProperties = properties;
