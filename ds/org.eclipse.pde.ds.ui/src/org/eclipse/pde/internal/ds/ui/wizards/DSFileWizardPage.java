@@ -13,6 +13,8 @@
 package org.eclipse.pde.internal.ds.ui.wizards;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
@@ -21,7 +23,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
-import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -38,8 +39,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
-public class DSFileWizardPage extends PDEWizardNewFileCreationPage {
+public class DSFileWizardPage extends WizardNewFileCreationPage {
 
 	public static final String F_PAGE_NAME = "ds"; //$NON-NLS-1$
 
@@ -90,6 +92,7 @@ public class DSFileWizardPage extends PDEWizardNewFileCreationPage {
 
 		fDSComponentNameText = new Text(fGroup, SWT.NONE);
 		fDSComponentNameText.setLayoutData(textGridData);
+		fDSComponentNameText.setText(""); //$NON-NLS-1$
 		fDSComponentNameText.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
 				if (!fDSComponentNameText.getText().equals("")) { //$NON-NLS-1$
@@ -115,6 +118,7 @@ public class DSFileWizardPage extends PDEWizardNewFileCreationPage {
 				setPageComplete(checkPageComplete());
 			}
 		});
+		
 
 		// Implementation Class Composite
 		fImplementationComposite = new Composite(fGroup, SWT.NONE);
@@ -133,6 +137,7 @@ public class DSFileWizardPage extends PDEWizardNewFileCreationPage {
 		fDSImplementationClassText = new Text(fImplementationComposite,
 				SWT.NONE);
 		fDSImplementationClassText.setLayoutData(textGridData);
+		fDSImplementationClassText.setText(""); //$NON-NLS-1$
 		fDSImplementationClassText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				setPageComplete(checkPageComplete());
@@ -192,6 +197,16 @@ public class DSFileWizardPage extends PDEWizardNewFileCreationPage {
 	private boolean checkPageComplete() {
 		return fDSComponentNameText.getText().length() > 0
 				&& fDSImplementationClassText.getText().length() > 0;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
+	 */
+	protected IStatus validateLinkedResource() {
+		return new Status(IStatus.OK, Activator.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
 	}
 
 	public boolean isPageComplete() {
