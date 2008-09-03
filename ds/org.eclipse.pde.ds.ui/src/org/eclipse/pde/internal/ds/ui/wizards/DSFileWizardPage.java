@@ -208,6 +208,10 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	protected IStatus validateLinkedResource() {
 		return new Status(IStatus.OK, Activator.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
 	}
+	
+	protected void createLinkTarget() {
+		// NO-OP
+	}
 
 	public boolean isPageComplete() {
 		return checkPageComplete();

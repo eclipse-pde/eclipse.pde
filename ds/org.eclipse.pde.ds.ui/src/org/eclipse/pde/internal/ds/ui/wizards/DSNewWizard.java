@@ -15,15 +15,15 @@ package org.eclipse.pde.internal.ds.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ds.ui.Activator;
-import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
 
-public class DSNewWizard extends BasicNewFileResourceWizard {
+public class DSNewWizard extends Wizard implements INewWizard {
 	protected DSFileWizardPage fMainPage;
 
-	/**
-	 * 
-	 */
 	public DSNewWizard() {
 		super();
 	}
@@ -34,8 +34,11 @@ public class DSNewWizard extends BasicNewFileResourceWizard {
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#addPages()
 	 */
 	public void addPages() {
-		 fMainPage = new DSFileWizardPage(getSelection());
 		 addPage(fMainPage);
+	}
+	
+	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+		fMainPage = new DSFileWizardPage(currentSelection);
 	}
 
 	/*
