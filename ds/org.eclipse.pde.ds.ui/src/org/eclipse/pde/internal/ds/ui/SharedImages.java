@@ -23,6 +23,7 @@ public final class SharedImages {
 	public final static String ICONS_PATH = "icons/"; //$NON-NLS-1$
 
 	private static final String PATH_OBJ = ICONS_PATH + "obj16/"; //$NON-NLS-1$
+	private static final String OVERLAY_OBJ = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
 
 	public static final String DESC_IMPLEMENTATION = PATH_OBJ + "class_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_PROPERTY = PATH_OBJ + "property_obj.gif"; //$NON-NLS-1$
@@ -34,8 +35,9 @@ public final class SharedImages {
 	public static final String DESC_SERVICE = PATH_OBJ + "service_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_DS = PATH_OBJ + "ds_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_ATTR = PATH_OBJ + "attribute_obj.gif"; //$NON-NLS-1$
-
 	public static final String DESC_DETAILS = PATH_OBJ + "details_obj.gif"; //$NON-NLS-1$
+	
+	public static final String OVR_DYNAMIC = OVERLAY_OBJ + "synch_co.gif"; //$NON-NLS-1$
 	
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return Activator.getDefault().getImageRegistry().getDescriptor(key);
