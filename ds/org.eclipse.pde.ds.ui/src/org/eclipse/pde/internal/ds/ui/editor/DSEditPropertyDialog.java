@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
+import java.util.StringTokenizer;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -49,9 +51,7 @@ import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.forms.FormDialog;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -61,11 +61,15 @@ public class DSEditPropertyDialog extends FormDialog {
 	private DSPropertiesSection fPropertiesSection;
 	private FormEntry fNameEntry;
 	private ComboPart fTypeCombo;
-	private FormEntry fValueEntry;
-	private FormEntry fBodyEntry;
+	private FormEntry fValuesEntry;
 	private Label fTypeLabel;
-	private boolean fAddDialog; // boolean used to erase added element whether user
-							// clicks on cancel button.
+	private boolean fAddDialog; // boolean used to erase added element whether
+
+	private static final String EMPTY = ""; //$NON-NLS-1$
+
+	// user
+
+	// clicks on cancel button.
 
 	protected DSEditPropertyDialog(Shell parentShell, IDSProperty property,
 			DSPropertiesSection propertiesSection, boolean addDialog) {
@@ -93,10 +97,6 @@ public class DSEditPropertyDialog extends FormDialog {
 		fNameEntry = new FormEntry(mainContainer, toolkit,
 				Messages.DSPropertyDetails_nameEntry, SWT.MULTI);
 
-		// Attribute: value
-		fValueEntry = new FormEntry(mainContainer, toolkit,
-				Messages.DSPropertyDetails_valueEntry, SWT.NONE);
-
 		// Attribute: type
 		fTypeLabel = toolkit.createLabel(mainContainer,
 				Messages.DSPropertyDetails_typeEntry, SWT.WRAP);
@@ -119,12 +119,13 @@ public class DSEditPropertyDialog extends FormDialog {
 		fTypeCombo.getControl().setLayoutData(data);
 
 		// description: Content (Element)
-		fBodyEntry = new FormEntry(mainContainer, toolkit,
-				Messages.DSPropertyDetails_bodyLabel, SWT.MULTI | SWT.V_SCROLL);
+		fValuesEntry = new FormEntry(mainContainer, toolkit,
+				Messages.DSEditPropertyDialog_valuesLabel, SWT.MULTI
+						| SWT.V_SCROLL);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 60;
 		data.horizontalIndent = 4;
-		fBodyEntry.getText().setLayoutData(data);
+		fValuesEntry.getText().setLayoutData(data);
 
 		updateFields();
 
@@ -132,16 +133,6 @@ public class DSEditPropertyDialog extends FormDialog {
 
 		toolkit.paintBordersFor(mainContainer);
 
-	}
-
-	private Section addSection(FormToolkit toolkit, Composite mainContainer) {
-		Section section = toolkit.createSection(mainContainer,
-				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(Messages.DSEditPropertyDialog_dialog_title);
-		section.setDescription(Messages.DSEditPropertyDialog_dialogMessage);
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		return section;
 	}
 
 	public boolean isHelpAvailable() {
@@ -157,18 +148,11 @@ public class DSEditPropertyDialog extends FormDialog {
 		super.buttonPressed(buttonId);
 	}
 
-
 	private void handleOKPressed() {
 
 		if (!fNameEntry.getValue().equals("")) { //$NON-NLS-1$
 			if (!fNameEntry.getValue().equals(fProperty.getPropertyName())) {
 				fProperty.setPropertyName(fNameEntry.getValue());
-			}
-		}
-
-		if (!fValueEntry.getValue().equals("")) { //$NON-NLS-1$
-			if (!fValueEntry.getValue().equals(fProperty.getPropertyValue())) {
-				fProperty.setPropertyValue(fValueEntry.getValue());
 			}
 		}
 
@@ -181,19 +165,47 @@ public class DSEditPropertyDialog extends FormDialog {
 			}
 		}
 
-		if (!fBodyEntry.getValue().equals("")) { //$NON-NLS-1$
-			String propertyElemBody = fProperty.getPropertyElemBody();
-			if (propertyElemBody != null) {
-				propertyElemBody = "";
-			}
-			if (!fBodyEntry.getValue().equals(propertyElemBody)) {
-				fProperty.setPropertyElemBody(fBodyEntry.getValue());
+		if (!fValuesEntry.getValue().equals("")) { //$NON-NLS-1$
+			StringTokenizer lines = new StringTokenizer(
+					fValuesEntry.getValue(), "\n"); //$NON-NLS-1$
+			
+			if (lines.countTokens() == 1) {
+				handleUniqueValue();
+			} else if (lines.countTokens() > 1) {
+				handleBodyValues();
 			}
 		}
-		
+
 		if (fAddDialog) {
 			fProperty.getModel().getDSComponent().addPropertyElement(fProperty);
 		}
+	}
+
+	private void handleUniqueValue() {
+		if (!fValuesEntry.getValue().equals(fProperty.getPropertyValue())) {
+			fProperty.setPropertyValue(fValuesEntry.getValue());
+		}
+		// Erase Body values if needed.
+		if (fProperty.getPropertyElemBody() != null
+				&& !fProperty.getPropertyElemBody().equals(EMPTY)) {
+			fProperty.setPropertyElemBody(EMPTY);
+		}
+	}
+
+	private void handleBodyValues() {
+		String propertyElemBody = fProperty.getPropertyElemBody();
+		if (propertyElemBody != null) {
+			propertyElemBody = EMPTY;
+		}
+		if (!fValuesEntry.getValue().equals(propertyElemBody)) {
+			fProperty.setPropertyElemBody(fValuesEntry.getValue());
+		}
+		// Erase property value attribute if needed.
+		if (fProperty.getPropertyValue() != null
+				&& !fProperty.getPropertyValue().equals(EMPTY)) {
+			fProperty.setPropertyValue(EMPTY);
+		}
+		
 	}
 
 	public void updateFields() {
@@ -211,24 +223,24 @@ public class DSEditPropertyDialog extends FormDialog {
 		fNameEntry.setEditable(true);
 
 		// Attribute: value
-		if (fProperty.getPropertyValue() != null) {
-			fValueEntry.setValue(fProperty.getPropertyValue(), true);
+		if (fProperty.getPropertyValue() != null
+				&& !fProperty.getPropertyValue().equals(EMPTY)) {
+			fValuesEntry.setValue(fProperty.getPropertyValue(), true);
 		} else {
-			fValueEntry.setValue("", true); //$NON-NLS-1$
+			// Attribute: body
+			if (fProperty.getPropertyElemBody() != null) {
+				fValuesEntry.setValue(fProperty.getPropertyElemBody(), true);
+			} else {
+				fValuesEntry.setValue(EMPTY, true);
+			}
 		}
-		fValueEntry.setEditable(true);
+		fValuesEntry.setEditable(true);
 
 		// Attribute: type
 		if (fProperty.getPropertyType() != null)
 			fTypeCombo.setText(fProperty.getPropertyType());
 
-		// Attribute: body
-		if (fProperty.getPropertyElemBody() != null) {
-			fBodyEntry.setValue(fProperty.getPropertyElemBody(), true);
-		} else {
-			fBodyEntry.setValue("", true); //$NON-NLS-1$
-		}
-		fBodyEntry.setEditable(true);
+		
 	}
 
 	public void setEntryListeners() {
@@ -256,32 +268,9 @@ public class DSEditPropertyDialog extends FormDialog {
 
 		});
 
-		// Attribute: Value
-		fValueEntry.setFormEntryListener(new FormEntryAdapter(
-				this.fPropertiesSection) {
-			public void textValueChanged(FormEntry entry) {
-				// no op due to OK Button
-			}
 
-			public void textDirty(FormEntry entry) {
-				// no op due to OK Button
-			}
-
-			public void linkActivated(HyperlinkEvent e) {
-				String value = fValueEntry.getValue();
-				value = handleLinkActivated(value, false);
-				if (value != null)
-					fValueEntry.setValue(value);
-			}
-
-			public void browseButtonSelected(FormEntry entry) {
-				doOpenSelectionDialog(fValueEntry);
-			}
-
-		});
-
-		// Attribute: Body
-		fBodyEntry.setFormEntryListener(new FormEntryAdapter(
+		// Attribute: Values
+		fValuesEntry.setFormEntryListener(new FormEntryAdapter(
 				this.fPropertiesSection) {
 			public void textValueChanged(FormEntry entry) {
 				// no op due to OK Button

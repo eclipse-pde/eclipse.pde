@@ -149,9 +149,11 @@ public class Messages extends NLS {
 	
 	public static String DSEditPropertyDialog_dialog_title;
 	public static String DSEditPropertyDialog_dialogMessage;
+	public static String DSEditPropertyDialog_valuesLabel;
 	
 	public static String DSServiceComponentSection_immediateButtonMessage;
 	public static String DSServiceComponentSection_enabledButtonMessage;
+	
 	
 	
 
