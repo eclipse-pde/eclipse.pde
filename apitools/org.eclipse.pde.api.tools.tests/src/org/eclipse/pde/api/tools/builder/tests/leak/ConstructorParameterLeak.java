@@ -361,4 +361,107 @@ public class ConstructorParameterLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	/**
+	 * Tests that an @noreference tag on a constructor removes a leak problem
+	 * from a certain inner constructor using a full build
+	 */
+	public void testConstructorParameterLeak11F() {
+		x11(false);
+	}
+
+	/**
+	 * Tests that an @noreference tag on a constructor removes a leak problem
+	 * from a certain constructor using an incremental build
+	 */
+	public void testConstructorParameterLeak11I() {
+		x11(true);
+	}
+	
+	private void x11(boolean inc) {
+		//TODO uncomment when bug 246114 is fixed
+		/*setExpectedProblemIds(getDefaultProblemIdSet(6));
+		String typename = "testCPL11";
+		String innertype1 = "inner2";
+		String innertype2 = "inner3";
+		setExpectedMessageArgs(new String[][] {
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype1}, 
+				{TESTING_INTERNAL_CLASS_NAME, innertype1},
+				{TESTING_INTERNAL_CLASS_NAME, innertype1},
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}, 
+				{TESTING_INTERNAL_CLASS_NAME, innertype2}, 
+				{TESTING_INTERNAL_CLASS_NAME, innertype2}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);*/
+	}
+	
+	/**
+	 * Tests that an @noreference tag on a constructor removes a leak problem
+	 * from a certain inner constructor using a full build
+	 */
+	public void testConstructorParameterLeak12F() {
+		x12(false);
+	}
+	
+	/**
+	 * Tests that an @noreference tag on a constructor removes a leak problem
+	 * from a certain constructor using an incremental build
+	 */
+	public void testConstructorParameterLeak12I() {
+		x12(true);
+	}
+	
+	private void x12(boolean inc) {
+		//TODO uncomment when bug 246114 is fixed
+		/*setExpectedProblemIds(getDefaultProblemIdSet(4));
+		String typename = "testCPL12";
+		String innertype1 = "inner2";
+		String innertype2 = "inner3";
+		setExpectedMessageArgs(new String[][] {
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype1}, 
+				{TESTING_INTERNAL_CLASS_NAME, innertype1},
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}, 
+				{TESTING_INTERNAL_CLASS_NAME, innertype2}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);*/
+	}
+	
+	/**
+	 * Tests that @noreference tags on constructors removes all leak problems
+	 * using a full build
+	 */
+	public void testConstructorParameterLeak13F() {
+		x13(false);
+	}
+	
+	/**
+	 * Tests that @noreference tags on constructors removes all leak problems
+	 * using an incremental build
+	 */
+	public void testConstructorParameterLeak13I() {
+		x13(true);
+	}
+	
+	private void x13(boolean inc) {
+		//TODO uncomment when bug 246114 is fixed
+		/*expectingNoProblems();
+		String typename = "testCPL13";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);*/
+	}
 }

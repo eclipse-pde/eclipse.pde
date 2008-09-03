@@ -368,4 +368,102 @@ public class MethodParameterLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	/**
+	 * Tests that problems for leaking parameters are still properly reported with an @nooverride tag on methods
+	 * using a full build
+	 */
+	public void testMethodParameterLeak11F() {
+		x11(false);
+	}
+	
+	/**
+	 * Tests that problems for leaking parameters are still properly reported with an @nooverride tag on methods
+	 * using an incremental build
+	 */
+	public void testMethodParameterLeak11I() {
+		x11(true);
+	}
+	
+	private void x11(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(12));
+		String typename = "testMPL11";
+		setExpectedMessageArgs(new String[][] {
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m1(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner", "m1(Iinternal, Object, double, internal)"},
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m2(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner", "m2(Iinternal, Object, double, internal)"}, 
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m3(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner", "m3(Iinternal, Object, double, internal)"}, 
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m1(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m1(Iinternal, Object, double, internal)"},
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m2(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m2(Iinternal, Object, double, internal)"},
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m3(Iinternal, Object, double, internal)"}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that problems for leaking parameters are still properly reported with an @noreference tag on methods
+	 * using a full build
+	 */
+	public void testMethodParameterLeak12F() {
+		x12(false);
+	}
+	
+	/**
+	 * Tests that problems for leaking parameters are still properly reported with an @noreference tag on methods
+	 * using an incremental build
+	 */
+	public void testMethodParameterLeak12I() {
+		x12(true);
+	}
+	
+	private void x12(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(12));
+		String typename = "testMPL12";
+		setExpectedMessageArgs(new String[][] {
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m1(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner", "m1(Iinternal, Object, double, internal)"},
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m2(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner", "m2(Iinternal, Object, double, internal)"}, 
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m3(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner", "m3(Iinternal, Object, double, internal)"}, 
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m1(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m1(Iinternal, Object, double, internal)"},
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m2(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m2(Iinternal, Object, double, internal)"},
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m3(Iinternal, Object, double, internal)"}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that a variety of methods leaking internal parameters are ignored when @noreference AND @nooverride tags are present 
+	 * using a full build
+	 */
+	public void testMethodParameterLeak13F() {
+		x13(false);
+	}
+	
+	/**
+	 * Tests that a variety of methods leaking internal parameters are ignored when @noreference AND @nooverride tags are present
+	 * using an incremental build
+	 */
+	public void testMethodParameterLeak13I() {
+		x13(true);
+	}
+	
+	private void x13(boolean inc) {
+		expectingNoProblems();
+		String typename = "testMPL13";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
 }

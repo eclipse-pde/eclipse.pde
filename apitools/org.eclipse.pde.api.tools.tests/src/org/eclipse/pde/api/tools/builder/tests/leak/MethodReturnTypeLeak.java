@@ -374,4 +374,105 @@ public class MethodReturnTypeLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	/**
+	 * Tests that methods leaking return types are properly reported even with an @nooverride tag present
+	 * using a full build
+	 */
+	public void testMethodReturnTypeLeak11F() {
+		x11(false);
+	}
+	
+	/**
+	 * Tests that methods leaking return types are properly reported even with an @nooverride tag present
+	 * using an incremental build
+	 */
+	public void testMethodReturnTypeLeak11I() {
+		x11(true);
+	}
+	
+	private void x11(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(8));
+		String typename = "testMRL11";
+		setExpectedMessageArgs(new String[][] {
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"},
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"},
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"},
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"},
+				{TESTING_INTERNAL_CLASS_NAME, "inner", "m1()"},
+				{TESTING_INTERNAL_CLASS_NAME, "inner", "m2()"},
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m3()"},
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m4()"}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename},
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	/**
+	 * Tests that methods leaking return types are properly reported even with an @noreference tag present
+	 * using a full build
+	 */
+	public void testMethodReturnLeak12F() {
+		x12(false);
+	}
+	
+	/**
+	 * Tests that methods leaking return types are properly reported even with an @noreference tag present
+	 * using an incremental build
+	 */
+	public void testMethodReturnType12I() {
+		x12(true);
+	}
+	
+	private void x12(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(8));
+		String typename = "testMRL12";
+		setExpectedMessageArgs(new String[][] {
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"},
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"},
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"},
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"},
+				{TESTING_INTERNAL_CLASS_NAME, "inner", "m1()"},
+				{TESTING_INTERNAL_CLASS_NAME, "inner", "m2()"},
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m3()"},
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m4()"}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename},
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that a variety of methods leaking return types are ignored when @noreference AND @nooverride tags are present
+	 * using a full build
+	 */
+	public void testMethodReturnTypeLeak13F() {
+		x13(false);
+	}
+	
+	/**
+	 * Tests that a variety of methods leaking return types are ignored when @noreference AND @nooverride tags are present
+	 * using an incremental build
+	 */
+	public void testMethodReturnTypeLeak13I() {
+		x13(true);
+	}
+	
+	private void x13(boolean inc) {
+		expectingNoProblems();
+		String typename = "testMRL13";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL},
+				null,
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
  }
