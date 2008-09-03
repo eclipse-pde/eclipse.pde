@@ -274,17 +274,17 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	private void xRemoveSuperInterface(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveSuperInterface.java");
 		// TODO: expect a problem
-//		int[] ids = new int[] {
-//			ApiProblemFactory.createProblemId(
-//				IApiProblem.CATEGORY_COMPATIBILITY,
-//				IDelta.ENUM_ELEMENT_TYPE,
-//				IDelta.CHANGED,
-//				IDelta.CONTRACTED_SUPERINTERFACES_SET)
-//		};
-//		setExpectedProblemIds(ids);
-//		String[][] args = new String[1][];
-//		args[0] = new String[]{PACKAGE_PREFIX + "RemoveSuperInterface"};
-//		setExpectedMessageArgs(args);
+		int[] ids = new int[] {
+			ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.ENUM_ELEMENT_TYPE,
+				IDelta.CHANGED,
+				IDelta.CONTRACTED_SUPERINTERFACES_SET)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveSuperInterface"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
