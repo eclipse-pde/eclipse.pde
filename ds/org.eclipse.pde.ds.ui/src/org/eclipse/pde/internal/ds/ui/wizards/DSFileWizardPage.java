@@ -25,6 +25,8 @@ import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.GridData;
@@ -51,7 +53,7 @@ public class DSFileWizardPage extends PDEWizardNewFileCreationPage {
 	private Text fDSImplementationClassText;
 	private Label fDSImplementationClassLabel;
 	private Button fDSImplementationClassButton;
-	
+
 	private Composite fImplementationComposite;
 
 	public DSFileWizardPage(IStructuredSelection selection) {
@@ -78,12 +80,11 @@ public class DSFileWizardPage extends PDEWizardNewFileCreationPage {
 		fGroup.setLayout(new GridLayout(2, false));
 		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		
 		GridData textGridData = new GridData(GridData.FILL_HORIZONTAL);
 		textGridData.widthHint = 20;
 		textGridData.horizontalSpan = 1;
 		textGridData.horizontalIndent = 3;
-		
+
 		fDSComponentNameLabel = new Label(fGroup, SWT.None);
 		fDSComponentNameLabel.setText(Messages.DSFileWizardPage_component_name);
 
@@ -109,6 +110,12 @@ public class DSFileWizardPage extends PDEWizardNewFileCreationPage {
 			}
 		});
 
+		fDSComponentNameText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				setPageComplete(checkPageComplete());
+			}
+		});
+
 		// Implementation Class Composite
 		fImplementationComposite = new Composite(fGroup, SWT.NONE);
 		fImplementationComposite.setLayout(new GridLayout(3, false));
@@ -126,6 +133,11 @@ public class DSFileWizardPage extends PDEWizardNewFileCreationPage {
 		fDSImplementationClassText = new Text(fImplementationComposite,
 				SWT.NONE);
 		fDSImplementationClassText.setLayoutData(textGridData);
+		fDSImplementationClassText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				setPageComplete(checkPageComplete());
+			}
+		});
 
 		// Implementation Class Browse Button
 		fDSImplementationClassButton = new Button(fImplementationComposite,
@@ -167,7 +179,7 @@ public class DSFileWizardPage extends PDEWizardNewFileCreationPage {
 			}
 
 		});
-			}
+	}
 
 	public String getDSComponentNameValue() {
 		return fDSComponentNameText.getText();
@@ -176,5 +188,16 @@ public class DSFileWizardPage extends PDEWizardNewFileCreationPage {
 	public String getDSImplementationClassValue() {
 		return fDSImplementationClassText.getText();
 	}
+
+	private boolean checkPageComplete() {
+		return fDSComponentNameText.getText().length() > 0
+				&& fDSImplementationClassText.getText().length() > 0;
+	}
+
+	public boolean isPageComplete() {
+		return checkPageComplete();
+	}
+
+
 
 }
