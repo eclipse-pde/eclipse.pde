@@ -29,7 +29,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("org.eclipse.api.tools.tests.compatability.a/src/a/methods/modifiers");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/methods/modifiers");
 
 	/**
 	 * Package prefix for test classes

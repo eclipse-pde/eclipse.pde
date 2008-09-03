@@ -29,7 +29,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("org.eclipse.api.tools.tests.compatability.a/src/a/fields/modifiers");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/fields/modifiers");
 
 	/**
 	 * Package prefix for test classes

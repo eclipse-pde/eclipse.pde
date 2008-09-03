@@ -29,7 +29,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("org.eclipse.api.tools.tests.compatability.a/src/a/classes/constructors");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/constructors");
 
 	/**
 	 * Package prefix for test classes

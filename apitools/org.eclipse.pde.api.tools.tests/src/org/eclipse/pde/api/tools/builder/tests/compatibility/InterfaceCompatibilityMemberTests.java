@@ -29,7 +29,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("org.eclipse.api.tools.tests.compatability.a/src/a/interfaces/members");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/interfaces/members");
 
 	/**
 	 * Package prefix for test classes
@@ -255,7 +255,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"a.interfaces.members.RemoveMemberType.MemberType", "org.eclipse.api.tools.tests.compatability.a_1.0.0"};
+		args[0] = new String[]{"a.interfaces.members.RemoveMemberType.MemberType", "bundle.a_1.0.0"};
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}

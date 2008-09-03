@@ -31,7 +31,7 @@ public abstract class ClassCompatibilityTests extends CompatibilityTest {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("org.eclipse.api.tools.tests.compatability.a/src/a/classes");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes");
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite

@@ -29,7 +29,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("org.eclipse.api.tools.tests.compatability.a/src/a/classes/membertypes");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/membertypes");
 
 	/**
 	 * Package prefix for test classes
@@ -103,7 +103,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"a.classes.membertypes.RemovePublicMemberType.PublicType", "org.eclipse.api.tools.tests.compatability.a_1.0.0"};
+		args[0] = new String[]{"a.classes.membertypes.RemovePublicMemberType.PublicType", "bundle.a_1.0.0"};
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -126,7 +126,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"a.classes.membertypes.RemoveProtectedMemberType.ProtectedType", "org.eclipse.api.tools.tests.compatability.a_1.0.0"};
+		args[0] = new String[]{"a.classes.membertypes.RemoveProtectedMemberType.ProtectedType", "bundle.a_1.0.0"};
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
