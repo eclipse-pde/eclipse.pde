@@ -428,7 +428,7 @@ public class SourceTests extends PDETestCase {
 		Utils.generateAllElements(build2, "sdk");
 		buildProperties = BuildConfiguration.getBuilderProperties(build2);
 		buildProperties.put("archivesFormat", "*,*,*-folder");
-		buildProperties.put("pluginPath", oldBuild + "/tmp/eclipse;" + oldBuild + "/features/rcp");
+		buildProperties.put("pluginPath", oldBuild + "/tmp/eclipse" + File.pathSeparator + oldBuild + "/features/rcp");
 		buildProperties.put("forceContextQualifier", "124");
 		Utils.storeBuildProperties(build2, buildProperties);
 		runBuild(build2);
