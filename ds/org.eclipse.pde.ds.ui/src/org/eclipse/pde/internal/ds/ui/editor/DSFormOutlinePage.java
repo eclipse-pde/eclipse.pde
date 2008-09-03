@@ -57,6 +57,6 @@ public class DSFormOutlinePage extends FormOutlinePage  {
 	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getParentPageId(java.lang.Object)
 	 */
 	protected String getParentPageId(Object item) {
-		return DSDetailsPage.PAGE_ID;
+		return DSOverviewPage.PAGE_ID;
 	}
 }

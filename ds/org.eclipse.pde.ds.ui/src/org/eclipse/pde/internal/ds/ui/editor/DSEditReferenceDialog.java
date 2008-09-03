@@ -96,6 +96,9 @@ public class DSEditReferenceDialog extends FormDialog {
 
 		// Attribute: Cardinality
 		addCardinalityEntry(toolkit, entryContainer, gd);
+		
+		// Attribute: Policy
+		addPolicyEntry(toolkit, entryContainer, gd);
 
 		// Attribute: Target
 		fTargetEntry = new FormEntry(entryContainer, toolkit,
@@ -108,9 +111,6 @@ public class DSEditReferenceDialog extends FormDialog {
 		// Attribute: UnBind
 		fUnBindEntry = new FormEntry(entryContainer, toolkit,
 				Messages.DSReferenceDetails_unbindEntry, SWT.NONE);
-
-		// Attribute: Policy
-		addPolicyEntry(toolkit, entryContainer, gd);
 
 		// Update Fields with fReference`s attributes values
 		updateFields();
