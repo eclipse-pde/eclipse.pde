@@ -196,6 +196,33 @@ public class AnnotationCompatibilityTests extends CompatibilityTest {
 	public void testRemoveMethodF() throws Exception {
 		xRemoveMethod(false);
 	}
+
+	/**
+	 * Tests removing a field
+	 */
+	private void xRemoveField(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveField.java");
+		int[] ids = new int[] {
+			ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.ANNOTATION_ELEMENT_TYPE,
+				IDelta.REMOVED,
+				IDelta.FIELD)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveField", "FIELD"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemoveFieldI() throws Exception {
+		xRemoveField(true);
+	}
+	
+	public void testRemoveFieldF() throws Exception {
+		xRemoveField(false);
+	}
 	
 	/**
 	 * Tests conversion to a class

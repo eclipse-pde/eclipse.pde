@@ -15,6 +15,7 @@ Export-Package: a.annotations,
  a.classes.restrictions,
  a.classes.typeparameters,
  a.constructors,
+ a.enums,
  a.fields.modifiers,
  a.interfaces.members,
  a.methods.modifiers
