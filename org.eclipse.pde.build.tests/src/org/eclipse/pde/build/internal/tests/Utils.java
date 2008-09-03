@@ -152,6 +152,7 @@ public class Utils {
 		buffer.append(new Boolean(features).toString());
 		buffer.append("\">\n");
 		buffer.append("  <configIni use=\"default\"/>\n");
+		buffer.append("  <launcher name=\"eclipse\"/>");
 		if (features) {
 			buffer.append("  <features>\n");
 			for (int i = 0; i < entryList.length; i++) {
