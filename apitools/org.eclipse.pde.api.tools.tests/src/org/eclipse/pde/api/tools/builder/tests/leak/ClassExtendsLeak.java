@@ -331,4 +331,91 @@ public class ClassExtendsLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	/**
+	 * Tests that having an @noextend tag(s) on classes does not remove leak problems using a full build
+	 */
+	public void testClassExtendsLeak10F() {
+		x10(false);
+	}
+	
+	/**
+	 * Tests that having an @noextend tag(s) on classes does not remove leak problems using an incremental build
+	 */
+	public void testClassExtendsLeak10I() {
+		x10(true);
+	}
+	
+	private void x10(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId()});
+		String typename = "test17";
+		String innertype1 = "inner";
+		String innertype2 = "inner2";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, innertype1}, {TESTING_INTERNAL_CLASS_NAME, innertype2}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that having an @noinstantiate tag(s) on classes does not remove leak problems using a full build
+	 */
+	public void testClassExtendsLeak11F() {
+		x11(false);
+	}
+	
+	/**
+	 * Tests that having an @noinstantiate tag(s) on classes does not remove leak problems using an incremental build
+	 */
+	public void testClassExtendsLeak11I() {
+		x11(true);
+	}
+	
+	private void x11(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId()});
+		String typename = "test18";
+		String innertype1 = "inner";
+		String innertype2 = "inner2";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, innertype1}, {TESTING_INTERNAL_CLASS_NAME, innertype2}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that having an @noinstantiate and @noextend tag(s) on classes does not remove leak problems using a full build
+	 */
+	public void testClassExtendsLeak12F() {
+		x12(false);
+	}
+	
+	/**
+	 * Tests that having an @noinstantiate and @noextend tag(s) on classes does not remove leak problems using an incremental build
+	 */
+	public void testClassExtendsLeak12I() {
+		x12(true);
+	}
+	
+	private void x12(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId()});
+		String typename = "test19";
+		String innertype1 = "inner";
+		String innertype2 = "inner2";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, innertype1}, {TESTING_INTERNAL_CLASS_NAME, innertype2}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
 }

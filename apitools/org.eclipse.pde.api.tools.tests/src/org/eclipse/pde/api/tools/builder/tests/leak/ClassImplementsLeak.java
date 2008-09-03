@@ -263,4 +263,103 @@ public class ClassImplementsLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	/**
+	 * Tests that an @noextend tag(s) does not prevent an implement leak problem from being reported
+	 * using a full build
+	 */
+	public void testClassImplementsLeak8F() {
+		x8(false);
+	}
+	
+	/**
+	 * Tests that an @noextend tag(s) does not prevent an implement leak problem from being reported
+	 * using an incremental build
+	 */
+	public void testClassImplementsLeak8I() {
+		x8(true);
+	}
+	
+	private void x8(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId(), getDefaultProblemId()});
+		String typename = "test20";
+		String innertype = "inner";
+		String innertype2 = "inner2";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype},
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that an @noinstantiate tag(s) does not prevent an implement leak problem from being reported
+	 * using a full build
+	 */
+	public void testClassImplementsLeak9F() {
+		x9(false);
+	}
+	
+	/**
+	 * Tests that an @noinstantiate tag(s) does not prevent an implement leak problem from being reported
+	 * using an incremental build
+	 */
+	public void testClassImplementsLeak9I() {
+		x9(true);
+	}
+	
+	private void x9(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId(), getDefaultProblemId()});
+		String typename = "test21";
+		String innertype = "inner";
+		String innertype2 = "inner2";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype},
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that an @noinstantiate and @noextend tag(s) does not prevent an implement leak problem from being reported
+	 * using a full build
+	 */
+	public void testClassImplementsLeak10F() {
+		x10(false);
+	}
+	
+	/**
+	 * Tests that an @noinstantiate and @noextend tag(s) does not prevent an implement leak problem from being reported
+	 * using an incremental build
+	 */
+	public void testClassImplementsLeak10I() {
+		x10(true);
+	}
+	
+	private void x10(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId(), getDefaultProblemId()});
+		String typename = "test22";
+		String innertype = "inner";
+		String innertype2 = "inner2";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype},
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
 }

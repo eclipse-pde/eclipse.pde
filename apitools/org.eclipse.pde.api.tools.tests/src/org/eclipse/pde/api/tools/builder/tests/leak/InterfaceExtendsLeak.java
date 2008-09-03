@@ -303,4 +303,37 @@ public class InterfaceExtendsLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	/**
+	 * Tests that having an @noimplement tag on interfaces does not affect problems being detected for extends leaks
+	 * using a full build
+	 */
+	public void testInterfaceExtendsLeak9F() {
+		x9(false);
+	}
+	
+	/**
+	 * Tests that having an @noimplement tag on interfaces does not affect problems being detected for extends leaks
+	 * using an incremental build
+	 */
+	public void testInterfaceExtendsLeak9I() {
+		x9(true);
+	}
+	
+	private void x9(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId(), getDefaultProblemId()});
+		String typename = "Etest9";
+		String innertype1 = "inner";
+		String innertype2 = "inner2";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},	
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype1},
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename},
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
 }
