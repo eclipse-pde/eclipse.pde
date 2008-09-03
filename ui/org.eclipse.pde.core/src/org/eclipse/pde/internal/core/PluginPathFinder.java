@@ -96,9 +96,16 @@ public class PluginPathFinder {
 		if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation()))) {
 			// Pointing at default install, so use the actual configuration area
 			Location configArea = Platform.getConfigurationLocation();
+
 			if (configArea != null) {
 				urls = P2Utils.readBundlesTxt(platformHome, configArea.getURL());
+
+				// try the shared location (parent)
+				if (urls == null && configArea.getParentLocation() != null) {
+					urls = P2Utils.readBundlesTxt(platformHome, configArea.getParentLocation().getURL());
+				}
 			}
+
 		} else {
 			// Pointing at a folder, so try to guess the configuration area
 			File configurationArea = new File(platformHome, "configuration"); //$NON-NLS-1$
