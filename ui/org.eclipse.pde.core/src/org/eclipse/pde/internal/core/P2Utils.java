@@ -11,8 +11,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -55,6 +54,11 @@ public class P2Utils {
 		}
 		try {
 			URL bundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(BUNDLE_TXT_PATH));
+
+			File file = P2Utils.toFile(bundlesTxt);
+			if (file == null || !file.exists())
+				return null;
+
 			List bundles = getBundlesFromFile(bundlesTxt, basePath);
 
 			if (bundles == null) {
@@ -344,6 +348,24 @@ public class P2Utils {
 		}
 
 		return writeBundlesTxt(bundleMap, 4, false, directory);
+	}
+
+	/**
+	 * Returns the URL as a local file, or <code>null</code> if the given
+	 * URL does not represent a local file.
+	 * @param url The url to return the file for
+	 * @return The local file corresponding to the given url, or <code>null</code>
+	 */
+	public static File toFile(URL url) {
+		try {
+			if (!"file".equalsIgnoreCase(url.getProtocol())) //$NON-NLS-1$
+				return null;
+			//assume all illegal characters have been properly encoded, so use URI class to unencode
+			return new File(new URI(url.toExternalForm()));
+		} catch (Exception e) {
+			//URL contains unencoded characters
+			return new File(url.getFile());
+		}
 	}
 
 }
