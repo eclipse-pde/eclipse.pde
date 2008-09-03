@@ -188,20 +188,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 */
 	private void xAddStaticNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddStaticNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.NON_STATIC_TO_STATIC)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddStaticNoReference", "method()"};
-		setExpectedMessageArgs(args);
+		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	
 	public void testAddStaticNoReferenceI() throws Exception {
 		xAddStaticNoReference(true);
-	}	
+	}
 	
 	public void testAddStaticNoReferenceF() throws Exception {
 		xAddStaticNoReference(false);
@@ -235,14 +228,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 */
 	private void xRemoveStaticNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveStaticNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.STATIC_TO_NON_STATIC)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveStaticNoReference", "method()"};
-		setExpectedMessageArgs(args);		
+		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -282,14 +268,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 */
 	private void xProtectedToPackageNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.DECREASE_ACCESS)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackageNoReference", "method()"};
-		setExpectedMessageArgs(args);
+		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -432,14 +411,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 */
 	private void xPublicToPrivateNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.DECREASE_ACCESS)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPrivateNoReference", "method()"};
-		setExpectedMessageArgs(args);
+		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	

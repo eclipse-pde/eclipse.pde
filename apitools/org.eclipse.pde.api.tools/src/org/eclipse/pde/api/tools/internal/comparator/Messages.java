@@ -386,6 +386,8 @@ public class Messages extends NLS {
 								return 84;
 							case IDelta.DECREASE_ACCESS :
 								return 99;
+							case IDelta.STATIC_TO_NON_STATIC :
+								return 102;
 						}
 					case IDelta.REMOVED :
 						switch(delta.getFlags()) {

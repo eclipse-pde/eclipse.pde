@@ -173,6 +173,10 @@ public class DeltaProcessor {
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isMethodCompatible(IDelta delta) {
+		int restrictions = delta.getRestrictions();
+		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+			return true;
+		}
 		switch(delta.getKind()) {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
@@ -195,9 +199,8 @@ public class DeltaProcessor {
 					case IDelta.STATIC_TO_NON_STATIC :
 						return !Util.isVisible(delta);
 					case IDelta.DECREASE_ACCESS :
-						return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+						return RestrictionModifiers.isExtendRestriction(restrictions);
 					case IDelta.NON_FINAL_TO_FINAL :
-						int restrictions = delta.getRestrictions();
 						return !Util.isVisible(delta) || RestrictionModifiers.isOverrideRestriction(restrictions)
 							|| RestrictionModifiers.isExtendRestriction(restrictions);
 				}
@@ -271,6 +274,10 @@ public class DeltaProcessor {
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isConstructorCompatible(IDelta delta) {
+		int restrictions = delta.getRestrictions();
+		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+			return true;
+		}
 		switch(delta.getKind()) {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
@@ -292,9 +299,9 @@ public class DeltaProcessor {
 					case IDelta.STATIC_TO_NON_STATIC :
 						return !Util.isVisible(delta);
 					case IDelta.DECREASE_ACCESS :
-						return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+						return RestrictionModifiers.isExtendRestriction(restrictions);
 					case IDelta.NON_FINAL_TO_FINAL :
-						return !Util.isVisible(delta) || RestrictionModifiers.isOverrideRestriction(delta.getRestrictions());
+						return !Util.isVisible(delta) || RestrictionModifiers.isOverrideRestriction(restrictions);
 				}
 				break;
 		}

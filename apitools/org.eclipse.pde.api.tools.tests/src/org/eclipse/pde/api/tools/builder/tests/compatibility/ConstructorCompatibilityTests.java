@@ -115,14 +115,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 */
 	private void xProtectedToPackageNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.DECREASE_ACCESS)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackageNoReference", "ProtectedToPackageNoReference()"};
-		setExpectedMessageArgs(args);
+		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -225,14 +218,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 */
 	private void xPublicToPrivateNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.DECREASE_ACCESS)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPrivateNoReference", "PublicToPrivateNoReference()"};
-		setExpectedMessageArgs(args);
+		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	
