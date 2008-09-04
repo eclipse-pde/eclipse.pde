@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * Tests valid use of the @noreference tag on fields in classes
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class ValidClassFieldTagTests extends ValidFieldTagTests {
 

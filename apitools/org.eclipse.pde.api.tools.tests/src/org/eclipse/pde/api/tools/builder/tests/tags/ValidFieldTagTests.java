@@ -22,7 +22,7 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 /**
  * Tests valid tags on fields in classes, interfaces, enum and annotations
  * 
- * since 3.4
+ * since 1.0
  */
 public class ValidFieldTagTests extends InvalidFieldTagTests {
 

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * Tests valid uses of @noreference on interface fields
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 

@@ -47,6 +47,8 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Base class for API builder tests
+ * 
+ * @since 1.0
  */
 public abstract class ApiBuilderTest extends BuilderTests {
 	/**

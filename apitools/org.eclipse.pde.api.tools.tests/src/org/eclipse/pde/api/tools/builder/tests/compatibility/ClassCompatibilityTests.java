@@ -24,7 +24,7 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
  * Tests that the builder correctly reports compatibility problems
  * for classes.
  * 
- * @since 3.4
+ * @since 1.0
  */
 public abstract class ClassCompatibilityTests extends CompatibilityTest {
 	

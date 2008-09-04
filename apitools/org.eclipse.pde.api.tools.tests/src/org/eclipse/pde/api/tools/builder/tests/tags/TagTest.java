@@ -26,7 +26,7 @@ import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
  * Tests the builder to make sure it correctly finds and reports
  * unsupported tag usage.
  * 
- * @since 3.4
+ * @since 1.0
  */
 public abstract class TagTest extends ApiBuilderTest {
 

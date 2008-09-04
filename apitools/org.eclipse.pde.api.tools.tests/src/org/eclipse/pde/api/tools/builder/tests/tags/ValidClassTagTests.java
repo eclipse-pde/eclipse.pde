@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * Tests the tags that are valid on a class
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class ValidClassTagTests extends InvalidClassTagTests {
 

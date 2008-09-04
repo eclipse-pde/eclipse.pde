@@ -54,7 +54,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 /**
  * Base class for binary compatibility tests
  * 
- * @since 3.4
+ * @since 1.0
  */
 public abstract class CompatibilityTest extends ApiBuilderTest {	
 

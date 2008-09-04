@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.Path;
  * Tests that the builder correctly finds and reports problems
  * with the default API baseline being set
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class BaselineProblemTests extends ApiBuilderTest {
 

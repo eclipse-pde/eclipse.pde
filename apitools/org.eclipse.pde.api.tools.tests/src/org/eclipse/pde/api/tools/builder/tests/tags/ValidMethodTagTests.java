@@ -22,7 +22,7 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 /**
  * Tests valid javadoc tags on methods in classes, interfaces, enums and annotations
  * 
- * @since 3.5
+ * @since 1.0
  */
 public class ValidMethodTagTests extends InvalidMethodTagTests {
 

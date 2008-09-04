@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Test unsupported javadoc tags on methods in classes, interfaces, enums and annotations
  * 
- * @since 3.5
+ * @since 1.0
  */
 public class InvalidMethodTagTests extends TagTest {
 

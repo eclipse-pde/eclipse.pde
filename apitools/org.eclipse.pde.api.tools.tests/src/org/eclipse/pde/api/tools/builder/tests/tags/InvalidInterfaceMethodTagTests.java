@@ -19,7 +19,7 @@ import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 /**
  * Tests invalid javadoc tags on interface methods
  * 
- * @since 3.5
+ * @since 1.0
  */
 public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 

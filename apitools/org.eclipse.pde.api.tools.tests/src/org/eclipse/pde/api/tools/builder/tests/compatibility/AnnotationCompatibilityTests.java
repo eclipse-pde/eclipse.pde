@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  * Tests that the builder correctly finds and reports problems with 
  * annotation compatibility
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class AnnotationCompatibilityTests extends CompatibilityTest {
 

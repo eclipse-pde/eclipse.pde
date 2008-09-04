@@ -19,7 +19,7 @@ import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 /**
  * Tests invalid tags on fields in classes
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	

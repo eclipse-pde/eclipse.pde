@@ -23,7 +23,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests that the builder finds and properly reports invalid tags on enum fields
  *  
- *  @since 3.4
+ *  @since 1.0
  */
 public class InvalidEnumTagTests extends TagTest {
 

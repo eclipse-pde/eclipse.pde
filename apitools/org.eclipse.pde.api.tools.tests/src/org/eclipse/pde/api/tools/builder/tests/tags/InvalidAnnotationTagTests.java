@@ -23,7 +23,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests unsupported javadoc tags for annotations
  * 
- * @since 3.5
+ * @since 1.0
  */
 public class InvalidAnnotationTagTests extends TagTest {
 

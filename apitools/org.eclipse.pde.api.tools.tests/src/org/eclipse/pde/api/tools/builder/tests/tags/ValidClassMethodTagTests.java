@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * Tests valid javadoc tags for class methods
  * 
- * @since 3.5
+ * @since 1.0
  */
 public class ValidClassMethodTagTests extends ValidMethodTagTests {
 

@@ -19,7 +19,7 @@ import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 /**
  * Tests valid use of @noreference tags in an enum
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 

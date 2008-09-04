@@ -25,6 +25,8 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Tests the base analyzer without OSGi present
+ * 
+ * @since 1.0
  */
 public class OSGiLessAnalysisTests extends TestCase {
 	

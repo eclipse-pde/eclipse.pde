@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 /**
  * Tests unsupported javadoc tags on fields in classes, interfaces, enums and annotations
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class InvalidFieldTagTests extends TagTest {
 	

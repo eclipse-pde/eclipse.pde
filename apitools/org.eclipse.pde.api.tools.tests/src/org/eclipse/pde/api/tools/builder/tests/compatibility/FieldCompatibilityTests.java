@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
  * Tests that the builder correctly finds and reports field
  * compatibility problems
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class FieldCompatibilityTests extends CompatibilityTest {
 

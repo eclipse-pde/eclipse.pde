@@ -20,7 +20,7 @@ import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 /**
  * Tests invalid javadoc tags on enum methods
  * 
- * @since 3.5
+ * @since 1.0
  */
 public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 

@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.Path;
  * Tests that the build correctly finds and reports problems
  * with @since tags
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class SinceTagTests extends ApiBuilderTest {
 

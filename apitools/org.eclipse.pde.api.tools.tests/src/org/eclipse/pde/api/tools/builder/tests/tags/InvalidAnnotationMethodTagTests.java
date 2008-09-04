@@ -20,7 +20,7 @@ import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 /**
  * Tests invalid tags on annotation methods.
  * 
- * @since 3.5
+ * @since 1.0
  */
 public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 

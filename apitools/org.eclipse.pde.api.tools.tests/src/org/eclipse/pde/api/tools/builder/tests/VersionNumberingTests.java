@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.Path;
  * Tests that the build correctly finds and reports problems 
  * with plug-in version numbering.
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class VersionNumberingTests extends ApiBuilderTest{
 

@@ -19,7 +19,7 @@ import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 /**
  * Tests unsupported javadoc tags on class constructors
  * 
- * @since 3.5
+ * @since 1.0
  */
 public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 

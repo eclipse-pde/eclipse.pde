@@ -23,7 +23,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  * Tests for the builder to ensure it find and reports unsupported
  * Javadoc tags on classes properly.
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class InvalidClassTagTests extends TagTest {
 

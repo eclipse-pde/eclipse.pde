@@ -19,7 +19,7 @@ import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 /**
  * Tests invalid tag use on interface fields
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * Tests the tags that are valid on an interface
  * 
- * @since 3.4
+ * @since 1.0
  */
 public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 
