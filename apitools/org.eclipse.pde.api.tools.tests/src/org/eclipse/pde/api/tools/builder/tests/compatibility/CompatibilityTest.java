@@ -99,7 +99,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			FieldCompatibilityTests.class,
 			MethodCompatibilityTests.class,
 			ConstructorCompatibilityTests.class,
-			MissingSinceTagTests.class
+			SinceTagTest.class
 		};
 		return classes;
 	}

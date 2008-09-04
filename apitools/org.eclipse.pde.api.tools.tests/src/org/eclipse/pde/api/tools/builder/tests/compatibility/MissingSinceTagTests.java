@@ -93,7 +93,7 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 */
 	private void xAddMemberType(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMemberType.java");
-		configureExpectedProblems(IDelta.FIELD_ELEMENT_TYPE, "MemberType");
+		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, "MemberType");
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -110,7 +110,7 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 */
 	private void xAddMethod(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethod.java");
-		configureExpectedProblems(IDelta.FIELD_ELEMENT_TYPE, "method()");
+		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "method()");
 		performCompatibilityTest(filePath, incremental);
 	}
 	
