@@ -131,7 +131,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		});
 
 		fTargetCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET35, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});
 		boolean comboInitialized = false;
 		if (settings != null && !osgiProject) {
 			String text = settings.get(S_TARGET_NAME);
