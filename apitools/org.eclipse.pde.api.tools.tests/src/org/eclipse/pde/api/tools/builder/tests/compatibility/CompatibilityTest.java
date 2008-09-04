@@ -99,6 +99,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			FieldCompatibilityTests.class,
 			MethodCompatibilityTests.class,
 			ConstructorCompatibilityTests.class,
+			MissingSinceTagTests.class
 		};
 		return classes;
 	}
@@ -352,6 +353,23 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	}
 	
 	/**
+	 * Updates the contents of a workspace file at the specified location (full path),
+	 * with the contents of a local file at the given replacement location (absolute path).
+	 * 
+	 * @param workspaceLocation
+	 * @param replacementLocation
+	 */
+	protected void createWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
+		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
+		assertFalse("Workspace file should not exist: " + workspaceLocation.toString(), file.exists());
+		File replacement = replacementLocation.toFile();
+		assertTrue("Replacement file does not exist: " + replacementLocation.toOSString(), replacement.exists());
+		FileInputStream stream = new FileInputStream(replacement);
+		file.create(stream, false, null);
+		stream.close();
+	}
+	
+	/**
 	 * Deletes the workspace file at the specified location (full path).
 	 * 
 	 * @param workspaceLocation
@@ -416,6 +434,29 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			ApiProblem[] problems = getEnv().getProblems();
 			assertProblems(problems);
 	}	
+	
+	/**
+	 * Performs a compatibility test. The workspace file at the specified (full workspace path)
+	 * location is created. A build is performed and problems are compared against the expected
+	 * problems for the associated resource.
+	 * 
+	 * @param workspaceFile file to update
+	 * @param incremental whether to perform an incremental (<code>true</code>) or
+	 * 	full (<code>false</code>) build
+	 * @throws Exception
+	 */
+	protected void performCreationCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
+		createWorkspaceFile(
+				workspaceFile,
+				getUpdateFilePath(workspaceFile.lastSegment()));
+		if (incremental) {
+			incrementalBuild();
+		} else {
+			fullBuild();
+		}
+		ApiProblem[] problems = getEnv().getProblems();
+		assertProblems(problems);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
