@@ -273,7 +273,6 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	 */
 	private void xRemoveSuperInterface(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveSuperInterface.java");
-		// TODO: expect a problem
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
