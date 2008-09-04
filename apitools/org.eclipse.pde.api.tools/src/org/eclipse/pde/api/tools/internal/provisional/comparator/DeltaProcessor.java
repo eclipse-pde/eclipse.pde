@@ -159,7 +159,6 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
 					case IDelta.TYPE_CONVERSION :
-					case IDelta.RESTRICTIONS :
 						return false;
 				}
 				break;
@@ -342,7 +341,6 @@ public class DeltaProcessor {
 					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
 					case IDelta.TYPE_CONVERSION :
-					case IDelta.RESTRICTIONS :
 						return !Util.isVisible(delta);
 					case IDelta.DECREASE_ACCESS :
 						return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());

@@ -77,7 +77,6 @@ public class PreferenceMessages extends NLS {
 	public static String ANNOTATION_REMOVED_METHOD;
 	public static String ANNOTATION_REMOVED_TYPE_MEMBER;
 	public static String ANNOTATION_CHANGED_TYPE_CONVERSION;
-	public static String ANNOTATION_CHANGED_RESTRICTIONS;
 	
 	public static String INTERFACE_ADDED_FIELD;
 	public static String INTERFACE_ADDED_METHOD;
@@ -92,7 +91,6 @@ public class PreferenceMessages extends NLS {
 
 	public static String ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
 	public static String ENUM_CHANGED_TYPE_CONVERSION;
-	public static String ENUM_CHANGED_RESTRICTIONS;
 	public static String ENUM_REMOVED_FIELD;
 	public static String ENUM_REMOVED_ENUM_CONSTANT;
 	public static String ENUM_REMOVED_METHOD;

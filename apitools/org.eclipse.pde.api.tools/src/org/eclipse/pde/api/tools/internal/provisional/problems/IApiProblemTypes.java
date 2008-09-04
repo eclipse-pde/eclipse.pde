@@ -34,8 +34,6 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_MEMBER);
 	public static final String ANNOTATION_CHANGED_TYPE_CONVERSION =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_CONVERSION);
-	public static final String ANNOTATION_CHANGED_RESTRICTIONS =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CHANGED, IDelta.RESTRICTIONS);
 	public static final String ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD_WITHOUT_DEFAULT_VALUE);
 	// interface key constant
@@ -64,8 +62,6 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET);
 	public static final String ENUM_CHANGED_TYPE_CONVERSION =
 		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_CONVERSION);
-	public static final String ENUM_CHANGED_RESTRICTIONS =
-		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.CHANGED, IDelta.RESTRICTIONS);
 	public static final String ENUM_REMOVED_FIELD =
 		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.REMOVED, IDelta.FIELD);
 	public static final String ENUM_REMOVED_ENUM_CONSTANT =
