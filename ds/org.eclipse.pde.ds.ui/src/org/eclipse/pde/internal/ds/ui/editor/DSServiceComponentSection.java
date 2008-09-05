@@ -41,6 +41,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -67,7 +68,7 @@ public class DSServiceComponentSection extends PDESection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 
 		initializeAttributes();
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
@@ -89,14 +90,12 @@ public class DSServiceComponentSection extends PDESection {
 				Messages.DSImplementationDetails_browse, isEditable(), 0);
 
 		createButtons(client, toolkit);
-		
+
 		setListeners();
 		updateUIFields();
 
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
-		
-		
 
 	}
 
@@ -114,8 +113,7 @@ public class DSServiceComponentSection extends PDESection {
 						fEnabledButton.getSelection());
 			}
 		});
-		
-		
+
 		fImmediateButton = toolkit.createButton(parent,
 				Messages.DSServiceComponentSection_immediateButtonMessage,
 				SWT.CHECK);
@@ -126,7 +124,7 @@ public class DSServiceComponentSection extends PDESection {
 				fModel.getDSComponent().setImmediate(
 						fImmediateButton.getSelection());
 			}
-		});		
+		});
 	}
 
 	private void initializeAttributes() {
@@ -144,11 +142,24 @@ public class DSServiceComponentSection extends PDESection {
 		fNameEntry.commit();
 		super.commit(onSave);
 	}
-	
+
 	public void modelChanged(IModelChangedEvent e) {
 		fComponent = fModel.getDSComponent();
 		if (fComponent != null)
 			fImplementation = fComponent.getImplementation();
+
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			markStale();
+		}
+
+		if (fNameEntry != null) {
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					updateUIFields();
+				}
+			});
+		}
+
 	}
 
 	public void updateUIFields() {
@@ -161,11 +172,11 @@ public class DSServiceComponentSection extends PDESection {
 				// Attribute: name
 				fNameEntry.setValue(fComponent.getAttributeName(), true);
 			}
-			
+
 			if (fComponent.getEnabled()) {
 				fEnabledButton.setSelection(true);
 			}
-			
+
 			if (fComponent.getImmediate()) {
 				fImmediateButton.setSelection(true);
 			}
