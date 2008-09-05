@@ -283,7 +283,11 @@ public class Messages extends NLS {
 								return 93;
 							case IDelta.DECREASE_ACCESS :
 								return 98;
-						}
+							case IDelta.NON_STATIC_TO_STATIC :
+								return 103;
+							case IDelta.STATIC_TO_NON_STATIC :
+								return 104;
+							}
 						break;
 					case IDelta.REMOVED :
 						if (delta.getFlags() == IDelta.VALUE) {

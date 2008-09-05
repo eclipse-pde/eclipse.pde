@@ -108,14 +108,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xAddFinalNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoReference.java");
-		// TODO: expect no problems since @noreference
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.NON_FINAL_TO_FINAL)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddFinalNoReference", "ADD_FINAL"};
-		setExpectedMessageArgs(args);
+		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -155,14 +148,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xAddFinalOnStaticNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalOnStaticNoReference.java");
-		// TODO: expect no problems since @noreference
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.NON_FINAL_TO_FINAL)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddFinalOnStaticNoReference", "ADD_FINAL"};
-		setExpectedMessageArgs(args);
+		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -233,14 +219,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xAddStaticNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddStaticNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.NON_STATIC_TO_STATIC)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddStaticNoReference", "ADD_STATIC"};
-		setExpectedMessageArgs(args);
+		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -280,14 +259,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xRemoveStaticNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveStaticNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.STATIC_TO_NON_STATIC)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveStaticNoReference", "REMOVE_STATIC"};
-		setExpectedMessageArgs(args);
+		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -327,14 +299,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xProtectedToPackageNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.DECREASE_ACCESS)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackageNoReference", "FIELD"};
-		setExpectedMessageArgs(args);
+		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -437,14 +402,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xPublicToPrivateNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.DECREASE_ACCESS)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPrivateNoReference", "FIELD"};
-		setExpectedMessageArgs(args);
+		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -547,14 +505,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xChangeTypeNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeTypeNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.TYPE)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ChangeTypeNoReference", "FIELD"};
-		setExpectedMessageArgs(args);
+		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -611,14 +562,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xGeneralizeTypeNoReference(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("GeneralizeTypeNoReference.java");
-		// TODO: should be no problems
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.TYPE)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "GeneralizeTypeNoReference", "FIELD"};
-		setExpectedMessageArgs(args);
+		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
 	

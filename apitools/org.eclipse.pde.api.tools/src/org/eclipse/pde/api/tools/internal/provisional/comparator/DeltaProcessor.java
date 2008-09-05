@@ -214,6 +214,10 @@ public class DeltaProcessor {
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isFieldCompatible(IDelta delta) {
+		int restrictions = delta.getRestrictions();
+		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+			return true;
+		}
 		switch(delta.getKind()) {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
