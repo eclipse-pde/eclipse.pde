@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - on going enhancements and maintenance
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
@@ -203,13 +204,19 @@ public class PDECompilersConfigurationBlock {
 	private static final Key KEY_P_MISSING_EXPORT_PKGS = getPDEPrefKey(CompilerFlags.P_MISSING_EXPORT_PKGS);
 	private static final Key KEY_P_DEPRECATED = getPDEPrefKey(CompilerFlags.P_DEPRECATED);
 	private static final Key KEY_P_INTERNAL = getPDEPrefKey(CompilerFlags.P_INTERNAL);
+
+	// versioning
+	private static final Key KEY_P_VERSION_EXP_PKG = getPDEPrefKey(CompilerFlags.P_MISSING_VERSION_EXP_PKG);
+	private static final Key KEY_P_VERSION_IMP_PKG = getPDEPrefKey(CompilerFlags.P_MISSING_VERSION_IMP_PKG);
+	private static final Key KEY_P_VERSION_REQ_BUNDLE = getPDEPrefKey(CompilerFlags.P_MISSING_VERSION_REQ_BUNDLE);
+
 	private static final Key KEY_S_CREATE_DOCS = getPDEPrefKey(CompilerFlags.S_CREATE_DOCS);
 	private static final Key KEY_S_DOC_FOLDER = getPDEPrefKey(CompilerFlags.S_DOC_FOLDER);
 	private static final Key KEY_S_OPEN_TAGS = getPDEPrefKey(CompilerFlags.S_OPEN_TAGS);
 
 	private static String[] SEVERITIES = {PDEUIMessages.PDECompilersConfigurationBlock_error, PDEUIMessages.PDECompilersConfigurationBlock_warning, PDEUIMessages.PDECompilersConfigurationBlock_ignore};
 
-	private static Key[] fgAllKeys = {KEY_F_UNRESOLVED_FEATURES, KEY_F_UNRESOLVED_PLUGINS, KEY_P_BUILD, KEY_P_INTERNAL, KEY_P_DEPRECATED, KEY_P_DISCOURAGED_CLASS, KEY_P_INCOMPATIBLE_ENV, KEY_P_MISSING_EXPORT_PKGS, KEY_P_NO_REQUIRED_ATT, KEY_P_NOT_EXTERNALIZED, KEY_P_UNKNOWN_ATTRIBUTE, KEY_P_UNKNOWN_CLASS, KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_IDENTIFIER, KEY_P_UNKNOWN_RESOURCE, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_UNRESOLVED_IMPORTS, KEY_S_CREATE_DOCS, KEY_S_DOC_FOLDER, KEY_S_OPEN_TAGS};
+	private static Key[] fgAllKeys = {KEY_F_UNRESOLVED_FEATURES, KEY_F_UNRESOLVED_PLUGINS, KEY_P_BUILD, KEY_P_INTERNAL, KEY_P_DEPRECATED, KEY_P_DISCOURAGED_CLASS, KEY_P_INCOMPATIBLE_ENV, KEY_P_MISSING_EXPORT_PKGS, KEY_P_NO_REQUIRED_ATT, KEY_P_NOT_EXTERNALIZED, KEY_P_UNKNOWN_ATTRIBUTE, KEY_P_UNKNOWN_CLASS, KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_IDENTIFIER, KEY_P_UNKNOWN_RESOURCE, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_UNRESOLVED_IMPORTS, KEY_P_VERSION_EXP_PKG, KEY_P_VERSION_IMP_PKG, KEY_P_VERSION_REQ_BUNDLE, KEY_S_CREATE_DOCS, KEY_S_DOC_FOLDER, KEY_S_OPEN_TAGS};
 
 	/**
 	 * Constant representing the {@link IDialogSettings} section for this block
@@ -495,13 +502,16 @@ public class PDECompilersConfigurationBlock {
 				ScrolledComposite scomp = createScrolledComposite(parent, 1);
 				Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
 				scomp.setContent(sbody);
-				//General
+				// General
 				Composite client = createExpansibleComposite(sbody, PDEUIMessages.PDECompilersConfigurationBlock_general);
 				initializeComboControls(client, new String[] {PDEUIMessages.compilers_p_no_required_att, PDEUIMessages.CompilersConfigurationTab_buildPropertiesErrors, PDEUIMessages.CompilersConfigurationTab_incompatEnv, PDEUIMessages.compilers_p_exported_pkgs}, new Key[] {KEY_P_NO_REQUIRED_ATT, KEY_P_BUILD, KEY_P_INCOMPATIBLE_ENV, KEY_P_MISSING_EXPORT_PKGS}, CompilerFlags.PLUGIN_FLAGS);
-				//Usage
+				// Versioning
+				client = createExpansibleComposite(sbody, PDEUIMessages.PDECompilersConfigurationBlock_versioning);
+				initializeComboControls(client, new String[] {PDEUIMessages.compilers_p_missing_require_bundle, PDEUIMessages.compilers_p_missing_exp_pkg, PDEUIMessages.compilers_p_missing_imp_pkg}, new Key[] {KEY_P_VERSION_REQ_BUNDLE, KEY_P_VERSION_EXP_PKG, KEY_P_VERSION_IMP_PKG}, CompilerFlags.PLUGIN_FLAGS);
+				// Usage
 				client = createExpansibleComposite(sbody, PDEUIMessages.PDECompilersConfigurationBlock_usage);
 				initializeComboControls(client, new String[] {PDEUIMessages.compilers_p_unresolved_import, PDEUIMessages.compilers_p_unresolved_ex_points, PDEUIMessages.compilers_p_internal, PDEUIMessages.compilers_p_deprecated, PDEUIMessages.compilers_p_not_externalized_att}, new Key[] {KEY_P_UNRESOLVED_IMPORTS, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_INTERNAL, KEY_P_DEPRECATED, KEY_P_NOT_EXTERNALIZED}, CompilerFlags.PLUGIN_FLAGS);
-				//References
+				// References
 				client = createExpansibleComposite(sbody, PDEUIMessages.PDECompilersConfigurationBlock_references);
 				initializeComboControls(client, new String[] {PDEUIMessages.compilers_p_unknown_element, PDEUIMessages.compilers_p_unknown_attribute, PDEUIMessages.compilers_p_unknown_class, PDEUIMessages.compilers_p_discouraged_class, PDEUIMessages.compilers_p_unknown_resource, PDEUIMessages.compilers_p_unknown_identifier}, new Key[] {KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_ATTRIBUTE, KEY_P_UNKNOWN_CLASS, KEY_P_DISCOURAGED_CLASS, KEY_P_UNKNOWN_RESOURCE, KEY_P_UNKNOWN_IDENTIFIER,}, CompilerFlags.PLUGIN_FLAGS);
 

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - on going enhancements and maintenance
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -92,15 +93,11 @@ public class PDEUIMessages extends NLS {
 	public static String OrganizeManifestsProcessor_rootMessage;
 
 	public static String PDECompilersConfigurationBlock_general;
-
+	public static String PDECompilersConfigurationBlock_versioning;
 	public static String PDECompilersConfigurationBlock_references;
-
 	public static String PDECompilersConfigurationBlock_setting_changed_project;
-
 	public static String PDECompilersConfigurationBlock_settings_changed;
-
 	public static String PDECompilersConfigurationBlock_settings_changed_all;
-
 	public static String PDECompilersConfigurationBlock_usage;
 
 	public static String PDEWizardNewFileCreationPage_errorMsgStartsWithDot;
@@ -1924,6 +1921,9 @@ public class PDEUIMessages extends NLS {
 	public static String compilers_p_not_externalized_att;
 	public static String compilers_p_deprecated;
 	public static String compilers_p_internal;
+	public static String compilers_p_missing_imp_pkg;
+	public static String compilers_p_missing_exp_pkg;
+	public static String compilers_p_missing_require_bundle;
 	public static String compilers_s_create_docs;
 	public static String compilers_s_doc_folder;
 	public static String compilers_s_open_tags;

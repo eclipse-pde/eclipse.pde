@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - on going enhancements and maintenance
  *     Brock Janiczak <brockj@tpg.com.au> - bug 169373
  *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 150225
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 209432, 214156
@@ -490,6 +491,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateBundleVersionAttribute(IHeader header, ManifestElement element) {
 		String versionRange = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_MISSING_VERSION_REQ_BUNDLE);
+		if (severity != CompilerFlags.IGNORE && versionRange == null) {
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_MissingVersion, element.getValue()), getPackageLine(header, element), severity, PDEMarkerFactory.CAT_OTHER);
+		}
+
 		if (versionRange != null && !VersionUtil.validateVersionRange(versionRange).isOK()) {
 			report(NLS.bind(PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion, element.getValue()), getPackageLine(header, element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 		}
@@ -554,7 +560,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			ManifestElement[] elements = header.getElements();
 			for (int i = 0; i < elements.length; i++) {
 				validateSpecificationVersionAttribute(header, elements[i]);
-				validateVersionAttribute(header, elements[i], true);
+				validateImportPackageVersion(header, elements[i]);
 			}
 			return;
 		}
@@ -587,10 +593,12 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 			validateSpecificationVersionAttribute(header, elements[i]);
 			validateResolutionDirective(header, elements[i]);
+
+			// TODO we should only validate versions that we have a match
+			validateImportPackageVersion(header, elements[i]);
+
 			if (!hasUnresolved)
 				continue;
-
-			validateVersionAttribute(header, elements[i], true);
 
 			int length = elements[i].getValueComponents().length;
 			for (int j = 0; j < length; j++) {
@@ -667,7 +675,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		for (int i = 0; i < elements.length; i++) {
 			checkCanceled(monitor);
 
-			validateVersionAttribute(header, elements[i], false);
+			validateExportPackageVersion(header, elements[i]);
 			validateSpecificationVersionAttribute(header, elements[i]);
 			validateX_InternalDirective(header, elements[i]);
 			validateX_FriendsDirective(header, elements[i]);
@@ -798,6 +806,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		return CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_IMPORTS) != CompilerFlags.IGNORE;
 	}
 
+	protected boolean isCheckMissingExportPackageVersion() {
+		return CompilerFlags.getFlag(fProject, CompilerFlags.P_MISSING_VERSION_EXP_PKG) != CompilerFlags.IGNORE;
+	}
+
+	protected boolean isCheckMissingImportPackageVersion() {
+		return CompilerFlags.getFlag(fProject, CompilerFlags.P_MISSING_VERSION_IMP_PKG) != CompilerFlags.IGNORE;
+	}
+
 	private void validateTranslatableHeaders() {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_NOT_EXTERNALIZED);
 		if (severity == CompilerFlags.IGNORE)
@@ -831,13 +847,31 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
+	private void validateImportPackageVersion(IHeader header, ManifestElement element) {
+		String version = element.getAttribute(Constants.VERSION_ATTRIBUTE);
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_MISSING_VERSION_IMP_PKG);
+		if (severity != CompilerFlags.IGNORE && version == null) {
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_MissingVersion, element.getValue()), getPackageLine(header, element), severity, PDEMarkerFactory.CAT_OTHER);
+		}
+		validateVersionAttribute(header, element, true);
+	}
+
+	private void validateExportPackageVersion(IHeader header, ManifestElement element) {
+		String version = element.getAttribute(Constants.VERSION_ATTRIBUTE);
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_MISSING_VERSION_EXP_PKG);
+		if (severity != CompilerFlags.IGNORE && version == null) {
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_MissingVersion, element.getValue()), getPackageLine(header, element), severity, PDEMarkerFactory.CAT_OTHER);
+		}
+		validateVersionAttribute(header, element, false);
+	}
+
 	private void validateVersionAttribute(IHeader header, ManifestElement element, boolean range) {
 		String version = element.getAttribute(Constants.VERSION_ATTRIBUTE);
-		if (version == null)
-			return;
-		IStatus status = range ? VersionUtil.validateVersionRange(version) : VersionUtil.validateVersion(version);
-		if (!status.isOK()) {
-			report(status.getMessage(), getPackageLine(header, element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+		if (version != null) {
+			IStatus status = range ? VersionUtil.validateVersionRange(version) : VersionUtil.validateVersion(version);
+			if (!status.isOK()) {
+				report(status.getMessage(), getPackageLine(header, element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+			}
 		}
 	}
 

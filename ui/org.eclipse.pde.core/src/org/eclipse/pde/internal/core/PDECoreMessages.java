@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - on going enhancements and maintenance
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -22,26 +23,17 @@ public class PDECoreMessages extends NLS {
 	public static String BuildErrorReporter_cannotFindJar;
 
 	public static String BundleErrorReporter_badFilter;
-
 	public static String BundleErrorReporter_bundleActivationPolicy_unsupported;
-
 	public static String BundleErrorReporter_localization_folder_not_exist;
-
 	public static String BundleErrorReporter_localization_properties_file_not_exist;
-
 	public static String BundleErrorReporter_providePackageHeaderDeprecated;
-
 	public static String BundleErrorReporter_reqExecEnv_conflict;
-
 	public static String BundleErrorReporter_reqExecEnv_unknown;
-
 	public static String BundleErrorReporter_unresolvedExporter;
-
 	public static String BundleErrorReporter_unresolvedHost;
-
 	public static String BundleErrorReporter_unsatisfiedConstraint;
-
 	public static String BundleErrorReporter_unsupportedSingletonDirective;
+	public static String BundleErrorReporter_MissingVersion;
 
 	public static String BundleTextChangeListener_editNames_insert;
 
