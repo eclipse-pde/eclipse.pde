@@ -284,28 +284,17 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 				file1,
 				getUpdateFilePath(file1.lastSegment()));
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("SubClazz.java");
-		// TODO: no problems expected
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-					IApiProblem.CATEGORY_COMPATIBILITY,
-					IDelta.CLASS_ELEMENT_TYPE,
-					IDelta.REMOVED,
-					IDelta.METHOD)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "SubClazz", "pushUp()"};
-		setExpectedMessageArgs(args);		
+		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	public void ZZZtestPushMethodUpI() throws Exception {
+	public void testPushMethodUpI() throws Exception {
 		xPushMethodUp(true);
-	}	
+	}
 	
-	public void ZZZtestPushMethodUpF() throws Exception {
+	public void testPushMethodUpF() throws Exception {
 		xPushMethodUp(false);
-	}	
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
