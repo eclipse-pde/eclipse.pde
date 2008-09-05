@@ -181,6 +181,8 @@ public class Messages extends NLS {
 								return 94;
 							case IDelta.DECREASE_ACCESS :
 								return 101;
+							case IDelta.NON_ABSTRACT_TO_ABSTRACT :
+								return 105;
 						}
 						break;
 					case IDelta.REMOVED :

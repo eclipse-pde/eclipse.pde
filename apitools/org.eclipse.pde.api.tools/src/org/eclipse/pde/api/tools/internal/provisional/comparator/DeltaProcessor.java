@@ -401,9 +401,13 @@ public class DeltaProcessor {
 				break;
 			case IDelta.CHANGED :
 				switch(delta.getFlags()) {
-					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
+						if (Util.isVisible(delta)) {
+							return RestrictionModifiers.isInstantiateRestriction(delta.getRestrictions());
+						}
+						return true;
 					case IDelta.TYPE_CONVERSION :
+					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
 					case IDelta.RESTRICTIONS :
 					case IDelta.STATIC_TO_NON_STATIC :
 					case IDelta.NON_STATIC_TO_STATIC :

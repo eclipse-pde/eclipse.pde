@@ -997,14 +997,8 @@ public class ClassFileComparator {
 			if (Util.isFinal(typeAccess2)) {
 				this.currentDescriptorRestrictions |= RestrictionModifiers.NO_EXTEND;
 			}
-			if (Util.isAbstract(typeAccess2)) {
-				this.currentDescriptorRestrictions |= RestrictionModifiers.NO_INSTANTIATE;
-			}
 			if (Util.isFinal(typeAccess)) {
 				this.initialDescriptorRestrictions |= RestrictionModifiers.NO_EXTEND;
-			}
-			if (Util.isAbstract(typeAccess)) {
-				this.initialDescriptorRestrictions |= RestrictionModifiers.NO_INSTANTIATE;
 			}
 
 			if (Util.isProtected(typeAccess)) {
@@ -1884,8 +1878,8 @@ public class ClassFileComparator {
 				this.addDelta(
 						this.descriptor1.getElementType(),
 						IDelta.REMOVED,
-						methodDescriptor.getElementType() == IDelta.CONSTRUCTOR_ELEMENT_TYPE ? IDelta.CONSTRUCTOR : IDelta.METHOD,
-						this.currentDescriptorRestrictions,
+						methodDescriptor.isConstructor() ? IDelta.CONSTRUCTOR : IDelta.METHOD,
+						Util.isAbstract(this.descriptor2.access) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions,
 						access,
 						this.classFile,
 						this.descriptor1.name,
@@ -1988,7 +1982,7 @@ public class ClassFileComparator {
 							this.descriptor1.getElementType(),
 							IDelta.REMOVED,
 							methodDescriptor.isConstructor() ? IDelta.CONSTRUCTOR : IDelta.METHOD,
-							this.currentDescriptorRestrictions,
+							Util.isAbstract(this.descriptor2.access) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions,
 							methodDescriptor.access,
 							this.classFile,
 							this.descriptor1.name,
@@ -2136,7 +2130,7 @@ public class ClassFileComparator {
 								this.descriptor2.getElementType(),
 								IDelta.REMOVED,
 								methodDescriptor.isConstructor() ? IDelta.API_CONSTRUCTOR : IDelta.API_METHOD,
-								Util.isAbstract(this.descriptor1.access) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions,
+								Util.isAbstract(this.descriptor2.access) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions,
 								access2,
 								this.classFile,
 								getKeyForMethod(methodDescriptor2, this.descriptor2),

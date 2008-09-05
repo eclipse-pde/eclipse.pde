@@ -213,14 +213,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 */
 	private void xAddAbstractNoInstantiate(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractNoInstantiate.java");
-		// TODO: no problems expected
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.NON_ABSTRACT_TO_ABSTRACT)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstractNoInstantiate"};
-		setExpectedMessageArgs(args);
+		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -238,14 +231,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 */
 	private void xAddAbstractNoExtendNoInstantiate(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractNoExtendNoInstantiate.java");
-		// TODO: no problems expected
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.NON_ABSTRACT_TO_ABSTRACT)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstractNoExtendNoInstantiate"};
-		setExpectedMessageArgs(args);
+		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	
