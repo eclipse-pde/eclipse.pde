@@ -43,7 +43,8 @@ public abstract class SinceTagTest extends CompatibilityTest {
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
 			MissingSinceTagTests.class,
-			InvalidSinceTagTests.class
+			InvalidSinceTagTests.class,
+			MalformedSinceTagTests.class
 		};
 		return classes;
 	}
