@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.jar.JarFile;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -99,7 +100,8 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			FieldCompatibilityTests.class,
 			MethodCompatibilityTests.class,
 			ConstructorCompatibilityTests.class,
-			SinceTagTest.class
+			SinceTagTest.class,
+			VersionTest.class
 		};
 		return classes;
 	}
@@ -413,6 +415,29 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			ApiProblem[] problems = getEnv().getProblemsFor(workspaceFile, null);
 			assertProblems(problems);
 	}
+	
+	/**
+	 * Performs a compatibility test. The workspace file at the specified (full workspace path)
+	 * location is updated with a corresponding file from test data. A build is performed
+	 * and problems are compared against the expected problems for the associated resource.
+	 * 
+	 * @param workspaceFile file to update
+	 * @param incremental whether to perform an incremental (<code>true</code>) or
+	 * 	full (<code>false</code>) build
+	 * @throws Exception
+	 */
+	protected void performVersionTest(IPath workspaceFile, boolean incremental) throws Exception {
+			updateWorkspaceFile(
+					workspaceFile,
+					getUpdateFilePath(workspaceFile.lastSegment()));
+			if (incremental) {
+				incrementalBuild();
+			} else {
+				fullBuild();
+			}
+			ApiProblem[] problems = getEnv().getProblemsFor(new Path(workspaceFile.segment(0)).append(JarFile.MANIFEST_NAME), null);
+			assertProblems(problems);
+	}	
 	
 	/**
 	 * Performs a compatibility test. The workspace file at the specified (full workspace path)
