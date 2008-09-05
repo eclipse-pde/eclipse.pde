@@ -11,9 +11,11 @@
 package org.eclipse.pde.api.tools.internal.comparator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -188,69 +190,65 @@ public class ClassFileComparator {
 						this.classFile,
 						this.descriptor1.name,
 						Util.getDescriptorName(descriptor1));
-				return;
 			}
-			// both types extends java.lang.Object
-			return;
-		}
-		if (superclassList2 == null) {
+		} else if (superclassList2 == null) {
 			// this means the direct super class of descriptor2 is java.lang.Object
 			this.addDelta(
 					this.descriptor1.getElementType(),
-					IDelta.CHANGED,
+					IDelta.REMOVED,
 					IDelta.SUPERCLASS,
 					this.currentDescriptorRestrictions,
 					this.descriptor1.access,
 					this.classFile,
 					this.descriptor1.name,
 					Util.getDescriptorName(descriptor1));
-			return;
 		}
-		int list1Size = superclassList1.size();
-		int list2Size = superclassList2.size();
-		for (Iterator iterator = superclassList1.iterator(); iterator.hasNext();) {
-			TypeDescriptor superclassTypeDescriptor = (TypeDescriptor) iterator.next();
-			if (!superclassList2.remove(superclassTypeDescriptor)) {
-				this.addDelta(
-						this.descriptor1.getElementType(),
-						IDelta.CHANGED,
-						IDelta.CONTRACTED_SUPERCLASS_SET,
-						this.currentDescriptorRestrictions,
-						this.descriptor1.access,
-						this.classFile,
-						this.descriptor1.name,
-						Util.getDescriptorName(descriptor1));
-				return;
+		// get superclass of descriptor2
+		if (superclassList1 != null && superclassList2 != null) {
+			TypeDescriptor superclassTypeDescriptor2 = (TypeDescriptor) superclassList2.get(0);
+			TypeDescriptor superclassTypeDescriptor = (TypeDescriptor) superclassList1.get(0);
+			if (!superclassTypeDescriptor.name.equals(superclassTypeDescriptor2.name)) {
+				if (!superclassList2.contains(superclassTypeDescriptor)) {
+					this.addDelta(
+							this.descriptor1.getElementType(),
+							IDelta.REMOVED,
+							IDelta.SUPERCLASS,
+							this.currentDescriptorRestrictions,
+							this.descriptor1.access,
+							this.classFile,
+							this.descriptor1.name,
+							Util.getDescriptorName(descriptor1));
+				} else {
+					this.addDelta(
+							this.descriptor1.getElementType(),
+							IDelta.ADDED,
+							IDelta.SUPERCLASS,
+							this.currentDescriptorRestrictions,
+							this.descriptor1.access,
+							this.classFile,
+							this.descriptor1.name,
+							Util.getDescriptorName(descriptor1));
+				}
 			}
-		}
-		if (list1Size < list2Size) {
-			this.addDelta(
-					this.descriptor1.getElementType(),
-					IDelta.CHANGED,
-					IDelta.EXPANDED_SUPERCLASS_SET,
-					this.currentDescriptorRestrictions,
-					this.descriptor1.access,
-					this.classFile,
-					this.descriptor1.name,
-					Util.getDescriptorName(descriptor1));
 		}
 		// TODO check super class if they are not checked anyway
 		// case where an API type inherits from a non-API type that contains public methods/fields
 		if (visibilityModifiers == VisibilityModifiers.API) {
 			int currentTypeVisibility = 0;
 			IApiDescription apiDescription = this.component.getApiDescription();
-			TypeDescriptor superclassTypeDescriptor = (TypeDescriptor) superclassList1.get(0);
-			IApiAnnotations superclassAnnotations = apiDescription.resolveAnnotations(superclassTypeDescriptor.handle);
+			String superTypeName = this.descriptor1.superName;
+			IClassFile superclassType1 = getType(superTypeName, this.component, this.apiProfile);
+			if (superclassType1 == null) return;
+			TypeDescriptor superTypeDescriptor = new TypeDescriptor(superclassType1.getContents());
+			IApiAnnotations superclassAnnotations = apiDescription.resolveAnnotations(superTypeDescriptor.handle);
 			if (superclassAnnotations != null) {
 				currentTypeVisibility = superclassAnnotations.getVisibility();
 				if (!VisibilityModifiers.isAPI(currentTypeVisibility)) {
-					// super class is not an API type so we need to check it for visible members
+					// superclass is not an API type so we need to check it for visible members
 					// if this is an API, it will be checked when the supertype is checked
 					boolean ignoreProtected = RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions) || Util.isFinal(this.descriptor1.access);
-					String superTypeName = ((IReferenceTypeDescriptor) superclassTypeDescriptor.handle).getQualifiedName();
-					IClassFile superclassType1 = this.component.findClassFile(superTypeName);
 					IClassFile superclassType2 = this.component2.findClassFile(superTypeName);
-					if (superclassType1 != null && superclassType2 != null) {
+					if (superclassType2 != null) {
 						ClassFileComparator comparator = new ClassFileComparator(superclassType1, superclassType2, this.component, this.component2, this.apiProfile, this.apiProfile2, this.visibilityModifiers);
 						IDelta delta2 = comparator.getDelta();
 						if (delta2 != null && delta2 != ApiComparator.NO_DELTA) {
@@ -871,56 +869,38 @@ public class ClassFileComparator {
 	private void collectAllInterfaces(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile, Set set) {
 		Set interfaces = typeDescriptor.interfaces;
 		try {
+			IApiComponent sourceComponent = apiComponent;
+			IApiDescription apiDescription = sourceComponent.getApiDescription();
+			Map apiDescriptions = new HashMap(3);
+			apiDescriptions.put(sourceComponent.getId(), apiDescription);
 			if (interfaces != null) {
 				for (Iterator iterator = interfaces.iterator(); iterator.hasNext();) {
 					String interfaceName = (String) iterator.next();
-					String packageName = Util.getPackageName(interfaceName);
-					IApiComponent[] components = profile.resolvePackage(apiComponent, packageName);
-					if (components == null) {
-						String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), apiComponent.getId()});
-						if (DEBUG) {
-							System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
-						}
-						reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
-						return;
-					}
-					IClassFile superinterface = Util.getClassFile(components, interfaceName);
-					if (superinterface == null) {
-						String msg = ComparatorMessages.ClassFileComparator_2;
-						msg = MessageFormat.format(msg, new String[] {interfaceName, profile.getName(), apiComponent.getId()});
-						if (DEBUG) {
-							System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
-						}
-						reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
-						return;
-					}
+					IClassFile superinterface = getType(interfaceName, sourceComponent, profile);
+					if (superinterface == null) return;
 					TypeDescriptor typeDescriptor2 = new TypeDescriptor(superinterface.getContents());
-					set.add(typeDescriptor2);
+					int visibility = VisibilityModifiers.PRIVATE;
+					if (sourceComponent.hasApiDescription()) {
+						apiDescription = (IApiDescription) apiDescriptions.get(sourceComponent.getId());
+						if (apiDescription == null) {
+							apiDescription = sourceComponent.getApiDescription();
+							apiDescriptions.put(sourceComponent.getId(), apiDescription);
+						}
+						IApiAnnotations elementDescription = apiDescription.resolveAnnotations(typeDescriptor2.handle);
+						if (elementDescription != null) {
+							visibility = elementDescription.getVisibility();
+						}
+					}
+					if ((visibility & visibilityModifiers) != 0) {
+						set.add(typeDescriptor2);
+					}
 					collectAllInterfaces(typeDescriptor2, apiComponent, profile, set);
 				}
 			}
 			String superclassName = typeDescriptor.superName;
 			if (superclassName != null && !Util.isJavaLangObject(superclassName)) {
-				String packageName = Util.getPackageName(superclassName);
-				IApiComponent[] components = profile.resolvePackage(apiComponent, packageName);
-				if (components == null) {
-					String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), apiComponent.getId()});
-					if (DEBUG) {
-						System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
-					}
-					reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
-					return;
-				}
-				IClassFile superclass = Util.getClassFile(components, superclassName);
-				if (superclass == null) {
-					String msg = ComparatorMessages.ClassFileComparator_4;
-					msg = MessageFormat.format(msg, new String[] {superclassName, profile.getName(), apiComponent.getId()});
-					if (DEBUG) {
-						System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
-					}
-					reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
-					return;
-				}
+				IClassFile superclass = getType(superclassName, apiComponent, profile);
+				if (superclass == null) return;
 				TypeDescriptor typeDescriptor2 = new TypeDescriptor(superclass.getContents());
 				collectAllInterfaces(typeDescriptor2, apiComponent, profile, set);
 			}
@@ -2641,6 +2621,9 @@ public class ClassFileComparator {
 		return getSuperclassList(typeDescriptor, apiComponent, profile, false);
 	}
 	private List getSuperclassList(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile, boolean includeObject) {
+		return getSuperclassList(typeDescriptor, apiComponent, profile, includeObject, false);
+	}
+	private List getSuperclassList(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile, boolean includeObject, boolean includePrivate) {
 		TypeDescriptor descriptor = typeDescriptor;
 		String superName = descriptor.superName;
 		if (Util.isJavaLangObject(superName) && !includeObject) {
@@ -2649,42 +2632,36 @@ public class ClassFileComparator {
 		List list = new ArrayList();
 		IApiComponent sourceComponent = apiComponent; 
 		try {
+			IApiDescription apiDescription = sourceComponent.getApiDescription();
+			Map apiDescriptions = new HashMap(3);
+			apiDescriptions.put(sourceComponent.getId(), apiDescription);
 			while (superName != null && (!Util.isJavaLangObject(superName) || includeObject)) {
-				String packageName = Util.getPackageName(superName);
-				IApiComponent[] components = profile.resolvePackage(sourceComponent, packageName);
-				if (components == null) {
-					String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_5, new String[] {packageName, profile.getName(), apiComponent.getId()});
-					if (DEBUG) {
-						System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
-					}
-					reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
+				IClassFile classFile = getType(superName, sourceComponent, profile);
+				if (classFile == null) {
 					return null;
 				}
-				sourceComponent = Util.getComponent(components, superName);
-				if (sourceComponent == null) {
-					String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_5, new String[] {packageName, profile.getName(), apiComponent.getId()});
-					if (DEBUG) {
-						System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
+				descriptor = new TypeDescriptor(classFile.getContents());
+				int visibility = VisibilityModifiers.PRIVATE;
+				if (sourceComponent.hasApiDescription()) {
+					apiDescription = (IApiDescription) apiDescriptions.get(sourceComponent.getId());
+					if (apiDescription == null) {
+						apiDescription = sourceComponent.getApiDescription();
+						apiDescriptions.put(sourceComponent.getId(), apiDescription);
 					}
-					reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
-					return null;
-				}
-				IClassFile superclass = sourceComponent.findClassFile(superName);
-				if (superclass == null) {
-					String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_7, new String[] {superName, profile.getName(), apiComponent.getId()});
-					if (DEBUG) {
-						System.err.println("SUPERINTERFACES LOOKUP: "+msg); //$NON-NLS-1$
+					IApiAnnotations elementDescription = apiDescription.resolveAnnotations(descriptor.handle);
+					if (elementDescription != null) {
+						visibility = elementDescription.getVisibility();
 					}
-					reportStatus(new Status(Status.ERROR, apiComponent.getId(), msg));
-					return null;
 				}
-				descriptor = new TypeDescriptor(superclass.getContents());
-				list.add(descriptor);
+				if (includePrivate || ((visibility & visibilityModifiers) != 0)) {
+					list.add(descriptor);
+				}
 				superName = descriptor.superName;
 			}
 		} catch (CoreException e) {
 			reportStatus(e);
 		}
+		if (list.isEmpty()) return null;
 		return list;
 	}
 	
@@ -2973,5 +2950,38 @@ public class ClassFileComparator {
 			}
 		}
 		return null;
+	}
+	
+	private IClassFile getType(String typeName, IApiComponent component, IApiProfile profile) throws CoreException {
+		IApiComponent sourceComponent = component;
+		String packageName = Util.getPackageName(typeName);
+		IApiComponent[] components = profile.resolvePackage(component, packageName);
+		if (components == null) {
+			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), component.getId()});
+			if (DEBUG) {
+				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
+			}
+			reportStatus(new Status(Status.ERROR, component.getId(), msg));
+			return null;
+		}
+		sourceComponent = Util.getComponent(components, typeName);
+		if (sourceComponent == null) {
+			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), component.getId()});
+			if (DEBUG) {
+				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
+			}
+			reportStatus(new Status(Status.ERROR, component.getId(), msg));
+			return null;
+		}
+		IClassFile superclass = sourceComponent.findClassFile(typeName);
+		if (superclass == null) {
+			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, new String[] {typeName, profile.getName(), component.getId()});
+			if (DEBUG) {
+				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
+			}
+			reportStatus(new Status(Status.ERROR, component.getId(), msg));
+			return null;
+		}
+		return superclass;
 	}
 }

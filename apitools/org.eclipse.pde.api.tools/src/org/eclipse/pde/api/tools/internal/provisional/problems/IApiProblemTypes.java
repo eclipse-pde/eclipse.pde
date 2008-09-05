@@ -77,10 +77,6 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
 	public static final String CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET);
-	public static final String CLASS_CHANGED_CONTRACTED_SUPERCLASS_SET =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CONTRACTED_SUPERCLASS_SET);
-	public static final String CLASS_CHANGED_SUPERCLASS =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.SUPERCLASS);
 	public static final String CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_ABSTRACT_TO_ABSTRACT);
 	public static final String CLASS_CHANGED_NON_FINAL_TO_FINAL =
@@ -99,6 +95,8 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.REMOVED, IDelta.CONSTRUCTOR);
 	public static final String CLASS_REMOVED_TYPE_MEMBER =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_MEMBER);
+	public static final String CLASS_REMOVED_SUPERCLASS =
+		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.REMOVED, IDelta.SUPERCLASS);
 	public static final String CLASS_REMOVED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETER);
 

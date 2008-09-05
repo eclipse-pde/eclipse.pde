@@ -99,8 +99,6 @@ public class PreferenceMessages extends NLS {
 	public static String CLASS_ADDED_METHOD;
 	public static String CLASS_ADDED_TYPE_PARAMETER;
 	public static String CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
-	public static String CLASS_CHANGED_CONTRACTED_SUPERCLASS_SET;
-	public static String CLASS_CHANGED_SUPERCLASS;
 	public static String CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT;
 	public static String CLASS_CHANGED_NON_FINAL_TO_FINAL;
 	public static String CLASS_CHANGED_TYPE_CONVERSION;
@@ -109,6 +107,7 @@ public class PreferenceMessages extends NLS {
 	public static String CLASS_REMOVED_FIELD;
 	public static String CLASS_REMOVED_METHOD;
 	public static String CLASS_REMOVED_CONSTRUCTOR;
+	public static String CLASS_REMOVED_SUPERCLASS;
 	public static String CLASS_REMOVED_TYPE_MEMBER;
 	public static String CLASS_REMOVED_TYPE_PARAMETER;
 

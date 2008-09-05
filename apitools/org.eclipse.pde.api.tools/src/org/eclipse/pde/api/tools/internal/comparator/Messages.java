@@ -171,8 +171,6 @@ public class Messages extends NLS {
 						switch(delta.getFlags()) {
 							case IDelta.ABSTRACT_TO_NON_ABSTRACT :
 								return 19;
-							case IDelta.EXPANDED_SUPERCLASS_SET :
-								return 20;
 							case IDelta.EXPANDED_SUPERINTERFACES_SET :
 								return 21;
 							case IDelta.FINAL_TO_NON_FINAL :

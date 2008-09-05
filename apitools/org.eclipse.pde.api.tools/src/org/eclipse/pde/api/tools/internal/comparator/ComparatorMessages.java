@@ -20,9 +20,6 @@ public class ComparatorMessages extends NLS {
 	public static String ClassFileComparator_0;
 	public static String ClassFileComparator_1;
 	public static String ClassFileComparator_2;
-	public static String ClassFileComparator_4;
-	public static String ClassFileComparator_5;
-	public static String ClassFileComparator_7;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, ComparatorMessages.class);

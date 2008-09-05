@@ -470,7 +470,6 @@ public class ApiProblemFactory {
 						}
 						switch(flags) {
 							case IDelta.CLASS_BOUND: return 52;
-							case IDelta.CONTRACTED_SUPERCLASS_SET: return 53;
 							case IDelta.CONTRACTED_SUPERINTERFACES_SET: return 54;
 							case IDelta.DECREASE_ACCESS: return 55;
 							case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT: return 61;
@@ -480,7 +479,7 @@ public class ApiProblemFactory {
 							case IDelta.NON_STATIC_TO_STATIC: return 123;
 							case IDelta.RESTRICTIONS: return 72;
 							case IDelta.STATIC_TO_NON_STATIC: return 73;
-							case IDelta.SUPERCLASS: return  74;
+							case IDelta.SUPERCLASS: return 74;
 							case IDelta.TYPE_CONVERSION:
 								return TYPE_CONVERSION_ID;
 							case IDelta.VARARGS_TO_ARRAY: return 85;
@@ -513,6 +512,7 @@ public class ApiProblemFactory {
 							case IDelta.API_METHOD_WITH_DEFAULT_VALUE : return 129;
 							case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE: return 130;
 							case IDelta.TYPE_ARGUMENT: return 107;
+							case IDelta.SUPERCLASS: return 131;
 						}
 					}
 				}

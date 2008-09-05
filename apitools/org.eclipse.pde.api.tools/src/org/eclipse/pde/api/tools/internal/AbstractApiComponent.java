@@ -201,14 +201,14 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractClassFileContainer#getClassFileContainers()
 	 */
-	public IClassFileContainer[] getClassFileContainers() {
+	public synchronized IClassFileContainer[] getClassFileContainers() {
 		return super.getClassFileContainers();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractClassFileContainer#getClassFileContainers()
 	 */
-	public IClassFileContainer[] getClassFileContainers(String id) {
+	public synchronized IClassFileContainer[] getClassFileContainers(String id) {
 		if (this.hasFragments()) {
 			return super.getClassFileContainers(id);
 		} else {

@@ -200,16 +200,6 @@ public interface IDelta {
 	 */
 	public static final int CONSTRUCTOR = 8;
 	/**
-	 * Delta kind flag that denotes a class in the super-class set has been removed.
-	 * <br>
-	 * Applies to kinds:
-	 * <ul>
-	 * <li>{@link #CHANGED}</li>
-	 * </ul> 
-	 * @see #getFlags()
-	 */
-	public static final int CONTRACTED_SUPERCLASS_SET = 9;
-	/**
 	 * Delta kind flag that denotes an interface in the super-interface set has been removed.
 	 * <br>
 	 * Applies to kinds:
@@ -255,17 +245,6 @@ public interface IDelta {
 	 * @see #getFlags()
 	 */
 	public static final int EXECUTION_ENVIRONMENT = 13;
-	/**
-	 * Delta kind flag that denotes a superclass has been added to the current super-class set.
-	 * <br>
-	 * Applies to kinds:
-	 * <ul>
-	 * <li>{@link #CHANGED}</li>
-	 * </ul>
-	 * 
-	 * @see #getFlags()
-	 */
-	public static final int EXPANDED_SUPERCLASS_SET = 14;
 	/**
 	 * Delta kind flag that denotes an interface has been added to the current set of super-interfaces.
 	 * <br>
@@ -525,12 +504,12 @@ public interface IDelta {
 	 */
 	public static final int STATIC_TO_NON_STATIC = 38;
 	/**
-	 * Delta kind flag that denotes a super-class has been added or changed.
+	 * Delta kind flag that denotes a super-class has been added, or removed.
 	 * <br>
 	 * Applies to kinds:
 	 * <ul>
 	 * <li>{@link #ADDED}</li>
-	 * <li>{@link #CHANGED}</li>
+	 * <li>{@link #REMOVED}</li>
 	 * </ul>
 	 * 
 	 * @see #getFlags()

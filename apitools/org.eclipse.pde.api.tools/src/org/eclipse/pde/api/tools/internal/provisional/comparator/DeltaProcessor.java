@@ -391,14 +391,13 @@ public class DeltaProcessor {
 						}
 						return true;
 					case IDelta.TYPE_PARAMETER :
+					case IDelta.SUPERCLASS :
 						return !Util.isVisible(delta);
 				}
 				break;
 			case IDelta.CHANGED :
 				switch(delta.getFlags()) {
 					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
-					case IDelta.CONTRACTED_SUPERCLASS_SET :
-					case IDelta.SUPERCLASS :
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
 					case IDelta.TYPE_CONVERSION :
 					case IDelta.RESTRICTIONS :

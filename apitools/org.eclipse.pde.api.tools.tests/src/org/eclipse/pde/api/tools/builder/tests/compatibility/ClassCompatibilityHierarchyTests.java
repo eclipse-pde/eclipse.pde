@@ -74,6 +74,21 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 				flags);
 	}
 
+	/**
+	 * Returns a problem id for a compatibility remove to a class based on the
+	 * specified flags.
+	 * 
+	 * @param flags
+	 * @return problem id
+	 */
+	protected int getRemovedProblemId(int flags) {
+		return ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.CLASS_ELEMENT_TYPE,
+				IDelta.REMOVED,
+				flags);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
@@ -87,7 +102,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	private void xReduceHierarchyCtoA(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromCtoA.java");
 		int[] ids = new int[] {
-			getChangedProblemId(IDelta.CONTRACTED_SUPERCLASS_SET)
+			getRemovedProblemId(IDelta.SUPERCLASS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
@@ -110,7 +125,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	private void xReduceHierarchyCtoB(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromCtoB.java");
 		int[] ids = new int[] {
-			getChangedProblemId(IDelta.CONTRACTED_SUPERCLASS_SET)
+				getRemovedProblemId(IDelta.SUPERCLASS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
@@ -133,7 +148,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	private void xReduceHierarchyCtoObject(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromCtoObject.java");
 		int[] ids = new int[] {
-			getChangedProblemId(IDelta.SUPERCLASS) // TODO appears as changed superclass versus reduced
+			getRemovedProblemId(IDelta.SUPERCLASS) // TODO appears as changed superclass versus reduced
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
@@ -156,7 +171,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	private void xChangeHierarchyAtoD(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangedFromAtoD.java");
 		int[] ids = new int[] {
-			getChangedProblemId(IDelta.CONTRACTED_SUPERCLASS_SET) // TODO appears as reduced versus changed superclass
+				getRemovedProblemId(IDelta.SUPERCLASS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
