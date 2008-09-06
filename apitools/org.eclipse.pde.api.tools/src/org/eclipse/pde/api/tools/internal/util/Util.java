@@ -2223,12 +2223,22 @@ public final class Util {
 	 */
 	public static String getFileContentAsString(File file) {
 		String contents = null;
+		FileInputStream stream = null;
 		try {
-			char[] array = getInputStreamAsCharArray(new FileInputStream(file), -1, IApiCoreConstants.UTF_8);
+			stream = new FileInputStream(file);
+			char[] array = getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8);
 			contents = new String(array);
 		}
 		catch(IOException ioe) {
 			ApiPlugin.log(ioe);
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
 		}
 		return contents;
 	}
