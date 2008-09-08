@@ -370,7 +370,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	private void generateRootFilesAndPermissions() throws CoreException {
 		String product = generateProductFiles ? director.getProduct() : null;
-		if (product != null && !havePDEUIState()) {
+		if (product != null) {
 			ProductGenerator generator = new ProductGenerator();
 			generator.setProduct(product);
 			generator.setBuildSiteFactory(siteFactory);
