@@ -18,6 +18,7 @@ Export-Package: a.annotations,
  a.enums,
  a.fields.modifiers,
  a.interfaces.members,
+ a.interfaces.typeparameters,
  a.methods.modifiers,
  a.since,
  a.version
