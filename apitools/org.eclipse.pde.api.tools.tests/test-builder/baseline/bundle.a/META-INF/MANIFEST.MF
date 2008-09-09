@@ -20,5 +20,6 @@ Export-Package: a.annotations,
  a.interfaces.members,
  a.interfaces.typeparameters,
  a.methods.modifiers,
+ a.methods.typeparameters,
  a.since,
  a.version

@@ -253,4 +253,57 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		xPublicToProtected(false);
 	}	
 		
+	/**
+	 * Tests adding a type parameter to a constructor
+	 */
+	private void xAddTypeParameter(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeParameter.java");
+		int[] ids = new int[] {
+			ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.CONSTRUCTOR_ELEMENT_TYPE,
+				IDelta.ADDED,
+				IDelta.TYPE_PARAMETER)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddTypeParameter.AddTypeParameter(Object)", "U"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddTypeParameterI() throws Exception {
+		xAddTypeParameter(true);
+	}	
+	
+	public void testAddTypeParameterF() throws Exception {
+		xAddTypeParameter(false);
+	}
+	
+	/**
+	 * Tests removing a type parameter from a constructor
+	 */
+	private void xRemoveTypeParameter(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeParameter.java");
+		int[] ids = new int[] {
+			ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.CONSTRUCTOR_ELEMENT_TYPE,
+				IDelta.REMOVED,
+				IDelta.TYPE_PARAMETER)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeParameter.RemoveTypeParameter(Object)", "U"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemoveTypeParameterI() throws Exception {
+		xRemoveTypeParameter(true);
+	}	
+	
+	public void testRemoveTypeParameterF() throws Exception {
+		xRemoveTypeParameter(false);
+	}	
 }
