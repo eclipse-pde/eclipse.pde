@@ -120,7 +120,7 @@ public class PreferenceMessages extends NLS {
 	public static String FIELD_CHANGED_STATIC_TO_NON_STATIC;
 	public static String FIELD_CHANGED_NON_STATIC_TO_STATIC;
 	public static String FIELD_REMOVED_VALUE;
-	public static String FIELD_REMOVED_TYPE_ARGUMENTS;
+	public static String FIELD_REMOVED_TYPE_ARGUMENT;
 	
 	public static String METHOD_ADDED_TYPE_PARAMETER;
 	public static String METHOD_CHANGED_VARARGS_TO_ARRAY;

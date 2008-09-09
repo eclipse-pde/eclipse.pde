@@ -15,7 +15,7 @@ import java.util.List;
 /**
  *
  */
-public class RemoveTypeParameters {
+public class RemoveTypeArguments {
 
 	public List<String> FIELD;
 }

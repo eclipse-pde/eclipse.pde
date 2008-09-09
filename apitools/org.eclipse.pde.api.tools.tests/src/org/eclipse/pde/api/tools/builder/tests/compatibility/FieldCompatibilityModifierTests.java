@@ -599,49 +599,48 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	}
 	
 	/**
-	 * Tests remove a type parameter
+	 * Tests remove a type argument
 	 */
-	private void xRemoveTypeParameters(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeParameters.java");
-		// TODO: expecting problem
-//		int[] ids = new int[] {
-//			ApiProblemFactory.createProblemId(
-//				IApiProblem.CATEGORY_COMPATIBILITY,
-//				IDelta.FIELD_ELEMENT_TYPE,
-//				IDelta.REMOVED,
-//				IDelta.TYPE_PARAMETER)
-//		};
-//		setExpectedProblemIds(ids);
-//		String[][] args = new String[1][];
-//		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeParameters", "FIELD"};
-//		setExpectedMessageArgs(args);
+	private void xRemoveTypeArguments(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeArguments.java");
+		int[] ids = new int[] {
+			ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.FIELD_ELEMENT_TYPE,
+				IDelta.REMOVED,
+				IDelta.TYPE_ARGUMENT)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeArguments.FIELD", "java.lang.String"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	public void testRemoveTypeParametersI() throws Exception {
-		xRemoveTypeParameters(true);
+	public void testRemoveTypeArgumentsI() throws Exception {
+		xRemoveTypeArguments(true);
 	}	
 	
-	public void testRemoveTypeParametersF() throws Exception {
-		xRemoveTypeParameters(false);
+	public void testRemoveTypeArgumentsF() throws Exception {
+		xRemoveTypeArguments(false);
 	}
 	
 	/**
 	 * Tests adding a type parameter
 	 */
-	private void xAddTypeParameters(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeParameters.java");
+	private void xAddTypeArguments(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeArguments.java");
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	public void testAddTypeParametersI() throws Exception {
-		xAddTypeParameters(true);
-	}	
+	public void testAddTypeArgumentsI() throws Exception {
+		xAddTypeArguments(true);
+	}
 	
-	public void testAddTypeParametersF() throws Exception {
-		xAddTypeParameters(false);
-	}	
+	public void testAddTypeArgumentsF() throws Exception {
+		xAddTypeArguments(false);
+	}
 	
 	/**
 	 * Tests adding no-reference

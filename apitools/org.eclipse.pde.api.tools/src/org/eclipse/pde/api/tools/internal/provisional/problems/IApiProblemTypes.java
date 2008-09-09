@@ -119,8 +119,8 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.FIELD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_STATIC_TO_STATIC);
 	public static final String FIELD_REMOVED_VALUE =
 		Util.getDeltaPrefererenceKey(IDelta.FIELD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.VALUE);
-	public static final String FIELD_REMOVED_TYPE_ARGUMENTS =
-		Util.getDeltaPrefererenceKey(IDelta.FIELD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_ARGUMENTS);
+	public static final String FIELD_REMOVED_TYPE_ARGUMENT =
+		Util.getDeltaPrefererenceKey(IDelta.FIELD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_ARGUMENT);
 	// method key constant
 	public static final String METHOD_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);

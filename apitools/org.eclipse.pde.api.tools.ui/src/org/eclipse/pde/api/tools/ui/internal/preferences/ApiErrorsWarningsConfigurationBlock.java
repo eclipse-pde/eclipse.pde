@@ -322,8 +322,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 		getApiToolsKey(IApiProblemTypes.FIELD_CHANGED_NON_STATIC_TO_STATIC);
 	private static final Key KEY_FIELD_REMOVED_VALUE =
 		getApiToolsKey(IApiProblemTypes.FIELD_REMOVED_VALUE);
-	private static final Key KEY_FIELD_REMOVED_TYPE_ARGUMENTS =
-		getApiToolsKey(IApiProblemTypes.FIELD_REMOVED_TYPE_ARGUMENTS);
+	private static final Key KEY_FIELD_REMOVED_TYPE_ARGUMENT =
+		getApiToolsKey(IApiProblemTypes.FIELD_REMOVED_TYPE_ARGUMENT);
 
 	// method key constant
 	private static final Key KEY_METHOD_ADDED_TYPE_PARAMETER =
@@ -433,7 +433,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_FIELD_CHANGED_STATIC_TO_NON_STATIC,
 		KEY_FIELD_CHANGED_NON_STATIC_TO_STATIC,
 		KEY_FIELD_REMOVED_VALUE,
-		KEY_FIELD_REMOVED_TYPE_ARGUMENTS,
+		KEY_FIELD_REMOVED_TYPE_ARGUMENT,
 		KEY_METHOD_ADDED_TYPE_PARAMETER,
 		KEY_METHOD_CHANGED_VARARGS_TO_ARRAY,
 		KEY_METHOD_CHANGED_DECREASE_ACCESS,
@@ -537,7 +537,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_FIELD_CHANGED_STATIC_TO_NON_STATIC,
 		KEY_FIELD_CHANGED_NON_STATIC_TO_STATIC,
 		KEY_FIELD_REMOVED_VALUE,
-		KEY_FIELD_REMOVED_TYPE_ARGUMENTS,
+		KEY_FIELD_REMOVED_TYPE_ARGUMENT,
 		KEY_METHOD_ADDED_TYPE_PARAMETER,
 		KEY_METHOD_CHANGED_VARARGS_TO_ARRAY,
 		KEY_METHOD_CHANGED_DECREASE_ACCESS,
@@ -1072,7 +1072,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 						PreferenceMessages.FIELD_CHANGED_STATIC_TO_NON_STATIC,
 						PreferenceMessages.FIELD_CHANGED_NON_STATIC_TO_STATIC,
 						PreferenceMessages.FIELD_REMOVED_VALUE,
-						PreferenceMessages.FIELD_REMOVED_TYPE_ARGUMENTS,
+						PreferenceMessages.FIELD_REMOVED_TYPE_ARGUMENT,
 					},
 					new Key[] {
 						KEY_FIELD_ADDED_VALUE,
@@ -1084,7 +1084,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 						KEY_FIELD_CHANGED_STATIC_TO_NON_STATIC,
 						KEY_FIELD_CHANGED_NON_STATIC_TO_STATIC,
 						KEY_FIELD_REMOVED_VALUE,
-						KEY_FIELD_REMOVED_TYPE_ARGUMENTS,
+						KEY_FIELD_REMOVED_TYPE_ARGUMENT,
 					});
 				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityMethodElement);
 				initializeComboControls(

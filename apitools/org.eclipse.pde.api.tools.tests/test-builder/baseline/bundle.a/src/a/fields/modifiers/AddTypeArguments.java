@@ -15,7 +15,7 @@ import java.util.List;
 /**
  *
  */
-public class AddTypeParameters {
+public class AddTypeArguments {
 
-	public List<String> FIELD;
+	public List FIELD;
 }
