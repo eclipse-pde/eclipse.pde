@@ -445,18 +445,17 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 */
 	private void xAddAbstractMethod(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractMethod.java");
-		// TODO: expect problem
-//		int[] ids = new int[] {
-//			ApiProblemFactory.createProblemId(
-//				IApiProblem.CATEGORY_COMPATIBILITY,
-//				IDelta.CLASS_ELEMENT_TYPE,
-//				IDelta.ADDED,
-//				IDelta.METHOD)
-//			};
-//		setExpectedProblemIds(ids);
-//		String[][] args = new String[1][];
-//		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstractMethod", "method()"};
-//		setExpectedMessageArgs(args);
+		int[] ids = new int[] {
+			ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.CLASS_ELEMENT_TYPE,
+				IDelta.ADDED,
+				IDelta.METHOD)
+			};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstractMethod", "method()"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -483,5 +482,5 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	
 	public void testAddAbstractMethodNoExtendF() throws Exception {
 		xAddAbstractMethodNoExtend(false);
-	}	
+	}
 }

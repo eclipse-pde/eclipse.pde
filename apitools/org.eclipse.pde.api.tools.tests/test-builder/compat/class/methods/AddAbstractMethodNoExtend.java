@@ -15,5 +15,5 @@ package a.classes.methods;
  */
 public abstract class AddAbstractMethodNoExtend {
 
-	public abstract void method() {}
+	public abstract void method();
 }
