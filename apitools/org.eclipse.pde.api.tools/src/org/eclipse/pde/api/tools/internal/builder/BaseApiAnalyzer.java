@@ -1041,11 +1041,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							}
 					}
 					break;
-				case IDelta.CHANGED :
-					if (flags == IDelta.RESTRICTIONS) {
-						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=228424
-						return;
-					}
 			}
 			IApiProblem problem = createCompatibilityProblem(delta, reference, component);
 			if(addProblem(problem)) {

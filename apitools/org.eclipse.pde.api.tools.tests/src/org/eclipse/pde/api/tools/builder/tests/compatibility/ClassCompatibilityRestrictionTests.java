@@ -82,14 +82,13 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	 */
 	private void xAddNoExtend(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoExtend.java");
-		// TODO: expecting a problem
-//		int[] ids = new int[] {
-//			getDefaultProblemId()
-//		};
-//		setExpectedProblemIds(ids);
-//		String[][] args = new String[1][];
-//		args[0] = new String[]{"AddNoExtend"};
-//		setExpectedMessageArgs(args);
+		int[] ids = new int[] {
+			getDefaultProblemId()
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddNoExtend"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -106,14 +105,13 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	 */
 	private void xAddNoInstantiate(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoInstantiate.java");
-		// TODO: expecting a problem
-//		int[] ids = new int[] {
-//			getDefaultProblemId()
-//		};
-//		setExpectedProblemIds(ids);
-//		String[][] args = new String[1][];
-//		args[0] = new String[]{"AddNoInstantiate"};
-//		setExpectedMessageArgs(args);
+		int[] ids = new int[] {
+			getDefaultProblemId()
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddNoInstantiate"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	

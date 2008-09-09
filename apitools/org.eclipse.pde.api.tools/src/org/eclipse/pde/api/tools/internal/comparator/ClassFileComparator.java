@@ -967,15 +967,24 @@ public class ClassFileComparator {
 					}
 					if (restrictions2 != restrictions) {
 						// report different restrictions
-						this.addDelta(
-								this.descriptor1.getElementType(),
-								IDelta.CHANGED,
-								IDelta.RESTRICTIONS,
-								restrictions2,
-								typeAccess,
-								this.classFile,
-								this.descriptor1.name,
-								Util.getDescriptorName(descriptor1));
+						// adding no extend on a final class is ok
+						// adding no instantiate on an abstract class is ok
+						if (!((Util.isFinal(this.descriptor2.access)
+								&& RestrictionModifiers.isExtendRestriction(restrictions2)
+								&& !RestrictionModifiers.isExtendRestriction(restrictions))
+							|| (Util.isAbstract(this.descriptor2.access)
+									&& RestrictionModifiers.isInstantiateRestriction(restrictions2)
+									&& !RestrictionModifiers.isInstantiateRestriction(restrictions)))) {
+							this.addDelta(
+									this.descriptor1.getElementType(),
+									IDelta.CHANGED,
+									IDelta.RESTRICTIONS,
+									restrictions2,
+									typeAccess,
+									this.classFile,
+									this.descriptor1.name,
+									Util.getDescriptorName(descriptor1));
+						}
 					}
 				}
 				this.currentDescriptorRestrictions = restrictions2;
