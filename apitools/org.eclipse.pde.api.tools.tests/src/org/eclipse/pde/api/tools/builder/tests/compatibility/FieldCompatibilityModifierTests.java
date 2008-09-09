@@ -596,5 +596,50 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	
 	public void testSpecializeTypeF() throws Exception {
 		xSpecializeType(false);
+	}
+	
+	/**
+	 * Tests remove a type parameter
+	 */
+	private void xRemoveTypeParameters(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeParameters.java");
+		// TODO: expecting problem
+//		int[] ids = new int[] {
+//			ApiProblemFactory.createProblemId(
+//				IApiProblem.CATEGORY_COMPATIBILITY,
+//				IDelta.FIELD_ELEMENT_TYPE,
+//				IDelta.REMOVED,
+//				IDelta.TYPE_PARAMETER)
+//		};
+//		setExpectedProblemIds(ids);
+//		String[][] args = new String[1][];
+//		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeParameters", "FIELD"};
+//		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemoveTypeParametersI() throws Exception {
+		xRemoveTypeParameters(true);
+	}	
+	
+	public void testRemoveTypeParametersF() throws Exception {
+		xRemoveTypeParameters(false);
+	}
+	
+	/**
+	 * Tests adding a type parameter
+	 */
+	private void xAddTypeParameters(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeParameters.java");
+		// no problems expected
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddTypeParametersI() throws Exception {
+		xAddTypeParameters(true);
+	}	
+	
+	public void testAddTypeParametersF() throws Exception {
+		xAddTypeParameters(false);
 	}	
 }
