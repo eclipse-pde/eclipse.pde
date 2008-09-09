@@ -119,4 +119,47 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		xRemoveTypeParameter(false);
 	}
 	
+	/**
+	 * Tests converting variable arguments to an array
+	 */
+	private void xVarArgsToArray(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("VarArgsToArray.java");
+		int[] ids = new int[] {
+			ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.METHOD_ELEMENT_TYPE,
+				IDelta.CHANGED,
+				IDelta.VARARGS_TO_ARRAY)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "VarArgsToArray", "method(int, int[])"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testVarArgsToArrayI() throws Exception {
+		xVarArgsToArray(true);
+	}	
+	
+	public void testVarArgsToArrayF() throws Exception {
+		xVarArgsToArray(false);
+	}	
+	
+	/**
+	 * Tests converting an array to variable arguments
+	 */
+	private void xArrayToVarArgs(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ArrayToVarArgs.java");
+		// no problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testArrayToVarArgsI() throws Exception {
+		xArrayToVarArgs(true);
+	}	
+	
+	public void testArrayToVarArgsF() throws Exception {
+		xArrayToVarArgs(false);
+	}	
 }
