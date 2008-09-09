@@ -642,4 +642,31 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	public void testAddTypeParametersF() throws Exception {
 		xAddTypeParameters(false);
 	}	
+	
+	/**
+	 * Tests adding no-reference
+	 */
+	private void xAddNoReference(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoReference.java");
+		int[] ids = new int[] {
+			ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.FIELD_ELEMENT_TYPE,
+				IDelta.REMOVED,
+				IDelta.API_FIELD)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddNoReference", "FIELD"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddNoReferenceI() throws Exception {
+		xAddNoReference(true);
+	}	
+	
+	public void testAddNoReferenceF() throws Exception {
+		xAddNoReference(false);
+	}			
 }
