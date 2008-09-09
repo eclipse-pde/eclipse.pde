@@ -438,5 +438,50 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	
 	public void testAddPublicAPIMethodF() throws Exception {
 		xAddPublicAPIMethod(false);
-	}		
+	}	
+	
+	/**
+	 * Tests the addition of an abstract method in an API class that can be extended
+	 */
+	private void xAddAbstractMethod(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractMethod.java");
+		// TODO: expect problem
+//		int[] ids = new int[] {
+//			ApiProblemFactory.createProblemId(
+//				IApiProblem.CATEGORY_COMPATIBILITY,
+//				IDelta.CLASS_ELEMENT_TYPE,
+//				IDelta.ADDED,
+//				IDelta.METHOD)
+//			};
+//		setExpectedProblemIds(ids);
+//		String[][] args = new String[1][];
+//		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstractMethod", "method()"};
+//		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddAbstractMethodI() throws Exception {
+		xAddAbstractMethod(true);
+	}	
+	
+	public void testAddAbstractMethodF() throws Exception {
+		xAddAbstractMethod(false);
+	}	
+	
+	/**
+	 * Tests the addition of an abstract method in an API class that *cannot* be extended
+	 */
+	private void xAddAbstractMethodNoExtend(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractMethodNoExtend.java");
+		// no problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddAbstractMethodNoExtendI() throws Exception {
+		xAddAbstractMethodNoExtend(true);
+	}	
+	
+	public void testAddAbstractMethodNoExtendF() throws Exception {
+		xAddAbstractMethodNoExtend(false);
+	}	
 }
