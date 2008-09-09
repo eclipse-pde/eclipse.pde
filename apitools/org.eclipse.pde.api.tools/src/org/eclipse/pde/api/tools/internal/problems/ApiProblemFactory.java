@@ -479,9 +479,7 @@ public class ApiProblemFactory {
 							case IDelta.NON_STATIC_TO_STATIC: return 123;
 							case IDelta.RESTRICTIONS: return 72;
 							case IDelta.STATIC_TO_NON_STATIC: return 73;
-							case IDelta.SUPERCLASS: return 74;
-							case IDelta.TYPE_CONVERSION:
-								return TYPE_CONVERSION_ID;
+							case IDelta.TYPE_CONVERSION: return TYPE_CONVERSION_ID;
 							case IDelta.VARARGS_TO_ARRAY: return 85;
 							case IDelta.TYPE_ARGUMENT: return 124;
 						}
