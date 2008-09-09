@@ -490,12 +490,18 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	protected void assertProblems(ApiProblem[] problems) {
 		super.assertProblems(problems);
 		int[] expectedProblemIds = getExpectedProblemIds();
-		assertEquals("Wrong number of problems", expectedProblemIds.length, problems.length);
+		int length = problems.length;
+		if (expectedProblemIds.length != length) {
+			for (int i = 0; i < length; i++) {
+				System.err.println(problems[i]);
+			}
+		}
+		assertEquals("Wrong number of problems", expectedProblemIds.length, length);
 		String[][] args = getExpectedMessageArgs();
 		if (args != null) {
 			// compare messages
 			Set<String> set = new HashSet<String>();
-			for (int i = 0; i < problems.length; i++) {
+			for (int i = 0; i < length; i++) {
 				set.add(problems[i].getMessage());
 			}
 			for (int i = 0; i < expectedProblemIds.length; i++) {
@@ -507,7 +513,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		} else {
 			// compare id's
 			Set<Integer> set = new HashSet<Integer>();
-			for (int i = 0; i < problems.length; i++) {
+			for (int i = 0; i < length; i++) {
 				set.add(new Integer(problems[i].getProblemId()));
 			}
 			for (int i = 0; i < expectedProblemIds.length; i++) {
