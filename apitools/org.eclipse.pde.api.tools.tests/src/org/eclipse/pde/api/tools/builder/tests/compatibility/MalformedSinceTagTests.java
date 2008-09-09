@@ -127,8 +127,7 @@ public class MalformedSinceTagTests extends SinceTagTest {
 	 */
 	private void xMalformedTag(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("MalformedTag.java");
-		// TODO: expecting a problem
-		//configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"abc1.0", "method()"});
+		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"abc1.0", "method()"});
 		performCompatibilityTest(filePath, incremental);
 	}
 	

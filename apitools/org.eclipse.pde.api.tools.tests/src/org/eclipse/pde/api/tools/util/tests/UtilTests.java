@@ -266,5 +266,10 @@ public class UtilTests extends TestCase {
 		assertEquals("wrong version string", "3.4", sinceTagVersion.getVersionString());
 		assertNull("wrong prefix string", sinceTagVersion.prefixString());
 		assertEquals("wrong postfix string", " protected (was added in 2.1 as private class)", sinceTagVersion.postfixString());
+
+		sinceTagVersion = new SinceTagVersion("abc1.0");
+		assertNull("Wrong version string", sinceTagVersion.getVersionString());
+		assertNull("Wrong prefix string", sinceTagVersion.prefixString());
+		assertNull("Wrong postfix string", sinceTagVersion.postfixString());
 	}
 }

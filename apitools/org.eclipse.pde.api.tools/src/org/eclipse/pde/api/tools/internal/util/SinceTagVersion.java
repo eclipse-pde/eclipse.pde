@@ -59,6 +59,12 @@ public class SinceTagVersion {
 			if (versionString.length() != value.length()) {
 				if (prefixIndex != 0) {
 					this.prefixString = value.substring(0, prefixIndex);
+					// if prefixString doesn't end with a space, this is a wrong version
+					if (Character.isLetterOrDigit(value.charAt(prefixIndex - 1))) {
+						this.versionString = null;
+						this.prefixString = null;
+						return;
+					}
 				}
 			}
 			// extract postfix
