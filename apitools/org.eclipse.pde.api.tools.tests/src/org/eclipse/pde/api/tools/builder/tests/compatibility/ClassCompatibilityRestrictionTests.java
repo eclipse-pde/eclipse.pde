@@ -140,4 +140,38 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		xFinalAddNoExtend(false);
 	}
 	
+	/**
+	 * Tests adding a no-instantiate annotation to an abstract class 
+	 */
+	private void xAbstractAddNoInstantiate(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AbstractAddNoInstantiate.java");
+		// no errors expected
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAbstractAddNoInstantiateI() throws Exception {
+		xAbstractAddNoInstantiate(true);
+	}	
+	
+	public void testAbstractAddNoInstantiateF() throws Exception {
+		xAbstractAddNoInstantiate(false);
+	}	
+	
+	/**
+	 * Tests adding an abstract keyword to a no-instantiate class 
+	 */
+	private void xNoInstantiateAddAbstract(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("NoInstantiateAddAbstract.java");
+		// no errors expected
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testNoInstantiateAddAbstractI() throws Exception {
+		xNoInstantiateAddAbstract(true);
+	}	
+	
+	public void testNoInstantiateAddAbstractF() throws Exception {
+		xNoInstantiateAddAbstract(false);
+	}		
+	
 }
