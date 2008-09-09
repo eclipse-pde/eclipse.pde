@@ -123,7 +123,6 @@ public class PreferenceMessages extends NLS {
 	public static String FIELD_REMOVED_TYPE_ARGUMENTS;
 	
 	public static String METHOD_ADDED_TYPE_PARAMETER;
-	public static String METHOD_CHANGED_TYPE_PARAMETER;
 	public static String METHOD_CHANGED_VARARGS_TO_ARRAY;
 	public static String METHOD_CHANGED_DECREASE_ACCESS;
 	public static String METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT;
@@ -134,7 +133,6 @@ public class PreferenceMessages extends NLS {
 	public static String METHOD_REMOVED_TYPE_PARAMETER;
 
 	public static String CONSTRUCTOR_ADDED_TYPE_PARAMETER;
-	public static String CONSTRUCTOR_CHANGED_TYPE_PARAMETER;
 	public static String CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY;
 	public static String CONSTRUCTOR_CHANGED_DECREASE_ACCESS;
 	public static String CONSTRUCTOR_REMOVED_TYPE_PARAMETER;

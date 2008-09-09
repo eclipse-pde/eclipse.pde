@@ -124,8 +124,6 @@ public interface IApiProblemTypes {
 	// method key constant
 	public static final String METHOD_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
-	public static final String METHOD_CHANGED_TYPE_PARAMETER =
-		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_PARAMETER);
 	public static final String METHOD_CHANGED_VARARGS_TO_ARRAY =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY);
 	public static final String METHOD_CHANGED_DECREASE_ACCESS =
@@ -145,8 +143,6 @@ public interface IApiProblemTypes {
 	// constructor key constant
 	public static final String CONSTRUCTOR_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
-	public static final String CONSTRUCTOR_CHANGED_TYPE_PARAMETER =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_PARAMETER);
 	public static final String CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY);
 	public static final String CONSTRUCTOR_CHANGED_DECREASE_ACCESS =
