@@ -381,5 +381,5 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	
 	public void testAddNoImplementF() throws Exception {
 		xAddNoImplement(false);
-	}	
+	}
 }
