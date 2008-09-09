@@ -361,18 +361,17 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 */
 	private void xAddNoImplement(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoImplement.java");
-		// TODO: expect problem
-//		int[] ids = new int[] {
-//				ApiProblemFactory.createProblemId(
-//						IApiProblem.CATEGORY_COMPATIBILITY,
-//						IDelta.INTERFACE_ELEMENT_TYPE,
-//						IDelta.CHANGED,
-//						IDelta.RESTRICTIONS)
-//		};
-//		setExpectedProblemIds(ids);
-//		String[][] args = new String[1][];
-//		args[0] = new String[]{PACKAGE_PREFIX + "AddNoImplement"};
-//		setExpectedMessageArgs(args);
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.INTERFACE_ELEMENT_TYPE,
+						IDelta.CHANGED,
+						IDelta.RESTRICTIONS)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddNoImplement"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
