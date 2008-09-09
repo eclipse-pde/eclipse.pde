@@ -958,34 +958,24 @@ public class ClassFileComparator {
 			if (elementDescription2 != null) {
 				int restrictions2 = elementDescription2.getRestrictions();
 				IApiDescription apiDescription = this.component.getApiDescription();
-				IApiAnnotations componentApiDescription = apiDescription.resolveAnnotations(this.descriptor1.handle);
-				if (componentApiDescription != null) {
-					int restrictions = componentApiDescription.getRestrictions();
-					this.initialDescriptorRestrictions = restrictions;
+				if (this.component.hasApiDescription()) {
+					int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+					IApiAnnotations componentApiDescription = apiDescription.resolveAnnotations(this.descriptor1.handle);
+					if (componentApiDescription != null) {
+						restrictions = componentApiDescription.getRestrictions();
+						this.initialDescriptorRestrictions = restrictions;
+					}
 					if (restrictions2 != restrictions) {
-						if (RestrictionModifiers.isUnrestricted(restrictions)) {
-							// report different restrictions - from not restricted to restricted
-							this.addDelta(
-									this.descriptor1.getElementType(),
-									IDelta.CHANGED,
-									IDelta.RESTRICTIONS,
-									restrictions,
-									typeAccess,
-									this.classFile,
-									this.descriptor1.name,
-									Util.getDescriptorName(descriptor1));
-						} else if (!RestrictionModifiers.isUnrestricted(restrictions2)) {
-							// report different restrictions - different restrictions
-							this.addDelta(
-									this.descriptor1.getElementType(),
-									IDelta.CHANGED,
-									IDelta.RESTRICTIONS,
-									restrictions2,
-									typeAccess,
-									this.classFile,
-									this.descriptor1.name,
-									Util.getDescriptorName(descriptor1));
-						}
+						// report different restrictions
+						this.addDelta(
+								this.descriptor1.getElementType(),
+								IDelta.CHANGED,
+								IDelta.RESTRICTIONS,
+								restrictions2,
+								typeAccess,
+								this.classFile,
+								this.descriptor1.name,
+								Util.getDescriptorName(descriptor1));
 					}
 				}
 				this.currentDescriptorRestrictions = restrictions2;
