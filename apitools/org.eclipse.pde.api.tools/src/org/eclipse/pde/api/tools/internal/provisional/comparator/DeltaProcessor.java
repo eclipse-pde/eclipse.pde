@@ -367,7 +367,10 @@ public class DeltaProcessor {
 						return true; 
 					case IDelta.METHOD :
 						if (Util.isVisible(delta)) {
-							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions()) || !Util.isAbstract(delta.getModifiers());
+							if (Util.isAbstract(delta.getModifiers())) {
+								// case where the implementation is provided and the class cannot be instantiated by the client
+								return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+							}
 						}
 						return true; 
 					case IDelta.TYPE_PARAMETER :
