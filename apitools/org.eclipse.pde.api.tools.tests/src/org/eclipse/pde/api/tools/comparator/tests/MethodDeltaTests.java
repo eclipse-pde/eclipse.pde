@@ -30,7 +30,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(MethodDeltaTests.class);
 		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
-		suite.addTest(new MethodDeltaTests("test36"));
+		suite.addTest(new MethodDeltaTests("test105"));
 		return suite;
 	}
 
@@ -2369,5 +2369,43 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertTrue("Not visible", Util.isVisible(child));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246767
+	 */
+	public void test104() {
+		deployBundles("test104");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags());
+		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not @override restriction", RestrictionModifiers.isOverrideRestriction(child.getRestrictions()));
+		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246767
+	 */
+	public void test105() {
+		deployBundles("test105");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES);
+		assertNotNull("No delta", delta);
+		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA);
 	}
 }

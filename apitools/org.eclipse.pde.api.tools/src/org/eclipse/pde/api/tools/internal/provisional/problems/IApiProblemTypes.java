@@ -132,6 +132,8 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_ABSTRACT_TO_ABSTRACT);
 	public static final String METHOD_CHANGED_NON_STATIC_TO_STATIC =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_STATIC_TO_STATIC);
+	public static final String METHOD_CHANGED_RESTRICTIONS =
+		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.RESTRICTIONS);
 	public static final String METHOD_CHANGED_STATIC_TO_NON_STATIC =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.STATIC_TO_NON_STATIC);
 	public static final String METHOD_CHANGED_NON_FINAL_TO_FINAL =
@@ -140,6 +142,7 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.ANNOTATION_DEFAULT_VALUE);
 	public static final String METHOD_REMOVED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_PARAMETER);
+
 	// constructor key constant
 	public static final String CONSTRUCTOR_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);

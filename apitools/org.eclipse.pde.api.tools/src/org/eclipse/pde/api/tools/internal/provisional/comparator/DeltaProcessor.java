@@ -196,6 +196,7 @@ public class DeltaProcessor {
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
 					case IDelta.NON_STATIC_TO_STATIC :
 					case IDelta.STATIC_TO_NON_STATIC :
+					case IDelta.RESTRICTIONS :
 						return !Util.isVisible(delta);
 					case IDelta.DECREASE_ACCESS :
 						return RestrictionModifiers.isExtendRestriction(restrictions);

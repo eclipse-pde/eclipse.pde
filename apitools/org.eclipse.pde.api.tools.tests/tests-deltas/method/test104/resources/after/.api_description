@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="deltatest">
+<plugin id="deltatest" />
+
+<package name="p">
+	<type name="X">
+		<method name="foo" signature="()V" override="false"/>
+	</type>
+</package>
+</component>

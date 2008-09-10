@@ -127,6 +127,7 @@ public class PreferenceMessages extends NLS {
 	public static String METHOD_CHANGED_DECREASE_ACCESS;
 	public static String METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT;
 	public static String METHOD_CHANGED_NON_STATIC_TO_STATIC;
+	public static String METHOD_CHANGED_RESTRICTIONS;
 	public static String METHOD_CHANGED_STATIC_TO_NON_STATIC;
 	public static String METHOD_CHANGED_NON_FINAL_TO_FINAL;
 	public static String METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE;

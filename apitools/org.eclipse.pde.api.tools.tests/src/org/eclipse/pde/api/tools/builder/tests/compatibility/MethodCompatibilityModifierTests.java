@@ -95,6 +95,22 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 	
+	public void testAddNoOverrideI() throws Exception {
+		xAddNoOverride(true);
+	}
+
+	public void testAddNoOverrideF() throws Exception {
+		xAddNoOverride(false);
+	}
+
+	public void testAddNoOverrideToFinalI() throws Exception {
+		xAddNoOverrideToFinal(true);
+	}
+
+	public void testAddNoOverrideToFinalF() throws Exception {
+		xAddNoOverrideToFinal(false);
+	}
+
 	public void testAddFinalI() throws Exception {
 		xAddFinal(true);
 	}	
@@ -451,24 +467,15 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 */
 	private void xAddNoOverride(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoOverride.java");
-		// TODO: expect problem
-//		int[] ids = new int[] {
-//			getChangedProblemId(IDelta.RESTRICTIONS)
-//		};
-//		setExpectedProblemIds(ids);
-//		String[][] args = new String[1][];
-//		args[0] = new String[]{PACKAGE_PREFIX + "AddNoOverride", "method()"};
-//		setExpectedMessageArgs(args);
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.RESTRICTIONS)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddNoOverride", "method()"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
-	public void testAddNoOverrideI() throws Exception {
-		xAddNoOverride(true);
-	}	
-	
-	public void testAddNoOverrideF() throws Exception {
-		xAddNoOverride(false);
-	}	
 	
 	/**
 	 * Tests adding no-override to a final method (no-op)
@@ -478,14 +485,6 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		// no problems
 		performCompatibilityTest(filePath, incremental);
 	}
-	
-	public void testAddNoOverrideToFinalI() throws Exception {
-		xAddNoOverrideToFinal(true);
-	}	
-	
-	public void testAddNoOverrideToFinalF() throws Exception {
-		xAddNoOverrideToFinal(false);
-	}	
 	
 	/**
 	 * Tests adding no-reference

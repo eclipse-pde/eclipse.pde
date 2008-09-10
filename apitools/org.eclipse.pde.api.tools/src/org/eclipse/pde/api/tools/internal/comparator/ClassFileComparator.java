@@ -2166,6 +2166,21 @@ public class ClassFileComparator {
 				}
 			}
 		}
+		if (this.component.hasApiDescription() && !methodDescriptor.isConstructor() && !methodDescriptor.isClinit()) {
+			if (RestrictionModifiers.isOverrideRestriction(restrictions)) {
+				if (!RestrictionModifiers.isOverrideRestriction(referenceRestrictions) && !Util.isFinal(access2)) {
+					this.addDelta(
+							methodDescriptor.getElementType(),
+							IDelta.CHANGED,
+							IDelta.RESTRICTIONS,
+							restrictions,
+							access2,
+							this.classFile,
+							getKeyForMethod(methodDescriptor2, this.descriptor2),
+							new String[] {Util.getDescriptorName(this.descriptor2), methodDisplayName});
+				}
+			}
+		}
 		if (methodDescriptor.exceptions != null) {
 			if (methodDescriptor2.exceptions == null) {
 				// check all exception in method descriptor to see if they are checked or unchecked exceptions
