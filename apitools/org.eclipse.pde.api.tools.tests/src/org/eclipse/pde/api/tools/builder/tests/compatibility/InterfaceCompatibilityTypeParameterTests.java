@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  * @since 1.0
  */
 public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibilityTests {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
@@ -35,12 +35,12 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 	 * Package prefix for test interfaces
 	 */
 	protected static String PACKAGE_PREFIX = "a.interfaces.typeparameters.";
-	
+
 	/**
 	 * Package prefix for support classes
 	 */
 	protected static String CLASSES_PACKAGE_PREFIX = "a.classes.typeparameters.";	
-	
+
 	/**
 	 * Constructor
 	 * @param name
@@ -55,7 +55,7 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("typeparameters");
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -69,7 +69,7 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 	protected int getDefaultProblemId() {
 		return -1;
 	}
-	
+
 	protected int getProblemId(int kind, int flags) {
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -84,7 +84,7 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 	protected String getTestingProjectName() {
 		return "classcompat";
 	}
-	
+
 	/**
 	 * Tests adding a first/single type parameter to a class
 	 */
@@ -93,22 +93,22 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddFirstTypeParameterI() throws Exception {
 		xAddFirstTypeParameter(true);
 	}
-	
+
 	public void testAddFirstTypeParameterF() throws Exception {
 		xAddFirstTypeParameter(false);
 	}
-	
+
 	/**
 	 * Tests adding a second type parameter to a class
 	 */
 	private void xAddSecondaryTypeParameter(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeParameter.java");
 		int[] ids = new int[] {
-			getProblemId(IDelta.ADDED, IDelta.TYPE_PARAMETER)
+				getProblemId(IDelta.ADDED, IDelta.TYPE_PARAMETER)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
@@ -116,22 +116,22 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddSecondaryTypeParameterI() throws Exception {
 		xAddSecondaryTypeParameter(true);
 	}
-	
+
 	public void testAddSecondaryTypeParameterF() throws Exception {
 		xAddSecondaryTypeParameter(false);
 	}
-	
+
 	/**
 	 * Tests removing a type parameter
 	 */
 	private void xRemoveTypeParameter(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeParameter.java");
 		int[] ids = new int[] {
-			getProblemId(IDelta.REMOVED, IDelta.TYPE_PARAMETER)
+				getProblemId(IDelta.REMOVED, IDelta.TYPE_PARAMETER)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
@@ -139,63 +139,61 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveTypeParameterI() throws Exception {
 		xRemoveTypeParameter(true);
 	}
-	
+
 	public void testRemoveTypeParameterF() throws Exception {
 		xRemoveTypeParameter(false);
 	}
-	
+
 	/**
 	 * Tests adding a class bound to a type parameter
 	 */
 	private void xAddClassBound(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddClassBound.java");
-		// TODO: should be ADDED instead of CHANGED
 		int[] ids = new int[] {
-				getProblemId(IDelta.CHANGED, IDelta.CLASS_BOUND)
-			};
-			setExpectedProblemIds(ids);
-			String[][] args = new String[1][];
-			args[0] = new String[]{PACKAGE_PREFIX + "AddClassBound", "E"};
-			setExpectedMessageArgs(args);
+				getProblemId(IDelta.ADDED, IDelta.CLASS_BOUND)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddClassBound", "E"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddClassBoundI() throws Exception {
 		xAddClassBound(true);
 	}
-	
+
 	public void testAddClassBoundF() throws Exception {
 		xAddClassBound(false);
 	}
-	
+
 	/**
 	 * Tests removing a class bound to a type parameter
 	 */
 	private void xRemoveClassBound(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveClassBound.java");
-		// TODO: should be removed instead of CHANGED
 		int[] ids = new int[] {
-				getProblemId(IDelta.CHANGED, IDelta.CLASS_BOUND)
-			};
-			setExpectedProblemIds(ids);
-			String[][] args = new String[1][];
-			args[0] = new String[]{PACKAGE_PREFIX + "RemoveClassBound", "E"};
-			setExpectedMessageArgs(args);
+				getProblemId(IDelta.REMOVED, IDelta.CLASS_BOUND)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveClassBound", "E"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveClassBoundI() throws Exception {
 		xRemoveClassBound(true);
 	}
-	
+
 	public void testRemoveClassBoundF() throws Exception {
 		xRemoveClassBound(false);
-	}	
-	
+	}
+
 	/**
 	 * Tests adding an interface bound to a type parameter
 	 */
@@ -203,24 +201,22 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceBound.java");
 		int[] ids = new int[] {
 				getProblemId(IDelta.ADDED, IDelta.INTERFACE_BOUND),
-				getProblemId(IDelta.REMOVED, IDelta.CLASS_BOUND) // TODO: should only be added interface
-			};
-			setExpectedProblemIds(ids);
-			String[][] args = new String[2][];
-			args[0] = new String[]{PACKAGE_PREFIX + "AddInterfaceBound", "E", CLASSES_PACKAGE_PREFIX + "IBound"};
-			args[1] = new String[]{PACKAGE_PREFIX + "AddInterfaceBound", "E"}; // TODO: remove 
-			setExpectedMessageArgs(args);
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddInterfaceBound", "E", CLASSES_PACKAGE_PREFIX + "IBound"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddInterfaceBoundI() throws Exception {
 		xAddInterfaceBound(true);
 	}
-	
+
 	public void testAddInterfaceBoundF() throws Exception {
 		xAddInterfaceBound(false);
 	}
-	
+
 	/**
 	 * Tests removing an interface bound to a type parameter
 	 */
@@ -228,24 +224,22 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveInterfaceBound.java");
 		int[] ids = new int[] {
 				getProblemId(IDelta.REMOVED, IDelta.INTERFACE_BOUND), 
-				getProblemId(IDelta.ADDED, IDelta.CLASS_BOUND) // TODO: should only be removed interface
-			};
-			setExpectedProblemIds(ids);
-			String[][] args = new String[2][];
-			args[0] = new String[]{PACKAGE_PREFIX + "RemoveInterfaceBound", "E", CLASSES_PACKAGE_PREFIX + "IBound"};
-			args[1] = new String[]{PACKAGE_PREFIX + "RemoveInterfaceBound", "E"}; // TODO: remove
-			setExpectedMessageArgs(args);
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveInterfaceBound", "E", CLASSES_PACKAGE_PREFIX + "IBound"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveOnlyInterfaceBoundI() throws Exception {
 		xRemoveInterfaceBound(true);
 	}
-	
+
 	public void testRemoveOnlyInterfaceBoundF() throws Exception {
 		xRemoveInterfaceBound(false);
 	}
-	
+
 	/**
 	 * Tests removing a secondary interface bound from a type parameter
 	 */
@@ -253,22 +247,22 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveSecondInterfaceBound.java");
 		int[] ids = new int[] {
 				getProblemId(IDelta.REMOVED, IDelta.INTERFACE_BOUND)
-			};
-			setExpectedProblemIds(ids);
-			String[][] args = new String[1][];
-			args[0] = new String[]{PACKAGE_PREFIX + "RemoveSecondInterfaceBound", "E", CLASSES_PACKAGE_PREFIX + "IBoundTwo"};
-			setExpectedMessageArgs(args);
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveSecondInterfaceBound", "E", CLASSES_PACKAGE_PREFIX + "IBoundTwo"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveSecondaryInterfaceBoundI() throws Exception {
 		xRemoveSecondaryInterfaceBound(true);
 	}
-	
+
 	public void testRemoveSecondaryInterfaceBoundF() throws Exception {
 		xRemoveSecondaryInterfaceBound(false);
 	}	
-	
+
 	/**
 	 * Tests changing a class bound to a type parameter
 	 */
@@ -276,22 +270,22 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeClassBound.java");
 		int[] ids = new int[] {
 				getProblemId(IDelta.CHANGED, IDelta.CLASS_BOUND)
-			};
-			setExpectedProblemIds(ids);
-			String[][] args = new String[1][];
-			args[0] = new String[]{PACKAGE_PREFIX + "ChangeClassBound", "E"};
-			setExpectedMessageArgs(args);
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "ChangeClassBound", "E"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testChangeClassBoundI() throws Exception {
 		xChangeClassBound(true);
 	}
-	
+
 	public void testChangeClassBoundF() throws Exception {
 		xChangeClassBound(false);
 	}	
-	
+
 	/**
 	 * Tests changing a class bound to a type parameter
 	 */
@@ -299,18 +293,18 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeInterfaceBound.java");
 		int[] ids = new int[] {
 				getProblemId(IDelta.CHANGED, IDelta.INTERFACE_BOUND)
-			};
-			setExpectedProblemIds(ids);
-			String[][] args = new String[1][];
-			args[0] = new String[]{PACKAGE_PREFIX + "ChangeInterfaceBound", "E", CLASSES_PACKAGE_PREFIX + "IBound"};
-			setExpectedMessageArgs(args);
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "ChangeInterfaceBound", "E", CLASSES_PACKAGE_PREFIX + "IBound"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testChangeInterfaceBoundI() throws Exception {
 		xChangeInterfaceBound(true);
 	}
-	
+
 	public void testChangeInterfaceBoundF() throws Exception {
 		xChangeClassBound(false);
 	}		

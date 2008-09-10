@@ -20,6 +20,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * Represents a type parameter inside a generic signature
  */
 class TypeParameterDescriptor {
+	private static final String JAVA_LANG_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 	String classBound;
 	List interfaceBounds;
 	String name;
@@ -36,6 +37,11 @@ class TypeParameterDescriptor {
 	}
 	
 	public void setClassBound(String bound) {
+		if (JAVA_LANG_OBJECT.equals(bound)) {
+			// we consider Object as an implicit bound
+			// <E> is implicitly <E extends Object>
+			return;
+		}
 		this.classBound = bound;
 	}
 	

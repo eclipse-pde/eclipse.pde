@@ -167,6 +167,7 @@ public interface IDelta {
 	 * <br>
 	 * Applies to kinds:
 	 * <ul>
+	 * <li>{@link #ADDED}</li>
 	 * <li>{@link #CHANGED}</li>
 	 * <li>{@link #REMOVED}</li>
 	 * </ul> 

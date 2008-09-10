@@ -1,4 +1,4 @@
 import java.io.Serializable;
 
-public class X<T extends Object & Serializable > {
+public class X<T extends Exception & Serializable > {
 }
