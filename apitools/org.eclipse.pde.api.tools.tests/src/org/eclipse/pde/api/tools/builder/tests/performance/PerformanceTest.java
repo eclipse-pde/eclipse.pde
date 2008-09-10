@@ -92,7 +92,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 */
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
-			// TODO
+			FullSourceBuildTests.class
 		};
 		return classes;
 	}

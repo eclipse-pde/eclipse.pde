@@ -96,7 +96,16 @@ public class FullSourceBuildTests extends PerformanceTest {
 		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(ps);
 		IProject[] order = po.projects;
 		
-		for (int j = 0; j < 10; j++) {
+		// WARM-UP
+		for (int j = 0; j < 2; j++) {
+			// *** build each project ***
+			for (int i = 0; i < order.length; i++) {
+				order[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
+			}
+		}
+		
+		// TEST
+		for (int j = 0; j < 15; j++) {
 			startMeasuring();
 			
 			// *** build each project ***
@@ -129,8 +138,18 @@ public class FullSourceBuildTests extends PerformanceTest {
 		}
 		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(ps);
 		IProject[] order = po.projects;
+
+		// WARM-UP
+		for (int j = 0; j < 2; j++) {
+			// *** build each project ***
+			for (int i = 0; i < order.length; i++) {
+				order[i].build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
+				order[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
+			}
+		}
 		
-		for (int j = 0; j < 10; j++) {
+		// TEST
+		for (int j = 0; j < 15; j++) {
 			startMeasuring();
 			
 			// *** build each project ***
