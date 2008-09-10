@@ -1646,42 +1646,7 @@ public class ClassFileComparator {
 			String signature2 = fieldDescriptor2.signature;
 			checkGenericSignature(signature1, signature2, fieldDescriptor, fieldDescriptor2);
 		}
-		if (fieldDescriptor.value != null) {
-			if (fieldDescriptor2.value == null) {
-				// report delta - removal of constant value
-				this.addDelta(
-						IDelta.FIELD_ELEMENT_TYPE,
-						IDelta.REMOVED,
-						IDelta.VALUE,
-						restrictions,
-						access2,
-						this.classFile,
-						name,
-						new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor.value)});
-			} else if (!fieldDescriptor.value.equals(fieldDescriptor2.value)) {
-				// report delta - modified constant value
-				this.addDelta(
-						IDelta.FIELD_ELEMENT_TYPE,
-						IDelta.CHANGED,
-						IDelta.VALUE,
-						restrictions,
-						access2,
-						this.classFile,
-						name,
-						new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor.value)});
-			}
-		} else if (fieldDescriptor2.value != null) {
-			// report delta
-			this.addDelta(
-					IDelta.FIELD_ELEMENT_TYPE,
-					IDelta.ADDED,
-					IDelta.VALUE,
-					restrictions,
-					access2,
-					this.classFile,
-					name,
-					new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor2.value)});
-		}
+		boolean changeFinalToNonFinal = false;
 		if (Util.isProtected(access)) {
 			if (Util.isPrivate(access2) || Util.isDefault(access2)) {
 				// report delta - decrease access: protected to default or private
@@ -1761,6 +1726,7 @@ public class ClassFileComparator {
 							new String[] {Util.getDescriptorName(this.descriptor1), name});
 				} else if (fieldDescriptor.value != null) {
 					// report delta - final to non-final for a static field with a compile time constant
+					changeFinalToNonFinal = true;
 					this.addDelta(
 							IDelta.FIELD_ELEMENT_TYPE,
 							IDelta.CHANGED,
@@ -1869,6 +1835,44 @@ public class ClassFileComparator {
 					this.classFile,
 					name,
 					new String[] {Util.getDescriptorName(this.descriptor1), name});
+		}
+		if (fieldDescriptor.value != null) {
+			if (fieldDescriptor2.value == null) {
+				if (!changeFinalToNonFinal) {
+					// report delta - removal of constant value
+					this.addDelta(
+							IDelta.FIELD_ELEMENT_TYPE,
+							IDelta.REMOVED,
+							IDelta.VALUE,
+							restrictions,
+							access2,
+							this.classFile,
+							name,
+							new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor.value)});
+				}
+			} else if (!fieldDescriptor.value.equals(fieldDescriptor2.value)) {
+				// report delta - modified constant value
+				this.addDelta(
+						IDelta.FIELD_ELEMENT_TYPE,
+						IDelta.CHANGED,
+						IDelta.VALUE,
+						restrictions,
+						access2,
+						this.classFile,
+						name,
+						new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor.value)});
+			}
+		} else if (fieldDescriptor2.value != null) {
+			// report delta
+			this.addDelta(
+					IDelta.FIELD_ELEMENT_TYPE,
+					IDelta.ADDED,
+					IDelta.VALUE,
+					restrictions,
+					access2,
+					this.classFile,
+					name,
+					new String[] {Util.getDescriptorName(this.descriptor1), name, String.valueOf(fieldDescriptor2.value)});
 		}
 	}
 	private void getDeltaForMethodDescriptor(MethodDescriptor methodDescriptor) {

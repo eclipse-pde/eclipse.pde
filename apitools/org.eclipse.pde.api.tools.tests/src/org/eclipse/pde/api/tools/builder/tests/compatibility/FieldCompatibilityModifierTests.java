@@ -168,28 +168,22 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		// TODO: should only have the first error (removed final) - second error indicates
 		// the same problem (redundant)
 		int[] ids = new int[] {
-			getChangedProblemId(IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT),
-			ApiProblemFactory.createProblemId(
-					IApiProblem.CATEGORY_COMPATIBILITY,
-					IDelta.FIELD_ELEMENT_TYPE,
-					IDelta.REMOVED,
-					IDelta.VALUE)
+			getChangedProblemId(IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT)
 		};
 		setExpectedProblemIds(ids);
-		String[][] args = new String[2][];
+		String[][] args = new String[1][];
 		args[0] = new String[]{PACKAGE_PREFIX + "RemoveFinalOnConstant", "CONSTANT"};
-		args[1] = new String[]{PACKAGE_PREFIX + "RemoveFinalOnConstant", "CONSTANT", "CONSTANT"};
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
 	public void testRemoveFinalOnConstantI() throws Exception {
 		xRemoveFinalOnConstant(true);
-	}	
+	}
 	
 	public void testRemoveFinalOnConstantF() throws Exception {
 		xRemoveFinalOnConstant(false);
-	}	
+	}
 	
 	/**
 	 * Tests making a non-static field static

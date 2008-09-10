@@ -30,7 +30,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(FieldDeltaTests.class);
 		TestSuite suite = new TestSuite(FieldDeltaTests.class.getName());
-		suite.addTest(new FieldDeltaTests("test73"));
+		suite.addTest(new FieldDeltaTests("test74"));
 		return suite;
 	}
 
@@ -348,7 +348,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 3, allLeavesDeltas.length);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags());
@@ -357,11 +357,6 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT, child.getFlags());
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
-		child = allLeavesDeltas[2];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -561,7 +556,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 3, allLeavesDeltas.length);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags());
@@ -571,12 +566,6 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT, child.getFlags());
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
-		child = allLeavesDeltas[2];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertTrue("Is visible", !Util.isVisible(child));
-		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -618,7 +607,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 3, allLeavesDeltas.length);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags());
@@ -628,12 +617,6 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT, child.getFlags());
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
-		child = allLeavesDeltas[2];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertTrue("Is visible", !Util.isVisible(child));
-		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -938,7 +921,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 3, allLeavesDeltas.length);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertFalse("Not visible", Util.isVisible(child));
@@ -949,12 +932,6 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertTrue("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT, child.getFlags());
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
-		child = allLeavesDeltas[2];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertTrue("Is visible", Util.isVisible(child));
-		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1749,5 +1726,33 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244994
+	 */
+	public void test74() {
+		deployBundles("test74");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags());
+		assertFalse("Is visible", Util.isVisible(child));
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
+		assertTrue("Not visible", Util.isVisible(child));
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 }
