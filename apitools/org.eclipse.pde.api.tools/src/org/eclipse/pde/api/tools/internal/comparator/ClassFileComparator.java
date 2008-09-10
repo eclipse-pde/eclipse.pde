@@ -47,6 +47,20 @@ import com.ibm.icu.text.MessageFormat;
  * @since 1.0.0
  */
 public class ClassFileComparator {
+	
+	/**
+	 * This class is used to store type lookup results. We need to return the found type as well as 
+	 * the api component it is coming from.
+	 */
+	private static class LookupResult {
+		IClassFile classFile;
+		IApiComponent apiComponent;
+		
+		LookupResult(IClassFile classFile, IApiComponent apiComponent) {
+			this.classFile = classFile;
+			this.apiComponent = apiComponent;
+		}
+	}
 	/**
 	 * Constant used for controlling tracing in the class file comparator
 	 */
@@ -174,6 +188,9 @@ public class ClassFileComparator {
 	private void checkSuperclass() throws CoreException {
 		// check superclass set
 		List superclassList1 = getSuperclassList(this.descriptor1, this.component, this.apiProfile);
+		if(!isStatusOk()) {
+			return;
+		}
 		List superclassList2 = getSuperclassList(this.descriptor2, this.component2, this.apiProfile2);
 		if(!isStatusOk()) {
 			return;
@@ -235,10 +252,11 @@ public class ClassFileComparator {
 		// case where an API type inherits from a non-API type that contains public methods/fields
 		if (visibilityModifiers == VisibilityModifiers.API) {
 			int currentTypeVisibility = 0;
-			IApiDescription apiDescription = this.component.getApiDescription();
 			String superTypeName = this.descriptor1.superName;
-			IClassFile superclassType1 = getType(superTypeName, this.component, this.apiProfile);
-			if (superclassType1 == null) return;
+			LookupResult pair = getType(superTypeName, this.component, this.apiProfile);
+			if (pair == null) return;
+			IClassFile superclassType1 = pair.classFile;
+			IApiDescription apiDescription = pair.apiComponent.getApiDescription();
 			TypeDescriptor superTypeDescriptor = new TypeDescriptor(superclassType1.getContents());
 			IApiAnnotations superclassAnnotations = apiDescription.resolveAnnotations(superTypeDescriptor.handle);
 			if (superclassAnnotations != null) {
@@ -331,6 +349,9 @@ public class ClassFileComparator {
 	 */
 	private void checkSuperInterfaces() {
 		Set superinterfacesSet1 = getInterfacesSet(this.descriptor1, this.component, this.apiProfile);
+		if(!isStatusOk()) {
+			return;
+		}
 		Set superinterfacesSet2 = getInterfacesSet(this.descriptor2, this.component2, this.apiProfile2);
 		if(!isStatusOk()) {
 			return;
@@ -876,15 +897,17 @@ public class ClassFileComparator {
 			if (interfaces != null) {
 				for (Iterator iterator = interfaces.iterator(); iterator.hasNext();) {
 					String interfaceName = (String) iterator.next();
-					IClassFile superinterface = getType(interfaceName, sourceComponent, profile);
-					if (superinterface == null) return;
+					LookupResult pair = getType(interfaceName, sourceComponent, profile);
+					if (pair == null) return;
+					IClassFile superinterface = pair.classFile;
 					TypeDescriptor typeDescriptor2 = new TypeDescriptor(superinterface.getContents());
 					int visibility = VisibilityModifiers.PRIVATE;
-					if (sourceComponent.hasApiDescription()) {
-						apiDescription = (IApiDescription) apiDescriptions.get(sourceComponent.getId());
+					IApiComponent apiComponent2 = pair.apiComponent;
+					if (apiComponent2.hasApiDescription()) {
+						apiDescription = (IApiDescription) apiDescriptions.get(apiComponent2.getId());
 						if (apiDescription == null) {
-							apiDescription = sourceComponent.getApiDescription();
-							apiDescriptions.put(sourceComponent.getId(), apiDescription);
+							apiDescription = apiComponent2.getApiDescription();
+							apiDescriptions.put(apiComponent2.getId(), apiDescription);
 						}
 						IApiAnnotations elementDescription = apiDescription.resolveAnnotations(typeDescriptor2.handle);
 						if (elementDescription != null) {
@@ -899,8 +922,9 @@ public class ClassFileComparator {
 			}
 			String superclassName = typeDescriptor.superName;
 			if (superclassName != null && !Util.isJavaLangObject(superclassName)) {
-				IClassFile superclass = getType(superclassName, apiComponent, profile);
-				if (superclass == null) return;
+				LookupResult pair = getType(superclassName, apiComponent, profile);
+				if (pair == null) return;
+				IClassFile superclass = pair.classFile;
 				TypeDescriptor typeDescriptor2 = new TypeDescriptor(superclass.getContents());
 				collectAllInterfaces(typeDescriptor2, apiComponent, profile, set);
 			}
@@ -938,7 +962,6 @@ public class ClassFileComparator {
 	 * @return
 	 */
 	private Delta createDelta() {
-		this.status = null;
 		return new Delta();
 	}
 	
@@ -1916,7 +1939,7 @@ public class ClassFileComparator {
 					}
 				} else {
 					List superclassList = getSuperclassList(typeDescriptor, this.component2, this.apiProfile2, true);
-					if (superclassList != null) {
+					if (superclassList != null && isStatusOk()) {
 						loop: for (Iterator iterator = superclassList.iterator(); iterator.hasNext();) {
 							TypeDescriptor superTypeDescriptor = (TypeDescriptor) iterator.next();
 							MethodDescriptor methodDescriptor3 = getMethodDescriptor(superTypeDescriptor, name, descriptor);
@@ -2553,6 +2576,7 @@ public class ClassFileComparator {
 	 */
 	private Set getInterfacesSet(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile) {
 		HashSet set = new HashSet();
+		this.status = null;
 		collectAllInterfaces(typeDescriptor, apiComponent, profile, set);
 		if (set.isEmpty()) {
 			return null;
@@ -2618,6 +2642,7 @@ public class ClassFileComparator {
 	}
 	private List getSuperclassList(TypeDescriptor typeDescriptor, IApiComponent apiComponent, IApiProfile profile, boolean includeObject, boolean includePrivate) {
 		TypeDescriptor descriptor = typeDescriptor;
+		this.status = null;
 		String superName = descriptor.superName;
 		if (Util.isJavaLangObject(superName) && !includeObject) {
 			return null;
@@ -2629,17 +2654,20 @@ public class ClassFileComparator {
 			Map apiDescriptions = new HashMap(3);
 			apiDescriptions.put(sourceComponent.getId(), apiDescription);
 			while (superName != null && (!Util.isJavaLangObject(superName) || includeObject)) {
-				IClassFile classFile = getType(superName, sourceComponent, profile);
-				if (classFile == null) {
+				LookupResult pair = getType(superName, sourceComponent, profile);
+				if (pair == null) {
 					return null;
 				}
+				IClassFile classFile = pair.classFile;
 				descriptor = new TypeDescriptor(classFile.getContents());
 				int visibility = VisibilityModifiers.PRIVATE;
-				if (sourceComponent.hasApiDescription()) {
-					apiDescription = (IApiDescription) apiDescriptions.get(sourceComponent.getId());
+				IApiComponent pairComponent = pair.apiComponent;
+				if (pairComponent.hasApiDescription()) {
+					String id = pairComponent.getId();
+					apiDescription = (IApiDescription) apiDescriptions.get(id);
 					if (apiDescription == null) {
-						apiDescription = sourceComponent.getApiDescription();
-						apiDescriptions.put(sourceComponent.getId(), apiDescription);
+						apiDescription = pairComponent.getApiDescription();
+						apiDescriptions.put(id, apiDescription);
 					}
 					IApiAnnotations elementDescription = apiDescription.resolveAnnotations(descriptor.handle);
 					if (elementDescription != null) {
@@ -2945,7 +2973,7 @@ public class ClassFileComparator {
 		return null;
 	}
 	
-	private IClassFile getType(String typeName, IApiComponent component, IApiProfile profile) throws CoreException {
+	private LookupResult getType(String typeName, IApiComponent component, IApiProfile profile) throws CoreException {
 		IApiComponent sourceComponent = component;
 		String packageName = Util.getPackageName(typeName);
 		IApiComponent[] components = profile.resolvePackage(component, packageName);
@@ -2966,8 +2994,8 @@ public class ClassFileComparator {
 			reportStatus(new Status(Status.ERROR, component.getId(), msg));
 			return null;
 		}
-		IClassFile superclass = sourceComponent.findClassFile(typeName);
-		if (superclass == null) {
+		IClassFile classfile = sourceComponent.findClassFile(typeName);
+		if (classfile == null) {
 			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, new String[] {typeName, profile.getName(), component.getId()});
 			if (DEBUG) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
@@ -2975,6 +3003,6 @@ public class ClassFileComparator {
 			reportStatus(new Status(Status.ERROR, component.getId(), msg));
 			return null;
 		}
-		return superclass;
+		return new LookupResult(classfile, sourceComponent);
 	}
 }
