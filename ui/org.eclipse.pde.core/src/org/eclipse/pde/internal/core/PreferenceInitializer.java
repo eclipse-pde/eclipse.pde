@@ -61,6 +61,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		prefs.putInt(CompilerFlags.P_INCOMPATIBLE_ENV, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_MISSING_EXPORT_PKGS, CompilerFlags.IGNORE);
 
+		prefs.putInt(CompilerFlags.P_MISSING_VERSION_EXP_PKG, CompilerFlags.IGNORE);
+		prefs.putInt(CompilerFlags.P_MISSING_VERSION_IMP_PKG, CompilerFlags.IGNORE);
+		prefs.putInt(CompilerFlags.P_MISSING_VERSION_REQ_BUNDLE, CompilerFlags.IGNORE);
+
 		prefs.putBoolean(CompilerFlags.S_CREATE_DOCS, false);
 		prefs.put(CompilerFlags.S_DOC_FOLDER, "doc"); //$NON-NLS-1$
 		prefs.putInt(CompilerFlags.S_OPEN_TAGS, CompilerFlags.WARNING);
