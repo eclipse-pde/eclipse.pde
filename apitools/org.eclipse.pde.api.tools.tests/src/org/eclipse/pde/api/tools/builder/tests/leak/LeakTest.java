@@ -82,22 +82,6 @@ public abstract class LeakTest extends ApiBuilderTest {
 		return suite;
 	}
 	
-	/**
-	 * Creates a set of the default problem ids of the given count
-	 * @param numproblems
-	 * @return the set of default problem ids, or an empty set.
-	 */
-	protected int[] getDefaultProblemIdSet(int numproblems) {
-		if(numproblems < 0) {
-			return NO_PROBLEM_IDS;
-		}
-		int[] set = new int[numproblems];
-		for(int i = 0; i < numproblems; i++) {
-			set[i] = getDefaultProblemId();
-		}
-		return set;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
 	 */

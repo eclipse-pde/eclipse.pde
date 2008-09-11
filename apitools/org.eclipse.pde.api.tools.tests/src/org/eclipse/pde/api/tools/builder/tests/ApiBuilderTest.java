@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -23,9 +24,13 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -44,6 +49,9 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 /**
  * Base class for API builder tests
@@ -133,6 +141,22 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		expectingOnlyProblemsFor(new IPath[] { expected });
 	}
 
+	/**
+	 * Creates a set of the default problem ids of the given count
+	 * @param numproblems
+	 * @return the set of default problem ids, or an empty set.
+	 */
+	protected int[] getDefaultProblemIdSet(int numproblems) {
+		if(numproblems < 0) {
+			return NO_PROBLEM_IDS;
+		}
+		int[] set = new int[numproblems];
+		for(int i = 0; i < numproblems; i++) {
+			set[i] = getDefaultProblemId();
+		}
+		return set;
+	}
+	
 	/** 
 	 * Verifies that the given elements have problems and
 	 * only the given elements.
@@ -189,6 +213,69 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		IPath cpath = getEnv().addClass(packpath, sourcename, contents);
 		assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
 		return ppath;
+	}
+	
+	/**
+	 * Adds the given source to the given package with the specified project and returns the 
+	 * path the {@link IPackageFragment} the source was added to.
+	 * @param project the project to add to
+	 * @param packagename the package name to add the source to (will be created if it does not exist)
+	 * @param sourcename the name of the new source to add
+	 * @return the path to the {@link IPackageFragment} the source was added to
+	 * @throws JavaModelException
+	 */
+	protected IPath assertSource(IProject project, String packagename, String sourcename) throws JavaModelException {
+		IPath ppath = project.getFullPath();
+		assertTrue("The path for '"+project.getName()+"' must exist", !ppath.isEmpty());
+		IPath frpath = getEnv().getPackageFragmentRootPath(ppath, SRC_ROOT);
+		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
+		IPath packpath = getEnv().getPackagePath(frpath, packagename);
+		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
+		String contents = getSourceContents(getTestSourcePath(), sourcename);
+		assertNotNull("the source contents for '"+sourcename+"' must exist", contents);
+		IPath cpath = getEnv().addClass(packpath, sourcename, contents);
+		assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
+		return packpath;
+	}
+	
+	/**
+	 * Deploys a standard API usage test with the test project being created and the given source is imported in the testing project
+	 * into the given project.
+	 * 
+	 * This method assumes that the reference and testing project have been imported into the workspace already.
+	 * 
+	 * @param packagename
+	 * @param sourcename
+	 * @param expectingproblems
+	 * @param buildtype the type of build to perform. One of:
+	 * <ol>
+	 * <li>IncrementalProjectBuilder#FULL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#INCREMENTAL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#CLEAN_BUILD</li>
+	 * </ol>
+	 * @param buildworkspace
+	 */
+	protected void deployUsageTest(String packagename, String sourcename, boolean expectingproblems, int buildtype, boolean buildworkspace) {
+		try {
+			IProject project = getEnv().getProject(getTestingProjectName());
+			assertNotNull("the testing project "+getTestingProjectName()+" must be in the workspace", project);
+			assertSource(project, packagename, sourcename);
+			doBuild(buildtype, (buildworkspace ? null : project.getFullPath()));
+			IJavaProject jproject = getEnv().getJavaProject(getTestingProjectName());
+			IType type = jproject.findType(packagename, sourcename);
+			assertNotNull("The type "+sourcename+" from package "+packagename+" must exist", type);
+			IPath sourcepath = type.getPath();
+			if(expectingproblems) {
+				expectingOnlySpecificProblemsFor(sourcepath, getExpectedProblemIds());
+				assertProblems(getEnv().getProblems());
+			}
+			else {
+				expectingNoProblemsFor(sourcepath);
+			}
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
 	}
 	
 	/**
@@ -260,6 +347,82 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			}
 		}
 		return ppath;
+	}
+	
+	/**
+	 * Creates the workspace by importing projects from the 'projectsdir' directory. All projects in the given directory 
+	 * will try to be imported into the workspace. The given 'projectsdir' is assumed to be a child path
+	 * of the test source path (the test-builder folder in the test workspace).
+	 * 
+	 * This is the initial state of the workspace.
+	 *  
+	 * @param projectsdir the directory to load projects from
+	 * @param buildimmediately if a build should be run immediately following the import
+	 * @throws Exception
+	 */
+	protected void createExistingProjects(String projectsdir, boolean buildimmediately) throws Exception {
+		IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(projectsdir);
+		File dir = path.toFile();
+		assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists());
+		File[] files = dir.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			File file = files[i];
+			if (file.isDirectory() && !file.getName().equals("CVS")) {
+				createExistingProject(file);
+			}
+		}
+		if(buildimmediately) {
+			fullBuild();
+		}
+	}
+	
+	/**
+	 * Create the project described in record. If it is successful return true.
+	 * 
+	 * @param projectDir directory containing existing project
+	 */
+	private void createExistingProject(File projectDir) throws Exception {
+		String projectName = projectDir.getName();
+		final IWorkspace workspace = getEnv().getWorkspace();
+		IPath ppath = getEnv().addProject(projectName, getTestCompliance());
+		final IProject project = getEnv().getProject(ppath);
+		IProjectDescription description = workspace.newProjectDescription(projectName);
+		IPath locationPath = new Path(projectDir.getAbsolutePath());
+		description.setLocation(locationPath);
+		
+		// import from file system
+		File importSource = null;
+		// import project from location copying files - use default project
+		// location for this workspace
+		URI locationURI = description.getLocationURI();
+		// if location is null, project already exists in this location or
+		// some error condition occurred.
+		assertNotNull("project description location is null", locationURI);
+		importSource = new File(locationURI);
+		
+		IProjectDescription desc = workspace.newProjectDescription(projectName);
+		desc.setBuildSpec(description.getBuildSpec());
+		desc.setComment(description.getComment());
+		desc.setDynamicReferences(description.getDynamicReferences());
+		desc.setNatureIds(description.getNatureIds());
+		desc.setReferencedProjects(description.getReferencedProjects());
+		description = desc;
+
+		project.setDescription(description, new NullProgressMonitor());
+		project.open(null);
+		
+		// import operation to import project files
+		List filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
+		ImportOperation operation = new ImportOperation(
+				project.getFullPath(), importSource,
+				FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
+					public String queryOverwrite(String pathString) {
+						return IOverwriteQuery.ALL;
+					}
+				}, filesToImport);
+		operation.setOverwriteResources(true);
+		operation.setCreateContainerStructure(false);
+		operation.run(new NullProgressMonitor());
 	}
 	
 	/**

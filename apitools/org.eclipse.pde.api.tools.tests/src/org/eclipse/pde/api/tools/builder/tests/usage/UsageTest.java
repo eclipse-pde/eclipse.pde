@@ -12,14 +12,20 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 
 /**
  * Tests usage scanning in source
@@ -27,11 +33,19 @@ import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
  */
 public abstract class UsageTest extends ApiBuilderTest {
 
+	protected static final String TESTING_PACKAGE = "x.y.z";
+	protected static final String REF_PROJECT_NAME = "refproject";
+	protected static final String TESTING_PROJECT = "usagetests"; 
+	protected static final String INNER_NAME1 = "inner";
+	protected static final String OUTER_NAME = "outer";
+	protected static final String INNER_NAME2 = "inner2";
+	protected static final String OUTER_INAME = "Iouter";
+	
 	/**
 	 * Constructor
 	 */
-	public UsageTest() {
-		super("API usage leak tests");
+	public UsageTest(String name) {
+		super(name);
 	}
 	
 	/* (non-Javadoc)
@@ -68,6 +82,56 @@ public abstract class UsageTest extends ApiBuilderTest {
 		TestSuite suite = new TestSuite(UsageTest.class.getName());
 		collectTests(suite);
 		return suite;
+	}
+	
+	/**
+	 * Deploys a usage test
+	 * @param typename
+	 * @param inc
+	 */
+	protected void deployTest(String typename, boolean inc) {
+		deployUsageTest(TESTING_PACKAGE, 
+				typename, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		createExistingProjects("usageprojects", false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
+	 */
+	@Override
+	protected void assertProblems(ApiProblem[] problems) {
+		int[] pids = getExpectedProblemIds();
+		assertEquals("The number of problems should match the number of specified problem ids", pids.length, problems.length);
+		String[][] margs = getExpectedMessageArgs();
+		if(margs != null) {
+			ArrayList<String[]> args = new ArrayList<String[]>(Arrays.asList(margs));
+			String message = null;
+			int messageid = -1;
+			loop: for(int i = 0; i < problems.length; i++) {
+				for(Iterator<String[]> iter = args.iterator(); iter.hasNext();) {
+					messageid = ApiProblemFactory.getProblemMessageId(problems[i].getProblemId());
+					message = ApiProblemFactory.getLocalizedMessage(messageid, iter.next());
+					if(problems[i].getMessage().equals(message)) {
+						iter.remove();
+						continue loop;
+					}
+				}
+			}
+			if(args.size() > 0) {
+				fail("There was no problem that matched the arguments: "+Arrays.toString(args.iterator().next()));
+			}
+		}
 	}
 	
 	/**
@@ -115,7 +179,11 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 */
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
-
+				FieldUsageTests.class,
+				MethodUsageTests.class,
+				ConstructorUsageTests.class,
+				ClassUsageTests.class,
+				InterfaceUsageTests.class,
 		};
 		return classes;
 	}

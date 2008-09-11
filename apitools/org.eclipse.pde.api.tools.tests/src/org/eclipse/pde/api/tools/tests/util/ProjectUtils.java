@@ -31,6 +31,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModelFactory;
 import org.eclipse.pde.core.plugin.IFragment;
@@ -138,7 +139,7 @@ public class ProjectUtils {
 		createBuildPropertiesFile(proj, data);
 		return project;
 	}
-
+	
 	/**
 	 * creates a java project with the specified name and additional project natures
 	 * @param projectName
@@ -160,7 +161,7 @@ public class ProjectUtils {
 		IJavaProject jproject = JavaCore.create(project);
 		jproject.setOutputLocation(getDefaultProjectOutputLocation(project), monitor);
 		jproject.setRawClasspath(new IClasspathEntry[0], monitor);
-		
+		addContainerEntry(jproject, JavaRuntime.newDefaultJREContainerPath());
 		return jproject;	
 	}
 	
@@ -528,7 +529,7 @@ public class ProjectUtils {
 	 */
 	public static void addExportedPackage(IProject project, String packagename, boolean internal, String[] friends) throws CoreException {
 		if(!project.exists() || packagename == null) {
-			//do not work
+			//do no work
 			return;
 		}
 		IFile manifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);

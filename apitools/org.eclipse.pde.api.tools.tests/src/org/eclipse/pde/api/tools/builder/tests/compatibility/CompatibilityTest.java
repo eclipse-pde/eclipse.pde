@@ -16,9 +16,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
 
@@ -28,12 +26,8 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
@@ -48,9 +42,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
-import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 /**
  * Base class for binary compatibility tests
@@ -58,6 +49,11 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  * @since 1.0
  */
 public abstract class CompatibilityTest extends ApiBuilderTest {	
+
+	/**
+	 * 
+	 */
+	private static final String BASELINE = "baseline";
 
 	/**
 	 * Constructor
@@ -165,14 +161,14 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		// populate the workspace with initial plug-ins/projects
-		createInitialWorkspace();
+		createExistingProjects(BASELINE, true);
 		IApiProfileManager manager = ApiPlugin.getDefault().getApiProfileManager();
 		IApiProfile baseline = manager.getDefaultApiProfile();
 		if (baseline == null) {
 			// create the API baseline
 			IApiProfile profile = manager.getWorkspaceProfile();
 			IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
-			IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append("baseline");
+			IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(BASELINE);
 			for (int i = 0; i < projects.length; i++) {
 				exportApiComponent(
 						projects[i],
@@ -191,26 +187,6 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			manager.setDefaultApiProfile(baseline.getName());
 		}
 	}	
-	
-	/**
-	 * Creates the workspace by importing projects from the "baseline". This is the 
-	 * initial state of the workspace.
-	 *  
-	 * @throws Exception
-	 */
-	protected void createInitialWorkspace() throws Exception {
-		IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("baseline");
-		File dir = path.toFile();
-		assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists());
-		File[] files = dir.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			File file = files[i];
-			if (file.isDirectory() && !file.getName().equals("CVS")) {
-				createExistingProject(file);
-			}
-		}
-		fullBuild();
-	}
 	
 	/**
 	 * Exports the project as an API component to be used in an API baseline.
@@ -288,53 +264,6 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		stream.write(bytes);
 		contents.close();
 		stream.close();
-	}
-
-	/**
-	 * Create the project described in record. If it is successful return true.
-	 * 
-	 * @param projectDir directory containing existing project
-	 */
-	private void createExistingProject(File projectDir) throws Exception {
-		String projectName = projectDir.getName();
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IProject project = workspace.getRoot().getProject(projectName);
-		IProjectDescription description = workspace.newProjectDescription(projectName);
-		IPath locationPath = new Path(projectDir.getAbsolutePath());
-		description.setLocation(locationPath);
-		
-		// import from file system
-		File importSource = null;
-		// import project from location copying files - use default project
-		// location for this workspace
-		URI locationURI = description.getLocationURI();
-		// if location is null, project already exists in this location or
-		// some error condition occured.
-		assertNotNull("project description location is null", locationURI);
-		importSource = new File(locationURI);
-		IProjectDescription desc = workspace.newProjectDescription(projectName);
-		desc.setBuildSpec(description.getBuildSpec());
-		desc.setComment(description.getComment());
-		desc.setDynamicReferences(description.getDynamicReferences());
-		desc.setNatureIds(description.getNatureIds());
-		desc.setReferencedProjects(description.getReferencedProjects());
-		description = desc;
-
-		project.create(description, null);
-		project.open(null);
-
-		// import operation to import project files
-		List filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
-		ImportOperation operation = new ImportOperation(
-				project.getFullPath(), importSource,
-				FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
-					public String queryOverwrite(String pathString) {
-						return IOverwriteQuery.ALL;
-					}
-				}, filesToImport);
-		operation.setOverwriteResources(true);
-		operation.setCreateContainerStructure(false);
-		operation.run(new NullProgressMonitor());
 	}	
 	
 	/**

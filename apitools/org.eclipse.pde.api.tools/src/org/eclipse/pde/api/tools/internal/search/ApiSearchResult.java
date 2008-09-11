@@ -65,9 +65,11 @@ public class ApiSearchResult implements IApiSearchResult {
 		if(fReferences != null) {
 			buffer.append("References: ["); //$NON-NLS-1$
 			for(int i = 0; i < fReferences.length; i++) {
-				buffer.append(fReferences[i].toString());
-				if(i < fReferences.length) {
-					buffer.append("\n"); //$NON-NLS-1$
+				if(fReferences[i] != null) {
+					buffer.append(fReferences[i].toString());
+					if(i < fReferences.length) {
+						buffer.append("\n"); //$NON-NLS-1$
+					}
 				}
 			}
 			buffer.append("]").append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
