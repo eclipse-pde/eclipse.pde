@@ -323,7 +323,37 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 			}
 			FeatureEntry[] includedRefs = toAnalyse.getIncludedFeatureReferences();
 			for (int i = 0; i < includedRefs.length; i++) {
-				rootFeatures.add(findFeature(includedRefs[i].getId(), includedRefs[i].getVersion(), true));
+				String featureId = includedRefs[i].getId();
+				BuildTimeFeature nested = findFeature(featureId, includedRefs[i].getVersion(), false);
+				if (nested != null)
+					rootFeatures.add(nested);
+				else {
+					// missing feature, ok if it will be a generated source feature
+					Properties props = AbstractScriptGenerator.readProperties(toAnalyse.getRootLocation(), PROPERTIES_FILE, IStatus.OK);
+					boolean doSourceFeatureGeneration = props.containsKey(IBuildPropertiesConstants.GENERATION_SOURCE_FEATURE_PREFIX + featureId);
+					if (doSourceFeatureGeneration) {
+						//generate property may add extra plugins or features
+						String[] extraEntries = Utils.getArrayFromString(props.getProperty(IBuildPropertiesConstants.GENERATION_SOURCE_FEATURE_PREFIX + featureId));
+						for (int j = 1; j < extraEntries.length; j++) {
+							Map items = Utils.parseExtraBundlesString(extraEntries[j], true);
+							String id = (String) items.get(Utils.EXTRA_ID);
+							Version version = (Version) items.get(Utils.EXTRA_VERSION);
+							if (extraEntries[j].startsWith("feature@")) { //$NON-NLS-1$
+								FeatureEntry added = new FeatureEntry(id, version.toString(), false);
+								FeatureEntry[] expanded = new FeatureEntry[includedRefs.length + 1];
+								System.arraycopy(includedRefs, 0, expanded, 0, includedRefs.length);
+								expanded[includedRefs.length] = added;
+								includedRefs = expanded;
+							} else if (extraEntries[j].startsWith("plugin@")) { //$NON-NLS-1$
+								VersionRange range = new VersionRange(version, true, version.equals(Version.emptyVersion) ? (Version) null : version, true);
+								allPlugins.add(new ReachablePlugin(id, range));
+							}
+						}
+					} else {
+						String message = NLS.bind(Messages.exception_missingFeature, featureId);
+						throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
+					}
+				}
 			}
 			FeatureEntry[] entries = toAnalyse.getPluginEntries();
 			for (int i = 0; i < entries.length; i++) {

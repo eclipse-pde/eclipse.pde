@@ -436,4 +436,22 @@ public class SourceTests extends PDETestCase {
 		assertResourceFile(build2, "tmp/eclipse/plugins/rcp.source_1.0.0.124/src/a.bundle_1.0.0/about.html");
 		assertResourceFile(build2, "tmp/eclipse/plugins/rcp.source_1.0.0.124/src/a.bundle_1.0.0/src.zip");
 	}
+	
+	
+	public void testBug247007_247027() throws Exception {
+		IFolder buildFolder = newTest("247007");
+		IFolder sdkFolder = Utils.createFolder(buildFolder, "features/sdk");
+		
+		Utils.generateFeature(buildFolder, "sdk", new String [] { "sdk.source" }, new String [] { "org.apache.ant" });
+		Properties properties = new Properties();
+		properties.put("generate.feature@sdk.source", "sdk,feature@org.eclipse.rcp");
+		Utils.storeBuildProperties(sdkFolder, properties);
+
+		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
+		properties.put("filteredDependencyCheck", "true");
+		generateScripts(buildFolder, properties);
+		
+		//if we failed to account for the source features, then osgi would not have been in the state and 
+		//org.apache.ant would have failed to resolve and generateScripts would have thrown an exception
+	}
 }

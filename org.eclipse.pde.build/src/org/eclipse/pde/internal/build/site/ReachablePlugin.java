@@ -10,19 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
-
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
+/**
+ * ReachablePlugin's are sorted first by id, then by the width of the version range.
+ * With equal range width, R1 < R2 if R1.range.getMinimum() < R2.range.getMaximum()
+ */
 public class ReachablePlugin implements Comparable {
 	private static final Version GENERIC_VERSION = new Version(IPDEBuildConstants.GENERIC_VERSION_NUMBER);
 	private static final Version MAX_VERSION = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
-	public static final VersionRange WIDEST_RANGE = new VersionRange(new Version(0, 0, 0), true, MAX_VERSION, true);
+	public static final VersionRange WIDEST_RANGE = new VersionRange(Version.emptyVersion, true, MAX_VERSION, true);
+	public static final VersionRange NARROWEST_RANGE = new VersionRange(Version.emptyVersion, true, Version.emptyVersion, false);
 
-	private String id;
+	private final String id;
 	private VersionRange range;
 
 	public ReachablePlugin(String id, VersionRange range) {
@@ -46,31 +50,6 @@ public class ReachablePlugin implements Comparable {
 		}
 	}
 
-//	public ReachablePlugin(IImport existingImport) {
-//		id = existingImport.getVersionedIdentifier().getIdentifier();
-//		range = constructRange(new Version(existingImport.getVersionedIdentifier().toString()), existingImport.getRule());
-//	}
-//
-//	private VersionRange constructRange(Version initialValue, int ruleCode) {
-//		switch (ruleCode) {
-//			case IUpdateConstants.RULE_NONE :
-//			case IUpdateConstants.RULE_EQUIVALENT : //[1.0.0, 1.1.0)
-//				return new VersionRange(initialValue, true, new Version(initialValue.getMajor(), initialValue.getMinor() + 1, 0), false);
-//
-//			case IUpdateConstants.RULE_PERFECT : //[1.0.0, 1.0.0]
-//				return new VersionRange(initialValue, true, initialValue, true);
-//
-//			case IUpdateConstants.RULE_COMPATIBLE : //[1.1.0, 2.0.0) 
-//				return new VersionRange(initialValue, true, new Version(initialValue.getMajor() + 1, 0, 0), false);
-//
-//			case IUpdateConstants.RULE_GREATER_OR_EQUAL ://[1.0.0, 999.999.999)
-//				return new VersionRange(initialValue, true, new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE), true);
-//			default :
-//				return null;
-//		}
-//
-//	}
-
 	public String getId() {
 		return id;
 	}
@@ -89,6 +68,10 @@ public class ReachablePlugin implements Comparable {
 			result = substract(toCompare.range.getMaximum(), toCompare.range.getMinimum()).compareTo(substract(range.getMaximum(), range.getMinimum()));
 			if (result != 0)
 				return result;
+			if (range.getIncludeMaximum() && !toCompare.range.getIncludeMaximum())
+				return -1;
+			if (!range.getIncludeMaximum() && toCompare.range.getIncludeMaximum())
+				return 1;
 			if (this.equals(o))
 				return 0;
 			result = range.getMinimum().compareTo(toCompare.range.getMaximum());

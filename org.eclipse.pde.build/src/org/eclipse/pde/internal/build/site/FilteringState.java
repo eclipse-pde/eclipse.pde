@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.SortedSet;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.VersionRange;
-import org.osgi.framework.Version;
 
 public class FilteringState extends PDEState {
 	SortedSet allPlugins;
@@ -27,7 +26,7 @@ public class FilteringState extends PDEState {
 			return super.addBundleDescription(toAdd);
 		}
 
-		SortedSet includedMatches = allPlugins.subSet(new ReachablePlugin(toAdd.getSymbolicName(), ReachablePlugin.WIDEST_RANGE), new ReachablePlugin(toAdd.getSymbolicName(), new VersionRange(Version.emptyVersion, true, Version.emptyVersion, true)));
+		SortedSet includedMatches = allPlugins.subSet(new ReachablePlugin(toAdd.getSymbolicName(), ReachablePlugin.WIDEST_RANGE), new ReachablePlugin(toAdd.getSymbolicName(), ReachablePlugin.NARROWEST_RANGE));
 		for (Iterator iterator = includedMatches.iterator(); iterator.hasNext();) {
 			ReachablePlugin constraint = (ReachablePlugin) iterator.next();
 			if (constraint.getRange().isIncluded(toAdd.getVersion()))
