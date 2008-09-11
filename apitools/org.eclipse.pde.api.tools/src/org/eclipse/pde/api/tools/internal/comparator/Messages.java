@@ -393,6 +393,7 @@ public class Messages extends NLS {
 							case IDelta.STATIC_TO_NON_STATIC :
 								return 102;
 						}
+						break;
 					case IDelta.REMOVED :
 						switch(delta.getFlags()) {
 							case IDelta.CHECKED_EXCEPTION :
@@ -427,6 +428,7 @@ public class Messages extends NLS {
 							case IDelta.DECREASE_ACCESS :
 								return 100;
 						}
+						break;
 					case IDelta.REMOVED :
 						switch(delta.getFlags()) {
 							case IDelta.CHECKED_EXCEPTION :

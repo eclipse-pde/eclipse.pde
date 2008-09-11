@@ -873,6 +873,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 								p = (IProject) resource;
 							}
 						}
+						break;
 					}
 					case IClasspathEntry.CPE_SOURCE: {
 						IPath entrypath = entry.getOutputLocation();

@@ -415,12 +415,14 @@ public class ApiProblemFactory {
 								switch(flags) {
 									case IDelta.METHOD: return 41;
 								}
+								break;
 							}
 							case IDelta.ANNOTATION_ELEMENT_TYPE: {
 								switch(flags) {
 									case IDelta.FIELD: return 39;
 									case IDelta.METHOD: return 43;
 								}
+								break;
 							}
 							case IDelta.INTERFACE_ELEMENT_TYPE: {
 								switch(flags) {
@@ -452,6 +454,7 @@ public class ApiProblemFactory {
 									case IDelta.STATIC_TO_NON_STATIC: return 121;
 									case IDelta.NON_STATIC_TO_STATIC: return 69;
 								}
+								break;
 							}
 							case IDelta.METHOD_ELEMENT_TYPE : {
 								switch(flags) {
@@ -461,6 +464,7 @@ public class ApiProblemFactory {
 									case IDelta.NON_STATIC_TO_STATIC: return 120;
 									case IDelta.STATIC_TO_NON_STATIC: return 122;
 								}
+								break;
 							}
 							case IDelta.CONSTRUCTOR_ELEMENT_TYPE : {
 								switch(flags) {
@@ -533,6 +537,7 @@ public class ApiProblemFactory {
 				switch(problem.getKind()) {
 					case IApiProblem.API_PROFILE_MISSING: return IApiProblemTypes.MISSING_DEFAULT_API_BASELINE;
 				}
+				break;
 			}
 			case IApiProblem.CATEGORY_SINCETAGS: {
 				switch(problem.getKind()) {
@@ -540,6 +545,7 @@ public class ApiProblemFactory {
 					case IApiProblem.SINCE_TAG_MALFORMED: return IApiProblemTypes.MALFORMED_SINCE_TAG;
 					case IApiProblem.SINCE_TAG_MISSING: return IApiProblemTypes.MISSING_SINCE_TAG;
 				}
+				break;
 			}
 			case IApiProblem.CATEGORY_VERSION: {
 				return IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION;
@@ -560,9 +566,11 @@ public class ApiProblemFactory {
 							case IApiProblem.LEAK_METHOD_PARAMETER : return IApiProblemTypes.LEAK_METHOD_PARAM;
 							case IApiProblem.LEAK_RETURN_TYPE : return IApiProblemTypes.LEAK_METHOD_RETURN_TYPE;
 						}
+						break;
 					}
 					case IApiProblem.UNSUPPORTED_TAG_USE: return IApiProblemTypes.INVALID_JAVADOC_TAG;
 				}
+				break;
 			}
 			case IApiProblem.CATEGORY_COMPATIBILITY: {
 				return Util.getDeltaPrefererenceKey(problem.getElementKind(), problem.getKind(), problem.getFlags());

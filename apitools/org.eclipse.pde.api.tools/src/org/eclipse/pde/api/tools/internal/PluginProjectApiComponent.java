@@ -259,6 +259,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 									break;
 								case IClasspathEntry.CPE_VARIABLE :
 									classpathEntry = JavaCore.getResolvedClasspathEntry(classpathEntry);
+									//$FALL-THROUGH$
 								case IClasspathEntry.CPE_LIBRARY :
 									IPath path = classpathEntry.getPath();
 									if (Util.isArchive(path.lastSegment())) {

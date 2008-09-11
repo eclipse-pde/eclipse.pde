@@ -373,6 +373,7 @@ public final class Util {
 						currentChar = chars[++i];
 					}
 				}
+				//$FALL-THROUGH$
 				default: {
 					buffer.append(currentChar);
 				}
@@ -1061,6 +1062,7 @@ public final class Util {
 									return type2;
 								}
 						}
+						break;
 					case IDelta.REMOVED :
 						switch(delta.getFlags()) {
 							case IDelta.API_FIELD :
