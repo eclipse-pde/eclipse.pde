@@ -227,9 +227,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected IPath assertSource(IProject project, String packagename, String sourcename) throws JavaModelException {
 		IPath ppath = project.getFullPath();
 		assertTrue("The path for '"+project.getName()+"' must exist", !ppath.isEmpty());
-		IPath frpath = getEnv().getPackageFragmentRootPath(ppath, SRC_ROOT);
+		IPath frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
 		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
-		IPath packpath = getEnv().getPackagePath(frpath, packagename);
+		IPath packpath = getEnv().addPackage(frpath, packagename);
 		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
 		String contents = getSourceContents(getTestSourcePath(), sourcename);
 		assertNotNull("the source contents for '"+sourcename+"' must exist", contents);
