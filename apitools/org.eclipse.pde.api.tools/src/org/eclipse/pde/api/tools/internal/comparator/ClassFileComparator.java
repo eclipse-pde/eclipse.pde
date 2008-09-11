@@ -913,7 +913,9 @@ public class ClassFileComparator {
 						if (elementDescription != null) {
 							visibility = elementDescription.getVisibility();
 						}
-					}
+					}/* else if (Util.isPublic(typeDescriptor2.access) || Util.isProtected(typeDescriptor2.access)) {
+						visibility = VisibilityModifiers.API;
+					}*/
 					if ((visibility & visibilityModifiers) != 0) {
 						set.add(typeDescriptor2);
 					}
@@ -990,14 +992,20 @@ public class ClassFileComparator {
 					}
 					if (restrictions2 != restrictions) {
 						// report different restrictions
-						// adding no extend on a final class is ok
-						// adding no instantiate on an abstract class is ok
+						// adding/removing no extend on a final class is ok
+						// adding/removing no instantiate on an abstract class is ok
 						if (!((Util.isFinal(this.descriptor2.access)
 								&& RestrictionModifiers.isExtendRestriction(restrictions2)
 								&& !RestrictionModifiers.isExtendRestriction(restrictions))
 							|| (Util.isAbstract(this.descriptor2.access)
 									&& RestrictionModifiers.isInstantiateRestriction(restrictions2)
-									&& !RestrictionModifiers.isInstantiateRestriction(restrictions)))) {
+									&& !RestrictionModifiers.isInstantiateRestriction(restrictions))
+							|| (Util.isFinal(this.descriptor2.access)
+									&& !RestrictionModifiers.isExtendRestriction(restrictions2)
+									&& RestrictionModifiers.isExtendRestriction(restrictions))
+							|| (Util.isAbstract(this.descriptor2.access)
+									&& !RestrictionModifiers.isInstantiateRestriction(restrictions2)
+									&& RestrictionModifiers.isInstantiateRestriction(restrictions)))) {
 							this.addDelta(
 									this.descriptor1.getElementType(),
 									IDelta.CHANGED,
@@ -2692,7 +2700,9 @@ public class ClassFileComparator {
 					if (elementDescription != null) {
 						visibility = elementDescription.getVisibility();
 					}
-				}
+				}/* else if (Util.isPublic(descriptor.access) || Util.isProtected(descriptor.access)) {
+					visibility = VisibilityModifiers.API;
+				}*/
 				if (includePrivate || ((visibility & visibilityModifiers) != 0)) {
 					list.add(descriptor);
 				}

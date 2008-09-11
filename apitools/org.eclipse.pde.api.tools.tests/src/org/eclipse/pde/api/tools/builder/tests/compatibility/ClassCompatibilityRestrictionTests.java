@@ -122,7 +122,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	public void testAddNoInstantiateF() throws Exception {
 		xAddNoInstantiate(false);
 	}	
-	
+
 	/**
 	 * Tests adding a noextend annotation
 	 */
@@ -140,6 +140,40 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		xFinalAddNoExtend(false);
 	}
 	
+	/**
+	 * Tests adding a noextend annotation
+	 */
+	private void xFinalRemoveNoExtend(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("FinalRemoveNoExtend.java");
+		// no errors expected
+		performCompatibilityTest(filePath, incremental);
+	}
+
+	public void testFinalRemoveNoExtendI() throws Exception {
+		xFinalRemoveNoExtend(true);
+	}
+	
+	public void testFinalRemoveNoExtendF() throws Exception {
+		xFinalRemoveNoExtend(false);
+	}
+
+	/**
+	 * Tests adding a noextend annotation
+	 */
+	private void xAbstractRemoveNoInstantiate(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AbstractRemoveNoInstantiate.java");
+		// no errors expected
+		performCompatibilityTest(filePath, incremental);
+	}
+
+	public void testAbstractRemoveNoInstantiateI() throws Exception {
+		xAbstractRemoveNoInstantiate(true);
+	}
+	
+	public void testAbstractRemoveNoInstantiateF() throws Exception {
+		xAbstractRemoveNoInstantiate(false);
+	}
+
 	/**
 	 * Tests adding a no-instantiate annotation to an abstract class 
 	 */

@@ -28,7 +28,7 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(RestrictionsDeltaTests.class);
 		TestSuite suite = new TestSuite(RestrictionsDeltaTests.class.getName());
-		suite.addTest(new RestrictionsDeltaTests("test1"));
+		suite.addTest(new RestrictionsDeltaTests("test6"));
 		return suite;
 	}
 
@@ -166,5 +166,73 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Remove @noextend on a final class
+	 */
+	public void test6() {
+		deployBundles("test6");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		assertTrue("Has no description", beforeApiComponent.hasApiDescription());
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		assertTrue("Has no description", afterApiComponent.hasApiDescription());
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * Remove @noinstantiate on an abstract class
+	 */
+	public void test7() {
+		deployBundles("test7");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		assertTrue("Has no description", beforeApiComponent.hasApiDescription());
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		assertTrue("Has no description", afterApiComponent.hasApiDescription());
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * Remove @noinstantiate on an abstract class
+	 */
+	public void test8() {
+		deployBundles("test8");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		assertTrue("Has no description", beforeApiComponent.hasApiDescription());
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		assertTrue("Has no description", afterApiComponent.hasApiDescription());
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * Remove @noextend on a final class
+	 */
+	public void test9() {
+		deployBundles("test9");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		assertTrue("Has no description", beforeApiComponent.hasApiDescription());
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		assertTrue("Has no description", afterApiComponent.hasApiDescription());
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA);
 	}
 }
