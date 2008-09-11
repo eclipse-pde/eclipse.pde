@@ -165,8 +165,6 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 */
 	private void xRemoveFinalOnConstant(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveFinalOnConstant.java");
-		// TODO: should only have the first error (removed final) - second error indicates
-		// the same problem (redundant)
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT)
 		};
