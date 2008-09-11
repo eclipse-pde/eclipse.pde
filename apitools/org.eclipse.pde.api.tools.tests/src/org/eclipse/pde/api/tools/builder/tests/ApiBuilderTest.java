@@ -923,7 +923,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
-			VersionNumberingTests.class,
 			BaselineProblemTests.class,
 			CompatibilityTest.class,
 			UsageTest.class,	
