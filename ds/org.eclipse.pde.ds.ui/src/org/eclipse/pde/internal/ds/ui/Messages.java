@@ -154,6 +154,7 @@ public class Messages extends NLS {
 	public static String DSServiceComponentSection_immediateButtonMessage;
 	public static String DSServiceComponentSection_enabledButtonMessage;
 	
+	public static String DSService_title;
 	
 	
 

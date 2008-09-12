@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSReference;
+import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SharedImages;
 import org.eclipse.swt.graphics.Image;
 
@@ -31,6 +32,9 @@ public class DSLabelProvider extends LabelProvider {
 	}
 
 	public String getObjectText(IDSObject obj) {
+		if (obj.getType() == IDSConstants.TYPE_SERVICE) {
+			return Messages.DSService_title;
+		}
 		return obj.getName();
 	}
 
@@ -68,7 +72,7 @@ public class DSLabelProvider extends LabelProvider {
 		} else if (obj.getType() == IDSConstants.TYPE_COMPONENT) {
 			return SharedImages.getImage(SharedImages.DESC_ROOT);
 		} else if (obj.getType() == IDSConstants.TYPE_SERVICE) {
-			return SharedImages.getImage(SharedImages.DESC_SERVICE);
+			return SharedImages.getImage(SharedImages.DESC_SERVICES);
 		}
 		return null;
 	}

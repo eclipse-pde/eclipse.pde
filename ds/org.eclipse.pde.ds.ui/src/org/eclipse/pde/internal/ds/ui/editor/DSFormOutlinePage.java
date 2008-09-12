@@ -13,8 +13,6 @@
 package org.eclipse.pde.internal.ds.ui.editor;
 
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.pde.internal.ds.core.IDSObject;
-import org.eclipse.pde.internal.ds.core.text.DSObject;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
@@ -23,24 +21,6 @@ public class DSFormOutlinePage extends FormOutlinePage  {
 	public DSFormOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}
-	
-	public class DSLabelProvider extends BasicLabelProvider {
-		public String getText(Object obj) {
-			if (obj instanceof DSObject) {
-				return getObjectText((IDSObject) obj);
-			}
-			return super.getText(obj);
-		}
-
-	}
-	
-
-	protected String getObjectText(IDSObject obj) {
-		//TODO verify limits?
-		return obj.getName();
-	}
-
-
 
 	/*
 	 * (non-Javadoc)
