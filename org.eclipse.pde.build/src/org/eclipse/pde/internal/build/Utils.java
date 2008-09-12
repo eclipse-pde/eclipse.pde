@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
@@ -24,6 +25,77 @@ import org.osgi.framework.Version;
  * General utility class.
  */
 public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstants, IXMLConstants {
+	// The 64 characters that are legal in a version qualifier, in lexicographical order.
+	private static final String BASE_64_ENCODING = "-0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
+
+	/** 
+	 * returns a value 1 - 64 for valid qualifier characters.  Returns 0 for non-valid characters 
+	 */
+	public static int qualifierCharValue(char c) {
+		int index = BASE_64_ENCODING.indexOf(c);
+		// The "+ 1" is very intentional.  For a blank (or anything else that
+		// is not a legal character), we want to return 0.  For legal
+		// characters, we want to return one greater than their position, so
+		// that a blank is correctly distinguished from '-'.
+		return index + 1;
+	}
+
+	// Integer to character conversion in our base-64 encoding scheme.  If the
+	// input is out of range, an illegal character will be returned.
+	public static char base64Character(int number) {
+		if (number < 0 || number > 63) {
+			return ' ';
+		}
+		return BASE_64_ENCODING.charAt(number);
+	}
+
+	public static VersionRange createVersionRange(String versionId) {
+		VersionRange range = null;
+		if (versionId == null || GENERIC_VERSION_NUMBER.equals(versionId))
+			range = VersionRange.emptyRange;
+		else {
+			int qualifierIdx = versionId.indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER);
+			if (qualifierIdx != -1) {
+				String newVersion = versionId.substring(0, qualifierIdx);
+				if (newVersion.endsWith(".")) //$NON-NLS-1$
+					newVersion = newVersion.substring(0, newVersion.length() - 1);
+
+				Version lower = new Version(newVersion);
+				Version upper = null;
+				String newQualifier = incrementQualifier(lower.getQualifier());
+				if (newQualifier == null)
+					upper = new Version(lower.getMajor(), lower.getMinor(), lower.getMicro() + 1);
+				else
+					upper = new Version(lower.getMajor(), lower.getMinor(), lower.getMicro(), newQualifier);
+				range = new VersionRange(lower, true, upper, false);
+			} else {
+				range = new VersionRange(new Version(versionId), true, new Version(versionId), true);
+			}
+		}
+		return range;
+	}
+
+	private static String incrementQualifier(String qualifier) {
+		int idx = qualifier.length() - 1;
+
+		for (; idx >= 0; idx--) {
+			//finding last non-'z' character
+			if (qualifier.charAt(idx) != 'z')
+				break;
+		}
+
+		if (idx >= 0) {
+			// qualifierCharValue returns 1 - 64, this is an implicit +1 over
+			// the characters returned by base64Character
+			int c = Utils.qualifierCharValue(qualifier.charAt(idx));
+			String newQualifier = qualifier.substring(0, idx);
+			newQualifier += Utils.base64Character(c);
+			return newQualifier;
+		}
+
+		return null;
+	}
+
 	/**
 	 * Convert a list of tokens into an array. The list separator has to be
 	 * specified.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -30,13 +30,27 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		}
 
 		public boolean equals(Object obj) {
-			if (obj instanceof Entry)
-				return id.equals(((Entry) obj).id);
+			if (obj instanceof Entry) {
+				Entry objEntry = (Entry) obj;
+				String objVersion = "0.0.0"; //$NON-NLS-1$
+				if (objEntry.attributes != null && objEntry.attributes.containsKey(VERSION))
+					objVersion = (String) objEntry.attributes.get(VERSION);
+
+				String version = "0.0.0"; //$NON-NLS-1$
+				if (attributes != null && attributes.containsKey(VERSION))
+					version = (String) attributes.get(VERSION);
+
+				return id.equals(((Entry) obj).id) && version.equals(objVersion);
+			}
+
 			return id.equals(obj);
 		}
 
 		public int hashCode() {
-			return id.hashCode();
+			String version = "0.0.0"; //$NON-NLS-1$
+			if (attributes != null && attributes.containsKey(VERSION))
+				version = (String) attributes.get(VERSION);
+			return id.hashCode() + version.hashCode();
 		}
 
 		public Map getAttributes() {
@@ -207,8 +221,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		BundleDescription bundle = state.getResolvedBundle(BUNDLE_OSGI);
 		if (bundle == null)
 			return;
-		Version version = bundle.getVersion();
-		if (version.compareTo(new Version("3.3")) < 0) { //$NON-NLS-1$
+		Version osgiVersion = bundle.getVersion();
+		if (osgiVersion.compareTo(new Version("3.3")) < 0) { //$NON-NLS-1$
 			// we have an OSGi version that is less than 3.3 so add the old launcher
 			if (!features.contains(FEATURE_PLATFORM_LAUNCHERS))
 				features.add(new Entry(FEATURE_PLATFORM_LAUNCHERS));

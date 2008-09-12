@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -22,9 +22,6 @@ import org.osgi.framework.Version;
  * Generates build.xml script for features.
  */
 public class BuildDirector extends AbstractBuildScriptGenerator {
-
-	// The 64 characters that are legal in a version qualifier, in lexicographical order.
-	private static final String BASE_64_ENCODING = "-0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
 
 	private static final int QUALIFIER_SUFFIX_VERSION = 1;
 
@@ -167,7 +164,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	public void generate(BuildTimeFeature feature) throws CoreException {
 		generate(feature, true);
 	}
-	
+
 	protected void generate(BuildTimeFeature feature, boolean generateProductFiles) throws CoreException {
 		if (analyseIncludedFeatures)
 			generateIncludedFeatureBuildFile(feature);
@@ -241,15 +238,6 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		generateModels(Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins));
 	}
 
-	// Integer to character conversion in our base-64 encoding scheme.  If the
-	// input is out of range, an illegal character will be returned.
-	private static char base64Character(int number) {
-		if (number < 0 || number > 63) {
-			return ' ';
-		}
-		return BASE_64_ENCODING.charAt(number);
-	}
-
 	// Encode a non-negative number as a variable length string, with the
 	// property that if X > Y then the encoding of X is lexicographically
 	// greater than the enocding of Y.  This is accomplished by encoding the
@@ -280,20 +268,11 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			}
 		}
 		StringBuffer result = new StringBuffer(length + 1);
-		result.append(base64Character((length << 3) + (int) ((number >> (6 * length)) & 0x7)));
+		result.append(Utils.base64Character((length << 3) + (int) ((number >> (6 * length)) & 0x7)));
 		while (--length >= 0) {
-			result.append(base64Character((int) ((number >> (6 * length)) & 0x3f)));
+			result.append(Utils.base64Character((int) ((number >> (6 * length)) & 0x3f)));
 		}
 		return result.toString();
-	}
-
-	private static int charValue(char c) {
-		int index = BASE_64_ENCODING.indexOf(c);
-		// The "+ 1" is very intentional.  For a blank (or anything else that
-		// is not a legal character), we want to return 0.  For legal
-		// characters, we want to return one greater than their position, so
-		// that a blank is correctly distinguished from '-'.
-		return index + 1;
 	}
 
 	private static void appendEncodedCharacter(StringBuffer buffer, int c) {
@@ -301,7 +280,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			buffer.append('z');
 			c -= 63;
 		}
-		buffer.append(base64Character(c));
+		buffer.append(Utils.base64Character(c));
 	}
 
 	private static int getIntProperty(String property, int defaultValue) {
@@ -435,7 +414,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			int[] qualifierSums = new int[longestQualifier];
 			for (int i = 0; i < numElements; ++i) {
 				for (int j = 0; j < qualifiers[i].length(); ++j) {
-					qualifierSums[j] += charValue(qualifiers[i].charAt(j));
+					qualifierSums[j] += Utils.qualifierCharValue(qualifiers[i].charAt(j));
 				}
 			}
 			// Normalize the sums to be base 65.

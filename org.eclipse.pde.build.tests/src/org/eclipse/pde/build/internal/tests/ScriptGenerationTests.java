@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,12 +20,14 @@ import org.apache.tools.ant.types.Path;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.*;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
+import org.osgi.framework.Version;
 
 public class ScriptGenerationTests extends PDETestCase {
 
@@ -551,5 +553,64 @@ public class ScriptGenerationTests extends PDETestCase {
 		
 		Utils.generateFeature(buildFolder, "f", new String[] {"opt;optional=true"}, new String[] { "org.eclipse.osgi"} );
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f"));
+	}
+	
+	public void testBug247091() throws Exception {
+		IFolder buildFolder = newTest("247091");
+		
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "f;version=0.0.0", "f;version=1.0.0.qualifier", "f;version=1.0.0.vqualifier"}, null);
+		Utils.generateFeature(buildFolder, "f", null, null, "2.0.0");
+		IFolder f = buildFolder.getFolder("features/f");
+		f.refreshLocal(IResource.DEPTH_INFINITE, null);
+		f.move(new org.eclipse.core.runtime.Path("F1"), true, null);
+		Utils.generateFeature(buildFolder, "f", null, null, "1.0.0.z1234");
+		f.refreshLocal(IResource.DEPTH_INFINITE, null);
+		f.move(new org.eclipse.core.runtime.Path("F2"), true, null);
+		Utils.generateFeature(buildFolder, "f", null, null, "1.0.0.v5678");
+		f.refreshLocal(IResource.DEPTH_INFINITE, null);
+		f.move(new org.eclipse.core.runtime.Path("F3"), true, null);
+		
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk"));
+		
+		assertLogContainsLines(buildFolder.getFile("features/sdk/build.xml"), new String[] { "../F1", "../F2", "../F3" } );
+	}
+	
+	public void testBug247091_2() throws Exception {
+		VersionRange range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0");
+		assertTrue( range.getIncludeMinimum());
+		assertTrue(range.getIncludeMaximum());
+		assertEquals(range.getMinimum(), new Version("1.0.0"));
+		assertEquals(range.getMaximum(), new Version("1.0.0"));
+		
+		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.qualifier");
+		assertTrue( range.getIncludeMinimum());
+		assertFalse(range.getIncludeMaximum());
+		assertEquals(range.getMinimum(), new Version("1.0.0"));
+		assertEquals(range.getMaximum(), new Version("1.0.1"));
+		
+		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.zqualifier");
+		assertTrue( range.getIncludeMinimum());
+		assertFalse(range.getIncludeMaximum());
+		assertEquals(range.getMinimum(), new Version("1.0.0.z"));
+		assertEquals(range.getMaximum(), new Version("1.0.1"));
+		
+		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abcqualifier");
+		assertTrue( range.getIncludeMinimum());
+		assertFalse(range.getIncludeMaximum());
+		assertEquals(range.getMinimum(), new Version("1.0.0.abc"));
+		assertEquals(range.getMaximum(), new Version("1.0.0.abd"));
+		
+		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzqualifier");
+		assertTrue( range.getIncludeMinimum());
+		assertFalse(range.getIncludeMaximum());
+		assertEquals(range.getMinimum(), new Version("1.0.0.abz"));
+		assertEquals(range.getMaximum(), new Version("1.0.0.ac"));
+		
+		
+		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzzqualifier");
+		assertTrue( range.getIncludeMinimum());
+		assertFalse(range.getIncludeMaximum());
+		assertEquals(range.getMinimum(), new Version("1.0.0.abzz"));
+		assertEquals(range.getMaximum(), new Version("1.0.0.ac"));
 	}
 }

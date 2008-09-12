@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -36,7 +36,7 @@ public class SourceTests extends PDETestCase {
 		return new TestSuite(SourceTests.class);
 	}
 
-	public void testBug206679() throws Exception {
+	public void testBug206679_247198() throws Exception {
 		IFolder buildFolder = newTest("206679");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
 
@@ -47,6 +47,8 @@ public class SourceTests extends PDETestCase {
 		Utils.storeBuildProperties(sdk, properties);
 
 		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
+		//tests bug 247198
+		props.put("filteredDependencyCheck", "true");
 		generateScripts(buildFolder, props);
 
 		IFolder jdtSource = buildFolder.getFolder("features").getFolder("jdt.source");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	private final Map /*of BuildTimeFeature*/featureCache = new HashMap();
 	private List /*of FeatureReference*/featureReferences;
 	private BuildTimeSiteContentProvider contentProvider;
+	private boolean featuresResolved = false;
 
 	private PDEState state;
 	private Properties repositoryVersions; //version for the features
@@ -42,6 +43,15 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	private List rootFeaturesForFilter;
 	private List rootPluginsForFiler;
 	private boolean filter = false;
+
+	private final Comparator featureComparator = new Comparator() {
+		// Sort highest to lowest version, they are assumed to have the same id
+		public int compare(Object arg0, Object arg1) {
+			Version v0 = new Version(((Feature) arg0).getVersion());
+			Version v1 = new Version(((Feature) arg1).getVersion());
+			return -1 * v0.compareTo(v1);
+		}
+	};
 
 	public void setReportResolutionErrors(boolean value) {
 		reportResolutionErrors = value;
@@ -229,42 +239,52 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	}
 
 	public BuildTimeFeature findFeature(String featureId, String versionId, boolean throwsException) throws CoreException {
-		FeatureReference[] features = getFeatureReferences();
-		if (GENERIC_VERSION_NUMBER.equals(versionId))
-			versionId = null;
-		for (int i = 0; i < features.length; i++) {
-			Feature verifiedFeature;
-			try {
-				verifiedFeature = features[i].getFeature();
-			} catch (CoreException e) {
-				String message = NLS.bind(Messages.exception_featureParse, features[i].getURL());
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
-			}
-			if (verifiedFeature.getId().equals(featureId))
-				if (versionId == null || new Version(features[i].getFeature().getVersion()).equals(new Version(versionId)))
-					return (BuildTimeFeature) features[i].getFeature();
-		}
-		int qualifierIdx = -1;
-		if (versionId != null && (((qualifierIdx = versionId.indexOf('.' + IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) || ((qualifierIdx = versionId.indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1))) {
-			Version versionToMatch = Version.parseVersion(versionId.substring(0, qualifierIdx));
-			for (int i = 0; i < features.length; i++) {
-				Version featureVersion = Version.parseVersion(features[i].getFeature().getVersion());
-				if (features[i].getFeature().getId().equals(featureId) && featureVersion.getMajor() == versionToMatch.getMajor() && featureVersion.getMinor() == versionToMatch.getMinor() && featureVersion.getMicro() >= versionToMatch.getMicro() && featureVersion.getQualifier().compareTo(versionToMatch.getQualifier()) >= 0)
-					return (BuildTimeFeature) features[i].getFeature();
+		VersionRange range = Utils.createVersionRange(versionId);
+		return findFeature(featureId, range, throwsException);
+	}
+
+	private BuildTimeFeature findFeature(String featureId, VersionRange range, boolean throwsException) throws CoreException {
+		if (range == null)
+			range = VersionRange.emptyRange;
+
+		if (!featuresResolved)
+			resolveFeatureReferences();
+
+		if (featureCache.containsKey(featureId)) {
+			//Set is ordered highest version to lowest, return the first that matches the range
+			Set featureSet = (Set) featureCache.get(featureId);
+			for (Iterator iterator = featureSet.iterator(); iterator.hasNext();) {
+				BuildTimeFeature feature = (BuildTimeFeature) iterator.next();
+				Version featureVersion = new Version(feature.getVersion());
+				if (range.isIncluded(featureVersion)) {
+					return feature;
+				}
 			}
 		}
+
 		if (throwsException) {
 			String message = NLS.bind(Messages.exception_missingFeature, featureId);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 		}
+
 		return null;
 	}
 
-	public void addFeatureReferenceModel(File featureXML) {
-		addFeatureReferenceModel(featureXML, false);
+	private void resolveFeatureReferences() throws CoreException {
+		FeatureReference[] features = getFeatureReferences();
+		for (int i = 0; i < features.length; i++) {
+			try {
+				//getting the feature for the first time will result in it being added to featureCache
+				features[i].getFeature();
+			} catch (CoreException e) {
+				String message = NLS.bind(Messages.exception_featureParse, features[i].getURL());
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
+			}
+		}
+		featuresResolved = true;
 	}
 
-	public void addFeatureReferenceModel(File featureXML, boolean first) {
+	public void addFeatureReferenceModel(File featureXML) {
 		URL featureURL;
 		FeatureReference featureRef;
 		if (featureXML.exists()) {
@@ -278,7 +298,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 				featureRef = new FeatureReference();
 				featureRef.setSiteModel(this);
 				featureRef.setURLString(featureURL.toExternalForm());
-				addFeatureReferenceModel(featureRef, first);
+				addFeatureReferenceModel(featureRef);
 			} catch (MalformedURLException e) {
 				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, NLS.bind(Messages.warning_cannotLocateSource, featureXML.getAbsolutePath()), e));
 			}
@@ -286,26 +306,18 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	}
 
 	public void addFeatureReferenceModel(FeatureReference featureReference) {
-		addFeatureReferenceModel(featureReference, false);
-	}
-
-	public void addFeatureReferenceModel(FeatureReference featureReference, boolean first) {
-		//assertIsWriteable();
 		if (this.featureReferences == null)
 			this.featureReferences = new ArrayList();
-		// PERF: do not check if already present 
-		//if (!this.featureReferences.contains(featureReference))
-		if (first)
-			this.featureReferences.add(0, featureReference);
-		else
-			this.featureReferences.add(featureReference);
+
+		this.featureReferences.add(featureReference);
+		featuresResolved = false;
 	}
 
 	private SortedSet findAllReferencedPlugins() throws CoreException {
 		ArrayList rootFeatures = new ArrayList();
 		SortedSet allPlugins = new TreeSet();
 		for (Iterator iter = rootFeaturesForFilter.iterator(); iter.hasNext();) {
-			BuildTimeFeature correspondingFeature = findFeature((String) iter.next(), null, true);
+			BuildTimeFeature correspondingFeature = findFeature((String) iter.next(), (String) null, true);
 			if (correspondingFeature == null)
 				return null;
 			rootFeatures.add(correspondingFeature);
@@ -362,13 +374,43 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 			FeatureEntry[] imports = toAnalyse.getImports();
 			for (int i = 0; i < imports.length; i++) {
 				if (!imports[i].isPlugin()) {
-					rootFeatures.add(findFeature(imports[i].getId(), imports[i].getVersion(), true));
+					rootFeatures.add(findFeature(imports[i].getId(), getVersionRange(imports[i]), true));
 				} else {
 					allPlugins.add(new ReachablePlugin(imports[i]));
 				}
 			}
 		}
 		return allPlugins;
+	}
+
+	private VersionRange getVersionRange(FeatureEntry entry) {
+		String versionSpec = entry.getVersion();
+		if (versionSpec == null)
+			return VersionRange.emptyRange;
+		Version version = new Version(versionSpec);
+		if (version.equals(Version.emptyVersion))
+			return VersionRange.emptyRange;
+		if (!entry.isRequires())
+			return new VersionRange(version, true, version, true);
+
+		String match = entry.getMatch();
+		if (match == null)
+			return VersionRange.emptyRange;
+
+		if (match.equals("perfect")) //$NON-NLS-1$
+			return new VersionRange(version, true, version, true);
+		if (match.equals("equivalent")) { //$NON-NLS-1$
+			Version upper = new Version(version.getMajor(), version.getMinor() + 1, 0);
+			return new VersionRange(version, true, upper, false);
+		}
+		if (match.equals("compatible")) { //$NON-NLS-1$
+			Version upper = new Version(version.getMajor() + 1, 0, 0);
+			return new VersionRange(version, true, upper, false);
+		}
+		if (match.equals("greaterOrEqual")) //$NON-NLS-1$
+			return new VersionRange(version, true, new VersionRange(null).getMaximum(), true);
+
+		return VersionRange.emptyRange;
 	}
 
 	public void setFilter(boolean filter) {
@@ -406,6 +448,16 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 		feature = factory.createFeature(url, this);
 		feature.setFeatureContentProvider(getSiteContentProvider());
 		featureCache.put(url, feature);
+
+		if (featureCache.containsKey(feature.getId())) {
+			Set set = (Set) featureCache.get(feature.getId());
+			set.add(feature);
+		} else {
+			TreeSet set = new TreeSet(featureComparator);
+			set.add(feature);
+			featureCache.put(feature.getId(), set);
+		}
+
 		return feature;
 	}
 

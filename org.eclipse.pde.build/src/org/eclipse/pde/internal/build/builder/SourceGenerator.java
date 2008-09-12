@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -522,7 +522,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 		File buildProperty = new File(sourceFeatureDir + '/' + PROPERTIES_FILE);
 		if (buildProperty.exists()) {//If a build.properties file already exist then we don't override it.
-			getSite().addFeatureReferenceModel(sourceDir, true);
+			getSite().addFeatureReferenceModel(sourceDir);
 			return;
 		}
 		copiedFiles.add(Constants.FEATURE_FILENAME_DESCRIPTOR); //Because the feature.xml is not copied, we need to add it to the file
@@ -543,7 +543,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
-		getSite().addFeatureReferenceModel(sourceDir, true);
+		getSite().addFeatureReferenceModel(sourceDir);
 	}
 
 	private void replaceXMLAttribute(String location, String tag, String attr, String newValue) {
