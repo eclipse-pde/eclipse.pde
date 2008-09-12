@@ -56,19 +56,27 @@ public class DSLabelProvider extends LabelProvider {
 			return SharedImages.getImage(SharedImages.DESC_SERVICE);
 		} else if (obj.getType() == IDSConstants.TYPE_REFERENCE) {
 			IDSReference reference = (IDSReference) obj;
+			int flags = 0;
+			if (reference.getReferencePolicy().equals(
+					IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC)) {
+				flags |= SharedImages.F_DYNAMIC;
+			}
 			if (reference.getReferenceCardinality().equals(
 					IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE)) {
 				return SharedImages
-						.getImage(SharedImages.DESC_REFERENCE_ZERO_ONE);
+.getImage(
+						SharedImages.DESC_REFERENCE_ZERO_ONE, flags);
 			} else if (reference.getReferenceCardinality().equals(
 					IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N)) {
 				return SharedImages
-						.getImage(SharedImages.DESC_REFERENCE_ZERO_N);
+.getImage(
+						SharedImages.DESC_REFERENCE_ZERO_N, flags);
 			} else if (reference.getReferenceCardinality().equals(
 					IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N)) {
-				return SharedImages.getImage(SharedImages.DESC_REFERENCE_ONE_N);
+				return SharedImages.getImage(SharedImages.DESC_REFERENCE_ONE_N,
+						flags);
 			}
-			return SharedImages.getImage(SharedImages.DESC_REFERENCE);
+			return SharedImages.getImage(SharedImages.DESC_REFERENCE, flags);
 		} else if (obj.getType() == IDSConstants.TYPE_COMPONENT) {
 			return SharedImages.getImage(SharedImages.DESC_ROOT);
 		} else if (obj.getType() == IDSConstants.TYPE_SERVICE) {

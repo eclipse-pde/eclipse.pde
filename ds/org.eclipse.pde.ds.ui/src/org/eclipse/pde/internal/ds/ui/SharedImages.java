@@ -13,12 +13,16 @@
 package org.eclipse.pde.internal.ds.ui;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
 
 public final class SharedImages {
 
 	private SharedImages() { // do nothing
 	}
+
+	public final static int F_DYNAMIC = 1;
 
 	public final static String ICONS_PATH = "icons/"; //$NON-NLS-1$
 
@@ -43,15 +47,33 @@ public final class SharedImages {
 	public static final String DESC_DS = PATH_OBJ + "ds_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_ATTR = PATH_OBJ + "attribute_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_DETAILS = PATH_OBJ + "details_obj.gif"; //$NON-NLS-1$
-	
+
 	public static final String OVR_DYNAMIC = OVERLAY_OBJ + "synch_co.gif"; //$NON-NLS-1$
-	
+
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return Activator.getDefault().getImageRegistry().getDescriptor(key);
 	}
 
 	public static Image getImage(String key) {
 		return Activator.getDefault().getImageRegistry().get(key);
+	}
+
+	public static Image getImage(String key, int flags) {
+		// TODO crufty code
+		Image image = Activator.getDefault().getImageRegistry().get(key);
+		if ((flags & F_DYNAMIC) != 0) {
+			Image o = Activator.getDefault().getImageRegistry().get(
+					key + OVR_DYNAMIC);
+			if (o != null)
+				return o;
+			Image i = new DecorationOverlayIcon(image, SharedImages
+					.getImageDescriptor(OVR_DYNAMIC),
+ IDecoration.TOP_RIGHT)
+					.createImage();
+			Activator.getDefault().getImageRegistry().put(key + OVR_DYNAMIC, i);
+			return i;
+		}
+		return image;
 	}
 
 }
