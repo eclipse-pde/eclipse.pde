@@ -54,10 +54,13 @@ import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
+import org.eclipse.pde.api.tools.internal.comparator.TypeDescriptor;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
+import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
@@ -605,24 +608,61 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
-		if (classFile == null) {
-			if (DEBUG) {
-				System.err.println("Could not retrieve class file for " + typeName + " in " + component.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			return;
-		}
-		fBuildState.cleanup(typeName);
 		IDelta delta = null;
-		long time = System.currentTimeMillis();
-		try {
-			delta = ApiComparator.compare(classFile, reference, component, reference.getProfile(), component.getProfile(), VisibilityModifiers.API);
-		} catch(Exception e) {
-			ApiPlugin.log(e);
-		} finally {
-			if (DEBUG) {
-				System.out.println("Time spent for " + typeName + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (classFile == null) {
+			// this indicates a removed type
+			// we should try to get the class file from the reference
+			IClassFile referenceClassFile = null;
+			try {
+				referenceClassFile = reference.findClassFile(typeName);
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
 			}
-			fPendingDeltaInfos.clear();
+			if (referenceClassFile != null) {
+				try {
+					final IApiDescription referenceApiDescription = reference.getApiDescription();
+					IApiAnnotations elementDescription = referenceApiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
+					TypeDescriptor typeDescriptor = new TypeDescriptor(referenceClassFile);
+					int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+					if (!typeDescriptor.isNestedType()) {
+						// we skip nested types (member, local and anonymous)
+						if (elementDescription != null) {
+							restrictions = elementDescription.getRestrictions();
+						}
+						// if the visibility is API, we only consider public and protected types
+						if (Util.isDefault(typeDescriptor.access)
+									|| Util.isPrivate(typeDescriptor.access)) {
+							return;
+						}
+						String deltaComponentID = Util.getDeltaComponentID(reference);
+						delta = new Delta(
+								deltaComponentID,
+								IDelta.API_COMPONENT_ELEMENT_TYPE,
+								IDelta.REMOVED,
+								IDelta.TYPE,
+								restrictions,
+								typeDescriptor.access,
+								typeName,
+								typeName,
+								new String[] { typeName, deltaComponentID});
+					}
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+				}
+			}
+		} else {
+			fBuildState.cleanup(typeName);
+			long time = System.currentTimeMillis();
+			try {
+				delta = ApiComparator.compare(classFile, reference, component, reference.getProfile(), component.getProfile(), VisibilityModifiers.API);
+			} catch(Exception e) {
+				ApiPlugin.log(e);
+			} finally {
+				if (DEBUG) {
+					System.out.println("Time spent for " + typeName + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+				fPendingDeltaInfos.clear();
+			}
 		}
 		if (delta == null) {
 			return;

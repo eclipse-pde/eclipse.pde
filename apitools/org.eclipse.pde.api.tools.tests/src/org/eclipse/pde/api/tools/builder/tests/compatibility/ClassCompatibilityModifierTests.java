@@ -263,13 +263,12 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	}
 	
 	public void testPublicToPackageVisibilityI() throws Exception {
-		// TODO: incremental build case does not work - full build does.
-		// xPublicToPackageVisibility(true);
-	}	
+		xPublicToPackageVisibility(true);
+	}
 	
 	public void testPublicToPackageVisibilityF() throws Exception {
 		xPublicToPackageVisibility(false);
-	}	
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()

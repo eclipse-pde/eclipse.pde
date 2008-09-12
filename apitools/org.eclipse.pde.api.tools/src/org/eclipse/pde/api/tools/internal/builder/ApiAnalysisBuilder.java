@@ -190,6 +190,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	private HashSet fTypesToCheck = new HashSet();
 	
 	/**
+	 * List of removed type names (fully qualified and dot based)
+	 */
+	private HashSet fRemovedTypes = new HashSet(2);
+	/**
 	 * The set of changed types that came directly from the delta 
 	 */
 	private HashSet fChangedTypes = new HashSet(5);
@@ -346,6 +350,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			fPackages.clear();
 			fTypesToCheck.clear();
 			fChangedTypes.clear();
+			fRemovedTypes.clear();
 			fProjectToOutputLocations.clear();
 			updateMonitor(monitor, 0);
 			fAnalyzer.dispose();
@@ -667,6 +672,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			updateMonitor(monitor, 0);
 		}
+		// inject removed types inside changed type names so that we can properly detect type removal
+		for (Iterator iterator = this.fRemovedTypes.iterator(); iterator.hasNext(); ) {
+			cnames.add(iterator.next());
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -751,8 +760,19 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					return;
 				}
 				switch (binaryDelta.getKind()) {
-					case IResourceDelta.ADDED :
-					case IResourceDelta.REMOVED : {
+					case IResourceDelta.REMOVED :
+						// record removed type names (package + type)
+						StringBuffer buffer = new StringBuffer();
+						String[] segments = typePath.segments();
+						for (int i = 0, max = segments.length; i < max; i++) {
+							if (i > 0) {
+								buffer.append('.');
+							}
+							buffer.append(segments[i]);
+						}
+						fRemovedTypes.add(String.valueOf(buffer));
+						//$FALL-THROUGH$
+					case IResourceDelta.ADDED : {
 						if (DEBUG) {
 							System.out.println("Found added/removed class file " + typePath); //$NON-NLS-1$
 						}

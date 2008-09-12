@@ -159,7 +159,22 @@ public class ApiComparator {
 				// if the visibility is API, we only consider public and protected types
 				if (Util.isDefault(typeDescriptor2.access)
 							|| Util.isPrivate(typeDescriptor2.access)) {
-					return NO_DELTA;
+					// we need to check if the reference contains the type to report a reduced visibility
+					if (Util.isPublic(typeDescriptor.access)
+							|| Util.isProtected(typeDescriptor.access)) {
+						return new Delta(
+							deltaComponentID,
+							IDelta.API_COMPONENT_ELEMENT_TYPE,
+							IDelta.REMOVED,
+							IDelta.API_TYPE,
+							elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
+							typeDescriptor2.access,
+							typeName,
+							typeName,
+							new String[] { typeName, deltaComponentID});
+					} else {
+						return NO_DELTA;
+					}
 				}
 			}
 			ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);

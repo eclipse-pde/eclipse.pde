@@ -92,13 +92,12 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 	}
 	
 	public void testPublicToPackageI() throws Exception {
-		// TODO: expect problem
-		//xPublicToPackage(true);
+		xPublicToPackage(true);
 	}
 	
 	public void testPublicToPackageF() throws Exception {
 		xPublicToPackage(false);
-	}	
+	}
 	
 	/**
 	 * Tests deleting a public class
@@ -120,11 +119,10 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 	}
 	
 	public void testRemovePublicClassI() throws Exception {
-		// TODO: expect problem
-		// xRemovePublicClass(true);
+		xRemovePublicClass(true);
 	}
 	
 	public void testRemovePublicClassF() throws Exception {
 		xRemovePublicClass(false);
-	}	
+	}
 }
