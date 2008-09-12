@@ -913,9 +913,9 @@ public class ClassFileComparator {
 						if (elementDescription != null) {
 							visibility = elementDescription.getVisibility();
 						}
-					}/* else if (Util.isPublic(typeDescriptor2.access) || Util.isProtected(typeDescriptor2.access)) {
+					} else if (Util.isPublic(typeDescriptor2.access) || Util.isProtected(typeDescriptor2.access)) {
 						visibility = VisibilityModifiers.API;
-					}*/
+					}
 					if ((visibility & visibilityModifiers) != 0) {
 						set.add(typeDescriptor2);
 					}
@@ -994,18 +994,11 @@ public class ClassFileComparator {
 						// report different restrictions
 						// adding/removing no extend on a final class is ok
 						// adding/removing no instantiate on an abstract class is ok
-						if (!((Util.isFinal(this.descriptor2.access)
-								&& RestrictionModifiers.isExtendRestriction(restrictions2)
-								&& !RestrictionModifiers.isExtendRestriction(restrictions))
-							|| (Util.isAbstract(this.descriptor2.access)
-									&& RestrictionModifiers.isInstantiateRestriction(restrictions2)
-									&& !RestrictionModifiers.isInstantiateRestriction(restrictions))
-							|| (Util.isFinal(this.descriptor2.access)
-									&& !RestrictionModifiers.isExtendRestriction(restrictions2)
-									&& RestrictionModifiers.isExtendRestriction(restrictions))
-							|| (Util.isAbstract(this.descriptor2.access)
-									&& !RestrictionModifiers.isInstantiateRestriction(restrictions2)
-									&& RestrictionModifiers.isInstantiateRestriction(restrictions)))) {
+						if (this.descriptor1.isInterface()) {
+							if ((RestrictionModifiers.isImplementRestriction(restrictions2)
+									&& !RestrictionModifiers.isImplementRestriction(restrictions))
+							|| (!RestrictionModifiers.isImplementRestriction(restrictions2)
+									&& RestrictionModifiers.isImplementRestriction(restrictions))) {
 							this.addDelta(
 									this.descriptor1.getElementType(),
 									IDelta.CHANGED,
@@ -1015,6 +1008,43 @@ public class ClassFileComparator {
 									this.classFile,
 									this.descriptor1.name,
 									Util.getDescriptorName(descriptor1));
+							}
+						} else {
+							boolean reportChangedRestrictions = false;
+							if (!Util.isFinal(this.descriptor2.access)) {
+								if ((RestrictionModifiers.isExtendRestriction(restrictions2)
+										&& !RestrictionModifiers.isExtendRestriction(restrictions))
+									|| (!RestrictionModifiers.isExtendRestriction(restrictions2)
+										&& RestrictionModifiers.isExtendRestriction(restrictions))) {
+									reportChangedRestrictions = true;
+									this.addDelta(
+											this.descriptor1.getElementType(),
+											IDelta.CHANGED,
+											IDelta.RESTRICTIONS,
+											restrictions2,
+											typeAccess,
+											this.classFile,
+											this.descriptor1.name,
+											Util.getDescriptorName(descriptor1));
+								}
+							}
+							if (!reportChangedRestrictions
+									&&!Util.isAbstract(this.descriptor2.access)) {
+								if ((RestrictionModifiers.isInstantiateRestriction(restrictions2)
+											&& !RestrictionModifiers.isInstantiateRestriction(restrictions))
+									|| (!RestrictionModifiers.isInstantiateRestriction(restrictions2)
+											&& RestrictionModifiers.isInstantiateRestriction(restrictions))) {
+									this.addDelta(
+											this.descriptor1.getElementType(),
+											IDelta.CHANGED,
+											IDelta.RESTRICTIONS,
+											restrictions2,
+											typeAccess,
+											this.classFile,
+											this.descriptor1.name,
+											Util.getDescriptorName(descriptor1));
+								}
+							}
 						}
 					}
 				}
@@ -2039,7 +2069,7 @@ public class ClassFileComparator {
 		}
 		int referenceRestrictions = this.initialDescriptorRestrictions;
 		int access2 = methodDescriptor2.access;
-		if (this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription()) {
+		if (component.hasApiDescription()) {
 			// check if this method should be removed because it is tagged as @noreference
 			IApiDescription apiDescription = null;
 			try {
@@ -2053,6 +2083,8 @@ public class ClassFileComparator {
 					referenceRestrictions |= apiAnnotations.getRestrictions();
 				}
 			}
+		}
+		if (this.visibilityModifiers == VisibilityModifiers.API) {
 			if (RestrictionModifiers.isReferenceRestriction(referenceRestrictions)) {
 				// tagged as @noreference in the reference component
 				if (!RestrictionModifiers.isReferenceRestriction(restrictions)) {
@@ -2174,18 +2206,24 @@ public class ClassFileComparator {
 				}
 			}
 		}
-		if (this.component.hasApiDescription() && !methodDescriptor.isConstructor() && !methodDescriptor.isClinit()) {
-			if (RestrictionModifiers.isOverrideRestriction(restrictions)) {
-				if (!RestrictionModifiers.isOverrideRestriction(referenceRestrictions) && !Util.isFinal(access2)) {
-					this.addDelta(
-							methodDescriptor.getElementType(),
-							IDelta.CHANGED,
-							IDelta.RESTRICTIONS,
-							restrictions,
-							access2,
-							this.classFile,
-							getKeyForMethod(methodDescriptor2, this.descriptor2),
-							new String[] {Util.getDescriptorName(this.descriptor2), methodDisplayName});
+		if (this.component.hasApiDescription() && !methodDescriptor.isConstructor() && !methodDescriptor.isClinit()
+				&& !(descriptor1.isInterface() || descriptor1.isAnnotation())) {
+			if (restrictions != referenceRestrictions) {
+				if (!Util.isFinal(access2)) {
+					if ((RestrictionModifiers.isOverrideRestriction(restrictions)
+							&& !RestrictionModifiers.isOverrideRestriction(referenceRestrictions))
+						|| (!RestrictionModifiers.isOverrideRestriction(restrictions)
+								&& RestrictionModifiers.isOverrideRestriction(referenceRestrictions))) {
+							this.addDelta(
+									methodDescriptor.getElementType(),
+									IDelta.CHANGED,
+									IDelta.RESTRICTIONS,
+									restrictions,
+									access2,
+									this.classFile,
+									getKeyForMethod(methodDescriptor2, this.descriptor2),
+									new String[] {Util.getDescriptorName(this.descriptor2), methodDisplayName});
+					}
 				}
 			}
 		}
@@ -2700,9 +2738,9 @@ public class ClassFileComparator {
 					if (elementDescription != null) {
 						visibility = elementDescription.getVisibility();
 					}
-				}/* else if (Util.isPublic(descriptor.access) || Util.isProtected(descriptor.access)) {
+				} else if (Util.isPublic(descriptor.access) || Util.isProtected(descriptor.access)) {
 					visibility = VisibilityModifiers.API;
-				}*/
+				}
 				if (includePrivate || ((visibility & visibilityModifiers) != 0)) {
 					list.add(descriptor);
 				}

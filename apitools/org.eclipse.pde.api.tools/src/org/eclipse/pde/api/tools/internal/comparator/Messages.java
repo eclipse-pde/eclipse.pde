@@ -392,6 +392,8 @@ public class Messages extends NLS {
 								return 99;
 							case IDelta.STATIC_TO_NON_STATIC :
 								return 102;
+							case IDelta.RESTRICTIONS :
+								return 106;
 						}
 						break;
 					case IDelta.REMOVED :

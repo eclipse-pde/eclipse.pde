@@ -507,9 +507,47 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	
 	public void testAddNoReferenceI() throws Exception {
 		xAddNoReference(true);
-	}	
+	}
 	
 	public void testAddNoReferenceF() throws Exception {
 		xAddNoReference(false);
-	}		
+	}
+
+	public void testRemoveNoOverrideToFinalI() throws Exception {
+		xRemoveNoOverrideToFinal(true);
+	}
+
+	public void testRemoveNoOverrideToFinalF() throws Exception {
+		xRemoveNoOverrideToFinal(false);
+	}
+	/**
+	 * Tests removing no-override to a final method (no-op)
+	 */
+	private void xRemoveNoOverrideToFinal(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoOverrideToFinal.java");
+		// no problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemoveNoOverrideI() throws Exception {
+		xRemoveNoOverride(true);
+	}
+
+	public void testRemoveNoOverrideF() throws Exception {
+		xRemoveNoOverride(false);
+	}
+	/**
+	 * Tests removing no-override to a final method (no-op)
+	 */
+	private void xRemoveNoOverride(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoOverride.java");
+		int[] ids = new int[] {
+				getChangedProblemId(IDelta.RESTRICTIONS)
+			};
+			setExpectedProblemIds(ids);
+			String[][] args = new String[1][];
+			args[0] = new String[]{PACKAGE_PREFIX + "RemoveNoOverride", "method()"};
+			setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
 }

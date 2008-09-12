@@ -463,6 +463,7 @@ public class ApiProblemFactory {
 									case IDelta.NON_FINAL_TO_FINAL: return 119;
 									case IDelta.NON_STATIC_TO_STATIC: return 120;
 									case IDelta.STATIC_TO_NON_STATIC: return 122;
+									case IDelta.RESTRICTIONS: return 132;
 								}
 								break;
 							}
