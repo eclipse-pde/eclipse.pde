@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
-import java.util.zip.ZipFile;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -48,9 +47,7 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
-import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
 /**
  * Base class for performance tests
@@ -92,7 +89,8 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 */
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
-			FullSourceBuildTests.class
+			FullSourceBuildTests.class,
+			ApiDescriptionTests.class
 		};
 		return classes;
 	}
@@ -137,13 +135,18 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		}
 	}
 	
-	/**
-	 * @return the tests for this class
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(PerformanceTest.class.getName());
-		collectTests(suite);
-		return suite;
+	protected int getDefaultProblemId() {
+		return 0;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
+	 */
+	protected String getTestingProjectName() {
+		return "dummy";
 	}
 	
 	/* (non-Javadoc)
@@ -157,34 +160,47 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		super.setUp();
 		// populate the workspace with initial plug-ins/projects
 		createInitialWorkspace();
-		IApiProfileManager manager = ApiPlugin.getDefault().getApiProfileManager();
-		IApiProfile perfline = manager.getApiProfile("perf-baseline");
-		if (perfline == null) {
-			// create the API baseline
-			IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append("perf-baseline");
-			long start = System.currentTimeMillis();
-			String fullSourceZipPath = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf").append("bin-baseline.zip").toOSString();
-			System.out.println("Unzipping "+fullSourceZipPath);
-			System.out.print("	in "+baselineLocation.toOSString()+"...");
-			Util.unzip(fullSourceZipPath, baselineLocation.toOSString());
-			System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");	
-				
-			perfline = Factory.newApiProfile("perf-baseline");
-			File[] files = baselineLocation.toFile().listFiles();
-			IApiComponent[] components = new IApiComponent[files.length];
-			for (int i = 0; i < files.length; i++) {
-				IPath location = baselineLocation.append(files[i].getName());
-				components[i] = perfline.newApiComponent(location.toOSString());
-			}
-			perfline.addApiComponents(components);
-			manager.addApiProfile(perfline);
-			manager.setDefaultApiProfile(perfline.getName());			
-		}
-		IApiProfile baseline = manager.getDefaultApiProfile();
-		if (baseline != perfline) {
-			manager.setDefaultApiProfile(perfline.getName());
-		}
+		createBaseline();
 	}	
+	
+	/**
+	 * Creates the API baseline for this test.
+	 * 
+	 * @throws Exception
+	 */
+	protected void createBaseline() throws Exception {
+		String zipPath = getBaselineLocation();
+		if (zipPath != null) {
+			IApiProfileManager manager = ApiPlugin.getDefault().getApiProfileManager();
+			IPath path = new Path(zipPath);
+			String id = path.lastSegment();
+			IApiProfile perfline = manager.getApiProfile(id);
+			if (perfline == null) {
+				// create the API baseline
+				IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(id);
+				long start = System.currentTimeMillis();
+				System.out.println("Unzipping "+zipPath);
+				System.out.print("	in "+baselineLocation.toOSString()+"...");
+				Util.unzip(zipPath, baselineLocation.toOSString());
+				System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");	
+					
+				perfline = Factory.newApiProfile(id);
+				File[] files = baselineLocation.toFile().listFiles();
+				IApiComponent[] components = new IApiComponent[files.length];
+				for (int i = 0; i < files.length; i++) {
+					IPath location = baselineLocation.append(files[i].getName());
+					components[i] = perfline.newApiComponent(location.toOSString());
+				}
+				perfline.addApiComponents(components);
+				manager.addApiProfile(perfline);
+				manager.setDefaultApiProfile(perfline.getName());			
+			}
+			IApiProfile baseline = manager.getDefaultApiProfile();
+			if (baseline != perfline) {
+				manager.setDefaultApiProfile(perfline.getName());
+			}
+		}
+	}
 	
 	/**
 	 * Creates the workspace by importing projects from the source zip. This is the 
@@ -195,9 +211,6 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	protected void createInitialWorkspace() throws Exception {
 		// Get wksp info
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IPath location = ApiTestsPlugin.getDefault().getStateLocation().append("workspace");
-		location.toFile().mkdirs();
-		String targetWorkspacePath = location.toOSString();
 
 		// Modify resources workspace preferences to avoid disturbing tests while running them
 		IEclipsePreferences resourcesPreferences = new InstanceScope().getNode(ResourcesPlugin.PI_RESOURCES);
@@ -207,7 +220,18 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 
 		// Get projects directories
 		long start = System.currentTimeMillis();
-		String fullSourceZipPath = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf").append("source-ws.zip").toOSString();
+		String fullSourceZipPath = getWorkspaceLocation();
+		IPath path = new Path(fullSourceZipPath);
+		String dirName = path.lastSegment();
+		String fileExtension = path.getFileExtension();
+		dirName = dirName.substring(0, dirName.length() - fileExtension.length());
+		IPath location = ApiTestsPlugin.getDefault().getStateLocation().append(dirName);
+		File dir = location.toFile();
+		if (dir.exists()) {
+			deleteDir(dir);
+		}
+		dir.mkdirs();
+		String targetWorkspacePath = location.toOSString();
 		System.out.println("Unzipping "+fullSourceZipPath);
 		System.out.print("	in "+targetWorkspacePath+"...");
 		Util.unzip(fullSourceZipPath, targetWorkspacePath);
@@ -215,14 +239,62 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		
 		start = System.currentTimeMillis();
 		System.out.println("Importing projects... ");
-		File root = location.toFile();
+		File root = dir;
 		File[] projects = root.listFiles();
 		for (int i = 0; i < projects.length; i++) {
 			System.out.println("\t" + projects[i].getName());
 			createExistingProject(projects[i]);
 		}
 		System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");
-		
+	}		
+	
+	/**
+	 * Recursively deletes directories and all files in it.
+	 * 
+	 * @param dir
+	 */
+	protected void deleteDir(File dir) {
+		File[] listFiles = dir.listFiles();
+		for (int i = 0; i < listFiles.length; i++) {
+			File file = listFiles[i];
+			if (file.isDirectory()) {
+				deleteDir(file);
+			}
+			file.delete();
+		}
+	}
+	
+	/**
+	 * Returns the a string of the absolute path in the local file system to an archive of the
+	 * API baseline to use for this test or <code>null</code> if none. Subclasses must override
+	 * if they need a baseline.
+	 * 
+	 * @return absolute path in the local file system to an archive of the
+	 * 	API baseline to use for this test or <code>null</code>
+	 */
+	protected String getBaselineLocation() {
+		return null;
+	}
+	
+	/**
+	 * Returns the a string of the absolute path in the local file system to an archive of the
+	 * source workspace to use for this test or <code>null</code> if none. Subclasses must override
+	 * if they need to populate a workspace.
+	 * 
+	 * @return absolute path in the local file system to an archive of the
+	 * 	source workspace to use for this test or <code>null</code>
+	 */	
+	protected String getWorkspaceLocation() {
+		return null;
+	}
+	
+	/**
+	 * @return the tests for this class
+	 */
+	public static Test suite() {
+		TestSuite suite = new TestSuite(PerformanceTest.class.getName());
+		collectTests(suite);
+		return suite;
 	}
 	
 	/**
@@ -230,7 +302,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * 
 	 * @param projectDir directory containing existing project
 	 */
-	private void createExistingProject(File projectDir) throws Exception {
+	protected void createExistingProject(File projectDir) throws Exception {
 		String projectName = projectDir.getName();
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProject project = workspace.getRoot().getProject(projectName);
@@ -267,25 +339,6 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 						return IOverwriteQuery.ALL;
 					}
 				}, filesToImport);
-		operation.setOverwriteResources(true);
-		operation.setCreateContainerStructure(false);
-		operation.run(new NullProgressMonitor());
-	}	
-
-	/**
-	 * Creates projects in the given archive file.
-	 * 
-	 * @param zip Archive file
-	 */
-	protected void createExistingProjects(ZipFile zip) throws Exception {
-		IImportStructureProvider provider = new ZipFileStructureProvider(zip);
-		ImportOperation operation = new ImportOperation(
-				Path.ROOT, zip,
-				provider, new IOverwriteQuery() {
-					public String queryOverwrite(String pathString) {
-						return IOverwriteQuery.ALL;
-					}
-				}, provider.getChildren(zip));
 		operation.setOverwriteResources(true);
 		operation.setCreateContainerStructure(false);
 		operation.run(new NullProgressMonitor());

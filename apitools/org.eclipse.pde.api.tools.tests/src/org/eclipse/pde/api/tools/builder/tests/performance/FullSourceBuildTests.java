@@ -16,11 +16,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.test.performance.Dimension;
 
 /**
@@ -28,18 +27,7 @@ import org.eclipse.test.performance.Dimension;
  * 
  * @since 1.0
  */
-public class FullSourceBuildTests extends PerformanceTest {
-	
-	/**
-	 * Workspace relative path classes in bundle/project A
-	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/enums");
-
-	/**
-	 * Package prefix for test classes
-	 */
-	protected static String PACKAGE_PREFIX = "a.enums.";
-	
+public class FullSourceBuildTests extends PerformanceTest {	
 
 	/**
 	 * Constructor
@@ -48,13 +36,6 @@ public class FullSourceBuildTests extends PerformanceTest {
 	public FullSourceBuildTests(String name) {
 		super(name);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
-	 */
-	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("enums");
-	}
 	
 	/**
 	 * @return the tests for this class
@@ -62,20 +43,20 @@ public class FullSourceBuildTests extends PerformanceTest {
 	public static Test suite() {
 		return buildTestSuite(FullSourceBuildTests.class);
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
+	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#getBaselineLocation()
 	 */
-	protected int getDefaultProblemId() {
-		return 0;
+	protected String getBaselineLocation() {
+		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf").append("bin-baseline.zip").toOSString();
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
+	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#getWorkspaceLocation()
 	 */
-	protected String getTestingProjectName() {
-		return "enumcompat";
-	}
+	protected String getWorkspaceLocation() {
+		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf").append("source-ws.zip").toOSString();
+	}	
 	
 	/**
 	 * Tests a full build of a 3.4 workspace with source from debug.core and pre-reqs
@@ -164,4 +145,6 @@ public class FullSourceBuildTests extends PerformanceTest {
 		commitMeasurements();
 		assertPerformance();
 	}	
+	
+	
 }
