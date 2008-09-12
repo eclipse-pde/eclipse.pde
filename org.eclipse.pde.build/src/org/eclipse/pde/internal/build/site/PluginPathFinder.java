@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2004, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
@@ -21,6 +22,9 @@ import org.eclipse.update.configurator.IPlatformConfiguration;
 public class PluginPathFinder {
 	private static final String URL_PROPERTY = "org.eclipse.update.resolution_url"; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String DROPINS = "dropins"; //$NON-NLS-1$
+	private static final String LINK = ".link"; //$NON-NLS-1$
+	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 
 	/**
 	 * 
@@ -40,11 +44,11 @@ public class PluginPathFinder {
 			if (path != null) {
 				if (!new Path(path).isAbsolute())
 					path = prefix + IPath.SEPARATOR + path;
-				path += IPath.SEPARATOR + "eclipse" + IPath.SEPARATOR; //$NON-NLS-1$
+				path += IPath.SEPARATOR + ECLIPSE + IPath.SEPARATOR;
 				if (features)
-					path += "features"; //$NON-NLS-1$
+					path += IPDEBuildConstants.DEFAULT_FEATURE_LOCATION;
 				else
-					path += "plugins"; //$NON-NLS-1$
+					path += IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION;
 				if (new File(path).exists()) {
 					return path;
 				}
@@ -64,7 +68,7 @@ public class PluginPathFinder {
 	private static File[] getSites(String platformHome, boolean features) {
 		ArrayList sites = new ArrayList();
 
-		File file = new File(platformHome, features ? "features" : "plugins"); //$NON-NLS-1$ //$NON-NLS-2$
+		File file = new File(platformHome, features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
 		if (!features && !file.exists())
 			file = new File(platformHome);
 		if (file.exists())
@@ -82,6 +86,53 @@ public class PluginPathFinder {
 		return (File[]) sites.toArray(new File[sites.size()]);
 	}
 
+	private static List getDropins(String platformHome, boolean features) {
+		File dropins = new File(platformHome, DROPINS);
+		if (!dropins.exists())
+			return Collections.EMPTY_LIST;
+
+		ArrayList sites = new ArrayList();
+		ArrayList results = new ArrayList();
+
+		File[] contents = dropins.listFiles();
+		for (int i = 0; i < contents.length; i++) {
+			if (contents[i].isFile()) {
+				if (contents[i].getName().endsWith(LINK)) {
+					sites.add(getSitePath(platformHome, contents[i], features));
+				} else {
+					//bundle
+					results.add(contents[i]);
+				}
+			} else { //folder
+				//dropins/features or dropins/plugins
+				if (contents[i].isDirectory() && contents[i].getName().equals(features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION)) {
+					results.addAll(Arrays.asList(contents[i].listFiles()));
+					continue;
+				}
+
+				//dropins/*/features or dropins/*/plugins
+				File temp = new File(contents[i], features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
+				if (temp.isDirectory()) {
+					sites.add(temp);
+					continue;
+				}
+
+				//dropins/*/eclipse/features or dropins/*/eclipse/plugins
+				temp = new File(contents[i], ECLIPSE + File.separator + (features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION));
+				if (temp.isDirectory()) {
+					sites.add(temp);
+					continue;
+				}
+
+				//else treat as a bundle/feature
+				results.add(contents[i]);
+			}
+		}
+
+		results.addAll(scanLocations((File[]) sites.toArray(new File[sites.size()])));
+		return results;
+	}
+
 	public static File[] getFeaturePaths(String platformHome) {
 		return getPaths(platformHome, true, false);
 	}
@@ -89,7 +140,7 @@ public class PluginPathFinder {
 	public static File[] getPluginPaths(String platformHome, boolean filterP2Base) {
 		return getPaths(platformHome, false, filterP2Base);
 	}
-	
+
 	public static File[] getPluginPaths(String platformHome) {
 		return getPaths(platformHome, false, false);
 	}
@@ -110,7 +161,7 @@ public class PluginPathFinder {
 				System.setProperty(URL_PROPERTY, value);
 				try {
 					IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
-					return Utils.asFile(getConfiguredSitesPaths(platformHome, config, features));
+					return getConfiguredSitesPaths(platformHome, config, features);
 				} finally {
 					System.setProperty(URL_PROPERTY, EMPTY_STRING);
 				}
@@ -121,27 +172,31 @@ public class PluginPathFinder {
 			}
 		}
 
-		return Utils.asFile(scanLocations(getSites(platformHome, features)));
+		List list = scanLocations(getSites(platformHome, features));
+		list.addAll(getDropins(platformHome, features));
+		return Utils.asFile(list);
 	}
 
-	private static URL[] getConfiguredSitesPaths(String platformHome, IPlatformConfiguration configuration, boolean features) {
-		List installPlugins = scanLocations(new File[] {new File(platformHome, features ? "features" : "plugins")}); //$NON-NLS-1$ //$NON-NLS-2$
-		List extensionPlugins = getExtensionPluginURLs(configuration, features);
+	private static File[] getConfiguredSitesPaths(String platformHome, IPlatformConfiguration configuration, boolean features) {
+		List installPlugins = scanLocations(new File[] {new File(platformHome, features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION)});
+		List extensionPlugins = getExtensionPlugins(configuration, features);
+		List dropinsPlugins = getDropins(platformHome, features);
 
 		Set all = new LinkedHashSet();
 		all.addAll(installPlugins);
 		all.addAll(extensionPlugins);
+		all.addAll(dropinsPlugins);
 
-		return (URL[]) all.toArray(new URL[all.size()]);
+		return (File[]) all.toArray(new File[all.size()]);
 	}
 
 	/**
 	 * 
 	 * @param config
 	 * @param features true for features false for plugins
-	 * @return URLs for features or plugins on the site
+	 * @return List of Files for features or plugins on the site
 	 */
-	private static List getExtensionPluginURLs(IPlatformConfiguration config, boolean features) {
+	private static List getExtensionPlugins(IPlatformConfiguration config, boolean features) {
 		ArrayList extensionPlugins = new ArrayList();
 		IPlatformConfiguration.ISiteEntry[] sites = config.getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
@@ -153,11 +208,7 @@ public class PluginPathFinder {
 				else
 					entries = sites[i].getPlugins();
 				for (int j = 0; j < entries.length; j++) {
-					try {
-						extensionPlugins.add(new File(url.getFile(), entries[j]).toURL());
-					} catch (MalformedURLException e) {
-						//ignore
-					}
+					extensionPlugins.add(new File(url.getFile(), entries[j]));
 				}
 			}
 		}
@@ -172,18 +223,11 @@ public class PluginPathFinder {
 	private static List scanLocations(File[] sites) {
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < sites.length; i++) {
-			if (!sites[i].exists())
+			if (sites[i] == null || !sites[i].exists())
 				continue;
 			File[] children = sites[i].listFiles();
-			if (children != null) {
-				for (int j = 0; j < children.length; j++) {
-					try {
-						result.add(children[j].toURL());
-					} catch (MalformedURLException e) {
-						//ignore
-					}
-				}
-			}
+			if (children != null)
+				result.addAll(Arrays.asList(children));
 		}
 		return result;
 	}

@@ -213,6 +213,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			return asFile((String[]) collection.toArray(new String[collection.size()]));
 		else if (first instanceof URL)
 			return asFile((URL[]) collection.toArray(new URL[collection.size()]));
+		else if (first instanceof File)
+			return (File[]) collection.toArray(new File[collection.size()]);
 		throw new IllegalArgumentException();
 	}
 

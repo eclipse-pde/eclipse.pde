@@ -613,4 +613,29 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertEquals(range.getMinimum(), new Version("1.0.0.abzz"));
 		assertEquals(range.getMaximum(), new Version("1.0.0.ac"));
 	}
+	
+	public void testBug246127() throws Exception {
+		IFolder buildFolder = newTest("246127");
+		
+		IFolder base = Utils.createFolder(buildFolder, "base");
+		IFolder A = Utils.createFolder(base, "dropins/eclipse/plugins/A");
+		IFolder B = Utils.createFolder(base, "dropins/plugins/B");
+		IFolder C = Utils.createFolder(base, "dropins/random/plugins/C");
+		IFolder D = Utils.createFolder(base, "dropins/other/eclipse/plugins/D");
+		IFolder E = Utils.createFolder(base, "dropins/E");
+		
+		Utils.generateBundle(A, "A");
+		Utils.generateBundle(B, "B");
+		Utils.generateBundle(C, "C");
+		Utils.generateBundle(D, "D");
+		Utils.generateBundle(E, "E");
+		
+		Utils.generateFeature(buildFolder, "sdk", null, new String [] { "A", "B", "C", "D", "E" } );
+		
+		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
+		props.put("baseLocation", base.getLocation().toOSString());
+		generateScripts(buildFolder, props);
+		
+		//success if we found all the bundles and hence did not throw an exception
+	}
 }
