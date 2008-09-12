@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ds.ui.editor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSObject;
+import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.ui.SharedImages;
 import org.eclipse.swt.graphics.Image;
 
@@ -50,6 +51,19 @@ public class DSLabelProvider extends LabelProvider {
 		} else if (obj.getType() == IDSConstants.TYPE_PROVIDE) {
 			return SharedImages.getImage(SharedImages.DESC_SERVICE);
 		} else if (obj.getType() == IDSConstants.TYPE_REFERENCE) {
+			IDSReference reference = (IDSReference) obj;
+			if (reference.getReferenceCardinality().equals(
+					IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE)) {
+				return SharedImages
+						.getImage(SharedImages.DESC_REFERENCE_ZERO_ONE);
+			} else if (reference.getReferenceCardinality().equals(
+					IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N)) {
+				return SharedImages
+						.getImage(SharedImages.DESC_REFERENCE_ZERO_N);
+			} else if (reference.getReferenceCardinality().equals(
+					IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N)) {
+				return SharedImages.getImage(SharedImages.DESC_REFERENCE_ONE_N);
+			}
 			return SharedImages.getImage(SharedImages.DESC_REFERENCE);
 		} else if (obj.getType() == IDSConstants.TYPE_COMPONENT) {
 			return SharedImages.getImage(SharedImages.DESC_ROOT);

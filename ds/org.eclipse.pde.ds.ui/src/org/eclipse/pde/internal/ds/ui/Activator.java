@@ -82,6 +82,12 @@ public class Activator extends AbstractUIPlugin {
 				createImageDescriptor(SharedImages.DESC_PROVIDE));
 		registry.put(SharedImages.DESC_REFERENCE,
 				createImageDescriptor(SharedImages.DESC_REFERENCE));
+		registry.put(SharedImages.DESC_REFERENCE_ZERO_N,
+				createImageDescriptor(SharedImages.DESC_REFERENCE_ZERO_N));
+		registry.put(SharedImages.DESC_REFERENCE_ZERO_ONE,
+				createImageDescriptor(SharedImages.DESC_REFERENCE_ZERO_ONE));
+		registry.put(SharedImages.DESC_REFERENCE_ONE_N,
+				createImageDescriptor(SharedImages.DESC_REFERENCE_ONE_N));
 		registry.put(SharedImages.DESC_ROOT,
 				createImageDescriptor(SharedImages.DESC_ROOT));
 		registry.put(SharedImages.DESC_SERVICE,

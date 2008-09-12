@@ -31,6 +31,12 @@ public final class SharedImages {
 			+ "properties_obj.gif"; //$NON-NLS-1$	
 	public static final String DESC_PROVIDE = PATH_OBJ + "int_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_REFERENCE = PATH_OBJ + "reference_obj.gif"; //$NON-NLS-1$
+	public static final String DESC_REFERENCE_ONE_N = PATH_OBJ
+			+ "reference_one_n_obj.gif"; //$NON-NLS-1$
+	public static final String DESC_REFERENCE_ZERO_ONE = PATH_OBJ
+			+ "reference_zero_one_obj.gif"; //$NON-NLS-1$
+	public static final String DESC_REFERENCE_ZERO_N = PATH_OBJ
+			+ "reference_zero_n_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_ROOT = PATH_OBJ + "component_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_SERVICE = PATH_OBJ + "service_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_DS = PATH_OBJ + "ds_obj.gif"; //$NON-NLS-1$
