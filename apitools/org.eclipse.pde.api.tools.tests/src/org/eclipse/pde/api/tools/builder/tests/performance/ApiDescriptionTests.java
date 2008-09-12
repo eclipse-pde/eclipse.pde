@@ -51,49 +51,14 @@ public class ApiDescriptionTests extends PerformanceTest {
 	}
 	
 	/**
-	 * Tests a full build of a 3.4 workspace with source from debug.core and pre-reqs
-	 * against a baseline of 3.3 binary plug-ins.
-	 * 
-	 * @throws Exception
-	 */
-	public void testCachedVisit() throws Exception {
-		tagAsGlobalSummary("Visit API Description", Dimension.ELAPSED_PROCESS);
-		
-		// WARM-UP
-		fullBuild();
-		IProject proj = getEnv().getWorkspace().getRoot().getProject("org.eclipse.jdt.ui");	
-		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor();
-		for (int j = 0; j < 2; j++) {
-			// *** visit API description ***
-			IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
-			IApiComponent component = profile.getApiComponent(proj.getName());
-			component.getApiDescription().accept(visitor);
-		}
-		
-		// TEST
-		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
-		IApiComponent component = profile.getApiComponent(proj.getName());
-		for (int j = 0; j < 15; j++) {
-			// ** Visit API description ***
-			startMeasuring();
-			component.getApiDescription().accept(visitor);
-			stopMeasuring();
-		}
-		
-		commitMeasurements();
-		assertPerformance();
-	}
-	
-	/**
 	 * Tests a clean and visit jdt-ui source project. Populates the entire API description.
 	 * 
 	 * @throws Exception
 	 */
 	public void testCleanVisit() throws Exception {
-		tagAsGlobalSummary("Clean & Visit API Description", Dimension.ELAPSED_PROCESS);
+		tagAsGlobalSummary("Build API description from source tags", Dimension.ELAPSED_PROCESS);
 		
 		// WARM-UP
-		fullBuild();
 		IProject proj = getEnv().getWorkspace().getRoot().getProject("org.eclipse.jdt.ui");	
 		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor();
 		for (int j = 0; j < 2; j++) {
