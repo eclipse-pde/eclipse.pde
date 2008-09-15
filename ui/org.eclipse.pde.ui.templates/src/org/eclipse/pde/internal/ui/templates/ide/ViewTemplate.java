@@ -13,26 +13,14 @@ package org.eclipse.pde.internal.ui.templates.ide;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginModelFactory;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
-import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
-import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.AbstractTemplateSection;
-import org.eclipse.pde.ui.templates.BooleanOption;
-import org.eclipse.pde.ui.templates.PluginReference;
+import org.eclipse.pde.ui.templates.*;
 
 public class ViewTemplate extends PDETemplateSection {
 	private BooleanOption addToPerspective;
@@ -68,6 +56,7 @@ public class ViewTemplate extends PDETemplateSection {
 				new String[][] { {"tableViewer", PDETemplateMessages.ViewTemplate_table}, //$NON-NLS-1$
 						{"treeViewer", PDETemplateMessages.ViewTemplate_tree}}, //$NON-NLS-1$
 				"tableViewer", 0); //$NON-NLS-1$
+		addOption("addViewID", PDETemplateMessages.ViewTemplate_addViewID, true, 0); //$NON-NLS-1$
 		addToPerspective = (BooleanOption) addOption("addToPerspective", PDETemplateMessages.ViewTemplate_addToPerspective, true, 0); //$NON-NLS-1$
 		contextHelp = (BooleanOption) addOption("contextHelp", PDETemplateMessages.ViewTemplate_contextHelp, true, 0); //$NON-NLS-1$
 	}

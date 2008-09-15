@@ -1,12 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing development
+ *     Volker Wegert - bug 243087
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates;
 
@@ -167,6 +169,7 @@ public class PDETemplateMessages extends NLS {
 	public static String ViewTemplate_tree;
 	public static String ViewTemplate_contextHelp;
 	public static String ViewTemplate_addToPerspective;
+	public static String ViewTemplate_addViewID;
 
 	public static String HelpTemplate_title;
 	public static String HelpTemplate_desc;

@@ -47,6 +47,14 @@ import org.eclipse.core.runtime.IAdaptable;
 % drillDown
 
 public class $className$ extends ViewPart {
+%if addViewID	
+
+	/**
+	 * The ID of the view as specified by the extension.
+	 */
+	public static final String ID = "$packageName$.$className$";
+
+%endif
 %if viewType == "tableViewer"
 	private TableViewer viewer;
 %else
