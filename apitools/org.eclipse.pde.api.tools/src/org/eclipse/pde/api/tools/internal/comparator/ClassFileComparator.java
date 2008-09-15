@@ -995,10 +995,8 @@ public class ClassFileComparator {
 						// adding/removing no extend on a final class is ok
 						// adding/removing no instantiate on an abstract class is ok
 						if (this.descriptor1.isInterface()) {
-							if ((RestrictionModifiers.isImplementRestriction(restrictions2)
-									&& !RestrictionModifiers.isImplementRestriction(restrictions))
-							|| (!RestrictionModifiers.isImplementRestriction(restrictions2)
-									&& RestrictionModifiers.isImplementRestriction(restrictions))) {
+							if (RestrictionModifiers.isImplementRestriction(restrictions2)
+									&& !RestrictionModifiers.isImplementRestriction(restrictions)) {
 							this.addDelta(
 									this.descriptor1.getElementType(),
 									IDelta.CHANGED,
@@ -1012,10 +1010,8 @@ public class ClassFileComparator {
 						} else {
 							boolean reportChangedRestrictions = false;
 							if (!Util.isFinal(this.descriptor2.access)) {
-								if ((RestrictionModifiers.isExtendRestriction(restrictions2)
-										&& !RestrictionModifiers.isExtendRestriction(restrictions))
-									|| (!RestrictionModifiers.isExtendRestriction(restrictions2)
-										&& RestrictionModifiers.isExtendRestriction(restrictions))) {
+								if (RestrictionModifiers.isExtendRestriction(restrictions2)
+										&& !RestrictionModifiers.isExtendRestriction(restrictions)) {
 									reportChangedRestrictions = true;
 									this.addDelta(
 											this.descriptor1.getElementType(),
@@ -1030,10 +1026,8 @@ public class ClassFileComparator {
 							}
 							if (!reportChangedRestrictions
 									&&!Util.isAbstract(this.descriptor2.access)) {
-								if ((RestrictionModifiers.isInstantiateRestriction(restrictions2)
-											&& !RestrictionModifiers.isInstantiateRestriction(restrictions))
-									|| (!RestrictionModifiers.isInstantiateRestriction(restrictions2)
-											&& RestrictionModifiers.isInstantiateRestriction(restrictions))) {
+								if (RestrictionModifiers.isInstantiateRestriction(restrictions2)
+											&& !RestrictionModifiers.isInstantiateRestriction(restrictions)) {
 									this.addDelta(
 											this.descriptor1.getElementType(),
 											IDelta.CHANGED,
@@ -2210,10 +2204,8 @@ public class ClassFileComparator {
 				&& !(descriptor1.isInterface() || descriptor1.isAnnotation())) {
 			if (restrictions != referenceRestrictions) {
 				if (!Util.isFinal(access2)) {
-					if ((RestrictionModifiers.isOverrideRestriction(restrictions)
-							&& !RestrictionModifiers.isOverrideRestriction(referenceRestrictions))
-						|| (!RestrictionModifiers.isOverrideRestriction(restrictions)
-								&& RestrictionModifiers.isOverrideRestriction(referenceRestrictions))) {
+					if (RestrictionModifiers.isOverrideRestriction(restrictions)
+							&& !RestrictionModifiers.isOverrideRestriction(referenceRestrictions)) {
 							this.addDelta(
 									methodDescriptor.getElementType(),
 									IDelta.CHANGED,
@@ -2493,6 +2485,10 @@ public class ClassFileComparator {
 					res = this.currentDescriptorRestrictions;
 				} else if (RestrictionModifiers.isExtendRestriction(this.initialDescriptorRestrictions)) {
 					res = this.initialDescriptorRestrictions;
+				}
+				if (RestrictionModifiers.isOverrideRestriction(referenceRestrictions)) {
+					// it is ok to remove @nooverride and add final at the same time
+					res = referenceRestrictions;
 				}
 			}
 			this.addDelta(

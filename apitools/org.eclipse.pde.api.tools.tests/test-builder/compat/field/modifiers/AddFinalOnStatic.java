@@ -15,5 +15,5 @@ package a.fields.modifiers;
  */
 public class AddFinalOnStatic {
 
-	public static final String ADD_FINAL; 
+	public static final String ADD_FINAL = ""; 
 }

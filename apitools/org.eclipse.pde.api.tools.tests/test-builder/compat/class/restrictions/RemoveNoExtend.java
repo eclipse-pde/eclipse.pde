@@ -8,12 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.fields.modifiers;
+package a.classes.restrictions;
 
 /**
- *
  */
-public class AddFinal {
+public class RemoveNoExtend {
 
-	public final String ADD_FINAL = null;
 }

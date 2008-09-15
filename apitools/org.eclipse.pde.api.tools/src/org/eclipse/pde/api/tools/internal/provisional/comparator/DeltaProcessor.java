@@ -264,7 +264,6 @@ public class DeltaProcessor {
 				break;
 			case IDelta.ADDED :
 				switch(delta.getFlags()) {
-					case IDelta.VALUE :
 					case IDelta.TYPE_ARGUMENT :
 						return !Util.isVisible(delta);
 				}

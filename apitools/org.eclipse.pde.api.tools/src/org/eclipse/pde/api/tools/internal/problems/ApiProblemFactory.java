@@ -439,7 +439,6 @@ public class ApiProblemFactory {
 							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE: return 29;
 							case IDelta.TYPE_PARAMETER: return 32;
 							case IDelta.TYPE_ARGUMENT: return 106;
-							case IDelta.VALUE: return 36;
 						}
 						break;
 					}

@@ -208,4 +208,19 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		xNoInstantiateAddAbstract(false);
 	}		
 	
+	public void testRemoveNoExtendI() throws Exception {
+		xRemoveNoExtend(true);
+	}	
+	
+	public void testRemoveNoExtendF() throws Exception {
+		xRemoveNoExtend(false);
+	}
+	/**
+	 * Tests removing a noextend annotation
+	 */
+	private void xRemoveNoExtend(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoExtend.java");
+		// no problem expected
+		performCompatibilityTest(filePath, incremental);
+	}
 }

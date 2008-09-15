@@ -28,7 +28,7 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(RestrictionsDeltaTests.class);
 		TestSuite suite = new TestSuite(RestrictionsDeltaTests.class.getName());
-		suite.addTest(new RestrictionsDeltaTests("test6"));
+		suite.addTest(new RestrictionsDeltaTests("test11"));
 		return suite;
 	}
 
@@ -223,6 +223,41 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 	 */
 	public void test9() {
 		deployBundles("test9");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		assertTrue("Has no description", beforeApiComponent.hasApiDescription());
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		assertTrue("Has no description", afterApiComponent.hasApiDescription());
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+
+	/**
+	 * Remove @noextend on a non-final class (see 247291)
+	 */
+	public void test10() {
+		deployBundles("test10");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		assertTrue("Has no description", beforeApiComponent.hasApiDescription());
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		assertTrue("Has no description", afterApiComponent.hasApiDescription());
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * Remove @noimplement on an interface
+	 */
+	public void test11() {
+		deployBundles("test11");
 		IApiProfile before = getBeforeState();
 		IApiProfile after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);

@@ -18,5 +18,5 @@ public class AddFinalNoReference {
 	/**
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	public final String ADD_FINAL;
+	public final String ADD_FINAL = null;
 }

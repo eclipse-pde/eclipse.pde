@@ -18,5 +18,5 @@ public class AddFinalOnStaticNoReference {
 	/**
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	public static final String ADD_FINAL; 
+	public static final String ADD_FINAL = ""; 
 }
