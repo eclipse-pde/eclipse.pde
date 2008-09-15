@@ -269,11 +269,10 @@ public class VersionTest extends CompatibilityTest {
 	}
 	
 	public void testRemoveInternalClassI() throws Exception {
-		// TODO: this test should be uncommented when bug is fixed
-		//xRemoveInternalClass(true);
-	}	
+		xRemoveInternalClass(true);
+	}
 	
 	public void testRemoveInternalClassF() throws Exception {
 		xRemoveInternalClass(false);
-	}	
+	}
 }

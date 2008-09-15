@@ -624,27 +624,31 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					IApiAnnotations elementDescription = referenceApiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
 					TypeDescriptor typeDescriptor = new TypeDescriptor(referenceClassFile);
 					int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+					int visibility = VisibilityModifiers.ALL_VISIBILITIES;
 					if (!typeDescriptor.isNestedType()) {
 						// we skip nested types (member, local and anonymous)
 						if (elementDescription != null) {
 							restrictions = elementDescription.getRestrictions();
+							visibility = elementDescription.getVisibility();
 						}
 						// if the visibility is API, we only consider public and protected types
 						if (Util.isDefault(typeDescriptor.access)
 									|| Util.isPrivate(typeDescriptor.access)) {
 							return;
 						}
-						String deltaComponentID = Util.getDeltaComponentID(reference);
-						delta = new Delta(
-								deltaComponentID,
-								IDelta.API_COMPONENT_ELEMENT_TYPE,
-								IDelta.REMOVED,
-								IDelta.TYPE,
-								restrictions,
-								typeDescriptor.access,
-								typeName,
-								typeName,
-								new String[] { typeName, deltaComponentID});
+						if ((visibility & VisibilityModifiers.API) != 0) {
+							String deltaComponentID = Util.getDeltaComponentID(reference);
+							delta = new Delta(
+									deltaComponentID,
+									IDelta.API_COMPONENT_ELEMENT_TYPE,
+									IDelta.REMOVED,
+									IDelta.TYPE,
+									restrictions,
+									typeDescriptor.access,
+									typeName,
+									typeName,
+									new String[] { typeName, deltaComponentID});
+						}
 					}
 				} catch (CoreException e) {
 					ApiPlugin.log(e);

@@ -30,6 +30,7 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 	 * Workspace relative path classes in bundle/project A
 	 */
 	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/bundles");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_INTERNAL = new Path("bundle.a/src/a/bundles/internal");
 
 	/**
 	 * Package prefix for test classes
@@ -124,5 +125,22 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 	
 	public void testRemovePublicClassF() throws Exception {
 		xRemovePublicClass(false);
+	}
+	
+	/**
+	 * Tests deleting a private class
+	 */
+	private void xRemovePrivateClass(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_INTERNAL.append("RemovePrivateClass.java");
+		// no problem expected
+		performDeletionCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemovePrivateClassI() throws Exception {
+		xRemovePrivateClass(true);
+	}
+	
+	public void testRemovePrivateClassF() throws Exception {
+		xRemovePrivateClass(false);
 	}
 }
