@@ -119,6 +119,23 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	
 	public void testAddFinalNoExtendF() throws Exception {
 		xAddFinalNoExtend(false);
+	}
+	
+	/**
+	 * Tests making a non-final class with a no-extend tag final while removing the no-extend tag
+	 */
+	private void xAddFinalRemoveNoExtend(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalRemoveNoExtend.java");
+		// no problems expected
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddFinalRemoveNoExtendI() throws Exception {
+		xAddFinalRemoveNoExtend(true);
+	}	
+	
+	public void testAddFinalRemoveNoExtendF() throws Exception {
+		xAddFinalRemoveNoExtend(false);
 	}	
 	
 	/**

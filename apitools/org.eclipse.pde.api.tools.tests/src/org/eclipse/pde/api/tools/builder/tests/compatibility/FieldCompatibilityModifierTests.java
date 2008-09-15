@@ -304,6 +304,24 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	}
 	
 	/**
+	 * Tests changing a protected field to package protected when no-reference, and remove
+	 * the no-reference tag
+	 */
+	private void xProtectedToPackageRemoveNoReference(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageRemoveNoReference.java");
+		// expecting no errors
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testProtectedToPackageRemoveNoReferenceI() throws Exception {
+		xProtectedToPackageRemoveNoReference(true);
+	}	
+	
+	public void testProtectedToPackageRemoveNoReferenceF() throws Exception {
+		xProtectedToPackageRemoveNoReference(false);
+	}	
+	
+	/**
 	 * Tests changing a protected field to private
 	 */
 	private void xProtectedToPrivate(boolean incremental) throws Exception {
