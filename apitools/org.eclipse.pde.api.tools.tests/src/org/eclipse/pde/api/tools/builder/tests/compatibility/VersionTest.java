@@ -38,6 +38,7 @@ public class VersionTest extends CompatibilityTest {
 	 * Workspace relative path classes in bundle/project A
 	 */
 	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/version");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_INTERNAL = new Path("bundle.a/src/a/version/internal");
 	
 	protected static IPath MANIFEST_PATH = new Path("bundle.a").append(JarFile.MANIFEST_NAME);
 
@@ -257,4 +258,22 @@ public class VersionTest extends CompatibilityTest {
 	public void testFalseMajorIncF() throws Exception {
 		xFalseMajorInc(false);
 	}
+	
+	/**
+	 * Tests removing a non-API class
+	 */
+	private void xRemoveInternalClass(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_INTERNAL.append("RemoveInternalClass.java");
+		// no problems expected
+		performDeletionCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemoveInternalClassI() throws Exception {
+		// TODO: this test should be uncommented when bug is fixed
+		//xRemoveInternalClass(true);
+	}	
+	
+	public void testRemoveInternalClassF() throws Exception {
+		xRemoveInternalClass(false);
+	}	
 }
