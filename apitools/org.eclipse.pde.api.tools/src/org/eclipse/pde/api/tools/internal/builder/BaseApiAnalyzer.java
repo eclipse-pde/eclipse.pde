@@ -624,8 +624,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					IApiAnnotations elementDescription = referenceApiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
 					TypeDescriptor typeDescriptor = new TypeDescriptor(referenceClassFile);
 					int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
-					int visibility = VisibilityModifiers.ALL_VISIBILITIES;
 					if (!typeDescriptor.isNestedType()) {
+						int visibility = VisibilityModifiers.ALL_VISIBILITIES;
 						// we skip nested types (member, local and anonymous)
 						if (elementDescription != null) {
 							restrictions = elementDescription.getRestrictions();
