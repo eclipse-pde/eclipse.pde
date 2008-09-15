@@ -346,7 +346,8 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			int length = jdtMarkers.length;
 			if (length != 0) {
 				for (int i = 0; i < length; i++) {
-					assertFalse("Should not be a JDT error", jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR);
+					boolean condition = jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR;
+					assertFalse("Should not be a JDT error", condition);
 				}
 			}
 			ApiProblem[] problems = getEnv().getProblemsFor(workspaceFile, null);
