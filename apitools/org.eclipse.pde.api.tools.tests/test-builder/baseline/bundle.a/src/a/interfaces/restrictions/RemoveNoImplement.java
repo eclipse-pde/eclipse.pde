@@ -8,11 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.interfaces.members;
+package a.interfaces.restrictions;
 
 /**
  * @noimplement
  */
-public interface AddNoImplement {
+public interface RemoveNoImplement {
 
 }

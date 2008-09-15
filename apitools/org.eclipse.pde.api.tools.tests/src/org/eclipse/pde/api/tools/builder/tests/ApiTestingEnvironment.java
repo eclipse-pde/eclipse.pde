@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.tests.builder.TestingEnvironment;
 import org.eclipse.jdt.core.tests.util.AbstractCompilerTest;
@@ -118,6 +119,31 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		return resource.findMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
 	
+	/**
+	 * returns all of the usage markers for the specified resource and its children
+	 * @param resource
+	 * @return
+	 * @throws CoreException
+	 */
+	public IMarker[] getAllJDTMarkers(IPath path) throws CoreException {
+		return getAllJDTMarkers(getResource(path));
+	}
+
+	/**
+	 * returns all of the usage markers for the specified resource and its children
+	 * @param resource
+	 * @return
+	 * @throws CoreException
+	 */
+	protected IMarker[] getAllJDTMarkers(IResource resource) throws CoreException {
+		if(resource == null) {
+			return NO_MARKERS;
+		}
+		if(!resource.isAccessible()) {
+			return NO_MARKERS;
+		}
+		return resource.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+	}
 	/**
 	 * Returns all of the unsupported Javadoc tag markers on the specified resource
 	 * and all of its children.
@@ -222,19 +248,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @return
 	 */
 	public IMarker[] getMarkersFor(IPath path, String additionalMarkerType){
-		IResource resource;
-		if(path.equals(getWorkspaceRootPath())){
-			resource = getWorkspace().getRoot();
-		} else {
-			IProject p = getProject(path);
-			if(p != null && path.equals(p.getFullPath())) {
-				resource = getProject(path.lastSegment());
-			} else if(path.getFileExtension() == null) {
-				resource = getWorkspace().getRoot().getFolder(path);
-			} else {
-				resource = getWorkspace().getRoot().getFile(path);
-			}
-		}
+		IResource resource = getResource(path);
 		try {
 			ArrayList<IMarker> problems = new ArrayList<IMarker>();
 			addToList(problems, getAllUsageMarkers(resource));
@@ -253,6 +267,23 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			// ignore
 		}
 		return new IMarker[0];
+	}
+
+	public IResource getResource(IPath path) {
+		IResource resource;
+		if(path.equals(getWorkspaceRootPath())){
+			resource = getWorkspace().getRoot();
+		} else {
+			IProject p = getProject(path);
+			if(p != null && path.equals(p.getFullPath())) {
+				resource = getProject(path.lastSegment());
+			} else if(path.getFileExtension() == null) {
+				resource = getWorkspace().getRoot().getFolder(path);
+			} else {
+				resource = getWorkspace().getRoot().getFile(path);
+			}
+		}
+		return resource;
 	}
 	
 	private void addToList(List list, Object[] objects) {

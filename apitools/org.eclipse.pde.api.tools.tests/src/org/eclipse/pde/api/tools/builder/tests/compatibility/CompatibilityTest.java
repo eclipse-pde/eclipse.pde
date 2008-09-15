@@ -25,6 +25,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -48,7 +49,7 @@ import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
  * 
  * @since 1.0
  */
-public abstract class CompatibilityTest extends ApiBuilderTest {	
+public abstract class CompatibilityTest extends ApiBuilderTest {
 
 	/**
 	 * 
@@ -341,6 +342,8 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			} else {
 				fullBuild();
 			}
+			IMarker[] jdtMarkers = getEnv().getAllJDTMarkers(workspaceFile);
+			assertEquals("Should not be any errors", 0, jdtMarkers.length);
 			ApiProblem[] problems = getEnv().getProblemsFor(workspaceFile, null);
 			assertProblems(problems);
 	}

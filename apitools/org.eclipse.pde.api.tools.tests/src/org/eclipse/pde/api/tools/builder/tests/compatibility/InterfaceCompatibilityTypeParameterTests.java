@@ -82,7 +82,7 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "intercompat";
 	}
 
 	/**

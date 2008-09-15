@@ -62,7 +62,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "intercompat";
 	}
 	
 	/**
@@ -350,36 +350,9 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	
 	public void testReduceSuperInterfaceABtoEmptyI() throws Exception {
 		xReduceSuperInterfaceABtoEmpty(true);
-	}	
+	}
 	
 	public void testReduceSuperInterfaceABtoEmptyF() throws Exception {
 		xReduceSuperInterfaceABtoEmpty(false);
-	}	
-	
-	/**
-	 * Tests adding a noimplement restriction
-	 */
-	private void xAddNoImplement(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoImplement.java");
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_COMPATIBILITY,
-						IDelta.INTERFACE_ELEMENT_TYPE,
-						IDelta.CHANGED,
-						IDelta.RESTRICTIONS)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddNoImplement"};
-		setExpectedMessageArgs(args);
-		performCompatibilityTest(filePath, incremental);
-	}
-	
-	public void testAddNoImplementI() throws Exception {
-		xAddNoImplement(true);
-	}	
-	
-	public void testAddNoImplementF() throws Exception {
-		xAddNoImplement(false);
 	}
 }

@@ -73,6 +73,7 @@ public class InterfaceCompatibilityTests extends CompatibilityTest {
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
 			InterfaceCompatibilityMemberTests.class,
+			InterfaceCompatibilityRestrictionTests.class,
 			InterfaceCompatibilityTypeParameterTests.class
 		};
 		return classes;
