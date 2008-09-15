@@ -38,4 +38,14 @@ public class ValidSinceTags {
 	 * @since a,1.0,b
 	 */
 	public void m5() {}	
+	
+	/**
+	 * @since 1.0 , was added in 3.1 as private method
+	 */
+	public void m6() {}
+	
+	/**
+	 * @since 1.0 protected (was added in 2.1 as private class)
+	 */
+	public void m7() {}
 }
