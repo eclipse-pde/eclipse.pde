@@ -1926,10 +1926,9 @@
                 targetID="org.eclipse.pde.runtime.LogView">
              <action
                    class="org.eclipse.pde.internal.ui.ShowErrorInStackTraceConsoleAction"
-                   disabledIcon="$nl$/icons/obj16/open_artifact_disabled_obj.gif"
                    enablesFor="+"
-                   hoverIcon="$nl$/icons/obj16/open_artifact_obj.gif"
-                   icon="$nl$/icons/obj16/open_artifact_obj.gif"
+                   hoverIcon="$nl$/icons/obj16/open_console_obj.gif"
+                   icon="$nl$/icons/obj16/open_console_obj.gif"
                    id="org.eclipse.jdt.debug.ui.LogViewActions.showStackTrace"
                    label="%showErrorInStackTraceConsoleAction.label"
                    toolbarPath="additions"
