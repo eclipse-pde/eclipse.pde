@@ -476,6 +476,19 @@
             %pluginContent.OSGiSimpleLogService.description
          </description>
       </wizard>
+      <wizard
+            class="org.eclipse.pde.internal.ui.templates.osgi.HelloServiceComponentTemplateWizard"
+            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            id="org.eclipse.pde.ui.ds.DSTemplateWizard"
+            name="%pluginContent.helloDSOSGIService.name"
+            pureOSGi="true"
+            requiresActivator="false"
+            ui-content="false">
+         <description>
+            %pluginContent.helloDSOSGIService.description
+         </description>
+      </wizard>
+        
    </extension>
-
+   
 </plugin>

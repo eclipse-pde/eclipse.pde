@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="component">
+   <implementation class="$packageName$.ServiceComponent">
+   </implementation>
+   <service servicefactory="false">
+      <provide interface="org.eclipse.osgi.framework.console.CommandProvider">
+      </provide>
+   </service>
+</component>

@@ -15,13 +15,7 @@ package org.eclipse.pde.internal.ui.templates;
 import org.eclipse.osgi.util.NLS;
 
 public class PDETemplateMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.templates.pderesources";//$NON-NLS-1$
-
-	public static String HelloOSGiServiceTemplate_howdy;
-
-	public static String HelloOSGiTemplate_goodbye;
-
-	public static String HelloOSGiTemplate_hello;
+	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.templates.pderesources"; //$NON-NLS-1$
 
 	public static String HelpTemplate_sampleText;
 	public static String HelpNewWizard_wiz;
@@ -240,33 +234,23 @@ public class PDETemplateMessages extends NLS {
 	public static String HelloRCPTemplate_productBranding;
 
 	public static String HelloOSGiNewWizard_title;
-
 	public static String HelloOSGiTemplate_startMessage;
-
 	public static String HelloOSGiTemplate_stopMessage;
-
 	public static String HelloOSGiTemplate_pageTitle;
-
 	public static String HelloOSGiTemplate_pageDescription;
+	public static String HelloOSGiServiceTemplate_howdy;
+	public static String HelloOSGiTemplate_goodbye;
+	public static String HelloOSGiTemplate_hello;
 
 	public static String UniversalWelcomeTemplate_key_directoryName;
-
 	public static String UniversalWelcomeTemplate_key_targetPage;
-
 	public static String UniversalWelcomeTemplate_page_Overview;
-
 	public static String UniversalWelcomeTemplate_page_Tutorials;
-
 	public static String UniversalWelcomeTemplate_page_FirstSteps;
-
 	public static String UniversalWelcomeTemplate_page_Samples;
-
 	public static String UniversalWelcomeTemplate_page_Whatsnew;
-
 	public static String UniversalWelcomeTemplate_page_Migrate;
-
 	public static String UniversalWelcomeTemplate_page_WebResources;
-
 	public static String UniversalWelcomeTemplate_linkUrl;
 
 	// Hello world OSGi Service template
@@ -274,6 +258,15 @@ public class PDETemplateMessages extends NLS {
 	public static String HelloOSGiServiceTemplate_pageDescription;
 	public static String HelloOSGiServiceTemplate_pageTitle;
 	public static String HelloOSGiServiceNewWizard_title;
+
+	// DS OSGi Service template
+	public static String DSTemplate_startMessage;
+	public static String DSTemplate_stopMessage;
+	public static String DSTemplate_hello;
+	public static String DSTemplate_goodbye;
+	public static String DSTemplate_pageDescription;
+	public static String DSTemplate_pageTitle;
+	public static String DSTemplateWizard_title;
 
 	// Perspective Template
 	public static String PerspectiveTemplate_title;
@@ -303,12 +296,18 @@ public class PDETemplateMessages extends NLS {
 	public static String OSGiSimpleLogServiceTemplate_startLogMessage;
 	public static String OSGiSimpleLogServiceTemplate_stopLogMessage;
 
-	//Common Navigator Template
+	// Common Navigator Template
 	public static String CommonNavigatorTemplate_viewId;
 	public static String CommonNavigatorTemplate_viewName;
 	public static String CommonNavigatorTemplate_addToPerspective;
 	public static String CommonNavigatorTemplate_defaultViewName;
 	public static String CommonNavigatorTemplate_pagedescription;
 	public static String CommonNavigatorTemplate_pagetitle;
+
+	// Declarative Services Template
+	public static String HelloServiceComponentTemplate_message;
+	public static String HelloServiceComponentTemplate_messageTitle;
+	public static String HelloServiceComponentTemplate_command;
+	public static String HelloServiceComponentTemplate_commandTitle;
 
 }
