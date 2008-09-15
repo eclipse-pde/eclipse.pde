@@ -78,6 +78,7 @@ public class DSEditReferenceDialog extends FormDialog {
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		FormToolkit toolkit = mform.getToolkit();
+		toolkit.decorateFormHeading(mform.getForm().getForm());
 		
 		Composite entryContainer = toolkit.createComposite(container);
 		entryContainer.setLayout(FormLayoutFactory.createSectionClientGridLayout(
