@@ -13,7 +13,7 @@ Export-Package:
  org.eclipse.pde.internal.ui.compare;x-internal:=true,
  org.eclipse.pde.internal.ui.correction;x-internal:=true,
  org.eclipse.pde.internal.ui.correction.java;x-internal:=true,
- org.eclipse.pde.internal.ui.editor;x-internal:=true,
+ org.eclipse.pde.internal.ui.editor;x-friends:="org.eclipse.pde.ds.ui",
  org.eclipse.pde.internal.ui.editor.actions;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.build;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.cheatsheet;x-internal:=true,
