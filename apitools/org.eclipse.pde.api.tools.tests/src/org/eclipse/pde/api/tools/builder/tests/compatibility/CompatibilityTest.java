@@ -343,8 +343,9 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 				fullBuild();
 			}
 			IMarker[] jdtMarkers = getEnv().getAllJDTMarkers(workspaceFile);
-			if (jdtMarkers.length!= 0) {
-				for (int i = 0, max = jdtMarkers.length; i < max; i++) {
+			int length = jdtMarkers.length;
+			if (length != 0) {
+				for (int i = 0; i < length; i++) {
 					assertFalse(jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) != IMarker.SEVERITY_ERROR);
 				}
 			}
