@@ -160,6 +160,31 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	}	
 	
 	/**
+	 * Tests making a non-final no-override method final, and remove the no-override tag.
+	 */
+	private void xAddFinalRemoveNoOverride(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalRemoveNoOverride.java");
+		// no problems expected since @nooverride
+		// TODO: no problem expected
+		int[] ids = new int[] {
+			getChangedProblemId(IDelta.NON_FINAL_TO_FINAL)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddFinalRemoveNoOverride", "method()"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddFinalRemoveNoOverrideI() throws Exception {
+		xAddFinalRemoveNoOverride(true);
+	}	
+	
+	public void testAddFinalRemoveNoOverrideF() throws Exception {
+		xAddFinalRemoveNoOverride(false);
+	}	
+	
+	/**
 	 * Tests making a non-final method final in a no-extend class
 	 */
 	private void xAddFinalNoExtend(boolean incremental) throws Exception {
