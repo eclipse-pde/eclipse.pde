@@ -15,17 +15,14 @@ import java.io.InputStream;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.ApiProfile;
 import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
-import org.eclipse.pde.api.tools.internal.descriptors.PrimitiveDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.descriptors.ResourceDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPrimitiveTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IResourceDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
@@ -76,78 +73,6 @@ public class Factory {
 	 */
 	public static IApiProfile newApiProfile(String name, File eeDescription) throws CoreException {
 		return new ApiProfile(name, eeDescription);
-	}
-
-	/**
-	 * Returns a type descriptor for the primitive boolean type.
-	 * 
-	 * @return an {@link IPrimitiveTypeDescriptor} for a boolean type
-	 */
-	public static IPrimitiveTypeDescriptor booleanType() {
-		return new PrimitiveDescriptorImpl(Signature.SIG_BOOLEAN);
-	}
-	
-	/**
-	 * Returns a type descriptor for the primitive byte type.
-	 * 
-	 * @return an {@link IPrimitiveTypeDescriptor} for a byte type
-	 */
-	public static IPrimitiveTypeDescriptor byteType() {
-		return new PrimitiveDescriptorImpl(Signature.SIG_BYTE);
-	}	
-	
-	/**
-	 * Returns a type descriptor for the primitive char type.
-	 * 
-	 * @return an {@link IPrimitiveTypeDescriptor} for a char type
-	 */
-	public static IPrimitiveTypeDescriptor charType() {
-		return new PrimitiveDescriptorImpl(Signature.SIG_CHAR);
-	}	
-	
-	/**
-	 * Returns a type descriptor for the primitive double type.
-	 * 
-	 * @return an {@link IPrimitiveTypeDescriptor} for a double type
-	 */
-	public static IPrimitiveTypeDescriptor doubleType() {
-		return new PrimitiveDescriptorImpl(Signature.SIG_DOUBLE);
-	}	
-	
-	/**
-	 * Returns a type descriptor for the primitive float type.
-	 * 
-	 * @return an {@link IPrimitiveTypeDescriptor} for a float type
-	 */
-	public static IPrimitiveTypeDescriptor floatType() {
-		return new PrimitiveDescriptorImpl(Signature.SIG_FLOAT);
-	}	
-	
-	/**
-	 * Returns a type descriptor for the primitive int type.
-	 * 
-	 * @return an {@link IPrimitiveTypeDescriptor} for an int type
-	 */
-	public static IPrimitiveTypeDescriptor intType() {
-		return new PrimitiveDescriptorImpl(Signature.SIG_INT);
-	}
-	
-	/**
-	 * Returns a type descriptor for the primitive long type.
-	 * 
-	 * @return an {@link IPrimitiveTypeDescriptor} for a long type
-	 */
-	public static IPrimitiveTypeDescriptor longType() {
-		return new PrimitiveDescriptorImpl(Signature.SIG_LONG);
-	}	
-	
-	/**
-	 * Returns a type descriptor for the primitive short type.
-	 * 
-	 * @return an {@link IPrimitiveTypeDescriptor} for a short type
-	 */
-	public static IPrimitiveTypeDescriptor shortType() {
-		return new PrimitiveDescriptorImpl(Signature.SIG_SHORT);
 	}
 	
 	/**

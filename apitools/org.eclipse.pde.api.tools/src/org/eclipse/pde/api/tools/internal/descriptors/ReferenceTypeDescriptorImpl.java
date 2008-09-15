@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IArrayTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
@@ -65,13 +64,6 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 	ReferenceTypeDescriptorImpl(String name, IElementDescriptor parent, String genericSignature, int modifiers) {
 		this(name, parent, modifiers);
 		fGenericSignature = genericSignature;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IReferenceTypeDescriptor#getArray(int)
-	 */
-	public IArrayTypeDescriptor getArray(int dimensions) {
-		return new ArrayDescriptorImpl(this, dimensions);
 	}
 
 	/* (non-Javadoc)

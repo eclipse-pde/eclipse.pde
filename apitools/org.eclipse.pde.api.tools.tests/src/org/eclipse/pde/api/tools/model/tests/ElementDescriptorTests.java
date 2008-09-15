@@ -16,11 +16,9 @@ import junit.framework.TestSuite;
 
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IArrayTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPrimitiveTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 
 /**
@@ -234,9 +232,9 @@ public class ElementDescriptorTests extends TestCase {
 		IReferenceTypeDescriptor type1 = pkg1.getType("A");
 		IReferenceTypeDescriptor type2 = pkg2.getType("A");
 		IMethodDescriptor m1 = type1.getMethod("foo", Signature.createMethodSignature(
-				new String[]{Factory.intType().getSignature(), type1.getSignature()}, "V"));
+				new String[]{Signature.SIG_INT, type1.getSignature()}, "V"));
 		IMethodDescriptor m2 = type2.getMethod("foo", Signature.createMethodSignature(
-				new String[]{Factory.intType().getSignature(), type2.getSignature()}, "V"));
+				new String[]{Signature.SIG_INT, type2.getSignature()}, "V"));
 		assertEquals("Methods should be equal", m1, m2);
 	}	
 	
@@ -249,9 +247,9 @@ public class ElementDescriptorTests extends TestCase {
 		IReferenceTypeDescriptor type1 = pkg1.getType("A");
 		IReferenceTypeDescriptor type2 = pkg2.getType("A");
 		IMethodDescriptor m1 = type1.getMethod("foo", Signature.createMethodSignature(
-				new String[]{Factory.intType().getSignature(), type1.getSignature()}, "V"));
+				new String[]{Signature.SIG_INT, type1.getSignature()}, "V"));
 		IMethodDescriptor m2 = type2.getMethod("foo", Signature.createMethodSignature(
-				new String[]{Factory.intType().getSignature(), Factory.booleanType().getSignature()}, "V"));
+				new String[]{Signature.SIG_INT, Signature.SIG_BOOLEAN}, "V"));
 		assertFalse("Methods should not be equal", m1.equals(m2));
 	}
 	
@@ -264,9 +262,9 @@ public class ElementDescriptorTests extends TestCase {
 		IReferenceTypeDescriptor type1 = pkg1.getType("A");
 		IReferenceTypeDescriptor type2 = pkg2.getType("A");
 		IMethodDescriptor m1 = type1.getMethod("foo", Signature.createMethodSignature(
-				new String[]{Factory.intType().getSignature()}, "V"));
+				new String[]{Signature.SIG_INT}, "V"));
 		IMethodDescriptor m2 = type2.getMethod("foo", Signature.createMethodSignature(
-				new String[]{Factory.intType().getSignature(), Factory.booleanType().getSignature()}, "V"));
+				new String[]{Signature.SIG_INT, Signature.SIG_BOOLEAN}, "V"));
 		assertFalse("Methods should not be equal", m1.equals(m2));
 	}	
 	
@@ -277,78 +275,10 @@ public class ElementDescriptorTests extends TestCase {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c");
 		IReferenceTypeDescriptor type1 = pkg1.getType("A");
 		IMethodDescriptor m1 = type1.getMethod("foo", Signature.createMethodSignature(
-				new String[]{Factory.intType().getSignature()}, "V"));
+				new String[]{Signature.SIG_INT}, "V"));
 		assertEquals("Wrong package", pkg1, m1.getPackage());
 	}		
-	
-	/**
-	 * Tests equality of primitive types
-	 */
-	public void testPrimitiveTypeEq() {
-		assertEquals("Primitives should be equal", Factory.booleanType(), Factory.booleanType());
-		assertEquals("Primitives should be equal", Factory.byteType(), Factory.byteType());
-		assertEquals("Primitives should be equal", Factory.charType(), Factory.charType());
-		assertEquals("Primitives should be equal", Factory.doubleType(), Factory.doubleType());
-		assertEquals("Primitives should be equal", Factory.floatType(), Factory.floatType());
-		assertEquals("Primitives should be equal", Factory.intType(), Factory.intType());
-		assertEquals("Primitives should be equal", Factory.longType(), Factory.longType());
-		assertEquals("Primitives should be equal", Factory.shortType(), Factory.shortType());
-	}
-	
-	/**
-	 * Tests non-equality of primitive types
-	 */
-	public void testPrimitiveTypeNonEq() {
-		assertFalse("Different primitives should not be equal", Factory.booleanType().equals(Factory.byteType()));
-		assertFalse("Different primitives should not be equal", Factory.byteType().equals(Factory.charType()));
-		assertFalse("Different primitives should not be equal", Factory.charType().equals(Factory.doubleType()));
-		assertFalse("Different primitives should not be equal", Factory.doubleType().equals(Factory.floatType()));
-		assertFalse("Different primitives should not be equal", Factory.floatType().equals(Factory.intType()));
-		assertFalse("Different primitives should not be equal", Factory.intType().equals(Factory.longType()));
-		assertFalse("Different primitives should not be equal", Factory.longType().equals(Factory.shortType()));
-		assertFalse("Different primitives should not be equal", Factory.shortType().equals(Factory.booleanType()));
-	}	
-	
-	/**
-	 * Tests equality of array types
-	 */
-	public void testArrayTypesEq() {
-		IPackageDescriptor pkg1 = Factory.packageDescriptor("java.lang");
-		IPackageDescriptor pkg2 = Factory.packageDescriptor("java.lang");
-		IReferenceTypeDescriptor type1 = pkg1.getType("Object");
-		IReferenceTypeDescriptor type2 = pkg2.getType("Object");
-		IArrayTypeDescriptor array1 = type1.getArray(1);
-		IArrayTypeDescriptor array2 = type2.getArray(1);
-		assertEquals("Arrays should be equal", array1, array2);
-	}
-	
-	/**
-	 * Tests non-equality of array with different types
-	 */
-	public void testArrayTypesNonEq() {
-		IPackageDescriptor pkg1 = Factory.packageDescriptor("java.lang");
-		IPackageDescriptor pkg2 = Factory.packageDescriptor("java.lang");
-		IReferenceTypeDescriptor type1 = pkg1.getType("Object");
-		IReferenceTypeDescriptor type2 = pkg2.getType("String");
-		IArrayTypeDescriptor array1 = type1.getArray(1);
-		IArrayTypeDescriptor array2 = type2.getArray(1);
-		assertFalse("Arrays should not be equal", array1.equals(array2));
-	}	
-	
-	
-	/**
-	 * Tests non-equality of arrays with different dimensions
-	 */
-	public void testArrayDimensionNonEq() {
-		IPackageDescriptor pkg1 = Factory.packageDescriptor("java.lang");
-		IPackageDescriptor pkg2 = Factory.packageDescriptor("java.lang");
-		IReferenceTypeDescriptor type1 = pkg1.getType("Object");
-		IReferenceTypeDescriptor type2 = pkg2.getType("Object");
-		IArrayTypeDescriptor array1 = type1.getArray(1);
-		IArrayTypeDescriptor array2 = type2.getArray(3);
-		assertFalse("Arrays should not be equal", array1.equals(array2));
-	}	
-	
+			
 	/**
 	 * Tests reference type signature generation
 	 */
@@ -358,22 +288,5 @@ public class ElementDescriptorTests extends TestCase {
 		assertEquals("Wrong signature", "Ljava.lang.Object;", type1.getSignature());
 	}
 	
-	/**
-	 * Tests array type signature generation
-	 */
-	public void testArrayTypeSignature() {
-		IPackageDescriptor pkg1 = Factory.packageDescriptor("java.lang");
-		IReferenceTypeDescriptor type1 = pkg1.getType("Object");
-		IArrayTypeDescriptor array = type1.getArray(1);
-		assertEquals("Wrong signature", "[Ljava.lang.Object;", array.getSignature());
-	}
 	
-	/**
-	 * Tests primitive array type signature generation
-	 */
-	public void testPrimitiveArrayTypeSignature() {
-		IPrimitiveTypeDescriptor intType = Factory.intType();
-		IArrayTypeDescriptor array = intType.getArray(2);
-		assertEquals("Wrong signature", "[[I", array.getSignature());
-	}	
 }

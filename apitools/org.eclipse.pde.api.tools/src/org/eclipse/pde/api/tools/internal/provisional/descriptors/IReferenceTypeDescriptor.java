@@ -108,15 +108,6 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor, ITypeDescri
 	public IMethodDescriptor getMethod(String name, String signature, int modifiers);
 	
 	/**
-	 * Returns an array type descriptor of this type with the specified number
-	 * of dimensions.
-	 * 
-	 * @param dimensions number of dimensions in the array
-	 * @return array type descriptor
-	 */
-	public IArrayTypeDescriptor getArray(int dimensions);
-	
-	/**
 	 * Returns whether this type describes an anonymous inner
 	 * type.
 	 * 
