@@ -177,8 +177,6 @@ public class DSReferenceSection extends TableSection {
 
 	private void updateButtons() {
 		Table table = fReferencesTable.getTable();
-		int count = table.getItemCount();
-
 		TablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(0, isEditable());
 		tablePart.setButtonEnabled(1, isEditable()
@@ -208,7 +206,7 @@ public class DSReferenceSection extends TableSection {
 
 	private void doOpenSelectionDialog(int scopeType) {
 		try {
-			String filter = "";
+			String filter = ""; //$NON-NLS-1$
 			filter = filter.substring(filter.lastIndexOf(".") + 1); //$NON-NLS-1$
 			SelectionDialog dialog = JavaUI.createTypeDialog(Activator
 					.getActiveWorkbenchShell(), PlatformUI.getWorkbench()
@@ -231,7 +229,7 @@ public class DSReferenceSection extends TableSection {
 		reference.setReferenceInterface(fullyQualifiedName);
 		
 		// set name attribute
-		int index = fullyQualifiedName.lastIndexOf(".");
+		int index = fullyQualifiedName.lastIndexOf("."); //$NON-NLS-1$
 		if (index != -1) {
 			fullyQualifiedName = fullyQualifiedName.substring(index + 1);
 		}

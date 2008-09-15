@@ -153,13 +153,6 @@ public class DSEditReferenceDialog extends FormDialog {
 		fPolicy.getControl().setLayoutData(gd);
 	}
 
-	private void addButtonBar(FormToolkit toolkit, Composite mainContainer) {
-		Composite buttonBar = (Composite) createButtonBar(mainContainer);
-		GridData layoutData = (GridData) buttonBar.getLayoutData();
-		layoutData.horizontalSpan = 3;
-		buttonBar.setBackground(toolkit.getColors().getBackground());
-	}
-
 	public boolean isHelpAvailable() {
 		return false;
 	}

@@ -369,7 +369,6 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 	private ICompletionProposal[] computeAddChildProposal(
 			IDocumentElementNode node, int offset, IDocument doc, String filter) {
-		ArrayList propList = new ArrayList();
 		if (node instanceof IDSComponent) {
 			return computeRootNodeProposals(node, offset, filter);
 		} else if (node instanceof IDSService) {

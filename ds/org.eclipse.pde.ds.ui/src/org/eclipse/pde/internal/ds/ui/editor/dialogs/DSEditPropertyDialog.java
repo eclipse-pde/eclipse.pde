@@ -46,7 +46,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
@@ -65,7 +64,6 @@ public class DSEditPropertyDialog extends FormDialog {
 	private FormEntry fNameEntry;
 	private ComboPart fTypeCombo;
 	private FormEntry fValuesEntry;
-	private Label fTypeLabel;
 	private boolean fAddDialog; // boolean used to erase added element whether
 
 	private static final String EMPTY = ""; //$NON-NLS-1$
@@ -97,7 +95,7 @@ public class DSEditPropertyDialog extends FormDialog {
 				Messages.DSPropertyDetails_nameEntry, SWT.MULTI);
 
 		// Attribute: type
-		fTypeLabel = toolkit.createLabel(mainContainer,
+		toolkit.createLabel(mainContainer,
 				Messages.DSPropertyDetails_typeEntry, SWT.WRAP);
 		fTypeCombo = new ComboPart();
 		fTypeCombo.createControl(mainContainer, toolkit, SWT.READ_ONLY);
