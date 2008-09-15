@@ -77,7 +77,7 @@ public class DSEditProvideDialog extends FormDialog {
 		// Attribute: Interface
 		fInterfaceEntry = new FormEntry(composite, toolkit,
 				Messages.DSProvideDetails_interface,
-				Messages.DSProvideDetails_browse, true, 0);
+				Messages.DSProvideDetails_browse, false, 0);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 20;
