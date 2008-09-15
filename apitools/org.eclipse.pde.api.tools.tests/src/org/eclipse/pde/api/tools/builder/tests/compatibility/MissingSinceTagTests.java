@@ -123,6 +123,41 @@ public class MissingSinceTagTests extends SinceTagTest {
 	}	
 	
 	/**
+	 * Tests adding a method that is part of a newly implemented interface
+	 */
+	private void xAddNewInterfaceMethod(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNewInterfaceMethod.java");
+		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "methodA()");
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddNewInterfaceMethodI() throws Exception {
+		xAddNewInterfaceMethod(true);
+	}
+	
+	public void testAddNewInterfaceMethodF() throws Exception {
+		xAddNewInterfaceMethod(false);
+	}	
+	
+	/**
+	 * Tests adding a method inherited/overridden from a super type. There should be no since tag
+	 * required.
+	 */
+	private void xAddInheritedMethod(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInheritedMethod.java");
+		// no problem expected
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddInheritedMethodI() throws Exception {
+		xAddInheritedMethod(true);
+	}
+	
+	public void testAddInheritedMethodF() throws Exception {
+		xAddInheritedMethod(false);
+	}
+	
+	/**
 	 * Tests adding a non-visible method
 	 */
 	private void xAddNonVisibleMethod(boolean incremental) throws Exception {
