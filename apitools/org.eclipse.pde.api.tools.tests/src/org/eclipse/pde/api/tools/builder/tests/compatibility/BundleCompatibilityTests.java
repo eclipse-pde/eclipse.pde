@@ -143,4 +143,36 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 	public void testRemovePrivateClassF() throws Exception {
 		xRemovePrivateClass(false);
 	}
+	
+	/**
+	 * Tests deleting a public class and then replacing it
+	 */
+	private void xDeleteAndReplace(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("DeleteAndReplace.java");
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.API_COMPONENT_ELEMENT_TYPE,
+						IDelta.REMOVED,
+						IDelta.TYPE)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "DeleteAndReplace", "bundle.a_1.0.0"};
+		setExpectedMessageArgs(args);
+		performDeletionCompatibilityTest(filePath, incremental);
+		// now replace the class - no problems expected
+		setExpectedProblemIds(null);
+		setExpectedMessageArgs(null);
+		performCreationCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testDeleteAndReplaceI() throws Exception {
+		//TODO: Add this test when bug 247545 is fixed
+		//xDeleteAndReplace(true);
+	}
+	
+	public void testDeleteAndReplaceF() throws Exception {
+		xDeleteAndReplace(false);
+	}	
 }
