@@ -155,7 +155,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	protected void init(State state, long bundleId) throws CoreException {
 		try {
 			Dictionary manifest = getManifest();
-			if (isBinaryBundle() && ApiPlugin.WORKSPACE_API_PROFILE_ID.equals(getProfile().getName())) {
+			if (isBinaryBundle() && ApiProfileManager.WORKSPACE_API_PROFILE_ID.equals(getProfile().getName())) {
 				// must account for bundles in development mode - look for class files in output
 				// folders rather than jars
 				TargetWeaver.weaveManifest(manifest);

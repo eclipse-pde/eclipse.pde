@@ -72,6 +72,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * are made for information, nothing is pre-loaded when the manager is initialized.
  * 
  * @since 1.0.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class ApiProfileManager implements IApiProfileManager, ISaveParticipant, IElementChangedListener, IPluginModelListener, IResourceChangeListener {
 	
@@ -92,6 +93,12 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 * Value is: <code>default_api_profile</code>
 	 */
 	private static final String DEFAULT_PROFILE = "default_api_profile"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the id of the workspace {@link IApiProfile}.
+	 * Value is: <code>workspace</code>
+	 */
+	public static final String WORKSPACE_API_PROFILE_ID = "workspace"; //$NON-NLS-1$
 	
 	/**
 	 * The main cache for the manager.
@@ -122,6 +129,9 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 */
 	private boolean fNeedsSaving = false;
 	
+	/**
+	 * The singleton instance
+	 */
 	private static ApiProfileManager fInstance = null;
 	
 	/**
@@ -506,7 +516,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		long time = System.currentTimeMillis();
 		IApiProfile profile = null; 
 		try {
-			profile = Factory.newApiProfile(ApiPlugin.WORKSPACE_API_PROFILE_ID);
+			profile = Factory.newApiProfile(ApiProfileManager.WORKSPACE_API_PROFILE_ID);
 			// populate it with only projects that are API aware
 			IPluginModelBase[] models = PluginRegistry.getActiveModels();
 			List componentsList = new ArrayList(models.length);

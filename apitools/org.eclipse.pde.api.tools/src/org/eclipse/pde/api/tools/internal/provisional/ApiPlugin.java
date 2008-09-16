@@ -124,12 +124,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	public static final String BUILDER_ID = PLUGIN_ID + ".apiAnalysisBuilder" ; //$NON-NLS-1$
 	
 	/**
-	 * Constant representing the id of the workspace {@link IApiProfile}.
-	 * Value is: <code>workspace</code>
-	 */
-	public static final String WORKSPACE_API_PROFILE_ID = "workspace"; //$NON-NLS-1$
-	
-	/**
 	 * Singleton instance of the plugin
 	 */
 	private static ApiPlugin fgDefault = null;
