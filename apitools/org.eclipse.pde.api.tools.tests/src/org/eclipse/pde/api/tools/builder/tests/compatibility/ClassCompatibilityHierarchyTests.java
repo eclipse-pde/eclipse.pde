@@ -296,6 +296,40 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		xPushMethodUp(false);
 	}
 	
+	/**
+	 * Tests removing an internal superclass
+	 */
+	private void xRemoveInternalSuperClass(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveInternalSuperClass.java");
+		// no problems expected
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemoveInternalSuperClassI() throws Exception {
+		xRemoveInternalSuperClass(true);
+	}
+	
+	public void testRemoveInternalSuperClassF() throws Exception {
+		xRemoveInternalSuperClass(false);
+	}	
+	
+	/**
+	 * Tests removing an internal superclass exposing a public method
+	 */
+	private void xRemoveIntSuperClassWithMethod(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveIntSuperClassWithMethod.java");
+		// TODO: expect a removed method problem
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemoveIntSuperClassWithMethodI() throws Exception {
+		xRemoveIntSuperClassWithMethod(true);
+	}
+	
+	public void testRemoveIntSuperClassWithMethodF() throws Exception {
+		xRemoveIntSuperClassWithMethod(false);
+	}		
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
