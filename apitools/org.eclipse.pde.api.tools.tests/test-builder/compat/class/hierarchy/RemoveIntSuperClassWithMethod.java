@@ -10,8 +10,6 @@
  *******************************************************************************/
 package a.classes.hierarchy;
 
-import a.classes.internal.InternalClassWithMethod;
-
 /**
  *
  */
