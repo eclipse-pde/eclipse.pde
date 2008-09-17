@@ -253,6 +253,11 @@ public class ClassFileComparator {
 		if (visibilityModifiers == VisibilityModifiers.API) {
 			int currentTypeVisibility = 0;
 			String superTypeName = this.descriptor1.superName;
+			String superTypeName2 = this.descriptor2.superName;
+			if (!superTypeName.equals(superTypeName2)) {
+				// we don't need to check the superclass if it has changed
+				return;
+			}
 			LookupResult pair = getType(superTypeName, this.component, this.apiProfile);
 			if (pair == null) return;
 			IClassFile superclassType1 = pair.classFile;
@@ -264,20 +269,21 @@ public class ClassFileComparator {
 				if (!VisibilityModifiers.isAPI(currentTypeVisibility)) {
 					// superclass is not an API type so we need to check it for visible members
 					// if this is an API, it will be checked when the supertype is checked
-					boolean ignoreProtected = RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions) || Util.isFinal(this.descriptor1.access);
+					final boolean ignoreProtected = RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions) || Util.isFinal(this.descriptor1.access);
 					IClassFile superclassType2 = this.component2.findClassFile(superTypeName);
 					if (superclassType2 != null) {
 						ClassFileComparator comparator = new ClassFileComparator(superclassType1, superclassType2, this.component, this.component2, this.apiProfile, this.apiProfile2, this.visibilityModifiers);
 						IDelta delta2 = comparator.getDelta();
 						if (delta2 != null && delta2 != ApiComparator.NO_DELTA) {
-							if (ignoreProtected) {
-								// filter all protected members changes
-								delta2.accept(new DeltaVisitor() {
-									public boolean visit(IDelta delta) {
-										IDelta[] children = delta.getChildren();
-										if (children.length == 0) {
-											// leaf node
-											if (Util.isProtected(delta.getModifiers())) {
+							// filter all protected members changes
+							delta2.accept(new DeltaVisitor() {
+								public boolean visit(IDelta delta) {
+									IDelta[] children = delta.getChildren();
+									if (children.length == 0) {
+										// leaf node
+										int modifiers = delta.getModifiers();
+										if (Util.isProtected(modifiers)) {
+											if (!ignoreProtected) {
 												switch(delta.getElementType()) {
 													case IDelta.METHOD_ELEMENT_TYPE : 
 													case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
@@ -288,17 +294,26 @@ public class ClassFileComparator {
 													default :
 														addDelta(delta);
 												}
-											} else {
-												addDelta(delta);
 											}
-											return false;
+										} else if (Util.isPublic(modifiers)) {
+											switch(delta.getElementType()) {
+												case IDelta.METHOD_ELEMENT_TYPE : 
+												case IDelta.FIELD_ELEMENT_TYPE :
+												case IDelta.CLASS_ELEMENT_TYPE :
+												case IDelta.ENUM_ELEMENT_TYPE :
+													switch(delta.getFlags()) {
+														case IDelta.CONSTRUCTOR :
+															break;
+														default:
+															addDelta(delta);
+													}
+											}
 										}
-										return true;
+										return false;
 									}
-								});
-							} else {
-								this.addDelta(delta2);
-							}
+									return true;
+								}
+							});
 						}
 					}
 				}
@@ -976,6 +991,7 @@ public class ClassFileComparator {
 			this.delta = createDelta();
 			// check visibility
 			int typeAccess = this.descriptor1.access;
+			int typeAccess2 = this.descriptor2.access;
 			final IApiDescription component2ApiDescription = component2.getApiDescription();
 			IApiAnnotations elementDescription2 = component2ApiDescription.resolveAnnotations(this.descriptor2.handle);
 			this.initialDescriptorRestrictions = RestrictionModifiers.NO_RESTRICTIONS;
@@ -1009,7 +1025,7 @@ public class ClassFileComparator {
 							}
 						} else {
 							boolean reportChangedRestrictions = false;
-							if (!Util.isFinal(this.descriptor2.access)) {
+							if (!Util.isFinal(typeAccess2) && !Util.isFinal(typeAccess)) {
 								if (RestrictionModifiers.isExtendRestriction(restrictions2)
 										&& !RestrictionModifiers.isExtendRestriction(restrictions)) {
 									reportChangedRestrictions = true;
@@ -1025,7 +1041,8 @@ public class ClassFileComparator {
 								}
 							}
 							if (!reportChangedRestrictions
-									&&!Util.isAbstract(this.descriptor2.access)) {
+									&& !Util.isAbstract(typeAccess2)
+									&& !Util.isAbstract(typeAccess)) {
 								if (RestrictionModifiers.isInstantiateRestriction(restrictions2)
 											&& !RestrictionModifiers.isInstantiateRestriction(restrictions)) {
 									this.addDelta(
@@ -1046,8 +1063,6 @@ public class ClassFileComparator {
 			}
 			// first make sure that we compare interface with interface, class with class,
 			// annotation with annotation and enum with enums
-			int typeAccess2 = this.descriptor2.access;
-
 			if (Util.isFinal(typeAccess2)) {
 				this.currentDescriptorRestrictions |= RestrictionModifiers.NO_EXTEND;
 			}
