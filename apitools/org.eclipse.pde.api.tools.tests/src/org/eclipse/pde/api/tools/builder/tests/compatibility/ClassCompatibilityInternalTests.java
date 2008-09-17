@@ -14,6 +14,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -30,6 +31,8 @@ public class ClassCompatibilityInternalTests extends ClassCompatibilityTests {
 	 * Workspace relative path classes in bundle/project A
 	 */
 	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/internal");
+	
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_HIER = new Path("bundle.a/src/a/classes/hierarchy");
 
 	/**
 	 * Package prefix for test classes
@@ -91,6 +94,27 @@ public class ClassCompatibilityInternalTests extends ClassCompatibilityTests {
 	
 	public void testRemoveInternalConstructorF() throws Exception {
 		xRemoveInternalConstructor(false);
+	}
+	
+	/**
+	 * Tests the removal of a method from a non-API class, subclassed by an API class.
+	 */
+	private void xRemoveInternalMethod(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveInternalMethod.java");
+		// no problems expected on internal method removal
+		performCompatibilityTest(filePath, incremental);
+		// TODO: should be problem on existing API class
+		IPath path = WORKSPACE_CLASSES_PACKAGE_HIER.append("SubclassInternalClass.java");
+		ApiProblem[] problems = getEnv().getProblemsFor(path, null);
+		assertProblems(problems);
+	}
+	
+	public void testRemoveInternalMethodI() throws Exception {
+		xRemoveInternalMethod(true);
+	}
+	
+	public void testRemoveInternalMethodF() throws Exception {
+		xRemoveInternalMethod(false);
 	}
 	
 }
