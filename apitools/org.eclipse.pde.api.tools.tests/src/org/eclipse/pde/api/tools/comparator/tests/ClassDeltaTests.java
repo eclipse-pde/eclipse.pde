@@ -36,7 +36,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(ClassDeltaTests.class);
 		TestSuite suite = new TestSuite(ClassDeltaTests.class.getName());
-		suite.addTest(new ClassDeltaTests("test137"));
+		suite.addTest(new ClassDeltaTests("test138"));
 		return suite;
 	}
 
@@ -3195,7 +3195,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
-	 * remove internal super class
+	 * Remove internal super class
 	 */
 	public void test137() {
 		deployBundles("test137");
@@ -3209,4 +3209,24 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertNotNull("No delta", delta);
 		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA);
 	}
-}
+	/**
+	 * Remove public method in internal superclass
+	 */
+	public void test138() {
+		deployBundles("test138");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}}
