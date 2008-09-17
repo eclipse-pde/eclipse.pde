@@ -322,7 +322,6 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	protected IPath getUpdateFilePath(String filename) {
 		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(filename);
 	}
-	
 	/**
 	 * Performs a compatibility test. The workspace file at the specified (full workspace path)
 	 * location is updated with a corresponding file from test data. A build is performed
@@ -347,6 +346,10 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			if (length != 0) {
 				for (int i = 0; i < length; i++) {
 					boolean condition = jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR;
+					if (condition) {
+						System.err.println("workspace file : " + workspaceFile.toOSString());
+						System.err.println(jdtMarkers[i].getAttribute(IMarker.MESSAGE));
+					}
 					assertFalse("Should not be a JDT error", condition);
 				}
 			}
