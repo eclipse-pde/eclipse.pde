@@ -180,6 +180,40 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	}
 	
 	/**
+	 * Tests making a final class non-final
+	 */
+	private void xRemoveFinal(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveFinal.java");
+		// no errors
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemoveFinalI() throws Exception {
+		xRemoveFinal(true);
+	}	
+	
+	public void testRemoveFinalF() throws Exception {
+		xRemoveFinal(false);
+	}	
+	
+	/**
+	 * Tests making a final class non-final and adding the no-extend tag
+	 */
+	private void xRemoveFinalAddNoExtend(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveFinalAddNoExtend.java");
+		// no errors
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemoveFinalAddNoExtendI() throws Exception {
+		xRemoveFinalAddNoExtend(true);
+	}	
+	
+	public void testRemoveFinalAddNoExtendF() throws Exception {
+		xRemoveFinalAddNoExtend(false);
+	}	
+	
+	/**
 	 * Tests making a non-abstract class abstract
 	 */
 	private void xAddAbstract(boolean incremental) throws Exception {
