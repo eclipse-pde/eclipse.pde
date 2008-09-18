@@ -18,7 +18,10 @@ import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SharedImages;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.forms.editor.IFormPage;
 
 public class DSLabelProvider extends LabelProvider {
 
@@ -27,6 +30,9 @@ public class DSLabelProvider extends LabelProvider {
 		if (obj instanceof IDSObject) {
 			return getObjectText((IDSObject) obj);
 		}
+
+		if (obj instanceof IFormPage)
+			return ((IFormPage) obj).getTitle();
 
 		return super.getText(obj);
 	}
@@ -42,6 +48,12 @@ public class DSLabelProvider extends LabelProvider {
 		if (obj instanceof IDSObject) {
 			return getObjectImage((IDSObject) obj);
 		}
+
+		// TODO consider changing this
+		if (obj instanceof IFormPage)
+			return PDEPlugin.getDefault().getLabelProvider().get(
+					PDEPluginImages.DESC_PAGE_OBJ);
+
 		return super.getImage(obj);
 	}
 
