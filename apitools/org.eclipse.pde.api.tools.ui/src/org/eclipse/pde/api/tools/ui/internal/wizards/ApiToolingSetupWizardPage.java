@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,9 +41,7 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -56,12 +55,18 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IWorkbenchPage;
@@ -69,6 +74,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.FilteredList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.progress.UIJob;
 
@@ -85,6 +91,8 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	private static final String SETTINGS_REMOVECXML = "remove_componentxml"; //$NON-NLS-1$
 	
 	private CheckboxTableViewer tableviewer = null;
+	private FilteredList projectlist = null;
+	private HashSet checkedset = new HashSet();
 	private Button removecxml = null;
 	
 	/**
@@ -106,31 +114,61 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.API_TOOLING_SETUP_WIZARD_PAGE);
 		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_6, 1, 100);
 		SWTFactory.createVerticalSpacer(comp, 1);
-		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_8, 1, 50);
-		Table table = new Table(comp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 150;
-		table.setLayoutData(gd);
-		tableviewer =  new CheckboxTableViewer(table);
-		tableviewer.setLabelProvider(new WorkbenchLabelProvider());
-		tableviewer.setContentProvider(new ArrayContentProvider());
-		tableviewer.setInput(ResourcesPlugin.getWorkspace().getRoot().getProjects());
-		tableviewer.setComparator(new ViewerComparator());
-		tableviewer.addFilter(new ViewerFilter() {
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if(element instanceof IProject) {
-					IProject project  = (IProject) element;
-					try {
-						return (project.hasNature(JavaCore.NATURE_ID) && project.hasNature("org.eclipse.pde.PluginNature"))  //$NON-NLS-1$
-						&& !project.hasNature(ApiPlugin.NATURE_ID);
-					}
-					catch(CoreException ce) {}
+		SWTFactory.createWrapLabel(comp, WizardMessages.ApiToolingSetupWizardPage_6, 1, 50);
+		
+		IProject[] projects = getInputProjects();
+		
+		final Text text = SWTFactory.createText(comp, SWT.BORDER, 1);
+		text.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if(projectlist != null) {
+					projectlist.setFilter(text.getText().trim());
 				}
-				return false;
+				if(tableviewer != null) {
+					tableviewer.refresh(false);
+					tableviewer.setCheckedElements(checkedset.toArray());
+				}
 			}
 		});
+		text.addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent e) {
+                if (e.keyCode == SWT.ARROW_DOWN) {
+                	if(projectlist != null) {
+                		projectlist.setFocus();
+                	}
+				}
+            }
+			public void keyReleased(KeyEvent e) {
+			}
+		});
+		
+		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_8, 1, 50);
+		
+		projectlist = new FilteredList(comp, 
+				SWT.BORDER | SWT.CHECK | SWT.MULTI | SWT.FULL_SELECTION, 
+				new WorkbenchLabelProvider(),
+				true,
+				true,
+				true);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 150;
+		projectlist.setLayoutData(gd);
+		projectlist.setFont(parent.getFont());
+		projectlist.setElements(projects);
+		
+		Table table = (Table) projectlist.getChildren()[0];
+		tableviewer = new CheckboxTableViewer(table);
+		tableviewer.setContentProvider(new ArrayContentProvider());
+		tableviewer.setInput(projects);
+		tableviewer.setComparator(new ViewerComparator());
 		tableviewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
+				if(event.getChecked()) {
+					checkedset.add(event.getElement());
+				}
+				else {
+					checkedset.remove(event.getElement());
+				}
 				setPageComplete(pageValid());
 			}
 		});
@@ -139,6 +177,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				tableviewer.setAllChecked(true);
+				checkedset.addAll(Arrays.asList(tableviewer.getCheckedElements()));
 				setPageComplete(pageValid());
 			}
 		});
@@ -146,10 +185,19 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				tableviewer.setAllChecked(false);
+				TableItem[] items = tableviewer.getTable().getItems();
+				for(int i = 0; i < items.length; i++) {
+					checkedset.remove(items[i].getData());
+				}
 				setPageComplete(pageValid());
 			}
 		});
-		tableviewer.setCheckedElements(getWorkbenchSelection());
+
+		Object[] selected = getWorkbenchSelection();
+		if(selected.length > 0) {
+			tableviewer.setCheckedElements(selected);
+			checkedset.addAll(Arrays.asList(selected));
+		}
 		setPageComplete(tableviewer.getCheckedElements().length > 0);
 		
 		SWTFactory.createVerticalSpacer(comp, 1);
@@ -161,6 +209,26 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		}
 	}
 
+	/**
+	 * @return the complete listing of projects in the workspace that could have API tooling set-up
+	 * on them
+	 * @throws CoreException
+	 */
+	private IProject[] getInputProjects() {
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		ArrayList pjs = new ArrayList();
+		for(int i = 0; i < projects.length; i++) {
+			try {
+				if((projects[i].hasNature(JavaCore.NATURE_ID) && projects[i].hasNature("org.eclipse.pde.PluginNature"))  //$NON-NLS-1$
+							&& !projects[i].hasNature(ApiPlugin.NATURE_ID)) {
+					pjs.add(projects[i]);
+				}
+			}
+			catch(CoreException ce) {}
+		}
+		return (IProject[]) pjs.toArray(new IProject[pjs.size()]);
+	}
+	
 	/**
 	 * @return the current selection from the workbench as an array of objects
 	 */
