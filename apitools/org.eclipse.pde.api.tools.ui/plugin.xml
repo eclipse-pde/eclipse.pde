@@ -60,6 +60,52 @@
                value="org.eclipse.pde.PluginNature">
          </filter>
       </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.eclipse.pde.api.tools.ui.configproblemfilters"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="org.eclipse.pde.api.tools.ui.internal.actions.ConfigureProblemFiltersAction"
+               enablesFor="1"
+               helpContextId="api_problem_filter_configure"
+               icon="icons/full/elcl16/filter_ps.gif"
+               id="org.eclipse.pde.api.tools.ui.problemfilters"
+               label="%ApiProblemFilters.name"
+               menubarPath="org.eclipse.pde.ui.project.tools/group1"
+               tooltip="%ApiProblemFilters.tooltip">
+         </action>
+         <filter
+               name="projectNature"
+               value="org.eclipse.pde.api.tools.apiAnalysisNature">
+         </filter>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.eclipse.pde.api.tools.ui.configproblemfilters.editor"
+            nameFilter=".api_filters"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="org.eclipse.pde.ui.project.tools"
+               label="%PdeTools.name">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
+         <action
+               class="org.eclipse.pde.api.tools.ui.internal.actions.ConfigureProblemFiltersAction"
+               enablesFor="1"
+               helpContextId="api_problem_filter_configure"
+               icon="icons/full/elcl16/filter_ps.gif"
+               id="org.eclipse.pde.api.tools.ui.problemfilters"
+               label="%ApiProblemFilters.name"
+               menubarPath="org.eclipse.pde.ui.project.tools/group1"
+               tooltip="%ApiProblemFilters.tooltip">
+         </action>
+         <filter
+               name="projectNature"
+               value="org.eclipse.pde.api.tools.apiAnalysisNature">
+         </filter>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
@@ -195,5 +241,15 @@
             class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
             markerType="org.eclipse.pde.api.tools.unsupported_tags">
       </markerResolutionGenerator>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.pde.api.tools.ui.internal.actions.ApiToolsPropertyTester"
+            id="org.eclipse.pde.api.tools.ui.proptester"
+            namespace="org.eclipse.pde.api.tools.ui"
+            properties="pbfilters"
+            type="java.lang.Object">
+      </propertyTester>
    </extension>
 </plugin>

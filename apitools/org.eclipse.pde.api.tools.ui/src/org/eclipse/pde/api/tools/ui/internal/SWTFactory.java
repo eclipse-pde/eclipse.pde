@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.ui.internal;
 
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -550,5 +551,16 @@ public class SWTFactory {
 	 */
 	public static void showPreferencePage(Shell shell, String id, Object data) {
 		PreferencesUtil.createPreferenceDialogOn(shell, id, new String[] {id}, data).open();
+	}
+	
+	/**
+	 * This method allows us to open a property page in the default platform dialog
+	 * @param shell
+	 * @param id
+	 * @param element
+	 * @param data
+	 */
+	public static void showPropertiesDialog(Shell shell, String id, IAdaptable element, Object data) {
+		PreferencesUtil.createPropertyDialogOn(shell, element, id, new String[] {id}, data).open();
 	}
 }
