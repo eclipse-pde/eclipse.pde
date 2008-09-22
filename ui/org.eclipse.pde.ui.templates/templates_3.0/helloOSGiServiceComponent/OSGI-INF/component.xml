@@ -2,7 +2,7 @@
 <component name="component">
    <implementation class="$packageName$.ServiceComponent">
    </implementation>
-   <service servicefactory="false">
+   <service>
       <provide interface="org.eclipse.osgi.framework.console.CommandProvider">
       </provide>
    </service>

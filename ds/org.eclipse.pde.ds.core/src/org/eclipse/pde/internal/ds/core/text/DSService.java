@@ -23,9 +23,6 @@ public class DSService extends DSObject implements IDSService {
 
 	public DSService(DSModel model) {
 		super(model, ELEMENT_SERVICE);
-		
-		// set Default Values
-		this.setServiceFactory(false);
 	}
 
 	/*
