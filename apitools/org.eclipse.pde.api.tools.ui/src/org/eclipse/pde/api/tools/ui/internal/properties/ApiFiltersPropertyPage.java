@@ -31,8 +31,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -57,6 +55,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.PlatformUI;
@@ -284,7 +283,22 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		if(deletions.size() > 0) {
 			fChangeset.addAll(deletions);
 			fViewer.remove(deletions.toArray());
+			updateParents();
 			fViewer.refresh();
+		}
+	}
+	
+	/**
+	 * Cleans up empty parents once a deletion update has been done
+	 * for the parents that have incrementally had all their children removed
+	 */
+	private void updateParents() {
+		Tree tree = fViewer.getTree();
+		TreeItem[] items = tree.getItems();
+		for(int i = 0; i < items.length; i++) {
+			if(items[i].getItems().length < 1) {
+				fInputset.remove(items[i].getData());
+			}
 		}
 	}
 	
@@ -306,15 +320,6 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 			}
 			else {
 				filters.add(node);
-				TreeSelection tsel = (TreeSelection) selection;
-				TreePath[] paths = tsel.getPathsFor(node);
-				Object parent = null;
-				for(int i = 0; i < paths.length; i++) {
-					parent = paths[i].getFirstSegment();
-					if(((TreeContentProvider)fViewer.getContentProvider()).getChildren(parent).length < 2) {
-						fInputset.remove(parent);
-					}
-				}
 			}
 		}
 		return filters;
