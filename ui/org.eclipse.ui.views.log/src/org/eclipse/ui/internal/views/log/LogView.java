@@ -12,6 +12,7 @@
  *     													bugs 172658, 216341, 216657
  *     Michael Rennie <Michael_Rennie@ca.ibm.com> - bug 208637
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218648 
+ *     Tuukka Lehtonen <tuukka.lehtonen@semantum.fi>  - bug 247907
 *******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
@@ -1464,7 +1465,7 @@ public class LogView extends ViewPart implements ILogListener {
 					}
 
 					if (date1 == date2) {
-						int result = elements.indexOf(e2) - elements.indexOf(e1);
+						int result = elements.indexOf(e1) - elements.indexOf(e2);
 						if (DATE_ORDER == DESCENDING)
 							result *= DESCENDING;
 						return result;
