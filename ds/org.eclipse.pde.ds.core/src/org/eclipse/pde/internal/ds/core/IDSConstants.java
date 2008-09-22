@@ -76,7 +76,7 @@ public interface IDSConstants {
 	public static final String VALUE_PROPERTY_TYPE_DOUBLE = "Double"; //$NON-NLS-1$
 	public static final String VALUE_PROPERTY_TYPE_INTEGER = "Integer"; //$NON-NLS-1$
 	public static final String VALUE_PROPERTY_TYPE_BYTE = "Byte"; //$NON-NLS-1$
-	public static final String VALUE_PROPERTY_TYPE_CHAR = "Char"; //$NON-NLS-1$
+	public static final String VALUE_PROPERTY_TYPE_CHAR = "Character"; //$NON-NLS-1$
 	public static final String VALUE_PROPERTY_TYPE_BOOLEAN = "Boolean"; //$NON-NLS-1$
 	public static final String VALUE_PROPERTY_TYPE_SHORT = "Short"; //$NON-NLS-1$
 
