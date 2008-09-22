@@ -151,7 +151,10 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 				.append(IApiCoreConstants.API_DESCRIPTION_XML_NAME).toFile();
 			if (file.exists()) {
 				file.delete();
-				file.getParentFile().delete();
+			}
+			file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).toFile();
+			if(file.exists() && file.isDirectory()) {
+				file.delete();
 			}
 		}
 	}
