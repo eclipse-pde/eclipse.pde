@@ -125,8 +125,14 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 					projectlist.setFilter(text.getText().trim());
 				}
 				if(tableviewer != null) {
-					tableviewer.refresh(false);
-					tableviewer.setCheckedElements(checkedset.toArray());
+					try {
+						tableviewer.getTable().setRedraw(false);
+						tableviewer.refresh(false);
+						tableviewer.setCheckedElements(checkedset.toArray());
+					}
+					finally {
+						tableviewer.getTable().setRedraw(true);
+					}
 				}
 			}
 		});
