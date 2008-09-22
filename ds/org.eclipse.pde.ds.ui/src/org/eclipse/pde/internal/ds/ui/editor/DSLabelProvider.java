@@ -8,7 +8,7 @@
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
+ *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028, 248197
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
@@ -69,21 +69,26 @@ public class DSLabelProvider extends LabelProvider {
 		} else if (obj.getType() == IDSConstants.TYPE_REFERENCE) {
 			IDSReference reference = (IDSReference) obj;
 			int flags = 0;
+			
+			if (reference == null || reference.getReferencePolicy() == null
+					|| reference.getReferenceCardinality() == null)
+				return SharedImages
+						.getImage(SharedImages.DESC_REFERENCE, flags); 
+				
 			if (reference.getReferencePolicy().equals(
 					IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC)) {
 				flags |= SharedImages.F_DYNAMIC;
 			}
-			if (reference.getReferenceCardinality().equals(
+			String cardinality = reference.getReferenceCardinality();
+			if (cardinality.equals(
 					IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE)) {
-				return SharedImages
-.getImage(
+				return SharedImages.getImage(
 						SharedImages.DESC_REFERENCE_ZERO_ONE, flags);
-			} else if (reference.getReferenceCardinality().equals(
+			} else if (cardinality.equals(
 					IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N)) {
-				return SharedImages
-.getImage(
+				return SharedImages.getImage(
 						SharedImages.DESC_REFERENCE_ZERO_N, flags);
-			} else if (reference.getReferenceCardinality().equals(
+			} else if (cardinality.equals(
 					IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N)) {
 				return SharedImages.getImage(SharedImages.DESC_REFERENCE_ONE_N,
 						flags);
@@ -96,5 +101,4 @@ public class DSLabelProvider extends LabelProvider {
 		}
 		return null;
 	}
-
 }
