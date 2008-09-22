@@ -127,7 +127,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 				if(tableviewer != null) {
 					try {
 						tableviewer.getTable().setRedraw(false);
-						tableviewer.refresh(false);
+						tableviewer.refresh();
 						tableviewer.setCheckedElements(checkedset.toArray());
 					}
 					finally {
@@ -345,7 +345,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	private void collectChanges() {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				Object[] projects = tableviewer.getCheckedElements();
+				Object[] projects = checkedset.toArray(new IProject[checkedset.size()]);
 				IProject project = null;
 				if(monitor == null) {
 					monitor = new NullProgressMonitor();
