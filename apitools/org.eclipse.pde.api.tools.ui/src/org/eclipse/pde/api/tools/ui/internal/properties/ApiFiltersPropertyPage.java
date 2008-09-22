@@ -31,6 +31,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -45,6 +47,8 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -217,6 +221,13 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		gd.widthHint = 275;
 		gd.heightHint = 300;
 		tree.setLayoutData(gd);
+		tree.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if(e.character == SWT.DEL && e.stateMask == 0) {
+					handleRemove((IStructuredSelection) fViewer.getSelection());
+				}
+			}
+		});
 		fViewer = new TreeViewer(tree);
 		fViewer.setAutoExpandLevel(2);
 		fViewer.setContentProvider(new TreeContentProvider());
@@ -256,12 +267,7 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection ss = (IStructuredSelection) fViewer.getSelection();
-				HashSet deletions = collectDeletions(ss);
-				if(deletions.size() > 0) {
-					fChangeset.addAll(deletions);
-					fViewer.remove(deletions.toArray());
-					fViewer.refresh();
-				}
+				handleRemove(ss);
 			}
 		});
 		fRemoveButton.setEnabled(false);
@@ -269,6 +275,19 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		return comp;
 	}	
 
+	/**
+	 * Performs the remove
+	 * @param selection
+	 */
+	private void handleRemove(IStructuredSelection selection) {
+		HashSet deletions = collectDeletions(selection);
+		if(deletions.size() > 0) {
+			fChangeset.addAll(deletions);
+			fViewer.remove(deletions.toArray());
+			fViewer.refresh();
+		}
+	}
+	
 	/**
 	 * Collects all of the elements to be deleted
 	 * @param selection
@@ -287,6 +306,15 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 			}
 			else {
 				filters.add(node);
+				TreeSelection tsel = (TreeSelection) selection;
+				TreePath[] paths = tsel.getPathsFor(node);
+				Object parent = null;
+				for(int i = 0; i < paths.length; i++) {
+					parent = paths[i].getFirstSegment();
+					if(((TreeContentProvider)fViewer.getContentProvider()).getChildren(parent).length < 2) {
+						fInputset.remove(parent);
+					}
+				}
 			}
 		}
 		return filters;
