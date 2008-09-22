@@ -115,7 +115,6 @@ public class TracingBlock {
 		gd.widthHint = 125;
 		gd.heightHint = 100;
 		fPluginViewer.getTable().setLayoutData(gd);
-		fPluginViewer.setInput(getTraceableModels());
 	}
 
 	private void createPropertySheetClient(Composite sashForm) {
@@ -263,6 +262,8 @@ public class TracingBlock {
 	}
 
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		if (fPluginViewer.getInput() == null)
+			fPluginViewer.setInput(getTraceableModels());
 		fPageBook.getParent().getParent().layout(true);
 	}
 
@@ -348,7 +349,7 @@ public class TracingBlock {
 		}
 		fPropertySources.clear();
 	}
-	
+
 	private class PageBookKey {
 		IPluginModelBase fModel;
 		boolean fEnabled;
@@ -369,6 +370,5 @@ public class TracingBlock {
 			return fModel.hashCode() + (fEnabled ? 1 : 0);
 		}
 	}
-	
 
 }
