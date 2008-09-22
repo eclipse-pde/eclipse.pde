@@ -41,8 +41,6 @@ public class DSComponent extends DSObject implements IDSComponent {
 		super(model, ELEMENT_COMPONENT);
 		setInTheModel(true);
 
-		// set default values
-		this.setEnabled(true);
 		this.setAttributeName(IDSConstants.ELEMENT_COMPONENT);
 	}
 
