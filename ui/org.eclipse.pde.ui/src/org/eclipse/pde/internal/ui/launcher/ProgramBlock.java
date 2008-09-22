@@ -15,13 +15,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jface.fieldassist.*;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -34,8 +34,9 @@ public class ProgramBlock {
 	private Button fApplicationButton;
 	private AbstractLauncherTab fTab;
 	private Listener fListener = new Listener();
+	private ControlDecoration fProductComboDecoration;
 
-	class Listener extends SelectionAdapter {
+	class Listener extends SelectionAdapter implements ModifyListener {
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 			if (source == fProductButton) {
@@ -43,7 +44,29 @@ public class ProgramBlock {
 				fProductCombo.setEnabled(enabled);
 				fApplicationCombo.setEnabled(!enabled);
 			}
+
 			fTab.updateLaunchConfigurationDialog();
+		}
+
+		public void modifyText(ModifyEvent e) {
+			if (e.getSource() == fProductCombo) {
+				String productValue = fProductCombo.getText();
+				String[] knownProducts = TargetPlatform.getProducts();
+				boolean found = false;
+				for (int i = 0; i < knownProducts.length; i++) {
+					String knownProduct = knownProducts[i];
+					if (knownProduct.equals(productValue)) {
+						found = true;
+						break;
+					}
+				}
+				if (found)
+					fProductComboDecoration.hide();
+				else
+					fProductComboDecoration.show();
+
+				fTab.updateLaunchConfigurationDialog();
+			}
 		}
 	}
 
@@ -68,10 +91,17 @@ public class ProgramBlock {
 		fProductButton.setText(PDEUIMessages.ProgramBlock_runProduct);
 		fProductButton.addSelectionListener(fListener);
 
-		fProductCombo = new Combo(parent, SWT.READ_ONLY | SWT.DROP_DOWN);
+		fProductCombo = new Combo(parent, SWT.DROP_DOWN);
 		fProductCombo.setItems(TargetPlatform.getProducts());
 		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProductCombo.addSelectionListener(fListener);
+		fProductCombo.addModifyListener(fListener);
+
+		fProductComboDecoration = new ControlDecoration(fProductCombo, SWT.TOP | SWT.LEFT);
+		FieldDecoration warningDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING);
+		fProductComboDecoration.setDescriptionText(PDEUIMessages.ProgramBlock_productDecorationWarning0);
+		fProductComboDecoration.setImage(warningDecoration.getImage());
+
 	}
 
 	protected void createApplicationSection(Composite parent) {
@@ -97,13 +127,9 @@ public class ProgramBlock {
 	}
 
 	protected void initializeProductSection(ILaunchConfiguration config) throws CoreException {
-		if (fProductCombo.getItemCount() > 0) {
-			String productName = config.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
-			int index = productName == null ? -1 : fProductCombo.indexOf(productName);
-			if (index == -1)
-				index = 0;
-			fProductCombo.setText(fProductCombo.getItem(index));
-		}
+		String productName = config.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
+		if (productName != null)
+			fProductCombo.setText(productName);
 	}
 
 	protected void initializeApplicationSection(ILaunchConfiguration config) throws CoreException {

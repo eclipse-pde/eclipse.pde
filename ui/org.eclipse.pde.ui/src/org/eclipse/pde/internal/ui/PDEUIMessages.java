@@ -1156,6 +1156,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String BasicLauncherTab_environments;
 	public static String BasicLauncherTab_installedJREs;
+	public static String ProgramBlock_productDecorationWarning0;
+
 	public static String ProgramBlock_programToRun;
 	public static String BasicLauncherTab_bootstrap;
 	public static String BasicLauncherTab_javaExecDefault;
