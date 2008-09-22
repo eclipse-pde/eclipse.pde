@@ -146,7 +146,10 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				break;
 			}
 			case IJavaElement.METHOD: {
-				return !(Flags.isFinal(((IMethod)element).getFlags()) && tag.getTagName().equals("@nooverride")); //$NON-NLS-1$
+				IMethod method = (IMethod) element;
+				if(Flags.isFinal(method.getFlags()) || Flags.isStatic(method.getFlags())) {
+					return !tag.getTagName().equals("@nooverride"); //$NON-NLS-1$
+				}
 			}
 		}
 		return true;

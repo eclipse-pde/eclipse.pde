@@ -46,7 +46,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		for(int i = 0; i < problems.length; i++) {
 			message = problems[i].getMessage();
 			assertTrue("The problem message is not correct: "+message, message.endsWith("a method") || message.endsWith("a private method") 
-					|| message.endsWith("a final method"));
+					|| message.endsWith("a final method") || message.endsWith("a static method") || message.endsWith("a static final method"));
 		}
 	}
 	
@@ -595,5 +595,21 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidClassMethodTag30F() {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		deployTagTest("", "test30", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	}
+	
+	/**
+	 * Tests the unsupported @nooverride tag on a static method using an incremental build
+	 */
+	public void testInvalidClassMethodTag31I() {
+		setExpectedProblemIds(getDefaultProblemIdSet(3));
+		deployTagTest("", "test57", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	}
+	
+	/**
+	 * Tests the unsupported @nooverride tag on a static method using  full build
+	 */
+	public void testInvalidClassMethodTag31F() {
+		setExpectedProblemIds(getDefaultProblemIdSet(3));
+		deployTagTest("", "test57", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 }

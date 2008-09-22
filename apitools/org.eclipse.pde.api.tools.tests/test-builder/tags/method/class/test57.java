@@ -8,42 +8,34 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
 
 /**
- * Test supported @noreference tag on class methods
+ * 
  */
-public class test1 {
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 * @return
-	 */
-	public int m1() {
-		return 0;
-	}
-	
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @return
-	 */
-	public final char m2() {
-		return 's';
-	}
-	
+public class test57 {
+
 	/**
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	protected void m3() {
+	public static void m1() {
 		
 	}
 	
+	static class inner {
+		/**
+		 * @nooverride This method is not intended to be re-implemented or extended by clients.
+		 */
+		public static final void m1() {
+			
+		}
+	}
+}
+
+class outer {
 	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @return
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
-	protected static Object m4() {
-		return null;
+	static void m3() {
+		
 	}
 }

@@ -98,7 +98,6 @@ public class TagValidator extends ASTVisitor {
 				String context = BuilderMessages.TagValidator_an_interface;
 				if(!type.isInterface()) {
 					context = BuilderMessages.TagValidator_a_class;
-					
 					if(Flags.isAbstract(type.getModifiers())) {
 						context = BuilderMessages.TagValidator_an_abstract_class;
 						invalidtags.add("@noinstantiate"); //$NON-NLS-1$
@@ -142,9 +141,11 @@ public class TagValidator extends ASTVisitor {
 				MethodDeclaration method = (MethodDeclaration) node;
 				int pkind = getParentKind(node);
 				String context = null;
-				boolean isprivate = Flags.isPrivate(method.getModifiers());
+				int mods = method.getModifiers();
+				boolean isprivate = Flags.isPrivate(mods);
 				boolean isconstructor = method.isConstructor();
-				boolean isfinal = Flags.isFinal(method.getModifiers());
+				boolean isfinal = Flags.isFinal(mods);
+				boolean isstatic = Flags.isStatic(mods);
 				switch(pkind) {
 					case IApiJavadocTag.TYPE_ENUM: {
 						context = isprivate ? BuilderMessages.TagValidator_private_enum_method : BuilderMessages.TagValidator_an_enum_method;
@@ -158,8 +159,14 @@ public class TagValidator extends ASTVisitor {
 						if(isprivate) {
 							context = isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method;
 						}
+						else if(isstatic && isfinal) {
+							context = BuilderMessages.TagValidator_a_static_final_method;
+						}
 						else if (isfinal) {
 							context = BuilderMessages.TagValidator_a_final_method;
+						}
+						else if(isstatic) {
+							context = BuilderMessages.TagValidator_a_static_method;
 						}
 						else {
 							context = isconstructor ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
@@ -171,7 +178,7 @@ public class TagValidator extends ASTVisitor {
 				if(!isprivate) {
 					validtags = jtm.getTagsForType(pkind, isconstructor ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
 				}
-				if(isfinal) {
+				if(isfinal || isstatic) {
 					ArrayList ttags = new ArrayList(validtags.length);
 					for(int i = 0; i < validtags.length; i++) {
 						if(!validtags[i].getTagName().equals("@nooverride")) { //$NON-NLS-1$
