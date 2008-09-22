@@ -129,5 +129,8 @@ public class DSProperty extends DSObject implements IDSProperty {
 				IDSConstants.ATTRIBUTE_PROPERTY_VALUE };
 	}
 
+	public boolean isLeafNode() {
+		return true;
+	}
 	
 }

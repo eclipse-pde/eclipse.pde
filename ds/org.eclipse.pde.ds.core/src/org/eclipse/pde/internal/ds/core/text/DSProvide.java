@@ -85,4 +85,9 @@ public class DSProvide extends DSObject implements IDSProvide {
 	public String[] getAttributesNames() {
 		return new String[] { IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE };
 	}
+
+	public boolean isLeafNode() {
+		return true;
+	}
+
 }

@@ -96,4 +96,8 @@ public class DSImplementation extends DSObject implements IDSImplementation {
 		return new String[] { IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS };
 	}
 
+	public boolean isLeafNode() {
+		return true;
+	}
+
 }

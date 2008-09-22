@@ -185,4 +185,9 @@ public class DSReference extends DSObject implements IDSReference {
 				IDSConstants.ATTRIBUTE_REFERENCE_TARGET,
 				IDSConstants.ATTRIBUTE_REFERENCE_UNBIND };
 	}
+
+	public boolean isLeafNode() {
+		return true;
+	}
+
 }
