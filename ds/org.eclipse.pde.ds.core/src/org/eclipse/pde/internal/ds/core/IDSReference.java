@@ -72,8 +72,8 @@ public interface IDSReference extends IDSObject {
 	 * support a single bound service or multiple bound services.
 	 * 
 	 * The cardinality for a reference can be specified as one of four choices:
-	 * 0..1 â€“ Optional and unary. 1..1 â€“ Mandatory and unary (Default) 0..n â€“
-	 * Optional and multiple. 1..n â€“ Mandatory and multiple.
+	 * 0..1 (optional and unary), 1..1 (mandatory and unary - default), 0..n
+	 * (optional and multiple), 1..n (mandatory and multiple).
 	 * 
 	 * @param cardinality
 	 *            new cardinality value
@@ -84,9 +84,9 @@ public interface IDSReference extends IDSObject {
 	 * Returns if the reference is optional and if the component implementation
 	 * support a single bound service or multiple bound services.
 	 * 
-	 * @return String containing one of four choices: 0..1 â€“ Optional and unary.
-	 *         1..1 â€“ Mandatory and unary (Default) 0..n â€“ Optional and
-	 *         multiple. 1..n â€“ Mandatory and multiple
+	 * @return String containing one of four choices: 0..1 (optional and unary),
+	 *         1..1 (mandatory and unary - default), 0..n (optional and
+	 *         multiple), 1..n (mandatory and multiple).
 	 */
 	public String getReferenceCardinality();
 
