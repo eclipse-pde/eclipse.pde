@@ -31,6 +31,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -282,9 +285,67 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		HashSet deletions = collectDeletions(selection);
 		if(deletions.size() > 0) {
 			fChangeset.addAll(deletions);
+			int[] indexes = getIndexes(selection);
 			fViewer.remove(deletions.toArray());
 			updateParents();
 			fViewer.refresh();
+			updateSelection(indexes);
+		}
+	}
+	
+	/**
+	 * Collects the indexes of the first item in the current selection
+	 * @param selection
+	 * @return an array of indexes (parent, child) of the first item in the current selection
+	 */
+	private int[] getIndexes(IStructuredSelection selection) {
+		int[] indexes = new int[] {0,0};
+		TreeSelection tsel = (TreeSelection) selection;
+		TreePath path = tsel.getPaths()[0];
+		TreeItem parent = (TreeItem) fViewer.testFindItem(path.getFirstSegment());
+		if(parent != null) {
+			Tree tree = fViewer.getTree();
+			//found parent
+			indexes[0] = tree.indexOf(parent);
+			TreeItem item = (TreeItem) fViewer.testFindItem(path.getLastSegment());
+			if(item != null) {
+				indexes[1] = parent.indexOf(item);
+			}
+		}
+		return indexes;
+	}
+	
+	/**
+	 * Updates the selection in the viewer based on the given indexes.
+	 * If there is no item to update at the given indexes then the next logical child is taken, else the parent
+	 * is selected, else no selection is made
+	 * @param indexes
+	 */
+	private void updateSelection(int[] indexes) {
+		Tree tree = fViewer.getTree();
+		TreeItem parent = null;
+		if(tree.getItemCount() == 0) {
+			return;
+		}
+		if(indexes[0] < tree.getItemCount()) {
+			TreeItem child = null;
+			parent = tree.getItem(indexes[0]);
+			int childcount = parent.getItemCount();
+			if(childcount < 1 || indexes[1] < 0) {
+				fViewer.setSelection(new StructuredSelection(parent.getData()));
+				return;
+			}
+			else if (indexes[1] < childcount){
+				child = parent.getItem(indexes[1]);
+			}
+			else {
+				child = parent.getItem(childcount-1);
+			}
+			fViewer.setSelection(new StructuredSelection(child.getData()));
+		}
+		else {
+			parent = tree.getItem(tree.getItemCount()-1);
+			fViewer.setSelection(new StructuredSelection(parent.getData()));
 		}
 	}
 	
