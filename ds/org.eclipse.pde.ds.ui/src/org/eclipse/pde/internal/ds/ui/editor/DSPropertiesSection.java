@@ -80,7 +80,7 @@ public class DSPropertiesSection extends TableSection {
 					// property elements in order of appearance
 					IDocumentElementNode[] childNodes = component
 							.getChildNodes();
-					
+
 					// count the number of property and properties elements
 					int propertyLength = 0;
 					int propertiesLength = 0;
@@ -193,15 +193,41 @@ public class DSPropertiesSection extends TableSection {
 
 	private void handleUpDown(int newRelativeIndex) {
 		ISelection sel = fPropertiesTable.getSelection();
-		Object object = ((IStructuredSelection) sel).getFirstElement();
-		if (object == null) {
-			return;
-		} else if (object instanceof IDocumentElementNode) {
-			// Move the task object up or down one position
-			getDSModel().getDSComponent().moveChildNode(
-					(IDocumentElementNode) object, newRelativeIndex, true);
+		Object[] array = ((IStructuredSelection) sel).toArray();
+		
+		if (newRelativeIndex == F_UP_FLAG) {
+			moveUp(newRelativeIndex, array);
+		} else {
+			moveDown(newRelativeIndex, array);
+	
 		}
 		return;
+	}
+
+	private void moveDown(int newRelativeIndex, Object[] array) {
+		for (int i = array.length - 1; i >= 0; i--) {
+			Object object = array[i];
+			if (object == null) {
+				continue;
+			} else if (object instanceof IDocumentElementNode) {
+				// Move the task object up or down one position
+				getDSModel().getDSComponent().moveChildNode(
+						(IDocumentElementNode) object, newRelativeIndex, true);
+			}
+		}
+	}
+
+	private void moveUp(int newRelativeIndex, Object[] array) {
+		for (int i = 0; i < array.length; i++) {
+			Object object = array[i];
+			if (object == null) {
+				continue;
+			} else if (object instanceof IDocumentElementNode) {
+				// Move the task object up or down one position
+				getDSModel().getDSComponent().moveChildNode(
+						(IDocumentElementNode) object, newRelativeIndex, true);
+			}
+		}
 	}
 
 	private void handleAddProperty() {
@@ -286,9 +312,10 @@ public class DSPropertiesSection extends TableSection {
 				&& table.getSelection().length > 0);
 		tablePart.setButtonEnabled(3, isEditable());
 		tablePart.setButtonEnabled(4, isEditable()
-				&& table.getSelection().length > 0);
+				&& table.getSelection().length > 0 && !table.isSelected(0));
 		tablePart.setButtonEnabled(5, isEditable()
-				&& table.getSelection().length > 0);
+				&& table.getSelection().length > 0
+				&& !table.isSelected(table.getItems().length - 1));
 	}
 
 	private void handleRemove() {
@@ -333,8 +360,7 @@ public class DSPropertiesSection extends TableSection {
 		dialog.setMessage(Messages.DSPropertiesDetails_dialogMessage);
 		dialog.setValidator(new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
-				if (selection != null
-						&& selection.length > 0
+				if (selection != null && selection.length > 0
 						&& selection[0] instanceof IFile)
 					return new Status(IStatus.OK, Activator.PLUGIN_ID,
 							IStatus.OK, "", null); //$NON-NLS-1$
