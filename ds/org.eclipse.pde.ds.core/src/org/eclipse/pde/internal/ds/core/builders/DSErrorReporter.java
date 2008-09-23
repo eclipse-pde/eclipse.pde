@@ -84,6 +84,8 @@ public class DSErrorReporter extends XMLErrorReporter {
 	}
 
 	private void reportIllegalAttributeValue(Element element, Attr attr) {
+		if (attr == null || attr.getValue() == null || attr.getName() == null)
+			return;
 		String message = NLS.bind(Messages.DSErrorReporter_attrValue,
 				(new String[] { attr.getValue(), attr.getName() }));
 		report(message, getLine(element, attr.getName()), ERROR,
