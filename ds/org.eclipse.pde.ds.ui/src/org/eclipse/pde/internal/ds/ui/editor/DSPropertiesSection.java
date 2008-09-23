@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSModel;
@@ -66,35 +67,48 @@ public class DSPropertiesSection extends TableSection {
 	private Action fAddPropertyAction;
 	private Action fEditAction;
 
+	private static final int F_UP_FLAG = -1;
+	private static final int F_DOWN_FLAG = 1;
+
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object inputElement) {
-			IDSProperties[] propertiesElements = null;
-			IDSProperty[] propertyElements = null;
 			if (inputElement instanceof IDSModel) {
 				IDSModel model = (IDSModel) inputElement;
 				IDSComponent component = model.getDSComponent();
 				if (component != null) {
-					propertiesElements = component.getPropertiesElements();
-					propertyElements = component.getPropertyElements();
-				}
-
-				if (propertiesElements != null) {
-					if (propertyElements != null) {
-						Object[] objs = new Object[propertiesElements.length
-								+ propertyElements.length];
-						System.arraycopy(propertiesElements, 0, objs, 0,
-								propertiesElements.length);
-						System.arraycopy(propertyElements, 0, objs,
-								propertiesElements.length,
-								propertyElements.length);
-						return objs;
-					} else {
-						return propertiesElements;
+					// gets all children from DS component to get properties and
+					// property elements in order of appearance
+					IDocumentElementNode[] childNodes = component
+							.getChildNodes();
+					
+					// count the number of property and properties elements
+					int propertyLength = 0;
+					int propertiesLength = 0;
+					if (component.getPropertyElements() != null) {
+						propertyLength = component.getPropertyElements().length;
 					}
-				} else if (propertyElements != null) {
-					return propertyElements;
+
+					if (component.getPropertiesElements() != null) {
+						propertiesLength = component.getPropertiesElements().length;
+					}
+
+					// creates and returns an array with all property and
+					// properties elements
+					Object[] props = new Object[propertyLength
+							+ propertiesLength];
+					int index = 0;
+					for (int i = 0; i < childNodes.length; i++) {
+						IDocumentElementNode child = childNodes[i];
+						if (child instanceof IDSProperties
+								|| child instanceof IDSProperty) {
+							props[index] = child;
+							index++;
+						}
+
+					}
+					return props;
+
 				}
-				
 
 			}
 			return new Object[0];
@@ -106,7 +120,9 @@ public class DSPropertiesSection extends TableSection {
 				new String[] { Messages.DSPropertiesSection_addProperties,
 						Messages.DSPropertiesSection_addProperty,
 						Messages.DSPropertiesSection_edit,
-						Messages.DSPropertiesSection_remove });
+						Messages.DSPropertiesSection_remove,
+						Messages.DSPropertiesSection_up,
+						Messages.DSPropertiesSection_down, });
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
@@ -114,8 +130,7 @@ public class DSPropertiesSection extends TableSection {
 		section.setText(Messages.DSPropertiesSection_title);
 		section.setDescription(Messages.DSPropertiesSection_description);
 
-		section.setLayout(FormLayoutFactory
-				.createClearGridLayout(false, 1));
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
@@ -167,14 +182,32 @@ public class DSPropertiesSection extends TableSection {
 		case 3:
 			handleRemove();
 			break;
+		case 4:
+			handleUpDown(F_UP_FLAG);
+			break;
+		case 5:
+			handleUpDown(F_DOWN_FLAG);
+			break;
 		}
+	}
+
+	private void handleUpDown(int newRelativeIndex) {
+		ISelection sel = fPropertiesTable.getSelection();
+		Object object = ((IStructuredSelection) sel).getFirstElement();
+		if (object == null) {
+			return;
+		} else if (object instanceof IDocumentElementNode) {
+			// Move the task object up or down one position
+			getDSModel().getDSComponent().moveChildNode(
+					(IDocumentElementNode) object, newRelativeIndex, true);
+		}
+		return;
 	}
 
 	private void handleAddProperty() {
 		DSEditPropertyDialog dialog = new DSEditPropertyDialog(Activator
 				.getActiveWorkbenchShell(), createPropertyElement(), this, true);
 		dialog.open();
-
 
 	}
 
@@ -190,13 +223,13 @@ public class DSPropertiesSection extends TableSection {
 						.getElementAt(selectionIndex);
 
 				if (selectionElement instanceof IDSProperties) {
-				DSEditPropertiesDialog dialog = new DSEditPropertiesDialog(
-						Activator.getActiveWorkbenchShell(),
-						(IDSProperties) selectionElement, this);
-				dialog.create();
-				dialog.getShell().setSize(500, 200);
-				dialog.open();
-				
+					DSEditPropertiesDialog dialog = new DSEditPropertiesDialog(
+							Activator.getActiveWorkbenchShell(),
+							(IDSProperties) selectionElement, this);
+					dialog.create();
+					dialog.getShell().setSize(500, 200);
+					dialog.open();
+
 				} else if (selectionElement instanceof IDSProperty) {
 					DSEditPropertyDialog dialog = new DSEditPropertyDialog(
 							Activator.getActiveWorkbenchShell(),
@@ -219,7 +252,7 @@ public class DSPropertiesSection extends TableSection {
 			}
 		};
 		fAddPropertiesAction.setEnabled(isEditable());
-		
+
 		fAddPropertyAction = new Action(
 				Messages.DSPropertiesSection_addProperty) {
 			public void run() {
@@ -247,11 +280,15 @@ public class DSPropertiesSection extends TableSection {
 		Table table = fPropertiesTable.getTable();
 
 		TablePart tablePart = getTablePart();
-				tablePart.setButtonEnabled(0, isEditable());
+		tablePart.setButtonEnabled(0, isEditable());
 		tablePart.setButtonEnabled(1, isEditable());
 		tablePart.setButtonEnabled(2, isEditable()
 				&& table.getSelection().length > 0);
 		tablePart.setButtonEnabled(3, isEditable());
+		tablePart.setButtonEnabled(4, isEditable()
+				&& table.getSelection().length > 0);
+		tablePart.setButtonEnabled(5, isEditable()
+				&& table.getSelection().length > 0);
 	}
 
 	private void handleRemove() {
@@ -329,7 +366,7 @@ public class DSPropertiesSection extends TableSection {
 		// add properties
 		component.addPropertiesElement(properties);
 	}
-	
+
 	private IDSProperty createPropertyElement() {
 
 		IDSDocumentFactory factory = getDSModel().getFactory();

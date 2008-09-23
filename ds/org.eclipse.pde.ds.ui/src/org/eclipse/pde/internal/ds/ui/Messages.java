@@ -140,7 +140,8 @@ public class Messages extends NLS {
 	public static String DSPropertiesSection_addProperty;
 	public static String DSPropertiesSection_remove;
 	public static String DSPropertiesSection_edit;
-
+	public static String DSPropertiesSection_up;
+	public static String DSPropertiesSection_down;
 
 	public static String DSEditPropertiesDialog_OK;
 	public static String DSEditPropertiesDialog_Cancel;
@@ -155,6 +156,7 @@ public class Messages extends NLS {
 	public static String DSServiceComponentSection_enabledButtonMessage;
 	
 	public static String DSService_title;
+	
 	
 	
 
