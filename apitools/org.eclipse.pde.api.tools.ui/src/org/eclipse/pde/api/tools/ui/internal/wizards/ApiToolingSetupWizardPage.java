@@ -121,7 +121,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 				try {
 					tableviewer.getTable().setRedraw(false);
 					filter.setPattern(pattern + '*');
-					tableviewer.refresh();
+					tableviewer.refresh(true);
 					tableviewer.setCheckedElements(checkedset.toArray());
 				}
 				finally {
@@ -359,7 +359,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 * @return if the page is valid or not, this method also sets error messages
 	 */
 	protected boolean pageValid() {
-		if(tableviewer.getCheckedElements().length < 1) {
+		if(checkedset.size() < 1) {
 			setErrorMessage(WizardMessages.UpdateJavadocTagsWizardPage_12);
 			return false;
 		}
