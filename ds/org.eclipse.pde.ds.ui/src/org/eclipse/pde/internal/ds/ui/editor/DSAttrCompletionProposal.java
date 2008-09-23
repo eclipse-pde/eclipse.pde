@@ -56,6 +56,10 @@ public class DSAttrCompletionProposal extends TypeCompletionProposal implements
 			replacementString = displayString + string1
 					+ IDSConstants.VALUE_TRUE
 					+ string2;
+		} else if (displayString
+				.equals(IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE)) {
+			replacementString = displayString + string1
+					+ IDSConstants.VALUE_FALSE + string2;
 		} else if (displayString.equals(IDSConstants.ATTRIBUTE_PROPERTY_TYPE)) {
 			replacementString = displayString + string1
 					+ IDSConstants.VALUE_PROPERTY_TYPE_STRING + string2;
