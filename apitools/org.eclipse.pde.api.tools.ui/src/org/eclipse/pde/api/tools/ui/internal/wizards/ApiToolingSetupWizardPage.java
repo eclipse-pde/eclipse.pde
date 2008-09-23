@@ -41,7 +41,9 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -54,9 +56,10 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
+import org.eclipse.pde.api.tools.ui.internal.StringMatcher;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -74,9 +77,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.FilteredList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -87,13 +90,93 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	
+	/**
+	 * Job for updating the filtering on the table viewer
+	 */
+	class UpdateJob extends WorkbenchJob {
+		
+		private String pattern = null;
+		
+		/**
+		 * Constructor
+		 */
+		public UpdateJob() {
+			super(WizardMessages.ApiToolingSetupWizardPage_filter_update_job);
+			setSystem(true);
+		}
+
+		/**
+		 * Sets the current text filter to use
+		 * @param filter
+		 */
+		public synchronized void setFilter(String pattern) {
+			this.pattern = pattern;
+		}
+		
+		/**
+		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			if(tableviewer != null) {
+				try {
+					tableviewer.getTable().setRedraw(false);
+					filter.setPattern(pattern + '*');
+					tableviewer.refresh();
+					tableviewer.setCheckedElements(checkedset.toArray());
+				}
+				finally {
+					tableviewer.getTable().setRedraw(true);
+				}
+			}
+			return Status.OK_STATUS;
+		}
+		
+	}
+	
+	/**
+	 * Filter for the viewer, uses a text matcher
+	 */
+	class StringFilter extends ViewerFilter {
+
+		private String pattern = null;
+		StringMatcher matcher = null;
+		
+		public void setPattern(String pattern) {
+			this.pattern = pattern;
+		}
+		
+		/**
+		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if(pattern == null) {
+				return true;
+			}
+			if(pattern.trim().length() == 0) {
+				return true;
+			}
+			String name = null;
+			if(element instanceof IResource) {
+				name = ((IResource)element).getName();
+			}
+			if(name == null) {
+				return false;
+			}
+			matcher = new StringMatcher(pattern, true, false);
+			return matcher.match(name, 0, name.length());
+		}
+		
+	}
+	
 	private static final String SETTINGS_SECTION = "ApiToolingSetupWizardPage"; //$NON-NLS-1$
 	private static final String SETTINGS_REMOVECXML = "remove_componentxml"; //$NON-NLS-1$
 	
 	private CheckboxTableViewer tableviewer = null;
-	private FilteredList projectlist = null;
 	private HashSet checkedset = new HashSet();
 	private Button removecxml = null;
+	private UpdateJob updatejob = new UpdateJob();
+	private StringFilter filter = new StringFilter();
+	private Text checkcount = null;
 	
 	/**
 	 * Constructor
@@ -116,57 +199,36 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		SWTFactory.createVerticalSpacer(comp, 1);
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiToolingSetupWizardPage_6, 1, 50);
 		
-		IProject[] projects = getInputProjects();
-		
 		final Text text = SWTFactory.createText(comp, SWT.BORDER, 1);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if(projectlist != null) {
-					projectlist.setFilter(text.getText().trim());
-				}
-				if(tableviewer != null) {
-					try {
-						tableviewer.getTable().setRedraw(false);
-						tableviewer.refresh();
-						tableviewer.setCheckedElements(checkedset.toArray());
-					}
-					finally {
-						tableviewer.getTable().setRedraw(true);
-					}
-				}
+				updatejob.setFilter(text.getText().trim());
+				updatejob.cancel();
+				updatejob.schedule();
 			}
 		});
-		text.addKeyListener(new KeyListener() {
+		text.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
                 if (e.keyCode == SWT.ARROW_DOWN) {
-                	if(projectlist != null) {
-                		projectlist.setFocus();
+                	if(tableviewer != null) {
+                		tableviewer.getTable().setFocus();
                 	}
 				}
             }
-			public void keyReleased(KeyEvent e) {
-			}
 		});
 		
 		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_8, 1, 50);
 		
-		projectlist = new FilteredList(comp, 
-				SWT.BORDER | SWT.CHECK | SWT.MULTI | SWT.FULL_SELECTION, 
-				new WorkbenchLabelProvider(),
-				true,
-				true,
-				true);
+		Table table = new Table(comp, SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK | SWT.MULTI);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 150;
-		projectlist.setLayoutData(gd);
-		projectlist.setFont(parent.getFont());
-		projectlist.setElements(projects);
-		
-		Table table = (Table) projectlist.getChildren()[0];
+		table.setLayoutData(gd);
 		tableviewer = new CheckboxTableViewer(table);
+		tableviewer.setLabelProvider(new WorkbenchLabelProvider());
 		tableviewer.setContentProvider(new ArrayContentProvider());
-		tableviewer.setInput(projects);
+		tableviewer.setInput(getInputProjects());
 		tableviewer.setComparator(new ViewerComparator());
+		tableviewer.addFilter(filter);
 		tableviewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				if(event.getChecked()) {
@@ -178,7 +240,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 				setPageComplete(pageValid());
 			}
 		});
-		Composite bcomp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_HORIZONTAL | GridData.END, 0, 0);
+		Composite bcomp = SWTFactory.createComposite(comp, 3, 1, GridData.FILL_HORIZONTAL | GridData.END, 0, 0);
 		Button button = SWTFactory.createPushButton(bcomp, WizardMessages.UpdateJavadocTagsWizardPage_10, null);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -199,12 +261,14 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 			}
 		});
 
+		checkcount = SWTFactory.createText(bcomp, SWT.FLAT | SWT.READ_ONLY, 1, GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
+		
 		Object[] selected = getWorkbenchSelection();
 		if(selected.length > 0) {
 			tableviewer.setCheckedElements(selected);
 			checkedset.addAll(Arrays.asList(selected));
 		}
-		setPageComplete(tableviewer.getCheckedElements().length > 0);
+		setPageComplete(checkedset.size() > 0);
 		
 		SWTFactory.createVerticalSpacer(comp, 1);
 		removecxml = SWTFactory.createCheckButton(comp, WizardMessages.ApiToolingSetupWizardPage_0, null, true, 1);
@@ -215,6 +279,25 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		}
 	}
 
+	/**
+	 * @see org.eclipse.jface.wizard.WizardPage#setPageComplete(boolean)
+	 */
+	public void setPageComplete(boolean complete) {
+		super.setPageComplete(complete);
+		updateCheckStatus(checkedset.size());
+	}
+	
+	/**
+	 * Updates the number of items that have been checked
+	 * @param count
+	 */
+	private void updateCheckStatus(int count) {
+		if(checkcount == null) {
+			return;
+		}
+		checkcount.setText(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_n_items_checked, new String[] {Integer.toString(count)}));
+	}
+	
 	/**
 	 * @return the complete listing of projects in the workspace that could have API tooling set-up
 	 * on them
