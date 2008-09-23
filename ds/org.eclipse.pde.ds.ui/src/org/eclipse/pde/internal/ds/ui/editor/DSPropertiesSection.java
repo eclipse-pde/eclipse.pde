@@ -335,7 +335,7 @@ public class DSPropertiesSection extends TableSection {
 			public IStatus validate(Object[] selection) {
 				if (selection != null
 						&& selection.length > 0
-						&& (selection[0] instanceof IFile || selection[0] instanceof IContainer))
+						&& selection[0] instanceof IFile)
 					return new Status(IStatus.OK, Activator.PLUGIN_ID,
 							IStatus.OK, "", null); //$NON-NLS-1$
 
