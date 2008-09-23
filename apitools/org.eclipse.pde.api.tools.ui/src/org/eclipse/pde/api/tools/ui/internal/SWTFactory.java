@@ -88,7 +88,6 @@ public class SWTFactory {
 		GridData gd = new GridData();
 		gd.horizontalSpan = hspan;
 		button.setLayoutData(gd);
-		setButtonDimensionHint(button);
 		return button;
 	}
 	
