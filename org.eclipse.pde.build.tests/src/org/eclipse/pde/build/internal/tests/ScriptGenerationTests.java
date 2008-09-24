@@ -638,4 +638,19 @@ public class ScriptGenerationTests extends PDETestCase {
 		
 		//success if we found all the bundles and hence did not throw an exception
 	}
+	
+	public void testBug247232() throws Exception {
+		IFolder buildFolder = newTest("247232");
+
+		Utils.generateBundleManifest(buildFolder, "org.foo", "1.2.2.2.3", null);
+		Utils.generatePluginBuildProperties(buildFolder, null);
+		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+		
+		try {
+			generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "org.foo"));
+		} catch(Exception e) {
+			//ok
+		}
+		assertLogContainsLines(buildFolder.getFile("log.log"), new String [] {"Problem occurred while considering plugin: Test Bundle org.foo.", "invalid format"});
+	}
 }
