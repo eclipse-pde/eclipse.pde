@@ -1453,6 +1453,15 @@ public class LogView extends ViewPart implements ILogListener {
 			};
 		} else {
 			return new ViewerComparator() {
+				private int indexOf(Object[] array, Object o) {
+					if (o == null)
+						return -1;
+					for (int i = 0; i < array.length; ++i)
+						if (o.equals(array[i]))
+							return i;
+					return -1;
+				}
+
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					long date1 = 0;
 					long date2 = 0;
@@ -1465,7 +1474,20 @@ public class LogView extends ViewPart implements ILogListener {
 					}
 
 					if (date1 == date2) {
-						int result = elements.indexOf(e1) - elements.indexOf(e2);
+						// Everything that appears in LogView should be an AbstractEntry.
+						AbstractEntry parent = (AbstractEntry) ((AbstractEntry) e1).getParent(null);
+						Object[] children = null;
+						if (parent != null)
+							children = parent.getChildren(parent);
+
+						int result = 0;
+						if (children != null) {
+							// The elements in children seem to be in reverse order,
+							// i.e. latest log message first, therefore index(e2)-index(e1)
+							result = indexOf(children, e2) - indexOf(children, e1);
+						} else {
+							result = elements.indexOf(e1) - elements.indexOf(e2);
+						}
 						if (DATE_ORDER == DESCENDING)
 							result *= DESCENDING;
 						return result;
