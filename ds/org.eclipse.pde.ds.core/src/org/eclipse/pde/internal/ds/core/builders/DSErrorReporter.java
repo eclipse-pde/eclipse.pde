@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class DSErrorReporter extends XMLErrorReporter {
-	
+
 	public static final int ERROR = 0;
 	public static final int WARNING = 1;
 	public static final int IGNORE = 2;
@@ -100,19 +100,16 @@ public class DSErrorReporter extends XMLErrorReporter {
 			// Validate Required Attributes
 			if (reference.getName() == null) {
 				reportMissingRequiredAttribute(element,
-						IDSConstants.ATTRIBUTE_REFERENCE_NAME,
-						ERROR);
+						IDSConstants.ATTRIBUTE_REFERENCE_NAME, ERROR);
 			}
 
 			// Validate Required Attributes
 			if (reference.getReferenceInterface() == null) {
 				reportMissingRequiredAttribute(element,
-						IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE,
-						ERROR);
+						IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE, ERROR);
 			} else {
 				// Validate Resource Existence
-				validateJavaElement(
-						reference.getReferenceInterface(),
+				validateJavaElement(reference.getReferenceInterface(),
 						IDSConstants.ELEMENT_REFERENCE,
 						IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE, i);
 			}
@@ -173,14 +170,13 @@ public class DSErrorReporter extends XMLErrorReporter {
 			IDSProperties properties = propertiesElements[i];
 			Element element = (Element) getDocumentRoot().getElementsByTagName(
 					properties.getXMLTagName()).item(i);
-			
+
 			// Validate Required Attributes
 			if (properties.getEntry() == null) {
 				reportMissingRequiredAttribute(element,
-						IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY,
-						ERROR);
+						IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY, ERROR);
 			}
-			
+
 			validateResource(properties.getEntry(),
 					IDSConstants.ELEMENT_PROPERTIES,
 					IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY, i);
@@ -198,8 +194,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			// Validate Required Attributes
 			if (property.getName() == null) {
 				reportMissingRequiredAttribute(element,
-						IDSConstants.ATTRIBUTE_PROPERTY_NAME,
-						ERROR);
+						IDSConstants.ATTRIBUTE_PROPERTY_NAME, ERROR);
 			}
 			// Validate Allowed Values
 			validatePropertyTypeValues(element);
@@ -242,8 +237,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			if (className == null) {
 				// Validate Required Attributes
 				reportMissingRequiredAttribute(element,
-						IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS,
-						ERROR);
+						IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS, ERROR);
 			} else {
 				// validate Resource Existence
 				validateJavaElement(className,
@@ -268,14 +262,13 @@ public class DSErrorReporter extends XMLErrorReporter {
 		}
 	}
 
-
-	private void validateResource(String path,
-			String elementName, String attrName, int index) {
+	private void validateResource(String path, String elementName,
+			String attrName, int index) {
 		if (!fProject.exists(new Path(path))) {
-			reportResourceNotFound(elementName, attrName,
-					path, index);
+			reportResourceNotFound(elementName, attrName, path, index);
 		}
 	}
+
 	private void reportMissingRequiredAttribute(Element element,
 			String attName, int severity) {
 		String message = NLS.bind(Messages.DSErrorReporter_requiredAttribute,
@@ -304,8 +297,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		String[] binds = new String[] { resource, attributeConstant };
 
 		report(NLS.bind(Messages.DSErrorReporter_cannotResolveResource, binds),
-				getLine(element), WARNING,
-				DSMarkerFactory.CAT_OTHER);
+				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	}
 
 	public void validateComponent(IDSComponent component) {
@@ -314,8 +306,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			// Validate Required Attributes
 			if (component.getAttributeName() == null) {
 				reportMissingRequiredAttribute(element,
-						IDSConstants.ATTRIBUTE_COMPONENT_NAME,
-						ERROR);
+						IDSConstants.ATTRIBUTE_COMPONENT_NAME, ERROR);
 
 			}
 			// Validate Required Children
@@ -334,7 +325,33 @@ public class DSErrorReporter extends XMLErrorReporter {
 			validateBoolean(element, element
 					.getAttributeNode(IDSConstants.ATTRIBUTE_COMPONENT_ENABLED));
 
+			// validate non-empty values
+			validateEmpty(element, element
+					.getAttributeNode(IDSConstants.ATTRIBUTE_COMPONENT_FACTORY));
+
+			validateEmpty(element, element
+					.getAttributeNode(IDSConstants.ATTRIBUTE_COMPONENT_NAME));
+
+
 		}
+	}
+
+	private void validateEmpty(Element element, Attr attr) {
+		if (attr != null) {
+			String value = attr.getValue();
+			if (value.equalsIgnoreCase("")) //$NON-NLS-1$
+				reportIllegalEmptyAttributeValue(element, attr);
+		}
+	}
+
+	private void reportIllegalEmptyAttributeValue(Element element, Attr attr) {
+		if (attr == null || attr.getValue() == null || attr.getName() == null)
+			return;
+		String message = NLS.bind(Messages.DSErrorReporter_emptyAttrValue,
+				attr
+				.getName());
+		report(message, getLine(element, attr.getName()), ERROR,
+				DSMarkerFactory.CAT_OTHER);
 	}
 
 	public void validateService(IDSService service) {
@@ -359,8 +376,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			// Validate Required Attributes
 			if (provide.getInterface() == null) {
 				reportMissingRequiredAttribute(element,
-						IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE,
-						ERROR);
+						IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE, ERROR);
 			} else {
 				validateJavaElement(provide.getInterface(),
 						IDSConstants.ELEMENT_PROVIDE,
