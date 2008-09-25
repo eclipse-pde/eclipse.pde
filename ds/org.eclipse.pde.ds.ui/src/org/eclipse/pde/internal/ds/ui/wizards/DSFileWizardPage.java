@@ -9,6 +9,7 @@
  *     Code 9 Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
+ *     Simon Archer <sarcher@us.ibm.com> - bug 248519
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.wizards;
 
