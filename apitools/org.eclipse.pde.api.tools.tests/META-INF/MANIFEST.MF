@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: API Tooling Tests
 Bundle-SymbolicName: org.eclipse.pde.api.tools.tests
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
@@ -23,9 +23,13 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.core.tests.compiler
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.pde.api.tools.builder.tests,
+ org.eclipse.pde.api.tools.builder.tests.performance,
  org.eclipse.pde.api.tools.comparator.tests,
  org.eclipse.pde.api.tools.model.tests;uses:="junit.framework,org.eclipse.pde.api.tools.model.component",
+ org.eclipse.pde.api.tools.problems.tests,
  org.eclipse.pde.api.tools.reference.tests,
  org.eclipse.pde.api.tools.tests,
  org.eclipse.pde.api.tools.tests.util,
  org.eclipse.pde.api.tools.util.tests;uses:="junit.framework"
+Bundle-Activator: org.eclipse.pde.api.tools.tests.ApiTestsPlugin
+Bundle-ActivationPolicy: lazy

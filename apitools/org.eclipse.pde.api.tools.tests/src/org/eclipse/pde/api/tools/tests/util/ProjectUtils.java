@@ -39,13 +39,19 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleFragmentModel;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.pde.internal.ui.wizards.plugin.AbstractFieldData;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IFragmentFieldData;
@@ -443,6 +449,127 @@ public class ProjectUtils {
 		if(base != null) {
 			base.save();
 		}
+		
+	}
+	
+	/**
+	 * Removes the given package from the exported packages header, if it exists.
+	 * 
+	 * This method is not safe to use in a headless manner.
+	 * 
+	 * @param project the project to remove the package from
+	 * @param packagename the name of the package to remove from the export package header
+	 */
+	public static void removeExportedPackage(IProject project, String packagename) {
+		IBundle bundle = getBundle(project);
+		if(bundle == null) {
+			return;
+		}
+		try {
+			ExportPackageHeader header = getExportedPackageHeader(bundle);
+			Object removed = header.removePackage(packagename);
+			if(removed != null) {
+				bundle.setHeader(Constants.EXPORT_PACKAGE, header.getValue());
+			}
+		}
+		finally {
+			WorkspaceBundleModel model = (WorkspaceBundleModel) bundle.getModel();
+			if(model.isDirty()) {
+				model.save();
+				if(!model.isInSync()) {
+					model.load();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Returns the {@link IBundle} for the given {@link IProject} if one exists. Otherwise <code>null</code> is returned.
+	 * 
+	 * This method is not safe to use in a headless manner.
+	 * 
+	 * @param project the project to get the {@link IBundle} for
+	 * @return the {@link IBundle} for the given project or <code>null</code> if one cannot be created
+	 */
+	public static IBundle getBundle(IProject project) {
+		IFile manifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+		if(manifest == null || !manifest.exists()) {
+			return null;
+		}
+		WorkspacePluginModelBase plugin = new WorkspaceBundlePluginModel(manifest, project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
+		IPluginBase pluginBase = plugin.getPluginBase();
+		if (pluginBase instanceof BundlePluginBase) {
+			return ((BundlePluginBase)pluginBase).getBundle();
+		}
+		return null;
+	}
+	
+	/**
+	 * Adds a new exported package to the manifest.
+	 * 
+	 * This method is not safe to use in a headless manner.
+	 * 
+	 * @param project the project to get the manifest information from
+	 * @param packagename the fully qualified name of the package to add 
+	 * @param internal if the added package should be internal or not
+	 * @param friends a listing of friends for this exported package
+	 * @throws CoreException if something bad happens
+	 */
+	public static void addExportedPackage(IProject project, String packagename, boolean internal, String[] friends) throws CoreException {
+		if(!project.exists() || packagename == null) {
+			//do no work
+			return;
+		}
+		IFile manifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+		if(manifest == null || !manifest.exists()) {
+			createManifest(project, new TestFieldData(project.getName(), SRC_FOLDER, BIN_FOLDER));
+			manifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+		}
+		IBundle bundle = getBundle(project);
+		if (bundle != null) {
+			ExportPackageObject pack = null;
+			try {
+				ExportPackageHeader header = getExportedPackageHeader(bundle);
+				if(header != null) {
+					pack = header.addPackage(packagename);
+					if(internal != pack.isInternal()) {
+						pack.setInternal(internal);
+					}
+					if(friends != null) {
+						for(int i = 0; i < friends.length; i++) {
+							if(friends[i] != null) {
+								pack.addFriend(new PackageFriend(pack, friends[i]));
+							}
+						}
+					}
+					bundle.setHeader(Constants.EXPORT_PACKAGE, header.getValue());
+				}
+			}
+			finally {
+				WorkspaceBundleModel model = (WorkspaceBundleModel) bundle.getModel();
+				if(model.isDirty()) {
+					model.save();
+					if(!model.isInSync()) {
+						model.load();
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Returns the {@link ExportPackageHeader} for the given {@link IBundle}.
+	 * @param bundle the bundle to get the header from
+	 * @return new {@link ExportPackageHeader} for the given {@link IBundle}
+	 */
+	public static ExportPackageHeader getExportedPackageHeader(IBundle bundle) {
+		IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
+		BundleModelFactory factory = new BundleModelFactory(bundle.getModel());
+		String value = "";
+		if(header != null && header.getValue() != null) {
+			value = header.getValue();
+		}
+		return (ExportPackageHeader) factory.createHeader(Constants.EXPORT_PACKAGE, value);
 	}
 	
 	/**

@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: API Tools Tests Plug-in A
+Bundle-SymbolicName: bundle.a
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: a.annotations,
+ a.bundles,
+ a.classes.constructors,
+ a.classes.fields,
+ a.classes.hierarchy,
+ a.classes.membertypes,
+ a.classes.methods,
+ a.classes.modifiers,
+ a.classes.restrictions,
+ a.classes.typeparameters,
+ a.constructors,
+ a.enums,
+ a.fields.modifiers,
+ a.interfaces.members,
+ a.interfaces.restrictions,
+ a.interfaces.typeparameters,
+ a.methods.modifiers,
+ a.methods.typeparameters,
+ a.since,
+ a.version

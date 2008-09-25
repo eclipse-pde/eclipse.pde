@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.tests.builder.TestingEnvironment;
@@ -244,4 +245,21 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		}
 		return (ApiProblem[]) problems.toArray(new ApiProblem[problems.size()]);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#resetWorkspace()
+	 */
+	public void resetWorkspace() {
+		super.resetWorkspace();
+		//clean up any left over projects from other tests
+		IProject[] projects = getWorkspace().getRoot().getProjects();
+		for(int i = 0; i < projects.length; i++) {
+			try {
+				projects[i].delete(true, new NullProgressMonitor());
+			}
+			catch(CoreException ce) {
+				
+			}
+		}
+	}	
 }
