@@ -1,0 +1,20 @@
+<!DOCTYPE project[
+<!ELEMENT project (class*)>
+<!ELEMENT class (classReference|methodReference|interfaceMethodReference|fieldReference)*>
+<!ELEMENT classReference (sourceClass+)>
+<!ELEMENT methodReference (sourceClass+)>
+<!ELEMENT interfaceMethodReference (sourceClass+)>
+<!ELEMENT fieldReference (sourceClass+)>
+<!ELEMENT sourceClass (#PCDATA)>
+<!ATTLIST project name CDATA #REQUIRED>
+<!ATTLIST class aName CDATA #REQUIRED>
+<!ATTLIST methodReference methodName CDATA #REQUIRED>
+<!ATTLIST methodReference type CDATA #REQUIRED>
+<!ATTLIST methodReference parameters CDATA #IMPLIED>
+<!ATTLIST interfaceMethodReference methodName CDATA #REQUIRED>
+<!ATTLIST interfaceMethodReference type CDATA #REQUIRED>
+<!ATTLIST interfaceMethodReference parameters CDATA #IMPLIED>
+<!ATTLIST fieldReference fieldName CDATA #REQUIRED>
+<!ATTLIST fieldReference fieldType CDATA #REQUIRED>
+<!ATTLIST sourceClass class CDATA #REQUIRED>
+]>

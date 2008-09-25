@@ -1,0 +1,63 @@
+body {
+	font-size: 12pt;
+}
+
+.pageTitle {
+	font-weight: bold;
+	font-size: 16pt;
+	padding-bottom: 0.5em;
+}
+
+.bucketHeader {
+	font-weight: bold;
+	font-size: 16pt;
+	text-align: left;
+	border: 1px solid #000;
+	padding: 0.5em;
+	background-color: #ABCBFC;
+}
+
+.modifiedBuckets {
+	font-weight: bold;
+}
+
+.apiTable {
+	border: 1px solid #000;
+}
+	
+.apiHeader {
+	text-align: center;
+	padding-top: 0.3em;
+	padding-bottom: 0.3em;
+	background-color: #F7F186;
+	border: 2px solid black;
+}
+
+.apiBlock {
+	text-align: left;
+	font-weight: bold;
+	border-top: 1px solid #000;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	background-color: #EEEEEE;
+}
+
+.apiSubBlock {
+	text-align: left;
+	font-weight: bold;
+}
+
+.apiGroupHeader {
+	text-align: left;
+	font-style: italic;
+}
+
+.compare {
+	font-size: smaller;
+	font-variant: small-caps;
+	vertical-align: middle;
+	color: #B1B1B1;
+	border: 1px solid #B1B1B1;
+}
+
+

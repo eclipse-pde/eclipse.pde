@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (c) IBM Corporation and others 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.
+	
+	All Platform Debug contexts, those for org.eclipse.debug.ui, are located in this file
+	All contexts are grouped by their relation, with all relations grouped alphabetically.
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="apiprofile">
+    <xsd:complexType>
+      <xsd:sequence>
+      	<xsd:element ref="pool" maxOccurs="unbounded" minOccurs="0"/>
+      	<xsd:element ref="apicomponent" maxOccurs="unbounded" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="xsd:string" use="required"/>
+      <xsd:attribute name="ee" type="xsd:string" use="required"/>
+      <xsd:attribute name="version" type="xsd:integer" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="pool">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element maxOccurs="unbounded" ref="apicomponent" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="location" type="xsd:string" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="apicomponent">
+    <xsd:complexType>
+    	<xsd:attribute name="id" type="xsd:string" use="required" />
+    	<xsd:attribute name="version" type="xsd:string" use="required" />
+    	<xsd:attribute name="location" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

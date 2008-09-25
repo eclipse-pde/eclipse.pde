@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (c) IBM Corporation and others 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.
+	
+	All Platform Debug contexts, those for org.eclipse.debug.ui, are located in this file
+	All contexts are grouped by their relation, with all relations grouped alphabetically.
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="component">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="resource"/>
+      </xsd:sequence>
+      <xsd:attribute name="id" type="xsd:string" use="required"/>
+      <xsd:attribute name="version" type="xsd:integer" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="resource">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="1" maxOccurs="unbounded" ref="filter"/>
+      </xsd:sequence>
+      <xsd:attribute name="path" type="xsd:string" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="filter">
+    <xsd:complexType>
+      <xsd:attribute name="category" type="xsd:string" use="required"/>
+      <xsd:attribute name="severity" type="xsd:string" use="required"/>
+      <xsd:attribute name="message" type="xsd:string" use="optional"/>
+      <xsd:attribute name="flags" type="xsd:string" use="required"/>
+      <xsd:attribute name="kind" type="xsd:string" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

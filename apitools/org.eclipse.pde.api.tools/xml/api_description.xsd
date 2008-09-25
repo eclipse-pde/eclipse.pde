@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (c) IBM Corporation and others 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.
+	
+	All Platform Debug contexts, those for org.eclipse.debug.ui, are located in this file
+	All contexts are grouped by their relation, with all relations grouped alphabetically.
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="component">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element maxOccurs="unbounded" ref="package"/>
+      </xsd:sequence>
+      <xsd:attribute name="id" type="xsd:string" use="required"/>
+      <xsd:attribute name="modificationStamp" type="xsd:string" use="required"/>
+      <xsd:attribute name="version" type="xsd:integer" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="field">
+    <xsd:complexType>
+      <xsd:attribute name="name" type="xsd:string" use="required"/>
+      <xsd:attribute name="restrictions" type="xsd:string" use="required"/>
+      <xsd:attribute name="visibility" type="xsd:string" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="type">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:choice>
+          <xsd:element maxOccurs="unbounded" minOccurs="0" ref="type"/>
+          <xsd:element minOccurs="0" ref="method" maxOccurs="unbounded"/>
+        </xsd:choice>
+        <xsd:element minOccurs="0" ref="field" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:attribute name="handle" type="xsd:string" use="required"/>
+      <xsd:attribute name="restrictions" type="xsd:string" use="required"/>
+      <xsd:attribute name="modificationStamp" type="xsd:string" use="required"/>
+      <xsd:attribute name="visibility" type="xsd:string" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="package">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element maxOccurs="unbounded" minOccurs="0" ref="type"/>
+      </xsd:sequence>
+      <xsd:attribute name="context" type="xsd:string" use="optional"/>
+      <xsd:attribute name="handle" type="xsd:string" use="required"/>
+      <xsd:attribute name="restrictions" type="xsd:string" use="required"/>
+      <xsd:attribute name="visibility" type="xsd:string" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="method">
+    <xsd:complexType>
+      <xsd:attribute name="name" type="xsd:string" use="required"/>
+      <xsd:attribute name="signature" type="xsd:string" use="required"/>
+      <xsd:attribute name="restrictions" type="xsd:string" use="required"/>
+      <xsd:attribute name="visibility" type="xsd:string" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
