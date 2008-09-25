@@ -56,8 +56,6 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	private Label fDSImplementationClassLabel;
 	private Button fDSImplementationClassButton;
 
-	private Composite fImplementationComposite;
-
 	public DSFileWizardPage(IStructuredSelection selection) {
 		super(F_PAGE_NAME, selection);
 		initialize();
@@ -79,19 +77,18 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		// Controls Group
 		fGroup = new Group(parent, SWT.NONE);
 		fGroup.setText(Messages.DSFileWizardPage_group);
-		fGroup.setLayout(new GridLayout(2, false));
+		fGroup.setLayout(new GridLayout(3, false));
 		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		GridData textGridData = new GridData(GridData.FILL_HORIZONTAL);
-		textGridData.widthHint = 20;
-		textGridData.horizontalSpan = 1;
-		textGridData.horizontalIndent = 3;
+		GridData nameTextGridData = new GridData(GridData.FILL_HORIZONTAL);
+		nameTextGridData.horizontalSpan = 2;
+		nameTextGridData.horizontalIndent = 3;
 
 		fDSComponentNameLabel = new Label(fGroup, SWT.None);
 		fDSComponentNameLabel.setText(Messages.DSFileWizardPage_component_name);
 
-		fDSComponentNameText = new Text(fGroup, SWT.NONE);
-		fDSComponentNameText.setLayoutData(textGridData);
+		fDSComponentNameText = new Text(fGroup, SWT.SINGLE | SWT.BORDER);
+		fDSComponentNameText.setLayoutData(nameTextGridData);
 		fDSComponentNameText.setText(""); //$NON-NLS-1$
 		fDSComponentNameText.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
@@ -120,23 +117,19 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		});
 		
 
-		// Implementation Class Composite
-		fImplementationComposite = new Composite(fGroup, SWT.NONE);
-		fImplementationComposite.setLayout(new GridLayout(3, false));
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 3;
-		fImplementationComposite.setLayoutData(data);
-
 		// Implementation Class Label
-		fDSImplementationClassLabel = new Label(fImplementationComposite,
+		fDSImplementationClassLabel = new Label(fGroup,
 				SWT.NONE);
 		fDSImplementationClassLabel
 				.setText(Messages.DSFileWizardPage_implementation_class);
 
 		// Implementation Class Text
-		fDSImplementationClassText = new Text(fImplementationComposite,
-				SWT.NONE);
-		fDSImplementationClassText.setLayoutData(textGridData);
+		fDSImplementationClassText = new Text(fGroup,
+				SWT.SINGLE | SWT.BORDER);
+		GridData classTextGridData = new GridData(GridData.FILL_HORIZONTAL);
+		classTextGridData.horizontalSpan = 1;
+		classTextGridData.horizontalIndent = 3;
+		fDSImplementationClassText.setLayoutData(classTextGridData);
 		fDSImplementationClassText.setText(""); //$NON-NLS-1$
 		fDSImplementationClassText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -145,7 +138,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		});
 
 		// Implementation Class Browse Button
-		fDSImplementationClassButton = new Button(fImplementationComposite,
+		fDSImplementationClassButton = new Button(fGroup,
 				SWT.NONE);
 		fDSImplementationClassButton.setText(Messages.DSFileWizardPage_browse);
 		fDSImplementationClassButton.addMouseListener(new MouseListener() {
