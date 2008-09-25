@@ -107,21 +107,23 @@ public class LauncherUtils {
 
 		File workspaceFile = new Path(workspace).toFile().getAbsoluteFile();
 		if (configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false) && workspaceFile.exists()) {
-			boolean doClear = !configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, true);
-			if (!doClear) {
-				int result = confirmDeleteWorkspace(workspaceFile);
-				if (result == 2 || result == -1) {
+			if (configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, true)) {
+				int result;
+				if (configuration.getAttribute(IPDEUIConstants.DOCLEARLOG, false)) {
+					result = generateDialog(PDEUIMessages.LauncherUtils_clearLogFile);
+				} else {
+					result = generateDialog(NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace, workspaceFile.getPath()));
+				}
+
+				if (result == 2 /*Cancel Button*/|| result == -1 /*Dialog close button*/) {
 					monitor.done();
 					return false;
-				}
-				doClear = result == 0;
-			}
-
-			if (doClear) {
-				if (configuration.getAttribute(IPDEUIConstants.DOCLEARLOG, false)) {
-					LauncherUtils.clearWorkspaceLog(workspace);
-				} else {
-					CoreUtility.deleteContent(workspaceFile);
+				} else if (result == 0) {
+					if (configuration.getAttribute(IPDEUIConstants.DOCLEARLOG, false)) {
+						LauncherUtils.clearWorkspaceLog(workspace);
+					} else {
+						CoreUtility.deleteContent(workspaceFile);
+					}
 				}
 			}
 		}
@@ -130,16 +132,17 @@ public class LauncherUtils {
 		return true;
 	}
 
-	private static int confirmDeleteWorkspace(final File workspaceFile) {
-		String message = NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace, workspaceFile.getPath());
-		return generateDialog(message);
-	}
-
 	public static boolean generateConfigIni() {
 		String message = PDEUIMessages.LauncherUtils_generateConfigIni;
 		return generateDialog(message) == 0;
 	}
 
+	/**
+	 * Creates a message dialog using a syncExec in case we are launching in the background.
+	 * Dialog will be a question dialog with Yes, No and Cancel buttons.
+	 * @param message Message to use in the dialog
+	 * @return int representing the button clicked (-1 or 2 for cancel, 0 for yes, 1 for no).
+	 */
 	private static int generateDialog(final String message) {
 		final int[] result = new int[1];
 		getDisplay().syncExec(new Runnable() {
