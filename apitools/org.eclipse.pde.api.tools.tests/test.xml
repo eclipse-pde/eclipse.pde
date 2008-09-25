@@ -21,7 +21,7 @@
     </delete>
   </target>
 
-  <!-- This target defines the tests that need to be run. -->
+  <!-- This target defines the regression tests that need to be run. -->
   <target name="suite">
     <!-- Api Tools Plugin test suite -->
     <property name="api-tools-plugins-folder" 
@@ -49,6 +49,22 @@
       <property name="vmargs" value="-DrequiredBundles=${plugin-dir}"/>
     </ant>
   </target>
+	
+  <!-- This target defines the performance tests that need to be run. -->
+  <target name="perfsuite">
+    <!-- Api Tools Performance test suite -->
+    <property name="api-tools-plugins-folder" 
+              value="${eclipse-home}/api_tools_plugins_folder"/>
+    <delete dir="${jdt-model-folder}" quiet="true"/>
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <!-- Use a subdir 'data' so that the JCL jars are put in jdt-model-folder and are deleted at the end of the tests. -->
+      <property name="data-dir" value="${api-tools-plugins-folder}/data"/>
+      <property name="plugin-name" value="${plugin-name}"/>
+      <property name="classname" 
+                value="org.eclipse.pde.api.tools.tests.ApiToolsPerformanceTestSuite"/>
+        <property name="vmargs" value="-Xmx300M" />
+    </ant>
+  </target>  	
 
   <!-- This target holds code to cleanup the testing environment after -->
   <!-- after all of the tests have been run. You can use this target to -->
@@ -66,7 +82,11 @@
   </target>
 
   <!-- This target runs the performance test suites. -->
-  <target name="performance">
+  <target name="performance" depends="init,perfsuite,cleanup">
+    <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="includes" value="org*.xml"/>
+      <property name="output-file" value="${plugin-name}.xml"/>
+    </ant>
   </target>
 
 </project>
