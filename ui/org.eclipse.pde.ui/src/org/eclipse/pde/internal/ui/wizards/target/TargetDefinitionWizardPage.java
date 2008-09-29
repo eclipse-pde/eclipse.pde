@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 		Group group = new Group(parent, SWT.NONE);
 		group.setText(PDEUIMessages.TargetProfileWizardPage_groupTitle);
 		group.setLayout(new GridLayout(3, false));
-		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fDefaultButton = new Button(group, SWT.RADIO);
 		fDefaultButton.setText(PDEUIMessages.TargetProfileWizardPage_blankTarget);
