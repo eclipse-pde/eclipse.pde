@@ -21,7 +21,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ds.core.Activator;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
@@ -141,13 +140,15 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void validateTarget(Element element) {
 		Attr attr = element
 				.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_TARGET);
-		String value = attr.getValue();
-		try {
-			PDECore.getDefault().getBundleContext().createFilter(value);
-		} catch (InvalidSyntaxException ise) {
-			reportInvalidTarget(element);
+		if (attr != null) {
+			String value = attr.getValue();
+			try {
+				Activator.getDefault().getBundle().getBundleContext()
+						.createFilter(value);
+			} catch (InvalidSyntaxException ise) {
+				reportInvalidTarget(element);
+			}
 		}
-
 	}
 
 	private void reportInvalidTarget(Element element) {
@@ -299,29 +300,29 @@ public class DSErrorReporter extends XMLErrorReporter {
 						IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS, 0);
 
 				// validate Class Default Constructor
-				validateClassDefaultConstructor(element, className);
+				// validateClassDefaultConstructor(element, className);
 				
 			}
 		}
 
 	}
 
-	private void validateClassDefaultConstructor(Element element,
-			String className) {
-		try {
-			Class.forName(className);
-		} catch (ClassNotFoundException e) {
-			reportDefaultConstructorNotDefined(element, className);
-		}
-	}
-
-	private void reportDefaultConstructorNotDefined(Element element,
-			String className) {
-		String message = NLS.bind(
-				Messages.DSErrorReporter_requiredDefaultConstructor,
-				(new String[] { className }));
-		report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
-	}
+	// private void validateClassDefaultConstructor(Element element,
+	// String className) {
+	// try {
+	// Class.forName(className);
+	// } catch (ClassNotFoundException e) {
+	// reportDefaultConstructorNotDefined(element, className);
+	// }
+	// }
+	//
+	// private void reportDefaultConstructorNotDefined(Element element,
+	// String className) {
+	// String message = NLS.bind(
+	// Messages.DSErrorReporter_requiredDefaultConstructor,
+	// (new String[] { className }));
+	// report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
+	// }
 
 	private void validateJavaElement(String fullyQualifiedName,
 			String elementName, String attrName, int index) {

@@ -91,5 +91,6 @@ public interface IDSConstants {
 	public static final String VALUE_TRUE = "true"; //$NON-NLS-1$
 	public static final String VALUE_FALSE = "false"; //$NON-NLS-1$
 	
+	public static final String VALUE_DEFAULT_TARGET = "(name=value)"; //$NON-NLS-1$
 	
 }

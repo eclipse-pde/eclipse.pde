@@ -22,10 +22,10 @@ import org.eclipse.swt.graphics.Point;
 public class DSAttrCompletionProposal extends TypeCompletionProposal implements
 		ICompletionProposal {
 
-	public DSAttrCompletionProposal(String displayString,
+	public DSAttrCompletionProposal(String string,
 			int startOffset, int length) {
-		super(getReplacementString(displayString), SharedImages
-				.getImage(SharedImages.DESC_ATTR), displayString,
+		super(getReplacementString(string), SharedImages
+				.getImage(SharedImages.DESC_ATTR), string,
 				startOffset, length);
 	}
 
@@ -40,44 +40,46 @@ public class DSAttrCompletionProposal extends TypeCompletionProposal implements
 	 * 
 	 * Example: enabled="true" and entry="entry"
 	 * 
-	 * @param displayString
+	 * @param attribute
 	 *            the name of attribute
 	 * @return a String containing the replacementString
 	 */
-	private static String getReplacementString(String displayString) {
+	private static String getReplacementString(String attribute) {
 		String replacementString = null;
-		if (displayString == null) {
+		if (attribute == null) {
 			return null;
 		}
 		String string1 = "=\""; //$NON-NLS-1$
 		String string2 = "\""; //$NON-NLS-1$
-		
-		if (displayString.equals(IDSConstants.ATTRIBUTE_COMPONENT_ENABLED)) {
-			replacementString = displayString + string1
-					+ IDSConstants.VALUE_TRUE
-					+ string2;
-		} else if (displayString
+
+		if (attribute.equals(IDSConstants.ATTRIBUTE_COMPONENT_ENABLED)) {
+			replacementString = attribute + string1
+					+ IDSConstants.VALUE_TRUE + string2;
+		} else if (attribute
 				.equals(IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE)) {
-			replacementString = displayString + string1
+			replacementString = attribute + string1
 					+ IDSConstants.VALUE_FALSE + string2;
-		} else if (displayString.equals(IDSConstants.ATTRIBUTE_PROPERTY_TYPE)) {
-			replacementString = displayString + string1
+		} else if (attribute.equals(IDSConstants.ATTRIBUTE_PROPERTY_TYPE)) {
+			replacementString = attribute + string1
 					+ IDSConstants.VALUE_PROPERTY_TYPE_STRING + string2;
-		} else if (displayString.equals(IDSConstants.ATTRIBUTE_SERVICE_FACTORY)) {
-			replacementString = displayString + string1
-					+ IDSConstants.VALUE_FALSE
-					+ string2;
-		} else if (displayString
+		} else if (attribute.equals(IDSConstants.ATTRIBUTE_SERVICE_FACTORY)) {
+			replacementString = attribute + string1
+					+ IDSConstants.VALUE_FALSE + string2;
+		} else if (attribute
+				.equals(IDSConstants.ATTRIBUTE_REFERENCE_TARGET)) {
+			replacementString = attribute + string1
+					+ IDSConstants.VALUE_DEFAULT_TARGET + string2;
+		} else if (attribute
 				.equals(IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY)) {
-			replacementString = displayString + string1
+			replacementString = attribute + string1
 					+ IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE
 					+ string2;
-		} else if (displayString
+		} else if (attribute
 				.equals(IDSConstants.ATTRIBUTE_REFERENCE_POLICY)) {
-			replacementString = displayString + string1
+			replacementString = attribute + string1
 					+ IDSConstants.VALUE_REFERENCE_POLICY_STATIC + string2;
 		} else {
-			replacementString = displayString + string1 + displayString
+			replacementString = attribute + string1 + attribute
 					+ string2;
 		}
 		return replacementString;
