@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="component">
-   <implementation class="$packageName$.ServiceComponent"/>
+<component name="$packageName$">
+   <implementation class="$packageName$.ServiceComponent">
+   </implementation>
    <service>
-      <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
+      <provide interface="org.eclipse.osgi.framework.console.CommandProvider">
+      </provide>
    </service>
 </component>
