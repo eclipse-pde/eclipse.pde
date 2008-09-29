@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.builders;
 
+import java.util.Hashtable;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,6 +21,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ds.core.Activator;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
@@ -32,6 +35,7 @@ import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.core.Messages;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
+import org.osgi.framework.InvalidSyntaxException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -93,6 +97,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	}
 
 	public void validateReferences(IDSReference[] references) {
+		Hashtable referencedNames = new Hashtable();
 		for (int i = 0; i < references.length; i++) {
 			IDSReference reference = references[i];
 			Element element = (Element) getDocumentRoot().getElementsByTagName(
@@ -119,7 +124,56 @@ public class DSErrorReporter extends XMLErrorReporter {
 			// Validate Allowed Values
 			validateReferencePolicy(element);
 
+			// validate non-empty values
+			validateEmpty(element, element
+					.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_NAME));
+
+			// Validate duplicated names
+			validateDuplicatedNames(referencedNames, element);
+
+			// Validate target
+			 validateTarget(element);
+
 		}
+
+	}
+
+	private void validateTarget(Element element) {
+		Attr attr = element
+				.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_TARGET);
+		String value = attr.getValue();
+		try {
+			PDECore.getDefault().getBundleContext().createFilter(value);
+		} catch (InvalidSyntaxException ise) {
+			reportInvalidTarget(element);
+		}
+
+	}
+
+	private void reportInvalidTarget(Element element) {
+		report(Messages.DSErrorReporter_invalidTarget, getLine(element), ERROR,
+				DSMarkerFactory.CAT_OTHER);
+	}
+
+	private void validateDuplicatedNames(Hashtable referencedNames,
+			Element element) {
+		String name = element
+				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
+		if (referencedNames.containsKey(name)) {
+			reportRepeatedName(element, element
+					.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_NAME));
+		} else {
+			referencedNames.put(name, name);
+		}
+	}
+
+	private void reportRepeatedName(Element element, Attr attr) {
+		if (attr == null || attr.getValue() == null || attr.getName() == null)
+			return;
+		String message = NLS.bind(Messages.DSErrorReporter_repeatedName,
+				new String[] { attr.getName(), element.getNodeName() });
+		report(message, getLine(element, attr.getName()), ERROR,
+				DSMarkerFactory.CAT_OTHER);
 
 	}
 
@@ -243,9 +297,30 @@ public class DSErrorReporter extends XMLErrorReporter {
 				validateJavaElement(className,
 						IDSConstants.ELEMENT_IMPLEMENTATION,
 						IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS, 0);
+
+				// validate Class Default Constructor
+				validateClassDefaultConstructor(element, className);
+				
 			}
 		}
 
+	}
+
+	private void validateClassDefaultConstructor(Element element,
+			String className) {
+		try {
+			Class.forName(className);
+		} catch (ClassNotFoundException e) {
+			reportDefaultConstructorNotDefined(element, className);
+		}
+	}
+
+	private void reportDefaultConstructorNotDefined(Element element,
+			String className) {
+		String message = NLS.bind(
+				Messages.DSErrorReporter_requiredDefaultConstructor,
+				(new String[] { className }));
+		report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateJavaElement(String fullyQualifiedName,
@@ -332,7 +407,6 @@ public class DSErrorReporter extends XMLErrorReporter {
 			validateEmpty(element, element
 					.getAttributeNode(IDSConstants.ATTRIBUTE_COMPONENT_NAME));
 
-
 		}
 	}
 
@@ -347,8 +421,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void reportIllegalEmptyAttributeValue(Element element, Attr attr) {
 		if (attr == null || attr.getValue() == null || attr.getName() == null)
 			return;
-		String message = NLS.bind(Messages.DSErrorReporter_emptyAttrValue,
-				attr
+		String message = NLS.bind(Messages.DSErrorReporter_emptyAttrValue, attr
 				.getName());
 		report(message, getLine(element, attr.getName()), ERROR,
 				DSMarkerFactory.CAT_OTHER);
@@ -361,7 +434,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 			validateBoolean(element, element
 					.getAttributeNode(IDSConstants.ATTRIBUTE_SERVICE_FACTORY));
-
+			
 			validateProvide(service.getProvidedServices());
 		}
 	}
@@ -381,8 +454,49 @@ public class DSErrorReporter extends XMLErrorReporter {
 				validateJavaElement(provide.getInterface(),
 						IDSConstants.ELEMENT_PROVIDE,
 						IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE, i);
+				
+				// validate if implementation class implements services
+				// interfaces
+				// validateClassInstanceofProvidedInterface(element, provide);
 			}
 		}
 	}
+
+//	private void validateClassInstanceofProvidedInterface(Element element,
+//			IDSProvide provide) {
+//		
+//		IDSComponent component = provide.getComponent();
+//		
+//		String providedInterfaceString = provide.getInterface();
+//		String implementationClassString = component.getImplementation()
+//		.getClassName();
+//		
+//		Class implementationClass = null;
+//		Class providedInterfaceClass = null;
+//		try {
+//			
+//			implementationClass = Class.forName(implementationClassString);
+//			providedInterfaceClass = Class.forName(providedInterfaceString);
+//		} catch (ClassNotFoundException e) {
+//		}
+//		if (implementationClass != null && providedInterfaceClass != null) {
+//			try {
+//				// TODO
+//				// implementationClass.asSubclass(providedInterfaceClass);
+//			} catch (ClassCastException e) {
+//				reportUnimplementedProvidedInterface(element,
+//						implementationClassString, providedInterfaceString);
+//			}
+//		}
+	// }
+
+	// private void reportUnimplementedProvidedInterface(Element element,
+	// String implementationClassString, String providedInterfaceString) {
+	// String message = NLS.bind(
+	// Messages.DSErrorReporter_unimplementedProvidedInterface,
+	// (new String[] { implementationClassString,
+	// providedInterfaceString }));
+	// report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
+	// }
 
 }
