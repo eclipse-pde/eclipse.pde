@@ -227,14 +227,15 @@ public class DSErrorReporter extends XMLErrorReporter {
 					properties.getXMLTagName()).item(i);
 
 			// Validate Required Attributes
-			if (properties.getEntry() == null) {
+			if (properties.getEntry() == null
+					|| properties.getEntry().length() == 0) {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY, ERROR);
+			} else {
+				validateResource(properties.getEntry(),
+						IDSConstants.ELEMENT_PROPERTIES,
+						IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY, i);
 			}
-
-			validateResource(properties.getEntry(),
-					IDSConstants.ELEMENT_PROPERTIES,
-					IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY, i);
 
 		}
 

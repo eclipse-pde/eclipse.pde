@@ -14,8 +14,6 @@ package org.eclipse.pde.internal.ds.ui.editor.contentassist;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.internal.text.html.BrowserInformationControl;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -25,6 +23,8 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension5;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.pde.internal.ui.editor.contentassist.display.BrowserInformationControl;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
@@ -135,9 +135,8 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 				 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 				 */
 				public IInformationControl doCreateInformationControl(Shell parent) {
-					return new BrowserInformationControl(parent,
-							JFaceResources.DIALOG_FONT,
-							EditorsUI
+					return new BrowserInformationControl(parent, SWT.NO_TRIM
+							| SWT.TOOL, SWT.NONE, EditorsUI
 							.getTooltipAffordanceString());
 				}
 			};
