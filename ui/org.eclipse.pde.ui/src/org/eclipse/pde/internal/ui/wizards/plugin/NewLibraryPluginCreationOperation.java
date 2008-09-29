@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 109440
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 248852
  *******************************************************************************/
