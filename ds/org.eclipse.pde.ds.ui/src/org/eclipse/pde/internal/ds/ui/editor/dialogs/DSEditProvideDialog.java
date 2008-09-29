@@ -153,7 +153,7 @@ public class DSEditProvideDialog extends FormDialog {
 
 			public void browseButtonSelected(FormEntry entry) {
 				doOpenSelectionDialog(
-						IJavaElementSearchConstants.CONSIDER_INTERFACES,
+						IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES,
 						fInterfaceEntry);
 			}
 
