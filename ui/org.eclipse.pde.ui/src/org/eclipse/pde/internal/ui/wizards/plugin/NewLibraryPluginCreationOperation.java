@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008  IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 109440
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 248852
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -287,25 +288,25 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 
 	protected void fillBinIncludes(IProject project, IBuildEntry binEntry) throws CoreException {
 		if (fData.hasBundleStructure())
-			binEntry.addToken("META-INF/"); //$NON-NLS-1$
+			binEntry.addToken(ICoreConstants.MANIFEST_FOLDER_NAME);
 		else
 			binEntry.addToken(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 
 		if (fData.isUnzipLibraries()) {
 			IResource[] resources = project.members(false);
 			for (int j = 0; j < resources.length; j++) {
+				String resourceName = resources[j].getName();
 				if (resources[j] instanceof IFolder) {
-					if (!binEntry.contains(resources[j].getName() + "/")) //$NON-NLS-1$
-						binEntry.addToken(resources[j].getName() + "/"); //$NON-NLS-1$
+					if (!".settings".equals(resourceName) && !binEntry.contains(resourceName + "/")) //$NON-NLS-1$ //$NON-NLS-2$
+						binEntry.addToken(resourceName + "/"); //$NON-NLS-1$
 				} else {
-					if (".project".equals(resources[j].getName()) //$NON-NLS-1$
-							|| ".classpath".equals(resources[j] //$NON-NLS-1$
-									.getName()) || "build.properties".equals(resources[j] //$NON-NLS-1$
-									.getName())) {
+					if (".project".equals(resourceName) //$NON-NLS-1$
+							|| ".classpath".equals(resourceName) //$NON-NLS-1$
+							|| ICoreConstants.BUILD_FILENAME_DESCRIPTOR.equals(resourceName)) {
 						continue;
 					}
-					if (!binEntry.contains(resources[j].getName()))
-						binEntry.addToken(resources[j].getName());
+					if (!binEntry.contains(resourceName))
+						binEntry.addToken(resourceName);
 				}
 			}
 		} else {
