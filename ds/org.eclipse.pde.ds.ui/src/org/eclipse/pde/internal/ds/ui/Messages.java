@@ -159,6 +159,7 @@ public class Messages extends NLS {
 	
 	
 	
+	
 
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$
 

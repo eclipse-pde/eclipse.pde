@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
@@ -166,6 +167,14 @@ public class DSPropertiesSection extends TableSection {
 	public void refresh() {
 		fPropertiesTable.refresh();
 		updateButtons();
+		updateTitle();
+	}
+
+	private void updateTitle() {
+		int itemCount = fPropertiesTable.getTable().getItemCount();
+		getSection().setText(
+				NLS.bind(Messages.DSPropertiesSection_title, new Integer(
+						itemCount)));
 	}
 
 	protected void buttonSelected(int index) {
@@ -194,12 +203,12 @@ public class DSPropertiesSection extends TableSection {
 	private void handleUpDown(int newRelativeIndex) {
 		ISelection sel = fPropertiesTable.getSelection();
 		Object[] array = ((IStructuredSelection) sel).toArray();
-		
+
 		if (newRelativeIndex == F_UP_FLAG) {
 			moveUp(newRelativeIndex, array);
 		} else {
 			moveDown(newRelativeIndex, array);
-	
+
 		}
 		return;
 	}
@@ -439,6 +448,7 @@ public class DSPropertiesSection extends TableSection {
 			fPropertiesTable.refresh();
 			updateButtons();
 		}
+		updateTitle();
 	}
 
 	private DSInputContext getDSContext() {
