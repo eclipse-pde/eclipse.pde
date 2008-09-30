@@ -112,11 +112,19 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		} else if (fRange instanceof IDocumentElementNode) {
 			return computeCompletionProposal((IDocumentElementNode) fRange,
 					offset, doc);
-			// } else if (fRange instanceof IDocumentTextNode) {
-			// return stubProposals(model, "Text", offset);
+			 } else if (fRange == null && model instanceof IDSModel) {
+				return componentProposal((IDSModel) model, offset);
 		}
 
 		return null;
+	}
+
+	private ICompletionProposal[] componentProposal(IDSModel model,
+		int offset) {
+		return new ICompletionProposal[] {
+				new DSCompletionProposal(
+				model.getDSComponent(),offset) };
+		
 	}
 
 	private ICompletionProposal[] computeCATextProposal(IDocument doc,
