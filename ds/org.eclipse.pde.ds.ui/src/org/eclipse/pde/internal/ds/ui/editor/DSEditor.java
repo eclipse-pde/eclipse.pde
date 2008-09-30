@@ -14,7 +14,12 @@ package org.eclipse.pde.internal.ds.ui.editor;
 
 import java.io.File;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.IConstants;
@@ -76,7 +81,35 @@ public class DSEditor extends MultiSourceEditor {
 		if (file != null) {
 			IEditorInput in = new SystemFileEditorInput(file);
 			contexts.putContext(in, new DSInputContext(this, in, true));
+			
 		}
+	}
+
+	private void addDSBuilder(IFile file) {
+		try {
+			// Add builder
+			IProject project = file.getProject();
+			IProjectDescription description = project.getDescription();
+			ICommand[] commands = description.getBuildSpec();
+
+			for (int i = 0; i < commands.length; ++i) {
+				if (commands[i].getBuilderName().equals(IConstants.ID_BUILDER)) {
+					return;
+				}
+			}
+
+			ICommand[] newCommands = new ICommand[commands.length + 1];
+			System.arraycopy(commands, 0, newCommands, 0, commands.length);
+			ICommand command = description.newCommand();
+			command.setBuilderName(IConstants.ID_BUILDER);
+			newCommands[newCommands.length - 1] = command;
+			description.setBuildSpec(newCommands);
+			project.setDescription(description, null);
+
+		} catch (CoreException e) {
+			Activator.logException(e, null, null);
+		}
+		
 	}
 
 	public void editorContextAdded(InputContext context) {
@@ -112,6 +145,15 @@ public class DSEditor extends MultiSourceEditor {
 		return true;
 	}
 	
+	public void doSave(IProgressMonitor monitor) {
+		IEditorInput input = getEditorInput();
+		if (input instanceof IFileEditorInput) {
+			IFileEditorInput fileInput = (IFileEditorInput) input;
+			addDSBuilder((IFile) fileInput.getFile());
+		}
+		super.doSave(monitor);
+	}
+
 	protected PDESourcePage createSourcePage(PDEFormEditor editor,
 			String title, String name, String contextId) {
 		return new DSSourcePage(editor, title, name);
