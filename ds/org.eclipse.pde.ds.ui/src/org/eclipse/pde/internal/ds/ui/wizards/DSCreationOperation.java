@@ -99,9 +99,9 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	private void updateManifest(IBundlePluginModelBase model,
 			IProgressMonitor monitor) throws CoreException {
 		IBundleModel bundleModel = model.getBundleModel();
-		String filePath = fFile.getFullPath().toPortableString();
+		String filePath = fFile.getFullPath().removeFirstSegments(1)
+				.toPortableString();
 
-		filePath = filePath.substring(1);
 		String header = bundleModel.getBundle().getHeader(DS_MANIFEST_KEY);
 		if (header != null) {
 			filePath = header + ", " + filePath; //$NON-NLS-1$
