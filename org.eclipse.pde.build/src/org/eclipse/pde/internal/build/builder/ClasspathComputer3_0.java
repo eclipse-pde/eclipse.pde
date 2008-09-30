@@ -180,7 +180,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		String root = generator.getLocation(model);
 		IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
 		Properties modelProps = getBuildPropertiesFor(model);
-		ModelBuildScriptGenerator.specialDotProcessing(modelProps, libraries);
+		if (modelProps != AbstractScriptGenerator.MissingProperties.getInstance())
+			ModelBuildScriptGenerator.specialDotProcessing(modelProps, libraries);
 		for (int i = 0; i < libraries.length; i++) {
 			addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(modelProps.getProperty(PROPERTY_OUTPUT_PREFIX + libraries[i])), modelProps);
 			addPathAndCheck(model, base, libraries[i], modelProps, classpath);

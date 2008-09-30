@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: A Plug-in
+Bundle-SymbolicName: A; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: a.Activator
+Bundle-ClassPath: ., library.jar
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Export-Package: a
+Require-Bundle: org.eclipse.osgi;bundle-version="3.5.0"

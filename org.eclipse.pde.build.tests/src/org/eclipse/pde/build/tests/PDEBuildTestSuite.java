@@ -19,11 +19,13 @@ public class PDEBuildTestSuite {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.build"); //$NON-NLS-1$
 		suite.addTestSuite(SourceTests.class);
-		suite.addTestSuite(FetchTests.class);
 		suite.addTestSuite(ScriptGenerationTests.class);
 		suite.addTestSuite(ProductTests.class);
 		suite.addTestSuite(P2Tests.class);
 		suite.addTest(AssembleTests.suite());
+
+		if(System.getProperty("pde.build.includeFetch") != null)
+			suite.addTestSuite(FetchTests.class);
 		return suite;
 	}
 	
