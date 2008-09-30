@@ -173,13 +173,9 @@ public class DSServiceComponentSection extends PDESection {
 				fNameEntry.setValue(fComponent.getAttributeName(), true);
 			}
 
-			if (fComponent.getEnabled()) {
-				fEnabledButton.setSelection(true);
-			}
+			fEnabledButton.setSelection(fComponent.getEnabled());
+			fImmediateButton.setSelection(fComponent.getImmediate());
 
-			if (fComponent.getImmediate()) {
-				fImmediateButton.setSelection(true);
-			}
 			fNameEntry.setEditable(isEditable());
 
 		}
