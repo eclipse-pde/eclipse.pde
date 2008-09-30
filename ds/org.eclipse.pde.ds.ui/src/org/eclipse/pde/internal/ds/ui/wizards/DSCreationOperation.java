@@ -52,6 +52,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	private String fComponentName;
 	private String fImplementationClass;
 
+	private final String DS_MANIFEST_KEY = "Service-Component"; //$NON-NLS-1$
 
 	/**
 	 * 
@@ -81,12 +82,12 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 
 	private void writeDSPropIntoManifest(IProject project,
 			SubProgressMonitor monitor) {
-		
+
 		PDEModelUtility.modifyModel(new ModelModification(project) {
-			
+
 			protected void modifyModel(IBaseModel model,
 					IProgressMonitor monitor) throws CoreException {
-				
+
 				if (model instanceof IBundlePluginModelBase)
 					updateManifest((IBundlePluginModelBase) model, monitor);
 			}
@@ -95,22 +96,17 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 
 	}
 
-
 	private void updateManifest(IBundlePluginModelBase model,
 			IProgressMonitor monitor) throws CoreException {
 		IBundleModel bundleModel = model.getBundleModel();
-		String filePath = fFile.getFullPath().toOSString();
-		
-		// gets the second index of "\" (the first is index=0)
-		filePath = filePath.substring(1);
-		int index = filePath.indexOf("\\"); //$NON-NLS-1$
-		// TODO we need to deal with this header if there are existing entries
-		if (index > -1) {
-			String dsFilePath = filePath.substring(index + 1);
-			bundleModel.getBundle().setHeader(
-					"Service-Component", dsFilePath); //$NON-NLS-1$
-		}
+		String filePath = fFile.getFullPath().toPortableString();
 
+		filePath = filePath.substring(1);
+		String header = bundleModel.getBundle().getHeader(DS_MANIFEST_KEY);
+		if (header != null) {
+			filePath = header + ", " + filePath; //$NON-NLS-1$
+		}
+		bundleModel.getBundle().setHeader(DS_MANIFEST_KEY, filePath);
 	}
 
 	protected void createContent() throws CoreException {
