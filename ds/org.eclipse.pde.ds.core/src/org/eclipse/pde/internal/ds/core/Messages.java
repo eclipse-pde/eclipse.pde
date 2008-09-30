@@ -27,9 +27,15 @@ public class Messages extends NLS {
 	public static String DSErrorReporter_requiredDefaultConstructor;
 	public static String DSErrorReporter_invalidTarget;
 	public static String DSErrorReporter_unimplementedProvidedInterface;
+	public static String DSErrorReporter_singleAndMultipleAttrValue;
+	public static String DSErrorReporter_emptyPropertyValue;
 	
 	public static String DSBuilder_verifying;
 	public static String DSBuilder_updating;
+
+	
+
+	
 
 
 

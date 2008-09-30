@@ -254,8 +254,50 @@ public class DSErrorReporter extends XMLErrorReporter {
 			}
 			// Validate Allowed Values
 			validatePropertyTypeValues(element);
+			
+			// Validate Value Attribute and Body Values
+			ValidatePropertyAttrValueAndBody(element, property);
 
 		}
+	}
+
+	/**
+	 * Validates if a property elements defines a single value and multiple
+	 * values at the same time.
+	 * 
+	 * @param element
+	 * @param property
+	 */
+	private void ValidatePropertyAttrValueAndBody(Element element,
+			IDSProperty property) {
+		if (property.getPropertyValue() != null
+				&& !property.getPropertyValue().equals("")) { //$NON-NLS-1$
+			if (property.getPropertyElemBody() != null
+					&& !property.getPropertyElemBody().equals("")) { //$NON-NLS-1$
+				reportSingleAndMultiplePropertyValues(element, property
+						.getPropertyValue(), property.getPropertyElemBody());
+			}
+		} else {
+			if (property.getPropertyElemBody() == null
+					|| property.getPropertyElemBody().equals("")) { //$NON-NLS-1$
+				reportEmptyPropertyValue(element);
+			}
+		}
+	}
+
+	private void reportEmptyPropertyValue(Element element) {
+		report(Messages.DSErrorReporter_emptyPropertyValue, getLine(element),
+				WARNING, DSMarkerFactory.CAT_OTHER);
+
+	}
+
+	private void reportSingleAndMultiplePropertyValues(Element element,
+			String value, String body) {
+		String message = NLS.bind(
+				Messages.DSErrorReporter_singleAndMultipleAttrValue,
+				new String[] { value, body });
+		report(message,
+				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	}
 
 	private void validatePropertyTypeValues(Element element) {

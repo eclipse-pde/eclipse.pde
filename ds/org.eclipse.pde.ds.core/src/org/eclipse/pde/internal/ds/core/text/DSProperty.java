@@ -24,6 +24,8 @@ public class DSProperty extends DSObject implements IDSProperty {
 		this.setPropertyType(IDSConstants.VALUE_PROPERTY_TYPE_STRING);
 		int property_count = model.getDSComponent().getPropertyElements().length + 1;
 		this.setPropertyName(IDSConstants.ELEMENT_PROPERTY + property_count);
+		this.setPropertyValue(IDSConstants.ATTRIBUTE_PROPERTY_VALUE);
+		
 	}
 
 	/*
