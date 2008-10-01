@@ -201,7 +201,7 @@ public class DSReferenceSection extends TableSection {
 	}
 
 	private void handleAdd() {
-		doOpenSelectionDialog(IJavaElementSearchConstants.CONSIDER_INTERFACES);
+		doOpenSelectionDialog(IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES);
 	}
 
 	private void doOpenSelectionDialog(int scopeType) {
