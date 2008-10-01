@@ -91,4 +91,9 @@ public class DSProperties extends DSObject implements IDSProperties {
 	public String[] getAttributesNames() {
 		return new String[] { IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY };
 	}
+
+	public boolean isLeafNode() {
+		return true;
+	}
+
 }
