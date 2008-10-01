@@ -23,7 +23,7 @@ package org.eclipse.pde.api.tools.internal.provisional.descriptors;
  * </p>
  * @since 1.0.0
  */
-public interface IReferenceTypeDescriptor extends IMemberDescriptor, ITypeDescriptor {
+public interface IReferenceTypeDescriptor extends IMemberDescriptor {
 	
 	/**
 	 * Returns this type's fully qualified name. Package names are dot qualified
@@ -32,6 +32,13 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor, ITypeDescri
 	 * @return type name
 	 */
 	public String getQualifiedName();	
+	
+	/**
+	 * Returns this type's signature.
+	 * 
+	 * @return type signature
+	 */
+	public String getSignature();		
 	
 	/**
 	 * Returns type signature information about this type or <code>null</code>

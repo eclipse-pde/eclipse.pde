@@ -26,17 +26,7 @@ public interface IElementDescriptor {
 	/**
 	 * Constant representing a reference type descriptor.
 	 */
-	public static final int T_REFERENCE_TYPE = 2;	
-	
-	/**
-	 * Constant representing a primitive type descriptor.
-	 */
-	public static final int T_PRIMITIVE_TYPE = 3;	
-	
-	/**
-	 * Constant representing an array type descriptor.
-	 */
-	public static final int T_ARRAY_TYPE = 4;	
+	public static final int T_REFERENCE_TYPE = 2;		
 	
 	/**
 	 * Constant representing a field descriptor.

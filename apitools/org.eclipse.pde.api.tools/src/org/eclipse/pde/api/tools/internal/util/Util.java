@@ -1591,17 +1591,11 @@ public final class Util {
 			case IElementDescriptor.T_PACKAGE: {
 				return "PACKAGE";	 //$NON-NLS-1$
 			}
-			case IElementDescriptor.T_ARRAY_TYPE: {
-				return "ARRAY_TYPE"; //$NON-NLS-1$
-			}
 			case IElementDescriptor.T_FIELD: {
 				return "FIELD"; //$NON-NLS-1$
 			}
 			case IElementDescriptor.T_METHOD: {
 				return "METHOD"; //$NON-NLS-1$
-			}
-			case IElementDescriptor.T_PRIMITIVE_TYPE: {
-				return "PRIMITIVE_TYPE"; //$NON-NLS-1$
 			}
 			case IElementDescriptor.T_REFERENCE_TYPE: {
 				return "REFERENCE_TYPE"; //$NON-NLS-1$
