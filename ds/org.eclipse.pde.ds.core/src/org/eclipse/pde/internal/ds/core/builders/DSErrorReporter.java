@@ -276,6 +276,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 				reportSingleAndMultiplePropertyValues(element, property
 						.getPropertyValue(), property.getPropertyElemBody());
 			}
+			if (property.getPropertyValue().equals("")) { //$NON-NLS-1$
+				reportEmptyPropertyValue(element);
+			}
 		} else {
 			if (property.getPropertyElemBody() == null
 					|| property.getPropertyElemBody().equals("")) { //$NON-NLS-1$
