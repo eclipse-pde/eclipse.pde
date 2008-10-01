@@ -50,6 +50,7 @@ import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
@@ -448,7 +449,11 @@ public class DSPropertiesSection extends TableSection {
 			fPropertiesTable.refresh();
 			updateButtons();
 		}
-		updateTitle();
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				updateTitle();
+			}
+		});
 	}
 
 	private DSInputContext getDSContext() {

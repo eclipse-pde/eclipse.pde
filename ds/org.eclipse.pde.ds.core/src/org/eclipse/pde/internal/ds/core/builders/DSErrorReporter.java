@@ -270,8 +270,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	 */
 	private void ValidatePropertyAttrValueAndBody(Element element,
 			IDSProperty property) {
-		if (property.getPropertyValue() != null
-				&& !property.getPropertyValue().equals("")) { //$NON-NLS-1$
+		if (property.getPropertyValue() != null) { //$NON-NLS-1$
 			if (property.getPropertyElemBody() != null
 					&& !property.getPropertyElemBody().equals("")) { //$NON-NLS-1$
 				reportSingleAndMultiplePropertyValues(element, property
