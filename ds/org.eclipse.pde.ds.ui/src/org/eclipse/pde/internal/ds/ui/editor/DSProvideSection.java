@@ -217,12 +217,15 @@ public class DSProvideSection extends TableSection {
 			SelectionDialog dialog = JavaUI.createTypeDialog(Activator
 					.getActiveWorkbenchShell(), PlatformUI.getWorkbench()
 					.getProgressService(), SearchEngine.createWorkspaceScope(),
-					scopeType, false, filter);
+					scopeType, true, filter);
 			dialog.setTitle(Messages.DSProvideDetails_selectType);
 			if (dialog.open() == Window.OK) {
-				IType type = (IType) dialog.getResult()[0];
-				String fullyQualifiedName = type.getFullyQualifiedName('$');
-				addProvide(fullyQualifiedName);
+				Object[] result = dialog.getResult();
+				for (int i = 0; i < result.length; i++) {
+					IType type = (IType) result[i];
+					String fullyQualifiedName = type.getFullyQualifiedName('$');
+					addProvide(fullyQualifiedName);
+				}
 			}
 		} catch (CoreException e) {
 		}
