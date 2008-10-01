@@ -14,7 +14,6 @@ package org.eclipse.pde.internal.ds.core.text;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.text.XMLEditingModel;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
@@ -44,14 +43,6 @@ public class DSModel extends XMLEditingModel implements IDSModel {
 			fHandler = new DSDocumentHandler(this, reconciling);
 		}
 		return fHandler;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.AbstractEditingModel#createNLResourceHelper()
-	 */
-	protected NLResourceHelper createNLResourceHelper() {
-		// Not needed
-		return null;
 	}
 
 	/* (non-Javadoc)

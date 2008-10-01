@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.xml.sax.SAXException;
@@ -166,6 +167,11 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 			getRoot().write("", writer); //$NON-NLS-1$
 		}
 		setDirty(false);
+	}
+
+	protected NLResourceHelper createNLResourceHelper() {
+		// by default, don't create one
+		return null;
 	}
 
 	protected abstract IWritable getRoot();
