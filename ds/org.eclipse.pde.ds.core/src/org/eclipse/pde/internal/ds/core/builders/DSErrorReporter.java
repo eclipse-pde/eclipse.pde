@@ -95,7 +95,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				DSMarkerFactory.CAT_OTHER);
 	}
 
-	public void validateReferences(IDSReference[] references) {
+	private void validateReferences(IDSReference[] references) {
 		Hashtable referencedNames = new Hashtable();
 		for (int i = 0; i < references.length; i++) {
 			IDSReference reference = references[i];
@@ -220,7 +220,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	}
 
-	public void validateProperties(IDSProperties[] propertiesElements) {
+	private void validateProperties(IDSProperties[] propertiesElements) {
 		for (int i = 0; i < propertiesElements.length; i++) {
 			IDSProperties properties = propertiesElements[i];
 			Element element = (Element) getDocumentRoot().getElementsByTagName(
@@ -241,7 +241,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	}
 
-	public void validatePropertyElements(IDSProperty[] propertyElements) {
+	private void validatePropertyElements(IDSProperty[] propertyElements) {
 		for (int i = 0; i < propertyElements.length; i++) {
 			IDSProperty property = propertyElements[i];
 			Element element = (Element) getDocumentRoot().getElementsByTagName(
@@ -256,7 +256,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			validatePropertyTypeValues(element);
 			
 			// Validate Value Attribute and Body Values
-			ValidatePropertyAttrValueAndBody(element, property);
+			validatePropertyAttrValueAndBody(element, property);
 
 		}
 	}
@@ -268,9 +268,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 	 * @param element
 	 * @param property
 	 */
-	private void ValidatePropertyAttrValueAndBody(Element element,
+	private void validatePropertyAttrValueAndBody(Element element,
 			IDSProperty property) {
-		if (property.getPropertyValue() != null) { //$NON-NLS-1$
+		if (property.getPropertyValue() != null) {
 			if (property.getPropertyElemBody() != null
 					&& !property.getPropertyElemBody().equals("")) { //$NON-NLS-1$
 				reportSingleAndMultiplePropertyValues(element, property
@@ -325,7 +325,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	}
 
-	public void validateImplementation(IDSImplementation implementation) {
+	private void validateImplementation(IDSImplementation implementation) {
 		if (implementation != null) {
 			String className = implementation.getClassName();
 			Element element = (Element) getDocumentRoot().getElementsByTagName(
@@ -418,7 +418,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	}
 
-	public void validateComponent(IDSComponent component) {
+	private void validateComponent(IDSComponent component) {
 		if (component != null) {
 			Element element = getDocumentRoot();
 			// Validate Required Attributes
@@ -449,8 +449,45 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 			validateEmpty(element, element
 					.getAttributeNode(IDSConstants.ATTRIBUTE_COMPONENT_NAME));
+			
+			// validate immediate values
+			validateImediate(element, component);
 
 		}
+	}
+
+	private void validateImediate(Element element, IDSComponent component) {
+		boolean isService = false;
+		boolean isFactory = component.getFactory() != null;
+		boolean isImmediate = component.getImmediate();
+		
+		if (component.getService() != null) {
+			IDSProvide[] providedServices = component.getService()
+					.getProvidedServices();
+			if (providedServices != null && providedServices.length > 0) {
+				isService = true;
+			}
+		}
+		if (!isService && !isFactory && !isImmediate) {
+			reportInvalidImmediate(element);
+		}
+		
+		if (isFactory && isImmediate) {
+			reportInvalidImmediateFactory(element);
+		}
+		
+		
+	}
+
+	private void reportInvalidImmediateFactory(Element element) {
+		report(Messages.DSErrorReporter_invalidImmediateValueFactory,
+				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
+
+	}
+
+	private void reportInvalidImmediate(Element element) {
+		report(Messages.DSErrorReporter_invalidImmediateValue,
+				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateEmpty(Element element, Attr attr) {
@@ -470,7 +507,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				DSMarkerFactory.CAT_OTHER);
 	}
 
-	public void validateService(IDSService service) {
+	private void validateService(IDSService service) {
 		if (service != null) {
 			Element element = (Element) getDocumentRoot().getElementsByTagName(
 					service.getXMLTagName()).item(0);
@@ -482,7 +519,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		}
 	}
 
-	public void validateProvide(IDSProvide[] providedServices) {
+	private void validateProvide(IDSProvide[] providedServices) {
 		for (int i = 0; i < providedServices.length; i++) {
 			IDSProvide provide = providedServices[i];
 
