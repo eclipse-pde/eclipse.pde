@@ -19,17 +19,15 @@ import javax.xml.parsers.*;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.launching.ExecutionArguments;
-import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -63,9 +61,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 				createFeature(featureID, fFeatureLocation, config, true);
 				createBuildPropertiesFile(fFeatureLocation, config);
-				createConfigIniFile(config);
-				createEclipseProductFile();
-				createLauncherIniFile(config[0]);
 				doExport(featureID, null, fFeatureLocation, config[0], config[1], config[2], new SubProgressMonitor(monitor, 8));
 			} catch (IOException e) {
 				PDECore.log(e);
@@ -112,22 +107,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 		cleanup(null, new SubProgressMonitor(monitor, 1));
 
 		monitor.done();
-	}
-
-	private File getCustomIniFile(String os) {
-		IConfigurationFileInfo info = fProduct.getConfigurationFileInfo();
-		String path = info.getPath(os);
-		if (path == null) // if we can't find an os path, let's try the normal one
-			path = info.getPath(null);
-		if (info != null && path != null) {
-			String expandedPath = getExpandedPath(path);
-			if (expandedPath != null) {
-				File file = new File(expandedPath);
-				if (file.exists() && file.isFile())
-					return file;
-			}
-		}
-		return null;
 	}
 
 	/*
@@ -210,10 +189,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 				}
 			}
 		}
-		// add content of temp folder (.eclipseproduct, configuration/config.ini)
-		if (buffer.length() > 0)
-			buffer.append(","); //$NON-NLS-1$
-		buffer.append("/temp/"); //$NON-NLS-1$
 
 		return buffer.toString();
 	}
@@ -236,235 +211,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 		buffer.append("absolute:file:"); //$NON-NLS-1$
 		buffer.append(file.getAbsolutePath());
-	}
-
-	private void createEclipseProductFile() {
-		File dir = new File(fFeatureLocation, "temp"); //$NON-NLS-1$
-		if (!dir.exists() || !dir.isDirectory())
-			dir.mkdirs();
-		Properties properties = new Properties();
-		IPluginModelBase model = PluginRegistry.findModel(getBrandingPlugin());
-		if (model != null)
-			properties.put("name", model.getResourceString(fProduct.getName())); //$NON-NLS-1$
-		else
-			properties.put("name", fProduct.getName()); //$NON-NLS-1$
-		properties.put("id", fProduct.getId()); //$NON-NLS-1$
-		if (model != null)
-			properties.put("version", model.getPluginBase().getVersion()); //$NON-NLS-1$
-		File product = new File(dir, ".eclipseproduct"); //$NON-NLS-1$
-		save(product, properties, "Eclipse Product File"); //$NON-NLS-1$
-	}
-
-	private void createLauncherIniFile(String os) {
-		String programArgs = getProgramArguments(os);
-		String vmArgs = getVMArguments(os);
-
-		if (programArgs.length() == 0 && vmArgs.length() == 0)
-			return;
-
-		File dir = new File(fFeatureLocation, "temp"); //$NON-NLS-1$
-		// need to place launcher.ini file in special directory for MacOSX (bug 164762)
-		if (Platform.OS_MACOSX.equals(os)) {
-			dir = new File(dir, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
-		}
-		if (!dir.exists() || !dir.isDirectory())
-			dir.mkdirs();
-
-		String lineDelimiter = Platform.OS_WIN32.equals(os) ? "\r\n" : "\n"; //$NON-NLS-1$ //$NON-NLS-2$
-
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(new FileWriter(new File(dir, getLauncherName() + ".ini"))); //$NON-NLS-1$
-			ExecutionArguments args = new ExecutionArguments(vmArgs, programArgs);
-
-			// add program arguments
-			String[] array = args.getProgramArgumentsArray();
-			for (int i = 0; i < array.length; i++) {
-				writer.print(array[i]);
-				writer.print(lineDelimiter);
-			}
-
-			// add VM arguments
-			array = args.getVMArgumentsArray();
-			if (array.length > 0) {
-				writer.print("-vmargs"); //$NON-NLS-1$
-				writer.print(lineDelimiter);
-				for (int i = 0; i < array.length; i++) {
-					writer.print(array[i]);
-					writer.print(lineDelimiter);
-				}
-			}
-		} catch (IOException e) {
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
-		}
-	}
-
-	private String getProgramArguments(String os) {
-		IArgumentsInfo info = fProduct.getLauncherArguments();
-		return info != null ? CoreUtility.normalize(info.getCompleteProgramArguments(os)) : "";//$NON-NLS-1$
-	}
-
-	private String getVMArguments(String os) {
-		IArgumentsInfo info = fProduct.getLauncherArguments();
-		return (info != null) ? CoreUtility.normalize(info.getCompleteVMArguments(os)) : ""; //$NON-NLS-1$
-	}
-
-	private void createConfigIniFile(String[] config) {
-		File dir = new File(fFeatureLocation, "temp/configuration"); //$NON-NLS-1$
-		if (!dir.exists() || !dir.isDirectory())
-			dir.mkdirs();
-
-		PrintWriter writer = null;
-
-		File custom = getCustomIniFile(config[0]);
-		if (custom != null) {
-			BufferedReader in = null;
-			try {
-				in = new BufferedReader(new FileReader(custom));
-				writer = new PrintWriter(new FileWriter(new File(dir, "config.ini"))); //$NON-NLS-1$
-				String line;
-				while ((line = in.readLine()) != null) {
-					writer.println(line);
-				}
-			} catch (IOException e) {
-			} finally {
-				try {
-					if (in != null)
-						in.close();
-					if (writer != null)
-						writer.close();
-				} catch (IOException e) {
-				}
-			}
-			return;
-		}
-		try {
-			writer = new PrintWriter(new FileWriter(new File(dir, "config.ini"))); //$NON-NLS-1$
-			String location = getSplashLocation(config[0], config[1], config[2]);
-			writer.println("#Product Runtime Configuration File"); //$NON-NLS-1$
-			writer.println();
-			if (location != null)
-				writer.println("osgi.splashPath=" + location); //$NON-NLS-1$
-			writer.println("eclipse.product=" + fProduct.getId()); //$NON-NLS-1$
-			writer.println("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$
-
-			String bundleList = getPluginList(config, TargetPlatform.getBundleList());
-			writer.println("osgi.bundles=" + bundleList); //$NON-NLS-1$
-
-		} catch (IOException e) {
-		} finally {
-			if (writer != null)
-				writer.close();
-		}
-	}
-
-	private String getSplashLocation(String os, String ws, String arch) {
-		ISplashInfo info = fProduct.getSplashInfo();
-		String plugin = null;
-		if (info != null) {
-			plugin = info.getLocation();
-		}
-		if (plugin == null || plugin.trim().length() == 0)
-			plugin = getBrandingPlugin();
-
-		if (plugin == null)
-			return null;
-
-		StringBuffer buffer = new StringBuffer("platform:/base/plugins/"); //$NON-NLS-1$
-		buffer.append(plugin.trim());
-
-		State state = getState(os, ws, arch);
-		BundleDescription bundle = state.getBundle(plugin, null);
-		if (bundle != null) {
-			BundleDescription[] fragments = bundle.getFragments();
-			for (int i = 0; i < fragments.length; i++) {
-				String id = fragments[i].getSymbolicName();
-				if (fProduct.containsPlugin(id)) {
-					buffer.append(",platform:/base/plugins/"); //$NON-NLS-1$
-					buffer.append(id);
-				}
-			}
-		}
-		return buffer.toString();
-	}
-
-	private String getBrandingPlugin() {
-		int dot = fProduct.getId().lastIndexOf('.');
-		return (dot != -1) ? fProduct.getId().substring(0, dot) : null;
-	}
-
-	private String getPluginList(String[] config, String bundleList) {
-		if (fProduct.useFeatures()) {
-			// if we're using features and find simple configurator in the list, let's just default and use update configurator 
-			if (bundleList.indexOf("org.eclipse.equinox.simpleconfigurator") != -1) { //$NON-NLS-1$
-				return TargetPlatformHelper.getDefaultBundleList();
-			}
-			return bundleList;
-		}
-
-		StringBuffer buffer = new StringBuffer();
-
-		// include only bundles that are actually in this product configuration
-		Set initialBundleSet = new HashSet();
-		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
-		while (tokenizer.hasMoreTokens()) {
-			String token = tokenizer.nextToken();
-			int index = token.indexOf('@');
-			String id = index != -1 ? token.substring(0, index) : token;
-			if (fProduct.containsPlugin(id)) {
-				if (buffer.length() > 0)
-					buffer.append(',');
-				buffer.append(id);
-				if (index != -1 && index < token.length() - 1)
-					buffer.append(token.substring(index));
-				initialBundleSet.add(id);
-			}
-		}
-
-		if (!fProduct.containsPlugin("org.eclipse.update.configurator")) { //$NON-NLS-1$
-			initialBundleSet.add("org.eclipse.osgi"); //$NON-NLS-1$
-
-			Dictionary environment = new Hashtable(4);
-			environment.put("osgi.os", config[0]); //$NON-NLS-1$
-			environment.put("osgi.ws", config[1]); //$NON-NLS-1$
-			environment.put("osgi.arch", config[2]); //$NON-NLS-1$
-			environment.put("osgi.nl", config[3]); //$NON-NLS-1$
-
-			BundleContext context = PDECore.getDefault().getBundleContext();
-			for (int i = 0; i < fInfo.items.length; i++) {
-				BundleDescription bundle = (BundleDescription) fInfo.items[i];
-				String filterSpec = bundle.getPlatformFilter();
-				try {
-					if (filterSpec == null || context.createFilter(filterSpec).match(environment)) {
-						String id = ((BundleDescription) fInfo.items[i]).getSymbolicName();
-						if (!initialBundleSet.contains(id)) {
-							if (buffer.length() > 0)
-								buffer.append(","); //$NON-NLS-1$
-							buffer.append(id);
-
-							// ensure core.runtime is always started
-							if ("org.eclipse.core.runtime".equals(id)) { //$NON-NLS-1$
-								buffer.append("@start"); //$NON-NLS-1$
-							}
-						}
-					}
-				} catch (InvalidSyntaxException e) {
-				}
-			}
-		}
-
-		// something horribly went wrong if we get there
-		if (buffer.length() == 0)
-			return TargetPlatformHelper.getDefaultBundleList();
-
-		// if we have both, prefer update.configurator for now
-		if (fProduct.containsPlugin("org.eclipse.update.configurator") && fProduct.containsPlugin("org.eclipse.equinox.simpleconfigurator")) //$NON-NLS-1$//$NON-NLS-2$
-			return TargetPlatformHelper.getDefaultBundleList();
-
-		return buffer.toString();
 	}
 
 	protected HashMap createAntBuildProperties(String os, String ws, String arch) {
