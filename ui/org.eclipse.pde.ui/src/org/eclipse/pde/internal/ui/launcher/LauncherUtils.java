@@ -125,6 +125,10 @@ public class LauncherUtils {
 						CoreUtility.deleteContent(workspaceFile);
 					}
 				}
+			} else if (configuration.getAttribute(IPDEUIConstants.DOCLEARLOG, false)) {
+				LauncherUtils.clearWorkspaceLog(workspace);
+			} else {
+				CoreUtility.deleteContent(workspaceFile);
 			}
 		}
 
