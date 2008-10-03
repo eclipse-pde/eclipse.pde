@@ -18,6 +18,7 @@ import org.eclipse.jdt.ui.dialogs.ITypeInfoRequestor;
 import org.eclipse.jdt.ui.dialogs.TypeSelectionExtension;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
+import org.eclipse.pde.internal.ds.core.IDSService;
 
 public class DSTypeSelectionExtension extends TypeSelectionExtension {
 
@@ -51,8 +52,10 @@ public class DSTypeSelectionExtension extends TypeSelectionExtension {
 	}
 
 	public ITypeInfoFilterExtension getFilterExtension() {
-		return new TypeInfoFilterExtension(fModel.getDSComponent().getService()
-				.getProvidedServices());
+		IDSService service = fModel.getDSComponent().getService();
+		if (service != null)
+			return new TypeInfoFilterExtension(service.getProvidedServices());
+		return null;
 	}
 
 
