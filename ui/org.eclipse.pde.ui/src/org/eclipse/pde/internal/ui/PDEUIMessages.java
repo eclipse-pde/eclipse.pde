@@ -3224,6 +3224,7 @@ public class PDEUIMessages extends NLS {
 	public static String FilteredPluginArtifactsSelectionDialog_showExtensions;
 	public static String FilteredPluginArtifactsSelectionDialog_showExtensionPoints;
 	public static String FilteredPluginArtifactsSelectionDialog_showExportedPackages;
+	public static String FilteredPluginArtifactsSelectionDialog_showFeatures;
 
 	public static String FilteredSchemaAttributeSelectionDialog_title;
 	public static String FilteredSchemaAttributeSelectionDialog_message;

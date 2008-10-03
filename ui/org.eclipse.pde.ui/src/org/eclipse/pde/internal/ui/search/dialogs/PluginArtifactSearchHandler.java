@@ -16,7 +16,9 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
 import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.pde.internal.ui.search.ManifestEditorOpener;
 import org.eclipse.ui.IEditorPart;
@@ -33,6 +35,9 @@ public class PluginArtifactSearchHandler extends AbstractHandler {
 		if (status == Window.OK) {
 			Object[] result = dialog.getResult();
 			Object object = result[0];
+			if (object instanceof IFeatureModel) {
+				FeatureEditor.openFeatureEditor((IFeatureModel) object);
+			}
 			IEditorPart editorPart = ManifestEditor.open(object, true);
 			if (editorPart != null && editorPart instanceof ManifestEditor) {
 				ManifestEditor editor = (ManifestEditor) editorPart;
