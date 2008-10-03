@@ -31,9 +31,12 @@ public class Messages extends NLS {
 	public static String DSErrorReporter_emptyPropertyValue;
 	public static String DSErrorReporter_invalidImmediateValue;
 	public static String DSErrorReporter_invalidImmediateValueFactory;
+	public static String DSErrorReporter_duplicatedInterface;
 	
 	public static String DSBuilder_verifying;
 	public static String DSBuilder_updating;
+
+	
 
 	
 

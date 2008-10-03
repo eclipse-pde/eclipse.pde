@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
@@ -67,8 +68,7 @@ public class DSProvideSection extends TableSection {
 					if (service != null) {
 						return service.getProvidedServices();
 					}
-				} 
-				
+				}
 
 			}
 			return new Object[0];
@@ -86,9 +86,9 @@ public class DSProvideSection extends TableSection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(Messages.DSProvideSection_title);
 		section.setDescription(Messages.DSProvideSection_description);
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		
+
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
 
@@ -101,6 +101,7 @@ public class DSProvideSection extends TableSection {
 		fProvidesTable = tablePart.getTableViewer();
 		fProvidesTable.setContentProvider(new ContentProvider());
 		fProvidesTable.setLabelProvider(new DSLabelProvider());
+		fProvidesTable.setComparator(new ViewerComparator());
 
 		makeActions();
 
@@ -134,7 +135,7 @@ public class DSProvideSection extends TableSection {
 			break;
 		case 2:
 			handleEdit();
-			break;	
+			break;
 		}
 	}
 
@@ -171,7 +172,7 @@ public class DSProvideSection extends TableSection {
 			}
 		};
 		fRemoveAction.setEnabled(isEditable());
-		
+
 		fEditAction = new Action(Messages.DSProvideSection_edit) {
 			public void run() {
 				handleRemove();
@@ -199,8 +200,7 @@ public class DSProvideSection extends TableSection {
 				Object object = iter.next();
 				if (object instanceof IDSProvide) {
 					getDSModel().getDSComponent().getService()
-							.removeProvidedService(
-							(IDSProvide) object);
+							.removeProvidedService((IDSProvide) object);
 				}
 			}
 		}
@@ -217,7 +217,8 @@ public class DSProvideSection extends TableSection {
 			SelectionDialog dialog = JavaUI.createTypeDialog(Activator
 					.getActiveWorkbenchShell(), PlatformUI.getWorkbench()
 					.getProgressService(), SearchEngine.createWorkspaceScope(),
-					scopeType, true, filter);
+					scopeType, true, filter, new DSTypeSelectionExtension(
+							getDSModel()));
 			dialog.setTitle(Messages.DSProvideDetails_selectType);
 			if (dialog.open() == Window.OK) {
 				Object[] result = dialog.getResult();
@@ -235,7 +236,7 @@ public class DSProvideSection extends TableSection {
 
 		IDSDocumentFactory factory = getDSModel().getFactory();
 		IDSComponent component = getDSModel().getDSComponent();
-		
+
 		IDSService service = component.getService();
 		if (service == null) {
 			service = factory.createService();

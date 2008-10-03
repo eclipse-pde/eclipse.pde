@@ -253,13 +253,27 @@ public class DSErrorReporter extends XMLErrorReporter {
 						IDSConstants.ATTRIBUTE_PROPERTY_NAME, ERROR);
 			}
 			// Validate Allowed Values
-			validatePropertyTypeValues(element);
+			validatePropertyTypes(element);
 			
 			// Validate Value Attribute and Body Values
 			validatePropertyAttrValueAndBody(element, property);
+			
+			// Validate Type Specific Values
+			// validatePropertyTypesValues(element, property);
 
 		}
 	}
+
+//	private void validatePropertyTypesValues(Element element,
+//			IDSProperty property) {
+//			String type = property.getPropertyType();
+//			String value= property.getPropertyValue();
+//			String body = property.getPropertyElemBody();
+//			if(value != null){
+//				
+//		}
+//				
+//	}
 
 	/**
 	 * Validates if a property elements defines a single value and multiple
@@ -302,7 +316,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	}
 
-	private void validatePropertyTypeValues(Element element) {
+	private void validatePropertyTypes(Element element) {
 		String attribute = element
 				.getAttribute(IDSConstants.ATTRIBUTE_PROPERTY_TYPE);
 		String allowedValues[] = new String[] {
@@ -523,6 +537,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	}
 
 	private void validateProvide(IDSProvide[] providedServices) {
+		Hashtable providedInterfaces = new Hashtable();
 		for (int i = 0; i < providedServices.length; i++) {
 			IDSProvide provide = providedServices[i];
 
@@ -541,7 +556,23 @@ public class DSErrorReporter extends XMLErrorReporter {
 				// validate if implementation class implements services
 				// interfaces
 				// validateClassInstanceofProvidedInterface(element, provide);
+				
+				// validate duplicate interfaces
+				validateDuplicateInterface(providedInterfaces, provide, element);
 			}
+		}
+	}
+
+	private void validateDuplicateInterface(Hashtable providedInterfaces,
+			IDSProvide provide, Element element) {
+		String interface1 = provide.getInterface();
+		if (providedInterfaces.get(interface1) != null) {
+			String message = NLS.bind(
+					Messages.DSErrorReporter_duplicatedInterface, interface1);
+			report(message, getLine(element), WARNING,
+					DSMarkerFactory.CAT_OTHER);
+		}else{
+			providedInterfaces.put(interface1,interface1);
 		}
 	}
 
