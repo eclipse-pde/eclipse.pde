@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - creation of this class
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 
@@ -43,7 +44,7 @@ public class ComboViewerPart {
 
 		fObjects = new ArrayList();
 		fComboViewer.setLabelProvider(new LabelProvider());
-		fComboViewer.setContentProvider(new ArrayContentProvider());
+		fComboViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fComboViewer.setInput(fObjects);
 	}
 

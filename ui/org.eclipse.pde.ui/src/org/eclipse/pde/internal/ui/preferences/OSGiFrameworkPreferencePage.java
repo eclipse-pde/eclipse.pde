@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
@@ -85,7 +86,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 
 		fTableViewer = new TableViewer(container, SWT.BORDER);
 		fTableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		fTableViewer.setContentProvider(new ArrayContentProvider());
+		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTableViewer.setLabelProvider(new FrameworkLabelProvider());
 		fTableViewer.setInput(PDEPlugin.getDefault().getOSGiFrameworkManager().getSortedFrameworks());
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {

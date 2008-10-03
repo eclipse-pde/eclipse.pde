@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -83,7 +84,7 @@ public class TracingBlock {
 		composite.setLayout(layout);
 
 		fPluginViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
-		fPluginViewer.setContentProvider(new ArrayContentProvider());
+		fPluginViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fPluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fPluginViewer.setComparator(new ListUtil.PluginComparator());
 		fPluginViewer.addSelectionChangedListener(new ISelectionChangedListener() {

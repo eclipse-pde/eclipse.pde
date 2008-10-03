@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
@@ -156,7 +157,7 @@ public abstract class SyntaxColorTab {
 
 		fElementViewer = new TableViewer(container, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
 		fElementViewer.setLabelProvider(new LabelProvider());
-		fElementViewer.setContentProvider(new ArrayContentProvider());
+		fElementViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fElementViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Composite colorComposite = new Composite(container, SWT.NONE);

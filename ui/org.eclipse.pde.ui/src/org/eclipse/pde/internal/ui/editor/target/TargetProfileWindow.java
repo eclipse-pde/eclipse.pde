@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
@@ -182,7 +183,7 @@ public class TargetProfileWindow extends ApplicationWindow {
 		int style = SWT.H_SCROLL | SWT.V_SCROLL | toolkit.getBorderStyle();
 
 		TableViewer tableViewer = new TableViewer(parent, style);
-		tableViewer.setContentProvider(new ArrayContentProvider());
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		tableViewer.setInput(objects);
 		tableViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.provisioner;
 
@@ -77,7 +78,7 @@ public class DirectorySelectionPage extends WizardPage {
 
 		fTableViewer = new TableViewer(client);
 		fTableViewer.setLabelProvider(new FolderLabelProvider());
-		fTableViewer.setContentProvider(new ArrayContentProvider());
+		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTableViewer.setInput(fElements);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.verticalSpan = 3;

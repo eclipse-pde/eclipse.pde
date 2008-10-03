@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.provisioner;
 
@@ -59,7 +60,7 @@ public class ProvisionerListSelectionPage extends WizardSelectionPage {
 		fTableViewer = new TableViewer(sashForm, SWT.BORDER);
 
 		fTableViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
-		fTableViewer.setContentProvider(new ArrayContentProvider());
+		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTableViewer.setInput(fElements.getChildren());
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
