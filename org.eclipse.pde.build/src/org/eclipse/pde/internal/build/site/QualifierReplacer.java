@@ -18,6 +18,15 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 	//	private static final String DOT_QUALIFIER = '.' + PROPERTY_QUALIFIER;
 	private static String globalQualifier = null;
 
+	/**
+	 * Replaces the 'qualifier' in the given version with the qualifier replacement.
+	 * 
+	 * @param version version to replace qualifier in
+	 * @param id id used when building a replacement using newVersions properties
+	 * @param replaceTag replace qualifier with this tag instead of global qualifier, may be <code>null</code>
+	 * @param newVersions properties that can be used to generate an alternative qualifier
+	 * @return string version with qualifier replaced
+	 */
 	public static String replaceQualifierInVersion(String version, String id, String replaceTag, Properties newVersions) {
 		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER))
 			return version;
@@ -37,7 +46,7 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 					newQualifier = newVersions.getProperty(DEFAULT_MATCH_ALL);
 			}
 			if (newQualifier == null)
-				newQualifier = getDate();
+				newQualifier = getDateQualifier();
 		} else if (replaceTag.equalsIgnoreCase(PROPERTY_NONE)) {
 			newQualifier = ""; //$NON-NLS-1$
 		} else {
@@ -50,7 +59,13 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 		return version;
 	}
 
-	private static String getDate() {
+	/**
+	 * Returns the current date/time as a string to be used as a qualifier
+	 * replacement.  This is the default qualifier replacement.  Will
+	 * be of the form YYYYMMDDHHMM.
+	 * @return current date/time as a qualifier replacement 
+	 */
+	public static String getDateQualifier() {
 		final String empty = ""; //$NON-NLS-1$
 		int monthNbr = Calendar.getInstance().get(Calendar.MONTH) + 1;
 		String month = (monthNbr < 10 ? "0" : empty) + monthNbr; //$NON-NLS-1$
@@ -67,6 +82,13 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 		return empty + Calendar.getInstance().get(Calendar.YEAR) + month + day + hour + minute;
 	}
 
+	/**
+	 * Sets the global variable used as the qualifier replacement during calls to
+	 * {@link #replaceQualifierInVersion(String, String, String, Properties)}
+	 * Setting the qualifier to <code>null</code> will result in the default
+	 * date qualifier being used.
+	 * @param globalQualifier string replacement or <code>null</code>
+	 */
 	public static void setGlobalQualifier(String globalQualifier) {
 		if (globalQualifier == null || globalQualifier.length() == 0)
 			QualifierReplacer.globalQualifier = null;
