@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Code 9 Corporation - initial API and implementation
+ *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
-package org.eclipse.pde.internal.ds.ui.editor;
+package org.eclipse.pde.internal.ds.ui.editor.sections;
 
 import java.util.Iterator;
 
@@ -24,17 +24,17 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
-import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSModel;
-import org.eclipse.pde.internal.ds.core.IDSProvide;
-import org.eclipse.pde.internal.ds.core.IDSService;
+import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
-import org.eclipse.pde.internal.ds.ui.editor.dialogs.DSEditProvideDialog;
+import org.eclipse.pde.internal.ds.ui.editor.DSInputContext;
+import org.eclipse.pde.internal.ds.ui.editor.DSLabelProvider;
+import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
+import org.eclipse.pde.internal.ds.ui.editor.dialogs.DSEditReferenceDialog;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -51,9 +51,9 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class DSProvideSection extends TableSection {
+public class DSReferenceSection extends TableSection {
 
-	private TableViewer fProvidesTable;
+	private TableViewer fReferencesTable;
 	private Action fRemoveAction;
 	private Action fAddAction;
 	private Action fEditAction;
@@ -63,30 +63,26 @@ public class DSProvideSection extends TableSection {
 			if (inputElement instanceof IDSModel) {
 				IDSModel model = (IDSModel) inputElement;
 				IDSComponent component = model.getDSComponent();
-				if (component != null) {
-					IDSService service = component.getService();
-					if (service != null) {
-						return service.getProvidedServices();
-					}
-				}
+				if (component != null)
+					return component.getReferences();
 
 			}
 			return new Object[0];
 		}
 	}
 
-	public DSProvideSection(PDEFormPage page, Composite parent) {
+	public DSReferenceSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {
-				Messages.DSProvideSection_add,
-				Messages.DSProvideSection_remove,
-				Messages.DSProvideSection_edit });
+				Messages.DSReferenceSection_add,
+				Messages.DSReferenceSection_remove,
+				Messages.DSReferenceSection_edit });
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(Messages.DSProvideSection_title);
-		section.setDescription(Messages.DSProvideSection_description);
-
+		section.setText(Messages.DSReferenceSection_title);
+		section.setDescription(Messages.DSReferenceSection_description);
+		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -98,16 +94,15 @@ public class DSProvideSection extends TableSection {
 
 		createViewerPartControl(container, SWT.FULL_SELECTION | SWT.MULTI, 2,
 				toolkit);
-		fProvidesTable = tablePart.getTableViewer();
-		fProvidesTable.setContentProvider(new ContentProvider());
-		fProvidesTable.setLabelProvider(new DSLabelProvider());
-		fProvidesTable.setComparator(new ViewerComparator());
+		fReferencesTable = tablePart.getTableViewer();
+		fReferencesTable.setContentProvider(new ContentProvider());
+		fReferencesTable.setLabelProvider(new DSLabelProvider());
 
 		makeActions();
 
 		IDSModel model = getDSModel();
 		if (model != null) {
-			fProvidesTable.setInput(model);
+			fReferencesTable.setInput(model);
 			model.addModelChangedListener(this);
 		}
 		toolkit.paintBordersFor(container);
@@ -121,7 +116,7 @@ public class DSProvideSection extends TableSection {
 	}
 
 	public void refresh() {
-		fProvidesTable.refresh();
+		fReferencesTable.refresh();
 		updateButtons();
 	}
 
@@ -140,67 +135,69 @@ public class DSProvideSection extends TableSection {
 	}
 
 	private void handleEdit() {
-
-		ISelection selection = fProvidesTable.getSelection();
-		if (selection != null) {
-
-			int selectionIndex = fProvidesTable.getTable().getSelectionIndex();
-			if (selectionIndex != -1) {
-				DSEditProvideDialog dialog = new DSEditProvideDialog(Activator
-						.getActiveWorkbenchShell(), (IDSProvide) fProvidesTable
-						.getElementAt(selectionIndex), this);
+		
+				ISelection selection = fReferencesTable.getSelection();
+				if(selection != null){
+					
+					int selectionIndex = fReferencesTable.getTable().getSelectionIndex();
+					if (selectionIndex != -1) {
+				DSEditReferenceDialog dialog = new DSEditReferenceDialog(
+						Activator.getActiveWorkbenchShell(),
+						(IDSReference) fReferencesTable
+								.getElementAt(selectionIndex), this);
 				dialog.create();
-				dialog.getShell().setSize(500, 200);
+				dialog.getShell().setSize(500, 400);
 				dialog.open();
 			}
-
-		}
-
+		
+				}
+				
 	}
 
 	private void makeActions() {
-		fAddAction = new Action(Messages.DSProvideSection_add) {
+		fAddAction = new Action(Messages.DSReferenceSection_add) {
 			public void run() {
 				handleAdd();
 			}
 		};
 		fAddAction.setEnabled(isEditable());
 
-		fRemoveAction = new Action(Messages.DSProvideSection_remove) {
+		fRemoveAction = new Action(Messages.DSReferenceSection_remove) {
 			public void run() {
 				handleRemove();
 			}
 		};
 		fRemoveAction.setEnabled(isEditable());
 
-		fEditAction = new Action(Messages.DSProvideSection_edit) {
+		fEditAction = new Action(Messages.DSReferenceSection_edit) {
 			public void run() {
-				handleRemove();
+				handleEdit();
 			}
 		};
 		fEditAction.setEnabled(isEditable());
+
 	}
 
 	private void updateButtons() {
-		Table table = fProvidesTable.getTable();
+		Table table = fReferencesTable.getTable();
 		TablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(0, isEditable());
 		tablePart.setButtonEnabled(1, isEditable()
 				&& table.getSelection().length > 0);
 		tablePart.setButtonEnabled(2, isEditable()
-				&& table.getSelection().length == 1);
+				&& table.getSelection().length > 0);
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fProvidesTable
+		IStructuredSelection ssel = (IStructuredSelection) fReferencesTable
 				.getSelection();
 		if (ssel.size() > 0) {
 			Iterator iter = ssel.iterator();
 			while (iter.hasNext()) {
 				Object object = iter.next();
-				if (object instanceof IDSProvide) {
-					getDSModel().getDSComponent().getService()
-							.removeProvidedService((IDSProvide) object);
+				if (object instanceof IDSReference) {
+					getDSModel().getDSComponent().removeReference(
+							(IDSReference) object);
 				}
 			}
 		}
@@ -217,38 +214,35 @@ public class DSProvideSection extends TableSection {
 			SelectionDialog dialog = JavaUI.createTypeDialog(Activator
 					.getActiveWorkbenchShell(), PlatformUI.getWorkbench()
 					.getProgressService(), SearchEngine.createWorkspaceScope(),
-					scopeType, true, filter, new DSTypeSelectionExtension(
-							getDSModel()));
-			dialog.setTitle(Messages.DSProvideDetails_selectType);
+					scopeType, true, filter);
+			dialog.setTitle(Messages.DSReferenceDetails_selectType);
 			if (dialog.open() == Window.OK) {
 				Object[] result = dialog.getResult();
 				for (int i = 0; i < result.length; i++) {
 					IType type = (IType) result[i];
 					String fullyQualifiedName = type.getFullyQualifiedName('$');
-					addProvide(fullyQualifiedName);
+					addReference(fullyQualifiedName);
 				}
 			}
 		} catch (CoreException e) {
 		}
 	}
 
-	private void addProvide(String fullyQualifiedName) {
-
-		IDSDocumentFactory factory = getDSModel().getFactory();
-		IDSComponent component = getDSModel().getDSComponent();
-
-		IDSService service = component.getService();
-		if (service == null) {
-			service = factory.createService();
-			component.setService(service);
-		}
-
-		IDSProvide provide = factory.createProvide();
+	private void addReference(String fullyQualifiedName) {
+	
+		IDSReference reference = getDSModel().getFactory().createReference();
 		// set interface attribute
-		provide.setInterface(fullyQualifiedName);
-
-		// add provide
-		service.addProvidedService(provide);
+		reference.setReferenceInterface(fullyQualifiedName);
+		
+		// set name attribute
+		int index = fullyQualifiedName.lastIndexOf("."); //$NON-NLS-1$
+		if (index != -1) {
+			fullyQualifiedName = fullyQualifiedName.substring(index + 1);
+		}
+		reference.setReferenceName(fullyQualifiedName);
+		
+		// add reference
+		getDSModel().getDSComponent().addReference(reference);
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
@@ -257,10 +251,10 @@ public class DSProvideSection extends TableSection {
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 			Object[] objects = e.getChangedObjects();
 			for (int i = 0; i < objects.length; i++) {
-				Table table = fProvidesTable.getTable();
-				if (objects[i] instanceof IDSProvide) {
+				Table table = fReferencesTable.getTable();
+				if (objects[i] instanceof IDSReference) {
 					int index = table.getSelectionIndex();
-					fProvidesTable.remove(objects[i]);
+					fReferencesTable.remove(objects[i]);
 					if (canSelect()) {
 						table.setSelection(index < table.getItemCount() ? index
 								: table.getItemCount() - 1);
@@ -271,13 +265,13 @@ public class DSProvideSection extends TableSection {
 		} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 			Object[] objects = e.getChangedObjects();
 			if (objects.length > 0) {
-				fProvidesTable.refresh();
-				fProvidesTable.setSelection(new StructuredSelection(
+				fReferencesTable.refresh();
+				fReferencesTable.setSelection(new StructuredSelection(
 						objects[objects.length - 1]));
 			}
 			updateButtons();
 		} else {
-			fProvidesTable.refresh();
+			fReferencesTable.refresh();
 			updateButtons();
 		}
 	}

@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
-package org.eclipse.pde.internal.ds.ui.editor;
+package org.eclipse.pde.internal.ds.ui.editor.sections;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -30,16 +30,15 @@ import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
+import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
@@ -50,17 +49,15 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class DSServiceComponentSection extends PDESection {
+public class DSComponentSection extends PDESection {
 
 	private IDSComponent fComponent;
 	private IDSImplementation fImplementation;
 	private FormEntry fClassEntry;
 	private FormEntry fNameEntry;
 	private IDSModel fModel;
-	private Button fImmediateButton;
-	private Button fEnabledButton;
 
-	public DSServiceComponentSection(PDEFormPage page, Composite parent) {
+	public DSComponentSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
@@ -84,12 +81,10 @@ public class DSServiceComponentSection extends PDESection {
 		fNameEntry = new FormEntry(client, toolkit,
 				Messages.DSComponentDetails_nameEntry, SWT.NONE);
 
-		// Attribute: title
+		// Attribute: class
 		fClassEntry = new FormEntry(client, toolkit,
 				Messages.DSImplementationDetails_classEntry,
 				Messages.DSImplementationDetails_browse, isEditable(), 0);
-
-		createButtons(client, toolkit);
 
 		setListeners();
 		updateUIFields();
@@ -97,34 +92,6 @@ public class DSServiceComponentSection extends PDESection {
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 
-	}
-
-	private void createButtons(Composite parent, FormToolkit toolkit) {
-		fEnabledButton = toolkit.createButton(parent,
-				Messages.DSServiceComponentSection_enabledButtonMessage,
-				SWT.CHECK);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		fEnabledButton.setLayoutData(data);
-		fEnabledButton.setEnabled(isEditable());
-		fEnabledButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fModel.getDSComponent().setEnabled(
-						fEnabledButton.getSelection());
-			}
-		});
-
-		fImmediateButton = toolkit.createButton(parent,
-				Messages.DSServiceComponentSection_immediateButtonMessage,
-				SWT.CHECK);
-		fImmediateButton.setLayoutData(data);
-		fImmediateButton.setEnabled(isEditable());
-		fImmediateButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fModel.getDSComponent().setImmediate(
-						fImmediateButton.getSelection());
-			}
-		});
 	}
 
 	private void initializeAttributes() {
@@ -173,11 +140,7 @@ public class DSServiceComponentSection extends PDESection {
 				fNameEntry.setValue(fComponent.getAttributeName(), true);
 			}
 
-			fEnabledButton.setSelection(fComponent.getEnabled());
-			fImmediateButton.setSelection(fComponent.getImmediate());
-
 			fNameEntry.setEditable(isEditable());
-
 		}
 
 		// Ensure data object is defined
@@ -207,7 +170,7 @@ public class DSServiceComponentSection extends PDESection {
 		});
 		IActionBars actionBars = this.getPage().getEditor().getEditorSite()
 				.getActionBars();
-		// Attribute: title
+		// Attribute: class
 		fClassEntry
 				.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 					public void textValueChanged(FormEntry entry) {
@@ -218,20 +181,20 @@ public class DSServiceComponentSection extends PDESection {
 						fImplementation.setClassName(fClassEntry.getValue());
 					}
 
-					public void linkActivated(HyperlinkEvent e) {
+			public void linkActivated(HyperlinkEvent e) {
 						String value = fClassEntry.getValue();
 						value = handleLinkActivated(value, false);
 						if (value != null)
 							fClassEntry.setValue(value);
 					}
 
-					public void browseButtonSelected(FormEntry entry) {
+			public void browseButtonSelected(FormEntry entry) {
 						doOpenSelectionDialog(
 								IJavaElementSearchConstants.CONSIDER_CLASSES,
 								fClassEntry);
 					}
 
-				});
+		});
 	}
 
 	private String handleLinkActivated(String value, boolean isInter) {
