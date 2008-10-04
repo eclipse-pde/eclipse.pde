@@ -10,13 +10,12 @@
  *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
-package org.eclipse.pde.internal.ds.ui.editor;
+package org.eclipse.pde.internal.ds.ui.editor.contentassist;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.ui.SharedImages;
-import org.eclipse.pde.internal.ds.ui.editor.contentassist.TypeCompletionProposal;
 import org.eclipse.swt.graphics.Point;
 
 public class DSAttrCompletionProposal extends TypeCompletionProposal implements
