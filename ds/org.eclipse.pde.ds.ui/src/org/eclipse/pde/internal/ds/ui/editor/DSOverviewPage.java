@@ -57,7 +57,12 @@ public class DSOverviewPage extends PDEFormPage implements
 		Composite top = toolkit.createComposite(body);
 		top.setLayout(GridLayoutFactory.fillDefaults().create());
 		top.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
-				.span(4, 1).create());
+				.span(2, 1).create());
+
+		Composite topRight = toolkit.createComposite(body);
+		topRight.setLayout(GridLayoutFactory.fillDefaults().create());
+		topRight.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
+				.span(2, 1).create());
 		
 		Composite left = toolkit.createComposite(body);
 		left.setLayout(new GridLayout());
@@ -75,7 +80,8 @@ public class DSOverviewPage extends PDEFormPage implements
 				.span(4, 1).create());
 
 		// Sections
-		managedForm.addPart(new DSServiceComponentSection(this, top));
+		managedForm.addPart(new DSComponentSection(this, top));
+		managedForm.addPart(new DSOptionsSection(this, topRight));
 		managedForm.addPart(new DSReferenceSection(this, left));
 		managedForm.addPart(new DSProvideSection(this, right));
 		managedForm.addPart(new DSPropertiesSection(this, bottom));

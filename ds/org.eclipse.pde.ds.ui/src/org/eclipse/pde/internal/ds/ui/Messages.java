@@ -112,6 +112,9 @@ public class Messages extends NLS {
 	public static String DSSection_title;
 	public static String DSSection_description;
 	
+	public static String DSOptionsSection_title;
+	public static String DSOptionsSection_description;
+
 	public static String DSReferenceSection_title;
 	public static String DSReferenceSection_description;
 	public static String DSReferenceSection_add;
@@ -156,9 +159,6 @@ public class Messages extends NLS {
 	public static String DSServiceComponentSection_enabledButtonMessage;
 	
 	public static String DSService_title;
-	
-	
-	
 	
 
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$
