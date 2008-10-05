@@ -40,7 +40,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class DSErrorReporter extends XMLErrorReporter {
-
 	public static final int ERROR = 0;
 	public static final int WARNING = 1;
 	public static final int IGNORE = 2;
@@ -65,17 +64,16 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 			IDSComponent component = model.getDSComponent();
 
-			validateComponent(component);
-			validateImplementation(component.getImplementation());
-			validateService(component.getService());
+			validateComponentElement(component);
+			validateImplementationElement(component.getImplementation());
+			validateServiceElement(component.getService());
 			validatePropertyElements(component.getPropertyElements());
-			validateProperties(component.getPropertiesElements());
-			validateReferences(component.getReferences());
+			validatePropertiesElements(component.getPropertiesElements());
+			validateReferenceElements(component.getReferences());
 
 		} catch (CoreException e) {
 			Activator.log(e);
 		}
-
 	}
 
 	private void validateBoolean(Element element, Attr attr) {
@@ -89,13 +87,13 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void reportIllegalAttributeValue(Element element, Attr attr) {
 		if (attr == null || attr.getValue() == null || attr.getName() == null)
 			return;
-		String message = NLS.bind(Messages.DSErrorReporter_attrValue,
-				(new String[] { attr.getValue(), attr.getName() }));
+		String message = NLS.bind(Messages.DSErrorReporter_attrValue, attr
+				.getValue(), attr.getName());
 		report(message, getLine(element, attr.getName()), ERROR,
 				DSMarkerFactory.CAT_OTHER);
 	}
 
-	private void validateReferences(IDSReference[] references) {
+	private void validateReferenceElements(IDSReference[] references) {
 		Hashtable referencedNames = new Hashtable();
 		for (int i = 0; i < references.length; i++) {
 			IDSReference reference = references[i];
@@ -128,16 +126,16 @@ public class DSErrorReporter extends XMLErrorReporter {
 					.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_NAME));
 
 			// Validate duplicated names
-			validateDuplicatedNames(referencedNames, element);
+			validateReferenceElementNames(referencedNames, element);
 
 			// Validate target
-			 validateTarget(element);
+			validateTargetAttribute(element);
 
 		}
 
 	}
 
-	private void validateTarget(Element element) {
+	private void validateTargetAttribute(Element element) {
 		Attr attr = element
 				.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_TARGET);
 		if (attr != null) {
@@ -146,36 +144,41 @@ public class DSErrorReporter extends XMLErrorReporter {
 				Activator.getDefault().getBundle().getBundleContext()
 						.createFilter(value);
 			} catch (InvalidSyntaxException ise) {
-				reportInvalidTarget(element);
+				reportInvalidTarget(element, value);
 			}
 		}
 	}
 
-	private void reportInvalidTarget(Element element) {
-		report(Messages.DSErrorReporter_invalidTarget, getLine(element), ERROR,
-				DSMarkerFactory.CAT_OTHER);
+	private void reportInvalidTarget(Element element, String target) {
+		String name = element
+				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
+		String message = NLS.bind(Messages.DSErrorReporter_invalidTarget, name,
+				target);
+		report(message, getLine(element), ERROR, DSMarkerFactory.CAT_OTHER);
 	}
 
-	private void validateDuplicatedNames(Hashtable referencedNames,
+	private void validateReferenceElementNames(Hashtable referencedNames,
 			Element element) {
 		String name = element
 				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
 		if (referencedNames.containsKey(name)) {
-			reportRepeatedName(element, element
-					.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_NAME));
+			reportDuplicateReferenceElementName(element, name);
 		} else {
 			referencedNames.put(name, name);
 		}
 	}
 
-	private void reportRepeatedName(Element element, Attr attr) {
+	private void reportDuplicateReferenceElementName(Element element,
+			String name) {
+		Attr attr = element
+				.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
 		if (attr == null || attr.getValue() == null || attr.getName() == null)
 			return;
-		String message = NLS.bind(Messages.DSErrorReporter_repeatedName,
-				new String[] { attr.getName(), element.getNodeName() });
-		report(message, getLine(element, attr.getName()), ERROR,
+		String message = NLS.bind(
+				Messages.DSErrorReporter_duplicateReferenceName, name);
+		report(message,
+				getLine(element, IDSConstants.ATTRIBUTE_REFERENCE_NAME), ERROR,
 				DSMarkerFactory.CAT_OTHER);
-
 	}
 
 	private void validateReferencePolicy(Element element) {
@@ -191,14 +194,24 @@ public class DSErrorReporter extends XMLErrorReporter {
 					return;
 				}
 			}
-			reportIllegalAttributeValue(element, element
-					.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_POLICY));
+			reportIllegalPolicy(element, attribute);
 		}
 
 	}
 
+	private void reportIllegalPolicy(Element element, String policy) {
+		String name = element
+				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
+		String message = NLS.bind(Messages.DSErrorReporter_invalidPolicyValue,
+				name, policy);
+		Attr attr = element
+				.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_POLICY);
+		report(message, getLine(element, attr.getName()), ERROR,
+				DSMarkerFactory.CAT_OTHER);
+	}
+
 	private void validateReferenceCardinality(Element element) {
-		String attribute = element
+		String cardinality = element
 				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY);
 		String allowedValues[] = new String[] {
 				IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N,
@@ -206,21 +219,29 @@ public class DSErrorReporter extends XMLErrorReporter {
 				IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N,
 				IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE };
 
-		if (attribute != null) {
+		if (cardinality != null) {
 			for (int i = 0; i < allowedValues.length; i++) {
-				if (allowedValues[i].equalsIgnoreCase(attribute)) {
+				if (allowedValues[i].equalsIgnoreCase(cardinality)) {
 					return;
 				}
 			}
-			reportIllegalAttributeValue(
-					element,
-					element
-							.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY));
+			reportIllegalCardinality(element, cardinality);
 		}
 
 	}
 
-	private void validateProperties(IDSProperties[] propertiesElements) {
+	private void reportIllegalCardinality(Element element, String cardinality) {
+		String name = element.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
+		String message = NLS.bind(
+				Messages.DSErrorReporter_invalidCardinalityValue, name,
+				cardinality);
+		Attr attr = element
+				.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY);
+		report(message, getLine(element, attr.getName()), ERROR,
+				DSMarkerFactory.CAT_OTHER);
+	}
+
+	private void validatePropertiesElements(IDSProperties[] propertiesElements) {
 		for (int i = 0; i < propertiesElements.length; i++) {
 			IDSProperties properties = propertiesElements[i];
 			Element element = (Element) getDocumentRoot().getElementsByTagName(
@@ -232,9 +253,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY, ERROR);
 			} else {
-				validateResource(properties.getEntry(),
-						IDSConstants.ELEMENT_PROPERTIES,
-						IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY, i);
+				validatePropertiesElement(properties.getEntry(), i);
 			}
 
 		}
@@ -248,7 +267,8 @@ public class DSErrorReporter extends XMLErrorReporter {
 					property.getXMLTagName()).item(i);
 
 			// Validate Required Attributes
-			if (property.getName() == null) {
+			String name = property.getName();
+			if (name == null || name.length() == 0) {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_PROPERTY_NAME, ERROR);
 			}
@@ -287,31 +307,43 @@ public class DSErrorReporter extends XMLErrorReporter {
 		if (property.getPropertyValue() != null) {
 			if (property.getPropertyElemBody() != null
 					&& !property.getPropertyElemBody().equals("")) { //$NON-NLS-1$
-				reportSingleAndMultiplePropertyValues(element, property
-						.getPropertyValue(), property.getPropertyElemBody());
+				String propertyName = property.getPropertyName();
+				reportSingleAndMultiplePropertyValues(element, propertyName,
+						property
+						.getPropertyValue());
 			}
+			String propertyType = property.getPropertyType();
+			if (propertyType == null
+					|| propertyType
+							.equals(IDSConstants.VALUE_PROPERTY_TYPE_STRING))
+				return; // It's OK for a property of type "String" to have a
+						// value of "".
 			if (property.getPropertyValue().equals("")) { //$NON-NLS-1$
-				reportEmptyPropertyValue(element);
+				String propertyName = property.getPropertyName();
+				reportEmptyPropertyValue(element, propertyName);
 			}
 		} else {
 			if (property.getPropertyElemBody() == null
 					|| property.getPropertyElemBody().equals("")) { //$NON-NLS-1$
-				reportEmptyPropertyValue(element);
+				String propertyName = property.getPropertyName();
+				reportEmptyPropertyValue(element, propertyName);
 			}
 		}
 	}
 
-	private void reportEmptyPropertyValue(Element element) {
-		report(Messages.DSErrorReporter_emptyPropertyValue, getLine(element),
-				WARNING, DSMarkerFactory.CAT_OTHER);
+	private void reportEmptyPropertyValue(Element element, String propertyName) {
+		String message = NLS.bind(Messages.DSErrorReporter_emptyPropertyValue,
+				propertyName);
+		report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 
 	}
 
 	private void reportSingleAndMultiplePropertyValues(Element element,
-			String value, String body) {
+			String propertyName,
+			String value) {
 		String message = NLS.bind(
 				Messages.DSErrorReporter_singleAndMultipleAttrValue,
-				new String[] { value, body });
+				propertyName, value);
 		report(message,
 				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	}
@@ -342,7 +374,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	}
 
-	private void validateImplementation(IDSImplementation implementation) {
+	private void validateImplementationElement(IDSImplementation implementation) {
 		if (implementation != null) {
 			String className = implementation.getClassName();
 			Element element = (Element) getDocumentRoot().getElementsByTagName(
@@ -389,7 +421,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			if (fProject.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jp = JavaCore.create(fProject);
 				if (!DSJavaHelper.isOnClasspath(fullyQualifiedName, (jp))) {
-					reportResourceNotFound(elementName, attrName,
+					reportJavaTypeNotFound(elementName, attrName,
 							fullyQualifiedName, index);
 				}
 			}
@@ -397,17 +429,26 @@ public class DSErrorReporter extends XMLErrorReporter {
 		}
 	}
 
-	private void validateResource(String path, String elementName,
-			String attrName, int index) {
+	private void validatePropertiesElement(String path, int index) {
 		if (!fProject.exists(new Path(path))) {
-			reportResourceNotFound(elementName, attrName, path, index);
+			reportPropertiesFileNotFound(path, index);
 		}
+	}
+
+	private void reportPropertiesFileNotFound(String resource, int index) {
+		Element documentRoot = getDocumentRoot();
+		NodeList elementsByTagName = documentRoot
+				.getElementsByTagName(IDSConstants.ELEMENT_PROPERTIES);
+		Element element = (Element) elementsByTagName.item(index);
+		report(NLS
+				.bind(Messages.DSErrorReporter_cannotFindProperties, resource),
+				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	}
 
 	private void reportMissingRequiredAttribute(Element element,
 			String attName, int severity) {
 		String message = NLS.bind(Messages.DSErrorReporter_requiredAttribute,
-				(new String[] { attName, element.getNodeName() }));
+				attName, element.getNodeName());
 		report(message, getLine(element), severity, DSMarkerFactory.CAT_OTHER);
 	}
 
@@ -422,20 +463,18 @@ public class DSErrorReporter extends XMLErrorReporter {
 	 * @param index
 	 *            used to select an element among many from the same type
 	 */
-	private void reportResourceNotFound(String elementConstant,
+	private void reportJavaTypeNotFound(String elementConstant,
 			String attributeConstant, String resource, int index) {
 		Element documentRoot = getDocumentRoot();
 		NodeList elementsByTagName = documentRoot
 				.getElementsByTagName(elementConstant);
 		Element element = (Element) elementsByTagName.item(index);
-
-		String[] binds = new String[] { resource, attributeConstant };
-
-		report(NLS.bind(Messages.DSErrorReporter_cannotResolveResource, binds),
+		report(NLS.bind(Messages.DSErrorReporter_cannotFindJavaType, resource,
+				attributeConstant),
 				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	}
 
-	private void validateComponent(IDSComponent component) {
+	private void validateComponentElement(IDSComponent component) {
 		if (component != null) {
 			Element element = getDocumentRoot();
 			// Validate Required Attributes
@@ -468,12 +507,13 @@ public class DSErrorReporter extends XMLErrorReporter {
 					.getAttributeNode(IDSConstants.ATTRIBUTE_COMPONENT_NAME));
 			
 			// validate immediate values
-			validateImediate(element, component);
+			validateImmediateAttribute(element, component);
 
 		}
 	}
 
-	private void validateImediate(Element element, IDSComponent component) {
+	private void validateImmediateAttribute(Element element,
+			IDSComponent component) {
 		boolean isService = false;
 		boolean isFactory = component.getFactory() != null;
 		boolean isImmediate = component.getImmediate();
@@ -524,7 +564,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				DSMarkerFactory.CAT_OTHER);
 	}
 
-	private void validateService(IDSService service) {
+	private void validateServiceElement(IDSService service) {
 		if (service != null) {
 			Element element = (Element) getDocumentRoot().getElementsByTagName(
 					service.getXMLTagName()).item(0);
@@ -532,11 +572,11 @@ public class DSErrorReporter extends XMLErrorReporter {
 			validateBoolean(element, element
 					.getAttributeNode(IDSConstants.ATTRIBUTE_SERVICE_FACTORY));
 			
-			validateProvide(service.getProvidedServices());
+			validateProvideElement(service.getProvidedServices());
 		}
 	}
 
-	private void validateProvide(IDSProvide[] providedServices) {
+	private void validateProvideElement(IDSProvide[] providedServices) {
 		Hashtable providedInterfaces = new Hashtable();
 		for (int i = 0; i < providedServices.length; i++) {
 			IDSProvide provide = providedServices[i];
@@ -612,5 +652,4 @@ public class DSErrorReporter extends XMLErrorReporter {
 	// providedInterfaceString }));
 	// report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	// }
-
 }
