@@ -267,7 +267,11 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
 		environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
 
-		List bundles = getBundlesFromProductFile();
+		Collection bundles = null;
+		if (productFile.useFeatures())
+			bundles = director.getAssemblyData().getPlugins(config);
+		else
+			bundles = getBundlesFromProductFile();
 		BundleHelper helper = BundleHelper.getDefault();
 		boolean first = true;
 		for (Iterator iter = bundles.iterator(); iter.hasNext();) {
