@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,17 +13,16 @@ package org.eclipse.pde.internal.core.ant;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
-import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 
 public class PluginExportTask extends BaseExportTask {
 	protected IPluginModelBase[] fPlugins = new IPluginModelBase[0];
 
-	protected FeatureExportOperation getExportOperation() {
+	protected Job getExportJob(String jobName) {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fToDirectory;
 		info.useJarFormat = fUseJarFormat;
@@ -37,7 +36,7 @@ public class PluginExportTask extends BaseExportTask {
 			info.destinationDirectory = new File(home, fDestination).toString();
 		} else
 			info.destinationDirectory = fDestination;
-		return new PluginExportOperation(info);
+		return new PluginExportOperation(info, jobName);
 	}
 
 	public void setPlugins(String plugins) {

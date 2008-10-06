@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
-import com.ibm.icu.util.Calendar;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -19,14 +18,15 @@ import java.util.*;
 import javax.xml.parsers.*;
 import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
@@ -40,16 +40,13 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.InvalidSyntaxException;
 import org.w3c.dom.*;
 
-public class FeatureExportOperation implements IWorkspaceRunnable {
-
-	// write to the ant build listener log
-	private static boolean fHasErrors;
+public class FeatureExportOperation extends Job {
 
 	// Location where the build takes place
 	protected String fBuildTempLocation;
 	protected String fBuildTempMetadataLocation;
 	private String fDevProperties;
-
+	private static boolean fHasErrors;
 	protected HashMap fAntBuildProperties;
 
 	protected State fStateCopy;
@@ -57,36 +54,23 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 	protected static String FEATURE_POST_PROCESSING = "features.postProcessingSteps.properties"; //$NON-NLS-1$
 	protected static String PLUGIN_POST_PROCESSING = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
 
-	public static String getDate() {
-		final String empty = ""; //$NON-NLS-1$
-		int monthNbr = Calendar.getInstance().get(Calendar.MONTH) + 1;
-		String month = (monthNbr < 10 ? "0" : empty) + monthNbr; //$NON-NLS-1$
-
-		int dayNbr = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-		String day = (dayNbr < 10 ? "0" : empty) + dayNbr; //$NON-NLS-1$
-
-		int hourNbr = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-		String hour = (hourNbr < 10 ? "0" : empty) + hourNbr; //$NON-NLS-1$
-
-		int minuteNbr = Calendar.getInstance().get(Calendar.MINUTE);
-		String minute = (minuteNbr < 10 ? "0" : empty) + minuteNbr; //$NON-NLS-1$
-
-		return empty + Calendar.getInstance().get(Calendar.YEAR) + month + day + hour + minute;
-	}
-
 	protected FeatureExportInfo fInfo;
 
-	public FeatureExportOperation(FeatureExportInfo info) {
+	public FeatureExportOperation(FeatureExportInfo info, String name) {
+		super(name);
 		fInfo = info;
 		String qualifier = info.qualifier;
 		if (qualifier == null)
-			qualifier = getDate();
+			qualifier = QualifierReplacer.getDateQualifier();
 		QualifierReplacer.setGlobalQualifier(qualifier);
 		fBuildTempLocation = PDECore.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
 		fBuildTempMetadataLocation = PDECore.getDefault().getStateLocation().append("tempp2metadata").toString(); //$NON-NLS-1$
 	}
 
-	public void run(IProgressMonitor monitor) throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			createDestination();
 			String[][] configurations = fInfo.targets;
@@ -97,9 +81,11 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 			for (int i = 0; i < configurations.length; i++) {
 				for (int j = 0; j < fInfo.items.length; j++) {
 					if (monitor.isCanceled())
-						throw new OperationCanceledException();
+						return Status.CANCEL_STATUS;
 					try {
 						doExport((IFeatureModel) fInfo.items[j], configurations[i], new SubProgressMonitor(monitor, 9));
+					} catch (CoreException e) {
+						return e.getStatus();
 					} finally {
 						cleanup(configurations[i], new SubProgressMonitor(monitor, 1));
 					}
@@ -109,9 +95,14 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 				}
 			}
 		} catch (InvocationTargetException e) {
-			throwCoreException(e);
+			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getCause() != null ? e.getCause() : e);
+		}
+		if (fHasErrors) {
+			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_CompilationErrors, fInfo.destinationDirectory));
 		}
 		monitor.done();
+		return Status.OK_STATUS;
+
 	}
 
 	/**
@@ -171,13 +162,6 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 			if (scriptFile != null && scriptFile.exists())
 				scriptFile.delete();
 			monitor.done();
-		}
-	}
-
-	protected void throwCoreException(InvocationTargetException e) throws CoreException {
-		String message = e.getTargetException().getMessage();
-		if (message != null && message.length() > 0) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, message, null));
 		}
 	}
 
@@ -722,10 +706,6 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 	}
 
 	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
-	}
-
-	public boolean hasErrors() {
-		return fHasErrors;
 	}
 
 	public static void errorFound() {

@@ -101,4 +101,9 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		return fMultiPlatform != null && fMultiPlatform.getSelection();
 	}
 
+	protected void setEnabledForInstall(boolean enabled) {
+		super.setEnabledForInstall(enabled);
+		fExportMetadata.setEnabled(enabled);
+	}
+
 }

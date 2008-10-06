@@ -251,6 +251,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String CalculateUsesAction_jobName;
 
+	public static String ExportDestinationTab_InstallIntoCurrentPlatform;
+
 	public static String ExportPackageSection_uses;
 
 	public static String ExtensionElementBodyTextDetails_labelBodyText;
@@ -264,10 +266,6 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionsSection_sectionDescExtensionsMaster;
 
 	public static String JRESection_eeBoundJRE;
-
-	public static String JRESection_eeJre;
-
-	public static String JRESection_eeJreUnbound;
 
 	public static String JRESection_eePreference;
 
@@ -298,6 +296,10 @@ public class PDEUIMessages extends NLS {
 	public static String PluginContentMergeViewer_title;
 
 	public static String PluginExportJob_name;
+
+	public static String PluginExportWizard_InstallJobName;
+
+	public static String PluginExportWizard_ProblemWithExportLocation;
 
 	public static String PluginEditor_exportTooltip;
 
@@ -986,9 +988,7 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_DataDetailsSection_title;
 	public static String FeatureEditor_DataDetailsSection_desc;
 
-	public static String FeatureExportJob_problems;
 	public static String FeatureExportJob_name;
-	public static String FeatureExportJob_error;
 
 	public static String FeatureEditor_RequiresSection_title;
 	public static String FeatureEditor_RequiresSection_desc;
@@ -1387,7 +1387,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String BuildAction_Validate;
 	public static String BuildAction_Generate;
-	public static String BuildSiteJob_message;
 	public static String BuildAction_Update;
 	public static String BuildPage_custom;
 	public static String BuildPage_name;
@@ -1728,6 +1727,12 @@ public class PDEUIMessages extends NLS {
 	public static String RuntimeWorkbenchShortcut_select_run;
 	public static String RuntimeInfoSection_addEntry;
 	public static String RuntimeInfoSection_rename;
+	public static String RuntimeInstallJob_ErrorCouldNotFindUnitInRepo;
+
+	public static String RuntimeInstallJob_ErrorCouldNotGetIdOrVersion;
+
+	public static String RuntimeInstallJob_ErrorCouldntOpenProfile;
+
 	public static String BaseExtensionPointMainPage_pluginId_tooltip;
 	public static String BaseExtensionPointMainPage_schemaLocation_tooltip;
 	public static String BaseExtensionPointMainPage_pluginBrowse;
@@ -1936,10 +1941,6 @@ public class PDEUIMessages extends NLS {
 	public static String compilers_f_unresolved_plugins;
 	public static String compilers_f_unresolved_features;
 
-	public static String CompilersConfigurationBlock_rebuild_title;
-	public static String CompilersConfigurationBlock_rebuild_message;
-	public static String CompilersConfigurationBlock_rebuild_many_title;
-	public static String CompilersConfigurationBlock_rebuild_many_message;
 	public static String CompilersConfigurationBlock_building;
 
 	public static String ExportWizard_Plugin_pageTitle;
@@ -1970,7 +1971,6 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionDetails_id;
 	public static String ExtensionDetails_name;
 
-	public static String ExportJob_error_message;
 	public static String FeatureImportWizard_DetailedPage_problemsLoading;
 	public static String NewArchiveDialog_alreadyExists;
 	public static String UpdateClasspathAction_find;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -23,13 +24,13 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
+import org.eclipse.pde.internal.core.exports.ProductExportOperation;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.build.ProductExportJob;
 import org.eclipse.pde.internal.ui.wizards.product.SynchronizationOperation;
 import org.eclipse.ui.progress.IProgressConstants;
 
@@ -82,8 +83,9 @@ public class ProductExportWizard extends BaseExportWizard {
 		String rootDirectory = fPage.getRootDirectory();
 		if ("".equals(rootDirectory.trim())) //$NON-NLS-1$
 			rootDirectory = "."; //$NON-NLS-1$
-		ProductExportJob job = new ProductExportJob(info, fProductModel, rootDirectory);
+		ProductExportOperation job = new ProductExportOperation(info, PDEUIMessages.ProductExportJob_name, fProductModel.getProduct(), rootDirectory);
 		job.setUser(true);
+		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		job.schedule();
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_FEATURE_OBJ);
 	}

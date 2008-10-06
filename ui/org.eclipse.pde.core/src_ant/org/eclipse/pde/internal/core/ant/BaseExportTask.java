@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,15 +12,9 @@ package org.eclipse.pde.internal.core.ant;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 
 public abstract class BaseExportTask extends Task {
 
@@ -44,16 +38,7 @@ public abstract class BaseExportTask extends Task {
 		if (!fToDirectory && fZipFilename == null)
 			throw new BuildException("No zip file is specified"); //$NON-NLS-1$
 
-		Job job = new Job(PDECoreMessages.BaseExportTask_pdeExport) {
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					getExportOperation().run(new NullProgressMonitor());
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-				return Status.OK_STATUS;
-			}
-		};
+		Job job = getExportJob(PDECoreMessages.BaseExportTask_pdeExport);
 
 		// if running in ant runner, block until job is done.  Prevents Exiting before completed
 		// blocking will cause errors if done when running in regular runtime.
@@ -100,5 +85,5 @@ public abstract class BaseExportTask extends Task {
 		return false;
 	}
 
-	protected abstract FeatureExportOperation getExportOperation();
+	protected abstract Job getExportJob(String jobName);
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,17 +19,18 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.exports.SiteBuildOperation;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.site.SiteEditor;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.ui.*;
@@ -68,7 +69,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
-			BuildSiteJob job = new BuildSiteJob(models, fModel);
+			Job job = new SiteBuildOperation(models, fModel, PDEUIMessages.BuildSiteJob_name);
 			job.setUser(true);
 			job.schedule();
 			job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_SITE_OBJ);

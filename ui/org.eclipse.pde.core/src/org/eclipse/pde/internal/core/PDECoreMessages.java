@@ -63,6 +63,8 @@ public class PDECoreMessages extends NLS {
 	public static String SimpleCSIntro_0;
 	public static String TargetPlatform_exceptionThrown;
 
+	public static String FeatureBasedExportOperation_ProblemDuringExport;
+
 	public static String FeatureInfo_description;
 	public static String FeatureInfo_license;
 	public static String FeatureInfo_copyright;
@@ -245,6 +247,8 @@ public class PDECoreMessages extends NLS {
 	public static String ExportWizard_badDirectory;
 
 	public static String FeatureExportJob_taskName;
+
+	public static String FeatureExportOperation_CompilationErrors;
 
 	public static String TargetPlatformResetJob_resetTarget;
 

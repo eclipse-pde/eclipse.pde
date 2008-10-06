@@ -149,12 +149,26 @@ public class SWTFactory {
 	 * @return a new radio button
 	 */
 	public static Button createRadioButton(Composite parent, String label) {
+		return createRadioButton(parent, label, 1);
+	}
+
+	/**
+	 * Creates and returns a new radio button with the given
+	 * label.
+	 * 
+	 * @param parent parent control
+	 * @param label button label or <code>null</code>
+	 * @param hspan number of columns to horizontally span in the parent composite
+	 * @return a new radio button
+	 */
+	public static Button createRadioButton(Composite parent, String label, int hspan) {
 		Button button = new Button(parent, SWT.RADIO);
 		button.setFont(parent.getFont());
 		if (label != null) {
 			button.setText(label);
 		}
 		GridData gd = new GridData();
+		gd.horizontalSpan = hspan;
 		button.setLayoutData(gd);
 		SWTFactory.setButtonDimensionHint(button);
 		return button;

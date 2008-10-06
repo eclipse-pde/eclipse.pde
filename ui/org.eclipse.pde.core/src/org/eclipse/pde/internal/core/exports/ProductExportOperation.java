@@ -37,13 +37,16 @@ public class ProductExportOperation extends FeatureExportOperation {
 	private String fRoot;
 	private IProduct fProduct;
 
-	public ProductExportOperation(FeatureExportInfo info, IProduct product, String root) {
-		super(info);
+	public ProductExportOperation(FeatureExportInfo info, String name, IProduct product, String root) {
+		super(info, name);
 		fProduct = product;
 		fRoot = root;
 	}
 
-	public void run(IProgressMonitor monitor) throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IStatus run(IProgressMonitor monitor) {
 		String[][] configurations = fInfo.targets;
 		if (configurations == null)
 			configurations = new String[][] {{TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL()}};
@@ -65,7 +68,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 			} catch (IOException e) {
 				PDECore.log(e);
 			} catch (InvocationTargetException e) {
-				throwCoreException(e);
+				return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
+			} catch (CoreException e) {
+				return e.getStatus();
 			} finally {
 
 				// Append platform specific version information so that it is available for the p2 post script
@@ -86,27 +91,35 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 				// Clean up generated files
 				for (int j = 0; j < fInfo.items.length; j++) {
-					deleteBuildFiles(fInfo.items[j]);
+					try {
+						deleteBuildFiles(fInfo.items[j]);
+					} catch (CoreException e) {
+						PDECore.log(e);
+					}
 				}
 				cleanup(fInfo.targets == null ? null : configurations[i], new SubProgressMonitor(monitor, 1));
 			}
 		}
 
-		// Run postscript to generate p2 metadata for product
-		String postScript = PackageScriptGenerator.generateP2ProductScript(fFeatureLocation, fProduct.getModel().getInstallLocation(), versionAdvice);
-		if (postScript != null) {
-			try {
-				Map properties = new HashMap();
-				setP2MetaDataProperties(properties);
-				runScript(postScript, null, properties, monitor);
-			} catch (InvocationTargetException e) {
-				throwCoreException(e);
+		try {
+			// Run postscript to generate p2 metadata for product
+			String postScript = PackageScriptGenerator.generateP2ProductScript(fFeatureLocation, fProduct.getModel().getInstallLocation(), versionAdvice);
+			if (postScript != null) {
+				try {
+					Map properties = new HashMap();
+					setP2MetaDataProperties(properties);
+					runScript(postScript, null, properties, monitor);
+				} catch (InvocationTargetException e) {
+					return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
+				}
 			}
+		} catch (CoreException e) {
+			return e.getStatus();
 		}
 
 		cleanup(null, new SubProgressMonitor(monitor, 1));
-
 		monitor.done();
+		return Status.OK_STATUS;
 	}
 
 	/*

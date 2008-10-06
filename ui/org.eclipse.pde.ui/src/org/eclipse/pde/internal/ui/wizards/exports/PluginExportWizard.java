@@ -11,10 +11,15 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import javax.xml.parsers.*;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
+import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.build.PluginExportJob;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.build.RuntimeInstallJob;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.w3c.dom.*;
 
@@ -34,7 +39,7 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 	}
 
 	protected void scheduleExportJob() {
-		FeatureExportInfo info = new FeatureExportInfo();
+		final FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fPage.doExportToDirectory();
 		info.useJarFormat = fPage.useJARFormat();
 		info.exportSource = fPage.doExportSource();
@@ -44,10 +49,27 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 		info.signingInfo = fPage.useJARFormat() ? fPage.getSigningInfo() : null;
 		info.qualifier = fPage.getQualifier();
 
-		PluginExportJob job = new PluginExportJob(info);
+		final boolean installAfterExport = fPage.doInstall();
+		if (installAfterExport) {
+			RuntimeInstallJob.modifyInfoForInstall(info);
+		}
+
+		PluginExportOperation job = new PluginExportOperation(info, PDEUIMessages.PluginExportJob_name);
 		job.setUser(true);
-		job.schedule();
+		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PLUGIN_OBJ);
+		job.addJobChangeListener(new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				if (event.getResult().isOK() && installAfterExport) {
+					// Install the export into the current running platform
+					RuntimeInstallJob installJob = new RuntimeInstallJob(PDEUIMessages.PluginExportWizard_InstallJobName, info);
+					installJob.setUser(true);
+					installJob.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_FEATURE_OBJ);
+					installJob.schedule();
+				}
+			}
+		});
+		job.schedule();
 	}
 
 	protected Document generateAntTask() {

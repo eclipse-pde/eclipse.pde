@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.exports;
 
 import java.io.File;
 import java.util.Dictionary;
-
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.TargetPlatform;
@@ -20,8 +19,8 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 
 public class PluginExportOperation extends FeatureBasedExportOperation {
 
-	public PluginExportOperation(FeatureExportInfo info) {
-		super(info);
+	public PluginExportOperation(FeatureExportInfo info, String name) {
+		super(info, name);
 	}
 
 	protected void createPostProcessingFiles() {

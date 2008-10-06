@@ -20,15 +20,16 @@ import java.util.Locale;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.exports.SiteBuildOperation;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.build.BuildSiteJob;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -192,7 +193,7 @@ public class SiteEditor extends MultiSourceEditor {
 			return;
 		}
 
-		BuildSiteJob job = new BuildSiteJob(models, buildSiteModel);
+		Job job = new SiteBuildOperation(models, buildSiteModel, PDEUIMessages.BuildSiteJob_name);
 		job.setUser(true);
 		job.schedule();
 	}

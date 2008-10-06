@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.core.ant;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 public class FeatureExportTask extends BaseExportTask {
 	private IFeatureModel[] fFeatures = new IFeatureModel[0];
 
-	protected FeatureExportOperation getExportOperation() {
+	protected Job getExportJob(String jobName) {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fToDirectory;
 		info.useJarFormat = fUseJarFormat;
@@ -37,7 +37,7 @@ public class FeatureExportTask extends BaseExportTask {
 			info.destinationDirectory = new File(home, fDestination).toString();
 		} else
 			info.destinationDirectory = fDestination;
-		return new FeatureExportOperation(info);
+		return new FeatureExportOperation(info, jobName);
 	}
 
 	public void setFeatures(String features) {

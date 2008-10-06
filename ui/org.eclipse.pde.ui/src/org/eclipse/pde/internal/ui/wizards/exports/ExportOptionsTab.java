@@ -12,8 +12,8 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -36,7 +36,6 @@ public class ExportOptionsTab extends AbstractExportTab {
 	private Button fSaveAsAntButton;
 	private Combo fAntCombo;
 	private Button fBrowseAnt;
-
 	private Button fQualifierButton;
 	private Text fQualifierText;
 
@@ -150,7 +149,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	private String getInitialQualifierText(IDialogSettings settings) {
 		String qualifier = settings.get(S_QUALIFIER_NAME);
 		if (qualifier == null || qualifier.equals("")) //$NON-NLS-1$
-			return FeatureExportOperation.getDate();
+			return QualifierReplacer.getDateQualifier();
 		return qualifier;
 	}
 
@@ -234,6 +233,19 @@ public class ExportOptionsTab extends AbstractExportTab {
 				return qualifier;
 		}
 		return null;
+	}
+
+	/**
+	 * Provides the destination tab the ability to disable the JAR shape
+	 * and metadata generation options when the export will be installed
+	 * into the current running platform.
+	 * 
+	 * @param enabled whether to enable or disable the controls
+	 */
+	protected void setEnabledForInstall(boolean enabled) {
+		fQualifierButton.setEnabled(enabled);
+		fQualifierText.setEnabled(enabled);
+		fJarButton.setEnabled(enabled);
 	}
 
 }

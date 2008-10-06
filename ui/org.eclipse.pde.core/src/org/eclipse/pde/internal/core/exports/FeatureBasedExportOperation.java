@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,28 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public abstract class FeatureBasedExportOperation extends FeatureExportOperation {
 
 	protected String fFeatureLocation;
 
-	public FeatureBasedExportOperation(FeatureExportInfo info) {
-		super(info);
+	public FeatureBasedExportOperation(FeatureExportInfo info, String name) {
+		super(info, name);
 	}
 
-	public void run(IProgressMonitor monitor) throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			createDestination();
 			monitor.beginTask("", 10); //$NON-NLS-1$
@@ -45,16 +44,27 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 				createPostProcessingFiles();
 			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), new SubProgressMonitor(monitor, 7));
 		} catch (IOException e) {
+			PDECore.log(e);
+		} catch (CoreException e) {
+			return e.getStatus();
 		} catch (InvocationTargetException e) {
-			throwCoreException(e);
+			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
 		} finally {
 			for (int i = 0; i < fInfo.items.length; i++) {
 				if (fInfo.items[i] instanceof IModel)
-					deleteBuildFiles(fInfo.items[i]);
+					try {
+						deleteBuildFiles(fInfo.items[i]);
+					} catch (CoreException e) {
+						PDECore.log(e);
+					}
 			}
 			cleanup(null, new SubProgressMonitor(monitor, 3));
 			monitor.done();
 		}
+		if (monitor.isCanceled()) {
+			return Status.CANCEL_STATUS;
+		}
+		return Status.OK_STATUS;
 	}
 
 	protected abstract void createPostProcessingFiles();
