@@ -26,29 +26,33 @@ import org.osgi.framework.Filter;
 
 public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConstants, IXMLConstants, IBuildPropertiesConstants {
 	public static class ClasspathElement {
-		private String path;
+		private final String path;
 		private String accessRules;
-		
+
 		/**
 		 * Create a ClasspathElement object
 		 * @param path
 		 * @param accessRules
 		 * @throws NullPointerException if path is null
 		 */
-		public ClasspathElement(String path, String accessRules){
+		public ClasspathElement(String path, String accessRules) {
 			this.path = path;
 			this.accessRules = accessRules;
 		}
+
 		public String toString() {
 			return path;
 		}
+
 		public String getPath() {
 			return path;
 		}
-		public String getAccessRules(){
+
+		public String getAccessRules() {
 			return accessRules;
 		}
-		public void addRules(String newRule){
+
+		public void addRules(String newRule) {
 			if (accessRules.equals("") || accessRules.equals(newRule)) //$NON-NLS-1$
 				return;
 			if (!newRule.equals("")) { //$NON-NLS-1$
@@ -58,6 +62,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			accessRules = newRule;
 			return;
 		}
+
 		/**
 		 * ClasspathElement objects are equal if they have the same path.
 		 * Access rules are not considered.
@@ -69,23 +74,24 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			}
 			return false;
 		}
+
 		public int hashCode() {
 			return path.hashCode();
 		}
-		
+
 		public static String normalize(String path) {
 			//always use '/' as a path separator to help with comparing paths in equals
 			return path.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+
 	private static final String EXCLUDE_ALL_RULE = "?**/*"; //$NON-NLS-1$
-	
-	private ModelBuildScriptGenerator generator;
+
+	private final ModelBuildScriptGenerator generator;
 	private Map visiblePackages = null;
 	private Map pathElements = null;
 	private boolean allowBinaryCycles = false;
-	
+
 	public ClasspathComputer3_0(ModelBuildScriptGenerator modelGenerator) {
 		this.generator = modelGenerator;
 	}
@@ -108,7 +114,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		visiblePackages = getVisiblePackages(model);
 
 		allowBinaryCycles = AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
-		
+
 		//PREREQUISITE
 		addPrerequisites(model, classpath, location, pluginChain, addedPlugins);
 
@@ -124,21 +130,21 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		addVisiblePackagesFromState(helper, model, packages);
 		if (model.getHost() != null)
-			addVisiblePackagesFromState(helper, (BundleDescription)model.getHost().getSupplier(), packages);
+			addVisiblePackagesFromState(helper, (BundleDescription) model.getHost().getSupplier(), packages);
 		return packages;
 	}
-	
+
 	private void addVisiblePackagesFromState(StateHelper helper, BundleDescription model, Map packages) {
 		ExportPackageDescription[] exports = helper.getVisiblePackages(model);
 		for (int i = 0; i < exports.length; i++) {
 			BundleDescription exporter = exports[i].getExporter();
 			if (exporter == null)
 				continue;
-			
+
 			boolean discouraged = helper.getAccessCode(model, exports[i]) == StateHelper.ACCESS_DISCOURAGED;
 			String pattern = exports[i].getName().replaceAll("\\.", "/") + "/*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			String rule = (discouraged ? '~' : '+') + pattern;
-			
+
 			String rules = (String) packages.get(exporter.getSymbolicName());
 			if (rules != null) {
 				if (rules.indexOf(rule) == -1)
@@ -146,10 +152,11 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			} else {
 				rules = rule;
 			}
-				
+
 			packages.put(exporter.getSymbolicName(), rules);
 		}
 	}
+
 	/**
 	 * Add the specified plugin (including its jars) and its fragments 
 	 * @param plugin
@@ -206,12 +213,12 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				continue;
 			if (matchFilter(fragments[i]) == false)
 				continue;
-			if (! afterPlugin && isPatchFragment(fragments[i])) {
+			if (!afterPlugin && isPatchFragment(fragments[i])) {
 				addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
 				addRuntimeLibraries(fragments[i], classpath, baseLocation);
 				continue;
 			}
-			if ( (afterPlugin && !isPatchFragment(fragments[i])) || all) {
+			if ((afterPlugin && !isPatchFragment(fragments[i])) || all) {
 				addRuntimeLibraries(fragments[i], classpath, baseLocation);
 				addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
 				continue;
@@ -281,7 +288,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		//only add access rules to libraries that are not part of the current bundle
 		//and are not this bundle's host if we are a fragment
 		BundleDescription currentBundle = generator.getModel();
-		if (model != null && model != currentBundle && (currentBundle.getHost() == null || currentBundle.getHost().getSupplier() != model) ) {
+		if (model != null && model != currentBundle && (currentBundle.getHost() == null || currentBundle.getHost().getSupplier() != model)) {
 			String packageKey = pluginId;
 			if (model.isResolved() && model.getHost() != null) {
 				packageKey = ((BundleDescription) model.getHost().getSupplier()).getSymbolicName();
@@ -309,20 +316,20 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null)
 				path = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
 			secondaryPath = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/../" + model.getSymbolicName() + '_' + model.getVersion() + '/' + libraryName; //$NON-NLS-1$
-		
+
 		}
-		
+
 		addClasspathElementWithRule(classpath, path, rules);
 		if (secondaryPath != null) {
 			addClasspathElementWithRule(classpath, secondaryPath, rules);
-		}	
+		}
 	}
 
 	private void addClasspathElementWithRule(List classpath, String path, String rules) {
 		String normalizedPath = ClasspathElement.normalize(path);
 		ClasspathElement existing = (ClasspathElement) pathElements.get(normalizedPath);
-		if (existing != null){
-			existing.addRules( rules);
+		if (existing != null) {
+			existing.addRules(rules);
 		} else {
 			ClasspathElement element = new ClasspathElement(normalizedPath, rules);
 			classpath.add(element);
