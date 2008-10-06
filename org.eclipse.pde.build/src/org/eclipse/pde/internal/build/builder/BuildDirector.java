@@ -78,8 +78,8 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 * @return List of BundleDescription
 	 * @throws CoreException
 	 */
-	protected List computeElements(BuildTimeFeature feature) throws CoreException {
-		List computedElements = new ArrayList(5);
+	protected Set computeElements(BuildTimeFeature feature) throws CoreException {
+		Set computedElements = new LinkedHashSet(5);
 		FeatureEntry[] pluginList = feature.getPluginEntries();
 		for (int i = 0; i < pluginList.length; i++) {
 			FeatureEntry entry = pluginList[i];
@@ -223,7 +223,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 * @throws CoreException
 	 */
 	private void generateChildrenScripts(BuildTimeFeature feature) throws CoreException {
-		List plugins = computeElements(feature);
+		Set plugins = computeElements(feature);
 		String suffix = generateFeatureVersionSuffix(feature);
 		if (suffix != null) {
 			Version versionId = new Version(feature.getVersion());

@@ -561,12 +561,12 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 * @throws CoreException
 	 */
 	protected void generateAllPluginsTarget() throws CoreException {
-		List plugins = computeElements();
-		plugins = Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins);
+		Set plugins = computeElements();
+		List sortedPlugins = Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins);
 		script.println();
 		script.printTargetDeclaration(TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
-		Set writtenCalls = new HashSet(plugins.size());
-		for (Iterator iter = plugins.iterator(); iter.hasNext();) {
+		Set writtenCalls = new HashSet(sortedPlugins.size());
+		for (Iterator iter = sortedPlugins.iterator(); iter.hasNext();) {
 			BundleDescription current = (BundleDescription) iter.next();
 			//If it is not a compiled element, then we don't generate a call
 			Properties bundleProperties = (Properties) current.getUserObject();
@@ -597,8 +597,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetEnd();
 	}
 
-	protected List computeElements() throws CoreException {
-		List computedElements = new ArrayList(5);
+	protected Set computeElements() throws CoreException {
+		Set computedElements = new LinkedHashSet(5);
 		FeatureEntry[] pluginList = feature.getPluginEntries();
 		for (int i = 0; i < pluginList.length; i++) {
 			FeatureEntry entry = pluginList[i];

@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
@@ -547,18 +547,18 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertResourceFile(featureFolder, "F_1.0.0.jar");
 		assertResourceFile(fooFolder, "foo_1.0.0.jar");
 	}
-	
+
 	public void testBug237475() throws Exception {
 		IFolder buildFolder = newTest("237475");
-		
-		Utils.generateFeature(buildFolder, "f", new String[] {"opt;optional=true"}, new String[] { "org.eclipse.osgi"} );
+
+		Utils.generateFeature(buildFolder, "f", new String[] {"opt;optional=true"}, new String[] {"org.eclipse.osgi"});
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f"));
 	}
-	
+
 	public void testBug247091() throws Exception {
 		IFolder buildFolder = newTest("247091");
-		
-		Utils.generateFeature(buildFolder, "sdk", new String[] { "f;version=0.0.0", "f;version=1.0.0.qualifier", "f;version=1.0.0.vqualifier"}, null);
+
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"f;version=0.0.0", "f;version=1.0.0.qualifier", "f;version=1.0.0.vqualifier"}, null);
 		Utils.generateFeature(buildFolder, "f", null, null, "2.0.0");
 		IFolder f = buildFolder.getFolder("features/f");
 		f.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -569,108 +569,115 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateFeature(buildFolder, "f", null, null, "1.0.0.v5678");
 		f.refreshLocal(IResource.DEPTH_INFINITE, null);
 		f.move(new org.eclipse.core.runtime.Path("F3"), true, null);
-		
+
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk"));
-		
-		assertLogContainsLines(buildFolder.getFile("features/sdk/build.xml"), new String[] { "../F1", "../F2", "../F3" } );
+
+		assertLogContainsLines(buildFolder.getFile("features/sdk/build.xml"), new String[] {"../F1", "../F2", "../F3"});
 	}
-	
+
 	public void testBug247091_2() throws Exception {
 		VersionRange range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0");
-		assertTrue( range.getIncludeMinimum());
+		assertTrue(range.getIncludeMinimum());
 		assertTrue(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0"));
 		assertEquals(range.getMaximum(), new Version("1.0.0"));
-		
+
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.qualifier");
-		assertTrue( range.getIncludeMinimum());
+		assertTrue(range.getIncludeMinimum());
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0"));
 		assertEquals(range.getMaximum(), new Version("1.0.1"));
-		
+
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.zqualifier");
-		assertTrue( range.getIncludeMinimum());
+		assertTrue(range.getIncludeMinimum());
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0.z"));
 		assertEquals(range.getMaximum(), new Version("1.0.1"));
-		
+
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abcqualifier");
-		assertTrue( range.getIncludeMinimum());
+		assertTrue(range.getIncludeMinimum());
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0.abc"));
 		assertEquals(range.getMaximum(), new Version("1.0.0.abd"));
-		
+
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzqualifier");
-		assertTrue( range.getIncludeMinimum());
+		assertTrue(range.getIncludeMinimum());
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0.abz"));
 		assertEquals(range.getMaximum(), new Version("1.0.0.ac"));
-		
-		
+
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzzqualifier");
-		assertTrue( range.getIncludeMinimum());
+		assertTrue(range.getIncludeMinimum());
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0.abzz"));
 		assertEquals(range.getMaximum(), new Version("1.0.0.ac"));
 	}
-	
+
 	public void testBug246127() throws Exception {
 		IFolder buildFolder = newTest("246127");
-		
+
 		IFolder base = Utils.createFolder(buildFolder, "base");
 		IFolder A = Utils.createFolder(base, "dropins/eclipse/plugins/A");
 		IFolder B = Utils.createFolder(base, "dropins/plugins/B");
 		IFolder C = Utils.createFolder(base, "dropins/random/plugins/C");
 		IFolder D = Utils.createFolder(base, "dropins/other/eclipse/plugins/D");
 		IFolder E = Utils.createFolder(base, "dropins/E");
-		
+
 		Utils.generateBundle(A, "A");
 		Utils.generateBundle(B, "B");
 		Utils.generateBundle(C, "C");
 		Utils.generateBundle(D, "D");
 		Utils.generateBundle(E, "E");
-		
-		Utils.generateFeature(buildFolder, "sdk", null, new String [] { "A", "B", "C", "D", "E" } );
-		
+
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"A", "B", "C", "D", "E"});
+
 		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
 		props.put("baseLocation", base.getLocation().toOSString());
 		generateScripts(buildFolder, props);
-		
+
 		//success if we found all the bundles and hence did not throw an exception
 	}
-	
+
 	public void testBug247232() throws Exception {
 		IFolder buildFolder = newTest("247232");
 
 		Utils.generateBundleManifest(buildFolder, "org.foo", "1.2.2.2.3", null);
 		Utils.generatePluginBuildProperties(buildFolder, null);
 		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
-		
+
 		try {
 			generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "org.foo"));
-		} catch(Exception e) {
+		} catch (Exception e) {
 			//ok
 		}
-		assertLogContainsLines(buildFolder.getFile("log.log"), new String [] {"Problem occurred while considering plugin: Test Bundle org.foo.", "invalid format"});
+		assertLogContainsLines(buildFolder.getFile("log.log"), new String[] {"Problem occurred while considering plugin: Test Bundle org.foo.", "invalid format"});
 	}
 
-	public void testBug248767() throws Exception {
+	public void testBug248767_212467() throws Exception {
 		IFolder rootFolder = newTest("248767");
 		IFolder build1 = rootFolder.getFolder("build1");
 		IFolder build2 = rootFolder.getFolder("build2");
 
 		// Build 1 compiles B against source A
-		Utils.generateFeature(build1, "F1", null, new String[] {"A;unpack=true", "org.eclipse.osgi", "B"});
+		// A must compile first, testing flatten dependencies (non-flattened order is depth first putting B before A).
+		Utils.generateFeature(build1, "F1", new String[] {"F2"}, new String[] {"A;unpack=true", "org.eclipse.osgi"});
+		Utils.generateFeature(build1, "F2", null, new String[] {"B"});
+
 		Properties properties = BuildConfiguration.getBuilderProperties(build1);
 		properties.put("topLevelElementId", "F1");
 		properties.put("archivesFormat", "*,*,*-folder");
 		properties.put("pluginPath", build2.getLocation().toOSString());
+		properties.put("flattenDependencies", "true");
 		Utils.storeBuildProperties(build1, properties);
 		runBuild(build1);
-		
+
 		build1.refreshLocal(IResource.DEPTH_INFINITE, null);
-		build1.getFolder("tmp/eclipse/plugins/B_1.0.0").delete(true, null);
+
+		assertResourceFile(build1, "compile.F1.xml");
+		assertLogContainsLines(build1.getFile("compile.F1.xml"), new String[] {"plugins/A", "plugins/B"});
 		
+		build1.getFolder("tmp/eclipse/plugins/B_1.0.0").delete(true, null);
+
 		//Build 2 compiles B against binary A
 		Utils.generateFeature(build2, "F2", null, new String[] {"A", "B"});
 		properties = BuildConfiguration.getBuilderProperties(build2);

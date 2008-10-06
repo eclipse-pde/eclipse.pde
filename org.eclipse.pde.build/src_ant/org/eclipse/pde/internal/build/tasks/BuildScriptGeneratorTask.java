@@ -9,7 +9,7 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.File;
-import java.util.*;
+import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.build.site.QualifierReplacer;
  * Generate build scripts for the listed elements. This is the implementation of the "eclipse.buildScript" Ant task.
  */
 public class BuildScriptGeneratorTask extends Task {
-	private Properties antProperties = new Properties();
+	private final Properties antProperties = new Properties();
 	/**
 	 * The application associated with this Ant task.
 	 */
@@ -46,6 +46,10 @@ public class BuildScriptGeneratorTask extends Task {
 	 */
 	public void setDevEntries(String devEntries) {
 		generator.setDevEntries(devEntries);
+	}
+
+	public void setFlattenDependencies(boolean flatten) {
+		generator.setFlattenDependencies(flatten);
 	}
 
 	/**
@@ -270,7 +274,7 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setPlatformProperties(String filename) {
 		generator.setPlatformProperties(filename);
 	}
-	
+
 	public void setFilterP2Base(boolean value) {
 		generator.setFilterP2Base(value);
 	}

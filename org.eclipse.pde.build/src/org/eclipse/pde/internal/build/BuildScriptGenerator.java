@@ -71,6 +71,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	private Properties antProperties = null;
 	private BundleDescription[] bundlesToBuild;
+	private boolean flatten = false;
 
 	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat"; //$NON-NLS-1$
 
@@ -209,24 +210,23 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 		if (generator != null) {
 			try {
+				String[] featureInfo = null;
 				for (Iterator i = features.iterator(); i.hasNext();) {
-					String[] featureInfo = getNameAndVersion((String) i.next());
+					featureInfo = getNameAndVersion((String) i.next());
 					BuildTimeFeature feature = getSite(false).findFeature(featureInfo[0], featureInfo[1], true);
 					generator.generate(feature);
 				}
 
-				if (generateAssembleScript == true) {
-					String[] featureInfo = null;
-					if (features.size() == 1)
-						featureInfo = getNameAndVersion((String) features.get(0));
-					else
-						featureInfo = new String[] {"all"}; //$NON-NLS-1$
+				if (features.size() != 1)
+					featureInfo = new String[] {"all"}; //$NON-NLS-1$
 
+				if (flatten)
+					generateCompileScript(assemblageInformation, featureInfo);
+
+				if (generateAssembleScript == true) {
 					generateAssembleScripts(assemblageInformation, featureInfo, generator.siteFactory);
 
-					if (features.size() == 1)
-						featureInfo = getNameAndVersion((String) features.get(0));
-					else
+					if (features.size() != 1)
 						featureInfo = new String[] {""}; //$NON-NLS-1$
 
 					generatePackageScripts(assemblageInformation, featureInfo, generator.siteFactory);
@@ -369,6 +369,15 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assembler.setGroupConfigs(groupConfigs);
 		assembler.setVersionsList(generateVersionsList);
 		assembler.generate();
+	}
+
+	private void generateCompileScript(AssemblyInformation assemblageInformation, String[] featureInfo) throws CoreException {
+		CompilationScriptGenerator generator = new CompilationScriptGenerator();
+		generator.setBuildSiteFactory(siteFactory);
+		generator.setWorkingDirectory(workingDirectory);
+		generator.setAssemblyData(assemblageInformation);
+		generator.setFeatureId(featureInfo[0]);
+		generator.generate();
 	}
 
 	public void setGenerateArchive(boolean generateArchive) {
@@ -529,5 +538,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	public void setBundles(BundleDescription[] bundles) {
 		bundlesToBuild = bundles;
+	}
+
+	public void setFlattenDependencies(boolean flatten) {
+		this.flatten = flatten;
 	}
 }

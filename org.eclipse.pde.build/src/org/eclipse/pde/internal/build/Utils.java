@@ -428,7 +428,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return copiedFiles;
 	}
 
-	public static List extractPlugins(List initialList, List toExtract) {
+	public static List extractPlugins(List initialList, Set toExtract) {
 		//TODO This algorithm needs to be  improved
 		if (initialList.size() == toExtract.size())
 			return initialList;

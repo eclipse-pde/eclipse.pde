@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,7 +16,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	// List all the features and plugins to assemble sorted on a per config basis 
 	//	key: string[] representing the tuple of a config 
 	// value: (AssemblyLevelConfigInfo) representing the info for the given config
-	private Map assembleInformation = new HashMap(8);
+	private final Map assembleInformation = new HashMap(8);
 
 	public AssemblyInformation() {
 		// Initialize the content of the assembly information with the configurations 
@@ -68,7 +68,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		return result;
 	}
 
-	public Collection getAllCompiledPlugins() {
+	public Set getAllCompiledPlugins() {
 		Collection pluginsByConfig = assembleInformation.values();
 		Set result = new LinkedHashSet();
 		for (Iterator iter2 = pluginsByConfig.iterator(); iter2.hasNext();) {
@@ -130,11 +130,11 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	// All the information that will go into the assemble file for a specific info
 	protected class AssemblyLevelConfigInfo {
 		// the plugins that are contained into this config
-		private Collection plugins = new LinkedHashSet(20);
+		private final Collection plugins = new LinkedHashSet(20);
 		// the features that are contained into this config
-		private ArrayList features = new ArrayList(7);
+		private final ArrayList features = new ArrayList(7);
 		// indicate whether root files needs to be copied and where they are coming from
-		private LinkedList rootFileProviders = new LinkedList();
+		private final LinkedList rootFileProviders = new LinkedList();
 
 		public void addRootFileProvider(BuildTimeFeature feature) {
 			if (rootFileProviders.contains(feature))

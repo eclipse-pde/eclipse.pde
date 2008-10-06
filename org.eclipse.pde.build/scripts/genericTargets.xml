@@ -85,6 +85,7 @@
 		filteredDependencyCheck="${filteredDependencyCheck}"
 		platformProperties="${platformProperties}"
 		filterP2Base="${filterP2Base}"
+		flattenDependencies="${flattenDependencies}"
 	/>
 </target>
 
@@ -92,11 +93,20 @@
 <!-- Run build.xml for a single element-->
 <!-- ===================================================================== -->
 <target name="processElement" description="Processing build scripts..." depends="init">
+	<antcall target="processViaFeature" />
+	<antcall target="processFlat" />
+</target>
+
+<target name="processViaFeature" unless="flattenDependencies" description="Compile in order of feature containment">
 	<ant antfile="build.xml" dir="${elementPath}" target="build.jars">
 		<property name="target" value="build.jars"/>
 	</ant>
 </target>
-
+	
+<target name="processFlat" if="flattenDependencies" description="Compile in flattened dependency order">
+	<ant antfile="compile.${id}.xml" dir="${buildDirectory}"/>
+</target>
+	
 <!-- **********************
 1) the gather targets do more than just gather.  These are packaging targets.
 We need to continue ot separate the two concepts (gather and package) as 
