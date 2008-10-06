@@ -171,7 +171,7 @@ public class RuntimeInstallJob extends Job {
 		RequiredCapability newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(new Version(version), true, new Version(version), true), null, false, false);
 		iuPatchDescription.setRequirementChanges(new RequirementChange[] {new RequirementChange(applyTo, newValue)});
 
-		iuPatchDescription.setApplicabilityScope(new RequiredCapability[][] {{}});
+		iuPatchDescription.setApplicabilityScope(new RequiredCapability[0][0]);
 
 		iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(applyTo.getNamespace(), applyTo.getName(), applyTo.getRange(), null, false, false, false));
 
