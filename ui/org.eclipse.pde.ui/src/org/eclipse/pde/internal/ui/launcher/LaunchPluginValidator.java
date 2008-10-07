@@ -55,13 +55,12 @@ public class LaunchPluginValidator {
 		String value2 = configuration.getAttribute("extplugins", (String) null); //$NON-NLS-1$
 		if (value2 != null) {
 			wc.setAttribute("extplugins", (String) null); //$NON-NLS-1$
-			if (value2.indexOf(';') != -1)
+			if (value2.indexOf(';') != -1) {
 				value2 = value2.replace(';', ',');
-			else if (value2.indexOf(':') != -1)
+			} else if (value2.indexOf(':') != -1) {
 				value2 = value2.replace(':', ',');
-			value2 = (value2.length() == 0 || value2.equals(",")) //$NON-NLS-1$
-			? null
-					: value2.substring(0, value2.length() - 1);
+			}
+			value2 = (value2.length() == 0 || value2.equals(",")) ? null : value2.substring(0, value2.length() - 1); //$NON-NLS-1$
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, value2);
 		}
 
@@ -190,27 +189,31 @@ public class LaunchPluginValidator {
 		HashSet set = new HashSet();
 		String ids = configuration.getAttribute(attribute, (String) null);
 		if (ids != null) {
-			boolean targetPlatform = attribute.equals(IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
-			StringTokenizer tok = new StringTokenizer(ids, ","); //$NON-NLS-1$
-			while (tok.hasMoreTokens()) {
-				String token = tok.nextToken();
-				int index = token.indexOf(BundleLauncherHelper.VERSION_SEPARATOR);
-				String id = (index == -1) ? token : token.substring(0, index);
-				String version = (index == -1) ? null : token.substring(index + 1);
+			String[] entries = ids.split(","); //$NON-NLS-1$
+			Map unmatchedEntries = new HashMap();
+			for (int i = 0; i < entries.length; i++) {
+				int index = entries[i].indexOf(BundleLauncherHelper.VERSION_SEPARATOR);
+				String id = (index == -1) ? entries[i] : entries[i].substring(0, index);
+				String version = (index == -1) ? null : entries[i].substring(index + 1);
 				ModelEntry entry = PluginRegistry.findEntry(id);
 				if (entry != null) {
-					IPluginModelBase models[] = targetPlatform ? entry.getExternalModels() : entry.getWorkspaceModels();
-					for (int i = 0; i < models.length; i++) {
+					IPluginModelBase matchingModels[] = attribute.equals(IPDELauncherConstants.SELECTED_TARGET_PLUGINS) ? entry.getExternalModels() : entry.getWorkspaceModels();
+					for (int j = 0; j < matchingModels.length; j++) {
 						// the logic here is this (see bug 225644)
 						// a) if we come across a bundle that has the right version, immediately add it
 						// b) if there's no version, add it
 						// c) if there's only one instance of that bundle in the list of ids... add it
-						String[] counter = ids.split(id); // hack to get how many bundles in list of ids
-						if (models[i].getPluginBase().getVersion().equals(version) || version == null || (counter.length == 2 && models.length == 1))
-							set.add(models[i]);
+						if (version == null || matchingModels[j].getPluginBase().getVersion().equals(version)) {
+							set.add(matchingModels[j]);
+						} else if (matchingModels.length == 1) {
+							if (unmatchedEntries.remove(id) == null) {
+								unmatchedEntries.put(id, matchingModels[j]);
+							}
+						}
 					}
 				}
 			}
+			set.addAll(unmatchedEntries.values());
 		}
 		return set;
 	}
