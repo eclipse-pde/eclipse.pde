@@ -24,14 +24,15 @@ import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.core.IDSService;
 
 /**
- * Handles the creation of document nodes representing the types of elements that
- * can exist in a declarative services xml file.
+ * Handles the creation of document nodes representing the types of elements
+ * that can exist in a declarative services xml file.
  * 
  * @since 3.4
  * @see DSModel
  * @see DSDocumentHandler
  */
-public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentNodeFactory, IDSDocumentFactory {
+public class DSDocumentFactory extends DocumentNodeFactory implements
+		IDocumentNodeFactory, IDSDocumentFactory {
 	private DSModel fModel;
 
 	public DSDocumentFactory(DSModel model) {
@@ -44,74 +45,94 @@ public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentN
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String,
 	 *      org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent) {
+	public IDocumentElementNode createDocumentNode(String name,
+			IDocumentElementNode parent) {
+
 		if (isRoot(name)) { // Root
 			return (IDocumentElementNode) createComponent();
 		}
-		if (isImplementation(name)){ 
-			return (IDocumentElementNode) createImplementation();
+
+		if (parent.getXMLTagName().equals(IDSConstants.ELEMENT_COMPONENT)) {
+			if (isImplementation(name)) {
+				return (IDocumentElementNode) createImplementation();
+			}
+			if (isProperties(name)) {
+				return (IDocumentElementNode) createProperties();
+			}
+			if (isProperty(name)) {
+				return (IDocumentElementNode) createProperty();
+			}
+			if (isService(name)) {
+				return (IDocumentElementNode) createService();
+			}
+			if (isReference(name)) {
+				return (IDocumentElementNode) createReference();
+			}
 		}
-		if (isProperties(name)){
-			return (IDocumentElementNode) createProperties();
+
+		if (parent.getXMLTagName().equals(IDSConstants.ELEMENT_SERVICE)) {
+			if (isProvide(name)) {
+				return (IDocumentElementNode) createProvide();
+			}
 		}
-		if(isProperty(name)){
-			return (IDocumentElementNode) createProperty();
-		}
-		if (isService(name)) { 
-			return (IDocumentElementNode) createService();
-		}
-		if (isReference(name)){
-			return (IDocumentElementNode) createReference();
-		}
-		if(isProvide(name)){
-			return (IDocumentElementNode) createProvide();
-		}
-		
+
 		return super.createDocumentNode(name, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createProvide()
 	 */
 	public IDSProvide createProvide() {
 		return new DSProvide(fModel);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createProperty()
 	 */
 	public IDSProperty createProperty() {
 		return new DSProperty(fModel);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createReference()
 	 */
 	public IDSReference createReference() {
 		return new DSReference(fModel);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createService()
 	 */
 	public IDSService createService() {
 		return new DSService(fModel);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createProperties()
 	 */
 	public IDSProperties createProperties() {
 		return new DSProperties(fModel);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSDocumentFactory#createImplementation()
 	 */
 	public IDSImplementation createImplementation() {
 		return new DSImplementation(fModel);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -138,7 +159,7 @@ public class DSDocumentFactory extends DocumentNodeFactory implements IDocumentN
 	}
 
 	private boolean isRoot(String name) {
-		return name.equals(IDSConstants.ELEMENT_COMPONENT); 
+		return name.equals(IDSConstants.ELEMENT_COMPONENT);
 	}
 
 	private boolean isProperty(String name) {

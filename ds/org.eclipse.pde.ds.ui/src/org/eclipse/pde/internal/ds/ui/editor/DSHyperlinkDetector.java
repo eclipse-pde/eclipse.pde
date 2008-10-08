@@ -48,6 +48,9 @@ public class DSHyperlinkDetector extends PDEHyperlinkDetector {
 		if (attrValue.length() == 0)
 			return null;
 
+		if (!(attr.getEnclosingElement() instanceof IDSObject)) {
+			return null;
+		}
 		IDSObject node = (IDSObject) attr.getEnclosingElement();
 
 		if (node == null || !node.getModel().isEditable())
