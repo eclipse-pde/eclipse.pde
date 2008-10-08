@@ -278,4 +278,24 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setFilterP2Base(boolean value) {
 		generator.setFilterP2Base(value);
 	}
+
+	public void setParallelCompilation(boolean parallel) {
+		generator.setParallel(parallel);
+	}
+
+	public void setParallelThreadCount(String count) {
+		try {
+			generator.setThreadCount(Integer.parseInt(count));
+		} catch (NumberFormatException e) {
+			//ignore
+		}
+	}
+
+	public void setParallelThreadsPerProcessor(String threads) {
+		try {
+			generator.setThreadsPerProcessor(Integer.parseInt(threads));
+		} catch (NumberFormatException e) {
+			//ignore
+		}
+	}
 }

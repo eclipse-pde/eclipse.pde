@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private Map visiblePackages = null;
 	private Map pathElements = null;
 	private boolean allowBinaryCycles = false;
+	private StringBuffer requiredIds = null;
 
 	public ClasspathComputer3_0(ModelBuildScriptGenerator modelGenerator) {
 		this.generator = modelGenerator;
@@ -112,7 +113,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		Set addedPlugins = new HashSet(10); //The set of all the plugins already added to the classpath (this allows for optimization)
 		pathElements = new HashMap();
 		visiblePackages = getVisiblePackages(model);
-
+		requiredIds = new StringBuffer();
 		allowBinaryCycles = AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
 
 		//PREREQUISITE
@@ -121,8 +122,20 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		//SELF
 		addSelf(model, jar, classpath, location, pluginChain, addedPlugins);
 
+		recordRequiredIds(model);
+
 		return classpath;
 
+	}
+
+	private void recordRequiredIds(BundleDescription model) {
+		Properties bundleProperties = null;
+		bundleProperties = (Properties) model.getUserObject();
+		if (bundleProperties == null) {
+			bundleProperties = new Properties();
+			model.setUserObject(bundleProperties);
+		}
+		bundleProperties.setProperty(PROPERTY_REQUIRED_BUNDLE_IDS, requiredIds.toString());
 	}
 
 	private Map getVisiblePackages(BundleDescription model) {
@@ -171,6 +184,10 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			addFragmentsLibraries(plugin, classpath, location, false, false);
 			allFragments = false;
 		}
+
+		requiredIds.append(plugin.getBundleId());
+		requiredIds.append(':');
+
 		addRuntimeLibraries(plugin, classpath, location);
 		addFragmentsLibraries(plugin, classpath, location, true, allFragments);
 	}
@@ -213,6 +230,10 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				continue;
 			if (matchFilter(fragments[i]) == false)
 				continue;
+
+			requiredIds.append(fragments[i].getBundleId());
+			requiredIds.append(':');
+
 			if (!afterPlugin && isPatchFragment(fragments[i])) {
 				addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
 				addRuntimeLibraries(fragments[i], classpath, baseLocation);

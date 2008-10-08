@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,10 +10,12 @@ package org.eclipse.pde.build.internal.tests.ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
 
 import org.apache.tools.ant.*;
+import org.apache.tools.ant.taskdefs.Parallel;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.Type;
 import org.eclipse.core.runtime.FileLocator;
@@ -39,6 +41,31 @@ public class AntUtils {
 			}
 		}
 		return null;
+	}
+
+	static public Object[] getChildrenByName(Target target, String name) {
+		List list = new ArrayList();
+		Task[] tasks = target.getTasks();
+		for (int i = 0; i < tasks.length; i++) {
+			if (tasks[i].getTaskName().equals(name)) {
+				if (tasks[i] instanceof UnknownElement) {
+					UnknownElement task = (UnknownElement) tasks[i];
+					task.maybeConfigure();
+					list.add(task.getRealThing());
+				} else {
+					list.add(tasks[i]);
+				}
+			}
+		}
+		return list.toArray();
+	}
+
+	static public Task[] getParallelTasks(Parallel parallel) throws Exception {
+		Field nestedField = parallel.getClass().getDeclaredField("nestedTasks");
+		nestedField.setAccessible(true);
+
+		Vector nested = (Vector) nestedField.get(parallel);
+		return (Task[]) nested.toArray(new Task[nested.size()]);
 	}
 
 	static public void setupProject(Project project, Map alternateTasks) {

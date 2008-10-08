@@ -14,8 +14,8 @@ import java.io.FileFilter;
 import java.util.*;
 import java.util.jar.Attributes;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Target;
+import org.apache.tools.ant.*;
+import org.apache.tools.ant.taskdefs.Parallel;
 import org.apache.tools.ant.types.Path;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -675,7 +675,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		assertResourceFile(build1, "compile.F1.xml");
 		assertLogContainsLines(build1.getFile("compile.F1.xml"), new String[] {"plugins/A", "plugins/B"});
-		
+
 		build1.getFolder("tmp/eclipse/plugins/B_1.0.0").delete(true, null);
 
 		//Build 2 compiles B against binary A
@@ -685,5 +685,81 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("baseLocation", build1.getFolder("tmp/eclipse").getLocation().toOSString());
 		Utils.storeBuildProperties(build2, properties);
 		runBuild(build2);
+	}
+
+	public void testBug238177() throws Exception {
+		IFolder buildFolder = newTest("238177");
+		IFolder a = Utils.createFolder(buildFolder, "plugins/A");
+		IFolder b = Utils.createFolder(buildFolder, "plugins/B");
+		IFolder c = Utils.createFolder(buildFolder, "plugins/C");
+		IFolder d = Utils.createFolder(buildFolder, "plugins/D");
+		IFolder e = Utils.createFolder(buildFolder, "plugins/E");
+		IFolder f = Utils.createFolder(buildFolder, "plugins/F");
+
+		Utils.generateFeature(buildFolder, "feature", null, new String[] {"A", "B", "C", "D", "E", "F"});
+
+		Utils.generateBundleManifest(a, "A", "1.0.0", null);
+		Utils.generateBundle(a, "A");
+		Utils.generateBundle(b, "B");
+
+		Attributes attributes = new Attributes();
+		Attributes.Name requireAttribute = new Attributes.Name("Require-Bundle");
+		attributes.put(requireAttribute, "A");
+		Utils.generateBundleManifest(c, "C", "1.0.0", attributes);
+		Utils.generatePluginBuildProperties(c, null);
+
+		attributes.put(requireAttribute, "A, B");
+		Utils.generateBundleManifest(d, "D", "1.0.0", attributes);
+		Utils.generatePluginBuildProperties(d, null);
+
+		attributes.put(requireAttribute, "C, B");
+		Utils.generateBundleManifest(e, "E", "1.0.0", attributes);
+		Utils.generatePluginBuildProperties(e, null);
+
+		attributes.put(requireAttribute, "C, D, E");
+		Utils.generateBundleManifest(f, "F", "1.0.0", attributes);
+		Utils.generatePluginBuildProperties(f, null);
+
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "feature");
+		properties.put("flattenDependencies", "true");
+		properties.put("parallelCompilation", "true");
+		generateScripts(buildFolder, properties);
+
+		IFile buildScript = buildFolder.getFile("compile.feature.xml");
+		Project antProject = assertValidAntScript(buildScript);
+		Target main = (Target) antProject.getTargets().get("main");
+		assertNotNull(main);
+		Object[] children = AntUtils.getChildrenByName(main, "parallel");
+		assertTrue(children.length == 4);
+
+		Task[] tasks = AntUtils.getParallelTasks((Parallel) children[0]);
+		assertTrue(tasks.length == 2);
+		String dir0 = (String) tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
+		String dir1 = (String) tasks[1].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
+		if (dir0.equals("plugins/B"))
+			assertEquals("plugins/A", dir1);
+		else {
+			assertEquals("plugins/A", dir0);
+			assertEquals("plugins/B", dir1);
+		}
+
+		tasks = AntUtils.getParallelTasks((Parallel) children[1]);
+		assertTrue(tasks.length == 2);
+		dir0 = (String) tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
+		dir1 = (String) tasks[1].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
+		if (dir0.equals("plugins/C"))
+			assertEquals("plugins/D", dir1);
+		else {
+			assertEquals("plugins/D", dir0);
+			assertEquals("plugins/C", dir1);
+		}
+
+		tasks = AntUtils.getParallelTasks((Parallel) children[2]);
+		assertTrue(tasks.length == 1);
+		assertEquals("plugins/E", tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir"));
+
+		tasks = AntUtils.getParallelTasks((Parallel) children[3]);
+		assertTrue(tasks.length == 1);
+		assertEquals("plugins/F", tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir"));
 	}
 }

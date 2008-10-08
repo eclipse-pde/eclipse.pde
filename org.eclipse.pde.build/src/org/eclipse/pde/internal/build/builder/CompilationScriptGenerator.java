@@ -19,6 +19,9 @@ import org.eclipse.pde.internal.build.*;
 public class CompilationScriptGenerator extends AbstractScriptGenerator {
 
 	private String featureId = "all"; //$NON-NLS-1$
+	private boolean parallel = true;
+	private int threadCount = 0;
+	private int threadsPerProcessor = 3;
 
 	/** Contain the elements that will be assembled */
 	protected AssemblyInformation assemblyData;
@@ -48,6 +51,20 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 		this.director = director;
 	}
 
+	public void setParallel(boolean parallel) {
+		this.parallel = parallel;
+	}
+
+	public void setThreadCount(int count) {
+		if (count != -1)
+			this.threadCount = count;
+	}
+
+	public void setThreadsPerProcessor(int threads) {
+		if (threads != -1)
+			this.threadsPerProcessor = threads;
+	}
+
 	protected String getScriptName() {
 		return DEFAULT_COMPILE_NAME + '.' + featureId + ".xml"; //$NON-NLS-1$
 	}
@@ -73,14 +90,53 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 		Set plugins = assemblyData.getAllCompiledPlugins();
 		List sortedPlugins = Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins);
 		IPath basePath = new Path(workingDirectory);
+
+		Set bucket = null;
+		if (parallel) {
+			bucket = new HashSet();
+			script.printParallel(threadCount, threadsPerProcessor);
+		}
+
 		for (Iterator iterator = sortedPlugins.iterator(); iterator.hasNext();) {
 			BundleDescription bundle = (BundleDescription) iterator.next();
 			// Individual source bundles have empty build.jars targets, skip them
 			if (Utils.isSourceBundle(bundle))
 				continue;
+
+			if (parallel) {
+				if (requiredInBucket(bundle, bucket)) {
+					script.printEndParallel();
+					script.printParallel(threadCount, threadsPerProcessor);
+					bucket.clear();
+				}
+				bucket.add(new Long(bundle.getBundleId()));
+			}
+
 			IPath location = Utils.makeRelative(new Path(getLocation(bundle)), basePath);
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toString(), TARGET_BUILD_JARS, null, null, null);
 		}
+
+		if (parallel)
+			script.printEndParallel();
 	}
 
+	private boolean requiredInBucket(BundleDescription bundle, Set bucket) {
+		Properties properties = (Properties) bundle.getUserObject();
+		if (properties != null) {
+			String required = properties.getProperty(PROPERTY_REQUIRED_BUNDLE_IDS);
+			if (required != null) {
+				String[] ids = Utils.getArrayFromString(required, ":"); //$NON-NLS-1$
+				for (int i = 0; i < ids.length; i++) {
+					try {
+						if (bucket.contains(new Long(ids[i]))) {
+							return true;
+						}
+					} catch (NumberFormatException e) {
+						//ignore
+					}
+				}
+			}
+		}
+		return false;
+	}
 }

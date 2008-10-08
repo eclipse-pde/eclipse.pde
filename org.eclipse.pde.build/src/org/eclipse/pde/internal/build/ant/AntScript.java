@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -81,6 +81,24 @@ public class AntScript implements IAntScript {
 			printTab();
 			output.println("</antcall>"); //$NON-NLS-1$
 		}
+	}
+
+	public void printParallel(int threadCount, int threadsPerProcessor) {
+		printTab();
+		output.print("<parallel"); //$NON-NLS-1$
+		if (threadCount > 0)
+			output.print(" threadCount=\'" + String.valueOf(threadCount) + "\'"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (threadsPerProcessor > 0)
+			output.print(" threadsPerProcessor=\'" + String.valueOf(threadsPerProcessor) + "\'"); //$NON-NLS-1$ //$NON-NLS-2$
+		output.println(">"); //$NON-NLS-1$
+		indent++;
+	}
+
+	public void printEndParallel() {
+		indent--;
+		printTab();
+		output.println("</parallel>"); //$NON-NLS-1$
+
 	}
 
 	/**
@@ -801,8 +819,9 @@ public class AntScript implements IAntScript {
 	public void printConditionIsSet(String property, String value, String testProperty) {
 		printConditionIsSet(property, value, testProperty, null);
 	}
+
 	public void printConditionIsSet(String property, String value, String testProperty, String elseValue) {
-		print("<condition");  //$NON-NLS-1$
+		print("<condition"); //$NON-NLS-1$
 		printAttribute("property", property, true); //$NON-NLS-1$
 		printAttribute("value", value, true); //$NON-NLS-1$
 		printAttribute("else", elseValue, false); //$NON-NLS-1$

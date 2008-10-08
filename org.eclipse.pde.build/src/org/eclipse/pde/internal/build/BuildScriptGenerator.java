@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -52,6 +52,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected boolean signJars = false;
 	protected boolean generateJnlp = false;
 	protected boolean generateFeatureVersionSuffix = false;
+	protected boolean parallel = false;
+	protected int threadCount = -1;
+	protected int threadsPerProcessor = -1;
+
 	protected String product;
 	//Map configuration with the expected output format: key: Config, value: string
 	private HashMap archivesFormat;
@@ -377,6 +381,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		generator.setWorkingDirectory(workingDirectory);
 		generator.setAssemblyData(assemblageInformation);
 		generator.setFeatureId(featureInfo[0]);
+		generator.setParallel(parallel);
+		generator.setThreadCount(threadCount);
+		generator.setThreadsPerProcessor(threadsPerProcessor);
 		generator.generate();
 	}
 
@@ -542,5 +549,17 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	public void setFlattenDependencies(boolean flatten) {
 		this.flatten = flatten;
+	}
+
+	public void setParallel(boolean parallel) {
+		this.parallel = parallel;
+	}
+
+	public void setThreadCount(int threadCount) {
+		this.threadCount = threadCount;
+	}
+
+	public void setThreadsPerProcessor(int threadsPerProcessor) {
+		this.threadsPerProcessor = threadsPerProcessor;
 	}
 }

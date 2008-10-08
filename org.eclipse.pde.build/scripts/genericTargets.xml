@@ -86,6 +86,9 @@
 		platformProperties="${platformProperties}"
 		filterP2Base="${filterP2Base}"
 		flattenDependencies="${flattenDependencies}"
+		parallelCompilation="${parallelCompilation}"
+		parallelThreadCount="${parallelThreadCount}"
+		parallelThreadsPerProcessor="${parallelThreadsPerProcessor}"
 	/>
 </target>
 
