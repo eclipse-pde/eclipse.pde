@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,12 +17,12 @@ import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.SignJar;
-import org.eclipse.update.internal.jarprocessor.SignCommandStep;
+import org.eclipse.equinox.internal.p2.jarprocessor.SignCommandStep;
 
 public class AntSignCommand extends SignCommandStep {
-	private Project project;
-	private Properties jarSignerArguments;
-	private String antTaskName;
+	private final Project project;
+	private final Properties jarSignerArguments;
+	private final String antTaskName;
 
 	public AntSignCommand(Properties options, Properties signArguments, Project project, String antTaskName, String command, boolean verbose) {
 		super(options, command, verbose);

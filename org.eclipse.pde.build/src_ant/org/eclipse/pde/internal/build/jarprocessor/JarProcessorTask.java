@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.eclipse.update.internal.jarprocessor.Main.Options;
+import org.eclipse.internal.provisional.equinox.p2.jarprocessor.JarProcessorExecutor.Options;
 
 /**
  * This task provides massaging facilities for jar files.
@@ -22,8 +22,8 @@ import org.eclipse.update.internal.jarprocessor.Main.Options;
  * 	- 
  */
 public class JarProcessorTask extends Task {
-	private Options options = new Options();
-	private Properties signArgs = new Properties();
+	private final Options options = new Options();
+	private final Properties signArgs = new Properties();
 
 	public static final String ALIAS = "alias"; //$NON-NLS-1$
 	public static final String KEYSTORE = "keystore"; //$NON-NLS-1$
