@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.ds.ui.editor.sections;
 
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
-import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.pde.internal.ds.core.IDSModel;
+import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
@@ -35,7 +35,6 @@ import org.eclipse.ui.forms.widgets.Section;
 public class DSOptionsSection extends PDESection {
 
 	private IDSComponent fComponent;
-	private IDSImplementation fImplementation;
 	private FormEntry fFactoryEntry;
 	private IDSModel fModel;
 	private Button fImmediateButton;
@@ -106,11 +105,7 @@ public class DSOptionsSection extends PDESection {
 	private void initializeAttributes() {
 		fModel = (IDSModel) getPage().getModel();
 		fModel.addModelChangedListener(this);
-
 		fComponent = fModel.getDSComponent();
-		if (fComponent != null) {
-			fImplementation = fComponent.getImplementation();
-		}
 	}
 
 	public void commit(boolean onSave) {
@@ -120,8 +115,6 @@ public class DSOptionsSection extends PDESection {
 
 	public void modelChanged(IModelChangedEvent e) {
 		fComponent = fModel.getDSComponent();
-		if (fComponent != null)
-			fImplementation = fComponent.getImplementation();
 
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -135,7 +128,6 @@ public class DSOptionsSection extends PDESection {
 	}
 
 	public void updateUIFields() {
-
 		if (fComponent != null) {
 			if (fComponent.getFactory() == null) {
 				// Attribute: factory
@@ -147,9 +139,39 @@ public class DSOptionsSection extends PDESection {
 
 			fEnabledButton.setSelection(fComponent.getEnabled());
 			fImmediateButton.setSelection(fComponent.getImmediate());
+			enableOrDisableImmediate();
 		}
 
+	}
 
+	private void enableOrDisableImmediate() {
+		boolean isService = false;
+		boolean isFactory = fComponent.getFactory() != null
+				&& !fComponent.getFactory().equals(""); //$NON-NLS-1$
+		boolean isImmediate = fComponent.getImmediate();
+		boolean enabled = true;
+
+		if (fComponent.getService() != null) {
+			IDSProvide[] providedServices = fComponent.getService()
+					.getProvidedServices();
+			if (providedServices != null && providedServices.length > 0) {
+				isService = true;
+			}
+		}
+		if (!isService && !isFactory) {
+			if (!isImmediate) {
+				fComponent.setImmediate(true);
+			}
+			enabled = false;
+		}
+
+		if (isFactory) {
+			if (isImmediate) {
+				fComponent.setImmediate(false);
+			}
+			enabled = false;
+		}
+		fImmediateButton.setEnabled(enabled);
 	}
 
 	public void setListeners() {
