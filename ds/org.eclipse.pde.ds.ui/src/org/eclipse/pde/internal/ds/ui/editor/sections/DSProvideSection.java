@@ -200,12 +200,15 @@ public class DSProvideSection extends TableSection {
 				.getSelection();
 		if (ssel.size() > 0) {
 			Iterator iter = ssel.iterator();
+			IDSService service = getDSModel().getDSComponent().getService();
 			while (iter.hasNext()) {
 				Object object = iter.next();
 				if (object instanceof IDSProvide) {
-					getDSModel().getDSComponent().getService()
-							.removeProvidedService((IDSProvide) object);
+					service.removeProvidedService((IDSProvide) object);
 				}
+			}
+			if (service.getProvidedServices().length == 0) {
+				getDSModel().getDSComponent().removeService(service);
 			}
 		}
 	}
