@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.ui.build;
 
 import com.ibm.icu.text.MessageFormat;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -81,7 +80,7 @@ public class RuntimeInstallJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			// p2 needs to know about the generated repos
-			URL destination = new File(fInfo.destinationDirectory).toURL();
+			URI destination = new File(fInfo.destinationDirectory).toURI();
 			IArtifactRepository artifactRepo = ProvisioningUtil.loadArtifactRepository(destination, monitor);
 			IMetadataRepository metaRepo = ProvisioningUtil.loadMetadataRepository(destination, monitor);
 
@@ -146,8 +145,6 @@ public class RuntimeInstallJob extends Job {
 				status = ProvisioningUtil.performProvisioningPlan(thePlan, new DefaultPhaseSet(), profile, monitor);
 				return status;
 			}
-		} catch (MalformedURLException e) {
-			return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.PluginExportWizard_ProblemWithExportLocation, e);
 		} catch (ProvisionException e) {
 			return e.getStatus();
 		}

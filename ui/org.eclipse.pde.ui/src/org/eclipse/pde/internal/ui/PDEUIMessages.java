@@ -299,8 +299,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginExportWizard_InstallJobName;
 
-	public static String PluginExportWizard_ProblemWithExportLocation;
-
 	public static String PluginEditor_exportTooltip;
 
 	public static String PluginListPage_initializeFromLaunch;
