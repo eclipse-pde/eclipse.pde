@@ -8,7 +8,7 @@
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
+ *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028, 249263
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.sections;
 
@@ -174,27 +174,35 @@ public class DSComponentSection extends PDESection {
 		fClassEntry
 				.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 					public void textValueChanged(FormEntry entry) {
-						// Ensure data object is defined
 						if (fImplementation == null) {
-							return;
+							if (fComponent != null) {
+								fImplementation = fComponent.getModel()
+										.getFactory().createImplementation();
+								fImplementation.setClassName(fClassEntry
+										.getValue());
+								fComponent.addChildNode(fImplementation, 0,
+										true);
+							}
+						} else {
+							fImplementation
+									.setClassName(fClassEntry.getValue());
 						}
-						fImplementation.setClassName(fClassEntry.getValue());
 					}
 
-			public void linkActivated(HyperlinkEvent e) {
+					public void linkActivated(HyperlinkEvent e) {
 						String value = fClassEntry.getValue();
 						value = handleLinkActivated(value, false);
 						if (value != null)
 							fClassEntry.setValue(value);
 					}
 
-			public void browseButtonSelected(FormEntry entry) {
+					public void browseButtonSelected(FormEntry entry) {
 						doOpenSelectionDialog(
 								IJavaElementSearchConstants.CONSIDER_CLASSES,
 								fClassEntry);
 					}
 
-		});
+				});
 	}
 
 	private String handleLinkActivated(String value, boolean isInter) {
