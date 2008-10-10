@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -92,6 +93,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		levelColumnEditor = new TreeEditor(tree);
 		levelColumnEditor.horizontalAlignment = SWT.CENTER;
 		levelColumnEditor.minimumWidth = 60;
+		if (Util.isMac())
+			levelColumnEditor.minimumHeight = 27;
 
 		autoColumnEditor = new TreeEditor(tree);
 		autoColumnEditor.horizontalAlignment = SWT.CENTER;
