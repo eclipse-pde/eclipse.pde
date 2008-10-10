@@ -263,8 +263,6 @@ public class TracingBlock {
 	}
 
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
-		if (fPluginViewer.getInput() == null)
-			fPluginViewer.setInput(getTraceableModels());
 		fPageBook.getParent().getParent().layout(true);
 	}
 
@@ -337,6 +335,9 @@ public class TracingBlock {
 		Control currentPage = fPageBook.getCurrentPage();
 		if (currentPage != null && enabled == false) {
 			fPageBook.showEmptyPage();
+		}
+		if (enabled) {
+			fPluginViewer.setInput(getTraceableModels());
 		}
 		fSelectAllButton.setEnabled(enabled);
 		fDeselectAllButton.setEnabled(enabled);
