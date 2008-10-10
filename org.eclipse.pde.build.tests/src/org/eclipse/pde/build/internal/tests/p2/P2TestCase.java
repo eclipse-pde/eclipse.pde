@@ -1,9 +1,11 @@
 package org.eclipse.pde.build.internal.tests.p2;
 
-import java.net.URL;
-import java.util.*;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.internal.p2.core.helpers.URIUtil;
 import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
@@ -44,7 +46,7 @@ public class P2TestCase extends PDETestCase {
 		if (metadataManager == null)
 			initialize();
 
-		URL location = new URL(metadataLocation);
+		URI location = URIUtil.fromString(metadataLocation);
 		IMetadataRepository repository = metadataManager.loadRepository(location, null);
 		assertNotNull(repository);
 		return repository;
