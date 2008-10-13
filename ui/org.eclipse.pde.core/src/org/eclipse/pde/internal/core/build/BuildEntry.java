@@ -81,7 +81,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 	}
 
 	public String toString() {
-		return name + " = " + tokens;
+		return name + " = " + tokens; //$NON-NLS-1$
 	}
 
 	public void write(String indent, PrintWriter writer) {
