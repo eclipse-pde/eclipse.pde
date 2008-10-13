@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,16 +14,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -152,7 +145,7 @@ public class SchemaRegistry {
 				File schemaFile = new File(file, schema);
 				if (schemaFile.exists())
 					return schemaFile.toURL();
-			} else if (CoreUtility.jarContainsResource(file, schema, false)) { //$NON-NLS-1$
+			} else if (CoreUtility.jarContainsResource(file, schema, false)) {
 				return new URL("jar:file:" + file.getAbsolutePath() + "!/" + schema); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (MalformedURLException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
-
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IWindowImages;
 import org.w3c.dom.Element;
@@ -86,19 +85,19 @@ public class WindowImages extends ProductObject implements IWindowImages {
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
-			f16ImagePath = element.getAttribute(P_16); //$NON-NLS-1$
+			f16ImagePath = element.getAttribute(P_16);
 			// try the old 3.1 attribute name
 			if (f16ImagePath == null || f16ImagePath.length() == 0)
 				f16ImagePath = element.getAttribute("small"); //$NON-NLS-1$
 
-			f32ImagePath = element.getAttribute(P_32); //$NON-NLS-1$
+			f32ImagePath = element.getAttribute(P_32);
 			// try the old 3.1 attribute name
 			if (f32ImagePath == null || f32ImagePath.length() == 0)
 				f32ImagePath = element.getAttribute("large"); //$NON-NLS-1$
 
-			f48ImagePath = element.getAttribute(P_48); //$NON-NLS-1$
-			f64ImagePath = element.getAttribute(P_64); //$NON-NLS-1$
-			f128ImagePath = element.getAttribute(P_128); //$NON-NLS-1$
+			f48ImagePath = element.getAttribute(P_48);
+			f64ImagePath = element.getAttribute(P_64);
+			f128ImagePath = element.getAttribute(P_128);
 		}
 	}
 
