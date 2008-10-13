@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jakub Jurkiewicz <jakub.jurkiewicz@pl.ibm.com> - bug 185995
+ *     Rudiger Herrmann <rherrmann@innoopract.com> - bug 249707
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -26,7 +27,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 public class TemplateListSelectionPage extends WizardListSelectionPage implements ISelectionChangedListener, IExecutableExtension {
 	private ContentPage fContentPage;
@@ -43,12 +46,16 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 			boolean osgi = data.getOSGiFramework() != null;
 			WizardElement welement = (WizardElement) element;
 			IConfigurationElement config = welement.getConfigurationElement();
+			boolean active = isActive(config);
 			boolean uiFlag = getFlag(config, "ui-content", true); //$NON-NLS-1$
 			boolean javaFlag = getFlag(config, "java", true); //$NON-NLS-1$
 			boolean rcpFlag = getFlag(config, "rcp", false); //$NON-NLS-1$
 			boolean osgiFlag = getFlag(config, "pureOSGi", false); //$NON-NLS-1$
 			boolean activatorFlag = getFlag(config, "requiresActivator", false); //$NON-NLS-1$
 
+			//filter out wizards from disabled activities
+			if (!active)
+				return false;
 			//osgi projects need java
 			if (osgi && simple)
 				return false;
@@ -73,6 +80,21 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 			if (value == null)
 				return defaultValue;
 			return value.equalsIgnoreCase("true"); //$NON-NLS-1$
+		}
+
+		private boolean isActive(IConfigurationElement config) {
+			final String pluginId = config.getNamespaceIdentifier();
+			final String contributionId = config.getAttribute("id"); //$NON-NLS-1$
+			IPluginContribution contribution = new IPluginContribution() {
+				public String getLocalId() {
+					return contributionId;
+				}
+
+				public String getPluginId() {
+					return pluginId;
+				}
+			};
+			return !WorkbenchActivityHelper.filterItem(contribution);
 		}
 	}
 
