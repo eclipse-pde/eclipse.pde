@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.natures;
 
-import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IProjectNature;
-import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.core.PDECore;
@@ -41,7 +37,7 @@ public abstract class BaseProject extends PlatformObject implements IProjectNatu
 		}
 	}
 
-	private ICommand getBuilderCommand(IProjectDescription description, String builderId) throws CoreException {
+	private ICommand getBuilderCommand(IProjectDescription description, String builderId) {
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
 			if (commands[i].getBuilderName().equals(builderId)) {
