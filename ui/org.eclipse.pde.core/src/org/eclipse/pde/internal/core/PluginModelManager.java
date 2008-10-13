@@ -158,7 +158,7 @@ public class PluginModelManager implements IModelProviderListener {
 		if (fState != null) {
 			// if the target location has not changed, incrementally re-resolve the state after processing all the add/remove/modify changes
 			// Otherwise, the state is in a good resolved state
-			StateDelta stateDelta = (e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0 ? null : fState.resolveState((e.getEventTypes() & ICoreConstants.ENVIRONMENT_CHANGED) != 0 ? false : true);
+			StateDelta stateDelta = (e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0 ? null : fState.resolveState((e.getEventTypes() & IModelProviderEvent.ENVIRONMENT_CHANGED) != 0 ? false : true);
 			// trigger a classpath update for all workspace plug-ins affected by the
 			// processed batch of changes
 			updateAffectedEntries(stateDelta);

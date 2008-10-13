@@ -16,8 +16,6 @@ import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Constants;
 
 public interface ICoreConstants {
-	// TODO move to API - IModelProviderEvent
-	int ENVIRONMENT_CHANGED = 0x10;
 
 	// Target Platform
 	String PLATFORM_PATH = "platform_path"; //$NON-NLS-1$
