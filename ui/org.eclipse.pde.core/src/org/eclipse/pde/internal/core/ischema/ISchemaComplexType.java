@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,14 +19,16 @@ import org.eclipse.pde.core.IWritable;
 public interface ISchemaComplexType extends ISchemaType, ISchemaAttributeProvider, IWritable {
 	/**
 	 * A complex type can have one root compositor.
-	 @ return root complex type compositor
+	 * 
+	 * @return root complex type compositor
 	 */
 	public ISchemaCompositor getCompositor();
 
 	/**
 	 * Returns whether the content of the element that owns this type
 	 * can mix child elements and text.
-	 *@return true if element can mix text and other elements
+	 * 
+	 * @return true if element can mix text and other elements
 	 */
 	public boolean isMixed();
 }
