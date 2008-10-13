@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.itarget.*;
 import org.eclipse.pde.internal.core.util.VMUtil;
@@ -340,7 +341,7 @@ public class TargetEnvironmentTab {
 		// Resetting the state (manager.getState() != state) refreshes workspace projects automatically.  So if we are not reseting  
 		// the state, we need to fire an event to have the PluginModelManager re-resolve the current state with the new platform properties.
 		if (manager.getState() == state) {
-			manager.modelsChanged(new ModelProviderEvent(properties, ICoreConstants.ENVIRONMENT_CHANGED, null, null, null));
+			manager.modelsChanged(new ModelProviderEvent(properties, IModelProviderEvent.ENVIRONMENT_CHANGED, null, null, null));
 		}
 	}
 }
