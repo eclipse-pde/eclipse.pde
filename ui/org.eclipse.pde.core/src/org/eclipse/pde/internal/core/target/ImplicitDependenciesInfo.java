@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,8 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
-import org.eclipse.pde.internal.core.itarget.ITargetModel;
-import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
+import java.util.*;
+import org.eclipse.pde.internal.core.itarget.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -51,7 +45,7 @@ public class ImplicitDependenciesInfo extends TargetObject implements IImplicitD
 			addedPlugins.add(plugins[i]);
 		}
 		if (isEditable() && (addedPlugins.size() > 0)) {
-			firePropertyChanged(P_IMPLICIT_PLUGINS, new ITargetPlugin[0], (ITargetPlugin[]) addedPlugins.toArray(new ITargetPlugin[addedPlugins.size()]));
+			firePropertyChanged(P_IMPLICIT_PLUGINS, new ITargetPlugin[0], addedPlugins.toArray(new ITargetPlugin[addedPlugins.size()]));
 		}
 
 	}
@@ -66,7 +60,7 @@ public class ImplicitDependenciesInfo extends TargetObject implements IImplicitD
 			if (fPlugins.remove(plugins[i].getId()) != null)
 				removedPlugins.add(plugins[i]);
 		if (isEditable() && (removedPlugins.size() > 0))
-			firePropertyChanged(P_IMPLICIT_PLUGINS, (ITargetPlugin[]) removedPlugins.toArray(new ITargetPlugin[removedPlugins.size()]), new ITargetPlugin[0]);
+			firePropertyChanged(P_IMPLICIT_PLUGINS, removedPlugins.toArray(new ITargetPlugin[removedPlugins.size()]), new ITargetPlugin[0]);
 	}
 
 	public void parse(Node node) {
