@@ -15,6 +15,8 @@ import org.eclipse.osgi.util.NLS;
 public class PDERuntimeMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.runtime.pderuntimeresources";//$NON-NLS-1$
 
+	public static String ActiveFormEditorSection_Active_Form_Page;
+
 	public static String RegistryView_refresh_label;
 	public static String RegistryView_refresh_tooltip;
 	public static String RegistryView_collapseAll_label;

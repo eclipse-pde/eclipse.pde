@@ -100,6 +100,9 @@ public class SpyDialog extends PopupDialog {
 		section = new ActivePartSection();
 		section.build(form, toolkit, event);
 
+		section = new ActiveFormEditorSection();
+		section.build(form, toolkit, event);
+
 		section = new ActiveSelectionSection();
 		section.build(form, toolkit, event);
 
