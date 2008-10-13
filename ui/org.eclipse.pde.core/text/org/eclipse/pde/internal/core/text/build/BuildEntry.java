@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,10 @@ package org.eclipse.pde.internal.core.text.build;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.text.IEditingModel;
@@ -181,7 +178,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 				}
 			}
 		}
-		buffer.append(fLineDelimiter); //$NON-NLS-1$
+		buffer.append(fLineDelimiter);
 		return buffer.toString();
 	}
 
