@@ -84,7 +84,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	private void createBuildPropertiesFile(IProject project) throws CoreException {
-		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+		IFile file = project.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
 		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 			IBuildModelFactory factory = model.getFactory();
@@ -255,7 +255,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		IProject project = createProject();
 		monitor.worked(1);
 		createContents(monitor, project);
-		
+
 		// set classpath if project has a Java nature
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			monitor.subTask(PDEUIMessages.NewProjectCreationOperation_setClasspath);
@@ -270,12 +270,12 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			if (data.doGenerateClass()) {
 				generateTopLevelPluginClass(project, new SubProgressMonitor(monitor, 1));
 			}
-			
+
 			// add API tooling nature if requested
-			if (data.doEnableAPITooling()){
+			if (data.doEnableAPITooling()) {
 				addApiAnalysisNature();
 			}
-			
+
 		}
 		// generate the manifest file
 		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile);
@@ -506,7 +506,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		} catch (JavaModelException e) {
 		}
 	}
-	
+
 	/**
 	 * Add the API analysis nature to the project
 	 * @param add
