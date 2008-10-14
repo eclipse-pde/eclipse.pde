@@ -7,12 +7,20 @@
          point="org.eclipse.jdt.ui.javaCompletionProposalComputer">
       <javaCompletionProposalComputer
             activate="true"
-            categoryId="org.eclipse.jdt.ui.javaNoTypeProposalCategory"
+            categoryId="org.eclipse.pde.api.tools.ui.apitools_proposal_category"
             class="org.eclipse.pde.api.tools.ui.internal.completion.APIToolsJavadocCompletionProposalComputer">
          <partition
                type="__java_javadoc">
          </partition>
       </javaCompletionProposalComputer>
+   </extension>
+   <extension
+         id="apitools_proposal_category"
+         name="%ApiToolsProposalCategory.name"
+         point="org.eclipse.jdt.ui.javaCompletionProposalComputer">
+      <proposalCategory
+            icon="icons/full/obj16/category_menu.gif">
+      </proposalCategory>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
