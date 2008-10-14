@@ -15,6 +15,7 @@ package org.eclipse.pde.core;
  * managed by the model provider changes in some way.
  * 
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IModelProviderEvent {
 	/**
