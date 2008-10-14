@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal;
 
 import java.io.InputStream;
+import java.net.URI;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -21,7 +22,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
  * 
  * @since 1.0
  */
-public class ResourceClassFile extends AbstractClassFile {
+public class ResourceClassFile extends CRCClassFile {
 	
 	/**
 	 * Corresponding file
@@ -81,4 +82,12 @@ public class ResourceClassFile extends AbstractClassFile {
 		}
 		return super.equals(obj);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFile#getURI()
+	 */
+	public URI getURI() {
+		return fFile.getLocationURI();
+	}
+
 }

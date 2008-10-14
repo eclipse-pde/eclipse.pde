@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -31,6 +34,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFile.IModificationStamp;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -66,11 +70,22 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	 */
 	private ZipFile fZipFile = null;
 	
+	/**
+	 * Modification stamp for archive. Incremented each time the archive is closed/opened.
+	 */
+	private IModificationStamp fModStamp;
+	
+	/**
+	 * URI of the archive
+	 */
+	private String fURI;
+	
 	class ArchiveClassFile extends AbstractClassFile implements Comparable {
 		
 		private ArchiveClassFileContainer fArchive;
 		private String fEntryName;
 		private String fTypeName;
+		private URI fEntryURI;
 		
 		/**
 		 * Constructs a new handle to a class file in the archive.
@@ -128,6 +143,31 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 			}
 			abort("Class file not found: " + getTypeName() + " in archive: " + fArchive.fLocation, null); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFile#getURI()
+		 */
+		public URI getURI() {
+			if (fEntryURI == null) {
+				StringBuffer buf = new StringBuffer("jar:"); //$NON-NLS-1$
+				buf.append(fURI);
+				buf.append('!');
+				buf.append(fEntryName);
+				try {
+					fEntryURI = new URI(buf.toString());
+				} catch (URISyntaxException e) {
+					ApiPlugin.log(e);
+				}
+			}
+			return fEntryURI;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.AbstractClassFile#getModificationStamp()
+		 */
+		public IModificationStamp getModificationStamp() {
+			return fModStamp;
 		}
 	}
 
@@ -260,7 +300,10 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	private synchronized ZipFile open() throws CoreException {
 		if (fZipFile == null) {
 			try {
+				File file = new File(fLocation);
+				fURI = file.toURI().toString();
 				fZipFile = new ZipFile(fLocation);
+				fModStamp = new ModificationStamp(file.lastModified(), null);
 			} catch (IOException e) {
 				abort("Failed to open archive: " + fLocation, e); //$NON-NLS-1$
 			}

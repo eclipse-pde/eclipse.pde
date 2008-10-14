@@ -8,29 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal.search;
+package org.eclipse.pde.api.tools.internal;
 
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFile.IModificationStamp;
+
 /**
- * LRU cache 
+ * Implementation of a modification stamp.
  */
-public class LRUMap extends LinkedHashMap {
-	private static final long serialVersionUID= 1L;
-	private int fMaxSize;
-	private int fOverflows = 0;
-	public LRUMap(int maxSize) {
-		super();
-		fMaxSize = maxSize;
+public class ModificationStamp implements IModificationStamp {
+	private long fStamp;
+	private byte[] fContents;
+	
+	public ModificationStamp(long stamp, byte[] contents) {
+		fStamp = stamp;
+		fContents = contents;
 	}
-	protected boolean removeEldestEntry(Entry eldest) {
-		if (size() > fMaxSize) {
-			fOverflows++;
-			return true;
-		}
-		return false;
+
+	public byte[] getContents() {
+		return fContents;
 	}
-	public int getOverflows() {
-		return fOverflows;
+
+	public long getModificationStamp() {
+		return fStamp;
 	}
+	
 }

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
+import org.eclipse.pde.api.tools.internal.model.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -50,6 +51,7 @@ public abstract class DeltaTestSetup extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		// create workspace root
+		TypeStructureCache.clearCache();
 		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
 	}
 	

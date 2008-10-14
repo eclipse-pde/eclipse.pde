@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.provisional;
 
 import java.io.InputStream;
+import java.net.URI;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -20,6 +21,29 @@ import org.eclipse.core.runtime.CoreException;
  * @since 1.0.0
  */
 public interface IClassFile {
+	
+	public interface IModificationStamp {
+		/**
+		 * Returns a non-negative modification stamp.
+		 * <p>
+		 * A modification stamp gets updated each time a class file is modified.
+		 * If a modification stamp is the same, the class file has not changed.
+		 * Conversely, if a modification stamp is different, some aspect of it
+		 * has been modified at least once (possibly several times).
+		 * The magnitude or sign of the numerical difference between two modification stamps 
+		 * is not significant.
+		 * 
+		 * @return modification stamp
+		 */		
+		public long getModificationStamp();
+		/**
+		 * Returns the contents used to generate the stamp or <code>null</code>
+		 * if not available.
+		 * 
+		 * @return contents or <code>null</code>
+		 */
+		public byte[] getContents();
+	}
 
 	/**
 	 * Returns the fully qualified name of the type contained in this class file.
@@ -28,6 +52,28 @@ public interface IClassFile {
 	 * @return fully qualified type name
 	 */
 	public String getTypeName();
+	
+	/**
+	 * Returns a URI to this class file, or <code>null</code> if it does
+	 * not exist.
+	 * 
+	 * @return URI to this class file or <code>null</code>
+	 */
+	public URI getURI();
+	
+	/**
+	 * Returns a non-negative modification stamp.
+	 * <p>
+	 * A modification stamp gets updated each time a class file is modified.
+	 * If a modification stamp is the same, the class file has not changed.
+	 * Conversely, if a modification stamp is different, some aspect of it
+	 * has been modified at least once (possibly several times).
+	 * The magnitude or sign of the numerical difference between two modification stamps 
+	 * is not significant.
+	 * 
+	 * @return modification stamp
+	 */
+	public IModificationStamp getModificationStamp();
 	
 	/**
 	 * Returns the bytes of this class file. 

@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Description of a method.
@@ -39,7 +38,7 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 	 */
 	MethodDescriptorImpl(String name, IReferenceTypeDescriptor enclosingType, String signature, int modifiers) {
 		super(name, enclosingType, modifiers);
-		fSignature = signature.replace('/', '.');
+		fSignature = signature;
 	}
 	
 	/* (non-Javadoc)
@@ -61,8 +60,7 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 			IMethodDescriptor method = (IMethodDescriptor) obj;
 			return getName().equals(method.getName())
 					&& getEnclosingType().equals(method.getEnclosingType())
-					&& (Util.matchesSignatures(getSignature(), method.getSignature())
-							|| Util.matchesSignatures(method.getSignature(), getSignature()));
+					&& getSignature().equals(method.getSignature());
 		}
 		return false;
 	}

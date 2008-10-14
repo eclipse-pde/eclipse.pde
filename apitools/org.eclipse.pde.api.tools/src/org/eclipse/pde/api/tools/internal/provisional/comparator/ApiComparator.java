@@ -18,10 +18,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
-import org.eclipse.pde.api.tools.internal.comparator.TypeDescriptor;
+import org.eclipse.pde.api.tools.internal.model.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
-import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
@@ -30,6 +29,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.Version;
 
@@ -89,21 +89,21 @@ public class ApiComparator {
 		}
 
 		try {
-			TypeDescriptor typeDescriptor2 = new TypeDescriptor(classFile2);
-			if (typeDescriptor2.isNestedType()) {
+			IApiType typeDescriptor2 = TypeStructureCache.getTypeStructure(classFile2, component2);
+			if (typeDescriptor2.isMemberType() || typeDescriptor2.isAnonymous() || typeDescriptor2.isLocal()) {
 				// we skip nested types (member, local and anonymous)
 				return NO_DELTA;
 			}
 			String typeName = classFile2.getTypeName();
 			IClassFile classFile = component.findClassFile(typeName);
 			final IApiDescription apiDescription2 = component2.getApiDescription();
-			IApiAnnotations elementDescription2 = apiDescription2.resolveAnnotations(Factory.typeDescriptor(typeName));
+			IApiAnnotations elementDescription2 = apiDescription2.resolveAnnotations(typeDescriptor2.getHandle());
 			int visibility = 0;
 			if (elementDescription2 != null) {
 				visibility = elementDescription2.getVisibility();
 			}
 			final IApiDescription referenceApiDescription = component.getApiDescription();
-			IApiAnnotations refElementDescription = referenceApiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
+			IApiAnnotations refElementDescription = referenceApiDescription.resolveAnnotations(typeDescriptor2.getHandle());
 			int refVisibility = 0;
 			if (refElementDescription != null) {
 				refVisibility = refElementDescription.getVisibility();
@@ -117,14 +117,14 @@ public class ApiComparator {
 							IDelta.ADDED,
 							IDelta.TYPE,
 							elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-							typeDescriptor2.access,
+							typeDescriptor2.getModifiers(),
 							typeName,
 							typeName,
 							new String[] { typeName, deltaComponentID});
 				}
 				return NO_DELTA;
 			}
-			TypeDescriptor typeDescriptor = new TypeDescriptor(classFile);
+			IApiType typeDescriptor = TypeStructureCache.getTypeStructure(classFile, component);
 			if ((visibility & visibilityModifiers) == 0) {
 				if ((refVisibility & visibilityModifiers) == 0) {
 					// no delta
@@ -137,7 +137,7 @@ public class ApiComparator {
 							IDelta.REMOVED,
 							IDelta.API_TYPE,
 							elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-							typeDescriptor2.access,
+							typeDescriptor2.getModifiers(),
 							typeName,
 							typeName,
 							new String[] { typeName, deltaComponentID});
@@ -150,25 +150,25 @@ public class ApiComparator {
 						IDelta.ADDED,
 						IDelta.TYPE,
 						elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-						typeDescriptor2.access,
+						typeDescriptor2.getModifiers(),
 						typeName,
 						typeName,
 						new String[] { typeName, deltaComponentID});
 			}
 			if (visibilityModifiers == VisibilityModifiers.API) {
 				// if the visibility is API, we only consider public and protected types
-				if (Util.isDefault(typeDescriptor2.access)
-							|| Util.isPrivate(typeDescriptor2.access)) {
+				if (Util.isDefault(typeDescriptor2.getModifiers())
+							|| Util.isPrivate(typeDescriptor2.getModifiers())) {
 					// we need to check if the reference contains the type to report a reduced visibility
-					if (Util.isPublic(typeDescriptor.access)
-							|| Util.isProtected(typeDescriptor.access)) {
+					if (Util.isPublic(typeDescriptor.getModifiers())
+							|| Util.isProtected(typeDescriptor.getModifiers())) {
 						return new Delta(
 							deltaComponentID,
 							IDelta.API_COMPONENT_ELEMENT_TYPE,
 							IDelta.REMOVED,
 							IDelta.API_TYPE,
 							elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-							typeDescriptor2.access,
+							typeDescriptor2.getModifiers(),
 							typeName,
 							typeName,
 							new String[] { typeName, deltaComponentID});
@@ -190,8 +190,8 @@ public class ApiComparator {
 	}
 
 	private static boolean isAPI(int visibility,
-			TypeDescriptor typeDescriptor) {
-		int access = typeDescriptor.access;
+			IApiType typeDescriptor) {
+		int access = typeDescriptor.getModifiers();
 		return (visibility & VisibilityModifiers.API) != 0
 			&& (Util.isPublic(access) || Util.isProtected(access));
 	}
@@ -674,10 +674,10 @@ public class ApiComparator {
 					container.accept(new ClassFileContainerVisitor() {
 						public void visit(String packageName, IClassFile classFile) {
 							String typeName = classFile.getTypeName();
-							IApiAnnotations elementDescription = apiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
 							try {
-								TypeDescriptor typeDescriptor = new TypeDescriptor(classFile);
-								if (typeDescriptor.isNestedType()) {
+								IApiType typeDescriptor = TypeStructureCache.getTypeStructure(classFile, component);
+								IApiAnnotations elementDescription = apiDescription.resolveAnnotations(typeDescriptor.getHandle());
+								if (typeDescriptor.isMemberType() || typeDescriptor.isAnonymous() || typeDescriptor.isLocal()) {
 									// we skip nested types (member, local and anonymous)
 									return;
 								}
@@ -699,8 +699,8 @@ public class ApiComparator {
 									}
 									if (visibilityModifiers == VisibilityModifiers.API) {
 										// if the visibility is API, we only consider public and protected types
-										if (Util.isDefault(typeDescriptor.access)
-													|| Util.isPrivate(typeDescriptor.access)) {
+										if (Util.isDefault(typeDescriptor.getModifiers())
+													|| Util.isPrivate(typeDescriptor.getModifiers())) {
 											return;
 										}
 									}
@@ -711,7 +711,7 @@ public class ApiComparator {
 													IDelta.REMOVED,
 													IDelta.TYPE,
 													RestrictionModifiers.NO_RESTRICTIONS,
-													typeDescriptor.access,
+													typeDescriptor.getModifiers(),
 													typeName,
 													typeName,
 													new String[] { typeName, deltaComponentID}));
@@ -720,16 +720,16 @@ public class ApiComparator {
 										// we skip the class file according to their visibility
 										return;
 									}
-									TypeDescriptor typeDescriptor2 = new TypeDescriptor(classFile2);
-									IApiAnnotations elementDescription2 = apiDescription2.resolveAnnotations(Factory.typeDescriptor(typeName));
+									IApiType typeDescriptor2 = TypeStructureCache.getTypeStructure(classFile2, component2);
+									IApiAnnotations elementDescription2 = apiDescription2.resolveAnnotations(typeDescriptor2.getHandle());
 									int visibility2 = 0;
 									if (elementDescription2 != null) {
 										visibility2 = elementDescription2.getVisibility();
 									}
 									if (visibilityModifiers == VisibilityModifiers.API) {
 										// if the visibility is API, we only consider public and protected types
-										if (Util.isDefault(typeDescriptor.access)
-												|| Util.isPrivate(typeDescriptor.access)) {
+										if (Util.isDefault(typeDescriptor.getModifiers())
+												|| Util.isPrivate(typeDescriptor.getModifiers())) {
 											return;
 										}
 									}
@@ -741,7 +741,7 @@ public class ApiComparator {
 														IDelta.REMOVED,
 														IDelta.API_TYPE,
 														elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-														typeDescriptor2.access,
+														typeDescriptor2.getModifiers(),
 														typeName,
 														typeName,
 														new String[] { typeName, deltaComponentID}));
@@ -756,7 +756,7 @@ public class ApiComparator {
 														IDelta.CHANGED,
 														IDelta.TYPE_VISIBILITY,
 														elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-														typeDescriptor2.access,
+														typeDescriptor2.getModifiers(),
 														typeName,
 														typeName,
 														new String[] { typeName, deltaComponentID}));
@@ -789,14 +789,14 @@ public class ApiComparator {
 					container.accept(new ClassFileContainerVisitor() {
 						public void visit(String packageName, IClassFile classFile) {
 							String typeName = classFile.getTypeName();
-							IApiAnnotations elementDescription = apiDescription2.resolveAnnotations(Factory.typeDescriptor(typeName));
 							try {
-								TypeDescriptor typeDescriptor = new TypeDescriptor(classFile);
-								if (typeDescriptor.isNestedType()) {
+								IApiType type = TypeStructureCache.getTypeStructure(classFile, component2);
+								IApiAnnotations elementDescription = apiDescription2.resolveAnnotations(type.getHandle());
+								if (type.isMemberType() || type.isLocal() || type.isAnonymous()) {
 									// we skip nested types (member, local and anonymous)
 									return;
 								}
-								if (filterType(visibilityModifiers, elementDescription, typeDescriptor)) {
+								if (filterType(visibilityModifiers, elementDescription, type)) {
 									return;
 								}
 								if (classFileBaseLineNames.contains(typeName)) {
@@ -812,7 +812,7 @@ public class ApiComparator {
 												IDelta.ADDED,
 												IDelta.TYPE,
 												elementDescription != null ? elementDescription.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-												typeDescriptor.access,
+												type.getModifiers(),
 												typeName,
 												typeName,
 												new String[] { typeName, deltaComponentID}));
@@ -834,15 +834,15 @@ public class ApiComparator {
 	 */
 	static boolean filterType(final int visibilityModifiers,
 			IApiAnnotations elementDescription,
-			TypeDescriptor typeDescriptor) {
+			IApiType typeDescriptor) {
 		if (elementDescription != null && (elementDescription.getVisibility() & visibilityModifiers) == 0) {
 			// we skip the class file according to their visibility
 			return true;
 		}
 		if (visibilityModifiers == VisibilityModifiers.API) {
 			// if the visibility is API, we only consider public and protected types
-			if (Util.isDefault(typeDescriptor.access)
-						|| Util.isPrivate(typeDescriptor.access)) {
+			if (Util.isDefault(typeDescriptor.getModifiers())
+						|| Util.isPrivate(typeDescriptor.getModifiers())) {
 				return true;
 			}
 		}

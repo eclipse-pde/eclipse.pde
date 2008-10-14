@@ -101,7 +101,6 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
-import org.eclipse.pde.api.tools.internal.comparator.TypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
@@ -112,6 +111,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.objectweb.asm.Opcodes;
@@ -607,12 +607,14 @@ public final class Util {
 	}
 
 	/**
-	 * Returns the component with the given type name or <code>null</code> 
-	 * @param components
-	 * @param typeName
-	 * @return the component with the given type name or <code>null</code>
+	 * Returns a result of searching the given components for  class file with the
+	 * given type name.
+	 *  
+	 * @param components API components to search or <code>null</code> if none
+	 * @param typeName type to search for
+	 * @return result of the search, or <code>null</code> if none found
 	 */
-	public static IApiComponent getComponent(IApiComponent[] components, String typeName) {
+	public static ClassFileResult getComponent(IApiComponent[] components, String typeName) {
 		if (components == null) return null;
 		for (int i = 0, max = components.length; i < max; i++) {
 			IApiComponent apiComponent = components[i];
@@ -620,7 +622,7 @@ public final class Util {
 				try {
 					IClassFile classFile = apiComponent.findClassFile(typeName);
 					if (classFile != null) {
-						return apiComponent;
+						return new ClassFileResult(apiComponent, classFile);
 					}
 				} catch (CoreException e) {
 					// ignore
@@ -629,7 +631,7 @@ public final class Util {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Return a string that represents the element type of the given delta.
 	 * Returns {@link #UNKNOWN_ELEMENT_TYPE} if the element type cannot be determined.
@@ -1493,11 +1495,8 @@ public final class Util {
 				}
 			}
 			else {
-				StringBuffer buffer = new StringBuffer();
-				buffer.append("<init>"); //$NON-NLS-1$
 				collectSyntheticParam(node, rparams);
-				buffer.append(Signature.createMethodSignature((String[]) rparams.toArray(new String[rparams.size()]), Signature.SIG_VOID));
-				return buffer.toString();
+				return Signature.createMethodSignature((String[]) rparams.toArray(new String[rparams.size()]), Signature.SIG_VOID);
 			}
 		}
 		return null;
@@ -2614,38 +2613,14 @@ public final class Util {
 	 * @return true if the type names match, false otherwise
 	 */
 	private static boolean matches(String type, String type2) {
-		if (type.length() == 1) {
-			if (type2.length() != 1) {
-				return false;
+		if (Signature.getArrayCount(type) == Signature.getArrayCount(type2)) {
+			String el1 = Signature.getElementType(type);
+			String el2 = Signature.getElementType(type2);
+			if (Signature.getSignatureSimpleName(el1).equals(Signature.getSignatureSimpleName(el2))) {
+				return true;
 			}
-			return type.charAt(0) == type2.charAt(0);
-		} else if (type2.length() == 1) {
-			return false;
 		}
-		char[] typeChars = type.toCharArray();
-		char[] type2Chars = type2.toCharArray();
-		// return types are reference types
-		if (typeChars[0] == Signature.C_ARRAY) {
-			// array type
-			if (type2Chars[0] != Signature.C_ARRAY) {
-				// not an array type
-				return false;
-			}
-			// check array types
-			// get type1 dimensions
-			int dims1 = Signature.getArrayCount(typeChars);
-			if (dims1 != Signature.getArrayCount(type2Chars)) {
-				return false;
-			}
-			return matches(CharOperation.subarray(typeChars, dims1, typeChars.length),
-					CharOperation.subarray(type2Chars, dims1, type2Chars.length));
-		}
-		if (type2.charAt(0) == Signature.C_ARRAY) {
-			// an array type
-			return false;
-		}
-		// check reference types
-		return matches(typeChars, type2Chars);
+		return false;
 	}
 
 	/**
@@ -2661,10 +2636,10 @@ public final class Util {
 		char[] typeName2 = Signature.toCharArray(type2);
 		if (CharOperation.lastIndexOf(Signature.C_DOLLAR, typeName2) == -1) {
 			// no member type
-			if(CharOperation.indexOf('.', typeName) > -1) {
+			if(CharOperation.indexOf('/', typeName) > -1) {
 				return CharOperation.equals(typeName, typeName2);
 			}
-			return CharOperation.equals(typeName, Signature.getSimpleName(typeName2));
+			return CharOperation.equals(typeName, getSimpleName(typeName2));
 		}
 		// member type
 		int index = CharOperation.indexOf(typeName, typeName2, true);
@@ -2678,6 +2653,20 @@ public final class Util {
 		typeName[dotIndex] = Signature.C_DOLLAR;
 		index = CharOperation.indexOf(typeName, typeName2, true);
 		return index != -1 && ((index + typeName.length) == typeName2.length);
+	}
+	
+	/**
+	 * Returns the last segment of a slash delimited name.
+	 * 
+	 * @param slashName slash delimited name
+	 * @return last segment
+	 */
+	private static char[] getSimpleName(char[] slashName) {
+		int index = CharOperation.lastIndexOf('/', slashName);
+		if (index > -1) {
+			return CharOperation.subarray(slashName, index+1, slashName.length);
+		}
+		return slashName;
 	}
 	
 	/**
@@ -2718,8 +2707,8 @@ public final class Util {
 		return String.valueOf(buffer);
 	}
 	
-	public static String getDescriptorName(TypeDescriptor descriptor) {
-		String typeName = descriptor.name;
+	public static String getDescriptorName(IApiType descriptor) {
+		String typeName = descriptor.getName();
 		int index = typeName.lastIndexOf('$');
 		if (index != -1) {
 			return typeName.replace('$', '.');

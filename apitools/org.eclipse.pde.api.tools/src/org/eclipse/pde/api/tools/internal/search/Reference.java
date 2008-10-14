@@ -11,14 +11,17 @@
 package org.eclipse.pde.api.tools.internal.search;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.model.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
+import org.eclipse.pde.api.tools.internal.util.ClassFileResult;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -96,15 +99,15 @@ public class Reference implements IReference {
 			if(sourceComponent != null) {
 				if ((getReferenceKind() & METHODS_TO_RESOLVE) > 0) {
 					IMethodDescriptor method = (IMethodDescriptor) target.getMember();
-					resolveVirtualMethod(sourceComponent, method, engine);
+					resolveVirtualMethod(sourceComponent, method);
 				} else {
-					IApiComponent cpackage = Util.getComponent(
+					ClassFileResult result = Util.getComponent(
 							sourceComponent.getProfile().resolvePackage(sourceComponent, target.getType().getPackage().getName()),
 							target.getType().getQualifiedName());
-					if(cpackage != null) {
-						ILocation res = new Location(cpackage, target.getMember());
+					if(result != null) {
+						ILocation res = new Location(result.getComponent(), target.getMember());
 						res.setLineNumber(target.getLineNumber());
-						IApiAnnotations ann = cpackage.getApiDescription().resolveAnnotations(res.getMember());
+						IApiAnnotations ann = result.getComponent().getApiDescription().resolveAnnotations(res.getMember());
 						setResolution(ann, res);
 					}
 				}
@@ -121,51 +124,46 @@ public class Reference implements IReference {
 	 * @param profile profile in which method lookup is to be resolved
 	 * @param callSiteComponent the component where the method call site was located
 	 * @param method the method that has been called
-	 * @param engine search engine (used for class file reader cache)
 	 * @returns whether the lookup succeeded
 	 * @throws CoreException if something goes terribly wrong
 	 */
-	private boolean resolveVirtualMethod(IApiComponent callSiteComponent, IMethodDescriptor method, SearchEngine engine) throws CoreException {
+	private boolean resolveVirtualMethod(IApiComponent callSiteComponent, IMethodDescriptor method) throws CoreException {
 		// resolve the package in which to start the lookup
 		IApiComponent[] implComponents = callSiteComponent.getProfile().resolvePackage(callSiteComponent, method.getPackage().getName());
 		String receivingTypeName = method.getEnclosingType().getQualifiedName();
-		IApiComponent implComponent = Util.getComponent(implComponents, receivingTypeName);
-		if (implComponent != null) {
-			IClassFile classFile = implComponent.findClassFile(receivingTypeName);
-			if (classFile != null) {
-				MethodExtractor extractor = engine.getExtraction(classFile);
-				IMethodDescriptor[] methods = extractor.getMethods();
-				for (int i = 0; i < methods.length; i++) {
-					IMethodDescriptor methodInfo = methods[i];
-					if (methodInfo.equals(method)) {
-						if (methodInfo.isSynthetic()) {
-							// don't resolve references to synthetic methods
-							return false;
-						} else {
-							ILocation res = new Location(implComponent, method);
-							IApiAnnotations ann = implComponent.getApiDescription().resolveAnnotations(
-									res.getMember());
-							setResolution(ann, res);
-							return true;
-						}
+		ClassFileResult result = Util.getComponent(implComponents, receivingTypeName);
+		if (result != null) {
+			IApiType structure = TypeStructureCache.getTypeStructure(result.getClassFile(), result.getComponent());
+			if (structure != null) {
+				IApiMethod target = structure.getMethod(method.getName(), method.getSignature());
+				if (target != null) {
+					if (target.isSynthetic()) {
+						// don't resolve references to synthetic methods
+						return false;
+					} else {
+						ILocation res = new Location(result.getComponent(), method);
+						IApiAnnotations ann = result.getComponent().getApiDescription().resolveAnnotations(
+								res.getMember());
+						setResolution(ann, res);
+						return true;
 					}
 				}
 				if (kind == ReferenceModifiers.REF_INTERFACEMETHOD) {
 					// resolve method in super interfaces rather than class
-					String[] interaces = extractor.getInteraces();
+					String[] interaces = structure.getSuperInterfaceNames();
 					if (interaces != null) {
 						for (int i = 0; i < interaces.length; i++) {
 							IReferenceTypeDescriptor supertype = Util.getType(interaces[i]);
-							if (resolveVirtualMethod(implComponent, supertype.getMethod(method.getName(), method.getSignature()), engine)) {
+							if (resolveVirtualMethod(result.getComponent(), supertype.getMethod(method.getName(), method.getSignature()))) {
 								return true;
 							}
 						}
 					}
 				} else {
-					String superName = extractor.getSuperclassName();
+					String superName = structure.getSuperclassName();
 					if (superName != null) {
 						IReferenceTypeDescriptor supertype = Util.getType(superName);
-						return resolveVirtualMethod(implComponent, supertype.getMethod(method.getName(), method.getSignature()), engine);
+						return resolveVirtualMethod(result.getComponent(), supertype.getMethod(method.getName(), method.getSignature()));
 					}
 				}
 			}

@@ -787,6 +787,8 @@ public class ApiDescriptionProcessor {
 			if(signature == null) {
 				abort(ScannerMessages.ComponentXMLScanner_3, null); 
 			}
+			// old files might use '.' instead of '/'
+			signature.replace('.', '/');
 			methoddesc = typedesc.getMethod(name, signature);
 			annotateDescriptor(project, settings, methoddesc, method);
 		}

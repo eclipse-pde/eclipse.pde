@@ -54,7 +54,7 @@ import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
-import org.eclipse.pde.api.tools.internal.comparator.TypeDescriptor;
+import org.eclipse.pde.api.tools.internal.model.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -75,6 +75,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
@@ -150,6 +151,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	public void analyzeComponent(final BuildState state, final IApiFilterStore filterStore, final IApiProfile baseline,	final IApiComponent component,
 			final String[] typenames, final String[] changedtypes, IProgressMonitor monitor) {
 		try {
+			TypeStructureCache.clearCache();
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 6 + (changedtypes == null ? 0 : changedtypes.length));
 			fJavaProject = getJavaProject(component);
 			if(baseline != null) {
@@ -195,6 +197,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			updateMonitor(localMonitor);
 		}
 		finally {
+			TypeStructureCache.clearCache();
 			if(monitor != null) {
 				monitor.done();
 			}
@@ -620,11 +623,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			if (referenceClassFile != null) {
 				try {
+					IApiType type = TypeStructureCache.getTypeStructure(referenceClassFile, reference);
 					final IApiDescription referenceApiDescription = reference.getApiDescription();
-					IApiAnnotations elementDescription = referenceApiDescription.resolveAnnotations(Factory.typeDescriptor(typeName));
-					TypeDescriptor typeDescriptor = new TypeDescriptor(referenceClassFile);
+					IApiAnnotations elementDescription = referenceApiDescription.resolveAnnotations(type.getHandle());
 					int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
-					if (!typeDescriptor.isNestedType()) {
+					if (!type.isMemberType() && !type.isAnonymous() && !type.isLocal()) {
 						int visibility = VisibilityModifiers.ALL_VISIBILITIES;
 						// we skip nested types (member, local and anonymous)
 						if (elementDescription != null) {
@@ -632,8 +635,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							visibility = elementDescription.getVisibility();
 						}
 						// if the visibility is API, we only consider public and protected types
-						if (Util.isDefault(typeDescriptor.access)
-									|| Util.isPrivate(typeDescriptor.access)) {
+						if (Util.isDefault(type.getModifiers())
+									|| Util.isPrivate(type.getModifiers())) {
 							return;
 						}
 						if ((visibility & VisibilityModifiers.API) != 0) {
@@ -644,7 +647,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									IDelta.REMOVED,
 									IDelta.TYPE,
 									restrictions,
-									typeDescriptor.access,
+									type.getModifiers(),
 									typeName,
 									typeName,
 									new String[] { typeName, deltaComponentID});

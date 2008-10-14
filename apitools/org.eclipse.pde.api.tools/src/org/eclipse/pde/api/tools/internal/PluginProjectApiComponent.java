@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,10 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -38,7 +34,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -172,47 +167,6 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 			System.out.println("Time to create api description for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return apiDesc;
-	}
-	
-	/**
-	 * Processes all source tags in this project, annotating the given API description.
-	 * 
-	 * @param apiDescription API description
-	 * @throws CoreException if something goes wrong
-	 */
-	protected void loadSourceTags(IApiDescription apiDescription) throws CoreException {
-		List sourceRoots = new ArrayList();
-		if (fProject.exists() && fProject.getProject().isOpen()) {
-			IClasspathEntry entries[] = fProject.getRawClasspath();
-			for (int i = 0; i < entries.length; i++) {
-				IClasspathEntry classpathEntry = entries[i];
-				if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-					IPackageFragmentRoot[] roots = fProject.findPackageFragmentRoots(classpathEntry);
-					for (int j = 0; j < roots.length; j++) {
-						sourceRoots.add(roots[j]);
-					}
-				}
-			}
-		}
-		TagScanner scanner = TagScanner.newScanner();
-		Iterator iterator = sourceRoots.iterator();
-		ICompilationUnit[] units = null;
-		IJavaElement[] pkgs = null;
-		while (iterator.hasNext()) {
-			pkgs = ((IPackageFragmentRoot) iterator.next()).getChildren();
-			for (int i = 0; i < pkgs.length; i++) {
-				if (pkgs[i] instanceof IPackageFragment) {
-					units = ((IPackageFragment) pkgs[i]).getCompilationUnits();
-					for (int j = 0; j < units.length; j++) {
-						try {
-							scanner.scan(units[j], apiDescription, this);
-						} catch (CoreException e) {
-							abort("Unable to initialize from Javadoc tags", e); //$NON-NLS-1$
-						}
-					}
-				}
-			}
-		}
 	}
 
 	/* (non-Javadoc)

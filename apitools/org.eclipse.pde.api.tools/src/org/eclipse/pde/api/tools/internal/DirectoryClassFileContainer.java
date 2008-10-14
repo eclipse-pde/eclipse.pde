@@ -15,6 +15,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,12 +59,13 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 	 */
 	private String[] fPackageNames;
 	
+
 	/**
 	 * Implementation of a class file in the local file system.
 	 * 
 	 * @since 1.0.0
 	 */
-	class ClassFile extends AbstractClassFile implements Comparable {
+	class ClassFile extends CRCClassFile implements Comparable {
 		
 		/**
 		 * Associated file
@@ -127,6 +129,14 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 			}
 			return null; // never reaches here
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFile#getURI()
+		 */
+		public URI getURI() {
+			return fFile.toURI();
+		}
+		
 	}	
 	
 	/**

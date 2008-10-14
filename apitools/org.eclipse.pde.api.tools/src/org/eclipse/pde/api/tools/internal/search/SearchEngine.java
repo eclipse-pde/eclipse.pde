@@ -37,7 +37,6 @@ import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.objectweb.asm.ClassReader;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -136,13 +135,6 @@ public class SearchEngine implements IApiSearchEngine {
 	private List[] fPotentialMatches = null;
 	
 	/**
-	 * Class file cache for resolution of virtual methods
-	 */
-	private LRUMap fCache = new LRUMap(300);
-	private int fHits = 0;
-	private int fMiss = 0;	
-	
-	/**
 	 * Search criteria
 	 */
 	private IApiSearchCriteria[] fConditions = null;
@@ -220,8 +212,6 @@ public class SearchEngine implements IApiSearchEngine {
 	 * @throws CoreException if something goes wrong
 	 */
 	private void resolveReferences(List[] referenceLists, IProgressMonitor monitor) throws CoreException {
-		fHits = 0;
-		fMiss = 0;
 		// sort references by target type for 'shared' resolution
 		Map sigtoref = new HashMap(50);
 		
@@ -271,33 +261,8 @@ public class SearchEngine implements IApiSearchEngine {
 		end = System.currentTimeMillis();
 		if (DEBUG) {
 			System.out.println("Search: resolved method overrides in " + (end - start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
-			System.out.println("Search: class file method info cache hits: " + fHits + " misses: " + fMiss); //$NON-NLS-1$ //$NON-NLS-2$
-			
-		}
-		fCache.clear();
-		
+		}	
 	}
-	
-	/**
-	 * Returns a class file reader for the given class file.
-	 * 
-	 * @param file class file
-	 * @return class file reader
-	 * @throws CoreException
-	 */
-	MethodExtractor getExtraction(IClassFile file) throws CoreException {
-		MethodExtractor extractor= (MethodExtractor) fCache.get(file.getTypeName());
-		if (extractor == null) {
-			extractor = new MethodExtractor();
-			ClassReader reader = new ClassReader(file.getContents());
-			reader.accept(extractor, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
-			fCache.put(file.getTypeName(), extractor);
-			fMiss++;
-		} else {
-			fHits++;
-		}
-		return extractor;
-	}	
 	
 	/**
 	 * Resolves the collect sets of references.
@@ -389,7 +354,6 @@ public class SearchEngine implements IApiSearchEngine {
 			results[index++] = new ApiSearchResult(fConditions[i], (IReference[]) references.toArray(new IReference[references.size()]));
 			references.clear();
 		}
-		fCache.clear();
 		fPotentialMatches = null;
 		localMonitor.worked(1);
 		localMonitor.done();

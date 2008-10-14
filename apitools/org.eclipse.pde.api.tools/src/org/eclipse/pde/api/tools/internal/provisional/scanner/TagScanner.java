@@ -14,8 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +24,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -45,6 +42,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
+import org.eclipse.pde.api.tools.internal.model.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
@@ -56,10 +54,9 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.search.MethodExtractor;
-import org.eclipse.pde.api.tools.internal.util.HashtableOfInt;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.objectweb.asm.ClassReader;
 
 /**
  * Scans the source of a *.java file for any API javadoc tags
@@ -104,11 +101,6 @@ public class TagScanner {
 		 * <code>null</code> if not provided.
 		 */
 		private IClassFileContainer fContainer = null;
-		
-		/**
-		 * Cache of class files to maps of unresolved method descriptors to resolved descriptors.
-		 */
-		private Map fMethodMappings = null;
 		
 		/**
 		 * List of exceptions encountered, or <code>null</code>
@@ -326,30 +318,13 @@ public class TagScanner {
 				IReferenceTypeDescriptor type = descriptor.getEnclosingType();
 				IClassFile classFile = fContainer.findClassFile(type.getQualifiedName());
 				if(classFile != null) {
-					Map methodMapping = getMethodMapping(classFile);
-					Object object = methodMapping.get(descriptor.getName());
-					if (object == null) {
-						throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
-								MessageFormat.format("Unable to resolve method signature: {0}", new String[]{descriptor.toString()}), null)); //$NON-NLS-1$
-					}
-					if (object instanceof IMethodDescriptor) {
-						return (IMethodDescriptor) object;
-					}
-					if (object instanceof HashtableOfInt) {
-						HashtableOfInt hashtableOfInt = (HashtableOfInt) object;
-						int numberOfParameters = Signature.getParameterCount(descriptor.getSignature())+1;
-						Object object2 = hashtableOfInt.get(numberOfParameters);
-						if (object2 instanceof IMethodDescriptor) {
-							return (IMethodDescriptor) object2;
-						}
-						if(object2 != null) {
-							// this is a list of method descriptors and we need to find the better match
-							List methodList = (List) object2;
-							for (Iterator iterator = methodList.iterator(); iterator.hasNext(); ) {
-								IMethodDescriptor methodDescriptor = (IMethodDescriptor) iterator.next();
-								if (matches(descriptor, methodDescriptor)) {
-									return methodDescriptor;
-								}
+					IApiType structure = TypeStructureCache.getTypeStructure(classFile, null);
+					IApiMethod[] methods = structure.getMethods();
+					for (int i = 0; i < methods.length; i++) {
+						IApiMethod method = methods[i];
+						if (descriptor.getName().equals(method.getName())) {
+							if (Util.matchesSignatures(descriptor.getSignature().replace('/', '.'), method.getSignature().replace('/', '.'))) {
+								return descriptor.getEnclosingType().getMethod(method.getName(), method.getSignature());
 							}
 						}
 					}
@@ -360,93 +335,6 @@ public class TagScanner {
 			return descriptor;
 		}
 		
-		private boolean matches(IMethodDescriptor descriptor, IMethodDescriptor methodDescriptor) {
-			String signature = descriptor.getSignature();
-			String signature2 = methodDescriptor.getSignature();
-			return Util.matchesSignatures(signature, signature2);
-		}
-		/**
-		 * Returns resolved method descriptors from the given class file.
-		 * 
-		 * @param file class file
-		 * @return method descriptors for all methods in the file
-		 * @throws CoreException
-		 */
-		private IMethodDescriptor[] getMethods(IClassFile file) throws CoreException {
-			MethodExtractor extractor = new MethodExtractor();
-			ClassReader reader = new ClassReader(file.getContents());
-			reader.accept(extractor, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
-			return extractor.getMethods();
-		}
-		
-		
-		/**
-		 * Returns a map of unresolved methods descriptors to resolved method descriptors
-		 * for the methods in the given class file.
-		 * 
-		 * @param file class file
-		 * @return mapping of unresolved methods to resolved methods
-		 * @throws CoreException 
-		 */
-		private Map getMethodMapping(final IClassFile file) throws CoreException {
-			if (fMethodMappings == null) {
-				fMethodMappings = new HashMap();
-			}
-			Map mapping = (Map) fMethodMappings.get(file);
-			if (mapping == null) {
-				mapping = new HashMap();
-				IMethodDescriptor[] methods = getMethods(file);
-				for (int i = 0; i < methods.length; i++) {
-					IMethodDescriptor resolved = methods[i];
-					String selector = resolved.getName();
-					Object methodsCache = mapping.get(selector);
-					if (methodsCache != null) {
-						// already an existing method with the same selector
-						//parameter counts start @ 1 to be mappable
-						int numberOfParameter = Signature.getParameterCount(resolved.getSignature())+1;
-						if (methodsCache instanceof HashtableOfInt) {
-							HashtableOfInt hashtableOfInt = (HashtableOfInt) methodsCache;
-							Object object = hashtableOfInt.get(numberOfParameter);
-							if (object == null) {
-								// first method with this name and number of parameters
-								hashtableOfInt.put(numberOfParameter, resolved);
-							} else if (object instanceof List) {
-								// already more than one method with this name and number of parameters
-								List existingMethodsList = (List) object;
-								existingMethodsList.add(resolved);
-							} else {
-								// insert the second method with this name and number of parameters
-								List methodsList = new ArrayList();
-								methodsList.add(object);
-								methodsList.add(resolved);
-								hashtableOfInt.put(numberOfParameter, methodsList);
-							}
-						} else {
-							// this is a IMethodDescriptor
-							IMethodDescriptor previousMethod = (IMethodDescriptor) methodsCache;
-							HashtableOfInt hashtableOfInt = new HashtableOfInt();
-							//parameter counts start @ 1 to be mappable
-							int numberOfParametersForPrevious = Signature.getParameterCount(previousMethod.getSignature())+1;
-							if (numberOfParametersForPrevious != numberOfParameter) {
-								hashtableOfInt.put(numberOfParameter, resolved);
-								hashtableOfInt.put(numberOfParametersForPrevious, previousMethod);
-							} else {
-								List methodsList = new ArrayList();
-								methodsList.add(previousMethod);
-								methodsList.add(resolved);
-								hashtableOfInt.put(numberOfParameter, methodsList);
-							}
-							mapping.put(selector, hashtableOfInt);
-						}
-					} else {
-						// we insert the IMethodDescriptor in the map
-						mapping.put(selector, resolved);
-					}
-				}
-				fMethodMappings.put(file, mapping);
-			}
-			return mapping;
-		}
 	}
 
 	/**

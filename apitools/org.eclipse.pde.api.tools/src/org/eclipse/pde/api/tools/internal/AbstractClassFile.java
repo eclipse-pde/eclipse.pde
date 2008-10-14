@@ -56,6 +56,6 @@ public abstract class AbstractClassFile implements IClassFile {
 	private void abort(String message, Throwable e) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR,
 				ApiPlugin.PLUGIN_ID, message, e));
-	}	
+	}
 
 }
