@@ -157,8 +157,7 @@ public class TagValidator extends ASTVisitor {
 						break;
 					}
 					default: {
-						AbstractTypeDeclaration type = (AbstractTypeDeclaration) method.getParent();
-						pfinal = Flags.isFinal(type.getModifiers());
+						pfinal = Flags.isFinal(getParentModifiers(method));
 						if(isprivate) {
 							context = isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method;
 						}
@@ -235,6 +234,22 @@ public class TagValidator extends ASTVisitor {
 				break;
 			}
 		}
+	}
+	
+	/**
+	 * Returns the modifiers from the smallest enclosing type containing the given node
+	 * @param node
+	 * @return the modifiers for the smallest enclosing type or 0
+	 */
+	private int getParentModifiers(ASTNode node) {
+		if(node == null) {
+			return 0;
+		}
+		if(node instanceof AbstractTypeDeclaration) {
+			AbstractTypeDeclaration type = (AbstractTypeDeclaration) node;
+			return type.getModifiers();
+		}
+		return getParentModifiers(node.getParent());
 	}
 	
 	/**
