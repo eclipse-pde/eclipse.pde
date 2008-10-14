@@ -28,11 +28,9 @@ import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifier;
 import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
-import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -92,16 +90,8 @@ public abstract class PDETestCase extends TestCase {
 		if (resource != null) {
 			String path = FileLocator.toFileURL(resource).getPath();
 
-			IOverwriteQuery query = new IOverwriteQuery() {
-				public String queryOverwrite(String pathString) {
-					return ALL;
-				}
-			};
-			List files = new ArrayList(1);
-			files.add(new File(path));
-			ImportOperation op = new ImportOperation(new Path(PROJECT_NAME), FileSystemStructureProvider.INSTANCE, query, files);
-			op.setCreateContainerStructure(false);
-			op.run(null);
+			Utils.copyFiles(path, buildFolder.getLocation().toOSString());
+			buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
 		}
 
 		return buildFolder;
