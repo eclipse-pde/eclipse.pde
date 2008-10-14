@@ -38,6 +38,7 @@ public class BuilderMessages extends NLS {
 	public static String TagValidator_a_final_field;
 	public static String TagValidator_a_final_method;
 	public static String TagValidator_a_method;
+	public static String TagValidator_a_method_in_a_final_class;
 	public static String TagValidator_a_static_final_method;
 	public static String TagValidator_a_static_method;
 	public static String TagValidator_an_abstract_class;

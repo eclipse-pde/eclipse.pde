@@ -150,6 +150,10 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				if(Flags.isFinal(method.getFlags()) || Flags.isStatic(method.getFlags())) {
 					return !tag.getTagName().equals("@nooverride"); //$NON-NLS-1$
 				}
+				IType type = method.getDeclaringType();
+				if(type != null && Flags.isFinal(type.getFlags())) {
+					return !tag.getTagName().equals("@nooverride"); //$NON-NLS-1$
+				}
 			}
 		}
 		return true;

@@ -146,6 +146,7 @@ public class TagValidator extends ASTVisitor {
 				boolean isconstructor = method.isConstructor();
 				boolean isfinal = Flags.isFinal(mods);
 				boolean isstatic = Flags.isStatic(mods);
+				boolean pfinal = false;
 				switch(pkind) {
 					case IApiJavadocTag.TYPE_ENUM: {
 						context = isprivate ? BuilderMessages.TagValidator_private_enum_method : BuilderMessages.TagValidator_an_enum_method;
@@ -156,6 +157,8 @@ public class TagValidator extends ASTVisitor {
 						break;
 					}
 					default: {
+						AbstractTypeDeclaration type = (AbstractTypeDeclaration) method.getParent();
+						pfinal = Flags.isFinal(type.getModifiers());
 						if(isprivate) {
 							context = isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method;
 						}
@@ -168,6 +171,9 @@ public class TagValidator extends ASTVisitor {
 						else if(isstatic) {
 							context = BuilderMessages.TagValidator_a_static_method;
 						}
+						else if(pfinal) {
+							context = BuilderMessages.TagValidator_a_method_in_a_final_class;
+						}
 						else {
 							context = isconstructor ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
 						}
@@ -178,7 +184,7 @@ public class TagValidator extends ASTVisitor {
 				if(!isprivate) {
 					validtags = jtm.getTagsForType(pkind, isconstructor ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
 				}
-				if(isfinal || isstatic) {
+				if(isfinal || isstatic || pfinal) {
 					ArrayList ttags = new ArrayList(validtags.length);
 					for(int i = 0; i < validtags.length; i++) {
 						if(!validtags[i].getTagName().equals("@nooverride")) { //$NON-NLS-1$
