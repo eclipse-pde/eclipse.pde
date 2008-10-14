@@ -475,4 +475,88 @@ public class MethodReturnTypeLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	/**
+	 * Tests that a method in a final class leaking internal parameters is ignored when a @noreference tag is present 
+	 * using a full build
+	 */
+	public void testMethodParameterLeak14F() {
+		x14(false);
+	}
+	
+	/**
+	 * Tests that a method in a final class leaking internal parameters is ignored when a @noreference tag is present 
+	 * using an incremental build
+	 */
+	public void testMethodParameterLeak14I() {
+		x14(true);
+	}
+	
+	private void x14(boolean inc) {
+		expectingNoProblems();
+		String typename = "testMRL14";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that a method in an extend restricted class leaking internal parameters is ignored when a @noreference tag is present 
+	 * using a full build
+	 */
+	public void testMethodParameterLeak15F() {
+		x15(false);
+	}
+	
+	/**
+	 * Tests that a method in an extend restricted class leaking internal parameters is ignored when a @noreference tag is present 
+	 * using an incremental build
+	 */
+	public void testMethodParameterLeak15I() {
+		x15(true);
+	}
+	
+	private void x15(boolean inc) {
+		expectingNoProblems();
+		String typename = "testMRL15";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that a static method leaking internal parameters is ignored when a @noreference tag is present 
+	 * using a full build
+	 */
+	public void testMethodParameterLeak16F() {
+		x16(false);
+	}
+	
+	/**
+	 * Tests that a static method leaking internal parameters is ignored when a @noreference tag is present 
+	 * using an incremental build
+	 */
+	public void testMethodParameterLeak16I() {
+		x16(true);
+	}
+	
+	private void x16(boolean inc) {
+		expectingNoProblems();
+		String typename = "testMRL16";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
  }

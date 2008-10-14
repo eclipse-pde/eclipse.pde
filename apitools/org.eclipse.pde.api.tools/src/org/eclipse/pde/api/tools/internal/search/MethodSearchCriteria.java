@@ -83,6 +83,7 @@ public class MethodSearchCriteria extends SearchCriteria {
 								pres = annot.getRestrictions();
 							}
 							return (ares & RestrictionModifiers.NO_REFERENCE) != 0 && (!Util.isFinal(method.getModifiers())
+									&& !Util.isStatic(method.getModifiers())
 									&& !Util.isFinal(method.getEnclosingType().getModifiers())
 									&& ((pres & RestrictionModifiers.NO_EXTEND) == 0));
 						}
