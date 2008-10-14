@@ -483,6 +483,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 		try {
 			IMarker marker = resource.createMarker(type);
+			int line = problem.getLineNumber();
+			if(!type.equals(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER) &&
+					!type.equals(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER)) {
+				line += 1;
+			}
 			marker.setAttributes(
 					new String[] {
 							IMarker.MESSAGE,
@@ -495,7 +500,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					new Object[] {
 							problem.getMessage(),
 							new Integer(ApiPlugin.getDefault().getSeverityLevel(ApiProblemFactory.getProblemSeverityId(problem), this.fCurrentProject)),
-							new Integer(problem.getLineNumber()),
+							new Integer(line),
 							new Integer(problem.getCharStart()),
 							new Integer(problem.getCharEnd()),
 							ApiAnalysisBuilder.SOURCE,
