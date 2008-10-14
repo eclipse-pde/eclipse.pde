@@ -77,7 +77,14 @@ public class MethodSearchCriteria extends SearchCriteria {
 							return (ares & RestrictionModifiers.NO_REFERENCE) == 0;
 						}
 						if((ares & RestrictionModifiers.NO_OVERRIDE) == 0) {
-							return (ares & RestrictionModifiers.NO_REFERENCE) != 0 && !Util.isFinal(method.getModifiers());
+							IApiAnnotations annot = apiComponent.getApiDescription().resolveAnnotations(method.getEnclosingType());
+							int pres = 0;
+							if(annot != null) {
+								pres = annot.getRestrictions();
+							}
+							return (ares & RestrictionModifiers.NO_REFERENCE) != 0 && (!Util.isFinal(method.getModifiers())
+									&& !Util.isFinal(method.getEnclosingType().getModifiers())
+									&& ((pres & RestrictionModifiers.NO_EXTEND) == 0));
 						}
 						return  (ares & RestrictionModifiers.NO_REFERENCE) == 0; 
 					}
