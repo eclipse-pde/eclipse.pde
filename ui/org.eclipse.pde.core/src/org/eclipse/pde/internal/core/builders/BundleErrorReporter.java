@@ -71,6 +71,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateImportExportServices();
 		validateBundleLocalization();
 		validateProvidePackage();
+		validateEclipseBundleShape();
 	}
 
 	private boolean validateBundleManifestVersion() {
@@ -375,6 +376,23 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				break;
 			}
 		}
+	}
+
+	/**
+	 * Validates the Eclipse-BundleShape header
+	 * 
+	 * @since 3.5
+	 */
+	private void validateEclipseBundleShape() {
+		IHeader header = getHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE);
+		if (header == null)
+			return;
+
+		String value = header.getValue();
+		if (value != null) {
+			validateHeaderValue(header, ICoreConstants.SHAPE_VALUES);
+		}
+
 	}
 
 	private void validateEclipsePlatformFilter() {

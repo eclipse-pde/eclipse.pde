@@ -45,8 +45,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	private IJavaProject fJP;
 
 	// if we order the headers alphabetically in the array, there is no need to sort and we can save time
-	private static final String[] fHeader = {Constants.BUNDLE_ACTIVATIONPOLICY, Constants.BUNDLE_ACTIVATOR, Constants.BUNDLE_CATEGORY, Constants.BUNDLE_CLASSPATH, Constants.BUNDLE_CONTACTADDRESS, Constants.BUNDLE_COPYRIGHT, Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_DOCURL, Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_MANIFESTVERSION, Constants.BUNDLE_NAME, Constants.BUNDLE_NATIVECODE, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, Constants.BUNDLE_SYMBOLICNAME, Constants.BUNDLE_UPDATELOCATION, Constants.BUNDLE_VENDOR, Constants.BUNDLE_VERSION, Constants.DYNAMICIMPORT_PACKAGE, ICoreConstants.ECLIPSE_BUDDY_POLICY, ICoreConstants.ECLIPSE_GENERIC_CAPABILITY, ICoreConstants.ECLIPSE_GENERIC_REQUIRED, ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.PLATFORM_FILTER,
-			ICoreConstants.ECLIPSE_REGISTER_BUDDY, Constants.EXPORT_PACKAGE, ICoreConstants.EXPORT_SERVICE, Constants.FRAGMENT_HOST, Constants.IMPORT_PACKAGE, ICoreConstants.IMPORT_SERVICE, Constants.REQUIRE_BUNDLE};
+	private static final String[] fHeader = {Constants.BUNDLE_ACTIVATIONPOLICY, Constants.BUNDLE_ACTIVATOR, Constants.BUNDLE_CATEGORY, Constants.BUNDLE_CLASSPATH, Constants.BUNDLE_CONTACTADDRESS, Constants.BUNDLE_COPYRIGHT, Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_DOCURL, Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_MANIFESTVERSION, Constants.BUNDLE_NAME, Constants.BUNDLE_NATIVECODE, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, Constants.BUNDLE_SYMBOLICNAME, Constants.BUNDLE_UPDATELOCATION, Constants.BUNDLE_VENDOR, Constants.BUNDLE_VERSION, Constants.DYNAMICIMPORT_PACKAGE, ICoreConstants.ECLIPSE_BUDDY_POLICY, ICoreConstants.ECLIPSE_BUNDLE_SHAPE, ICoreConstants.ECLIPSE_GENERIC_CAPABILITY, ICoreConstants.ECLIPSE_GENERIC_REQUIRED, ICoreConstants.ECLIPSE_LAZYSTART,
+			ICoreConstants.PLATFORM_FILTER, ICoreConstants.ECLIPSE_REGISTER_BUDDY, Constants.EXPORT_PACKAGE, ICoreConstants.EXPORT_SERVICE, Constants.FRAGMENT_HOST, Constants.IMPORT_PACKAGE, ICoreConstants.IMPORT_SERVICE, Constants.REQUIRE_BUNDLE};
 
 	private static final String BAUMAN = "Brian Bauman"; //$NON-NLS-1$
 	private static final String ANISZCZYK = "Chris Aniszczyk"; //$NON-NLS-1$
@@ -228,6 +228,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			return handleBundleActivationPolicyCompletion(value.substring(Constants.BUNDLE_ACTIVATIONPOLICY.length() + 1), offset);
 		if (value.regionMatches(true, 0, ICoreConstants.ECLIPSE_BUDDY_POLICY, 0, Math.min(length, ICoreConstants.ECLIPSE_BUDDY_POLICY.length())))
 			return handleBuddyPolicyCompletion(value.substring(ICoreConstants.ECLIPSE_BUDDY_POLICY.length() + 1), offset);
+		if (value.regionMatches(true, 0, ICoreConstants.ECLIPSE_BUNDLE_SHAPE, 0, Math.min(length, ICoreConstants.ECLIPSE_BUNDLE_SHAPE.length())))
+			return handleEclipseBundleShape(value.substring(ICoreConstants.ECLIPSE_BUNDLE_SHAPE.length() + 1), offset);
 		return new ICompletionProposal[0];
 	}
 
@@ -601,6 +603,17 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			return new ICompletionProposal[] {new TypeCompletionProposal("false", getImage(F_TYPE_VALUE), "false", offset - length, length) //$NON-NLS-1$ //$NON-NLS-2$
 			};
 		return new ICompletionProposal[0];
+	}
+
+	protected ICompletionProposal[] handleEclipseBundleShape(String currentValue, int offset) {
+		currentValue = removeLeadingSpaces(currentValue);
+		ArrayList completions = new ArrayList();
+		int length = currentValue.length();
+		String[] values = ICoreConstants.SHAPE_VALUES;
+		for (int i = 0; i < values.length; i++)
+			if (values[i].regionMatches(true, 0, currentValue, 0, length) && !currentValue.equals(values[i]))
+				completions.add(new TypeCompletionProposal(values[i], getImage(F_TYPE_VALUE), values[i], offset - length, length));
+		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 
 	protected ICompletionProposal[] matchValueCompletion(String value, String[] attrs, int[] types, int offset) {
