@@ -201,7 +201,7 @@ public class DeltaProcessor {
 					case IDelta.DECREASE_ACCESS :
 						return RestrictionModifiers.isExtendRestriction(restrictions);
 					case IDelta.NON_FINAL_TO_FINAL :
-						return !Util.isVisible(delta) || RestrictionModifiers.isOverrideRestriction(restrictions)
+						return !Util.isVisible(delta)
 							|| RestrictionModifiers.isExtendRestriction(restrictions);
 				}
 				break;
