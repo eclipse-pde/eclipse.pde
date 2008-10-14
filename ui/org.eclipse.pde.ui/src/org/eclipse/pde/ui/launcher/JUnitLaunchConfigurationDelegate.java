@@ -7,7 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     David Saff (saff@mit.edu) - bug 102632: [JUnit] Support for JUnit 4.
+ *     Code 9 Corporation - ongoing enhancements
+ *     David Saff <saff@mit.edu> - bug 102632
+ *     Ketan Padegaonkar <KetanPadegaonkar@gmail.com> - bug 250340
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
@@ -92,33 +94,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 		// Specify the JUnit Plug-in test application to launch
 		programArgs.add("-application"); //$NON-NLS-1$
-		String application = null;
-		try {
-			// if application is set, it must be a headless app.
-			application = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
-		} catch (CoreException e) {
-		}
-
-		// if application is not set, we should launch the default UI test app
-		// Check to see if we should launch the legacy UI app
-		if (application == null) {
-			IPluginModelBase model = (IPluginModelBase) fPluginMap.get("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
-			BundleDescription desc = model != null ? model.getBundleDescription() : null;
-			if (desc != null) {
-				Version version = desc.getVersion();
-				int major = version.getMajor();
-				// launch legacy UI app only if we are launching a target that does 
-				// not use the new application model and we are launching with a 
-				// org.eclipse.pde.junit.runtime whose version is >= 3.3
-				if (major >= 3 && version.getMinor() >= 3 && !TargetPlatformHelper.usesNewApplicationModel()) {
-					application = IPDEUIConstants.LEGACY_UI_TEST_APPLICATION;
-				}
-			}
-		}
-
-		// launch the UI test application
-		if (application == null)
-			application = IPDEUIConstants.UI_TEST_APPLICATION;
+		String application = getApplication(configuration);
 
 		programArgs.add(application);
 
@@ -199,6 +175,45 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
 		programArgs.add(getTestPluginId(configuration));
+	}
+
+	/**
+	 * Returns the application to launch plug-in tests with
+	 * 
+	 * @since 3.5
+	 * 
+	 * @param configuration
+	 * @return the application
+	 */
+	protected String getApplication(ILaunchConfiguration configuration) {
+		String application = null;
+		try {
+			// if application is set, it must be a headless app.
+			application = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
+		} catch (CoreException e) {
+		}
+
+		// if application is not set, we should launch the default UI test app
+		// Check to see if we should launch the legacy UI app
+		if (application == null) {
+			IPluginModelBase model = (IPluginModelBase) fPluginMap.get("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
+			BundleDescription desc = model != null ? model.getBundleDescription() : null;
+			if (desc != null) {
+				Version version = desc.getVersion();
+				int major = version.getMajor();
+				// launch legacy UI app only if we are launching a target that does 
+				// not use the new application model and we are launching with a 
+				// org.eclipse.pde.junit.runtime whose version is >= 3.3
+				if (major >= 3 && version.getMinor() >= 3 && !TargetPlatformHelper.usesNewApplicationModel()) {
+					application = IPDEUIConstants.LEGACY_UI_TEST_APPLICATION;
+				}
+			}
+		}
+
+		// launch the UI test application
+		if (application == null)
+			application = IPDEUIConstants.UI_TEST_APPLICATION;
+		return application;
 	}
 
 	private IPluginModelBase findPlugin(String id) throws CoreException {
