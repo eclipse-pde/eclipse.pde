@@ -58,5 +58,30 @@ public interface IReference {
 	 * @return one of the reference type constants defined in this interface
 	 */
 	public int getReferenceType();
+	
+	/**
+	 * Returns the fully qualified name of the type that has been referenced.
+	 * 
+	 * @return fully qualified name of the type that has been referenced
+	 */
+	public String getReferencedTypeName();
+	
+	/**
+	 * Returns the name of the field or method that has been referenced, or 
+	 * <code>null</code> if this is a {@link #T_TYPE_REFERENCE}.
+	 * 
+	 * @return the name of the field or method that has been referenced, or 
+	 * <code>null</code>
+	 */
+	public String getReferencedMemberName();
+	
+	/**
+	 * Returns the type signature of the method that has been referenced, or 
+	 * <code>null</code> if this is not a {@link #T_METHOD_REFERENCE}.
+	 * 
+	 * @return the type signature of the method that has been referenced, or 
+	 * <code>null</code>
+	 */
+	public String getReferencedSignature();	
 
 }
