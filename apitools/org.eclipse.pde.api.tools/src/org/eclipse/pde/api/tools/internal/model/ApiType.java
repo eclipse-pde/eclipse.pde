@@ -87,35 +87,6 @@ public class ApiType extends ApiMember implements IApiType {
 	 * Cached super interfaces or <code>null</code>
 	 */
 	private IApiType[] fSuperInterfaces;
-
-	/**
-	 * Keys for method table
-	 */
-	private class MethodKey {
-		private String fSelector;
-		private String fSig;
-		private MethodKey(String name, String sig) {
-			fSelector = name;
-			fSig = sig;
-		}
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		public boolean equals(Object obj) {
-			if (obj instanceof MethodKey) {
-				MethodKey key = (MethodKey) obj;
-				return fSelector.equals(key.fSelector) &&
-				 fSig.equals(key.fSig);
-			}
-			return false;
-		}
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
-		public int hashCode() {
-			return fSelector.hashCode() + fSig.hashCode();
-		}
-	}
 	
 	/**
 	 * Creates an API type. Note that if an API component is not specified,

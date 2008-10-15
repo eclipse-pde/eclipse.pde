@@ -418,4 +418,207 @@ public class ClassExtendsLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	/**
+	 * Tests that an API class that extends an internal type is *not* flagged 
+	 * as a leak when a @noextend tag being used using a full build, since
+	 * only protected methods are exposed by the internal class.
+	 */
+	public void testClassExtendsLeak23F() {
+		x23(false);
+	}
+	
+	/**
+	 * Tests that an API class that extends an internal type is *not* flagged 
+	 * as a leak when a @noextend tag being used using an incremental build,
+	 * since only protected methods are exposed by the internal class.
+	 */
+	public void testClassExtendsLeak23I() {
+		x23(true);
+	}
+	
+	private void x23(boolean inc) {
+		String typename = "test23";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_PROTECTED_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that an API class that extends an internal type is flagged 
+	 * as a leak since a @noextend tag is *not* used during a full build (since
+	 * protected methods are exposed by the internal class, and extending
+	 * is allowed).
+	 */
+	public void testClassExtendsLeak24F() {
+		x24(false);
+	}
+	
+	/**
+	 * Tests that an API class that extends an internal type is flagged 
+	 * as a leak since a @noextend tag being *not* used during an incremental build,
+	 * (since protected methods are exposed by the internal class, and extending
+	 * is allowed).
+	 */
+	public void testClassExtendsLeak24I() {
+		x24(true);
+	}
+	
+	private void x24(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		String typename = "test24";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_PROTECTED_CLASS_NAME, typename}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_PROTECTED_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}	
+	
+	/**
+	 * Tests that an API class that extends an internal type with a public
+	 * field is a leak.
+	 */
+	public void testClassExtendsLeak25F() {
+		x25(false);
+	}
+	
+	/**
+	 * Tests that an API class that extends an internal type with a public
+	 * field is a leak.
+	 */
+	public void testClassExtendsLeak25I() {
+		x25(true);
+	}
+	
+	private void x25(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		String typename = "test25";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_PUBLIC_FIELD_CLASS_NAME, typename}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_PUBLIC_FIELD_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that an API class that extends an internal type with a public
+	 * field is a leak, even with a @noextend tag.
+	 */
+	public void testClassExtendsLeak26F() {
+		x26(false);
+	}
+	
+	/**
+	 * Tests that an API class that extends an internal type with a public
+	 * field is a leak, even with a @noextend tag.
+	 */
+	public void testClassExtendsLeak26I() {
+		x26(true);
+	}
+	
+	private void x26(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		String typename = "test26";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_PUBLIC_FIELD_CLASS_NAME, typename}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_PUBLIC_FIELD_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}	
+	
+	/**
+	 * Tests that an API class that extends an internal type with a protected
+	 * field is a leak (since it allows extending).
+	 */
+	public void testClassExtendsLeak27F() {
+		x27(false);
+	}
+	
+	/**
+	 * Tests that an API class that extends an internal type with a protected
+	 * field is a leak (since it allows extending)
+	 */
+	public void testClassExtendsLeak27I() {
+		x27(true);
+	}
+	
+	private void x27(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		String typename = "test27";
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_PROTECTED_FIELD_CLASS_NAME, typename}});
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_PROTECTED_FIELD_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	/**
+	 * Tests that an API class that extends an internal type with a protected
+	 * field is *not* a leak (since it *disallows* extending).
+	 */
+	public void testClassExtendsLeak28F() {
+		x28(false);
+	}
+	
+	/**
+	 * Tests that an API class that extends an internal type with a protected
+	 * field is *not* a leak (since it *disallows* extending)
+	 */
+	public void testClassExtendsLeak28I() {
+		x28(true);
+	}
+	
+	private void x28(boolean inc) {
+		String typename = "test28";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_PROTECTED_FIELD_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}	
+	
+	/**
+	 * Tests that an API class that extends an internal type with a private
+	 * field is *not* a leak.
+	 */
+	public void testClassExtendsLeak29F() {
+		x29(false);
+	}
+	
+	/**
+	 * Tests that an API class that extends an internal type with a private
+	 * field is *not* a leak.
+	 */
+	public void testClassExtendsLeak29I() {
+		x29(true);
+	}
+	
+	private void x29(boolean inc) {
+		String typename = "test29";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_PRIVATE_FIELD_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}		
 }

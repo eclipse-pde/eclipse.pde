@@ -53,6 +53,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
+import org.eclipse.pde.api.tools.internal.search.ExtendsSearchCriteria;
 import org.eclipse.pde.api.tools.internal.search.MethodSearchCriteria;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -288,7 +289,7 @@ public class ApiUseAnalyzer {
 		// Add API leak conditions
 		List conditions = visitor.getConditions();
 		
-		conditions.add(createLeakCondition(ReferenceModifiers.REF_EXTENDS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, 
+		conditions.add(createExtendsLeakCondition(ReferenceModifiers.REF_EXTENDS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, 
 				IApiProblem.LEAK_EXTENDS, RestrictionModifiers.ALL_RESTRICTIONS, Flags.AccPublic | Flags.AccProtected));
 		conditions.add(createLeakCondition(ReferenceModifiers.REF_IMPLEMENTS, IApiProblem.API_LEAK, IElementDescriptor.T_REFERENCE_TYPE, 
 				IApiProblem.LEAK_IMPLEMENTS, RestrictionModifiers.ALL_RESTRICTIONS, Flags.AccPublic | Flags.AccProtected));
@@ -324,6 +325,27 @@ public class ApiUseAnalyzer {
 		criteria.setUserData(new ProblemDescriptor(problemKind, elementType, flags));
 		return criteria;
 	}
+	
+	/**
+	 * Creates a new {@link IApiSearchCriteria} for an extends leak kind and adds it to the 
+	 * collector specified
+	 * 
+	 * @param conditions
+	 * @param refKind
+	 * @param problemKind
+	 * @param elementType
+	 * @param flags
+	 * @param restrictions
+	 */
+	private IApiSearchCriteria createExtendsLeakCondition(int refKind, int problemKind, int elementType, int flags, int restrictions, int sourcevis) {
+		IApiSearchCriteria criteria = new ExtendsSearchCriteria();
+		criteria.setReferenceKinds(refKind);
+		criteria.setReferencedRestrictions(VisibilityModifiers.PRIVATE, RestrictionModifiers.ALL_RESTRICTIONS);
+		criteria.setSourceRestrictions(VisibilityModifiers.API, restrictions);
+		criteria.setSourceModifiers(sourcevis);	
+		criteria.setUserData(new ProblemDescriptor(problemKind, elementType, flags));
+		return criteria;
+	}	
 		
 	/**
 	 * Creates an {@link IApiProblem} for the given illegal reference.

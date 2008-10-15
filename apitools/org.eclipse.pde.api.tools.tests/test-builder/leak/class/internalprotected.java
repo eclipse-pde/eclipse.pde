@@ -11,14 +11,14 @@
 package internal.x.y.z;
 
 /**
- * 
+ * An internal class with only protected members visible
  */
-public class internal {
+public class internalprotected {
 	
 	/**
-	 * Need to leak a public method - this is alwas a leak
+	 * This is only a leak if someone can extend a class
 	 */
-	public void publicMethod() {
+	protected void protectedMethod() {
 	}
 
 }

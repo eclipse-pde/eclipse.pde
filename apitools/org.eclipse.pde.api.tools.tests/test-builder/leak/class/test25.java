@@ -8,17 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package internal.x.y.z;
+package x.y.z;
+
+import internal.x.y.z.internalpublicfield;
 
 /**
  * 
  */
-public class internal {
-	
-	/**
-	 * Need to leak a public method - this is alwas a leak
-	 */
-	public void publicMethod() {
-	}
+public class test25 extends internalpublicfield {
 
 }

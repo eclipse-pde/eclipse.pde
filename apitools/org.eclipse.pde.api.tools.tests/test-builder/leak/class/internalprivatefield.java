@@ -13,12 +13,8 @@ package internal.x.y.z;
 /**
  * 
  */
-public class internal {
+public class internalprivatefield {
 	
-	/**
-	 * Need to leak a public method - this is alwas a leak
-	 */
-	public void publicMethod() {
-	}
+	private int privateField = 1; // this is never a leak
 
 }
