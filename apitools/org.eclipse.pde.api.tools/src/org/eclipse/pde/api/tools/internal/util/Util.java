@@ -80,7 +80,6 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.ArrayType;
@@ -2621,52 +2620,6 @@ public final class Util {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Returns if the two type names match. Type names are considered a match
-	 * iff the full name is the same OR the name of a Q-type is the same 
-	 * as the simple name of an L-type;
-	 * @param type
-	 * @param type2
-	 * @return
-	 */
-	private static boolean matches(char[] type, char[] type2) {
-		char[] typeName = Signature.toCharArray(type);
-		char[] typeName2 = Signature.toCharArray(type2);
-		if (CharOperation.lastIndexOf(Signature.C_DOLLAR, typeName2) == -1) {
-			// no member type
-			if(CharOperation.indexOf('/', typeName) > -1) {
-				return CharOperation.equals(typeName, typeName2);
-			}
-			return CharOperation.equals(typeName, getSimpleName(typeName2));
-		}
-		// member type
-		int index = CharOperation.indexOf(typeName, typeName2, true);
-		if (index != -1 && ((index + typeName.length) == typeName2.length)) {
-			return true;
-		}
-		int dotIndex = CharOperation.lastIndexOf(Signature.C_DOT, typeName);
-		if (dotIndex == -1) {
-			return false;
-		}
-		typeName[dotIndex] = Signature.C_DOLLAR;
-		index = CharOperation.indexOf(typeName, typeName2, true);
-		return index != -1 && ((index + typeName.length) == typeName2.length);
-	}
-	
-	/**
-	 * Returns the last segment of a slash delimited name.
-	 * 
-	 * @param slashName slash delimited name
-	 * @return last segment
-	 */
-	private static char[] getSimpleName(char[] slashName) {
-		int index = CharOperation.lastIndexOf('/', slashName);
-		if (index > -1) {
-			return CharOperation.subarray(slashName, index+1, slashName.length);
-		}
-		return slashName;
 	}
 	
 	/**
