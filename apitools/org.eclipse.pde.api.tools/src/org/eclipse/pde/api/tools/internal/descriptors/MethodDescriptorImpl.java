@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.descriptors;
 
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
@@ -85,13 +84,6 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 	public String getSignature() {
 		return fSignature;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.descriptors.IMethodDescriptor#isSynthetic()
-	 */
-	public boolean isSynthetic() {
-		return Flags.isSynthetic(getModifiers());
-	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor#isConstructor()

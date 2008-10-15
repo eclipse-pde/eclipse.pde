@@ -32,13 +32,6 @@ public interface IMethodDescriptor extends IMemberDescriptor {
 	public String getSignature();
 	
 	/**
-	 * Returns whether this method is synthetic.
-	 * 
-	 * @return whether this method is synthetic
-	 */
-	public boolean isSynthetic();
-	
-	/**
 	 * Returns whether this method is a constructor
 	 * 
 	 * @return whether this method is a constructor
