@@ -712,7 +712,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateBundleManifest(d, "D", "1.0.0", attributes);
 		Utils.generatePluginBuildProperties(d, null);
 
-		attributes.put(requireAttribute, "C, B");
+		attributes.put(requireAttribute, "C, B, D");
 		Utils.generateBundleManifest(e, "E", "1.0.0", attributes);
 		Utils.generatePluginBuildProperties(e, null);
 
