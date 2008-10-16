@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *     Les Jones <lesojones@gamil.com> - bug 205361
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
@@ -27,7 +28,8 @@ import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.core.util.*;
+import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
@@ -109,18 +111,18 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		if (!buildFile.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildFile);
 			IBuild build = model.getBuild(true);
-			IBuildEntry entry = model.getFactory().createEntry(IBuildEntry.BIN_INCLUDES); //$NON-NLS-1$
+			IBuildEntry entry = model.getFactory().createEntry(IBuildEntry.BIN_INCLUDES);
 			if (projectToConvert.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).exists())
-				entry.addToken("plugin.xml"); //$NON-NLS-1$
+				entry.addToken(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 			if (projectToConvert.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists())
-				entry.addToken("META-INF/"); //$NON-NLS-1$
+				entry.addToken(ICoreConstants.MANIFEST_FOLDER_NAME);
 			for (int i = 0; i < fLibEntries.length; i++) {
 				entry.addToken(fLibEntries[i]);
 			}
 
 			if (fSrcEntries.length > 0) {
 				entry.addToken(fLibraryName);
-				IBuildEntry source = model.getFactory().createEntry(IBuildEntry.JAR_PREFIX + fLibraryName); //$NON-NLS-1$
+				IBuildEntry source = model.getFactory().createEntry(IBuildEntry.JAR_PREFIX + fLibraryName);
 				for (int i = 0; i < fSrcEntries.length; i++) {
 					source.addToken(fSrcEntries[i]);
 				}
