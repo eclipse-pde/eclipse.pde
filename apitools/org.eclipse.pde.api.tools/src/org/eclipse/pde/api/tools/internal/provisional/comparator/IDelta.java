@@ -483,11 +483,11 @@ public interface IDelta {
 	 */
 	public static final int OVERRIDEN_METHOD = 36;
 	/**
-	 * Delta kind flag that denotes API restrictions on a member have changed.
+	 * Delta kind flag that denotes API restrictions on a member have been added.
 	 * <br>
 	 * Applies to kinds:
 	 * <ul>
-	 * <li>{@link #CHANGED}</li>
+	 * <li>{@link #ADDED}</li>
 	 * </ul>
 	 * 
 	 * @see #getFlags()

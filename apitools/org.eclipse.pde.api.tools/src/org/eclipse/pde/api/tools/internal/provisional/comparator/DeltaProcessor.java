@@ -187,6 +187,7 @@ public class DeltaProcessor {
 			case IDelta.ADDED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE_PARAMETER :
+					case IDelta.RESTRICTIONS :
 						return !Util.isVisible(delta);
 				}
 				break;
@@ -196,7 +197,6 @@ public class DeltaProcessor {
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
 					case IDelta.NON_STATIC_TO_STATIC :
 					case IDelta.STATIC_TO_NON_STATIC :
-					case IDelta.RESTRICTIONS :
 						return !Util.isVisible(delta);
 					case IDelta.DECREASE_ACCESS :
 						return RestrictionModifiers.isExtendRestriction(restrictions);
@@ -374,6 +374,7 @@ public class DeltaProcessor {
 						}
 						return true; 
 					case IDelta.TYPE_PARAMETER :
+					case IDelta.RESTRICTIONS :
 						return !Util.isVisible(delta);
 				}
 				break;
@@ -411,7 +412,6 @@ public class DeltaProcessor {
 						return true;
 					case IDelta.TYPE_CONVERSION :
 					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
-					case IDelta.RESTRICTIONS :
 					case IDelta.STATIC_TO_NON_STATIC :
 					case IDelta.NON_STATIC_TO_STATIC :
 						return !Util.isVisible(delta);
@@ -472,6 +472,8 @@ public class DeltaProcessor {
 						return RestrictionModifiers.isImplementRestriction(delta.getRestrictions());
 					case IDelta.TYPE_PARAMETER :
 						return false;
+					case IDelta.RESTRICTIONS :
+						return false;
 				}
 				break;
 			case IDelta.REMOVED :
@@ -489,7 +491,6 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
 					case IDelta.TYPE_CONVERSION :
-					case IDelta.RESTRICTIONS :
 						return false;
 				}
 				break;

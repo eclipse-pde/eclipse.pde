@@ -250,14 +250,4 @@
             markerType="org.eclipse.pde.api.tools.unsupported_tags">
       </markerResolutionGenerator>
    </extension>
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="org.eclipse.pde.api.tools.ui.internal.actions.ApiToolsPropertyTester"
-            id="org.eclipse.pde.api.tools.ui.proptester"
-            namespace="org.eclipse.pde.api.tools.ui"
-            properties="pbfilters"
-            type="java.lang.Object">
-      </propertyTester>
-   </extension>
 </plugin>

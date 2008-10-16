@@ -79,7 +79,22 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 				IDelta.CHANGED,
 				flags);
 	}	
-	
+
+	/**
+	 * Returns a problem id for a compatibility addition to a class based on the
+	 * specified flags.
+	 * 
+	 * @param flags
+	 * @return problem id
+	 */
+	protected int getAddedProblemId(int flags) {
+		return ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_COMPATIBILITY,
+				IDelta.METHOD_ELEMENT_TYPE,
+				IDelta.ADDED,
+				flags);
+	}
+
 	/**
 	 * Tests making a non-final method final
 	 */
@@ -493,7 +508,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	private void xAddNoOverride(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoOverride.java");
 		int[] ids = new int[] {
-			getChangedProblemId(IDelta.RESTRICTIONS)
+			getAddedProblemId(IDelta.RESTRICTIONS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];

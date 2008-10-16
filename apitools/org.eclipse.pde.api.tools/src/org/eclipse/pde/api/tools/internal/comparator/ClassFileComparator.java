@@ -993,7 +993,7 @@ public class ClassFileComparator {
 									&& !RestrictionModifiers.isImplementRestriction(restrictions)) {
 							this.addDelta(
 									getElementType(this.type1),
-									IDelta.CHANGED,
+									IDelta.ADDED,
 									IDelta.RESTRICTIONS,
 									restrictions2,
 									typeAccess,
@@ -1009,7 +1009,7 @@ public class ClassFileComparator {
 									reportChangedRestrictions = true;
 									this.addDelta(
 											getElementType(this.type1),
-											IDelta.CHANGED,
+											IDelta.ADDED,
 											IDelta.RESTRICTIONS,
 											restrictions2,
 											typeAccess,
@@ -1025,7 +1025,7 @@ public class ClassFileComparator {
 											&& !RestrictionModifiers.isInstantiateRestriction(restrictions)) {
 									this.addDelta(
 											getElementType(this.type1),
-											IDelta.CHANGED,
+											IDelta.ADDED,
 											IDelta.RESTRICTIONS,
 											restrictions2,
 											typeAccess,
@@ -2196,7 +2196,7 @@ public class ClassFileComparator {
 							&& !RestrictionModifiers.isOverrideRestriction(referenceRestrictions)) {
 							this.addDelta(
 									getElementType(method),
-									IDelta.CHANGED,
+									IDelta.ADDED,
 									IDelta.RESTRICTIONS,
 									restrictions,
 									access2,

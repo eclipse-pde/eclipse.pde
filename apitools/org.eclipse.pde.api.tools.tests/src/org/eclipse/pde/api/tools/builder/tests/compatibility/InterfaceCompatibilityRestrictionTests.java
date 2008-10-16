@@ -66,7 +66,7 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
 				IDelta.INTERFACE_ELEMENT_TYPE,
-				IDelta.CHANGED,
+				IDelta.ADDED,
 				IDelta.RESTRICTIONS);
 	}
 

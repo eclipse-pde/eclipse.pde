@@ -2386,7 +2386,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags());
 		assertTrue("Not visible", Util.isVisible(child));
 		assertTrue("Not @override restriction", RestrictionModifiers.isOverrideRestriction(child.getRestrictions()));
@@ -2469,7 +2469,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags());
 		assertFalse("Is visible", Util.isVisible(child));
 		assertTrue("Not @override restriction", RestrictionModifiers.isOverrideRestriction(child.getRestrictions()));

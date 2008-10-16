@@ -66,7 +66,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
 				IDelta.CLASS_ELEMENT_TYPE,
-				IDelta.CHANGED,
+				IDelta.ADDED,
 				IDelta.RESTRICTIONS);
 	}
 

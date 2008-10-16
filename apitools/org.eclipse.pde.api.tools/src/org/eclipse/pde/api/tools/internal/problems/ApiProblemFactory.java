@@ -414,6 +414,7 @@ public class ApiProblemFactory {
 							case IDelta.CLASS_ELEMENT_TYPE: {
 								switch(flags) {
 									case IDelta.METHOD: return 41;
+									case IDelta.RESTRICTIONS: return 72;
 								}
 								break;
 							}
@@ -428,6 +429,13 @@ public class ApiProblemFactory {
 								switch(flags) {
 									case IDelta.FIELD: return 40;
 									case IDelta.METHOD: return 44;
+									case IDelta.RESTRICTIONS: return 72;
+								}
+								break;
+							}
+							case IDelta.METHOD_ELEMENT_TYPE : {
+								switch(flags) {
+									case IDelta.RESTRICTIONS: return 132;
 								}
 							}
 						}
@@ -462,7 +470,6 @@ public class ApiProblemFactory {
 									case IDelta.NON_FINAL_TO_FINAL: return 119;
 									case IDelta.NON_STATIC_TO_STATIC: return 120;
 									case IDelta.STATIC_TO_NON_STATIC: return 122;
-									case IDelta.RESTRICTIONS: return 132;
 								}
 								break;
 							}
@@ -481,7 +488,6 @@ public class ApiProblemFactory {
 							case IDelta.NON_ABSTRACT_TO_ABSTRACT: return 66;
 							case IDelta.NON_FINAL_TO_FINAL: return 67;
 							case IDelta.NON_STATIC_TO_STATIC: return 123;
-							case IDelta.RESTRICTIONS: return 72;
 							case IDelta.STATIC_TO_NON_STATIC: return 73;
 							case IDelta.TYPE_CONVERSION: return TYPE_CONVERSION_ID;
 							case IDelta.VARARGS_TO_ARRAY: return 85;
