@@ -112,6 +112,11 @@ public class IdAttributeRow extends ButtonAttributeRow {
 				InputContext context = editor.getContextManager().findContext(PluginInputContext.CONTEXT_ID);
 				IDocument document = context.getDocumentProvider().getDocument(context.getInput());
 				IRegion region = ManifestEditorOpener.getAttributeMatch(editor, id, document);
+				if (region == null) {
+					// see bug 248248 for why we have this check
+					id = id.substring(id.lastIndexOf('.') + 1, id.length());
+					region = ManifestEditorOpener.getAttributeMatch(editor, id, document);
+				}
 				editor.openToSourcePage(context, region.getOffset(), region.getLength());
 			}
 		}

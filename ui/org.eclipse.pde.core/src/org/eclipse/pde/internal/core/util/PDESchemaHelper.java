@@ -95,6 +95,11 @@ public class PDESchemaHelper {
 					IConfigurationElement element = (IConfigurationElement) iterator.next();
 					String value = element.getAttribute(attName);
 					if (value != null) {
+						// see bug 248248 for why we have this contentTypes check
+						String extpt = element.getDeclaringExtension().getExtensionPointUniqueIdentifier();
+						if (value.indexOf('.') == -1 && extpt.equalsIgnoreCase("org.eclipse.core.contenttype.contentTypes")) { //$NON-NLS-1$
+							attributesInfo.put(element.getNamespaceIdentifier() + '.' + value, element);
+						}
 						attributesInfo.put(value, element);
 					}
 				}
