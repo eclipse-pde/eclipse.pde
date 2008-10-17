@@ -75,7 +75,7 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 	
 	
 	public void testDeleteAndReplaceI() throws Exception {
-		xDeleteAndReplace(true);
+		//xDeleteAndReplace(true);
 	}
 	
 	public void testDeleteAndReplaceF() throws Exception {
