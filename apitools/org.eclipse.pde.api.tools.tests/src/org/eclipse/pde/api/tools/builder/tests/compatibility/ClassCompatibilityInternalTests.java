@@ -30,8 +30,6 @@ public class ClassCompatibilityInternalTests extends ClassCompatibilityTests {
 	 * Workspace relative path classes in bundle/project A
 	 */
 	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/internal");
-	
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_HIER = new Path("bundle.a/src/a/classes/hierarchy");
 
 	/**
 	 * Package prefix for test classes
@@ -77,7 +75,7 @@ public class ClassCompatibilityInternalTests extends ClassCompatibilityTests {
 	protected String getTestingProjectName() {
 		return "classcompat";
 	}
-	
+
 	/**
 	 * Tests the removal of a constructor from a non-API class.
 	 */
@@ -86,15 +84,15 @@ public class ClassCompatibilityInternalTests extends ClassCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testRemoveInternalConstructorI() throws Exception {
 		xRemoveInternalConstructor(true);
 	}
-	
+
 	public void testRemoveInternalConstructorF() throws Exception {
 		xRemoveInternalConstructor(false);
 	}
-	
+
 	/**
 	 * Tests the removal of a method from a non-API class, subclassed by an API class.
 	 */
@@ -116,8 +114,7 @@ public class ClassCompatibilityInternalTests extends ClassCompatibilityTests {
 	}
 	
 	public void testRemoveInternalMethodI() throws Exception {
-		// TODO: should be problem on existing API class
-		// xRemoveInternalMethod(true);
+		xRemoveInternalMethod(true);
 	}
 	
 	public void testRemoveInternalMethodF() throws Exception {

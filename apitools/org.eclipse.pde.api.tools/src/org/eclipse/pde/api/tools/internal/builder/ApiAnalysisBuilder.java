@@ -241,7 +241,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if (resource.getType() == IResource.PROJECT) {
 					// on full builds
 					resource.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-					resource.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);				}
+					resource.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+				}
 			}
 		} catch(CoreException e) {
 			ApiPlugin.log(e.getStatus());
@@ -658,13 +659,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				continue;
 			}
 			updateMonitor(monitor, 0);
-			if(changedtypes.contains(file)) {
+//			if(changedtypes.contains(file)) {
 				cleanupUnsupportedTagMarkers(file);
 				updateMonitor(monitor, 0);
 				cleanupCompatibiltiyMarkers(file);
 				updateMonitor(monitor, 0);
 				cnames.add(type.getFullyQualifiedName());
-			}
+//			}
 			try {
 				cleanupUsageMarkers(file);
 				updateMonitor(monitor, 0);

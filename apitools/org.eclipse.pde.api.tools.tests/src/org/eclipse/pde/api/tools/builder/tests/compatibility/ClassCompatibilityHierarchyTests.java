@@ -110,7 +110,15 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
+
+	public void testRemoveIntSuperClassWithMethodI() throws Exception {
+		xRemoveIntSuperClassWithMethod(true);
+	}
 	
+	public void testRemoveIntSuperClassWithMethodF() throws Exception {
+		xRemoveIntSuperClassWithMethod(false);
+	}
+
 	public void testReduceHierarchyCtoAI() throws Exception {
 		xReduceHierarchyCtoA(true);
 	}	
@@ -265,7 +273,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
-	
+
 	public void testAddInterfaceAI() throws Exception {
 		xAddInterfaceA(true);
 	}	
@@ -318,17 +326,16 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 */
 	private void xRemoveIntSuperClassWithMethod(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveIntSuperClassWithMethod.java");
-		// TODO: expect a removed method problem
+		int[] ids = new int[] {
+				getRemovedProblemId(IDelta.METHOD)
+			};
+			setExpectedProblemIds(ids);
+			String[][] args = new String[1][];
+			args[0] = new String[]{PACKAGE_PREFIX + "RemoveIntSuperClassWithMethod", "method()"};
+			setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
-	public void testRemoveIntSuperClassWithMethodI() throws Exception {
-		xRemoveIntSuperClassWithMethod(true);
-	}
-	
-	public void testRemoveIntSuperClassWithMethodF() throws Exception {
-		xRemoveIntSuperClassWithMethod(false);
-	}		
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()

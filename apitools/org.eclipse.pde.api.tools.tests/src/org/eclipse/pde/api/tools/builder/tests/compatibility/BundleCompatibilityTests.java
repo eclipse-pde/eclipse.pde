@@ -73,6 +73,15 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 		return "bundlecompat";
 	}
 	
+	
+	public void testDeleteAndReplaceI() throws Exception {
+		xDeleteAndReplace(true);
+	}
+	
+	public void testDeleteAndReplaceF() throws Exception {
+		xDeleteAndReplace(false);
+	}
+
 	/**
 	 * Tests reducing visibility from public to package
 	 */
@@ -166,13 +175,4 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 		setExpectedMessageArgs(null);
 		performCreationCompatibilityTest(filePath, incremental);
 	}
-	
-	public void testDeleteAndReplaceI() throws Exception {
-		//TODO: Add this test when bug 247545 is fixed
-		//xDeleteAndReplace(true);
-	}
-	
-	public void testDeleteAndReplaceF() throws Exception {
-		xDeleteAndReplace(false);
-	}	
 }

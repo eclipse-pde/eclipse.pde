@@ -15,6 +15,6 @@ package a.classes.internal;
  */
 public class RemoveInternalConstructor {
 
-	public RemoveInternalConstructor() {}
+	public RemoveInternalConstructor(int i) {}
 
 }
