@@ -617,7 +617,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					}
 					List tnames = new ArrayList(fTypesToCheck.size()),
 						 cnames = new ArrayList(fChangedTypes.size());
-					collectAllQualifiedNames(fTypesToCheck, fChangedTypes, tnames, cnames, localMonitor.newChild(1));
+					collectAllQualifiedNames(fTypesToCheck, tnames, cnames, localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
 					IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 					fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, (String[])tnames.toArray(new String[tnames.size()]), (String[])cnames.toArray(new String[cnames.size()]), localMonitor.newChild(1));
@@ -645,7 +645,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param cnames the list to collect the changed type names into
 	 * @param monitor
 	 */
-	private void collectAllQualifiedNames(final HashSet alltypes, final HashSet changedtypes, List tnames, List cnames, final IProgressMonitor monitor) {
+	private void collectAllQualifiedNames(final HashSet alltypes, List tnames, List cnames, final IProgressMonitor monitor) {
 		IType[] types = null;
 		IFile file = null;
 		for (Iterator iterator = alltypes.iterator(); iterator.hasNext(); ) {
