@@ -1721,6 +1721,15 @@
              %provisioner.site.description
           </description>
        </provisioner>
+       <provisioner
+             class="org.eclipse.pde.internal.ui.wizards.provisioner.p2.P2TargetProvisionerWizard"
+             icon="$nl$/icons/obj16/feature_obj.gif"
+             id="org.eclipse.pde.ui.p2.provisioner"
+             name="%provisioner.p2.name">
+          <description>
+             %provisioner.p2.description
+          </description>
+       </provisioner>
     </extension>
     
     <!-- Search Menu Additions -->
@@ -1935,5 +1944,5 @@
                    tooltip="%showErrorInStackTraceConsoleAction.tooltip">
              </action>
           </viewContribution>
-	</extension>
+	</extension>>
 </plugin>

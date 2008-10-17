@@ -245,5 +245,6 @@ public interface IHelpContextIds {
 	// Provisioning
 	public static final String FILE_SYSTEM_PROVISIONING_PAGE = PREFIX + "file_system_provisioning_page"; //$NON-NLS-1$
 	public static final String UPDATE_SITE_PROVISIONING_PAGE = PREFIX + "update_site_provisioning_page"; //$NON-NLS-1$
+	public static final String P2_PROVISIONING_PAGE = PREFIX + "p2_provisioning_page"; //$NON-NLS-1$
 
 }
