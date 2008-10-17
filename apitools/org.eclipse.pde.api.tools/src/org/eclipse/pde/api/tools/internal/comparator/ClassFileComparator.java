@@ -248,7 +248,20 @@ public class ClassFileComparator {
 			String superTypeName = this.type1.getSuperclassName();
 			String superTypeName2 = this.type2.getSuperclassName();
 			if (!superTypeName.equals(superTypeName2)) {
-				// we don't need to check the superclass if it has changed
+				// if the superclass has changed we need to look at visible members have been removed or moved 
+				// to a different location
+				ClassFileResult pair = getType(superTypeName, this.component, this.apiProfile);
+				if (pair == null) return;
+				IClassFile superclassType1 = pair.getClassFile();
+				IApiType typeStructure = TypeStructureCache.getTypeStructure(superclassType1, pair.getComponent());
+				IApiMethod[] methods = typeStructure.getMethods();
+				for (int i = 0, max = methods.length; i < max; i++) {
+					getDeltaForMethod(methods[i]);
+				}
+				IApiField[] fields = typeStructure.getFields();
+				for (int i = 0, max = fields.length; i < max; i++) {
+					getDeltaForField(fields[i]);
+				}
 				return;
 			}
 			ClassFileResult pair = getType(superTypeName, this.component, this.apiProfile);

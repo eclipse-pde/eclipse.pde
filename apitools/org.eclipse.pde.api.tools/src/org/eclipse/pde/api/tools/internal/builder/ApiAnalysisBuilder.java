@@ -659,13 +659,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				continue;
 			}
 			updateMonitor(monitor, 0);
-//			if(changedtypes.contains(file)) {
-				cleanupUnsupportedTagMarkers(file);
-				updateMonitor(monitor, 0);
-				cleanupCompatibiltiyMarkers(file);
-				updateMonitor(monitor, 0);
-				cnames.add(type.getFullyQualifiedName());
-//			}
+			cleanupUnsupportedTagMarkers(file);
+			updateMonitor(monitor, 0);
+			cleanupCompatibiltiyMarkers(file);
+			updateMonitor(monitor, 0);
+			cnames.add(type.getFullyQualifiedName());
 			try {
 				cleanupUsageMarkers(file);
 				updateMonitor(monitor, 0);
