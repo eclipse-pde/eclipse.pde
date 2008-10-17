@@ -118,7 +118,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					if (Util.isClassFile(fileName)) {
 						findAffectedSourceFiles(delta);
 					} else if (Util.isJavaFileName(fileName) && fCurrentProject.equals(resource.getProject())) {
-						fChangedTypes.add(resource);
+						if (delta.getKind() == IResourceDelta.ADDED) {
+							fAddedRemovedDeltas.add(delta);
+						}
 						fTypesToCheck.add(resource);
 					} else if (!fRequireFullBuild && IApiCoreConstants.API_FILTERS_XML_NAME.equals(fileName)) {
 						switch(delta.getKind()) {
@@ -188,15 +190,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * The type that we want to check for API problems
 	 */
 	private HashSet fTypesToCheck = new HashSet();
-	
 	/**
-	 * List of removed type names (fully qualified and dot based)
+	 * The set of added/removed deltas that come directly from the builder resource delta 
 	 */
-	private HashSet fRemovedTypes = new HashSet(2);
-	/**
-	 * The set of changed types that came directly from the delta 
-	 */
-	private HashSet fChangedTypes = new HashSet(5);
+	private HashSet fAddedRemovedDeltas = new HashSet(5);
 	
 	/**
 	 * Current build state
@@ -350,8 +347,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			fTypes.clear();
 			fPackages.clear();
 			fTypesToCheck.clear();
-			fChangedTypes.clear();
-			fRemovedTypes.clear();
+			fAddedRemovedDeltas.clear();
 			fProjectToOutputLocations.clear();
 			updateMonitor(monitor, 0);
 			fAnalyzer.dispose();
@@ -616,7 +612,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						return;
 					}
 					List tnames = new ArrayList(fTypesToCheck.size()),
-						 cnames = new ArrayList(fChangedTypes.size());
+						 cnames = new ArrayList(fTypesToCheck.size());
 					collectAllQualifiedNames(fTypesToCheck, tnames, cnames, localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
 					IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
@@ -669,7 +665,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				updateMonitor(monitor, 0);
 				types = unit.getAllTypes();
 				for (int i = 0; i < types.length; i++) {
-					tnames.add(types[i].getFullyQualifiedName('$'));
+					IType type2 = types[i];
+					if (type2.isMember()) {
+						tnames.add(type2.getFullyQualifiedName('$'));
+					} else {
+						tnames.add(type2.getFullyQualifiedName());
+					}
 				}
 			} catch (JavaModelException e) {
 				ApiPlugin.log(e.getStatus());
@@ -677,8 +678,77 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			updateMonitor(monitor, 0);
 		}
 		// inject removed types inside changed type names so that we can properly detect type removal
-		for (Iterator iterator = this.fRemovedTypes.iterator(); iterator.hasNext(); ) {
-			cnames.add(iterator.next());
+		for (Iterator iterator = this.fAddedRemovedDeltas.iterator(); iterator.hasNext(); ) {
+			IResourceDelta delta = (IResourceDelta) iterator.next();
+			if (delta.getKind() != IResourceDelta.REMOVED) continue;
+			IResource resource = delta.getResource();
+			IPath typePath = resolveJavaPathFromResource(resource);
+			if(typePath == null) {
+				continue;
+			}
+			// record removed type names (package + type)
+			StringBuffer buffer = new StringBuffer();
+			String[] segments = typePath.segments();
+			for (int i = 0, max = segments.length; i < max; i++) {
+				if (i > 0) {
+					buffer.append('.');
+				}
+				buffer.append(segments[i]);
+			}
+			cnames.add(String.valueOf(buffer));
+		}
+		// clean up markers on added deltas
+		if (!this.fAddedRemovedDeltas.isEmpty()) {
+			IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
+			if (manifestFile != null) {
+				try {
+					IMarker[] markers = manifestFile.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+					for (int i = 0, max = markers.length; i < max; i++) {
+						IMarker marker = markers[i];
+						String typeName = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_TYPE_NAME, null);
+						if (typeName != null) {
+							for (Iterator iterator = this.fAddedRemovedDeltas.iterator(); iterator.hasNext(); ) {
+								IResourceDelta delta = (IResourceDelta) iterator.next();
+								if (delta.getKind() != IResourceDelta.ADDED) continue;
+								ICompilationUnit unit = (ICompilationUnit) JavaCore.create(delta.getResource());
+								if(!unit.exists()) {
+									continue;
+								}
+								IType type = unit.findPrimaryType();
+								if(type == null) {
+									continue;
+								}
+								if (typeName.equals(type.getFullyQualifiedName())) {
+									marker.delete();
+									return;
+								} else {
+									// check secondary types
+									try {
+										types = unit.getAllTypes();
+										for (int j = 0; j < types.length; j++) {
+											IType type2 = types[i];
+											String fullyQualifiedName = null;
+											if (type2.isMember()) {
+												fullyQualifiedName = type2.getFullyQualifiedName('$');
+											} else {
+												fullyQualifiedName = type2.getFullyQualifiedName();
+											}
+											if (typeName.equals(fullyQualifiedName)) {
+												marker.delete();
+												return;
+											}
+										}
+									} catch (JavaModelException e) {
+										ApiPlugin.log(e.getStatus());
+									}
+								}
+							}
+						}
+					}
+				} catch (CoreException e) {
+					ApiPlugin.log(e.getStatus());
+				}
+			}
 		}
 	}
 	
@@ -765,16 +835,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 				switch (binaryDelta.getKind()) {
 					case IResourceDelta.REMOVED :
-						// record removed type names (package + type)
-						StringBuffer buffer = new StringBuffer();
-						String[] segments = typePath.segments();
-						for (int i = 0, max = segments.length; i < max; i++) {
-							if (i > 0) {
-								buffer.append('.');
-							}
-							buffer.append(segments[i]);
-						}
-						fRemovedTypes.add(String.valueOf(buffer));
+						fAddedRemovedDeltas.add(binaryDelta);
 						//$FALL-THROUGH$
 					case IResourceDelta.ADDED : {
 						if (DEBUG) {

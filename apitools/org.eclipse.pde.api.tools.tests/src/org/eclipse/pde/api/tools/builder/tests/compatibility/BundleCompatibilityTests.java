@@ -72,15 +72,6 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 	protected String getTestingProjectName() {
 		return "bundlecompat";
 	}
-	
-	
-	public void testDeleteAndReplaceI() throws Exception {
-		//xDeleteAndReplace(true);
-	}
-	
-	public void testDeleteAndReplaceF() throws Exception {
-		xDeleteAndReplace(false);
-	}
 
 	/**
 	 * Tests reducing visibility from public to package
@@ -153,6 +144,15 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 		xRemovePrivateClass(false);
 	}
 	
+
+	public void testDeleteAndReplaceI() throws Exception {
+		xDeleteAndReplace(true);
+	}
+	
+	public void testDeleteAndReplaceF() throws Exception {
+		xDeleteAndReplace(false);
+	}
+
 	/**
 	 * Tests deleting a public class and then replacing it
 	 */
