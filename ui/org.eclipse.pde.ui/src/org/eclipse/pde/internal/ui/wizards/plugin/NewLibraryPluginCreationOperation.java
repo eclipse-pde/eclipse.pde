@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - ongoing enhancements
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 109440
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 248852
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 248852, bug 247553
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -427,7 +427,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				map.put(elems[i].getValue(), filter);
 			}
 			Set packages = PluginConverter.getDefault().getExports(project, map);
-			String pkgValue = getCommaValueFromSet(packages);
+			String pkgValue = getCommaValuesFromPackagesSet(packages, fData.getVersion());
 			bundle.setHeader(Constants.EXPORT_PACKAGE, pkgValue);
 		} catch (BundleException e) {
 		}

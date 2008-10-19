@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - bug 201044
  *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 179213
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 247553
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -79,7 +80,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 		if (!packages.isEmpty()) {
 			IBundle iBundle = ((WorkspaceBundlePluginModelBase) fModel).getBundleModel().getBundle();
-			iBundle.setHeader(Constants.EXPORT_PACKAGE, getCommaValueFromSet(packages));
+			iBundle.setHeader(Constants.EXPORT_PACKAGE, getCommaValuesFromPackagesSet(packages, fData.getVersion()));
 		}
 	}
 
@@ -188,7 +189,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 				String framework = ((AbstractFieldData) fData).getOSGiFramework();
 				if (framework != null) {
-					String value = getCommaValueFromSet(getImportPackagesSet());
+					String value = getCommaValuesFromPackagesSet(getImportPackagesSet(), fData.getVersion());
 					if (value.length() > 0)
 						bundle.setHeader(Constants.IMPORT_PACKAGE, value);
 					// if framework is not equinox, skip equinox step below to add extra headers
@@ -472,14 +473,26 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected String getCommaValueFromSet(Set values) {
+	/**
+	 * @param values a {@link Set} containing packages names as {@link String}s
+	 * @param version a {@link String} representing the version to set on the packages, <code>null</code> allowed.
+	 * @return a {@link String} representing the given packages, with the exported version set correctly.<br>
+	 * If version is <code>null</code> or there is more than one package in <code>values</code> the packages are exported with a <code>0.0.0</code> version. 
+	 */
+	protected String getCommaValuesFromPackagesSet(Set values, String version) {
 		StringBuffer buffer = new StringBuffer();
 		Iterator iter = values.iterator();
 		while (iter.hasNext()) {
 			if (buffer.length() > 0) {
-				buffer.append(",\n "); //$NON-NLS-1$
+				buffer.append(",\n"); //$NON-NLS-1$
 			}
 			buffer.append(iter.next().toString());
+			buffer.append(";version=\""); //$NON-NLS-1$
+			if (values.size() == 1)
+				buffer.append(((version != null) ? version : "0.0.0"));//$NON-NLS-1$
+			else
+				buffer.append("0.0.0"); //$NON-NLS-1$
+			buffer.append("\""); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
