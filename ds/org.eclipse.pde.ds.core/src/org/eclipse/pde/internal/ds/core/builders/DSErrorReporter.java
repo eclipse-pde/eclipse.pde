@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
- *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 230232
+ *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 230232, 249254
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.builders;
 
+import java.lang.reflect.Constructor;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -274,26 +276,90 @@ public class DSErrorReporter extends XMLErrorReporter {
 			}
 			// Validate Allowed Values
 			validatePropertyTypes(element);
-			
+
 			// Validate Value Attribute and Body Values
 			validatePropertyAttrValueAndBody(element, property);
-			
+
 			// Validate Type Specific Values
-			// validatePropertyTypesValues(element, property);
+			validatePropertyTypesValues(element, property);
 
 		}
 	}
 
-//	private void validatePropertyTypesValues(Element element,
-//			IDSProperty property) {
-//			String type = property.getPropertyType();
-//			String value= property.getPropertyValue();
-//			String body = property.getPropertyElemBody();
-//			if(value != null){
-//				
-//		}
-//				
-//	}
+	private void validatePropertyTypesValues(Element element,
+			IDSProperty property) {
+		String type = property.getPropertyType();
+		String value = property.getPropertyValue();
+		String body = property.getPropertyElemBody();
+		if (value != null && value.length() > 0) {
+			validatePropertySpecificTypeValue(type, value, element);
+		} else {
+			validatePropertySpecificTypeBody(type, body, element);
+		}
+
+	}
+
+	private void validatePropertySpecificTypeBody(String type, String body,
+			Element element) {
+		StringTokenizer st = new StringTokenizer(body, "\n"); //$NON-NLS-1$
+		while (st.hasMoreTokens()) {
+			String token = st.nextToken();
+			token = token.trim();
+			if (token.length() > 0)
+				validatePropertySpecificTypeValue(type, token, element);
+		}
+	}
+
+	private void validatePropertySpecificTypeValue(String type, String value, Element element) {
+
+		// Validate Double, Long, Float, Integer, Byte, Short and
+		// String
+		if (!type.equals(IDSConstants.VALUE_PROPERTY_TYPE_CHAR)
+				&& !type.equals(IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN)) {
+			try {
+				Class forName = Class.forName("java.lang." + type); //$NON-NLS-1$
+				Constructor[] constructors = forName.getConstructors();
+				for (int i = 0; i < constructors.length; i++) {
+					Constructor constructor = constructors[i];
+					Class[] parameterTypes = constructor.getParameterTypes();
+					if (parameterTypes.length == 1) {
+						if (parameterTypes[0].equals(Class
+								.forName("java.lang.String"))) { //$NON-NLS-1$
+							constructor.newInstance(new Object[] { value });
+
+						}
+					}
+
+				}
+
+			} catch (Exception e) {
+				reportPropertyTypeCastException(element, value, type);
+			}
+		} else {
+			// Validate Booleans
+			if (type.equals(IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN)) {
+				if (!value.equals(IDSConstants.VALUE_FALSE)
+						&& !value.equals(IDSConstants.VALUE_TRUE)) {
+					reportPropertyTypeCastException(element, value, type);
+				}
+			} else {
+				// Validate Chars
+				if (type.equals(IDSConstants.VALUE_PROPERTY_TYPE_CHAR)) {
+					if (value.length() > 1) {
+						reportPropertyTypeCastException(element, value, type);
+					}
+				}
+			}
+		}
+	}
+
+	private void reportPropertyTypeCastException(Element element, String value,
+			String type) {
+		String message = NLS.bind(
+				Messages.DSErrorReporter_propertyTypeCastException,
+				new String[] { value, type });
+		report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
+	}
 
 	/**
 	 * Validates if a property elements defines a single value and multiple
@@ -317,7 +383,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 					|| propertyType
 							.equals(IDSConstants.VALUE_PROPERTY_TYPE_STRING))
 				return; // It's OK for a property of type "String" to have a
-						// value of "".
+			// value of "".
 			if (property.getPropertyValue().equals("")) { //$NON-NLS-1$
 				String propertyName = property.getPropertyName();
 				reportEmptyPropertyValue(element, propertyName);
@@ -392,7 +458,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 				// validate Class Default Constructor
 				// validateClassDefaultConstructor(element, className);
-				
+
 			}
 		}
 
@@ -505,7 +571,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 			validateEmpty(element, element
 					.getAttributeNode(IDSConstants.ATTRIBUTE_COMPONENT_NAME));
-			
+
 			// validate immediate values
 			validateImmediateAttribute(element, component);
 
@@ -517,7 +583,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		boolean isService = false;
 		boolean isFactory = component.getFactory() != null;
 		boolean isImmediate = component.getImmediate();
-		
+
 		if (component.getService() != null) {
 			IDSProvide[] providedServices = component.getService()
 					.getProvidedServices();
@@ -528,12 +594,11 @@ public class DSErrorReporter extends XMLErrorReporter {
 		if (!isService && !isFactory && !isImmediate) {
 			reportInvalidImmediate(element);
 		}
-		
+
 		if (isFactory && isImmediate) {
 			reportInvalidImmediateFactory(element);
 		}
-		
-		
+
 	}
 
 	private void reportInvalidImmediateFactory(Element element) {
@@ -571,7 +636,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 			validateBoolean(element, element
 					.getAttributeNode(IDSConstants.ATTRIBUTE_SERVICE_FACTORY));
-			
+
 			validateProvideElement(service.getProvidedServices());
 		}
 	}
@@ -592,11 +657,11 @@ public class DSErrorReporter extends XMLErrorReporter {
 				validateJavaElement(provide.getInterface(),
 						IDSConstants.ELEMENT_PROVIDE,
 						IDSConstants.ATTRIBUTE_PROVIDE_INTERFACE, i);
-				
+
 				// validate if implementation class implements services
 				// interfaces
 				// validateClassInstanceofProvidedInterface(element, provide);
-				
+
 				// validate duplicate interfaces
 				validateDuplicateInterface(providedInterfaces, provide, element);
 			}
@@ -616,32 +681,32 @@ public class DSErrorReporter extends XMLErrorReporter {
 		}
 	}
 
-//	private void validateClassInstanceofProvidedInterface(Element element,
-//			IDSProvide provide) {
-//		
-//		IDSComponent component = provide.getComponent();
-//		
-//		String providedInterfaceString = provide.getInterface();
-//		String implementationClassString = component.getImplementation()
-//		.getClassName();
-//		
-//		Class implementationClass = null;
-//		Class providedInterfaceClass = null;
-//		try {
-//			
-//			implementationClass = Class.forName(implementationClassString);
-//			providedInterfaceClass = Class.forName(providedInterfaceString);
-//		} catch (ClassNotFoundException e) {
-//		}
-//		if (implementationClass != null && providedInterfaceClass != null) {
-//			try {
-//				// TODO
-//				// implementationClass.asSubclass(providedInterfaceClass);
-//			} catch (ClassCastException e) {
-//				reportUnimplementedProvidedInterface(element,
-//						implementationClassString, providedInterfaceString);
-//			}
-//		}
+	// private void validateClassInstanceofProvidedInterface(Element element,
+	// IDSProvide provide) {
+	//		
+	// IDSComponent component = provide.getComponent();
+	//		
+	// String providedInterfaceString = provide.getInterface();
+	// String implementationClassString = component.getImplementation()
+	// .getClassName();
+	//		
+	// Class implementationClass = null;
+	// Class providedInterfaceClass = null;
+	// try {
+	//			
+	// implementationClass = Class.forName(implementationClassString);
+	// providedInterfaceClass = Class.forName(providedInterfaceString);
+	// } catch (ClassNotFoundException e) {
+	// }
+	// if (implementationClass != null && providedInterfaceClass != null) {
+	// try {
+	// // TODO
+	// // implementationClass.asSubclass(providedInterfaceClass);
+	// } catch (ClassCastException e) {
+	// reportUnimplementedProvidedInterface(element,
+	// implementationClassString, providedInterfaceString);
+	// }
+	// }
 	// }
 
 	// private void reportUnimplementedProvidedInterface(Element element,
