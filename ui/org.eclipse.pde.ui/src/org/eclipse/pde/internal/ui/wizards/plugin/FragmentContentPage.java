@@ -12,6 +12,8 @@
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
+
 import java.util.TreeSet;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -27,7 +29,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.PluginVersionPart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
-import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StackLayout;

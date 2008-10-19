@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
+
 import java.io.ByteArrayInputStream;
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -39,7 +41,6 @@ import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.AddNewDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
-import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Cursor;

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards;
+package org.eclipse.pde.internal.ui.dialogs;
 
 import java.util.HashMap;
 import java.util.HashSet;

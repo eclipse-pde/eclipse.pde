@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
+
+import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;

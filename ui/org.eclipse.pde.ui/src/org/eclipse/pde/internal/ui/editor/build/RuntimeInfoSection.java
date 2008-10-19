@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.editor.build;
 
+import org.eclipse.pde.internal.ui.dialogs.FolderSelectionDialog;
+
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -29,7 +31,6 @@ import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
 import org.eclipse.pde.internal.ui.parts.TablePart;
-import org.eclipse.pde.internal.ui.wizards.FolderSelectionDialog;
 import org.eclipse.pde.internal.ui.wizards.RenameDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;

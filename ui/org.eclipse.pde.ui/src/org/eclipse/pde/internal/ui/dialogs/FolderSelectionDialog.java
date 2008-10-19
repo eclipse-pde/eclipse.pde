@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards;
+package org.eclipse.pde.internal.ui.dialogs;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.*;
