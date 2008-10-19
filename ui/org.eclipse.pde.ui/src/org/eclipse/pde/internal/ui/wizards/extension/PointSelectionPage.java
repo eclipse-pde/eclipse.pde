@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
-
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 
 import java.net.URL;
 import java.util.*;
@@ -32,6 +30,7 @@ import org.eclipse.pde.internal.core.text.plugin.PluginExtensionNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.core.util.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.contentassist.XMLInsertionComputer;
 import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -49,7 +48,6 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -501,6 +499,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	private void handlePointSelection(IPluginExtensionPoint element) {
 		fCurrentPoint = element;
 		fTemplateViewer.setInput(fCurrentPoint);
+		fTemplateViewer.setSelection(StructuredSelection.EMPTY);
 		String fullPointID = IdUtil.getFullId(fCurrentPoint, fModel);
 
 		String description = XMLComponentRegistry.Instance().getDescription(fullPointID, XMLComponentRegistry.F_SCHEMA_COMPONENT);
@@ -599,7 +598,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	private void setPointDescriptionText(String text) {
 		if (fPointDescBrowser != null) {
 			StringBuffer desc = new StringBuffer();
-			HTMLPrinter.insertPageProlog(desc, 0, new RGB(255, 255, 255), TextUtil.getJavaDocStyleSheerURL());
+			HTMLPrinter.insertPageProlog(desc, 0, TextUtil.getJavaDocStyleSheerURL());
 			desc.append(text);
 			HTMLPrinter.addPageEpilog(desc);
 			fPointDescBrowser.setText(desc.toString());

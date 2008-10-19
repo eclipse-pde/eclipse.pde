@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,14 @@ import org.eclipse.swt.widgets.Display;
  */
 public class HTMLPrinter {
 
-	private static RGB BG_COLOR_RGB = null;
+	private static RGB BG_COLOR_RGB = new RGB(255, 255, 225); // RGB value of info bg color on WindowsXP
+	private static RGB FG_COLOR_RGB = new RGB(0, 0, 0); // RGB value of info fg color on WindowsXP
+
+	private static final String UNIT; // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=155993
+	static {
+		String platform = SWT.getPlatform();
+		UNIT = "carbon".equals(platform) || "cocoa".equals(platform) ? "px" : "pt"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
 
 	static {
 		final Display display = Display.getDefault();
@@ -38,6 +45,7 @@ public class HTMLPrinter {
 					 */
 					public void run() {
 						BG_COLOR_RGB = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
+						FG_COLOR_RGB = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB();
 					}
 				});
 			} catch (SWTError err) {
@@ -96,42 +104,43 @@ public class HTMLPrinter {
 		return null;
 	}
 
-	public static void insertPageProlog(StringBuffer buffer, int position, RGB bgRGB, URL styleSheetURL) {
-
+	public static void insertPageProlog(StringBuffer buffer, int position, RGB fgRGB, RGB bgRGB, String styleSheet) {
+		if (fgRGB == null)
+			fgRGB = FG_COLOR_RGB;
 		if (bgRGB == null)
-			insertPageProlog(buffer, position, styleSheetURL);
-		else {
-			StringBuffer pageProlog = new StringBuffer(300);
+			bgRGB = BG_COLOR_RGB;
 
-			pageProlog.append("<html>"); //$NON-NLS-1$
+		StringBuffer pageProlog = new StringBuffer(300);
 
-			appendStyleSheetURL(pageProlog, styleSheetURL);
+		pageProlog.append("<html>"); //$NON-NLS-1$
 
-			pageProlog.append("<body text=\"#000000\" bgcolor=\""); //$NON-NLS-1$
-			appendColor(pageProlog, bgRGB);
-			pageProlog.append("\">"); //$NON-NLS-1$
+		appendStyleSheetURL(pageProlog, styleSheet);
 
-			buffer.insert(position, pageProlog.toString());
-		}
+		appendColors(pageProlog, fgRGB, bgRGB);
+
+		buffer.insert(position, pageProlog.toString());
 	}
 
-	public static void insertPageProlog(StringBuffer buffer, int position, RGB bgRGB, String styleSheet) {
+	private static void appendColors(StringBuffer pageProlog, RGB fgRGB, RGB bgRGB) {
+		pageProlog.append("<body text=\""); //$NON-NLS-1$
+		appendColor(pageProlog, fgRGB);
+		pageProlog.append("\" bgcolor=\""); //$NON-NLS-1$
+		appendColor(pageProlog, bgRGB);
+		pageProlog.append("\">"); //$NON-NLS-1$
+	}
 
-		if (bgRGB == null)
-			insertPageProlog(buffer, position, styleSheet);
-		else {
-			StringBuffer pageProlog = new StringBuffer(300);
+	private static void appendColor(StringBuffer buffer, RGB rgb) {
+		buffer.append('#');
+		appendAsHexString(buffer, rgb.red);
+		appendAsHexString(buffer, rgb.green);
+		appendAsHexString(buffer, rgb.blue);
+	}
 
-			pageProlog.append("<html>"); //$NON-NLS-1$
-
-			appendStyleSheetURL(pageProlog, styleSheet);
-
-			pageProlog.append("<body text=\"#000000\" bgcolor=\""); //$NON-NLS-1$
-			appendColor(pageProlog, bgRGB);
-			pageProlog.append("\">"); //$NON-NLS-1$
-
-			buffer.insert(position, pageProlog.toString());
-		}
+	private static void appendAsHexString(StringBuffer buffer, int intValue) {
+		String hexValue = Integer.toHexString(intValue);
+		if (hexValue.length() == 1)
+			buffer.append('0');
+		buffer.append(hexValue);
 	}
 
 	public static void insertStyles(StringBuffer buffer, String[] styles) {
@@ -139,14 +148,14 @@ public class HTMLPrinter {
 			return;
 
 		StringBuffer styleBuf = new StringBuffer(10 * styles.length);
-		for (int i = 0; styles != null && i < styles.length; i++) {
+		for (int i = 0; i < styles.length; i++) {
 			styleBuf.append(" style=\""); //$NON-NLS-1$
 			styleBuf.append(styles[i]);
 			styleBuf.append('"');
 		}
 
 		// Find insertion index
-		// a) within existing body tag with trailing space 
+		// a) within existing body tag with trailing space
 		int index = buffer.indexOf("<body "); //$NON-NLS-1$
 		if (index != -1) {
 			buffer.insert(index + 5, styleBuf);
@@ -159,18 +168,6 @@ public class HTMLPrinter {
 			buffer.insert(index + 5, ' ');
 			buffer.insert(index + 6, styleBuf);
 			return;
-		}
-	}
-
-	public static void insertPageProlog(StringBuffer buffer, int position, RGB bgRGB) {
-		if (bgRGB == null)
-			insertPageProlog(buffer, position);
-		else {
-			StringBuffer pageProlog = new StringBuffer(60);
-			pageProlog.append("<html><body text=\"#000000\" bgcolor=\""); //$NON-NLS-1$
-			appendColor(pageProlog, bgRGB);
-			pageProlog.append("\">"); //$NON-NLS-1$
-			buffer.insert(position, pageProlog.toString());
 		}
 	}
 
@@ -196,30 +193,23 @@ public class HTMLPrinter {
 		buffer.append("</head>"); //$NON-NLS-1$
 	}
 
-	private static void appendColor(StringBuffer buffer, RGB rgb) {
-		buffer.append('#');
-		buffer.append(Integer.toHexString(rgb.red));
-		buffer.append(Integer.toHexString(rgb.green));
-		buffer.append(Integer.toHexString(rgb.blue));
-	}
-
 	public static void insertPageProlog(StringBuffer buffer, int position) {
-		insertPageProlog(buffer, position, getBgColor());
+		StringBuffer pageProlog = new StringBuffer(60);
+		pageProlog.append("<html>"); //$NON-NLS-1$
+		appendColors(pageProlog, FG_COLOR_RGB, BG_COLOR_RGB);
+		buffer.insert(position, pageProlog.toString());
 	}
 
 	public static void insertPageProlog(StringBuffer buffer, int position, URL styleSheetURL) {
-		insertPageProlog(buffer, position, getBgColor(), styleSheetURL);
+		StringBuffer pageProlog = new StringBuffer(300);
+		pageProlog.append("<html>"); //$NON-NLS-1$
+		appendStyleSheetURL(pageProlog, styleSheetURL);
+		appendColors(pageProlog, FG_COLOR_RGB, BG_COLOR_RGB);
+		buffer.insert(position, pageProlog.toString());
 	}
 
 	public static void insertPageProlog(StringBuffer buffer, int position, String styleSheet) {
-		insertPageProlog(buffer, position, getBgColor(), styleSheet);
-	}
-
-	private static RGB getBgColor() {
-		if (BG_COLOR_RGB != null)
-			return BG_COLOR_RGB;
-		return new RGB(255, 255, 225); // RGB value of info bg color on WindowsXP
-
+		insertPageProlog(buffer, position, null, null, styleSheet);
 	}
 
 	public static void addPageProlog(StringBuffer buffer) {
@@ -280,7 +270,7 @@ public class HTMLPrinter {
 	 * <p>
 	 * If the listed font attributes are not contained in the passed style list, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param styles CSS style definitions
 	 * @param fontData the font information to use
 	 * @return the modified style definitions
@@ -289,11 +279,9 @@ public class HTMLPrinter {
 	public static String convertTopLevelFont(String styles, FontData fontData) {
 		boolean bold = (fontData.getStyle() & SWT.BOLD) != 0;
 		boolean italic = (fontData.getStyle() & SWT.ITALIC) != 0;
-
-		// See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=155993
-		String size = Integer.toString(fontData.getHeight()) + ("carbon".equals(SWT.getPlatform()) ? "px" : "pt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+		String size = Integer.toString(fontData.getHeight()) + UNIT;
 		String family = "'" + fontData.getName() + "',sans-serif"; //$NON-NLS-1$ //$NON-NLS-2$
+
 		styles = styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-size:\\s*)\\d+pt(\\;?.*\\})", "$1" + size + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		styles = styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-weight:\\s*)\\w+(\\;?.*\\})", "$1" + (bold ? "bold" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		styles = styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-style:\\s*)\\w+(\\;?.*\\})", "$1" + (italic ? "italic" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
