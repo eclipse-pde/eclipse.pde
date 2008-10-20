@@ -256,7 +256,9 @@ public class ClassFileComparator {
 				IApiType typeStructure = TypeStructureCache.getTypeStructure(superclassType1, pair.getComponent());
 				IApiMethod[] methods = typeStructure.getMethods();
 				for (int i = 0, max = methods.length; i < max; i++) {
-					getDeltaForMethod(methods[i]);
+					if (!methods[i].isConstructor()) {
+						getDeltaForMethod(methods[i]);
+					}
 				}
 				IApiField[] fields = typeStructure.getFields();
 				for (int i = 0, max = fields.length; i < max; i++) {

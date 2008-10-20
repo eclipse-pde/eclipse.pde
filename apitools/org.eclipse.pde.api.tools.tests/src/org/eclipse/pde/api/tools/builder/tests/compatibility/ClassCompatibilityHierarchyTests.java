@@ -346,4 +346,21 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		return 0;
 	}
 	
+	
+	/**
+	 * Tests removing an internal superclass that defines a public constructor
+	 */
+	private void xRemoveInternalSuperClassWithConstructor(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveConstructorFromInternalSuperclass.java");
+		// no problems expected
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemoveInternalSuperClassWithConstructorI() throws Exception {
+		xRemoveInternalSuperClassWithConstructor(true);
+	}
+	
+	public void testRemoveInternalSuperClassWithConstructorF() throws Exception {
+		xRemoveInternalSuperClassWithConstructor(false);
+	}	
 }
