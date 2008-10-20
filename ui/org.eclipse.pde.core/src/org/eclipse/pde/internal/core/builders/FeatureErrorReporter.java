@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,20 +12,17 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.util.Arrays;
 import java.util.HashSet;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 public class FeatureErrorReporter extends ManifestErrorReporter {
 
@@ -405,16 +402,27 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			severity = CompilerFlags.WARNING;
 		}
 		String unpack = parent.getAttribute("unpack"); //$NON-NLS-1$
-		if ("false".equals(unpack)) //$NON-NLS-1$
-			return;
 		IPluginModelBase pModel = PluginRegistry.findModel(parent.getAttribute("id")); //$NON-NLS-1$
 		if (pModel == null) {
 			return;
 		}
+
+		if (pModel instanceof IBundlePluginModel) {
+			IBundlePluginModel bModel = (IBundlePluginModel) pModel;
+			IManifestHeader header = bModel.getBundleModel().getBundle().getManifestHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE);
+			if (header != null) {
+				String value = header.getValue();
+				String unpackValue = unpack == "true" ? "jar" : "dir"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (!value.equalsIgnoreCase(unpackValue)) {
+					String message = NLS.bind(PDECoreMessages.Builders_Feature_mismatchUnpackBundleShape, (new String[] {"unpack=" + unpack, parent.getAttribute("id"), "Eclipse-BundleShape: " + value})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
+				}
+			}
+		}
+
 		if (!CoreUtility.guessUnpack(pModel.getBundleDescription())) {
 			String message = NLS.bind(PDECoreMessages.Builders_Feature_missingUnpackFalse, (new String[] {parent.getAttribute("id"), "unpack=\"false\""})); //$NON-NLS-1$ //$NON-NLS-2$			
 			report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
 		}
 	}
-
 }

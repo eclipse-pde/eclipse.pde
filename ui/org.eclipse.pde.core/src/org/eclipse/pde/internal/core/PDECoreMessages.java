@@ -103,6 +103,7 @@ public class PDECoreMessages extends NLS {
 	public static String Builders_Feature_patchedVersion;
 	public static String Builders_Feature_patchedMatch;
 	public static String Builders_Feature_missingUnpackFalse;
+	public static String Builders_Feature_mismatchUnpackBundleShape;
 	public static String Builders_Schema_compiling;
 	public static String Builders_Schema_compilingSchemas;
 	public static String Builders_Schema_removing;
