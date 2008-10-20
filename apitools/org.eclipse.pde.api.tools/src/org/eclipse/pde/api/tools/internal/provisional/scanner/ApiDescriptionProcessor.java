@@ -642,10 +642,7 @@ public class ApiDescriptionProcessor {
 		int res = RestrictionModifiers.NO_RESTRICTIONS;
 		switch(descriptor.getElementType()) {
 			case IElementDescriptor.T_FIELD: {
-				IFieldDescriptor field = (IFieldDescriptor) descriptor;
-				if(!Flags.isFinal(field.getModifiers())) {
-					res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
-				}
+				res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
 				break;
 			}
 			case IElementDescriptor.T_METHOD: {
@@ -788,7 +785,7 @@ public class ApiDescriptionProcessor {
 				abort(ScannerMessages.ComponentXMLScanner_3, null); 
 			}
 			// old files might use '.' instead of '/'
-			signature.replace('.', '/');
+			signature = signature.replace('.', '/');
 			methoddesc = typedesc.getMethod(name, signature);
 			annotateDescriptor(project, settings, methoddesc, method);
 		}
