@@ -10,106 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
-import org.osgi.framework.*;
+import org.eclipse.pde.internal.runtime.registry.model.*;
 
 public class RegistryBrowserContentProvider implements ITreeContentProvider {
-	private Hashtable fExtensionPointMap = new Hashtable();
 	public boolean isInExtensionSet;
+	private RegistryBrowser fRegistryBrowser;
 
-	static class BundleFolder implements IBundleFolder {
-		private int id;
-		private Bundle bundle;
-		private Object[] children;
-
-		public BundleFolder(Bundle pd, int id) {
-			this.bundle = pd;
-			this.id = id;
-		}
-
-		public Bundle getBundle() {
-			return bundle;
-		}
-
-		public Object[] getChildren() {
-			if (children == null) {
-				children = getFolderChildren(bundle, id);
-			}
-			return children;
-		}
-
-		/**
-		 * Resets folder's previously cached knowledge about it's children. 
-		 */
-		public void refresh() {
-			children = null;
-		}
-
-		public int getFolderId() {
-			return id;
-		}
-
-		public Object getAdapter(Class key) {
-			return null;
-		}
-	}
-
-	static class BundlePrerequisite implements IBundlePrerequisite {
-		private ManifestElement underlyingElement;
-
-		public BundlePrerequisite(ManifestElement element) {
-			underlyingElement = element;
-		}
-
-		public ManifestElement getPrerequisite() {
-			return underlyingElement;
-		}
-
-		public boolean isExported() {
-			String visibility = underlyingElement.getDirective(Constants.VISIBILITY_DIRECTIVE);
-			return Constants.VISIBILITY_REEXPORT.equals(visibility);
-		}
-
-		public String getLabel() {
-			String version = underlyingElement.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
-			String value = underlyingElement.getValue();
-			if (version == null)
-				return value;
-			if (Character.isDigit(version.charAt(0)))
-				version = '(' + version + ')';
-			return value + ' ' + version;
-		}
-	}
-
-	static class BundleLibrary implements IBundleLibrary {
-		private ManifestElement underlyingElement;
-
-		public BundleLibrary(ManifestElement element) {
-			underlyingElement = element;
-		}
-
-		public String getLibrary() {
-			return underlyingElement.getValue();
-		}
-	}
-
-	/**
-	 * Creates contents adapter for given folder id.
-	 * @param object Folder contents to be wrapped in adapter
-	 * @param id Type of folder
-	 * @return Adapter 
-	 */
-	static protected PluginObjectAdapter createAdapter(Object object, int id) {
-		if (id == IBundleFolder.F_EXTENSIONS)
-			return new ExtensionAdapter(object);
-		if (id == IBundleFolder.F_EXTENSION_POINTS)
-			return new ExtensionPointAdapter(object);
-		return new PluginObjectAdapter(object);
+	public RegistryBrowserContentProvider(RegistryBrowser registryBrowser) {
+		fRegistryBrowser = registryBrowser;
 	}
 
 	public void dispose() { // nothing to dispose
@@ -123,128 +34,74 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		if (element == null)
 			return null;
 
-		if (element instanceof ExtensionAdapter)
-			return ((ExtensionAdapter) element).getChildren();
+		if (element instanceof Extension)
+			return ((Extension) element).getConfigurationElements();
 
 		isInExtensionSet = false;
-		if (element instanceof ExtensionPointAdapter)
-			return ((ExtensionPointAdapter) element).getChildren();
+		if (element instanceof ExtensionPoint)
+			return ((ExtensionPoint) element).getExtensions().toArray();
 
-		if (element instanceof ConfigurationElementAdapter)
-			return ((ConfigurationElementAdapter) element).getChildren();
+		if (element instanceof ConfigurationElement)
+			return ((ConfigurationElement) element).getElements();
 
-		if (element instanceof PluginAdapter) {
-			PluginAdapter bundle = (PluginAdapter) element;
+		if (element instanceof Bundle) {
+			Bundle bundle = (Bundle) element;
 
-			Object[] folders = bundle.getChildren();
+			Folder[] folders = new Folder[6];
+			folders[0] = new Folder(Folder.F_IMPORTS, bundle);
+			folders[1] = new Folder(Folder.F_LIBRARIES, bundle);
+			folders[2] = new Folder(Folder.F_EXTENSION_POINTS, bundle);
+			folders[3] = new Folder(Folder.F_EXTENSIONS, bundle);
+			folders[4] = new Folder(Folder.F_REGISTERED_SERVICES, bundle);
+			folders[5] = new Folder(Folder.F_SERVICES_IN_USE, bundle);
 
 			// filter out empty folders
 			ArrayList folderList = new ArrayList();
+			folderList.add(new Attribute(bundle.getModel(), Attribute.F_LOCATION, bundle.getLocation()));
+
 			for (int i = 0; i < folders.length; i++) {
-				if (folders[i] != null && ((IBundleFolder) folders[i]).getChildren() != null || ((IBundleFolder) folders[i]).getFolderId() == IBundleFolder.F_LOCATION)
+				if ((folders[i].getChildren() != null) && (folders[i].getChildren().length > 0))
 					folderList.add(folders[i]);
 			}
-			folders = folderList.toArray(new Object[folderList.size()]);
-
-			return folders;
+			return folderList.toArray();
 		}
 
-		if (element instanceof PluginObjectAdapter)
-			element = ((PluginObjectAdapter) element).getObject();
+		if (element instanceof Folder) {
+			Folder folder = (Folder) element;
+			isInExtensionSet = folder.getId() == Folder.F_EXTENSIONS;
+			Object[] objs = ((Folder) element).getChildren();
+			return objs;
+		}
+		if (element instanceof ConfigurationElement) {
+			return ((ConfigurationElement) element).getElements();
+		}
 
-		if (element instanceof IBundleFolder) {
-			IBundleFolder folder = (IBundleFolder) element;
-			isInExtensionSet = folder.getFolderId() == IBundleFolder.F_EXTENSIONS;
-			return ((IBundleFolder) element).getChildren();
+		if (element instanceof ExtensionPoint) {
+			ExtensionPoint extensionPoint = (ExtensionPoint) element;
+			Object[] objs = extensionPoint.getExtensions().toArray();
+			return objs;
 		}
-		if (element instanceof IConfigurationElement) {
-			return ((IConfigurationElement) element).getChildren();
-		}
+
 		if (element instanceof Object[]) {
 			return (Object[]) element;
 		}
-		if (element instanceof IExtensionPoint) {
-			IExtensionPoint extensionPoint = (IExtensionPoint) element;
-			String id = extensionPoint.getUniqueIdentifier();
 
-			Object[] children = (Object[]) fExtensionPointMap.get(id);
-			if (children == null) {
-				Object[] array = extensionPoint.getExtensions();
-				if (array != null && array.length > 0) {
-					children = new Object[array.length];
-					for (int i = 0; i < array.length; i++) {
-						children[i] = createAdapter(array[i], IBundleFolder.F_EXTENSIONS);
-					}
-
-					fExtensionPointMap.put(id, children);
-				}
-			}
-
-			return children;
-		}
 		return null;
 	}
 
-	protected static Object[] getFolderChildren(Bundle bundle, int id) {
-		Object[] array = null;
-		String bundleId = bundle.getSymbolicName();
-		switch (id) {
-			case IBundleFolder.F_EXTENSIONS :
-				array = Platform.getExtensionRegistry().getExtensions(bundleId);
-				break;
-			case IBundleFolder.F_EXTENSION_POINTS :
-				array = Platform.getExtensionRegistry().getExtensionPoints(bundleId);
-				break;
-			case IBundleFolder.F_IMPORTS :
-				array = getManifestHeaderArray(bundle, Constants.REQUIRE_BUNDLE);
-				break;
-			case IBundleFolder.F_LIBRARIES :
-				array = getManifestHeaderArray(bundle, Constants.BUNDLE_CLASSPATH);
-				break;
-			case IBundleFolder.F_REGISTERED_SERVICES :
-				return getServices(bundle, IBundleFolder.F_REGISTERED_SERVICES);
-			case IBundleFolder.F_SERVICES_IN_USE :
-				return getServices(bundle, IBundleFolder.F_SERVICES_IN_USE);
-		}
-		Object[] result = null;
-		if (array != null && array.length > 0) {
-			result = new Object[array.length];
-			for (int i = 0; i < array.length; i++) {
-				result[i] = createAdapter(array[i], id);
-			}
-		}
-		return result;
-	}
-
-	protected static Object[] getServices(Bundle bundle, int type) {
-		Set result = new HashSet();
-
-		try {
-			ServiceReference[] references = PDERuntimePlugin.getDefault().getBundleContext().getAllServiceReferences(null, null);
-
-			for (int i = 0; i < references.length; i++) {
-				ServiceReference ref = references[i];
-
-				if ((type == IBundleFolder.F_REGISTERED_SERVICES) && (bundle.equals(ref.getBundle()))) {
-					result.add(new ServiceReferenceAdapter(ref));
-				}
-
-				Bundle[] usingBundles = ref.getUsingBundles();
-				if ((type == IBundleFolder.F_SERVICES_IN_USE) && (usingBundles != null && Arrays.asList(usingBundles).contains(bundle))) {
-					result.add(new ServiceReferenceAdapter(ref));
-				}
-			}
-
-		} catch (InvalidSyntaxException e) { // nothing
-		}
-
-		if (result.size() == 0)
-			return null;
-
-		return result.toArray(new ServiceReferenceAdapter[result.size()]);
-	}
-
 	public Object getParent(Object element) {
+		if (!(element instanceof ModelObject)) {
+			return null;
+		}
+
+		ModelObject object = (ModelObject) element;
+
+		boolean extOnly = fRegistryBrowser.showExtensionsOnly();
+
+		if (element instanceof Folder) {
+			return ((Folder) element).getParent();
+		}
+
 		return null;
 	}
 
@@ -254,28 +111,6 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { // do nothing
-	}
-
-	static private Object[] getManifestHeaderArray(Bundle bundle, String headerKey) {
-		String libraries = (String) bundle.getHeaders().get(headerKey);
-		try {
-			ManifestElement[] elements = ManifestElement.parseHeader(headerKey, libraries);
-			if (elements == null)
-				return null;
-			if (headerKey.equals(Constants.BUNDLE_CLASSPATH)) {
-				IBundleLibrary[] array = new IBundleLibrary[elements.length];
-				for (int i = 0; i < elements.length; i++)
-					array[i] = new BundleLibrary(elements[i]);
-				return array;
-			} else if (headerKey.equals(Constants.REQUIRE_BUNDLE)) {
-				IBundlePrerequisite[] array = new IBundlePrerequisite[elements.length];
-				for (int i = 0; i < elements.length; i++)
-					array[i] = new BundlePrerequisite(elements[i]);
-				return array;
-			}
-		} catch (BundleException e) { // do nothing
-		}
-		return null;
 	}
 
 }

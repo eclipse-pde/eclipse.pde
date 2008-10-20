@@ -10,19 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.pde.internal.runtime.registry.model.*;
 import org.eclipse.swt.graphics.Image;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceReference;
 
 public class RegistryBrowserLabelProvider extends LabelProvider {
 
@@ -102,18 +97,10 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	}
 
 	public Image getImage(Object element) {
-		if (element instanceof PluginObjectAdapter)
-			element = ((PluginObjectAdapter) element).getObject();
-
 		if (element instanceof Bundle) {
 			Bundle bundle = (Bundle) element;
 
-			// check if bundle is disabled
-			PlatformAdmin plaformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-			State state = plaformAdmin.getState(false);
-
-			BundleDescription description = state.getBundle(bundle.getBundleId());
-			if ((state.getDisabledInfos(description)).length > 0)
+			if (!bundle.isEnabled())
 				return fDisabledImage;
 
 			switch (bundle.getState()) {
@@ -122,147 +109,125 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 				case Bundle.UNINSTALLED :
 					return fUnresolvedPluginImage;
 				case Bundle.INSTALLED :
-					if ((state.getDisabledInfos(description)).length > 0)
+					if (!bundle.isEnabled())
 						return fUnresolvedPluginImage;
 				default :
 					return fPluginImage;
 			}
 		}
 
-		if (element instanceof ServiceReference) {
+		if (element instanceof ServiceRegistration) {
 			return fServiceImage;
 		}
 
-		if (element instanceof IBundleFolder) {
-			int id = ((IBundleFolder) element).getFolderId();
+		if (element instanceof Folder) {
+			int id = ((Folder) element).getId();
 			switch (id) {
-				case IBundleFolder.F_EXTENSIONS :
+				case Folder.F_EXTENSIONS :
 					return fExtensionsImage;
-				case IBundleFolder.F_EXTENSION_POINTS :
+				case Folder.F_EXTENSION_POINTS :
 					return fExtensionPointsImage;
-				case IBundleFolder.F_IMPORTS :
+				case Folder.F_IMPORTS :
 					return fRequiresImage;
-				case IBundleFolder.F_LIBRARIES :
+				case Folder.F_LIBRARIES :
 					return fRuntimeImage;
-				case IBundleFolder.F_LOCATION :
-					return fLocationImage;
-				case IBundleFolder.F_REGISTERED_SERVICES :
+				case Folder.F_REGISTERED_SERVICES :
 					return fExporterImage;
-				case IBundleFolder.F_SERVICES_IN_USE :
+				case Folder.F_SERVICES_IN_USE :
 					return fImporterImage;
 			}
 			return null;
 		}
-		if (element instanceof IExtension)
+		if (element instanceof Extension)
 			return fExtensionImage;
 
-		if (element instanceof IExtensionPoint)
+		if (element instanceof ExtensionPoint)
 			return fExtensionPointImage;
 
-		if (element instanceof IBundlePrerequisite)
-			return ((IBundlePrerequisite) element).isExported() ? fExpReqPluginImage : fReqPluginImage;
+		if (element instanceof BundlePrerequisite)
+			return ((BundlePrerequisite) element).isExported() ? fExpReqPluginImage : fReqPluginImage;
 
-		if (element instanceof IBundleLibrary)
+		if (element instanceof BundleLibrary)
 			return fLibraryImage;
 
-		if (element instanceof IConfigurationElement)
+		if (element instanceof ConfigurationElement)
 			return fGenericTagImage;
 
-		if (element instanceof IConfigurationAttribute)
+		if (element instanceof Attribute) {
+			Attribute attr = (Attribute) element;
+			if (Attribute.F_LOCATION.equals(attr.getName())) {
+				return fLocationImage;
+			}
 			return fGenericAttrImage;
+		}
 
 		return null;
 	}
 
 	public String getText(Object element) {
-		if (element instanceof PluginObjectAdapter)
-			element = ((PluginObjectAdapter) element).getObject();
 		if (element instanceof Bundle) {
 			String id = ((Bundle) element).getSymbolicName();
-			String version = (String) ((Bundle) element).getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+			String version = ((Bundle) element).getVersion();
 			if (version == null)
 				return id;
 			return id + " (" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (element instanceof ServiceReference) {
-			ServiceReference ref = (ServiceReference) element;
-			String[] classes = (String[]) ref.getProperty(org.osgi.framework.Constants.OBJECTCLASS);
-			Long id = (Long) ref.getProperty(org.osgi.framework.Constants.SERVICE_ID);
+		if (element instanceof ServiceRegistration) {
+			ServiceRegistration ref = (ServiceRegistration) element;
+			String[] classes = ref.getClasses();
+			Long id = ref.getId();
 			String identifier = " (id=" + id.toString() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			return Arrays.asList(classes).toString().concat(identifier);
 		}
-		if (element instanceof IBundleFolder) {
-			switch (((IBundleFolder) element).getFolderId()) {
-				case IBundleFolder.F_IMPORTS :
+		if (element instanceof Folder) {
+			switch (((Folder) element).getId()) {
+				case Folder.F_IMPORTS :
 					return PDERuntimeMessages.RegistryView_folders_imports;
-				case IBundleFolder.F_LIBRARIES :
+				case Folder.F_LIBRARIES :
 					return PDERuntimeMessages.RegistryView_folders_libraries;
-				case IBundleFolder.F_EXTENSION_POINTS :
+				case Folder.F_EXTENSION_POINTS :
 					return PDERuntimeMessages.RegistryView_folders_extensionPoints;
-				case IBundleFolder.F_EXTENSIONS :
+				case Folder.F_EXTENSIONS :
 					return PDERuntimeMessages.RegistryView_folders_extensions;
-				case IBundleFolder.F_REGISTERED_SERVICES :
+				case Folder.F_REGISTERED_SERVICES :
 					return PDERuntimeMessages.RegistryBrowserLabelProvider_registeredServices;
-				case IBundleFolder.F_SERVICES_IN_USE :
+				case Folder.F_SERVICES_IN_USE :
 					return PDERuntimeMessages.RegistryBrowserLabelProvider_usedServices;
-				case IBundleFolder.F_LOCATION :
-					Bundle bundle = ((IBundleFolder) element).getBundle();
-					URL bundleEntry = bundle.getEntry("/"); //$NON-NLS-1$
-					try {
-						bundleEntry = FileLocator.resolve(bundleEntry);
-					} catch (IOException e) { // do nothing
-					}
-					IPath path = new Path(bundleEntry.getFile());
-					String pathString = path.removeTrailingSeparator().toOSString();
-					if (pathString.startsWith("file:")) //$NON-NLS-1$
-						pathString = pathString.substring(5);
-					if (pathString.endsWith("!")) //$NON-NLS-1$
-						pathString = pathString.substring(0, pathString.length() - 1);
-					return pathString;
 			}
 		}
-		if (element instanceof IExtension) {
+		if (element instanceof Extension) {
 			if (((RegistryBrowserContentProvider) fViewer.getContentProvider()).isInExtensionSet) {
-				String name = ((IExtension) element).getLabel();
-				String id = ((IExtension) element).getExtensionPointUniqueIdentifier();
+				String name = ((Extension) element).getLabel();
+				String id = ((Extension) element).getExtensionPointUniqueIdentifier();
 				if (name != null && name.length() > 0)
 					return NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_nameIdBind, id, name);
 				return id;
 			}
 
-			String contributor = ((IExtension) element).getNamespaceIdentifier();
+			String contributor = ((Extension) element).getNamespaceIdentifier();
 			return NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_contributedBy, contributor);
 
 		}
-		if (element instanceof IExtensionPoint) {
-			String id = ((IExtensionPoint) element).getUniqueIdentifier();
-			String name = ((IExtensionPoint) element).getLabel();
+		if (element instanceof ExtensionPoint) {
+			String id = ((ExtensionPoint) element).getUniqueIdentifier();
+			String name = ((ExtensionPoint) element).getLabel();
 			if (name != null && name.length() > 0)
 				return NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_nameIdBind, id, name);
 			return id;
 		}
-		if (element instanceof IBundlePrerequisite)
-			return ((IBundlePrerequisite) element).getLabel();
+		if (element instanceof BundlePrerequisite)
+			return ((BundlePrerequisite) element).getName();
 
-		if (element instanceof IBundleLibrary)
-			return ((IBundleLibrary) element).getLibrary();
+		if (element instanceof BundleLibrary)
+			return ((BundleLibrary) element).getLibrary();
 
-		if (element instanceof IConfigurationElement) {
-			String label = ((IConfigurationElement) element).getAttribute("label"); //$NON-NLS-1$
-			if (label == null)
-				label = ((IConfigurationElement) element).getName();
-
-			if (label == null)
-				label = ((IConfigurationElement) element).getAttribute("name"); //$NON-NLS-1$
-
-			if (label == null && ((IConfigurationElement) element).getAttribute("id") != null) { //$NON-NLS-1$
-				String[] labelSplit = ((IConfigurationElement) element).getAttribute("id").split("\\."); //$NON-NLS-1$ //$NON-NLS-2$
-				label = labelSplit.length == 0 ? null : labelSplit[labelSplit.length - 1];
-			}
-			return label;
+		if (element instanceof ConfigurationElement) {
+			return ((ConfigurationElement) element).getName();
 		}
-		if (element instanceof IConfigurationAttribute)
-			return ((IConfigurationAttribute) element).getLabel();
+		if (element instanceof Attribute) {
+			Attribute attribute = (Attribute) element;
+			return attribute.getName() + " = " + attribute.getValue(); //$NON-NLS-1$
+		}
 
 		return super.getText(element);
 	}

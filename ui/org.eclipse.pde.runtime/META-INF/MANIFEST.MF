@@ -17,6 +17,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.pde.internal.runtime;x-internal:=true,
  org.eclipse.pde.internal.runtime.registry;x-internal:=true,
+ org.eclipse.pde.internal.runtime.registry.model;x-internal:=true,
  org.eclipse.pde.internal.runtime.spy;x-internal:=true,
  org.eclipse.pde.internal.runtime.spy.dialogs;x-internal:=true,
  org.eclipse.pde.internal.runtime.spy.handlers;x-internal:=true,

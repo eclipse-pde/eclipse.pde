@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.runtime.registry;
+package org.eclipse.pde.internal.runtime.registry.model;
 
-public class ConfigurationAttributeAdapter extends ParentAdapter {
+public abstract class ModelObject {
 
-	public ConfigurationAttributeAdapter(Object object) {
-		super(object);
+	private RegistryModel model;
+
+	public ModelObject(RegistryModel model) {
+		this.model = model;
 	}
 
-	protected Object[] createChildren() {
-		return null;
+	public RegistryModel getModel() {
+		return model;
 	}
-
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,20 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.runtime.registry;
+package org.eclipse.pde.internal.runtime.registry.model;
 
-public abstract class ParentAdapter extends PluginObjectAdapter {
-	Object[] fChildren;
+public class Attribute extends ModelObject {
+	public static final String F_LOCATION = "Location"; //$NON-NLS-1$
 
-	public ParentAdapter(Object object) {
-		super(object);
+	private String name;
+	private String value;
+
+	public Attribute(RegistryModel model, String name, String value) {
+		super(model);
+		this.name = name;
+		this.value = value;
 	}
 
-	protected abstract Object[] createChildren();
+	public String getValue() {
+		return value;
+	}
 
-	public Object[] getChildren() {
-		if (fChildren == null)
-			fChildren = createChildren();
-		return fChildren;
+	public String getName() {
+		return name;
 	}
 }

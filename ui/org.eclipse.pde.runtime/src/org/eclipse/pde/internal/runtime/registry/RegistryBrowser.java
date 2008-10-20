@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -18,9 +20,9 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.pde.internal.runtime.registry.model.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.*;
@@ -33,8 +35,7 @@ import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
-import org.osgi.framework.*;
-import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.framework.BundleException;
 
 public class RegistryBrowser extends ViewPart {
 
@@ -43,11 +44,15 @@ public class RegistryBrowser extends ViewPart {
 	public static final String SHOW_EXTENSIONS_ONLY = "RegistryView.showExtensions.label"; //$NON-NLS-1$ 
 	public static final String SHOW_DISABLED_MODE = "RegistryView.showDisabledMode.label"; //$NON-NLS-1$
 
-	private RegistryBrowserListener fListener;
 	private FilteredTree fFilteredTree;
 	private TreeViewer fTreeViewer;
 	private IMemento fMemento;
 	private int fTotalItems = 0;
+
+	private RegistryModel model;
+	private ModelChangeListener listener;
+
+	private RegistryBrowserContentProvider fContentProvider;
 
 	// menus and action items
 	private Action fRefreshAction;
@@ -70,12 +75,10 @@ public class RegistryBrowser extends ViewPart {
 	private DrillDownAdapter fDrillDownAdapter;
 	private ViewerFilter fActiveFilter = new ViewerFilter() {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof PluginObjectAdapter)
-				element = ((PluginObjectAdapter) element).getObject();
-			if (element instanceof IExtensionPoint)
-				element = Platform.getBundle(((IExtensionPoint) element).getNamespaceIdentifier());
-			else if (element instanceof IExtension)
-				element = Platform.getBundle(((IExtension) element).getNamespaceIdentifier());
+			if (element instanceof ExtensionPoint)
+				element = Platform.getBundle(((ExtensionPoint) element).getNamespaceIdentifier());
+			else if (element instanceof Extension)
+				element = Platform.getBundle(((Extension) element).getNamespaceIdentifier());
 			if (element instanceof Bundle)
 				return ((Bundle) element).getState() == Bundle.ACTIVE;
 			return true;
@@ -83,17 +86,9 @@ public class RegistryBrowser extends ViewPart {
 	};
 
 	private ViewerFilter fDisabledFilter = new ViewerFilter() {
-		PlatformAdmin plaformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-		State state = plaformAdmin.getState(false);
-
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof PluginObjectAdapter)
-				element = ((PluginObjectAdapter) element).getObject();
-
 			if (element instanceof Bundle) {
-				Bundle bundle = (Bundle) element;
-				BundleDescription description = state.getBundle(bundle.getBundleId());
-				return ((state.getDisabledInfos(description)).length > 0);
+				return !((Bundle) element).isEnabled();
 			}
 			return false;
 		}
@@ -133,6 +128,18 @@ public class RegistryBrowser extends ViewPart {
 		}
 	}
 
+	public RegistryBrowser() {
+		try {
+			model = RegistryModelFactory.getRegistryModel(new URI("local"));
+		} catch (URISyntaxException e) {
+			PDERuntimePlugin.log(e);
+		}
+		model.connect();
+
+		listener = new RegistryBrowserModelChangeListener(this);
+		model.addModelChangeListener(listener);
+	}
+
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		if (memento == null)
@@ -140,8 +147,6 @@ public class RegistryBrowser extends ViewPart {
 		else
 			this.fMemento = memento;
 		initializeMemento();
-
-		fListener = new RegistryBrowserListener(this);
 	}
 
 	private void initializeMemento() {
@@ -159,12 +164,11 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	public void dispose() {
-		if (fListener != null) {
-			Platform.getExtensionRegistry().removeRegistryChangeListener(fListener);
-			PDERuntimePlugin.getDefault().getBundleContext().removeBundleListener(fListener);
-			PDERuntimePlugin.getDefault().getBundleContext().removeServiceListener(fListener);
+		model.disconnect();
+		model.removeModelChangeListener(listener);
+		if (fClipboard != null) {
+			fClipboard.dispose();
 		}
-		fClipboard.dispose();
 		super.dispose();
 	}
 
@@ -179,10 +183,6 @@ public class RegistryBrowser extends ViewPart {
 		createTreeViewer(composite);
 		fClipboard = new Clipboard(fTreeViewer.getTree().getDisplay());
 		fillToolBar();
-
-		PDERuntimePlugin.getDefault().getBundleContext().addBundleListener(fListener);
-		Platform.getExtensionRegistry().addRegistryChangeListener(fListener);
-		PDERuntimePlugin.getDefault().getBundleContext().addServiceListener(fListener);
 	}
 
 	private void createTreeViewer(Composite parent) {
@@ -198,17 +198,14 @@ public class RegistryBrowser extends ViewPart {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fFilteredTree.setLayoutData(gd);
 		fTreeViewer = fFilteredTree.getViewer();
-		fTreeViewer.setContentProvider(new RegistryBrowserContentProvider());
+		fContentProvider = new RegistryBrowserContentProvider(this);
+		fTreeViewer.setContentProvider(fContentProvider);
 		fTreeViewer.setLabelProvider(new RegistryBrowserLabelProvider(fTreeViewer));
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				if (e1 instanceof PluginObjectAdapter)
-					e1 = ((PluginObjectAdapter) e1).getObject();
-				if (e2 instanceof PluginObjectAdapter)
-					e2 = ((PluginObjectAdapter) e2).getObject();
-				if (e1 instanceof IBundleFolder && e2 instanceof IBundleFolder)
-					return ((IBundleFolder) e1).getFolderId() - ((IBundleFolder) e2).getFolderId();
+				if (e1 instanceof Folder && e2 instanceof Folder)
+					return ((Folder) e1).getId() - ((Folder) e2).getId();
 				if (e1 instanceof Bundle && e2 instanceof Bundle) {
 					e1 = ((Bundle) e1).getSymbolicName();
 					e2 = ((Bundle) e2).getSymbolicName();
@@ -238,15 +235,6 @@ public class RegistryBrowser extends ViewPart {
 		popupMenuManager.addMenuListener(listener);
 		Menu menu = popupMenuManager.createContextMenu(tree);
 		tree.setMenu(menu);
-	}
-
-	private PluginObjectAdapter[] getBundles() {
-		Bundle[] bundles = PDERuntimePlugin.getDefault().getBundleContext().getBundles();
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < bundles.length; i++)
-			if (bundles[i].getHeaders().get(Constants.FRAGMENT_HOST) == null)
-				list.add(new PluginAdapter(bundles[i]));
-		return (PluginObjectAdapter[]) list.toArray(new PluginObjectAdapter[list.size()]);
 	}
 
 	private void fillToolBar() {
@@ -424,61 +412,32 @@ public class RegistryBrowser extends ViewPart {
 		fEnableAction = new Action(PDERuntimeMessages.RegistryView_enableAction_label) {
 			public void run() {
 				List bundles = getSelectedBundles();
-				State state = PDERuntimePlugin.getDefault().getState();
 				for (Iterator it = bundles.iterator(); it.hasNext();) {
 					Bundle bundle = (Bundle) it.next();
-					BundleDescription desc = state.getBundle(bundle.getBundleId());
-					DisabledInfo[] infos = state.getDisabledInfos(desc);
-					for (int i = 0; i < infos.length; i++) {
-						PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-						platformAdmin.removeDisabledInfo(infos[i]);
-					}
+					bundle.setEnabled(true);
 				}
-				PackageAdmin packageAdmin = PDERuntimePlugin.getDefault().getPackageAdmin();
-				packageAdmin.refreshPackages((Bundle[]) bundles.toArray(new Bundle[bundles.size()]));
 			}
 		};
 
 		fDisableAction = new Action(PDERuntimeMessages.RegistryView_disableAction_label) {
 			public void run() {
 				List bundles = getSelectedBundles();
-				State state = PDERuntimePlugin.getDefault().getState();
 				for (Iterator it = bundles.iterator(); it.hasNext();) {
 					Bundle bundle = (Bundle) it.next();
-					BundleDescription desc = state.getBundle(bundle.getBundleId());
-					DisabledInfo info = new DisabledInfo("org.eclipse.pde.ui", "Disabled via PDE", desc); //$NON-NLS-1$ //$NON-NLS-2$
-					PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-					platformAdmin.addDisabledInfo(info);
+					bundle.setEnabled(false);
 				}
-				PackageAdmin packageAdmin = PDERuntimePlugin.getDefault().getPackageAdmin();
-				packageAdmin.refreshPackages((Bundle[]) bundles.toArray(new Bundle[bundles.size()]));
 			}
 		};
 
 		fDiagnoseAction = new Action(PDERuntimeMessages.RegistryView_diagnoseAction_label) {
 			public void run() {
 				List bundles = getSelectedBundles();
-				State state = PDERuntimePlugin.getDefault().getState();
 				for (Iterator it = bundles.iterator(); it.hasNext();) {
 					Bundle bundle = (Bundle) it.next();
-					BundleDescription desc = state.getBundle(bundle.getBundleId());
-					PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-					VersionConstraint[] unsatisfied = platformAdmin.getStateHelper().getUnsatisfiedConstraints(desc);
-					ResolverError[] resolverErrors = platformAdmin.getState(false).getResolverErrors(desc);
-					MultiStatus problems = new MultiStatus(PDERuntimePlugin.ID, IStatus.INFO, PDERuntimeMessages.RegistryView_found_problems, null);
-					for (int i = 0; i < resolverErrors.length; i++) {
-						if ((resolverErrors[i].getType() & (ResolverError.MISSING_FRAGMENT_HOST | ResolverError.MISSING_GENERIC_CAPABILITY | ResolverError.MISSING_IMPORT_PACKAGE | ResolverError.MISSING_REQUIRE_BUNDLE)) != 0)
-							continue;
-						IStatus status = new Status(IStatus.WARNING, PDERuntimePlugin.ID, resolverErrors[i].toString());
-						problems.add(status);
-					}
+					MultiStatus problems = bundle.diagnose();
 
-					for (int i = 0; i < unsatisfied.length; i++) {
-						IStatus status = new Status(IStatus.WARNING, PDERuntimePlugin.ID, MessageHelper.getResolutionFailureMessage(unsatisfied[i]));
-						problems.add(status);
-					}
 					Dialog dialog;
-					if (unsatisfied.length != 0 || resolverErrors.length != 0) {
+					if (problems.getChildren().length > 0) {
 						dialog = new DiagnosticsDialog(getSite().getShell(), PDERuntimeMessages.RegistryView_diag_dialog_title, null, problems, IStatus.WARNING);
 						dialog.open();
 					} else {
@@ -499,17 +458,19 @@ public class RegistryBrowser extends ViewPart {
 		fCollapseAllAction.setToolTipText(PDERuntimeMessages.RegistryView_collapseAll_tooltip);
 	}
 
+	public boolean showExtensionsOnly() {
+		return fShowExtensionsOnlyAction.isChecked();
+	}
+
 	protected void updateItems(boolean resetInput) {
 		Object[] input = null;
-		boolean extOnly = fShowExtensionsOnlyAction.isChecked();
-		if (extOnly)
-			input = Platform.getExtensionRegistry().getExtensionPoints();
+		if (showExtensionsOnly())
+			input = model.getExtensionPoints();
 		else
-			input = getBundles();
-		fListener.fExtOnly = extOnly;
+			input = model.getBundles();
 		fTotalItems = input.length;
 		if (resetInput)
-			fTreeViewer.setInput(new PluginObjectAdapter(input));
+			fTreeViewer.setInput(input);
 		updateTitle();
 	}
 
@@ -531,22 +492,17 @@ public class RegistryBrowser extends ViewPart {
 		return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {Integer.toString(tree.getItemCount()), Integer.toString(fTotalItems), type}));
 	}
 
-	// TODO hackish, should rewrite
 	private boolean isBundleSelected() {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		if (selection != null) {
 			Object[] elements = selection.toArray();
 			for (int i = 0; i < elements.length; i++) {
-				if (elements[i] instanceof PluginObjectAdapter) {
-					PluginObjectAdapter adapter = (PluginObjectAdapter) elements[i];
-					Object object = adapter.getObject();
-					if (!(object instanceof Bundle))
-						return false;
-				} else {
+				if (!(elements[i] instanceof Bundle)) {
 					return false;
 				}
 			}
 		}
+
 		return true;
 	}
 
@@ -556,17 +512,17 @@ public class RegistryBrowser extends ViewPart {
 		if (selection != null) {
 			Object[] elements = selection.toArray();
 			for (int i = 0; i < elements.length; i++) {
-				if (elements[i] instanceof PluginObjectAdapter) {
-					PluginObjectAdapter adapter = (PluginObjectAdapter) elements[i];
-					Object object = adapter.getObject();
-					if (object instanceof Bundle)
-						bundles.add(object);
+				if (elements[i] instanceof Bundle) {
+					bundles.add(elements[i]);
 				}
 			}
 		}
 		return bundles;
 	}
 
+	/**
+	 * @return true if none is stopped, false if at least one is stopped
+	 */
 	private boolean selectedBundlesStarted() {
 		List bundles = getSelectedBundles();
 		for (Iterator it = bundles.iterator(); it.hasNext();) {
@@ -577,6 +533,9 @@ public class RegistryBrowser extends ViewPart {
 		return true;
 	}
 
+	/**
+	 * @return true if none is active, false if at least one is active
+	 */
 	private boolean selectedBundlesStopped() {
 		List bundles = getSelectedBundles();
 		for (Iterator it = bundles.iterator(); it.hasNext();) {
@@ -587,34 +546,39 @@ public class RegistryBrowser extends ViewPart {
 		return true;
 	}
 
+	/**
+	 * @return true if none is enabled, false if at least one is enabled
+	 */
 	private boolean selectedBundlesDisabled() {
 		List bundles = getSelectedBundles();
 		for (Iterator it = bundles.iterator(); it.hasNext();) {
 			Bundle bundle = (Bundle) it.next();
-			State state = PDERuntimePlugin.getDefault().getState();
-			BundleDescription desc = state.getBundle(bundle.getBundleId());
-			DisabledInfo[] infos = state.getDisabledInfos(desc);
-			if (infos.length == 0)
+			if (bundle.isEnabled())
 				return false;
 		}
 		return true;
 	}
 
+	/**
+	 * @return true if none is disabled, false if at least one is disabled
+	 */
 	private boolean selectedBundlesEnabled() {
 		List bundles = getSelectedBundles();
 		for (Iterator it = bundles.iterator(); it.hasNext();) {
 			Bundle bundle = (Bundle) it.next();
-			State state = PDERuntimePlugin.getDefault().getState();
-			BundleDescription desc = state.getBundle(bundle.getBundleId());
-			DisabledInfo[] infos = state.getDisabledInfos(desc);
-			if (infos.length > 0)
+			if (!bundle.isEnabled())
 				return false;
 		}
 		return true;
 	}
 
-	protected void add(Object object) {
-		add(fTreeViewer.getInput(), object);
+	public void add(Object object) {
+		Object parent = fContentProvider.getParent(object);
+		if (parent == null) {
+			add(fTreeViewer.getInput(), object);
+		} else {
+			refresh(parent);
+		}
 	}
 
 	protected void add(Object parent, Object object) {
@@ -625,7 +589,7 @@ public class RegistryBrowser extends ViewPart {
 		updateTitle();
 	}
 
-	protected void remove(Object object) {
+	public void remove(Object object) {
 		if (fDrillDownAdapter.canGoHome())
 			return;
 		fTotalItems -= 1;
@@ -633,15 +597,11 @@ public class RegistryBrowser extends ViewPart {
 		updateTitle();
 	}
 
-	protected void update(Object object) {
+	public void update(Object object) {
 		fTreeViewer.update(object, null);
 	}
 
-	protected void refresh(Object object) {
+	public void refresh(Object object) {
 		fTreeViewer.refresh(object);
-	}
-
-	protected TreeItem[] getTreeItems() {
-		return fTreeViewer.getTree().getItems();
 	}
 }

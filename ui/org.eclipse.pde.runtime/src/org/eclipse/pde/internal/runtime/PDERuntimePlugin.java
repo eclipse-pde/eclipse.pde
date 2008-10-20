@@ -32,6 +32,10 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	private ServiceTracker packageAdminTracker;
 	private ServiceTracker platformAdminTracker;
 
+	public PDERuntimePlugin() {
+		inst = this;
+	}
+
 	private static boolean isBundleAvailable(String bundleID) {
 		Bundle bundle = Platform.getBundle(bundleID);
 		return bundle != null && (bundle.getState() & (Bundle.ACTIVE | Bundle.STARTING | Bundle.RESOLVED)) != 0;
@@ -86,10 +90,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		return getDefault().getBundle().getSymbolicName();
 	}
 
-	public PDERuntimePlugin() {
-		inst = this;
-	}
-
 	private IWorkbenchPage internalGetActivePage() {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
@@ -142,7 +142,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 			platformAdminTracker.close();
 			platformAdminTracker = null;
 		}
-		inst = null;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.runtime.registry;
+package org.eclipse.pde.internal.runtime.registry.model;
 
-import org.eclipse.osgi.util.ManifestElement;
+import java.net.URI;
 
-public interface IBundlePrerequisite {
-	public ManifestElement getPrerequisite();
+/**
+ * Produces RegistryModels for URLs. Valid URLs:
+ * local
+ * target
+ * remote://host:port
+ *
+ */
+public class RegistryModelFactory {
 
-	public boolean isExported();
-
-	public String getLabel();
+	/**
+	 * 
+	 * @param codename
+	 * @return never returns null
+	 */
+	public static RegistryModel getRegistryModel(URI codename) {
+		return new RegistryModel(new LocalRegistryBackend());
+	}
 }
