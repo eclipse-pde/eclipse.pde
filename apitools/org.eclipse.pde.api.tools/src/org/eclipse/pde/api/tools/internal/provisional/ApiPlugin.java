@@ -36,10 +36,10 @@ import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.model.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.model.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.model.ReferenceExtractor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
-import org.eclipse.pde.api.tools.internal.search.ClassFileVisitor;
 import org.eclipse.pde.api.tools.internal.search.SearchEngine;
 import org.osgi.framework.BundleContext;
 
@@ -489,7 +489,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 
 			option = Platform.getDebugOption(CLASSFILE_VISITOR_DEBUG);
 			if(option != null) {
-				ClassFileVisitor.setDebug(option.equalsIgnoreCase(TRUE));
+				ReferenceExtractor.setDebug(option.equalsIgnoreCase(TRUE));
 			}
 
 			option = Platform.getDebugOption(SEARCH_DEBUG);

@@ -76,12 +76,21 @@ public interface IReference {
 	public String getReferencedMemberName();
 	
 	/**
-	 * Returns the type signature of the method that has been referenced, or 
-	 * <code>null</code> if this is not a {@link #T_METHOD_REFERENCE}.
+	 * Returns the type signature of the method or type that has been referenced, or 
+	 * <code>null</code> if this is not a {@link #T_METHOD_REFERENCE} or if not
+	 * available for an {@link #T_TYPE_REFERENCE}.
 	 * 
-	 * @return the type signature of the method that has been referenced, or 
+	 * @return the type signature of the method or type that has been referenced, or 
 	 * <code>null</code>
 	 */
 	public String getReferencedSignature();	
+	
+	/**
+	 * Returns the resolved member that is referenced or <code>null</code> if
+	 * this reference is unresolved.
+	 * 
+	 * @return resolved reference or <code>null</code>
+	 */
+	public IApiMember getResolvedReference();
 
 }

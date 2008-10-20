@@ -42,13 +42,5 @@ public interface IMemberDescriptor extends IElementDescriptor {
 	 * @return package descriptor
 	 */
 	public IPackageDescriptor getPackage();
-	
-	/**
-	 * Returns the modifier bit mask associated with this member or -1 if unknown.
-	 * Modifiers are as defined by {@link Flags}
-	 * 
-	 * @return modifiers bit mask
-	 */
-	public int getModifiers();
 
 }

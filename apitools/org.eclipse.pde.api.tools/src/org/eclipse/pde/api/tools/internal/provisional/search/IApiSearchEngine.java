@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional.search;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 
 /**
  * Searches an API profile for references to specified elements.

@@ -22,8 +22,8 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
-import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
@@ -132,11 +132,15 @@ public class XMLFactory {
 	public static Element serializeElement(IReference reference, Document document) {
 		Element element = document.createElement(ELEMENT_REFERNCE);
 		element.setAttribute(ATTR_KIND, toString(reference.getReferenceKind(), ReferenceModifiers.class, null));
-		ILocation origin = reference.getSourceLocation();
-		Element child = serializeLocation(ELEMENT_ORIGIN, origin.getApiComponent().getId(), origin.getMember(), origin.getLineNumber(), null, document);
+		Element child = serializeLocation(ELEMENT_ORIGIN, reference.getMember().getApiComponent().getId(), reference.getMember().getHandle(), reference.getLineNumber(), null, document);
 		element.appendChild(child);
-		ILocation target = reference.getResolvedLocation();
-		child = serializeLocation(ELEMENT_TARGET, target.getApiComponent().getId(), target.getMember(), -1, reference.getResolvedAnnotations(), document);
+		IApiMember target = reference.getResolvedReference();
+		try {
+			IApiAnnotations annotations = target.getApiComponent().getApiDescription().resolveAnnotations(target.getHandle());
+			child = serializeLocation(ELEMENT_TARGET, target.getApiComponent().getId(), target.getHandle(), -1, annotations, document);
+		} catch (CoreException e) {
+			ApiPlugin.log(e.getStatus());
+		}
 		element.appendChild(child);
 		return element;
 	}

@@ -33,10 +33,9 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 	 * @param name method name
 	 * @param enclosingType enclosing type
 	 * @param signature method signature
-	 * @param modifiers modifiers
 	 */
-	MethodDescriptorImpl(String name, IReferenceTypeDescriptor enclosingType, String signature, int modifiers) {
-		super(name, enclosingType, modifiers);
+	MethodDescriptorImpl(String name, IReferenceTypeDescriptor enclosingType, String signature) {
+		super(name, enclosingType);
 		fSignature = signature;
 	}
 	

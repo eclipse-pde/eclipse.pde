@@ -46,10 +46,9 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 	 * 
 	 * @param name simple type name
 	 * @param parent package or enclosing type
-	 * @param modifiers modifiers
 	 */
-	ReferenceTypeDescriptorImpl(String name, IElementDescriptor parent, int modifiers) {
-		super(name, parent, modifiers);
+	ReferenceTypeDescriptorImpl(String name, IElementDescriptor parent) {
+		super(name, parent);
 		
 	}
 	
@@ -59,10 +58,9 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 	 * @param name simple type name
 	 * @param parent package or enclosing type
 	 * @param genericSignature generic signature info or <code>null</code>
-	 * @param modifiers modifiers
 	 */
-	ReferenceTypeDescriptorImpl(String name, IElementDescriptor parent, String genericSignature, int modifiers) {
-		this(name, parent, modifiers);
+	ReferenceTypeDescriptorImpl(String name, IElementDescriptor parent, String genericSignature) {
+		this(name, parent);
 		fGenericSignature = genericSignature;
 	}
 
@@ -70,36 +68,22 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 	 * @see org.eclipse.pde.api.tools.model.component.IReferenceTypeDescriptor#getField(java.lang.String)
 	 */
 	public IFieldDescriptor getField(String name) {
-		return getField(name, 0);
+		return new FieldDescriptorImpl(name, this);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor#getField(java.lang.String, int)
-	 */
-	public IFieldDescriptor getField(String name, int modifiers) {
-		return new FieldDescriptorImpl(name, this, modifiers);
-	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IReferenceTypeDescriptor#getMethod(java.lang.String, java.lang.String)
 	 */
 	public IMethodDescriptor getMethod(String name, String signature) {
-		return getMethod(name, signature, 0);
+		return new MethodDescriptorImpl(name, this, signature);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IReferenceTypeDescriptor#getType(java.lang.String)
 	 */
 	public IReferenceTypeDescriptor getType(String simpleName) {
-		return getType(simpleName, 0);
+		return new ReferenceTypeDescriptorImpl(simpleName, this);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor#getType(java.lang.String, int)
-	 */
-	public IReferenceTypeDescriptor getType(String simpleName, int modifiers) {
-		return new ReferenceTypeDescriptorImpl(simpleName, this, modifiers);
-	}	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -206,10 +190,4 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor#getMethod(java.lang.String, java.lang.String, int)
-	 */
-	public IMethodDescriptor getMethod(String name, String signature, int modifiers) {
-		return new MethodDescriptorImpl(name, this, signature, modifiers);
-	}
 }

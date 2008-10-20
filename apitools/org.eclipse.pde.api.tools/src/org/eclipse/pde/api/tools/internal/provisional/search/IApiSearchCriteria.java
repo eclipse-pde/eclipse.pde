@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.provisional.search;
 
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 
 /**
  * Describes the criteria for a search.
@@ -61,15 +62,6 @@ public interface IApiSearchCriteria {
 	 */
 	public void addReferencedElementRestriction(String componentId, IElementDescriptor[] elements);
 	
-	/**
-	 * Restricts matching to references that have a name matching the given
-	 * regular expression and element type.
-	 * 
-	 * @param regEx regular expression
-	 * @param elementType element type defined by {@link IElementDescriptor}
-	 */
-	public void addReferencedPatternRestriction(String regEx, int elementType);
-
 	/**
 	 * Sets the kinds of references to consider. By default all reference kinds are
 	 * considered.

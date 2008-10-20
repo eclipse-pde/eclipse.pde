@@ -243,4 +243,32 @@ public class FieldTypeLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);*/
 	}
+	
+	/**
+	 * Tests a field of an internal type does not create a leak when the type
+	 * is not visible - a private inner type.
+	 */
+	public void testFieldTypeLeak6F() {
+		x6(false);
+	}
+	
+	/**
+	 * Tests a field of an internal type does not create a leak when the type
+	 * is not visible - a private inner type.
+	 */
+	public void testFieldTypeLeak6I() {
+		x6(true);
+	}
+	
+	private void x6(boolean inc) {
+		String typename = "testFTL6";
+		// no problems expected
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}	
 }

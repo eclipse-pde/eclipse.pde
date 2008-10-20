@@ -796,6 +796,14 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		Element apiProblems = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEMS);
 		root.appendChild(apiProblems);
 		Element element = null;
+		// sort the problem by type name
+		Collections.sort(problems, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				IApiProblem p1 = (IApiProblem) o1;
+				IApiProblem p2 = (IApiProblem) o2;
+				return p1.getTypeName().compareTo(p2.getTypeName());
+			}
+		});
 		for(Iterator iterator = problems.iterator(); iterator.hasNext(); ) {
 			IApiProblem problem = (IApiProblem) iterator.next();
 			element = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM);

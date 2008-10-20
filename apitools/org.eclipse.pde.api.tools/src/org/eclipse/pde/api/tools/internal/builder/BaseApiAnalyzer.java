@@ -151,7 +151,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	public void analyzeComponent(final BuildState state, final IApiFilterStore filterStore, final IApiBaseline baseline,	final IApiComponent component,
 			final String[] typenames, final String[] changedtypes, IProgressMonitor monitor) {
 		try {
-			TypeStructureCache.clearCache();
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 6 + (changedtypes == null ? 0 : changedtypes.length));
 			fJavaProject = getJavaProject(component);
 			if(baseline != null) {
@@ -197,7 +196,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			updateMonitor(localMonitor);
 		}
 		finally {
-			TypeStructureCache.clearCache();
 			if(monitor != null) {
 				monitor.done();
 			}

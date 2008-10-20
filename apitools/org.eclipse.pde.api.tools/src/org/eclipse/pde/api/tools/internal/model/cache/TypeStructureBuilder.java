@@ -18,6 +18,7 @@ import org.eclipse.pde.api.tools.internal.model.ApiMethod;
 import org.eclipse.pde.api.tools.internal.model.ApiType;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassAdapter;
@@ -35,6 +36,7 @@ import org.objectweb.asm.util.TraceAnnotationVisitor;
 class TypeStructureBuilder extends ClassAdapter {
 	ApiType fType;
 	IApiComponent fComponent;
+	IClassFile fFile;
 
 	/**
 	 * Builds a type structure for a class file. Note that if an API 
@@ -45,9 +47,10 @@ class TypeStructureBuilder extends ClassAdapter {
 	 * @param cv class file visitor
 	 * @param component originating API component or <code>null</code> if unknown
 	 */
-	TypeStructureBuilder(ClassVisitor cv, IApiComponent component) {
+	TypeStructureBuilder(ClassVisitor cv, IApiComponent component, IClassFile file) {
 		super(cv);
 		fComponent = component;
+		fFile = file;
 	}
 	
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
@@ -60,7 +63,7 @@ class TypeStructureBuilder extends ClassAdapter {
 		if (index > -1) {
 			enclosingName = name.substring(0, index);
 		}
-		fType = new ApiType(fComponent, name.replace('/', '.'), simpleSig.toString(), signature, access, enclosingName);
+		fType = new ApiType(fComponent, name.replace('/', '.'), simpleSig.toString(), signature, access, enclosingName, fFile);
 		if (superName != null) {
 			fType.setSuperclassName(superName.replace('/', '.'));
 		}
@@ -79,7 +82,7 @@ class TypeStructureBuilder extends ClassAdapter {
 		String currentName = name.replace('/', '.');
 		if (fType == null) {
 			// TODO: signature? generic signature?
-			fType = new ApiType(fComponent, currentName, null, null, access, outerName);
+			fType = new ApiType(fComponent, currentName, null, null, access, outerName, fFile);
 			// this is a nested type
 			if (outerName == null) {
 				// this is a local or an anonymous type
@@ -140,10 +143,11 @@ class TypeStructureBuilder extends ClassAdapter {
 	 * 
 	 * @param bytes class file bytes
 	 * @param component originating API component
+	 * @param file associated class file
 	 * @return
 	 */
-	public static IApiType buildTypeStructure(byte[] bytes, IApiComponent component) {
-		TypeStructureBuilder visitor = new TypeStructureBuilder(new ClassNode(), component);
+	public static IApiType buildTypeStructure(byte[] bytes, IApiComponent component, IClassFile file) {
+		TypeStructureBuilder visitor = new TypeStructureBuilder(new ClassNode(), component, file);
 		try {
 			ClassReader classReader = new ClassReader(bytes);
 			classReader.accept(visitor, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);

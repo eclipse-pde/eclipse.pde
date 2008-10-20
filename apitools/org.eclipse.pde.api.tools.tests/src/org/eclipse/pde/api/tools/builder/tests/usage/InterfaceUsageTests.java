@@ -80,13 +80,11 @@ public class InterfaceUsageTests extends UsageTest {
 	}
 	
 	private void x1(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemIdSet(5));
+		setExpectedProblemIds(getDefaultProblemIdSet(3));
 		String typename = "testI1";
 		setExpectedMessageArgs(new String[][] {
 				{INNER_I_NAME, INNER_NAME1},
-				{INNER_I_NAME, INNER_NAME1},
 				{INTERFACE_NAME, typename},
-				{INNER_I_NAME, OUTER_INAME},
 				{INNER_I_NAME, OUTER_INAME}
 		});
 		deployTest(typename, inc);
@@ -109,10 +107,9 @@ public class InterfaceUsageTests extends UsageTest {
 	}
 	
 	private void x2(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemIdSet(4));
+		setExpectedProblemIds(getDefaultProblemIdSet(3));
 		String typename = "testI2";
 		setExpectedMessageArgs(new String[][] {
-				{INNER_I_NAME, INNER_NAME1},
 				{INNER_I_NAME, INNER_NAME1},
 				{INTERFACE_NAME, OUTER_NAME},
 				{INTERFACE_NAME, typename}

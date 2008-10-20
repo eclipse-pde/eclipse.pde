@@ -64,15 +64,6 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor {
 	public IReferenceTypeDescriptor getType(String simpleName);
 	
 	/**
-	 * Returns a descriptor for a member type with the given modifiers.
-	 * 
-	 * @param simpleName simple type name
-	 * @param modifiers modifiers define by {@link Flags}
-	 * @return type descriptor
-	 */
-	public IReferenceTypeDescriptor getType(String simpleName, int modifiers);	
-	
-	/**
 	 * Returns a descriptor for a field with the given name in this type.
 	 * 
 	 * @param name field name
@@ -80,18 +71,6 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor {
 	 * 
 	 */
 	public IFieldDescriptor getField(String name);
-	
-	/**
-	 * Returns a descriptor for a field with the given name in this type with the
-	 * specified modifiers.
-	 * 
-	 * @param name field name
-	 * @param modifiers modifiers
-	 * @return field descriptor
-	 * 
-	 * 
-	 */
-	public IFieldDescriptor getField(String name, int modifiers);
 	
 	/**
 	 * Returns a descriptor for a non-synthetic method with the given
@@ -102,17 +81,6 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor {
 	 * @return method descriptor
 	 */
 	public IMethodDescriptor getMethod(String name, String signature);
-	
-	/**
-	 * Returns a descriptor for a method with the given name
-	 * and signature in this type.
-	 * 
-	 * @param name method name
-	 * @param signature method signature
-	 * @param modifiers member modifiers
-	 * @return method descriptor
-	 */
-	public IMethodDescriptor getMethod(String name, String signature, int modifiers);
 	
 	/**
 	 * Returns whether this type describes an anonymous inner

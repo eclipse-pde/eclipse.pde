@@ -65,7 +65,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 	 * 
 	 * @since 1.0.0
 	 */
-	class ClassFile extends CRCClassFile implements Comparable {
+	class ClassFile extends AbstractClassFile implements Comparable {
 		
 		/**
 		 * Associated file
@@ -135,6 +135,10 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 		 */
 		public URI getURI() {
 			return fFile.toURI();
+		}
+
+		public long getModificationStamp() {
+			return fFile.lastModified() + fFile.length();
 		}
 		
 	}	

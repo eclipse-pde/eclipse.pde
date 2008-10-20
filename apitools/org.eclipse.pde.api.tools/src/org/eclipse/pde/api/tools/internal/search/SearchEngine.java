@@ -21,20 +21,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.pde.api.tools.internal.model.Reference;
+import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
-import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
+import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchResult;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
-import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
-import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -100,8 +99,8 @@ public class SearchEngine implements IApiSearchEngine {
 		public void visit(String packageName, IClassFile classFile) {
 			if (!fMonitor.isCanceled()) {
 				try {
-					fScanner.scan(fCurrentComponent, classFile, fAllReferenceKinds);
-					List references = fScanner.getReferenceListing();
+					IApiType type = TypeStructureCache.getTypeStructure(classFile, fCurrentComponent);
+					List references = type.extractReferences(fAllReferenceKinds, null);
 					// keep potential matches
 					Iterator iterator = references.iterator();
 					while (iterator.hasNext()) {
@@ -118,11 +117,6 @@ public class SearchEngine implements IApiSearchEngine {
 			}
 		}
 	}
-	
-	/**
-	 * Class file scanner
-	 */
-	private ClassFileScanner fScanner;
 		
 	/**
 	 * Scan status
@@ -153,7 +147,6 @@ public class SearchEngine implements IApiSearchEngine {
 	 */
 	private void extractReferences(IApiSearchScope scope, IProgressMonitor monitor) throws CoreException {
 		fStatus = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, SearchMessages.SearchEngine_1, null); 
-		fScanner = ClassFileScanner.newScanner();
 		String[] packageNames = scope.getPackageNames();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, packageNames.length);
 		ClassFileContainerVisitor visitor = new Visitor(localMonitor);
@@ -178,28 +171,30 @@ public class SearchEngine implements IApiSearchEngine {
 	}
 	
 	/**
-	 * Creates a unique string key for a given location.
-	 * The key is of the form:
+	 * Creates a unique string key for a given reference.
+	 * The key is of the form "component X references type/member"
 	 * <pre>
 	 * [component_id]#[type_name](#[member_name]#[member_signature])
 	 * </pre>
-	 * @param source
-	 * @param target 
-	 * @return a string key for the given location.
+	 * @param reference reference
+	 * @return a string key for the given reference.
 	 */
-	private String createSignatureKey(ILocation source, ILocation target) {
+	private String createSignatureKey(IReference reference) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(source.getApiComponent().getId());
+		buffer.append(reference.getMember().getApiComponent().getId());
 		buffer.append("#"); //$NON-NLS-1$
-		buffer.append(target.getType().getQualifiedName());
-		IMemberDescriptor member = target.getMember();
-		if(!(member instanceof IReferenceTypeDescriptor)) {
+		buffer.append(reference.getReferencedTypeName());
+		switch (reference.getReferenceType()) {
+		case IReference.T_FIELD_REFERENCE:
 			buffer.append("#"); //$NON-NLS-1$
-			buffer.append(member.getName());
+			buffer.append(reference.getReferencedMemberName());
+			break;
+		case IReference.T_METHOD_REFERENCE:
 			buffer.append("#"); //$NON-NLS-1$
-			if (member instanceof IMethodDescriptor) {
-				buffer.append(((IMethodDescriptor)member).getSignature());
-			}
+			buffer.append(reference.getReferencedMemberName());
+			buffer.append("#"); //$NON-NLS-1$
+			buffer.append(reference.getReferencedSignature());
+			break;
 		}
 		return buffer.toString();
 	}
@@ -227,7 +222,7 @@ public class SearchEngine implements IApiSearchEngine {
 				if (ref.getReferenceKind() == ReferenceModifiers.REF_OVERRIDE) {
 					methodDecls.add(ref);
 				} else {
-					key = createSignatureKey(ref.getSourceLocation(), ref.getReferencedLocation());
+					key = createSignatureKey(ref);
 					refs = (List) sigtoref.get(key);
 					if(refs == null) {
 						refs = new ArrayList(20);
@@ -256,7 +251,7 @@ public class SearchEngine implements IApiSearchEngine {
 		Iterator iterator = methodDecls.iterator();
 		while (iterator.hasNext()) {
 			Reference reference = (Reference) iterator.next();
-			reference.resolve(this);
+			reference.resolve();
 		}
 		end = System.currentTimeMillis();
 		if (DEBUG) {
@@ -281,13 +276,13 @@ public class SearchEngine implements IApiSearchEngine {
 			key = (String) types.next();
 			refs = (List) map.get(key);
 			ref = (IReference) refs.get(0);
-			((Reference)ref).resolve(this);
-			IApiAnnotations resolved = ref.getResolvedAnnotations();
+			((org.eclipse.pde.api.tools.internal.model.Reference)ref).resolve();
+			IApiMember resolved = ref.getResolvedReference();
 			if (resolved != null) {
 				Iterator iterator = refs.iterator();
 				while (iterator.hasNext()) {
-					Reference ref2 = (Reference) iterator.next();
-					ref2.setResolution(resolved, ref.getResolvedLocation());
+					org.eclipse.pde.api.tools.internal.model.Reference ref2 = (org.eclipse.pde.api.tools.internal.model.Reference) iterator.next();
+					ref2.setResolution(resolved);
 				}
 			}
 		}

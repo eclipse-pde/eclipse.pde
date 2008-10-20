@@ -42,9 +42,6 @@ public abstract class ApiElement implements IApiElement {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getAncestor(int)
 	 */
 	public IApiElement getAncestor(int ancestorType) {
-		if(fType == ancestorType) {
-			return this;
-		}
 		IApiElement parent = fParent;
 		while(parent != null && parent.getType() != ancestorType) {
 			parent = parent.getParent();

@@ -22,29 +22,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IClassFile {
 	
-	public interface IModificationStamp {
-		/**
-		 * Returns a non-negative modification stamp.
-		 * <p>
-		 * A modification stamp gets updated each time a class file is modified.
-		 * If a modification stamp is the same, the class file has not changed.
-		 * Conversely, if a modification stamp is different, some aspect of it
-		 * has been modified at least once (possibly several times).
-		 * The magnitude or sign of the numerical difference between two modification stamps 
-		 * is not significant.
-		 * 
-		 * @return modification stamp
-		 */		
-		public long getModificationStamp();
-		/**
-		 * Returns the contents used to generate the stamp or <code>null</code>
-		 * if not available.
-		 * 
-		 * @return contents or <code>null</code>
-		 */
-		public byte[] getContents();
-	}
-
 	/**
 	 * Returns the fully qualified name of the type contained in this class file.
 	 * Package names are dot separated and type names are '$'-separated.
@@ -73,7 +50,7 @@ public interface IClassFile {
 	 * 
 	 * @return modification stamp
 	 */
-	public IModificationStamp getModificationStamp();
+	public long getModificationStamp();
 	
 	/**
 	 * Returns the bytes of this class file. 

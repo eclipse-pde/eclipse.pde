@@ -12,6 +12,8 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -29,9 +31,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
-import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.util.ClassFileResult;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 
 import com.ibm.icu.text.MessageFormat;
@@ -92,6 +94,11 @@ public class ApiType extends ApiMember implements IApiType {
 	private IApiType[] fSuperInterfaces;
 	
 	/**
+	 * The storage this type structure originated from
+	 */
+	private IClassFile fStorage;
+	
+	/**
 	 * Creates an API type. Note that if an API component is not specified,
 	 * then some operations will not be available (navigating super types,
 	 * member types, etc).
@@ -102,12 +109,14 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @param genericSig
 	 * @param flags
 	 * @param enclosingName
+	 * @param storage the storage this content was generated from
 	 */
-	public ApiType(IApiComponent parent, String name, String signature, String genericSig, int flags, String enclosingName) {
+	public ApiType(IApiComponent parent, String name, String signature, String genericSig, int flags, String enclosingName, IClassFile storage) {
 		//TODO parent is either APIType or APiComponent
 		super(null, name, signature, genericSig, IApiElement.TYPE, flags);
 		fComponent = parent;
 		fEnclosingTypeName = enclosingName;
+		fStorage = storage;
 	}
 
 	/* (non-Javadoc)
@@ -120,9 +129,12 @@ public class ApiType extends ApiMember implements IApiType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#extractReferences(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IReference[] extractReferences(int referenceMask, IProgressMonitor monitor) throws CoreException {
-		// TODO Auto-generated method stub
-		return null;
+	public List extractReferences(int referenceMask, IProgressMonitor monitor) throws CoreException {
+		List references = new LinkedList();
+		ReferenceExtractor extractor = new ReferenceExtractor(this, references, referenceMask);
+		ClassReader reader = new ClassReader(fStorage.getContents());
+		reader.accept(extractor, ClassReader.SKIP_FRAMES);
+		return references;
 	}
 
 	/* (non-Javadoc)

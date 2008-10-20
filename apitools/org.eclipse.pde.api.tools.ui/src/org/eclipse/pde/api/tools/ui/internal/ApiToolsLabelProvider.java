@@ -13,20 +13,13 @@ package org.eclipse.pde.api.tools.ui.internal;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
-import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiBaselineWizardPage.EEEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -83,18 +76,6 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		if(element instanceof EEEntry) {
 			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
 		}
-		if (element instanceof ILocation) {
-			ILocation location = (ILocation) element;
-			IMemberDescriptor member = location.getMember();
-			switch (member.getElementType()) {
-				case IElementDescriptor.T_REFERENCE_TYPE:
-					// TODO: class versus interface
-					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
-				default:
-					// TODO: need visibility
-					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
-			}
-		}
 		return null;
 	}
 
@@ -120,23 +101,6 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		if(element instanceof EEEntry) {
 			return ((EEEntry)element).toString();
 		}
-		if (element instanceof ILocation) {
-			ILocation location = (ILocation) element;
-			IMemberDescriptor member = location.getMember();
-			switch (member.getElementType()) {
-				case IElementDescriptor.T_REFERENCE_TYPE:
-					return ((IReferenceTypeDescriptor)member).getQualifiedName();
-				case IElementDescriptor.T_METHOD:
-					IMethodDescriptor method = (IMethodDescriptor) member;
-					StringBuffer buf = new StringBuffer();
-					buf.append(member.getEnclosingType().getQualifiedName());
-					buf.append('.');
-					buf.append(Signature.toString(method.getSignature(), method.getName(), null, false, false));
-					return buf.toString();
-				default:
-					return member.getName();
-			}
-		}		
 		return "<unknown>"; //$NON-NLS-1$
 	}
 

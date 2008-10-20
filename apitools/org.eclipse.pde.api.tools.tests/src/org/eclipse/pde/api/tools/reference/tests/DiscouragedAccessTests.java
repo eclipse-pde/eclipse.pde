@@ -28,11 +28,12 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
-import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
-import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.Util;
@@ -84,8 +85,9 @@ public class DiscouragedAccessTests extends TestCase {
 		for (int i = 0; i < references.length; i++) {
 			IReference ref = references[i];
 			total++;
-			IApiAnnotations resolved = ref.getResolvedAnnotations();
-			if (resolved != null) {
+			IApiMember resolvedMember = ref.getResolvedReference();
+			if (resolvedMember != null) {
+				IApiAnnotations resolved = resolvedMember.getApiComponent().getApiDescription().resolveAnnotations(resolvedMember.getHandle());
 				if(ref.getReferenceKind() == ReferenceModifiers.REF_VIRTUALMETHOD) {
 					virtual++;
 				}
@@ -94,8 +96,7 @@ public class DiscouragedAccessTests extends TestCase {
 						pvirtual++;
 					}
 					priv++;
-					ILocation target = ref.getReferencedLocation();
-					if (jdtComponent.equals(target.getApiComponent())) {
+					if (jdtComponent.equals(resolvedMember.getApiComponent())) {
 						if(ref.getReferenceKind() == ReferenceModifiers.REF_VIRTUALMETHOD) {
 							pvirtualint++;
 						}
@@ -105,7 +106,7 @@ public class DiscouragedAccessTests extends TestCase {
 							pvirtualext++;
 						}
 						external++;
-						String sourceName = ref.getSourceLocation().getType().getQualifiedName();
+						String sourceName = getTypeName(ref.getMember());
 						List<IReference> list = illegalRefsByType.get(sourceName);
 						Set<String> set = illegalSetRefsByType.get(sourceName);
 						if (list == null) {
@@ -115,9 +116,9 @@ public class DiscouragedAccessTests extends TestCase {
 							illegalSetRefsByType.put(sourceName, set);
 						}
 						list.add(ref);
-						set.add(ref.getReferencedLocation().getType().getQualifiedName());
+						set.add(getTypeName(resolvedMember));
 					}
-				}				
+				}
 			} else {
 				unres++;
 			}
@@ -161,5 +162,20 @@ public class DiscouragedAccessTests extends TestCase {
 		
 		profile.dispose();
 	}
+	
+	/**
+	 * Returns the fully qualified type name associated with the given member.
+	 * 
+	 * @param member
+	 * @return fully qualified type name
+	 */
+	private String getTypeName(IApiMember member) throws CoreException {
+		switch (member.getType()) {
+			case IApiElement.TYPE:
+				return member.getName();
+			default:
+				return member.getEnclosingType().getName();
+		}
+	}	
 
 }

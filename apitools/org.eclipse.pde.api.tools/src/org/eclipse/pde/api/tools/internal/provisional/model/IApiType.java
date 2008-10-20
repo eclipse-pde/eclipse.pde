@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.model;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -201,13 +203,14 @@ public interface IApiType extends IApiMember {
 	
 	/**
 	 * Extracts and returns all references made from this type of the specified kind.
+	 * The list contains instances of {@link IReference}.
 	 *  
 	 * @param referenceMask kinds of references to extract/search for as described by
 	 *  {@link org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers}
 	 * @param monitor progress monitor or <code>null</code>
-	 * @return extracted references, possible an empty collection
+	 * @return extracted {@link IReference}s, possibly an empty collection
 	 * @throws CoreException if this type does not exist or an exception occurs reading
 	 * 	underlying storage
 	 */
-	public IReference[] extractReferences(int referenceMask, IProgressMonitor monitor) throws CoreException;
+	public List extractReferences(int referenceMask, IProgressMonitor monitor) throws CoreException;
 }

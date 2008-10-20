@@ -34,7 +34,6 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile.IModificationStamp;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -73,7 +72,7 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	/**
 	 * Modification stamp for archive. Incremented each time the archive is closed/opened.
 	 */
-	private IModificationStamp fModStamp;
+	private long fModStamp;
 	
 	/**
 	 * URI of the archive
@@ -166,7 +165,7 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.internal.AbstractClassFile#getModificationStamp()
 		 */
-		public IModificationStamp getModificationStamp() {
+		public long getModificationStamp() {
 			return fModStamp;
 		}
 	}
@@ -303,7 +302,7 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 				File file = new File(fLocation);
 				fURI = file.toURI().toString();
 				fZipFile = new ZipFile(fLocation);
-				fModStamp = new ModificationStamp(file.lastModified(), null);
+				fModStamp = file.lastModified();
 			} catch (IOException e) {
 				abort("Failed to open archive: " + fLocation, e); //$NON-NLS-1$
 			}

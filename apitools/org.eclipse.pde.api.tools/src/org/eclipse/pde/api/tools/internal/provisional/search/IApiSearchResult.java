@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.search;
 
+import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
+
 /**
  * References that match a specific search criteria.
  * 

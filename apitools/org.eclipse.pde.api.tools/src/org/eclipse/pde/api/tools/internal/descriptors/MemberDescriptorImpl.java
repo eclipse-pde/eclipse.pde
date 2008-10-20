@@ -28,21 +28,15 @@ public abstract class MemberDescriptorImpl extends NamedElementDescriptorImpl im
 	private IElementDescriptor fParent;
 	
 	/**
-	 * Modifiers bit mask
-	 */
-	private int fModifiers;
-	
-	/**
 	 * Constructs a member with the given name and parent
 	 * 
 	 * @param name field name
 	 * @param parent type containing the field declaration or package containing the type
 	 * @param modifiers
 	 */
-	MemberDescriptorImpl(String name, IElementDescriptor parent, int modifiers) {
+	MemberDescriptorImpl(String name, IElementDescriptor parent) {
 		super(name);
 		fParent = parent;
-		fModifiers = modifiers;
 	}
 
 	/* (non-Javadoc)
@@ -73,13 +67,5 @@ public abstract class MemberDescriptorImpl extends NamedElementDescriptorImpl im
 	public IElementDescriptor getParent() {
 		return fParent;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor#getModifiers()
-	 */
-	public int getModifiers() {
-		return fModifiers;
-	}
-	
 
 }

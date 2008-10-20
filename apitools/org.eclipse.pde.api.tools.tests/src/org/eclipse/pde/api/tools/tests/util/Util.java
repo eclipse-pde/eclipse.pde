@@ -15,8 +15,8 @@ package org.eclipse.pde.api.tools.tests.util;
 import java.io.IOException;
 import java.net.ServerSocket;
 
+import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchResult;
-import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 
 /**
  * Utility methods for api tools test suite

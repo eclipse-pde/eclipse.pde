@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal.search;
+package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,15 +18,13 @@ import java.util.SortedSet;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
-import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.ClassAdapter;
@@ -41,11 +39,11 @@ import org.objectweb.asm.signature.SignatureVisitor;
 import org.objectweb.asm.tree.ClassNode;
 
 /**
- * Visitor for class files
+ * Extracts references from a class file
  *
  * @since 1.0.0
  */
-public class ClassFileVisitor extends ClassAdapter {
+public class ReferenceExtractor extends ClassAdapter {
 
 	/**
 	 * Constant used for controlling tracing in the visitor
@@ -102,20 +100,17 @@ public class ClassFileVisitor extends ClassAdapter {
 		 * @param name the name of the type
 		 */
 		protected void processType(String name) {
-			Type type = ClassFileVisitor.this.resolveType(Type.getObjectType(name).getDescriptor());
+			Type type = ReferenceExtractor.this.resolveType(Type.getObjectType(name).getDescriptor());
 			if(type != null) {
 				String tname = type.getClassName();
 				if(tname.equals("E") || tname.equals("T")) {  //$NON-NLS-1$//$NON-NLS-2$
 					type = Type.getObjectType("java.lang.Object"); //$NON-NLS-1$
 					tname = type.getClassName();
 				}
-				if(ClassFileVisitor.this.consider(tname) && this.kind != -1) {
+				if(ReferenceExtractor.this.consider(tname) && this.kind != -1) {
 					if(this.name != null && this.signature != null) {
-						IReferenceTypeDescriptor target = Util.getType(tname);
-						target = target.getPackage().getType(target.getName(), this.signature);
-						this.references.add(new Reference(new Location(ClassFileVisitor.this.fComponent, ClassFileVisitor.this.getMember()),
-								new Location(null, target),
-								this.kind));
+						this.references.add(
+							Reference.typeReference(ReferenceExtractor.this.getMember(), tname, this.signature, this.kind));
 					}
 				}
 			}
@@ -263,7 +258,7 @@ public class ClassFileVisitor extends ClassAdapter {
 		public void visitEnd() {
 			this.implicitConstructor = false;
 			this.argumentcount = 0;
-			ClassFileVisitor.this.exitMember();
+			ReferenceExtractor.this.exitMember();
 			this.linePositionTracker.computeLineNumbers();
 			this.labelsToLocalMarkers = null;
 		}
@@ -297,9 +292,9 @@ public class ClassFileVisitor extends ClassAdapter {
 				break;
 			}
 			if (refType != -1) {
-				IReference reference = ClassFileVisitor.this.addFieldReference(Type.getObjectType(owner), name, refType);
+				Reference reference = ReferenceExtractor.this.addFieldReference(Type.getObjectType(owner), name, refType);
 				if (reference != null) {
-					this.linePositionTracker.addLocation(reference.getSourceLocation());
+					this.linePositionTracker.addLocation(reference);
 				}
 			}
 		}
@@ -310,11 +305,10 @@ public class ClassFileVisitor extends ClassAdapter {
 		public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
 			if(type != null) {
 				Type ctype = Type.getObjectType(type);
-				IReference reference = ClassFileVisitor.this.addTypeReference(ctype, ReferenceModifiers.REF_CATCHEXCEPTION);
+				Reference reference = ReferenceExtractor.this.addTypeReference(ctype, ReferenceModifiers.REF_CATCHEXCEPTION);
 				if (reference != null) {
-					ILocation sourceLocation = reference.getSourceLocation();
-					this.linePositionTracker.addCatchLabelInfos(sourceLocation, handler);
-					this.linePositionTracker.addLocation(sourceLocation);
+					this.linePositionTracker.addCatchLabelInfos(reference, handler);
+					this.linePositionTracker.addLocation(reference);
 				}
 			}
 		}
@@ -354,14 +348,14 @@ public class ClassFileVisitor extends ClassAdapter {
 				case Opcodes.INVOKESPECIAL: {
 					kind = ("<init>".equals(name) ? ReferenceModifiers.REF_CONSTRUCTORMETHOD : ReferenceModifiers.REF_SPECIALMETHOD); //$NON-NLS-1$
 					if (kind == ReferenceModifiers.REF_CONSTRUCTORMETHOD) {
-						if(!implicitConstructor && this.methodName.equals("<init>") && !fSuperStack.isEmpty() && ((IReferenceTypeDescriptor)fSuperStack.peek()).getQualifiedName().equals(declaringType.getClassName())) { //$NON-NLS-1$
+						if(!implicitConstructor && this.methodName.equals("<init>") && !fSuperStack.isEmpty() && (fSuperStack.peek()).equals(declaringType.getClassName())) { //$NON-NLS-1$
 							implicitConstructor = true;
 							kind = ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD;
 						}
 						else {
-							IReference reference = ClassFileVisitor.this.addTypeReference(declaringType, ReferenceModifiers.REF_INSTANTIATE);
+							Reference reference = ReferenceExtractor.this.addTypeReference(declaringType, ReferenceModifiers.REF_INSTANTIATE);
 							if (reference != null) {
-								this.linePositionTracker.addLocation(reference.getSourceLocation());
+								this.linePositionTracker.addLocation(reference);
 							}
 						}
 					}
@@ -371,12 +365,12 @@ public class ClassFileVisitor extends ClassAdapter {
 					kind = ReferenceModifiers.REF_STATICMETHOD;
 					// check for reference to a class literal
 					if (name.equals("forName")) { //$NON-NLS-1$
-						if (ClassFileVisitor.this.processName(owner).equals("java.lang.Class")) { //$NON-NLS-1$
+						if (ReferenceExtractor.this.processName(owner).equals("java.lang.Class")) { //$NON-NLS-1$
 							if (this.stringLiteral != null) {
 								Type classLiteral = Type.getObjectType(this.stringLiteral);
-								IReference reference = ClassFileVisitor.this.addTypeReference(classLiteral, ReferenceModifiers.REF_CONSTANTPOOL);
+								Reference reference = ReferenceExtractor.this.addTypeReference(classLiteral, ReferenceModifiers.REF_CONSTANTPOOL);
 								if (reference != null) {
-									this.linePositionTracker.addLocation(reference.getSourceLocation());
+									this.linePositionTracker.addLocation(reference);
 								}
 							}
 						}
@@ -393,9 +387,9 @@ public class ClassFileVisitor extends ClassAdapter {
 				}
 			}
 			if(kind != -1) {
-				IReference reference = ClassFileVisitor.this.addMethodReference(declaringType, name, desc, kind);
+				Reference reference = ReferenceExtractor.this.addMethodReference(declaringType, name, desc, kind);
 				if (reference != null) {
-					this.linePositionTracker.addLocation(reference.getSourceLocation());
+					this.linePositionTracker.addLocation(reference);
 				}
 			}
 			this.stringLiteral = null;
@@ -406,9 +400,9 @@ public class ClassFileVisitor extends ClassAdapter {
 		 */
 		public void visitMultiANewArrayInsn(String desc, int dims) {
 			Type type = this.getTypeFromDescription(desc);
-			IReference reference = ClassFileVisitor.this.addTypeReference(type, ReferenceModifiers.REF_ARRAYALLOC);
+			Reference reference = ReferenceExtractor.this.addTypeReference(type, ReferenceModifiers.REF_ARRAYALLOC);
 			if (reference != null) {
-				this.linePositionTracker.addLocation(reference.getSourceLocation());
+				this.linePositionTracker.addLocation(reference);
 			}
 		}
 
@@ -466,9 +460,9 @@ public class ClassFileVisitor extends ClassAdapter {
 					}
 				}
 				if(kind != -1) {
-					IReference reference = ClassFileVisitor.this.addTypeReference(type, kind);
+					Reference reference = ReferenceExtractor.this.addTypeReference(type, kind);
 					if (reference != null) {
-						this.linePositionTracker.addLocation(reference.getSourceLocation());
+						this.linePositionTracker.addLocation(reference);
 					}
 				}
 			}
@@ -516,21 +510,17 @@ public class ClassFileVisitor extends ClassAdapter {
 				}
 				if (lineNumber == -1) return;
 				if(signature != null) {
-					List references = ClassFileVisitor.this.processSignature(name, signature, ReferenceModifiers.REF_PARAMETERIZED_VARIABLE, METHOD);
+					List references = ReferenceExtractor.this.processSignature(name, signature, ReferenceModifiers.REF_PARAMETERIZED_VARIABLE, METHOD);
 					for (Iterator iterator = references.iterator(); iterator.hasNext();) {
-						IReference reference = (IReference) iterator.next();
-						ILocation sourceLocation = reference.getSourceLocation();
-						sourceLocation.setLineNumber(lineNumber);
-						ILocation targetLocation = reference.getReferencedLocation();
-						targetLocation.setLineNumber(lineNumber);
+						Reference reference = (Reference) iterator.next();
+						reference.setLineNumber(lineNumber);
 					}
 				} else {
 					Type type = Type.getType(desc);
 					if(type.getSort() == Type.OBJECT) {
-						IReference reference = ClassFileVisitor.this.addTypeReference(type, ReferenceModifiers.REF_LOCALVARIABLEDECL);
+						Reference reference = ReferenceExtractor.this.addTypeReference(type, ReferenceModifiers.REF_LOCALVARIABLEDECL);
 						if (reference != null) {
-							ILocation sourceLocation = reference.getSourceLocation();
-							sourceLocation.setLineNumber(lineNumber);
+							reference.setLineNumber(lineNumber);
 						}
 					}
 				}
@@ -543,9 +533,9 @@ public class ClassFileVisitor extends ClassAdapter {
 		public void visitLdcInsn(Object cst) {
 			if(cst instanceof Type) {
 				Type type = (Type) cst;
-				IReference reference = ClassFileVisitor.this.addTypeReference(type, ReferenceModifiers.REF_CONSTANTPOOL);
+				Reference reference = ReferenceExtractor.this.addTypeReference(type, ReferenceModifiers.REF_CONSTANTPOOL);
 				if (reference != null) {
-					this.linePositionTracker.addLocation(reference.getSourceLocation());
+					this.linePositionTracker.addLocation(reference);
 				}
 			} else if (cst instanceof String) {
 				this.stringLiteral = (String) cst;
@@ -568,7 +558,7 @@ public class ClassFileVisitor extends ClassAdapter {
 			this.lineMap = new HashMap();
 		}
 
-		void addLocation(ILocation location) {
+		void addLocation(Reference location) {
 			this.labelsAndLocations.add(location);
 		}
 
@@ -577,7 +567,7 @@ public class ClassFileVisitor extends ClassAdapter {
 			this.lineMap.put(label, new Integer(line));
 		}
 
-		void addCatchLabelInfos(ILocation location, Label label) {
+		void addCatchLabelInfos(Reference location, Label label) {
 			this.catchLabelInfos.add(new LabelInfo(location, label));
 		}
 
@@ -643,12 +633,12 @@ public class ClassFileVisitor extends ClassAdapter {
 							remainingCatchLabelInfos = remaingEntriesTemp;
 						}
 					}
-				} else if (current instanceof ILocation) {
-					ILocation location = (ILocation) current;
-					if (location.getLineNumber() == -1) {
-						((ILocation) current).setLineNumber(currentLineNumber);
+				} else if (current instanceof Reference) {
+					Reference ref = (Reference) current;
+					if (ref.getLineNumber() == -1) {
+						ref.setLineNumber(currentLineNumber);
 					} else {
-						currentLineNumber = location.getLineNumber();
+						currentLineNumber = ref.getLineNumber();
 					}
 				} else if (current instanceof LineInfo) {
 					LineInfo lineInfo = (LineInfo) current;
@@ -659,10 +649,10 @@ public class ClassFileVisitor extends ClassAdapter {
 	}
 
 	static class LabelInfo {
-		public ILocation location;
+		public Reference location;
 		public Label label;
 
-		public LabelInfo(ILocation location, Label label) {
+		public LabelInfo(Reference location, Label label) {
 			this.location = location;
 			this.label = label;
 		}
@@ -714,13 +704,12 @@ public class ClassFileVisitor extends ClassAdapter {
 	}
 
 	private List collector = null;
-	private IApiComponent fComponent = null;
 	String classname = null;
 
 	/**
 	 * Current type being visited.
 	 */
-	private IReferenceTypeDescriptor fType;
+	private IApiType fType;
 
 	/**
 	 * Stack of members being visited. When a member is entered its
@@ -730,7 +719,7 @@ public class ClassFileVisitor extends ClassAdapter {
 	private Stack fMemberStack = new Stack();
 
 	/**
-	 * Stack of super types of types being visited. When a type is
+	 * Stack of super types *names* (String) being visited. When a type is
 	 * entered, its super type is pushed onto the stack. When a type
 	 * is exited, the stack is popped.
 	 */
@@ -765,14 +754,13 @@ public class ClassFileVisitor extends ClassAdapter {
 
 	/**
 	 * Constructor
-	 * @param component the component this scanned class file resides in
-	 * while visiting the class
+	 * @param type the type to extract references from
 	 * @param collector the listing of references to annotate from this pass
 	 * @param referenceKinds kinds of references to extract as defined by {@link ReferenceModifiers}
 	 */
-	public ClassFileVisitor(IApiComponent component, List collector, int referenceKinds) {
+	public ReferenceExtractor(IApiType type, List collector, int referenceKinds) {
 		super(new ClassNode());
-		this.fComponent = component;
+		fType = type;
 		this.collector = collector;
 		fReferenceKinds = referenceKinds;
 		fIsVisitMembers = (VISIT_MEMBERS_MASK & fReferenceKinds) > 0; 
@@ -794,46 +782,41 @@ public class ClassFileVisitor extends ClassAdapter {
 	}
 
 	/**
-	 * Returns whether the specified reference to the target element should be
+	 * Returns whether the specified reference should be
 	 * considered when extracting references. Configured by setting on whether
 	 * to include references within the same class file.
 	 *
-	 * @param refKind kind of reference
-	 * @param element element
-	 * @return true if references should be considered
+	 * @param ref reference
+	 * @return whether to include the reference
 	 */
-	protected boolean consider(int refKind, IMemberDescriptor element) {
+	protected boolean consider(Reference ref) {
+		if ((ref.getReferenceKind() & fReferenceKinds) == 0) {
+			return false;
+		}
 		if (this.fIncludeLocalRefs) {
 			return true;
 		}
-		if (element.getElementType() == IElementDescriptor.T_REFERENCE_TYPE) {
-			if (((IReferenceTypeDescriptor)element).isAnonymous()) {
-				// don't consider references to anonymous types
+		// don't consider references to anonymous types or elements in them
+		String referencedTypeName = ref.getReferencedTypeName();
+		int index = referencedTypeName.lastIndexOf('$');
+		if (index > -1) {
+			String num = referencedTypeName.substring(index + 1);
+			try {
+				Integer.parseInt(num);
+				// if we can parse a number, this is an anonymous type ref
 				return false;
-			}
-		} else {
-			IReferenceTypeDescriptor enclosingType = element.getEnclosingType();
-			if (enclosingType.isAnonymous()) {
-				// don't consider references to elements in an anonymous type
-				return false;
+			} catch (NumberFormatException e) {
 			}
 		}
-		if (refKind == ReferenceModifiers.REF_VIRTUALMETHOD || refKind == ReferenceModifiers.REF_OVERRIDE) {
+		if (ref.getReferenceKind() == ReferenceModifiers.REF_VIRTUALMETHOD || ref.getReferenceKind() == ReferenceModifiers.REF_OVERRIDE) {
 			return true;
 		}
-		IElementDescriptor temp = element;
-		while (temp.getElementType() != IElementDescriptor.T_PACKAGE) {
-			if (this.fType.equals(temp)) {
-				return true;
+		if (referencedTypeName.startsWith(fType.getName())) {
+			// don't include references within this type or a member type
+			if (referencedTypeName.length() > fType.getName().length()) {
+				return referencedTypeName.charAt(fType.getName().length()) != '$';
 			}
-			temp = temp.getParent();
-		}
-		IReferenceTypeDescriptor enclosing = this.fType.getEnclosingType();
-		while (enclosing != null) {
-			if (element.equals(enclosing)) {
-				return false;
-			}
-			enclosing = enclosing.getEnclosingType();
+			return false;
 		}
 		return true;
 	}
@@ -863,11 +846,11 @@ public class ClassFileVisitor extends ClassAdapter {
 	 * @param kind kind of reference
 	 * @return reference added, or <code>null</code> if none
 	 */
-	protected IReference addTypeReference(Type type, int kind) {
+	protected Reference addTypeReference(Type type, int kind) {
 		Type rtype = this.resolveType(type.getDescriptor());
 		if(rtype != null) {
-			IReferenceTypeDescriptor target = Util.getType(rtype.getClassName());
-			return this.addReference(target, kind);
+			return addReference(
+				Reference.typeReference(getMember(), rtype.getClassName(), kind));
 		}
 		return null;
 	}
@@ -882,11 +865,11 @@ public class ClassFileVisitor extends ClassAdapter {
 	 * @param kind kind of reference
 	 * @return reference added, or <code>null</code> if none
 	 */
-	protected IReference addFieldReference(Type declaringType, String name, int kind) {
+	protected Reference addFieldReference(Type declaringType, String name, int kind) {
 		Type rtype = this.resolveType(declaringType.getDescriptor());
 		if(rtype != null) {
-			IReferenceTypeDescriptor target = Util.getType(rtype.getClassName());
-			return this.addReference(target.getField(name), kind);
+			return addReference(
+				Reference.fieldReference(getMember(), rtype.getClassName(), name, kind));
 		}
 		return null;
 	}
@@ -902,24 +885,13 @@ public class ClassFileVisitor extends ClassAdapter {
 	 * @param kind kind of reference
 	 * @return reference added, or <code>null</code> if none
 	 */
-	protected IReference addMethodReference(Type declaringType, String name, String signature, int kind) {
+	protected Reference addMethodReference(Type declaringType, String name, String signature, int kind) {
 		Type rtype = this.resolveType(declaringType.getDescriptor());
 		if(rtype != null) {
-			IReferenceTypeDescriptor target = Util.getType(rtype.getClassName());
-			return this.addReference(target.getMethod(name, signature), kind);
+			return this.addReference(
+					Reference.methodReference(getMember(), rtype.getClassName(), name, signature, kind));
 		}
 		return null;
-	}
-
-	/**
-	 * Adds the given method declaration as a potential reference to an
-	 * overridden method.
-	 *
-	 * @param method method declared
-	 * @return reference added, or <code>null</code> if none
-	 */
-	protected IReference addMethodDeclaration(IMethodDescriptor method) {
-		return this.addReference(method, ReferenceModifiers.REF_OVERRIDE);
 	}
 
 	/**
@@ -928,19 +900,13 @@ public class ClassFileVisitor extends ClassAdapter {
 	 * in the class file being scanned it is discarded based on the
 	 * setting to include local references.
 	 *
-	 * @param member the target member being referenced
-	 * @param linenumber line number the reference was made from
-	 * @param kind the kind of reference
+	 * @param target reference
 	 * @param reference added, or <code>null</code> if none
 	 */
-	protected IReference addReference(IMemberDescriptor target, int kind) {
-		if(this.consider(kind, target)) {
-			Reference ref = new Reference(
-				new Location(this.fComponent, this.getMember()),
-				new Location(null, target),
-				kind);
-			this.collector.add(ref);
-			return ref;
+	protected Reference addReference(Reference target) {
+		if(this.consider(target)) {
+			this.collector.add(target);
+			return target;
 		}
 		return null;
 	}
@@ -1002,9 +968,8 @@ public class ClassFileVisitor extends ClassAdapter {
 	 */
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 		this.classname = this.processName(name);
-		this.fType = Util.getType(this.classname, access);
 		if(DEBUG) {
-			System.out.println("Starting visit of type: ["+this.fType.getQualifiedName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("Starting visit of type: ["+this.fType.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		this.enterMember(this.fType);
 		//if there is a signature we get more information from it, so we don't need to do both
@@ -1017,20 +982,16 @@ public class ClassFileVisitor extends ClassAdapter {
 				Type supertype = null;
 				for(int i = 0; i < interfaces.length; i++) {
 					supertype = Type.getObjectType(interfaces[i]);
-					IReference typeReference = this.addTypeReference(supertype, ReferenceModifiers.REF_EXTENDS);
-					if (typeReference != null) {
-						this.fSuperStack.add(typeReference.getReferencedLocation().getType());
-					}
+					this.addTypeReference(supertype, ReferenceModifiers.REF_EXTENDS);
+					this.fSuperStack.add(supertype.getClassName());
 				}
 			}
 			else {
 				Type supertype = null;
 				if(superName != null) {
 					supertype = Type.getObjectType(superName);
-					IReference typeReference = this.addTypeReference(supertype, ReferenceModifiers.REF_EXTENDS);
-					if (typeReference != null) {
-						this.fSuperStack.add(typeReference.getReferencedLocation().getType());
-					}
+					this.addTypeReference(supertype, ReferenceModifiers.REF_EXTENDS);
+					this.fSuperStack.add(supertype.getClassName());
 				}
 				for(int i = 0; i < interfaces.length; i++) {
 					supertype = Type.getObjectType(interfaces[i]);
@@ -1047,9 +1008,9 @@ public class ClassFileVisitor extends ClassAdapter {
 	public void visitEnd() {
 		this.exitMember();
 		if (!this.fSuperStack.isEmpty()) {
-			IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) this.fSuperStack.pop();
+			String typeName = (String) this.fSuperStack.pop();
 			if(DEBUG) {
-				System.out.println("ending visit of type: ["+type.getQualifiedName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("ending visit of type: ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -1059,8 +1020,8 @@ public class ClassFileVisitor extends ClassAdapter {
 	 */
 	public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
 		if (fIsVisitMembers) {
-			IReferenceTypeDescriptor owner = (IReferenceTypeDescriptor) this.getMember();
-			IFieldDescriptor field = owner.getField(name, access);
+			IApiType owner = (IApiType) this.getMember();
+			IApiField field = owner.getField(name);
 			this.enterMember(field);
 			if((access & Opcodes.ACC_SYNTHETIC) == 0) {
 				if(signature != null) {
@@ -1079,20 +1040,26 @@ public class ClassFileVisitor extends ClassAdapter {
 	 */
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 		if (fIsVisitMembers) {
-			IMemberDescriptor member = this.getMember();
-			IReferenceTypeDescriptor owner = null;
-			if (member instanceof IReferenceTypeDescriptor) {
-				owner = (IReferenceTypeDescriptor) member;
+			IApiMember member = this.getMember();
+			IApiType owner = null;
+			if (member instanceof IApiType) {
+				owner = (IApiType) member;
 			} else {
-				owner = member.getEnclosingType();
+				try {
+					owner = member.getEnclosingType();
+				} catch (CoreException e) {
+					// should not happen for field or method
+					ApiPlugin.log(e.getStatus());
+				}
 			}
-			IMethodDescriptor method = owner.getMethod(name, desc, access);
+			IApiMethod method = owner.getMethod(name, desc);
 			this.enterMember(method);
 			// record potential method override reference
 			if ((access & (Opcodes.ACC_PROTECTED | Opcodes.ACC_PUBLIC)) > 0) {
 				if (!this.fSuperStack.isEmpty()) {
-					IReferenceTypeDescriptor superType = (IReferenceTypeDescriptor) this.fSuperStack.peek();
-					this.addMethodDeclaration(superType.getMethod(method.getName(), method.getSignature(), method.getModifiers()));
+					String superTypeName = (String) this.fSuperStack.peek();
+					addReference(
+						Reference.methodReference(method, superTypeName, method.getName(), method.getSignature(), ReferenceModifiers.REF_OVERRIDE));
 				}
 			}
 			if((access & Opcodes.ACC_SYNTHETIC) == 0 && !"<clinit>".equals(name)) { //$NON-NLS-1$
@@ -1130,7 +1097,7 @@ public class ClassFileVisitor extends ClassAdapter {
 	 *
 	 * @param member current member
 	 */
-	protected void enterMember(IMemberDescriptor member) {
+	protected void enterMember(IApiMember member) {
 		this.fMemberStack.push(member);
 	}
 
@@ -1142,12 +1109,11 @@ public class ClassFileVisitor extends ClassAdapter {
 	}
 
 	/**
-	 * Returns the element descriptor for the current member being
-	 * visited.
+	 * Returns the member currently being visited.
 	 *
 	 * @return current member
 	 */
-	protected IMemberDescriptor getMember() {
-		return (IMemberDescriptor) this.fMemberStack.peek();
+	protected IApiMember getMember() {
+		return (IApiMember) this.fMemberStack.peek();
 	}
 }

@@ -16,10 +16,9 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -42,14 +41,18 @@ public class MethodSearchCriteria extends SearchCriteria {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.SearchCriteria#matchesSourceModifiers(org.eclipse.pde.api.tools.internal.provisional.search.ILocation)
+	 * @see org.eclipse.pde.api.tools.internal.search.SearchCriteria#matchesSourceModifiers(org.eclipse.pde.api.tools.internal.provisional.model.IApiMember)
 	 */
-	protected boolean matchesSourceModifiers(ILocation location) {
-		IMemberDescriptor member = location.getMember();
+	protected boolean matchesSourceModifiers(IApiMember member) {
 		while (member != null) {
 			int modifiers = member.getModifiers();
 			if (Util.isPublic(modifiers) || Util.isProtected(modifiers)) {
-				member = member.getEnclosingType();
+				try {
+					member = member.getEnclosingType();
+				} catch (CoreException e) {
+					ApiPlugin.log(e.getStatus());
+					return false;
+				}
 			} else {
 				return false;
 			}
@@ -58,17 +61,16 @@ public class MethodSearchCriteria extends SearchCriteria {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.SearchCriteria#matchesSourceApiRestrictions(org.eclipse.pde.api.tools.internal.provisional.search.ILocation)
+	 * @see org.eclipse.pde.api.tools.internal.search.SearchCriteria#matchesSourceApiRestrictions(org.eclipse.pde.api.tools.internal.provisional.model.IApiMember)
 	 */
-	protected boolean matchesSourceApiRestrictions(ILocation location) {
-		IMemberDescriptor member = location.getMember();
-		if(member.getElementType() != IElementDescriptor.T_METHOD) {
+	protected boolean matchesSourceApiRestrictions(IApiMember member) {
+		if(member.getType() != IApiElement.METHOD) {
 			return false;
 		}
-		IApiComponent apiComponent = location.getApiComponent();
+		IApiComponent apiComponent = member.getApiComponent();
 		try {
-			IMethodDescriptor method = (IMethodDescriptor) member;
-			IApiAnnotations annotations = apiComponent.getApiDescription().resolveAnnotations(method);
+			IApiMethod method = (IApiMethod) member;
+			IApiAnnotations annotations = apiComponent.getApiDescription().resolveAnnotations(method.getHandle());
 			if (annotations != null) {
 				if ((annotations.getVisibility() & fSourceVisibility) > 0) {
 					int ares = annotations.getRestrictions();
@@ -77,7 +79,7 @@ public class MethodSearchCriteria extends SearchCriteria {
 							return (ares & RestrictionModifiers.NO_REFERENCE) == 0;
 						}
 						if((ares & RestrictionModifiers.NO_OVERRIDE) == 0) {
-							IApiAnnotations annot = apiComponent.getApiDescription().resolveAnnotations(method.getEnclosingType());
+							IApiAnnotations annot = apiComponent.getApiDescription().resolveAnnotations(method.getEnclosingType().getHandle());
 							int pres = 0;
 							if(annot != null) {
 								pres = annot.getRestrictions();

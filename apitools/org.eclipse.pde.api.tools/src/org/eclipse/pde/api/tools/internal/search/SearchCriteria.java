@@ -17,8 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -28,13 +26,11 @@ import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
-import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
-import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -81,103 +77,6 @@ public class SearchCriteria implements IApiSearchCriteria {
 	private Object fUserData;
 
 	/**
-	 * Used for pattern matching.
-	 */
-	class PatternMatch {
-		private int fElementType;
-		private Pattern fPattern = null;
-		
-		/**
-		 * Constructs a new pattern matcher.
-		 * 
-		 * @param pattern regular expression
-		 * @param elementType element type constant
-		 */
-		PatternMatch(String pattern, int elementType) {
-			fElementType = elementType;
-			fPattern = Pattern.compile(pattern); 
-		}
-		
-		/**
-		 * Return whether the given element matches this pattern.
-		 * 
-		 * @param element element
-		 * @return whether the given element matches this pattern
-		 */
-		public boolean matches(IElementDescriptor element) {
-			String name = null;
-			IReferenceTypeDescriptor potentialInner = null;
-			switch (fElementType) {
-			case IElementDescriptor.T_PACKAGE:
-				switch (element.getElementType()) {
-					case IElementDescriptor.T_PACKAGE:
-						name = ((IPackageDescriptor)element).getName();
-						break;
-					case IElementDescriptor.T_REFERENCE_TYPE:
-					case IElementDescriptor.T_METHOD:
-					case IElementDescriptor.T_FIELD:
-						name = ((IMemberDescriptor)element).getPackage().getName();
-						break;
-					}
-				break;
-			case IElementDescriptor.T_REFERENCE_TYPE:
-				switch (element.getElementType()) {
-					case IElementDescriptor.T_REFERENCE_TYPE:
-						potentialInner = (IReferenceTypeDescriptor)element;  
-						name = potentialInner.getQualifiedName();
-						break;
-					case IElementDescriptor.T_METHOD:
-					case IElementDescriptor.T_FIELD:
-						potentialInner = ((IMemberDescriptor)element).getEnclosingType();
-						name = potentialInner.getQualifiedName();
-						break;
-					}				
-				break;
-			case IElementDescriptor.T_METHOD:
-				switch (element.getElementType()) {
-					case IElementDescriptor.T_METHOD:
-						name = ((IMethodDescriptor)element).getName();
-						break;
-				}				
-				break;
-			case IElementDescriptor.T_FIELD:
-				switch (element.getElementType()) {
-					case IElementDescriptor.T_FIELD:
-						name = ((IFieldDescriptor)element).getName();
-						break;
-				}				
-				break;
-			}
-			if (name != null) {
-				Matcher matcher = fPattern.matcher(name);
-				if (matcher.matches()) {
-					return true;
-				}
-				if (potentialInner != null) {
-					// check enclosing types for match
-					IReferenceTypeDescriptor type = potentialInner.getEnclosingType();
-					if (type != null) {
-						return matches(type);
-					}
-				}
-			}
-			return false;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
-		public String toString() {
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("Element: ").append(Util.getDescriptorKind(fElementType)); //$NON-NLS-1$
-			if(fPattern != null) {
-				buffer.append(" with pattern :").append(fPattern.toString()); //$NON-NLS-1$
-			}
-			return buffer.toString();
-		}
-	}
-	
-	/**
 	 * Used for determining potential element matches.
 	 */
 	class PotentialElementMatch {
@@ -196,30 +95,36 @@ public class SearchCriteria implements IApiSearchCriteria {
 		}
 		
 		/**
-		 * Return whether the given element is a potential match for this element.
+		 * Return whether the given reference is a potential match for this element.
 		 * 
-		 * @param element element
-		 * @return whether the given element matches this pattern
+		 * @param reference
+		 * @return whether the given reference matches this pattern
 		 */
-		public boolean matches(IElementDescriptor element) {
-			if (element.getElementType() == IElementDescriptor.T_METHOD) {
-				if (fElement.getElementType() == IElementDescriptor.T_METHOD) {
-					// ensure names are equal
-					IMethodDescriptor potential = (IMethodDescriptor)element;
-					IMethodDescriptor target = (IMethodDescriptor)fElement;
-					return potential.getName().equals(target.getName()) &&
-						potential.getSignature().equals(target.getSignature());
-				} else {
-					// all method sends must be resolved, so it is a potential match
-					// TODO: could we optimize static methods?
-					return true;
-				}
+		public boolean matches(IReference reference) {
+			switch (fElement.getElementType()) {
+				case IElementDescriptor.T_METHOD:
+					if (reference.getReferenceType() == IReference.T_METHOD_REFERENCE) {
+						// ensure names are equal
+						IMethodDescriptor method = (IMethodDescriptor)fElement;
+						return reference.getReferencedMemberName().equals(method.getName()) &&
+							reference.getReferencedSignature().equals(method.getSignature());
+					}
+					return false;
+				case IElementDescriptor.T_FIELD:
+					if (reference.getReferenceType() == IReference.T_FIELD_REFERENCE) {
+						IFieldDescriptor field = (IFieldDescriptor)fElement;
+						return field.getName().equals(reference.getReferencedMemberName()) &&
+							field.getEnclosingType().getQualifiedName().equals(reference.getReferencedTypeName());
+					}
+					return false;
+				case IElementDescriptor.T_REFERENCE_TYPE:
+					if (reference.getReferenceType() == IReference.T_TYPE_REFERENCE) {
+						IReferenceTypeDescriptor type = (IReferenceTypeDescriptor)fElement;
+						return type.getQualifiedName().equals(reference.getReferencedTypeName());
+					}
+					return false;
 			}
-			if (fElement.equals(element)) {
-				return true;
-			}
-			Set parents = getParents(element);
-			return parents.contains(fElement);
+			return false;
 		}
 		
 		/* (non-Javadoc)
@@ -239,6 +144,27 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * List of potential element matches or <code>null</code> if none
 	 */
 	private List fPotentialElements = null;
+	
+	/**
+	 * Returns all parent elements of the given element in a set.
+	 * 
+	 * @param member member
+	 * @return parent elements
+	 */
+	private Set getParents(IApiMember member) {
+		try {
+			Set parents = new HashSet();
+			IApiMember parent = member.getEnclosingType();
+			while (parent != null) {
+				parents.add(parent.getHandle());
+				parent = parent.getEnclosingType();
+			}
+			return parents;
+		} catch (CoreException e) {
+			ApiPlugin.log(e.getStatus());
+		}
+		return null;
+	}
 	
 	/**
 	 * Returns all parent elements of the given element in a set.
@@ -264,7 +190,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * @param element element descriptor
 	 * @return whether this criteria contains the specified element
 	 */
-	private boolean encloses(String componentId, IElementDescriptor element) {
+	private boolean encloses(String componentId, IApiMember member) {
 		Set leaves = (Set) fComponentIds.get(componentId);
 		if (leaves != null) {
 			if (leaves.isEmpty()) {
@@ -273,10 +199,10 @@ public class SearchCriteria implements IApiSearchCriteria {
 				return true;
 			}
 			Iterator iterator = leaves.iterator();
-			Set parents = getParents(element);
+			Set parents = getParents(member);
 			while (iterator.hasNext()) {
 				IElementDescriptor leaf = (IElementDescriptor) iterator.next();
-				if (leaf.equals(element) || parents.contains(leaf)) {
+				if (leaf.equals(member.getHandle()) || parents.contains(leaf)) {
 					return true;
 				}
 			}
@@ -334,16 +260,6 @@ public class SearchCriteria implements IApiSearchCriteria {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#addPatternRestriction(java.lang.String, int)
-	 */
-	public void addReferencedPatternRestriction(String regEx, int elementType) {
-		if (fPatterns == null) {
-			fPatterns = new ArrayList();
-		}
-		fPatterns.add(new PatternMatch(regEx, elementType));
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#getReferenceKinds()
 	 */
 	public int getReferenceKinds() {
@@ -354,33 +270,16 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#isMatch(org.eclipse.pde.api.tools.search.IReference)
 	 */
 	public boolean isMatch(IReference reference) {
-		ILocation location = reference.getResolvedLocation();
-		if (location != null) {
-			IApiAnnotations annotations = reference.getResolvedAnnotations();
-			if (annotations != null) {
-				return matchesElementRestrictions(location)
-					&& matchesApiRestrictions(annotations);
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Returns whether the given location meets pattern matching criteria.
-	 * 
-	 * @param location location
-	 * @return whether the given location meets pattern matching criteria
-	 */
-	private boolean matchesPatternRestrictions(ILocation location) {
-		if (fPatterns == null) {
-			return true;
-		}
-		IElementDescriptor element = location.getMember();
-		Iterator iterator = fPatterns.iterator();
-		while (iterator.hasNext()) {
-			PatternMatch pattern = (PatternMatch) iterator.next();
-			if (pattern.matches(element)) {
-				return true;
+		IApiMember member = reference.getResolvedReference();
+		if (member != null) {
+			try {
+				IApiAnnotations annotations = member.getApiComponent().getApiDescription().resolveAnnotations(member.getHandle());
+				if (annotations != null) {
+					return matchesElementRestrictions(member)
+						&& matchesApiRestrictions(annotations);
+				}
+			} catch (CoreException e) {
+				ApiPlugin.log(e.getStatus());
 			}
 		}
 		return false;
@@ -406,18 +305,18 @@ public class SearchCriteria implements IApiSearchCriteria {
 	}
 	
 	/**
-	 * Returns whether the given location is contained within the component and
+	 * Returns whether the given member is contained within the component and
 	 * element restrictions of this search criteria.
 	 * 
-	 * @param location location
-	 * @return whether the given location is contained within the component and
+	 * @param member referenced member
+	 * @return whether the given member is contained within the component and
 	 * element restrictions of this search criteria
 	 */
-	private boolean matchesElementRestrictions(ILocation location) {
+	private boolean matchesElementRestrictions(IApiMember member) {
 		if (fComponentIds.isEmpty()) {
 			return true;
 		}
-		return encloses(location.getApiComponent().getId(), location.getMember());
+		return encloses(member.getApiComponent().getId(), member);
 	}
 
 	/* (non-Javadoc)
@@ -440,11 +339,10 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 */
 	public boolean isPotentialMatch(IReference reference) {
 		return ((reference.getReferenceKind() & fReferenceKinds) > 0) &&
-				!isFilteredSourceLocation(reference.getSourceLocation()) &&
-				matchesSourceModifiers(reference.getSourceLocation()) &&
-				matchesSourceApiRestrictions(reference.getSourceLocation()) &&
-				matchesPatternRestrictions(reference.getReferencedLocation()) &&
-				isPotentialElementMatch(reference.getReferencedLocation());
+				!isFilteredSourceLocation(reference.getMember()) &&
+				matchesSourceModifiers(reference.getMember()) &&
+				matchesSourceApiRestrictions(reference.getMember()) &&
+				isPotentialElementMatch(reference);
 	}
 	
 	/**
@@ -453,7 +351,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * @param location source location
 	 * @return whether the location (reference) should be filtered (ignored)
 	 */
-	private boolean isFilteredSourceLocation(ILocation location) {
+	private boolean isFilteredSourceLocation(IApiMember location) {
 		if (fSourceFilter == null) {
 			return false;
 		}
@@ -472,13 +370,13 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * @param location source location
 	 * @return whether restrictions are satisfied
 	 */
-	protected boolean matchesSourceApiRestrictions(ILocation location) {
+	protected boolean matchesSourceApiRestrictions(IApiMember location) {
 		if (fSourceVisibility == VisibilityModifiers.ALL_VISIBILITIES && fSourceRestriction == RestrictionModifiers.ALL_RESTRICTIONS) {
 			return true;
 		}
 		IApiComponent apiComponent = location.getApiComponent();
 		try {
-			IApiAnnotations annotations = apiComponent.getApiDescription().resolveAnnotations(location.getMember());
+			IApiAnnotations annotations = apiComponent.getApiDescription().resolveAnnotations(location.getHandle());
 			if (annotations != null) {
 				if ((annotations.getVisibility() & fSourceVisibility) > 0) {
 					if(fSourceRestriction == RestrictionModifiers.ALL_RESTRICTIONS) {
@@ -509,15 +407,19 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * @param location source/referencing location
 	 * @return whether it matches Java visibility modifiers
 	 */
-	protected boolean matchesSourceModifiers(ILocation location) {
+	protected boolean matchesSourceModifiers(IApiMember member) {
 		if (fSourceModifiers == -1) {
 			return true;
 		}
-		IMemberDescriptor member = location.getMember();
 		while (member != null) {
 			int modifiers = member.getModifiers();
 			if ((fSourceModifiers & modifiers) > 0 || fSourceModifiers == modifiers) { // in case of Acc.Default (0)
-				member = member.getEnclosingType();
+				try {
+					member = member.getEnclosingType();
+				} catch (CoreException e) {
+					ApiPlugin.log(e.getStatus());
+					return false;
+				}
 			} else {
 				return false;
 			}
@@ -525,15 +427,14 @@ public class SearchCriteria implements IApiSearchCriteria {
 		return true;
 	}
 
-	protected boolean isPotentialElementMatch(ILocation location) {
+	protected boolean isPotentialElementMatch(IReference reference) {
 		if (fPotentialElements == null) {
 			return true;
 		}
-		IElementDescriptor element = location.getMember();
 		Iterator iterator = fPotentialElements.iterator();
 		while (iterator.hasNext()) {
 			PotentialElementMatch match = (PotentialElementMatch) iterator.next();
-			if (match.matches(element)) {
+			if (match.matches(reference)) {
 				return true;
 			}
 		}

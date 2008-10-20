@@ -8,23 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.tests;
+package x.y.z;
 
-import junit.framework.TestCase;
-
-import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
+import internal.x.y.z.Iinternal;
+import internal.x.y.z.internal;
 
 /**
- * Test to write out type structure statistics. Used for performance tuning.
+ * 
  */
-public class BeanCounter extends TestCase {
-
-	public BeanCounter(String name) {
-		super(name);
-	}
+public class testFTL6 {
 	
-	public void testStats() {
-		System.out.println(TypeStructureCache.getStats());
+	private class innerFLT6 {
+		public internal f1 = null;
+		
+		public Iinternal[] f2 = null;
+		
+		protected internal f3 = null;
+		
+		protected Iinternal[] f4 = null;
 	}
-	
 }

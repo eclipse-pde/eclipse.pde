@@ -1891,21 +1891,6 @@ public final class Util {
 	}
 	
 	/**
-	 * Returns a reference type for the given fully qualified type name with the
-	 * given modifiers
-	 * 
-	 * @param fullyQualifiedName type name
-	 * @param modifiers access flags as defined by {@link Flags}
-	 * @return reference type
-	 */
-	public static IReferenceTypeDescriptor getType(String fullyQualifiedName, int modifiers) {
-		int index = fullyQualifiedName.lastIndexOf('.');
-		String pkg = index == -1 ? DEFAULT_PACKAGE_NAME : fullyQualifiedName.substring(0, index);
-		String type = index == -1 ? fullyQualifiedName : fullyQualifiedName.substring(index + 1);
-		return Factory.packageDescriptor(pkg).getType(type, modifiers);
-	}		
-	
-	/**
 	 * Returns the simple name of the type, by stripping off the last '.' segment and returning it.
 	 * This method assumes that qualified type names are '.' separated. If the type specified is a package
 	 * than an empty string is returned.

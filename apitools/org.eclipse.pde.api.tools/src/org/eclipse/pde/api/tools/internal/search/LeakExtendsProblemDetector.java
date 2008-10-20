@@ -29,20 +29,50 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 
 /**
- * Search criteria that examines whether an API leak of a non-API
- * super type really exposes anything.
+ * Detects leaked super types.
  * 
- * @since 1.1 
+ * @since 1.1
  */
-public class ExtendsSearchCriteria extends SearchCriteria {
+public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
+
+	/**
+	 * @param nonApiPackageNames
+	 */
+	public LeakExtendsProblemDetector(Set nonApiPackageNames) {
+		super(nonApiPackageNames);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#getReferenceKinds()
+	 */
+	public int getReferenceKinds() {
+		return ReferenceModifiers.REF_EXTENDS;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSeverityKey()
+	 */
+	protected String getSeverityKey() {
+		return IApiProblemTypes.LEAK_EXTEND;
+	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.SearchCriteria#isMatch(org.eclipse.pde.api.tools.internal.provisional.search.IReference)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getProblemFlags(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
-	public boolean isMatch(IReference reference) {
-		if (super.isMatch(reference)) {
+	protected int getProblemFlags(IReference reference) {
+		return IApiProblem.LEAK_EXTENDS;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractTypeLeakDetector#isProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+	 */
+	public boolean isProblem(IReference reference) {
+		if (super.isProblem(reference)) {
 			// check the use restrictions on the API type (can be extended or not)
 			IApiType type = (IApiType) reference.getMember();
 			IApiComponent component = type.getApiComponent();
@@ -177,5 +207,6 @@ public class ExtendsSearchCriteria extends SearchCriteria {
 		IApiDescription description = type.getApiComponent().getApiDescription();
 		IApiAnnotations annotations = description.resolveAnnotations(type.getHandle());
 		return VisibilityModifiers.isAPI(annotations.getVisibility());
-	}
+	}	
+	
 }

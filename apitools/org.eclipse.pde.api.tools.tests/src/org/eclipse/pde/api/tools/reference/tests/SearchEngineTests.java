@@ -24,15 +24,18 @@ import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
+import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
-import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.search.XMLFactory;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -67,72 +70,9 @@ public class SearchEngineTests extends TestCase {
 		criteria.addReferencedElementRestriction(componentA.getId(), new IElementDescriptor[]{typeA});
 		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of extenders", 1, refs.length);
-		assertEquals("Wrong extender", Factory.packageDescriptor("component.b").getType("B"), refs[0].getSourceLocation().getMember());
+		assertEquals("Wrong extender", Factory.packageDescriptor("component.b").getType("B"), refs[0].getMember().getHandle());
 	}
-	
-	/**
-	 * Searches for extensions of A by name matching, rather than element matching.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testSearchForExtendersByName() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
-		IApiComponent componentB = profile.getApiComponent("component.b");
-		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
-		IApiSearchEngine engine = Factory.newSearchEngine();
-		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setReferenceKinds(ReferenceModifiers.REF_EXTENDS);
-		criteria.setReferencedRestrictions(
-				VisibilityModifiers.ALL_VISIBILITIES,
-				RestrictionModifiers.ALL_RESTRICTIONS);
-		criteria.addReferencedPatternRestriction("component.a.A", IElementDescriptor.T_REFERENCE_TYPE);
-		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
-		assertEquals("Wrong number of extenders", 1, refs.length);
-		assertEquals("Wrong extender", Factory.packageDescriptor("component.b").getType("B"), refs[0].getSourceLocation().getMember());
-	}
-	
-	/**
-	 * Searches for callers of the "no*" methods in MethodNoExtendClass
-	 * 
-	 * @throws CoreException
-	 */
-	public void testSearchForCallersByRegEx() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
-		IApiComponent componentB = profile.getApiComponent("component.b");
-		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
-		IApiSearchEngine engine = Factory.newSearchEngine();
-		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setReferenceKinds(ReferenceModifiers.REF_VIRTUALMETHOD | ReferenceModifiers.REF_SPECIALMETHOD);
-		criteria.setReferencedRestrictions(
-				VisibilityModifiers.ALL_VISIBILITIES,
-				RestrictionModifiers.ALL_RESTRICTIONS);
-		criteria.addReferencedPatternRestriction("no.*", IElementDescriptor.T_METHOD);
-		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
-		assertEquals("Wrong number of callers", 3, refs.length);
-	}	
-	
-	/**
-	 * Searches for extensions of A by name matching, rather than element matching.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testSearchForExtendersInPackageByName() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
-		IApiComponent componentB = profile.getApiComponent("component.b");
-		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
-		IApiSearchEngine engine = Factory.newSearchEngine();
-		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.setReferenceKinds(ReferenceModifiers.REF_EXTENDS);
-		criteria.setReferencedRestrictions(
-				VisibilityModifiers.ALL_VISIBILITIES,
-				RestrictionModifiers.ALL_RESTRICTIONS);
-		criteria.addReferencedPatternRestriction("component.a", IElementDescriptor.T_PACKAGE);
-		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
-				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
-		assertEquals("Wrong number of extenders", 4, refs.length);
-		assertEquals("Wrong extender", Factory.packageDescriptor("component.b").getType("B"), refs[0].getSourceLocation().getMember());
-	}	
-	
+		
 	/**
 	 * Tests that references to illegal method overrides are found.
 	 * 
@@ -169,7 +109,7 @@ public class SearchEngineTests extends TestCase {
 		set.add(m3.getSignature());
 		for (int i = 0; i < refs.length; i++) {
 			IReference reference = refs[i];
-			IMethodDescriptor method = (IMethodDescriptor) reference.getReferencedLocation().getMember();
+			IApiMethod method = (IApiMethod) reference.getResolvedReference();
 			assertTrue("Method not present", set.remove(method.getName()));
 			assertTrue("Signature not present", set.remove(method.getSignature()));
 		}
@@ -196,7 +136,7 @@ public class SearchEngineTests extends TestCase {
 		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
 				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of illegal instantiations", 1, refs.length);
-		assertEquals("Wrong source", Factory.packageDescriptor("e.f.g").getType("TestInstantiate"), refs[0].getSourceLocation().getType());
+		assertEquals("Wrong source", Factory.packageDescriptor("e.f.g").getType("TestInstantiate"), getType(refs[0].getMember()));
 	}	
 	
 	/**
@@ -220,7 +160,7 @@ public class SearchEngineTests extends TestCase {
 		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
 				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of illegal extensions", 1, refs.length);
-		assertEquals("Wrong source", Factory.packageDescriptor("e.f.g").getType("TestSubclass"), refs[0].getSourceLocation().getType());
+		assertEquals("Wrong source", Factory.packageDescriptor("e.f.g").getType("TestSubclass"), getType(refs[0].getMember()));
 	}		
 	
 	/**
@@ -244,7 +184,7 @@ public class SearchEngineTests extends TestCase {
 		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
 				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of illegal implements", 1, refs.length);
-		assertEquals("Wrong source", Factory.packageDescriptor("e.f.g").getType("TestImplement"), refs[0].getSourceLocation().getType());
+		assertEquals("Wrong source", Factory.packageDescriptor("e.f.g").getType("TestImplement"), getType(refs[0].getMember()));
 	}
 	
 	/**
@@ -270,7 +210,7 @@ public class SearchEngineTests extends TestCase {
 		IReference[] refs = org.eclipse.pde.api.tools.tests.util.Util.getReferences(
 				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		assertEquals("Wrong number of illegal implements", 1, refs.length);
-		assertEquals("Wrong source", Factory.packageDescriptor("component.a.internal").getType("LegalImplementation"), refs[0].getSourceLocation().getType());
+		assertEquals("Wrong source", Factory.packageDescriptor("component.a.internal").getType("LegalImplementation"), getType(refs[0].getMember()));
 	}	
 
 	/**
@@ -362,7 +302,7 @@ public class SearchEngineTests extends TestCase {
 		assertEquals("Wrong number of illegal references", 3, refs.length);
 		Set<String> set = new HashSet<String>();
 		for (int i = 0; i < refs.length; i++) {
-			set.add(refs[i].getSourceLocation().getMember().getName());
+			set.add(refs[i].getMember().getName());
 		}
 		assertTrue("missing callInstance", set.contains("callInstance"));
 		assertTrue("missing callInstance", set.contains("callStatic"));
@@ -397,7 +337,7 @@ public class SearchEngineTests extends TestCase {
 		assertEquals("Wrong number of illegal references", 4, refs.length);
 		Set<String> set = new HashSet<String>();
 		for (int i = 0; i < refs.length; i++) {
-			set.add(refs[i].getSourceLocation().getMember().getName());
+			set.add(refs[i].getMember().getName());
 		}
 		assertTrue("missing callInstance", set.contains("readInstance"));
 		assertTrue("missing callInstance", set.contains("readStatic"));
@@ -428,7 +368,7 @@ public class SearchEngineTests extends TestCase {
 				engine.search(sourceScope, new IApiSearchCriteria[]{criteria}, null));
 		Set<String> set = new HashSet<String>();
 		for (int i = 0; i < refs.length; i++) {
-			set.add(refs[i].getSourceLocation().getMember().getName());
+			set.add(refs[i].getMember().getName());
 		}
 		assertTrue("missing callBaseInterface", set.contains("callBaseInterface"));
 		assertTrue("missing callLeafInterface", set.contains("callLeafInterface"));
@@ -456,6 +396,20 @@ public class SearchEngineTests extends TestCase {
 		IApiSearchScope scope = Factory.newScope(systemComp, new IElementDescriptor[]{Factory.packageDescriptor("java.lang")});
 		IApiProblem[] problems = analyzer.findIllegalApiUse(systemComp, scope, new NullProgressMonitor());
 		assertEquals("Should be no problems from system library", 0, problems.length);
+	}
+	
+	/**
+	 * Returns the type handle for a member.
+	 * 
+	 * @param member
+	 * @return
+	 */
+	private IReferenceTypeDescriptor getType(IApiMember member) {
+		IMemberDescriptor handle = member.getHandle();
+		if (handle.getElementType() == IElementDescriptor.T_REFERENCE_TYPE) {
+			return (IReferenceTypeDescriptor) handle;
+		}
+		return handle.getEnclosingType();
 	}
 }
 

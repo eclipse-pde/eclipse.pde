@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
+import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchResult;
-import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 
 /**
  * Search result implementation.
