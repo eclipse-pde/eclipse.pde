@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal;
+package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +34,8 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.api.tools.internal.FolderClassFileContainer;
+import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -70,7 +72,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Time stamp at which package information was created
 	 */
-	long fPackageTimeStamp = 0L;
+	public long fPackageTimeStamp = 0L;
 	
 	/** 
 	 * Whether a package refresh is in progress
@@ -80,7 +82,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Associated manifest file
 	 */
-	protected IFile fManifestFile;
+	public IFile fManifestFile;
 	
 	/**
 	 * Class file container cache used for tag scanning.
@@ -461,7 +463,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @param res
 	 * @return
 	 */
-	PackageNode newPackageNode(IPackageFragment[] fragments, ManifestNode parent, IElementDescriptor descriptor, int vis, int res) {
+	public PackageNode newPackageNode(IPackageFragment[] fragments, ManifestNode parent, IElementDescriptor descriptor, int vis, int res) {
 		return new PackageNode(fragments, parent, descriptor, vis, res);
 	}
 
@@ -608,7 +610,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * 
 	 * @param bundle bundle description
 	 */
-	synchronized void connect(BundleDescription bundle) {
+	public synchronized void connect(BundleDescription bundle) {
 		if (fBundle != null && fBundle != bundle) {
 			throw new IllegalStateException("Already connected to a bundle"); //$NON-NLS-1$
 		}
@@ -642,7 +644,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * 
 	 * @throws CoreException
 	 */
-	synchronized String getXML() throws CoreException {
+	public synchronized String getXML() throws CoreException {
 		Document document = Util.newDocument();	
 		Element component = document.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 		component.setAttribute(IApiXmlConstants.ATTR_ID, getJavaProject().getElementName());
@@ -672,7 +674,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Cleans this API description so it will be re-populated with fresh data.
 	 */
-	synchronized void clean() {
+	public synchronized void clean() {
 		fPackageMap.clear();
 		fPackageTimeStamp = -1L;
 		fInSynch = false;
@@ -683,7 +685,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * Notes that the underlying project has changed in some way and that the
 	 * description cache is no longer in synch with the project.
 	 */
-	synchronized void projectChanged() {
+	public synchronized void projectChanged() {
 		fInSynch = false;
 	}
 	

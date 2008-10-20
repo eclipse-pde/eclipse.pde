@@ -37,12 +37,12 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.jdt.core.tests.util.Util;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
+import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
+import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -171,10 +171,10 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	protected void createBaseline() throws Exception {
 		String zipPath = getBaselineLocation();
 		if (zipPath != null) {
-			IApiProfileManager manager = ApiPlugin.getDefault().getApiProfileManager();
+			IApiBaselineManager manager = ApiPlugin.getDefault().getApiProfileManager();
 			IPath path = new Path(zipPath);
 			String id = path.lastSegment();
-			IApiProfile perfline = manager.getApiProfile(id);
+			IApiBaseline perfline = manager.getApiBaseline(id);
 			if (perfline == null) {
 				// create the API baseline
 				IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(id);
@@ -184,20 +184,20 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 				Util.unzip(zipPath, baselineLocation.toOSString());
 				System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");	
 					
-				perfline = Factory.newApiProfile(id);
+				perfline = ApiModelFactory.newApiBaseline(id);
 				File[] files = baselineLocation.toFile().listFiles();
 				IApiComponent[] components = new IApiComponent[files.length];
 				for (int i = 0; i < files.length; i++) {
 					IPath location = baselineLocation.append(files[i].getName());
-					components[i] = perfline.newApiComponent(location.toOSString());
+					components[i] = ApiModelFactory.newApiComponent(perfline, location.toOSString());
 				}
 				perfline.addApiComponents(components);
-				manager.addApiProfile(perfline);
-				manager.setDefaultApiProfile(perfline.getName());			
+				manager.addApiBaseline(perfline);
+				manager.setDefaultApiBaseline(perfline.getName());			
 			}
-			IApiProfile baseline = manager.getDefaultApiProfile();
+			IApiBaseline baseline = manager.getDefaultApiBaseline();
 			if (baseline != perfline) {
-				manager.setDefaultApiProfile(perfline.getName());
+				manager.setDefaultApiBaseline(perfline.getName());
 			}
 		}
 	}

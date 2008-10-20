@@ -14,22 +14,22 @@ import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 
 /**
  * A wizard to create a new API profile
  * @since 1.0.0
  */
-public class ApiProfileWizard extends Wizard {
+public class ApiBaselineWizard extends Wizard {
 
-	private IApiProfile profile = null;
+	private IApiBaseline profile = null;
 	
 	/**
 	 * Constructor
 	 * @param profile
 	 */
-	public ApiProfileWizard(IApiProfile profile) {
+	public ApiBaselineWizard(IApiBaseline profile) {
 		this.profile = profile;
 		if(profile == null) {
 			setWindowTitle(WizardMessages.ApiProfileWizard_0);
@@ -44,7 +44,7 @@ public class ApiProfileWizard extends Wizard {
 	 * @return the current profile in the wizard. The current profile 
 	 * can be <code>null</code> if the wizard has just been opened to create a new API profile
 	 */
-	public IApiProfile getProfile() {
+	public IApiBaseline getProfile() {
 		return profile;
 	}
 	
@@ -52,7 +52,7 @@ public class ApiProfileWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		addPage(new ApiProfileWizardPage(profile));
+		addPage(new ApiBaselineWizardPage(profile));
 	}
 	
 	/* (non-Javadoc)
@@ -60,7 +60,7 @@ public class ApiProfileWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		try {
-			ApiProfileWizardPage page = (ApiProfileWizardPage) getContainer().getCurrentPage();
+			ApiBaselineWizardPage page = (ApiBaselineWizardPage) getContainer().getCurrentPage();
 			profile = page.finish();
 			return profile != null;
 		}
@@ -71,5 +71,14 @@ public class ApiProfileWizard extends Wizard {
 			ApiUIPlugin.log(e);
 		}
 		return false;
+	}
+	
+	/**
+	 * @see org.eclipse.jface.wizard.Wizard#performCancel()
+	 */
+	public boolean performCancel() {
+		ApiBaselineWizardPage page = (ApiBaselineWizardPage) getContainer().getCurrentPage();
+		page.cancel();
+		return super.performCancel();
 	}
 }

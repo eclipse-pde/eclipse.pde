@@ -8,21 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal.provisional;
-
-import java.io.OutputStream;
+package org.eclipse.pde.api.tools.internal.provisional.model;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 
 /**
  * A collection of related API components that together make up
- * an API profile that can be compared with another profile.
+ * an {@link IApiBaseline} that can be compared with another {@link IApiBaseline}.
  * 
  * @since 1.0.0
  */
-public interface IApiProfile {
+public interface IApiBaseline extends IApiElement {
 	
 	/**
 	 * Returns all API components in this profile. The components
@@ -31,16 +29,12 @@ public interface IApiProfile {
 	 * components would be searched when performing class loading
 	 * at runtime or name resolution at compile time).
 	 *  
+	 *  This is a convenience method for retrieving all children 
+	 *  of the baseline that are {@link IApiComponent}s.
+	 *  
 	 * @return all API components in this profile
 	 */
 	public IApiComponent[] getApiComponents();
-	
-	/**
-	 * Returns a human readable name for this API profile.
-	 * 
-	 * @return baseline name
-	 */
-	public String getName();
 	
 	/**
 	 * Allows the name of the profile to be changed to the new name.
@@ -66,30 +60,6 @@ public interface IApiProfile {
 	 * @exception CoreException if an exception occurs
 	 */
 	public IApiComponent[] resolvePackage(IApiComponent sourceComponent, String packageName) throws CoreException;
-	
-	/**
-	 * Creates and returns a new API component for this profile at the specified
-	 * location or <code>null</code> if the location specified does not contain
-	 * a valid API component. The component is not added to the profile.
-	 * 
-	 * @param location absolute path in the local file system to the API component
-	 * @return API component or <code>null</code> if the location specified does not contain a valid
-	 * 	API component
-	 * @exception CoreException if unable to create the component
-	 */
-	public IApiComponent newApiComponent(String location) throws CoreException;
-
-	/**
-	 * Creates and returns a new API component for this profile based on the given
-	 * model or <code>null</code> if the given model cannot be resolved or does not contain
-	 * a valid API component. The component is not added to the profile.
-	 *
-	 * @param model the given model
-	 * @return API component or <code>null</code> if the given model cannot be resolved or does not contain
-	 * a valid API component
-	 * @exception CoreException if unable to create the component
-	 */
-	public IApiComponent newApiComponent(IPluginModelBase model) throws CoreException;
 
 	/**
 	 * Returns the API component in this profile with the given symbolic name
@@ -139,15 +109,6 @@ public interface IApiProfile {
 	 * @throws CoreException if closing fails
 	 */
 	public void close() throws CoreException;	
-	
-	/**
-	 * Writes a description of this profile to the given output stream.
-	 * The profile can be recreated using the {@link Factory}.
-	 * 
-	 * @param stream output stream to write description to
-	 * @throws CoreException if something goes terribly wrong
-	 */
-	public void writeProfileDescription(OutputStream stream) throws CoreException;
 	
 	/**
 	 * Returns all components in this profile depending on the given components.

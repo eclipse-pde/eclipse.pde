@@ -40,18 +40,18 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.SystemLibraryApiComponent;
+import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
+import org.eclipse.pde.api.tools.internal.model.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.ui.internal.ApiToolsLabelProvider;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
-import org.eclipse.pde.api.tools.ui.internal.preferences.ApiProfilesPreferencePage;
+import org.eclipse.pde.api.tools.ui.internal.preferences.ApiBaselinePreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -71,7 +71,7 @@ import org.eclipse.ui.PlatformUI;
  * or an existing one to be edited
  * @since 1.0.0
  */
-public class ApiProfileWizardPage extends WizardPage {
+public class ApiBaselineWizardPage extends WizardPage {
 	
 	/**
 	 * an EE entry (child of an api component in the viewer)
@@ -166,13 +166,13 @@ public class ApiProfileWizardPage extends WizardPage {
 			}
 			File[] files = scanLocation(plugins);
 			monitor.worked(1);
-			fProfile = Factory.newApiProfile(name);
+			fProfile = ApiModelFactory.newApiBaseline(name);
 			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 8);
 			subMonitor.beginTask(IApiToolsConstants.EMPTY_STRING, files.length); 
 			List components = new ArrayList();
 			for (int i = 0; i < files.length; i++) {
 				try {
-					IApiComponent component = fProfile.newApiComponent(files[i].getPath());
+					IApiComponent component = ApiModelFactory.newApiComponent(fProfile, files[i].getPath());
 					if (component != null) {
 						components.add(component);
 					}
@@ -212,14 +212,14 @@ public class ApiProfileWizardPage extends WizardPage {
 	 */
 	class WorkingCopyOperation implements IRunnableWithProgress {
 		
-		IApiProfile original = null, 
+		IApiBaseline original = null, 
 					workingcopy = null;
 		
 		/**
 		 * Constructor
 		 * @param original
 		 */
-		public WorkingCopyOperation(IApiProfile original) {
+		public WorkingCopyOperation(IApiBaseline original) {
 			this.original = original;
 		}
 		
@@ -231,13 +231,13 @@ public class ApiProfileWizardPage extends WizardPage {
 				IApiComponent[] components = original.getApiComponents();
 				IProgressMonitor localmonitor = SubMonitor.convert(monitor, WizardMessages.ApiProfileWizardPage_create_working_copy, components.length + 1);
 				localmonitor.subTask(WizardMessages.ApiProfileWizardPage_copy_profile_attribs);
-				workingcopy = Factory.newApiProfile(original.getName());
+				workingcopy = ApiModelFactory.newApiBaseline(original.getName());
 				localmonitor.worked(1);
 				localmonitor.subTask(WizardMessages.ApiProfileWizardPage_copy_api_components);
 				ArrayList comps = new ArrayList();
 				IApiComponent comp = null;
 				for(int i = 0; i < components.length; i++) {
-					comp = workingcopy.newApiComponent(components[i].getLocation());
+					comp = ApiModelFactory.newApiComponent(workingcopy, components[i].getLocation());
 					if(comp != null) {
 						comps.add(comp);
 					}
@@ -254,12 +254,12 @@ public class ApiProfileWizardPage extends WizardPage {
 		 * Returns the newly created {@link IApiProfile} working copy or <code>null</code>
 		 * @return the working copy or <code>null</code>
 		 */
-		public IApiProfile getWorkingCopy() {
+		public IApiBaseline getWorkingCopy() {
 			return workingcopy;
 		}
 	}
 	
-	private IApiProfile fProfile = null;
+	private IApiBaseline fProfile = null;
 	private String originalname = null;
 	
 	/**
@@ -274,7 +274,7 @@ public class ApiProfileWizardPage extends WizardPage {
 	 * Constructor
 	 * @param profile
 	 */
-	protected ApiProfileWizardPage(IApiProfile profile) {
+	protected ApiBaselineWizardPage(IApiBaseline profile) {
 		super(WizardMessages.ApiProfileWizardPage_1);
 		this.fProfile = profile;
 		setTitle(WizardMessages.ApiProfileWizardPage_1);
@@ -485,8 +485,8 @@ public class ApiProfileWizardPage extends WizardPage {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
 			return false;
 		}
-		if(!name.equals(originalname) && (((ApiProfileManager)ApiPlugin.getDefault().getApiProfileManager()).isExistingProfileName(name) &&
-				!ApiProfilesPreferencePage.isRemovedBaseline(name))) {
+		if(!name.equals(originalname) && (((ApiBaselineManager)ApiPlugin.getDefault().getApiProfileManager()).isExistingProfileName(name) &&
+				!ApiBaselinePreferencePage.isRemovedBaseline(name))) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_profile_with_that_name_exists);
 			return false;
 		}
@@ -523,10 +523,19 @@ public class ApiProfileWizardPage extends WizardPage {
 	 * @return a new {@link IApiProfile} or <code>null</code> if an error was encountered
 	 * creating the new profile
 	 */
-	public IApiProfile finish() throws IOException, CoreException {
+	public IApiBaseline finish() throws IOException, CoreException {
 		if(fProfile != null) {
 			fProfile.setName(nametext.getText().trim());
 		}	
 		return fProfile;
+	}
+	
+	/**
+	 * Cleans up the working copy if the page is cancelled
+	 */
+	public void cancel() {
+		if(fProfile != null) {
+			fProfile.dispose();
+		}
 	}
 }

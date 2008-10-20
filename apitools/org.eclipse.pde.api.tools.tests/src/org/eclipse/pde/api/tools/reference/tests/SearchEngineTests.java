@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.pde.api.tools.internal.builder.ApiUseAnalyzer;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -28,6 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
@@ -52,7 +52,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchForExtenders() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
@@ -76,7 +76,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchForExtendersByName() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
@@ -97,7 +97,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchForCallersByRegEx() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
@@ -117,7 +117,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchForExtendersInPackageByName() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
 		IApiSearchEngine engine = Factory.newSearchEngine();
@@ -139,7 +139,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchForMethodExtenders() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IApiSearchScope sourceScope = Factory.newScope(new IApiComponent[]{componentB});
@@ -181,7 +181,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchIllegalInstantiate() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("NoInstantiateClass");
@@ -205,7 +205,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchIllegalExtendsClass() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("NoExtendClass");
@@ -229,7 +229,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchIllegalImplementInterface() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("INoImplementInterface");
@@ -256,7 +256,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchIllegalImplementWithinComponent() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("INoImplementInterface");
 		componentA.getApiDescription().setRestrictions(noInst, RestrictionModifiers.NO_IMPLEMENT);
@@ -280,7 +280,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testIgnoreIllegalImplementWithinComponent() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("INoImplementInterface");
 		componentA.getApiDescription().setRestrictions(noInst, RestrictionModifiers.NO_IMPLEMENT);
@@ -302,7 +302,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException 
 	 */
 	public void testXMLReferences() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noInst = Factory.packageDescriptor("component.a").getType("INoImplementInterface");
@@ -340,7 +340,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchIllegalMethodReference() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noCall = Factory.packageDescriptor("component.a").getType("MethodNoReference");
@@ -376,7 +376,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchIllegalFieldReference() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noCall = Factory.packageDescriptor("component.a").getType("FieldNoReference");
@@ -411,7 +411,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchIllegalInterfaceMethodReference() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IReferenceTypeDescriptor noCall = Factory.packageDescriptor("component.a").getType("MethodNoReferenceInterface");
@@ -441,7 +441,7 @@ public class SearchEngineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testSearchSystemLibrary() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent[] components = profile.getApiComponents();
 		IApiComponent systemComp = null;
 		for (int i = 0; i < components.length; i++) {

@@ -10,13 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
-import java.io.File;
-import java.io.InputStream;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.ApiProfile;
-import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.descriptors.ResourceDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -41,40 +36,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public class Factory {
 
-	/**
-	 * Creates a new empty API profile with the given name. Its execution
-	 * environment will be automatically resolved when components are added
-	 * to it.
-	 * <p>
-	 * Note, a profile can only automatically resolve an execution environment
-	 * when it is created within an Eclipse SDK. A profile created in a non-OSGi
-	 * environment must have its execution environment specified at creation
-	 * time.
-	 * </p>
-	 *
-	 * @param name profile name
-	 */
-	public static IApiProfile newApiProfile(String name) {
-		return new ApiProfile(name);
-	}
-	
-	/**
-	 * Creates a new empty API profile with the specified execution environment.
-	 * <p>
-	 * The execution environment description file describes how an execution 
-	 * environment profile is provided by or mapped to a specific JRE. The format for
-	 * this file is described here
-	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
-	 * </p>
-	 * @param name profile name
-	 * @param eeDescription execution environment description file
-	 * @return API profile
-	 * @throws CoreException if unable to create a new profile with the specified attributes 
-	 */
-	public static IApiProfile newApiProfile(String name, File eeDescription) throws CoreException {
-		return new ApiProfile(name, eeDescription);
-	}
-	
 	/**
 	 * Returns a package descriptor for the package with the given name.
 	 * An empty string indicates the default package. Package names are
@@ -184,19 +145,6 @@ public class Factory {
 	 */
 	public static IApiSearchEngine newSearchEngine() {
 		return new SearchEngine();
-	}
-	
-	/**
-	 * Creates and returns an API profile from the given input stream. The
-	 * contents of the stream must have been created with
-	 * {@link IApiProfile#writeProfileDescription(java.io.OutputStream)}.
-	 * 
-	 * @param descriptionStream profile description
-	 * @return API profile
-	 * @exception CoreException if unable to create a profile from the stream
-	 */
-	public static IApiProfile createProfile(InputStream descriptionStream) throws CoreException {
-		return ApiProfileManager.restoreProfile(descriptionStream);
 	}
 	
 	/**

@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.tests;
 
 import junit.framework.TestCase;
 
-import org.eclipse.pde.api.tools.internal.model.TypeStructureCache;
+import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 
 /**
  * Test to write out type structure statistics. Used for performance tuning.

@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.pde.api.tools.internal.builder.BaseApiAnalyzer;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
@@ -31,8 +31,8 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 public class OSGiLessAnalysisTests extends TestCase {
 	
 	public void testAnalyzer() throws CoreException {
-		IApiProfile baseline = TestSuiteHelper.createTestingProfile("test-analyzer-1");
-		IApiProfile current = TestSuiteHelper.createTestingProfile("test-analyzer-2");
+		IApiBaseline baseline = TestSuiteHelper.createTestingProfile("test-analyzer-1");
+		IApiBaseline current = TestSuiteHelper.createTestingProfile("test-analyzer-2");
 		BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 		IApiComponent component = current.getApiComponent("test.bundle.a");
 		assertNotNull("Missing API component test.bundle.a", component);

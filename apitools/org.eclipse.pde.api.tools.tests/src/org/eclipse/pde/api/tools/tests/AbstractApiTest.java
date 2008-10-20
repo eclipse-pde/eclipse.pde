@@ -26,7 +26,7 @@ import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 
 /**
  * Abstract class with commonly used methods for API Tooling tests
@@ -70,7 +70,7 @@ public class AbstractApiTest extends TestCase {
 	 */
 	protected IApiComponent getProjectApiComponent(String projectname) {
 		IJavaProject project = getTestingJavaProject(projectname);
-		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
+		IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
 		assertNotNull("the workspace profile must exist", profile);
 		return profile.getApiComponent(project.getElementName());
 	}

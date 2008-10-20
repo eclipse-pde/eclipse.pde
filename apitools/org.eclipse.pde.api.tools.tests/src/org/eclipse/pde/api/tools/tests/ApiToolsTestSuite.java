@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
 import org.eclipse.pde.api.tools.builder.tests.OSGiLessAnalysisTests;
 import org.eclipse.pde.api.tools.comparator.tests.AllDeltaTests;
 import org.eclipse.pde.api.tools.model.tests.ApiDescriptionTests;
-import org.eclipse.pde.api.tools.model.tests.ApiProfileTests;
+import org.eclipse.pde.api.tools.model.tests.ApiBaselineTests;
 import org.eclipse.pde.api.tools.model.tests.ClassFileContainerTests;
 import org.eclipse.pde.api.tools.model.tests.ClassFileScannerTests;
 import org.eclipse.pde.api.tools.model.tests.ComponentManifestTests;
@@ -55,7 +55,7 @@ public class ApiToolsTestSuite extends TestSuite {
 		addTest(new TestSuite(TagScannerTests.class));
 		addTest(new TestSuite(ComponentManifestTests.class));
 		addTest(new TestSuite(UtilTests.class));
-		addTest(new TestSuite(ApiProfileTests.class));
+		addTest(new TestSuite(ApiBaselineTests.class));
 		addTest(new TestSuite(ClassFileContainerTests.class));
 		addTest(new TestSuite(ClassFileScannerTests.class));
 		addTest(new TestSuite(ComponentManifestTests.class));

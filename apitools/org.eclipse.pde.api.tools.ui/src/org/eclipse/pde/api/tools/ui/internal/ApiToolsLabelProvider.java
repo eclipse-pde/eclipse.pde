@@ -21,13 +21,13 @@ import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
-import org.eclipse.pde.api.tools.ui.internal.wizards.ApiProfileWizardPage.EEEntry;
+import org.eclipse.pde.api.tools.ui.internal.wizards.ApiBaselineWizardPage.EEEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -77,7 +77,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		if (element instanceof File) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
-		if(element instanceof IApiProfile) {
+		if(element instanceof IApiBaseline) {
 			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE);
 		}
 		if(element instanceof EEEntry) {
@@ -113,8 +113,8 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 				return ((File)element).getName();
 			}
 		}
-		if(element instanceof IApiProfile) {
-			IApiProfile profile  = (IApiProfile) element;
+		if(element instanceof IApiBaseline) {
+			IApiBaseline profile  = (IApiBaseline) element;
 			return profile.getName();
 		}
 		if(element instanceof EEEntry) {
@@ -146,9 +146,9 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	 * @return if the profile is the default or not
 	 */
 	protected boolean isDefaultProfile(Object element) {
-		if(element instanceof IApiProfile) {
-			IApiProfile profile = (IApiProfile) element;
-			IApiProfile def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
+		if(element instanceof IApiBaseline) {
+			IApiBaseline profile = (IApiBaseline) element;
+			IApiBaseline def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline();
 			if(def != null) {
 				return profile.getName().equals(def.getName());
 			}

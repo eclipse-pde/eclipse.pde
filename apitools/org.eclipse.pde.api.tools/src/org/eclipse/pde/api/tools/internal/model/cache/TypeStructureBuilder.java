@@ -9,11 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.api.tools.internal.model;
+package org.eclipse.pde.api.tools.internal.model.cache;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.eclipse.pde.api.tools.internal.model.ApiMethod;
+import org.eclipse.pde.api.tools.internal.model.ApiType;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;

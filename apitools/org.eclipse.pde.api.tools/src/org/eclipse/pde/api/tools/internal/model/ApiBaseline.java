@@ -8,20 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal;
+package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,18 +28,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
@@ -62,63 +51,35 @@ import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
+import org.eclipse.pde.api.tools.internal.AnyValue;
+import org.eclipse.pde.api.tools.internal.CoreMessages;
+import org.eclipse.pde.api.tools.internal.SystemLibraryApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Implementation of an API profile.
+ * Implementation of an {@link IApiBaseline}
  * 
  * @since 1.0
  */
-public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
-	/**
-	 * Constant used for controlling tracing in the example class
-	 */
-	private static boolean DEBUG = Util.DEBUG;
+public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallChangedListener {
 	
 	/**
-	 * Method used for initializing tracing in the example class
+	 * Empty array of component
 	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
-
-	public static IWorkspaceRoot ROOT;
-	public static IPath ROOT_LOCATION_PATH;
-
-	static {
-		try {
-			ROOT = ResourcesPlugin.getWorkspace().getRoot();
-			ROOT_LOCATION_PATH = ROOT.getLocation();
-		} catch(IllegalStateException e) {
-			// ignore
-		}
-	}
-	private IApiComponent[] EMPTY_COMPONENTS = new IApiComponent[0];
-	
-	/**
-	 * profile name
-	 */
-	private String fName;
+	private static final IApiComponent[] EMPTY_COMPONENTS = new IApiComponent[0];
 	
 	/**
 	 * OSGi bundle state
 	 */
 	private State fState;
-	
-	/**
-	 * Next available bundle id
-	 */
-	private long fNextId = 0L; 
 	
 	/**
 	 * Execution environment identifier
@@ -152,24 +113,18 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	 * For each package the cache contains a map of API components that provide that package,
 	 * by source component name (including the <code>null</code> component name).
 	 */
-	private HashMap fComponentsCache = null;
-	
-	/**
-	 * Maps bundle descriptions to components.
-	 * <p>Map of <code>BundleDescription.getSymbolicName() + BundleDescription.getVersion().toString() -> {@link IApiComponent}</code></p>
-	 */
-	private Map fComponents = null;
+	private HashMap fComponentsProvidingPackageCache = null;
 	
 	/**
 	 * Maps component id's to components.
 	 * <p>Map of <code>componentId -> {@link IApiComponent}</code></p>
 	 */
-	private Map fComponentsById = null;
+	private HashMap fComponentsById = null;
 	
 	/**
 	 * Cache of system package names
 	 */
-	private Set fSystemPackageNames = null;
+	private HashSet fSystemPackageNames = null;
 	
 	/**
 	 * The VM install this profile is bound to for system libraries or <code>null</code>.
@@ -182,11 +137,10 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	 * 
 	 * @param name profile name
 	 */
-	public ApiProfile(String name) {
-		fName = name;
+	public ApiBaseline(String name) {
+		super(null, IApiElement.BASELINE, name);
 		fAutoResolve = true;
 		fEEStatus = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_0);
-		fState = StateObjectFactory.defaultFactory.createState(true);
 	}	
 		
 	/**
@@ -196,7 +150,7 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	 * @param eeDescriptoin execution environment description file
 	 * @throws CoreException if unable to create a profile with the given attributes
 	 */
-	public ApiProfile(String name, File eeDescription) throws CoreException {
+	public ApiBaseline(String name, File eeDescription) throws CoreException {
 		this(name);
 		fAutoResolve = false;
 		EEVMType.clearProperties(eeDescription);
@@ -205,7 +159,7 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID,
 				MessageFormat.format(CoreMessages.ApiProfile_1, new String[]{profile}));
 	}
-	
+
 	/**
 	 * Initializes this profile to resolve in the execution environment
 	 * associated with the given symbolic name.
@@ -305,7 +259,7 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		dictionary.put("osgi.arch", ANY_VALUE); //$NON-NLS-1$
 		dictionary.put("osgi.ws", ANY_VALUE); //$NON-NLS-1$
 		dictionary.put("osgi.nl", ANY_VALUE); //$NON-NLS-1$
-		fState.setPlatformProperties(dictionary);
+		getState().setPlatformProperties(dictionary);
 		// clean up previous system library
 		if (fSystemLibraryComponent != null && fComponentsById != null) {
 			fComponentsById.remove(fSystemLibraryComponent.getId());
@@ -324,9 +278,9 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	 * Clears the package -> components cache and sets it to <code>null</code>
 	 */
 	private void clearComponentsCache() {
-		if(fComponentsCache != null) {
-			fComponentsCache.clear();
-			fComponentsCache = null;
+		if(fComponentsProvidingPackageCache != null) {
+			fComponentsProvidingPackageCache.clear();
+			fComponentsProvidingPackageCache = null;
 		}
 	}
 	
@@ -355,55 +309,12 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 				continue;
 			}
 			BundleDescription description = component.getBundleDescription();
-			fState.addBundle(description);
-			storeBundleDescription(description, component);
+			getState().addBundle(description);
 			addComponent(component);
 			ees.addAll(Arrays.asList(component.getExecutionEnvironments()));
 		}
 		resolveSystemLibrary(ees);
-		fState.resolve();
-		if (DEBUG) {
-			ResolverError[] errors = getErrors();
-			int length = errors.length;
-			if (length != 0) {
-				System.out.println("Errors found during state resolution"); //$NON-NLS-1$
-				for (int i = 0; i < length; i++) {
-					ResolverError resolverError = errors[i];
-					System.err.println(resolverError);
-				}
-				System.out.println("All components added to the state"); //$NON-NLS-1$
-				BundleDescription[] bundles = fState.getBundles();
-				Arrays.sort(bundles, new Comparator() {
-					public int compare(Object o1, Object o2) {
-						BundleDescription bundleDescription1 = (BundleDescription) o1;
-						BundleDescription bundleDescription2 = (BundleDescription) o2;
-						return bundleDescription1.getSymbolicName().compareTo(bundleDescription2.getSymbolicName());
-					}
-				});
-				for (int i = 0, max = bundles.length; i < max; i++) {
-					BundleDescription bundleDescription = bundles[i];
-					System.out.println("bundle descriptions added to the state[" + i + "] : " + bundleDescription.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				System.out.println("All available components"); //$NON-NLS-1$
-				Arrays.sort(components, new Comparator() {
-					public int compare(Object o1, Object o2) {
-						IApiComponent component1 = (IApiComponent) o1;
-						IApiComponent component2 = (IApiComponent) o2;
-						return component1.getId().compareTo(component2.getId());
-					}
-				});
-				for (int i = 0, max = components.length; i < max; i++) {
-					IApiComponent component = components[i];
-					if (component instanceof PluginProjectApiComponent) {
-						System.out.println("workspace component[" + i + "] : " + component); //$NON-NLS-1$ //$NON-NLS-2$
-					} else {
-						System.out.println("Binary component   [" + i + "] : " + component); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-				}
-			} else {
-				System.out.println("No errors found during state resolution"); //$NON-NLS-1$
-			}
-		}
+		getState().resolve();
 	}
 
 	/**
@@ -515,10 +426,21 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		}
 	}
 
+	/**
+	 * Returns true if the {@link IApiBaseline} has infos loaded (components) false otherwise.
+	 * This is a handle only method that will not load infos.
+	 * 
+	 * @return true if the {@link IApiBaseline} has infos loaded (components) false otherwise.
+	 */
+	public boolean peekInfos() {
+		return fComponentsById != null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see IApiProfile#getApiComponents()
 	 */
 	public IApiComponent[] getApiComponents() {
+		loadBaselineInfos();
 		if(fComponentsById == null) {
 			return EMPTY_COMPONENTS;
 		}
@@ -527,22 +449,15 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	}
 	
 	/* (non-Javadoc)
-	 * @see IApiProfile#getName()
-	 */
-	public String getName() {
-		return fName;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfile#resolvePackage(org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String)
 	 */
 	public synchronized IApiComponent[] resolvePackage(IApiComponent sourceComponent, String packageName) throws CoreException {
 		HashMap componentsForPackage = null;
-		if(fComponentsCache != null){
-			componentsForPackage = (HashMap) fComponentsCache.get(packageName);
+		if(fComponentsProvidingPackageCache != null){
+			componentsForPackage = (HashMap) fComponentsProvidingPackageCache.get(packageName);
 		}
 		else {
-			fComponentsCache = new HashMap(8);
+			fComponentsProvidingPackageCache = new HashMap(8);
 		}
 		IApiComponent[] cachedComponents = null;
 		if (componentsForPackage != null) {
@@ -552,7 +467,7 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 			}
 		} else {
 			componentsForPackage = new HashMap(8);
-			fComponentsCache.put(packageName, componentsForPackage);
+			fComponentsProvidingPackageCache.put(packageName, componentsForPackage);
 		}
 		// check system packages first
 		if (isSystemPackage(packageName)) {
@@ -590,13 +505,13 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		if (component instanceof BundleApiComponent) {
 			BundleDescription bundle = ((BundleApiComponent)component).getBundleDescription();
 			if (bundle != null) {
-				StateHelper helper = fState.getStateHelper();
+				StateHelper helper = getState().getStateHelper();
 				ExportPackageDescription[] visiblePackages = helper.getVisiblePackages(bundle);
 				for (int i = 0; i < visiblePackages.length; i++) {
 					ExportPackageDescription pkg = visiblePackages[i];
 					if (packageName.equals(pkg.getName())) {
 						BundleDescription bundleDescription = pkg.getExporter();
-						IApiComponent exporter = getBundleDescription(bundleDescription);
+						IApiComponent exporter = getApiComponent(bundleDescription.getSymbolicName());
 						if (exporter != null) {
 							componentsList.add(exporter);
 						}
@@ -613,6 +528,7 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 			}
 		}
 	}
+	
 	/**
 	 * Returns whether the specified package is supplied by the system
 	 * library.
@@ -626,7 +542,7 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 			return true;
 		}
 		if (fSystemPackageNames == null) {
-			ExportPackageDescription[] systemPackages = fState.getSystemPackages();
+			ExportPackageDescription[] systemPackages = getState().getSystemPackages();
 			fSystemPackageNames = new HashSet(systemPackages.length);
 			for (int i = 0; i < systemPackages.length; i++) {
 				fSystemPackageNames.add(systemPackages[i].getName());
@@ -634,79 +550,22 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		}
 		return fSystemPackageNames.contains(packageName);
 	}
-
-	
-	/* (non-Javadoc)
-	 * @see IApiProfile#newApiComponent(java.lang.String)
-	 */
-	public IApiComponent newApiComponent(String location) throws CoreException {
-		BundleApiComponent component = new BundleApiComponent(this, location);
-		if(component.isValidBundle()) {
-			component.init(fState, nextId());
-			return component;
-		}
-		return null;
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see IApiProfile#newApiComponent(IPluginModelBase)
-	 */
-	public IApiComponent newApiComponent(IPluginModelBase model) throws CoreException {
-		BundleDescription bundleDescription = model.getBundleDescription();
-		if (bundleDescription == null) {
-			return null;
-		}
-		String location = bundleDescription.getLocation();
-		if (location == null) {
-			return null;
-		}
-		IPath pathForLocation = new Path(location);
-		BundleApiComponent component = null;
-		if (ROOT_LOCATION_PATH != null && ROOT_LOCATION_PATH.isPrefixOf(pathForLocation)) {
-			if(isValidProject(location)) {
-				component = new PluginProjectApiComponent(this, location, model);
-			}
-		} else {
-			component = new BundleApiComponent(this, location);
-		}
-		if(component != null && component.isValidBundle()) {
-			component.init(fState, nextId());
-			return component;
-		}
-		return null;
-	}
-
-	/**
-	 * Returns if the specified location is a valid API project or not.
-	 * <p>
-	 * We accept projects that are plug-ins even if not API enabled (i.e.
-	 * with API nature), as we still need them to make a complete
-	 * API profile without resolution errors.
-	 * </p> 
-	 * @param location
-	 * @return true if the location is valid, false otherwise
-	 * @throws CoreException
-	 */
-	private boolean isValidProject(String location) throws CoreException {
-		IPath path = new Path(location);
-		IProject project = ApiProfile.ROOT.getProject(path.lastSegment());
-		return project != null && project.exists();
-	}
 	
 	/**
-	 * Returns the next available bundle identifier.
-	 * 
-	 * @return next available bundle identifier
+	 * @return the OSGi state for this {@link IApiProfile}
 	 */
-	private long nextId() {
-		return ++fNextId;
+	public State getState() {
+		if(fState == null) {
+			fState = StateObjectFactory.defaultFactory.createState(true);
+		}
+		return fState;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfile#getApiComponent(java.lang.String)
 	 */
 	public IApiComponent getApiComponent(String id) {
+		loadBaselineInfos();
 		if(fComponentsById == null) {
 			return null;
 		}
@@ -721,113 +580,62 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	}
 	
 	/**
+	 * Loads the infos from the *.profile file the first time the baseline is accessed
+	 */
+	private void loadBaselineInfos() {
+		if(fComponentsById != null) {
+			return;
+		}
+		try {
+			ApiBaselineManager.getManager().loadBaselineInfos(this);
+		}
+		catch(CoreException ce) {
+			ApiPlugin.log(ce);
+		}
+	}
+	
+	/**
 	 * Returns all errors in the state.
 	 * 
 	 * @return state errors
 	 */
 	public ResolverError[] getErrors() {
 		List errs = new ArrayList();
-		BundleDescription[] bundles = fState.getBundles();
+		BundleDescription[] bundles = getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
-			ResolverError[] errors = fState.getResolverErrors(bundles[i]);
+			ResolverError[] errors = getState().getResolverErrors(bundles[i]);
 			for (int j = 0; j < errors.length; j++) {
 				errs.add(errors[j]);
 			}
 		}
 		return (ResolverError[]) errs.toArray(new ResolverError[errs.size()]);
 	}
-
-	/* (non-Javadoc)
-	 * @see IApiProfile#setName(java.lang.String)
+	
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.model.ApiElement#setName(java.lang.String)
 	 */
 	public void setName(String name) {
-		if(name != null) {
-			fName = name;
-		}
-	}
-
-	/**
-	 * Returns a file to the root of the specified bundle or <code>null</code>
-	 * if none. Searches for plug-ins based on the "requiredBundles" system
-	 * property.
-	 * 
-	 * @param bundleName symbolic name
-	 * @return bundle root or <code>null</code>
-	 */
-	static File getBundle(String bundleName) {
-		String root = System.getProperty("requiredBundles"); //$NON-NLS-1$
-		if (root != null) {
-			File bundlesRoot = new File(root);
-			if (bundlesRoot.exists() && bundlesRoot.isDirectory()) {
-				File[] bundles = bundlesRoot.listFiles();
-				if (bundles != null) {
-					StringBuffer buffer = new StringBuffer(bundleName);
-					buffer.append('_');
-					String key = String.valueOf(buffer);
-					for (int i = 0; i < bundles.length; i++) {
-						File file = bundles[i];
-						if (file.getName().startsWith(key)) {
-							return file;
-						}
-					}
-				}
-			}
-		}
-		return null;
+		super.setName(name);
 	}
 	
 	/**
-	 * Retrieve the properties from the OSGi bundle (jar)
-	 * 
-	 * @param location the location to look
-	 * @param ee the id of the execution environment
-	 * @return the ee properties file or <code>null</code> if it could not be created 
-	 * @throws CoreException
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	static Properties getEEProfile(File location, String ee) throws CoreException {
-		String filename = ee + ".profile"; //$NON-NLS-1$
-		InputStream is = null;
-		ZipFile zipFile = null;
-		try {
-			// find the input stream to the profile properties file
-			if (location.isDirectory()) {
-				File file = new File(location, filename);
-				if (file.exists())
-					is = new FileInputStream(file);
-			} else {
-				try {
-					zipFile = new ZipFile(location, ZipFile.OPEN_READ);
-					ZipEntry entry = zipFile.getEntry(filename);
-					if (entry != null)
-						is = zipFile.getInputStream(entry);
-				} catch (IOException e) {
-					// nothing to do
-				}
-			}
-			if (is != null) {
-				Properties profile = new Properties();
-				profile.load(is);
-				return profile;
-			}
-		} catch (IOException e) {
-			// nothing to do
-		} finally {
-			if (is != null)
-				try {
-					is.close();
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				}
-			if (zipFile != null)
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				}
+	public boolean equals(Object obj) {
+		if(obj instanceof IApiBaseline) {
+			IApiBaseline baseline = (IApiBaseline) obj;
+			return this.getName().equals(baseline.getName());
 		}
-		return null;
+		return super.equals(obj);
 	}
-
+	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return this.getName().hashCode();
+	}
+	
 	/* (non-Javadoc)
 	 * @see IApiProfile#dispose()
 	 */
@@ -838,10 +646,6 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		IApiComponent[] components = getApiComponents();
 		for (int i = 0; i < components.length; i++) {
 			components[i].dispose();
-		}
-		if(fComponents != null) {
-			fComponents.clear();
-			fComponents = null;
 		}
 		clearComponentsCache();
 		if(fComponentsById != null) {
@@ -857,9 +661,9 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 		}
 		fState = null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfile#close()
+
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline#close()
 	 */
 	public void close() throws CoreException {
 		IApiComponent[] components = getApiComponents();
@@ -869,94 +673,11 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProfile#writeProfileDescription(java.io.OutputStream)
-	 */
-	public void writeProfileDescription(OutputStream stream) throws CoreException {
-		String xml = getProfileXML(this);
-		try {
-			stream.write(xml.getBytes(IApiCoreConstants.UTF_8));
-		} catch (UnsupportedEncodingException e) {
-			abort("Error writing pofile descrition", e); //$NON-NLS-1$
-		} catch (IOException e) {
-			abort("Error writing pofile descrition", e); //$NON-NLS-1$
-		}
-	}
-
-	/**
-	 * Returns an XML description of the given profile.
-	 * 
-	 * @param profile API profile
-	 * @return XML
-	 * @throws CoreException
-	 */
-	private String getProfileXML(IApiProfile profile) throws CoreException {
-		// pool bundles by location
-		Map pools = new HashMap();
-		List unRooted = new ArrayList();
-		IApiComponent[] components = profile.getApiComponents();
-		for(int i = 0; i < components.length; i++) {
-			if(!components[i].isSystemComponent()) {
-				String location = components[i].getLocation();
-				File file = new File(location);
-				if (file.exists()) {
-					File dir = file.getParentFile();
-					if (dir != null) {
-						List pool = (List) pools.get(dir);
-						if (pool == null) {
-							pool = new ArrayList();
-							pools.put(dir, pool);
-						}
-						pool.add(components[i]);
-					} else {
-						unRooted.add(components[i]);
-					}
-				}
-				
-			}
-		}
-		Document document = Util.newDocument();
-		Element root = document.createElement(IApiXmlConstants.ELEMENT_APIPROFILE);
-		document.appendChild(root);
-		root.setAttribute(IApiXmlConstants.ATTR_NAME, profile.getName());
-		root.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_PROFILE_CURRENT_VERSION);
-		// dump component pools
-		Element subroot = null;
-		File dir = null;
-		List comps = null;
-		IApiComponent comp = null;
-		Element celement = null;
-		for(Iterator iter = pools.keySet().iterator(); iter.hasNext();) {
-			dir = (File) iter.next();
-			subroot = document.createElement(IApiXmlConstants.ELEMENT_POOL);
-			root.appendChild(subroot);
-			subroot.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(dir.getAbsolutePath()).toPortableString());
-			comps = (List) pools.get(dir);
-			for(Iterator iter2 = comps.iterator(); iter2.hasNext();) {
-				comp = (IApiComponent) iter2.next();
-				celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
-				celement.setAttribute(IApiXmlConstants.ATTR_ID, comp.getId());
-				celement.setAttribute(IApiXmlConstants.ATTR_VERSION, comp.getVersion());
-				subroot.appendChild(celement);
-			}
-		}
-		// dump un-pooled components
-		for(Iterator iter = unRooted.iterator(); iter.hasNext();) {
-			comp = (IApiComponent) iter.next();
-			celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
-			celement.setAttribute(IApiXmlConstants.ATTR_ID, comp.getId());
-			celement.setAttribute(IApiXmlConstants.ATTR_VERSION, comp.getVersion());
-			celement.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(comp.getLocation()).toPortableString());
-			root.appendChild(celement);
-		}
-		return Util.serializeDocument(document);
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiProfile#getDependentComponents(org.eclipse.pde.api.tools.IApiComponent[])
 	 */
 	public IApiComponent[] getDependentComponents(IApiComponent[] components) {
 		ArrayList bundles = getBundleDescriptions(components);
-		BundleDescription[] bundleDescriptions = fState.getStateHelper().getDependentBundles((BundleDescription[]) bundles.toArray(new BundleDescription[bundles.size()]));
+		BundleDescription[] bundleDescriptions = getState().getStateHelper().getDependentBundles((BundleDescription[]) bundles.toArray(new BundleDescription[bundles.size()]));
 		return getApiComponents(bundleDescriptions);
 	}
 
@@ -1000,42 +721,18 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	 */
 	public IApiComponent[] getPrerequisiteComponents(IApiComponent[] components) {
 		ArrayList bundles = getBundleDescriptions(components);
-		BundleDescription[] bundlesDescriptions = fState.getStateHelper().getPrerequisites((BundleDescription[]) bundles.toArray(new BundleDescription[bundles.size()]));
+		BundleDescription[] bundlesDescriptions = getState().getStateHelper().getPrerequisites((BundleDescription[]) bundles.toArray(new BundleDescription[bundles.size()]));
 		return getApiComponents(bundlesDescriptions);
 	}
-	
-	/**
-	 * Gets the {@link BundleDescription} from the cache, if present
-	 * @param bundleDescription
-	 * @return the {@link BundleDescription} or <code>null</code>
-	 */
-	private IApiComponent getBundleDescription(BundleDescription bundleDescription) {
-		if(fComponents == null) {
-			return null;
-		}
-		return (IApiComponent) fComponents.get(bundleDescription.getSymbolicName() + bundleDescription.getVersion().toString());
-	}
-	
-	/**
-	 * Stores the given component in the cache keyed by {@link BundleDescription} symbolic name + version 
-	 * @param bundleDescription
-	 * @param component
-	 */
-	private void storeBundleDescription(BundleDescription bundleDescription, IApiComponent component) {
-		if(fComponents == null) {
-			fComponents = new HashMap(8);
-		}
-		fComponents.put(bundleDescription.getSymbolicName() + bundleDescription.getVersion().toString(), component);
-	}
-	
+
 	/**
 	 * Clear cached settings for the given package.
 	 * 
 	 * @param packageName
 	 */
 	protected synchronized void clearPackage(String packageName) {
-		if(fComponentsCache != null) {
-			fComponentsCache.remove(packageName);
+		if(fComponentsProvidingPackageCache != null) {
+			fComponentsProvidingPackageCache.remove(packageName);
 		}
 	}
 	
@@ -1056,8 +753,7 @@ public class ApiProfile implements IApiProfile, IVMInstallChangedListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
 	 */
-	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
-	}
+	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)

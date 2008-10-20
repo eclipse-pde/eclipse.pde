@@ -38,16 +38,16 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.compiler.batch.Main;
+import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
-import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -72,16 +72,16 @@ public class TestSuiteHelper {
 	 * @return API profile
 	 * @throws CoreException
 	 */
-	public static IApiProfile createProfile(String name, File rootDirectory) throws CoreException {
+	public static IApiBaseline createProfile(String name, File rootDirectory) throws CoreException {
 		File eeFile = getEEDescriptionFile();
-		IApiProfile baseline = newApiProfile(name, eeFile);
+		IApiBaseline baseline = newApiProfile(name, eeFile);
 		// create a component for each jar/directory in the folder
 		File[] files = rootDirectory.listFiles();
 		List<IApiComponent> components = new ArrayList<IApiComponent>();
 		Set<String> requiredComponents = new HashSet<String>();
 		for (int i = 0; i < files.length; i++) {
 			File bundle = files[i];
-			IApiComponent component = baseline.newApiComponent(bundle.getAbsolutePath());
+			IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
 			if(component != null) {
 				components.add(component);
 				requiredComponents.add(component.getId());
@@ -104,7 +104,7 @@ public class TestSuiteHelper {
 	 * @return
 	 * @throws CoreException
 	 */
-	public static IApiProfile createTestingProfile(String testDirectory) throws CoreException {
+	public static IApiBaseline createTestingProfile(String testDirectory) throws CoreException {
 		return createTestingProfile(new Path(testDirectory));
 	}
 	
@@ -159,7 +159,7 @@ public class TestSuiteHelper {
 			}
 			public void dispose() {
 			}
-			public IApiProfile getProfile() {
+			public IApiBaseline getProfile() {
 				return null;
 			}
 			public IApiFilterStore getFilterStore() {
@@ -197,13 +197,13 @@ public class TestSuiteHelper {
 	 * <code>null</code> is returned
 	 * @throws CoreException
 	 */
-	public static IApiProfile createTestingProfile(IPath testDirectory) throws CoreException {
+	public static IApiBaseline createTestingProfile(IPath testDirectory) throws CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append(testDirectory);
 		File file = path.toFile();
 		if(file.exists()) {
 			File eeFile = getEEDescriptionFile();
-			IApiProfile baseline = newApiProfile("test", eeFile);
+			IApiBaseline baseline = newApiProfile("test", eeFile);
 			// create a component for each jar/directory in the folder
 			File[] files = file.listFiles();
 			List<IApiComponent> components = new ArrayList<IApiComponent>();
@@ -212,7 +212,7 @@ public class TestSuiteHelper {
 				File bundle = files[i];
 				if (!bundle.getName().equals("CVS")) {
 					// ignore CVS folder
-					IApiComponent component = baseline.newApiComponent(bundle.getAbsolutePath());
+					IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
 					if(component != null) {
 						components.add(component);
 						requiredComponents.add(component.getId());
@@ -243,8 +243,8 @@ public class TestSuiteHelper {
 	 * @return API baseline
 	 * @exception CoreException if unable to create a baseline
 	 */
-	public static IApiProfile newApiProfile(String name, File eeFile) throws CoreException {
-		return Factory.newApiProfile(name, eeFile);
+	public static IApiBaseline newApiProfile(String name, File eeFile) throws CoreException {
+		return ApiModelFactory.newApiBaseline(name, eeFile);
 	}
 
 	/**
@@ -318,7 +318,7 @@ public class TestSuiteHelper {
 	 * @param collection collection to add prerequisites to.
 	 * @throws CoreException 
 	 */
-	public static void addAllRequired(IApiProfile baseline, Set<String> done, IApiComponent component, List<IApiComponent> collection) throws CoreException {
+	public static void addAllRequired(IApiBaseline baseline, Set<String> done, IApiComponent component, List<IApiComponent> collection) throws CoreException {
 		IRequiredComponentDescription[] descriptions = component.getRequiredComponents();
 		boolean error = false;
 		StringBuffer buffer = new StringBuffer();
@@ -332,7 +332,7 @@ public class TestSuiteHelper {
 						error = true;
 					}
 				} else {
-					IApiComponent apiComponent = baseline.newApiComponent(bundle.getAbsolutePath());
+					IApiComponent apiComponent = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
 					collection.add(apiComponent);
 					done.add(apiComponent.getId());
 					addAllRequired(baseline, done, apiComponent, collection);

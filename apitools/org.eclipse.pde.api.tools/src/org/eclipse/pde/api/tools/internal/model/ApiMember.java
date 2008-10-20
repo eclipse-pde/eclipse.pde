@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 
@@ -21,11 +22,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
  * @since 1.0.0
  * @noextend This class is not intended to be subclassed by clients.
  */
-public abstract class ApiMember implements IApiMember {
-
-	private String fName;
-	private int fType;
-	private IApiType fEnclosing;
+public abstract class ApiMember extends ApiElement implements IApiMember {
+	
 	private int fFlags = -1;
 	private String fSignature;
 	private String fGenericSignature;
@@ -34,17 +32,14 @@ public abstract class ApiMember implements IApiMember {
 	 * Constructs a member enclosed by the given type with the specified
 	 * name, type constant, and flags (modifiers).
 	 *  
-	 * @param enclosing enclosing type or <code>null</code> if unknown
-	 *  or a top-level type.
+	 * @param parent the parent {@link IApiElement} for this type
 	 * @param name member name
 	 * @param signature signature (type or method)
 	 * @param type see element type constants in {@link IApiMember}
 	 * @param flags modifier flags
 	 */
-	protected ApiMember(IApiType enclosing, String name, String signature, String genericSig, int type, int flags) {
-		fEnclosing = enclosing;
-		fName = name;
-		fType = type;
+	protected ApiMember(IApiElement parent, String name, String signature, String genericSig, int type, int flags) {
+		super(parent, type, name);
 		fFlags = flags;
 		fSignature = signature;
 		fGenericSignature = genericSig;
@@ -74,29 +69,16 @@ public abstract class ApiMember implements IApiMember {
 	public int getModifiers() {
 		return fFlags;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getName()
-	 */
-	public String getName() {
-		return fName;
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getEnclosingType()
 	 */
 	public IApiType getEnclosingType() throws CoreException {
-		if (fEnclosing == null) {
-			// TODO: resolve enclosing type
+		IApiType type = (IApiType) getAncestor(IApiElement.TYPE); 
+		if(type == null) {
+			//TODO resolve?
 		}
-		return fEnclosing;
-	}
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getElementType()
-	 */
-	public int getElementType() {
-		return fType;
+		return type;
 	}
 
 	/* (non-Javadoc)
@@ -104,10 +86,12 @@ public abstract class ApiMember implements IApiMember {
 	 */ 
 	public IApiComponent getApiComponent() {
 		try {
-			return getEnclosingType().getApiComponent();
-		} catch (CoreException e) {
-			// should never happen for type members
-		}
+			IApiType type = getEnclosingType();
+			if(type != null) {
+				return type.getApiComponent();
+			}
+		} 
+		catch (CoreException e) {}
 		return null;
 	}
 	
@@ -115,26 +99,45 @@ public abstract class ApiMember implements IApiMember {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
-		if (obj instanceof ApiMember) {
-			ApiMember mem = (ApiMember) obj;
-			return fEnclosing.equals(mem.fEnclosing)
-			 && getName().equals(mem.getName());
+		if (obj instanceof IApiElement) {
+			IApiElement element = (IApiElement) obj;
+			if(element.getType() == this.getType()) {
+				return enclosingTypesEqual(this, element)
+				 && getName().equals(element.getName());
+			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns if the immediate enclosing {@link IApiType}s of the two members
+	 * are equal: where both enclosing type being <code>null</code> is considered equal
+	 * @param e1
+	 * @param e2
+	 * @return true if both immediate enclosing type are equal 
+	 */
+	protected boolean enclosingTypesEqual(IApiElement e1, IApiElement e2) {
+		IApiType t1 = (IApiType) e1.getAncestor(IApiElement.TYPE);
+		IApiType t2 = (IApiType) e2.getAncestor(IApiElement.TYPE);
+		if(t1 == null) {
+			return t2 == null;
+		}
+		return t1.equals(t2);
 	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return fEnclosing.hashCode() + fName.hashCode();
+		IApiType enclosing = (IApiType) getAncestor(IApiElement.TYPE);
+		return getType() + getName().hashCode() + (enclosing == null ? 0 : enclosing.hashCode());
 	}	
 	
 	/**
 	 * Used when building a member type.
 	 * @param access modifiers
 	 */
-	void setModifiers(int access) {
+	public void setModifiers(int access) {
 		fFlags = access;
 	}
 }

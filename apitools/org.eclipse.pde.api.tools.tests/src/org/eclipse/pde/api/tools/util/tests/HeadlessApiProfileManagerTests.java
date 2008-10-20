@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
-import org.eclipse.pde.api.tools.internal.ApiProfileManager;
+import org.eclipse.pde.api.tools.internal.model.ApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.Factory;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 
 /**
@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.tests.AbstractApiTest;
  */
 public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	
-	private ApiProfileManager fManager = ApiProfileManager.getManager();
+	private ApiBaselineManager fManager = ApiBaselineManager.getManager();
 	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
@@ -36,9 +36,9 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * Tests that we can get an API profile that exists from the manager 
 	 */
 	public void testGetApiProfile() {
-		IApiProfile profile = Factory.newApiProfile("test1");
-		fManager.addApiProfile(profile);
-		profile = fManager.getApiProfile("test1");
+		IApiBaseline profile = ApiModelFactory.newApiBaseline("test1");
+		fManager.addApiBaseline(profile);
+		profile = fManager.getApiBaseline("test1");
 		assertNotNull("the test1 profile must exist in the manager", profile);
 		assertTrue("the found profile must be test1", profile.getName().equals("test1"));
 	}
@@ -47,7 +47,7 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * Tests that looking up a profile that does not exist in the manager returns null
 	 */
 	public void testGetNonExistantProfile() {
-		IApiProfile profile = fManager.getApiProfile("fooprofile");
+		IApiBaseline profile = fManager.getApiBaseline("fooprofile");
 		assertNull("There should be no profile found", profile);
 	}
 	
@@ -55,10 +55,10 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * Tests that setting the default profile works
 	 */
 	public void testSetDefaultProfile() {
-		IApiProfile profile = Factory.newApiProfile("test2");
-		fManager.addApiProfile(profile);
-		fManager.setDefaultApiProfile(profile.getName());
-		profile = fManager.getDefaultApiProfile();
+		IApiBaseline profile = ApiModelFactory.newApiBaseline("test2");
+		fManager.addApiBaseline(profile);
+		fManager.setDefaultApiBaseline(profile.getName());
+		profile = fManager.getDefaultApiBaseline();
 		assertNotNull("the default profile should not be null", profile);
 		assertTrue("the default profiles' name should be test2", profile.getName().equals("test2"));
 	}
@@ -68,8 +68,8 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * when asked for the default.
 	 */
 	public void testGetWrongDefault() {
-		fManager.setDefaultApiProfile("fooprofile");
-		IApiProfile profile = fManager.getDefaultApiProfile();
+		fManager.setDefaultApiBaseline("fooprofile");
+		IApiBaseline profile = fManager.getDefaultApiBaseline();
 		assertNull("the default profile should be null for a non-existant id", profile);
 	}
 	
@@ -77,11 +77,11 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * Tests getting all profiles from the manager
 	 */
 	public void testGetAllProfiles() {
-		IApiProfile profile = Factory.newApiProfile("test1");
-		fManager.addApiProfile(profile);
-		profile = Factory.newApiProfile("test2");
-		fManager.addApiProfile(profile);
-		IApiProfile[] profiles = fManager.getApiProfiles();
+		IApiBaseline profile = ApiModelFactory.newApiBaseline("test1");
+		fManager.addApiBaseline(profile);
+		profile = ApiModelFactory.newApiBaseline("test2");
+		fManager.addApiBaseline(profile);
+		IApiBaseline[] profiles = fManager.getApiBaselines();
 		assertEquals("there should be 2 profiles", 2, profiles.length);
 	}
 	
@@ -89,19 +89,19 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * Tests removing an existing profile from the manager
 	 */
 	public void testRemoveApiProfile() {
-		IApiProfile profile = Factory.newApiProfile("test2");
-		fManager.addApiProfile(profile);
-		boolean result = fManager.removeApiProfile("test2");
+		IApiBaseline profile = ApiModelFactory.newApiBaseline("test2");
+		fManager.addApiBaseline(profile);
+		boolean result = fManager.removeApiBaseline("test2");
 		assertTrue("the profile test2 should have been removed from the manager", result);
-		assertTrue("There should only be 0 profiles left", fManager.getApiProfiles().length == 0);
+		assertTrue("There should only be 0 profiles left", fManager.getApiBaselines().length == 0);
 	}
 	
 	/**
 	 * Tests that isExistingProfileName(..) returns return true when expected to 
 	 */
 	public void testIsExistingName() {
-		IApiProfile profile = Factory.newApiProfile("test1");
-		fManager.addApiProfile(profile);
+		IApiBaseline profile = ApiModelFactory.newApiBaseline("test1");
+		fManager.addApiBaseline(profile);
 		boolean result = fManager.isExistingProfileName("test1");
 		assertTrue("the name test1 should be an existing name", result);
 	}
@@ -204,7 +204,7 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	 * Tests that the workspace profile is null in headless mode
 	 */
 	public void testGetWorkspaceProfile() {
-		IApiProfile profile = fManager.getWorkspaceProfile();
+		IApiBaseline profile = fManager.getWorkspaceBaseline();
 		if(ApiPlugin.isRunningInFramework()) {
 			assertNotNull("the workspace profile must not be null with the framework running", profile);
 		}
@@ -219,7 +219,7 @@ public class HeadlessApiProfileManagerTests extends AbstractApiTest {
 	public void testStop() {
 		try {
 			fManager.stop();
-			assertTrue("There should be no api profiles in the manager", fManager.getApiProfiles().length == 0);
+			assertTrue("There should be no api profiles in the manager", fManager.getApiBaselines().length == 0);
 			//stop it again to free the memory from the map
 			fManager.stop();
 		}

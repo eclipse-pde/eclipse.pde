@@ -17,13 +17,14 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.pde.api.tools.internal.model.ApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 
 /**
  * An API component for a system library.
@@ -64,7 +65,7 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	 * @param description EE file
 	 * @param systemPackages exported system packages
 	 */
-	public SystemLibraryApiComponent(IApiProfile profile, File description, String[] systemPackages) {
+	public SystemLibraryApiComponent(IApiBaseline profile, File description, String[] systemPackages) {
 		super(profile);
 		init(description);
 		fSystemPackages = systemPackages;

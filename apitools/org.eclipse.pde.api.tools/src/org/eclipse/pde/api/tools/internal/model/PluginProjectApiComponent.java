@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal;
+package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,11 +29,16 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.api.tools.internal.ApiFilterStore;
+import org.eclipse.pde.api.tools.internal.ArchiveClassFileContainer;
+import org.eclipse.pde.api.tools.internal.CompositeClassFileContainer;
+import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
+import org.eclipse.pde.api.tools.internal.FolderClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -90,10 +95,10 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 * @param project java project
 	 * @throws CoreException if unable to create the API component
 	 */
-	public PluginProjectApiComponent(IApiProfile profile, String location, IPluginModelBase model) throws CoreException {
+	public PluginProjectApiComponent(IApiBaseline profile, String location, IPluginModelBase model) throws CoreException {
 		super(profile,location);
 		IPath path = new Path(location);
-		IProject project = ApiProfile.ROOT.getProject(path.lastSegment());
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
 		this.fProject = JavaCore.create(project);
 		this.fModel = model;
 	}

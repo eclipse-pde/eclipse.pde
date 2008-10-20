@@ -22,20 +22,21 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
+import org.eclipse.pde.api.tools.internal.model.ApiDescription;
+import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -267,8 +268,8 @@ public class ApiDescriptionTests extends TestCase {
 		path = path.append("test-xml");
 		File file = path.toFile();
 		assertTrue("Missing xml directory", file.exists());
-		IApiProfile baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
-		IApiComponent component = baseline.newApiComponent(file.getAbsolutePath());
+		IApiBaseline baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
+		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 		baseline.addApiComponents(new IApiComponent[] { component });
 		
 		IPackageDescriptor defPkgDesc = Factory.packageDescriptor("");
@@ -788,7 +789,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * tests that a binary bundle with no .api_description file has no API description
 	 */
 	public void testBinaryHasNoApiDescription() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		assertFalse("Should have no .api_description file", componentA.hasApiDescription());
 	}
@@ -797,7 +798,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * tests that a binary bundle with an .api_description file has an API description
 	 */
 	public void testBinaryHasApiDescription() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins-with-desc");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins-with-desc");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		assertTrue("Should have an .api_description file", componentA.hasApiDescription());
 	}	

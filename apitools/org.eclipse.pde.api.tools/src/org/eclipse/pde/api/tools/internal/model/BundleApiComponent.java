@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal;
+package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,18 +43,23 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.api.tools.internal.AbstractApiComponent;
+import org.eclipse.pde.api.tools.internal.ArchiveClassFileContainer;
+import org.eclipse.pde.api.tools.internal.BundleVersionRange;
+import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
+import org.eclipse.pde.api.tools.internal.RequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -99,7 +104,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * @param location directory or jar file
 	 * @exception CoreException if unable to create a component from the specified location
 	 */
-	public BundleApiComponent(IApiProfile profile, String location) throws CoreException {
+	public BundleApiComponent(IApiBaseline profile, String location) throws CoreException {
 		super(profile);
 		fLocation = location;
 	}
@@ -152,16 +157,16 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * @param state PDE state
 	 * @throws CoreException on failure
 	 */
-	protected void init(State state, long bundleId) throws CoreException {
+	protected void init(long bundleId) throws CoreException {
 		try {
 			Dictionary manifest = getManifest();
-			if (isBinaryBundle() && ApiProfileManager.WORKSPACE_API_PROFILE_ID.equals(getProfile().getName())) {
+			if (isBinaryBundle() && ApiBaselineManager.WORKSPACE_API_BASELINE_ID.equals(getProfile().getName())) {
 				// must account for bundles in development mode - look for class files in output
 				// folders rather than jars
 				TargetWeaver.weaveManifest(manifest);
 			}
 			StateObjectFactory factory = StateObjectFactory.defaultFactory;
-			fBundleDescription = factory.createBundleDescription(state, manifest, fLocation, bundleId);
+			fBundleDescription = factory.createBundleDescription(((ApiBaseline)getProfile()).getState(), manifest, fLocation, bundleId);
 		} catch (BundleException e) {
 			abort("Unable to create API component from specified location: " + fLocation, e); //$NON-NLS-1$
 		}

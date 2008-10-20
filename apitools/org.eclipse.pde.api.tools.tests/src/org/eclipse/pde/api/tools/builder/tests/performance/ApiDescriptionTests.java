@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.test.performance.Dimension;
 
@@ -64,7 +64,7 @@ public class ApiDescriptionTests extends PerformanceTest {
 		for (int j = 0; j < 2; j++) {
 			// *** clean & visit API description ***
 			proj.build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
-			IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
+			IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
 			IApiComponent component = profile.getApiComponent(proj.getName());
 			component.getApiDescription().accept(visitor);
 		}
@@ -74,7 +74,7 @@ public class ApiDescriptionTests extends PerformanceTest {
 			
 			// *** clean API description ***
 			proj.build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
-			IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
+			IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
 			IApiComponent component = profile.getApiComponent(proj.getName());
 				
 			// ** Visit API description ***

@@ -18,8 +18,8 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
-import org.eclipse.pde.api.tools.internal.model.MethodKey;
-import org.eclipse.pde.api.tools.internal.model.TypeStructureCache;
+import org.eclipse.pde.api.tools.internal.model.cache.MethodKey;
+import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;

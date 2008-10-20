@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -46,7 +46,7 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 	 * @param flags
 	 */
 	protected ApiMethod(IApiType enclosing, String name, String signature, String genericSig, int flags, String[] exceptions) {
-		super(enclosing, name, signature, genericSig, IApiMember.T_METHOD, flags);
+		super(enclosing, name, signature, genericSig, IApiElement.METHOD, flags);
 		fExceptions = exceptions;
 	}
 
@@ -100,7 +100,7 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 	 * 
 	 * @param value default value
 	 */
-	void setDefaultValue(String value) {
+	public void setDefaultValue(String value) {
 		fDefaultValue = value;
 	}
 
@@ -111,6 +111,9 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 		return (getModifiers() & Opcodes.ACC_SYNTHETIC) != 0;
 	}
 	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer

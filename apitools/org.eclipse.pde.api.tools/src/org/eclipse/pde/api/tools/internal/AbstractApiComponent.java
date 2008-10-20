@@ -17,8 +17,8 @@ import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
@@ -42,14 +42,14 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 	/**
 	 * Owning profile
 	 */
-	private IApiProfile fProfile = null;
+	private IApiBaseline fProfile = null;
 	
 	/**
 	 * Constructs an API component in the given profile.
 	 * 
 	 * @param profile API profile
 	 */
-	public AbstractApiComponent(IApiProfile profile) {
+	public AbstractApiComponent(IApiBaseline profile) {
 		fProfile = profile;
 	}
 	
@@ -66,7 +66,7 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getProfile()
 	 */
-	public IApiProfile getProfile() {
+	public IApiBaseline getProfile() {
 		return fProfile;
 	}
 

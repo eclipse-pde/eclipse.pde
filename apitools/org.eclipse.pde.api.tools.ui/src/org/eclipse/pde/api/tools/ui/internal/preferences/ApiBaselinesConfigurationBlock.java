@@ -46,7 +46,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * 
  * @since 1.0.0
  */
-public class ApiProfilesConfigurationBlock {
+public class ApiBaselinesConfigurationBlock {
 	/**
 	 * Provides data information for created controls
 	 */
@@ -222,7 +222,7 @@ public class ApiProfilesConfigurationBlock {
 				ControlData data = (ControlData) combo.getData();
 				data.key.setStoredValue(fLookupOrder[0], combo.getText(), fManager);
 				fDirty = true;
-				ApiProfilesPreferencePage.rebuildcount = 0;
+				ApiBaselinePreferencePage.rebuildcount = 0;
 			}
 		}
 	};
@@ -267,7 +267,7 @@ public class ApiProfilesConfigurationBlock {
 	 * Constructor
 	 * @param project
 	 */
-	public ApiProfilesConfigurationBlock(IWorkbenchPreferenceContainer container) {
+	public ApiBaselinesConfigurationBlock(IWorkbenchPreferenceContainer container) {
 		fLookupOrder = new IScopeContext[] {
 			new InstanceScope(),
 			new DefaultScope()
@@ -286,7 +286,7 @@ public class ApiProfilesConfigurationBlock {
 	 * 
 	 * @param parent the parent control
 	 */
-	public Control createControl(Composite parent, final ApiProfilesPreferencePage page) {
+	public Control createControl(Composite parent, final ApiBaselinePreferencePage page) {
 		fParent = parent;
 		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		Group optionsProfileGroup = SWTFactory.createGroup(fMainComp, PreferenceMessages.ApiProfilesConfigurationBlock_options_group_title, 2, 1, GridData.FILL_BOTH);
@@ -318,8 +318,8 @@ public class ApiProfilesConfigurationBlock {
 				ArrayList changes = new ArrayList();
 				collectChanges(fLookupOrder[0], changes);
 				if(changes.size() > 0) {
-					if(ApiProfilesPreferencePage.rebuildcount < 1) {
-						ApiProfilesPreferencePage.rebuildcount++;
+					if(ApiBaselinePreferencePage.rebuildcount < 1) {
+						ApiBaselinePreferencePage.rebuildcount++;
 						fManager.applyChanges();
 						String message = PreferenceMessages.ApiErrorsWarningsConfigurationBlock_0;
 						IProject[] apiProjects = Util.getApiProjects();

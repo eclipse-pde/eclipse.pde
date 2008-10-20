@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal.model;
+package org.eclipse.pde.api.tools.internal.model.cache;
 
 
 /**

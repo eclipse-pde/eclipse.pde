@@ -28,15 +28,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
-import org.eclipse.pde.api.tools.internal.ApiProfile;
-import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
-import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
+import org.eclipse.pde.api.tools.internal.model.ApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.model.ApiDescriptionManager;
+import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
@@ -143,7 +142,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	private static final String TAG_SCANNER_DEBUG = PLUGIN_ID + "/debug/tagscanner" ; //$NON-NLS-1$
 	private static final String PLUGIN_WORKSPACE_COMPONENT_DEBUG = PLUGIN_ID + "/debug/pluginworkspacecomponent"; //$NON-NLS-1$
 	private static final String API_PROFILE_MANAGER_DEBUG = PLUGIN_ID + "/debug/profilemanager"; //$NON-NLS-1$
-	private static final String API_PROFILE_DEBUG = PLUGIN_ID + "/debug/apiprofile" ; //$NON-NLS-1$
 	private static final String API_FILTER_STORE_DEBUG = PLUGIN_ID + "/debug/apifilterstore"; //$NON-NLS-1$
 	private static final String API_ANALYZER_DEBUG = PLUGIN_ID + "/debug/apianalyzer"; //$NON-NLS-1$
 
@@ -308,8 +306,8 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * 
 	 * @return the singleton instance of the {@link IApiProfileManager}
 	 */
-	public IApiProfileManager getApiProfileManager() {
-		return ApiProfileManager.getManager();
+	public IApiBaselineManager getApiProfileManager() {
+		return ApiBaselineManager.getManager();
 	}
 	
 	/**
@@ -516,12 +514,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			
 			option = Platform.getDebugOption(API_PROFILE_MANAGER_DEBUG);
 			if(option != null) {
-				ApiProfileManager.setDebug(option.equalsIgnoreCase(TRUE));
-			}
-			
-			option = Platform.getDebugOption(API_PROFILE_DEBUG);
-			if(option != null) {
-				ApiProfile.setDebug(option.equalsIgnoreCase(TRUE));
+				ApiBaselineManager.setDebug(option.equalsIgnoreCase(TRUE));
 			}
 			option = Platform.getDebugOption(API_FILTER_STORE_DEBUG);
 			if(option != null) {

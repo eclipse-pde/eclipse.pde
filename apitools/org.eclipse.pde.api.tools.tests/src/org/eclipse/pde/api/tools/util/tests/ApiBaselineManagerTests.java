@@ -53,15 +53,16 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
+import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
@@ -79,9 +80,9 @@ import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
 
 /**
- * Tests the {@link ApiProfileManager} without the framework running
+ * Tests the {@link ApiBaselineManager} without the framework running
  */
-public class ApiProfileManagerTests extends AbstractApiTest {
+public class ApiBaselineManagerTests extends AbstractApiTest {
 
 	class SourceChangeVisitor extends ASTVisitor {
 		String name = null;
@@ -173,14 +174,14 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	
 	private IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("a").append("b").append("c");
 	private IPath PLUGIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-plugins");
-	private IApiProfileManager fPMmanager = ApiPlugin.getDefault().getApiProfileManager();
+	private IApiBaselineManager fPMmanager = ApiPlugin.getDefault().getApiProfileManager();
 	private final String TESTING_PACKAGE = "a.b.c";
 	
 	/**
 	 * @return the {@link IApiDescription} for the testing project
 	 */
 	private IApiDescription getTestProjectApiDescription()  throws CoreException {
-		IApiProfile profile = getWorkspaceProfile();
+		IApiBaseline profile = getWorkspaceProfile();
 		assertNotNull("the workspace profile must exist", profile);
 		IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		if(component != null) {
@@ -194,8 +195,8 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 * 
 	 * @return workspace profile
 	 */
-	private IApiProfile getWorkspaceProfile() {
-		return fPMmanager.getWorkspaceProfile();
+	private IApiBaseline getWorkspaceProfile() {
+		return fPMmanager.getWorkspaceBaseline();
 	}
 	
 	/**
@@ -204,10 +205,10 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 * @param id
 	 * @return
 	 */
-	protected IApiProfile getTestProfile(String id) {
-		IApiProfile profile = null;
-		profile = Factory.newApiProfile(id);
-		fPMmanager.addApiProfile(profile);
+	protected IApiBaseline getTestProfile(String id) {
+		IApiBaseline profile = null;
+		profile = ApiModelFactory.newApiBaseline(id);
+		fPMmanager.addApiBaseline(profile);
 		return profile;
 	}
 	
@@ -215,7 +216,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 * Tests trying to get the workspace profile without the framework running 
 	 */
 	public void testGetWorkspaceComponent() {
-		IApiProfile profile = getWorkspaceProfile();
+		IApiBaseline profile = getWorkspaceProfile();
 		assertTrue("the workspace profile must not be null", profile != null);
 	}
 	
@@ -223,9 +224,9 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 * Tests that an api profile can be added and retrieved successfully 
 	 */
 	public void testAddProfile() {
-		IApiProfile profile = getTestProfile("addtest");
+		IApiBaseline profile = getTestProfile("addtest");
 		assertTrue("the test profile must have been created", profile != null);
-		profile = fPMmanager.getApiProfile("addtest");
+		profile = fPMmanager.getApiBaseline("addtest");
 		assertTrue("the testadd profile must be in the manager", profile != null);
 	}
 	
@@ -233,21 +234,21 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 * Tests that an api profile can be added/removed successfully
 	 */
 	public void testRemoveProfile() {
-		IApiProfile profile = getTestProfile("removetest");
+		IApiBaseline profile = getTestProfile("removetest");
 		assertTrue("the testremove profile must exist", profile != null);
-		profile = fPMmanager.getApiProfile("removetest");
+		profile = fPMmanager.getApiBaseline("removetest");
 		assertTrue("the testremove profile must be in the manager", profile != null);
-		assertTrue("the testremove profile should have been removed", fPMmanager.removeApiProfile("removetest"));
+		assertTrue("the testremove profile should have been removed", fPMmanager.removeApiBaseline("removetest"));
 	}
 	
 	/**
 	 * Tests that the default profile can be set/retrieved
 	 */
 	public void testSetDefaultProfile() {
-		IApiProfile profile = getTestProfile("testdefault");
+		IApiBaseline profile = getTestProfile("testdefault");
 		assertTrue("the testdefault profile must exist", profile != null);
-		fPMmanager.setDefaultApiProfile("testdefault");
-		profile = fPMmanager.getDefaultApiProfile();
+		fPMmanager.setDefaultApiBaseline("testdefault");
+		profile = fPMmanager.getDefaultApiBaseline();
 		assertTrue("the default profile must be the testdefault profile", profile != null);
 	}
 	
@@ -256,7 +257,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testGetAllProfiles() {
 		getTestProfile("three");
-		IApiProfile[] profiles = fPMmanager.getApiProfiles();
+		IApiBaseline[] profiles = fPMmanager.getApiBaselines();
 		assertTrue("there should be three profiles", profiles.length == 3);
 	}
 	
@@ -264,9 +265,9 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 * Tests that all of the profiles have been removed
 	 */
 	public void testCleanUfPMmanager() {
-		assertTrue("the testadd profile should have been removed", fPMmanager.removeApiProfile("addtest"));
-		assertTrue("the testdefault profile should have been removed", fPMmanager.removeApiProfile("testdefault"));
-		assertTrue("the three profile should have been removed", fPMmanager.removeApiProfile("three"));
+		assertTrue("the testadd profile should have been removed", fPMmanager.removeApiBaseline("addtest"));
+		assertTrue("the testdefault profile should have been removed", fPMmanager.removeApiBaseline("testdefault"));
+		assertTrue("the three profile should have been removed", fPMmanager.removeApiBaseline("three"));
 	}
 	
 	/**
@@ -305,7 +306,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 	        assertNotNull("No default JRE", vm);
 	        ProjectUtils.addContainerEntry(project, new Path(JavaRuntime.JRE_CONTAINER));
-	        IApiProfile profile = getWorkspaceProfile();
+	        IApiBaseline profile = getWorkspaceProfile();
 	        assertNotNull("the workspace profile cannot be null", profile);
 	        IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 	        assertNotNull("the test project api component must exist in the workspace profile", component);
@@ -466,7 +467,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			project.getProject().open(new NullProgressMonitor());
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the opened event was not received", obj);
-			IApiProfile profile = getWorkspaceProfile();
+			IApiBaseline profile = getWorkspaceProfile();
 			assertNotNull("the workspace profile must not be null", profile);
 			IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 			assertNotNull("the test project api component must exist in the workspace profile", component);

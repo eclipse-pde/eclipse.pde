@@ -21,12 +21,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.pde.api.tools.internal.model.TypeStructureCache;
+import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -34,9 +33,11 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.util.ClassFileResult;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -63,7 +64,7 @@ public class ClassFileComparator {
 		DEBUG = debugValue || Util.DEBUG;
 	}
 
-	private boolean isCheckedException(IApiProfile profile, IApiComponent apiComponent, String exceptionName) {
+	private boolean isCheckedException(IApiBaseline profile, IApiComponent apiComponent, String exceptionName) {
 		if (profile == null) {
 			return true;
 		}
@@ -101,8 +102,8 @@ public class ClassFileComparator {
 		return true;
 	}
 
-	private IApiProfile apiProfile = null;
-	private IApiProfile apiProfile2 = null;
+	private IApiBaseline apiProfile = null;
+	private IApiBaseline apiProfile2 = null;
 	
 	private IApiComponent component = null;
 	private IApiComponent component2 = null;
@@ -128,7 +129,7 @@ public class ClassFileComparator {
 	 * @param visibilityModifiers any modifiers from the class file
 	 * @throws CoreException if the contents of the specified class files cannot be acquired
 	 */
-	public ClassFileComparator(IClassFile classFile, IClassFile classFile2, IApiComponent component, IApiComponent component2, IApiProfile apiState, IApiProfile apiState2, int visibilityModifiers) throws CoreException {
+	public ClassFileComparator(IClassFile classFile, IClassFile classFile2, IApiComponent component, IApiComponent component2, IApiBaseline apiState, IApiBaseline apiState2, int visibilityModifiers) throws CoreException {
 		this.component = component;
 		this.component2 = component2;
 		this.type1 = TypeStructureCache.getTypeStructure(classFile, component);
@@ -149,7 +150,7 @@ public class ClassFileComparator {
 	 * @param visibilityModifiers any modifiers from the class file
 	 * @throws CoreException if the contents of the specified class file cannot be acquired
 	 */
-	public ClassFileComparator(IApiType type, IClassFile classFile2, IApiComponent component, IApiComponent component2, IApiProfile apiState, IApiProfile apiState2, int visibilityModifiers) throws CoreException {
+	public ClassFileComparator(IApiType type, IClassFile classFile2, IApiComponent component, IApiComponent component2, IApiBaseline apiState, IApiBaseline apiState2, int visibilityModifiers) throws CoreException {
 		this.component = component;
 		this.component2 = component2;
 		this.type1 = type;
@@ -276,7 +277,7 @@ public class ClassFileComparator {
 				currentTypeVisibility = superclassAnnotations.getVisibility();
 				if (!VisibilityModifiers.isAPI(currentTypeVisibility)) {
 					// superclass is not an API type so we need to check it for visible members
-					// if this is an API, it will be checked when the supertype is checked
+					// if this is an API, it will be checked when the super type is checked
 					final boolean ignoreProtected = RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions) || Util.isFinal(this.type1.getModifiers());
 					IClassFile superclassType2 = this.component2.findClassFile(superTypeName);
 					if (superclassType2 != null) {
@@ -949,17 +950,17 @@ public class ClassFileComparator {
 	}
 	
 	private String getDataFor(IApiMember member, IApiType type) {
-		switch(member.getElementType()) {
-			case IApiMember.T_TYPE:
+		switch(member.getType()) {
+			case IApiElement.TYPE:
 				if (((IApiType)member).isMemberType()) {
 					return member.getName().replace('$', '.');
 				}
 				return member.getName();
-			case IApiMember.T_METHOD:
+			case IApiElement.METHOD:
 				StringBuffer buffer = new StringBuffer();
 				buffer.append(type.getName()).append('.').append(getMethodDisplayName((IApiMethod) member, type));
 				return String.valueOf(buffer);
-			case IApiMember.T_FIELD:
+			case IApiElement.FIELD:
 				buffer = new StringBuffer();
 				buffer.append(type.getName()).append('.').append(member.getName());
 				return String.valueOf(buffer);
@@ -2997,7 +2998,7 @@ public class ClassFileComparator {
 			&& (Util.isPublic(access) || Util.isProtected(access));
 	}
 	
-	private ClassFileResult getType(String typeName, IApiComponent component, IApiProfile profile) throws CoreException {
+	private ClassFileResult getType(String typeName, IApiComponent component, IApiBaseline profile) throws CoreException {
 		String packageName = Util.getPackageName(typeName);
 		IApiComponent[] components = profile.resolvePackage(component, packageName);
 		if (components == null) {
@@ -3084,10 +3085,10 @@ public class ClassFileComparator {
 	 * @return delta element type code
 	 */
 	private int getElementType(IApiMember member) {
-		switch (member.getElementType()) {
-		case IApiMember.T_TYPE:
+		switch (member.getType()) {
+		case IApiElement.TYPE:
 			return getElementType((IApiType)member);
-		case IApiMember.T_METHOD:
+		case IApiElement.METHOD:
 			return getElementType((IApiMethod)member);
 		}
 		return IDelta.FIELD_ELEMENT_TYPE;

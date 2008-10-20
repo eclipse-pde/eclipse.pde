@@ -493,7 +493,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 * Notifies the user that they have no default API profile
 	 */
 	private void notifyNoDefaultProfile() {
-		if(ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile() == null) {
+		if(ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline() == null) {
 			UIJob job = new UIJob("No default API profile detected")  { //$NON-NLS-1$
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					boolean doit = MessageDialog.openQuestion(getShell(), WizardMessages.ApiToolingSetupWizardPage_1, WizardMessages.ApiToolingSetupWizardPage_2 +

@@ -25,9 +25,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
@@ -53,7 +53,7 @@ public class DiscouragedAccessTests extends TestCase {
 		// build baseline
 		File jdt = TestSuiteHelper.getBundle("org.eclipse.jdt.debug.ui");
 		assertNotNull("Missing jdt.debug.ui", jdt);
-		IApiProfile profile = TestSuiteHelper.createProfile("eclipse", jdt.getParentFile());
+		IApiBaseline profile = TestSuiteHelper.createProfile("eclipse", jdt.getParentFile());
 		
 		// search
 		IApiComponent jdtComponent = profile.getApiComponent("org.eclipse.jdt.debug.ui");

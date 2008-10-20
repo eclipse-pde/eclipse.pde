@@ -23,9 +23,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.BundleVersionRange;
 import org.eclipse.pde.api.tools.internal.RequiredComponentDescription;
+import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 
 /**
  * @since 1.0.0
@@ -49,8 +50,8 @@ public class ComponentManifestTests extends TestCase {
 		path = path.append("test-manifests");
 		File file = path.toFile();
 		assertTrue("Missing manifest directory", file.exists());
-		IApiProfile baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
-		IApiComponent component = baseline.newApiComponent(file.getAbsolutePath());
+		IApiBaseline baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
+		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 		baseline.addApiComponents(new IApiComponent[] { component });
 		assertEquals("Id: ", "org.eclipse.debug.ui" , component.getId());
 		assertEquals("Name: ", "Debug Platform UI" , component.getName());
@@ -86,8 +87,8 @@ public class ComponentManifestTests extends TestCase {
 		path = path.append("test-manifests");
 		File file = path.toFile();
 		assertTrue("Missing manifest directory", file.exists());
-		IApiProfile baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
-		IApiComponent component = baseline.newApiComponent(file.getAbsolutePath());
+		IApiBaseline baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
+		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 		baseline.addApiComponents(new IApiComponent[] { component });
 		
 		boolean debugCoreExport = false;

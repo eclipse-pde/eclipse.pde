@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal;
+package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -37,8 +37,10 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode;
-import org.eclipse.pde.api.tools.internal.ProjectApiDescription.TypeNode;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
+import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
+import org.eclipse.pde.api.tools.internal.model.ApiDescription.ManifestNode;
+import org.eclipse.pde.api.tools.internal.model.ProjectApiDescription.TypeNode;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;

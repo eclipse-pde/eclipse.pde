@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.model.tests.ApiFilterStoreTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;
 import org.eclipse.pde.api.tools.util.tests.ApiDescriptionProcessorTests;
-import org.eclipse.pde.api.tools.util.tests.ApiProfileManagerTests;
+import org.eclipse.pde.api.tools.util.tests.ApiBaselineManagerTests;
 import org.eclipse.pde.api.tools.util.tests.PreferencesTests;
 import org.eclipse.pde.api.tools.util.tests.ProjectCreationTests;
 
@@ -45,7 +45,7 @@ public class ApiToolsPluginTestSuite extends TestSuite {
 		addTest(new TestSuite(ProjectCreationTests.class));
 		addTest(new TestSuite(ApiDescriptionProcessorTests.class));
 		addTest(new TestSuite(PreferencesTests.class));
-		addTest(new TestSuite(ApiProfileManagerTests.class));
+		addTest(new TestSuite(ApiBaselineManagerTests.class));
 		addTest(new TestSuite(ApiFilterStoreTests.class));
 		addTest(new TestSuite(ApiProblemTests.class));
 		addTest(ApiBuilderTest.suite());

@@ -50,11 +50,11 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
-import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
-import org.eclipse.pde.api.tools.internal.model.TypeStructureCache;
+import org.eclipse.pde.api.tools.internal.model.ApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -63,8 +63,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
+import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -75,6 +74,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
@@ -148,7 +148,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(org.eclipse.pde.api.tools.internal.builder.BuildState, org.eclipse.pde.api.tools.internal.provisional.IApiProfile, org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String[], java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void analyzeComponent(final BuildState state, final IApiFilterStore filterStore, final IApiProfile baseline,	final IApiComponent component,
+	public void analyzeComponent(final BuildState state, final IApiFilterStore filterStore, final IApiBaseline baseline,	final IApiComponent component,
 			final String[] typenames, final String[] changedtypes, IProgressMonitor monitor) {
 		try {
 			TypeStructureCache.clearCache();
@@ -217,8 +217,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		int length = requiredComponents.length;
 		ReexportedBundleVersionInfo info = null;
 		if (length != 0) {
-			IApiProfile profile = component.getProfile();
-			IApiProfile baseline = reference.getProfile();
+			IApiBaseline profile = component.getProfile();
+			IApiBaseline baseline = reference.getProfile();
 			loop: for (int i = 0; i < length; i++) {
 				IRequiredComponentDescription description = requiredComponents[i];
 				if (description.isExported()) {
@@ -1516,8 +1516,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return true;
 		}
 
-		IApiProfileManager manager = ApiProfileManager.getManager();
-		IApiProfile profile = manager.getWorkspaceProfile();
+		IApiBaselineManager manager = ApiBaselineManager.getManager();
+		IApiBaseline profile = manager.getWorkspaceBaseline();
 		if(profile == null) {
 			return false;
 		}

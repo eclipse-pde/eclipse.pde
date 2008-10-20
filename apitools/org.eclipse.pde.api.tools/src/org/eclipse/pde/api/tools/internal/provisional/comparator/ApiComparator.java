@@ -18,17 +18,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
-import org.eclipse.pde.api.tools.internal.model.TypeStructureCache;
+import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.Version;
@@ -74,8 +74,8 @@ public class ApiComparator {
 			final IClassFile classFile2,
 			final IApiComponent component,
 			final IApiComponent component2,
-			final IApiProfile referenceProfile,
-			final IApiProfile profile,
+			final IApiBaseline referenceProfile,
+			final IApiBaseline profile,
 			final int visibilityModifiers) {
 		
 		if (classFile2 == null) {
@@ -218,8 +218,8 @@ public class ApiComparator {
 			final IClassFile classFile2,
 			final IApiComponent component,
 			final IApiComponent component2,
-			final IApiProfile referenceProfile,
-			final IApiProfile profile,
+			final IApiBaseline referenceProfile,
+			final IApiBaseline profile,
 			final int visibilityModifiers) {
 		
 		if (classFile == null || classFile2 == null) {
@@ -265,8 +265,8 @@ public class ApiComparator {
 	 * @throws IllegalArgumentException if one of the two profiles is null
 	 */
 	public static IDelta compare(
-			final IApiProfile referenceProfile,
-			final IApiProfile profile,
+			final IApiBaseline referenceProfile,
+			final IApiBaseline profile,
 			final boolean force) {
 		return compare(referenceProfile, profile, VisibilityModifiers.ALL_VISIBILITIES, force);
 	}
@@ -283,8 +283,8 @@ public class ApiComparator {
 	 * @throws IllegalArgumentException if one of the two profiles is null
 	 */
 	public static IDelta compare(
-			final IApiProfile referenceProfile,
-			final IApiProfile profile) {
+			final IApiBaseline referenceProfile,
+			final IApiBaseline profile) {
 		return compare(referenceProfile, profile, VisibilityModifiers.ALL_VISIBILITIES, false);
 	}
 
@@ -301,8 +301,8 @@ public class ApiComparator {
 	 * @throws IllegalArgumentException if one of the two profiles is null
 	 */
 	public static IDelta compare(
-			final IApiProfile referenceProfile,
-			final IApiProfile profile,
+			final IApiBaseline referenceProfile,
+			final IApiBaseline profile,
 			final int visibilityModifiers) {
 		return compare(referenceProfile, profile, visibilityModifiers, false);
 	}
@@ -319,8 +319,8 @@ public class ApiComparator {
 	 * @throws IllegalArgumentException if one of the two profiles is null
 	 */
 	public static IDelta compare(
-			final IApiProfile referenceProfile,
-			final IApiProfile profile,
+			final IApiBaseline referenceProfile,
+			final IApiBaseline profile,
 			final int visibilityModifiers,
 			final boolean force) {
 		if (referenceProfile == null || profile == null) {
@@ -456,7 +456,7 @@ public class ApiComparator {
 	 */
 	public static IDelta compare(
 			final IApiComponent component,
-			final IApiProfile referenceProfile,
+			final IApiBaseline referenceProfile,
 			final int visibilityModifiers,
 			final boolean force) {
 		
@@ -544,8 +544,8 @@ public class ApiComparator {
 	public static IDelta compare(
 			final IApiComponent referenceComponent,
 			final IApiComponent component2,
-			final IApiProfile referenceProfile,
-			final IApiProfile profile) {
+			final IApiBaseline referenceProfile,
+			final IApiBaseline profile) {
 		return compare(referenceComponent, component2, referenceProfile, profile, VisibilityModifiers.ALL_VISIBILITIES);
 	}
 
@@ -568,8 +568,8 @@ public class ApiComparator {
 	public static IDelta compare(
 			final IApiComponent referenceComponent,
 			final IApiComponent component2,
-			final IApiProfile referenceProfile,
-			final IApiProfile profile,
+			final IApiBaseline referenceProfile,
+			final IApiBaseline profile,
 			final int visibilityModifiers) {
 	
 		if (referenceProfile == null || profile == null) {
@@ -646,8 +646,8 @@ public class ApiComparator {
 	private static IDelta internalCompare(
 			final IApiComponent component,
 			final IApiComponent component2,
-			final IApiProfile referenceProfile,
-			final IApiProfile profile,
+			final IApiBaseline referenceProfile,
+			final IApiBaseline profile,
 			final int visibilityModifiers,
 			final Delta globalDelta) throws CoreException {
 

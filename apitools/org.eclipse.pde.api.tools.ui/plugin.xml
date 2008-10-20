@@ -26,7 +26,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.eclipse.pde.ui.MainPreferencePage"
-            class="org.eclipse.pde.api.tools.ui.internal.preferences.ApiProfilesPreferencePage"
+            class="org.eclipse.pde.api.tools.ui.internal.preferences.ApiBaselinePreferencePage"
             id="org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"
             name="%ApiProfilesPreferencePage.name">
          <keywordReference

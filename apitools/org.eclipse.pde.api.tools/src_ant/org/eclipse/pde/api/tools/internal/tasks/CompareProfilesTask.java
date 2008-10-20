@@ -23,13 +23,13 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.comparator.DeltaXmlVisitor;
+import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -97,8 +97,8 @@ public class CompareProfilesTask extends Task {
 
 		// run the comparison
 		// create profile for the reference
-		IApiProfile referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(tempDir, REFERENCE), this.eeFileLocation);
-		IApiProfile currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(tempDir, CURRENT), this.eeFileLocation);
+		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(tempDir, REFERENCE), this.eeFileLocation);
+		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(tempDir, CURRENT), this.eeFileLocation);
 		
 		IDelta delta = null;
 		
@@ -171,15 +171,15 @@ public class CompareProfilesTask extends Task {
 		return new File(new File(new File(dir, profileInstallName), ECLIPSE_FOLDER_NAME), PLUGINS_FOLDER_NAME).getAbsolutePath();
 	}
 
-	private static IApiProfile createProfile(String profileName, String fileName, String eeFileLocation) {
+	private static IApiBaseline createProfile(String profileName, String fileName, String eeFileLocation) {
 		try {
-			IApiProfile baseline = null;
+			IApiBaseline baseline = null;
 			if (ApiPlugin.isRunningInFramework()) {
-				baseline = Factory.newApiProfile(profileName);
+				baseline = ApiModelFactory.newApiBaseline(profileName);
 			} else if (eeFileLocation != null) {
-				baseline = Factory.newApiProfile(profileName, new File(eeFileLocation));
+				baseline = ApiModelFactory.newApiBaseline(profileName, new File(eeFileLocation));
 			} else {
-				baseline = Factory.newApiProfile(profileName, Util.getEEDescriptionFile());
+				baseline = ApiModelFactory.newApiBaseline(profileName, Util.getEEDescriptionFile());
 			}
 			// create a component for each jar/directory in the folder
 			File dir = new File(fileName);
@@ -189,7 +189,7 @@ public class CompareProfilesTask extends Task {
 				File bundle = files[i];
 				if (!bundle.getName().equals(CVS_FOLDER_NAME)) {
 					// ignore CVS folder
-					IApiComponent component = baseline.newApiComponent(bundle.getAbsolutePath());
+					IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
 					if(component != null) {
 						components.add(component);
 					}

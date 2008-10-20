@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
@@ -43,7 +43,7 @@ public interface IApiAnalyzer {
 	 * @see PluginProjectApiComponent
 	 * @see BundleApiComponent
 	 */
-	public void analyzeComponent(final BuildState buildState, final IApiFilterStore filterStore, final IApiProfile baseline, final IApiComponent component, final String[] typenames, final String[] changedtypes, IProgressMonitor monitor);
+	public void analyzeComponent(final BuildState buildState, final IApiFilterStore filterStore, final IApiBaseline baseline, final IApiComponent component, final String[] typenames, final String[] changedtypes, IProgressMonitor monitor);
 	
 	/**
 	 * Returns the complete set of {@link IApiProblem}s found by this analyzer, or an empty

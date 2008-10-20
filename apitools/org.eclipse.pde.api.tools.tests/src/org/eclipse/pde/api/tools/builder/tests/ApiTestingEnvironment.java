@@ -30,7 +30,7 @@ import org.eclipse.jdt.core.tests.util.AbstractCompilerTest;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.internal.core.natures.PDE;
 
@@ -309,8 +309,8 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Returns the current workspace {@link IApiProfile}
 	 * @return
 	 */
-	protected IApiProfile getWorkspaceProfile() {
-		return ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
+	protected IApiBaseline getWorkspaceProfile() {
+		return ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
 	}
 	
 	/* (non-Javadoc)

@@ -15,12 +15,12 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 
 /**
  * Delta tests for class
@@ -184,8 +184,8 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test8() {
 		deployBundles("test8");
-		IApiProfile beforeState = getBeforeState();
-		IApiProfile afterState = getAfterState();
+		IApiBaseline beforeState = getBeforeState();
+		IApiBaseline afterState = getAfterState();
 		IApiComponent referenceComponent = beforeState.getApiComponent("deltatest1");
 		IApiComponent component = afterState.getApiComponent("deltatest1");
 		try {
@@ -478,8 +478,8 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test11() {
 		deployBundles("test11");
-		IApiProfile beforeState = getBeforeState();
-		IApiProfile afterState = getAfterState();
+		IApiBaseline beforeState = getBeforeState();
+		IApiBaseline afterState = getAfterState();
 		IApiComponent apiComponent = afterState.getApiComponent("deltatest1");
 		assertNotNull("No api component", apiComponent);
 		IApiComponent refApiComponent = beforeState.getApiComponent("deltatest1");
@@ -500,8 +500,8 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test12() {
 		deployBundles("test12");
-		IApiProfile beforeState = getBeforeState();
-		IApiProfile afterState = getAfterState();
+		IApiBaseline beforeState = getBeforeState();
+		IApiBaseline afterState = getAfterState();
 		IApiComponent apiComponent = afterState.getApiComponent("deltatest1");
 		assertNotNull("No api component", apiComponent);
 		IApiComponent refApiComponent = beforeState.getApiComponent("deltatest1");
@@ -521,8 +521,8 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test13() {
 		deployBundles("test13");
-		IApiProfile beforeState = getBeforeState();
-		IApiProfile afterState = getAfterState();
+		IApiBaseline beforeState = getBeforeState();
+		IApiBaseline afterState = getAfterState();
 		IApiComponent apiComponent = afterState.getApiComponent("deltatest1");
 		assertNotNull("No api component", apiComponent);
 		IApiComponent refApiComponent = beforeState.getApiComponent("deltatest1");
@@ -542,8 +542,8 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test14() {
 		deployBundles("test14");
-		IApiProfile beforeState = getBeforeState();
-		IApiProfile afterState = getAfterState();
+		IApiBaseline beforeState = getBeforeState();
+		IApiBaseline afterState = getAfterState();
 		IApiComponent apiComponent = afterState.getApiComponent("deltatest1");
 		assertNotNull("No api component", apiComponent);
 		IApiComponent refApiComponent = beforeState.getApiComponent("deltatest1");

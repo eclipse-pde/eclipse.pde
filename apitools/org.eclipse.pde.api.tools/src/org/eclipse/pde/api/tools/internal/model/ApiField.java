@@ -15,8 +15,8 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -46,7 +46,7 @@ public class ApiField extends ApiMember implements IApiField {
 	 * @param value constant value or <code>null</code> if none
 	 */
 	protected ApiField(IApiType enclosing, String name, String signature, String genericSig, int flags, Object value) {
-		super(enclosing, name, signature, genericSig, IApiMember.T_FIELD, flags);
+		super(enclosing, name, signature, genericSig, IApiElement.FIELD, flags);
 		fValue = value;
 	}
 	

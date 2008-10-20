@@ -18,11 +18,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.api.tools.internal.model.cache.MethodKey;
+import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -100,9 +103,10 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @param flags
 	 * @param enclosingName
 	 */
-	protected ApiType(IApiComponent component, String name, String signature, String genericSig, int flags, String enclosingName) {
-		super(null, name, signature, genericSig, IApiMethod.T_TYPE, flags);
-		fComponent = component;
+	public ApiType(IApiComponent parent, String name, String signature, String genericSig, int flags, String enclosingName) {
+		//TODO parent is either APIType or APiComponent
+		super(null, name, signature, genericSig, IApiElement.TYPE, flags);
+		fComponent = parent;
 		fEnclosingTypeName = enclosingName;
 	}
 
@@ -150,7 +154,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @param modifiers method modifiers
 	 * @param exceptions names of thrown exceptions
 	 */
-	ApiMethod addMethod(String name, String signature, String genericSig, int modifiers, String[] exceptions) {
+	public ApiMethod addMethod(String name, String signature, String genericSig, int modifiers, String[] exceptions) {
 		if (fMethods == null) {
 			fMethods = new HashMap();
 		}
@@ -168,7 +172,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @param modifiers field modifiers
 	 * @param value constant value or <code>null</code> if none
 	 */
-	ApiField addField(String name, String signature, String genericSig, int modifiers, Object value) {
+	public ApiField addField(String name, String signature, String genericSig, int modifiers, Object value) {
 		if (fFields == null) {
 			fFields = new HashMap();
 		}
@@ -204,7 +208,7 @@ public class ApiType extends ApiMember implements IApiType {
 		return fSuperInterfaceNames;
 	}
 	
-	void setSuperInterfaceNames(String[] names) {
+	public void setSuperInterfaceNames(String[] names) {
 		fSuperInterfaceNames = names;
 	}
 
@@ -288,7 +292,7 @@ public class ApiType extends ApiMember implements IApiType {
 		return fSuperclassName;
 	}
 	
-	void setSuperclassName(String superName) {
+	public void setSuperclassName(String superName) {
 		fSuperclassName = superName;
 	}
 
@@ -316,14 +320,14 @@ public class ApiType extends ApiMember implements IApiType {
 	/**
 	 * Used when building a type structure.
 	 */
-	void setAnonymous() {
+	public void setAnonymous() {
 		fBits |= ANONYMOUS_TYPE;
 	}
 	
 	/**
 	 * Used when building a type structure.
 	 */
-	void setLocal() {
+	public void setLocal() {
 		fBits |= LOCAL_TYPE;
 	}
 
@@ -399,7 +403,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 * 
 	 * @param name member type name
 	 */
-	void addMemberType(String name, int modifiers) {
+	public void addMemberType(String name, int modifiers) {
 		if (fMemberTypes == null) {
 			fMemberTypes = new HashMap();
 		} 
@@ -457,6 +461,9 @@ public class ApiType extends ApiMember implements IApiType {
 		return members;
 	}
 	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer

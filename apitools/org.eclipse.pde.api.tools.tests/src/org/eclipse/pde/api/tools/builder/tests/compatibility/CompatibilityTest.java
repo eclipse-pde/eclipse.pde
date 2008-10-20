@@ -34,12 +34,12 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
+import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
+import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
@@ -163,11 +163,11 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		super.setUp();
 		// populate the workspace with initial plug-ins/projects
 		createExistingProjects(BASELINE, true);
-		IApiProfileManager manager = ApiPlugin.getDefault().getApiProfileManager();
-		IApiProfile baseline = manager.getDefaultApiProfile();
+		IApiBaselineManager manager = ApiPlugin.getDefault().getApiProfileManager();
+		IApiBaseline baseline = manager.getDefaultApiBaseline();
 		if (baseline == null) {
 			// create the API baseline
-			IApiProfile profile = manager.getWorkspaceProfile();
+			IApiBaseline profile = manager.getWorkspaceBaseline();
 			IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
 			IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(BASELINE);
 			for (int i = 0; i < projects.length; i++) {
@@ -176,16 +176,16 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 						profile.getApiComponent(projects[i].getName()), 
 						baselineLocation);
 			}
-			baseline = Factory.newApiProfile("API-baseline");
+			baseline = ApiModelFactory.newApiBaseline("API-baseline");
 			IApiComponent[] components = new IApiComponent[projects.length];
 			for (int i = 0; i < projects.length; i++) {
 				IProject project = projects[i];
 				IPath location = baselineLocation.append(project.getName());
-				components[i] = baseline.newApiComponent(location.toOSString());
+				components[i] = ApiModelFactory.newApiComponent(baseline, location.toOSString());
 			}
 			baseline.addApiComponents(components);
-			manager.addApiProfile(baseline);
-			manager.setDefaultApiProfile(baseline.getName());
+			manager.addApiBaseline(baseline);
+			manager.setDefaultApiBaseline(baseline.getName());
 		}
 	}	
 	

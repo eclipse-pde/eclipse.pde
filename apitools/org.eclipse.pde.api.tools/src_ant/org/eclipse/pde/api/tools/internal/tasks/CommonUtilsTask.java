@@ -18,10 +18,10 @@ import java.util.List;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -55,15 +55,15 @@ public abstract class CommonUtilsTask extends Task {
 		return new File(new File(new File(dir, profileInstallName), ECLIPSE_FOLDER_NAME), PLUGINS_FOLDER_NAME).getAbsolutePath();
 	}
 
-	public static IApiProfile createProfile(String profileName, String fileName, String eeFileLocation) {
+	public static IApiBaseline createProfile(String profileName, String fileName, String eeFileLocation) {
 		try {
-			IApiProfile baseline = null;
+			IApiBaseline baseline = null;
 			if (ApiPlugin.isRunningInFramework()) {
-				baseline = Factory.newApiProfile(profileName);
+				baseline = ApiModelFactory.newApiBaseline(profileName);
 			} else if (eeFileLocation != null) {
-				baseline = Factory.newApiProfile(profileName, new File(eeFileLocation));
+				baseline = ApiModelFactory.newApiBaseline(profileName, new File(eeFileLocation));
 			} else {
-				baseline = Factory.newApiProfile(profileName, Util.getEEDescriptionFile());
+				baseline = ApiModelFactory.newApiBaseline(profileName, Util.getEEDescriptionFile());
 			}
 			// create a component for each jar/directory in the folder
 			File dir = new File(fileName);
@@ -73,7 +73,7 @@ public abstract class CommonUtilsTask extends Task {
 				File bundle = files[i];
 				if (!bundle.getName().equals(CVS_FOLDER_NAME)) {
 					// ignore CVS folder
-					IApiComponent component = baseline.newApiComponent(bundle.getAbsolutePath());
+					IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
 					if(component != null) {
 						components.add(component);
 					}

@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -27,6 +26,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
@@ -44,7 +44,7 @@ public class SearchScopeTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testVisitEntireComponentsScope() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IApiComponent[] components = new IApiComponent[]{componentA, componentB};
@@ -90,7 +90,7 @@ public class SearchScopeTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testVisitPackageScope() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiSearchScope scope = Factory.newScope(componentA, new IElementDescriptor[]{Factory.packageDescriptor("a.b.c")});
 		final Collection<String> expectedPackages = new HashSet<String>();
@@ -118,7 +118,7 @@ public class SearchScopeTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testVisitTypeScope() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IPackageDescriptor pkg = Factory.packageDescriptor("component.a");
 		IReferenceTypeDescriptor type = pkg.getType("A");
@@ -140,7 +140,7 @@ public class SearchScopeTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testVisitMethodScope() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IPackageDescriptor pkg = Factory.packageDescriptor("component.a");
 		IReferenceTypeDescriptor type = pkg.getType("Activator");
@@ -164,7 +164,7 @@ public class SearchScopeTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testAddingWiderScope() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IPackageDescriptor pkg = Factory.packageDescriptor("component.a");
 		IReferenceTypeDescriptor type = pkg.getType("Activator");
@@ -185,7 +185,7 @@ public class SearchScopeTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testEnclosesSiblingScope() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IPackageDescriptor pkg = Factory.packageDescriptor("component.a");
 		IReferenceTypeDescriptor type = pkg.getType("Activator");
@@ -202,7 +202,7 @@ public class SearchScopeTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testEnclosesChildrenScope() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IPackageDescriptor pkg = Factory.packageDescriptor("component.a");
 		IReferenceTypeDescriptor type = pkg.getType("Activator");
@@ -220,7 +220,7 @@ public class SearchScopeTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testVisitSpecificTypes() throws CoreException {
-		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		Collection<String> expectedPackages = new HashSet<String>();
 		expectedPackages.add("a.b.c");

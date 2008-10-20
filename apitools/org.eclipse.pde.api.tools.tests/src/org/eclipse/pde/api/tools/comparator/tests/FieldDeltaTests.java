@@ -14,12 +14,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -46,8 +46,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test1() {
 		deployBundles("test1");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -68,8 +68,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test2() {
 		deployBundles("test2");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -90,8 +90,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test3() {
 		deployBundles("test3");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -113,8 +113,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test4() {
 		deployBundles("test4");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -136,8 +136,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test5() {
 		deployBundles("test5");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -153,8 +153,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test6() {
 		deployBundles("test6");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -175,8 +175,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test7() {
 		deployBundles("test7");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -197,8 +197,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test8() {
 		deployBundles("test8");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -219,8 +219,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test9() {
 		deployBundles("test9");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -241,8 +241,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test10() {
 		deployBundles("test10");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -263,8 +263,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test11() {
 		deployBundles("test11");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -285,8 +285,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test12() {
 		deployBundles("test12");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -312,8 +312,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test13() {
 		deployBundles("test13");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -339,8 +339,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test14() {
 		deployBundles("test14");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -366,8 +366,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test15() {
 		deployBundles("test15");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -388,8 +388,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test16() {
 		deployBundles("test16");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -410,8 +410,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test17() {
 		deployBundles("test17");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -432,8 +432,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test18() {
 		deployBundles("test18");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -454,8 +454,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test19() {
 		deployBundles("test19");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -476,8 +476,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test20() {
 		deployBundles("test20");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -498,8 +498,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test21() {
 		deployBundles("test21");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -520,8 +520,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test22() {
 		deployBundles("test22");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -547,8 +547,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test23() {
 		deployBundles("test23");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -575,8 +575,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test24() {
 		deployBundles("test24");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -598,8 +598,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test25() {
 		deployBundles("test25");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -626,8 +626,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test26() {
 		deployBundles("test26");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -649,8 +649,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test27() {
 		deployBundles("test27");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -678,8 +678,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test28() {
 		deployBundles("test28");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -701,8 +701,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test29() {
 		deployBundles("test29");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -722,8 +722,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test30() {
 		deployBundles("test30");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -744,8 +744,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test31() {
 		deployBundles("test31");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -765,8 +765,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test32() {
 		deployBundles("test32");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -787,8 +787,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test33() {
 		deployBundles("test33");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -809,8 +809,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test34() {
 		deployBundles("test34");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -836,8 +836,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test35() {
 		deployBundles("test35");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -860,8 +860,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test36() {
 		deployBundles("test36");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -888,8 +888,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test37() {
 		deployBundles("test37");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -912,8 +912,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test38() {
 		deployBundles("test38");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -942,8 +942,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test39() {
 		deployBundles("test39");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -974,8 +974,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test40() {
 		deployBundles("test40");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1021,8 +1021,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test41() {
 		deployBundles("test41");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1044,8 +1044,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test42() {
 		deployBundles("test42");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1065,8 +1065,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test43() {
 		deployBundles("test43");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1087,8 +1087,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test44() {
 		deployBundles("test44");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1108,8 +1108,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test45() {
 		deployBundles("test45");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1129,8 +1129,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test46() {
 		deployBundles("test46");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1145,8 +1145,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test47() {
 		deployBundles("test47");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1166,8 +1166,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test48() {
 		deployBundles("test48");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1187,8 +1187,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test49() {
 		deployBundles("test49");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1202,8 +1202,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test50() {
 		deployBundles("test50");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1223,8 +1223,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test51() {
 		deployBundles("test51");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1244,8 +1244,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test52() {
 		deployBundles("test52");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1265,8 +1265,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test53() {
 		deployBundles("test53");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1287,8 +1287,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test54() {
 		deployBundles("test54");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1309,8 +1309,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test55() {
 		deployBundles("test55");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1324,8 +1324,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test56() {
 		deployBundles("test56");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1346,8 +1346,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test57() {
 		deployBundles("test57");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1362,8 +1362,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test58() {
 		deployBundles("test58");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1377,8 +1377,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test59() {
 		deployBundles("test59");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1399,8 +1399,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test60() {
 		deployBundles("test60");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1425,8 +1425,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test61() {
 		deployBundles("test61");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1451,8 +1451,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test62() {
 		deployBundles("test62");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1466,8 +1466,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test63() {
 		deployBundles("test63");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1489,8 +1489,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test64() {
 		deployBundles("test64");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1511,8 +1511,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test65() {
 		deployBundles("test65");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1541,8 +1541,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test66() {
 		deployBundles("test66");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1564,8 +1564,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test67() {
 		deployBundles("test67");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1587,8 +1587,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test68() {
 		deployBundles("test68");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1617,8 +1617,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test69() {
 		deployBundles("test69");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1640,8 +1640,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test70() {
 		deployBundles("test70");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1663,8 +1663,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test71() {
 		deployBundles("test71");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1686,8 +1686,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test72() {
 		deployBundles("test72");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1709,8 +1709,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test73() {
 		deployBundles("test73");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
@@ -1732,8 +1732,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	 */
 	public void test74() {
 		deployBundles("test74");
-		IApiProfile before = getBeforeState();
-		IApiProfile after = getAfterState();
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);

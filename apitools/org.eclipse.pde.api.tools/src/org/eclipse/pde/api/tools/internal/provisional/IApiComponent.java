@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.provisional;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
@@ -21,6 +22,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
  * is composed of a set of class files owned by the component and
  * a description (manifest) of the component's API. 
  * 
+ * TODO should be an {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiElement}
  * @since 1.0.0
  */
 public interface IApiComponent extends IClassFileContainer {
@@ -148,7 +150,7 @@ public interface IApiComponent extends IClassFileContainer {
 	 * 
 	 * @return API profile
 	 */
-	public IApiProfile getProfile();
+	public IApiBaseline getProfile();
 		
 	/**
 	 * Returns a store of problem filters defined for this component or <code>null</code>
