@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model.cache;
 
-import java.util.HashMap;
-
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 
@@ -24,23 +22,12 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 public final class ApiToolsCache {
 	
 	private static final int DEFAULT_CACHE_SIZE = 20;
-	private static final int DEFAULT_MEMBER_CACHE_SIZE = 100;
 	
 	/**
 	 * The cache of {@link IApiDescription}s
 	 */
 	private ApiElementCache fDescriptionCache = new ApiElementCache(DEFAULT_CACHE_SIZE);
 	
-	/**
-	 * The cache of {@link IApiComponent} infos
-	 */
-	private ApiElementCache fComponentCache = new ApiElementCache(DEFAULT_CACHE_SIZE);
-	
-	/**
-	 * The cache of {@link IApiMember} infos
-	 */
-	private HashMap fMemberCache = new HashMap(DEFAULT_MEMBER_CACHE_SIZE);
-
 	/**
 	 * Returns the cached {@link IApiDescription} for the given component or <code>null</code>
 	 * if there is no {@link IApiDescription} cached for the given component.
