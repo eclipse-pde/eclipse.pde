@@ -23,7 +23,7 @@ import org.osgi.framework.Version;
  */
 public class BuildDirector extends AbstractBuildScriptGenerator {
 
-	private static final int QUALIFIER_SUFFIX_VERSION = 1;
+	private static final int QUALIFIER_SUFFIX_VERSION = 2;
 
 	// GENERATION FLAGS
 	/**
@@ -299,7 +299,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		return result;
 	}
 
-	private String generateFeatureVersionSuffix(BuildTimeFeature buildFeature) throws CoreException {
+	protected String generateFeatureVersionSuffix(BuildTimeFeature buildFeature) throws CoreException {
 		if (!generateVersionSuffix || buildFeature.getContextQualifierLength() == -1) {
 			return null; // do nothing
 		}

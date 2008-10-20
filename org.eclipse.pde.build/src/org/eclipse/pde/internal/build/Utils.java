@@ -26,7 +26,7 @@ import org.osgi.framework.Version;
  */
 public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstants, IXMLConstants {
 	// The 64 characters that are legal in a version qualifier, in lexicographical order.
-	private static final String BASE_64_ENCODING = "-0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
+	private static final String BASE_64_ENCODING = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
 
 	/** 
 	 * returns a value 1 - 64 for valid qualifier characters.  Returns 0 for non-valid characters 

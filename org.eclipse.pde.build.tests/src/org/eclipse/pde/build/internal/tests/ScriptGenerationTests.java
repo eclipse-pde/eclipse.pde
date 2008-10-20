@@ -25,6 +25,7 @@ import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.site.*;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
@@ -557,8 +558,8 @@ public class ScriptGenerationTests extends PDETestCase {
 
 	public void testBug247091() throws Exception {
 		IFolder buildFolder = newTest("247091");
-
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"f;version=0.0.0", "f;version=1.0.0.qualifier", "f;version=1.0.0.vqualifier"}, null);
+		//also tests bug 250942
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"f;version=0.0.0", "f;version=1.0.0.qualifier", "f;version=1.0.0.v_qualifier"}, null);
 		Utils.generateFeature(buildFolder, "f", null, null, "2.0.0");
 		IFolder f = buildFolder.getFolder("features/f");
 		f.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -566,7 +567,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateFeature(buildFolder, "f", null, null, "1.0.0.z1234");
 		f.refreshLocal(IResource.DEPTH_INFINITE, null);
 		f.move(new org.eclipse.core.runtime.Path("F2"), true, null);
-		Utils.generateFeature(buildFolder, "f", null, null, "1.0.0.v5678");
+		Utils.generateFeature(buildFolder, "f", null, null, "1.0.0.v_5678");
 		f.refreshLocal(IResource.DEPTH_INFINITE, null);
 		f.move(new org.eclipse.core.runtime.Path("F3"), true, null);
 
@@ -611,6 +612,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0.abzz"));
 		assertEquals(range.getMaximum(), new Version("1.0.0.ac"));
+
+		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzz_qualifier");
+		assertTrue(range.getIncludeMinimum());
+		assertFalse(range.getIncludeMaximum());
+		assertEquals(range.getMinimum(), new Version("1.0.0.abzz_"));
+		assertEquals(range.getMaximum(), new Version("1.0.0.abzza"));
+
 	}
 
 	public void testBug246127() throws Exception {
@@ -761,5 +769,97 @@ public class ScriptGenerationTests extends PDETestCase {
 		tasks = AntUtils.getParallelTasks((Parallel) children[3]);
 		assertTrue(tasks.length == 1);
 		assertEquals("plugins/F", tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir"));
+	}
+
+	public static class TestQualifierDirector extends BuildDirector {
+		public TestQualifierDirector() {
+			super();
+			setGenerateVersionSuffix(true);
+			setWorkingDirectory("foo");
+		}
+
+		public String getQualifierSuffix(BuildTimeFeature feature) throws CoreException {
+			return super.generateFeatureVersionSuffix(feature);
+		}
+	}
+
+	public void testQualifierSuffixes() throws Exception {
+		BuildTimeFeature f1 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f1.addEntry(new FeatureEntry("a", "1.2.3.aaa-0z-aaa", true));
+		f1.setContextQualifierLength(2);
+
+		BuildTimeFeature f2 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f2.addEntry(new FeatureEntry("a", "1.2.3.aaa-10-aaa", true));
+		f2.setContextQualifierLength(2);
+
+		TestQualifierDirector director = new TestQualifierDirector();
+		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
+		
+		f1 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f1.addEntry(new FeatureEntry("a", "1.2.3.abcd", true));
+		f1.setContextQualifierLength(2);
+
+		f2 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f2.addEntry(new FeatureEntry("a", "1.2.4.aaaa", true));
+		f2.setContextQualifierLength(2);
+
+		director = new TestQualifierDirector();
+		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
+		
+		f1 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f1.addEntry(new FeatureEntry("a", "4.5.6.xyz", true));
+		f1.addEntry(new FeatureEntry("b", "1.2.3.abccccc", true));
+		f1.setContextQualifierLength(2);
+
+		f2 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f2.addEntry(new FeatureEntry("a", "4.5.6.xyz", true));
+		f2.addEntry(new FeatureEntry("b", "1.2.3.abcd", true));
+		f2.setContextQualifierLength(2);
+
+		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
+
+		f1 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f1.addEntry(new FeatureEntry("a", "1.2.3.abcdefg", true));
+		f1.addEntry(new FeatureEntry("b", "4.5.6.xyz", true));
+		f1.setContextQualifierLength(2);
+
+		f2 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f2.addEntry(new FeatureEntry("a", "1.2.3.abcdefg", true));
+		f2.addEntry(new FeatureEntry("b", "4.5.6.xyz-", true));
+		f2.setContextQualifierLength(2);
+
+		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
+		
+		f1 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f1.addEntry(new FeatureEntry("a", "1.2.3.abcdefg", true));
+		f1.addEntry(new FeatureEntry("b", "4.5.6.xyz", true));
+		f1.setContextQualifierLength(2);
+
+		f2 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f2.addEntry(new FeatureEntry("a", "1.2.3.abcdefg", true));
+		f2.addEntry(new FeatureEntry("b", "4.5.6.xyz-", true));
+		f2.setContextQualifierLength(2);
+
+		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
+		
+		f1 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f1.addEntry(new FeatureEntry("a", "1.2.3.aAb", true));
+		f1.setContextQualifierLength(2);
+
+		f2 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f2.addEntry(new FeatureEntry("a", "1.2.3.a_b", true));
+		f2.setContextQualifierLength(2);
+
+		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
+		
+		f1 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f1.addEntry(new FeatureEntry("a", "1.2.3.aZ", true));
+		f1.setContextQualifierLength(2);
+
+		f2 = new BuildTimeFeature("foo", "1.0.0.v1");
+		f2.addEntry(new FeatureEntry("a", "1.2.3.a_", true));
+		f2.setContextQualifierLength(2);
+
+		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
 	}
 }
