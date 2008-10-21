@@ -11,14 +11,13 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
-import org.eclipse.pde.api.tools.internal.util.ClassFileResult;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -211,11 +210,11 @@ public class Reference implements IReference {
 		if (fResolved == null) {
 			IApiComponent sourceComponent = getMember().getApiComponent();
 			if(sourceComponent != null) {
-				ClassFileResult result = Util.getComponent(
+				IClassFile result = Util.getClassFile(
 						sourceComponent.getProfile().resolvePackage(sourceComponent, Util.getPackageName(getReferencedTypeName())),
 						getReferencedTypeName());
 				if(result != null) {
-					IApiType type = TypeStructureCache.getTypeStructure(result.getClassFile(), result.getComponent());
+					IApiType type = result.getStructure();
 					switch (getReferenceType()) {
 					case IReference.T_TYPE_REFERENCE:
 						fResolved = type;

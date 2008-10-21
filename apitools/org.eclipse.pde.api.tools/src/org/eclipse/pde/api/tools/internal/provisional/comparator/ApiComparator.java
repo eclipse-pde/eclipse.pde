@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
-import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -89,7 +88,7 @@ public class ApiComparator {
 		}
 
 		try {
-			IApiType typeDescriptor2 = TypeStructureCache.getTypeStructure(classFile2, component2);
+			IApiType typeDescriptor2 = classFile2.getStructure();
 			if (typeDescriptor2.isMemberType() || typeDescriptor2.isAnonymous() || typeDescriptor2.isLocal()) {
 				// we skip nested types (member, local and anonymous)
 				return NO_DELTA;
@@ -124,7 +123,7 @@ public class ApiComparator {
 				}
 				return NO_DELTA;
 			}
-			IApiType typeDescriptor = TypeStructureCache.getTypeStructure(classFile, component);
+			IApiType typeDescriptor = classFile.getStructure();
 			if ((visibility & visibilityModifiers) == 0) {
 				if ((refVisibility & visibilityModifiers) == 0) {
 					// no delta
@@ -675,7 +674,7 @@ public class ApiComparator {
 						public void visit(String packageName, IClassFile classFile) {
 							String typeName = classFile.getTypeName();
 							try {
-								IApiType typeDescriptor = TypeStructureCache.getTypeStructure(classFile, component);
+								IApiType typeDescriptor = classFile.getStructure();
 								IApiAnnotations elementDescription = apiDescription.resolveAnnotations(typeDescriptor.getHandle());
 								if (typeDescriptor.isMemberType() || typeDescriptor.isAnonymous() || typeDescriptor.isLocal()) {
 									// we skip nested types (member, local and anonymous)
@@ -720,7 +719,7 @@ public class ApiComparator {
 										// we skip the class file according to their visibility
 										return;
 									}
-									IApiType typeDescriptor2 = TypeStructureCache.getTypeStructure(classFile2, component2);
+									IApiType typeDescriptor2 = classFile2.getStructure();
 									IApiAnnotations elementDescription2 = apiDescription2.resolveAnnotations(typeDescriptor2.getHandle());
 									int visibility2 = 0;
 									if (elementDescription2 != null) {
@@ -790,7 +789,7 @@ public class ApiComparator {
 						public void visit(String packageName, IClassFile classFile) {
 							String typeName = classFile.getTypeName();
 							try {
-								IApiType type = TypeStructureCache.getTypeStructure(classFile, component2);
+								IApiType type = classFile.getStructure();
 								IApiAnnotations elementDescription = apiDescription2.resolveAnnotations(type.getHandle());
 								if (type.isMemberType() || type.isLocal() || type.isAnonymous()) {
 									// we skip nested types (member, local and anonymous)

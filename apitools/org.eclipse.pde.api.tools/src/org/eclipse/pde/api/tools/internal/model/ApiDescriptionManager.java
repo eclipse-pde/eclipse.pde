@@ -110,21 +110,22 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 	}
 	
 	/**
-	 * Returns an API description for the given Java project and connect it to the
+	 * Returns an API description for the given project component and connect it to the
 	 * given bundle description.
 	 * 
 	 * @param project Java project
 	 * @return API description
 	 */
-	public synchronized IApiDescription getApiDescription(IJavaProject project, BundleDescription bundle) {
+	public synchronized IApiDescription getApiDescription(PluginProjectApiComponent component, BundleDescription bundle) {
+		IJavaProject project = component.getJavaProject();
 		ProjectApiDescription description = (ProjectApiDescription) fDescriptions.get(project);
 		if (description == null) {
-			description = new ProjectApiDescription(project);
+			description = new ProjectApiDescription(component);
 			try {
 				restoreDescription(project, description);
 			} catch (CoreException e) {
 				ApiPlugin.log(e.getStatus());
-				description = new ProjectApiDescription(project);
+				description = new ProjectApiDescription(component);
 			}
 			fDescriptions.put(project, description);
 		}

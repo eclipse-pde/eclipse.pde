@@ -33,7 +33,7 @@ import org.objectweb.asm.util.TraceAnnotationVisitor;
 /**
  * Class adapter used to create an API type structure
  */
-class TypeStructureBuilder extends ClassAdapter {
+public class TypeStructureBuilder extends ClassAdapter {
 	ApiType fType;
 	IApiComponent fComponent;
 	IClassFile fFile;

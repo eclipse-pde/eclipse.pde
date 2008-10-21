@@ -61,7 +61,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Associated API component.
 	 */
-	private IJavaProject fProject;
+	private PluginProjectApiComponent fComponent;
 	
 	/**
 	 * Only valid when connected to a bundle. Used to initialize
@@ -280,13 +280,13 @@ public class ProjectApiDescription extends ApiDescription {
 	}
 	
 	/**
-	 * Constructs a new API description for the given Java project.
+	 * Constructs a new API description for the given project API component.
 	 * 
 	 * @param component
 	 */
-	public ProjectApiDescription(IJavaProject project) {
-		super(project.getElementName());
-		fProject = project;
+	public ProjectApiDescription(PluginProjectApiComponent component) {
+		super(component.getJavaProject().getElementName());
+		fComponent = component;
 	}
 
 	/* (non-Javadoc)
@@ -550,7 +550,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @return associated Java project
 	 */
 	private IJavaProject getJavaProject() {
-		return fProject;
+		return fComponent.getJavaProject();
 	}
 
 	/**
@@ -572,7 +572,7 @@ public class ProjectApiDescription extends ApiDescription {
 		if (container == null) {
 			IContainer folder = root.getJavaProject().getProject().getWorkspace().getRoot().getFolder(location);
 			if (folder.exists()) {
-				container = new FolderClassFileContainer(folder, getJavaProject().getElementName());
+				container = new FolderClassFileContainer(folder, fComponent);
 				fClassFileContainers.put(location, container);
 			}
 		}

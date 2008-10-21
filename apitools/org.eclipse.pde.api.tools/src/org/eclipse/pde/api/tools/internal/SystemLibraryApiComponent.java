@@ -106,7 +106,7 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 		List libs = new ArrayList(fLibraries.length);
 		for (int i = 0; i < fLibraries.length; i++) {
 			LibraryLocation lib = fLibraries[i];
-			libs.add(new ArchiveClassFileContainer(lib.getSystemLibraryPath().toOSString(), null));
+			libs.add(new ArchiveClassFileContainer(lib.getSystemLibraryPath().toOSString(), this));
 		}
 		return libs;
 	}

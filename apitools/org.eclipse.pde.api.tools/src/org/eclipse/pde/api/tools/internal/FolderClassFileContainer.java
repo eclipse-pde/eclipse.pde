@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -41,17 +42,17 @@ public class FolderClassFileContainer implements IClassFileContainer {
 	/**
 	 * Origin of this class file container
 	 */
-	private String fOrigin;
+	private IApiComponent fComponent;
 	
 	/**
 	 * Constructs a class file container rooted at the location.
 	 * 
 	 * @param container folder in the workspace
-	 * @param origin id of the component that creates this class file container
+	 * @param component the component that creates this class file container
 	 */
-	public FolderClassFileContainer(IContainer container, String origin) {
+	public FolderClassFileContainer(IContainer container, IApiComponent component) {
 		this.fRoot = container;
-		this.fOrigin = origin;
+		this.fComponent = component;
 	}
 	
 	/* (non-Javadoc)
@@ -81,7 +82,7 @@ public class FolderClassFileContainer implements IClassFileContainer {
 						buf.append(typeName);
 						typeName = buf.toString();
 					}
-					ResourceClassFile cf = new ResourceClassFile((IFile) file, typeName);
+					ResourceClassFile cf = new ResourceClassFile((IFile) file, typeName, fComponent);
 					visitor.visit(pkgName, cf);
 					visitor.end(pkgName, cf);
 				}
@@ -126,7 +127,7 @@ public class FolderClassFileContainer implements IClassFileContainer {
 		if (folder.exists()) {
 			IFile file = folder.getFile(cfName + Util.DOT_CLASS_SUFFIX);
 			if (file.exists()) {
-				return new ResourceClassFile(file, qualifiedName);
+				return new ResourceClassFile(file, qualifiedName, fComponent);
 			}
 		}
 		return null;
@@ -188,6 +189,6 @@ public class FolderClassFileContainer implements IClassFileContainer {
 	}
 
 	public String getOrigin() {
-		return this.fOrigin;
+		return this.fComponent.getId();
 	}
 }

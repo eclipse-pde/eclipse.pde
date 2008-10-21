@@ -35,6 +35,7 @@ import org.eclipse.pde.api.tools.internal.CompositeClassFileContainer;
 import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
 import org.eclipse.pde.api.tools.internal.FolderClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
@@ -163,7 +164,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 		IApiDescription apiDesc = null;
 		if(Util.isApiProject(getJavaProject())) {
 			setHasApiDescription(true);
-			apiDesc = ApiDescriptionManager.getDefault().getApiDescription(getJavaProject(), getBundleDescription());
+			apiDesc = ApiDescriptionManager.getDefault().getApiDescription(this, getBundleDescription());
 		}
 		else {
 			apiDesc = super.createLocalApiDescription();
@@ -211,7 +212,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 							switch(classpathEntry.getEntryKind()) {
 								case IClasspathEntry.CPE_SOURCE :
 									String containerPath = classpathEntry.getPath().removeFirstSegments(1).toString();
-									IClassFileContainer container = getClassFileContainer(containerPath, this.getId());
+									IClassFileContainer container = getClassFileContainer(containerPath, this);
 									if (container != null && !containers.contains(container)) {
 										containers.add(container);
 									}
@@ -225,10 +226,10 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 										IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 										if (resource != null) {
 											// jar inside the workspace
-											containers.add(new ArchiveClassFileContainer(resource.getLocation().toOSString(), this.getId()));
+											containers.add(new ArchiveClassFileContainer(resource.getLocation().toOSString(), this));
 										} else {
 											// external jar
-											containers.add(new ArchiveClassFileContainer(path.toOSString(), this.getId()));
+											containers.add(new ArchiveClassFileContainer(path.toOSString(), this));
 										}
 									}
 									break;
@@ -253,7 +254,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 							String jar = buildEntry.getName().substring(IBuildEntry.JAR_PREFIX.length());
 							String[] tokens = buildEntry.getTokens();
 							if (tokens.length == 1) {
-								IClassFileContainer container = getClassFileContainer(tokens[0], this.getId());
+								IClassFileContainer container = getClassFileContainer(tokens[0], this);
 								if (container != null) {
 									fPathToOutputContainers.put(jar, container);
 								}
@@ -261,7 +262,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 								List containers = new ArrayList();
 								for (int j = 0; j < tokens.length; j++) {
 									String currentToken = tokens[j];
-									IClassFileContainer container = getClassFileContainer(currentToken, this.getId());
+									IClassFileContainer container = getClassFileContainer(currentToken, this);
 									if (container != null && !containers.contains(container)) {
 										containers.add(container);
 									}
@@ -308,9 +309,9 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 		IResource res = fProject.getProject().findMember(new Path(location));
 		if (res != null) {
 			if (res.getType() == IResource.FILE) {
-				return new ArchiveClassFileContainer(res.getLocation().toOSString(), this.getId());
+				return new ArchiveClassFileContainer(res.getLocation().toOSString(), this);
 			} else {
-				return new DirectoryClassFileContainer(res.getLocation().toOSString(), this.getId());
+				return new DirectoryClassFileContainer(res.getLocation().toOSString(), this);
 			}
 		}
 		return null;
@@ -325,7 +326,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 * @param location project relative path to the source folder
 	 * @return class file container or <code>null</code>
 	 */
-	private IClassFileContainer getClassFileContainer(String location, String id) throws CoreException {
+	private IClassFileContainer getClassFileContainer(String location, IApiComponent component) throws CoreException {
 		IResource res = fProject.getProject().findMember(new Path(location));
 		if (res != null) {
 			IPackageFragmentRoot root = fProject.getPackageFragmentRoot(res);
@@ -339,7 +340,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 				if (cfc == null) {
 					IContainer container = fProject.getProject().getWorkspace().getRoot().getFolder(outputLocation);
 					if (container.exists()) {
-						cfc = new FolderClassFileContainer(container, id);
+						cfc = new FolderClassFileContainer(container, component);
 						fOutputLocationToContainer.put(outputLocation, cfc);
 					}
 				}

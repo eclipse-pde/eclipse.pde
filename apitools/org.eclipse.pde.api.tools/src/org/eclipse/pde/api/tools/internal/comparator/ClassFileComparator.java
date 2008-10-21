@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
@@ -33,13 +32,12 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
-import org.eclipse.pde.api.tools.internal.util.ClassFileResult;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.signature.SignatureReader;
 
@@ -70,16 +68,16 @@ public class ClassFileComparator {
 		}
 		try {
 			String packageName = Util.getPackageName(exceptionName);
-			ClassFileResult result = Util.getComponent(
+			IClassFile result = Util.getClassFile(
 					profile.resolvePackage(apiComponent, packageName),
 					exceptionName);
 			if (result != null) {
 				// TODO should this be reported as a checked exception
-				IApiType exception = TypeStructureCache.getTypeStructure(result.getClassFile(), result.getComponent());
+				IApiType exception = result.getStructure();
 				while (!Util.isJavaLangObject(exception.getName())) {
 					String superName = exception.getSuperclassName();
 					packageName = Util.getPackageName(superName);
-					result = Util.getComponent(
+					result = Util.getClassFile(
 							profile.resolvePackage(apiComponent, packageName),
 							superName);
 					if (result == null) {
@@ -89,7 +87,7 @@ public class ClassFileComparator {
 						}
 						break;
 					}
-					exception = TypeStructureCache.getTypeStructure(result.getClassFile(), result.getComponent());
+					exception = result.getStructure();
 					if (Util.isJavaLangRuntimeException(exception.getName())) {
 						return false;
 					}
@@ -132,8 +130,8 @@ public class ClassFileComparator {
 	public ClassFileComparator(IClassFile classFile, IClassFile classFile2, IApiComponent component, IApiComponent component2, IApiBaseline apiState, IApiBaseline apiState2, int visibilityModifiers) throws CoreException {
 		this.component = component;
 		this.component2 = component2;
-		this.type1 = TypeStructureCache.getTypeStructure(classFile, component);
-		this.type2 = TypeStructureCache.getTypeStructure(classFile2, component2);
+		this.type1 = classFile.getStructure();
+		this.type2 = classFile2.getStructure();
 		this.apiProfile = apiState;
 		this.apiProfile2 = apiState2;
 		this.visibilityModifiers = visibilityModifiers;
@@ -154,7 +152,7 @@ public class ClassFileComparator {
 		this.component = component;
 		this.component2 = component2;
 		this.type1 = type;
-		this.type2 = TypeStructureCache.getTypeStructure(classFile2, component2);
+		this.type2 = classFile2.getStructure();
 		this.apiProfile = apiState;
 		this.apiProfile2 = apiState2;
 		this.visibilityModifiers = visibilityModifiers;
@@ -251,10 +249,9 @@ public class ClassFileComparator {
 			if (!superTypeName.equals(superTypeName2)) {
 				// if the superclass has changed we need to look at visible members have been removed or moved 
 				// to a different location
-				ClassFileResult pair = getType(superTypeName, this.component, this.apiProfile);
-				if (pair == null) return;
-				IClassFile superclassType1 = pair.getClassFile();
-				IApiType typeStructure = TypeStructureCache.getTypeStructure(superclassType1, pair.getComponent());
+				IClassFile superclassType1 = getType(superTypeName, this.component, this.apiProfile);
+				if (superclassType1 == null) return;
+				IApiType typeStructure = superclassType1.getStructure();
 				IApiMethod[] methods = typeStructure.getMethods();
 				for (int i = 0, max = methods.length; i < max; i++) {
 					if (!methods[i].isConstructor()) {
@@ -267,11 +264,10 @@ public class ClassFileComparator {
 				}
 				return;
 			}
-			ClassFileResult pair = getType(superTypeName, this.component, this.apiProfile);
-			if (pair == null) return;
-			IClassFile superclassType1 = pair.getClassFile();
-			IApiDescription apiDescription = pair.getComponent().getApiDescription();
-			IApiType superType = TypeStructureCache.getTypeStructure(pair.getClassFile(), pair.getComponent());
+			IClassFile superclassType1 = getType(superTypeName, this.component, this.apiProfile);
+			if (superclassType1 == null) return;
+			IApiDescription apiDescription = superclassType1.getApiComponent().getApiDescription();
+			IApiType superType = superclassType1.getStructure();
 			IApiAnnotations superclassAnnotations = apiDescription.resolveAnnotations(superType.getHandle());
 			if (superclassAnnotations != null) {
 				currentTypeVisibility = superclassAnnotations.getVisibility();
@@ -472,10 +468,9 @@ public class ClassFileComparator {
 					for (Iterator iterator = names2.iterator(); iterator.hasNext();) {
 						String interfaceName = (String) iterator.next();
 						try {
-							ClassFileResult pair = getType(interfaceName, this.component2, this.apiProfile2);
-							if (pair == null) continue;
-							IClassFile interfaceClassFile = pair.getClassFile();
-							IApiType type = TypeStructureCache.getTypeStructure(interfaceClassFile, pair.getComponent());
+							IClassFile interfaceClassFile = getType(interfaceName, this.component2, this.apiProfile2);
+							if (interfaceClassFile == null) continue;
+							IApiType type = interfaceClassFile.getStructure();
 							IApiMethod[] methods = type.getMethods();
 							int length = methods.length;
 							if (length > 0) {
@@ -3084,7 +3079,7 @@ public class ClassFileComparator {
 			&& (Util.isPublic(access) || Util.isProtected(access));
 	}
 	
-	private ClassFileResult getType(String typeName, IApiComponent component, IApiBaseline profile) throws CoreException {
+	private IClassFile getType(String typeName, IApiComponent component, IApiBaseline profile) throws CoreException {
 		String packageName = Util.getPackageName(typeName);
 		IApiComponent[] components = profile.resolvePackage(component, packageName);
 		if (components == null) {
@@ -3095,17 +3090,8 @@ public class ClassFileComparator {
 			reportStatus(new Status(Status.ERROR, component.getId(), msg));
 			return null;
 		}
-		ClassFileResult result = Util.getComponent(components, typeName); 
+		IClassFile result = Util.getClassFile(components, typeName); 
 		if (result == null) {
-			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), component.getId()});
-			if (DEBUG) {
-				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
-			}
-			reportStatus(new Status(Status.ERROR, component.getId(), msg));
-			return null;
-		}
-		IClassFile classfile = result.getClassFile();
-		if (classfile == null) {
 			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, new String[] {typeName, profile.getName(), component.getId()});
 			if (DEBUG) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$

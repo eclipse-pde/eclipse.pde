@@ -16,8 +16,11 @@ import java.io.InputStream;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureBuilder;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -26,9 +29,33 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.0.0
  */
 public abstract class AbstractClassFile implements IClassFile {
-
+	
+	/**
+	 * API component the class file originates from
+	 */
+	private IApiComponent fComponent;
+	
+	/**
+	 * Constructs a class file from the given component.
+	 * 
+	 * @param component API component the class file comes from
+	 */
+	public AbstractClassFile(IApiComponent component) {
+		fComponent = component;
+	}
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFile#getContents()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFile#getApiComponent()
+	 */
+	public IApiComponent getApiComponent() {
+		return fComponent;
+	}
+
+	/**
+	 * Returns the bytes of this class file. 
+	 *
+	 * @return class file bytes
+	 * @exception CoreException if unable to obtain the bytes
 	 */
 	public byte[] getContents() throws CoreException {
 		InputStream inputStream = getInputStream();
@@ -44,6 +71,21 @@ public abstract class AbstractClassFile implements IClassFile {
 				ApiPlugin.log(e);
 			}
 		}
+	}
+	
+	/**
+	 * Returns an input stream for reading this class file. Clients are responsible
+	 * for closing the input stream.
+	 * 
+	 * @return input stream
+	 */
+	public abstract InputStream getInputStream() throws CoreException;	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFile#getStructure()
+	 */
+	public IApiType getStructure() throws CoreException {
+		return TypeStructureBuilder.buildTypeStructure(getContents(), fComponent, this);
 	}
 	
 	/**

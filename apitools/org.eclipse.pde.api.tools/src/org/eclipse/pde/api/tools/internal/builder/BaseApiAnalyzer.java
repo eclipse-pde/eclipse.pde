@@ -54,7 +54,6 @@ import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.model.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
-import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -622,7 +621,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			if (referenceClassFile != null) {
 				try {
-					IApiType type = TypeStructureCache.getTypeStructure(referenceClassFile, reference);
+					IApiType type = referenceClassFile.getStructure();
 					final IApiDescription referenceApiDescription = reference.getApiDescription();
 					IApiAnnotations elementDescription = referenceApiDescription.resolveAnnotations(type.getHandle());
 					int restrictions = RestrictionModifiers.NO_RESTRICTIONS;

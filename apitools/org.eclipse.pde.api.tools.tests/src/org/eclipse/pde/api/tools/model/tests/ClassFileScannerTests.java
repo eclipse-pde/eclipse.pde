@@ -19,21 +19,11 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
-import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
-import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 
 /**
@@ -47,7 +37,6 @@ public class ClassFileScannerTests extends TestCase {
 	private static String WORKSPACE_NAME = "test_classes_workspace";
 	private static IPath ROOT_PATH = null;
 	private static DirectoryClassFileContainer container = null;
-	private static IApiComponent component = null;
 	
 	static {
 		//setup workspace root
@@ -64,7 +53,7 @@ public class ClassFileScannerTests extends TestCase {
 	protected List<IReference> getRefSet(String qualifiedname) {
 		try {
 			IClassFile cfile = container.findClassFile(qualifiedname);
-			IApiType type = TypeStructureCache.getTypeStructure(cfile, component);
+			IApiType type = cfile.getStructure();
 			List<IReference> references = type.extractReferences(ReferenceModifiers.MASK_REF_ALL, null);
 			return references;
 		}
@@ -161,77 +150,6 @@ public class ClassFileScannerTests extends TestCase {
 				WORKSPACE_ROOT.toOSString(), 
 				new String[] {"-1.4", "-preserveAllLocals", "-nowarn"}));
 		container = new DirectoryClassFileContainer(WORKSPACE_ROOT.append("classes").toOSString(), null);
-		component = new IApiComponent() {
-			public String[] getPackageNames() throws CoreException {
-				return null;
-			}
-			public IClassFile findClassFile(String qualifiedName) throws CoreException {
-				return null;
-			}
-			public void close() throws CoreException {
-			}
-			public void accept(ClassFileContainerVisitor visitor) throws CoreException {
-			}
-			public String getVersion() {
-				return null;
-			}
-			public IRequiredComponentDescription[] getRequiredComponents() {
-				return null;
-			}
-			public String getName() {
-				return "test";
-			}
-			public String getLocation() {
-				return null;
-			}
-			public String getId() {
-				return "test";
-			}
-			public String[] getExecutionEnvironments() {
-				return null;
-			}
-			public IClassFileContainer[] getClassFileContainers() {
-				return null;
-			}
-			public IApiDescription getApiDescription() {
-				return null;
-			}
-			public boolean hasApiDescription() {
-				return false;
-			}
-			public boolean isSystemComponent() {
-				return false;
-			}
-			public void dispose() {
-			}
-			public IApiBaseline getProfile() {
-				return null;
-			}
-			public IApiFilterStore getFilterStore() {
-				return null;
-			}
-			public IApiProblemFilter newProblemFilter(IApiProblem problem) {
-				return null;
-			}
-			public boolean isSourceComponent() {
-				return false;
-			}
-			public boolean isFragment() {
-				return false;
-			}
-			public boolean hasFragments() {
-				return false;
-			}
-			public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
-				return null;
-			}
-			public IClassFileContainer[] getClassFileContainers(String id) {
-				return null;
-			}
-			public String getOrigin() {
-				return this.getId();
-			}
-		};
 	}
 	
 	/**

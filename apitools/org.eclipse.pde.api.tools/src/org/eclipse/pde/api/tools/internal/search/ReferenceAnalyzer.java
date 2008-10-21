@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.api.tools.internal.model.Reference;
-import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
@@ -102,7 +101,7 @@ public class ReferenceAnalyzer {
 		public void visit(String packageName, IClassFile classFile) {
 			if (!fMonitor.isCanceled()) {
 				try {
-					IApiType type = TypeStructureCache.getTypeStructure(classFile, fCurrentComponent);
+					IApiType type = classFile.getStructure();
 					List references = type.extractReferences(fAllReferenceKinds, null);
 					// keep potential matches
 					Iterator iterator = references.iterator();

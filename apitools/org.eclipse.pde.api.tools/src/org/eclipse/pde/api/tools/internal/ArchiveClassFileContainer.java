@@ -13,8 +13,6 @@ package org.eclipse.pde.api.tools.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -32,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -51,7 +50,7 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	/**
 	 * Origin of this class file container
 	 */
-	private String fOrigin;
+	private IApiComponent fComponent;
 	
 	/**
 	 * Cache of package names to class file paths in that package,
@@ -69,22 +68,11 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	 */
 	private ZipFile fZipFile = null;
 	
-	/**
-	 * Modification stamp for archive. Incremented each time the archive is closed/opened.
-	 */
-	private long fModStamp;
-	
-	/**
-	 * URI of the archive
-	 */
-	private String fURI;
-	
 	class ArchiveClassFile extends AbstractClassFile implements Comparable {
 		
 		private ArchiveClassFileContainer fArchive;
 		private String fEntryName;
 		private String fTypeName;
-		private URI fEntryURI;
 		
 		/**
 		 * Constructs a new handle to a class file in the archive.
@@ -93,6 +81,7 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 		 * @param entryName zip entry name
 		 */
 		public ArchiveClassFile(ArchiveClassFileContainer container, String entryName) {
+			super(fComponent);
 			fArchive = container;
 			fEntryName = entryName;
 		}
@@ -143,31 +132,7 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 			abort("Class file not found: " + getTypeName() + " in archive: " + fArchive.fLocation, null); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFile#getURI()
-		 */
-		public URI getURI() {
-			if (fEntryURI == null) {
-				StringBuffer buf = new StringBuffer("jar:"); //$NON-NLS-1$
-				buf.append(fURI);
-				buf.append('!');
-				buf.append(fEntryName);
-				try {
-					fEntryURI = new URI(buf.toString());
-				} catch (URISyntaxException e) {
-					ApiPlugin.log(e);
-				}
-			}
-			return fEntryURI;
-		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.AbstractClassFile#getModificationStamp()
-		 */
-		public long getModificationStamp() {
-			return fModStamp;
-		}
 	}
 
 	/**
@@ -175,10 +140,11 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	 * at the specified location.
 	 * 
 	 * @param path location of the file in the local file system
+	 * @param component owning API component 
 	 */
-	public ArchiveClassFileContainer(String path, String origin) {
+	public ArchiveClassFileContainer(String path, IApiComponent component) {
 		this.fLocation = path;
-		this.fOrigin = origin;
+		this.fComponent = component;
 	}
 	
 	/* (non-Javadoc)
@@ -300,9 +266,7 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 		if (fZipFile == null) {
 			try {
 				File file = new File(fLocation);
-				fURI = file.toURI().toString();
 				fZipFile = new ZipFile(fLocation);
-				fModStamp = file.lastModified();
 			} catch (IOException e) {
 				abort("Failed to open archive: " + fLocation, e); //$NON-NLS-1$
 			}
@@ -343,6 +307,6 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	}
 	
 	public String getOrigin() {
-		return this.fOrigin;
+		return this.fComponent.getId();
 	}
 }

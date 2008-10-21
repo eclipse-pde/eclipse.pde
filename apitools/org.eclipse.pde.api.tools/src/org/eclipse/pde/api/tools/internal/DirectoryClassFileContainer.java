@@ -15,7 +15,6 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +27,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -47,7 +47,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 	/**
 	 * Origin of this class file container
 	 */
-	private String fOrigin;
+	private IApiComponent fComponent;
 
 	/**
 	 * Map of package names to associated directory (file)
@@ -81,8 +81,10 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 		 * Constructs a class file on the given file
 		 * @param file file
 		 * @param qualified type name
+		 * @param component owning API component
 		 */
 		public ClassFile(File file, String typeName) {
+			super(fComponent);
 			fFile = file;
 			fTypeName = typeName;
 		}
@@ -130,17 +132,6 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 			return null; // never reaches here
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFile#getURI()
-		 */
-		public URI getURI() {
-			return fFile.toURI();
-		}
-
-		public long getModificationStamp() {
-			return fFile.lastModified() + fFile.length();
-		}
-		
 	}	
 	
 	/**
@@ -148,10 +139,11 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 	 * 
 	 * @param location absolute path in the local file system
 	 * @param origin id of the component that creates this class file container
+	 *  or <code>null</code> if unknown
 	 */
-	public DirectoryClassFileContainer(String location, String origin) {
+	public DirectoryClassFileContainer(String location, IApiComponent component) {
 		this.fRoot = new File(location);
-		this.fOrigin = origin;
+		this.fComponent = component;
 	}
 
 	/**
@@ -301,6 +293,6 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 	}
 
 	public String getOrigin() {
-		return this.fOrigin;
+		return this.fComponent.getId();
 	}
 }

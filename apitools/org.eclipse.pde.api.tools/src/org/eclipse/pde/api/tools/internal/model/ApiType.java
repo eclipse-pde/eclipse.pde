@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.api.tools.internal.AbstractClassFile;
 import org.eclipse.pde.api.tools.internal.model.cache.MethodKey;
-import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
@@ -31,7 +31,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
-import org.eclipse.pde.api.tools.internal.util.ClassFileResult;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -132,7 +131,7 @@ public class ApiType extends ApiMember implements IApiType {
 	public List extractReferences(int referenceMask, IProgressMonitor monitor) throws CoreException {
 		List references = new LinkedList();
 		ReferenceExtractor extractor = new ReferenceExtractor(this, references, referenceMask);
-		ClassReader reader = new ClassReader(fStorage.getContents());
+		ClassReader reader = new ClassReader(((AbstractClassFile)fStorage).getContents());
 		reader.accept(extractor, ClassReader.SKIP_FRAMES);
 		return references;
 	}
@@ -279,9 +278,9 @@ public class ApiType extends ApiMember implements IApiType {
 		String packageName = Util.getPackageName(qName);
 		IApiComponent[] components = getApiComponent().getProfile().
 			resolvePackage(getApiComponent(), packageName);
-		ClassFileResult result = Util.getComponent(components, qName);
+		IClassFile result = Util.getClassFile(components, qName);
 		if (result != null) {
-			return TypeStructureCache.getTypeStructure(result.getClassFile(), result.getComponent());
+			return result.getStructure();
 		}
 		return null;
 	}
@@ -450,7 +449,7 @@ public class ApiType extends ApiMember implements IApiType {
 				}
 				fMemberTypes.put(simpleName, file);
 			}
-			return TypeStructureCache.getTypeStructure(file, getApiComponent());
+			return file.getStructure();
 		}
 		return null;
 	}

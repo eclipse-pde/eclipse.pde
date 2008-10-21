@@ -42,7 +42,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
-import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
@@ -318,7 +317,7 @@ public class TagScanner {
 				IReferenceTypeDescriptor type = descriptor.getEnclosingType();
 				IClassFile classFile = fContainer.findClassFile(type.getQualifiedName());
 				if(classFile != null) {
-					IApiType structure = TypeStructureCache.getTypeStructure(classFile, null);
+					IApiType structure = classFile.getStructure();
 					IApiMethod[] methods = structure.getMethods();
 					for (int i = 0; i < methods.length; i++) {
 						IApiMethod method = methods[i];

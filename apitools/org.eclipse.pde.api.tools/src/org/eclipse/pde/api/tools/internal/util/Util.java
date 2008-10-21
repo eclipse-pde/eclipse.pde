@@ -581,11 +581,12 @@ public final class Util {
 	}
 
 	/**
-	 * Returns the {@link IClassFile} with the given name from the first {@link IApiComponent}
-	 * it is found in, or <code>null</code> if not found
-	 * @param components
-	 * @param typeName
-	 * @return the {@link IClassFile} with the given name or <code>null</code>
+	 * Returns a result of searching the given components for  class file with the
+	 * given type name.
+	 *  
+	 * @param components API components to search or <code>null</code> if none
+	 * @param typeName type to search for
+	 * @return class file or <code>null</code> if none found
 	 */
 	public static IClassFile getClassFile(IApiComponent[] components, String typeName) {
 		if (components == null) return null;
@@ -593,36 +594,7 @@ public final class Util {
 			IApiComponent apiComponent = components[i];
 			if (apiComponent != null) {
 				try {
-					IClassFile classFile = apiComponent.findClassFile(typeName);
-					if (classFile != null) {
-						return classFile;
-					}
-				} catch (CoreException e) {
-					// ignore
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns a result of searching the given components for  class file with the
-	 * given type name.
-	 *  
-	 * @param components API components to search or <code>null</code> if none
-	 * @param typeName type to search for
-	 * @return result of the search, or <code>null</code> if none found
-	 */
-	public static ClassFileResult getComponent(IApiComponent[] components, String typeName) {
-		if (components == null) return null;
-		for (int i = 0, max = components.length; i < max; i++) {
-			IApiComponent apiComponent = components[i];
-			if (apiComponent != null) {
-				try {
-					IClassFile classFile = apiComponent.findClassFile(typeName);
-					if (classFile != null) {
-						return new ClassFileResult(apiComponent, classFile);
-					}
+					return apiComponent.findClassFile(typeName);
 				} catch (CoreException e) {
 					// ignore
 				}

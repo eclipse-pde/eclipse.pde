@@ -10,20 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
-import java.io.InputStream;
-import java.net.URI;
-
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 
 /**
- * Handle to bytes in a class file.
+ * Handle to the structure of a class, interface, annotation, or enum.
  * 
  * @since 1.0.0
  */
 public interface IClassFile {
 	
 	/**
-	 * Returns the fully qualified name of the type contained in this class file.
+	 * Returns the fully qualified name of the type this storage represents.
 	 * Package names are dot separated and type names are '$'-separated.
 	 * 
 	 * @return fully qualified type name
@@ -31,40 +29,23 @@ public interface IClassFile {
 	public String getTypeName();
 	
 	/**
-	 * Returns a URI to this class file, or <code>null</code> if it does
-	 * not exist.
+	 * Returns the structure contained in this type storage. I.e. access
+	 * to the methods, fields, and member types in the associated type.
 	 * 
-	 * @return URI to this class file or <code>null</code>
+	 * @return structure of associated type
+	 * @exception CoreException if unable to retrieve the structure
 	 */
-	public URI getURI();
+	public IApiType getStructure() throws CoreException;
 	
 	/**
-	 * Returns a non-negative modification stamp.
-	 * <p>
-	 * A modification stamp gets updated each time a class file is modified.
-	 * If a modification stamp is the same, the class file has not changed.
-	 * Conversely, if a modification stamp is different, some aspect of it
-	 * has been modified at least once (possibly several times).
-	 * The magnitude or sign of the numerical difference between two modification stamps 
-	 * is not significant.
+	 * Returns the API component this class file originated from or
+	 * <code>null</code> if unknown. Note that the component will only be <code>null</code>
+	 * in the case that a class file container was created without an owning
+	 * component.
 	 * 
-	 * @return modification stamp
+	 * @return API component or <code>null</code> if unknown
 	 */
-	public long getModificationStamp();
+	public IApiComponent getApiComponent();
 	
-	/**
-	 * Returns the bytes of this class file. 
-	 *
-	 * @return class file bytes
-	 * @exception CoreException if unable to obtain the bytes
-	 */
-	public byte[] getContents() throws CoreException;
 	
-	/**
-	 * Returns an input stream for reading this class file. Clients are responsible
-	 * for closing the input stream.
-	 * 
-	 * @return input stream
-	 */
-	public InputStream getInputStream() throws CoreException;
 }
