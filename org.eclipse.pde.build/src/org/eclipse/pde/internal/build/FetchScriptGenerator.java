@@ -19,7 +19,8 @@ import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.build.IFetchFactory;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.fetch.CVSFetchTaskFactory;
-import org.eclipse.pde.internal.build.site.*;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
@@ -65,7 +66,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	//The registry of the task factories
 	private FetchTaskFactoriesRegistry fetchTaskFactories;
 	//Set of all the used factories while generating the fetch script for the top level element
-	private Set encounteredTypeOfRepo = new HashSet();
+	private final Set encounteredTypeOfRepo = new HashSet();
 
 	public static final String FEATURE_ONLY = "featureOnly"; //$NON-NLS-1$
 	public static final String FEATURE_AND_PLUGINS = "featureAndPlugins"; //$NON-NLS-1$
@@ -298,7 +299,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		// store builder
 		entryInfos.put(FETCH_TASK_FACTORY, fetchTaskFactory);
-		
+
 		// keep track of the version of the element as found in the map file
 		entryInfos.put(MATCHED_VERSION, match[1]);
 		return entryInfos;
@@ -476,17 +477,17 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			AntRunner runner = new AntRunner();
 			runner.setBuildFileLocation(target.getAbsolutePath());
 			Map retrieveProp = new HashMap();
-			retrieveProp.put("fetch.failonerror", "true");  //$NON-NLS-1$//$NON-NLS-2$
+			retrieveProp.put("fetch.failonerror", "true"); //$NON-NLS-1$//$NON-NLS-2$
 			runner.addUserProperties(retrieveProp);
 			//This has to be hardcoded here because of the way AntRunner stipulates that 
 			//loggers are passed in. Otherwise this would be a Foo.class.getName()
 			runner.addBuildLogger("org.eclipse.pde.internal.build.tasks.SimpleBuildLogger"); //$NON-NLS-1$
-			
-			runner.run();	
+
+			runner.run();
 		} catch (Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, NLS.bind(Messages.error_retrieveFailed, elementName), e));
 		}
-		
+
 		try {
 			BuildTimeFeatureFactory factory = BuildTimeFeatureFactory.getInstance();
 			File featureFolder = new File(destination.toString());
@@ -660,6 +661,10 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				return id.equals(entry.id) && v.equals(entry.v);
 			}
 			return false;
+		}
+
+		public int hashCode() {
+			return id.hashCode() + v.hashCode();
 		}
 	}
 
