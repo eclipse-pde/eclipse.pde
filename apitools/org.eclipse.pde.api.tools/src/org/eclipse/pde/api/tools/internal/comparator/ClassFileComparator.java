@@ -391,6 +391,38 @@ public class ClassFileComparator {
 						this.type1,
 						this.type1.getName(),
 						Util.getDescriptorName(type1));
+				if (this.type1.isInterface()) {
+					for (Iterator iterator = superinterfacesSet2.iterator(); iterator.hasNext();) {
+						IApiType type = (IApiType)iterator.next();
+						IApiMethod[] methods = type.getMethods();
+						int length = methods.length;
+						if (length != 0) {
+							// we should check if every method defined in the new interface exists in the old hierarchy
+							// could be methods moved up in the hierarchy
+							methodLoop: for (int j = 0; j < length; j++) {
+								IApiMethod method = methods[j];
+								IApiMethod method3 = this.type1.getMethod(method.getName(), method.getSignature());
+								if (method3 == null) {
+									this.addDelta(
+											getElementType(this.type1),
+											IDelta.ADDED,
+											IDelta.SUPER_INTERFACE_WITH_METHODS,
+											this.currentDescriptorRestrictions,
+											this.type1.getModifiers(),
+											this.type1,
+											this.type1.getName(),
+											new String[] {
+												Util.getDescriptorName(type1),
+												type.getName(),
+												getMethodDisplayName(method, type)
+											}
+									);
+									break methodLoop;
+								}
+							}
+						}
+					}
+				}
 			}
 		} else if (superinterfacesSet2 == null) {
 			this.addDelta(
@@ -407,22 +439,26 @@ public class ClassFileComparator {
 			for (Iterator iterator = superinterfacesSet2.iterator(); iterator.hasNext();) {
 				names2.add(((IApiType)iterator.next()).getName());
 			}
+			boolean contracted = false;
 			for (Iterator iterator = superinterfacesSet1.iterator(); iterator.hasNext();) {
 				IApiType superInterfaceType = (IApiType) iterator.next();
-				if (!names2.contains(superInterfaceType.getName())) {
-					this.addDelta(
-							getElementType(this.type1),
-							IDelta.CHANGED,
-							IDelta.CONTRACTED_SUPERINTERFACES_SET,
-							this.currentDescriptorRestrictions,
-							this.type1.getModifiers(),
-							this.type1,
-							this.type1.getName(),
-							Util.getDescriptorName(type1));
-					return;
+				if (!names2.remove(superInterfaceType.getName())) {
+					contracted = true;
 				}
 			}
-			if (superinterfacesSet1.size() < superinterfacesSet2.size()) {
+			if (contracted) {
+				this.addDelta(
+						getElementType(this.type1),
+						IDelta.CHANGED,
+						IDelta.CONTRACTED_SUPERINTERFACES_SET,
+						this.currentDescriptorRestrictions,
+						this.type1.getModifiers(),
+						this.type1,
+						this.type1.getName(),
+						Util.getDescriptorName(type1));
+				return;
+			}
+			if (names2.size() > 0) {
 				this.addDelta(
 						getElementType(this.type1),
 						IDelta.CHANGED,
@@ -432,6 +468,56 @@ public class ClassFileComparator {
 						this.type1,
 						this.type1.getName(),
 						Util.getDescriptorName(type1));
+				if (this.type1.isInterface()) {
+					for (Iterator iterator = names2.iterator(); iterator.hasNext();) {
+						String interfaceName = (String) iterator.next();
+						try {
+							ClassFileResult pair = getType(interfaceName, this.component2, this.apiProfile2);
+							if (pair == null) continue;
+							IClassFile interfaceClassFile = pair.getClassFile();
+							IApiType type = TypeStructureCache.getTypeStructure(interfaceClassFile, pair.getComponent());
+							IApiMethod[] methods = type.getMethods();
+							int length = methods.length;
+							if (length > 0) {
+								// we should check if every method defined in the new interface exists in the old hierarchy
+								// could be methods moved up in the hierarchy
+								methodLoop: for (int j = 0; j < length; j++) {
+									IApiMethod method = methods[j];
+									boolean found = false;
+									interfaceLoop: for (Iterator iterator2 = superinterfacesSet1.iterator(); iterator2.hasNext();) {
+										IApiType superTypeDescriptor = (IApiType) iterator2.next();
+										IApiMethod method3 = superTypeDescriptor.getMethod(method.getName(), method.getSignature());
+										if (method3 == null) {
+											continue interfaceLoop;
+										} else {
+											found = true;
+											break interfaceLoop;
+										}
+									}
+									if (!found) {
+										this.addDelta(
+												getElementType(this.type1),
+												IDelta.ADDED,
+												IDelta.SUPER_INTERFACE_WITH_METHODS,
+												this.currentDescriptorRestrictions,
+												this.type1.getModifiers(),
+												this.type1,
+												this.type1.getName(),
+												new String[] {
+													Util.getDescriptorName(type1),
+													type.getName(),
+													getMethodDisplayName(method, type)
+												}
+										);
+										break methodLoop;
+									}
+								}
+							}
+						} catch (CoreException e) {
+							ApiPlugin.log(e);
+						}
+					}
+				}
 			}
 		}
 	}

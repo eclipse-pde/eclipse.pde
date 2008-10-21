@@ -430,6 +430,7 @@ public class ApiProblemFactory {
 									case IDelta.FIELD: return 40;
 									case IDelta.METHOD: return 44;
 									case IDelta.RESTRICTIONS: return 72;
+									case IDelta.SUPER_INTERFACE_WITH_METHODS : return 133;
 								}
 								break;
 							}

@@ -819,6 +819,17 @@ public interface IDelta {
 	 */
 	public static final int TYPE_ARGUMENT = 68;
 	/**
+	 * Delta kind flag that denotes that an interface got a super interface with methods.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int SUPER_INTERFACE_WITH_METHODS = 69;
+	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
 	 * 
 	 * @return true if the receiver has no children deltas, false otherwise.

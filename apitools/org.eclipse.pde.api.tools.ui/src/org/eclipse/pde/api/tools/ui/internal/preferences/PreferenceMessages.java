@@ -80,6 +80,8 @@ public class PreferenceMessages extends NLS {
 	
 	public static String INTERFACE_ADDED_FIELD;
 	public static String INTERFACE_ADDED_METHOD;
+	public static String INTERFACE_ADDED_RESTRICTIONS;
+	public static String INTERFACE_ADDED_SUPER_INTERFACE_WITH_METHODS;
 	public static String INTERFACE_ADDED_TYPE_PARAMETER;
 	public static String INTERFACE_REMOVED_TYPE_PARAMETER;
 	public static String INTERFACE_REMOVED_FIELD;
@@ -87,7 +89,6 @@ public class PreferenceMessages extends NLS {
 	public static String INTERFACE_REMOVED_TYPE_MEMBER;
 	public static String INTERFACE_CHANGED_TYPE_CONVERSION;
 	public static String INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
-	public static String INTERFACE_ADDED_RESTRICTIONS;
 
 	public static String ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
 	public static String ENUM_CHANGED_TYPE_CONVERSION;

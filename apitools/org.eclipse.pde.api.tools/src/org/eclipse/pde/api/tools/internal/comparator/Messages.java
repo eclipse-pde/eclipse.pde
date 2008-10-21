@@ -323,6 +323,8 @@ public class Messages extends NLS {
 								return 18;
 							case IDelta.METHOD_MOVED_DOWN :
 								return 97;
+							case IDelta.SUPER_INTERFACE_WITH_METHODS :
+								return 107;
 						}
 						break;
 					case IDelta.CHANGED :
