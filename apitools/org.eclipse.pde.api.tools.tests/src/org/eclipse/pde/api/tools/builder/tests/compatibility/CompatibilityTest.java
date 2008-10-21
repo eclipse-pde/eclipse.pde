@@ -33,12 +33,13 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
+import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
@@ -54,7 +55,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	/**
 	 * 
 	 */
-	private static final String BASELINE = "baseline";
+	public static final String BASELINE = "baseline";
 
 	/**
 	 * Constructor
@@ -160,15 +161,26 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 */
 	@Override
 	protected void setUp() throws Exception {
+		// for the first compatibility test create workspace projects
+		ApiTestingEnvironment env = getEnv();
+		if (env != null) {
+			env.setRevert(true);
+		}
 		super.setUp();
-		// populate the workspace with initial plug-ins/projects
-		createExistingProjects(BASELINE, true);
+		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
+		if (projects.length == 0) {
+			// populate the workspace with initial plug-ins/projects
+			createExistingProjects(BASELINE, true);
+		} else {
+			// build after revert
+			incrementalBuild();
+		}
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiProfileManager();
 		IApiBaseline baseline = manager.getDefaultApiBaseline();
 		if (baseline == null) {
 			// create the API baseline
 			IApiBaseline profile = manager.getWorkspaceBaseline();
-			IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
+			projects = getEnv().getWorkspace().getRoot().getProjects();
 			IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(BASELINE);
 			for (int i = 0; i < projects.length; i++) {
 				exportApiComponent(
@@ -187,7 +199,13 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			manager.addApiBaseline(baseline);
 			manager.setDefaultApiBaseline(baseline.getName());
 		}
-	}	
+	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		getEnv().setRevert(false);
+	}
 	
 	/**
 	 * Exports the project as an API component to be used in an API baseline.
@@ -282,6 +300,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		FileInputStream stream = new FileInputStream(replacement);
 		file.setContents(stream, false, true, null);
 		stream.close();
+		getEnv().changed(workspaceLocation);
 	}
 	
 	/**
@@ -299,6 +318,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		FileInputStream stream = new FileInputStream(replacement);
 		file.create(stream, false, null);
 		stream.close();
+		getEnv().added(workspaceLocation);
 	}
 	
 	/**
@@ -310,6 +330,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
 		assertTrue("Workspace file does not exist: " + workspaceLocation.toString(), file.exists());
 		file.delete(false, null);
+		getEnv().removed(workspaceLocation);
 	}	
 	
 	/**
@@ -462,4 +483,6 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			}
 		}
 	}
+	
+	
 }

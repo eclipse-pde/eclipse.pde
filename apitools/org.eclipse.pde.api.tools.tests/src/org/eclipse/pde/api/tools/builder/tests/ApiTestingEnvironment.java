@@ -11,11 +11,16 @@
 package org.eclipse.pde.api.tools.builder.tests;
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -28,9 +33,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.tests.builder.TestingEnvironment;
 import org.eclipse.jdt.core.tests.util.AbstractCompilerTest;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.pde.api.tools.builder.tests.compatibility.CompatibilityTest;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.internal.core.natures.PDE;
 
@@ -43,6 +50,20 @@ import org.eclipse.pde.internal.core.natures.PDE;
 public class ApiTestingEnvironment extends TestingEnvironment {
 	
 	protected static final IMarker[] NO_MARKERS = new IMarker[0];
+	
+	/**
+	 * Whether to revert vs. reset the workspace
+	 */
+	private boolean fRevert = false;
+	
+	/**
+	 * Modified files for each build so that we can undo the changes incrementally
+	 * rather than recreating the workspace for each test.
+	 */
+	private List<IPath> fAdded = new ArrayList<IPath>();
+	private List<IPath> fChanged = new ArrayList<IPath>();
+	private List<IPath> fRemoved = new ArrayList<IPath>();
+	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#addProject(java.lang.String, java.lang.String)
@@ -344,16 +365,155 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#resetWorkspace()
 	 */
 	public void resetWorkspace() {
-		super.resetWorkspace();
-		//clean up any left over projects from other tests
-		IProject[] projects = getWorkspace().getRoot().getProjects();
-		for(int i = 0; i < projects.length; i++) {
-			try {
-				projects[i].delete(true, new NullProgressMonitor());
+		try {
+			if (fRevert) {
+				revertWorkspace();
+			} else {
+				super.resetWorkspace();
+				//clean up any left over projects from other tests
+				IProject[] projects = getWorkspace().getRoot().getProjects();
+				for(int i = 0; i < projects.length; i++) {
+					try {
+						projects[i].delete(true, new NullProgressMonitor());
+					}
+					catch(CoreException ce) {
+						
+					}
+				}
 			}
-			catch(CoreException ce) {
-				
-			}
+		} finally {
+			// clear all changes
+			fAdded.clear();
+			fChanged.clear();
+			fRemoved.clear();
 		}
+	}
+	
+	/**
+	 * Reverts changes in the workspace - added, removed, changed files
+	 */
+	public void revertWorkspace() {
+		
+		// remove each added file
+		Iterator<IPath> iterator = fAdded.iterator();
+		while (iterator.hasNext()) {
+			IPath path = (IPath) iterator.next();
+			deleteWorkspaceFile(path);
+		}
+		
+		// revert each changed file
+		iterator = fChanged.iterator();
+		while (iterator.hasNext()) {
+			IPath path = (IPath) iterator.next();
+			IPath repl = TestSuiteHelper.getPluginDirectoryPath().
+				append(ApiBuilderTest.TEST_SOURCE_ROOT).append(CompatibilityTest.BASELINE).append(path);
+			updateWorkspaceFile(path, repl);
+		}
+		
+		// replace each deleted file
+		iterator = fRemoved.iterator();
+		while (iterator.hasNext()) {
+			IPath path = (IPath) iterator.next();
+			IPath repl = TestSuiteHelper.getPluginDirectoryPath().
+				append(ApiBuilderTest.TEST_SOURCE_ROOT).append(CompatibilityTest.BASELINE).append(path);
+			createWorkspaceFile(path, repl);
+		}
+		
+	}
+	
+	/**
+	 * Deletes the workspace file at the specified location (full path).
+	 * 
+	 * @param workspaceLocation
+	 */
+	private void deleteWorkspaceFile(IPath workspaceLocation) {
+		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
+		try {
+			file.delete(false, null);
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+	}		
+	
+	/**
+	 * Updates the contents of a workspace file at the specified location (full path),
+	 * with the contents of a local file at the given replacement location (absolute path).
+	 * 
+	 * @param workspaceLocation
+	 * @param replacementLocation
+	 */
+	private void updateWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) {
+		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
+		File replacement = replacementLocation.toFile();
+		try {
+			FileInputStream stream = new FileInputStream(replacement);
+			file.setContents(stream, false, true, null);
+			stream.close();
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		} catch (IOException e) {
+			ApiPlugin.log(e);
+		}
+	}	
+
+	/**
+	 * Updates the contents of a workspace file at the specified location (full path),
+	 * with the contents of a local file at the given replacement location (absolute path).
+	 * 
+	 * @param workspaceLocation
+	 * @param replacementLocation
+	 */
+	private void createWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) {
+		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
+		File replacement = replacementLocation.toFile();
+		try {
+			FileInputStream stream = new FileInputStream(replacement);
+			file.create(stream, false, null);
+			stream.close();
+		} catch (IOException e) {
+			ApiPlugin.log(e);
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+	}
+	
+	/**
+	 * Notes a file was added during the test, to be undone
+	 * @param path
+	 */
+	public void added(IPath path) {
+		fAdded.add(path);
+	}
+	
+	public void changed(IPath path) {
+		fChanged.add(path);
+	}
+	
+	public void removed(IPath path) {
+		fRemoved.add(path);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#addFile(org.eclipse.core.runtime.IPath, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public IPath addFile(IPath root, String fileName, String contents) {
+		IPath path = root.append(fileName);
+		IFile file = getWorkspace().getRoot().getFile(path);
+		if (file.exists()) {
+			changed(path);
+		} else {
+			added(path);
+		}
+		return super.addFile(root, fileName, contents);
+	}	
+	
+	/**
+	 * Sets whether to revert the workspace rather than reset.
+	 * 
+	 * @param revert
+	 */
+	public void setRevert(boolean revert) {
+		fRevert = revert;
 	}
 }
