@@ -50,13 +50,6 @@ public abstract class ApiElement implements IApiElement {
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getDescriptor()
-	 */
-	public String getDescriptor() {
-		return fName;
-	}
-
-	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getName()
 	 */
 	public String getName() {

@@ -59,11 +59,11 @@ import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
+import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -79,6 +79,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
+import org.eclipse.pde.api.tools.internal.search.ReferenceAnalyzer;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.Constants;
@@ -569,10 +570,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} 
 		IApiSearchScope scope = getSearchScope(component, typenames);
 		SubMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {component.getId()}), 2);
-		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
+		ReferenceAnalyzer analyzer = new ReferenceAnalyzer();
 		try {
 			long start = System.currentTimeMillis();
-			IApiProblem[] illegal = analyzer.findIllegalApiUse(component, scope, monitor);
+			IApiProblem[] illegal = analyzer.analyze(component, scope, monitor);
 			updateMonitor(localMonitor);
 			long end = System.currentTimeMillis();
 			if (DEBUG) {

@@ -20,11 +20,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IResourceDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
-import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
-import org.eclipse.pde.api.tools.internal.search.SearchCriteria;
-import org.eclipse.pde.api.tools.internal.search.SearchEngine;
 import org.eclipse.pde.api.tools.internal.search.SearchScope;
 import org.eclipse.pde.api.tools.internal.search.TypeScope;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -136,24 +132,6 @@ public class Factory {
 	 */
 	public static IApiSearchScope newTypeScope(IApiComponent component, IReferenceTypeDescriptor[] types) {
 		return new TypeScope(component, types);
-	}
-	
-	/**
-	 * Creates and returns a new search engine.
-	 * 
-	 * @return search engine
-	 */
-	public static IApiSearchEngine newSearchEngine() {
-		return new SearchEngine();
-	}
-	
-	/**
-	 * Creates and returns a new search criteria.
-	 * 
-	 * @return new search criteria
-	 */
-	public static IApiSearchCriteria newSearchCriteria() {
-		return new SearchCriteria();
 	}
 }
 

@@ -39,7 +39,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
-import org.eclipse.pde.api.tools.internal.provisional.search.IReferenceAnalyzer;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -50,7 +49,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 1.1
  */
-public class ReferenceAnalyzer implements IReferenceAnalyzer {
+public class ReferenceAnalyzer {
 
 	/**
 	 * Natural log of 2.
@@ -394,8 +393,15 @@ public class ReferenceAnalyzer implements IReferenceAnalyzer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IReferenceAnalyzer#analyze(org.eclipse.pde.api.tools.internal.provisional.IApiComponent, org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope, org.eclipse.core.runtime.IProgressMonitor)
+	
+	/**
+	 * Analyzes the given {@link IApiComponent} within the given {@link IApiSearchScope} and returns 
+	 * a collection of detected {@link IApiProblem}s or an empty collection, never <code>null</code>
+	 * @param component
+	 * @param scope
+	 * @param monitor
+	 * @return the collection of detected {@link IApiProblem}s or an empty collection, never <code>null</code>
+	 * @throws CoreException
 	 */
 	public IApiProblem[] analyze(IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor) throws CoreException {
 		// build problem detectors

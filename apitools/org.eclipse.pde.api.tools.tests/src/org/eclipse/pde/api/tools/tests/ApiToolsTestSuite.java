@@ -16,8 +16,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.pde.api.tools.builder.tests.OSGiLessAnalysisTests;
 import org.eclipse.pde.api.tools.comparator.tests.AllDeltaTests;
-import org.eclipse.pde.api.tools.model.tests.ApiDescriptionTests;
 import org.eclipse.pde.api.tools.model.tests.ApiBaselineTests;
+import org.eclipse.pde.api.tools.model.tests.ApiDescriptionTests;
 import org.eclipse.pde.api.tools.model.tests.ClassFileContainerTests;
 import org.eclipse.pde.api.tools.model.tests.ClassFileScannerTests;
 import org.eclipse.pde.api.tools.model.tests.ComponentManifestTests;
@@ -25,7 +25,6 @@ import org.eclipse.pde.api.tools.model.tests.ElementDescriptorTests;
 import org.eclipse.pde.api.tools.model.tests.TagScannerTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemFactoryTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;
-import org.eclipse.pde.api.tools.reference.tests.SearchEngineTests;
 import org.eclipse.pde.api.tools.reference.tests.SearchScopeTests;
 import org.eclipse.pde.api.tools.util.tests.HeadlessApiProfileManagerTests;
 import org.eclipse.pde.api.tools.util.tests.UtilTests;
@@ -62,7 +61,6 @@ public class ApiToolsTestSuite extends TestSuite {
 		addTest(new AllDeltaTests());
 		addTest(new TestSuite(ElementDescriptorTests.class));
 		addTest(new TestSuite(SearchScopeTests.class));
-		addTest(new TestSuite(SearchEngineTests.class));
 		addTest(new TestSuite(ApiProblemTests.class));
 		addTest(new TestSuite(ApiProblemFactoryTests.class));
 		addTest(new TestSuite(OSGiLessAnalysisTests.class));

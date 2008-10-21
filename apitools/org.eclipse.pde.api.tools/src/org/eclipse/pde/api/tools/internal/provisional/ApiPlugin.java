@@ -40,7 +40,6 @@ import org.eclipse.pde.api.tools.internal.model.ReferenceExtractor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
-import org.eclipse.pde.api.tools.internal.search.SearchEngine;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -137,7 +136,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	private static final String BUILDER_DEBUG = PLUGIN_ID + "/debug/builder" ; //$NON-NLS-1$
 	private static final String DELTA_DEBUG = PLUGIN_ID + "/debug/delta" ; //$NON-NLS-1$
 	private static final String CLASSFILE_VISITOR_DEBUG = PLUGIN_ID + "/debug/classfilevisitor" ; //$NON-NLS-1$
-	private static final String SEARCH_DEBUG = PLUGIN_ID + "/debug/search" ; //$NON-NLS-1$
 	private static final String DESCRIPTOR_FRAMEWORK_DEBUG = PLUGIN_ID + "/debug/descriptor/framework" ; //$NON-NLS-1$
 	private static final String TAG_SCANNER_DEBUG = PLUGIN_ID + "/debug/tagscanner" ; //$NON-NLS-1$
 	private static final String PLUGIN_WORKSPACE_COMPONENT_DEBUG = PLUGIN_ID + "/debug/pluginworkspacecomponent"; //$NON-NLS-1$
@@ -490,11 +488,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			option = Platform.getDebugOption(CLASSFILE_VISITOR_DEBUG);
 			if(option != null) {
 				ReferenceExtractor.setDebug(option.equalsIgnoreCase(TRUE));
-			}
-
-			option = Platform.getDebugOption(SEARCH_DEBUG);
-			if(option != null) {
-				SearchEngine.setDebug(option.equalsIgnoreCase(TRUE));
 			}
 
 			option = Platform.getDebugOption(DESCRIPTOR_FRAMEWORK_DEBUG);
