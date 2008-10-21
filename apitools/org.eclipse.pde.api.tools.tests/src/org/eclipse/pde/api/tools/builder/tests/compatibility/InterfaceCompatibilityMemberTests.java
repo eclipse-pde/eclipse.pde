@@ -65,6 +65,14 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		return "intercompat";
 	}
 	
+	public void testAddSuperInterfaceAI() throws Exception {
+		xAddSuperInterfaceA(true);
+	}
+	
+	public void testAddSuperInterfaceAF() throws Exception {
+		xAddSuperInterfaceA(false);
+	}
+
 	/**
 	 * Tests adding a field to an interface
 	 */
@@ -273,18 +281,23 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 */
 	private void xAddSuperInterfaceA(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceA.java");
-		// TODO: should be problems
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.INTERFACE_ELEMENT_TYPE,
+						IDelta.ADDED,
+						IDelta.SUPER_INTERFACE_WITH_METHODS)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{
+				PACKAGE_PREFIX + "AddInterfaceA",
+				"a.classes.hierarchy.InterfaceA",
+				"methodA()"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
-	
-	public void testAddSuperInterfaceAI() throws Exception {
-		xAddSuperInterfaceA(true);
-	}	
-	
-	public void testAddSuperInterfaceAF() throws Exception {
-		xAddSuperInterfaceA(false);
-	}	
-	
+
 	/**
 	 * Tests adding a super interface to a noimplement interface
 	 */
