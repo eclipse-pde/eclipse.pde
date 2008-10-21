@@ -345,8 +345,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		// NOT USED
 		return 0;
 	}
-	
-	
+
 	/**
 	 * Tests removing an internal superclass that defines a public constructor
 	 */
