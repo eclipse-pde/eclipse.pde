@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -265,7 +264,6 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	private synchronized ZipFile open() throws CoreException {
 		if (fZipFile == null) {
 			try {
-				File file = new File(fLocation);
 				fZipFile = new ZipFile(fLocation);
 			} catch (IOException e) {
 				abort("Failed to open archive: " + fLocation, e); //$NON-NLS-1$

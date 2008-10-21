@@ -70,7 +70,6 @@ public class ReferenceAnalyzer {
 	 */
 	class Visitor extends ClassFileContainerVisitor {
 		
-		private IApiComponent fCurrentComponent = null;
 		private IProgressMonitor fMonitor = null;
 		
 		public Visitor(IProgressMonitor monitor) {
@@ -78,11 +77,9 @@ public class ReferenceAnalyzer {
 		}
 
 		public void end(IApiComponent component) {
-			fCurrentComponent = null;
 		}
 
 		public boolean visit(IApiComponent component) {
-			fCurrentComponent = component;
 			return true;
 		}
 		
