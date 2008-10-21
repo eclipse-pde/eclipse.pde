@@ -165,6 +165,8 @@ public class Messages extends NLS {
 								return 18;
 							case IDelta.METHOD_MOVED_DOWN :
 								return 97;
+							case IDelta.RESTRICTIONS :
+								return 108;
 						}
 						break;
 					case IDelta.CHANGED :
