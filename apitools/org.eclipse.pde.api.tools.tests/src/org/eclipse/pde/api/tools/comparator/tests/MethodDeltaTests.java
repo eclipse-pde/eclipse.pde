@@ -30,7 +30,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(MethodDeltaTests.class);
 		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
-		suite.addTest(new MethodDeltaTests("test115"));
+		suite.addTest(new MethodDeltaTests("test109"));
 		return suite;
 	}
 
@@ -2431,5 +2431,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags());
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=251513
+	 */
+	public void test109() {
+		deployBundles("test109");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA);
 	}
 }
