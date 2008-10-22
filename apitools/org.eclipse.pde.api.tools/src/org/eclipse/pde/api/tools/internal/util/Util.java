@@ -2578,8 +2578,15 @@ public final class Util {
 		if (Signature.getArrayCount(type) == Signature.getArrayCount(type2)) {
 			String el1 = Signature.getElementType(type);
 			String el2 = Signature.getElementType(type2);
-			if (Signature.getSignatureSimpleName(el1).equals(Signature.getSignatureSimpleName(el2))) {
+			String signatureSimpleName = Signature.getSignatureSimpleName(el1);
+			String signatureSimpleName2 = Signature.getSignatureSimpleName(el2);
+			if (signatureSimpleName.equals(signatureSimpleName2)) {
 				return true;
+			}
+			int index = signatureSimpleName2.lastIndexOf('.');
+			if (index != -1) {
+				// the right side is a member type
+				return signatureSimpleName.equals(signatureSimpleName2.subSequence(index + 1, signatureSimpleName2.length()));
 			}
 		}
 		return false;
