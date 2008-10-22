@@ -594,7 +594,8 @@ public final class Util {
 			IApiComponent apiComponent = components[i];
 			if (apiComponent != null) {
 				try {
-					return apiComponent.findClassFile(typeName);
+					IClassFile classFile = apiComponent.findClassFile(typeName);
+					if (classFile != null) return classFile;
 				} catch (CoreException e) {
 					// ignore
 				}
@@ -1094,6 +1095,10 @@ public final class Util {
 		if (method.exists()) {
 			return method;
 		} else {
+			// if the method is not null and it doesn't exist, it might be the default constructor
+			if (selector.equals(type.getElementName()) && parameterTypes.length == 0) {
+				return null;
+			}
 			// try to check by selector
 			IMethod[] methods = null;
 			try {
