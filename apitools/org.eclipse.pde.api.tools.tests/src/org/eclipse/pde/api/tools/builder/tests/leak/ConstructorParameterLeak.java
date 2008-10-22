@@ -379,8 +379,7 @@ public class ConstructorParameterLeak extends LeakTest {
 	}
 	
 	private void x11(boolean inc) {
-		//TODO uncomment when bug 246114 is fixed
-		/*setExpectedProblemIds(getDefaultProblemIdSet(6));
+		setExpectedProblemIds(getDefaultProblemIdSet(6));
 		String typename = "testCPL11";
 		String innertype1 = "inner2";
 		String innertype2 = "inner3";
@@ -397,7 +396,7 @@ public class ConstructorParameterLeak extends LeakTest {
 				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);*/
+				true);
 	}
 	
 	/**
@@ -417,8 +416,7 @@ public class ConstructorParameterLeak extends LeakTest {
 	}
 	
 	private void x12(boolean inc) {
-		//TODO uncomment when bug 246114 is fixed
-		/*setExpectedProblemIds(getDefaultProblemIdSet(4));
+		setExpectedProblemIds(getDefaultProblemIdSet(4));
 		String typename = "testCPL12";
 		String innertype1 = "inner2";
 		String innertype2 = "inner3";
@@ -433,7 +431,7 @@ public class ConstructorParameterLeak extends LeakTest {
 				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);*/
+				true);
 	}
 	
 	/**
@@ -453,8 +451,7 @@ public class ConstructorParameterLeak extends LeakTest {
 	}
 	
 	private void x13(boolean inc) {
-		//TODO uncomment when bug 246114 is fixed
-		/*expectingNoProblems();
+		expectingNoProblems();
 		String typename = "testCPL13";
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
@@ -462,6 +459,6 @@ public class ConstructorParameterLeak extends LeakTest {
 				null, 
 				false, 
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);*/
+				true);
 	}
 }

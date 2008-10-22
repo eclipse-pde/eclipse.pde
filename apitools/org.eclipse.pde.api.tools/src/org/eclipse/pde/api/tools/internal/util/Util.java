@@ -84,7 +84,9 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
@@ -1490,11 +1492,16 @@ public final class Util {
 			return;
 		}
 		ASTNode parent = method.getParent();
+		AbstractTypeDeclaration type = (AbstractTypeDeclaration) parent;
+		if (Util.isStatic(type)) {
+			// if the type is static it doesn't need the enclosing type
+			return;
+		}
 		StringBuffer name = new StringBuffer();
 		while(parent != null) {
 			parent = parent.getParent();
 			if(parent instanceof AbstractTypeDeclaration) {
-				AbstractTypeDeclaration type = (AbstractTypeDeclaration) parent;
+				type = (AbstractTypeDeclaration) parent;
 				name.insert(0, type.getName().getFullyQualifiedName());
 				if(type.isMemberTypeDeclaration()) {
 					name.insert(0, '$');
@@ -1517,6 +1524,20 @@ public final class Util {
 		}
 	}
 	
+	private static boolean isStatic(AbstractTypeDeclaration typeDeclaration) {
+		List modifiers = typeDeclaration.modifiers();
+		if (modifiers.isEmpty()) return false;
+		for (Iterator iterator = modifiers.iterator(); iterator.hasNext(); ) {
+			IExtendedModifier modifier = (IExtendedModifier) iterator.next();
+			if (!modifier.isModifier()) {
+				continue;
+			}
+			Modifier modifier2 = (Modifier) modifier;
+			if (modifier2.isStatic()) return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Determines if the given {@link MethodDeclaration} is present in a top level type
 	 * @param method

@@ -138,7 +138,13 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 		}
 		String methodname = method.getName();
 		if(method.isConstructor()) {
-			methodname = method.getEnclosingType().getSimpleName();
+			IApiType enclosingType = method.getEnclosingType();
+			if (enclosingType.isMemberType() && !Flags.isStatic(enclosingType.getModifiers())) {
+				// remove the synthetic argument that corresponds to the enclosing type
+				int length = parameterTypes.length - 1;
+				System.arraycopy(parameterTypes, 1, (parameterTypes = new String[length]), 0, length);
+			}
+			methodname = enclosingType.getSimpleName();
 		}
 		IMethod Qmethod = type.getMethod(methodname, parameterTypes);
 		IMethod[] methods = type.getMethods();
