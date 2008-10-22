@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.provisional;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 
 /**
@@ -18,7 +19,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
  * 
  * @since 1.0.0
  */
-public interface IClassFile {
+public interface IApiTypeRoot extends IApiElement {
 	
 	/**
 	 * Returns the fully qualified name of the type this storage represents.

@@ -15,18 +15,19 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.pde.api.tools.internal.ArchiveClassFileContainer;
+import org.eclipse.pde.api.tools.internal.ArchiveApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
-import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
+import org.eclipse.pde.api.tools.internal.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.model.ApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 
 import com.ibm.icu.text.MessageFormat;
@@ -52,12 +53,12 @@ public class TagScannerTests extends TestCase {
 	}
 	
 	/**
-	 * Creates a new {@link ArchiveClassFileContainer} on the given path
+	 * Creates a new {@link ArchiveApiTypeContainer} on the given path
 	 * @param path
 	 * @return
 	 */
-	protected IClassFileContainer newArchiveClassFileContainer(IPath path) {
-		return new ArchiveClassFileContainer(path.toOSString(), null);
+	protected IApiTypeContainer newArchiveClassFileContainer(IPath path) {
+		return new ArchiveApiTypeContainer(null, path.toOSString());
 	}
 	
 	/**
@@ -77,7 +78,7 @@ public class TagScannerTests extends TestCase {
 	 * @param manifest
 	 * @param cfc
 	 */
-	protected void doScan(String name, IApiDescription manifest, IClassFileContainer cfc) {
+	protected void doScan(String name, IApiDescription manifest, IApiTypeContainer cfc) {
 		try {
 			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, cfc, null);
 		}
@@ -102,10 +103,10 @@ public class TagScannerTests extends TestCase {
 	
 	/**
 	 * Tests that methods with non-simple type parameters have their signatures resolved if a backing class file 
-	 * is provided (via an {@link IClassFileContainer})
+	 * is provided (via an {@link IApiTypeContainer})
 	 */
 	public void testBug212276() {
-		DirectoryClassFileContainer container = new DirectoryClassFileContainer(BIN_LOC.toOSString(), null);
+		DirectoryApiTypeContainer container = new DirectoryApiTypeContainer(null, BIN_LOC.toOSString());
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod10.java", manifest, container);
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod10", "one", "(Ljava/lang/String;Ljava/lang/Integer;)V"));
@@ -131,23 +132,32 @@ public class TagScannerTests extends TestCase {
 	 * and is required to resolve a method signature, an exception is thrown.
 	 */
 	public void testMissingClassfile() {
-		IClassFileContainer container = new IClassFileContainer() {
+		IApiTypeContainer container = new IApiTypeContainer() {
 			public String[] getPackageNames() throws CoreException {
 				return new String[]{"there.are.none"};
 			}
-			public String getOrigin() {
-				return "none";
-			}
-			public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
+			public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 				return null;
 			}
-			public IClassFile findClassFile(String qualifiedName) throws CoreException {
+			public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 				return null;
 			}
 			public void close() throws CoreException {
 			}
 		
-			public void accept(ClassFileContainerVisitor visitor) throws CoreException {
+			public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
+			}
+			public IApiElement getAncestor(int ancestorType) {
+				return null;
+			}
+			public String getName() {
+				return "test container";
+			}
+			public IApiElement getParent() {
+				return null;
+			}
+			public int getType() {
+				return IApiElement.API_TYPE_CONTAINER;
 			}
 		};
 		IApiDescription manifest = newDescription();

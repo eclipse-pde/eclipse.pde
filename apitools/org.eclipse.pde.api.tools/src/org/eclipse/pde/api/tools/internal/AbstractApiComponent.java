@@ -13,12 +13,13 @@ package org.eclipse.pde.api.tools.internal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
@@ -27,7 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
  * 
  * @since 1.0.0
  */
-public abstract class AbstractApiComponent extends AbstractClassFileContainer implements IApiComponent {
+public abstract class AbstractApiComponent extends AbstractApiTypeContainer implements IApiComponent {
 	
 	/**
 	 * API description
@@ -40,34 +41,29 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 	private IApiFilterStore fFilterStore = null;
 	
 	/**
-	 * Owning profile
-	 */
-	private IApiBaseline fProfile = null;
-	
-	/**
-	 * Constructs an API component in the given profile.
+	 * Constructs an API component in the given {@link IApiBaseline}.
 	 * 
-	 * @param profile API profile
+	 * @param baseline the parent {@link IApiBaseline}
 	 */
-	public AbstractApiComponent(IApiBaseline profile) {
-		fProfile = profile;
+	public AbstractApiComponent(IApiBaseline baseline) {
+		super(baseline, IApiElement.COMPONENT, null);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#accept(org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor)
 	 */
-	public void accept(ClassFileContainerVisitor visitor) throws CoreException {
+	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		if (visitor.visit(this)) {
 			super.accept(visitor);
 		}
 		visitor.end(this);
 	}	
 		
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getProfile()
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#getBaseline()
 	 */
-	public IApiBaseline getProfile() {
-		return fProfile;
+	public IApiBaseline getBaseline() {
+		return (IApiBaseline) getAncestor(IApiElement.BASELINE);
 	}
 
 	/* (non-Javadoc)
@@ -80,7 +76,6 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 			ApiPlugin.log(e);
 		}
 		fApiDescription = null;
-		fProfile = null;
 	}
 
 	/* (non-Javadoc)
@@ -114,18 +109,18 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractClassFileContainer#getClassFileContainers()
 	 */
-	public synchronized IClassFileContainer[] getClassFileContainers() {
-		return super.getClassFileContainers();
+	public synchronized IApiTypeContainer[] getApiTypeContainers() {
+		return super.getApiTypeContainers();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractClassFileContainer#getClassFileContainers()
 	 */
-	public synchronized IClassFileContainer[] getClassFileContainers(String id) {
+	public synchronized IApiTypeContainer[] getApiTypeContainers(String id) {
 		if (this.hasFragments()) {
-			return super.getClassFileContainers(id);
+			return super.getApiTypeContainers(id);
 		} else {
-			return super.getClassFileContainers();
+			return super.getApiTypeContainers();
 		}
 	}
 	

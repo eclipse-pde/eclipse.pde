@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
@@ -67,7 +67,7 @@ public class ClassFileComparator {
 		}
 		try {
 			String packageName = Util.getPackageName(exceptionName);
-			IClassFile result = Util.getClassFile(
+			IApiTypeRoot result = Util.getClassFile(
 					profile.resolvePackage(apiComponent, packageName),
 					exceptionName);
 			if (result != null) {
@@ -126,7 +126,7 @@ public class ClassFileComparator {
 	 * @param visibilityModifiers any modifiers from the class file
 	 * @throws CoreException if the contents of the specified class files cannot be acquired
 	 */
-	public ClassFileComparator(IClassFile classFile, IClassFile classFile2, IApiComponent component, IApiComponent component2, IApiBaseline apiState, IApiBaseline apiState2, int visibilityModifiers) throws CoreException {
+	public ClassFileComparator(IApiTypeRoot classFile, IApiTypeRoot classFile2, IApiComponent component, IApiComponent component2, IApiBaseline apiState, IApiBaseline apiState2, int visibilityModifiers) throws CoreException {
 		this.component = component;
 		this.component2 = component2;
 		this.type1 = classFile.getStructure();
@@ -147,7 +147,7 @@ public class ClassFileComparator {
 	 * @param visibilityModifiers any modifiers from the class file
 	 * @throws CoreException if the contents of the specified class file cannot be acquired
 	 */
-	public ClassFileComparator(IApiType type, IClassFile classFile2, IApiComponent component, IApiComponent component2, IApiBaseline apiState, IApiBaseline apiState2, int visibilityModifiers) throws CoreException {
+	public ClassFileComparator(IApiType type, IApiTypeRoot classFile2, IApiComponent component, IApiComponent component2, IApiBaseline apiState, IApiBaseline apiState2, int visibilityModifiers) throws CoreException {
 		this.component = component;
 		this.component2 = component2;
 		this.type1 = type;
@@ -383,7 +383,7 @@ public class ClassFileComparator {
 					for (Iterator iterator = names2.iterator(); iterator.hasNext();) {
 						String interfaceName = (String) iterator.next();
 						try {
-							IClassFile interfaceClassFile = getType(interfaceName, this.component2, this.apiProfile2);
+							IApiTypeRoot interfaceClassFile = getType(interfaceName, this.component2, this.apiProfile2);
 							if (interfaceClassFile == null) continue;
 							IApiType type = interfaceClassFile.getStructure();
 							IApiMethod[] methods = type.getMethods();
@@ -545,7 +545,7 @@ public class ClassFileComparator {
 								continue loop;
 							}
 						}
-						IClassFile memberType2 = this.component2.findClassFile(typeMember.getName());
+						IApiTypeRoot memberType2 = this.component2.findTypeRoot(typeMember.getName());
 						ClassFileComparator comparator = new ClassFileComparator(typeMember, memberType2, this.component, this.component2, this.apiProfile, this.apiProfile2, this.visibilityModifiers);
 						IDelta delta2 = comparator.getDelta();
 						if (delta2 != null && delta2 != ApiComparator.NO_DELTA) {
@@ -2994,7 +2994,7 @@ public class ClassFileComparator {
 			&& (Util.isPublic(access) || Util.isProtected(access));
 	}
 	
-	private IClassFile getType(String typeName, IApiComponent component, IApiBaseline profile) throws CoreException {
+	private IApiTypeRoot getType(String typeName, IApiComponent component, IApiBaseline profile) throws CoreException {
 		String packageName = Util.getPackageName(typeName);
 		IApiComponent[] components = profile.resolvePackage(component, packageName);
 		if (components == null) {
@@ -3005,7 +3005,7 @@ public class ClassFileComparator {
 			reportStatus(new Status(Status.ERROR, component.getId(), msg));
 			return null;
 		}
-		IClassFile result = Util.getClassFile(components, typeName); 
+		IApiTypeRoot result = Util.getClassFile(components, typeName); 
 		if (result == null) {
 			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, new String[] {typeName, profile.getName(), component.getId()});
 			if (DEBUG) {

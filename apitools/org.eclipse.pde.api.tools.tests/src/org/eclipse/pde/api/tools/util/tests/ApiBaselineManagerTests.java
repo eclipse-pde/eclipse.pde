@@ -775,7 +775,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			assertNotNull("The testing project must exist", project);
 			IApiComponent component = getWorkspaceProfile().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
-			int before  = component.getClassFileContainers().length;
+			int before  = component.getApiTypeContainers().length;
 			
 			// add to classpath
 			IFolder folder = assertTestLibrary(project, new Path("libx"), "component.a_1.0.0.jar");
@@ -783,7 +783,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			
 			// re-retrieve updated component
 			component = getWorkspaceProfile().getApiComponent(project.getElementName());
-			assertTrue("there must be more containers after the addition", before < component.getClassFileContainers().length);
+			assertTrue("there must be more containers after the addition", before < component.getApiTypeContainers().length);
 		}
 		catch(Exception e) {
 			fail(e.getMessage());
@@ -802,7 +802,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			IFolder folder = assertTestLibrary(project, new Path("libx"), "component.a_1.0.0.jar");
 			IApiComponent component = getWorkspaceProfile().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
-			int before  = component.getClassFileContainers().length;
+			int before  = component.getApiTypeContainers().length;
 			IPath libPath = folder.getFullPath().append("component.a_1.0.0.jar");
 			
 			//remove classpath entry
@@ -825,7 +825,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			
 			// retrieve updated component
 			component = getWorkspaceProfile().getApiComponent(project.getElementName());
-			assertTrue("there must be less containers after the removal", before > component.getClassFileContainers().length);
+			assertTrue("there must be less containers after the removal", before > component.getApiTypeContainers().length);
 		}
 		catch(Exception e) {
 			fail(e.getMessage());
@@ -845,11 +845,11 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED | IJavaElementDelta.F_CLASSPATH_CHANGED, IJavaElement.JAVA_PROJECT);
 			IApiComponent component = getWorkspaceProfile().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
-			int before  = component.getClassFileContainers().length;
+			int before  = component.getApiTypeContainers().length;
 			project.setOutputLocation(container.getFullPath(), new NullProgressMonitor());
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the changed event for the project (classpath) was not received", obj);
-			assertTrue("there must be the same number of containers after the change", before == component.getClassFileContainers().length);
+			assertTrue("there must be the same number of containers after the change", before == component.getApiTypeContainers().length);
 			assertTrue("the new output location should be 'bin2'", "bin2".equalsIgnoreCase(project.getOutputLocation().toFile().getName()));
 		}
 		catch(Exception e) {
@@ -874,7 +874,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("src2", IJavaElementDelta.CHANGED, IJavaElementDelta.F_ADDED_TO_CLASSPATH | IJavaElementDelta.F_REMOVED_FROM_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
 			IApiComponent component = getWorkspaceProfile().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
-			int before  = component.getClassFileContainers().length;
+			int before  = component.getApiTypeContainers().length;
 			ProjectUtils.addToClasspath(project, entry);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the changed event for the package fragment root (classpath) was not received", obj);
@@ -900,7 +900,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			assertNotNull("the event for biuld.properties modification was not received", object3);
 			// retrieve updated component
 			component = getWorkspaceProfile().getApiComponent(project.getElementName());
-			assertTrue("there must be one more container after the change", before < component.getClassFileContainers().length);
+			assertTrue("there must be one more container after the change", before < component.getApiTypeContainers().length);
 			assertTrue("the class file container for src2 must be 'bin3'", "bin3".equals(src2.getRawClasspathEntry().getOutputLocation().toFile().getName()));
 		}
 		catch(Exception e) {

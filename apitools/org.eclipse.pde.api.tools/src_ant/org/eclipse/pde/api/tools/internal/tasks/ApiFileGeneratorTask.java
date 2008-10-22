@@ -34,7 +34,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
-import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
+import org.eclipse.pde.api.tools.internal.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.model.ApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -114,8 +114,8 @@ public class ApiFileGeneratorTask extends Task {
 		// create the directory class file container
 		StringBuffer classFileContainerRootBuffer = new StringBuffer(this.targetFolder);
 		classFileContainerRootBuffer.append(File.separatorChar).append(this.projectName);
-		DirectoryClassFileContainer classFileContainer = new DirectoryClassFileContainer(
-				String.valueOf(classFileContainerRootBuffer), null);
+		DirectoryApiTypeContainer classFileContainer = new DirectoryApiTypeContainer(null,
+				String.valueOf(classFileContainerRootBuffer));
 		String[] packageNames = null;
 		try {
 			packageNames = classFileContainer.getPackageNames();

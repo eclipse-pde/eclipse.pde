@@ -24,28 +24,28 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.api.tools.internal.ArchiveClassFileContainer;
-import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.ArchiveApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.DirectoryApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 
 /**
  * Tests the class file containers
  * 
  * @since 1.0.0
  */
-public class ClassFileContainerTests extends TestCase {
+public class ApiTypeContainerTests extends TestCase {
 
 	public static Test suite() {
-		return new TestSuite(ClassFileContainerTests.class);
+		return new TestSuite(ApiTypeContainerTests.class);
 	}	
 	
-	public ClassFileContainerTests() {
+	public ApiTypeContainerTests() {
 		super();
 	}
 	
-	public ClassFileContainerTests(String name) {
+	public ApiTypeContainerTests(String name) {
 		super(name);
 	}
 	
@@ -54,12 +54,12 @@ public class ClassFileContainerTests extends TestCase {
 	 * 
 	 * @return sample archive
 	 */
-	protected IClassFileContainer buildArchiveContainer() {
+	protected IApiTypeContainer buildArchiveContainer() {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-jars").append("sample.jar");
 		File file = path.toFile();
 		assertTrue("Missing jar file", file.exists());
-		return new ArchiveClassFileContainer(path.toOSString(), null);
+		return new ArchiveApiTypeContainer(null, path.toOSString());
 	}
 	
 	/**
@@ -67,12 +67,12 @@ public class ClassFileContainerTests extends TestCase {
 	 * 
 	 * @return sample directory container
 	 */
-	protected IClassFileContainer buildDirectoryContainer() {
+	protected IApiTypeContainer buildDirectoryContainer() {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-bin-dir");
 		File file = path.toFile();
 		assertTrue("Missing bin directory", file.exists());
-		return new DirectoryClassFileContainer(path.toOSString(), null);
+		return new DirectoryApiTypeContainer(null, path.toOSString());
 	}	
 	
 	/**
@@ -99,7 +99,7 @@ public class ClassFileContainerTests extends TestCase {
 	 * @param container class file container
 	 * @throws CoreException
 	 */
-	protected void doTestPackageNames(IClassFileContainer container) throws CoreException {
+	protected void doTestPackageNames(IApiTypeContainer container) throws CoreException {
 		String[] packageNames = container.getPackageNames();
 		Set<String> knownNames = new HashSet<String>();
 		knownNames.add("");
@@ -136,24 +136,24 @@ public class ClassFileContainerTests extends TestCase {
 	 * @param container class file container
 	 * @throws CoreException 
 	 */
-	protected void doTestVisitPackages(IClassFileContainer container) throws CoreException {
+	protected void doTestVisitPackages(IApiTypeContainer container) throws CoreException {
 		final List<String> expectedPkgOrder = new ArrayList<String>();
 		expectedPkgOrder.add("");
 		expectedPkgOrder.add("a");
 		expectedPkgOrder.add("a.b.c");
 		final List<String> visit = new ArrayList<String>();
-		ClassFileContainerVisitor visitor = new ClassFileContainerVisitor() {
+		ApiTypeContainerVisitor visitor = new ApiTypeContainerVisitor() {
 			public boolean visitPackage(String packageName) {
 				visit.add(packageName);
 				return false;
 			}
-			public void visit(String packageName, IClassFile classFile) {
+			public void visit(String packageName, IApiTypeRoot classFile) {
 				assertTrue("Should not visit types", false);
 			}
 			public void endVisitPackage(String packageName) {
 				assertTrue("Wrong end visit order", visit.get(visit.size() - 1).equals(packageName));
 			}
-			public void end(String packageName, IClassFile classFile) {
+			public void end(String packageName, IApiTypeRoot classFile) {
 				assertTrue("Should not visit types", false);
 			}
 		};
@@ -186,7 +186,7 @@ public class ClassFileContainerTests extends TestCase {
 	 * @param container class file container
 	 * @throws CoreException
 	 */
-	protected void doTestVisitClassFiles(IClassFileContainer container) throws CoreException {
+	protected void doTestVisitClassFiles(IApiTypeContainer container) throws CoreException {
 		final Map<String, List<String>> expectedTypes = new HashMap<String, List<String>>();
 		final List<String> expectedPkgOrder = new ArrayList<String>();
 		expectedPkgOrder.add("");
@@ -208,12 +208,12 @@ public class ClassFileContainerTests extends TestCase {
 			expectedTypes.put("a.b.c", cf);
 		final List<String> visit = new ArrayList<String>();
 		final Map<String, List<String>> visitTypes = new HashMap<String, List<String>>();
-		ClassFileContainerVisitor visitor = new ClassFileContainerVisitor() {
+		ApiTypeContainerVisitor visitor = new ApiTypeContainerVisitor() {
 			public boolean visitPackage(String packageName) {
 				visit.add(packageName);
 				return true;
 			}
-			public void visit(String packageName, IClassFile classFile) {
+			public void visit(String packageName, IApiTypeRoot classFile) {
 				assertTrue("Should not visit types", visit.get(visit.size() - 1).equals(packageName));
 				List<String> types = visitTypes.get(packageName);
 				if (types == null) {
@@ -227,7 +227,7 @@ public class ClassFileContainerTests extends TestCase {
 				assertTrue("Wrong end visit order", visit.get(visit.size() - 1).equals(packageName));
 				assertEquals("Visited wrong types", expectedTypes.get(packageName), visitTypes.get(packageName));
 			}
-			public void end(String packageName, IClassFile classFile) {
+			public void end(String packageName, IApiTypeRoot classFile) {
 				List<String> types = visitTypes.get(packageName);
 				assertTrue("Should not visit types", types.get(types.size() - 1).equals(classFile.getTypeName()));
 			}

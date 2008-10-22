@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.search;
 
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 /**
@@ -20,15 +21,15 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
  * 
  * @since 1.0.0
  */
-public interface IApiSearchScope extends IClassFileContainer {
+public interface IApiSearchScope extends IApiTypeContainer {
 
 	/**
 	 * Returns whether this scope encloses the given element in the specified component.
 	 * 
-	 * @param componentId identifier of the API component the given element is being considered in
+	 * @param component the API component the given element is being considered in
 	 * @param element element descriptor
 	 * @return whether this scope encloses the given element in the specified component
 	 */
-	public boolean encloses(String componentId, IElementDescriptor element);
+	public boolean encloses(IApiComponent component, IElementDescriptor element);
 	
 }

@@ -46,8 +46,8 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
@@ -99,7 +99,7 @@ public class TagScanner {
 		 * Used to look up binaries when resolving method signatures, or
 		 * <code>null</code> if not provided.
 		 */
-		private IClassFileContainer fContainer = null;
+		private IApiTypeContainer fContainer = null;
 		
 		/**
 		 * List of exceptions encountered, or <code>null</code>
@@ -112,7 +112,7 @@ public class TagScanner {
 		 * @param container class file container or <code>null</code>, used
 		 * 	to resolve method signatures
 		 */
-		public Visitor(IApiDescription description, IClassFileContainer container) {
+		public Visitor(IApiDescription description, IApiTypeContainer container) {
 			fDescription = description;
 			fContainer = container;
 		}
@@ -315,7 +315,7 @@ public class TagScanner {
 		private IMethodDescriptor resolveMethod(IMethodDescriptor descriptor) throws CoreException {
 			if (fContainer != null) {
 				IReferenceTypeDescriptor type = descriptor.getEnclosingType();
-				IClassFile classFile = fContainer.findClassFile(type.getQualifiedName());
+				IApiTypeRoot classFile = fContainer.findTypeRoot(type.getQualifiedName());
 				if(classFile != null) {
 					IApiType structure = classFile.getStructure();
 					IApiMethod[] methods = structure.getMethods();
@@ -380,7 +380,7 @@ public class TagScanner {
 	 * 	not provided (<code>null</code>), method signatures will be unresolved.
 	 * @throws CoreException
 	 */
-	public void scan(ICompilationUnit unit, IApiDescription description, IClassFileContainer container) throws CoreException {
+	public void scan(ICompilationUnit unit, IApiDescription description, IApiTypeContainer container) throws CoreException {
 		scan(new CompilationUnit(unit), description, container, unit.getJavaProject().getOptions(true));
 	}
 	
@@ -398,7 +398,7 @@ public class TagScanner {
 	 * 
 	 * @throws CoreException 
 	 */
-	public void scan(CompilationUnit source, IApiDescription description, IClassFileContainer container, Map options) throws CoreException {
+	public void scan(CompilationUnit source, IApiDescription description, IApiTypeContainer container, Map options) throws CoreException {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		InputStream inputStream = null;
 		try {

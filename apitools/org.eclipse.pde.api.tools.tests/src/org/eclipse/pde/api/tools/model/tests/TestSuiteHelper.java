@@ -40,14 +40,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.compiler.batch.Main;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -120,12 +121,12 @@ public class TestSuiteHelper {
 			public String[] getPackageNames() throws CoreException {
 				return null;
 			}
-			public IClassFile findClassFile(String qualifiedName) throws CoreException {
+			public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 				return null;
 			}
 			public void close() throws CoreException {
 			}
-			public void accept(ClassFileContainerVisitor visitor) throws CoreException {
+			public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 			}
 			public String getVersion() {
 				return null;
@@ -145,7 +146,7 @@ public class TestSuiteHelper {
 			public String[] getExecutionEnvironments() {
 				return null;
 			}
-			public IClassFileContainer[] getClassFileContainers() {
+			public IApiTypeContainer[] getApiTypeContainers() {
 				return null;
 			}
 			public IApiDescription getApiDescription() {
@@ -159,7 +160,7 @@ public class TestSuiteHelper {
 			}
 			public void dispose() {
 			}
-			public IApiBaseline getProfile() {
+			public IApiBaseline getBaseline() {
 				return null;
 			}
 			public IApiFilterStore getFilterStore() {
@@ -177,14 +178,20 @@ public class TestSuiteHelper {
 			public boolean hasFragments() {
 				return false;
 			}
-			public IClassFileContainer[] getClassFileContainers(String id) {
+			public IApiTypeContainer[] getApiTypeContainers(String id) {
 				return null;
 			}
-			public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
+			public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 				return null;
 			}
-			public String getOrigin() {
-				return this.getId();
+			public IApiElement getAncestor(int ancestorType) {
+				return null;
+			}
+			public IApiElement getParent() {
+				return null;
+			}
+			public int getType() {
+				return IApiElement.COMPONENT;
 			}
 		};
 	}

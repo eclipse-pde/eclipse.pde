@@ -103,7 +103,7 @@ import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
@@ -241,7 +241,7 @@ public final class Util {
 	public static final String UNKNOWN_FLAGS = "UNKNOWN_FLAGS"; //$NON-NLS-1$
 	public static final String UNKNOWN_KIND = "UNKOWN_KIND"; //$NON-NLS-1$
 	
-	public static final IClassFile[] NO_CLASS_FILES = new IClassFile[0];
+	public static final IApiTypeRoot[] NO_CLASS_FILES = new IApiTypeRoot[0];
 
 	// Trace for delete operation
 	/*
@@ -588,13 +588,13 @@ public final class Util {
 	 * @param typeName type to search for
 	 * @return class file or <code>null</code> if none found
 	 */
-	public static IClassFile getClassFile(IApiComponent[] components, String typeName) {
+	public static IApiTypeRoot getClassFile(IApiComponent[] components, String typeName) {
 		if (components == null) return null;
 		for (int i = 0, max = components.length; i < max; i++) {
 			IApiComponent apiComponent = components[i];
 			if (apiComponent != null) {
 				try {
-					IClassFile classFile = apiComponent.findClassFile(typeName);
+					IApiTypeRoot classFile = apiComponent.findTypeRoot(typeName);
 					if (classFile != null) return classFile;
 				} catch (CoreException e) {
 					// ignore

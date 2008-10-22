@@ -16,11 +16,11 @@ import java.util.HashSet;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
@@ -69,15 +69,15 @@ public class SearchScopeTests extends TestCase {
 	 * @param typeNames
 	 * @throws CoreException 
 	 */
-	private void visit(IClassFileContainer container, final Collection<String> packageNames, final Collection<String> typeNames) throws CoreException {
-		ClassFileContainerVisitor visitor = new ClassFileContainerVisitor() {
+	private void visit(IApiTypeContainer container, final Collection<String> packageNames, final Collection<String> typeNames) throws CoreException {
+		ApiTypeContainerVisitor visitor = new ApiTypeContainerVisitor() {
 		
 			public boolean visitPackage(String packageName) {
 				packageNames.add(packageName);
 				return true;
 			}
 		
-			public void visit(String packageName, IClassFile classFile) {
+			public void visit(String packageName, IApiTypeRoot classFile) {
 				typeNames.add(classFile.getTypeName());
 			}
 		};
@@ -96,11 +96,11 @@ public class SearchScopeTests extends TestCase {
 		final Collection<String> expectedPackages = new HashSet<String>();
 		expectedPackages.add("a.b.c");
 		final Collection<String> expectedTypes = new HashSet<String>();
-		componentA.accept(new ClassFileContainerVisitor() {
+		componentA.accept(new ApiTypeContainerVisitor() {
 			public boolean visitPackage(String packageName) {
 				return expectedPackages.contains(packageName);
 			}
-			public void visit(String packageName, IClassFile classFile) {
+			public void visit(String packageName, IApiTypeRoot classFile) {
 				expectedTypes.add(classFile.getTypeName());
 			}
 		
@@ -173,10 +173,10 @@ public class SearchScopeTests extends TestCase {
 		IApiSearchScope scope = Factory.newScope(componentA, new IElementDescriptor[]{method, type});
 		// scope should now include everything in the type
 		IFieldDescriptor field = type.getField("PLUGIN_ID");
-		assertTrue("Should enclose method", scope.encloses(componentA.getId(), method));
-		assertTrue("Should enclose field", scope.encloses(componentA.getId(), field));
-		assertTrue("Should enclose type", scope.encloses(componentA.getId(), type));
-		assertFalse("Should not enclose package", scope.encloses(componentA.getId(), pkg));
+		assertTrue("Should enclose method", scope.encloses(componentA, method));
+		assertTrue("Should enclose field", scope.encloses(componentA, field));
+		assertTrue("Should enclose type", scope.encloses(componentA, type));
+		assertFalse("Should not enclose package", scope.encloses(componentA, pkg));
 	}
 	
 	/**
@@ -191,9 +191,9 @@ public class SearchScopeTests extends TestCase {
 		IReferenceTypeDescriptor type = pkg.getType("Activator");
 		IReferenceTypeDescriptor typeA = pkg.getType("A");
 		IApiSearchScope scope = Factory.newScope(componentA, new IElementDescriptor[]{type});
-		assertTrue("Should enclose type", scope.encloses(componentA.getId(), type));
-		assertFalse("Should not enclose package", scope.encloses(componentA.getId(), pkg));
-		assertFalse("Should not enclose A", scope.encloses(componentA.getId(), typeA));
+		assertTrue("Should enclose type", scope.encloses(componentA, type));
+		assertFalse("Should not enclose package", scope.encloses(componentA, pkg));
+		assertFalse("Should not enclose A", scope.encloses(componentA, typeA));
 	}
 	
 	/**
@@ -210,8 +210,8 @@ public class SearchScopeTests extends TestCase {
 		IApiSearchScope scope = Factory.newScope(componentA, new IElementDescriptor[]{type});
 		// scope should now include everything in the type
 		IFieldDescriptor field = type.getField("PLUGIN_ID");
-		assertTrue("Should enclose method", scope.encloses(componentA.getId(), method));
-		assertTrue("Should enclose field", scope.encloses(componentA.getId(), field));
+		assertTrue("Should enclose method", scope.encloses(componentA, method));
+		assertTrue("Should enclose field", scope.encloses(componentA, field));
 	}	
 	
 	/**

@@ -25,10 +25,10 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.api.tools.internal.model.Reference;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
@@ -68,7 +68,7 @@ public class ReferenceAnalyzer {
 	/**
 	 * Visits each class file, extracting references.
 	 */
-	class Visitor extends ClassFileContainerVisitor {
+	class Visitor extends ApiTypeContainerVisitor {
 		
 		private IProgressMonitor fMonitor = null;
 		
@@ -95,7 +95,7 @@ public class ReferenceAnalyzer {
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor#visit(java.lang.String, org.eclipse.pde.api.tools.model.component.IClassFile)
 		 */
-		public void visit(String packageName, IClassFile classFile) {
+		public void visit(String packageName, IApiTypeRoot classFile) {
 			if (!fMonitor.isCanceled()) {
 				try {
 					IApiType type = classFile.getStructure();
@@ -255,7 +255,7 @@ public class ReferenceAnalyzer {
 		fStatus = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, SearchMessages.SearchEngine_1, null); 
 		String[] packageNames = scope.getPackageNames();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, packageNames.length);
-		ClassFileContainerVisitor visitor = new Visitor(localMonitor);
+		ApiTypeContainerVisitor visitor = new Visitor(localMonitor);
 		long start = System.currentTimeMillis();
 		try {
 			scope.accept(visitor);
@@ -414,7 +414,7 @@ public class ReferenceAnalyzer {
 	 */
 	private IApiProblemDetector[] buildProblemDetectors(IApiComponent component) {
 		long start = System.currentTimeMillis();
-		IApiComponent[] components = component.getProfile().getPrerequisiteComponents(new IApiComponent[]{component});
+		IApiComponent[] components = component.getBaseline().getPrerequisiteComponents(new IApiComponent[]{component});
 		ProblemDetectorBuilder visitor = new ProblemDetectorBuilder();
 		for (int i = 0; i < components.length; i++) {
 			IApiComponent prereq = components[i];

@@ -16,27 +16,24 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
+import org.eclipse.pde.api.tools.internal.model.ApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * An API component class file container, filtered by a scope.
+ * An API component {@link IApiTypeContainer}, filtered by a scope.
  * 
  * @since 1.0.0
  */
-public class ScopedClassFileContainer implements IClassFileContainer {
-	
-	/**
-	 * Underlying component
-	 */
-	private IApiComponent fComponent;
+public class ScopedApiTypeContainer extends ApiElement implements IApiTypeContainer {
 	
 	/**
 	 * Map of packages names to consider to fully qualified type names in each package to consider,
@@ -52,12 +49,12 @@ public class ScopedClassFileContainer implements IClassFileContainer {
 	/**
 	 * Proxy to underlying API component
 	 */
-	class ProxyVisitor extends ClassFileContainerVisitor {
+	class ProxyVisitor extends ApiTypeContainerVisitor {
 		
 		/**
 		 * The visitor we are providing a proxy for.
 		 */
-		private ClassFileContainerVisitor fVisitor;
+		private ApiTypeContainerVisitor fVisitor;
 		
 		/**
 		 * Constructs a visitor that will visit the underlying API component
@@ -65,37 +62,52 @@ public class ScopedClassFileContainer implements IClassFileContainer {
 		 * 
 		 * @param visitor outer visitor
 		 */
-		ProxyVisitor(ClassFileContainerVisitor visitor) {
+		ProxyVisitor(ApiTypeContainerVisitor visitor) {
 			fVisitor = visitor;
 		}
 
+		/**
+		 * @see org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor#end(org.eclipse.pde.api.tools.internal.provisional.IApiComponent)
+		 */
 		public void end(IApiComponent component) {
-			if (fComponent.equals(component)) {
+			if (((IApiComponent) getParent()).equals(component)) {
 				fVisitor.end(component);
 			}
 		}
 
+		/**
+		 * @see org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor#visit(org.eclipse.pde.api.tools.internal.provisional.IApiComponent)
+		 */
 		public boolean visit(IApiComponent component) {
-			if (fComponent.equals(component)) {
+			if (((IApiComponent) getParent()).equals(component)) {
 				return fVisitor.visit(component);
 			}
 			return false;
 		}
 
-		public void end(String packageName, IClassFile classFile) {
+		/**
+		 * @see org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor#end(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot)
+		 */
+		public void end(String packageName, IApiTypeRoot classFile) {
 			Set types = (Set)fTypesPerPackage.get(packageName);
 			if (types != null && types.contains(classFile.getTypeName())) {
 				fVisitor.end(packageName, classFile);
 			}
 		}
 
+		/**
+		 * @see org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor#endVisitPackage(java.lang.String)
+		 */
 		public void endVisitPackage(String packageName) {
 			if (fPackageNames.contains(packageName)) {
 				fVisitor.endVisitPackage(packageName);
 			}
 		}
 
-		public void visit(String packageName, IClassFile classFile) {
+		/**
+		 * @see org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor#visit(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot)
+		 */
+		public void visit(String packageName, IApiTypeRoot classFile) {
 			Set types = (Set)fTypesPerPackage.get(packageName);
 			if (types != null) {
 				String typeName = classFile.getTypeName();
@@ -109,24 +121,26 @@ public class ScopedClassFileContainer implements IClassFileContainer {
 			}
 		}
 
+		/**
+		 * @see org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor#visitPackage(java.lang.String)
+		 */
 		public boolean visitPackage(String packageName) {
 			if (fPackageNames.contains(packageName)) {
 				return fVisitor.visitPackage(packageName);
 			}
 			return false;
 		}
-
 	}
 
 	/**
-	 * Constructs a class file container on the given component filtered by the specified
+	 * Constructs an {@link IApiTypeContainer} on the given component filtered by the specified
 	 * elements.
 	 * 
 	 * @param component API component
 	 * @param elements leaf elements in the container
 	 */
-	public ScopedClassFileContainer(IApiComponent component, IElementDescriptor[] elements) {
-		fComponent = component;
+	public ScopedApiTypeContainer(IApiComponent component, IElementDescriptor[] elements) {
+		super(component, IApiElement.API_TYPE_CONTAINER, null);
 		init(elements);
 	}
 	
@@ -166,52 +180,52 @@ public class ScopedClassFileContainer implements IClassFileContainer {
 	}
 	
 	/* (non-Javadoc)
-	 * @see IClassFileContainer#accept(org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor)
+	 * @see IApiTypeContainer#accept(org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor)
 	 */
-	public void accept(ClassFileContainerVisitor visitor) throws CoreException {
+	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		ProxyVisitor proxyVisitor = new ProxyVisitor(visitor);
-		fComponent.accept(proxyVisitor);
+		((IApiComponent) getParent()).accept(proxyVisitor);
 	}
 
 	/* (non-Javadoc)
-	 * @see IClassFileContainer#close()
+	 * @see IApiTypeContainer#close()
 	 */
-	public void close() throws CoreException {
-		fComponent.close();
+	public synchronized void close() throws CoreException {
+		((IApiComponent) getParent()).close();
 	}
 
-	/* (non-Javadoc)
-	 * @see IClassFileContainer#findClassFile(java.lang.String)
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String)
 	 */
-	public IClassFile findClassFile(String qualifiedName) throws CoreException {
+	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		String packageName = Util.getPackageName(qualifiedName);
 		Set types = (Set) fTypesPerPackage.get(packageName);
 		if (types != null) {
 			if (types.isEmpty()) {
 				// all types in the package
-				return fComponent.findClassFile(qualifiedName);
+				return ((IApiComponent) getParent()).findTypeRoot(qualifiedName);
 			} else {
 				if (types.contains(qualifiedName)) {
-					return fComponent.findClassFile(qualifiedName);
+					return ((IApiComponent) getParent()).findTypeRoot(qualifiedName);
 				}
 			}
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see IClassFileContainer#findClassFile(java.lang.String,java.lang.String)
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String, java.lang.String)
 	 */
-	public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
+	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 		String packageName = Util.getPackageName(qualifiedName);
 		Set types = (Set) fTypesPerPackage.get(packageName);
 		if (types != null) {
 			if (types.isEmpty()) {
 				// all types in the package
-				return fComponent.findClassFile(qualifiedName, id);
+				return ((IApiComponent) getParent()).findTypeRoot(qualifiedName, id);
 			} else {
 				if (types.contains(qualifiedName)) {
-					return fComponent.findClassFile(qualifiedName, id);
+					return ((IApiComponent) getParent()).findTypeRoot(qualifiedName, id);
 				}
 			}
 		}
@@ -219,16 +233,9 @@ public class ScopedClassFileContainer implements IClassFileContainer {
 	}
 	
 	/* (non-Javadoc)
-	 * @see IClassFileContainer#getPackageNames()
+	 * @see IApiTypeContainer#getPackageNames()
 	 */
 	public String[] getPackageNames() throws CoreException {
 		return (String[]) fPackageNames.toArray(new String[fPackageNames.size()]);
-	}
-
-	/* (non-Javadoc)
-	 * @see IClassFileContainer#getOrigin()
-	 */
-	public String getOrigin() {
-		return this.fComponent.getId();
 	}
 }

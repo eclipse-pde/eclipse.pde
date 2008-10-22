@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
@@ -280,24 +280,24 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
-		IClassFile classFile = null;
+		IApiTypeRoot classFile = null;
 		try {
-			classFile = component.findClassFile("Zork");
+			classFile = component.findTypeRoot("Zork");
 		} catch (CoreException e) {
 			assertTrue("Should not happen", false);
 		}
 		assertNull("No class file", classFile);
 
 		try {
-			classFile = component.findClassFile("X");
+			classFile = component.findTypeRoot("X");
 		} catch (CoreException e) {
 			assertTrue("Should not happen", false);
 		}
 		assertNotNull("No class file", classFile);
 
-		IClassFile referenceClassFile = null;
+		IApiTypeRoot referenceClassFile = null;
 		try {
-			referenceClassFile = referenceComponent.findClassFile("X");
+			referenceClassFile = referenceComponent.findTypeRoot("X");
 		} catch (CoreException e) {
 			assertTrue("Should not happen", false);
 		}
@@ -484,9 +484,9 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertNotNull("No api component", apiComponent);
 		IApiComponent refApiComponent = beforeState.getApiComponent("deltatest1");
 		assertNotNull("No api component", refApiComponent);
-		IClassFile classFile = null;
+		IApiTypeRoot classFile = null;
 		try {
-			classFile = apiComponent.findClassFile("p.X2");
+			classFile = apiComponent.findTypeRoot("p.X2");
 		} catch (CoreException e) {
 			// ignore
 		}

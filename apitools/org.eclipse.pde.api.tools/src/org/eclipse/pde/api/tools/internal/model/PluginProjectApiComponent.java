@@ -30,15 +30,15 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
-import org.eclipse.pde.api.tools.internal.ArchiveClassFileContainer;
-import org.eclipse.pde.api.tools.internal.CompositeClassFileContainer;
-import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
-import org.eclipse.pde.api.tools.internal.FolderClassFileContainer;
+import org.eclipse.pde.api.tools.internal.ArchiveApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.CompositeApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.DirectoryApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.FolderApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.build.IBuild;
@@ -97,11 +97,12 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 * @throws CoreException if unable to create the API component
 	 */
 	public PluginProjectApiComponent(IApiBaseline profile, String location, IPluginModelBase model) throws CoreException {
-		super(profile,location);
+		super(profile, location);
 		IPath path = new Path(location);
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
 		this.fProject = JavaCore.create(project);
 		this.fModel = model;
+		setName(fModel.getResourceString(super.getName()));
 	}
 	
 	/* (non-Javadoc)
@@ -190,7 +191,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.BundleApiComponent#createClassFileContainers()
 	 */
-	protected List createClassFileContainers() throws CoreException {
+	protected List createApiTypeContainers() throws CoreException {
 		// first populate build.properties cache so we can create class file containers
 		// from bundle classpath entries
 		fPathToOutputContainers = new HashMap(4);
@@ -212,7 +213,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 							switch(classpathEntry.getEntryKind()) {
 								case IClasspathEntry.CPE_SOURCE :
 									String containerPath = classpathEntry.getPath().removeFirstSegments(1).toString();
-									IClassFileContainer container = getClassFileContainer(containerPath, this);
+									IApiTypeContainer container = getApiTypeContainer(containerPath, this);
 									if (container != null && !containers.contains(container)) {
 										containers.add(container);
 									}
@@ -226,21 +227,21 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 										IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 										if (resource != null) {
 											// jar inside the workspace
-											containers.add(new ArchiveClassFileContainer(resource.getLocation().toOSString(), this));
+											containers.add(new ArchiveApiTypeContainer(this, resource.getLocation().toOSString()));
 										} else {
 											// external jar
-											containers.add(new ArchiveClassFileContainer(path.toOSString(), this));
+											containers.add(new ArchiveApiTypeContainer(this, path.toOSString()));
 										}
 									}
 									break;
 							}
 						}
 						if (!containers.isEmpty()) {
-							IClassFileContainer cfc = null;
+							IApiTypeContainer cfc = null;
 							if (containers.size() == 1) {
-								cfc = (IClassFileContainer) containers.get(0);
+								cfc = (IApiTypeContainer) containers.get(0);
 							} else {
-								cfc = new CompositeClassFileContainer(containers, this.getId());
+								cfc = new CompositeApiTypeContainer(this, containers);
 							}
 							fPathToOutputContainers.put(".", cfc); //$NON-NLS-1$
 						}
@@ -254,7 +255,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 							String jar = buildEntry.getName().substring(IBuildEntry.JAR_PREFIX.length());
 							String[] tokens = buildEntry.getTokens();
 							if (tokens.length == 1) {
-								IClassFileContainer container = getClassFileContainer(tokens[0], this);
+								IApiTypeContainer container = getApiTypeContainer(tokens[0], this);
 								if (container != null) {
 									fPathToOutputContainers.put(jar, container);
 								}
@@ -262,17 +263,17 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 								List containers = new ArrayList();
 								for (int j = 0; j < tokens.length; j++) {
 									String currentToken = tokens[j];
-									IClassFileContainer container = getClassFileContainer(currentToken, this);
+									IApiTypeContainer container = getApiTypeContainer(currentToken, this);
 									if (container != null && !containers.contains(container)) {
 										containers.add(container);
 									}
 								}
 								if (!containers.isEmpty()) {
-									IClassFileContainer cfc = null;
+									IApiTypeContainer cfc = null;
 									if (containers.size() == 1) {
-										cfc = (IClassFileContainer) containers.get(0);
+										cfc = (IApiTypeContainer) containers.get(0);
 									} else {
-										cfc = new CompositeClassFileContainer(containers, this.getId());
+										cfc = new CompositeApiTypeContainer(this, containers);
 									}
 									fPathToOutputContainers.put(jar, cfc);
 								}
@@ -281,7 +282,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 					}
 				}
 			}
-			return super.createClassFileContainers();
+			return super.createApiTypeContainers();
 		}
 		return Collections.EMPTY_LIST;
 	}
@@ -289,44 +290,44 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#createClassFileContainer(java.lang.String)
 	 */
-	protected IClassFileContainer createClassFileContainer(String path) throws IOException {
-		IClassFileContainer container = (IClassFileContainer) fPathToOutputContainers.get(path);
+	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException {
+		IApiTypeContainer container = (IApiTypeContainer) fPathToOutputContainers.get(path);
 		if (container == null) {
 			// could be a binary jar included in the plug-in, just look for it
-			container = findClassFileContainer(path);
+			container = findApiTypeContainer(path);
 		}
 		return container;
 	}
 	
 	/** 
-	 * Finds and returns an existing class file container at the specified location
+	 * Finds and returns an existing {@link IApiTypeContainer} at the specified location
 	 * in this project, or <code>null</code> if none.
 	 * 
 	 * @param location project relative path to the class file container
-	 * @return class file container or null
+	 * @return {@link IApiTypeContainer} or <code>null</code>
 	 */
-	private IClassFileContainer findClassFileContainer(String location) {
+	private IApiTypeContainer findApiTypeContainer(String location) {
 		IResource res = fProject.getProject().findMember(new Path(location));
 		if (res != null) {
 			if (res.getType() == IResource.FILE) {
-				return new ArchiveClassFileContainer(res.getLocation().toOSString(), this);
+				return new ArchiveApiTypeContainer(this, res.getLocation().toOSString());
 			} else {
-				return new DirectoryClassFileContainer(res.getLocation().toOSString(), this);
+				return new DirectoryApiTypeContainer(this, res.getLocation().toOSString());
 			}
 		}
 		return null;
 	}
 	
 	/** 
-	 * Finds and returns a class file container for the specified
+	 * Finds and returns an {@link IApiTypeContainer} for the specified
 	 * source folder, or <code>null</code> if it does not exist. If the
 	 * source folder shares an output location with a previous source
 	 * folder, the output location is shared (a new one is not created).
 	 * 
 	 * @param location project relative path to the source folder
-	 * @return class file container or <code>null</code>
+	 * @return {@link IApiTypeContainer} or <code>null</code>
 	 */
-	private IClassFileContainer getClassFileContainer(String location, IApiComponent component) throws CoreException {
+	private IApiTypeContainer getApiTypeContainer(String location, IApiComponent component) throws CoreException {
 		IResource res = fProject.getProject().findMember(new Path(location));
 		if (res != null) {
 			IPackageFragmentRoot root = fProject.getPackageFragmentRoot(res);
@@ -336,11 +337,11 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 				if (outputLocation == null) {
 					outputLocation = fProject.getOutputLocation();
 				}
-				IClassFileContainer cfc = (IClassFileContainer) fOutputLocationToContainer.get(outputLocation);
+				IApiTypeContainer cfc = (IApiTypeContainer) fOutputLocationToContainer.get(outputLocation);
 				if (cfc == null) {
 					IContainer container = fProject.getProject().getWorkspace().getRoot().getFolder(outputLocation);
 					if (container.exists()) {
-						cfc = new FolderClassFileContainer(container, component);
+						cfc = new FolderApiTypeContainer(component, container);
 						fOutputLocationToContainer.put(outputLocation, cfc);
 					}
 				}
@@ -349,13 +350,6 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 		}
 		return null;
 	}	
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#getName()
-	 */
-	public String getName() throws CoreException {
-		return fModel.getResourceString(super.getName());
-	}
 	
 	/**
 	 * Returns the Java project associated with this component.

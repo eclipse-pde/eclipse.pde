@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
-
-
 /**
- * Visits class files in a class file container.
+ * Visits {@link IApiTypeRoot}s in an {@link IApiTypeContainer}
  * 
  * @since 1.0.0
  */
-public class ClassFileContainerVisitor {	
+public class ApiTypeContainerVisitor {	
 
 	/**
 	 * Visits a component in the container and returns whether class files
@@ -74,28 +72,28 @@ public class ClassFileContainerVisitor {
 	}
 	
 	/**
-	 * Visits a class file from the specified package.
+	 * Visits an {@link IApiTypeRoot} from the specified package.
 	 * <p>
 	 * The default implementation does nothing.
 	 * </p>
 	 * @param packageName fully qualified dot separated package name or the empty
 	 * 	string for the default package 
-	 * @param classFile class file
+	 * @param typeroot {@link IApiTypeRoot} to visit
 	 */
-	public void visit(String packageName, IClassFile classFile) {
+	public void visit(String packageName, IApiTypeRoot typeroot) {
 		// subclasses may re-implement
 	}
 	
 	/**
-	 * End visiting a class file.
+	 * End visiting an {@link IApiTypeRoot}.
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
 	 * @param packageName fully qualified dot separated package name or the empty
 	 * 	string for the default package
-	 * @param classFile class file
+	 * @param typeroot {@link IApiTypeRoot} ending visit on
 	 */	
-	public void end(String packageName, IClassFile classFile) {
+	public void end(String packageName, IApiTypeRoot typeroot) {
 		// subclasses may re-implement
 	}	
 }

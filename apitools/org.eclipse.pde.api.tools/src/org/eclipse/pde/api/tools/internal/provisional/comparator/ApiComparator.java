@@ -19,12 +19,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -70,7 +70,7 @@ public class ApiComparator {
 	 * </ul>
 	 */
 	public static IDelta compare(
-			final IClassFile classFile2,
+			final IApiTypeRoot classFile2,
 			final IApiComponent component,
 			final IApiComponent component2,
 			final IApiBaseline referenceProfile,
@@ -94,7 +94,7 @@ public class ApiComparator {
 				return NO_DELTA;
 			}
 			String typeName = classFile2.getTypeName();
-			IClassFile classFile = component.findClassFile(typeName);
+			IApiTypeRoot classFile = component.findTypeRoot(typeName);
 			final IApiDescription apiDescription2 = component2.getApiDescription();
 			IApiAnnotations elementDescription2 = apiDescription2.resolveAnnotations(typeDescriptor2.getHandle());
 			int visibility = 0;
@@ -213,8 +213,8 @@ public class ApiComparator {
 	 * </ul>
 	 */
 	public static IDelta compare(
-			final IClassFile classFile,
-			final IClassFile classFile2,
+			final IApiTypeRoot classFile,
+			final IApiTypeRoot classFile2,
 			final IApiComponent component,
 			final IApiComponent component2,
 			final IApiBaseline referenceProfile,
@@ -522,7 +522,7 @@ public class ApiComparator {
 		if (referenceComponent == null || component == null) {
 			throw new IllegalArgumentException("One of the given components is null"); //$NON-NLS-1$
 		}
-		return compare(referenceComponent, component, referenceComponent.getProfile(), component.getProfile(), visibilityModifiers);
+		return compare(referenceComponent, component, referenceComponent.getBaseline(), component.getBaseline(), visibilityModifiers);
 	}
 	/**
 	 * Returns a delta that corresponds to the comparison of the two given API components.
@@ -652,26 +652,26 @@ public class ApiComparator {
 
 		final Set classFileBaseLineNames = new HashSet();
 		final String id = component.getId();
-		IClassFileContainer[] classFileContainers = null;
-		IClassFileContainer[] classFileContainers2 = null;
+		IApiTypeContainer[] classFileContainers = null;
+		IApiTypeContainer[] classFileContainers2 = null;
 		
 		final boolean isSWT = "org.eclipse.swt".equals(id); //$NON-NLS-1$
 		if (isSWT) {
-			classFileContainers = component.getClassFileContainers();
-			classFileContainers2 = component2.getClassFileContainers();
+			classFileContainers = component.getApiTypeContainers();
+			classFileContainers2 = component2.getApiTypeContainers();
 		} else {
-			classFileContainers = component.getClassFileContainers(id);
-			classFileContainers2 = component2.getClassFileContainers(id);
+			classFileContainers = component.getApiTypeContainers(id);
+			classFileContainers2 = component2.getApiTypeContainers(id);
 		}
 		final IApiDescription apiDescription = component.getApiDescription();
 		final IApiDescription apiDescription2 = component2.getApiDescription();
 
 		if (classFileContainers != null) {
 			for (int i = 0, max = classFileContainers.length; i < max; i++) {
-				IClassFileContainer container = classFileContainers[i];
+				IApiTypeContainer container = classFileContainers[i];
 				try {
-					container.accept(new ClassFileContainerVisitor() {
-						public void visit(String packageName, IClassFile classFile) {
+					container.accept(new ApiTypeContainerVisitor() {
+						public void visit(String packageName, IApiTypeRoot classFile) {
 							String typeName = classFile.getTypeName();
 							try {
 								IApiType typeDescriptor = classFile.getStructure();
@@ -684,11 +684,11 @@ public class ApiComparator {
 								if (elementDescription != null) {
 									visibility = elementDescription.getVisibility();
 								}
-								IClassFile classFile2 = null;
+								IApiTypeRoot classFile2 = null;
 								if (isSWT) {
-									classFile2 = component2.findClassFile(typeName);
+									classFile2 = component2.findTypeRoot(typeName);
 								} else{
-									classFile2 = component2.findClassFile(typeName, id);
+									classFile2 = component2.findTypeRoot(typeName, id);
 								}
 								String deltaComponentID = Util.getDeltaComponentID(component2);
 								if(classFile2 == null) {
@@ -783,10 +783,10 @@ public class ApiComparator {
 		}
 		if (classFileContainers2 != null) {
 			for (int i = 0, max = classFileContainers2.length; i < max; i++) {
-				IClassFileContainer container = classFileContainers2[i];
+				IApiTypeContainer container = classFileContainers2[i];
 				try {
-					container.accept(new ClassFileContainerVisitor() {
-						public void visit(String packageName, IClassFile classFile) {
+					container.accept(new ApiTypeContainerVisitor() {
+						public void visit(String packageName, IApiTypeRoot classFile) {
 							String typeName = classFile.getTypeName();
 							try {
 								IApiType type = classFile.getStructure();

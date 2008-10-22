@@ -18,8 +18,8 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.DirectoryApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -36,7 +36,7 @@ public class ClassFileScannerTests extends TestCase {
 	private static IPath WORKSPACE_ROOT = null;
 	private static String WORKSPACE_NAME = "test_classes_workspace";
 	private static IPath ROOT_PATH = null;
-	private static DirectoryClassFileContainer container = null;
+	private static DirectoryApiTypeContainer container = null;
 	
 	static {
 		//setup workspace root
@@ -52,7 +52,7 @@ public class ClassFileScannerTests extends TestCase {
 	 */
 	protected List<IReference> getRefSet(String qualifiedname) {
 		try {
-			IClassFile cfile = container.findClassFile(qualifiedname);
+			IApiTypeRoot cfile = container.findTypeRoot(qualifiedname);
 			IApiType type = cfile.getStructure();
 			List<IReference> references = type.extractReferences(ReferenceModifiers.MASK_REF_ALL, null);
 			return references;
@@ -149,7 +149,7 @@ public class ClassFileScannerTests extends TestCase {
 		assertTrue("Test12 should compile to 1.4", TestSuiteHelper.compile(ROOT_PATH.append("Test12.java").toOSString(),
 				WORKSPACE_ROOT.toOSString(), 
 				new String[] {"-1.4", "-preserveAllLocals", "-nowarn"}));
-		container = new DirectoryClassFileContainer(WORKSPACE_ROOT.append("classes").toOSString(), null);
+		container = new DirectoryApiTypeContainer(null, WORKSPACE_ROOT.append("classes").toOSString());
 	}
 	
 	/**

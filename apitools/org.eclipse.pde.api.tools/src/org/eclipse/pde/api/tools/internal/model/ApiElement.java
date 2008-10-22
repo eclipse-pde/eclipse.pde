@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 
 /**
@@ -28,7 +32,7 @@ public abstract class ApiElement implements IApiElement {
 	
 	/**
 	 * Constructor
-	 * @param parent the parent type for this element, may be <code>null</code>
+	 * @param parent the parent {@link IApiElement} for this element, may be <code>null</code>
 	 * @param type the type of this element. See {@link IApiElement} for values.
 	 * @param name the simple name of the element
 	 */
@@ -79,5 +83,16 @@ public abstract class ApiElement implements IApiElement {
 		if(newname != null) {
 			fName = newname;
 		}
+	}
+	
+	/**
+	 * Throws a core exception.
+	 * 
+	 * @param message message
+	 * @param e underlying exception or <code>null</code>
+	 * @throws CoreException
+	 */
+	protected void abort(String message, Throwable e) throws CoreException {
+		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, message, e));
 	}
 }

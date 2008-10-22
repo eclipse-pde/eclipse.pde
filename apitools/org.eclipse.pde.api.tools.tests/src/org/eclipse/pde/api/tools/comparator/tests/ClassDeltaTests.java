@@ -18,7 +18,7 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.comparator.DeltaXmlVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
@@ -2857,9 +2857,9 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Wrong delta", delta == ApiComparator.NO_DELTA);
 		
 		// incremental build simulation
-		IClassFile classFile = null;
+		IApiTypeRoot classFile = null;
 		try {
-			classFile = afterApiComponent.findClassFile("p.Y");
+			classFile = afterApiComponent.findTypeRoot("p.Y");
 		} catch (CoreException e) {
 			// ignore
 		}

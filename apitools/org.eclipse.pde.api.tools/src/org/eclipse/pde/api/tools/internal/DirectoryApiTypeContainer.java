@@ -23,49 +23,24 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.model.ApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * A class file container rooted at a directory in the file system.
+ * An {@link IApiTypeContainer} rooted at a directory in the file system.
  * 
  * @since 1.0.0
  */
-public class DirectoryClassFileContainer implements IClassFileContainer {
+public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeContainer {
 	
 	/**
-	 * Root directory of the class file container
+	 * Implementation of an {@link IApiTypeRoot} in the local file system.
 	 */
-	private File fRoot;
-	
-	/**
-	 * Origin of this class file container
-	 */
-	private IApiComponent fComponent;
-
-	/**
-	 * Map of package names to associated directory (file)
-	 */
-	private Map fPackages;
-	
-	/**
-	 * Cache of package names
-	 */
-	private String[] fPackageNames;
-	
-
-	/**
-	 * Implementation of a class file in the local file system.
-	 * 
-	 * @since 1.0.0
-	 */
-	class ClassFile extends AbstractClassFile implements Comparable {
+	class LocalApiTypeRoot extends AbstractApiTypeRoot implements Comparable {
 		
 		/**
 		 * Associated file
@@ -73,42 +48,37 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 		private File fFile;
 		
 		/**
-		 * Qualified type name. Package is dot separated and types are $-separated.
-		 */
-		private String fTypeName;
-		
-		/**
 		 * Constructs a class file on the given file
+		 * @param directory the parent {@link IApiElement} directory
 		 * @param file file
 		 * @param qualified type name
 		 * @param component owning API component
 		 */
-		public ClassFile(File file, String typeName) {
-			super(fComponent);
+		public LocalApiTypeRoot(DirectoryApiTypeContainer directory, File file, String typeName) {
+			super(directory, typeName);
 			fFile = file;
-			fTypeName = typeName;
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.model.component.IClassFile#getTypeName()
 		 */
 		public String getTypeName() {
-			return fTypeName;
+			return getName();
 		}
 
 		/* (non-Javadoc)
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
 		public int compareTo(Object o) {
-			return fTypeName.compareTo(((ClassFile)o).fTypeName);
+			return getName().compareTo(((LocalApiTypeRoot)o).getName());
 		}
 
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		public boolean equals(Object obj) {
-			if (obj instanceof ClassFile) {
-				return ((ClassFile) obj).fTypeName.equals(this.fTypeName);
+			if (obj instanceof LocalApiTypeRoot) {
+				return ((LocalApiTypeRoot) obj).getName().equals(this.getName());
 			}
 			return false;
 		}
@@ -117,7 +87,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 		 * @see java.lang.Object#hashCode()
 		 */
 		public int hashCode() {
-			return this.fTypeName.hashCode();
+			return this.getName().hashCode();
 		}
 
 		/* (non-Javadoc)
@@ -131,37 +101,38 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 			}
 			return null; // never reaches here
 		}
-
 	}	
 	
 	/**
-	 * Constructs a class file container rooted at the specified path.
+	 * Root directory of the class file container
+	 */
+	private File fRoot;
+
+	/**
+	 * Map of package names to associated directory (file)
+	 */
+	private Map fPackages;
+	
+	/**
+	 * Cache of package names
+	 */
+	private String[] fPackageNames;
+	
+	/**
+	 * Constructs an {@link IApiTypeContainer} rooted at the specified path.
 	 * 
+	 * @param parent the parent {@link IApiElement} or <code>null</code> if none
 	 * @param location absolute path in the local file system
-	 * @param origin id of the component that creates this class file container
-	 *  or <code>null</code> if unknown
 	 */
-	public DirectoryClassFileContainer(String location, IApiComponent component) {
+	public DirectoryApiTypeContainer(IApiElement parent, String location) {
+		super(parent, IApiElement.API_TYPE_CONTAINER, location);
 		this.fRoot = new File(location);
-		this.fComponent = component;
 	}
-
-	/**
-	 * Throws a core exception with the given message and underlying exception,
-	 * if any.
-	 * 
-	 * @param message error message
-	 * @param e underlying exception or <code>null</code>
-	 * @throws CoreException
-	 */
-	private void abort(String message, Throwable e) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, message, e));
-	}	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#accept(org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor)
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
 	 */
-	public void accept(ClassFileContainerVisitor visitor) throws CoreException {
+	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		init();
 		String[] packageNames = getPackageNames();
 		for (int i = 0; i < packageNames.length; i++) {
@@ -182,12 +153,12 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 						if (pkg.length() > 0) {
 							typeName = pkg + "." + typeName; //$NON-NLS-1$
 						}
-						classFiles.add(new ClassFile(file, typeName));
+						classFiles.add(new LocalApiTypeRoot(this, file, typeName));
 					}
 					Collections.sort(classFiles);
 					Iterator cfIterator = classFiles.iterator();
 					while (cfIterator.hasNext()) {
-						IClassFile classFile = (IClassFile) cfIterator.next();
+						IApiTypeRoot classFile = (IApiTypeRoot) cfIterator.next();
 						visitor.visit(pkg, classFile);
 						visitor.end(pkg, classFile);
 					}
@@ -197,6 +168,15 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 		}
 	}
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buff = new StringBuffer();
+		buff.append("Directory Class File Container: "+getName()); //$NON-NLS-1$
+		return buff.toString();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#close()
 	 */
@@ -208,7 +188,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#findClassFile(java.lang.String)
 	 */
-	public IClassFile findClassFile(String qualifiedName) throws CoreException {
+	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		init();
 		int index = qualifiedName.lastIndexOf('.');
 		String cfName = qualifiedName;
@@ -221,7 +201,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 		if (dir != null) {
 			File file = new File(dir, cfName + Util.DOT_CLASS_SUFFIX);
 			if (file.exists()) {
-				return new ClassFile(file, qualifiedName);
+				return new LocalApiTypeRoot(this, file, qualifiedName);
 			}
 		}
 		return null;
@@ -288,11 +268,10 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 		}
 	}
 
-	public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
-		return findClassFile(qualifiedName);
-	}
-
-	public String getOrigin() {
-		return this.fComponent.getId();
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findClassFile(java.lang.String, java.lang.String)
+	 */
+	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
+		return findTypeRoot(qualifiedName);
 	}
 }

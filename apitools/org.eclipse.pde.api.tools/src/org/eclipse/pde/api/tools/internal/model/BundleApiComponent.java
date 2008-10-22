@@ -46,20 +46,22 @@ import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.api.tools.internal.AbstractApiComponent;
-import org.eclipse.pde.api.tools.internal.ArchiveClassFileContainer;
+import org.eclipse.pde.api.tools.internal.ArchiveApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.BundleVersionRange;
-import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
+import org.eclipse.pde.api.tools.internal.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.RequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -160,13 +162,14 @@ public class BundleApiComponent extends AbstractApiComponent {
 	protected void init(long bundleId) throws CoreException {
 		try {
 			Dictionary manifest = getManifest();
-			if (isBinaryBundle() && ApiBaselineManager.WORKSPACE_API_BASELINE_ID.equals(getProfile().getName())) {
+			if (isBinaryBundle() && ApiBaselineManager.WORKSPACE_API_BASELINE_ID.equals(getBaseline().getName())) {
 				// must account for bundles in development mode - look for class files in output
 				// folders rather than jars
 				TargetWeaver.weaveManifest(manifest);
 			}
 			StateObjectFactory factory = StateObjectFactory.defaultFactory;
-			fBundleDescription = factory.createBundleDescription(((ApiBaseline)getProfile()).getState(), manifest, fLocation, bundleId);
+			fBundleDescription = factory.createBundleDescription(((ApiBaseline)getBaseline()).getState(), manifest, fLocation, bundleId);
+			setName((String)getManifest().get(Constants.BUNDLE_NAME));
 		} catch (BundleException e) {
 			abort("Unable to create API component from specified location: " + fLocation, e); //$NON-NLS-1$
 		}
@@ -193,7 +196,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 		IApiDescription[] descriptions = new IApiDescription[fragments.length + 1];
 		for (int i = 0; i < fragments.length; i++) {
 			BundleDescription fragment = fragments[i];
-			BundleApiComponent component = (BundleApiComponent) getProfile().getApiComponent(fragment.getSymbolicName());
+			BundleApiComponent component = (BundleApiComponent) getBaseline().getApiComponent(fragment.getSymbolicName());
 			descriptions[i + 1] = component.getApiDescription();
 		}
 		descriptions[0] = createLocalApiDescription();
@@ -232,9 +235,11 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	protected Set getLocalPackageNames() throws CoreException {
 		Set names = new HashSet();
-		IClassFileContainer[] containers = getClassFileContainers();
+		IApiTypeContainer[] containers = getApiTypeContainers();
+		IApiComponent comp = null;
 		for (int i = 0; i < containers.length; i++) {
-			if (containers[i].getOrigin().equals(getId())) {
+			comp = (IApiComponent) containers[i].getAncestor(IApiElement.COMPONENT);
+			if (comp != null && comp.getId().equals(getId())) {
 				String[] packageNames = containers[i].getPackageNames();
 				for (int j = 0; j < packageNames.length; j++) {
 					names.add(packageNames[j]);
@@ -346,10 +351,10 @@ public class BundleApiComponent extends AbstractApiComponent {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.AbstractClassFileContainer#createClassFileContainers()
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#createApiTypeContainers()
 	 */
-	protected List createClassFileContainers() throws CoreException {
+	protected List createApiTypeContainers() throws CoreException {
 		List containers = new ArrayList(5);
 		try {
 			List all = new ArrayList();
@@ -364,10 +369,10 @@ public class BundleApiComponent extends AbstractApiComponent {
 				BundleDescription[] fragments = fBundleDescription.getFragments();
 				for (int i = 0; i < fragments.length; i++) {
 					BundleDescription fragment = fragments[i];
-					BundleApiComponent component = (BundleApiComponent) getProfile().getApiComponent(fragment.getSymbolicName());
+					BundleApiComponent component = (BundleApiComponent) getBaseline().getApiComponent(fragment.getSymbolicName());
 					if (component != null) {
 						// force initialization of the fragment so we can retrieve its class file containers
-						component.getClassFileContainers();
+						component.getApiTypeContainers();
 						all.add(component);
 					}
 				}
@@ -386,12 +391,12 @@ public class BundleApiComponent extends AbstractApiComponent {
 							continue;
 						}
 					}
-					IClassFileContainer container = component.createClassFileContainer(path);
+					IApiTypeContainer container = component.createApiTypeContainer(path);
 					if (container == null) {
 						for(Iterator iter = all.iterator(); iter.hasNext();) {
 							other = (BundleApiComponent) iter.next();
 							if (other != component) {
-								container = other.createClassFileContainer(path);
+								container = other.createApiTypeContainer(path);
 							}
 						}
 					}
@@ -443,25 +448,25 @@ public class BundleApiComponent extends AbstractApiComponent {
 	}
 	
 	/**
-	 * Creates and returns a class file container at the specified path in
-	 * this bundle, or <code>null</code> if the class file container does not
+	 * Creates and returns an {@link IApiTypeContainer} at the specified path in
+	 * this bundle, or <code>null</code> if the {@link IApiTypeContainer} does not
 	 * exist. The path is the name (path) of entries specified by the
 	 * <code>Bundle-ClassPath:</code> header.
 	 * 
 	 * @param path relative path to a class file container in this bundle
-	 * @return class file container or <code>null</code>
+	 * @return {@link IApiTypeContainer} or <code>null</code>
 	 * @exception IOException
 	 */
-	protected IClassFileContainer createClassFileContainer(String path) throws IOException {
+	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException {
 		File bundle = new File(fLocation);
 		if (bundle.isDirectory()) {
 			// bundle is folder
 			File entry = new File(bundle, path);
 			if (entry.exists()) {
 				if (entry.isFile()) {
-					return new ArchiveClassFileContainer(entry.getCanonicalPath(), this);
+					return new ArchiveApiTypeContainer(this, entry.getCanonicalPath());
 				} else {
-					return new DirectoryClassFileContainer(entry.getCanonicalPath(), this);
+					return new DirectoryApiTypeContainer(this, entry.getCanonicalPath());
 				}
 			}
 		} else {
@@ -469,7 +474,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 			ZipFile zip = null;
 			try {
 				if (path.equals(".")) { //$NON-NLS-1$
-					return new ArchiveClassFileContainer(fLocation, this);
+					return new ArchiveApiTypeContainer(this, fLocation);
 				} else {
 					// TODO: use temporary space from OSGi if in a framework
 					zip = new ZipFile(fLocation);
@@ -506,7 +511,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 								}
 							}
 						}
-						return new ArchiveClassFileContainer(tempFile.getCanonicalPath(), this);
+						return new ArchiveApiTypeContainer(this, tempFile.getCanonicalPath());
 					}
 				}
 			} finally {
@@ -634,6 +639,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 			}
 			return new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
 		} catch(IOException e) {
+			//TODO abort
 			ApiPlugin.log(e);
 		} finally {
 			closingZipFileAndStream(stream, jarFile);
@@ -719,13 +725,6 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public String getId() {
 		return fBundleDescription.getSymbolicName();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getName()
-	 */
-	public String getName() throws CoreException {
-		return (String)getManifest().get(Constants.BUNDLE_NAME);
 	}
 
 	/* (non-Javadoc)
@@ -886,10 +885,6 @@ public class BundleApiComponent extends AbstractApiComponent {
 		return fBundleDescription.getFragments().length != 0;
 	}
 	
-	public String getOrigin() {
-		return this.getId();
-	}
-
 	/**
 	 * Sets whether this bundle has an underlying API description file.
 	 * 

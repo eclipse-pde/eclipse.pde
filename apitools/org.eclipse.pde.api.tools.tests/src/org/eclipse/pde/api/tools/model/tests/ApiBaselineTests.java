@@ -23,8 +23,8 @@ import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -129,7 +129,7 @@ public class ApiBaselineTests extends TestCase {
 		assertNotNull("No component", components);
 		assertEquals("Wrong size", 1, components.length);
 		assertEquals("Wrong provider for package", baseline.getApiComponent(baseline.getExecutionEnvironment()), components[0]);
-		IClassFile classFile = components[0].findClassFile("java.lang.Object");
+		IApiTypeRoot classFile = components[0].findTypeRoot("java.lang.Object");
 		assertNotNull("Missing java.lang.Object", classFile);
 		assertEquals("Wrong type name", "java.lang.Object", classFile.getTypeName());
 	}	
@@ -173,15 +173,15 @@ public class ApiBaselineTests extends TestCase {
 		IApiBaseline baseline = TestSuiteHelper.createTestingProfile("test-nested-jars");
 		IApiComponent component = baseline.getApiComponent("component.a");
 		assertNotNull("missing component.a", component);
-		IClassFileContainer[] containers = component.getClassFileContainers();
+		IApiTypeContainer[] containers = component.getApiTypeContainers();
 		assertTrue("Missing containers:", containers.length > 0);
-		IClassFile file = null;
+		IApiTypeRoot file = null;
 		for (int i = 0; i < containers.length; i++) {
-			IClassFileContainer container = containers[i];
+			IApiTypeContainer container = containers[i];
 			String[] names = container.getPackageNames();
 			for (int j = 0; j < names.length; j++) {
 				if (names[j].equals("component.a")) {
-					file = container.findClassFile("component.a.A");
+					file = container.findTypeRoot("component.a.A");
 					break;
 				}
 			}

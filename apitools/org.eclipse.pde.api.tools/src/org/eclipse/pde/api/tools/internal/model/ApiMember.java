@@ -92,7 +92,7 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 			}
 		} 
 		catch (CoreException e) {}
-		return null;
+		return (IApiComponent) getAncestor(IApiElement.COMPONENT);
 	}
 	
 	/* (non-Javadoc)

@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.model.ApiMethod;
 import org.eclipse.pde.api.tools.internal.model.ApiType;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassAdapter;
@@ -36,7 +36,7 @@ import org.objectweb.asm.util.TraceAnnotationVisitor;
 public class TypeStructureBuilder extends ClassAdapter {
 	ApiType fType;
 	IApiComponent fComponent;
-	IClassFile fFile;
+	IApiTypeRoot fFile;
 
 	/**
 	 * Builds a type structure for a class file. Note that if an API 
@@ -47,12 +47,15 @@ public class TypeStructureBuilder extends ClassAdapter {
 	 * @param cv class file visitor
 	 * @param component originating API component or <code>null</code> if unknown
 	 */
-	TypeStructureBuilder(ClassVisitor cv, IApiComponent component, IClassFile file) {
+	TypeStructureBuilder(ClassVisitor cv, IApiComponent component, IApiTypeRoot file) {
 		super(cv);
 		fComponent = component;
 		fFile = file;
 	}
 	
+	/**
+	 * @see org.objectweb.asm.ClassAdapter#visit(int, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
+	 */
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 		StringBuffer simpleSig = new StringBuffer();
 		simpleSig.append('L');
@@ -77,11 +80,15 @@ public class TypeStructureBuilder extends ClassAdapter {
 		super.visit(version, access, name, signature, superName, interfaces);
 	}
 
+	/**
+	 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String, java.lang.String, java.lang.String, int)
+	 */
 	public void visitInnerClass(String name, String outerName, String innerName, int access) {
 		super.visitInnerClass(name, outerName, innerName, access);
 		String currentName = name.replace('/', '.');
 		if (fType == null) {
 			// TODO: signature? generic signature?
+			//TODO set parent as the parent type not the component
 			fType = new ApiType(fComponent, currentName, null, null, access, outerName, fFile);
 			// this is a nested type
 			if (outerName == null) {
@@ -146,7 +153,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 	 * @param file associated class file
 	 * @return
 	 */
-	public static IApiType buildTypeStructure(byte[] bytes, IApiComponent component, IClassFile file) {
+	public static IApiType buildTypeStructure(byte[] bytes, IApiComponent component, IApiTypeRoot file) {
 		TypeStructureBuilder visitor = new TypeStructureBuilder(new ClassNode(), component, file);
 		try {
 			ClassReader classReader = new ClassReader(bytes);

@@ -15,25 +15,14 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
-
-
 /**
  * Describes the API of a software component. An API component
- * is composed of a set of class files owned by the component and
+ * is composed of a set of {@link IApiTypeRoot}s owned by the component and
  * a description (manifest) of the component's API. 
  * 
- * TODO should be an {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiElement}
  * @since 1.0.0
  */
-public interface IApiComponent extends IClassFileContainer {
-	
-	/**
-	 * Returns a human readable name for this component.
-	 * 
-	 * @return component name
-	 * @exception CoreException if unable to retrieve the name
-	 */
-	public String getName() throws CoreException;
+public interface IApiComponent extends IApiTypeContainer {
 	
 	/**
 	 * Returns this component's symbolic name.
@@ -78,29 +67,29 @@ public interface IApiComponent extends IClassFileContainer {
 	public String[] getExecutionEnvironments();
 	
 	/**
-	 * Returns class file containers containing the class files associated with
+	 * Returns {@link IApiTypeContainer}s containing the {@link IApiTypeRoot}s associated with
 	 * this component in the order they would appear on the build path
 	 * or class path.
 	 * 
-	 * @return class file containers
+	 * @return {@link IApiTypeContainer}s
 	 */
-	public IClassFileContainer[] getClassFileContainers();
+	public IApiTypeContainer[] getApiTypeContainers();
 	
 	/**
-	 * Returns class file containers containing the class files associated with
+	 * Returns {@link IApiTypeContainer}s containing the {@link IApiTypeRoot}s associated with
 	 * this component that comes from the given component id in the order they 
 	 * would appear on the build path or class path.
 	 * 
-	 * This is used to filter out the class file containers coming from a fragment
+	 * This is used to filter out the {@link IApiTypeContainer}s coming from a fragment
 	 * 
 	 * @param id the given component id
-	 * @return class file containers
+	 * @return {@link IApiTypeContainer}s
 	 */
-	public IClassFileContainer[] getClassFileContainers(String id);
+	public IApiTypeContainer[] getApiTypeContainers(String id);
 
 	/**
 	 * Returns a collection of descriptions of components required by this
-	 * component, or an empty collection if none.
+	 * component or an empty collection if none.
 	 * 
 	 * @return required component descriptions, possibly empty
 	 */
@@ -115,7 +104,7 @@ public interface IApiComponent extends IClassFileContainer {
 	
 	/**
 	 * Returns if the component is a system component (a JRE definition for example) or not.
-	 * System components are not persisted with profiles, as they are recreated dynamically
+	 * System components are not persisted with baselines, as they are recreated dynamically
 	 * by the framework 
 	 * @return true if the component is a system component, false otherwise
 	 */
@@ -138,19 +127,20 @@ public interface IApiComponent extends IClassFileContainer {
 	 * @return true if the component is a source component, false otherwise
 	 */
 	public boolean isSourceComponent();
+	
 	/**
 	 * Disposes this API component. Clients must call this method when done
-	 * with an API component. Note that disposing an {@link IApiProfile} will dispose all of
+	 * with an API component. Note that disposing an {@link IApiBaseline} will dispose all of
 	 * its components. 
 	 */
 	public void dispose();
 	
 	/**
-	 * Returns the profile this component is contained in.
+	 * Returns the {@link IApiBaseline} this component is contained in.
 	 * 
-	 * @return API profile
+	 * @return the parent {@link IApiBaseline}
 	 */
-	public IApiBaseline getProfile();
+	public IApiBaseline getBaseline();
 		
 	/**
 	 * Returns a store of problem filters defined for this component or <code>null</code>

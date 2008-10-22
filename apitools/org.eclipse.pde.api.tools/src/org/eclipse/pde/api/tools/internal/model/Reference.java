@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -210,8 +210,8 @@ public class Reference implements IReference {
 		if (fResolved == null) {
 			IApiComponent sourceComponent = getMember().getApiComponent();
 			if(sourceComponent != null) {
-				IClassFile result = Util.getClassFile(
-						sourceComponent.getProfile().resolvePackage(sourceComponent, Util.getPackageName(getReferencedTypeName())),
+				IApiTypeRoot result = Util.getClassFile(
+						sourceComponent.getBaseline().resolvePackage(sourceComponent, Util.getPackageName(getReferencedTypeName())),
 						getReferencedTypeName());
 				if(result != null) {
 					IApiType type = result.getStructure();

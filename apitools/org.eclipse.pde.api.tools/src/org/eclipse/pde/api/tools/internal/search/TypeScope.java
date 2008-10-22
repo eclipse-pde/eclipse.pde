@@ -18,13 +18,15 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
+import org.eclipse.pde.api.tools.internal.model.ApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 
 /**
@@ -33,7 +35,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
  * 
  * @since 1.0
  */
-public class TypeScope implements IApiSearchScope {
+public class TypeScope extends ApiElement implements IApiSearchScope {
 
 	/**
 	 * Associated component
@@ -44,7 +46,7 @@ public class TypeScope implements IApiSearchScope {
 	 * Map of package names to associated type descriptors
 	 */
 	private Map fPackageToTypes;
-			
+		
 	/**
 	 * Constructs a new class file container/search scope on the given types.
 	 * 
@@ -52,6 +54,7 @@ public class TypeScope implements IApiSearchScope {
 	 * @param types types within the component
 	 */
 	public TypeScope(IApiComponent component, IReferenceTypeDescriptor[] types) {
+		super(component, IApiElement.API_TYPE_CONTAINER, null);
 		fComponent = component;
 		fPackageToTypes = new HashMap();
 		for (int i = 0; i < types.length; i++) {
@@ -69,8 +72,9 @@ public class TypeScope implements IApiSearchScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope#encloses(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
 	 */
-	public boolean encloses(String componentId, IElementDescriptor element) {
-		if (getOrigin().equals(componentId)) {
+	public boolean encloses(IApiComponent component, IElementDescriptor element) {
+		IApiComponent comp = (IApiComponent) getAncestor(IApiElement.COMPONENT);
+		if (comp != null && comp.getId().equals(component.getId())) {
 			if (element.getElementType() == IElementDescriptor.T_FIELD || element.getElementType() == IElementDescriptor.T_METHOD) {
 				element = ((IMemberDescriptor)element).getEnclosingType();
 			}
@@ -87,25 +91,17 @@ public class TypeScope implements IApiSearchScope {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#getOrigin()
-	 */
-	public String getOrigin() {
-		return fComponent.getId();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#getPackageNames()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#getPackageNames()
 	 */
 	public String[] getPackageNames() throws CoreException {
 		Set pkgs = fPackageToTypes.keySet();
 		return (String[]) pkgs.toArray(new String[pkgs.size()]);
 	}
 
-
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
 	 */
-	public void accept(ClassFileContainerVisitor visitor) throws CoreException {
+	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		if (visitor.visit(fComponent)) {
 			Set entrySet = fPackageToTypes.entrySet();
 			Iterator iterator = entrySet.iterator();
@@ -117,7 +113,7 @@ public class TypeScope implements IApiSearchScope {
 					Iterator typeIter = types.iterator();
 					while (typeIter.hasNext()) {
 						IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) typeIter.next();
-						IClassFile classFile = fComponent.findClassFile(type.getQualifiedName());
+						IApiTypeRoot classFile = fComponent.findTypeRoot(type.getQualifiedName());
 						if (classFile != null) {
 							visitor.visit(pkg, classFile);
 							visitor.end(pkg, classFile);
@@ -131,29 +127,31 @@ public class TypeScope implements IApiSearchScope {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#close()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#close()
 	 */
 	public void close() throws CoreException {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#findClassFile(java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findClassFile(java.lang.String)
 	 */
-	public IClassFile findClassFile(String qualifiedName) throws CoreException {
+	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		IReferenceTypeDescriptor descriptor = Factory.typeDescriptor(qualifiedName);
-		if (encloses(getOrigin(), descriptor)) {
-			return fComponent.findClassFile(qualifiedName);
+		IApiComponent comp = (IApiComponent) getAncestor(IApiElement.COMPONENT);
+		if (comp != null && encloses(comp, descriptor)) {
+			return fComponent.findTypeRoot(qualifiedName);
 		}
 		return null;
 	}
 
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#findClassFile(java.lang.String, java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findClassFile(java.lang.String, java.lang.String)
 	 */
-	public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
-		if (getOrigin().equals(id)) {
-			return findClassFile(qualifiedName);
+	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
+		IApiComponent comp = (IApiComponent) getAncestor(IApiElement.COMPONENT);
+		if (comp != null && comp.getId().equals(id)) {
+			return findTypeRoot(qualifiedName);
 		}
 		return null;
 	}

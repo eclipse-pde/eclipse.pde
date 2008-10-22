@@ -20,11 +20,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.api.tools.internal.AbstractClassFile;
+import org.eclipse.pde.api.tools.internal.AbstractApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.model.cache.MethodKey;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
@@ -45,11 +45,6 @@ import com.ibm.icu.text.MessageFormat;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ApiType extends ApiMember implements IApiType {
-
-	/**
-	 * API component or <code>null</code>
-	 */
-	private IApiComponent fComponent;
 	
 	private String fSuperclassName;
 	private String[] fSuperInterfaceNames;
@@ -73,7 +68,7 @@ public class ApiType extends ApiMember implements IApiType {
 	private Map fMethods;
 	
 	/**
-	 * Map of member type names to class file (or null untill resolved)
+	 * Map of member type names to class file (or null until resolved)
 	 */
 	private Map fMemberTypes;
 	
@@ -95,34 +90,25 @@ public class ApiType extends ApiMember implements IApiType {
 	/**
 	 * The storage this type structure originated from
 	 */
-	private IClassFile fStorage;
+	private IApiTypeRoot fStorage;
 	
 	/**
 	 * Creates an API type. Note that if an API component is not specified,
 	 * then some operations will not be available (navigating super types,
 	 * member types, etc).
 	 * 
-	 * @param component originating API component or <code>null</code> if unknown
-	 * @param name
-	 * @param signature
-	 * @param genericSig
-	 * @param flags
-	 * @param enclosingName
+	 * @param parent the parent {@link IApiElement} or <code>null</code> if none
+	 * @param name the name of the type
+	 * @param signature the signature of the type
+	 * @param genericSig the generic signature of the type
+	 * @param flags the flags for the type
+	 * @param enclosingName 
 	 * @param storage the storage this content was generated from
 	 */
-	public ApiType(IApiComponent parent, String name, String signature, String genericSig, int flags, String enclosingName, IClassFile storage) {
-		//TODO parent is either APIType or APiComponent
-		super(null, name, signature, genericSig, IApiElement.TYPE, flags);
-		fComponent = parent;
+	public ApiType(IApiElement parent, String name, String signature, String genericSig, int flags, String enclosingName, IApiTypeRoot storage) {
+		super(parent, name, signature, genericSig, IApiElement.TYPE, flags);
 		fEnclosingTypeName = enclosingName;
 		fStorage = storage;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.ApiMember#getApiComponent()
-	 */
-	public IApiComponent getApiComponent() {
-		return fComponent;
 	}
 
 	/* (non-Javadoc)
@@ -131,7 +117,7 @@ public class ApiType extends ApiMember implements IApiType {
 	public List extractReferences(int referenceMask, IProgressMonitor monitor) throws CoreException {
 		List references = new LinkedList();
 		ReferenceExtractor extractor = new ReferenceExtractor(this, references, referenceMask);
-		ClassReader reader = new ClassReader(((AbstractClassFile)fStorage).getContents());
+		ClassReader reader = new ClassReader(((AbstractApiTypeRoot)fStorage).getContents());
 		reader.accept(extractor, ClassReader.SKIP_FRAMES);
 		return references;
 	}
@@ -276,9 +262,9 @@ public class ApiType extends ApiMember implements IApiType {
 			requiresApiComponent();
 		}
 		String packageName = Util.getPackageName(qName);
-		IApiComponent[] components = getApiComponent().getProfile().
+		IApiComponent[] components = getApiComponent().getBaseline().
 			resolvePackage(getApiComponent(), packageName);
-		IClassFile result = Util.getClassFile(components, qName);
+		IApiTypeRoot result = Util.getClassFile(components, qName);
 		if (result != null) {
 			return result.getStructure();
 		}
@@ -434,14 +420,14 @@ public class ApiType extends ApiMember implements IApiType {
 			requiresApiComponent();
 		}
 		if (fMemberTypes.containsKey(simpleName)) {
-			IClassFile file =  (IClassFile) fMemberTypes.get(simpleName);
+			IApiTypeRoot file =  (IApiTypeRoot) fMemberTypes.get(simpleName);
 			if (file == null) {
 				// resolve
 				StringBuffer qName = new StringBuffer();
 				qName.append(getName());
 				qName.append('$');
 				qName.append(simpleName);
-				file = getApiComponent().findClassFile(qName.toString());
+				file = getApiComponent().findTypeRoot(qName.toString());
 				if (file == null) {
 					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
 							MessageFormat.format(Messages.ApiType_3,

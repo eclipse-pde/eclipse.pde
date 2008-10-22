@@ -20,9 +20,10 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.AbstractClassFileContainer;
+import org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 
 /**
@@ -30,7 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
  * 
  * @since 1.0.0
  */
-public class SearchScope extends AbstractClassFileContainer implements IApiSearchScope {
+public class SearchScope extends AbstractApiTypeContainer implements IApiSearchScope {
 		
 	/**
 	 * Map of components to collection of leaf element in that scope, or an empty
@@ -42,6 +43,15 @@ public class SearchScope extends AbstractClassFileContainer implements IApiSearc
 	 * Map of component id's to components with that id, contained in this scope.
 	 */
 	private Map fComponentIds = new HashMap();
+	
+	/**
+	 * Constructor
+	 * @param parent
+	 * @param name
+	 */
+	public SearchScope() {
+		super(null, IApiElement.API_TYPE_CONTAINER, null);
+	}
 	
 	/**
 	 * Adds the entire component to this scope.
@@ -108,11 +118,11 @@ public class SearchScope extends AbstractClassFileContainer implements IApiSearc
 		return parents;
 	}
 	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractClassFileContainer#createClassFileContainers()
+	/**
+	 * @return
+	 * @throws CoreException
 	 */
-	protected List createClassFileContainers() throws CoreException {
+	protected List createApiTypeContainers() throws CoreException {
 		List containers = new ArrayList(fComponents.size());
 		Iterator iterator = fComponents.entrySet().iterator();
 		while (iterator.hasNext()) {
@@ -123,18 +133,18 @@ public class SearchScope extends AbstractClassFileContainer implements IApiSearc
 				if (leaves.isEmpty()) {
 					containers.add(component);
 				} else {
-					containers.add(new ScopedClassFileContainer(component, (IElementDescriptor[])leaves.toArray(new IElementDescriptor[leaves.size()])));
+					containers.add(new ScopedApiTypeContainer(component, (IElementDescriptor[])leaves.toArray(new IElementDescriptor[leaves.size()])));
 				}
 			}
 		}
 		return containers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.search.IApiSearchScope#encloses(java.lang.String, org.eclipse.pde.api.tools.descriptors.IElementDescriptor)
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope#encloses(org.eclipse.pde.api.tools.internal.provisional.IApiComponent, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
 	 */
-	public boolean encloses(String componentId, IElementDescriptor element) {
-		Set set = (Set) fComponentIds.get(componentId);
+	public boolean encloses(IApiComponent component, IElementDescriptor element) {
+		Set set = (Set) fComponentIds.get(component.getId());
 		if (set != null) {
 			Iterator componets = set.iterator();
 			while (componets.hasNext()) {
@@ -159,10 +169,6 @@ public class SearchScope extends AbstractClassFileContainer implements IApiSearc
 		return false;
 	}
 
-	public String getOrigin() {
-		return null;
-	}
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

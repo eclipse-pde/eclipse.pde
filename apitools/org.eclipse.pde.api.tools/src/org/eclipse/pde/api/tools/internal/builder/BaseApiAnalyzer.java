@@ -63,7 +63,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -215,8 +215,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		int length = requiredComponents.length;
 		ReexportedBundleVersionInfo info = null;
 		if (length != 0) {
-			IApiBaseline profile = component.getProfile();
-			IApiBaseline baseline = reference.getProfile();
+			IApiBaseline profile = component.getBaseline();
+			IApiBaseline baseline = reference.getBaseline();
 			loop: for (int i = 0; i < length; i++) {
 				IRequiredComponentDescription description = requiredComponents[i];
 				if (description.isExported()) {
@@ -448,7 +448,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return;
 		}
 		try {
-			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + (typenames == null ? component.getClassFileContainers().length : typenames.length));
+			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + (typenames == null ? component.getApiTypeContainers().length : typenames.length));
 			if(typenames == null) {
 				try {
 					IPackageFragmentRoot[] roots = fJavaProject.getPackageFragmentRoots();
@@ -603,9 +603,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (DEBUG) {
 			System.out.println("comparing profiles ["+reference.getId()+"] and ["+component.getId()+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
-		IClassFile classFile = null;
+		IApiTypeRoot classFile = null;
 		try {
-			classFile = component.findClassFile(typeName);
+			classFile = component.findTypeRoot(typeName);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -613,9 +613,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (classFile == null) {
 			// this indicates a removed type
 			// we should try to get the class file from the reference
-			IClassFile referenceClassFile = null;
+			IApiTypeRoot referenceClassFile = null;
 			try {
-				referenceClassFile = reference.findClassFile(typeName);
+				referenceClassFile = reference.findTypeRoot(typeName);
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
 			}
@@ -659,7 +659,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			fBuildState.cleanup(typeName);
 			long time = System.currentTimeMillis();
 			try {
-				delta = ApiComparator.compare(classFile, reference, component, reference.getProfile(), component.getProfile(), VisibilityModifiers.API);
+				delta = ApiComparator.compare(classFile, reference, component, reference.getBaseline(), component.getBaseline(), VisibilityModifiers.API);
 			} catch(Exception e) {
 				ApiPlugin.log(e);
 			} finally {

@@ -127,15 +127,15 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	private HashSet fSystemPackageNames = null;
 	
 	/**
-	 * The VM install this profile is bound to for system libraries or <code>null</code>.
+	 * The VM install this baseline is bound to for system libraries or <code>null</code>.
 	 * Only used in the IDE when OSGi is running.
 	 */
 	private IVMInstall fVMBinding = null;
 
 	/**
-	 * Constructs a new API profile with the given name.
+	 * Constructs a new API baseline with the given name.
 	 * 
-	 * @param name profile name
+	 * @param name baseline name
 	 */
 	public ApiBaseline(String name) {
 		super(null, IApiElement.BASELINE, name);
@@ -144,11 +144,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}	
 		
 	/**
-	 * Constructs a new API profile with the given attributes.
+	 * Constructs a new API baseline with the given attributes.
 	 * 
-	 * @param name profile name
+	 * @param name baseline name
 	 * @param eeDescriptoin execution environment description file
-	 * @throws CoreException if unable to create a profile with the given attributes
+	 * @throws CoreException if unable to create a baseline with the given attributes
 	 */
 	public ApiBaseline(String name, File eeDescription) throws CoreException {
 		this(name);
@@ -161,7 +161,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	/**
-	 * Initializes this profile to resolve in the execution environment
+	 * Initializes this baseline to resolve in the execution environment
 	 * associated with the given symbolic name.
 	 * 
 	 * @param environmentId execution environment symbolic name
@@ -181,19 +181,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			initialize(properties, eeFile);
 		}
 	}
-	
-	/**
-	 * Throws a core exception with the given message and underlying exception,
-	 * if any.
-	 * 
-	 * @param message error message
-	 * @param e underlying exception or <code>null</code>
-	 * @throws CoreException
-	 */
-	private static void abort(String message, Throwable e) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, message, e));
-	}	
-	
+
 	/**
 	 * Returns the property file for the given environment or <code>null</code>.
 	 * 
@@ -218,7 +206,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 					return profile;
 				}
 			} catch (IOException e) {
-				abort("Unable to read profile: " + ee, e); //$NON-NLS-1$
+				ApiPlugin.log(e);
 			} finally {
 				try {
 					if (is != null) {
@@ -233,7 +221,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}		
 	
 	/**
-	 * Initializes this profile from the given properties.
+	 * Initializes this baseline from the given properties.
 	 * 
 	 * @param profile OGSi profile properties
 	 * @param description execution environment description file
@@ -779,7 +767,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	/**
-	 * Re-binds the VM this profile is bound to.
+	 * Re-binds the VM this baseline is bound to.
 	 */
 	private void rebindVM() {
 		fVMBinding = null;

@@ -102,11 +102,11 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#createClassFileContainers()
 	 */
-	protected List createClassFileContainers() throws CoreException {
+	protected List createApiTypeContainers() throws CoreException {
 		List libs = new ArrayList(fLibraries.length);
 		for (int i = 0; i < fLibraries.length; i++) {
 			LibraryLocation lib = fLibraries[i];
-			libs.add(new ArchiveClassFileContainer(lib.getSystemLibraryPath().toOSString(), this));
+			libs.add(new ArchiveApiTypeContainer(this, lib.getSystemLibraryPath().toOSString()));
 		}
 		return libs;
 	}
@@ -133,13 +133,6 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getName()
-	 */
-	public String getName() {
-		return fExecEnv[0];
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getRequiredComponents()
 	 */
 	public IRequiredComponentDescription[] getRequiredComponents() {
@@ -163,6 +156,7 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 		fLibraries = EEVMType.getLibraryLocations(description);
 		fExecEnv = new String[]{EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, description)};
 		fVersion = fExecEnv[0];
+		setName(fExecEnv[0]);
 		fLocation = EEVMType.getProperty(EEVMType.PROP_JAVA_HOME, description);
 	}
 

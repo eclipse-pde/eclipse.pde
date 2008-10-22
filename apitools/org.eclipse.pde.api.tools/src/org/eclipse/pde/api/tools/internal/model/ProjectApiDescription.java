@@ -34,13 +34,13 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.api.tools.internal.FolderClassFileContainer;
+import org.eclipse.pde.api.tools.internal.FolderApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -230,7 +230,7 @@ public class ProjectApiDescription extends ApiDescription {
 							fTimeStamp = resource.getModificationStamp();
 							try {
 								TagScanner.newScanner().scan(unit, ProjectApiDescription.this,
-									getClassFileContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()));
+									getApiTypeContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()));
 							} catch (CoreException e) {
 								ApiPlugin.log(e.getStatus());
 							}
@@ -560,7 +560,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @param root package fragment root
 	 * @return class file container or <code>null</code> if none
 	 */
-	private synchronized IClassFileContainer getClassFileContainer(IPackageFragmentRoot root) throws CoreException {
+	private synchronized IApiTypeContainer getApiTypeContainer(IPackageFragmentRoot root) throws CoreException {
 		if (fClassFileContainers == null) {
 			fClassFileContainers = new HashMap(8);
 		}
@@ -568,11 +568,11 @@ public class ProjectApiDescription extends ApiDescription {
 		if (location == null) {
 			location = root.getJavaProject().getOutputLocation();
 		}
-		IClassFileContainer container = (IClassFileContainer) fClassFileContainers.get(location);
+		IApiTypeContainer container = (IApiTypeContainer) fClassFileContainers.get(location);
 		if (container == null) {
 			IContainer folder = root.getJavaProject().getProject().getWorkspace().getRoot().getFolder(location);
 			if (folder.exists()) {
-				container = new FolderClassFileContainer(folder, fComponent);
+				container = new FolderApiTypeContainer(fComponent, folder);
 				fClassFileContainers.put(location, container);
 			}
 		}

@@ -20,34 +20,39 @@ package org.eclipse.pde.api.tools.internal.provisional.model;
 public interface IApiElement {
 
 	/**
-	 * Constant representing an API component
+	 * Constant representing an {@link org.eclipse.pde.api.tools.internal.provisional.IApiComponent}
 	 */
 	public int COMPONENT = 1;
 	
 	/**
-	 * Constant representing a reference type (class, enum, annotation).
+	 * Constant representing an {@link IApiType}
 	 */
 	public int TYPE = 2;		
 	
 	/**
-	 * Constant representing a class file container
+	 * Constant representing an {@link org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer}
 	 */
-	public int CLASS_FILE_CONTAINER = 3;
+	public int API_TYPE_CONTAINER = 3;
 	
 	/**
-	 * Constant representing an API baseline
+	 * Constant representing an {@link IApiBaseline}
 	 */
 	public int BASELINE = 4;
 	
 	/**
-	 * Constant representing a field
+	 * Constant representing an {@link IApiField}
 	 */
 	public int FIELD = 5;	
 	
 	/**
-	 * Constant representing a method
+	 * Constant representing an {@link IApiMethod}
 	 */
 	public int METHOD = 6;	
+	
+	/**
+	 * Constant representing an {@link org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot}
+	 */
+	public int API_TYPE_ROOT = 7;
 	
 	/**
 	 * Returns the name of this element
