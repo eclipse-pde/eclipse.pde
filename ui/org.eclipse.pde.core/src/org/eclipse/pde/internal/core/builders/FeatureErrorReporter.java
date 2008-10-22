@@ -413,7 +413,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			if (header != null) {
 				String value = header.getValue();
 				String unpackValue = unpack == "true" ? "jar" : "dir"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				if (!value.equalsIgnoreCase(unpackValue)) {
+				if (value != null && !value.equalsIgnoreCase(unpackValue)) {
 					String message = NLS.bind(PDECoreMessages.Builders_Feature_mismatchUnpackBundleShape, (new String[] {"unpack=" + unpack, parent.getAttribute("id"), "Eclipse-BundleShape: " + value})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
 				}
