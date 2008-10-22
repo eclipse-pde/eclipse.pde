@@ -517,4 +517,19 @@ public class ApiType extends ApiMember implements IApiType {
 		}
 		return name;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.ApiMember#getEnclosingType()
+	 */
+	public IApiType getEnclosingType() throws CoreException {
+		IApiType enclosing = super.getEnclosingType();
+		if (enclosing == null && fEnclosingTypeName != null) {
+			// anonymous or local
+			IApiTypeRoot root = getApiComponent().findTypeRoot(fEnclosingTypeName);
+			if (root != null) {
+				return root.getStructure();
+			}
+		}
+		return enclosing;
+	}
 }

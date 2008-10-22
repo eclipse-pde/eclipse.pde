@@ -64,8 +64,9 @@ public class TypeStructureBuilder extends ClassAdapter {
 		String enclosingName = null;
 		int index = name.lastIndexOf('$');
 		if (index > -1) {
-			enclosingName = name.substring(0, index);
+			enclosingName = name.substring(0, index).replace('/', '.');
 		}
+		// TODO: inner types should be have enclosing type as parent instead of component
 		fType = new ApiType(fComponent, name.replace('/', '.'), simpleSig.toString(), signature, access, enclosingName, fFile);
 		if (superName != null) {
 			fType.setSuperclassName(superName.replace('/', '.'));
@@ -86,20 +87,15 @@ public class TypeStructureBuilder extends ClassAdapter {
 	public void visitInnerClass(String name, String outerName, String innerName, int access) {
 		super.visitInnerClass(name, outerName, innerName, access);
 		String currentName = name.replace('/', '.');
-		if (fType == null) {
-			// TODO: signature? generic signature?
-			//TODO set parent as the parent type not the component
-			fType = new ApiType(fComponent, currentName, null, null, access, outerName, fFile);
-			// this is a nested type
+		if (currentName.equals(fType.getName())) {
 			if (outerName == null) {
-				// this is a local or an anonymous type
-				if (innerName == null) {
-					this.fType.setAnonymous();
-				} else {
-					this.fType.setLocal();
-				}
+				fType.setLocal();
 			}
-		} else if (outerName != null && innerName != null) {
+			if (innerName == null) {
+				fType.setAnonymous();
+			}
+		}
+		if (outerName != null && innerName != null) {
 			// technically speaking innerName != null is not necessary, but this is a workaround for some
 			// bogus synthetic types created by another compiler
 			String currentOuterName = outerName.replace('/', '.');

@@ -74,24 +74,13 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getEnclosingType()
 	 */
 	public IApiType getEnclosingType() throws CoreException {
-		IApiType type = (IApiType) getAncestor(IApiElement.TYPE); 
-		if(type == null) {
-			//TODO resolve?
-		}
-		return type;
+		return (IApiType) getAncestor(IApiElement.TYPE); 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getApiComponent()
 	 */ 
 	public IApiComponent getApiComponent() {
-		try {
-			IApiType type = getEnclosingType();
-			if(type != null) {
-				return type.getApiComponent();
-			}
-		} 
-		catch (CoreException e) {}
 		return (IApiComponent) getAncestor(IApiElement.COMPONENT);
 	}
 	
