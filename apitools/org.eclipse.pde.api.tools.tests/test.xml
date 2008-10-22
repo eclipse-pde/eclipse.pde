@@ -26,7 +26,7 @@
     <!-- Api Tools Plugin test suite -->
     <property name="api-tools-plugins-folder" 
               value="${eclipse-home}/api_tools_plugins_folder"/>
-    <delete dir="${jdt-model-folder}" quiet="true"/>
+    <delete dir="${api-tools-plugins-folder}" quiet="true"/>
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <!-- Use a subdir 'data' so that the JCL jars are put in jdt-model-folder and are deleted at the end of the tests. -->
       <property name="data-dir" value="${api-tools-plugins-folder}/data"/>
@@ -39,7 +39,7 @@
     <!-- Api Tools test suite -->
     <property name="api-tools-folder" 
               value="${eclipse-home}/api_tools_folder"/>
-    <delete dir="${jdt-dom-folder}" quiet="true"/>
+    <delete dir="${api-tools-folder}" quiet="true"/>
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
 	  <!-- Use a subdir 'data' so that the JCL jars are put in jdt-model-folder and are deleted at the end of the tests. -->
       <property name="data-dir" value="${api-tools-folder}/data"/>
@@ -55,7 +55,7 @@
     <!-- Api Tools Performance test suite -->
     <property name="api-tools-plugins-folder" 
               value="${eclipse-home}/api_tools_plugins_folder"/>
-    <delete dir="${jdt-model-folder}" quiet="true"/>
+    <delete dir="${api-tools-plugins-folder}" quiet="true"/>
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <!-- Use a subdir 'data' so that the JCL jars are put in jdt-model-folder and are deleted at the end of the tests. -->
       <property name="data-dir" value="${api-tools-plugins-folder}/data"/>

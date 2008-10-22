@@ -14,9 +14,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 
 
 /**
- * Interface describing the {@link ApiProfileManager}
+ * Interface describing the {@link IApiBaselineManager}
  * 
- * @noimplement this interface is not to be implemented by clients
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 1.0.0
  */
 public interface IApiBaselineManager {
