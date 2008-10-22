@@ -29,7 +29,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
-import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -237,90 +236,6 @@ public class ClassFileComparator {
 							this.type1,
 							this.type1.getName(),
 							Util.getDescriptorName(type1));
-				}
-			}
-		}
-		// TODO check super class if they are not checked anyway
-		// case where an API type inherits from a non-API type that contains public methods/fields
-		if (visibilityModifiers == VisibilityModifiers.API) {
-			int currentTypeVisibility = 0;
-			String superTypeName = this.type1.getSuperclassName();
-			String superTypeName2 = this.type2.getSuperclassName();
-			if (!superTypeName.equals(superTypeName2)) {
-				// if the superclass has changed we need to look at visible members have been removed or moved 
-				// to a different location
-				IClassFile superclassType1 = getType(superTypeName, this.component, this.apiProfile);
-				if (superclassType1 == null) return;
-				IApiType typeStructure = superclassType1.getStructure();
-				IApiMethod[] methods = typeStructure.getMethods();
-				for (int i = 0, max = methods.length; i < max; i++) {
-					if (!methods[i].isConstructor()) {
-						getDeltaForMethod(methods[i]);
-					}
-				}
-				IApiField[] fields = typeStructure.getFields();
-				for (int i = 0, max = fields.length; i < max; i++) {
-					getDeltaForField(fields[i]);
-				}
-				return;
-			}
-			IClassFile superclassType1 = getType(superTypeName, this.component, this.apiProfile);
-			if (superclassType1 == null) return;
-			IApiDescription apiDescription = superclassType1.getApiComponent().getApiDescription();
-			IApiType superType = superclassType1.getStructure();
-			IApiAnnotations superclassAnnotations = apiDescription.resolveAnnotations(superType.getHandle());
-			if (superclassAnnotations != null) {
-				currentTypeVisibility = superclassAnnotations.getVisibility();
-				if (!VisibilityModifiers.isAPI(currentTypeVisibility)) {
-					// superclass is not an API type so we need to check it for visible members
-					// if this is an API, it will be checked when the super type is checked
-					final boolean ignoreProtected = RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions) || Util.isFinal(this.type1.getModifiers());
-					IClassFile superclassType2 = this.component2.findClassFile(superTypeName);
-					if (superclassType2 != null) {
-						ClassFileComparator comparator = new ClassFileComparator(superclassType1, superclassType2, this.component, this.component2, this.apiProfile, this.apiProfile2, this.visibilityModifiers);
-						IDelta delta2 = comparator.getDelta();
-						if (delta2 != null && delta2 != ApiComparator.NO_DELTA) {
-							// filter all protected members changes
-							delta2.accept(new DeltaVisitor() {
-								public boolean visit(IDelta delta) {
-									IDelta[] children = delta.getChildren();
-									if (children.length == 0) {
-										// leaf node
-										int modifiers = delta.getModifiers();
-										if (Util.isProtected(modifiers)) {
-											if (!ignoreProtected) {
-												switch(delta.getElementType()) {
-													case IDelta.METHOD_ELEMENT_TYPE : 
-													case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
-													case IDelta.FIELD_ELEMENT_TYPE :
-													case IDelta.CLASS_ELEMENT_TYPE :
-													case IDelta.ENUM_ELEMENT_TYPE :
-														break;
-													default :
-														addDelta(delta);
-												}
-											}
-										} else if (Util.isPublic(modifiers)) {
-											switch(delta.getElementType()) {
-												case IDelta.METHOD_ELEMENT_TYPE : 
-												case IDelta.FIELD_ELEMENT_TYPE :
-												case IDelta.CLASS_ELEMENT_TYPE :
-												case IDelta.ENUM_ELEMENT_TYPE :
-													switch(delta.getFlags()) {
-														case IDelta.CONSTRUCTOR :
-															break;
-														default:
-															addDelta(delta);
-													}
-											}
-										}
-										return false;
-									}
-									return true;
-								}
-							});
-						}
-					}
 				}
 			}
 		}
@@ -2149,7 +2064,7 @@ public class ClassFileComparator {
 		}
 		int referenceRestrictions = this.initialDescriptorRestrictions;
 		int access2 = method2.getModifiers();
-		if (component.hasApiDescription()) {
+		if (this.component.hasApiDescription()) {
 			// check if this method should be removed because it is tagged as @noreference
 			IApiDescription apiDescription = null;
 			try {

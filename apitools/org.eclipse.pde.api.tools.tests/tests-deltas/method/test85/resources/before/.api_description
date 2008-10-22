@@ -3,6 +3,8 @@
 <plugin id="deltatest" />
 
 <package name="p">
-	<type name="X"/>
+	<type name="X">
+		<method name="&lt;init&gt;" signature="()V" reference="false"/>
+	</type>
 </package>
 </component>

@@ -1,5 +1,5 @@
 package p;
 
 public class X {
-	void foo() {}
+	public void foo() {}
 }

@@ -1,5 +1,5 @@
 package p;
 
 public class X {
-	X() {}
+	public final int i = 0;
 }

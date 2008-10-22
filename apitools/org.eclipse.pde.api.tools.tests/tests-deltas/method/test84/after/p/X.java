@@ -1,5 +1,5 @@
 package p;
 
-public class X implements I {
-	public void foo() {}
+public class X {
+	private X() {}
 }

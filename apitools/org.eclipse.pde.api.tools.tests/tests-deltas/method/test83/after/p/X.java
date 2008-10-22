@@ -1,4 +1,5 @@
 package p;
 
-public class X extends internal.p.Y {
+public class X {
+	private void foo() {}
 }

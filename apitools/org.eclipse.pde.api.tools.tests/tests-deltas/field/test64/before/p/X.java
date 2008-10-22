@@ -1,5 +1,5 @@
 package p;
 
 public class X {
-	protected int i;
+	public static int i;
 }

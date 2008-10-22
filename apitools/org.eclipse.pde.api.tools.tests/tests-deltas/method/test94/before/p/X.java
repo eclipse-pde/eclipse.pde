@@ -1,5 +1,4 @@
 package p;
 
-public class X {
-	public void foo() {}
+public abstract class X {
 }

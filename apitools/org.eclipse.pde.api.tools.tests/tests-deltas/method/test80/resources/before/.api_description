@@ -3,6 +3,6 @@
 <plugin id="deltatest" />
 
 <package name="p">
-	<type name="X" extend="false"/>
+	<type name="X"/>
 </package>
 </component>

@@ -1,4 +1,5 @@
 package p;
 
-public class X extends internal.Y {
+public class X {
+	protected X() {}
 }

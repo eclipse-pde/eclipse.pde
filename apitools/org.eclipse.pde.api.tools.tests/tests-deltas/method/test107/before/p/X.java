@@ -1,5 +1,10 @@
 package p;
 
-public class X {
-	final void foo() {}
+import p.internal.Y;
+
+public class X extends Y {
+	X() {
+		super();
+	}
+	public void foo() {}
 }

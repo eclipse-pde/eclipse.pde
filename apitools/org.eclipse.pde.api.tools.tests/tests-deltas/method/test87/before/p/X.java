@@ -1,4 +1,5 @@
 package p;
 
-public final class X {
+public class X {
+	public X() {}
 }

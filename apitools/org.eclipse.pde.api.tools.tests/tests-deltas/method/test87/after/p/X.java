@@ -1,5 +1,5 @@
 package p;
 
-public final class X {
-	protected void foo() {}
+public class X {
+	private X() {}
 }

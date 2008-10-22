@@ -1,5 +1,5 @@
 package p;
 
-public abstract class X {
-	abstract void foo();
+public class X {
+	final void foo() {}
 }
