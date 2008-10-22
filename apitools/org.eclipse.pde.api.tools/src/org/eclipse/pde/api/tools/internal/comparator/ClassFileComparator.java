@@ -2079,7 +2079,7 @@ public class ClassFileComparator {
 				}
 			}
 		}
-		if (this.visibilityModifiers == VisibilityModifiers.API) {
+		if (this.visibilityModifiers == VisibilityModifiers.API && this.component.hasApiDescription()) {
 			if (RestrictionModifiers.isReferenceRestriction(referenceRestrictions)) {
 				// tagged as @noreference in the reference component
 				if (!RestrictionModifiers.isReferenceRestriction(restrictions)) {
