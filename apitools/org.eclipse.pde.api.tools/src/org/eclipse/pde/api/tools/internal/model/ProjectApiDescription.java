@@ -437,7 +437,7 @@ public class ProjectApiDescription extends ApiDescription {
 								if (file.exists()) {
 									type = file.getType();
 								}
-							}							
+							}
 						}
 					} else if (parentNode instanceof TypeNode) {
 						type = ((TypeNode)parentNode).fType.getType(name);
