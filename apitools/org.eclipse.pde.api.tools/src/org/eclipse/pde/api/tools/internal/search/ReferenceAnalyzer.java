@@ -28,6 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -37,7 +38,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector;
-import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -158,7 +158,7 @@ public class ReferenceAnalyzer {
 	 * @return any problems
 	 * @throws CoreException
 	 */
-	private IApiProblem[] analyze(IApiSearchScope scope, IApiProblemDetector[] detectors, IProgressMonitor monitor) throws CoreException {
+	private IApiProblem[] analyze(IApiTypeContainer scope, IApiProblemDetector[] detectors, IProgressMonitor monitor) throws CoreException {
 		try {
 			// 1. index problem detectors
 			indexProblemDetectors(detectors);
@@ -251,7 +251,7 @@ public class ReferenceAnalyzer {
 	 * @param monitor progress monitor
 	 * @exception CoreException if the scan fails
 	 */
-	private void extractReferences(IApiSearchScope scope, IProgressMonitor monitor) throws CoreException {
+	private void extractReferences(IApiTypeContainer scope, IProgressMonitor monitor) throws CoreException {
 		fStatus = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, SearchMessages.SearchEngine_1, null); 
 		String[] packageNames = scope.getPackageNames();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, packageNames.length);
@@ -383,7 +383,6 @@ public class ReferenceAnalyzer {
 				while (iterator.hasNext()) {
 					Reference ref2 = (Reference) iterator.next();
 					ref2.setResolution(resolved);
-					// TODO: might as well resolve annotations to?
 				}
 			}
 		}
@@ -391,7 +390,7 @@ public class ReferenceAnalyzer {
 
 	
 	/**
-	 * Analyzes the given {@link IApiComponent} within the given {@link IApiSearchScope} and returns 
+	 * Analyzes the given {@link IApiComponent} within the given {@link IApiTypeContainer} (scope) and returns 
 	 * a collection of detected {@link IApiProblem}s or an empty collection, never <code>null</code>
 	 * @param component
 	 * @param scope
@@ -399,7 +398,7 @@ public class ReferenceAnalyzer {
 	 * @return the collection of detected {@link IApiProblem}s or an empty collection, never <code>null</code>
 	 * @throws CoreException
 	 */
-	public IApiProblem[] analyze(IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor) throws CoreException {
+	public IApiProblem[] analyze(IApiComponent component, IApiTypeContainer scope, IProgressMonitor monitor) throws CoreException {
 		// build problem detectors
 		IApiProblemDetector[] detectors = buildProblemDetectors(component);
 		// analyze

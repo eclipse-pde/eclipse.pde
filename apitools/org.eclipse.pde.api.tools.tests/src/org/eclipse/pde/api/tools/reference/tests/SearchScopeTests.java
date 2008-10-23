@@ -19,15 +19,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
-import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
@@ -48,7 +44,7 @@ public class SearchScopeTests extends TestCase {
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IApiComponent[] components = new IApiComponent[]{componentA, componentB};
-		IApiSearchScope scope = Factory.newScope(components);
+		IApiTypeContainer scope = Factory.newScope(components);
 		Collection<String> expectedPackages = new HashSet<String>();
 		Collection<String> expectedTypes = new HashSet<String>();
 		visit(componentA, expectedPackages, expectedTypes);
@@ -83,34 +79,6 @@ public class SearchScopeTests extends TestCase {
 		};
 		container.accept(visitor);
 	}
-
-	/**
-	 * Tests visiting a package scope - package a.b.c in component.a
-	 * 
-	 * @throws CoreException
-	 */
-	public void testVisitPackageScope() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
-		IApiComponent componentA = profile.getApiComponent("component.a");
-		IApiSearchScope scope = Factory.newScope(componentA, new IElementDescriptor[]{Factory.packageDescriptor("a.b.c")});
-		final Collection<String> expectedPackages = new HashSet<String>();
-		expectedPackages.add("a.b.c");
-		final Collection<String> expectedTypes = new HashSet<String>();
-		componentA.accept(new ApiTypeContainerVisitor() {
-			public boolean visitPackage(String packageName) {
-				return expectedPackages.contains(packageName);
-			}
-			public void visit(String packageName, IApiTypeRoot classFile) {
-				expectedTypes.add(classFile.getTypeName());
-			}
-		
-		});
-		Collection<String> actualPackages = new HashSet<String>();
-		Collection<String> actualTypes = new HashSet<String>();
-		visit(scope, actualPackages, actualTypes);
-		assertEquals("Different packages", expectedPackages, actualPackages);
-		assertEquals("Different types", expectedTypes, actualTypes);
-	}
 	
 	/**
 	 * Tests visiting a type scope - type A in package component.a in component.a
@@ -122,7 +90,7 @@ public class SearchScopeTests extends TestCase {
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IPackageDescriptor pkg = Factory.packageDescriptor("component.a");
 		IReferenceTypeDescriptor type = pkg.getType("A");
-		IApiSearchScope scope = Factory.newScope(componentA, new IElementDescriptor[]{type});
+		IApiTypeContainer scope = Factory.newTypeScope(componentA, new IReferenceTypeDescriptor[]{type});
 		Collection<String> expectedPackages = new HashSet<String>();
 		expectedPackages.add("component.a");
 		Collection<String> expectedTypes = new HashSet<String>();
@@ -132,86 +100,6 @@ public class SearchScopeTests extends TestCase {
 		visit(scope, actualPackages, actualTypes);
 		assertEquals("Different packages", expectedPackages, actualPackages);
 		assertEquals("Different types", expectedTypes, actualTypes);
-	}	
-	
-	/**
-	 * Tests visiting a type scope - method Activator.start(..) in package component.a in component.a
-	 * 
-	 * @throws CoreException
-	 */
-	public void testVisitMethodScope() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
-		IApiComponent componentA = profile.getApiComponent("component.a");
-		IPackageDescriptor pkg = Factory.packageDescriptor("component.a");
-		IReferenceTypeDescriptor type = pkg.getType("Activator");
-		IMethodDescriptor method = type.getMethod("start", "(QBundleContext;)V");
-		IApiSearchScope scope = Factory.newScope(componentA, new IElementDescriptor[]{method});
-		Collection<String> expectedPackages = new HashSet<String>();
-		expectedPackages.add("component.a");
-		Collection<String> expectedTypes = new HashSet<String>();
-		expectedTypes.add("component.a.Activator");
-		Collection<String> actualPackages = new HashSet<String>();
-		Collection<String> actualTypes = new HashSet<String>();
-		visit(scope, actualPackages, actualTypes);
-		assertEquals("Different packages", expectedPackages, actualPackages);
-		assertEquals("Different types", expectedTypes, actualTypes);
-	}	
-	
-	/**
-	 * Tests that adding a parent scope replaces the child scope - i.e.
-	 * makes the scope wider.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testAddingWiderScope() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
-		IApiComponent componentA = profile.getApiComponent("component.a");
-		IPackageDescriptor pkg = Factory.packageDescriptor("component.a");
-		IReferenceTypeDescriptor type = pkg.getType("Activator");
-		IMethodDescriptor method = type.getMethod("start", "(QBundleContext;)V");
-		// and the method and type scopes (type includes method)
-		IApiSearchScope scope = Factory.newScope(componentA, new IElementDescriptor[]{method, type});
-		// scope should now include everything in the type
-		IFieldDescriptor field = type.getField("PLUGIN_ID");
-		assertTrue("Should enclose method", scope.encloses(componentA, method));
-		assertTrue("Should enclose field", scope.encloses(componentA, field));
-		assertTrue("Should enclose type", scope.encloses(componentA, type));
-		assertFalse("Should not enclose package", scope.encloses(componentA, pkg));
-	}
-	
-	/**
-	 * Tests that a type does not enclose siblings.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testEnclosesSiblingScope() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
-		IApiComponent componentA = profile.getApiComponent("component.a");
-		IPackageDescriptor pkg = Factory.packageDescriptor("component.a");
-		IReferenceTypeDescriptor type = pkg.getType("Activator");
-		IReferenceTypeDescriptor typeA = pkg.getType("A");
-		IApiSearchScope scope = Factory.newScope(componentA, new IElementDescriptor[]{type});
-		assertTrue("Should enclose type", scope.encloses(componentA, type));
-		assertFalse("Should not enclose package", scope.encloses(componentA, pkg));
-		assertFalse("Should not enclose A", scope.encloses(componentA, typeA));
-	}
-	
-	/**
-	 * Tests that adding a parent scope encloses its children.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testEnclosesChildrenScope() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
-		IApiComponent componentA = profile.getApiComponent("component.a");
-		IPackageDescriptor pkg = Factory.packageDescriptor("component.a");
-		IReferenceTypeDescriptor type = pkg.getType("Activator");
-		IMethodDescriptor method = type.getMethod("start", "(QBundleContext;)V");
-		IApiSearchScope scope = Factory.newScope(componentA, new IElementDescriptor[]{type});
-		// scope should now include everything in the type
-		IFieldDescriptor field = type.getField("PLUGIN_ID");
-		assertTrue("Should enclose method", scope.encloses(componentA, method));
-		assertTrue("Should enclose field", scope.encloses(componentA, field));
 	}	
 	
 	/**
@@ -230,7 +118,7 @@ public class SearchScopeTests extends TestCase {
 		IReferenceTypeDescriptor two = Factory.typeDescriptor("component.a.NoExtendClass");
 		expectedTypes.add(one.getQualifiedName());
 		expectedTypes.add(two.getQualifiedName());
-		IApiSearchScope scope = Factory.newTypeScope(componentA, new IReferenceTypeDescriptor[]{one, two});
+		IApiTypeContainer scope = Factory.newTypeScope(componentA, new IReferenceTypeDescriptor[]{one, two});
 		Collection<String> actualPackages = new HashSet<String>();
 		Collection<String> actualTypes = new HashSet<String>();
 		visit(scope, actualPackages, actualTypes);

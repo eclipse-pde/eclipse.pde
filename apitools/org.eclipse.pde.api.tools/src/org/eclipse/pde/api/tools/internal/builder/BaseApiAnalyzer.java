@@ -63,6 +63,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -77,7 +78,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
-import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.internal.search.ReferenceAnalyzer;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -293,14 +293,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 	
 	/**
-	 * Returns an {@link IApiSearchScope} given the component and type names context
+	 * Returns an {@link IApiTypeContainer} given the component and type names context
 	 * @param component
 	 * @param types
-	 * @return a new {@link IApiSearchScope} for the component and type names context
+	 * @return a new {@link IApiTypeContainer} for the component and type names context
 	 */
-	private IApiSearchScope getSearchScope(final IApiComponent component, final String[] typenames) {
+	private IApiTypeContainer getSearchScope(final IApiComponent component, final String[] typenames) {
 		if(typenames == null) {
-			return Factory.newScope(new IApiComponent[]{component});
+			return component;
 		}
 		else {
 			return Factory.newTypeScope(component, getScopedElements(typenames));
@@ -567,7 +567,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			return;
 		} 
-		IApiSearchScope scope = getSearchScope(component, typenames);
+		IApiTypeContainer scope = getSearchScope(component, typenames);
 		SubMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {component.getId()}), 2);
 		ReferenceAnalyzer analyzer = new ReferenceAnalyzer();
 		try {

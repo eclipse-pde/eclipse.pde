@@ -22,12 +22,10 @@ import org.eclipse.pde.api.tools.internal.model.ApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
-import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 
 /**
  * A search scope containing only types from one component. More efficient than a general purpose
@@ -35,7 +33,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
  * 
  * @since 1.0
  */
-public class TypeScope extends ApiElement implements IApiSearchScope {
+public class TypeScope extends ApiElement implements IApiTypeContainer {
 
 	/**
 	 * Associated component
@@ -67,27 +65,6 @@ public class TypeScope extends ApiElement implements IApiSearchScope {
 			}
 			set.add(type);
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope#encloses(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
-	 */
-	public boolean encloses(IApiComponent component, IElementDescriptor element) {
-		IApiComponent comp = (IApiComponent) getAncestor(IApiElement.COMPONENT);
-		if (comp != null && comp.getId().equals(component.getId())) {
-			if (element.getElementType() == IElementDescriptor.T_FIELD || element.getElementType() == IElementDescriptor.T_METHOD) {
-				element = ((IMemberDescriptor)element).getEnclosingType();
-			}
-			if (element.getElementType() == IElementDescriptor.T_REFERENCE_TYPE) {
-				IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) element;
-				String pkg = type.getPackage().getName();
-				Set types = (Set) fPackageToTypes.get(pkg);
-				if (types != null) {
-					return types.contains(type);
-				}
-			}
-		}
-		return false;
 	}
 
 	/* (non-Javadoc)
@@ -137,8 +114,8 @@ public class TypeScope extends ApiElement implements IApiSearchScope {
 	 */
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		IReferenceTypeDescriptor descriptor = Factory.typeDescriptor(qualifiedName);
-		IApiComponent comp = (IApiComponent) getAncestor(IApiElement.COMPONENT);
-		if (comp != null && encloses(comp, descriptor)) {
+		Set types = (Set) fPackageToTypes.get(descriptor.getPackage().getName());
+		if (types != null && types.contains(descriptor)) {
 			return fComponent.findTypeRoot(qualifiedName);
 		}
 		return null;
@@ -149,8 +126,7 @@ public class TypeScope extends ApiElement implements IApiSearchScope {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findClassFile(java.lang.String, java.lang.String)
 	 */
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
-		IApiComponent comp = (IApiComponent) getAncestor(IApiElement.COMPONENT);
-		if (comp != null && comp.getId().equals(id)) {
+		if (fComponent.getId().equals(id)) {
 			return findTypeRoot(qualifiedName);
 		}
 		return null;

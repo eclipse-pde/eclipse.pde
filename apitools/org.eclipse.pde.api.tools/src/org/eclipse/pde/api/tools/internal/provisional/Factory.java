@@ -11,17 +11,18 @@
 package org.eclipse.pde.api.tools.internal.provisional;
 
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.pde.api.tools.internal.CompositeApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.descriptors.ResourceDescriptorImpl;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IResourceDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
-import org.eclipse.pde.api.tools.internal.search.SearchScope;
 import org.eclipse.pde.api.tools.internal.search.TypeScope;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -100,26 +101,12 @@ public class Factory {
 	 * @param components API components
 	 * @return search scope
 	 */
-	public static IApiSearchScope newScope(IApiComponent[] components) {
-		SearchScope scope = new SearchScope();
+	public static IApiTypeContainer newScope(IApiComponent[] components) {
+		List compList = new LinkedList();
 		for (int i = 0; i < components.length; i++) {
-			scope.addComponent(components[i]);
+			compList.add(components[i]);
 		}
-		return scope;
-	}
-	
-	/**
-	 * Returns a scope containing the specified elements in the given component.
-	 * 
-	 * @param component API component
-	 * @param elements elements in the component
-	 * @return search scope
-	 */
-	public static IApiSearchScope newScope(IApiComponent component, IElementDescriptor[] elements) {
-		SearchScope scope = new SearchScope();
-		for (int i = 0; i < elements.length; i++) {
-			scope.addElement(component, elements[i]);
-		}
+		CompositeApiTypeContainer scope = new CompositeApiTypeContainer(components[0].getBaseline(), compList);
 		return scope;
 	}
 	
@@ -130,7 +117,7 @@ public class Factory {
 	 * @param types reference types
 	 * @return search scope
 	 */
-	public static IApiSearchScope newTypeScope(IApiComponent component, IReferenceTypeDescriptor[] types) {
+	public static IApiTypeContainer newTypeScope(IApiComponent component, IReferenceTypeDescriptor[] types) {
 		return new TypeScope(component, types);
 	}
 }
