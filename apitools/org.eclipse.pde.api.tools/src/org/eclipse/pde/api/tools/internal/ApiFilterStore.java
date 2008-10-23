@@ -650,7 +650,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						}
 					}
 				}
-				if(needsbuild) {
+				if(needsbuild && ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 					Util.getBuildJob(new IProject[] {fProject.getProject()}).schedule();
 				}
 			}
