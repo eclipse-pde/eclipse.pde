@@ -81,22 +81,22 @@ public class ConstructorUsageTests extends UsageTest {
 	
 	private void x1(boolean inc) {
 		//TODO uncomment once https://bugs.eclipse.org/bugs/show_bug.cgi?id=247028 has been fixed
-		/*setExpectedProblemIds(getDefaultProblemIdSet(12));
+		setExpectedProblemIds(getDefaultProblemIdSet(12));
 		String typename = "testCN1";
 		setExpectedMessageArgs(new String[][] {
 				{CONST_CLASS_NAME+"()", typename},
 				{CONST_CLASS_NAME+"(int, Object, char[])", typename},
-				{CONST_CLASS_NAME+".inner()", typename},
+				{"inner()", typename},
 				{CONST_CLASS_NAME+"()", INNER_NAME1},
 				{CONST_CLASS_NAME+"(int, Object, char[])", INNER_NAME1},
-				{CONST_CLASS_NAME+".inner()", INNER_NAME1},
+				{"inner()", INNER_NAME1},
 				{CONST_CLASS_NAME+"()", INNER_NAME2},
 				{CONST_CLASS_NAME+"(int, Object, char[])", INNER_NAME2},
-				{CONST_CLASS_NAME+".inner()", INNER_NAME2},
+				{"inner()", INNER_NAME2},
 				{CONST_CLASS_NAME+"()", OUTER_NAME},
 				{CONST_CLASS_NAME+"(int, Object, char[])", OUTER_NAME},
-				{CONST_CLASS_NAME+".inner()", OUTER_NAME},
+				{"inner()", OUTER_NAME},
 		});
-		deployTest(typename, inc);*/
+		deployTest(typename, inc);
 	}
 }
