@@ -165,10 +165,12 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	private void generateGatherLogsTarget() {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
-		script.printMkdirTask(featureTempFolder);
+		String destinationTempFolder = new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString();
+		script.printMkdirTask(destinationTempFolder);
+		script.printProperty(PROPERTY_DESTINATION_TEMP_FOLDER, destinationTempFolder);
 		Map params = new HashMap(1);
 		params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString());
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, destinationTempFolder);
 		script.printAntCallTask(TARGET_ALL_CHILDREN, false, params);
 		script.printTargetEnd();
 	}

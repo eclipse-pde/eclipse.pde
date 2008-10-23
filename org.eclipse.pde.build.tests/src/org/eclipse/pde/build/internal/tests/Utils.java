@@ -224,15 +224,18 @@ public class Utils {
 		return null;
 	}
 
-	public static void writeBuffer(IFile outputFile, StringBuffer buffer) throws IOException {
+	public static void writeBuffer(IFile outputFile, StringBuffer buffer) throws IOException, CoreException {
 		FileOutputStream stream = null;
 		try {
-			stream = new FileOutputStream(outputFile.getLocation().toFile());
+			File output = outputFile.getLocation().toFile();
+			output.getParentFile().mkdirs();
+			stream = new FileOutputStream(output);
 			stream.write(buffer.toString().getBytes());
 		} finally {
 			if (stream != null)
 				stream.close();
 		}
+		outputFile.getParent().refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
 
 	public static void transferStreams(InputStream source, OutputStream destination) throws IOException {

@@ -794,7 +794,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		TestQualifierDirector director = new TestQualifierDirector();
 		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
-		
+
 		f1 = new BuildTimeFeature("foo", "1.0.0.v1");
 		f1.addEntry(new FeatureEntry("a", "1.2.3.abcd", true));
 		f1.setContextQualifierLength(2);
@@ -805,7 +805,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		director = new TestQualifierDirector();
 		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
-		
+
 		f1 = new BuildTimeFeature("foo", "1.0.0.v1");
 		f1.addEntry(new FeatureEntry("a", "4.5.6.xyz", true));
 		f1.addEntry(new FeatureEntry("b", "1.2.3.abccccc", true));
@@ -829,7 +829,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		f2.setContextQualifierLength(2);
 
 		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
-		
+
 		f1 = new BuildTimeFeature("foo", "1.0.0.v1");
 		f1.addEntry(new FeatureEntry("a", "1.2.3.abcdefg", true));
 		f1.addEntry(new FeatureEntry("b", "4.5.6.xyz", true));
@@ -841,7 +841,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		f2.setContextQualifierLength(2);
 
 		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
-		
+
 		f1 = new BuildTimeFeature("foo", "1.0.0.v1");
 		f1.addEntry(new FeatureEntry("a", "1.2.3.aAb", true));
 		f1.setContextQualifierLength(2);
@@ -851,7 +851,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		f2.setContextQualifierLength(2);
 
 		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
-		
+
 		f1 = new BuildTimeFeature("foo", "1.0.0.v1");
 		f1.addEntry(new FeatureEntry("a", "1.2.3.aZ", true));
 		f1.setContextQualifierLength(2);
@@ -861,5 +861,25 @@ public class ScriptGenerationTests extends PDETestCase {
 		f2.setContextQualifierLength(2);
 
 		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
+	}
+
+	public void testBug156043() throws Exception {
+		IFolder buildFolder = newTest("156043");
+		IFolder p1 = Utils.createFolder(buildFolder, "plugins/p1");
+		IFolder p2 = Utils.createFolder(buildFolder, "plugins/p2");
+		IFolder f1 = Utils.createFolder(buildFolder, "features/F1");
+		Utils.generateFeature(buildFolder, "F1", new String[] {"F2"}, new String[] {"P1"});
+		Utils.generateFeature(buildFolder, "F2", null, new String[] {"P2"});
+		Utils.generateBundle(p1, "P1");
+		Utils.generateBundle(p2, "P2");
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "F1"));
+
+		Utils.writeBuffer(p1.getFile("temp.folder/@dot.bin.log"), new StringBuffer("compile!"));
+		Utils.writeBuffer(p2.getFile("temp.folder/@dot.bin.log"), new StringBuffer("me too!"));
+
+		runAntScript(f1.getFile("build.xml").getLocation().toOSString(), new String[] {"gather.logs"}, buildFolder.getLocation().toOSString(), null);
+		assertResourceFile(f1, "feature.temp.folder/plugins/P1_1.0.0/@dot.bin.log");
+		assertResourceFile(f1, "feature.temp.folder/plugins/P2_1.0.0/@dot.bin.log");
 	}
 }
