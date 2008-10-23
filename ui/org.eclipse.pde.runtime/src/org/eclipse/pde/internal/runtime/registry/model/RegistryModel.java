@@ -133,6 +133,10 @@ public class RegistryModel {
 
 	public void connect() {
 		backend.connect();
+
+		bundles = backend.initializeBundles();
+		services = backend.initializeServices();
+		extensionPoints = backend.initializeExtensionPoints();
 	}
 
 	public void disconnect() {
@@ -140,26 +144,14 @@ public class RegistryModel {
 	}
 
 	public Bundle[] getBundles() {
-		if (bundles == null) {
-			bundles = backend.initializeBundles();
-		}
-
 		return (Bundle[]) bundles.values().toArray(new Bundle[bundles.values().size()]);
 	}
 
 	public ExtensionPoint[] getExtensionPoints() {
-		if (extensionPoints == null) {
-			extensionPoints = backend.initializeExtensionPoints();
-		}
-
 		return (ExtensionPoint[]) extensionPoints.values().toArray(new ExtensionPoint[extensionPoints.values().size()]);
 	}
 
 	public ServiceRegistration[] getServices() {
-		if (services == null) {
-			services = backend.initializeServices();
-		}
-
 		return (ServiceRegistration[]) services.values().toArray(new ServiceRegistration[services.values().size()]);
 	}
 

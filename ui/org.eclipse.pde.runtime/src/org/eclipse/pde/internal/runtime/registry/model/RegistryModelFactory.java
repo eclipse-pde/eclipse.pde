@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry.model;
 
-import java.net.URI;
 
 /**
  * Produces RegistryModels for URLs. Valid URLs:
@@ -23,10 +22,10 @@ public class RegistryModelFactory {
 
 	/**
 	 * 
-	 * @param codename
+	 * @param uri
 	 * @return never returns null
 	 */
-	public static RegistryModel getRegistryModel(URI codename) {
+	public static RegistryModel getRegistryModel(String uri) {
 		return new RegistryModel(new LocalRegistryBackend());
 	}
 }

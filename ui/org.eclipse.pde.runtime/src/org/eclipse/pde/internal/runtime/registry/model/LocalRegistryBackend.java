@@ -219,7 +219,14 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	}
 
 	private static String createLocation(org.osgi.framework.Bundle bundle) {
-		URL bundleEntry = bundle.getEntry("/"); //$NON-NLS-1$
+		URL bundleEntry = null;
+
+		try {
+			bundleEntry = bundle.getEntry("/"); //$NON-NLS-1$
+		} catch (IllegalStateException e) {
+			return null;
+		}
+
 		try {
 			bundleEntry = FileLocator.resolve(bundleEntry);
 		} catch (IOException e) { // do nothing
@@ -306,8 +313,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	}
 
 	public void bundleChanged(BundleEvent event) {
-		org.osgi.framework.Bundle bundle = event.getBundle();
-		Bundle adapter = createBundleAdapter(bundle);
+		Bundle adapter = createBundleAdapter(event.getBundle());
 
 		switch (event.getType()) {
 			case BundleEvent.INSTALLED :

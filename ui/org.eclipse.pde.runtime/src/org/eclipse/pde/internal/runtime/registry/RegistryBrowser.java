@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -129,11 +127,7 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	public RegistryBrowser() {
-		try {
-			model = RegistryModelFactory.getRegistryModel(new URI("local"));
-		} catch (URISyntaxException e) {
-			PDERuntimePlugin.log(e);
-		}
+		model = RegistryModelFactory.getRegistryModel("local");
 		model.connect();
 
 		listener = new RegistryBrowserModelChangeListener(this);
