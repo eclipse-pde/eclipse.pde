@@ -17,6 +17,7 @@ import org.eclipse.pde.ui.tests.model.bundle.AllBundleModelTests;
 import org.eclipse.pde.ui.tests.model.cheatsheet.AllCheatSheetModelTests;
 import org.eclipse.pde.ui.tests.model.xml.AllXMLModelTests;
 import org.eclipse.pde.ui.tests.nls.AllNLSTests;
+import org.eclipse.pde.ui.tests.runtime.AllPDERuntimeTests;
 import org.eclipse.pde.ui.tests.target.AllTargetTests;
 import org.eclipse.pde.ui.tests.wizards.AllNewProjectTests;
 
@@ -31,6 +32,7 @@ public class AllPDETests {
 		suite.addTest(AllXMLModelTests.suite());
 		suite.addTest(AllCheatSheetModelTests.suite());
 		suite.addTest(AllNLSTests.suite());
+		suite.addTest(AllPDERuntimeTests.suite());
 		return suite;
 	}
 

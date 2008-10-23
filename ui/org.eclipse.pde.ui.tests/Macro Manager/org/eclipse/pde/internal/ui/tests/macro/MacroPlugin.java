@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.tests.macro;
 
+import org.osgi.service.packageadmin.PackageAdmin;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,6 +31,8 @@ public class MacroPlugin extends AbstractUIPlugin {
 	private static MacroPlugin plugin;
 
 	private MacroManager recorder;
+	
+	private PackageAdmin packageAdmin;
 
 	/**
 	 * The constructor.
@@ -48,6 +52,7 @@ public class MacroPlugin extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		packageAdmin = (PackageAdmin) context.getService(context.getServiceReference(PackageAdmin.class.getName()));
 	}
 
 	/**
@@ -55,6 +60,7 @@ public class MacroPlugin extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		recorder.shutdown();
+		packageAdmin = null;
 		super.stop(context);
 	}
 
@@ -94,4 +100,13 @@ public class MacroPlugin extends AbstractUIPlugin {
 			}
 		});
 	}
+	
+	public static BundleContext getBundleContext() {
+		return getDefault().getBundle().getBundleContext();
+	}
+	
+	public PackageAdmin getPackageAdmin() {
+		return packageAdmin;
+	}
+	
 }
