@@ -475,24 +475,22 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 	/**
 	 * @param values a {@link Set} containing packages names as {@link String}s
-	 * @param version a {@link String} representing the version to set on the packages, <code>null</code> allowed.
+	 * @param version a {@link String} representing the version to set on the package, <code>null</code> allowed.
 	 * @return a {@link String} representing the given packages, with the exported version set correctly.<br>
-	 * If version is <code>null</code> or there is more than one package in <code>values</code> the packages are exported with a <code>0.0.0</code> version. 
+	 * If there's only one package and version is not null, package is exported with that version number. 
 	 */
 	protected String getCommaValuesFromPackagesSet(Set values, String version) {
 		StringBuffer buffer = new StringBuffer();
 		Iterator iter = values.iterator();
 		while (iter.hasNext()) {
 			if (buffer.length() > 0) {
-				buffer.append(",\n"); //$NON-NLS-1$
+				buffer.append(",\n "); //$NON-NLS-1$ // space required for multiline headers
 			}
 			buffer.append(iter.next().toString());
-			buffer.append(";version=\""); //$NON-NLS-1$
-			if (values.size() == 1)
-				buffer.append(((version != null) ? version : "0.0.0"));//$NON-NLS-1$
-			else
-				buffer.append("0.0.0"); //$NON-NLS-1$
-			buffer.append("\""); //$NON-NLS-1$
+
+			if ((version != null) && (values.size() == 1)) {
+				buffer.append(";version=\"").append(version).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		return buffer.toString();
 	}
