@@ -76,9 +76,6 @@ public class DSInputContext extends XMLInputContext {
 			}
 			
 			model.load();
-			
-			model.save();
-			
 			return model;
 		}
 
