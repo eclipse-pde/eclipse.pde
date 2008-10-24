@@ -158,6 +158,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 				if (event.getSource() instanceof CheckboxTableViewer) {
 					IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 					((CheckboxTableViewer) event.getSource()).setChecked(selection.getFirstElement(), !((CheckboxTableViewer) event.getSource()).getChecked(selection.getFirstElement()));
+					fExportPart.updateCounter(((CheckboxTableViewer) event.getSource()).getCheckedElements().length);
 				}
 			}
 		});
