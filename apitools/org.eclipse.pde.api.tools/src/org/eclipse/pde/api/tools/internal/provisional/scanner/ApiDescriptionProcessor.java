@@ -134,10 +134,10 @@ public class ApiDescriptionProcessor {
 		 */
 		public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 			switch(element.getElementType()) {
-				case IElementDescriptor.T_PACKAGE: {
+				case IElementDescriptor.PACKAGE: {
 					return true;
 				}
-				case IElementDescriptor.T_REFERENCE_TYPE: {
+				case IElementDescriptor.TYPE: {
 					members.clear(); 
 					members.add(element);
 					return true;
@@ -153,7 +153,7 @@ public class ApiDescriptionProcessor {
 		 * @see org.eclipse.pde.api.tools.model.component.ApiDescriptionVisitor#endVisitElement(org.eclipse.pde.api.tools.model.component.IElementDescriptor, java.lang.String, org.eclipse.pde.api.tools.model.IApiAnnotations)
 		 */
 		public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
-			if (element.getElementType() == IElementDescriptor.T_REFERENCE_TYPE) {
+			if (element.getElementType() == IElementDescriptor.TYPE) {
 				IReferenceTypeDescriptor refType = (IReferenceTypeDescriptor) element;
 				try {
 					IReferenceTypeDescriptor topLevelType = refType.getEnclosingType();
@@ -404,20 +404,20 @@ public class ApiDescriptionProcessor {
 			for(int i = 0; i < apis.size(); i++) {
 				desc = (IElementDescriptor) apis.get(i);
 				switch(desc.getElementType()) {
-					case IElementDescriptor.T_REFERENCE_TYPE: {
+					case IElementDescriptor.TYPE: {
 						if(((IReferenceTypeDescriptor)desc).getName().equals(name)) {
 							return desc;
 						}
 						break;
 					}
-					case IElementDescriptor.T_METHOD: {
+					case IElementDescriptor.METHOD: {
 						IMethodDescriptor method = (IMethodDescriptor) desc;
 						if(method.getName().equals(name) && method.getSignature().equals(signature)) {
 							return desc;
 						}
 						break;
 					}
-					case IElementDescriptor.T_FIELD: {
+					case IElementDescriptor.FIELD: {
 						if(((IFieldDescriptor)desc).getName().equals(name)) {
 							return desc;
 						}
@@ -641,11 +641,11 @@ public class ApiDescriptionProcessor {
 	private static int getRestrictions(final IJavaProject project, final Element element, final IElementDescriptor descriptor) {
 		int res = RestrictionModifiers.NO_RESTRICTIONS;
 		switch(descriptor.getElementType()) {
-			case IElementDescriptor.T_FIELD: {
+			case IElementDescriptor.FIELD: {
 				res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
 				break;
 			}
-			case IElementDescriptor.T_METHOD: {
+			case IElementDescriptor.METHOD: {
 				IMethodDescriptor method  = (IMethodDescriptor) descriptor;
 				res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
 				if(!method.isConstructor()) {
@@ -653,7 +653,7 @@ public class ApiDescriptionProcessor {
 				}
 				break;
 			}
-			case IElementDescriptor.T_REFERENCE_TYPE: {
+			case IElementDescriptor.TYPE: {
 				IReferenceTypeDescriptor rtype = (IReferenceTypeDescriptor) descriptor;
 				res = annotateRestriction(element, IApiXmlConstants.ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, res);
 				res = annotateRestriction(element, IApiXmlConstants.ATTR_EXTEND, RestrictionModifiers.NO_EXTEND, res);

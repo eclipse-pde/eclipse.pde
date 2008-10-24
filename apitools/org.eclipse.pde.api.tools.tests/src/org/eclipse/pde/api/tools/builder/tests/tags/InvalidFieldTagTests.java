@@ -50,7 +50,7 @@ public class InvalidFieldTagTests extends TagTest {
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.TagTest#getDefaultProblemId()
 	 */
 	protected int getDefaultProblemId() {
-		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiProblem.NO_FLAGS);
+		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiProblem.NO_FLAGS);
 	}
 	
 	/* (non-Javadoc)

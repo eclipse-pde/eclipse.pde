@@ -16,7 +16,9 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -36,6 +38,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector;
 import org.eclipse.pde.api.tools.internal.util.Util;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @since 1.1
@@ -103,15 +107,16 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					charStart = pos.getOffset();
 					if (charStart != -1) {
 						charEnd = charStart + pos.getLength();
-						try {
-							lineNumber = document.getLineOfOffset(charStart);
-						} catch (BadLocationException e) {
-							ApiPlugin.log(e);
-						}
+						lineNumber = document.getLineOfOffset(charStart);
 					}
 				}
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
+				return null;
+			}
+			catch (BadLocationException e) {
+				ApiPlugin.log(e);
+				return null;
 			}
 			IJavaElement element = compilationUnit;
 			if(charStart > -1) {
@@ -136,14 +141,15 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	}
 	
 	/**
-	 * Returns the source range to include in the associated problem.
+	 * Returns the source range to include in the associated problem or <code>null</code>
+	 * if a valid source range could not be computed.
 	 * 
 	 * @param type resolved type where the reference occurs
 	 * @param doc source document of the type
 	 * @param reference associated reference
 	 * @return source range as a position
 	 */
-	protected abstract Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException;
+	protected abstract Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException;
 
 	/**
 	 * Returns the element type the problem is reported on.
@@ -217,6 +223,20 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 				return member.getEnclosingType().getSimpleName();
 		}
 	}	
+	
+	/**
+	 * Throws a new exception to report that we could not locate a source position for the 
+	 * given reference in the given type
+	 * @param type the type
+	 * @param reference the reference
+	 * @throws CoreException
+	 */
+	protected void noSourcePosition(IType type, IReference reference) throws CoreException {
+		IStatus status = new Status(IStatus.ERROR, ApiPlugin.getPluginIdentifier(),
+				MessageFormat.format(SearchMessages.AbstractProblemDetector_could_not_locate_source_range, 
+						new String[] {reference.getReferencedMemberName(), type.getElementName()}));
+		throw new CoreException(status);
+	}
 	
 	/**
 	 * Finds the method name to select on the given line of code starting from the given index.
@@ -301,26 +321,22 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return method name range
 	 * @throws CoreException
 	 */
-	protected Position getMethodNameRange(String name, IDocument document, IReference reference) throws CoreException {
-		try {
-			int linenumber = reference.getLineNumber();
-			if (linenumber > 0) {
-				linenumber--;
-			}
-			int offset = document.getLineOffset(linenumber);
-			String line = document.get(offset, document.getLineLength(linenumber));
-			int first = findMethodNameStart(name, line, 0);
-			if(first < 0) {
-				name = "super"; //$NON-NLS-1$
-			}
-			first = findMethodNameStart(name, line, 0);
-			if(first > -1) {
-				return new Position(offset + first, name.length());
-			}
-		} catch (BadLocationException e) {
-			ApiPlugin.log(e);
+	protected Position getMethodNameRange(String name, IDocument document, IReference reference) throws CoreException, BadLocationException {
+		int linenumber = reference.getLineNumber();
+		if (linenumber > 0) {
+			linenumber--;
 		}
-		return new Position(-1, 0);
+		int offset = document.getLineOffset(linenumber);
+		String line = document.get(offset, document.getLineLength(linenumber));
+		int first = findMethodNameStart(name, line, 0);
+		if(first < 0) {
+			name = "super"; //$NON-NLS-1$
+		}
+		first = findMethodNameStart(name, line, 0);
+		if(first > -1) {
+			return new Position(offset + first, name.length());
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -336,8 +352,8 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
 				new Object[] {new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
 				lineNumber, 
-				-1, 
-				-1,
+				IApiProblem.NO_CHARRANGE, 
+				IApiProblem.NO_CHARRANGE,
 				getElementType(reference), 
 				getProblemKind(),
 				getProblemFlags(reference));

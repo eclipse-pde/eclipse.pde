@@ -52,7 +52,7 @@ public class MethodUsageTests extends UsageTest {
 	private int getProblemId(int kind, int flags) {
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_USAGE, 
-				IElementDescriptor.T_METHOD, 
+				IElementDescriptor.METHOD, 
 				kind, flags);
 	}
 	

@@ -88,7 +88,7 @@ public class VersionTest extends CompatibilityTest {
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_VERSION,
-				IElementDescriptor.T_RESOURCE,
+				IElementDescriptor.RESOURCE,
 				IDelta.MAJOR_VERSION,
 				IApiProblem.NO_FLAGS);
 	}
@@ -108,7 +108,7 @@ public class VersionTest extends CompatibilityTest {
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.T_RESOURCE,
+						IElementDescriptor.RESOURCE,
 						IApiProblem.MINOR_VERSION_CHANGE,
 						IApiProblem.NO_FLAGS)
 			};
@@ -135,7 +135,7 @@ public class VersionTest extends CompatibilityTest {
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.T_RESOURCE,
+						IElementDescriptor.RESOURCE,
 						IApiProblem.MAJOR_VERSION_CHANGE,
 						IApiProblem.NO_FLAGS)
 			};
@@ -182,7 +182,7 @@ public class VersionTest extends CompatibilityTest {
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.T_RESOURCE,
+						IElementDescriptor.RESOURCE,
 						IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API,
 						IApiProblem.NO_FLAGS)
 			};
@@ -226,7 +226,7 @@ public class VersionTest extends CompatibilityTest {
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.T_RESOURCE,
+						IElementDescriptor.RESOURCE,
 						IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
 						IApiProblem.NO_FLAGS)
 			};

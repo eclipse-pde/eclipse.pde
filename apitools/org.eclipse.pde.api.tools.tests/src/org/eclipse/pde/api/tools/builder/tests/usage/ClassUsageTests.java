@@ -50,7 +50,7 @@ public class ClassUsageTests extends UsageTest {
 	private int getProblemId(int kind) {
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_USAGE, 
-				IElementDescriptor.T_REFERENCE_TYPE, 
+				IElementDescriptor.TYPE, 
 				kind, 
 				IApiProblem.NO_FLAGS);
 	}

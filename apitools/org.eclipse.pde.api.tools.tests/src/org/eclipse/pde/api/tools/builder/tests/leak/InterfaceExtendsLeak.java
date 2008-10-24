@@ -42,7 +42,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 		if(pid == -1) {
 			pid = ApiProblemFactory.createProblemId(
 					IApiProblem.CATEGORY_USAGE, 
-					IElementDescriptor.T_REFERENCE_TYPE, 
+					IElementDescriptor.TYPE, 
 					IApiProblem.API_LEAK, 
 					IApiProblem.LEAK_EXTENDS);
 		}

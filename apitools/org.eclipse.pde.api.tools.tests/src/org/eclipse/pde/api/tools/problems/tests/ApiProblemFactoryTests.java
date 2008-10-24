@@ -35,10 +35,10 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testCreateProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, 
-				IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
+				IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
 		assertNotNull("a new problem should have been created with null attributes", problem);
 		problem = ApiProblemFactory.newApiProblem("path", null, new String[0], new String[0], new Object[0], -1, -1, -1, 
-				IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.T_METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
+				IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
 		assertNotNull("a new problem should have been created with non-null attributes", problem);
 	}
 
@@ -47,10 +47,10 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void tesCreateUsageProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem(null, null, null, null, null, -1, -1, -1, 
-				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with null attributes", problem);
 		problem = ApiProblemFactory.newApiUsageProblem("path", null, new String[0], new String[0], new Object[0], -1, -1, -1, 
-				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with non-null attributes", problem);
 	}
 	
@@ -59,10 +59,10 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testCreateSincetagProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiSinceTagProblem(null, null, null, null, null, -1, -1, -1, 
-				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with null attributes", problem);
 		problem = ApiProblemFactory.newApiSinceTagProblem("path", null, new String[0], new String[0], new Object[0], -1, -1, -1, 
-				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with non-null attributes", problem);
 	}
 	
@@ -71,10 +71,10 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testCreateVersionProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiVersionNumberProblem(null, null, null, null, null, -1, -1, -1, 
-				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with null attributes", problem);
 		problem = ApiProblemFactory.newApiVersionNumberProblem("path", null, new String[0], new String[0], new Object[0], -1, -1, -1, 
-				 IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				 IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with non-null attributes", problem);
 	}
 	
@@ -105,15 +105,15 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testGetVersionMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiVersionNumberProblem("", null, 
-				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MAJOR_VERSION_CHANGE);
+				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.TYPE, IApiProblem.MAJOR_VERSION_CHANGE);
 		assertNotNull("there should be a new problem created", problem);
 		validateProblem(2, problem);
 		problem = ApiProblemFactory.newApiVersionNumberProblem("", null, 
-				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE);
+				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.TYPE, IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE);
 		assertNotNull("there should be a new problem created", problem);
 		validateProblem(2, problem);
 		problem = ApiProblemFactory.newApiVersionNumberProblem("", null, 
-				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.MINOR_VERSION_CHANGE);
+				new String[] {"1", "2"}, null, null, -1, -1, -1,  IElementDescriptor.TYPE, IApiProblem.MINOR_VERSION_CHANGE);
 		assertNotNull("there should be a new problem created", problem);
 		validateProblem(2, problem);
 	}
@@ -130,19 +130,19 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testGetUsageMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", null, 
-				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_EXTEND);
+				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND);
 		validateProblem(1, problem);
 		problem = ApiProblemFactory.newApiUsageProblem("", null, 
-				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
+				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		validateProblem(1, problem);
 		problem = ApiProblemFactory.newApiUsageProblem("", null, 
-				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_OVERRIDE);
+				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_OVERRIDE);
 		validateProblem(2, problem);
 		problem = ApiProblemFactory.newApiUsageProblem("", null, 
-				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_INSTANTIATE);
+				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_INSTANTIATE);
 		validateProblem(1, problem);
 		problem = ApiProblemFactory.newApiProblem("", null, 
-				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE,IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD);
+				new String[] {"foo", "bar"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE,IElementDescriptor.TYPE, IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD);
 		validateProblem(2, problem);
 	}
 	
@@ -163,13 +163,13 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testGetSinceTagMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiSinceTagProblem("", 
-				null, new String[] {"A", "B", "C"}, null, null, -1, -1, -1,  IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_INVALID);
+				null, new String[] {"A", "B", "C"}, null, null, -1, -1, -1,  IElementDescriptor.RESOURCE, IApiProblem.SINCE_TAG_INVALID);
 		validateProblem(3, problem);
 		problem = ApiProblemFactory.newApiSinceTagProblem("", 
-				null, new String[] {"A", "B"}, null, null, -1, -1, -1,  IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_MALFORMED);
+				null, new String[] {"A", "B"}, null, null, -1, -1, -1,  IElementDescriptor.RESOURCE, IApiProblem.SINCE_TAG_MALFORMED);
 		validateProblem(2, problem);
 		problem = ApiProblemFactory.newApiSinceTagProblem("", 
-				null, new String[] {"A"}, null, null, -1, -1, -1,  IElementDescriptor.T_RESOURCE, IApiProblem.SINCE_TAG_MISSING);
+				null, new String[] {"A"}, null, null, -1, -1, -1,  IElementDescriptor.RESOURCE, IApiProblem.SINCE_TAG_MISSING);
 		validateProblem(1, problem);
 	}
 	
@@ -178,7 +178,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 */
 	public void testGetLeakConstructorParamMessage() {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", 
-				null, new String[] {"fooconstructor"}, null, null, -1, -1, -1, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.API_LEAK, IApiProblem.LEAK_CONSTRUCTOR_PARAMETER);
+				null, new String[] {"fooconstructor"}, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.API_LEAK, IApiProblem.LEAK_CONSTRUCTOR_PARAMETER);
 		validateProblem(1, problem);
 	}
 }

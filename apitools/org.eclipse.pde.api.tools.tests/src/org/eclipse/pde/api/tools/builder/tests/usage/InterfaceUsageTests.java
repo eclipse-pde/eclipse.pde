@@ -44,7 +44,7 @@ public class InterfaceUsageTests extends UsageTest {
 		if(pid == -1) {
 			pid = ApiProblemFactory.createProblemId(
 					IApiProblem.CATEGORY_USAGE, 
-					IElementDescriptor.T_REFERENCE_TYPE, 
+					IElementDescriptor.TYPE, 
 					IApiProblem.ILLEGAL_IMPLEMENT, 
 					IApiProblem.NO_FLAGS);
 		}

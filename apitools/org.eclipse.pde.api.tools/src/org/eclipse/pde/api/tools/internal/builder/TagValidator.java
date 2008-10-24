@@ -117,24 +117,24 @@ public class TagValidator extends ASTVisitor {
 					}
 					validtags = (IApiJavadocTag[]) vtags.toArray(new IApiJavadocTag[vtags.size()]);
 				}
-				processTags(getTypeName(type), tags, validtags, IElementDescriptor.T_REFERENCE_TYPE, context);
+				processTags(getTypeName(type), tags, validtags, IElementDescriptor.TYPE, context);
 				break;
 			}
 			case ASTNode.ENUM_DECLARATION: {
 				EnumDeclaration enumm = (EnumDeclaration) node;
 				IApiJavadocTag[] validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE);
-				processTags(getTypeName(enumm), tags, validtags, IElementDescriptor.T_REFERENCE_TYPE, BuilderMessages.TagValidator_an_enum);
+				processTags(getTypeName(enumm), tags, validtags, IElementDescriptor.TYPE, BuilderMessages.TagValidator_an_enum);
 				break;
 			}
 			case ASTNode.ENUM_CONSTANT_DECLARATION: {
 				EnumConstantDeclaration decl = (EnumConstantDeclaration) node;
-				processTags(getTypeName(decl), tags, new IApiJavadocTag[0], IElementDescriptor.T_FIELD, BuilderMessages.TagValidator_an_enum_constant);
+				processTags(getTypeName(decl), tags, new IApiJavadocTag[0], IElementDescriptor.FIELD, BuilderMessages.TagValidator_an_enum_constant);
 				break;
 			}
 			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
 				AnnotationTypeDeclaration annot = (AnnotationTypeDeclaration) node;
 				IApiJavadocTag[] validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE);
-				processTags(getTypeName(annot), tags, validtags, IElementDescriptor.T_REFERENCE_TYPE, BuilderMessages.TagValidator_an_annotation);
+				processTags(getTypeName(annot), tags, validtags, IElementDescriptor.TYPE, BuilderMessages.TagValidator_an_annotation);
 				break;
 			}
 			case ASTNode.METHOD_DECLARATION: {
@@ -192,13 +192,13 @@ public class TagValidator extends ASTVisitor {
 					}
 					validtags = (IApiJavadocTag[]) ttags.toArray(new IApiJavadocTag[ttags.size()]);
 				}
-				processTags(getTypeName(method), tags, validtags, IElementDescriptor.T_METHOD, context);
+				processTags(getTypeName(method), tags, validtags, IElementDescriptor.METHOD, context);
 				break;
 			}
 			case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION: {
 				AnnotationTypeMemberDeclaration decl = (AnnotationTypeMemberDeclaration) node;
 				IApiJavadocTag[] validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_METHOD);
-				processTags(getTypeName(decl), tags, validtags, IElementDescriptor.T_METHOD, BuilderMessages.TagValidator_an_annotation_method);
+				processTags(getTypeName(decl), tags, validtags, IElementDescriptor.METHOD, BuilderMessages.TagValidator_an_annotation_method);
 				break;
 			}
 			case ASTNode.FIELD_DECLARATION: {
@@ -230,7 +230,7 @@ public class TagValidator extends ASTVisitor {
 				if(!isprivate && !isfinal) {
 					validtags = jtm.getTagsForType(pkind, IApiJavadocTag.MEMBER_FIELD);
 				}
-				processTags(getTypeName(field), tags, validtags, IElementDescriptor.T_FIELD, context);
+				processTags(getTypeName(field), tags, validtags, IElementDescriptor.FIELD, context);
 				break;
 			}
 		}

@@ -114,22 +114,22 @@ public class ApiDescription implements IApiDescription {
 			String type = null;
 			String name = null;
 			switch(element.getElementType()) {
-				case IElementDescriptor.T_FIELD: {
+				case IElementDescriptor.FIELD: {
 					type = "Field"; //$NON-NLS-1$
 					name = ((IMemberDescriptor) element).getName();
 					break;
 				}
-				case IElementDescriptor.T_METHOD: {
+				case IElementDescriptor.METHOD: {
 					type = "Method"; //$NON-NLS-1$
 					name = ((IMemberDescriptor) element).getName();
 					break;
 				}
-				case IElementDescriptor.T_PACKAGE: {
+				case IElementDescriptor.PACKAGE: {
 					type = "Package"; //$NON-NLS-1$
 					name = ((IPackageDescriptor) element).getName();
 					break;
 				}
-				case IElementDescriptor.T_REFERENCE_TYPE: {
+				case IElementDescriptor.TYPE: {
 					type = "Type"; //$NON-NLS-1$
 					name = ((IMemberDescriptor) element).getName();
 					break;
@@ -140,7 +140,7 @@ public class ApiDescription implements IApiDescription {
 			buffer.append("\nVisibility: ").append(Util.getVisibilityKind(visibility)); //$NON-NLS-1$
 			buffer.append("\nRestrictions: ").append(Util.getRestrictionKind(restrictions)); //$NON-NLS-1$
 			if(parent != null) {
-				String pname = parent.element.getElementType() == IElementDescriptor.T_PACKAGE ? 
+				String pname = parent.element.getElementType() == IElementDescriptor.PACKAGE ? 
 						((IPackageDescriptor)parent.element).getName() : ((IMemberDescriptor)parent.element).getName();
 				buffer.append("\nParent: ").append(parent == null ? null : pname); //$NON-NLS-1$
 			}
@@ -183,7 +183,7 @@ public class ApiDescription implements IApiDescription {
 				return;
 			}
 			switch (element.getElementType()) {
-			case IElementDescriptor.T_METHOD:
+			case IElementDescriptor.METHOD:
 				IMethodDescriptor md = (IMethodDescriptor) element;
 				Element method = document.createElement(IApiXmlConstants.ELEMENT_METHOD);
 				method.setAttribute(IApiXmlConstants.ATTR_NAME, md.getName());
@@ -191,7 +191,7 @@ public class ApiDescription implements IApiDescription {
 				persistAnnotations(method);
 				parent.appendChild(method);
 				break;
-			case IElementDescriptor.T_FIELD:
+			case IElementDescriptor.FIELD:
 				IFieldDescriptor fd = (IFieldDescriptor) element;
 				Element field = document.createElement(IApiXmlConstants.ELEMENT_FIELD);
 				field.setAttribute(IApiXmlConstants.ATTR_NAME, fd.getName());
@@ -372,7 +372,7 @@ public class ApiDescription implements IApiDescription {
 	 */
 	protected ManifestNode createNode(ManifestNode parentNode, IElementDescriptor element) {
 		int vis = VISIBILITY_INHERITED;
-		if (element.getElementType() == IElementDescriptor.T_PACKAGE) {
+		if (element.getElementType() == IElementDescriptor.PACKAGE) {
 			vis = VisibilityModifiers.API;
 		}
 		return new ManifestNode(parentNode, element, vis, RestrictionModifiers.NO_RESTRICTIONS);

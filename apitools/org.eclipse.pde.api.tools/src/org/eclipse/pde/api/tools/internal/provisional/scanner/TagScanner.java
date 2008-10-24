@@ -219,7 +219,7 @@ public class TagScanner {
 				restrictions |= jtm.getRestrictionsForTag(tagname, type, member);
 			}
 			if (restrictions != RestrictionModifiers.NO_RESTRICTIONS) {
-				if (descriptor.getElementType() == IElementDescriptor.T_METHOD) {
+				if (descriptor.getElementType() == IElementDescriptor.METHOD) {
 					try {
 						descriptor = resolveMethod((IMethodDescriptor)descriptor);
 					} catch (CoreException e) {

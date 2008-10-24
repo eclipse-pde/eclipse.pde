@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -64,7 +65,7 @@ public class LeakFieldProblemDetector extends AbstractTypeLeakDetector {
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getElementType(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected int getElementType(IReference reference) {
-		return IElementDescriptor.T_FIELD;
+		return IElementDescriptor.FIELD;
 	}
 	
 	/* (non-Javadoc)
@@ -126,13 +127,19 @@ public class LeakFieldProblemDetector extends AbstractTypeLeakDetector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractTypeLeakDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
-	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException {
+	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
 		IApiField field = (IApiField) reference.getMember();
 		IField javaField = type.getField(field.getName());
+		Position pos = null;
 		if (javaField.exists()) {
 			ISourceRange range = javaField.getNameRange();
-			return new Position(range.getOffset(), range.getLength());
+			if(range != null) {
+				pos = new Position(range.getOffset(), range.getLength()); 
+			}
 		}
-		return new Position(-1, 0);
+		if(pos == null) {
+			noSourcePosition(type, reference);
+		}
+		return pos;
 	}
 }

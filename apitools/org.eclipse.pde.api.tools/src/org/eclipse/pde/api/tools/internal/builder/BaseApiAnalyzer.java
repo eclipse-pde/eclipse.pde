@@ -1411,7 +1411,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				lineNumber, 
 				charStart, 
 				charEnd, 
-				IElementDescriptor.T_RESOURCE, 
+				IElementDescriptor.RESOURCE, 
 				kind);
 	}
 	
@@ -1438,7 +1438,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				-1,
 				-1,
 				-1,
-				IElementDescriptor.T_RESOURCE,
+				IElementDescriptor.RESOURCE,
 				IApiProblem.API_PROFILE_MISSING);
 		addProblem(problem);
 	}

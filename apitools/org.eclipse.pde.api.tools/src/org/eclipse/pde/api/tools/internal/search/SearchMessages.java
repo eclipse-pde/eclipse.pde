@@ -17,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class SearchMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.search.searchmessages"; //$NON-NLS-1$
+	public static String AbstractProblemDetector_could_not_locate_source_range;
 	public static String SearchEngine_0;
 	public static String SearchEngine_1;
 	public static String SearchEngine_2;

@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.internal.search;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
@@ -37,9 +38,13 @@ public class IllegalInstantiateProblemDetector extends AbstractIllegalTypeRefere
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
-	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException {
+	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		String name = getSimpleTypeName(reference.getResolvedReference());
-		return getMethodNameRange(name, document, reference);
+		Position pos = getMethodNameRange(name, document, reference);
+		if(pos == null) {
+			noSourcePosition(type, reference);
+		}
+		return pos;
 	}
 
 	/* (non-Javadoc)

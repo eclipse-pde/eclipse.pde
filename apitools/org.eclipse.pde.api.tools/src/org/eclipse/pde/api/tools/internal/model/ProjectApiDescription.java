@@ -271,7 +271,7 @@ public class ProjectApiDescription extends ApiDescription {
 			buffer.append("\nVisibility: ").append(Util.getVisibilityKind(visibility)); //$NON-NLS-1$
 			buffer.append("\nRestrictions: ").append(Util.getRestrictionKind(restrictions)); //$NON-NLS-1$
 			if(parent != null) {
-				String pname = parent.element.getElementType() == IElementDescriptor.T_PACKAGE ?
+				String pname = parent.element.getElementType() == IElementDescriptor.PACKAGE ?
 						((IPackageDescriptor)parent.element).getName() : ((IReferenceTypeDescriptor)parent.element).getQualifiedName();
 				buffer.append("\nParent: ").append(pname); //$NON-NLS-1$
 			}
@@ -368,10 +368,10 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	protected boolean isInsertOnResolve(IElementDescriptor elementDescriptor) {
 		switch (elementDescriptor.getElementType()) {
-			case IElementDescriptor.T_METHOD:
-			case IElementDescriptor.T_FIELD:
+			case IElementDescriptor.METHOD:
+			case IElementDescriptor.FIELD:
 				return false;
-			case IElementDescriptor.T_REFERENCE_TYPE:
+			case IElementDescriptor.TYPE:
 				// no need to insert member types
 				return ((IReferenceTypeDescriptor) elementDescriptor).getEnclosingType() == null;
 			default:
@@ -384,7 +384,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	protected ManifestNode createNode(ManifestNode parentNode, IElementDescriptor element) {
 		switch (element.getElementType()) {
-			case IElementDescriptor.T_PACKAGE:
+			case IElementDescriptor.PACKAGE:
 				try {
 					IPackageDescriptor pkg = (IPackageDescriptor) element;
 					IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
@@ -410,7 +410,7 @@ public class ProjectApiDescription extends ApiDescription {
 				} catch (CoreException e) {
 					return null;
 				}
-			case IElementDescriptor.T_REFERENCE_TYPE:
+			case IElementDescriptor.TYPE:
 				IReferenceTypeDescriptor descriptor = (IReferenceTypeDescriptor) element;
 				try {
 					IType type = null;

@@ -71,6 +71,12 @@ public interface IApiProblem {
 	public static final int NO_FLAGS = 0x0;
 
 	/**
+	 * Constant representing the value of no char start / char end.
+	 * Value is: <code>-1</code>
+	 */
+	public static final int NO_CHARRANGE = -1;
+	
+	/**
 	 * Constant representing the value of the invalid @since tag {@link IApiProblem} kind.
 	 * <br>
 	 * Value is: <code>1</code>

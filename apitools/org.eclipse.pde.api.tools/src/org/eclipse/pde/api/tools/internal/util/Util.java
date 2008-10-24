@@ -1585,19 +1585,19 @@ public final class Util {
 	 */
 	public static String getDescriptorKind(int kind) {
 		switch(kind) {
-			case IElementDescriptor.T_PACKAGE: {
+			case IElementDescriptor.PACKAGE: {
 				return "PACKAGE";	 //$NON-NLS-1$
 			}
-			case IElementDescriptor.T_FIELD: {
+			case IElementDescriptor.FIELD: {
 				return "FIELD"; //$NON-NLS-1$
 			}
-			case IElementDescriptor.T_METHOD: {
+			case IElementDescriptor.METHOD: {
 				return "METHOD"; //$NON-NLS-1$
 			}
-			case IElementDescriptor.T_REFERENCE_TYPE: {
+			case IElementDescriptor.TYPE: {
 				return "REFERENCE_TYPE"; //$NON-NLS-1$
 			}
-			case IElementDescriptor.T_RESOURCE: {
+			case IElementDescriptor.RESOURCE: {
 				return "RESOURCE"; //$NON-NLS-1$
 			}
 		}

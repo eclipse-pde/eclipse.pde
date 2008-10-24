@@ -66,7 +66,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 		int mask = description.getRestrictions();
 		switch (element.getElementType()) {
-			case IElementDescriptor.T_PACKAGE:
+			case IElementDescriptor.PACKAGE:
 				if (VisibilityModifiers.isPrivate(description.getVisibility())) {
 					fNonApiPackageNames.add(((IPackageDescriptor)element).getName());
 				}
@@ -90,10 +90,10 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 						// IApiProblem.ILLEGAL_INSTANTIATE, IElementDescriptor.T_REFERENCE_TYPE
 					}
 					if (RestrictionModifiers.isReferenceRestriction(mask)) {
-						if (element.getElementType() == IElementDescriptor.T_METHOD) {
+						if (element.getElementType() == IElementDescriptor.METHOD) {
 							getIllegalMethodReference().addIllegalMethod((IMethodDescriptor) element, fOwningComponentId);
 							// IApiProblem.ILLEGAL_REFERENCE, IElementDescriptor.T_METHOD
-						} else if (element.getElementType() == IElementDescriptor.T_FIELD) {
+						} else if (element.getElementType() == IElementDescriptor.FIELD) {
 							getIllegalFieldReference().addIllegalField((IFieldDescriptor) element, fOwningComponentId);
 							// IApiProblem.ILLEGAL_REFERENCE, IElementDescriptor.T_FIELD
 						}

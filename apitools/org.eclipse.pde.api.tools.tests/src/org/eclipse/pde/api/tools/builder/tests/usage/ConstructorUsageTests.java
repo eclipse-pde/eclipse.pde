@@ -44,7 +44,7 @@ public class ConstructorUsageTests extends UsageTest {
 		if(pid == -1) {
 			pid = ApiProblemFactory.createProblemId(
 					IApiProblem.CATEGORY_USAGE, 
-					IElementDescriptor.T_METHOD, 
+					IElementDescriptor.METHOD, 
 					IApiProblem.ILLEGAL_REFERENCE, 
 					IApiProblem.CONSTRUCTOR_METHOD);
 		}

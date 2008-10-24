@@ -74,7 +74,7 @@ public class ResourceDescriptorImpl extends NamedElementDescriptorImpl implement
 	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor#getElementType()
 	 */
 	public int getElementType() {
-		return T_RESOURCE;
+		return RESOURCE;
 	}
 	
 	/* (non-Javadoc)

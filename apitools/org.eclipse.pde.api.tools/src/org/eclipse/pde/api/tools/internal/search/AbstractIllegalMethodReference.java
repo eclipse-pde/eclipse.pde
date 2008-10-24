@@ -76,7 +76,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getElementType(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected int getElementType(IReference reference) {
-		return IElementDescriptor.T_METHOD;
+		return IElementDescriptor.METHOD;
 	}	
 	
 	/* (non-Javadoc)

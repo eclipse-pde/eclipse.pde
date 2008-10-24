@@ -64,6 +64,6 @@ public class FieldDescriptorImpl extends MemberDescriptorImpl implements IFieldD
 	 * @see org.eclipse.pde.api.tools.model.component.IElementDescriptor#getElementType()
 	 */
 	public int getElementType() {
-		return IElementDescriptor.T_FIELD;
+		return IElementDescriptor.FIELD;
 	}	
 }

@@ -21,27 +21,27 @@ public interface IElementDescriptor {
 	/**
 	 * Constant representing a package descriptor.
 	 */
-	public static final int T_PACKAGE = 1;
+	public static final int PACKAGE = 1;
 	
 	/**
 	 * Constant representing a reference type descriptor.
 	 */
-	public static final int T_REFERENCE_TYPE = 2;		
+	public static final int TYPE = 2;		
 	
 	/**
 	 * Constant representing a field descriptor.
 	 */
-	public static final int T_FIELD = 5;	
+	public static final int FIELD = 5;	
 	
 	/**
 	 * Constant representing a method descriptor.
 	 */
-	public static final int T_METHOD = 6;	
+	public static final int METHOD = 6;	
 	
 	/**
 	 * Constant representing an {@link IResource} descriptor
 	 */
-	public static final int T_RESOURCE = 7;
+	public static final int RESOURCE = 7;
 	
 	/**
 	 * Returns the parent of this element or <code>null</code> if none.

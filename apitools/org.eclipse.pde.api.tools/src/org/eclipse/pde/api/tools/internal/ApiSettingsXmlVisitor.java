@@ -177,7 +177,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	 */
 	public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 		switch(element.getElementType()) {
-			case IElementDescriptor.T_PACKAGE: {
+			case IElementDescriptor.PACKAGE: {
 				// A null package indicates there was an override for the package in a different context.
 				// Package rules are stored in the manifest, not the API description file. 
 				// No need to add empty packages.
@@ -187,7 +187,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 				fPackage = null;
 				break;
 			}
-			case IElementDescriptor.T_REFERENCE_TYPE: {
+			case IElementDescriptor.TYPE: {
 				fTypeStack.pop();
 				break;
 			}
@@ -209,7 +209,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	 */
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 		switch(element.getElementType()) {
-			case IElementDescriptor.T_PACKAGE: {
+			case IElementDescriptor.PACKAGE: {
 				IPackageDescriptor pkg = (IPackageDescriptor) element;
 				String pkgName = pkg.getName();
 				if (fVisitedPackages.add(pkgName)) {
@@ -222,7 +222,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 				}
 				break;
 			}
-			case IElementDescriptor.T_REFERENCE_TYPE: {
+			case IElementDescriptor.TYPE: {
 				IReferenceTypeDescriptor typeDesc = (IReferenceTypeDescriptor) element;
 				fTypeStack.push(fDoc.createElement(IApiXmlConstants.ELEMENT_TYPE));
 				Element type = (Element) fTypeStack.peek();
@@ -231,7 +231,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 				type.setAttribute(IApiXmlConstants.ATTR_NAME, Util.getTypeName(typeDesc.getQualifiedName()));
 				break;
 			}
-			case IElementDescriptor.T_METHOD: {
+			case IElementDescriptor.METHOD: {
 				IMethodDescriptor desc = (IMethodDescriptor) element;
 				Element method = fDoc.createElement(IApiXmlConstants.ELEMENT_METHOD);
 				Element type = (Element) fTypeStack.peek();
@@ -245,7 +245,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 				}
 				break;
 			}
-			case IElementDescriptor.T_FIELD: {
+			case IElementDescriptor.FIELD: {
 				IFieldDescriptor desc = (IFieldDescriptor) element;
 				Element field = fDoc.createElement(IApiXmlConstants.ELEMENT_FIELD);
 				Element type = (Element) fTypeStack.peek();

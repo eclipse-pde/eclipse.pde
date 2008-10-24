@@ -438,7 +438,7 @@ public class ReferenceAnalyzer {
 			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
 			 */
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
-				if (element.getElementType() == IElementDescriptor.T_PACKAGE) {
+				if (element.getElementType() == IElementDescriptor.PACKAGE) {
 					if (VisibilityModifiers.isPrivate(description.getVisibility())) {
 						nonApi.add(((IPackageDescriptor)element).getName());
 					}

@@ -19,7 +19,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.api.tools.internal.model.cache.MethodKey;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
@@ -108,7 +107,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getElementType(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected int getElementType(IReference reference) {
-		return IElementDescriptor.T_FIELD;
+		return IElementDescriptor.FIELD;
 	}
 
 	/* (non-Javadoc)
@@ -130,56 +129,53 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
-	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException {
-		try {
-			IApiField field = (IApiField) reference.getResolvedReference();
-			String name = field.getName();
-			int linenumber = reference.getLineNumber();
-			if (linenumber > 0) {
-				linenumber--;
-			}
-			int offset = document.getLineOffset(linenumber);
-			String line = document.get(offset, document.getLineLength(linenumber));
-			IApiType parent = field.getEnclosingType();
-			String qname = parent.getName()+"."+name; //$NON-NLS-1$
-			int first = line.indexOf(qname);
-			if(first < 0) {
-				qname = parent.getName()+"."+name; //$NON-NLS-1$
-				first = line.indexOf(qname);
-			}
-			if(first < 0) {
-				qname = "super."+name; //$NON-NLS-1$
-				first = line.indexOf(qname);
-			}
-			if(first < 0) {
-				qname = "this."+name; //$NON-NLS-1$
-				first = line.indexOf(qname);
-			}
-			if(first < 0) {
-				//try a pattern [.*fieldname] 
-				//the field might be ref'd via a constant, e.g. enum constant
-				int idx = line.indexOf(name);
-				while(idx > -1) {
-					if(line.charAt(idx-1) == '.') {
-						first = idx;
-						qname = name;
-						break;
-					}
-					idx = line.indexOf(name, idx+1);
-				}
-			}
-			if(first > -1) {
-				return new Position(offset + first, qname.length());
-			}
-			else {
-				//optimistically select the whole line since we can't find the correct variable name and we can't just select
-				//the first occurrence
-				return new Position(offset, line.length());
-			}
-		} catch (BadLocationException e) {
-			ApiPlugin.log(e);
+	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
+		IApiField field = (IApiField) reference.getResolvedReference();
+		String name = field.getName();
+		int linenumber = reference.getLineNumber();
+		if (linenumber > 0) {
+			linenumber--;
 		}
-		return new Position(-1, 0);
+		int offset = document.getLineOffset(linenumber);
+		String line = document.get(offset, document.getLineLength(linenumber));
+		IApiType parent = field.getEnclosingType();
+		String qname = parent.getName()+"."+name; //$NON-NLS-1$
+		int first = line.indexOf(qname);
+		if(first < 0) {
+			qname = parent.getName()+"."+name; //$NON-NLS-1$
+			first = line.indexOf(qname);
+		}
+		if(first < 0) {
+			qname = "super."+name; //$NON-NLS-1$
+			first = line.indexOf(qname);
+		}
+		if(first < 0) {
+			qname = "this."+name; //$NON-NLS-1$
+			first = line.indexOf(qname);
+		}
+		if(first < 0) {
+			//try a pattern [.*fieldname] 
+			//the field might be ref'd via a constant, e.g. enum constant
+			int idx = line.indexOf(name);
+			while(idx > -1) {
+				if(line.charAt(idx-1) == '.') {
+					first = idx;
+					qname = name;
+					break;
+				}
+				idx = line.indexOf(name, idx+1);
+			}
+		}
+		Position pos = null;
+		if(first > -1) {
+			pos = new Position(offset + first, qname.length());
+		}
+		else {
+			//optimistically select the whole line since we can't find the correct variable name and we can't just select
+			//the first occurrence
+			pos = new Position(offset, line.length());
+		}
+		return pos;
 	}
 
 	/* (non-Javadoc)

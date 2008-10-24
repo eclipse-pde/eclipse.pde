@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -39,6 +40,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * Detects leaks in method return types and parameters
  * 
  * @since 1.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 
@@ -53,7 +55,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getElementType(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected int getElementType(IReference reference) {
-		return IElementDescriptor.T_METHOD;
+		return IElementDescriptor.METHOD;
 	}
 
 	/* (non-Javadoc)
@@ -129,7 +131,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
-	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException {
+	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
 		// report the marker on the method
 		IApiMethod method = (IApiMethod) reference.getMember();
 		String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
@@ -156,11 +158,17 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 				break;
 			}
 		}
+		Position pos = null;
 		if (match != null) {
 			ISourceRange range = match.getNameRange();
-			return new Position(range.getOffset(), range.getLength());
+			if(range != null) {
+				pos = new Position(range.getOffset(), range.getLength());
+			}
 		}
-		return new Position(-1, 0);
+		if(pos == null) {
+			noSourcePosition(type, reference);
+		}
+		return pos;
 	}
 
 	/* (non-Javadoc)

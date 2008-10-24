@@ -103,7 +103,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertNotNull("the resource src/x/y/z/C4.java must exist", resource);
 		IApiProblemFilter[] filters = store.getFilters(resource);
 		assertTrue("There should be 1 filter for src/x/y/z/C4.java", filters.length == 1);
-		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.T_REFERENCE_TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
+		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertTrue("the usage problem for src/x/y/z/C4.java should be filtered", store.isFiltered(problem));
 		
 		//C1

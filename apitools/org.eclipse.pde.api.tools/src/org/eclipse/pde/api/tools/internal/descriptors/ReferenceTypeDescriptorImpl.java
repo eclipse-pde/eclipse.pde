@@ -153,7 +153,7 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 	 * @see org.eclipse.pde.api.tools.model.component.IElementDescriptor#getElementType()
 	 */
 	public int getElementType() {
-		return IElementDescriptor.T_REFERENCE_TYPE;
+		return IElementDescriptor.TYPE;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IReferenceTypeDescriptor#getSignature()

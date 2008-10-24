@@ -74,7 +74,7 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 	 * @see org.eclipse.pde.api.tools.model.component.IElementDescriptor#getElementType()
 	 */
 	public int getElementType() {
-		return IElementDescriptor.T_METHOD;
+		return IElementDescriptor.METHOD;
 	}
 
 	/* (non-Javadoc)

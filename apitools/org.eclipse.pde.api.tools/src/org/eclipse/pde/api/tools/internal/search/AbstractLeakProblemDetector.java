@@ -21,6 +21,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * public references.
  * 
  * @since 1.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class AbstractLeakProblemDetector extends AbstractProblemDetector {
 

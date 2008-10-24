@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.search;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
@@ -73,13 +74,17 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
-	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException {
+	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();
 		String name = method.getName();
 		if(method.isConstructor()) {
 			name = getSimpleTypeName(method);
 		}
-		return getMethodNameRange(name, document, reference);
+		Position pos = getMethodNameRange(name, document, reference);
+		if(pos == null) {
+			noSourcePosition(type, reference);
+		}
+		return pos;
 	}
 
 	/* (non-Javadoc)

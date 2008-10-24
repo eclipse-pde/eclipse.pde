@@ -60,7 +60,7 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 	 * @see org.eclipse.pde.api.tools.model.component.IElementDescriptor#getElementType()
 	 */
 	public int getElementType() {
-		return IElementDescriptor.T_PACKAGE;
+		return IElementDescriptor.PACKAGE;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IPackageDescriptor#getType(java.lang.String, java.lang.String)

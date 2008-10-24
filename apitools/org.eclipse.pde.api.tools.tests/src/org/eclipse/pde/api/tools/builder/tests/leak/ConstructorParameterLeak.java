@@ -43,7 +43,7 @@ public class ConstructorParameterLeak extends LeakTest {
 		if(pid == -1) {
 			pid = ApiProblemFactory.createProblemId(
 					IApiProblem.CATEGORY_USAGE, 
-					IElementDescriptor.T_METHOD, 
+					IElementDescriptor.METHOD, 
 					IApiProblem.API_LEAK, 
 					IApiProblem.LEAK_CONSTRUCTOR_PARAMETER);
 		}

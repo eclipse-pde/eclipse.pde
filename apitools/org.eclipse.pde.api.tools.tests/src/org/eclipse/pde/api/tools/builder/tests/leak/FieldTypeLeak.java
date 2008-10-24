@@ -43,7 +43,7 @@ public class FieldTypeLeak extends LeakTest {
 		if(pid == -1){
 			pid = ApiProblemFactory.createProblemId(
 					IApiProblem.CATEGORY_USAGE, 
-					IElementDescriptor.T_FIELD, 
+					IElementDescriptor.FIELD, 
 					IApiProblem.API_LEAK, 
 					IApiProblem.LEAK_FIELD);
 		}

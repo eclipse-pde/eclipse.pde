@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
@@ -76,7 +77,7 @@ public class IllegalOverrideProblemDetector extends AbstractIllegalMethodReferen
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
-	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException {
+	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();
 		String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
 		for (int i = 0; i < parameterTypes.length; i++) {
@@ -92,11 +93,17 @@ public class IllegalOverrideProblemDetector extends AbstractIllegalMethodReferen
 				break;
 			}
 		}
+		Position pos = null;
 		if (match != null) {
 			ISourceRange range = match.getNameRange();
-			return new Position(range.getOffset(), range.getLength());
+			if(range != null) {
+				pos = new Position(range.getOffset(), range.getLength());
+			}
 		}
-		return new Position(-1, 0);
+		if(pos == null) {
+			noSourcePosition(type, reference);
+		}
+		return pos;
 	}
 	
 	/* (non-Javadoc)
