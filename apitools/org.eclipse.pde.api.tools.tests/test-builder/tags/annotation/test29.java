@@ -14,7 +14,7 @@ package a.b.c;
  * Tests invalid @noimplement tags on nested inner annotations
  * @noimplement
  */
-public @interface test24 {
+public @interface test29 {
 
 	/**
 	 * @noimplement

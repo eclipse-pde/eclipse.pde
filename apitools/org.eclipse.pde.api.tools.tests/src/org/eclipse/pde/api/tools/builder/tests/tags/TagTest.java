@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
+import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 
 
 /**
@@ -58,6 +59,27 @@ public abstract class TagTest extends ApiBuilderTest {
 		return classes;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
+		// for the first compatibility test create workspace projects
+		ApiTestingEnvironment env = getEnv();
+		if (env != null) {
+			env.setRevert(true);
+		}
+		super.setUp();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		getEnv().setRevert(false);
+	}
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
 	 * @param suite

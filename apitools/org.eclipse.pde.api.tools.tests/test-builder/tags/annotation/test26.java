@@ -14,6 +14,6 @@ package a.b.c;
  * Test unsupported @noimplement tag on an annotation
  * @noimplement
  */
-public @interface test21 {
+public @interface test26 {
 
 }

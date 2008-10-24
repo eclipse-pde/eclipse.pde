@@ -13,7 +13,7 @@ package a.b.c;
 /**
  * Tests invalid @noimplement tag on outer annotation
  */
-public @interface test22 {
+public @interface test27 {
 
 }
 

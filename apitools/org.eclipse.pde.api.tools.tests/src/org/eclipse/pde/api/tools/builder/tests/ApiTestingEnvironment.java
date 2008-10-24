@@ -508,6 +508,20 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		return super.addFile(root, fileName, contents);
 	}	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#addClass(org.eclipse.core.runtime.IPath, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public IPath addClass(IPath packagePath, String className, String contents) {
+		IPath filePath = packagePath.append(className + ".java"); //$NON-NLS-1$
+		if (getWorkspace().getRoot().getFile(filePath).exists()) {
+			changed(filePath);
+		} else {
+			added(filePath);
+		}
+		return super.addClass(packagePath, className, contents);
+	}
+	
 	/**
 	 * Sets whether to revert the workspace rather than reset.
 	 * 

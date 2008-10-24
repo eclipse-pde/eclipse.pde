@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.tests.builder.BuilderTests;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
@@ -202,10 +203,19 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @return the path to the new project
 	 */
 	protected IPath assertProject(String sourcename, String packagename) throws JavaModelException {
-		IPath ppath = getEnv().addProject(getTestingProjectName(), getTestCompliance());
-		assertTrue("The path for '"+getTestingProjectName()+"' must exist", !ppath.isEmpty());
-		IPath frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
-		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
+		IProject project = getEnv().getWorkspace().getRoot().getProject(getTestingProjectName());
+		IPath ppath = null;
+		IPath frpath = null;
+		if (project.exists()) { 
+			ppath = project.getFullPath();
+			frpath = ppath.append(SRC_ROOT);
+			assertProjectCompliance(project);
+		} else {
+			ppath = getEnv().addProject(getTestingProjectName(), getTestCompliance());
+			assertTrue("The path for '"+getTestingProjectName()+"' must exist", !ppath.isEmpty());
+			frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
+			assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
+		}
 		IPath packpath = getEnv().addPackage(frpath, packagename);
 		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
 		String contents = getSourceContents(getTestSourcePath(), sourcename);
@@ -213,6 +223,22 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		IPath cpath = getEnv().addClass(packpath, sourcename, contents);
 		assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
 		return ppath;
+	}
+	
+	/**
+	 * Ensures the {@link JavaCore#COMPILER_COMPLIANCE}, {@link JavaCore#COMPILER_CODEGEN_TARGET_PLATFORM} and 
+	 * {@link JavaCore#COMPILER_SOURCE} settings are what the current test says it should be.
+	 * This method is only consulted when we assert an existing project.
+	 * @param project the project test check the compliance one
+	 */
+	protected void assertProjectCompliance(IProject project) {
+		IJavaProject jproject = JavaCore.create(project); 
+		String compliance = getTestCompliance();
+		if(!compliance.equals(jproject.getOption(JavaCore.COMPILER_COMPLIANCE, false))) {
+			jproject.setOption(JavaCore.COMPILER_COMPLIANCE, compliance);
+			jproject.setOption(JavaCore.COMPILER_SOURCE, compliance);
+			jproject.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, compliance);
+		}
 	}
 	
 	/**
