@@ -36,9 +36,16 @@ public class Messages extends NLS {
 	public static String DSErrorReporter_invalidCardinalityValue;
 	public static String DSErrorReporter_invalidPolicyValue;
 	public static String DSErrorReporter_propertyTypeCastException;
+	public static String DSErrorReporter_illegalServiceFactory;
+	public static String DSErrorReporter_illegalServiceFactory_Immediate;
+	public static String DSErrorReporter_illegalEmptyService;
 	
 	public static String DSBuilder_verifying;
 	public static String DSBuilder_updating;
+
+	
+
+	
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

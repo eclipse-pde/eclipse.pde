@@ -233,7 +233,8 @@ public class DSErrorReporter extends XMLErrorReporter {
 	}
 
 	private void reportIllegalCardinality(Element element, String cardinality) {
-		String name = element.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
+		String name = element
+				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
 		String message = NLS.bind(
 				Messages.DSErrorReporter_invalidCardinalityValue, name,
 				cardinality);
@@ -294,7 +295,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 		if (value != null && value.length() > 0) {
 			validatePropertySpecificTypeValue(type, value, element);
 		} else {
-			validatePropertySpecificTypeBody(type, body, element);
+			if (body != null && body.length() > 0) {
+				validatePropertySpecificTypeBody(type, body, element);
+			}
 		}
 
 	}
@@ -310,7 +313,8 @@ public class DSErrorReporter extends XMLErrorReporter {
 		}
 	}
 
-	private void validatePropertySpecificTypeValue(String type, String value, Element element) {
+	private void validatePropertySpecificTypeValue(String type, String value,
+			Element element) {
 
 		// Validate Double, Long, Float, Integer, Byte, Short and
 		// String
@@ -375,8 +379,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 					&& !property.getPropertyElemBody().equals("")) { //$NON-NLS-1$
 				String propertyName = property.getPropertyName();
 				reportSingleAndMultiplePropertyValues(element, propertyName,
-						property
-						.getPropertyValue());
+						property.getPropertyValue());
 			}
 			String propertyType = property.getPropertyType();
 			if (propertyType == null
@@ -405,13 +408,11 @@ public class DSErrorReporter extends XMLErrorReporter {
 	}
 
 	private void reportSingleAndMultiplePropertyValues(Element element,
-			String propertyName,
-			String value) {
+			String propertyName, String value) {
 		String message = NLS.bind(
 				Messages.DSErrorReporter_singleAndMultipleAttrValue,
 				propertyName, value);
-		report(message,
-				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
+		report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	}
 
 	private void validatePropertyTypes(Element element) {
@@ -536,8 +537,8 @@ public class DSErrorReporter extends XMLErrorReporter {
 				.getElementsByTagName(elementConstant);
 		Element element = (Element) elementsByTagName.item(index);
 		report(NLS.bind(Messages.DSErrorReporter_cannotFindJavaType, resource,
-				attributeConstant),
-				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
+				attributeConstant), getLine(element), WARNING,
+				DSMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateComponentElement(IDSComponent component) {
@@ -637,12 +638,55 @@ public class DSErrorReporter extends XMLErrorReporter {
 			validateBoolean(element, element
 					.getAttributeNode(IDSConstants.ATTRIBUTE_SERVICE_FACTORY));
 
-			validateProvideElement(service.getProvidedServices());
+			validateServiceFactory(element, service);
+
+			IDSProvide[] providedServices = service.getProvidedServices();
+			if (providedServices.length == 0) {
+				reportEmptyService(element);
+			} else {
+				validateProvideElement(providedServices);
+			}
 		}
+	}
+
+	private void reportEmptyService(Element element) {
+		report(Messages.DSErrorReporter_illegalEmptyService, getLine(element),
+				ERROR, DSMarkerFactory.CAT_OTHER);
+	}
+
+	private void validateServiceFactory(Element element, IDSService service) {
+		IDSComponent component = service.getComponent();
+		boolean isFactory = component.getFactory() != null;
+		boolean isImmediate = component.getImmediate();
+
+		if (isFactory) {
+			if (service.getServiceFactory()) {
+				reportIllegalServiceFactory(element);
+			}
+		}
+		
+		if (isImmediate) {
+			if (service.getServiceFactory()) {
+				reportIllegalServiceFactory_Immediate(element);
+			}
+		}
+	}
+
+	private void reportIllegalServiceFactory_Immediate(Element element) {
+		report(Messages.DSErrorReporter_illegalServiceFactory_Immediate,
+				getLine(element), ERROR, DSMarkerFactory.CAT_OTHER);
+
+
+	}
+
+	private void reportIllegalServiceFactory(Element element) {
+		report(Messages.DSErrorReporter_illegalServiceFactory,
+				getLine(element), ERROR, DSMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateProvideElement(IDSProvide[] providedServices) {
 		Hashtable providedInterfaces = new Hashtable();
+
 		for (int i = 0; i < providedServices.length; i++) {
 			IDSProvide provide = providedServices[i];
 
@@ -676,8 +720,8 @@ public class DSErrorReporter extends XMLErrorReporter {
 					Messages.DSErrorReporter_duplicatedInterface, interface1);
 			report(message, getLine(element), WARNING,
 					DSMarkerFactory.CAT_OTHER);
-		}else{
-			providedInterfaces.put(interface1,interface1);
+		} else {
+			providedInterfaces.put(interface1, interface1);
 		}
 	}
 
