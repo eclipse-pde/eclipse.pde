@@ -364,6 +364,7 @@ public class PluginImportOperation extends JarImportOperation {
 		try {
 			RepositoryProvider.map(project, PDECore.BINARY_REPOSITORY_PROVIDER);
 		} catch (TeamException e) {
+			PDECore.logException(e);
 		}
 	}
 
