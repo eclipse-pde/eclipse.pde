@@ -15,8 +15,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -24,6 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
 /**
  * Builds problem detectors for reference analysis.
@@ -35,30 +40,22 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	/**
 	 * Problem detectors
 	 */
-	private IllegalExtendsProblemDetector fIllegalExtends;
-	private IllegalImplementsProblemDetector fIllegalImplements;
-	private IllegalInstantiateProblemDetector fIllegalInstantiate;
-	private IllegalOverrideProblemDetector fIllegalOverride;
-	private IllegalMethodReferenceDetector fIllegalMethodRef;
-	private IllegalFieldReferenceDetector fIllegalFieldRef;
-	/**
-	 * Identifier of component elements are being searched for in
-	 */
-	private String fOwningComponentId;
+	private IllegalExtendsProblemDetector fIllegalExtends = null;
+	private IllegalImplementsProblemDetector fIllegalImplements = null;
+	private IllegalInstantiateProblemDetector fIllegalInstantiate = null;
+	private IllegalOverrideProblemDetector fIllegalOverride = null;
+	private IllegalMethodReferenceDetector fIllegalMethodRef = null;
+	private IllegalFieldReferenceDetector fIllegalFieldRef = null;
 	
 	/**
-	 * Cache of non-API package names visisted
+	 * Cache of non-API package names visited
 	 */
 	private Set fNonApiPackageNames = new HashSet();
 	
 	/**
-	 * Sets the owning component (i.e. component of description being visited).
-	 * 
-	 * @param id
+	 * The owning {@link IApiComponent} of this builder
 	 */
-	void setOwningComponentId(String id) {
-		fOwningComponentId = id;
-	}
+	private IApiComponent fComponent = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.descriptors.IElementDescriptor, java.lang.String, org.eclipse.pde.api.tools.IApiAnnotations)
@@ -73,28 +70,28 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 				break;
 			default:
 				if (!RestrictionModifiers.isUnrestricted(mask)) {
-					if(RestrictionModifiers.isOverrideRestriction(mask)) {
-						getIllegalOverride().addIllegalMethod((IMethodDescriptor) element, fOwningComponentId);
+					if(RestrictionModifiers.isOverrideRestriction(mask) && fIllegalOverride != null) {
+						fIllegalOverride.addIllegalMethod((IMethodDescriptor) element, fComponent.getId());
 						// IApiProblem.ILLEGAL_OVERRIDE, IElementDescriptor.T_METHOD
 					}
-					if (RestrictionModifiers.isExtendRestriction(mask)) {
-						getIllegalExtends().addIllegalType((IReferenceTypeDescriptor) element, fOwningComponentId);
+					if (RestrictionModifiers.isExtendRestriction(mask) && fIllegalExtends != null) {
+						fIllegalExtends.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
 						// IApiProblem.ILLEGAL_EXTEND, IElementDescriptor.T_REFERENCE_TYPE 
 					}
-					if (RestrictionModifiers.isImplementRestriction(mask)) {
-						getIllegalImplements().addIllegalType((IReferenceTypeDescriptor) element, fOwningComponentId);
+					if (RestrictionModifiers.isImplementRestriction(mask) && fIllegalImplements != null) {
+						fIllegalImplements.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
 						// IApiProblem.ILLEGAL_IMPLEMENT, IElementDescriptor.T_REFERENCE_TYPE
 					}
-					if (RestrictionModifiers.isInstantiateRestriction(mask)) {
-						getIllegalInstantiate().addIllegalType((IReferenceTypeDescriptor) element, fOwningComponentId);
+					if (RestrictionModifiers.isInstantiateRestriction(mask) && fIllegalInstantiate != null) {
+						fIllegalInstantiate.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
 						// IApiProblem.ILLEGAL_INSTANTIATE, IElementDescriptor.T_REFERENCE_TYPE
 					}
 					if (RestrictionModifiers.isReferenceRestriction(mask)) {
-						if (element.getElementType() == IElementDescriptor.METHOD) {
-							getIllegalMethodReference().addIllegalMethod((IMethodDescriptor) element, fOwningComponentId);
+						if (element.getElementType() == IElementDescriptor.METHOD && fIllegalMethodRef != null) {
+							fIllegalMethodRef.addIllegalMethod((IMethodDescriptor) element, fComponent.getId());
 							// IApiProblem.ILLEGAL_REFERENCE, IElementDescriptor.T_METHOD
-						} else if (element.getElementType() == IElementDescriptor.FIELD) {
-							getIllegalFieldReference().addIllegalField((IFieldDescriptor) element, fOwningComponentId);
+						} else if (element.getElementType() == IElementDescriptor.FIELD && fIllegalFieldRef != null) {
+							fIllegalFieldRef.addIllegalField((IFieldDescriptor) element, fComponent.getId());
 							// IApiProblem.ILLEGAL_REFERENCE, IElementDescriptor.T_FIELD
 						}
 					}
@@ -103,46 +100,65 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 		return true;
 	}
 	
-	IllegalExtendsProblemDetector getIllegalExtends() {
-		if (fIllegalExtends == null) {
+	/**
+	 * Sets the owning component of this builder
+	 * @param component
+	 */
+	public void setOwningComponent(IApiComponent component) {
+		fComponent = component;
+		initializeDetectors();
+	}
+	
+	/**
+	 * @return the {@link IProject} associated with the set {@link IApiComponent} or <code>null</code>
+	 * if the component is not a {@link PluginProjectApiComponent}
+	 */
+	private IProject getProject() {
+		if(fComponent instanceof PluginProjectApiComponent) {
+			PluginProjectApiComponent comp = (PluginProjectApiComponent) fComponent;
+			return comp.getJavaProject().getProject();
+		}
+		return null;
+	}
+	
+	/**
+	 * Initializes the detectors for this builder. This method is only
+	 * called when an owning component is set
+	 */
+	private void initializeDetectors() {
+		IProject project = getProject();
+		if(project != null) {
+			int severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_EXTEND, project);
+			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+				fIllegalExtends = new IllegalExtendsProblemDetector();
+			}
+			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_IMPLEMENT, project);
+			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+				fIllegalImplements = new IllegalImplementsProblemDetector();
+			}
+			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_INSTANTIATE, project);
+			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+				fIllegalInstantiate = new IllegalInstantiateProblemDetector();
+			}
+			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_OVERRIDE, project);
+			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+				fIllegalOverride = new IllegalOverrideProblemDetector();
+			}
+			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_REFERENCE, project);
+			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+				fIllegalMethodRef = new IllegalMethodReferenceDetector();
+				fIllegalFieldRef = new IllegalFieldReferenceDetector();
+			}
+		}
+		else {
+			//add all detectors by default if we have no preference context
 			fIllegalExtends = new IllegalExtendsProblemDetector();
-		}
-		return fIllegalExtends;
-	}
-	
-	IllegalImplementsProblemDetector getIllegalImplements() {
-		if (fIllegalImplements == null) {
 			fIllegalImplements = new IllegalImplementsProblemDetector();
-		}
-		return fIllegalImplements;
-	}
-	
-	IllegalInstantiateProblemDetector getIllegalInstantiate() {
-		if (fIllegalInstantiate == null) {
 			fIllegalInstantiate = new IllegalInstantiateProblemDetector();
-		}
-		return fIllegalInstantiate;
-	}
-	
-	IllegalOverrideProblemDetector getIllegalOverride() {
-		if (fIllegalOverride == null) {
 			fIllegalOverride = new IllegalOverrideProblemDetector();
-		}
-		return fIllegalOverride;
-	}
-	
-	IllegalMethodReferenceDetector getIllegalMethodReference() {
-		if (fIllegalMethodRef == null) {
 			fIllegalMethodRef = new IllegalMethodReferenceDetector();
-		}
-		return fIllegalMethodRef;
-	}
-	
-	IllegalFieldReferenceDetector getIllegalFieldReference() {
-		if (fIllegalFieldRef == null) {
 			fIllegalFieldRef = new IllegalFieldReferenceDetector();
 		}
-		return fIllegalFieldRef;
 	}
 	
 	/**
@@ -152,6 +168,18 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 */
 	Set getNonApiPackageNames() {
 		return fNonApiPackageNames;
+	}
+	
+	/**
+	 * Adds additional non-API package descriptors to the detector builder.
+	 * @param packagee
+	 * @return true if the descriptor did not exist in the current collection and was added, false otherwise
+	 */
+	public boolean addNonApiPackageName(String packagee) {
+		if(packagee != null) {
+			return fNonApiPackageNames.add(packagee);
+		}
+		return false;
 	}
 	
 	/**
@@ -179,7 +207,46 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 		if (fIllegalFieldRef != null) {
 			detectors.add(fIllegalFieldRef);
 		}
+		addLeakDetectors(detectors);
 		return detectors;
 	}
 	
+	/**
+	 * Adds any leak detectors to the listing. If a project context is available we 
+	 * filter out disabled detectors based on project  / workspace preference settings
+	 * @param detectors
+	 */
+	private void addLeakDetectors(List detectors) {
+		IProject project = getProject();
+		if(project != null) {
+			int severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.LEAK_EXTEND, project);
+			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+				detectors.add(new LeakExtendsProblemDetector(fNonApiPackageNames));
+			}
+			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.LEAK_IMPLEMENT, project);
+			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+				detectors.add(new LeakImplementsProblemDetector(fNonApiPackageNames));
+			}
+			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.LEAK_FIELD_DECL, project);
+			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+				detectors.add(new LeakFieldProblemDetector(fNonApiPackageNames));
+			}
+			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.LEAK_METHOD_PARAM, project);
+			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+				detectors.add(new LeakParameterTypeDetector(fNonApiPackageNames));
+			}
+			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, project);
+			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+				detectors.add(new LeakReturnTypeDetector(fNonApiPackageNames));
+			}
+		}
+		else {
+			// add all leak detectors by default if we have no preference context
+			detectors.add(new LeakExtendsProblemDetector(fNonApiPackageNames));
+			detectors.add(new LeakImplementsProblemDetector(fNonApiPackageNames));
+			detectors.add(new LeakFieldProblemDetector(fNonApiPackageNames));
+			detectors.add(new LeakReturnTypeDetector(fNonApiPackageNames));
+			detectors.add(new LeakParameterTypeDetector(fNonApiPackageNames));
+		}
+	}
 }

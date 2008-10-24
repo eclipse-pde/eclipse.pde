@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -204,7 +203,7 @@ public class ReferenceAnalyzer {
 	 * For example, a detector interested in a
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers#REF_INSTANTIATE}
 	 * will be in the 26th index (0x1 << 27, which is 2 ^ 26).
-	 * Also initializes the bit mask fo all interesting reference kinds.
+	 * Also initializes the bit mask of all interesting reference kinds.
 	 * 
 	 * @param detectors problem detectors
 	 */
@@ -414,11 +413,11 @@ public class ReferenceAnalyzer {
 	private IApiProblemDetector[] buildProblemDetectors(IApiComponent component) {
 		long start = System.currentTimeMillis();
 		IApiComponent[] components = component.getBaseline().getPrerequisiteComponents(new IApiComponent[]{component});
-		ProblemDetectorBuilder visitor = new ProblemDetectorBuilder();
+		final ProblemDetectorBuilder visitor = new ProblemDetectorBuilder();
 		for (int i = 0; i < components.length; i++) {
 			IApiComponent prereq = components[i];
 			if (!prereq.equals(component)) {
-				visitor.setOwningComponentId(prereq.getId());
+				visitor.setOwningComponent(prereq);
 				try {
 					prereq.getApiDescription().accept(visitor);
 				} catch (CoreException e) {
@@ -430,8 +429,6 @@ public class ReferenceAnalyzer {
 		if (DEBUG) {
 			System.out.println("Time to build problem detectors: " + (end-start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
 		}		
-		List detectors = visitor.getProblemDetectors();
-		final Set nonApi = visitor.getNonApiPackageNames();
 		// add names from the leak component as well
 		ApiDescriptionVisitor nameVisitor = new ApiDescriptionVisitor() {
 			/* (non-Javadoc)
@@ -440,7 +437,7 @@ public class ReferenceAnalyzer {
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				if (element.getElementType() == IElementDescriptor.PACKAGE) {
 					if (VisibilityModifiers.isPrivate(description.getVisibility())) {
-						nonApi.add(((IPackageDescriptor)element).getName());
+						visitor.addNonApiPackageName(((IPackageDescriptor)element).getName());
 					}
 				}
 				return false;
@@ -451,13 +448,7 @@ public class ReferenceAnalyzer {
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
-		// add leak detectors
-		detectors.add(new LeakExtendsProblemDetector(nonApi));
-		detectors.add(new LeakImplementsProblemDetector(nonApi));
-		detectors.add(new LeakFieldProblemDetector(nonApi));
-		detectors.add(new LeakReturnTypeDetector(nonApi));
-		detectors.add(new LeakParameterTypeDetector(nonApi));
-		
+		List detectors = visitor.getProblemDetectors();
 		return (IApiProblemDetector[]) detectors.toArray(new IApiProblemDetector[detectors.size()]);
 	}
 }
