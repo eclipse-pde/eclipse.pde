@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
@@ -156,6 +157,10 @@ public class TagScanner {
 					}
 					case ASTNode.FIELD_DECLARATION: {
 						FieldDeclaration field = (FieldDeclaration) parent;
+						boolean isfinal = Flags.isFinal(field.getModifiers());
+						if(isfinal || (isfinal && Flags.isStatic(field.getModifiers()))) {
+							break;
+						}
 						List fields = field.fragments();
 						VariableDeclarationFragment fragment = null;
 						for(Iterator iter = fields.iterator(); iter.hasNext();) {

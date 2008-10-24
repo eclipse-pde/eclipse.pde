@@ -222,7 +222,7 @@ public class FieldTypeLeak extends LeakTest {
 	
 	private void x5(boolean inc) {
 		//TODO uncomment once bug 246139 is fixed
-		/*setExpectedProblemIds(getDefaultProblemIdSet(8));
+		setExpectedProblemIds(getDefaultProblemIdSet(8));
 		String typename = "testFTL5";
 		String innertype = "inner";
 		setExpectedMessageArgs(new String[][] {
@@ -241,7 +241,7 @@ public class FieldTypeLeak extends LeakTest {
 				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);*/
+				true);
 	}
 	
 	/**
