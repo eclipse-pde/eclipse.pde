@@ -31,6 +31,7 @@ public class DSProperties extends DSObject implements IDSProperties {
 		int number = model.getDSComponent().getPropertiesElements().length + 1;
 		this.setEntry(IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY
 				+ number);
+		setInTheModel(true);
 	}
 
 	/*

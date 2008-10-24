@@ -158,19 +158,10 @@ public class DSOptionsSection extends PDESection {
 				isService = true;
 			}
 		}
-		if (!isService && !isFactory) {
-			if (!isImmediate) {
-				fComponent.setImmediate(true);
-			}
+		if (!isService && !isFactory && !isImmediate) {
 			enabled = false;
 		}
 
-		if (isFactory) {
-			if (isImmediate) {
-				fComponent.setImmediate(false);
-			}
-			enabled = false;
-		}
 		fImmediateButton.setEnabled(enabled);
 	}
 

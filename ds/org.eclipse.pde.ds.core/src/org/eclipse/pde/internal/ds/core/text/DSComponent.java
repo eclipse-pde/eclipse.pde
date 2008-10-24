@@ -39,10 +39,9 @@ public class DSComponent extends DSObject implements IDSComponent {
 
 	public DSComponent(DSModel model) {
 		super(model, ELEMENT_COMPONENT);
-		setInTheModel(true);
-
 		this.setAttributeName(IDSConstants.ELEMENT_COMPONENT);
 		this.setImmediate(true);
+		setInTheModel(true);
 	}
 
 	/*
