@@ -592,7 +592,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 				isService = true;
 			}
 		}
-		if (!isService && !isFactory && !isImmediate) {
+		if (!isService && !isFactory && !isImmediate
+				&& component
+						.getXMLAttributeValue(IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE) != null) {
 			reportInvalidImmediate(element);
 		}
 
