@@ -179,6 +179,11 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 				null);
 	}
 
+	// we need to remove this but our tests will fail if we do, see bug 252003
+	public boolean canHandleLinkedResources() {
+		return true;
+	}
+
 	public boolean canHandleLinkedResourcesURI() {
 		return true;
 	}
