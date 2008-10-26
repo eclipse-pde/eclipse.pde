@@ -30,6 +30,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	private static final String S_ANT_FILENAME = "antFileName"; //$NON-NLS-1$
 	private static final String S_QUALIFIER = "qualifier"; //$NON-NLS-1$
 	private static final String S_QUALIFIER_NAME = "qualifierName"; //$NON-NLS-1$
+	private static final String S_ALLOW_BINARY_CYCLES = "allowBinaryCycles"; //$NON-NLS-1$
 
 	private Button fIncludeSource;
 	protected Button fJarButton;
@@ -38,6 +39,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	private Button fBrowseAnt;
 	private Button fQualifierButton;
 	private Text fQualifierText;
+	private Button fAllowBinaryCycles;
 
 	public ExportOptionsTab(BaseExportWizardPage page) {
 		super(page);
@@ -53,6 +55,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 		addAdditionalOptions(container);
 		addQualifierOption(container);
 		addAntSection(container);
+		addAllowBinaryCyclesSection(container);
 
 		return container;
 	}
@@ -69,6 +72,11 @@ public class ExportOptionsTab extends AbstractExportTab {
 			public void widgetSelected(SelectionEvent e) {
 			}
 		});
+	}
+
+	protected void addAllowBinaryCyclesSection(Composite comp) {
+		fAllowBinaryCycles = new Button(comp, SWT.CHECK);
+		fAllowBinaryCycles.setText(PDEUIMessages.ExportOptionsTab_allowBinaryCycles);
 	}
 
 	protected String getJarButtonText() {
@@ -134,6 +142,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 		fQualifierButton.setSelection(settings.getBoolean(S_QUALIFIER));
 		fQualifierText.setText(getInitialQualifierText(settings));
 		fQualifierText.setEnabled(fQualifierButton.getSelection());
+		fAllowBinaryCycles.setSelection(getInitialAllowBinaryCyclesSelection(settings));
 		hookListeners();
 	}
 
@@ -143,6 +152,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 		settings.put(S_SAVE_AS_ANT, fSaveAsAntButton.getSelection());
 		settings.put(S_QUALIFIER, fQualifierButton.getSelection());
 		settings.put(S_QUALIFIER_NAME, fQualifierText.getText());
+		settings.put(S_ALLOW_BINARY_CYCLES, fAllowBinaryCycles.getSelection());
 		saveCombo(settings, S_ANT_FILENAME, fAntCombo);
 	}
 
@@ -156,6 +166,11 @@ public class ExportOptionsTab extends AbstractExportTab {
 	protected boolean getInitialJarButtonSelection(IDialogSettings settings) {
 		String selected = settings.get(S_JAR_FORMAT);
 		return selected == null ? TargetPlatformHelper.getTargetVersion() >= 3.1 : "true".equals(selected); //$NON-NLS-1$
+	}
+
+	protected boolean getInitialAllowBinaryCyclesSelection(IDialogSettings settings) {
+		String selected = settings.get(S_ALLOW_BINARY_CYCLES);
+		return selected == null ? true : "true".equals(selected); //$NON-NLS-1$
 	}
 
 	protected void hookListeners() {
@@ -212,6 +227,10 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 	protected boolean doExportSource() {
 		return fIncludeSource.getSelection();
+	}
+
+	protected boolean doBinaryCycles() {
+		return fAllowBinaryCycles.getSelection();
 	}
 
 	protected boolean useJARFormat() {

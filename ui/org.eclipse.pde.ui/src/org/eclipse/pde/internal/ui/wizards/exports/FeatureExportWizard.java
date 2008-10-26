@@ -60,6 +60,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 		info.toDirectory = fPage.doExportToDirectory();
 		info.useJarFormat = fPage.useJARFormat();
 		info.exportSource = fPage.doExportSource();
+		info.allowBinaryCycles = fPage.allowBinaryCycles();
 		info.destinationDirectory = fPage.getDestination();
 		info.zipFileName = fPage.getFileName();
 		if (fPage2 != null && ((FeatureExportWizardPage) fPage).doMultiPlatform())

@@ -29,6 +29,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 	private static final String S_SYNC_PRODUCT = "syncProduct"; //$NON-NLS-1$
 	private static final String S_EXPORT_SOURCE = "exportSource"; //$NON-NLS-1$
+	private static final String S_ALLOW_BINARY_CYCLES = "allowBinaryCycles"; //$NON-NLS-1$
 	private static final String S_MULTI_PLATFORM = "multiplatform"; //$NON-NLS-1$
 	private static final String S_EXPORT_METADATA = "p2metadata"; //$NON-NLS-1$
 
@@ -39,6 +40,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	private Button fExportSource;
 	private Button fMultiPlatform;
 	private Button fExportMetadata;
+	private Button fAllowBinaryCycles;
 
 	public ProductExportWizardPage(IStructuredSelection selection) {
 		super("productExport"); //$NON-NLS-1$
@@ -123,6 +125,9 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 				}
 			});
 		}
+
+		fAllowBinaryCycles = new Button(group, SWT.CHECK);
+		fAllowBinaryCycles.setText(PDEUIMessages.ExportOptionsTab_allowBinaryCycles);
 	}
 
 	protected void initialize() {
@@ -136,6 +141,9 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 		fExportSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
 		fExportMetadata.setSelection(settings.getBoolean(S_EXPORT_METADATA));
+
+		String selected = settings.get(S_ALLOW_BINARY_CYCLES);
+		fAllowBinaryCycles.setSelection(selected == null ? true : "true".equals(selected)); //$NON-NLS-1$
 
 		if (fMultiPlatform != null)
 			fMultiPlatform.setSelection(settings.getBoolean(S_MULTI_PLATFORM));
@@ -167,6 +175,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		fExportGroup.saveSettings(settings);
 		settings.put(S_EXPORT_SOURCE, doExportSource());
 		settings.put(S_EXPORT_METADATA, doExportMetadata());
+		settings.put(S_ALLOW_BINARY_CYCLES, doBinaryCycles());
 
 		if (fMultiPlatform != null)
 			settings.put(S_MULTI_PLATFORM, fMultiPlatform.getSelection());
@@ -182,6 +191,10 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 	protected boolean doExportSource() {
 		return fExportSource.getSelection();
+	}
+
+	protected boolean doBinaryCycles() {
+		return fAllowBinaryCycles.getSelection();
 	}
 
 	/**

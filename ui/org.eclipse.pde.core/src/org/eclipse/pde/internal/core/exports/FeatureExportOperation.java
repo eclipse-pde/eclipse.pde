@@ -498,6 +498,7 @@ public class FeatureExportOperation extends Job {
 		generator.setIgnoreMissingPropertiesFile(true);
 		generator.setSignJars(fInfo.signingInfo != null);
 		generator.setGenerateJnlp(fInfo.jnlpInfo != null);
+
 		String config = os + ',' + ws + ',' + arch;
 		AbstractScriptGenerator.setConfigInfo(config); //This needs to be set before we set the format
 		String format;
@@ -511,6 +512,11 @@ public class FeatureExportOperation extends Job {
 		generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()));
 		AbstractScriptGenerator.setForceUpdateJar(false);
 		AbstractScriptGenerator.setEmbeddedSource(fInfo.exportSource);
+
+		// allow for binary cycles
+		Properties properties = new Properties();
+		properties.put(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES, Boolean.toString(fInfo.allowBinaryCycles));
+		generator.setImmutableAntProperties(properties);
 	}
 
 	protected State getState(String os, String ws, String arch) {

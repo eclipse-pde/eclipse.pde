@@ -16,6 +16,7 @@ public class FeatureExportInfo {
 	public boolean useJarFormat;
 	public boolean exportSource;
 	public boolean exportMetadata;
+	public boolean allowBinaryCycles;
 	public String destinationDirectory;
 	public String zipFileName;
 	public String qualifier;

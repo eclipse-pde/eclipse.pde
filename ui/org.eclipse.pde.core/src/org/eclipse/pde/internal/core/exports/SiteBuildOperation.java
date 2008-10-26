@@ -55,6 +55,7 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.useJarFormat = true;
 		info.toDirectory = true;
+		info.allowBinaryCycles = true;
 		info.destinationDirectory = siteModel.getUnderlyingResource().getParent().getLocation().toOSString();
 		info.items = models;
 		return info;

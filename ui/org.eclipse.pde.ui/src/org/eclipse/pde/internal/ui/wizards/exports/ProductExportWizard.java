@@ -70,6 +70,7 @@ public class ProductExportWizard extends BaseExportWizard {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fPage.doExportToDirectory();
 		info.exportSource = fPage.doExportSource();
+		info.allowBinaryCycles = fPage.doBinaryCycles();
 		info.exportMetadata = fPage.doExportMetadata();
 		info.destinationDirectory = fPage.getDestination();
 		info.zipFileName = fPage.getFileName();

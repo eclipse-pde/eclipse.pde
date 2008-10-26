@@ -503,6 +503,7 @@ public class PDEUIMessages extends NLS {
 	public static String UpdateSiteWizardPage_remove;
 
 	public static String ExportOptionsTab_antReservedMessage;
+	public static String ExportOptionsTab_allowBinaryCycles;
 
 	public static String ExtensionsPage_sortAlpha;
 

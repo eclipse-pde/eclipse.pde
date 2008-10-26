@@ -43,6 +43,7 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 		info.toDirectory = fPage.doExportToDirectory();
 		info.useJarFormat = fPage.useJARFormat();
 		info.exportSource = fPage.doExportSource();
+		info.allowBinaryCycles = fPage.allowBinaryCycles();
 		info.destinationDirectory = fPage.getDestination();
 		info.zipFileName = fPage.getFileName();
 		info.items = fPage.getSelectedItems();
