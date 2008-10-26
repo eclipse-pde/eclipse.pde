@@ -48,6 +48,19 @@ public class PDEJavaHelper {
 		else
 			fullyQualifiedName = "."; //$NON-NLS-1$
 
+		// allow classes within the project itself
+		try {
+			IType type = project.findType(fullyQualifiedName);
+			if (type != null && type.exists()) {
+				HashMap map = PDEJavaHelper.getPackageFragmentsHash(project, Collections.EMPTY_LIST, false);
+				if (map.containsValue(type.getPackageFragment())) {
+					return false;
+				}
+			}
+		} catch (JavaModelException e) {
+			return false;
+		}
+
 		State state = desc.getContainingState();
 		StateHelper helper = state.getStateHelper();
 		ExportPackageDescription[] exports = helper.getVisiblePackages(desc);
