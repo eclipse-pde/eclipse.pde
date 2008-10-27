@@ -72,27 +72,21 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 				if (!RestrictionModifiers.isUnrestricted(mask)) {
 					if(RestrictionModifiers.isOverrideRestriction(mask) && fIllegalOverride != null) {
 						fIllegalOverride.addIllegalMethod((IMethodDescriptor) element, fComponent.getId());
-						// IApiProblem.ILLEGAL_OVERRIDE, IElementDescriptor.T_METHOD
 					}
 					if (RestrictionModifiers.isExtendRestriction(mask) && fIllegalExtends != null) {
 						fIllegalExtends.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
-						// IApiProblem.ILLEGAL_EXTEND, IElementDescriptor.T_REFERENCE_TYPE 
 					}
 					if (RestrictionModifiers.isImplementRestriction(mask) && fIllegalImplements != null) {
 						fIllegalImplements.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
-						// IApiProblem.ILLEGAL_IMPLEMENT, IElementDescriptor.T_REFERENCE_TYPE
 					}
 					if (RestrictionModifiers.isInstantiateRestriction(mask) && fIllegalInstantiate != null) {
 						fIllegalInstantiate.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
-						// IApiProblem.ILLEGAL_INSTANTIATE, IElementDescriptor.T_REFERENCE_TYPE
 					}
 					if (RestrictionModifiers.isReferenceRestriction(mask)) {
 						if (element.getElementType() == IElementDescriptor.METHOD && fIllegalMethodRef != null) {
 							fIllegalMethodRef.addIllegalMethod((IMethodDescriptor) element, fComponent.getId());
-							// IApiProblem.ILLEGAL_REFERENCE, IElementDescriptor.T_METHOD
 						} else if (element.getElementType() == IElementDescriptor.FIELD && fIllegalFieldRef != null) {
 							fIllegalFieldRef.addIllegalField((IFieldDescriptor) element, fComponent.getId());
-							// IApiProblem.ILLEGAL_REFERENCE, IElementDescriptor.T_FIELD
 						}
 					}
 				}
@@ -128,24 +122,19 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	private void initializeDetectors() {
 		IProject project = getProject();
 		if(project != null) {
-			int severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_EXTEND, project);
-			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+			if(!isIgnore(IApiProblemTypes.ILLEGAL_EXTEND)) {
 				fIllegalExtends = new IllegalExtendsProblemDetector();
 			}
-			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_IMPLEMENT, project);
-			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+			if(!isIgnore(IApiProblemTypes.ILLEGAL_IMPLEMENT)) {
 				fIllegalImplements = new IllegalImplementsProblemDetector();
 			}
-			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_INSTANTIATE, project);
-			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+			if(!isIgnore(IApiProblemTypes.ILLEGAL_INSTANTIATE)) {
 				fIllegalInstantiate = new IllegalInstantiateProblemDetector();
 			}
-			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_OVERRIDE, project);
-			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+			if(!isIgnore(IApiProblemTypes.ILLEGAL_OVERRIDE)) {
 				fIllegalOverride = new IllegalOverrideProblemDetector();
 			}
-			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_REFERENCE, project);
-			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+			if(!isIgnore(IApiProblemTypes.ILLEGAL_REFERENCE)) {
 				fIllegalMethodRef = new IllegalMethodReferenceDetector();
 				fIllegalFieldRef = new IllegalFieldReferenceDetector();
 			}
@@ -159,6 +148,17 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 			fIllegalMethodRef = new IllegalMethodReferenceDetector();
 			fIllegalFieldRef = new IllegalFieldReferenceDetector();
 		}
+	}
+	
+	/**
+	 * Returns whether the given problem kind should be ignored.
+	 * 
+	 * @param problemKey
+	 * @return whether the given problem kind should be ignored
+	 */
+	private boolean isIgnore(String problemKey) {
+		int severity = ApiPlugin.getDefault().getSeverityLevel(problemKey, getProject());
+		return severity == ApiPlugin.SEVERITY_IGNORE;
 	}
 	
 	/**
