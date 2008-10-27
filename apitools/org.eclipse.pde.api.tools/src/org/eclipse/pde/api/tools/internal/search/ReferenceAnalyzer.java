@@ -413,7 +413,7 @@ public class ReferenceAnalyzer {
 	private IApiProblemDetector[] buildProblemDetectors(IApiComponent component) {
 		long start = System.currentTimeMillis();
 		IApiComponent[] components = component.getBaseline().getPrerequisiteComponents(new IApiComponent[]{component});
-		final ProblemDetectorBuilder visitor = new ProblemDetectorBuilder();
+		final ProblemDetectorBuilder visitor = new ProblemDetectorBuilder(component);
 		for (int i = 0; i < components.length; i++) {
 			IApiComponent prereq = components[i];
 			if (!prereq.equals(component)) {

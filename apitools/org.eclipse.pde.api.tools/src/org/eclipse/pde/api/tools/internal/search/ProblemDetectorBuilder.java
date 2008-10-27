@@ -56,6 +56,20 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 * The owning {@link IApiComponent} of this builder
 	 */
 	private IApiComponent fComponent = null;
+	
+	/**
+	 * Problem detectors used for a component's analysis
+	 */
+	private List fDetectors;
+	
+	/**
+	 * Build problem detectors for a component.
+	 * 
+	 * @param component
+	 */
+	public ProblemDetectorBuilder(IApiComponent component) {
+		initializeDetectors(component);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.descriptors.IElementDescriptor, java.lang.String, org.eclipse.pde.api.tools.IApiAnnotations)
@@ -100,16 +114,15 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 */
 	public void setOwningComponent(IApiComponent component) {
 		fComponent = component;
-		initializeDetectors();
 	}
 	
 	/**
 	 * @return the {@link IProject} associated with the set {@link IApiComponent} or <code>null</code>
 	 * if the component is not a {@link PluginProjectApiComponent}
 	 */
-	private IProject getProject() {
-		if(fComponent instanceof PluginProjectApiComponent) {
-			PluginProjectApiComponent comp = (PluginProjectApiComponent) fComponent;
+	private IProject getProject(IApiComponent component) {
+		if(component instanceof PluginProjectApiComponent) {
+			PluginProjectApiComponent comp = (PluginProjectApiComponent) component;
 			return comp.getJavaProject().getProject();
 		}
 		return null;
@@ -119,22 +132,23 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 * Initializes the detectors for this builder. This method is only
 	 * called when an owning component is set
 	 */
-	private void initializeDetectors() {
-		IProject project = getProject();
+	private void initializeDetectors(IApiComponent component) {
+		fDetectors = new ArrayList();
+		IProject project = getProject(component);
 		if(project != null) {
-			if(!isIgnore(IApiProblemTypes.ILLEGAL_EXTEND)) {
+			if(!isIgnore(IApiProblemTypes.ILLEGAL_EXTEND, project) && fIllegalExtends == null) {
 				fIllegalExtends = new IllegalExtendsProblemDetector();
 			}
-			if(!isIgnore(IApiProblemTypes.ILLEGAL_IMPLEMENT)) {
+			if(!isIgnore(IApiProblemTypes.ILLEGAL_IMPLEMENT, project) && fIllegalImplements == null) {
 				fIllegalImplements = new IllegalImplementsProblemDetector();
 			}
-			if(!isIgnore(IApiProblemTypes.ILLEGAL_INSTANTIATE)) {
+			if(!isIgnore(IApiProblemTypes.ILLEGAL_INSTANTIATE, project) && fIllegalInstantiate == null) {
 				fIllegalInstantiate = new IllegalInstantiateProblemDetector();
 			}
-			if(!isIgnore(IApiProblemTypes.ILLEGAL_OVERRIDE)) {
+			if(!isIgnore(IApiProblemTypes.ILLEGAL_OVERRIDE, project) && fIllegalOverride == null) {
 				fIllegalOverride = new IllegalOverrideProblemDetector();
 			}
-			if(!isIgnore(IApiProblemTypes.ILLEGAL_REFERENCE)) {
+			if(!isIgnore(IApiProblemTypes.ILLEGAL_REFERENCE, project) && fIllegalMethodRef == null) {
 				fIllegalMethodRef = new IllegalMethodReferenceDetector();
 				fIllegalFieldRef = new IllegalFieldReferenceDetector();
 			}
@@ -148,6 +162,25 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 			fIllegalMethodRef = new IllegalMethodReferenceDetector();
 			fIllegalFieldRef = new IllegalFieldReferenceDetector();
 		}
+		if (fIllegalExtends != null) {
+			fDetectors.add(fIllegalExtends);
+		}
+		if (fIllegalImplements != null) {
+			fDetectors.add(fIllegalImplements);
+		}
+		if (fIllegalInstantiate != null) {
+			fDetectors.add(fIllegalInstantiate);
+		}
+		if (fIllegalOverride != null) {
+			fDetectors.add(fIllegalOverride);
+		}
+		if (fIllegalMethodRef != null) {
+			fDetectors.add(fIllegalMethodRef);
+		}
+		if (fIllegalFieldRef != null) {
+			fDetectors.add(fIllegalFieldRef);
+		}		
+		addLeakDetectors(fDetectors, component);
 	}
 	
 	/**
@@ -156,8 +189,8 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 * @param problemKey
 	 * @return whether the given problem kind should be ignored
 	 */
-	private boolean isIgnore(String problemKey) {
-		int severity = ApiPlugin.getDefault().getSeverityLevel(problemKey, getProject());
+	private boolean isIgnore(String problemKey, IProject project) {
+		int severity = ApiPlugin.getDefault().getSeverityLevel(problemKey, project);
 		return severity == ApiPlugin.SEVERITY_IGNORE;
 	}
 	
@@ -188,27 +221,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 * @return problem detectors
 	 */
 	List getProblemDetectors() {
-		List detectors = new ArrayList();
-		if (fIllegalExtends != null) {
-			detectors.add(fIllegalExtends);
-		}
-		if (fIllegalImplements != null) {
-			detectors.add(fIllegalImplements);
-		}
-		if (fIllegalInstantiate != null) {
-			detectors.add(fIllegalInstantiate);
-		}
-		if (fIllegalOverride != null) {
-			detectors.add(fIllegalOverride);
-		}
-		if (fIllegalMethodRef != null) {
-			detectors.add(fIllegalMethodRef);
-		}
-		if (fIllegalFieldRef != null) {
-			detectors.add(fIllegalFieldRef);
-		}
-		addLeakDetectors(detectors);
-		return detectors;
+		return fDetectors;
 	}
 	
 	/**
@@ -216,27 +229,22 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 * filter out disabled detectors based on project  / workspace preference settings
 	 * @param detectors
 	 */
-	private void addLeakDetectors(List detectors) {
-		IProject project = getProject();
+	private void addLeakDetectors(List detectors, IApiComponent component) {
+		IProject project = getProject(component);
 		if(project != null) {
-			int severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.LEAK_EXTEND, project);
-			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+			if(!isIgnore(IApiProblemTypes.LEAK_EXTEND, project)) {
 				detectors.add(new LeakExtendsProblemDetector(fNonApiPackageNames));
 			}
-			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.LEAK_IMPLEMENT, project);
-			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+			if(!isIgnore(IApiProblemTypes.LEAK_IMPLEMENT, project)) {
 				detectors.add(new LeakImplementsProblemDetector(fNonApiPackageNames));
 			}
-			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.LEAK_FIELD_DECL, project);
-			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+			if(!isIgnore(IApiProblemTypes.LEAK_FIELD_DECL, project)) {
 				detectors.add(new LeakFieldProblemDetector(fNonApiPackageNames));
 			}
-			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.LEAK_METHOD_PARAM, project);
-			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+			if(!isIgnore(IApiProblemTypes.LEAK_METHOD_PARAM, project)) {
 				detectors.add(new LeakParameterTypeDetector(fNonApiPackageNames));
 			}
-			severity = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, project);
-			if(severity != ApiPlugin.SEVERITY_IGNORE) {
+			if(!isIgnore(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, project)) {
 				detectors.add(new LeakReturnTypeDetector(fNonApiPackageNames));
 			}
 		}
