@@ -40,7 +40,7 @@ public class ShapeAdvisor implements IPDEBuildConstants {
 	public void setForceUpdateJars(boolean force) {
 		this.forceUpdateJarFormat = force;
 	}
-	
+
 	public Object[] getFinalShape(BundleDescription bundle) {
 		String style = getUnpackClause(bundle) ? FLAT : UPDATEJAR;
 		return getFinalShape(bundle.getSymbolicName(), bundle.getVersion().toString(), style, true);
@@ -79,7 +79,11 @@ public class ShapeAdvisor implements IPDEBuildConstants {
 	}
 
 	private boolean getUnpackClause(BundleDescription bundle) {
-		Set entries = (Set) ((Properties) bundle.getUserObject()).get(PLUGIN_ENTRY);
-		return ((FeatureEntry) entries.iterator().next()).isUnpack();
+		Properties properties = (Properties) bundle.getUserObject();
+		if (properties != null) {
+			Set entries = (Set) ((Properties) bundle.getUserObject()).get(PLUGIN_ENTRY);
+			return ((FeatureEntry) entries.iterator().next()).isUnpack();
+		}
+		return true; //don't know, return the default
 	}
 }

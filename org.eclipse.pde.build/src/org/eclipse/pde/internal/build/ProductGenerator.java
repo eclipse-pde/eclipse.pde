@@ -194,13 +194,18 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		return (byte) (result | CONFIG_STYLE_ORIGINAL);
 	}
 
-	private List getBundlesFromProductFile() throws CoreException {
-		PDEState state = getSite(false).getRegistry();
+	private List getBundlesFromProductFile(Config config) {
+		Collection assembledPlugins = director.getAssemblyData().getPlugins(config);
+		HashMap map = new HashMap();
+		for (Iterator iterator = assembledPlugins.iterator(); iterator.hasNext();) {
+			BundleDescription bundle = (BundleDescription) iterator.next();
+			map.put(bundle.getName(), bundle);
+		}
+
 		List pluginList = productFile.getPlugins();
 		List results = new ArrayList(pluginList.size());
 		for (Iterator iter = pluginList.iterator(); iter.hasNext();) {
-			String id = (String) iter.next();
-			BundleDescription bundle = state.getResolvedBundle(id);
+			BundleDescription bundle = (BundleDescription) map.get(iter.next());
 			if (bundle == null) {
 				//TODO error?
 				continue;
@@ -210,7 +215,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		return results;
 	}
 
-	private void printSimpleBundles(StringBuffer buffer, Config config, File configDir, byte style) throws CoreException {
+	private void printSimpleBundles(StringBuffer buffer, Config config, File configDir, byte style) {
 		buffer.append("osgi.bundles="); //$NON-NLS-1$
 		buffer.append(BUNDLE_SIMPLE_CONFIGURATOR);
 		buffer.append(START_LEVEL_1);
@@ -220,7 +225,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (productFile.useFeatures())
 			plugins = director.getAssemblyData().getPlugins(config);
 		else
-			plugins = getBundlesFromProductFile();
+			plugins = getBundlesFromProductFile(config);
 
 		URL bundlesTxt = P2Utils.writeBundlesTxt(plugins, configDir, (style & CONFIG_STYLE_REFACTORED) > 0);
 		if (bundlesTxt != null) {
@@ -258,7 +263,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	private void printAllBundles(StringBuffer buffer, Config config, byte style) throws CoreException {
+	private void printAllBundles(StringBuffer buffer, Config config, byte style) {
 		buffer.append("osgi.bundles="); //$NON-NLS-1$
 
 		//When the plugins are all listed.
@@ -271,7 +276,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (productFile.useFeatures())
 			bundles = director.getAssemblyData().getPlugins(config);
 		else
-			bundles = getBundlesFromProductFile();
+			bundles = getBundlesFromProductFile(config);
 		BundleHelper helper = BundleHelper.getDefault();
 		boolean first = true;
 		for (Iterator iter = bundles.iterator(); iter.hasNext();) {

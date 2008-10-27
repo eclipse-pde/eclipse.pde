@@ -252,4 +252,37 @@ public class ProductTests extends PDETestCase {
 		assertTrue(bundlesList.indexOf('b') > -1);
 		assertTrue(bundlesList.indexOf('c') > -1);
 	}
+	
+	public void testBug252246() throws Exception {
+		IFolder buildFolder = newTest("252246");
+		
+		IFile product = buildFolder.getFile("foo.product");
+		Utils.generateProduct(product, "foo.product", "1.0.0", new String[] {"A", "org.eclipse.equinox.simpleconfigurator"}, false);
+		
+		IFolder A1 = Utils.createFolder(buildFolder, "plugins/A1");
+		IFolder A2 = Utils.createFolder(buildFolder, "plugins/A2");
+		IFolder simple = Utils.createFolder(buildFolder, "plugins/simple");
+		
+		Utils.generateBundleManifest(A1, "A", "1.0.0.v1", null);
+		Utils.generateBundleManifest(A2, "A", "1.0.0.v2", null);
+		Utils.generateBundleManifest(simple, "org.eclipse.equinox.simpleconfigurator", "1.0.0", null);
+		
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		properties.put("includeLaunchers", "false");
+		properties.put("baseLocation", "");
+		properties.put("archivesFormat", "*,*,*-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+		
+		File file = buildFolder.getFolder("tmp/eclipse/plugins").getLocation().toFile();
+		String [] a = file.list(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.startsWith("A_1.0.0.v");
+			}});
+		assertTrue(a.length == 1);
+		String bundleString = a[0].substring(0, a[0].length() - 4); //trim .jar
+		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info"), bundleString);
+	}
 }
