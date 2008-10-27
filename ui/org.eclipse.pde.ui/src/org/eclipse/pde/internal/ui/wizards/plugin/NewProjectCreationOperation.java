@@ -486,9 +486,10 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			if (buffer.length() > 0) {
 				buffer.append(",\n "); //$NON-NLS-1$ // space required for multiline headers
 			}
-			buffer.append(iter.next().toString());
+			String value = iter.next().toString();
+			buffer.append(value);
 
-			if ((version != null) && (values.size() == 1)) {
+			if (value.indexOf(";version=") == -1 && (version != null) && (values.size() == 1)) { //$NON-NLS-1$
 				buffer.append(";version=\"").append(version).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
