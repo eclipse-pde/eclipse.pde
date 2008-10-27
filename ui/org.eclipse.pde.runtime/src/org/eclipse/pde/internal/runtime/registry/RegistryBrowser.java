@@ -127,7 +127,7 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	public RegistryBrowser() {
-		model = RegistryModelFactory.getRegistryModel("local");
+		model = RegistryModelFactory.getRegistryModel("local"); //$NON-NLS-1$
 		model.connect();
 
 		listener = new RegistryBrowserModelChangeListener(this);

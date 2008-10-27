@@ -17,10 +17,11 @@ import org.eclipse.pde.internal.runtime.registry.model.*;
 
 public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	public boolean isInExtensionSet;
-	private RegistryBrowser fRegistryBrowser;
+
+	//private RegistryBrowser fRegistryBrowser;
 
 	public RegistryBrowserContentProvider(RegistryBrowser registryBrowser) {
-		fRegistryBrowser = registryBrowser;
+		//fRegistryBrowser = registryBrowser;
 	}
 
 	public void dispose() { // nothing to dispose
@@ -93,10 +94,6 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		if (!(element instanceof ModelObject)) {
 			return null;
 		}
-
-		ModelObject object = (ModelObject) element;
-
-		boolean extOnly = fRegistryBrowser.showExtensionsOnly();
 
 		if (element instanceof Folder) {
 			return ((Folder) element).getParent();

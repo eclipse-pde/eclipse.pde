@@ -43,7 +43,7 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 				Extension ext = (Extension) object;
 				return ext.getContributor();
 			} else if (object instanceof ServiceRegistration) {
-				ServiceRegistration reg = (ServiceRegistration) object;
+				//ServiceRegistration reg = (ServiceRegistration) object;
 				//return reg.getBundle(); // TODO FIXME
 			}
 		} else { // show only extensions
