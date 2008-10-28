@@ -5,7 +5,7 @@
 	All Platform Debug contexts, those for org.eclipse.debug.ui, are located in this file
 	All contexts are grouped by their relation, with all relations grouped alphabetically.
 -->
-  <component id="APIPluginTests">
+  <component id="APIPluginTests" version="2">
 	  <!--
 	  	Test the kind for RestrictionModifiers#NO_IMPLEMENT
 	  -->
