@@ -412,7 +412,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			IManifestHeader header = bModel.getBundleModel().getBundle().getManifestHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE);
 			if (header != null) {
 				String value = header.getValue();
-				String unpackValue = unpack == "true" ? "jar" : "dir"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				String unpackValue = "true".equals(unpack) ? "jar" : "dir"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if (value != null && !value.equalsIgnoreCase(unpackValue)) {
 					String message = NLS.bind(PDECoreMessages.Builders_Feature_mismatchUnpackBundleShape, (new String[] {"unpack=" + unpack, parent.getAttribute("id"), "Eclipse-BundleShape: " + value})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
@@ -420,7 +420,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			}
 		}
 
-		if (!CoreUtility.guessUnpack(pModel.getBundleDescription())) {
+		if ("true".equals(unpack) && !CoreUtility.guessUnpack(pModel.getBundleDescription())) {//$NON-NLS-1$
 			String message = NLS.bind(PDECoreMessages.Builders_Feature_missingUnpackFalse, (new String[] {parent.getAttribute("id"), "unpack=\"false\""})); //$NON-NLS-1$ //$NON-NLS-2$			
 			report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
 		}
