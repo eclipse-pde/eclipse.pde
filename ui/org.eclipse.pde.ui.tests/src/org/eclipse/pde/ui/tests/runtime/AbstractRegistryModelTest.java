@@ -45,7 +45,7 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 			
 			while (notificationsCount <= count) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 				}
 				
