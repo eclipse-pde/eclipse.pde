@@ -1540,7 +1540,7 @@ public class ClassFileComparator {
 				}
 				if (!found) {
 					if ((this.visibilityModifiers == VisibilityModifiers.API) && component.hasApiDescription()) {
-						// check if this method should be removed because it is tagged as @noreference
+						// check if this field should be removed because it is tagged as @noreference
 						IApiDescription apiDescription = null;
 						try {
 							apiDescription = this.component.getApiDescription();
@@ -1601,7 +1601,7 @@ public class ClassFileComparator {
 			}
 		}
 		if (this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription()) {
-			// check if this method should be removed because it is tagged as @noreference
+			// check if this field should be removed because it is tagged as @noreference
 			IApiDescription apiDescription = null;
 			try {
 				apiDescription = this.component.getApiDescription();
