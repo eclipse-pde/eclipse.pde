@@ -36,7 +36,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(ClassDeltaTests.class);
 		TestSuite suite = new TestSuite(ClassDeltaTests.class.getName());
-		suite.addTest(new ClassDeltaTests("test140"));
+		suite.addTest(new ClassDeltaTests("test139"));
 		return suite;
 	}
 
@@ -3203,6 +3203,40 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * Extend internal super class, no change, baseline has no api description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=251838
+	 */
+	public void test138() {
+		deployBundles("test138");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		assertFalse(beforeApiComponent.hasApiDescription());
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * Extend internal super class, no change, baseline has no api description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=251838
+	 */
+	public void test139() {
+		deployBundles("test139");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		assertFalse(beforeApiComponent.hasApiDescription());
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);

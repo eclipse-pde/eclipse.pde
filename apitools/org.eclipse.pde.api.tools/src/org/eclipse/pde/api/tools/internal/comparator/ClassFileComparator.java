@@ -919,14 +919,10 @@ public class ClassFileComparator {
 					IApiType anInterface = interfaces[i];
 					int visibility = VisibilityModifiers.PRIVATE;
 					IApiComponent ifaceComponent = anInterface.getApiComponent();
-					if (ifaceComponent.hasApiDescription()) {
-						IApiDescription apiDescription = ifaceComponent.getApiDescription();
-						IApiAnnotations elementDescription = apiDescription.resolveAnnotations(anInterface.getHandle());
-						if (elementDescription != null) {
-							visibility = elementDescription.getVisibility();
-						}
-					} else if (Util.isPublic(anInterface.getModifiers()) || Util.isProtected(anInterface.getModifiers())) {
-						visibility = VisibilityModifiers.API;
+					IApiDescription apiDescription = ifaceComponent.getApiDescription();
+					IApiAnnotations elementDescription = apiDescription.resolveAnnotations(anInterface.getHandle());
+					if (elementDescription != null) {
+						visibility = elementDescription.getVisibility();
 					}
 					if ((visibility & visibilityModifiers) != 0) {
 						set.add(anInterface);
@@ -2697,14 +2693,10 @@ public class ClassFileComparator {
 				superClass = superClass.getSuperclass();
 				int visibility = VisibilityModifiers.PRIVATE;
 				IApiComponent superComponent = superClass.getApiComponent();
-				if (superComponent.hasApiDescription()) {
-					IApiDescription apiDescription = superComponent.getApiDescription();
-					IApiAnnotations elementDescription = apiDescription.resolveAnnotations(superClass.getHandle());
-					if (elementDescription != null) {
-						visibility = elementDescription.getVisibility();
-					}
-				} else if (Util.isPublic(superClass.getModifiers()) || Util.isProtected(superClass.getModifiers())) {
-					visibility = VisibilityModifiers.API;
+				IApiDescription apiDescription = superComponent.getApiDescription();
+				IApiAnnotations elementDescription = apiDescription.resolveAnnotations(superClass.getHandle());
+				if (elementDescription != null) {
+					visibility = elementDescription.getVisibility();
 				}
 				if (includePrivate || ((visibility & visibilityModifiers) != 0)) {
 					list.add(superClass);
