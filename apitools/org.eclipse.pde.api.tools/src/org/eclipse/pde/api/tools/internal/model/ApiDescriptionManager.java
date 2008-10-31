@@ -370,6 +370,10 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 				int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
 				String name = element.getAttribute(IApiXmlConstants.ATTR_NAME);
 				String sig = element.getAttribute(IApiXmlConstants.ATTR_SIGNATURE);
+				if (sig.indexOf('.') != -1) {
+					// old files might use '.' instead of '/'
+					sig = sig.replace('.', '/');
+				}
 				elementDesc = type.getMethod(name,sig);
 				node = apiDesc.newNode(parentNode, elementDesc, vis, res);
 			}
