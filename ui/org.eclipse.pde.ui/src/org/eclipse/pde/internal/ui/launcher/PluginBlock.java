@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -114,6 +113,18 @@ public class PluginBlock extends AbstractPluginBlock {
 			// Store selected external models
 			StringBuffer exbuf = new StringBuffer();
 			Object[] checked = fPluginTreeViewer.getCheckedElements();
+			// Sort the array so that the attribute stays consistent between restarts
+			Arrays.sort(checked, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					if (!(o1 instanceof IPluginModelBase)) {
+						return -1;
+					}
+					if (!(o2 instanceof IPluginModelBase)) {
+						return 1;
+					}
+					return ((IPluginModelBase) o1).getPluginBase().getId().compareTo(((IPluginModelBase) o2).getPluginBase().getId());
+				}
+			});
 			for (int i = 0; i < checked.length; i++) {
 				if (checked[i] instanceof IPluginModelBase) {
 					IPluginModelBase model = (IPluginModelBase) checked[i];
