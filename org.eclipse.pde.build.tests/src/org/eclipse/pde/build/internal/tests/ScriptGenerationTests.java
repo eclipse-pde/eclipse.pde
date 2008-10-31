@@ -9,17 +9,18 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import java.io.File;
-import java.io.FileFilter;
+import java.io.*;
 import java.util.*;
 import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.taskdefs.Parallel;
 import org.apache.tools.ant.types.Path;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
@@ -881,5 +882,101 @@ public class ScriptGenerationTests extends PDETestCase {
 		runAntScript(f1.getFile("build.xml").getLocation().toOSString(), new String[] {"gather.logs"}, buildFolder.getLocation().toOSString(), null);
 		assertResourceFile(f1, "feature.temp.folder/plugins/P1_1.0.0/@dot.bin.log");
 		assertResourceFile(f1, "feature.temp.folder/plugins/P2_1.0.0/@dot.bin.log");
+	}
+	
+	public void testBug239843_1() throws Exception {
+		IFolder buildFolder = newTest("239843_1");
+		
+		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
+		Attributes additionalAttributes = new Attributes();
+		additionalAttributes = new Attributes();
+		additionalAttributes.put(new Attributes.Name("Import-Package"), "org.xml.sax");
+		Utils.generateBundleManifest(a, "a", "1.0.0", additionalAttributes);
+		
+		//1: without any particular profiles defined in build.properties, default to largest (1.6?) which does contain org.xml.sax
+		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
+		buildProperties.put("baseLocation", " " );
+		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.osgi")).getAbsolutePath());
+		generateScripts(buildFolder, buildProperties);
+		
+		//2: define CDC-1.1/Foundation-1.1, expect failure since that profile doesn't have org.xml.sax
+		buildProperties.put("CDC-1.1/Foundation-1.1", "somejar.jar");
+		try {
+			generateScripts(buildFolder, buildProperties);
+			fail("Script generation expected to fail.");
+		} catch (Exception e) {
+			assertTrue(e.getMessage().indexOf("Unable to find element: a") > -1 );
+		}
+
+		//3: add a bundle exporting xml.sax, expect success
+		IFolder xml = Utils.createFolder(buildFolder, "plugins/xml");
+		additionalAttributes.put(new Attributes.Name("Export-Package"), "org.xml.sax");
+		Utils.generateBundleManifest(xml, "org.xml", "1.0.0", additionalAttributes);
+		generateScripts(buildFolder, buildProperties);
+	}
+	
+	public void testBug239843_2() throws Exception {
+		IFolder buildFolder = newTest("239843_2");
+		
+		//custom profile contributed, without profile.list, in a folder
+		IFolder custom = Utils.createFolder(buildFolder, "plugins/custom");
+		Utils.generateBundle(custom, "custom");
+		StringBuffer buffer = new StringBuffer("osgi.java.profile.name=MyCustomProfile\n");
+		buffer.append("org.osgi.framework.system.packages=org.my.package\n");
+		buffer.append("org.osgi.framework.bootdelegation = org.my.package\n");
+		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.1\n");
+		Utils.writeBuffer(custom.getFile("my.profile"), buffer);
+		
+		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
+		Attributes additionalAttributes = new Attributes();
+		additionalAttributes = new Attributes();
+		additionalAttributes.put(new Attributes.Name("Import-Package"), "org.my.package");
+		Utils.generateBundleManifest(a, "a", "1.0.0", additionalAttributes);
+		
+		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
+		buildProperties.put("baseLocation", " " );
+		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.osgi")).getAbsolutePath());
+		buildProperties.put("customEESources", custom.getLocation().toOSString());
+		buildProperties.put("MyCustomProfile", "someLibrary.jar");
+		generateScripts(buildFolder, buildProperties);
+	}
+	
+	public void testBug239843_3() throws Exception {
+		IFolder buildFolder = newTest("239843_3");
+		
+		//custom profile contributed, with profile.list, in a jar
+		IFolder custom = Utils.createFolder(buildFolder, "plugins/custom");
+		Utils.generateBundle(custom, "custom");
+		
+		StringBuffer buffer = new StringBuffer("osgi.java.profile.name=MyCustomProfile\n");
+		buffer.append("org.osgi.framework.system.packages=org.my.package\n");
+		buffer.append("org.osgi.framework.bootdelegation = org.my.package\n");
+		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.1\n");
+		Utils.writeBuffer(custom.getFile("profiles/my.profile"), buffer);
+		Utils.writeBuffer(custom.getFile("profile.list"), new StringBuffer("java.profiles=profiles/my.profile\n"));
+		
+		ZipOutputStream jar = new ZipOutputStream(new FileOutputStream(new File(custom.getLocation().toOSString() + ".jar")));
+		jar.putNextEntry(new ZipEntry(JarFile.MANIFEST_NAME));
+		Utils.transferStreams(custom.getFile(JarFile.MANIFEST_NAME).getContents(), true, jar, false);
+		jar.putNextEntry(new ZipEntry("profile.list"));
+		Utils.transferStreams(custom.getFile("profile.list").getContents(), true, jar, false);
+		jar.putNextEntry(new ZipEntry("profiles/my.profile"));
+		Utils.transferStreams(custom.getFile("profiles/my.profile").getContents(), true, jar, false);
+		jar.close();
+		
+		custom.delete(true, null);
+		
+		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
+		Attributes additionalAttributes = new Attributes();
+		additionalAttributes = new Attributes();
+		additionalAttributes.put(new Attributes.Name("Import-Package"), "org.my.package");
+		Utils.generateBundleManifest(a, "a", "1.0.0", additionalAttributes);
+		
+		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
+		buildProperties.put("baseLocation", " " );
+		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.osgi")).getAbsolutePath());
+		buildProperties.put("customEESources", custom.getLocation().toOSString() + ".jar");
+		buildProperties.put("MyCustomProfile", "someLibrary.jar");
+		generateScripts(buildFolder, buildProperties);
 	}
 }

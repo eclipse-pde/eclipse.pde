@@ -239,6 +239,10 @@ public class Utils {
 	}
 
 	public static void transferStreams(InputStream source, OutputStream destination) throws IOException {
+		transferStreams(source, true, destination, true);
+	}
+	
+	public static void transferStreams(InputStream source, boolean closeIn, OutputStream destination, boolean closeOut) throws IOException {
 		source = new BufferedInputStream(source);
 		destination = new BufferedOutputStream(destination);
 		try {
@@ -251,12 +255,15 @@ public class Utils {
 			}
 		} finally {
 			try {
-				source.close();
+				if (closeIn)
+					source.close();
 			} catch (IOException e) {
 				// ignore
 			}
 			try {
-				destination.close();
+				destination.flush();
+				if(closeOut)
+					destination.close();
 			} catch (IOException e) {
 				// ignore
 			}
