@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.ClasspathComputer3_0.ClasspathElement;
+import org.eclipse.pde.internal.build.site.ProfileManager;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 /**
@@ -713,8 +714,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Defines, the XML declaration, Ant project and targets init and initTemplate.
+	 * @throws CoreException 
 	 */
-	private void generatePrologue() {
+	private void generatePrologue() throws CoreException {
 		script.printProjectDeclaration(model.getSymbolicName(), TARGET_BUILD_JARS, DOT);
 		script.println();
 
@@ -750,7 +752,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetEnd();
 	}
 
-	private void generateCompilerSettings() {
+	private void generateCompilerSettings() throws CoreException {
 		String javacSource = null;
 		String javacTarget = null;
 		String bootClasspath = null;
@@ -815,12 +817,18 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		} else {
 			environments = modelEnvironments;
 		}
+
+		ProfileManager profileManager = getSite(false).getRegistry().getProfileManager();
 		for (int i = 0; i < environments.length; i++) {
 			if (bootClasspath == null)
 				script.printConditionIsSet(PROPERTY_BUNDLE_BOOTCLASSPATH, Utils.getPropertyFormat(environments[i]), environments[i]);
 
-			source = (String) environmentMappings.get(environments[i] + '.' + IXMLConstants.PROPERTY_JAVAC_SOURCE);
-			target = (String) environmentMappings.get(environments[i] + '.' + IXMLConstants.PROPERTY_JAVAC_TARGET);
+			source = profileManager.getJavacSource(environments[i]);
+			if (source == null)
+				source = (String) environmentMappings.get(environments[i] + '.' + IXMLConstants.PROPERTY_JAVAC_SOURCE);
+			target = profileManager.getJavacTarget(environments[i]);
+			if (target == null)
+				target = (String) environmentMappings.get(environments[i] + '.' + IXMLConstants.PROPERTY_JAVAC_TARGET);
 			if (javacSource == null && source != null)
 				script.printConditionIsSet(PROPERTY_BUNDLE_JAVAC_SOURCE, source, environments[i]);
 			if (javacTarget == null && target != null)

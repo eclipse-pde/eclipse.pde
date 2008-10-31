@@ -12,6 +12,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
@@ -25,6 +26,24 @@ import org.osgi.framework.Version;
  * General utility class.
  */
 public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstants, IXMLConstants {
+	static class ArrayEnumeration implements Enumeration {
+		private final Object[] array;
+		int cur = 0;
+
+		public ArrayEnumeration(Object[] array) {
+			this.array = new Object[array.length];
+			System.arraycopy(array, 0, this.array, 0, this.array.length);
+		}
+
+		public boolean hasMoreElements() {
+			return cur < array.length;
+		}
+
+		public Object nextElement() {
+			return array[cur++];
+		}
+	}
+
 	// The 64 characters that are legal in a version qualifier, in lexicographical order.
 	private static final String BASE_64_ENCODING = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
 
@@ -766,5 +785,22 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			return;
 		buffer.replace(begin, end, newVersion);
 		transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(buildFile));
+	}
+
+	public static Enumeration getArrayEnumerator(Object[] array) {
+		return new ArrayEnumeration(array);
+	}
+
+	public static void close(Object obj) {
+		if (obj == null)
+			return;
+		try {
+			if (obj instanceof InputStream)
+				((InputStream) obj).close();
+			else if (obj instanceof ZipFile)
+				((ZipFile) obj).close();
+		} catch (IOException e) {
+			//boo
+		}
 	}
 }

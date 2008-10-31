@@ -16,9 +16,9 @@ import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
 
 public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
-	private String installedBaseURL;
-	private String[] urls;
-	private PDEUIStateWrapper pdeUIState;
+	private final String installedBaseURL;
+	private final String[] urls;
+	private final PDEUIStateWrapper pdeUIState;
 	private BuildTimeSite site;
 	private boolean filterP2Base = false;
 
@@ -57,11 +57,12 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 			if (f.exists()) {
 				//location was the root of an eclipse install, list everything from the plugins directory
 				collectedElements.addAll(Arrays.asList(f.listFiles()));
-			} else if (new File(location[i], JarFile.MANIFEST_NAME).exists() || new File(location[i], Constants.PLUGIN_FILENAME_DESCRIPTOR).exists()) {
+			} else if (new File(location[i], JarFile.MANIFEST_NAME).exists() || new File(location[i], Constants.PLUGIN_FILENAME_DESCRIPTOR).exists() || new File(location[i], Constants.FRAGMENT_FILENAME_DESCRIPTOR).exists()) {
 				collectedElements.add(location[i]);
 			} else if (location[i].isDirectory()) {
 				collectedElements.addAll(Arrays.asList(location[i].listFiles()));
-			}
+			} else if (location[i].isFile() && location[i].getName().endsWith(".jar")) //$NON-NLS-1$
+				collectedElements.add(location[i]);
 		}
 		return collectedElements;
 	}
@@ -83,7 +84,7 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	public void setSite(BuildTimeSite site) {
 		this.site = site;
 	}
-	
+
 	public void setFilterP2Base(boolean filter) {
 		this.filterP2Base = filter;
 	}

@@ -55,6 +55,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected boolean parallel = false;
 	protected int threadCount = -1;
 	protected int threadsPerProcessor = -1;
+	protected String[] eeSources = null;
 
 	protected String product;
 	//Map configuration with the expected output format: key: Config, value: string
@@ -561,5 +562,13 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	public void setThreadsPerProcessor(int threadsPerProcessor) {
 		this.threadsPerProcessor = threadsPerProcessor;
+	}
+
+	public void setEESources(String[] eeSources) {
+		this.eeSources = eeSources;
+	}
+
+	public String[] getEESources() {
+		return eeSources;
 	}
 }

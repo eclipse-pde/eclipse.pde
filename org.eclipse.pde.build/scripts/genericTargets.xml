@@ -17,6 +17,7 @@
 <!-- ===================================================================== -->
 <property name="configs" value="*,*,*"/>
 <property name="fetchTag" value=""/>
+<property name="customEESources" value="" />
 <property name="buildingOSGi" value="true"/>
 <property name="generateJnlp" value="false"/>
 <property name="signJars" value="false"/>
@@ -89,6 +90,7 @@
 		parallelCompilation="${parallelCompilation}"
 		parallelThreadCount="${parallelThreadCount}"
 		parallelThreadsPerProcessor="${parallelThreadsPerProcessor}"
+		customEESources="${customEESources}"
 	/>
 </target>
 

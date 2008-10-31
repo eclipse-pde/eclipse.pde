@@ -50,7 +50,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected boolean filterP2Base = false;
 
 	protected boolean reportResolutionErrors;
-	
+
 	static {
 		// By default, a generic configuration is set
 		configInfos = new ArrayList(1);
@@ -82,7 +82,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			immutableAntProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "true"); //$NON-NLS-1$
 		}
 	}
-	
+
 	public static String getImmutableAntProperty(String key) {
 		return getImmutableAntProperty(key, null);
 	}
@@ -93,7 +93,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			return true;
 		return false;
 	}
-	
+
 	public static String getImmutableAntProperty(String key, String defaultValue) {
 		if (immutableAntProperties == null || !immutableAntProperties.containsKey(key))
 			return defaultValue;
@@ -217,7 +217,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 		return result;
 	}
-	
+
 	public void closeScript() {
 		script.close();
 	}
@@ -290,6 +290,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 
 		siteFactory.setSitePaths(getPaths());
+		siteFactory.setEESources(getEESources());
 		siteFactory.setInitialState(pdeUIState);
 		BuildTimeSite result = siteFactory.createSite();
 		if (platformProperties != null)
@@ -313,6 +314,10 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 
 		return sitePaths;
+	}
+
+	protected String[] getEESources() {
+		return null;
 	}
 
 	public void setBuildSiteFactory(BuildTimeSiteFactory siteFactory) {
@@ -368,8 +373,8 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		//the ProductFile uses the OS to determine which icons to return, we don't care so can use null
 		//this is better since this generator may be used for multiple OS's
 		return loadProduct(product, null);
-	}	
-	
+	}
+
 	public ProductFile loadProduct(String product, String os) throws CoreException {
 		if (product == null || product.startsWith("${")) { //$NON-NLS-1$
 			return null;
@@ -391,7 +396,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 		return new ProductFile(f.getAbsolutePath(), os);
 	}
-	
+
 	//Find a file in a bundle or a feature.
 	//location is assumed to be structured like : /<featureId | pluginId>/path.to.the.file
 	protected String findFile(String location, boolean makeRelative) {
@@ -447,6 +452,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public void setFilterP2Base(boolean filter) {
 		filterP2Base = filter;
 	}
+
 	/*
 	 * If the user has specified a platform properties then load it.
 	 */
@@ -475,5 +481,5 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 				}
 		}
 	}
-	
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.site.compatibility.*;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureReference;
 
-public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBuildConstants {
+public class BuildTimeSiteFactory /*extends BaseSiteFactory*/implements IPDEBuildConstants {
 	// The whole site : things to be compiled and the installedBase
 	private BuildTimeSite site = null;
 
@@ -27,6 +27,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 
 	// URLs from the the site will be built
 	private String[] sitePaths;
+	private String[] eeSources;
 
 	//	address of the site used as a base
 	private static String installedBaseLocation = null;
@@ -71,15 +72,15 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 			Collection installedFeatures = Utils.findFiles(new File(installedBaseLocation), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (installedFeatures != null)
 				featureXMLs.addAll(installedFeatures);
-	
+
 			// extract features from platform.xml
 			File[] featureDirectories = PluginPathFinder.getFeaturePaths(installedBaseURL);
 			for (int i = 0; i < featureDirectories.length; i++) {
-				File featureXML = new File(featureDirectories[i],Constants.FEATURE_FILENAME_DESCRIPTOR);
+				File featureXML = new File(featureDirectories[i], Constants.FEATURE_FILENAME_DESCRIPTOR);
 				if (featureXML.exists())
 					featureXMLs.add(featureXML);
 			}
-			
+
 		}
 
 		URL featureURL;
@@ -115,6 +116,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 		model.setFilter(filterState);
 		model.setRootFeaturesForFilter(rootFeaturesForFilter);
 		model.setRootPluginsForFiler(rootPluginsForFilter);
+		model.setEESources(eeSources);
 		return model;
 	}
 
@@ -198,5 +200,9 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 
 	public void setFilterP2Base(boolean filterP2Base) {
 		this.filterP2Base = filterP2Base;
+	}
+
+	public void setEESources(String[] sources) {
+		this.eeSources = sources;
 	}
 }

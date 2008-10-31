@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,8 +14,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
-import org.eclipse.pde.internal.build.site.QualifierReplacer;
+import org.eclipse.pde.internal.build.site.*;
 
 /**
  * Generate build scripts for the listed elements. This is the implementation of the "eclipse.buildScript" Ant task.
@@ -111,15 +110,12 @@ public class BuildScriptGeneratorTask extends Task {
 	}
 
 	private void setEEProfileProperties(Properties antProperties) {
-		//TODO this relies on the formatting of the profile file names in osgi.
-		// More robust would be to load each profile and check its name directly.
-		String[] profiles = BundleHelper.getDefault().getRuntimeJavaProfiles();
+		ProfileManager manager = new ProfileManager(generator.getEESources(), true);
+		String[] profiles = manager.getJavaProfiles();
 		for (int i = 0; i < profiles.length; i++) {
-			String profileName = profiles[i].substring(0, profiles[i].length() - 8); //strip .profile off the end
-			profileName = profileName.replace('_', '/');
-			String value = getProject().getProperty(profileName);
+			String value = getProject().getProperty(profiles[i]);
 			if (value != null) {
-				antProperties.put(profileName, value);
+				antProperties.put(profiles[i], value);
 			}
 		}
 	}
@@ -203,6 +199,12 @@ public class BuildScriptGeneratorTask extends Task {
 	 */
 	public void setWorkingDirectory(String installLocation) {
 		generator.setWorkingDirectory(installLocation);
+	}
+
+	public void setCustomEESources(String eeSources) {
+		if (eeSources != null && !eeSources.startsWith("${")) { //$NON-NLS-1$
+			generator.setEESources(Utils.getArrayFromString(eeSources, File.pathSeparator));
+		}
 	}
 
 	/**

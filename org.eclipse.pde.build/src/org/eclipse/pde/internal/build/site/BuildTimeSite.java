@@ -38,6 +38,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	private Properties repositoryVersions; //version for the features
 	private boolean reportResolutionErrors;
 	private Properties platformProperties;
+	private String[] eeSources;
 
 	//Support for filtering what is added to the state
 	private List rootFeaturesForFilter;
@@ -111,7 +112,8 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 				state = createConverter();
 			}
 			state.addBundles(provider.getPluginPaths());
-
+			state.setEESources(eeSources);
+			
 			//Once all the elements have been added to the state, the filter is removed to allow for the generated plug-ins to be added
 			if (state instanceof FilteringState) {
 				((FilteringState) state).setFilter(null);
@@ -467,5 +469,9 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 
 	public void setSiteContentProvider(BuildTimeSiteContentProvider siteContentProvider) {
 		this.contentProvider = siteContentProvider;
+	}
+
+	public void setEESources(String[] eeSources) {
+		this.eeSources = eeSources;
 	}
 }

@@ -101,6 +101,23 @@ public class AntScript implements IAntScript {
 
 	}
 
+	public void printJarTask(String jarFile, FileSet[] files, String manifestAttribute) {
+		printTab();
+		output.print("<jar"); //$NON-NLS-1$
+		printAttribute("destfile", jarFile, true); //$NON-NLS-1$
+		printAttribute("manifest", manifestAttribute, false); //$NON-NLS-1$
+		//printAttribute("filesetmanifest", filesetManifest, false); //$NON-NLS-1$
+		output.println(">"); //$NON-NLS-1$
+		indent++;
+		for (int i = 0; i < files.length; i++)
+			if (files[i] != null)
+				files[i].print(this);
+		indent--;
+		printTab();
+		output.println("</jar>"); //$NON-NLS-1$
+
+	}
+
 	/**
 	 * Print a <code>jar</code> Ant task to this script. This jars together a group of 
 	 * files into a single file.
