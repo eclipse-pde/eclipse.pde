@@ -16,7 +16,7 @@ package a.b.c;
  */
 public class TestField6 {
 
-	private Runnable runner = new Runnable() {
+	public Runnable runner = new Runnable() {
 		/**
 		 * @noreference
 		 */

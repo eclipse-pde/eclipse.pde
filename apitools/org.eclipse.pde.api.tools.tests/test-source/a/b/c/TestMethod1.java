@@ -23,7 +23,7 @@ public class TestMethod1 {
 	/**
 	 * @nooverride
 	 */
-	private void two() {}
+	protected void two() {}
 	/**
 	 * @noreference
 	 */

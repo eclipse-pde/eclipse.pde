@@ -47,8 +47,8 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
-import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
@@ -257,6 +257,9 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeDeclaration)
 		 */
 		public boolean visit(TypeDeclaration node) {
+			if(isPrivate(node.getModifiers())) {
+				return false;
+			}
 			enterType(node.getName());
 			return isContinue();
 		}
@@ -264,12 +267,25 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.TypeDeclaration)
 		 */
 		public void endVisit(TypeDeclaration node) {
-			exitType();
+			if(!isPrivate(node.getModifiers())) {
+				exitType();
+			}
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
+		 */
+		public void endVisit(AnnotationTypeDeclaration node) {
+			if(!isPrivate(node.getModifiers())) {
+				exitType();
+			}
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
 		 */
 		public boolean visit(AnnotationTypeDeclaration node) {
+			if(isPrivate(node.getModifiers())) {
+				return false;
+			}
 			enterType(node.getName());
 			return isContinue();
 		}
@@ -277,6 +293,9 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)
 		 */
 		public boolean visit(EnumDeclaration node) {
+			if(isPrivate(node.getModifiers())) {
+				return false;
+			}
 			enterType(node.getName());
 			return isContinue();
 		}
@@ -284,7 +303,9 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.EnumDeclaration)
 		 */
 		public void endVisit(EnumDeclaration node) {
-			exitType();
+			if(!isPrivate(node.getModifiers())) {
+				exitType();
+			}
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.PackageDeclaration)
@@ -298,15 +319,23 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodDeclaration)
 		 */
 		public boolean visit(MethodDeclaration node) {
+			if(isPrivate(node.getModifiers())) {
+				return false;
+			}
 			return isContinue();
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.FieldDeclaration)
 		 */
 		public boolean visit(FieldDeclaration node) {
+			if(isPrivate(node.getModifiers())) {
+				return false;
+			}
 			return isContinue();
 		}
-		
+		private boolean isPrivate(int flags) {
+			return Flags.isPrivate(flags);
+		}
 		/**
 		 * Returns a method descriptor with a resolved signature for the given method
 		 * descriptor with an unresolved signature.
@@ -362,18 +391,6 @@ public class TagScanner {
 	 * Cannot be instantiated
 	 */
 	private TagScanner() {}
-	
-	/**
-	 * Scans the specified source {@linkplain CompilationUnit} for contributed API Javadoc tags.
-	 * Tags on methods will have unresolved signatures.
-	 * 
-	 * @param source the source file to scan for tags
-	 * @param description the API description to annotate with any new tag rules found
-	 * @throws CoreException
-	 */
-	public void scan(CompilationUnit source, IApiDescription description) throws CoreException {
-		scan(source, description, null, null);
-	}
 	
 	/**
 	 * Scans the specified {@link ICompilationUnit} for contributed API Javadoc tags.
@@ -432,6 +449,7 @@ public class TagScanner {
 		}
 		options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 		parser.setCompilerOptions(options);
+		parser.setResolveBindings(true);
 		org.eclipse.jdt.core.dom.CompilationUnit cunit = (org.eclipse.jdt.core.dom.CompilationUnit) parser.createAST(new NullProgressMonitor());
 		Visitor visitor = new Visitor(description, container);
 		cunit.accept(visitor);

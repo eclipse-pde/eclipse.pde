@@ -16,7 +16,7 @@ package a.b.c;
  */
 public class TestMethod6 {
 
-	private Runnable runner = new Runnable() {
+	public Runnable runner = new Runnable() {
 		
 		protected int number = -1;
 		/**
