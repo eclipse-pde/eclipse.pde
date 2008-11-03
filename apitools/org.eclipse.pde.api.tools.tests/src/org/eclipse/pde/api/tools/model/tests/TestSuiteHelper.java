@@ -52,6 +52,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 
 /**
  * Helper methods to set up baselines, etc.
@@ -328,13 +329,16 @@ public class TestSuiteHelper {
 	public static void addAllRequired(IApiBaseline baseline, Set<String> done, IApiComponent component, List<IApiComponent> collection) throws CoreException {
 		IRequiredComponentDescription[] descriptions = component.getRequiredComponents();
 		boolean error = false;
-		StringBuffer buffer = new StringBuffer();
+		StringBuffer buffer = null;
 		for (int i = 0; i < descriptions.length; i++) {
 			IRequiredComponentDescription description = descriptions[i];
 			if (!done.contains(description.getId())) {
 				File bundle = getBundle(description.getId());
 				if (bundle == null) {
 					if (!description.isOptional()) {
+						if (buffer == null) {
+							buffer = new StringBuffer();
+						}
 						buffer.append(description.getId()).append(',');
 						error = true;
 					}
@@ -347,8 +351,8 @@ public class TestSuiteHelper {
 			}
 		}
 		if (error) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					"Missing required bundle: " + String.valueOf(buffer), null));
+			throw new CoreException(new Status(IStatus.ERROR, ApiTestsPlugin.PLUGIN_ID, 
+					"Check the property : -DrequiredBundles=...\nMissing required bundle(s): " + String.valueOf(buffer)));
 		}
 	}
 
