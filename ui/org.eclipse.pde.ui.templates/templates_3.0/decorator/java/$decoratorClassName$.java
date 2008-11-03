@@ -13,6 +13,7 @@ package $packageName$;
 import java.net.URL;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -66,8 +67,8 @@ public class $decoratorClassName$ implements ILightweightLabelDecorator {
 		IResource resource = (IResource) element;
 		ResourceAttributes attrs = resource.getResourceAttributes();
 		if (attrs.isReadOnly()){
-			URL url = Platform.find(
-					Platform.getBundle("$pluginId$"), new Path(iconPath)); //$NON-NLS-1$
+			URL url = FileLocator.find(
+					Platform.getBundle("$pluginId$"), new Path(iconPath), null); //NON-NLS-1
 
 			if (url == null)
 				return;
