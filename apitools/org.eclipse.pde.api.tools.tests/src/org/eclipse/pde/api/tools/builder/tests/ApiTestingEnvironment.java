@@ -429,8 +429,16 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	private void deleteWorkspaceFile(IPath workspaceLocation) {
 		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
 		try {
-			file.delete(false, null);
+			file.delete(true, null);
 		} catch (CoreException e) {
+			try {
+				//try to bring the resource in to sync an re-delete
+				file.refreshLocal(IResource.DEPTH_ONE, null);
+				file.delete(true, null);
+			} catch (CoreException e1) {
+				ApiPlugin.log(e1);
+				return;
+			}
 			ApiPlugin.log(e);
 		}
 	}		
@@ -446,9 +454,16 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
 		File replacement = replacementLocation.toFile();
 		try {
-			FileInputStream stream = new FileInputStream(replacement);
-			file.setContents(stream, false, true, null);
-			stream.close();
+			FileInputStream stream = null;
+			try {
+				stream = new FileInputStream(replacement);
+				file.setContents(stream, false, true, null);
+			}
+			finally {
+				if(stream != null) {
+					stream.close();
+				}
+			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		} catch (IOException e) {
@@ -467,9 +482,16 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
 		File replacement = replacementLocation.toFile();
 		try {
-			FileInputStream stream = new FileInputStream(replacement);
-			file.create(stream, false, null);
-			stream.close();
+			FileInputStream stream = null;
+			try {
+				stream = new FileInputStream(replacement);
+				file.create(stream, false, null);
+			}
+			finally {
+				if(stream != null) {
+					stream.close();
+				}
+			}
 		} catch (IOException e) {
 			ApiPlugin.log(e);
 		} catch (CoreException e) {
