@@ -94,7 +94,6 @@ import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -1540,11 +1539,11 @@ public final class Util {
 
 	/**
 	 * Determines if the given {@link MethodDeclaration} is present in a top level type
-	 * @param method
-	 * @return
+	 * @param method the given method
+	 * @return true if the given {@link MethodDeclaration} is present in a top level type, false otherwise
 	 */
 	private static boolean isInTopLevelType(final MethodDeclaration method) {
-		TypeDeclaration type = (TypeDeclaration) method.getParent();
+		AbstractTypeDeclaration type = (AbstractTypeDeclaration) method.getParent();
 		return type != null && type.isPackageMemberTypeDeclaration();
 	}
 	
