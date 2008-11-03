@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 252329
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.nls;
 
@@ -26,6 +27,8 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginExtensionNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -130,9 +133,27 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 			if (schema != null)
 				inspectExtension(schema, extensions[i], model, file);
 		}
+
+		IPluginExtensionPoint[] extensionPoints = model.getPluginBase().getExtensionPoints();
+		for (int i = 0; i < extensionPoints.length; i++) {
+			inspectExtensionPoint(extensionPoints[i], model, file);
+		}
 	}
 
 	private void inspectExtension(ISchema schema, IPluginParent parent, IPluginModelBase memModel, IFile file) {
+		if (parent instanceof PluginExtensionNode) {
+			PluginExtensionNode parentNode = (PluginExtensionNode) parent;
+			IDocumentAttributeNode[] attributes = parentNode.getNodeAttributes();
+			ISchemaElement schemaElement = schema.findElement(parentNode.getXMLTagName());
+			for (int j = 0; j < attributes.length; j++) {
+				IPluginAttribute attr = (IPluginAttribute) attributes[j];
+				ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
+				if (attInfo != null && attInfo.isTranslatable())
+					if (isNotTranslated(attr.getValue()))
+						fModelChangeTable.addToChangeTable(memModel, file, attr, selected(file));
+			}
+		}
+
 		IPluginObject[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPluginElement child = (IPluginElement) children[i];
@@ -153,6 +174,12 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 			}
 			inspectExtension(schema, child, memModel, file);
 		}
+	}
+
+	private void inspectExtensionPoint(IPluginExtensionPoint extensionPoint, IPluginModelBase memModel, IFile file) {
+		if (extensionPoint instanceof PluginExtensionPointNode)
+			if (isNotTranslated(extensionPoint.getName()))
+				fModelChangeTable.addToChangeTable(memModel, file, ((PluginExtensionPointNode) extensionPoint).getNodeAttributesMap().get(IPluginObject.P_NAME), selected(file));
 	}
 
 	private boolean isNotTranslated(String value) {
