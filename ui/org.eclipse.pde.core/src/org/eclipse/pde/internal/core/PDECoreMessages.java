@@ -43,6 +43,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String BundleTextChangeListener_editNames_remove;
 
+	public static String ExtensionPointSchemaBuilder_0;
+
 	public static String ExtensionsErrorReporter_maxOccurrence;
 	public static String ExtensionsErrorReporter_minOccurrence;
 	public static String ExtensionsErrorReporter_unknownIdentifier;
@@ -64,6 +66,8 @@ public class PDECoreMessages extends NLS {
 	public static String TargetPlatform_exceptionThrown;
 
 	public static String FeatureBasedExportOperation_ProblemDuringExport;
+
+	public static String FeatureConsistencyChecker_0;
 
 	public static String FeatureInfo_description;
 	public static String FeatureInfo_license;
@@ -191,6 +195,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String BundleErrorReporter_importNoJRE;
 
+	public static String ManifestConsistencyChecker_0;
+
 	public static String ManifestConsistencyChecker_buildDoesNotExist;
 
 	public static String ManifestConsistencyChecker_builderTaskName;
@@ -275,6 +281,8 @@ public class PDECoreMessages extends NLS {
 	public static String SearchablePluginsManager_createProjectTaskName;
 
 	public static String SourceLocationManager_problemProcessingBundleManifestSourceHeader;
+
+	public static String UpdateSiteBuilder_0;
 
 	public static String VMHelper_noJreForExecEnv;
 

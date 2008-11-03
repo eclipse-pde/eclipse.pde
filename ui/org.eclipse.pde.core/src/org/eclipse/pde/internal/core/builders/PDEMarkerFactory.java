@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 
-public class PDEMarkerFactory implements IMarkerFactory {
+public class PDEMarkerFactory {
 
 	public static final String MARKER_ID = "org.eclipse.pde.core.problem"; //$NON-NLS-1$
 
@@ -72,13 +72,6 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final String CAT_DEPRECATION = "deprecation"; //$NON-NLS-1$
 	public static final String CAT_EE = "ee"; //$NON-NLS-1$
 	public static final String CAT_OTHER = ""; //$NON-NLS-1$
-
-	/**
-	 * @see org.eclipse.pde.internal.core.builders.IMarkerFactory#createMarker(org.eclipse.core.resources.IFile)
-	 */
-	public IMarker createMarker(IFile file) throws CoreException {
-		return createMarker(file, NO_RESOLUTION, ""); //$NON-NLS-1$
-	}
 
 	public IMarker createMarker(IFile file, int id, String category) throws CoreException {
 		IMarker marker = file.createMarker(MARKER_ID);

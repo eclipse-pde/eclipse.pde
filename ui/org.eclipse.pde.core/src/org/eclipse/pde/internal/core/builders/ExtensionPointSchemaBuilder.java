@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,38 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.Map;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 
@@ -87,6 +68,42 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			delta.accept(new DeltaVisitor(monitor));
 		}
 		return new IProject[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void clean(IProgressMonitor monitor) throws CoreException {
+		SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.ExtensionPointSchemaBuilder_0, getProject().getName()), 1);
+		try {
+			// clean existing markers on schema files
+			cleanSchemasIn(getProject(), localmonitor);
+			localmonitor.worked(1);
+		} finally {
+			localmonitor.done();
+		}
+	}
+
+	/**
+	 * Cleans all PDE problem markers from schema files in the given container.
+	 * 
+	 * @param container
+	 * @param monitor progress monitor
+	 * @throws CoreException
+	 */
+	private void cleanSchemasIn(IContainer container, IProgressMonitor monitor) throws CoreException {
+		if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
+		IResource[] members = container.members();
+		for (int i = 0; i < members.length; i++) {
+			IResource member = members[i];
+			if (member instanceof IContainer)
+				cleanSchemasIn((IContainer) member, monitor);
+			else if (member instanceof IFile && isSchemaFile((IFile) member)) {
+				member.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
+			}
+		}
 	}
 
 	private boolean isInterestingProject(IProject project) {

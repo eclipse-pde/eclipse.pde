@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,25 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
 import java.util.Locale;
 import java.util.Map;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.osgi.framework.Bundle;
 
 public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
@@ -106,6 +98,23 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 
 	private boolean isManifestFile(IFile file) {
 		return file.getParent().equals(file.getProject()) && file.getName().toLowerCase(Locale.ENGLISH).equals("feature.xml"); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void clean(IProgressMonitor monitor) throws CoreException {
+		IFile file = getProject().getFile("feature.xml"); //$NON-NLS-1$
+		if (file.exists()) {
+			SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.FeatureConsistencyChecker_0, file.getName()), 1);
+			try {
+				// clean problem markers on feature XML file
+				file.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
+				localmonitor.worked(1);
+			} finally {
+				localmonitor.done();
+			}
+		}
 	}
 
 }

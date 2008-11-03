@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,34 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Map;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.osgi.framework.Bundle;
 
@@ -408,4 +393,39 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void clean(IProgressMonitor monitor) throws CoreException {
+		SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(PDECoreMessages.ManifestConsistencyChecker_0, getProject().getName()), 1);
+		try {
+			// clean problem markers on the project
+			cleanProblems(getProject(), IResource.DEPTH_ZERO);
+			// clean the manifest directory (since errors can be created on manifest files with incorrect casing)
+			IFile manifestFile = getProject().getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+			cleanProblems(manifestFile.getParent(), IResource.DEPTH_ONE);
+			// clean plug-in XML file
+			cleanProblems(getProject().getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), IResource.DEPTH_ZERO);
+			// clean fragment XML file
+			cleanProblems(getProject().getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR), IResource.DEPTH_ZERO);
+			// clean build properties
+			cleanProblems(getProject().getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR), IResource.DEPTH_ZERO);
+			localmonitor.worked(1);
+		} finally {
+			localmonitor.done();
+		}
+	}
+
+	/**
+	 * Cleans PDE problems from the given resource to the specified depth.
+	 * 
+	 * @param resource resource to delete markers from
+	 * @param depth one of the depth constants in {@link IResource}
+	 * @throws CoreException
+	 */
+	private void cleanProblems(IResource resource, int depth) throws CoreException {
+		if (resource.exists()) {
+			resource.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, depth);
+		}
+	}
 }
