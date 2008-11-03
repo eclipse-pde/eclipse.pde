@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.ArchiveApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
 import org.eclipse.pde.api.tools.internal.DirectoryApiTypeContainer;
@@ -101,6 +104,20 @@ public class TagScannerTests extends TestCase {
 		}
 	}
 	
+	/**
+	 * Performs the scan to populate the manifest and traps exceptions thrown from the scanner
+	 * @param name
+	 * @param manifest
+	 * @param cfc
+	 */
+	protected void doScan(String name, IApiDescription manifest, Map options) {
+		try {
+			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, null, options);
+		}
+		catch(CoreException e) {
+			fail(MessageFormat.format("Error scanning: {0}", new String[] {name}));
+		}
+	}
 	/**
 	 * Tests that methods with non-simple type parameters have their signatures resolved if a backing class file 
 	 * is provided (via an {@link IApiTypeContainer})
@@ -910,6 +927,19 @@ public class TagScannerTests extends TestCase {
 		assertTrue("There should exist a description for method 'void two()'", description != null);
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
+	}
+	
+	/**
+	 * Tests that a restriction on a @noreference constructor inside an enum class.
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=253055
+	 */
+	public void testEnumMethodWithNoReference() {
+		IApiDescription manifest = newDescription();
+		Map options = JavaCore.getDefaultOptions();
+		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
+		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
+		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
+		doScan("a/b/c/TestMethod21.java", manifest, options);
 	}
 	
 }
