@@ -241,6 +241,7 @@ public class SchemaTransformer {
 			if (ischema != null) {
 				fWriter.println("<p>"); //$NON-NLS-1$
 				transformText(ischema.getDescription());
+				fWriter.println("</p>"); //$NON-NLS-1$
 			}
 		}
 		fWriter.println("<p></p>"); //$NON-NLS-1$
@@ -362,6 +363,7 @@ public class SchemaTransformer {
 			fWriter.print("\"" + att.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (!choices)
 			fWriter.print("#IMPLIED"); //$NON-NLS-1$
+		fWriter.print("</p>"); //$NON-NLS-1$
 	}
 
 	private void appendRestriction(ISchemaRestriction restriction) {
