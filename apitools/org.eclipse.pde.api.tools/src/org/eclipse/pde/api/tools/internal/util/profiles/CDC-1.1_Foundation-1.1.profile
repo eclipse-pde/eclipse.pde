@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2005 IBM Corporation and others.
+# Copyright (c) 2005, 2008 IBM Corporation and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ org.osgi.framework.bootdelegation = \
 org.osgi.framework.executionenvironment = \
  OSGi/Minimum-1.0,\
  OSGi/Minimum-1.1,\
+ OSGi/Minimum-1.2,\
  CDC-1.0/Foundation-1.0,\
  CDC-1.1/Foundation-1.1
 osgi.java.profile.name = CDC-1.1/Foundation-1.1
