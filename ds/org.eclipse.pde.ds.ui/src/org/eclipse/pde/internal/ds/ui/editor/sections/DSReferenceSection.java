@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
- *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
+ *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028, 248226
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.sections;
 
@@ -57,6 +57,8 @@ public class DSReferenceSection extends TableSection {
 	private Action fRemoveAction;
 	private Action fAddAction;
 	private Action fEditAction;
+	private Action fUpAction;
+	private Action fDownAction;
 
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object inputElement) {
@@ -75,14 +77,16 @@ public class DSReferenceSection extends TableSection {
 		super(page, parent, Section.DESCRIPTION, new String[] {
 				Messages.DSReferenceSection_add,
 				Messages.DSReferenceSection_remove,
-				Messages.DSReferenceSection_edit });
+				Messages.DSReferenceSection_edit,
+				Messages.DSReferenceSection_up,
+				Messages.DSReferenceSection_down });
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(Messages.DSReferenceSection_title);
 		section.setDescription(Messages.DSReferenceSection_description);
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -131,16 +135,42 @@ public class DSReferenceSection extends TableSection {
 		case 2:
 			handleEdit();
 			break;
+		case 3:
+			handleMove(true);
+			break;
+		case 4:
+			handleMove(false);
+			break;
 		}
 	}
 
+	private void handleMove(boolean moveUp) {
+		ISelection selection = fReferencesTable.getSelection();
+		if (selection != null) {
+
+			int selectionIndex = fReferencesTable.getTable()
+					.getSelectionIndex();
+			if (selectionIndex != -1) {
+
+				IDSReference ref = (IDSReference) fReferencesTable
+						.getElementAt(selectionIndex);
+				if (ref != null) {
+					int positionFlag = moveUp ? -1 : 1;
+					ref.getComponent().moveChildNode(ref, positionFlag, true);
+				}
+			}
+		}
+
+	}
+
 	private void handleEdit() {
-		
-				ISelection selection = fReferencesTable.getSelection();
-				if(selection != null){
-					
-					int selectionIndex = fReferencesTable.getTable().getSelectionIndex();
-					if (selectionIndex != -1) {
+
+		ISelection selection = fReferencesTable.getSelection();
+		if (selection != null) {
+
+			int selectionIndex = fReferencesTable.getTable()
+					.getSelectionIndex();
+			if (selectionIndex != -1) {
 				DSEditReferenceDialog dialog = new DSEditReferenceDialog(
 						Activator.getActiveWorkbenchShell(),
 						(IDSReference) fReferencesTable
@@ -149,9 +179,9 @@ public class DSReferenceSection extends TableSection {
 				dialog.getShell().setSize(500, 400);
 				dialog.open();
 			}
-		
-				}
-				
+
+		}
+
 	}
 
 	private void makeActions() {
@@ -182,10 +212,15 @@ public class DSReferenceSection extends TableSection {
 		Table table = fReferencesTable.getTable();
 		TablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(0, isEditable());
-		tablePart.setButtonEnabled(1, isEditable()
-				&& table.getSelection().length > 0);
-		tablePart.setButtonEnabled(2, isEditable()
-				&& table.getSelection().length > 0);
+		int length = table.getSelection().length;
+		tablePart.setButtonEnabled(1, isEditable() && length > 0);
+		tablePart.setButtonEnabled(2, isEditable() && length > 0);
+		
+		tablePart.setButtonEnabled(3, isEditable()
+				&& table.getSelection().length > 0 && !table.isSelected(0));
+		tablePart.setButtonEnabled(4, isEditable()
+				&& table.getSelection().length > 0
+				&& !table.isSelected(table.getItems().length - 1));
 	}
 
 	private void handleRemove() {
@@ -229,18 +264,18 @@ public class DSReferenceSection extends TableSection {
 	}
 
 	private void addReference(String fullyQualifiedName) {
-	
+
 		IDSReference reference = getDSModel().getFactory().createReference();
 		// set interface attribute
 		reference.setReferenceInterface(fullyQualifiedName);
-		
+
 		// set name attribute
 		int index = fullyQualifiedName.lastIndexOf("."); //$NON-NLS-1$
 		if (index != -1) {
 			fullyQualifiedName = fullyQualifiedName.substring(index + 1);
 		}
 		reference.setReferenceName(fullyQualifiedName);
-		
+
 		// add reference
 		getDSModel().getDSComponent().addReference(reference);
 	}

@@ -120,12 +120,15 @@ public class Messages extends NLS {
 	public static String DSReferenceSection_add;
 	public static String DSReferenceSection_remove;
 	public static String DSReferenceSection_edit;
+	public static String DSReferenceSection_up;
+	public static String DSReferenceSection_down;
 	
 	public static String DSProvideSection_title;
 	public static String DSProvideSection_description;
 	public static String DSProvideSection_add;
 	public static String DSProvideSection_remove;
 	public static String DSProvideSection_edit;
+	public static String DSProvideSection_ServiceFactoryButtonMessage;
 	
 	public static String DSEditReferenceDialog_OK;
 	public static String DSEditReferenceDialog_Cancel;
@@ -159,6 +162,7 @@ public class Messages extends NLS {
 	public static String DSServiceComponentSection_enabledButtonMessage;
 	
 	public static String DSService_title;
+	
 	
 
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ds.ui.messages"; //$NON-NLS-1$
