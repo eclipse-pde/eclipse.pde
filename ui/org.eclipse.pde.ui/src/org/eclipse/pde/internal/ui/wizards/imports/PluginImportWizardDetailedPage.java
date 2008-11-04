@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -54,13 +54,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private Text fFilterText;
 	private VersionFilter fVersionFilter;
 	private AvailableFilter fFilter;
-	// fSelected is used to track the selection in a HashMap so we can efficiently
+	// fSelected is used to track the selection in a hash set so we can efficiently
 	// filter selected items out of the available item list
-	private HashMap fSelected;
+	private Set fSelected;
 	// this job is used to delay the full filter refresh for 200 milliseconds in case the user is still typing
 	private WorkbenchJob fFilterJob;
-	// used to block the selection listeners from updating button enablement when programatically removing items
-	private boolean fBlockSelectionListeners;
 	private Button fAddButton;
 	private Button fAddAllButton;
 	private Button fRemoveButton;
@@ -80,7 +78,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			// filter out any items that are currently selected
 			// on a full refresh, these will have been added back to the list
-			if (fSelected.containsKey(element))
+			if (fSelected.contains(element))
 				return false;
 			if (!(element instanceof AbstractPluginModelBase))
 				return false;
@@ -140,7 +138,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		super(pageName, firstPage);
 		setTitle(PDEUIMessages.ImportWizard_DetailedPage_title);
 		setMessage(PDEUIMessages.ImportWizard_DetailedPage_desc);
-		fSelected = new HashMap();
+		fSelected = new HashSet();
 	}
 
 	public void createControl(Composite parent) {
@@ -237,15 +235,13 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 		fAvailableListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				if (!fBlockSelectionListeners)
-					updateSelectionBasedEnablement(event.getSelection(), true);
+				updateSelectionBasedEnablement(event.getSelection(), true);
 			}
 		});
 
 		fImportListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				if (!fBlockSelectionListeners)
-					updateSelectionBasedEnablement(event.getSelection(), false);
+				updateSelectionBasedEnablement(event.getSelection(), false);
 			}
 		});
 
@@ -419,7 +415,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	protected void refreshPage() {
 		fImportListViewer.getTable().removeAll();
-		fSelected = new HashMap();
+		fSelected.clear();
 		fFilter.setPattern("*"); //$NON-NLS-1$
 		fVersionFilter.setModel(fModels);
 		fAvailableListViewer.refresh();
@@ -467,14 +463,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		if (ssel.size() > 0) {
 			Table table = fAvailableListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
-			Object[] selection = ssel.toArray();
-			setBlockSelectionListeners(true);
-			setRedraw(false);
-			for (int i = 0; i < selection.length; i++) {
-				doAdd(selection[i]);
-			}
-			setRedraw(true);
-			setBlockSelectionListeners(false);
+			doAdd(ssel.toList());
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
 			pageChanged(true, false);
 		}
@@ -488,14 +477,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			data.add(items[i].getData());
 		}
 		if (data.size() > 0) {
-			Object[] datas = data.toArray();
-			setBlockSelectionListeners(true);
-			setRedraw(false);
-			for (int i = 0; i < datas.length; i++) {
-				doAdd(datas[i]);
-			}
-			setRedraw(true);
-			setBlockSelectionListeners(false);
+			doAdd(data);
 			pageChanged(true, false);
 		}
 	}
@@ -519,36 +501,22 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		if (ssel.size() > 0) {
 			Table table = fImportListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
-			Object[] selection = ssel.toArray();
-			setBlockSelectionListeners(true);
-			setRedraw(false);
-			for (int i = 0; i < selection.length; i++) {
-				doRemove(selection[i]);
-			}
-			setRedraw(true);
-			setBlockSelectionListeners(false);
+			doRemove(ssel.toList());
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
 			pageChanged(false, true);
 		}
 	}
 
-	private void doAdd(Object o) {
-		fImportListViewer.add(o);
-		fAvailableListViewer.remove(o);
-		fSelected.put(o, null);
+	private void doAdd(List items) {
+		fImportListViewer.add(items.toArray());
+		fAvailableListViewer.remove(items.toArray());
+		fSelected.addAll(items);
 	}
 
-	private void doRemove(Object o) {
-		fSelected.remove(o);
-		fImportListViewer.remove(o);
-		if (fFilter.select(fAvailableListViewer, null, o))
-			fAvailableListViewer.add(o);
-	}
-
-	// used to prevent flicker during operations that move items between lists
-	private void setRedraw(boolean redraw) {
-		fAvailableListViewer.getTable().setRedraw(redraw);
-		fImportListViewer.getTable().setRedraw(redraw);
+	private void doRemove(List items) {
+		fSelected.removeAll(items);
+		fImportListViewer.remove(items.toArray());
+		fAvailableListViewer.add(items.toArray());
 	}
 
 	private void handleRemoveAll() {
@@ -559,14 +527,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			data.add(items[i].getData());
 		}
 		if (data.size() > 0) {
-			Object[] datas = data.toArray();
-			setBlockSelectionListeners(true);
-			setRedraw(false);
-			for (int i = 0; i < datas.length; i++) {
-				doRemove(datas[i]);
-			}
-			setRedraw(true);
-			setBlockSelectionListeners(false);
+			doRemove(data);
 			pageChanged(false, true);
 		}
 	}
@@ -582,21 +543,21 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		for (int i = 0; i < items.length; i++) {
 			oldSelection[i] = items[i].getData();
 		}
-		setRedraw(false);
+
 		// remove items that were in the old selection, but are not in the new one
+		List itemsToRemove = new ArrayList();
 		for (int i = 0; i < oldSelection.length; i++) {
 			if (newSelectionList.contains(oldSelection[i])) {
 				newSelectionList.remove(oldSelection[i]);
 			} else {
-				doRemove(oldSelection[i]);
+				itemsToRemove.add(oldSelection[i]);
 			}
 		}
+		doRemove(itemsToRemove);
+
 		// add items that were not in the old selection and are in the new one
-		Object[] newSelection = newSelectionList.toArray();
-		for (int i = 0; i < newSelection.length; i++) {
-			doAdd(newSelection[i]);
-		}
-		setRedraw(true);
+		doAdd(newSelectionList);
+
 		pageChanged();
 	}
 
@@ -604,16 +565,12 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		TableItem[] aItems = fAvailableListViewer.getTable().getItems();
 		TableItem[] iItems = fImportListViewer.getTable().getItems();
 
-		setRedraw(false);
 		ArrayList data = new ArrayList();
 		for (int i = 0; i < iItems.length; i++) {
 			data.add(iItems[i].getData());
 		}
 		if (data.size() > 0) {
-			Object[] datas = data.toArray();
-			for (int i = 0; i < datas.length; i++) {
-				doRemove(datas[i]);
-			}
+			doRemove(data);
 		}
 
 		data.clear();
@@ -621,12 +578,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			data.add(aItems[i].getData());
 		}
 		if (data.size() > 0) {
-			Object[] datas = data.toArray();
-			for (int i = 0; i < datas.length; i++) {
-				doAdd(datas[i]);
-			}
+			doAdd(data);
 		}
-		setRedraw(true);
 		pageChanged();
 	}
 
@@ -674,10 +627,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	public void dispose() {
 		fFilterJob.cancel();
-	}
-
-	private void setBlockSelectionListeners(boolean blockSelectionListeners) {
-		fBlockSelectionListeners = blockSelectionListeners;
 	}
 
 	public void storeSettings() {
