@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brock Janiczak (brockj@tpg.com.au) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=197410
+ *     Brock Janiczak (brockj@tpg.com.au) - bug 197410
+ *     Benjamin Cabe (benjamin.cabe@anyware-tech.com) - bug 253692
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
@@ -53,8 +54,9 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	private static final String LASOCKI_BICZYSKO = "Janek Lasocki-Biczysko"; //$NON-NLS-1$
 	private static final String PAWLOWSKI = "Mike Pawlowski"; //$NON-NLS-1$
 	private static final String MELHEM = "Wassim Melhem"; //$NON-NLS-1$
+	private static final String WINDATT = "Curtis Windatt"; //$NON-NLS-1$
 
-	private static final String[] fNames = {BAUMAN, ANISZCZYK, LASOCKI_BICZYSKO, PAWLOWSKI, MELHEM};
+	private static final String[] fNames = {BAUMAN, ANISZCZYK, LASOCKI_BICZYSKO, PAWLOWSKI, MELHEM, WINDATT};
 
 	protected static final short F_TYPE_HEADER = 0, // header proposal
 			F_TYPE_PKG = 1, // package proposal
@@ -565,12 +567,24 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	}
 
 	protected ICompletionProposal[] handleBuddyPolicyCompletion(String currentValue, int offset) {
-		String value = removeLeadingSpaces(currentValue);
-		// values from bug 178517 comment #7
-		ArrayList validValues = initializeNewList(new String[] {"dependent", "global", "registered", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				"app", "ext", "boot", "parent"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		ArrayList types = initializeNewList(new Object[] {new Integer(F_TYPE_VALUE), new Integer(F_TYPE_VALUE), new Integer(F_TYPE_VALUE), new Integer(F_TYPE_VALUE), new Integer(F_TYPE_VALUE), new Integer(F_TYPE_VALUE), new Integer(F_TYPE_VALUE)});
-		return handleAttrsAndDirectives(value, validValues, types, offset);
+		String[] validValues = new String[] {"dependent", "global", "registered", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"app", "ext", "boot", "parent"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+		int comma = currentValue.lastIndexOf(',');
+		if (comma != -1)
+			currentValue = currentValue.substring(comma + 1);
+		currentValue = removeLeadingSpaces(currentValue);
+		ArrayList completions = new ArrayList();
+		ManifestElement[] elems = (ManifestElement[]) fHeaders.get(ICoreConstants.ECLIPSE_BUDDY_POLICY);
+		HashSet set = new HashSet();
+		if (elems != null)
+			for (int i = 0; i < elems.length; i++)
+				set.add(elems[i].getValue());
+		int length = currentValue.length();
+		for (int i = 0; i < validValues.length; i++)
+			if (validValues[i].regionMatches(true, 0, currentValue, 0, length) && !set.contains(validValues[i]))
+				completions.add(new TypeCompletionProposal(validValues[i], getImage(F_TYPE_VALUE), validValues[i], offset - length, length));
+		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 
 	protected ICompletionProposal[] handleRequiredExecEnv(String currentValue, int offset) {
