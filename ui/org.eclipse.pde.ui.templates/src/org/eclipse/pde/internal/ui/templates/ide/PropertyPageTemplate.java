@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,28 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 234376
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginModelFactory;
-import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
-import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
-import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.AbstractTemplateSection;
-import org.eclipse.pde.ui.templates.ITemplateSection;
-import org.eclipse.pde.ui.templates.PluginReference;
+import org.eclipse.pde.ui.templates.*;
 
 public class PropertyPageTemplate extends PDETemplateSection {
 	public static final String KEY_CLASSNAME = "className"; //$NON-NLS-1$
@@ -101,7 +92,17 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		pageElement.setAttribute("id", //$NON-NLS-1$
 				getStringOption(KEY_PACKAGE_NAME) + ".samplePropertyPage"); //$NON-NLS-1$
 		pageElement.setAttribute("name", getStringOption(KEY_PAGE_NAME)); //$NON-NLS-1$
-		pageElement.setAttribute("objectClass", getStringOption(KEY_TARGET_CLASS)); //$NON-NLS-1$
+		if (getTargetVersion() < 3.3) {
+			pageElement.setAttribute("objectClass", getStringOption(KEY_TARGET_CLASS)); //$NON-NLS-1$
+		} else {
+			IPluginElement enabledWhen = factory.createElement(pageElement);
+			pageElement.add(enabledWhen);
+			enabledWhen.setName("enabledWhen"); //$NON-NLS-1$
+			IPluginElement instanceOf = factory.createElement(enabledWhen);
+			enabledWhen.add(instanceOf);
+			instanceOf.setName("instanceof"); //$NON-NLS-1$
+			instanceOf.setAttribute("value", getStringOption(KEY_TARGET_CLASS)); //$NON-NLS-1$
+		}
 		pageElement.setAttribute("class", //$NON-NLS-1$
 				getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_CLASSNAME)); //$NON-NLS-1$
 		pageElement.setAttribute("nameFilter", getStringOption(KEY_NAME_FILTER)); //$NON-NLS-1$
