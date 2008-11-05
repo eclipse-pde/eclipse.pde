@@ -133,7 +133,7 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 		buffer.append(';').append(Util.LINE_DELIMITER);
 		if (getGenericSignature() != null) {
 			buffer
-				.append(" Signature : ") //$NON-NLS-1$
+				.append(" Generic signature : ") //$NON-NLS-1$
 				.append(getGenericSignature()).append(Util.LINE_DELIMITER);
 		}
 		return String.valueOf(buffer);
