@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 215232
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 215232, 250334
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LocaleUtil {
 
@@ -45,6 +47,23 @@ public class LocaleUtil {
 
 		Locale locale = new Locale(language, country, variant);
 		return locale.toString() + " - " + locale.getDisplayName(); //$NON-NLS-1$
+	}
+
+	/**
+	 * Smartly trims a {@link String} representing a <code>Bundle-Localization</code> key removing trailing locale and/or .properties extension<br>
+	 * <em>e.g.</em> <code>"bundle_es.properties  "</code> --> <code>"bundle"</code>
+	 * @param localization the {@link String} to trim
+	 * @return the trimmed {@link String}
+	 */
+	public static String trimLocalization(String localization) {
+		String sTrim = localization.trim();
+		if (sTrim.endsWith(".properties")) //$NON-NLS-1$
+			sTrim = sTrim.replaceAll(".properties", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		Pattern p = Pattern.compile(".*(_[a-z]{2}(_[A-Z]{2})?)$"); //$NON-NLS-1$
+		Matcher m = p.matcher(sTrim);
+		if (m.matches())
+			sTrim = sTrim.substring(0, m.start(1));
+		return sTrim;
 	}
 
 }

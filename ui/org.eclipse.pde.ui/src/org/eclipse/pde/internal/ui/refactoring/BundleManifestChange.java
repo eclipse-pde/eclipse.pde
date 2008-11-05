@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 219852
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 219852, 250334
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.ui.util.LocaleUtil;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.*;
 import org.osgi.framework.Constants;
@@ -111,7 +112,7 @@ public class BundleManifestChange {
 					if (!localizationRenamed && fileName.endsWith(".properties")) { //$NON-NLS-1$
 						String oldText = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
 						String oldLocalization = bundle.getLocalization();
-						if (oldText.equals(oldLocalization)) {
+						if (LocaleUtil.trimLocalization(oldText).equals(oldLocalization)) {
 							renameLocalization(bundle, oldText, newText);
 							localizationRenamed = true;
 						}
@@ -154,7 +155,7 @@ public class BundleManifestChange {
 
 	private static void renameLocalization(Bundle bundle, String oldText, String newText) {
 		if (newText.endsWith(".properties")) //$NON-NLS-1$
-			bundle.setLocalization(newText.substring(0, newText.lastIndexOf("."))); //$NON-NLS-1$
+			bundle.setLocalization(LocaleUtil.trimLocalization(newText));
 		else
 			bundle.setLocalization(null);
 	}
