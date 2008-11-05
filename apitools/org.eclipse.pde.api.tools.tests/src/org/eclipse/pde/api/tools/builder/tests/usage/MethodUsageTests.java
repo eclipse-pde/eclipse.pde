@@ -25,6 +25,8 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 public class MethodUsageTests extends UsageTest {
 	
 	protected static final String METHOD_CLASS_NAME = "MethodUsageClass";
+	protected static final String GENERIC_METHOD_CLASS_NAME = "GenericMethodUsageClass";
+	protected static final String GENERIC_METHOD_CLASS_NAME2 = "GenericMethodUsageClass2";
 	protected static final String METHOD_INTERFACE_NAME = "MethodUsageInterface";
 	protected static final String METHOD_ENUM_NAME = "MethodUsageEnum";
 	
@@ -255,6 +257,75 @@ public class MethodUsageTests extends UsageTest {
 				{METHOD_ENUM_NAME, OUTER_NAME, "m1()"},
 				{METHOD_ENUM_NAME, OUTER_NAME, "m3()"},
 				{METHOD_ENUM_NAME, OUTER_NAME, "m4()"}
+		});
+		deployTest(typename, inc);
+	}
+
+
+	/**
+	 * Tests that accessing restricted generic methods are properly reported
+	 * using a full build
+	 */
+	public void testMethodUsageTests6F() {
+		x6(false);
+	}
+	
+	/**
+	 * Tests that accessing restricted generic methods are properly reported
+	 * using an incremental build
+	 */
+	public void testMethodUsageTests6I() {
+		x6(true);
+	}
+
+	private void x6(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+		});
+		String typename = "testM6";
+		setExpectedMessageArgs(new String[][] {
+				{GENERIC_METHOD_CLASS_NAME, INNER_NAME1, "m1()"},
+				{GENERIC_METHOD_CLASS_NAME, INNER_NAME1, "m2(T)"},
+				{GENERIC_METHOD_CLASS_NAME, INNER_NAME2, "m1()"},
+				{GENERIC_METHOD_CLASS_NAME, INNER_NAME2, "m2(T)"},
+				{GENERIC_METHOD_CLASS_NAME, OUTER_NAME, "m1()"},
+				{GENERIC_METHOD_CLASS_NAME, OUTER_NAME, "m2(T)"},
+		});
+		deployTest(typename, inc);
+	}
+
+	/**
+	 * Tests that accessing restricted methods that has a generic type as a parameter
+	 * are properly reported using a full build
+	 */
+	public void testMethodUsageTests7F() {
+		x7(false);
+	}
+	
+	/**
+	 * Tests that accessing restricted methods that has a generic type as a parameter
+	 * are properly reported using a full build
+	 */
+	public void testMethodUsageTests7I() {
+		x7(true);
+	}
+	
+	private void x7(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+		});
+		String typename = "testM7";
+		setExpectedMessageArgs(new String[][] {
+				{GENERIC_METHOD_CLASS_NAME2, INNER_NAME1, "m1(GenericClassUsageClass<?>)"},
+				{GENERIC_METHOD_CLASS_NAME2, INNER_NAME2, "m1(GenericClassUsageClass<?>)"},
+				{GENERIC_METHOD_CLASS_NAME2, OUTER_NAME, "m1(GenericClassUsageClass<?>)"},
 		});
 		deployTest(typename, inc);
 	}

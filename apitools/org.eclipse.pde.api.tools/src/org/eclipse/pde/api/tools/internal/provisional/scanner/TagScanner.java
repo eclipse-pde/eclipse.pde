@@ -356,8 +356,16 @@ public class TagScanner {
 					for (int i = 0; i < methods.length; i++) {
 						IApiMethod method = methods[i];
 						if (descriptor.getName().equals(method.getName())) {
-							if (Util.matchesSignatures(descriptor.getSignature().replace('/', '.'), method.getSignature().replace('/', '.'))) {
-								return descriptor.getEnclosingType().getMethod(method.getName(), method.getSignature());
+							String signature = method.getSignature();
+							String descriptorSignature = descriptor.getSignature().replace('/', '.');
+							if (Util.matchesSignatures(descriptorSignature, signature.replace('/', '.'))) {
+								return descriptor.getEnclosingType().getMethod(method.getName(), signature);
+							}
+							String genericSignature = method.getGenericSignature();
+							if (genericSignature != null) {
+								if (Util.matchesSignatures(descriptorSignature, genericSignature.replace('/', '.'))) {
+									return descriptor.getEnclosingType().getMethod(method.getName(), signature);
+								}
 							}
 						}
 					}
@@ -449,7 +457,6 @@ public class TagScanner {
 		}
 		options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 		parser.setCompilerOptions(options);
-		parser.setResolveBindings(true);
 		org.eclipse.jdt.core.dom.CompilationUnit cunit = (org.eclipse.jdt.core.dom.CompilationUnit) parser.createAST(new NullProgressMonitor());
 		Visitor visitor = new Visitor(description, container);
 		cunit.accept(visitor);

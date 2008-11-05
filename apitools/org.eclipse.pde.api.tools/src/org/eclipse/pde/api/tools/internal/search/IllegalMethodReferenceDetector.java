@@ -60,15 +60,23 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 	 */
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();
+		String genericSignature = method.getGenericSignature();
+		String signature = null;
+		if (genericSignature != null) {
+			signature = genericSignature;
+		} else {
+			signature = method.getSignature();
+		}
 		if (method.isConstructor()) {
 			return new String[] {
-				Signature.toString(method.getSignature(), getSimpleTypeName(method), null, false, false), 
+				Signature.toString(signature, getSimpleTypeName(method), null, false, false), 
 				getSimpleTypeName(reference.getMember())};
 		}
 		return new String[] {
 			getSimpleTypeName(method), 
 			getSimpleTypeName(reference.getMember()), 
-			Signature.toString(method.getSignature(), method.getName(), null, false, false)};
+			Signature.toString(signature, method.getName(), null, false, false)
+		};
 	}
 
 	/* (non-Javadoc)

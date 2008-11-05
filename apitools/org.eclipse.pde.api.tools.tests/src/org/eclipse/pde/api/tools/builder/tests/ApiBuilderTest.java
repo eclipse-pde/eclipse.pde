@@ -767,10 +767,14 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected String arrayToString(Object[] array) {
 		StringBuffer buffer = new StringBuffer();
 		int length = array == null ? 0 : array.length;
-		for (int i = 0; i < length; i++) {
-			if (array[i] != null) {
-				if (i > 0) buffer.append('\n');
-				buffer.append(array[i].toString());
+		if (length == 0) {
+			buffer.append("No problem found");
+		} else {
+			for (int i = 0; i < length; i++) {
+				if (array[i] != null) {
+					if (i > 0) buffer.append('\n');
+					buffer.append(array[i].toString());
+				}
 			}
 		}
 		return buffer.toString();
