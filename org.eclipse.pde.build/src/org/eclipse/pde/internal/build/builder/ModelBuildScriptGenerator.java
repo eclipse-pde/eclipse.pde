@@ -1093,7 +1093,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		String name = entry.getName(false);
 		script.printTargetDeclaration(name, TARGET_INIT, null, entry.getName(true), NLS.bind(Messages.build_plugin_jar, model.getSymbolicName() + ' ' + name));
-		String destdir = getTempJARFolderLocation(entry.getName(true));
+		String destdir = (entry.getType() == CompiledEntry.FOLDER) ? getJARLocation(entry.getName(true)) : getTempJARFolderLocation(entry.getName(true));
 		script.printDeleteTask(destdir, null, null);
 		script.printMkdirTask(destdir);
 		script.printPathStructure("path", name + PROPERTY_CLASSPATH, classpath); //$NON-NLS-1$
@@ -1147,15 +1147,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		String jarLocation = getJARLocation(entry.getName(true));
-		script.printMkdirTask(new Path(jarLocation).removeLastSegments(1).toString());
-
-		if (entry.getType() == CompiledEntry.FOLDER) {
-			FileSet[] binFolder = new FileSet[] {new FileSet(destdir, null, null, null, null, null, null)};
-			script.printCopyTask(null, jarLocation, binFolder, true, false);
-		} else {
+		if (entry.getType() != CompiledEntry.FOLDER) {
+			script.printMkdirTask(new Path(jarLocation).removeLastSegments(1).toString());
 			script.printJarTask(jarLocation, destdir, getEmbeddedManifestFile(entry, destdir));
+			script.printDeleteTask(destdir, null, null);
 		}
-		script.printDeleteTask(destdir, null, null);
 
 		if (customBuildCallbacks != null) {
 			params.clear();
