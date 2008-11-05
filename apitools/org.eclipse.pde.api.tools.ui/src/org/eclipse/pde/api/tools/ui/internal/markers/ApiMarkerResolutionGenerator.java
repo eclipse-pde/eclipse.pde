@@ -62,6 +62,9 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			case IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID: {
 				return new IMarkerResolution[] {new UnsupportedTagResolution(marker)};
 			}
+			case IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID: {
+				return new IMarkerResolution[] {new DuplicateTagResolution(marker)};
+			}
 			default :
 				return NO_RESOLUTIONS;
 		}

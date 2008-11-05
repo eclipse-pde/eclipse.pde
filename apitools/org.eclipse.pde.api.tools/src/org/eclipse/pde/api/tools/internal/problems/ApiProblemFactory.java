@@ -404,6 +404,7 @@ public class ApiProblemFactory {
 						break;
 					}
 					case IApiProblem.UNSUPPORTED_TAG_USE: return 112;
+					case IApiProblem.DUPLICATE_TAG_USE: return 22;
 				}
 				break;
 			}
@@ -576,6 +577,7 @@ public class ApiProblemFactory {
 						break;
 					}
 					case IApiProblem.UNSUPPORTED_TAG_USE: return IApiProblemTypes.INVALID_JAVADOC_TAG;
+					case IApiProblem.DUPLICATE_TAG_USE: return IApiProblemTypes.INVALID_JAVADOC_TAG;
 				}
 				break;
 			}

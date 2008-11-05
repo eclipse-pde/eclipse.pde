@@ -10,23 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
+import java.util.HashMap;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 
 /**
- * Base implementation of an {@link IApiJavadocTag}. Acts as a delegate
- * to a contributed doc tag (via plugins.xml)
+ * Base API tools Javadoc tag implementation
  * 
  * @since 1.0.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ApiJavadocTag implements IApiJavadocTag {
-
-	/**
-	 * Array of element specific comments, or <code>null</code> if not applicable.
-	 * Indexed by type and member constants in {@link IApiJavadocTag}.
-	 */
-	private String[][] comments = null;
 
 	/**
 	 * The id of the tag
@@ -37,13 +34,11 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 */
 	private String fName = null;
 	/**
-	 * collection of elements this tag applies to
+	 * Map of integer ids to comments
 	 */
-	private int[] fElements = null;
-	/**
-	 * matching collection of comments for the elements
-	 */
-	private String[] fComments = null;
+	private HashMap fTagItems = null;
+	
+	private static String EMPTY_STRING = ""; //$NON-NLS-1$
 	/**
 	 * restriction modifier for the tag
 	 */
@@ -52,24 +47,19 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	/**
 	 * Lazily computed tag label, cached once it has been computed
 	 */
-	private String taglabel = null;
+	private String fTaglabel = null;
 	
 	/**
 	 * Constructor
 	 * @param id the id of the tag
 	 * @param name the name of the tag (not including the '@' symbol)
 	 * @param rmodifier 
-	 * @param elements
-	 * @param comments
 	 */
-	public ApiJavadocTag(String id, String name, int rmodifier, int[] elements, String[] comments) {
+	public ApiJavadocTag(String id, String name, int rmodifier) {
 		Assert.isNotNull(id);
 		fId = id;
 		Assert.isNotNull(name);
 		fName = name;
-		Assert.isNotNull(elements);
-		fElements = elements;
-		fComments = comments;
 		fRModifier = rmodifier;
 	}
 	
@@ -87,6 +77,16 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		return fRModifier;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag#setApplicableTo(int, int, java.lang.String)
+	 */
+	public void setApplicableTo(int type, int member, String comment) {
+		if(fTagItems == null) {
+			fTagItems = new HashMap(6);
+		}
+		fTagItems.put(getTagKey(type, member), comment);
+	}
+	
 	/**
 	 * Returns the comment for the given type ad member
 	 * @param type
@@ -94,111 +94,24 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 * @return the comment for the tag
 	 */
 	public String getTagComment(int type, int member) {
-		initializeElements();
-		int i1 = -1;
-		switch(type) {
-			case IApiJavadocTag.TYPE_CLASS: {
-				i1 = 0;
-				break;
-			}
-			case IApiJavadocTag.TYPE_INTERFACE: {
-				i1 = 1;
-				break;
-			}
-			case IApiJavadocTag.TYPE_ENUM: {
-				i1 = 2;
-				break;
-			}
+		if(fTagItems == null) {
+			return EMPTY_STRING;
 		}
-		int i2 = -1;
-		switch(member) {
-			case IApiJavadocTag.MEMBER_NONE: {
-				i2 = 2;
-				break;
-			}
-			case IApiJavadocTag.MEMBER_FIELD: {
-				i2 = 1;
-				break;
-			}
-			case IApiJavadocTag.MEMBER_METHOD: {
-				i2 = 0;
-				break;
-			}
-			case IApiJavadocTag.MEMBER_CONSTRUCTOR: {
-				i2 = 3;
-				break;
-			}
-		}
-		if(i1 < 0 || i2 < 0) {
-			return null;
-		}
-		return comments[i1][i2];
-	}
-	
-	/**
-	 * Initializes the cache of java element this tag applies to
-	 */
-	private void initializeElements() {
-		if(comments == null) {
-			comments = new String[3][4];
-			for(int i = 0; i < fElements.length; i++) {
-				boolean clazz = (IApiJavadocTag.TYPE_CLASS & fElements[i]) != 0;
-				boolean inter = (IApiJavadocTag.TYPE_INTERFACE & fElements[i]) != 0;
-				boolean method = (IApiJavadocTag.MEMBER_METHOD & fElements[i]) != 0;
-				boolean field = (IApiJavadocTag.MEMBER_FIELD & fElements[i]) != 0;
-				boolean constructor = (IApiJavadocTag.MEMBER_CONSTRUCTOR & fElements[i]) != 0;
-				boolean isenum = (IApiJavadocTag.TYPE_ENUM & fElements[i]) != 0;
-				if(clazz) {
-					if(constructor) {
-						comments[0][3] = fComments[i];
-					}
-					if (method) {
-						comments[0][0] = fComments[i];
-					}
-					if (field) {
-						comments[0][1] = fComments[i];
-					}
-					if(!field & !method & !constructor) {
-						comments[0][2] = fComments[i];
-					}
-				}
-				if(inter) {
-					if (method) {
-						comments[1][0] = fComments[i];
-					}
-					if (field) {
-						comments[1][1] = fComments[i];
-					}
-					if(!field & !method) {
-						comments[1][2] = fComments[i];
-					}
-				}
-				if(isenum) {
-					if (method) {
-						comments[2][0] = fComments[i];
-					}
-					if (field) {
-						comments[2][1] = fComments[i];
-					}
-					if(!field & !method) {
-						comments[2][2] = fComments[i];
-					}
-				}
-			}
-		}
+		Object obj = fTagItems.get(getTagKey(type, member));
+		return (String) (obj == null ? EMPTY_STRING : obj);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.IApiJavadocTag#getTagLabel()
 	 */
 	public String getTagName() {
-		if(taglabel == null) {
+		if(fTaglabel == null) {
 			StringBuffer tag = new StringBuffer();
 			tag.append("@"); //$NON-NLS-1$
 			tag.append(fName);
-			taglabel = tag.toString();
+			fTaglabel = tag.toString();
 		}
-		return taglabel;
+		return fTaglabel;
 	}
 	
 	/* (non-Javadoc)
@@ -213,10 +126,13 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 */
 	public String getCompleteTag(int type, int member) {
 		StringBuffer tag = new StringBuffer();
-		tag.append("@"); //$NON-NLS-1$
-		tag.append(fName);
+		tag.append(getTagName());
+		String comment = getTagComment(type, member);
+		if(EMPTY_STRING.equals(comment)) {
+			return tag.toString();
+		}
 		tag.append(" "); //$NON-NLS-1$
-		tag.append(getTagComment(type, member));
+		tag.append(comment);
 		return tag.toString();
 	}
 
@@ -224,8 +140,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 * @see org.eclipse.pde.api.tools.IApiJavadocTag#isApplicable(int, int)
 	 */
 	public boolean isApplicable(int type, int member) {
-		initializeElements();
-		return getTagComment(type, member) != null;
+		return fTagItems != null && fTagItems.keySet().contains(getTagKey(type, member));
 	}
 	
 	/* (non-Javadoc)
@@ -246,5 +161,15 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 */
 	public int hashCode() {
 		return getTagName().hashCode();
+	}
+	
+	/**
+	 * Returns a key to use for tag when getting / setting comment related attributes
+	 * @param type
+	 * @param member
+	 * @return a new key that can be used for map lookups
+	 */
+	private Integer getTagKey(int type, int member) {
+		return new Integer((type | member) + hashCode());
 	}
 }

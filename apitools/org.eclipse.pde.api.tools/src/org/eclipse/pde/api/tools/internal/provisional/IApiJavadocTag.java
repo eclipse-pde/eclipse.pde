@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
 
 
 /**
- * Describes a contributed javadoc tag
+ * Describes an API tools Javadoc tag
  * 
  * @noimplement this interface is not to be implemented by clients
  * 
@@ -38,7 +38,7 @@ public interface IApiJavadocTag {
 	public static final int TYPE_ENUM = 0x1 << 6;
 	
 	/**
-	 * Type constant representing the tag applies to a Java enum.
+	 * Type constant representing the tag applies to a Java annotation.
 	 * Values is <code>128</code>
 	 */
 	public static final int TYPE_ANNOTATION = 0x1 << 7;
@@ -139,5 +139,13 @@ public interface IApiJavadocTag {
 	 * @return whether this tag applies to this kind of element
 	 */
 	public boolean isApplicable(int type, int member);
+	
+	/**
+	 * Allows the tag to be set as applicable to the given type and member, with the given comment.
+	 * @param type the Java type the tag will be applicable to
+	 * @param member the Java member the tag will be applicable to
+	 * @param comment an optional comment to be displayed after the tag 
+	 */
+	public void setApplicableTo(int type, int member, String comment);
 	
 }

@@ -86,7 +86,6 @@ public class RemoveUnsupportedTagOperation {
 				charStartAttribute = (Integer) fBackingMarker.getAttribute(IMarker.CHAR_START);
 				int intValue = charStartAttribute.intValue();
 				parser.setFocalPosition(intValue);
-				parser.setResolveBindings(false);
 				Map options = compilationUnit.getJavaProject().getOptions(true);
 				options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 				parser.setCompilerOptions(options);
@@ -112,7 +111,7 @@ public class RemoveUnsupportedTagOperation {
 						TagElement tag = null;
 						for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
 							tag = (TagElement) iterator.next();
-							if (args[0].equals(tag.getTagName())) {
+							if (args[0].equals(tag.getTagName()) && tag.getStartPosition() == intValue) {
 								break;
 							}
 						}

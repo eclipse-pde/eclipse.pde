@@ -21,6 +21,7 @@ public class MarkerMessages extends NLS {
 	public static String DefaultApiProfileResolution_0;
 	public static String DefaultApiProfileResolution_1;
 	public static String DefaultApiProfileResolution_2;
+	public static String DuplicateTagResolution_remove_dupe_tag_resolution_label;
 	public static String FilterProblemResolution_0;
 	public static String FilterProblemResolution_compatible;
 	public static String FilterProblemResolution_default_profile;

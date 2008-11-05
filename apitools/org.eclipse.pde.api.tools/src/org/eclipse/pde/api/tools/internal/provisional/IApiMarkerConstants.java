@@ -112,6 +112,11 @@ public interface IApiMarkerConstants {
 	 */
 	public static final int UNSUPPORTED_TAG_MARKER_ID = 6;
 	/**
+	 * Constant representing the apiMarkerID value for duplicate javadoc tag markers
+	 * Value is: <code>7</code>
+	 */
+	public static final int DUPLICATE_TAG_MARKER_ID = 7;
+	/**
 	 * Constant representing the description for the bundle version marker.
 	 * Value is: <code>description</code>
 	 */

@@ -223,6 +223,15 @@ public interface IApiProblem {
 	public static final int UNSUPPORTED_TAG_USE = 7;
 	
 	/**
+	 * Constant representing the value of a duplicate API Javadoc tag use {@link IApiProblem} kind
+	 * <br>
+	 * Value is: <code>8</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int DUPLICATE_TAG_USE = 8;
+	
+	/**
 	 * Flags to indicate a leak from extending a non-API type. 
 	 * <br>
 	 * Value is: <code>1</code>

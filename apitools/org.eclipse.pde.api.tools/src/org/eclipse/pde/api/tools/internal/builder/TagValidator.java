@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
@@ -79,7 +80,7 @@ public class TagValidator extends ASTVisitor {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Validates the set of tags for the given parent node and the given listing of {@link TagElement}s
 	 * @param node
@@ -304,6 +305,7 @@ public class TagValidator extends ASTVisitor {
 	 */
 	private void processTags(String typeName, List tags, IApiJavadocTag[] validtags, int element, String context) {
 		IApiJavadocTag[] alltags = ApiPlugin.getJavadocTagManager().getAllTags();
+		Set tagnames = ApiPlugin.getJavadocTagManager().getAllTagNames();
 		HashSet invalidtags = new HashSet(alltags.length);
 		for(int i = 0; i < alltags.length; i++) {
 			invalidtags.add(alltags[i].getTagName());
@@ -315,10 +317,16 @@ public class TagValidator extends ASTVisitor {
 			return;
 		}
 		TagElement tag = null;
+		HashSet tagz = new HashSet(tags.size());
+		String tagname = null;
 		for(Iterator iter = tags.iterator(); iter.hasNext();) {
 			tag = (TagElement) iter.next();
+			tagname = tag.getTagName();
 			if(invalidtags.contains(tag.getTagName())) {
-				processTagProblem(typeName, tag, element, context);
+				processTagProblem(typeName, tag, element, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, context);
+			}
+			if(tagnames.contains(tag.getTagName()) && !tagz.add(tagname)) {
+				processTagProblem(typeName, tag, element, IApiProblem.DUPLICATE_TAG_USE, IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID, null);
 			}
 		}
 	}
@@ -329,7 +337,7 @@ public class TagValidator extends ASTVisitor {
 	 * @param element
 	 * @param context
 	 */
-	private void processTagProblem(String typeName, TagElement tag, int element, String context) {
+	private void processTagProblem(String typeName, TagElement tag, int element, int kind, int markerid, String context) {
 		if(fTagProblems == null) {
 			fTagProblems = new ArrayList(10);
 		}
@@ -348,13 +356,13 @@ public class TagValidator extends ASTVisitor {
 					typeName,
 					new String[] {tag.getTagName(), context},
 					new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID, IApiMarkerConstants.MARKER_ATTR_HANDLE_ID}, 
-					new Object[] {new Integer(IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID), fCompilationUnit.getHandleIdentifier()}, 
+					new Object[] {new Integer(markerid), fCompilationUnit.getHandleIdentifier()}, 
 					linenumber,
 					charstart,
 					charend,
 					IApiProblem.CATEGORY_USAGE,
 					element,
-					IApiProblem.UNSUPPORTED_TAG_USE,
+					kind,
 					IApiProblem.NO_FLAGS);
 			
 			fTagProblems.add(problem);

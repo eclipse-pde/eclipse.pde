@@ -55,6 +55,7 @@ public abstract class TagTest extends ApiBuilderTest {
 			ValidMethodTagTests.class,
 			InvalidEnumTagTests.class,
 			InvalidAnnotationTagTests.class,
+			InvalidDuplicateTagsTests.class
 		};
 		return classes;
 	}

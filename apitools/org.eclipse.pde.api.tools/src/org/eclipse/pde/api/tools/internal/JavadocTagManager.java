@@ -13,7 +13,9 @@ package org.eclipse.pde.api.tools.internal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -41,7 +43,7 @@ public class JavadocTagManager {
 	private IApiJavadocTag[] tags;
 	
 	/**
-	 * Initializes the cache of contributed javadoc tags.
+	 * Initializes the cache of contributed Javadoc tags.
 	 * If the cache has already been initialized no work is done.
 	 */
 	private void initializeJavadocTags() {
@@ -50,57 +52,73 @@ public class JavadocTagManager {
 			List list = new ArrayList(4);
 			
 			//noimplement tag
-			ApiJavadocTag newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.noimplement",  //$NON-NLS-1$
+			ApiJavadocTag newtag = new ApiJavadocTag(IApiJavadocTag.NO_IMPLEMENT_TAG_ID, 
 					"noimplement", //$NON-NLS-1$
-					RestrictionModifiers.NO_IMPLEMENT,
-					new int[] {IApiJavadocTag.TYPE_INTERFACE}, 
-					new String[] {"This interface is not intended to be implemented by clients."}); //$NON-NLS-1$ 
+					RestrictionModifiers.NO_IMPLEMENT);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
+					IApiJavadocTag.MEMBER_NONE, 
+					"This interface is not intended to be implemented by clients.");   //$NON-NLS-1$
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			
 			//noextend tag
-			newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.noextend",  //$NON-NLS-1$
+			newtag = new ApiJavadocTag(IApiJavadocTag.NO_EXTEND_TAG_ID, 
 					"noextend", //$NON-NLS-1$
-					RestrictionModifiers.NO_EXTEND,
-					new int[] {IApiJavadocTag.TYPE_CLASS}, 
-					new String[] {"This class is not intended to be subclassed by clients."});   //$NON-NLS-1$ 
-			tagcache.put(newtag.getTagId(), newtag);
+					RestrictionModifiers.NO_EXTEND);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
+					IApiJavadocTag.MEMBER_NONE, 
+					"This class is not intended to be subclassed by clients.");  //$NON-NLS-1$
+			/*newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
+					IApiJavadocTag.MEMBER_NONE, 
+					"This interface is not intended to be extended by clients.");  //$NON-NLS-1$
+*/			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			
 			//nooverride tag
-			newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.nooverride", //$NON-NLS-1$
+			newtag = new ApiJavadocTag(IApiJavadocTag.NO_OVERRIDE_TAG_ID,
 					"nooverride", //$NON-NLS-1$
-					RestrictionModifiers.NO_OVERRIDE,
-					new int[] {IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.MEMBER_METHOD},
-					new String[] {"This method is not intended to be re-implemented or extended by clients."}); //$NON-NLS-1$
+					RestrictionModifiers.NO_OVERRIDE);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
+					 IApiJavadocTag.MEMBER_METHOD, 
+					 "This method is not intended to be re-implemented or extended by clients.");  //$NON-NLS-1$
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			
 			//noinstantiate tag
-			newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.noinstantiate",  //$NON-NLS-1$
+			newtag = new ApiJavadocTag(IApiJavadocTag.NO_INSTANTIATE_TAG_ID,
 					"noinstantiate", //$NON-NLS-1$
-					RestrictionModifiers.NO_INSTANTIATE,
-					new int[] {IApiJavadocTag.TYPE_CLASS}, 
-					new String[] {"This class is not intended to be instantiated by clients."}); //$NON-NLS-1$
+					RestrictionModifiers.NO_INSTANTIATE);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS,
+					IApiJavadocTag.MEMBER_NONE, 
+					"This class is not intended to be instantiated by clients.");  //$NON-NLS-1$
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			
 			//noreference tag
-			newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.noreference",  //$NON-NLS-1$
+			newtag = new ApiJavadocTag(IApiJavadocTag.NO_REFERENCE_TAG_ID,
 					"noreference", //$NON-NLS-1$
-					RestrictionModifiers.NO_REFERENCE,
-					new int[] {IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.TYPE_INTERFACE | IApiJavadocTag.MEMBER_METHOD,
-								IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.TYPE_INTERFACE | IApiJavadocTag.MEMBER_FIELD,
-								IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.MEMBER_CONSTRUCTOR,
-								IApiJavadocTag.TYPE_ENUM | IApiJavadocTag.MEMBER_FIELD,
-								IApiJavadocTag.TYPE_ENUM | IApiJavadocTag.MEMBER_METHOD,
-								IApiJavadocTag.TYPE_ANNOTATION | IApiJavadocTag.MEMBER_METHOD}, 
-					new String[] {"This method is not intended to be referenced by clients.", //$NON-NLS-1$ 
-									"This field is not intended to be referenced by clients.", //$NON-NLS-1$
-									"This constructor is not intended to be referenced by clients.", //$NON-NLS-1$
-									"This enum field is not intended to be referenced by clients.", //$NON-NLS-1$
-									"This enum method is not intended to be referenced by clients.", //$NON-NLS-1$
-									"This annotation method is not intended to be referenced by clients."}); //$NON-NLS-1$
+					RestrictionModifiers.NO_REFERENCE);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
+					IApiJavadocTag.MEMBER_METHOD, 
+					"This method is not intended to be referenced by clients."); //$NON-NLS-1$
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
+					IApiJavadocTag.MEMBER_METHOD, 
+					"This method is not intended to be referenced by clients."); //$NON-NLS-1$
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
+					IApiJavadocTag.MEMBER_FIELD, 
+					"This field is not intended to be referenced by clients."); //$NON-NLS-1$
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
+					IApiJavadocTag.MEMBER_FIELD, 
+					"This field is not intended to be referenced by clients."); //$NON-NLS-1$
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
+					IApiJavadocTag.MEMBER_CONSTRUCTOR, 
+					"This constructor is not intended to be referenced by clients."); //$NON-NLS-1$
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, 
+					IApiJavadocTag.MEMBER_FIELD, 
+					"This enum field is not intended to be referenced by clients."); //$NON-NLS-1$
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, 
+					IApiJavadocTag.MEMBER_METHOD, 
+					"This enum method is not intended to be referenced by clients."); //$NON-NLS-1$
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			tags = (IApiJavadocTag[]) list.toArray(new IApiJavadocTag[list.size()]);
@@ -144,11 +162,24 @@ public class JavadocTagManager {
 	 * @return the complete listing of tags in the manager or <code>null</code>
 	 */
 	public synchronized IApiJavadocTag[] getAllTags() {
+		initializeJavadocTags();
 		if(tagcache == null) {
 			return new IApiJavadocTag[0];
 		}
 		Collection values = tagcache.values();
 		return (IApiJavadocTag[]) values.toArray(new IApiJavadocTag[values.size()]);
+	}
+	
+	/**
+	 * @return The complete set of tags names that this manager currently knows about.
+	 */
+	public synchronized Set getAllTagNames() {
+		IApiJavadocTag[] tags = getAllTags();
+		HashSet names = new HashSet(tags.length);
+		for(int i = 0; i < tags.length; i++) {
+			names.add(tags[i].getTagName());
+		}
+		return names;
 	}
 	
 	/**

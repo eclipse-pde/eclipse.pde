@@ -30,7 +30,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class UnsupportedTagResolution implements IMarkerResolution2 {
 
-	private IMarker fBackingMarker = null;
+	protected IMarker fBackingMarker = null;
 	
 	/**
 	 * Constructor
