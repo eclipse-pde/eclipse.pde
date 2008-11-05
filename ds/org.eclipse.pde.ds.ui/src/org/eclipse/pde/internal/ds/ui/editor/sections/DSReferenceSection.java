@@ -21,11 +21,14 @@ import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSReference;
@@ -38,7 +41,6 @@ import org.eclipse.pde.internal.ds.ui.editor.dialogs.DSEditReferenceDialog;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
@@ -57,10 +59,8 @@ public class DSReferenceSection extends TableSection {
 	private Action fRemoveAction;
 	private Action fAddAction;
 	private Action fEditAction;
-	private Action fUpAction;
-	private Action fDownAction;
 
-	class ContentProvider extends DefaultTableProvider {
+	class ContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IDSModel) {
 				IDSModel model = (IDSModel) inputElement;
@@ -70,6 +70,15 @@ public class DSReferenceSection extends TableSection {
 
 			}
 			return new Object[0];
+		}
+
+		public void dispose() {
+			// do nothing
+
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// do nothing
 		}
 	}
 
@@ -99,6 +108,7 @@ public class DSReferenceSection extends TableSection {
 		createViewerPartControl(container, SWT.FULL_SELECTION | SWT.MULTI, 2,
 				toolkit);
 		fReferencesTable = tablePart.getTableViewer();
+
 		fReferencesTable.setContentProvider(new ContentProvider());
 		fReferencesTable.setLabelProvider(new DSLabelProvider());
 
@@ -147,20 +157,39 @@ public class DSReferenceSection extends TableSection {
 	private void handleMove(boolean moveUp) {
 		ISelection selection = fReferencesTable.getSelection();
 		if (selection != null) {
-
-			int selectionIndex = fReferencesTable.getTable()
-					.getSelectionIndex();
-			if (selectionIndex != -1) {
-
-				IDSReference ref = (IDSReference) fReferencesTable
-						.getElementAt(selectionIndex);
-				if (ref != null) {
-					int positionFlag = moveUp ? -1 : 1;
-					ref.getComponent().moveChildNode(ref, positionFlag, true);
-				}
+			Object[] array = ((IStructuredSelection) selection).toArray();
+			if (moveUp) {
+				moveUp(array);
+			} else {
+				moveDown(array);
 			}
 		}
+	}
 
+	private void moveDown(Object[] array) {
+		for (int i = array.length - 1; i >= 0; i--) {
+			Object object = array[i];
+			if (object == null) {
+				continue;
+			} else if (object instanceof IDocumentElementNode) {
+				// Move the task object up or down one position
+				getDSModel().getDSComponent().moveChildNode(
+						(IDocumentElementNode) object, 1, true);
+			}
+		}
+	}
+
+	private void moveUp(Object[] array) {
+		for (int i = 0; i < array.length; i++) {
+			Object object = array[i];
+			if (object == null) {
+				continue;
+			} else if (object instanceof IDocumentElementNode) {
+				// Move the task object up or down one position
+				getDSModel().getDSComponent().moveChildNode(
+						(IDocumentElementNode) object, -1, true);
+			}
+		}
 	}
 
 	private void handleEdit() {
@@ -215,7 +244,7 @@ public class DSReferenceSection extends TableSection {
 		int length = table.getSelection().length;
 		tablePart.setButtonEnabled(1, isEditable() && length > 0);
 		tablePart.setButtonEnabled(2, isEditable() && length > 0);
-		
+
 		tablePart.setButtonEnabled(3, isEditable()
 				&& table.getSelection().length > 0 && !table.isSelected(0));
 		tablePart.setButtonEnabled(4, isEditable()
