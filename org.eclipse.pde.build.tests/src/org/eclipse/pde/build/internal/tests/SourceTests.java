@@ -340,7 +340,57 @@ public class SourceTests extends PDETestCase {
 		assertEquals(included[1].getId(), "bundleB.source");
 		assertFalse(included[1].isUnpack());
 	}
+	
+	public void testBug230870() throws Exception {
+		IFolder buildFolder = newTest("230870");
+		
+		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
+		IFolder bundleB = Utils.createFolder(buildFolder, "plugins/bundleB");
+		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
+		
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, new String[] { "bundleB", "bundleB.source;unpack=false" });
+		Properties properties = new Properties();
+		properties.put("generate.feature@rcp.source", "rcp");
+		properties.put("generate.plugin@bundleB.source", "bundleB");
+		properties.put("individualSourceBundles", "true");
+		Utils.storeBuildProperties(sdk, properties);
 
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundleA"});
+		
+		Utils.generateBundleManifest(bundleA, "bundleA", "1.0.0", null);
+		Properties buildProperties = new Properties();
+		buildProperties.put("src.includes", "about.html");
+		Utils.generatePluginBuildProperties(bundleA, buildProperties);
+		Utils.writeBuffer(bundleA.getFile("src/A.java"), new StringBuffer("class A {\n}\n"));
+		Utils.writeBuffer(bundleA.getFile("about.html"), new StringBuffer("about\n"));
+
+		Utils.generateBundleManifest(bundleB, "bundleB", "1.0.0", null);
+		buildProperties = new Properties();
+		buildProperties.put("src.includes", "about.html");
+		Utils.generatePluginBuildProperties(bundleB, buildProperties);
+		Utils.writeBuffer(bundleB.getFile("src/B.java"), new StringBuffer("class B {\n}\n"));
+		Utils.writeBuffer(bundleB.getFile("about.html"), new StringBuffer("about\n"));
+		
+		
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "sdk");
+		properties.put("baseLocation", "");
+		properties.put("archivesFormat", "*,*,*-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+		
+		Set entries = new HashSet();
+		entries.clear();
+		entries.add("A.java");
+		entries.add("about.html");
+		assertZipContents(buildFolder, "tmp/eclipse/plugins/bundleA.source_1.0.0.jar", entries);
+		
+		entries.clear();
+		entries.add("B.java");
+		entries.add("about.html");
+		assertZipContents(buildFolder, "tmp/eclipse/plugins/bundleB.source_1.0.0.jar", entries);
+	}
+	
 	public void testIndividualSourceBundles_2() throws Exception {
 		IFolder buildFolder = newTest("individualSourceBundles2");
 

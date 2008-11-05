@@ -39,6 +39,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	private String sourceFeatureId;
 	private String brandingPlugin;
 	private Properties buildProperties;
+	private boolean individualSourceBundles = false;
 
 	private BuildDirector director;
 	private String[] extraEntries;
@@ -54,6 +55,10 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	public void setDirector(BuildDirector director) {
 		this.director = director;
+	}
+
+	public void setIndividual(boolean individual) {
+		this.individualSourceBundles = individual;
 	}
 
 	private void initialize(BuildTimeFeature feature, String sourceFeatureName) throws CoreException {
@@ -103,7 +108,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private void collectSourcePlugins(BuildTimeFeature feature, FeatureEntry pluginEntry, BundleDescription model) throws CoreException {
 		//don't gather if we are doing individual source bundles
-		if (AbstractScriptGenerator.getPropertyAsBoolean("individualSourceBundles")) //$NON-NLS-1$
+		if (individualSourceBundles)
 			return;
 
 		// The generic entry may not be part of the configuration we are building however,
@@ -132,7 +137,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		associateExtraEntries(sourceFeature);
 
 		FeatureEntry sourcePlugin;
-		if (AbstractScriptGenerator.getPropertyAsBoolean("individualSourceBundles")) { //$NON-NLS-1$
+		if (individualSourceBundles) {
 			/* individual source bundles */
 
 			// branding plugin for source feature will be the source bundle generated

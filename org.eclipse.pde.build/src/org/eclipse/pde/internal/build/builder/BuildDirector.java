@@ -89,10 +89,11 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 			String versionRequested = entry.getVersion();
 			model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
+			Properties featureProperties = getBuildProperties(feature);
 			//we prefer a newly generated source plugin over a preexisting binary one. 
-			if ((model == null || Utils.isBinary(model)) && getBuildProperties(feature).containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId())) {
-				String[] extraEntries = Utils.getArrayFromString(getBuildProperties(feature).getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId()));
-				generateEmbeddedSource(entry, extraEntries);
+			if ((model == null || Utils.isBinary(model)) && featureProperties.containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId())) {
+				String[] extraEntries = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId()));
+				generateEmbeddedSource(entry, extraEntries, useIndividualSource(featureProperties));
 				model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
 			}
 			if (model == null) {
@@ -105,6 +106,11 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			collectElementToAssemble(pluginList[i]);
 		}
 		return computedElements;
+	}
+
+	private boolean useIndividualSource(Properties featureProperties) {
+		boolean individual = Boolean.valueOf(featureProperties.getProperty(PROPERTY_INDIVIDUAL_SOURCE)).booleanValue();
+		return individual || AbstractScriptGenerator.getPropertyAsBoolean(PROPERTY_INDIVIDUAL_SOURCE);
 	}
 
 	private void associateModelAndEntry(BundleDescription model, FeatureEntry entry) {
@@ -121,13 +127,14 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		entries.add(entry);
 	}
 
-	private void generateEmbeddedSource(FeatureEntry pluginEntry, String[] extraEntries) throws CoreException {
-		if (AbstractScriptGenerator.getPropertyAsBoolean("individualSourceBundles")) { //$NON-NLS-1$
+	private void generateEmbeddedSource(FeatureEntry pluginEntry, String[] extraEntries, boolean individual) throws CoreException {
+		if (individual) {
 			BundleDescription originalBundle = getSite(false).getRegistry().getResolvedBundle(extraEntries[0]);
 			if (originalBundle != null) {
 				SourceGenerator sourceGenerator = new SourceGenerator();
 				sourceGenerator.setExtraEntries(extraEntries);
 				sourceGenerator.setDirector(this);
+				sourceGenerator.setIndividual(individual);
 				sourceGenerator.generateSourcePlugin(pluginEntry, originalBundle);
 				return;
 			}
@@ -135,7 +142,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		/* else do it the old way */
 		BuildTimeFeature baseFeature = getSite(false).findFeature(extraEntries[0], null, true);
 		if (baseFeature != null)
-			generateSourceFeature(baseFeature, pluginEntry.getId(), extraEntries);
+			generateSourceFeature(baseFeature, pluginEntry.getId(), extraEntries, false);
 	}
 
 	/**
@@ -182,11 +189,11 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		}
 	}
 
-	protected void generateSourceFeature(BuildTimeFeature baseFeature, String sourceFeatureName, String[] extraEntries) throws CoreException {
+	protected void generateSourceFeature(BuildTimeFeature baseFeature, String sourceFeatureName, String[] extraEntries, boolean individual) throws CoreException {
 		SourceGenerator sourceGenerator = new SourceGenerator();
 		sourceGenerator.setExtraEntries(extraEntries);
 		sourceGenerator.setDirector(this);
-
+		sourceGenerator.setIndividual(individual);
 		sourceGenerator.generateSourceFeature(baseFeature, sourceFeatureName);
 	}
 
@@ -197,12 +204,12 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			String featureVersion = referencedFeatures[i].getVersion();
 
 			BuildTimeFeature nestedFeature = null;
-
-			boolean doSourceFeatureGeneration = getBuildProperties(feature).containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId);
+			Properties featureProperties = getBuildProperties(feature);
+			boolean doSourceFeatureGeneration = featureProperties.containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId);
 			if (doSourceFeatureGeneration) {
-				String[] extraEntries = Utils.getArrayFromString(getBuildProperties(feature).getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId));
+				String[] extraEntries = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId));
 				nestedFeature = getSite(false).findFeature(extraEntries[0], featureVersion, true);
-				generateSourceFeature(nestedFeature, featureId, extraEntries);
+				generateSourceFeature(nestedFeature, featureId, extraEntries, useIndividualSource(featureProperties));
 			}
 
 			try {
