@@ -191,7 +191,7 @@ public class ApiComparator {
 	private static boolean isAPI(int visibility,
 			IApiType typeDescriptor) {
 		int access = typeDescriptor.getModifiers();
-		return (visibility & VisibilityModifiers.API) != 0
+		return VisibilityModifiers.isAPI(visibility)
 			&& (Util.isPublic(access) || Util.isProtected(access));
 	}
 

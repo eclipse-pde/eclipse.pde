@@ -538,7 +538,7 @@ public class ClassFileComparator {
 											typeMember.getName(),
 											new String[] { typeMember.getName().replace('$', '.') }));
 						}
-						if (visibilityModifiers == VisibilityModifiers.API) {
+						if (this.visibilityModifiers == VisibilityModifiers.API) {
 							// if the visibility is API, we only consider public and protected types
 							if (Util.isDefault(typeMember2.getModifiers())
 										|| Util.isPrivate(typeMember2.getModifiers())) {
@@ -570,7 +570,7 @@ public class ClassFileComparator {
 						// we skip the class file according to their visibility
 						continue loop;
 					}
-					if (visibilityModifiers == VisibilityModifiers.API) {
+					if (this.visibilityModifiers == VisibilityModifiers.API) {
 						// if the visibility is API, we only consider public and protected types
 						if (Util.isDefault(typeMember.getModifiers())
 									|| Util.isPrivate(typeMember.getModifiers())) {
@@ -609,7 +609,7 @@ public class ClassFileComparator {
 					// we skip the class file according to their visibility
 					continue loop;
 				}
-				if (visibilityModifiers == VisibilityModifiers.API) {
+				if (this.visibilityModifiers == VisibilityModifiers.API) {
 					// if the visibility is API, we only consider public and protected types
 					if (Util.isDefault(typeMember.getModifiers())
 								|| Util.isPrivate(typeMember.getModifiers())) {
@@ -1596,7 +1596,7 @@ public class ClassFileComparator {
 				// ignore
 			}
 		}
-		if (this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription()) {
+		if ((this.visibilityModifiers == VisibilityModifiers.API) && component.hasApiDescription()) {
 			// check if this field should be removed because it is tagged as @noreference
 			IApiDescription apiDescription = null;
 			try {
@@ -1641,7 +1641,7 @@ public class ClassFileComparator {
 				}
 			} else if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
 				if (((Util.isPublic(access2) || Util.isProtected(access2)) && (Util.isPublic(access) || Util.isProtected(access)))
-						&& visibilityModifiers == VisibilityModifiers.API) {
+						&& (this.visibilityModifiers == VisibilityModifiers.API)) {
 					// report that it is no longer an API field
 					this.addDelta(
 							getElementType(this.type2),
@@ -2002,7 +2002,7 @@ public class ClassFileComparator {
 				}
 			}
 			if (!found) {
-				if (this.visibilityModifiers == VisibilityModifiers.API && component.hasApiDescription()) {
+				if ((this.visibilityModifiers == VisibilityModifiers.API) && component.hasApiDescription()) {
 					// check if this method should be removed because it is tagged as @noreference
 					IApiDescription apiDescription = null;
 					try {
@@ -2075,7 +2075,7 @@ public class ClassFileComparator {
 				}
 			}
 		}
-		if (this.visibilityModifiers == VisibilityModifiers.API && this.component.hasApiDescription()) {
+		if ((this.visibilityModifiers == VisibilityModifiers.API) && this.component.hasApiDescription()) {
 			if (RestrictionModifiers.isReferenceRestriction(referenceRestrictions)) {
 				// tagged as @noreference in the reference component
 				if (!RestrictionModifiers.isReferenceRestriction(restrictions)) {
@@ -2718,7 +2718,7 @@ public class ClassFileComparator {
 			// we ignore synthetic fields 
 			return;
 		}
-		if (this.visibilityModifiers == VisibilityModifiers.API && component2.hasApiDescription()) {
+		if ((this.visibilityModifiers == VisibilityModifiers.API) && component2.hasApiDescription()) {
 			// check if this method should be removed because it is tagged as @noreference
 			IApiDescription apiDescription = null;
 			try {
@@ -2779,7 +2779,7 @@ public class ClassFileComparator {
 			// we ignore synthetic method
 			return;
 		}
-		if (this.visibilityModifiers == VisibilityModifiers.API && component2.hasApiDescription()) {
+		if ((this.visibilityModifiers == VisibilityModifiers.API) && component2.hasApiDescription()) {
 			// check if this method should be removed because it is tagged as @noreference
 			IApiDescription apiDescription = null;
 			int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
@@ -2982,7 +2982,7 @@ public class ClassFileComparator {
 	private static boolean isAPI(int visibility,
 			IApiType memberTypeDescriptor) {
 		int access = memberTypeDescriptor.getModifiers();
-		return (visibility & VisibilityModifiers.API) != 0
+		return VisibilityModifiers.isAPI(visibility)
 			&& (Util.isPublic(access) || Util.isProtected(access));
 	}
 	

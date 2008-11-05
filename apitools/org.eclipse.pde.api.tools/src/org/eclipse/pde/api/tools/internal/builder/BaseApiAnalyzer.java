@@ -637,7 +637,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									|| Util.isPrivate(type.getModifiers())) {
 							return;
 						}
-						if ((visibility & VisibilityModifiers.API) != 0) {
+						if (VisibilityModifiers.isAPI(visibility)) {
 							String deltaComponentID = Util.getDeltaComponentID(reference);
 							delta = new Delta(
 									deltaComponentID,

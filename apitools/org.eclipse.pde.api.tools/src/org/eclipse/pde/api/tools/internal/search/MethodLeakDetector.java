@@ -191,7 +191,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 			IApiMethod method = (IApiMethod) member;
 			IApiAnnotations annotations = apiComponent.getApiDescription().resolveAnnotations(method.getHandle());
 			if (annotations != null) {
-				if ((annotations.getVisibility() & VisibilityModifiers.API) > 0) {
+				if (VisibilityModifiers.isAPI(annotations.getVisibility())) {
 					int ares = annotations.getRestrictions();
 					if(ares != 0) {
 						if(method.isConstructor()) {
