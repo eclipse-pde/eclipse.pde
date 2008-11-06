@@ -11,18 +11,18 @@ package org.eclipse.pde.internal.build.site.compatibility;
 /**
  */
 public class FeatureEntry implements IPlatformEntry {
-	private String id;
-	private String version;
+	private final String id;
+	private final String version;
 	private String url;
 	private String os;
 	private String ws;
 	private String arch;
 	private String nl;
 	private String match;
-	private boolean isPlugin;
+	private final boolean isPlugin;
 	private boolean isFragment = false;
 	private boolean isRequires = false;
-	private boolean unpack = true;
+	private Boolean unpack = null;
 	private boolean optional = false;
 
 	/**
@@ -123,11 +123,15 @@ public class FeatureEntry implements IPlatformEntry {
 	}
 
 	public void setUnpack(boolean value) {
-		unpack = value;
+		unpack = Boolean.valueOf(value);
 	}
 
 	public boolean isUnpack() {
-		return unpack;
+		return (unpack == null || unpack.booleanValue());
+	}
+
+	public boolean unpackSet() {
+		return unpack != null;
 	}
 
 	public void setOptional(boolean value) {

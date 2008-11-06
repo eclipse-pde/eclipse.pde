@@ -15,11 +15,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.Utils;
 import org.osgi.framework.Bundle;
 
 public class ProfileManager {
-	public static final String OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
 	public static final String PROFILE_EXTENSION = ".profile"; //$NON-NLS-1$
 	public static final String SYSTEM_PACKAGES = "org.osgi.framework.system.packages"; //$NON-NLS-1$
 	public static final String PROFILE_NAME = "osgi.java.profile.name"; //$NON-NLS-1$
@@ -129,7 +129,7 @@ public class ProfileManager {
 	}
 
 	protected void loadRuntimeJavaProfiles() {
-		Bundle systemBundle = Platform.getBundle(OSGI);
+		Bundle systemBundle = Platform.getBundle(IPDEBuildConstants.BUNDLE_OSGI);
 		if (systemBundle != null)
 			loadJavaProfiles(systemBundle);
 	}

@@ -16,8 +16,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.internal.build.ShapeAdvisor;
-import org.eclipse.pde.internal.build.Utils;
+import org.eclipse.pde.internal.build.*;
 
 /**
  * Temporary utilities until P2 and FrameworkAdmin are graduated into the SDK.
@@ -198,13 +197,13 @@ public class P2Utils {
 
 				boolean sourceBundle = Utils.isSourceBundle(currentModel);
 				BufferedWriter writer = sourceBundle ? srcOut : out;
-				
+
 				writer.write(name);
 				writer.write(',');
 				writer.write(version);
 				writer.write(",file:plugins/"); //$NON-NLS-1$
-				writer.write((String)advisor.getFinalShape(currentModel)[0]);
-				
+				writer.write((String) advisor.getFinalShape(currentModel)[0]);
+
 				if (Utils.isSourceBundle(currentModel)) {
 					writer.write(",-1,false"); //$NON-NLS-1$
 				} else {
@@ -277,15 +276,15 @@ public class P2Utils {
 			if (desc != null) {
 				String modelName = desc.getSymbolicName();
 
-				if ("org.eclipse.equinox.simpleconfigurator".equals(modelName)) { //$NON-NLS-1$
+				if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
 					bundleMap.put(desc, "1:true"); //$NON-NLS-1$
-				} else if ("org.eclipse.equinox.common".equals(modelName)) { //$NON-NLS-1$
+				} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
 					bundleMap.put(desc, "2:true"); //$NON-NLS-1$
-				} else if ("org.eclipse.osgi".equals(modelName)) { //$NON-NLS-1$
+				} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
 					bundleMap.put(desc, "-1:true"); //$NON-NLS-1$
-				} else if ("org.eclipse.update.configurator".equals(modelName)) { //$NON-NLS-1$
+				} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
 					bundleMap.put(desc, "3:true"); //$NON-NLS-1$
-				} else if ("org.eclipse.core.runtime".equals(modelName)) { //$NON-NLS-1$
+				} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
 					if (refactoredRuntime) {
 						bundleMap.put(desc, "default:true"); //$NON-NLS-1$
 					} else {

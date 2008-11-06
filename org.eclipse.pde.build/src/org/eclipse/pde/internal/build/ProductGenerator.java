@@ -19,12 +19,6 @@ import org.eclipse.pde.internal.build.site.P2Utils;
 import org.eclipse.pde.internal.build.site.PDEState;
 
 public class ProductGenerator extends AbstractScriptGenerator {
-	private static final String BUNDLE_EQUINOX_COMMON = "org.eclipse.equinox.common"; //$NON-NLS-1$
-	private static final String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
-	private static final String BUNDLE_EQUINOX_LAUNCHER = "org.eclipse.equinox.launcher"; //$NON-NLS-1$
-	private static final String BUNDLE_CORE_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
-	private static final String BUNDLE_UPDATE_CONFIGURATOR = "org.eclipse.update.configurator"; //$NON-NLS-1$
-	private static final String BUNDLE_SIMPLE_CONFIGURATOR = "org.eclipse.equinox.simpleconfigurator"; //$NON-NLS-1$
 	private static final String SIMPLE_CONFIGURATOR_CONFIG_URL = "org.eclipse.equinox.simpleconfigurator.configUrl"; //$NON-NLS-1$
 	private static final String START_LEVEL_1 = "@1:start"; //$NON-NLS-1$
 	private static final String START_LEVEL_2 = "@2:start"; //$NON-NLS-1$

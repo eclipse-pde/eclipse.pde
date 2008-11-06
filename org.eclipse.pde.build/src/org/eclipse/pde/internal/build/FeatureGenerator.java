@@ -72,8 +72,6 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 	private static final String FEATURE_PLATFORM_LAUNCHERS = "org.eclipse.platform.launchers"; //$NON-NLS-1$
 	private static final String FEATURE_EXECUTABLE = "org.eclipse.equinox.executable"; //$NON-NLS-1$
-	private static final String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
-	private static final String BUNDLE_LAUNCHER = "org.eclipse.equinox.launcher"; //$NON-NLS-1$
 
 	private String featureId = null;
 	private String version = null;
@@ -241,13 +239,13 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 					features.add(new Entry(FEATURE_EXECUTABLE));
 			} else {
 				// We don't have the executable feature, at least try and get the launcher jar and fragments 
-				plugins.add(new Entry(BUNDLE_LAUNCHER));
+				plugins.add(new Entry(BUNDLE_EQUINOX_LAUNCHER));
 				List configs = getConfigInfos();
 				// only include the fragments for the platforms we are attempting to build, since the others
 				// probably aren't around
 				for (Iterator iterator = configs.iterator(); iterator.hasNext();) {
 					Config config = (Config) iterator.next();
-					String fragment = BUNDLE_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
+					String fragment = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
 					//macosx doesn't have the arch on its fragment 
 					if (config.getOs().compareToIgnoreCase("macosx") != 0) //$NON-NLS-1$
 						fragment += '.' + config.getArch();
@@ -330,7 +328,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 							String filterSpec = bundle.getPlatformFilter();
 							if (filterSpec == null || helper.createFilter(filterSpec).match(environment)) {
 								writeBundle = true;
-								guessedUnpack = guessUnpack(bundle, (String[]) state.getExtraData().get(new Long(bundle.getBundleId())));
+								guessedUnpack = Utils.guessUnpack(bundle, (String[]) state.getExtraData().get(new Long(bundle.getBundleId())));
 								if (currentConfig.equals(Config.genericConfig())) {
 									listIter.remove();
 								}
@@ -465,28 +463,6 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	public void setVerify(boolean verify) {
 		this.verify = verify;
 		reportResolutionErrors = verify;
-	}
-
-	public boolean guessUnpack(BundleDescription bundle, String[] classpath) {
-		if (bundle == null)
-			return true;
-
-		// launcher fragments are a special case, they have no bundle-classpath and they must
-		//be unpacked
-		if (bundle.getHost() != null && bundle.getName().startsWith(BUNDLE_LAUNCHER))
-			return true;
-
-		if (new File(bundle.getLocation()).isFile())
-			return false;
-
-		if (classpath.length == 0)
-			return false;
-
-		for (int i = 0; i < classpath.length; i++) {
-			if (classpath[i].equals(".")) //$NON-NLS-1$
-				return false;
-		}
-		return true;
 	}
 
 	public void setImmutableAntProperties(Properties properties) {

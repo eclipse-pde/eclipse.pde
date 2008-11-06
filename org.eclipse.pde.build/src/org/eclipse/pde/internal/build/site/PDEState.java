@@ -611,7 +611,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private File getOSGiLocation() {
-		BundleDescription osgiBundle = state.getBundle("org.eclipse.osgi", null); //$NON-NLS-1$
+		BundleDescription osgiBundle = state.getBundle(BUNDLE_OSGI, null);
 		if (osgiBundle == null)
 			return null;
 		return new File(osgiBundle.getLocation());
