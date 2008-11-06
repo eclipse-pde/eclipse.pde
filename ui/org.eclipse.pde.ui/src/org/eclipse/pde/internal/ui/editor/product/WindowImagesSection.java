@@ -107,9 +107,6 @@ public class WindowImagesSection extends PDESection {
 		super.refresh();
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean validateWinImageEntry(int index) {
 		return EditorUtilities.imageEntryHasExactSize(fWinImageEntryValidator[index], fImages[index], getProduct(), F_ICON_DIMENSIONS[index][0], F_ICON_DIMENSIONS[index][1]);
 	}

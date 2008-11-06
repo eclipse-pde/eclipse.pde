@@ -225,7 +225,6 @@ public class SplashConfigurationSection extends PDESection {
 
 	/**
 	 * @param parent
-	 * @return
 	 */
 	private Composite createUISectionContainer(Composite parent) {
 		Composite client = fToolkit.createComposite(fSection);
