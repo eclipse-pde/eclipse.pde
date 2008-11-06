@@ -24,6 +24,8 @@ import org.osgi.framework.*;
 
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
+	private static final String[] MANIFEST_ENTRIES = {Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_NAME, Constants.BUNDLE_VENDOR, ECLIPSE_BUNDLE_SHAPE, ECLIPSE_SOURCE_BUNDLE};
+
 	private StateObjectFactory factory;
 	protected State state;
 	private long id;
@@ -84,14 +86,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		try {
 			BundleDescription descriptor;
 			descriptor = factory.createBundleDescription(state, enhancedManifest, bundleLocation.getAbsolutePath(), getNextId());
-			checkSourceBundle(descriptor, enhancedManifest);
-			bundleClasspaths.put(new Long(descriptor.getBundleId()), getClasspath(enhancedManifest));
+			bundleClasspaths.put(new Long(descriptor.getBundleId()), BundleHelper.getClasspath(enhancedManifest));
 			String patchValue = fillPatchData(enhancedManifest);
 			if (patchValue != null)
 				patchBundles.put(new Long(descriptor.getBundleId()), patchValue);
 			rememberQualifierTagPresence(descriptor);
 			rememberManifestConversion(descriptor, enhancedManifest);
-			rememberLocalization(descriptor, enhancedManifest);
+			rememberManifestEntries(descriptor, enhancedManifest, MANIFEST_ENTRIES);
 			if (addBundleDescription(descriptor) == true && addedBundle != null)
 				addedBundle.add(descriptor);
 		} catch (BundleException e) {
@@ -100,18 +101,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			return false;
 		}
 		return true;
-	}
-
-	private void checkSourceBundle(BundleDescription descriptor, Dictionary manifest) {
-		String sourceBundleHeader = (String) manifest.get(ECLIPSE_SOURCE_BUNDLE);
-		if (sourceBundleHeader == null)
-			return;
-		Properties bundleProperties = (Properties) descriptor.getUserObject();
-		if (bundleProperties == null) {
-			bundleProperties = new Properties();
-			descriptor.setUserObject(bundleProperties);
-		}
-		bundleProperties.setProperty(ECLIPSE_SOURCE_BUNDLE, sourceBundleHeader);
 	}
 
 	private void rememberQualifierTagPresence(BundleDescription descriptor) {
@@ -124,23 +113,21 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		bundleProperties.setProperty(PROPERTY_QUALIFIER, "marker"); //$NON-NLS-1$
 	}
 
-	private void rememberLocalization(BundleDescription descriptor, Dictionary manifest) {
-		String localization = (String) manifest.get(org.osgi.framework.Constants.BUNDLE_LOCALIZATION);
-		String name = (String) manifest.get(org.osgi.framework.Constants.BUNDLE_NAME);
-		String vendor = (String) manifest.get(org.osgi.framework.Constants.BUNDLE_VENDOR);
+	private void rememberManifestEntries(BundleDescription descriptor, Dictionary manifest, String[] entries) {
+		if (entries == null || entries.length == 0)
+			return;
 
-		if (localization != null || name != null || vendor != null) {
-			Properties bundleProperties = (Properties) descriptor.getUserObject();
-			if (bundleProperties == null) {
-				bundleProperties = new Properties();
-				descriptor.setUserObject(bundleProperties);
+		Properties properties = (Properties) descriptor.getUserObject();
+		if (properties == null) {
+			properties = new Properties();
+			descriptor.setUserObject(properties);
+		}
+
+		for (int i = 0; i < entries.length; i++) {
+			String entry = (String) manifest.get(entries[i]);
+			if (entry != null) {
+				properties.put(entries[i], entry);
 			}
-			if (localization != null)
-				bundleProperties.put(org.osgi.framework.Constants.BUNDLE_LOCALIZATION, localization);
-			if (name != null)
-				bundleProperties.put(org.osgi.framework.Constants.BUNDLE_NAME, name);
-			if (vendor != null)
-				bundleProperties.put(org.osgi.framework.Constants.BUNDLE_VENDOR, vendor);
 		}
 	}
 
@@ -167,31 +154,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		bundleProperties.setProperty(PROPERTY_VERSION_REPLACEMENT, String.valueOf(newBundle.getBundleId()));
 	}
 
-	private String[] getClasspath(Dictionary manifest) {
-		String fullClasspath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
-		String[] result = new String[0];
-		try {
-			if (fullClasspath != null) {
-				ManifestElement[] classpathEntries;
-				classpathEntries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, fullClasspath);
-				result = new String[classpathEntries.length];
-				for (int i = 0; i < classpathEntries.length; i++) {
-					result[i] = classpathEntries[i].getValue();
-				}
-			}
-		} catch (BundleException e) {
-			//Ignore
-		}
-		return result;
-	}
-
 	private String fillPatchData(Dictionary manifest) {
-		if (manifest.get("Eclipse-ExtensibleAPI") != null) { //$NON-NLS-1$
-			return "Eclipse-ExtensibleAPI: true"; //$NON-NLS-1$
+		if (manifest.get(EXTENSIBLE_API) != null) {
+			return EXTENSIBLE_API + ": true"; //$NON-NLS-1$
 		}
 
-		if (manifest.get("Eclipse-PatchFragment") != null) { //$NON-NLS-1$
-			return "Eclipse-PatchFragment: true"; //$NON-NLS-1$
+		if (manifest.get(PATCH_FRAGMENT) != null) {
+			return PATCH_FRAGMENT + ": true"; //$NON-NLS-1$
 		}
 		return null;
 	}

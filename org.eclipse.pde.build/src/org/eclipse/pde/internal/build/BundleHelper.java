@@ -13,8 +13,10 @@ package org.eclipse.pde.internal.build;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Dictionary;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.*;
 
 public class BundleHelper {
@@ -110,5 +112,23 @@ public class BundleHelper {
 		} catch (NoSuchMethodException e) {
 			log = null;
 		}
+	}
+
+	public static String[] getClasspath(Dictionary manifest) {
+		String fullClasspath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
+		String[] result = new String[0];
+		try {
+			if (fullClasspath != null) {
+				ManifestElement[] classpathEntries;
+				classpathEntries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, fullClasspath);
+				result = new String[classpathEntries.length];
+				for (int i = 0; i < classpathEntries.length; i++) {
+					result[i] = classpathEntries[i].getValue();
+				}
+			}
+		} catch (BundleException e) {
+			//Ignore
+		}
+		return result;
 	}
 }
