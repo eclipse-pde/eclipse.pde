@@ -86,4 +86,16 @@
             keySequence="Ctrl+Shift+F10"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
    </extension>
+   <extension
+         point="org.eclipse.jdt.launching.executionEnvironments">
+      <environment
+            description="Java 1.3 without sound APIs (PDE test suite)"
+            id="J2SE-1.3-NO-SOUND"
+            profileProperties="profiles/J2SE-1.3-NO-SOUND.profile">
+      </environment>
+      <analyzer
+            class="org.eclipse.pde.ui.tests.ee.EnvironmentAnalyzerDelegate"
+            id="org.eclipse.pde.ui.tests.ee.analyzer">
+      </analyzer>
+   </extension>
 </plugin>

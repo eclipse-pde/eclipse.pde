@@ -43,6 +43,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String BundleTextChangeListener_editNames_remove;
 
+	public static String ExecutionEnvironmentProfileManager_0;
+
 	public static String ExtensionPointSchemaBuilder_0;
 
 	public static String ExtensionsErrorReporter_maxOccurrence;

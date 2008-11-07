@@ -12,6 +12,7 @@ package org.eclipse.pde.ui.tests.wizards;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.pde.ui.tests.ee.ExecutionEnvironmentTests;
 
 public class AllNewProjectTests {
 
@@ -20,6 +21,7 @@ public class AllNewProjectTests {
 		suite.addTest(NewFeatureProjectTestCase.suite());
 		suite.addTest(NewSiteProjectTestCase.suite());
 		suite.addTest(ConvertProjectToPluginTestCase.suite());
+		suite.addTest(ExecutionEnvironmentTests.suite());
 		return suite;
 	}
 

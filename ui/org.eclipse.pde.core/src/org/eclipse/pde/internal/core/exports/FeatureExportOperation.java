@@ -517,6 +517,12 @@ public class FeatureExportOperation extends Job {
 		Properties properties = new Properties();
 		properties.put(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES, Boolean.toString(fInfo.allowBinaryCycles));
 		generator.setImmutableAntProperties(properties);
+
+		// allow for custom execution environments
+		String[] extraLocations = ExecutionEnvironmentProfileManager.getCustomProfileLocations();
+		if (extraLocations != null) {
+			generator.setEESources(extraLocations);
+		}
 	}
 
 	protected State getState(String os, String ws, String arch) {

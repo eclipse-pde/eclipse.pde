@@ -375,7 +375,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		if (data instanceof AbstractFieldData) {
 			executionEnvironment = ((AbstractFieldData) data).getExecutionEnvironment();
 		}
-		ClasspathComputer.setComplianceOptions(project, ExecutionEnvironmentAnalyzer.getCompliance(executionEnvironment));
+		ClasspathComputer.setComplianceOptions(project, executionEnvironment);
 		entries[0] = ClasspathComputer.createJREEntry(executionEnvironment);
 		entries[1] = ClasspathComputer.createContainerEntry();
 

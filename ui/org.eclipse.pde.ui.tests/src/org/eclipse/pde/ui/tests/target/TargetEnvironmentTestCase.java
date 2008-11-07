@@ -11,14 +11,9 @@
 package org.eclipse.pde.ui.tests.target;
 
 import java.util.Dictionary;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import junit.framework.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.framework.Constants;
 
@@ -76,7 +71,7 @@ public class TargetEnvironmentTestCase extends TestCase {
 
 	public void testStateDictionaryNumber() {
 		Dictionary[] dictionaries = TargetPlatformHelper.getState().getPlatformProperties();
-		String[] envs = ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
+		String[] envs = TargetPlatformHelper.getKnownExecutionEnvironments();
 		assertEquals(envs.length, dictionaries.length);
 	}
 

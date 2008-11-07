@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -46,7 +47,7 @@ public class ClasspathComputer {
 		// add JRE and set compliance options
 		String ee = getExecutionEnvironment(model.getBundleDescription());
 		result.add(createEntryUsingPreviousEntry(javaProject, ee, PDECore.JRE_CONTAINER_PATH));
-		setComplianceOptions(JavaCore.create(project), ExecutionEnvironmentAnalyzer.getCompliance(ee), overrideCompliance);
+		setComplianceOptions(JavaCore.create(project), ee, overrideCompliance);
 
 		// add pde container
 		result.add(createEntryUsingPreviousEntry(javaProject, ee, PDECore.REQUIRED_PLUGINS_CONTAINER_PATH));
@@ -200,13 +201,40 @@ public class ClasspathComputer {
 		return null;
 	}
 
-	public static void setComplianceOptions(IJavaProject project, String compliance) {
-		setComplianceOptions(project, compliance, true);
+	/**
+	 * Sets compiler compliance options on the given project to match the default compliance settings
+	 * for the specified execution environment. Overrides any existing settings.
+	 *  
+	 * @param project project to set compiler compliance options for
+	 * @param eeId execution environment identifier
+	 */
+	public static void setComplianceOptions(IJavaProject project, String eeId) {
+		setComplianceOptions(project, eeId, true);
 	}
 
-	public static void setComplianceOptions(IJavaProject project, String compliance, boolean overrideExisting) {
+	/**
+	 * Sets compiler compliance options on the given project to match the default compliance settings
+	 * for the specified execution environment. Only sets options that do not already have an explicit
+	 * setting based on the given override flag.
+	 * <p>
+	 * If the specified execution environment is <code>null</code> and override is <code>true</code>,
+	 * all compliance options are removed from the options map before applying to the project.
+	 * </p>
+	 * @param project project to set compiler compliance options for
+	 * @param eeId execution environment identifier, or <code>null</code>
+	 * @param overrideExisting whether to override a setting if already present
+	 */
+	public static void setComplianceOptions(IJavaProject project, String eeId, boolean overrideExisting) {
 		Map projectMap = project.getOptions(false);
-		if (compliance == null) {
+		IExecutionEnvironment ee = null;
+		Map options = null;
+		if (eeId != null) {
+			ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(eeId);
+			if (ee != null) {
+				options = ee.getComplianceOptions();
+			}
+		}
+		if (options == null) {
 			if (overrideExisting && projectMap.size() > 0) {
 				projectMap.remove(JavaCore.COMPILER_COMPLIANCE);
 				projectMap.remove(JavaCore.COMPILER_SOURCE);
@@ -216,60 +244,58 @@ public class ClasspathComputer {
 			} else {
 				return;
 			}
-		} else if (JavaCore.VERSION_1_6.equals(compliance)) {
-			setCompliance(projectMap, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_6, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_6, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR, overrideExisting);
-		} else if (JavaCore.VERSION_1_5.equals(compliance)) {
-			setCompliance(projectMap, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR, overrideExisting);
-		} else if (JavaCore.VERSION_1_4.equals(compliance)) {
-			setCompliance(projectMap, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_4, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2, overrideExisting);
-			setMinimumCompliance(projectMap, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.WARNING, overrideExisting);
-			setMinimumCompliance(projectMap, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING, overrideExisting);
-		} else if (JavaCore.VERSION_1_3.equals(compliance)) {
-			setCompliance(projectMap, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_3, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3, overrideExisting);
-			setCompliance(projectMap, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_1, overrideExisting);
-			setMinimumCompliance(projectMap, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.IGNORE, overrideExisting);
-			setMinimumCompliance(projectMap, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.IGNORE, overrideExisting);
+		} else {
+			String compliance = (String) options.get(JavaCore.COMPILER_COMPLIANCE);
+			Iterator iterator = options.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Entry entry = (Entry) iterator.next();
+				String option = (String) entry.getKey();
+				String value = (String) entry.getValue();
+				if (JavaCore.VERSION_1_3.equals(compliance) || JavaCore.VERSION_1_4.equals(compliance)) {
+					if (JavaCore.COMPILER_PB_ASSERT_IDENTIFIER.equals(option) || JavaCore.COMPILER_PB_ENUM_IDENTIFIER.equals(option)) {
+						// for 1.3 & 1.4 projects, only override the existing setting if the default setting
+						// is a greater severity than the existing setting
+						setMinimumCompliance(projectMap, option, value, overrideExisting);
+					} else {
+						setCompliance(projectMap, option, value, overrideExisting);
+					}
+				} else {
+					setCompliance(projectMap, option, value, overrideExisting);
+				}
+			}
 		}
+
 		project.setOptions(projectMap);
 
 	}
 
 	/**
 	 * Puts the key/value pair into the map if the map can be overridden or the map doesn't
-	 * already contain the key.
+	 * already contain the key. If the value is <code>null</code>, the existing value remains.
+	 * 
 	 * @param map map to put the value in
 	 * @param key key for the value
-	 * @param value value to put in the map
+	 * @param value value to put in the map or <code>null</code>
 	 * @param override whether existing map entries should be replaced with the value
 	 */
 	private static void setCompliance(Map map, String key, String value, boolean override) {
-		if (override || !map.containsKey(key)) {
+		if (value != null && (override || !map.containsKey(key))) {
 			map.put(key, value);
 		}
 	}
 
 	/**
 	 * Checks if the current value stored in the map is less severe than the given minimum value. If
-	 * the minimum value is higher, the map will be updated with the minimum.
+	 * the minimum value is higher, the map will be updated with the minimum. If the minimum value
+	 * is <code>null</code>, the existing value remains.
 	 * 
 	 * @param map the map to check the value in
 	 * @param key the key to get the current value out of the map
-	 * @param minimumValue the minimum value allowed
+	 * @param minimumValue the minimum value allowed or <code>null</code>
 	 * @param override whether an existing value in the map should be replaced
 	 */
 	private static void setMinimumCompliance(Map map, String key, String minimumValue, boolean override) {
-		if (override || !map.containsKey(key)) {
+		if (minimumValue != null && (override || !map.containsKey(key))) {
 			if (fSeverityTable == null) {
 				fSeverityTable = new HashMap(3);
 				fSeverityTable.put(JavaCore.IGNORE, new Integer(SEVERITY_IGNORE));

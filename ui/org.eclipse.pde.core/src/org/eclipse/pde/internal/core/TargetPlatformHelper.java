@@ -13,9 +13,9 @@ package org.eclipse.pde.internal.core;
 
 import java.io.*;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.ManifestElement;
@@ -255,73 +255,24 @@ public class TargetPlatformHelper {
 		// add java profiles for those EE's that have a .profile file in the current system bundle
 		ArrayList result = new ArrayList(profiles.length);
 		for (int i = 0; i < profiles.length; i++) {
-			Properties profileProps = getJavaProfileProperties(profiles[i], state);
-			if (profileProps != null) {
-				Dictionary props = TargetPlatformHelper.getTargetEnvironment(state);
-				String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-				if (systemPackages != null)
-					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
-				String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
-				if (ee != null)
-					props.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
-				result.add(props);
+			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profiles[i]);
+			if (environment != null) {
+				Properties profileProps = environment.getProfileProperties();
+				if (profileProps != null) {
+					Dictionary props = TargetPlatformHelper.getTargetEnvironment(state);
+					String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+					if (systemPackages != null)
+						props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
+					String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+					if (ee != null)
+						props.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+					result.add(props);
+				}
 			}
 		}
 		if (result.size() > 0)
 			return (Dictionary[]) result.toArray(new Dictionary[result.size()]);
 		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment(state)};
-	}
-
-	// We need system bundle passed here, because we are building the properties to be passed to
-	// the State - it doesn't know which is the system bundle yet.
-	private static Properties getJavaProfileProperties(String ee, MinimalState state) {
-		BundleDescription osgiBundle = state.getState().getBundle(state.getSystemBundle(), null);
-		if (osgiBundle == null)
-			return null;
-
-		File location = new File(osgiBundle.getLocation());
-		String filename = ee.replace('/', '_') + ".profile"; //$NON-NLS-1$
-		InputStream is = null;
-		ZipFile zipFile = null;
-		try {
-			// find the input stream to the profile properties file
-			if (location.isDirectory()) {
-				File file = new File(location, filename);
-				if (file.exists())
-					is = new FileInputStream(file);
-			} else {
-				zipFile = null;
-				try {
-					zipFile = new ZipFile(location, ZipFile.OPEN_READ);
-					ZipEntry entry = zipFile.getEntry(filename);
-					if (entry != null)
-						is = zipFile.getInputStream(entry);
-				} catch (IOException e) {
-					// nothing to do
-				}
-			}
-			if (is != null) {
-				Properties profile = new Properties();
-				profile.load(is);
-				return profile;
-			}
-		} catch (IOException e) {
-			// nothing to do
-		} finally {
-			if (is != null)
-				try {
-					is.close();
-				} catch (IOException e) {
-					// nothing to do
-				}
-			if (zipFile != null)
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					// nothing to do
-				}
-		}
-		return null;
 	}
 
 	public static String[] getKnownExecutionEnvironments() {
@@ -331,7 +282,12 @@ public class TargetPlatformHelper {
 				return new String[0];
 			return new String[] {jreProfile};
 		}
-		return ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
+		IExecutionEnvironment[] environments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
+		String[] ids = new String[environments.length];
+		for (int i = 0; i < environments.length; i++) {
+			ids[i] = environments[i].getId();
+		}
+		return ids;
 	}
 
 	public static String getTargetVersionString() {

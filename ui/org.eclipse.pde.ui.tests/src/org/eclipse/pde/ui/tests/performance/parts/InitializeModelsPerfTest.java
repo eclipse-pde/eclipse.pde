@@ -12,16 +12,11 @@ package org.eclipse.pde.ui.tests.performance.parts;
 
 import java.io.File;
 import java.net.URL;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEState;
-import org.eclipse.pde.internal.core.PluginPathFinder;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 
@@ -34,7 +29,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		deleteContent(new File(PDECore.getDefault().getStateLocation().toOSString()));
-		ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
+		TargetPlatformHelper.getKnownExecutionEnvironments();
 	}
 
 	public void testModels() throws Exception {
