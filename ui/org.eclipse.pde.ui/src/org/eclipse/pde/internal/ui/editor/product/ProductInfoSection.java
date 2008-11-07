@@ -307,7 +307,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 			}
 
 			public void linkActivated(HyperlinkEvent e) {
-				String pageId = fPluginButton.getSelection() ? ConfigurationPage.PLUGIN_ID : ConfigurationPage.FEATURE_ID;
+				String pageId = fPluginButton.getSelection() ? DependenciesPage.PLUGIN_ID : DependenciesPage.FEATURE_ID;
 				getPage().getEditor().setActivePage(pageId);
 			}
 		});
@@ -447,7 +447,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		// If the current page is the configuration page, switch to the 
 		// overview page before doing the update; otherwise, widget disposed
 		// errors may result
-		if (currentPage instanceof ConfigurationPage) {
+		if (currentPage instanceof DependenciesPage) {
 			getPage().getEditor().setActivePage(OverviewPage.PAGE_ID);
 		}
 		((ProductEditor) getPage().getEditor()).updateConfigurationPage();

@@ -18,6 +18,8 @@ public interface IProductModelFactory {
 
 	IProductPlugin createPlugin();
 
+	IPluginConfiguration createPluginConfiguration();
+
 	IProductFeature createFeature();
 
 	IConfigurationFileInfo createConfigFileInfo();

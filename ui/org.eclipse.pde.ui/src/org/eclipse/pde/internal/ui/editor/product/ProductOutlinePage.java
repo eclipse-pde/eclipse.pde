@@ -24,8 +24,8 @@ public class ProductOutlinePage extends FormOutlinePage {
 	}
 
 	protected Object[] getChildren(Object parent) {
-		if (parent instanceof ConfigurationPage) {
-			ConfigurationPage page = (ConfigurationPage) parent;
+		if (parent instanceof DependenciesPage) {
+			DependenciesPage page = (DependenciesPage) parent;
 			IProduct product = ((IProductModel) page.getModel()).getProduct();
 			if (product.useFeatures())
 				return product.getFeatures();
@@ -36,9 +36,9 @@ public class ProductOutlinePage extends FormOutlinePage {
 
 	protected String getParentPageId(Object item) {
 		if (item instanceof IProductPlugin)
-			return ConfigurationPage.PLUGIN_ID;
+			return DependenciesPage.PLUGIN_ID;
 		if (item instanceof IProductFeature)
-			return ConfigurationPage.FEATURE_ID;
+			return DependenciesPage.FEATURE_ID;
 		return super.getParentPageId(item);
 	}
 

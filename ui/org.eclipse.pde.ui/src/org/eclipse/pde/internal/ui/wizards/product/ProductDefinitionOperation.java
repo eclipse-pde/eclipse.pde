@@ -443,7 +443,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 
 			}
 		}
-		return buffer.length() == 0 ? null : buffer.toString(); //$NON-NLS-1$
+		return buffer.length() == 0 ? null : buffer.toString();
 	}
 
 	private String getForegroundColor() {

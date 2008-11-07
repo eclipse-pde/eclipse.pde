@@ -212,9 +212,9 @@ public class IntroSection extends PDESection {
 			plugin.setId(INTRO_PLUGIN_ID);
 			product.addPlugins(new IProductPlugin[] {plugin});
 			boolean includeOptional = false;
-			IFormPage page = getPage().getEditor().findPage(ConfigurationPage.PLUGIN_ID);
+			IFormPage page = getPage().getEditor().findPage(DependenciesPage.PLUGIN_ID);
 			if (page != null)
-				includeOptional = ((ConfigurationPage) page).includeOptionalDependencies();
+				includeOptional = ((DependenciesPage) page).includeOptionalDependencies();
 			PluginSection.handleAddRequired(new IProductPlugin[] {plugin}, includeOptional);
 		}
 		if (fManifest == null)

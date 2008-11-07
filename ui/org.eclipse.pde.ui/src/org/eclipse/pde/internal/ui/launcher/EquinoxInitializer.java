@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 			buffer.append("-console"); //$NON-NLS-1$
 		}
 		configuration.setAttribute(IPDEUIConstants.APPEND_ARGS_EXPLICITLY, true);
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, buffer.toString()); //$NON-NLS-1$
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, buffer.toString());
 	}
 
 	private void initializeVMArguments(ILaunchConfigurationWorkingCopy configuration) {

@@ -52,13 +52,21 @@ public interface IProduct extends IProductObject {
 
 	void addFeatures(IProductFeature[] feature);
 
+	void addPluginConfigurations(IPluginConfiguration[] configurations);
+
 	void removePlugins(IProductPlugin[] plugins);
 
 	void removeFeatures(IProductFeature[] feature);
 
+	void removePluginConfigurations(IPluginConfiguration[] configurations);
+
+	IPluginConfiguration findPluginConfiguration(String id);
+
 	IProductPlugin[] getPlugins();
 
 	IProductFeature[] getFeatures();
+
+	IPluginConfiguration[] getPluginConfigurations();
 
 	void setId(String id);
 

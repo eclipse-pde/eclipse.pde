@@ -2110,7 +2110,7 @@ public class PDEUIMessages extends NLS {
 	public static String ProductExportWizardPage_browse;
 	public static String Product_PluginSection_removeAll;
 	public static String Product_PluginSection_newPlugin;
-	public static String Product_ConfigurationPage_title;
+	public static String Product_DependenciesPage_title;
 	public static String ProductFileWizadPage_groupTitle;
 	public static String Product_PluginSection_newFragment;
 	public static String Product_overview_testing;
@@ -2416,6 +2416,9 @@ public class PDEUIMessages extends NLS {
 	public static String WorkspaceDataBlock_name;
 
 	public static String ConfigurationAreaBlock_name;
+	public static String ConfigurationPageMock_pageTitle;
+	public static String ConfigurationPageMock_sectionTitle;
+	public static String ConfigurationPageMock_sectionDesc;
 
 	public static String AbstractPluginBlock_counter;
 

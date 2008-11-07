@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -190,7 +191,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == Window.OK) {
-			addPlugin(wizard.getFragmentId());
+			addPlugin(wizard.getFragmentId(), wizard.getFragmentVersion());
 		}
 	}
 
@@ -201,7 +202,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == Window.OK) {
-			addPlugin(wizard.getPluginId());
+			addPlugin(wizard.getPluginId(), wizard.getPluginVersion());
 		}
 	}
 
@@ -310,7 +311,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		for (int i = 0; i < bundles.length; i++) {
 			HostSpecification host = bundles[i].getHost();
 			if (host != null && !("org.eclipse.ui.workbench.compatibility".equals(bundles[i].getSymbolicName())) //$NON-NLS-1$
-					&& calculator.containsPluginId(host.getName())) { //$NON-NLS-1$
+					&& calculator.containsPluginId(host.getName())) {
 				calculator.findDependency(bundles[i]);
 			}
 		}
@@ -379,7 +380,8 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		if (dialog.open() == Window.OK) {
 			Object[] bundles = dialog.getResult();
 			for (int i = 0; i < bundles.length; i++) {
-				addPlugin(((BundleDescription) bundles[i]).getSymbolicName());
+				BundleDescription desc = (BundleDescription) bundles[i];
+				addPlugin(desc.getSymbolicName(), desc.getVersion().toString());
 			}
 		}
 	}
@@ -397,11 +399,12 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		return (BundleDescription[]) map.values().toArray(new BundleDescription[map.size()]);
 	}
 
-	private void addPlugin(String id) {
+	private void addPlugin(String id, String version) {
 		IProduct product = getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
 		IProductPlugin plugin = factory.createPlugin();
 		plugin.setId(id);
+		plugin.setVersion(version);
 		product.addPlugins(new IProductPlugin[] {plugin});
 		fPluginTable.setSelection(new StructuredSelection(plugin));
 	}

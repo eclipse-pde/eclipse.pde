@@ -182,4 +182,8 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		return fPluginData.getId();
 	}
 
+	public String getPluginVersion() {
+		return fPluginData.getVersion();
+	}
+
 }

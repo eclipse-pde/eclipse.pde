@@ -7,52 +7,64 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
- *     Bartosz Michalik (bartosz.michalik@gmail.com)
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-/**
- * @author Bartosz Michalik
- */
-public class ConfigurationPage extends PDEFormPage {
-	public static final String PLUGIN_ID = "plugin-configuration"; //$NON-NLS-1$
+public class DependenciesPage extends PDEFormPage {
 
-	/**
-	 * @param productEditor
-	 * @param useFeatures
-	 */
-	public ConfigurationPage(ProductEditor editor, boolean useFeatures) {
-		super(editor, PLUGIN_ID, PDEUIMessages.ConfigurationPageMock_pageTitle);
+	public static final String PLUGIN_ID = "plugin-configuration"; //$NON-NLS-1$
+	public static final String FEATURE_ID = "feature-configuration"; //$NON-NLS-1$
+
+	private boolean fUseFeatures;
+	private PluginSection fPluginSection = null;
+
+	public DependenciesPage(FormEditor editor, boolean useFeatures) {
+		super(editor, useFeatures ? FEATURE_ID : PLUGIN_ID, PDEUIMessages.Product_DependenciesPage_title);
+		fUseFeatures = useFeatures;
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/configuration.htm"; //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc) 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ));
-		form.setText(PDEUIMessages.ConfigurationPageMock_pageTitle);
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ));
+		form.setText(PDEUIMessages.Product_DependenciesPage_title);
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.CONFIGURATION_PAGE);
 	}
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 2));
-		if (TargetPlatformHelper.getTargetVersion() > 3.4)
-			managedForm.addPart(new PluginConfigurationSection(this, body));
-		managedForm.addPart(new ConfigurationSection(this, body));
+		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
+
+		// sections
+		if (fUseFeatures)
+			managedForm.addPart(new FeatureSection(this, body));
+		else
+			managedForm.addPart(fPluginSection = new PluginSection(this, body));
+	}
+
+	public boolean includeOptionalDependencies() {
+		return (fPluginSection != null) ? fPluginSection.includeOptionalDependencies() : false;
 	}
 }

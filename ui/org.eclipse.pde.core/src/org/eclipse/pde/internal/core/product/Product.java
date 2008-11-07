@@ -26,6 +26,7 @@ public class Product extends ProductObject implements IProduct {
 	private IAboutInfo fAboutInfo;
 
 	private TreeMap fPlugins = new TreeMap();
+	private TreeMap fPluginConfigurations = new TreeMap();
 	private List fFeatures = new ArrayList();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
@@ -202,6 +203,18 @@ public class Product extends ProductObject implements IProduct {
 		}
 
 		writer.println();
+
+		if (fPluginConfigurations.size() > 0) {
+			writer.println(indent + "   <configurations>"); //$NON-NLS-1$  
+			iter = fPluginConfigurations.values().iterator();
+			while (iter.hasNext()) {
+				IPluginConfiguration configuration = (IPluginConfiguration) iter.next();
+				configuration.write(indent + "      ", writer); //$NON-NLS-1$
+			}
+			writer.println(indent + "   </configurations>"); //$NON-NLS-1$
+		}
+
+		writer.println();
 		writer.println("</product>"); //$NON-NLS-1$
 	}
 
@@ -222,6 +235,7 @@ public class Product extends ProductObject implements IProduct {
 		fUseFeatures = false;
 		fAboutInfo = null;
 		fPlugins.clear();
+		fPluginConfigurations.clear();
 		fFeatures.clear();
 		fConfigIniInfo = null;
 		fWindowImages = null;
@@ -256,6 +270,8 @@ public class Product extends ProductObject implements IProduct {
 						parsePlugins(child.getChildNodes());
 					} else if (name.equals("features")) { //$NON-NLS-1$
 						parseFeatures(child.getChildNodes());
+					} else if (name.equals("configurations")) { //$NON-NLS-1$
+						parsePluginConfigurations(child.getChildNodes());
 					} else if (name.equals("configIni")) { //$NON-NLS-1$
 						fConfigIniInfo = factory.createConfigFileInfo();
 						fConfigIniInfo.parse(child);
@@ -291,6 +307,19 @@ public class Product extends ProductObject implements IProduct {
 					IProductPlugin plugin = getModel().getFactory().createPlugin();
 					plugin.parse(child);
 					fPlugins.put(plugin.getId(), plugin);
+				}
+			}
+		}
+	}
+
+	private void parsePluginConfigurations(NodeList children) {
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				if (child.getNodeName().equals("pluginConfiguration")) { //$NON-NLS-1$
+					IPluginConfiguration configuration = getModel().getFactory().createPluginConfiguration();
+					configuration.parse(child);
+					fPluginConfigurations.put(configuration.getId(), configuration);
 				}
 			}
 		}
@@ -332,16 +361,63 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#addPluginConfigurations(org.eclipse.pde.internal.core.iproduct.IPluginConfiguration[])
+	 */
+	public void addPluginConfigurations(IPluginConfiguration[] configuration) {
+		boolean modified = false;
+		for (int i = 0; i < configuration.length; i++) {
+			if (configuration[i] == null)
+				continue;
+			String id = configuration[i].getId();
+			if (id == null || fPluginConfigurations.containsKey(id)) {
+				configuration[i] = null;
+				continue;
+			}
+
+			configuration[i].setModel(getModel());
+			fPluginConfigurations.put(id, configuration[i]);
+			modified = true;
+		}
+		if (modified && isEditable())
+			fireStructureChanged(configuration, IModelChangedEvent.INSERT);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removePlugins(org.eclipse.pde.internal.core.iproduct.IProductPlugin[])
 	 */
 	public void removePlugins(IProductPlugin[] plugins) {
 		boolean modified = false;
+		LinkedList removedConfigurations = new LinkedList();
 		for (int i = 0; i < plugins.length; i++) {
-			if (fPlugins.remove(plugins[i].getId()) != null)
+			final String id = plugins[i].getId();
+			if (fPlugins.remove(id) != null) {
 				modified = true;
+				Object configuration = fPluginConfigurations.remove(id);
+				if (configuration != null)
+					removedConfigurations.add(configuration);
+			}
 		}
-		if (modified && isEditable())
-			fireStructureChanged(plugins, IModelChangedEvent.REMOVE);
+		if (isEditable()) {
+			if (modified)
+				fireStructureChanged(plugins, IModelChangedEvent.REMOVE);
+			if (!removedConfigurations.isEmpty()) {
+				fireStructureChanged((IProductObject[]) removedConfigurations.toArray(new IProductObject[removedConfigurations.size()]), IModelChangedEvent.REMOVE);
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removePluginConfigurations(org.eclipse.pde.internal.core.iproduct.IProductPluginConfiguration[])
+	 */
+	public void removePluginConfigurations(IPluginConfiguration[] configurations) {
+		boolean modified = false;
+		for (int i = 0; i < configurations.length; i++) {
+			if (fPluginConfigurations.remove(configurations[i].getId()) != null) {
+				modified = true;
+			}
+		}
+		if (isEditable() && modified)
+			fireStructureChanged(configurations, IModelChangedEvent.REMOVE);
 	}
 
 	/* (non-Javadoc)
@@ -349,6 +425,13 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public IProductPlugin[] getPlugins() {
 		return (IProductPlugin[]) fPlugins.values().toArray(new IProductPlugin[fPlugins.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPluginConfigurations()
+	 */
+	public IPluginConfiguration[] getPluginConfigurations() {
+		return (IPluginConfiguration[]) fPluginConfigurations.values().toArray(new IPluginConfiguration[fPluginConfigurations.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -483,6 +566,13 @@ public class Product extends ProductObject implements IProduct {
 		fFeatures.set(index1, feature2);
 
 		fireStructureChanged(feature1, IModelChangedEvent.CHANGE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#findPluginConfiguration(java.lang.String)
+	 */
+	public IPluginConfiguration findPluginConfiguration(String id) {
+		return (IPluginConfiguration) fPluginConfigurations.get(id);
 	}
 
 }

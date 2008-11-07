@@ -84,7 +84,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 				getPDEEditor().doSave(null);
 			new ProductExportAction(getPDEEditor()).run();
 		} else if (href.equals("configuration")) { //$NON-NLS-1$
-			String pageId = ((ProductLauncherFormPageHelper) getLauncherHelper()).getProduct().useFeatures() ? ConfigurationPage.FEATURE_ID : ConfigurationPage.PLUGIN_ID;
+			String pageId = ((ProductLauncherFormPageHelper) getLauncherHelper()).getProduct().useFeatures() ? DependenciesPage.FEATURE_ID : DependenciesPage.PLUGIN_ID;
 			getEditor().setActivePage(pageId);
 		} else
 			super.linkActivated(e);
