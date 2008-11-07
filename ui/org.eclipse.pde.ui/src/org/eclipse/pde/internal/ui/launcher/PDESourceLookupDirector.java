@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -39,7 +40,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		fFilteredTypes = new HashSet(3);
 		fFilteredTypes.add(ProjectSourceContainer.TYPE_ID);
 		fFilteredTypes.add(WorkspaceSourceContainer.TYPE_ID);
-		fFilteredTypes.add(WorkingSetSourceContainer.TYPE_ID); //$NON-NLS-1$
+		fFilteredTypes.add(WorkingSetSourceContainer.TYPE_ID);
 	}
 
 	/* (non-Javadoc)
