@@ -84,7 +84,7 @@ public class LauncherUtils {
 				if (service instanceof Location) {
 					URL workspaceURL = new Path(workspace).toFile().toURI().toURL();
 					Location targetLocation = ((Location) service).createLocation(null, workspaceURL, false);
-					targetLocation.setURL(targetLocation.getDefault(), false);
+					targetLocation.set(targetLocation.getDefault(), false);
 					isLocked = targetLocation.isLocked();
 				}
 			}
