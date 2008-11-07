@@ -61,7 +61,7 @@ public class P2TestCase extends PDETestCase {
 	}
 	
 	public void assertTouchpoint(IInstallableUnit iu, String phase, String action) {
-		String data = iu.getTouchpointData()[0].getInstructions(phase).getBody();
+		String data = iu.getTouchpointData()[0].getInstruction(phase).getBody();
 		assertTrue(data.indexOf(action) != -1);
 	}
 	
