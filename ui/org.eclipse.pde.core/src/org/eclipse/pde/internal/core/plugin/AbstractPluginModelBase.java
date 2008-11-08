@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,27 +11,13 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.InputStream;
-
 import javax.xml.parsers.SAXParser;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.core.plugin.IExtensions;
-import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginModelFactory;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.AbstractNLModel;
-import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 
 public abstract class AbstractPluginModelBase extends AbstractNLModel implements IPluginModelBase, IPluginModelFactory {
 
@@ -77,7 +63,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 		load(stream, outOfSync, new PluginHandler(fAbbreviated));
 	}
 
-	public void load(InputStream stream, boolean outOfSync, PluginHandler handler) throws CoreException {
+	public void load(InputStream stream, boolean outOfSync, PluginHandler handler) {
 		if (fPluginBase == null)
 			fPluginBase = createPluginBase();
 
@@ -91,6 +77,7 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (Exception e) {
+			PDECore.log(e);
 		}
 	}
 
