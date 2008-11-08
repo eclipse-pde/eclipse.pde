@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *     Brock Janiczak <brockj@tpg.com.au> - bug 191545
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 221998
  *******************************************************************************/
@@ -382,7 +383,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					}
 				}
 				continue;
-			} else if (fProject.findMember(libname) != null) {//$NON-NLS-1$
+			} else if (fProject.findMember(libname) != null) {
 				// non "." library entries that exist in the workspace
 				// don't have to be referenced in the build properties
 				continue;
