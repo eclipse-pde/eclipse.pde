@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,23 +14,16 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public class JarManifestErrorReporter extends ErrorReporter {
-
-	protected static final String[] BOOLEAN_VALUES = new String[] {"true", //$NON-NLS-1$
-			"false"}; //$NON-NLS-1$
-
 	/**
 	 * Map of IHeader by name
 	 */
@@ -112,7 +105,6 @@ public class JarManifestErrorReporter extends ErrorReporter {
 
 	/**
 	 * @param document
-	 * @return Map of Header by header name
 	 */
 	protected void parseManifest(IDocument document, IProgressMonitor monitor) {
 		try {
