@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -36,6 +37,7 @@ public class Product extends ProductObject implements IProduct {
 	private ILauncherInfo fLauncherInfo;
 	private IArgumentsInfo fLauncherArgs;
 	private IIntroInfo fIntroInfo;
+	private ILicenseInfo fLicenseInfo;
 
 	public Product(IProductModel model) {
 		super(model);
@@ -182,6 +184,11 @@ public class Product extends ProductObject implements IProduct {
 			fJVMInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 
+		if (fLicenseInfo != null) {
+			writer.println();
+			fLicenseInfo.write(indent + "   ", writer); //$NON-NLS-1$
+		}
+
 		writer.println();
 		writer.println(indent + "   <plugins>"); //$NON-NLS-1$  
 		Iterator iter = fPlugins.values().iterator();
@@ -244,6 +251,7 @@ public class Product extends ProductObject implements IProduct {
 		fLauncherArgs = null;
 		fIntroInfo = null;
 		fJVMInfo = null;
+		fLicenseInfo = null;
 	}
 
 	/* (non-Javadoc)
@@ -293,6 +301,9 @@ public class Product extends ProductObject implements IProduct {
 					} else if (name.equals("vm")) { //$NON-NLS-1$
 						fJVMInfo = factory.createJVMInfo();
 						fJVMInfo.parse(child);
+					} else if (name.equals("license")) { //$NON-NLS-1$
+						fLicenseInfo = factory.createLicenseInfo();
+						fLicenseInfo.parse(child);
 					}
 				}
 			}
@@ -554,6 +565,14 @@ public class Product extends ProductObject implements IProduct {
 
 	public void setJREInfo(IJREInfo info) {
 		fJVMInfo = info;
+	}
+
+	public ILicenseInfo getLicenseInfo() {
+		return fLicenseInfo;
+	}
+
+	public void setLicenseInfo(ILicenseInfo info) {
+		fLicenseInfo = info;
 	}
 
 	public void swap(IProductFeature feature1, IProductFeature feature2) {

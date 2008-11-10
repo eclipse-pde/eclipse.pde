@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -81,6 +82,10 @@ public class ProductModelFactory implements IProductModelFactory {
 
 	public IJREInfo createJVMInfo() {
 		return new JREInfo(fModel);
+	}
+
+	public ILicenseInfo createLicenseInfo() {
+		return new LicenseInfo(fModel);
 	}
 
 }

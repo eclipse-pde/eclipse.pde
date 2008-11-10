@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
@@ -47,6 +48,8 @@ public interface IProduct extends IProductObject {
 	IIntroInfo getIntroInfo();
 
 	ILauncherInfo getLauncherInfo();
+
+	ILicenseInfo getLicenseInfo();
 
 	void addPlugins(IProductPlugin[] plugin);
 
@@ -91,6 +94,8 @@ public interface IProduct extends IProductObject {
 	void setIntroInfo(IIntroInfo introInfo);
 
 	void setLauncherInfo(ILauncherInfo info);
+
+	void setLicenseInfo(ILicenseInfo info);
 
 	void setUseFeatures(boolean use);
 

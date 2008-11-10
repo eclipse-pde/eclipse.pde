@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.PrintWriter;
-
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -123,20 +123,10 @@ public class TargetJRE extends TargetObject implements ITargetJRE {
 				IExecutionEnvironment environment = manager.getEnvironment(getJREName());
 				IVMInstall vm = null;
 				if (environment != null) {
-					vm = environment.getDefaultVM();
-					if (vm == null) {
-						IVMInstall[] installs = environment.getCompatibleVMs();
-						// take the first strictly compatible vm if there is no default
-						for (int i = 0; i < installs.length; i++) {
-							IVMInstall install = installs[i];
-							if (environment.isStrictlyCompatible(install)) {
-								return install.getName();
-							}
-						}
-						// use the first vm failing that
-						if (vm == null && installs.length > 0)
-							return installs[0].getName();
-					}
+					IPath path = JavaRuntime.newJREContainerPath(environment);
+					vm = JavaRuntime.getVMInstall(path);
+				}
+				if (vm != null) {
 					return vm.getName();
 				}
 		}
