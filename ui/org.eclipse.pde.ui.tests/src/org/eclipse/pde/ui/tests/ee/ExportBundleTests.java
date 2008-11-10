@@ -16,6 +16,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.util.IClassFileReader;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -50,7 +52,20 @@ public class ExportBundleTests extends PDETestCase {
 	}
 	
 	/**
-	 * Exports a plug-in project with a custom execution environment.
+	 * Validates the target level of a generated class file.
+	 * 
+	 * @param zipFileName location of archive file
+	 * @param zipEntryName path to class file in archive
+	 * @param major expected major class file version
+	 */
+	protected void validateTargetLevel(String zipFileName, String zipEntryName, int major) {
+		IClassFileReader reader = ToolFactory.createDefaultClassFileReader(zipFileName, zipEntryName, IClassFileReader.ALL);
+		assertEquals("Wrong major version", major, reader.getMajorVersion());
+	}	
+	
+	/**
+	 * Exports a plug-in project with a custom execution environment and validates class file
+	 * target level.
 	 * 
 	 * @throws Exception
 	 */
@@ -80,13 +95,15 @@ public class ExportBundleTests extends PDETestCase {
 			// veriry exported bundle exists
 			IPath path = EXPORT_PATH.append("plugins/no.sound.export_1.0.0.jar");
 			assertTrue("Missing exported bundle", path.toFile().exists());
+			validateTargetLevel(path.toOSString(), "no/sound/export/Activator.class", 47);
 		} finally {
 			deleteProject("no.sound.export");
 		}
 	}
 		
 	/**
-	 * Exports a plug-in project with a J2SE-1.4 execution environment.
+	 * Exports a plug-in project with a J2SE-1.4 execution environment and validates class file
+	 * target level.
 	 * 
 	 * @throws Exception
 	 */
@@ -116,6 +133,7 @@ public class ExportBundleTests extends PDETestCase {
 			// veriry exported bundle exists
 			IPath path = EXPORT_PATH.append("plugins/j2se14.export_1.0.0.jar");
 			assertTrue("Missing exported bundle", path.toFile().exists());
+			validateTargetLevel(path.toOSString(), "j2se14/export/Activator.class", 46);
 		} finally {
 			deleteProject("j2se14.export");
 		}
