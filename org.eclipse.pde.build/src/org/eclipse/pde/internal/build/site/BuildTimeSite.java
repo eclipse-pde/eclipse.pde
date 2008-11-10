@@ -96,6 +96,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 
 			if (provider.getInitialState() != null) {
 				state = new PDEState(provider.getInitialState());
+				state.setEESources(eeSources);
 				return state;
 			}
 
@@ -113,7 +114,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 			}
 			state.addBundles(provider.getPluginPaths());
 			state.setEESources(eeSources);
-			
+
 			//Once all the elements have been added to the state, the filter is removed to allow for the generated plug-ins to be added
 			if (state instanceof FilteringState) {
 				((FilteringState) state).setFilter(null);
