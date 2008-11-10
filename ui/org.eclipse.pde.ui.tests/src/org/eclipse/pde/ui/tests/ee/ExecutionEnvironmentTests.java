@@ -13,11 +13,11 @@ package org.eclipse.pde.ui.tests.ee;
 import java.util.Hashtable;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.util.IClassFileReader;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -47,6 +47,24 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 			project.delete(true, null);
 		}
 	}
+	
+	  /**
+     * Wait for builds to complete
+     */
+    public void waitForBuild() {
+        boolean wasInterrupted = false;
+        do {
+            try {
+                Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+                Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
+                wasInterrupted = false;
+            } catch (OperationCanceledException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                wasInterrupted = true;
+            }
+        } while (wasInterrupted);
+    }		
 	
 	/**
 	 * Validates that the project's option is as expected
@@ -82,8 +100,20 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	}
 
 	/**
+	 * Validates the target level of a generated class file.
+	 * 
+	 * @param classfile location of class file in local file system
+	 * @param major expected major class file version
+	 */
+	protected void validateTargetLevel(String classfile, int major) {
+		IClassFileReader reader = ToolFactory.createDefaultClassFileReader(classfile, IClassFileReader.ALL);
+		assertEquals("Wrong major version", major, reader.getMajorVersion());
+	}
+	
+	/**
 	 * Creates a plug-in project with a custom execution environment. Validates that
-	 * compiler compliance settings and build path are correct.
+	 * compiler compliance settings and build path are correct and that class files
+	 * are generated with correct target level.
 	 * 
 	 * @throws Exception
 	 */
@@ -100,6 +130,13 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	        validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
 	        
 	        validateSystemLibrary(project, JavaRuntime.newJREContainerPath(env));
+	        
+	        // ensure class files are build with correct target level
+	        project.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
+	        waitForBuild();
+	        IFile file = project.getProject().getFile("/bin/no/sound/Activator.class");
+	        assertTrue("Activator class missing", file.exists());
+	        validateTargetLevel(file.getLocation().toOSString(), 47);
 		} finally {
 			deleteProject("no.sound");
 		}
@@ -107,7 +144,8 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	
 	/**
 	 * Creates a plug-in project with a J2SE-1.4 execution environment. Validates that
-	 * compiler compliance settings and build path are correct.
+	 * compiler compliance settings and build path are correct and that class files
+	 * are generated with correct target level.
 	 * 
 	 * @throws Exception
 	 */
@@ -124,6 +162,12 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	        validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING);
 	        
 	        validateSystemLibrary(project, JavaRuntime.newJREContainerPath(env));
+	        
+	        project.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
+	        waitForBuild();
+	        IFile file = project.getProject().getFile("/bin/j2se14/plug/Activator.class");
+	        assertTrue("Activator class missing", file.exists());
+	        validateTargetLevel(file.getLocation().toOSString(), 46);
 		} finally {
 			deleteProject("j2se14.plug");
 		}

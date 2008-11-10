@@ -116,7 +116,8 @@ public class ProjectUtils {
 		if (env != null) {
 			data.setExecutionEnvironment(env.getId());
 		}
-		data.setDoGenerateClass(false);
+		data.setDoGenerateClass(true);
+		data.setClassname(projectName + ".Activator");
 		data.setEnableAPITooling(false);
 		data.setRCPApplicationPlugin(false);
 		data.setUIPlugin(false);
