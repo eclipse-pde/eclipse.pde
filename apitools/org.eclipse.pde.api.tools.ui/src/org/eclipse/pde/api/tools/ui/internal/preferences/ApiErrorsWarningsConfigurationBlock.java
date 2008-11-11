@@ -219,6 +219,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final Key KEY_LEAK_FIELD_DECL = getApiToolsKey(IApiProblemTypes.LEAK_FIELD_DECL);
 	private static final Key KEY_LEAK_METHOD_PARAM = getApiToolsKey(IApiProblemTypes.LEAK_METHOD_PARAM);
 	private static final Key KEY_INVALID_JAVADOC_TAG = getApiToolsKey(IApiProblemTypes.INVALID_JAVADOC_TAG);
+	private static final Key KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES = getApiToolsKey(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES);
 	
 	//compatibility keys
 	private static final Key KEY_API_COMPONENT_REMOVED_API_TYPE =
@@ -472,7 +473,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_LEAK_IMPLEMENT,
 		KEY_LEAK_METHOD_PARAM,
 		KEY_LEAK_METHOD_RETURN_TYPE,
-		KEY_INVALID_JAVADOC_TAG
+		KEY_INVALID_JAVADOC_TAG,
+		KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
 	};
 
 	private static Key[] fgAllVersionManagementKeys = {
@@ -497,6 +499,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_LEAK_METHOD_PARAM,
 		KEY_LEAK_METHOD_RETURN_TYPE,
 		KEY_INVALID_JAVADOC_TAG,
+		KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
 		KEY_API_COMPONENT_REMOVED_API_TYPE,
 		KEY_API_COMPONENT_REMOVED_TYPE,
 		KEY_ANNOTATION_REMOVED_FIELD,
@@ -873,9 +876,14 @@ public class ApiErrorsWarningsConfigurationBlock {
 				
 				Composite client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_general);
 				initializeComboControls(client, 
-						new String[] {PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_tag_use},
-						new Key[] {KEY_INVALID_JAVADOC_TAG}
-						);
+						new String[] {
+							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_tag_use,
+							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_reference_in_system_libraries
+						},
+						new Key[] {
+							KEY_INVALID_JAVADOC_TAG,
+							KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES
+						});
 				
 				client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);
 				initializeComboControls(client,

@@ -194,6 +194,13 @@ public class TestSuiteHelper {
 			public int getType() {
 				return IApiElement.COMPONENT;
 			}
+			public String getLowestEE() {
+				return null;
+			}
+			public IApiDescription getSystemApiDescription()
+					throws CoreException {
+				return null;
+			}
 		};
 	}
 	
