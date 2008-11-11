@@ -27,7 +27,7 @@ public interface IApiElement {
 	/**
 	 * Constant representing an {@link IApiType}
 	 */
-	public int TYPE = 2;		
+	public int TYPE = 2;
 	
 	/**
 	 * Constant representing an {@link org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer}
@@ -42,12 +42,12 @@ public interface IApiElement {
 	/**
 	 * Constant representing an {@link IApiField}
 	 */
-	public int FIELD = 5;	
+	public int FIELD = 5;
 	
 	/**
 	 * Constant representing an {@link IApiMethod}
 	 */
-	public int METHOD = 6;	
+	public int METHOD = 6;
 	
 	/**
 	 * Constant representing an {@link org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot}

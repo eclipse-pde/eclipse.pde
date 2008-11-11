@@ -198,4 +198,18 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	public boolean hasApiDescription() {
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#getSystemApiDescription()
+	 */
+	public IApiDescription getSystemApiDescription() throws CoreException {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#getLowestEE()
+	 */
+	public String getLowestEE() {
+		return null;
+	}
 }

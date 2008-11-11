@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
 
 
 /**
- * Describes API usage restrictions and visibility of an element contained
+ * Describes API usage restrictions, visibility and profiles information of an element contained
  * in an API component. 
  *   
  * @since 1.0.0
@@ -33,4 +33,17 @@ public interface IApiAnnotations {
 	 */
 	public int getRestrictions();
 	
+	/**
+	 * Returns the value corresponding to the profile in which this element was added
+	 * 
+	 * @return profile constant defined by {@link ProfileModifiers}
+	 */
+	public int getAddedProfile();
+
+	/**
+	 * Returns the value corresponding to the profiles in which this element was removed
+	 * 
+	 * @return profile constant defined by {@link ProfileModifiers}
+	 */
+	public int getRemovedProfile();
 }

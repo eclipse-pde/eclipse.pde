@@ -578,6 +578,7 @@ public class ApiProblemFactory {
 					}
 					case IApiProblem.UNSUPPORTED_TAG_USE: return IApiProblemTypes.INVALID_JAVADOC_TAG;
 					case IApiProblem.DUPLICATE_TAG_USE: return IApiProblemTypes.INVALID_JAVADOC_TAG;
+					case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES: return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
 				}
 				break;
 			}
@@ -610,6 +611,9 @@ public class ApiProblemFactory {
 		}
 		if(IApiProblemTypes.ILLEGAL_OVERRIDE.equals(prefkey)) {
 			return IApiProblem.ILLEGAL_OVERRIDE;
+		}
+		if(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES.equals(prefkey)) {
+			return IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
 		}
 		if(IApiProblemTypes.MISSING_SINCE_TAG.equals(prefkey)) {
 			return IApiProblem.SINCE_TAG_MISSING;

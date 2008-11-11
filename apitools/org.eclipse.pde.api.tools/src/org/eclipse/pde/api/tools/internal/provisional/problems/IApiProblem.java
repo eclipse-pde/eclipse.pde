@@ -211,7 +211,7 @@ public interface IApiProblem {
 	 * 
 	 * @see #getKind()
 	 */
-	public static final int API_LEAK = 6;	
+	public static final int API_LEAK = 6;
 	
 	/**
 	 * Constant representing the value of an invalid API javadoc tag use {@link IApiProblem} kind
@@ -232,13 +232,21 @@ public interface IApiProblem {
 	public static final int DUPLICATE_TAG_USE = 8;
 	
 	/**
+	 * Constant representing the value of an illegal reference inside system libraries use {@link IApiProblem} kind
+	 * <br>
+	 * Value is: <code>9</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int INVALID_REFERENCE_IN_SYSTEM_LIBRARIES = 9;
+	/**
 	 * Flags to indicate a leak from extending a non-API type. 
 	 * <br>
 	 * Value is: <code>1</code>
 	 * 
 	 * @see #getFlags()
 	 */
-	public static final int LEAK_EXTENDS = 1;	
+	public static final int LEAK_EXTENDS = 1;
 	
 	/**
 	 * Flags to indicate a leak from implementing a non-API type. 

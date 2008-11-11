@@ -185,6 +185,29 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_RESTRICTIONS = "restrictions"; //$NON-NLS-1$
 	/**
+	 * Constant representing the API profile attribute name in xml for which the element
+	 * was added.
+	 * Value is <code>addedprofile</code>
+	 */
+	public static final String ATTR_ADDED_PROFILE = "addedprofile"; //$NON-NLS-1$
+	/**
+	 * Constant representing the API profile attribute name in xml for which the element
+	 * was defined.
+	 * Value is <code>profile</code>
+	 */
+	public static final String ATTR_PROFILE = "profile"; //$NON-NLS-1$
+	/**
+	 * Constant representing the API profile attribute name in xml for which the element
+	 * was removed.
+	 * Value is <code>removedprofile</code>
+	 */
+	public static final String ATTR_REMOVED_PROFILE = "removedprofile"; //$NON-NLS-1$
+	/**
+	 * Constant representing the status of a member attribute name in xml.
+	 * Value is <code>status</code>
+	 */
+	public static final String ATTR_STATUS = "status"; //$NON-NLS-1$
+	/**
 	 * Constant representing the delta component id attribute name in xml.
 	 * Value is <code>componentId</code>
 	 */

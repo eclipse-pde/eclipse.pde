@@ -39,7 +39,7 @@ public interface IApiMember extends IApiElement {
 	 * @exception CoreException if this element does not exist or there in an 
 	 *  error reading its underlying storage
 	 */
-	public int getModifiers();		
+	public int getModifiers();
 	
 	/**
 	 * Returns the signature of member

@@ -226,4 +226,9 @@ public interface IApiProblemTypes {
 	 * Key for an invalid javadoc tag appearing where it does not belong
 	 */
 	public static final String INVALID_JAVADOC_TAG = "INVALID_JAVADOC_TAG"; //$NON-NLS-1$
+	/**
+	 * Key for the severity of referencing a type/method/field that does not belong
+	 * to the corresponding EE of the bundle
+	 */
+	public static final String INVALID_REFERENCE_IN_SYSTEM_LIBRARIES = "INVALID_REFERENCE_IN_SYSTEM_LIBRARIES"; //$NON-NLS-1$
 }

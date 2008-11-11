@@ -71,7 +71,13 @@ public class CompositeApiDescription implements IApiDescription {
 		}
 		return Status.CANCEL_STATUS;
 	}
-
+	public IStatus setAddedProfile(IElementDescriptor element, int addedProfile) {
+		return Status.OK_STATUS;
+	}
+	public IStatus setRemovedProfile(IElementDescriptor element,
+			int removedProfile) {
+		return Status.OK_STATUS;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#setVisibility(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, int)
 	 */

@@ -53,6 +53,30 @@ public interface IApiDescription {
 	 */
 	public IStatus setRestrictions(IElementDescriptor element, int restrictions);
 	
+
+	/**
+	 * Sets the visibility for the specified element in the context of the specified component
+	 * and returns a status describing whether the operation succeeded.
+	 * @param element the element the visibility applies to 
+	 * @param visibility element visibility. See {@linkplain VisibilityModifiers} for
+	 * supported modifiers
+	 * 
+	 * @return status of the operation 
+	 */
+	public IStatus setAddedProfile(IElementDescriptor element, int addedProfile);
+		
+	/**
+	 * Sets the restrictions for the specified element and returns a status describing whether the operation
+	 * succeeded.
+	 * 
+	 * @param element the element the restrictions apply to 
+	 * @param restrictions the restrictions to place on the element. See {@linkplain RestrictionModifiers} for
+	 * supported modifiers 
+	 *  
+	 * @return status of the operation
+	 */
+	public IStatus setRemovedProfile(IElementDescriptor element, int removedProfile);
+
 	/**
 	 * Returns annotations for the specified element when referenced from the specified component. 
 	 * <p>

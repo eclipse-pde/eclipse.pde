@@ -326,7 +326,7 @@ public class ReferenceAnalyzer {
 		end = System.currentTimeMillis();
 		if (DEBUG) {
 			System.out.println("Reference Analyzer: resolved method overrides in " + (end - start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
-		}	
+		}
 	}
 	
 	/**

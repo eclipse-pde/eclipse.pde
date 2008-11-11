@@ -905,4 +905,19 @@ public class BundleApiComponent extends AbstractApiComponent {
 		}
 		return fHasApiDescription;
 	}
+	public String getLowestEE() {
+		String[] executionEnvironments = this.getExecutionEnvironments();
+		switch(executionEnvironments.length) {
+			case 0 :
+				return null;
+			case 1 :
+				return executionEnvironments[0];
+			default :
+				return null;
+		}
+	}
+	public IApiDescription getSystemApiDescription() throws CoreException {
+		String lowestEE = getLowestEE();
+		return SystemLibraryApiDescription.newSystemLibraryApiDescription(lowestEE);
+	}
 }

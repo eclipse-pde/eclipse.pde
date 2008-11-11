@@ -24,28 +24,28 @@ public class RestrictionModifiers {
 	/**
 	 * Restriction kind constant indicating an interface cannot be implemented
 	 */
-	public static final int NO_IMPLEMENT = 0x0100;
+	public static final int NO_IMPLEMENT = 0x0001;
 	/**
 	 * Restriction kind constant indicating a type or member cannot be extended.
 	 */
-	public static final int NO_EXTEND = 0x0200;
+	public static final int NO_EXTEND = 0x0002;
 	/**
 	 * Restriction kind constant indicating a class cannot be instantiated.
 	 */
-	public static final int NO_INSTANTIATE = 0x0400;
+	public static final int NO_INSTANTIATE = 0x0004;
 	/**
 	 * Restriction kind constant indicating a class cannot have a member referenced
 	 */
-	public static final int NO_REFERENCE = 0x0800;
+	public static final int NO_REFERENCE = 0x0008;
 	/**
 	 * Restriction kind constant indicating a method cannot be overridden
 	 */
-	public static final int NO_OVERRIDE = 0x1000;
+	public static final int NO_OVERRIDE = 0x0010;
 	
 	/**
 	 * Bit mask of all restrictions.
 	 */
-	public static final int ALL_RESTRICTIONS = 0xFFFF;
+	public static final int ALL_RESTRICTIONS = 0xFF;
 	
 	/**
 	 * Returns if the no_implement modifier has been set in the specified modifiers

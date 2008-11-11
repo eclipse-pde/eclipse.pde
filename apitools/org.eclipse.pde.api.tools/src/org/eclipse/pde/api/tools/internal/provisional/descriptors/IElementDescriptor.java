@@ -26,17 +26,17 @@ public interface IElementDescriptor {
 	/**
 	 * Constant representing a reference type descriptor.
 	 */
-	public static final int TYPE = 2;		
+	public static final int TYPE = 2;
 	
 	/**
 	 * Constant representing a field descriptor.
 	 */
-	public static final int FIELD = 5;	
+	public static final int FIELD = 5;
 	
 	/**
 	 * Constant representing a method descriptor.
 	 */
-	public static final int METHOD = 6;	
+	public static final int METHOD = 6;
 	
 	/**
 	 * Constant representing an {@link IResource} descriptor

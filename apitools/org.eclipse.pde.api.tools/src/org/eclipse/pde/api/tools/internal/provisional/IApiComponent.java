@@ -40,6 +40,13 @@ public interface IApiComponent extends IApiTypeContainer {
 	public IApiDescription getApiDescription() throws CoreException;
 	
 	/**
+	 * Returns this component's system API description.
+	 * 
+	 * @return API manifest
+	 * @throws CoreException if there was a problem creating the system API description for this component
+	 */
+	public IApiDescription getSystemApiDescription() throws CoreException;
+	/**
 	 * Returns whether this component has an underlying API description. Even if a component
 	 * has no underlying description it will return one from {@link #getApiDescription()},
 	 * but it will be empty. This method allows clients to know if there was any thing used
@@ -173,4 +180,13 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * @return whether this API component is the host of one or more fragments
 	 */
 	public boolean hasFragments();
+	
+	/**
+	 * Returns the lowest execution environment required by this component for building
+	 * and running. An execution environment is represented by a unique identifier
+	 * as defined by OSGi - for example "J2SE-1.4" or "CDC-1.0/Foundation-1.0".
+	 * 
+	 * @return execution environment identifier
+	 */
+	public String getLowestEE();
 }

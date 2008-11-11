@@ -292,7 +292,7 @@ public class Reference implements IReference {
 		IApiMember member = getMember();
 		buf.append(member.getHandle().toString());
 		if (getResolvedReference() == null) {
-			buf.append("\nUnresoled To: "); //$NON-NLS-1$
+			buf.append("\nUnresolved To: "); //$NON-NLS-1$
 			buf.append(getReferencedTypeName());
 			if (getReferencedMemberName() != null) {
 				buf.append('#');

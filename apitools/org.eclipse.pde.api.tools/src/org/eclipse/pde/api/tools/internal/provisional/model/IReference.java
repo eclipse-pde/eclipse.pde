@@ -18,15 +18,15 @@ package org.eclipse.pde.api.tools.internal.provisional.model;
 public interface IReference {
 	
 	/**
-	 * An {@link IReference} of this type can be safely cast to an {@link ITypeReference}.
+	 * An {@link IReference} of this type represents a type reference.
 	 */
 	public static final int T_TYPE_REFERENCE = 1;
 	/**
-	 * An {@link IReference} of this type can be safely cast to an {@link IFieldReference}.
+	 * An {@link IReference} of this type represents a field reference.
 	 */	
 	public static final int T_FIELD_REFERENCE = 2;
 	/**
-	 * An {@link IReference} of this type can be safely cast to an {@link IMethodReference}.
+	 * An {@link IReference} of this type represents a method reference.
 	 */
 	public static final int T_METHOD_REFERENCE = 3;
 	

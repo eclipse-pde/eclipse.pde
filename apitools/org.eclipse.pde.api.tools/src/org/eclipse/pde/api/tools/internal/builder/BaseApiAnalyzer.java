@@ -436,7 +436,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_JAVADOC_TAG, fJavaProject.getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
-	
 	/**
 	 * Checks the validation of tags for the given {@link IApiComponent}
 	 * @param typenames

@@ -10,22 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipFile;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.ApiAnnotations;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
+import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -33,6 +40,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.scanner.SystemApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,16 +55,21 @@ import com.ibm.icu.text.MessageFormat;
  * @see IApiDescription
  * @since 1.0.0
  */
-public class ApiDescription implements IApiDescription {
+public class SystemLibraryApiDescription implements IApiDescription {
 	
-	// flag to indicate visibility should be inherited from parent node
-	protected static final int VISIBILITY_INHERITED = 0;
+	private static final SystemLibraryApiDescription EMPTY_DESCRIPTION = new SystemLibraryApiDescription("Default"); //$NON-NLS-1$
+	// initialize the system api descriptions
+	protected static IApiDescription[] ALL_SYSTEM_API_DESCRIPTIONS = new IApiDescription[3];
 	
-	/**
-	 * Debug flag
-	 */
-	protected static final boolean DEBUG = Util.DEBUG;
-	
+	protected static int INDEX_FOR_CDCs = 0;
+	protected static int INDEX_FOR_JREs = 1;
+	protected static int INDEX_FOR_OSGis = 2;
+
+	// flag to indicate added profile should be inherited from parent node
+	protected static final int ADDED_PROFILE_INHERITED = 0;
+	// flag to indicate removed profile should be inherited from parent node
+	protected static final int REMOVED_PROFILE_INHERITED = 0;
+
 	/**
 	 * API component identifier of the API component that owns this
 	 * description. All references within a component have no restrictions.
@@ -71,19 +84,35 @@ public class ApiDescription implements IApiDescription {
 	private boolean fModified = false;
 	
 	/**
+	 * Whether this description is exhaustive or compressed.
+	 */
+	private boolean isExhaustive = false;
+	
+	/**
 	 * Represents a single node in the tree of mapped manifest items
 	 */
 	class ManifestNode implements Comparable {
 		protected IElementDescriptor element = null;
-		protected int visibility, restrictions;
+		protected int visibility;
+		protected int restrictions;
+		protected int addedProfile;
+		protected int removedProfile;
 		protected ManifestNode parent = null;
 		protected HashMap children = new HashMap(1);
 		
-		public ManifestNode(ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
+		public ManifestNode(
+				ManifestNode parent,
+				IElementDescriptor element,
+				int visibility,
+				int restrictions,
+				int addedProfile,
+				int removedProfile) {
 			this.element = element;
+			this.parent = parent;
 			this.visibility = visibility;
 			this.restrictions = restrictions;
-			this.parent = parent;
+			this.addedProfile = addedProfile;
+			this.removedProfile = removedProfile;
 		}
 	
 		/* (non-Javadoc)
@@ -137,8 +166,16 @@ public class ApiDescription implements IApiDescription {
 			}
 			StringBuffer buffer = new StringBuffer();
 			buffer.append(type == null ? "Unknown" : type).append(" Node: ").append(name == null ? "Unknown Name" : name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			buffer.append("\nVisibility: ").append(Util.getVisibilityKind(visibility)); //$NON-NLS-1$
-			buffer.append("\nRestrictions: ").append(Util.getRestrictionKind(restrictions)); //$NON-NLS-1$
+			buffer.append("\nVisibility: API");//$NON-NLS-1$
+			buffer.append("\nRestrictions: None"); //$NON-NLS-1$
+			String name2 = ProfileModifiers.getName(this.addedProfile);
+			if (name2 != null) {
+				buffer.append("\nAdded profile: ").append(name2); //$NON-NLS-1$
+			}
+			name2 = ProfileModifiers.getName(this.removedProfile);
+			if (name2 != null) {
+				buffer.append("\nRemoved profile: ").append(name2); //$NON-NLS-1$
+			}
 			if(parent != null) {
 				String pname = parent.element.getElementType() == IElementDescriptor.PACKAGE ? 
 						((IPackageDescriptor)parent.element).getName() : ((IMemberDescriptor)parent.element).getName();
@@ -179,9 +216,6 @@ public class ApiDescription implements IApiDescription {
 		 * @param component component the description is for or <code>null</code>
 		 */
 		void persistXML(Document document, Element parent) {
-			if(restrictions == RestrictionModifiers.NO_RESTRICTIONS) { 
-				return;
-			}
 			switch (element.getElementType()) {
 			case IElementDescriptor.METHOD:
 				IMethodDescriptor md = (IMethodDescriptor) element;
@@ -208,8 +242,43 @@ public class ApiDescription implements IApiDescription {
 		 * @param component the component the description is for or <code>null</code>
 		 */
 		void persistAnnotations(Element element) {
-			element.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(visibility));
-			element.setAttribute(IApiXmlConstants.ATTR_RESTRICTIONS, Integer.toString(restrictions));
+			if (this.addedProfile != -1) {
+				element.setAttribute(IApiXmlConstants.ATTR_ADDED_PROFILE, Integer.toString(this.addedProfile));
+			}
+			if (this.removedProfile != -1) {
+				element.setAttribute(IApiXmlConstants.ATTR_RESTRICTIONS, Integer.toString(this.removedProfile));
+			}
+		}
+
+		public int getInheritedAddedProfile() {
+			int addedP = this.addedProfile;
+			if (addedP != ADDED_PROFILE_INHERITED) return addedP;
+			ManifestNode tmp = this;
+			while (tmp != null) {
+				addedP = tmp.addedProfile;
+				if(tmp.addedProfile == ADDED_PROFILE_INHERITED) {
+					tmp = tmp.parent;
+				}
+				else {
+					tmp = null;
+				}
+			}
+			return addedP;
+		}
+		public int getInheritedRemovedProfile() {
+			int removedP = this.removedProfile;
+			if (removedP != ADDED_PROFILE_INHERITED) return removedP;
+			ManifestNode tmp = this;
+			while (tmp != null) {
+				removedP = tmp.removedProfile;
+				if(tmp.removedProfile == REMOVED_PROFILE_INHERITED) {
+					tmp = tmp.parent;
+				}
+				else {
+					tmp = null;
+				}
+			}
+			return removedP;
 		}
 	}
 		
@@ -227,8 +296,77 @@ public class ApiDescription implements IApiDescription {
 	 * @param owningComponentId API component identifier or <code>null</code> if there
 	 * is no specific owner.
 	 */
-	public ApiDescription(String owningComponentId) {
-		fOwningComponentId = owningComponentId;
+	public static IApiDescription newSystemLibraryApiDescription(String eeID) {
+		if (ProfileModifiers.isJRE(eeID)) {
+			if (ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_JREs] == null) {
+				ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_JREs] = initialize("JREs", "../util/profiles/api_descriptions/jre.api_description", false); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_JREs];
+		} else if (ProfileModifiers.isOSGi(eeID)) {
+			if (ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_OSGis] == null) {
+				ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_OSGis] = initialize("OSGis", "../util/profiles/api_descriptions/osgi.api_description", true); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_OSGis];
+		} else if (ProfileModifiers.isCDC_Foundation(eeID)) {
+			if (ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_CDCs] == null) {
+				ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_CDCs] = initialize("CDCs", "../util/profiles/api_descriptions/cdc.api_description", true); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_CDCs];
+		}
+		return SystemLibraryApiDescription.EMPTY_DESCRIPTION;
+	}
+
+	private static IApiDescription initialize(String eeID, String location, boolean isExhaustive) {
+		IApiDescription apiDesc = new SystemLibraryApiDescription(eeID, isExhaustive);
+		// first mark all packages as internal
+		try {
+			String xml = loadApiDescription(location);
+			if (xml != null) {
+				SystemApiDescriptionProcessor.annotateApiSettings(apiDesc, xml);
+			}
+		} catch (IOException e) {
+			ApiPlugin.log(e);
+			return EMPTY_DESCRIPTION;
+		} catch(CoreException e) {
+			ApiPlugin.log(e);
+			return EMPTY_DESCRIPTION;
+		}
+		return apiDesc;
+	}
+	public SystemLibraryApiDescription(String id) {
+		this(id, false);
+	}
+	public SystemLibraryApiDescription(String id, boolean isExhaustive) {
+		this.fOwningComponentId = id;
+		this.isExhaustive = isExhaustive;
+	}
+	protected static String loadApiDescription(String inputLocation) throws IOException {
+		BufferedInputStream inputStream = null;
+		try {
+			inputStream = new BufferedInputStream(ApiPlugin.class.getResourceAsStream(inputLocation));
+			char[] charArray = Util.getInputStreamAsCharArray(inputStream, -1, IApiCoreConstants.UTF_8);
+			return new String(charArray);
+		} finally {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+		}
+	}
+	static void closingZipFileAndStream(InputStream stream, ZipFile jarFile) {
+		try {
+			if (stream != null) {
+				stream.close();
+			}
+		} catch (IOException e) {
+			ApiPlugin.log(e);
+		}
+		try {
+			if (jarFile != null) {
+				jarFile.close();
+			}
+		} catch (IOException e) {
+			ApiPlugin.log(e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -261,18 +399,11 @@ public class ApiDescription implements IApiDescription {
 	 * @param node node to visit
 	 */
 	private void visitNode(ApiDescriptionVisitor visitor, ManifestNode node) {
-		int vis = node.visibility;
-		ManifestNode tmp = node;
-		while (tmp != null) {
-			vis = tmp.visibility;
-			if(tmp.visibility == VISIBILITY_INHERITED) {
-				tmp = tmp.parent;
-			}
-			else {
-				tmp = null;
-			}
-		}
-		IApiAnnotations desc = new ApiAnnotations(vis, node.restrictions);
+		IApiAnnotations desc = new ApiAnnotations(
+				VisibilityModifiers.API,
+				RestrictionModifiers.NO_RESTRICTIONS,
+				node.getInheritedAddedProfile(),
+				node.getInheritedRemovedProfile());
 		boolean visitChildren = visitor.visitElement(node.element, desc);
 		if (visitChildren && !node.children.isEmpty()) {
 			visitChildren(visitor, node.children);
@@ -306,8 +437,10 @@ public class ApiDescription implements IApiDescription {
 					} else {
 						return null;
 					}
-				} else {
+				} else if (!this.isExhaustive) {
 					return parentNode;
+				} else {
+					return null;
 				}
 			}
 			node = node.refresh();
@@ -337,17 +470,11 @@ public class ApiDescription implements IApiDescription {
 	 * @return annotations
 	 */
 	protected IApiAnnotations resolveAnnotations(ManifestNode node, IElementDescriptor element) {
-		ManifestNode visNode = node;
-		int vis = visNode.visibility;
-		while (vis == VISIBILITY_INHERITED) {
-			visNode = visNode.parent;
-			vis = visNode.visibility;
-		}
-		int res = RestrictionModifiers.NO_RESTRICTIONS;
-		if (node.element.equals(element)) {
-			res = node.restrictions;
-		}
-		return new ApiAnnotations(vis, res);
+		return new ApiAnnotations(
+				VisibilityModifiers.API,
+				RestrictionModifiers.NO_RESTRICTIONS,
+				node.getInheritedAddedProfile(),
+				node.getInheritedRemovedProfile());
 	}
 	
 	/**
@@ -370,27 +497,16 @@ public class ApiDescription implements IApiDescription {
 	 * @param element element the node is to be created for
 	 * @return new manifest node or <code>null</code> if none
 	 */
-	protected ManifestNode createNode(ManifestNode parentNode, IElementDescriptor element) {
-		int vis = VISIBILITY_INHERITED;
-		if (element.getElementType() == IElementDescriptor.PACKAGE) {
-			vis = VisibilityModifiers.API;
-		}
-		return new ManifestNode(parentNode, element, vis, RestrictionModifiers.NO_RESTRICTIONS);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#setRestrictions(java.lang.String, org.eclipse.pde.api.tools.model.component.IElementDescriptor, int)
-	 */
-	public IStatus setRestrictions(IElementDescriptor element, int restrictions) {
-		ManifestNode node = findNode(element, true);
-		if(node != null) {
-			modified();
-			node.restrictions = restrictions;
-			return Status.OK_STATUS;
-		}
-		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND,
-				MessageFormat.format("Failed to set API restriction: {0} not found in {1}", //$NON-NLS-1$
-						new String[]{element.toString(), fOwningComponentId}), null);
+	protected ManifestNode createNode(
+			ManifestNode parentNode,
+			IElementDescriptor element) {
+		return new ManifestNode(
+				parentNode,
+				element,
+				VisibilityModifiers.API,
+				RestrictionModifiers.NO_RESTRICTIONS,
+				ADDED_PROFILE_INHERITED,
+				REMOVED_PROFILE_INHERITED);
 	}
 
 	/* (non-Javadoc)
@@ -407,14 +523,22 @@ public class ApiDescription implements IApiDescription {
 				MessageFormat.format("Failed to set API visibility: {0} not found in {1}", //$NON-NLS-1$
 						new String[]{element.toString(), fOwningComponentId}), null);
 	}
-	
-	public IStatus setAddedProfile(IElementDescriptor element, int addedProfile) {
-		return Status.OK_STATUS;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#setRestrictions(java.lang.String, org.eclipse.pde.api.tools.model.component.IElementDescriptor, int)
+	 */
+	public IStatus setRestrictions(IElementDescriptor element, int restrictions) {
+		ManifestNode node = findNode(element, true);
+		if(node != null) {
+			modified();
+			node.restrictions = restrictions;
+			return Status.OK_STATUS;
+		}
+		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND,
+				MessageFormat.format("Failed to set API restriction: {0} not found in {1}", //$NON-NLS-1$
+						new String[]{element.toString(), fOwningComponentId}), null);
 	}
-	public IStatus setRemovedProfile(IElementDescriptor element,
-			int removedProfile) {
-		return Status.OK_STATUS;
-	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -423,7 +547,29 @@ public class ApiDescription implements IApiDescription {
 		buffer.append("Api description for component: ").append(fOwningComponentId); //$NON-NLS-1$
 		return buffer.toString();
 	}
-
+	public IStatus setAddedProfile(IElementDescriptor element, int addedProfile) {
+		ManifestNode node = findNode(element, true);
+		if(node != null) {
+			modified();
+			node.addedProfile = addedProfile;
+			return Status.OK_STATUS;
+		}
+		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND,
+				MessageFormat.format("Failed to set API added profile: {0} not found in {1}", //$NON-NLS-1$
+						new String[]{element.toString(), fOwningComponentId}), null);
+	}
+	public IStatus setRemovedProfile(IElementDescriptor element,
+			int removedProfile) {
+		ManifestNode node = findNode(element, true);
+		if(node != null) {
+			modified();
+			node.removedProfile = removedProfile;
+			return Status.OK_STATUS;
+		}
+		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND,
+				MessageFormat.format("Failed to set API removed profile: {0} not found in {1}", //$NON-NLS-1$
+						new String[]{element.toString(), fOwningComponentId}), null);
+	}
 	/**
 	 * Returns whether a new node should be inserted into the API description
 	 * when resolving the annotations for an element if a node is not already

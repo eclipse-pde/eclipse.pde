@@ -44,6 +44,11 @@ public interface IApiCoreConstants {
 	 */
 	public static final String API_DESCRIPTION_XML_NAME = ".api_description"; //$NON-NLS-1$
 	/**
+	 * Constant representing the name of API description XML file.
+	 * Value is <code>.api_description</code>
+	 */
+	public static final String SYSTEM_API_DESCRIPTION_XML_NAME = "system.api_description"; //$NON-NLS-1$
+	/**
 	 * Constant representing the name of the API filters XML file.
 	 * Value is <code>.api_filters</code>
 	 */

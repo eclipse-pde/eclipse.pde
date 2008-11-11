@@ -29,7 +29,6 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
  * @since 1.0.0
  */
 public abstract class AbstractApiComponent extends AbstractApiTypeContainer implements IApiComponent {
-	
 	/**
 	 * API description
 	 */
@@ -145,7 +144,7 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#newProblemFilter(org.eclipse.pde.api.tools.internal.provisional.IApiProblem)
 	 */
 	public IApiProblemFilter newProblemFilter(IApiProblem problem) {
-	//TODO either expose a way to make problems or change the method to accept the parts of a problem
+		//TODO either expose a way to make problems or change the method to accept the parts of a problem
 		return new ApiProblemFilter(getId(), problem);
 	}
 	
@@ -155,6 +154,5 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 	 * @return the current {@link IApiFilterStore} for this component
 	 * @throws CoreException
 	 */
-	protected abstract IApiFilterStore createApiFilterStore() throws CoreException;
-	
+	protected abstract IApiFilterStore createApiFilterStore() throws CoreException;	
 }
