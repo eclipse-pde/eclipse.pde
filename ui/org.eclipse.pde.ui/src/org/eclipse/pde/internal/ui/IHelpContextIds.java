@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -235,6 +236,7 @@ public interface IHelpContextIds {
 	public static final String LAUNCHING_PAGE = PREFIX + "launching_page"; //$NON-NLS-1$
 	public static final String CONFIGURATION_PAGE = PREFIX + "configuration_page"; //$NON-NLS-1$
 	public static final String OVERVIEW_PAGE = PREFIX + "overview_page"; //$NON-NLS-1$
+	public static final String LICENSING_PAGE = PREFIX + "licensing_page"; //$NON-NLS-1$
 
 	public static final String ENVIRONMENT_PAGE = PREFIX + "environment_page"; //$NON-NLS-1$	
 	public static final String TARGET_OVERVIEW_PAGE = PREFIX + "target_overview_page"; //$NON-NLS-1$

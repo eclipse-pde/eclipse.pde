@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -78,6 +79,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_FEATURE_JAR_OBJ = create(PATH_OBJ, "ftr_jar_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FEATURE_MF_OBJ = create(PATH_OBJ, "ftr_mf_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FEATURE_OBJ = create(PATH_OBJ, "feature_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_LICENSE_OBJ = create(PATH_OBJ, "license_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NOREF_FEATURE_OBJ = create(PATH_OBJ, "noref_feature_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ELREF_SC_OBJ = create(PATH_OBJ, "elref_sc_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXTENSIONS_OBJ = create(PATH_OBJ, "extensions_obj.gif"); //$NON-NLS-1$

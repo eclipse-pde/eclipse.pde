@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -26,9 +27,6 @@ public class ProductEditor extends PDELauncherFormEditor {
 	private ProductExportAction fExportAction;
 	private ILauncherFormPageHelper fLauncherHelper;
 
-	/**
-	 * 
-	 */
 	public ProductEditor() {
 		super();
 	}
@@ -117,6 +115,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 			addPage(new LaunchingPage(this));
 			addPage(new SplashPage(this));
 			addPage(new BrandingPage(this));
+			addPage(new LicensingPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}

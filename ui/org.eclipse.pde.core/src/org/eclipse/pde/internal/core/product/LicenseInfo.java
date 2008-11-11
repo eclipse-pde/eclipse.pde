@@ -13,13 +13,12 @@ package org.eclipse.pde.internal.core.product;
 import java.io.PrintWriter;
 import org.eclipse.pde.internal.core.iproduct.ILicenseInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 public class LicenseInfo extends ProductObject implements ILicenseInfo {
 
 	public static final String P_URL = "url"; //$NON-NLS-1$
-	public static final String P_LICENSE = "license"; //$NON-NLS-1$
+	public static final String P_LICENSE = "text"; //$NON-NLS-1$
 
 	private static final long serialVersionUID = 1L;
 
@@ -53,15 +52,54 @@ public class LicenseInfo extends ProductObject implements ILicenseInfo {
 	}
 
 	public void parse(Node node) {
-		if (node.getNodeType() == Node.ELEMENT_NODE) {
-			Element element = (Element) node;
-			fURL = element.getAttribute(P_URL);
+		NodeList children = node.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				if (child.getNodeName().equals(P_LICENSE)) {
+					child.normalize();
+					if (child.getChildNodes().getLength() > 0) {
+						Node text = child.getFirstChild();
+						if (text.getNodeType() == Node.TEXT_NODE) {
+							fLicense = ((Text) text).getData().trim();
+						}
+					}
+					if (child.getNodeName().equals(P_URL)) {
+						child.normalize();
+						if (child.getChildNodes().getLength() > 0) {
+							Node text = child.getFirstChild();
+							if (text.getNodeType() == Node.TEXT_NODE) {
+								fURL = ((Text) text).getData().trim();
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		if (fURL != null && fURL.length() > 0)
-			writer.println(indent + "<license " + P_URL + "=\"" + getWritableString(fURL) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (isURLDefined() || isLicenseTextDefined()) {
+			writer.println(indent + "<license>"); //$NON-NLS-1$
+			if (isURLDefined()) {
+				writer.println(indent + "     <url>" + getWritableString(fURL.trim()) + "</url>"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if (isLicenseTextDefined()) {
+				writer.println(indent + "     <text>"); //$NON-NLS-1$
+				writer.println(indent + getWritableString(fLicense.trim()));
+				writer.println(indent + "      </text>"); //$NON-NLS-1$
+			}
+			writer.println(indent + "</license>"); //$NON-NLS-1$
+		}
+
+	}
+
+	private boolean isURLDefined() {
+		return fURL != null && fURL.length() > 0;
+	}
+
+	private boolean isLicenseTextDefined() {
+		return fLicense != null && fLicense.length() > 0;
 	}
 
 }
