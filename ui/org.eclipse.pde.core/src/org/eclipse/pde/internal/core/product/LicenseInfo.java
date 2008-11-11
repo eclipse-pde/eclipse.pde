@@ -64,13 +64,13 @@ public class LicenseInfo extends ProductObject implements ILicenseInfo {
 							fLicense = ((Text) text).getData().trim();
 						}
 					}
-					if (child.getNodeName().equals(P_URL)) {
-						child.normalize();
-						if (child.getChildNodes().getLength() > 0) {
-							Node text = child.getFirstChild();
-							if (text.getNodeType() == Node.TEXT_NODE) {
-								fURL = ((Text) text).getData().trim();
-							}
+				}
+				if (child.getNodeName().equals(P_URL)) {
+					child.normalize();
+					if (child.getChildNodes().getLength() > 0) {
+						Node text = child.getFirstChild();
+						if (text.getNodeType() == Node.TEXT_NODE) {
+							fURL = ((Text) text).getData().trim();
 						}
 					}
 				}
