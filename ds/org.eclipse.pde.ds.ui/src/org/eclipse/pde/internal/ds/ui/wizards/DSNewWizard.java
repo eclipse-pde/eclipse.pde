@@ -18,6 +18,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ds.ui.Activator;
+import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -38,6 +39,7 @@ public class DSNewWizard extends Wizard implements INewWizard {
 	}
 	
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+		setWindowTitle(Messages.DSNewWizard_title);
 		fMainPage = new DSFileWizardPage(currentSelection);
 	}
 

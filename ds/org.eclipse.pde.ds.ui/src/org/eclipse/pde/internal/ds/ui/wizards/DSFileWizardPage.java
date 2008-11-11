@@ -18,7 +18,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.core.JavaElement;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
@@ -26,10 +29,12 @@ import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
+import org.eclipse.pde.internal.ds.ui.SWTUtil;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -40,12 +45,17 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.osgi.framework.Constants;
 
 public class DSFileWizardPage extends WizardNewFileCreationPage {
@@ -62,7 +72,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	private Label fDSComponentNameLabel;
 
 	private Text fDSImplementationClassText;
-	private Label fDSImplementationClassLabel;
+	private Hyperlink fDSImplementationClassHyperlink;
 	private Button fDSImplementationClassButton;
 
 	private IStructuredSelection fSelection;
@@ -89,19 +99,23 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	private void setComponentName() {
 		Object element = fSelection.getFirstElement();
 		if (element != null) {
-			IProject project = null;
-			if (element instanceof IResource) {
-				project = ((IResource) element).getProject();
-			} else if (element instanceof JavaElement) {
-				project = ((JavaElement) element).getJavaProject()
-						.getProject();
-			} else if (element instanceof ClassPathContainer) {
-				project = ((ClassPathContainer) element).getJavaProject()
-						.getProject();
-			}
+			IProject project = getProject(element);
 			if (project != null)
 				setComponentNameText(project);
 		}
+	}
+
+	private IProject getProject(Object element) {
+		IProject project = null;
+		if (element instanceof IResource) {
+			project = ((IResource) element).getProject();
+		} else if (element instanceof JavaElement) {
+			project = ((JavaElement) element).getJavaProject().getProject();
+		} else if (element instanceof ClassPathContainer) {
+			project = ((ClassPathContainer) element).getJavaProject()
+					.getProject();
+		}
+		return project;
 	}
 
 	private void setComponentNameText(IProject project) {
@@ -112,13 +126,15 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 				model.load();
 				String header = model.getBundleModel().getBundle().getHeader(
 						Constants.BUNDLE_SYMBOLICNAME);
-				fDSComponentNameText.setText(header);
+				String[] h = header.split(";"); //$NON-NLS-1$
+				fDSComponentNameText.setText(h[0]);
 			}
 		} catch (CoreException e) {
 		}
 	}
 
 	protected void createAdvancedControls(Composite parent) {
+
 		// Controls Group
 		fGroup = new Group(parent, SWT.NONE);
 		fGroup.setText(Messages.DSFileWizardPage_group);
@@ -142,10 +158,74 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		});
 		setComponentName();
 
-		// Implementation Class Label
-		fDSImplementationClassLabel = new Label(fGroup, SWT.NONE);
-		fDSImplementationClassLabel
+		fDSImplementationClassHyperlink = new Hyperlink(fGroup, SWT.NONE);
+		fDSImplementationClassHyperlink
 				.setText(Messages.DSFileWizardPage_implementation_class);
+		fDSImplementationClassHyperlink.setUnderlined(true);
+		fDSImplementationClassHyperlink.setForeground(Display.getDefault()
+				.getSystemColor(SWT.COLOR_BLUE));
+		fDSImplementationClassHyperlink
+				.addHyperlinkListener(new IHyperlinkListener() {
+
+					public void linkActivated(HyperlinkEvent e) {
+						String value = fDSImplementationClassText.getText();
+						value = handleLinkActivated(value, false);
+						if (value != null)
+							fDSImplementationClassText.setText(value);
+
+					}
+
+					private String handleLinkActivated(String value,
+							boolean isInter) {
+						Object object = fSelection.getFirstElement();
+						if (object != null) {
+							IProject project = getProject(object);
+							try {
+								if (project != null
+										&& project
+												.hasNature(JavaCore.NATURE_ID)) {
+									IJavaProject javaProject = JavaCore
+											.create(project);
+									IJavaElement element = javaProject
+											.findType(value.replace('$', '.'));
+									if (element != null)
+										JavaUI.openInEditor(element);
+									else {
+										// TODO create our own wizard for reuse
+										// here
+										DSNewClassCreationWizard wizard = new DSNewClassCreationWizard(
+												project, isInter, value);
+										WizardDialog dialog = new WizardDialog(
+												Activator
+														.getActiveWorkbenchShell(),
+												wizard);
+										dialog.create();
+										SWTUtil.setDialogSize(dialog, 400, 500);
+										if (dialog.open() == Window.OK) {
+											return wizard.getQualifiedName();
+										}
+									}
+								}
+							} catch (PartInitException e1) {
+							} catch (CoreException e1) {
+							}
+						}
+						return null;
+					}
+
+					public void linkEntered(HyperlinkEvent e) {
+						fDSImplementationClassHyperlink.setForeground(Display
+								.getDefault().getSystemColor(
+										SWT.COLOR_DARK_BLUE));
+					}
+
+					public void linkExited(HyperlinkEvent e) {
+						fDSImplementationClassHyperlink.setForeground(Display
+								.getDefault().getSystemColor(SWT.COLOR_BLUE));
+
+					}
+
+				});
 
 		// Implementation Class Text
 		fDSImplementationClassText = new Text(fGroup, SWT.SINGLE | SWT.BORDER);
@@ -167,12 +247,10 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 
 			public void mouseDoubleClick(MouseEvent e) {
 				// TODO Auto-generated method stub
-
 			}
 
 			public void mouseDown(MouseEvent e) {
 				// TODO Auto-generated method stub
-
 			}
 
 			public void mouseUp(MouseEvent e) {
@@ -197,8 +275,8 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 				} catch (CoreException e) {
 				}
 			}
-
 		});
+
 	}
 
 	public String getDSComponentNameValue() {

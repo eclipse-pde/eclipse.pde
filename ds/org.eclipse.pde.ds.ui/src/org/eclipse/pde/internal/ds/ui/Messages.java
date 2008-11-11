@@ -41,6 +41,8 @@ public class Messages extends NLS {
 	public static String DSFileWizardPage_selectType;
 	public static String DSFileWizardPage_not_OSGI_folder;
 	
+	public static String DSNewWizard_title;
+	
 	public static String DSImplementationDetails_title;
 	public static String DSImplementationDetails_description;
 	public static String DSImplementationDetails_classEntry;
@@ -162,6 +164,7 @@ public class Messages extends NLS {
 	public static String DSServiceComponentSection_enabledButtonMessage;
 	
 	public static String DSService_title;
+
 	
 	
 
