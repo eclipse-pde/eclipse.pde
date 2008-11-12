@@ -38,11 +38,11 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * 
  * @since 1.1
  */
-public class SystemAPIDetector extends AbstractProblemDetector {
+public class SystemApiDetector extends AbstractProblemDetector {
 
 	int eeValue;
 	
-	public SystemAPIDetector(String eeIdentifier) {
+	public SystemApiDetector(String eeIdentifier) {
 		this.eeValue= ProfileModifiers.getValue(eeIdentifier);
 	}
 	protected int getElementType(IReference reference) {

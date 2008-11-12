@@ -46,7 +46,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	private IllegalOverrideProblemDetector fIllegalOverride = null;
 	private IllegalMethodReferenceDetector fIllegalMethodRef = null;
 	private IllegalFieldReferenceDetector fIllegalFieldRef = null;
-	private SystemAPIDetector fSystemApiDetector = null;
+	private SystemApiDetector fSystemApiDetector = null;
 	/**
 	 * Cache of non-API package names visited
 	 */
@@ -167,13 +167,13 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 			if (project != null && !isIgnore(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, project)) {
 				String lowestEE = component.getLowestEE();
 				if (lowestEE != null) {
-					fSystemApiDetector = new SystemAPIDetector(lowestEE);
+					fSystemApiDetector = new SystemApiDetector(lowestEE);
 				}
 			} else {
 				//add detector by default if we have no preference context
 				String lowestEE = component.getLowestEE();
 				if (lowestEE != null) {
-					fSystemApiDetector = new SystemAPIDetector(lowestEE);
+					fSystemApiDetector = new SystemApiDetector(lowestEE);
 				}
 			}
 		}
