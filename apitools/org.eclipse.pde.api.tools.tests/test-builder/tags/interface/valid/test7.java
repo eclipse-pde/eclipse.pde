@@ -8,18 +8,40 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
+
 
 /**
- * Tests invalid @noextend tag on an outer interface
- */
-public interface test7 {
-
-}
-
-/**
+ * Test supported @noextend tag on an interface in the default package
  * @noextend
  */
+public interface test7 {
+	/**
+	 * @noextend
+	 */
+	interface inner {
+		
+	}
+	
+	interface inner1 {
+		/**
+		 * @noextend
+		 */
+		interface inner2 {
+			
+		}
+	}
+	
+	interface inner2 {
+		
+	}
+}
+
 interface outer {
 	
+	/**
+	 * @noextend
+	 */
+	interface inner {
+		
+	}
 }

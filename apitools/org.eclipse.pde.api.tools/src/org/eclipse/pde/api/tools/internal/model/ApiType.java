@@ -215,7 +215,7 @@ public class ApiType extends ApiMember implements IApiType {
 	public IApiType[] getSuperInterfaces() throws CoreException {
 		String[] names = getSuperInterfaceNames();
 		if (names == null) {
-			return null;
+			return EMPTY_TYPES;
 		}
 		if (fSuperInterfaces == null) {
 			IApiType[] interfaces = new IApiType[names.length];

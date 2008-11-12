@@ -18,7 +18,6 @@ public interface test18 {
 	/**
 	 * @noreference
 	 * @nooverride
-	 * @noextend
 	 * @noinstantiate
 	 */
 	interface inner {

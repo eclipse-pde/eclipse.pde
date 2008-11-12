@@ -14,7 +14,6 @@ package a.b.c;
  * Test unsupported tags on an interface
  * @noreference
  * @nooverride
- * @noextend
  * @noinstantiate
  */
 public interface test16 {

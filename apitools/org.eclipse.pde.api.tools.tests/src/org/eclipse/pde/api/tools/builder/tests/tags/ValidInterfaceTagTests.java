@@ -123,4 +123,36 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	public void testValidInterfaceTag5F() {
 		deployTagTest(TESTING_PACKAGE, "test5", false, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
+	
+	/**
+	 * Tests having an @noextend tag on an interface in package a.b.c
+	 * using an incremental build
+	 */
+	public void testInvalidInterfaceTag6I() {
+		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on an interface in package a.b.c
+	 * using a full build
+	 */
+	public void testInvalidInterfaceTag6F() {
+		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	}
+
+	/**
+	 * Tests having an @noextend tag on an outer interface in package a.b.c
+	 * using an incremental build
+	 */
+	public void testInvalidInterfaceTag7I() {
+		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on an outer interface in package a.b.c
+	 * using a full build
+	 */
+	public void testInvalidInterfaceTag7F() {
+		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	}
 }

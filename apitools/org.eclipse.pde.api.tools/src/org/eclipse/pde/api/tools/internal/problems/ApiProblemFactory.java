@@ -380,7 +380,13 @@ public class ApiProblemFactory {
 			}
 			case IApiProblem.CATEGORY_USAGE: {
 				switch(kind) {
-					case IApiProblem.ILLEGAL_IMPLEMENT: return 8;
+					case IApiProblem.ILLEGAL_IMPLEMENT: {
+						switch(flags) {
+							case IApiProblem.NO_FLAGS: return 8;
+							case IApiProblem.INDIRECT_REFERENCE: return 24;
+						}
+						break;
+					}
 					case IApiProblem.ILLEGAL_EXTEND: return 9;
 					case IApiProblem.ILLEGAL_INSTANTIATE: return 10;
 					case IApiProblem.ILLEGAL_OVERRIDE: return 11;

@@ -8,41 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
+package i;
 
 /**
- * Tests invalid @noextend tags on nested inner interfaces
  * @noextend
  */
-public interface test9 {
+public interface InterfaceUsageInterface2 {
 
 	/**
 	 * @noextend
 	 */
-	interface inner {
-		
-	}
-	
-	interface inner1 {
-		/**
-		 * @noextend
-		 */
-		interface inner2 {
-			
-		}
-	}
-	
-	interface inner2 {
-		
-	}
-}
-
-interface outer {
-	
-	/**
-	 * @noextend
-	 */
-	interface inner {
+	interface Iinner {
 		
 	}
 }

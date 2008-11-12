@@ -114,4 +114,116 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
+	
+	/**
+	 * Tests removing a noextend annotation using an incremental build 
+	 */
+	public void testRemoveNoExtendI() {
+		xRemoveNoExtend(true);
+	}
+	
+	/**
+	 * Tests removing a noextend annotation using a full build
+	 */
+	public void testRemoveNoExtendF() {
+		xRemoveNoExtend(false);
+	}
+	
+	private void xRemoveNoExtend(boolean inc) {
+		try {
+			IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoExtend.java");
+			// no problem expected
+			performCompatibilityTest(filePath, inc);
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Tests adding a noextend annotation using an incremental build
+	 */
+	public void testAddNoExtendI() {
+		xAddNoExtend(true);
+	}
+	
+	/**
+	 * Tests adding a noextend annotation using a full build
+	 */
+	public void testAddNoExtendF() {
+		xAddNoExtend(false);
+	}
+	
+	private void xAddNoExtend(boolean inc) {
+		try {
+			IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoExtend.java");
+			int[] ids = new int[] {
+					getDefaultProblemId()
+			};
+			setExpectedProblemIds(ids);
+			String[][] args = new String[1][];
+			args[0] = new String[]{PACKAGE_PREFIX + "AddNoExtend"};
+			setExpectedMessageArgs(args);
+			performCompatibilityTest(filePath, inc);
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Tests adding both noextend and noimplement annotations using an incremental build
+	 */
+	public void testAddNoExtendNoImplementI() {
+		xAddNoExtendNoImplement(true);
+	}
+	
+	/**
+	 * Tests adding both noextend and noimplement annotations using a full build
+	 */
+	public void testAddNoExtendNoImplementF() {
+		xAddNoExtendNoImplement(false);
+	}
+	
+	private void xAddNoExtendNoImplement(boolean inc) {
+		try {
+			IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoExtendNoImplement.java");
+			int[] ids = new int[] {
+					getDefaultProblemId()
+			};
+			setExpectedProblemIds(ids);
+			String[][] args = new String[1][];
+			args[0] = new String[]{PACKAGE_PREFIX + "AddNoExtendNoImplement"};
+			setExpectedMessageArgs(args);
+			performCompatibilityTest(filePath, inc);
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Tests removing both noextend and noimplement annotations using an incremental build
+	 */
+	public void testRemoveNoExtendNoImplementI() {
+		xRemoveNoExtendNoImplement(true);
+	}
+	
+	/**
+	 * Tests removing both noextend and noimplement annotations using a full build
+	 */
+	public void testRemoveNoExtendNoImplementF() {
+		xRemoveNoExtendNoImplement(false);
+	}
+	
+	private void xRemoveNoExtendNoImplement(boolean inc) {
+		try {
+			IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoExtendNoImplement.java");
+			// no problem expected
+			performCompatibilityTest(filePath, inc);
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+	}
 }

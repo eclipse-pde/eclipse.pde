@@ -997,8 +997,8 @@ public class ClassFileComparator {
 						// adding/removing no extend on a final class is ok
 						// adding/removing no instantiate on an abstract class is ok
 						if (this.type1.isInterface()) {
-							if (RestrictionModifiers.isImplementRestriction(restrictions2)
-									&& !RestrictionModifiers.isImplementRestriction(restrictions)) {
+							if ((RestrictionModifiers.isImplementRestriction(restrictions2) && !RestrictionModifiers.isImplementRestriction(restrictions)) ||
+								(RestrictionModifiers.isExtendRestriction(restrictions2) && !RestrictionModifiers.isExtendRestriction(restrictions))) {
 							this.addDelta(
 									getElementType(this.type1),
 									IDelta.ADDED,

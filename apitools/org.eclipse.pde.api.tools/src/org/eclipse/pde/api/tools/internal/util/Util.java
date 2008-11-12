@@ -1324,6 +1324,9 @@ public final class Util {
 					case IApiProblem.NO_FLAGS: {
 						return "NO_FLAGS"; //$NON-NLS-1$
 					}
+					case IApiProblem.INDIRECT_REFERENCE: {
+						return "INDIRECT_REFERENCE"; //$NON-NLS-1$
+					}
 				}
 			}
 		}

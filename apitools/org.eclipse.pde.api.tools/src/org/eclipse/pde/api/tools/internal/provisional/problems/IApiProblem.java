@@ -319,6 +319,15 @@ public interface IApiProblem {
 	 * @see #getFlags()
 	 */
 	public static final int FIELD = 9;
+	
+	/**
+	 * Flags to indicate an indirect reference
+	 * <br>
+	 * Value is: <code>10</code>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int INDIRECT_REFERENCE = 10;
 
 	/**
 	 * Constant representing the value of a default API profile {@link IApiProblem} kind.

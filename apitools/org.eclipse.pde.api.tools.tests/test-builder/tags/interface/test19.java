@@ -14,7 +14,6 @@ package a.b.c;
  * Tests invalid tags on nested inner interfaces
  * @noreference
  * @nooverride
- * @noextend
  * @noinstantiate
  */
 public interface test19 {
@@ -22,7 +21,6 @@ public interface test19 {
 	/**
 	 * @noreference
 	 * @nooverride
-	 * @noextend
 	 * @noinstantiate
 	 */
 	interface inner {
@@ -33,7 +31,6 @@ public interface test19 {
 		/**
 		 * @noreference
 		 * @nooverride
-		 * @noextend
 		 * @noinstantiate
 		 */
 		interface inner2 {
@@ -51,7 +48,6 @@ interface outer {
 	/**
 	 * @noreference
 	 * @nooverride
-	 * @noextend
 	 * @noinstantiate
 	 */
 	interface inner {

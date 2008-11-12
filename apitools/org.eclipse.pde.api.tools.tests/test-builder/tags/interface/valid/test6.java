@@ -11,10 +11,34 @@
 package a.b.c;
 
 /**
- * Tests an invalid @noextend tag on a member interface
+ * Test supported @noextend tag on an interface
+ * @noextend
  */
-public interface test8 {
+public interface test6 {
 
+	/**
+	 * @noextend
+	 */
+	interface inner {
+		
+	}
+	
+	interface inner1 {
+		/**
+		 * @noextend
+		 */
+		interface inner2 {
+			
+		}
+	}
+	
+	interface inner2 {
+		
+	}
+}
+
+interface outer {
+	
 	/**
 	 * @noextend
 	 */

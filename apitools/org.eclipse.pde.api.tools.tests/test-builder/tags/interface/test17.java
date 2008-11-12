@@ -20,7 +20,6 @@ public interface test17 {
 /**
  * @noreference
  * @nooverride
- * @noextend
  * @noinstantiate
  */
 interface outer {

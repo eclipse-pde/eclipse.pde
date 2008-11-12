@@ -157,96 +157,6 @@ public class InvalidInterfaceTagTests extends TagTest {
 	}
 	
 	/**
-	 * Tests having an @noextend tag on an interface in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag6I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noextend tag on an interface in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag6F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-
-	/**
-	 * Tests having an @noextend tag on an outer interface in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag7I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noextend tag on an outer interface in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag7F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noextend tag on an inner interface in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag8I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noextend tag on an inner interface in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag8F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noextend tag on a variety of inner / outer / top-level interfaces in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag9I() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noextend tag on a variety of inner / outer / top-level interfaces in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag9F() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noextend tag on an interface in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag10I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test10", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noextend tag on an interface in the default package
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag10F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test10", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
 	 * Tests having an @nooverride tag on an interface in package a.b.c
 	 * using an incremental build
 	 */
@@ -341,7 +251,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * using an incremental build
 	 */
 	public void testInvalidInterfaceTag16I() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
@@ -350,7 +260,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * using a full build
 	 */
 	public void testInvalidInterfaceTag16F() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
@@ -359,7 +269,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * using an incremental build
 	 */
 	public void testInvalidInterfaceTag17I() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
@@ -368,7 +278,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * using a full build
 	 */
 	public void testInvalidInterfaceTag17F() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
@@ -377,7 +287,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * using an incremental build
 	 */
 	public void testInvalidInterfaceTag18I() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
@@ -386,7 +296,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * using a full build
 	 */
 	public void testInvalidInterfaceTag18F() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
@@ -395,7 +305,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * using an incremental build
 	 */
 	public void testInvalidInterfaceTag19I() {
-		setExpectedProblemIds(getDefaultProblemSet(16));
+		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
@@ -404,7 +314,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * using a full build
 	 */
 	public void testInvalidInterfaceTag19F() {
-		setExpectedProblemIds(getDefaultProblemSet(16));
+		setExpectedProblemIds(getDefaultProblemSet(12));
 		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
@@ -413,7 +323,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * using an incremental build
 	 */
 	public void testInvalidInterfaceTag20I() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployTagTest(TESTING_PACKAGE, "test20", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
@@ -422,7 +332,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * using a full build
 	 */
 	public void testInvalidInterfaceTag20F() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		deployTagTest(TESTING_PACKAGE, "test20", true, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	

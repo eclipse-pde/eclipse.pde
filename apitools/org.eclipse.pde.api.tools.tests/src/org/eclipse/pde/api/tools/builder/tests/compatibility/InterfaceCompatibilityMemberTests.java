@@ -105,7 +105,16 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 */
 	private void xAddFieldNoImplement(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFieldNoImplement.java");
-		// no problems expected
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.INTERFACE_ELEMENT_TYPE,
+						IDelta.ADDED,
+						IDelta.FIELD)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddField", "ADDED_FIELD"};
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -117,6 +126,50 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		xAddFieldNoImplement(false);
 	}
 
+	/**
+	 * Tests adding a field to a noextend interface
+	 */
+	private void xAddFieldNoExtend(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFieldNoExtend.java");
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.INTERFACE_ELEMENT_TYPE,
+						IDelta.ADDED,
+						IDelta.FIELD)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddFieldNoExtend", "ADDED_FIELD"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddFieldNoExtendI() throws Exception {
+		xAddFieldNoExtend(true);
+	}	
+	
+	public void testAddFieldNoExtendF() throws Exception {
+		xAddFieldNoExtend(false);
+	}
+	
+	/**
+	 * Tests adding a field to a noextend / noimplement interface
+	 */
+	private void xAddFieldNoExtendNoImplement(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFieldNoExtendNoImplement.java");
+		//expecting no problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddFieldNoExtendNoImplementI() throws Exception {
+		xAddFieldNoExtendNoImplement(true);
+	}	
+	
+	public void testAddFieldNoExtendNoImplementF() throws Exception {
+		xAddFieldNoExtendNoImplement(false);
+	}
+	
 	/**
 	 * Tests adding a method to an interface
 	 */
@@ -149,7 +202,17 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 */
 	private void xAddMethodNoImplement(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoImplement.java");
-		// no problems expected
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.INTERFACE_ELEMENT_TYPE,
+						IDelta.ADDED,
+						IDelta.METHOD)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddMethodNoImplement", "addMethod(String)"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -161,6 +224,50 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		xAddMethodNoImplement(false);
 	}
 
+	/**
+	 * Tests adding a method to a noimplement interface
+	 */
+	private void xAddMethodNoExtend(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoExtend.java");
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.INTERFACE_ELEMENT_TYPE,
+						IDelta.ADDED,
+						IDelta.METHOD)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "AddMethodNoExtend", "addMethod(String)"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddMethodNoExtendI() throws Exception {
+		xAddMethodNoExtend(true);
+	}	
+	
+	public void testAddMethodNoExtendF() throws Exception {
+		xAddMethodNoExtend(false);
+	}
+	
+	/**
+	 * Tests adding a method to a noimplement interface
+	 */
+	private void xAddMethodNoExtendNoImplement(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoExtendNoImplement.java");
+		//expecting no problems
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddMethodNoExtendNoImplementI() throws Exception {
+		xAddMethodNoExtendNoImplement(true);
+	}	
+	
+	public void testAddMethodNoExtendNoImplementF() throws Exception {
+		xAddMethodNoExtendNoImplement(false);
+	}
+	
 	/**
 	 * Tests adding a  member type to an interface
 	 */
@@ -303,7 +410,20 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 */
 	private void xAddSuperInterfaceANoImplement(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceANoImplement.java");
-		// no problems expected
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.INTERFACE_ELEMENT_TYPE,
+						IDelta.ADDED,
+						IDelta.SUPER_INTERFACE_WITH_METHODS)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{
+				PACKAGE_PREFIX + "AddInterfaceANoImplement",
+				"a.classes.hierarchy.InterfaceA",
+				"methodA()"};
+		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -313,6 +433,53 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	
 	public void testAddSuperInterfaceANoImplementF() throws Exception {
 		xAddSuperInterfaceANoImplement(false);
+	}	
+	
+	/**
+	 * Tests adding a super interface to a noimplement interface
+	 */
+	private void xAddSuperInterfaceANoExtend(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceANoExtend.java");
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.INTERFACE_ELEMENT_TYPE,
+						IDelta.ADDED,
+						IDelta.SUPER_INTERFACE_WITH_METHODS)
+		};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{
+				PACKAGE_PREFIX + "AddInterfaceANoExtend",
+				"a.classes.hierarchy.InterfaceA",
+				"methodA()"};
+		setExpectedMessageArgs(args);
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddSuperInterfaceANoExtendI() throws Exception {
+		xAddSuperInterfaceANoExtend(true);
+	}	
+	
+	public void testAddSuperInterfaceANoExtendF() throws Exception {
+		xAddSuperInterfaceANoExtend(false);
+	}	
+	
+	/**
+	 * Tests adding a super interface to a noimplement interface
+	 */
+	private void xAddSuperInterfaceANoExtendNoImplement(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceANoExtendNoImplement.java");
+		// no problems expected
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddSuperInterfaceANoExtendNoImplementI() throws Exception {
+		xAddSuperInterfaceANoExtendNoImplement(true);
+	}	
+	
+	public void testAddSuperInterfaceANoExtendNoImplementF() throws Exception {
+		xAddSuperInterfaceANoExtendNoImplement(false);
 	}	
 	
 	/**

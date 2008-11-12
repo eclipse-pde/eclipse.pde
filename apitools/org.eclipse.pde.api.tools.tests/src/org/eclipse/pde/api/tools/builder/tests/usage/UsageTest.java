@@ -94,7 +94,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 				typename, 
 				true, 
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+				getExpectedProblemIds().length > 0);
 	}
 	
 	/**

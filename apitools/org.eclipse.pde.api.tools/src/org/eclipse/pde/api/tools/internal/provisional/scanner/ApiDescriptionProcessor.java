@@ -336,7 +336,7 @@ public class ApiDescriptionProcessor {
 				case IApiJavadocTag.MEMBER_FIELD :
 					if(RestrictionModifiers.isReferenceRestriction(res)) {
 						if(!containsRestrictionTag(tags, "@noreference")) { //$NON-NLS-1$
-							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noreference"); //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag(IApiJavadocTag.NO_REFERENCE_TAG_ID);
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}
@@ -344,13 +344,13 @@ public class ApiDescriptionProcessor {
 				case IApiJavadocTag.MEMBER_METHOD :
 					if(RestrictionModifiers.isReferenceRestriction(res)) {
 						if(!containsRestrictionTag(tags, "@noreference")) { //$NON-NLS-1$
-							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noreference"); //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag(IApiJavadocTag.NO_REFERENCE_TAG_ID);
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}
 					if(RestrictionModifiers.isOverrideRestriction(res)) {
 						if(!containsRestrictionTag(tags, "@nooverride")) { //$NON-NLS-1$
-							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.nooverride"); //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag(IApiJavadocTag.NO_OVERRIDE_TAG_ID);
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}
@@ -358,19 +358,19 @@ public class ApiDescriptionProcessor {
 				case IApiJavadocTag.MEMBER_NONE :
 					if(RestrictionModifiers.isImplementRestriction(res)) {
 						if(!containsRestrictionTag(tags, "@noimplement")) { //$NON-NLS-1$
-							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noimplement"); //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag(IApiJavadocTag.NO_IMPLEMENT_TAG_ID);
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}
 					if(RestrictionModifiers.isInstantiateRestriction(res)) {
 						if(!containsRestrictionTag(tags, "@noinstantiate")) { //$NON-NLS-1$
-							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noinstantiate"); //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag(IApiJavadocTag.NO_INSTANTIATE_TAG_ID);
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}
 					if(RestrictionModifiers.isExtendRestriction(res)) {
 						if(!containsRestrictionTag(tags, "@noextend")) { //$NON-NLS-1$
-							IApiJavadocTag tag = jtm.getTag("org.eclipse.pde.api.tools.noextend"); //$NON-NLS-1$
+							IApiJavadocTag tag = jtm.getTag(IApiJavadocTag.NO_EXTEND_TAG_ID);
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}

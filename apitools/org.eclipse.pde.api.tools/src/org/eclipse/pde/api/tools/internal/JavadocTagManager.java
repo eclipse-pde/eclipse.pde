@@ -68,10 +68,10 @@ public class JavadocTagManager {
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
 					IApiJavadocTag.MEMBER_NONE, 
 					"This class is not intended to be subclassed by clients.");  //$NON-NLS-1$
-			/*newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
 					IApiJavadocTag.MEMBER_NONE, 
 					"This interface is not intended to be extended by clients.");  //$NON-NLS-1$
-*/			tagcache.put(newtag.getTagId(), newtag);
+			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			
 			//nooverride tag

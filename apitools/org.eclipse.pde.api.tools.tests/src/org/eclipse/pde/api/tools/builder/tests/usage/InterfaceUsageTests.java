@@ -26,7 +26,6 @@ public class InterfaceUsageTests extends UsageTest {
 
 	protected static final String INTERFACE_NAME = "InterfaceUsageInterface";
 	protected static final String INNER_I_NAME = "Iinner";
-	private int pid = -1;
 	
 	/**
 	 * Constructor
@@ -41,14 +40,15 @@ public class InterfaceUsageTests extends UsageTest {
 	 */
 	@Override
 	protected int getDefaultProblemId() {
-		if(pid == -1) {
-			pid = ApiProblemFactory.createProblemId(
-					IApiProblem.CATEGORY_USAGE, 
-					IElementDescriptor.TYPE, 
-					IApiProblem.ILLEGAL_IMPLEMENT, 
-					IApiProblem.NO_FLAGS);
-		}
-		return pid;
+		return -1;
+	}
+	
+	private int getProblemId(int kind, int flags) {		
+		return ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_USAGE, 
+				IElementDescriptor.TYPE, 
+				kind, 
+				flags);
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class InterfaceUsageTests extends UsageTest {
 	}
 
 	/**
-	 * Tests that extending an @noimplement interface properly reports the usage problems
+	 * Tests that extending an @noimplement interface properly reports no usage problems
 	 * using a full build 
 	 */
 	public void testInterfaceUsageTests1F() {
@@ -72,7 +72,7 @@ public class InterfaceUsageTests extends UsageTest {
 	}
 	
 	/**
-	 * Tests that extending an @noimplement interface properly reports the usage problems
+	 * Tests that extending an @noimplement interface properly reports no usage problems
 	 * using an incremental build 
 	 */
 	public void testInterfaceUsageTests1I() {
@@ -80,14 +80,8 @@ public class InterfaceUsageTests extends UsageTest {
 	}
 	
 	private void x1(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemIdSet(3));
-		String typename = "testI1";
-		setExpectedMessageArgs(new String[][] {
-				{INNER_I_NAME, INNER_NAME1},
-				{INTERFACE_NAME, typename},
-				{INNER_I_NAME, OUTER_INAME}
-		});
-		deployTest(typename, inc);
+		expectingNoProblems();
+		deployTest("testI1", inc);
 	}
 	
 	/**
@@ -107,7 +101,11 @@ public class InterfaceUsageTests extends UsageTest {
 	}
 	
 	private void x2(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemIdSet(3));
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS),
+				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS),
+				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS)
+		});
 		String typename = "testI2";
 		setExpectedMessageArgs(new String[][] {
 				{INNER_I_NAME, INNER_NAME1},
@@ -115,5 +113,35 @@ public class InterfaceUsageTests extends UsageTest {
 				{INTERFACE_NAME, typename}
 		});
 		deployTest(typename, inc);
+	}
+	
+	/**
+	 * Tests that extending an @noextend interface properly reports the usage problems
+	 * using a full build
+	 */
+	public void testIllegalExtendInterfaceF() {
+		x3(false);
+	}
+	
+	/**
+	 * Tests that extending an @noextend interface properly reports the usage problems
+	 * using an incremental build
+	 */
+	public void testIllegalExtendInterfaceI() {
+		x3(true);
+	}
+	
+	private void x3(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.INDIRECT_REFERENCE),
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.INDIRECT_REFERENCE),
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.INDIRECT_REFERENCE)
+		});
+		String typename = "testI3";
+		setExpectedMessageArgs(new String[][] {
+				{INNER_I_NAME, INNER_NAME1},
+				{"InterfaceUsageInterface2", typename},
+				{INNER_I_NAME, OUTER_INAME}
+		});
 	}
 }

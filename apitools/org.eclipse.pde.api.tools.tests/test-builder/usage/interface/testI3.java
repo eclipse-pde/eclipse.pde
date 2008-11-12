@@ -8,12 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
+package x.y.z;
+
+import i.InterfaceUsageInterface2;
 
 /**
- * Test unsupported @noextend tag on an interface
- * @noextend
+ * 
  */
-public interface test6 {
+public interface testI1 extends InterfaceUsageInterface2 {
 
+	interface inner extends InterfaceUsageInterface2.Iinner {
+		
+	}
+}
+
+interface Iouter extends InterfaceUsageInterface2.Iinner {
+	
 }

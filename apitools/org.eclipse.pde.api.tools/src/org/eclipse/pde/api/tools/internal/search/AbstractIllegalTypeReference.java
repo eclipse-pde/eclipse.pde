@@ -63,6 +63,15 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 		return false;
 	}	
 	
+	/**
+	 * Returns if the mapping contains the referenced type name
+	 * @param reference
+	 * @return true of the mapping contains the key false otherwise
+	 */
+	protected boolean isIllegalType(IReference reference) {
+		return fIllegalTypes.containsKey(reference.getReferencedTypeName());
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */

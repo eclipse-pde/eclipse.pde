@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="deltatest">
+ <plugin id="deltatest" />
+
+ <package name="">
+ 	<type name="I" extend="false" implement="false"/>
+ 	<type name="J" extend="false" implement="false"/>
+ </package>
+</component>
