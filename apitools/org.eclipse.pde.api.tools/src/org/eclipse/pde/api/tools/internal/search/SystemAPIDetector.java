@@ -11,9 +11,6 @@
 package org.eclipse.pde.api.tools.internal.search;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.text.BadLocationException;
@@ -29,6 +26,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
@@ -66,11 +64,20 @@ public class SystemAPIDetector extends AbstractProblemDetector {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		switch(resolvedReference.getType()) {
 			case IApiElement.TYPE : {
-				return new String[] {getSimpleTypeName(resolvedReference), getSimpleTypeName(reference.getMember())};
+				return new String[] {
+						getSimpleTypeName(reference.getMember()),
+						getSimpleTypeName(resolvedReference),
+						ProfileModifiers.getName(this.eeValue),
+				};
 			}
 			case IApiElement.FIELD : {
-				IApiField field = (IApiField) reference.getMember();
-				return new String[] {getSimpleTypeName(resolvedReference), getSimpleTypeName(field), field.getName()};
+				IApiField field = (IApiField) resolvedReference;
+				return new String[] {
+						getSimpleTypeName(reference.getMember()),
+						getSimpleTypeName(resolvedReference),
+						field.getName(),
+						ProfileModifiers.getName(this.eeValue),
+				};
 			}
 			case IApiElement.METHOD : {
 				IApiMethod method = (IApiMethod) resolvedReference;
@@ -78,7 +85,12 @@ public class SystemAPIDetector extends AbstractProblemDetector {
 				if (method.isConstructor()) {
 					methodName = getSimpleTypeName(method);
 				}
-				return new String[] {getSimpleTypeName(resolvedReference), getSimpleTypeName(reference.getMember()), Signature.toString(method.getSignature(), methodName, null, false, false)};
+				return new String[] {
+						getSimpleTypeName(reference.getMember()),
+						getSimpleTypeName(resolvedReference),
+						Signature.toString(method.getSignature(), methodName, null, false, false),
+						ProfileModifiers.getName(this.eeValue),
+				};
 			}
 			default :
 				return null;
@@ -114,11 +126,20 @@ public class SystemAPIDetector extends AbstractProblemDetector {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		switch(resolvedReference.getType()) {
 			case IApiElement.TYPE : {
-				return new String[] {getTypeName(resolvedReference), getTypeName(reference.getMember())};
+				return new String[] {
+						getTypeName(reference.getMember()),
+						getTypeName(resolvedReference),
+						ProfileModifiers.getName(this.eeValue),
+				};
 			}
 			case IApiElement.FIELD : {
-				IApiField field = (IApiField) reference.getMember();
-				return new String[] {getTypeName(resolvedReference), getTypeName(field), field.getName()};
+				IApiField field = (IApiField) resolvedReference;
+				return new String[] {
+						getTypeName(reference.getMember()),
+						getTypeName(resolvedReference),
+						field.getName(),
+						ProfileModifiers.getName(this.eeValue),
+				};
 			}
 			case IApiElement.METHOD : {
 				IApiMethod method = (IApiMethod) resolvedReference;
@@ -126,7 +147,12 @@ public class SystemAPIDetector extends AbstractProblemDetector {
 				if (method.isConstructor()) {
 					methodName = getSimpleTypeName(method);
 				}
-				return new String[] {getTypeName(resolvedReference), getTypeName(reference.getMember()), Signature.toString(method.getSignature(), methodName, null, false, false)};
+				return new String[] {
+						getTypeName(reference.getMember()),
+						getTypeName(resolvedReference),
+						Signature.toString(method.getSignature(), methodName, null, false, false),
+						ProfileModifiers.getName(this.eeValue),
+				};
 			}
 			default :
 				return null;
@@ -137,59 +163,90 @@ public class SystemAPIDetector extends AbstractProblemDetector {
 		return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
 	}
 
-	protected Position getSourceRange(IType type, IDocument doc,
+	protected Position getSourceRange(IType type, IDocument document,
 			IReference reference) throws CoreException, BadLocationException {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		switch(resolvedReference.getType()) {
 			case IApiElement.TYPE : {
-				ISourceRange range = type.getNameRange();
-				Position pos = null;
-				if(range != null) {
-					pos = new Position(range.getOffset(), range.getLength());
+				int linenumber = reference.getLineNumber();
+				if (linenumber > 0) {
+					linenumber--;
 				}
-				if(pos == null) {
-					noSourcePosition(type, reference);
+				int offset = document.getLineOffset(linenumber);
+				String line = document.get(offset, document.getLineLength(linenumber));
+				IApiType resolvedType = (IApiType) resolvedReference;
+				String qname = resolvedType.getName();
+				int first = line.indexOf(qname);
+				if(first < 0) {
+					qname = resolvedType.getSimpleName();
+					first = line.indexOf(qname);
+				}
+				Position pos = null;
+				if(first > -1) {
+					pos = new Position(offset + first, qname.length());
+				}
+				else {
+					//optimistically select the whole line since we can't find the correct variable name and we can't just select
+					//the first occurrence
+					pos = new Position(offset, line.length());
 				}
 				return pos;
 			}
 			case IApiElement.FIELD : {
-				IApiField field = (IApiField) reference.getMember();
-				IField javaField = type.getField(field.getName());
-				Position pos = null;
-				if (javaField.exists()) {
-					ISourceRange range = javaField.getNameRange();
-					if(range != null) {
-						pos = new Position(range.getOffset(), range.getLength()); 
+				IApiField field = (IApiField) resolvedReference;
+				String name = field.getName();
+				int linenumber = reference.getLineNumber();
+				if (linenumber > 0) {
+					linenumber--;
+				}
+				int offset = document.getLineOffset(linenumber);
+				String line = document.get(offset, document.getLineLength(linenumber));
+				IApiType parent = field.getEnclosingType();
+				String qname = parent.getName()+"."+name; //$NON-NLS-1$
+				int first = line.indexOf(qname);
+				if(first < 0) {
+					qname = parent.getName()+"."+name; //$NON-NLS-1$
+					first = line.indexOf(qname);
+				}
+				if(first < 0) {
+					qname = "super."+name; //$NON-NLS-1$
+					first = line.indexOf(qname);
+				}
+				if(first < 0) {
+					qname = "this."+name; //$NON-NLS-1$
+					first = line.indexOf(qname);
+				}
+				if(first < 0) {
+					//try a pattern [.*fieldname] 
+					//the field might be ref'd via a constant, e.g. enum constant
+					int idx = line.indexOf(name);
+					while(idx > -1) {
+						if(line.charAt(idx-1) == '.') {
+							first = idx;
+							qname = name;
+							break;
+						}
+						idx = line.indexOf(name, idx+1);
 					}
 				}
-				if(pos == null) {
-					noSourcePosition(type, reference);
+				Position pos = null;
+				if(first > -1) {
+					pos = new Position(offset + first, qname.length());
+				}
+				else {
+					//optimistically select the whole line since we can't find the correct variable name and we can't just select
+					//the first occurrence
+					pos = new Position(offset, line.length());
 				}
 				return pos;
 			}
 			case IApiElement.METHOD : {
 				IApiMethod method = (IApiMethod) resolvedReference;
-				String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
-				for (int i = 0; i < parameterTypes.length; i++) {
-					parameterTypes[i] = parameterTypes[i].replace('/', '.');
+				String name = method.getName();
+				if(method.isConstructor()) {
+					name = getSimpleTypeName(method);
 				}
-				IMethod Qmethod = type.getMethod(method.getName(), parameterTypes);
-				IMethod[] methods = type.getMethods();
-				IMethod match = null;
-				for (int i = 0; i < methods.length; i++) {
-					IMethod m = methods[i];
-					if (m.isSimilar(Qmethod)) {
-						match = m;
-						break;
-					}
-				}
-				Position pos = null;
-				if (match != null) {
-					ISourceRange range = match.getNameRange();
-					if(range != null) {
-						pos = new Position(range.getOffset(), range.getLength());
-					}
-				}
+				Position pos = getMethodNameRange(name, document, reference);
 				if(pos == null) {
 					noSourcePosition(type, reference);
 				}
@@ -212,7 +269,8 @@ public class SystemAPIDetector extends AbstractProblemDetector {
 		try {
 			IElementDescriptor elementDescriptor = reference.getResolvedReference().getHandle();
 			IApiDescription systemApiDescription = member.getApiComponent().getSystemApiDescription();
-			return !Util.isAPI(this.eeValue, elementDescriptor, systemApiDescription);
+			boolean value = !Util.isAPI(this.eeValue, elementDescriptor, systemApiDescription);
+			return value;
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}

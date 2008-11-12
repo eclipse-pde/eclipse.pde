@@ -405,6 +405,21 @@ public class ApiProblemFactory {
 					}
 					case IApiProblem.UNSUPPORTED_TAG_USE: return 112;
 					case IApiProblem.DUPLICATE_TAG_USE: return 22;
+					case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES :
+						switch(flags) {
+							case IApiProblem.METHOD :
+								// problem message for wrong reference to method
+								return 33;
+							case IApiProblem.CONSTRUCTOR_METHOD :
+								// problem message for wrong reference to constructor
+								return 34;
+							case IApiProblem.FIELD :
+								// problem message for wrong reference to field
+								return 35;
+							default:
+								 // problem message for wrong reference to type
+								return 36;
+						}
 				}
 				break;
 			}

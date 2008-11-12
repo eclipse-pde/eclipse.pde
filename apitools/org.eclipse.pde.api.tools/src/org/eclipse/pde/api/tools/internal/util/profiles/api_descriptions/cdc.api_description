@@ -2296,11 +2296,8 @@
             <method name="getOption" signature="(I)Ljava/lang/Object;"/>
             <method name="getTimeToLive" signature="()I"/>
             <method name="join" signature="(Ljava/net/InetAddress;)V"/>
-            <method addedprofile="2" name="joinGroup" signature="(Ljava/net/SocketAddress;Ljava/net/NetworkInterface;)V"/>
             <method name="leave" signature="(Ljava/net/InetAddress;)V"/>
-            <method addedprofile="2" name="leaveGroup" signature="(Ljava/net/SocketAddress;Ljava/net/NetworkInterface;)V"/>
             <method name="peek" signature="(Ljava/net/InetAddress;)I"/>
-            <method addedprofile="2" name="peekData" signature="(Ljava/net/DatagramPacket;)I"/>
             <method name="receive" signature="(Ljava/net/DatagramPacket;)V"/>
             <method name="send" signature="(Ljava/net/DatagramPacket;)V"/>
             <method name="setOption" signature="(ILjava/lang/Object;)V"/>
@@ -2448,7 +2445,6 @@
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
         <type name="ServerSocket">
-            <method addedprofile="2" name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="&lt;init&gt;" signature="(II)V"/>
             <method name="&lt;init&gt;" signature="(IILjava/net/InetAddress;)V"/>
@@ -2536,7 +2532,6 @@
             <method name="close" signature="()V"/>
             <method name="connect" signature="(Ljava/lang/String;I)V"/>
             <method name="connect" signature="(Ljava/net/InetAddress;I)V"/>
-            <method addedprofile="2" name="connect" signature="(Ljava/net/SocketAddress;I)V"/>
             <method name="create" signature="(Z)V"/>
             <method name="getFileDescriptor" signature="()Ljava/io/FileDescriptor;"/>
             <method name="getInetAddress" signature="()Ljava/net/InetAddress;"/>
@@ -2546,7 +2541,6 @@
             <method name="getOutputStream" signature="()Ljava/io/OutputStream;"/>
             <method name="getPort" signature="()I"/>
             <method name="listen" signature="(I)V"/>
-            <method addedprofile="2" name="sendUrgentData" signature="(I)V"/>
             <method name="setOption" signature="(ILjava/lang/Object;)V"/>
             <method name="shutdownInput" signature="()V"/>
             <method name="shutdownOutput" signature="()V"/>

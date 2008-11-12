@@ -2230,12 +2230,7 @@
     <package addedprofile="256" name="java.security.cert">
         <type name="Certificate">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
-            <method addedprofile="512" name="getEncoded" signature="()[B"/>
-            <method addedprofile="512" name="getPublicKey" signature="()Ljava/security/PublicKey;"/>
             <method addedprofile="512" name="getType" signature="()Ljava/lang/String;"/>
-            <method addedprofile="512" name="toString" signature="()Ljava/lang/String;"/>
-            <method addedprofile="512" name="verify" signature="(Ljava/security/PublicKey;)V"/>
-            <method addedprofile="512" name="verify" signature="(Ljava/security/PublicKey;Ljava/lang/String;)V"/>
             <method addedprofile="512" name="writeReplace" signature="()Ljava/lang/Object;"/>
         </type>
         <type addedprofile="512" name="CertificateEncodingException"/>
@@ -2548,7 +2543,6 @@
             <method name="&lt;init&gt;" signature="(J)V"/>
             <method name="after" signature="(Ljava/util/Date;)Z"/>
             <method name="before" signature="(Ljava/util/Date;)Z"/>
-            <method addedprofile="512" name="clone" signature="()Ljava/lang/Object;"/>
             <method name="compareTo" signature="(Ljava/lang/Object;)I"/>
             <method name="compareTo" signature="(Ljava/util/Date;)I"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
