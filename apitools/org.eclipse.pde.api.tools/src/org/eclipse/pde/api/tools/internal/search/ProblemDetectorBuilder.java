@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -167,8 +168,8 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 					 && fSystemApiDetector == null) {
 				fSystemApiDetector = new SystemApiDetector();
 			}
-		} else {
-			//add detector by default if we have no preference context
+		} else if (!Platform.isRunning()) {
+			//add detector by default only outside of the ide if we have no preference context
 			fSystemApiDetector = new SystemApiDetector();
 		}
 		if (fIllegalExtends != null) {
