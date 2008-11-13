@@ -942,4 +942,113 @@ public class TagScannerTests extends TestCase {
 		doScan("a/b/c/TestMethod21.java", manifest, options);
 	}
 	
+	/**
+	 * Tests that invalid Javadoc tags do not get leaked into the API description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
+	 */
+	public void testInterfaceWithBadTags() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/InvalidTagScanInterface.java", manifest);
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.InvalidTagScanInterface"));
+		assertNull("there should be no annotations for interface InvalidTagScanInterface", description);
+	}
+	
+	/**
+	 * Tests that invalid Javadoc tags do not get leaked into the API description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
+	 */
+	public void testClassWithBadTags1() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/InvalidTagScanClass1.java", manifest);
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.InvalidTagScanClass1"));
+		assertNull("there should be no annotations for class InvalidTagScanClass1", description);
+	}
+	
+	/**
+	 * Tests that invalid Javadoc tags do not get leaked into the API description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
+	 */
+	public void testClassWithBadTags2() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/InvalidTagScanClass2.java", manifest);
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.InvalidTagScanClass2"));
+		assertNull("there should be no annotations for class InvalidTagScanClass2", description);
+	}
+	
+	/**
+	 * Tests that invalid Javadoc tags do not get leaked into the API description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
+	 */
+	public void testClassWithBadTags3() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/InvalidTagScanClass3.java", manifest);
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.InvalidTagScanClass3"));
+		assertNull("there should be no annotations for class InvalidTagScanClass3", description);
+	}
+	
+	/**
+	 * Tests that invalid Javadoc tags do not get leaked into the API description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
+	 */
+	public void testMethodWithBadTags1() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/InvalidTagScanMethod1.java", manifest);
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.InvalidTagScanMethod1", "one", "()V"));
+		assertNull("there should be no annotations for method 'public void one()'", description);
+	}
+	
+	/**
+	 * Tests that invalid Javadoc tags do not get leaked into the API description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
+	 */
+	public void testMethodWithBadTags2() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/InvalidTagScanMethod2.java", manifest);
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.InvalidTagScanMethod2", "one", "()V"));
+		assertNull("there should be no annotations for method 'public void one()'", description);
+	}
+	
+	/**
+	 * Tests that invalid Javadoc tags do not get leaked into the API description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
+	 */
+	public void testMethodWithBadTags3() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/InvalidTagScanMethod3.java", manifest);
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.InvalidTagScanMethod3", "one", "()V"));
+		assertNull("there should be no annotations for method 'public void one()'", description);
+	}
+	
+	/**
+	 * Tests that invalid Javadoc tags do not get leaked into the API description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
+	 */
+	public void testFieldWithBadTags1() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/InvalidTagScanField1.java", manifest);
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.InvalidTagScanField1", "field"));
+		assertNull("there should be no annotations for field 'field'", description);
+	}
+	
+	/**
+	 * Tests that invalid Javadoc tags do not get leaked into the API description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
+	 */
+	public void testFieldWithBadTags2() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/InvalidTagScanField2.java", manifest);
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.InvalidTagScanField2", "field"));
+		assertNull("there should be no annotations for field 'field'", description);
+	}
+	
+	/**
+	 * Tests that invalid Javadoc tags do not get leaked into the API description
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
+	 */
+	public void testFieldWithBadTags3() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/InvalidTagScanField3.java", manifest);
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.InvalidTagScanField3", "field"));
+		assertNull("there should be no annotations for field 'field'", description);
+	}
 }

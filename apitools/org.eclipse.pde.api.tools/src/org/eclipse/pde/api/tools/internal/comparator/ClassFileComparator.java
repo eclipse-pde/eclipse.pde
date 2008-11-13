@@ -1406,15 +1406,17 @@ public class ClassFileComparator {
 				}
 			} else if (Util.isAbstract(typeAccess2)){
 				// report delta - changed from non-abstract to abstract
-				this.addDelta(
-						getElementType(this.type1),
-						IDelta.CHANGED,
-						IDelta.NON_ABSTRACT_TO_ABSTRACT,
-						this.currentDescriptorRestrictions,
-						typeAccess,
-						this.type1,
-						this.type1.getName(),
-						Util.getDescriptorName(type1));
+				if(!RestrictionModifiers.isInstantiateRestriction(initialDescriptorRestrictions)) {
+					this.addDelta(
+							getElementType(this.type1),
+							IDelta.CHANGED,
+							IDelta.NON_ABSTRACT_TO_ABSTRACT,
+							this.currentDescriptorRestrictions,
+							typeAccess,
+							this.type1,
+							this.type1.getName(),
+							Util.getDescriptorName(type1));
+				}
 			}
 
 			if (Util.isFinal(typeAccess)) {

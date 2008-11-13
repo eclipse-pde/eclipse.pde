@@ -148,7 +148,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(org.eclipse.pde.api.tools.internal.builder.BuildState, org.eclipse.pde.api.tools.internal.provisional.IApiProfile, org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String[], java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void analyzeComponent(final BuildState state, final IApiFilterStore filterStore, final IApiBaseline baseline,	final IApiComponent component,
+	public void analyzeComponent(final BuildState state, final IApiFilterStore filterStore, final IApiBaseline baseline, final IApiComponent component,
 			final String[] typenames, final String[] changedtypes, IProgressMonitor monitor) {
 		try {
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 6 + (changedtypes == null ? 0 : changedtypes.length));

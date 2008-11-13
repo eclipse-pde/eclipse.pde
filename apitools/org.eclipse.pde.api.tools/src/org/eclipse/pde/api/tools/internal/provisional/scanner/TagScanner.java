@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Javadoc;
@@ -126,17 +128,13 @@ public class TagScanner {
 			ASTNode parent = node.getParent();
 			if(parent != null) {
 				switch(parent.getNodeType()) {
-					case ASTNode.ENUM_DECLARATION: {
-						processTags(fType, tags, IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
-						break;
-					}
 					case ASTNode.TYPE_DECLARATION: {
 						TypeDeclaration type = (TypeDeclaration) parent;
 						if(type.isInterface()) {
-							processTags(fType, tags, IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_NONE);
+							processTags(fType, pruneTags(tags, type), IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_NONE);
 						}
 						else {
-							processTags(fType, tags, IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
+							processTags(fType, pruneTags(tags, type), IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
 						}
 						break;
 					}
@@ -151,21 +149,17 @@ public class TagScanner {
 								methodname = "<init>"; //$NON-NLS-1$
 							}
 							IMethodDescriptor descriptor = fType.getMethod(methodname, signature);
-							processTags(descriptor, tags, getEnclosingType(method), member);
+							processTags(descriptor, pruneTags(tags, method), getEnclosingType(method), member);
 						}
 						break;
 					}
 					case ASTNode.FIELD_DECLARATION: {
 						FieldDeclaration field = (FieldDeclaration) parent;
-						boolean isfinal = Flags.isFinal(field.getModifiers());
-						if(isfinal || (isfinal && Flags.isStatic(field.getModifiers()))) {
-							break;
-						}
 						List fields = field.fragments();
 						VariableDeclarationFragment fragment = null;
 						for(Iterator iter = fields.iterator(); iter.hasNext();) {
 							fragment = (VariableDeclarationFragment) iter.next();
-							processTags(fType.getField(fragment.getName().getFullyQualifiedName()), tags, getEnclosingType(field), IApiJavadocTag.MEMBER_FIELD);
+							processTags(fType.getField(fragment.getName().getFullyQualifiedName()), pruneTags(tags, field), getEnclosingType(field), IApiJavadocTag.MEMBER_FIELD);
 						}
 						break;
 					}
@@ -233,6 +227,88 @@ public class TagScanner {
 				}
 				fDescription.setRestrictions(descriptor, restrictions);
 			}
+		}
+		
+		/**
+		 * Method to post process returned flags from the {@link Javadoc} node of the element
+		 * @param tags the tags to process
+		 * @param element the {@link ASTNode} the tag appears on
+		 * @return the list of valid tags to process restrictions for
+		 */
+		private List pruneTags(final List tags, ASTNode node) {
+			ArrayList pruned = new ArrayList(tags.size());
+			TagElement tag = null;
+			switch(node.getNodeType()) {
+				case ASTNode.TYPE_DECLARATION: {
+					TypeDeclaration type = (TypeDeclaration) node;
+					int flags = type.getModifiers();
+					for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
+						tag = (TagElement) iterator.next();
+						String tagname = tag.getTagName();
+						if(type.isInterface() && 
+								("@noextend".equals(tagname) || //$NON-NLS-1$
+								"@noimplement".equals(tagname))) { //$NON-NLS-1$
+							pruned.add(tag);
+						}
+						else {
+							if("@noextend".equals(tagname)) { //$NON-NLS-1$
+								if(!Flags.isFinal(flags)) {
+									pruned.add(tag);
+									continue;
+								}
+							}
+							if("@noinstantiate".equals(tagname)) { //$NON-NLS-1$
+								if(!Flags.isAbstract(flags)) {
+									pruned.add(tag);
+									continue;
+								}
+							}
+						}
+					}
+					break;
+				}
+				case ASTNode.METHOD_DECLARATION: {
+					MethodDeclaration method = (MethodDeclaration) node;
+					int flags = method.getModifiers();
+					for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
+						tag = (TagElement) iterator.next();
+						if("@noreference".equals(tag.getTagName())) { //$NON-NLS-1$
+							pruned.add(tag);
+							continue;
+						}
+						if("@nooverride".equals(tag.getTagName())) { //$NON-NLS-1$
+							ASTNode parent = method.getParent();
+							int pflags = 0;
+							if(parent instanceof BodyDeclaration) {
+								pflags = ((BodyDeclaration)parent).getModifiers();
+							}
+							if(!Flags.isFinal(flags) && 
+									!Flags.isStatic(flags) &&
+									!Flags.isFinal(pflags)) {
+								pruned.add(tag);
+								continue;
+							}
+						}
+					}
+					break;
+				}
+				case ASTNode.FIELD_DECLARATION: {
+					FieldDeclaration field = (FieldDeclaration) node;
+					for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
+						tag = (TagElement) iterator.next();
+						boolean isfinal = Flags.isFinal(field.getModifiers());
+						if(isfinal || (isfinal && Flags.isStatic(field.getModifiers()))) {
+							break;
+						}
+						if("@noreference".equals(tag.getTagName())) { //$NON-NLS-1$
+							pruned.add(tag);
+							break;
+						}
+					}
+					break;
+				}
+			}
+			return pruned;
 		}
 		
 		/**

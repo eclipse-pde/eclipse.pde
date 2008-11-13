@@ -3139,6 +3139,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 	}
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244746
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
 	 */
 	public void test134() {
 		deployBundles("test134");
@@ -3150,13 +3151,14 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", afterApiComponent);
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES);
 		assertNotNull("No delta", delta);
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertTrue("should be no delta", delta == ApiComparator.NO_DELTA);
+		/*IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.NON_ABSTRACT_TO_ABSTRACT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));*/
 	}
 	/**
 	 * Add Object as a class bound
