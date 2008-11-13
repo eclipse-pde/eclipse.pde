@@ -286,7 +286,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		int index = referencedTypeName.lastIndexOf('.');
 		if (index == -1) return false;
 		try {
-			IApiComponent[] resolvePackages = baseline.resolvePackage(apiComponent, referencedTypeName.substring(0, index - 1));
+			IApiComponent[] resolvePackages = baseline.resolvePackage(apiComponent, referencedTypeName.substring(0, index));
 			switch(resolvePackages.length) {
 				case 1 :
 					if (resolvePackages[0].isSystemComponent()) {
