@@ -20,12 +20,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-      <command
-            name="%ViewCommand.registryBrowser.name"
-            description="%ViewCommand.registryBrowser.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.pde.runtime.RegistryBrowser">
-      </command>
       <category
             id="org.eclipse.pde.runtime.spy.commands.category"
             name="%spy-category.name">

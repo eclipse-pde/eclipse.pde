@@ -467,18 +467,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-      <command
-            name="%ViewCommand.pluginsView.name"
-            description="%ViewCommand.pluginsView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.pde.ui.PluginsView">
-      </command>
-      <command
-            name="%ViewCommand.dependenciesView.name"
-            description="%ViewCommand.dependenciesView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.pde.ui.DependenciesView">
-      </command>
 <!-- launch shortcuts -->
       <command
             name="%EclipseApplicationShortcut.description.debug"
