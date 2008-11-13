@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -150,7 +151,10 @@ public class FolderApiTypeContainer extends ApiElement implements IApiTypeContai
 	public String[] getPackageNames() throws CoreException {
 		List names = new ArrayList();
 		collectPackageNames(names, Util.DEFAULT_PACKAGE_NAME, fRoot);
-		return (String[]) names.toArray(new String[names.size()]);
+		String[] result = new String[names.size()];
+		names.toArray(result);
+		Arrays.sort(result);
+		return result;
 	}
 	
 	/**

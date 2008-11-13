@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -224,7 +225,10 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 		synchronized (this) {
 			if (fPackageNames == null) {
 				Set names = fPackages.keySet();
-				fPackageNames = (String[])names.toArray(new String[names.size()]);
+				String[] result = new String[names.size()];
+				names.toArray(result);
+				Arrays.sort(result);
+				fPackageNames = result;
 			}
 			return fPackageNames;
 		}

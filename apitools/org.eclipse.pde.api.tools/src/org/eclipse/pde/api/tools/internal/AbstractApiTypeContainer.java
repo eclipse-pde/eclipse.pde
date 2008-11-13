@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -136,13 +137,16 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	public String[] getPackageNames() throws CoreException {
 		List names = new ArrayList();
 		IApiTypeContainer[] containers = getApiTypeContainers();
-		for (int i = 0; i < containers.length; i++) {
+		for (int i = 0, max = containers.length; i < max; i++) {
 			String[] packageNames = containers[i].getPackageNames();
-			for (int j = 0; j < packageNames.length; j++) {
+			for (int j = 0, max2 = packageNames.length; j < max2; j++) {
 				names.add(packageNames[j]);
 			}
 		}
-		return (String[]) names.toArray(new String[names.size()]);
+		String[] result = new String[names.size()];
+		names.toArray(result);
+		Arrays.sort(result);
+		return result;
 	}
 
 	/**

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -72,7 +73,10 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 	 */
 	public String[] getPackageNames() throws CoreException {
 		Set pkgs = fPackageToTypes.keySet();
-		return (String[]) pkgs.toArray(new String[pkgs.size()]);
+		String[] result = new String[pkgs.size()];
+		pkgs.toArray(result);
+		Arrays.sort(result);
+		return result;
 	}
 
 	/* (non-Javadoc)

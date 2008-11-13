@@ -47,6 +47,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateHelper;
@@ -495,7 +496,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			if (bundle != null) {
 				StateHelper helper = getState().getStateHelper();
 				ExportPackageDescription[] visiblePackages = helper.getVisiblePackages(bundle);
-				for (int i = 0; i < visiblePackages.length; i++) {
+				for (int i = 0, max = visiblePackages.length; i < max; i++) {
 					ExportPackageDescription pkg = visiblePackages[i];
 					if (packageName.equals(pkg.getName())) {
 						BundleDescription bundleDescription = pkg.getExporter();
@@ -505,13 +506,27 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 						}
 					}
 				}
+				if (component.isFragment()) {
+					// a fragment can see all the packages from the host
+					HostSpecification host = bundle.getHost();
+					BundleDescription[] hosts = host.getHosts();
+					for (int i = 0, max = hosts.length; i < max; i++) {
+						BundleDescription currentHost = hosts[i];
+						IApiComponent apiComponent = component.getBaseline().getApiComponent(currentHost.getName());
+						if (apiComponent != null) {
+							String[] packageNames = apiComponent.getPackageNames();
+							int index = Arrays.binarySearch(packageNames, packageName, null);
+							if (index >= 0) {
+								componentsList.add(apiComponent);
+							}
+						}
+					}
+				}
 				// check for package within the source component
 				String[] packageNames = component.getPackageNames();
-				// TODO: would be more efficient to have containsPackage(...) or something
-				for (int i = 0; i < packageNames.length; i++) {
-					if (packageName.equals(packageNames[i])) {
-						componentsList.add(component);
-					}
+				int index = Arrays.binarySearch(packageNames, packageName, null);
+				if (index >= 0) {
+					componentsList.add(component);
 				}
 			}
 		}
