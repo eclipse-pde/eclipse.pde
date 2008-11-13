@@ -290,7 +290,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 							problem = createProblem(reference, project);
 						} else {
 							problem = createProblem(reference);
-						}					
+						}
 						if (problem != null) {
 							problems.add(problem);
 						}
