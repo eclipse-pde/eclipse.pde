@@ -97,6 +97,11 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * Underlying bundle description (OSGi model of a bundle)
 	 */
 	private BundleDescription fBundleDescription;
+	
+	/**
+	 * Cached value for the lowest EE
+	 */
+	private String lowestEE;
 
 	/**
 	 * Constructs a new API component from the specified location in the file system
@@ -906,15 +911,20 @@ public class BundleApiComponent extends AbstractApiComponent {
 		return fHasApiDescription;
 	}
 	public String getLowestEE() {
+		if (this.lowestEE != null) return this.lowestEE;
+		String temp = null;
 		String[] executionEnvironments = this.getExecutionEnvironments();
 		switch(executionEnvironments.length) {
 			case 0 :
 				return null;
 			case 1 :
-				return executionEnvironments[0];
+				temp = executionEnvironments[0];
+				break;
 			default :
+				// TODO compute the lowest EE
 				return null;
 		}
+		return temp;
 	}
 	public IApiDescription getSystemApiDescription() throws CoreException {
 		String lowestEE = getLowestEE();

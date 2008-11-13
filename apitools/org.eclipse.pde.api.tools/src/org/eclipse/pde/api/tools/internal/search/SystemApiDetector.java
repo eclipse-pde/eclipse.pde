@@ -39,11 +39,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.1
  */
 public class SystemApiDetector extends AbstractProblemDetector {
-
-	int eeValue;
-	
-	public SystemApiDetector(String eeIdentifier) {
-		this.eeValue= ProfileModifiers.getValue(eeIdentifier);
+	public SystemApiDetector() {
 	}
 	protected int getElementType(IReference reference) {
 		IApiMember member = reference.getMember();
@@ -62,21 +58,23 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	protected String[] getMessageArgs(IReference reference)
 			throws CoreException {
 		IApiMember resolvedReference = reference.getResolvedReference();
+		IApiMember member = reference.getMember();
+		String eeValue = member.getApiComponent().getLowestEE();
 		switch(resolvedReference.getType()) {
 			case IApiElement.TYPE : {
 				return new String[] {
-						getSimpleTypeName(reference.getMember()),
+						getSimpleTypeName(member),
 						getSimpleTypeName(resolvedReference),
-						ProfileModifiers.getName(this.eeValue),
+						eeValue,
 				};
 			}
 			case IApiElement.FIELD : {
 				IApiField field = (IApiField) resolvedReference;
 				return new String[] {
-						getSimpleTypeName(reference.getMember()),
+						getSimpleTypeName(member),
 						getSimpleTypeName(resolvedReference),
 						field.getName(),
-						ProfileModifiers.getName(this.eeValue),
+						eeValue,
 				};
 			}
 			case IApiElement.METHOD : {
@@ -86,10 +84,10 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					methodName = getSimpleTypeName(method);
 				}
 				return new String[] {
-						getSimpleTypeName(reference.getMember()),
+						getSimpleTypeName(member),
 						getSimpleTypeName(resolvedReference),
 						Signature.toString(method.getSignature(), methodName, null, false, false),
-						ProfileModifiers.getName(this.eeValue),
+						eeValue,
 				};
 			}
 			default :
@@ -124,21 +122,23 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	protected String[] getQualifiedMessageArgs(IReference reference)
 			throws CoreException {
 		IApiMember resolvedReference = reference.getResolvedReference();
+		IApiMember member = reference.getMember();
+		String eeValue = member.getApiComponent().getLowestEE();
 		switch(resolvedReference.getType()) {
 			case IApiElement.TYPE : {
 				return new String[] {
-						getTypeName(reference.getMember()),
+						getTypeName(member),
 						getTypeName(resolvedReference),
-						ProfileModifiers.getName(this.eeValue),
+						eeValue,
 				};
 			}
 			case IApiElement.FIELD : {
 				IApiField field = (IApiField) resolvedReference;
 				return new String[] {
-						getTypeName(reference.getMember()),
+						getTypeName(member),
 						getTypeName(resolvedReference),
 						field.getName(),
-						ProfileModifiers.getName(this.eeValue),
+						eeValue,
 				};
 			}
 			case IApiElement.METHOD : {
@@ -148,10 +148,10 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					methodName = getSimpleTypeName(method);
 				}
 				return new String[] {
-						getTypeName(reference.getMember()),
+						getTypeName(member),
 						getTypeName(resolvedReference),
 						Signature.toString(method.getSignature(), methodName, null, false, false),
-						ProfileModifiers.getName(this.eeValue),
+						eeValue,
 				};
 			}
 			default :
@@ -262,14 +262,15 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	 */
 	protected boolean isProblem(IReference reference) {
 		// the reference must be in the system library
-		if (this.eeValue == ProfileModifiers.NO_PROFILE_VALUE) {
+		IApiMember member = reference.getMember();
+		int eeValue = ProfileModifiers.getValue(member.getApiComponent().getLowestEE()); 
+		if (eeValue == ProfileModifiers.NO_PROFILE_VALUE) {
 			return false;
 		}
-		IApiMember member = reference.getMember();
 		try {
 			IElementDescriptor elementDescriptor = reference.getResolvedReference().getHandle();
 			IApiDescription systemApiDescription = member.getApiComponent().getSystemApiDescription();
-			boolean value = !Util.isAPI(this.eeValue, elementDescriptor, systemApiDescription);
+			boolean value = !Util.isAPI(eeValue, elementDescriptor, systemApiDescription);
 			return value;
 		} catch (CoreException e) {
 			ApiPlugin.log(e);

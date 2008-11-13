@@ -162,20 +162,14 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 			fIllegalMethodRef = new IllegalMethodReferenceDetector();
 			fIllegalFieldRef = new IllegalFieldReferenceDetector();
 		}
-		if (false) {
-			// TODO reenable when tested enough
-			if (project != null && !isIgnore(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, project)) {
-				String lowestEE = component.getLowestEE();
-				if (lowestEE != null) {
-					fSystemApiDetector = new SystemApiDetector(lowestEE);
-				}
-			} else {
-				//add detector by default if we have no preference context
-				String lowestEE = component.getLowestEE();
-				if (lowestEE != null) {
-					fSystemApiDetector = new SystemApiDetector(lowestEE);
-				}
+		if (project != null) {
+			if (!isIgnore(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, project)
+					 && fSystemApiDetector == null) {
+				fSystemApiDetector = new SystemApiDetector();
 			}
+		} else {
+			//add detector by default if we have no preference context
+			fSystemApiDetector = new SystemApiDetector();
 		}
 		if (fIllegalExtends != null) {
 			fDetectors.add(fIllegalExtends);

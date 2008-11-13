@@ -212,6 +212,9 @@ public final class ProfileModifiers {
 	}
 	
 	public static int getValue(String profileName) {
+		if (profileName == null) {
+			return NO_PROFILE_VALUE;
+		}
 		if (CDC_1_0_FOUNDATION_1_0_NAME.equals(profileName)) {
 			return CDC_1_0_FOUNDATION_1_0;
 		}
