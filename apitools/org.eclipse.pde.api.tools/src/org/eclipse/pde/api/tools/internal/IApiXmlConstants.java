@@ -21,7 +21,7 @@ public interface IApiXmlConstants {
 	/**
 	 * Constant representing the current version for api description files
 	 */
-	public static final String API_DESCRIPTION_CURRENT_VERSION = "1.1"; //$NON-NLS-1$
+	public static final String API_DESCRIPTION_CURRENT_VERSION = "1.2"; //$NON-NLS-1$
 	/**
 	 * Constant representing the current version for api filter store files
 	 */

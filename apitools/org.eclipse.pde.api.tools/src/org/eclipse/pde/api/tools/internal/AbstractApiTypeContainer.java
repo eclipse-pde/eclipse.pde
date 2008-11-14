@@ -76,7 +76,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 					single = e.getStatus();
 				} else {
 					if (multi == null) {
-						multi = new MultiStatus(ApiPlugin.getPluginIdentifier(), single.getCode(), single.getMessage(), single.getException());
+						multi = new MultiStatus(ApiPlugin.PLUGIN_ID, single.getCode(), single.getMessage(), single.getException());
 					}
 					multi.add(e.getStatus());
 				}

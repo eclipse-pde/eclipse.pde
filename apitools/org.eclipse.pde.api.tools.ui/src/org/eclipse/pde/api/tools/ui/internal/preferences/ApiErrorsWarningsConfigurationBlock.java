@@ -205,7 +205,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	 * @return the new {@link Key} for the {@link ApiUIPlugin} preference store
 	 */
 	protected final static Key getApiToolsKey(String key) {
-		return new Key(ApiPlugin.getPluginIdentifier(), key);
+		return new Key(ApiPlugin.PLUGIN_ID, key);
 	}
 	//Restriction modifier keys
 	private static final Key KEY_NOIMPLEMENT = getApiToolsKey(IApiProblemTypes.ILLEGAL_IMPLEMENT);

@@ -12,7 +12,9 @@ package org.eclipse.pde.api.tools.problems.tests;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -251,12 +253,15 @@ public class ApiProblemTests extends AbstractApiTest {
 	 */
 	public void testGetSeverity() {
 		if(ApiPlugin.isRunningInFramework()) {
-			Preferences store = ApiPlugin.getDefault().getPluginPreferences();
-			store.setValue(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_IGNORE);
+			IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+			assertNotNull("The instance preference node must exist", inode);
+			inode.put(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_IGNORE);
 			IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 			assertNotNull("there should have been a new problem created", problem);
 			assertEquals("the severity should be IGNORE", IMarker.SEVERITY_INFO, problem.getSeverity());
-			store.setValue(IApiProblemTypes.ILLEGAL_IMPLEMENT, store.getDefaultString(IApiProblemTypes.ILLEGAL_IMPLEMENT));
+			IEclipsePreferences dnode = new DefaultScope().getNode(ApiPlugin.PLUGIN_ID);
+			assertNotNull("Teh default pref node must exist", dnode);
+			inode.put(IApiProblemTypes.ILLEGAL_IMPLEMENT, dnode.get(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_WARNING));
 		}
 		else {
 			IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);

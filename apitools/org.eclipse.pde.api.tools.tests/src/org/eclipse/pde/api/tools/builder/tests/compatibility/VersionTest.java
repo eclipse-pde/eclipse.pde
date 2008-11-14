@@ -17,7 +17,8 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -175,9 +176,10 @@ public class VersionTest extends CompatibilityTest {
 	 * Tests unneeded minor version increment with no API addition
 	 */
 	private void xFalseMinorInc(boolean incremental) throws Exception {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, ApiPlugin.VALUE_ENABLED);
-		ApiPlugin.getDefault().savePluginPreferences();
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		assertNotNull("the instance pref node must exist", inode);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, ApiPlugin.VALUE_ENABLED);
+		inode.flush();
 		
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
@@ -219,9 +221,10 @@ public class VersionTest extends CompatibilityTest {
 	 * Tests unneeded major version increment with no API breakage
 	 */
 	private void xFalseMajorInc(boolean incremental) throws Exception {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_ENABLED);
-		ApiPlugin.getDefault().savePluginPreferences();
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		assertNotNull("The instance pref node must exist", inode);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_ENABLED);
+		inode.flush();
 		
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(

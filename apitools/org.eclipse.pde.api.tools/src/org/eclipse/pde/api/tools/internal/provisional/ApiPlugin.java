@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -41,6 +43,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * API Tools core plug-in.
@@ -237,14 +240,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	}
 	
 	/**
-	 * @return the id of this plugin.
-	 * Value is <code>org.eclipse.pde.api.tools</code>
-	 */
-	public static String getPluginIdentifier() {
-		return PLUGIN_ID;
-	}
-	
-	/**
 	 * Logs the specified status with this plug-in's log.
 	 * 
 	 * @param status status to log
@@ -287,7 +282,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * @return a new error status
 	 */
 	public static IStatus newErrorStatus(String message, Throwable exception) {
-		return new Status(IStatus.ERROR, getPluginIdentifier(), INTERNAL_ERROR, message, exception);
+		return new Status(IStatus.ERROR, PLUGIN_ID, INTERNAL_ERROR, message, exception);
 	}
 	
 	/**
@@ -387,7 +382,14 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			sp = (ISaveParticipant) iter.next();
 			sp.saving(context);
 		}
-		savePluginPreferences();
+		IEclipsePreferences node = new InstanceScope().getNode(PLUGIN_ID);
+		if(node != null) {
+			try {
+				node.flush();
+			} catch (BackingStoreException e) {
+				log(e);
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -432,9 +434,9 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		if(project != null) {
 			scopes.add(new ProjectScope(project));
 		}
-		String value = service.getString(ApiPlugin.getPluginIdentifier(), prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
+		String value = service.getString(PLUGIN_ID, prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
 		if(value == null) {
-			value = getPluginPreferences().getDefaultString(prefkey);
+			value = service.getString(PLUGIN_ID, prefkey, VALUE_IGNORE, new IScopeContext[]{new DefaultScope()});
 		}
 		if(VALUE_ERROR.equals(value)) {
 			return SEVERITY_ERROR;
@@ -462,9 +464,9 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		if(project != null) {
 			scopes.add(new ProjectScope(project));
 		}
-		String value = service.getString(ApiPlugin.getPluginIdentifier(), prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
+		String value = service.getString(PLUGIN_ID, prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
 		if(value == null) {
-			value = getPluginPreferences().getDefaultString(prefkey);
+			value = service.getString(PLUGIN_ID, prefkey, VALUE_IGNORE, new IScopeContext[]{new DefaultScope()}); 
 		}
 		return value;
 	}

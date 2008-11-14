@@ -221,6 +221,8 @@ public class ApiDescription implements IApiDescription {
 	 */
 	protected HashMap fPackageMap = new HashMap();
 
+	private float fEmbeddedVersion = 0.0f;
+	
 	/**
 	 * Constructs an API description owned by the specified component.
 	 * 
@@ -252,6 +254,36 @@ public class ApiDescription implements IApiDescription {
 			ManifestNode node = (ManifestNode) childrenMap.get(element);
 			visitNode(visitor, node);
 		}
+	}
+	
+	/**
+	 * Compares the given version against the embedded version that has been 
+	 * read from the API description
+	 * @param version
+	 * @return returns the same values as a compareTo call:
+	 * <ul>
+	 * <li> -1 if the given version is less than the embedded version</li>
+	 * <li> 0 if the given version is equal to the embedded version</li>
+	 * <li> 1 if the given version is greater than the embedded version</li>
+	 * </ul>
+	 */
+	public int compareEmbeddedVersionTo(String version) {
+		float lversion = Float.parseFloat(version);
+		if(fEmbeddedVersion < lversion) {
+			return 1;
+		}
+		if(fEmbeddedVersion == lversion) {
+			return 0;
+		}
+		return -1;
+	}
+	
+	/**
+	 * Allows the embedded version of this API description to be set
+	 * @param version the version to set on this description
+	 */
+	public void setEmbeddedVersion(String version) {
+		fEmbeddedVersion = Float.parseFloat(version);
 	}
 	
 	/**

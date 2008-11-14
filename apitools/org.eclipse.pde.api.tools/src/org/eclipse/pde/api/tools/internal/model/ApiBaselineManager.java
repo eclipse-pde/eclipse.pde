@@ -43,8 +43,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
@@ -283,13 +287,21 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 					}
 				}
 			}
-			String def = ApiPlugin.getDefault().getPluginPreferences().getString(DEFAULT_BASELINE);
+			String def = getDefaultProfilePref();
 			IApiBaseline profile = (IApiBaseline) baselinecache.get(def);
 			defaultbaseline = (profile != null ? def : null);
 			if(DEBUG) {
 				System.out.println("Time to initialize state cache: " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+	}
+	
+	/**
+	 * @return the default API baseline saved in the prefs, or <code>null</code> if tere isn't one
+	 */
+	private String getDefaultProfilePref() {
+		IPreferencesService service = Platform.getPreferencesService();
+		return service.getString(ApiPlugin.PLUGIN_ID, DEFAULT_BASELINE, null, new IScopeContext[] {new InstanceScope()});
 	}
 	
 	/**
@@ -301,12 +313,12 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if(savelocation == null) {
 			return;
 		}
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
+		IEclipsePreferences node = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
 		if(defaultbaseline != null) {
-			prefs.setValue(DEFAULT_BASELINE, defaultbaseline);
+			node.put(DEFAULT_BASELINE, defaultbaseline);
 		}
 		else {
-			prefs.setToDefault(DEFAULT_BASELINE);
+			node.remove(DEFAULT_BASELINE);
 		}
 		if(baselinecache != null && hasinfos != null) {
 			File dir = new File(savelocation.toOSString());

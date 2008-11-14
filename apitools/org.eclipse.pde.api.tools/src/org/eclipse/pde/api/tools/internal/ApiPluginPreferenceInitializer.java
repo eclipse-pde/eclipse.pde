@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
@@ -28,36 +29,39 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 	}
 
 	public void initializeDefaultPreferences() {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
+		IEclipsePreferences node = new DefaultScope().getNode(ApiPlugin.PLUGIN_ID);
+		if(node == null) {
+			return;
+		}
 		
 		// usage
-		prefs.setDefault(IApiProblemTypes.ILLEGAL_EXTEND, ApiPlugin.VALUE_WARNING);
-		prefs.setDefault(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_WARNING);
-		prefs.setDefault(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_WARNING);
-		prefs.setDefault(IApiProblemTypes.ILLEGAL_REFERENCE, ApiPlugin.VALUE_WARNING);
-		prefs.setDefault(IApiProblemTypes.ILLEGAL_OVERRIDE, ApiPlugin.VALUE_WARNING);
-		prefs.setDefault(IApiProblemTypes.LEAK_EXTEND, ApiPlugin.VALUE_WARNING);
-		prefs.setDefault(IApiProblemTypes.LEAK_FIELD_DECL, ApiPlugin.VALUE_WARNING);
-		prefs.setDefault(IApiProblemTypes.LEAK_IMPLEMENT, ApiPlugin.VALUE_WARNING);
-		prefs.setDefault(IApiProblemTypes.LEAK_METHOD_PARAM, ApiPlugin.VALUE_WARNING);
-		prefs.setDefault(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, ApiPlugin.VALUE_WARNING);
-		prefs.setDefault(IApiProblemTypes.INVALID_JAVADOC_TAG, ApiPlugin.VALUE_IGNORE);
-		prefs.setDefault(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, ApiPlugin.VALUE_IGNORE);
+		node.put(IApiProblemTypes.ILLEGAL_EXTEND, ApiPlugin.VALUE_WARNING);
+		node.put(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_WARNING);
+		node.put(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_WARNING);
+		node.put(IApiProblemTypes.ILLEGAL_REFERENCE, ApiPlugin.VALUE_WARNING);
+		node.put(IApiProblemTypes.ILLEGAL_OVERRIDE, ApiPlugin.VALUE_WARNING);
+		node.put(IApiProblemTypes.LEAK_EXTEND, ApiPlugin.VALUE_WARNING);
+		node.put(IApiProblemTypes.LEAK_FIELD_DECL, ApiPlugin.VALUE_WARNING);
+		node.put(IApiProblemTypes.LEAK_IMPLEMENT, ApiPlugin.VALUE_WARNING);
+		node.put(IApiProblemTypes.LEAK_METHOD_PARAM, ApiPlugin.VALUE_WARNING);
+		node.put(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, ApiPlugin.VALUE_WARNING);
+		node.put(IApiProblemTypes.INVALID_JAVADOC_TAG, ApiPlugin.VALUE_IGNORE);
+		node.put(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, ApiPlugin.VALUE_IGNORE);
 		
 		// compatibilities
 		for (int i = 0, max = ApiPlugin.AllCompatibilityKeys.length; i < max; i++) {
-			prefs.setDefault(ApiPlugin.AllCompatibilityKeys[i], ApiPlugin.VALUE_ERROR);
+			node.put(ApiPlugin.AllCompatibilityKeys[i], ApiPlugin.VALUE_ERROR);
 		}
 	
 		// version management
-		prefs.setDefault(IApiProblemTypes.MISSING_SINCE_TAG, ApiPlugin.VALUE_ERROR);
-		prefs.setDefault(IApiProblemTypes.MALFORMED_SINCE_TAG, ApiPlugin.VALUE_ERROR);
-		prefs.setDefault(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, ApiPlugin.VALUE_ERROR);
-		prefs.setDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_ERROR);
-		prefs.setDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, ApiPlugin.VALUE_DISABLED);
-		prefs.setDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_DISABLED);
+		node.put(IApiProblemTypes.MISSING_SINCE_TAG, ApiPlugin.VALUE_ERROR);
+		node.put(IApiProblemTypes.MALFORMED_SINCE_TAG, ApiPlugin.VALUE_ERROR);
+		node.put(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, ApiPlugin.VALUE_ERROR);
+		node.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_ERROR);
+		node.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, ApiPlugin.VALUE_DISABLED);
+		node.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_DISABLED);
 		
-		prefs.setDefault(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, ApiPlugin.VALUE_WARNING);
+		node.put(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, ApiPlugin.VALUE_WARNING);
 	}
 
 }

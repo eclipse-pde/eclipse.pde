@@ -232,7 +232,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @throws CoreException
 	 */
 	protected void noSourcePosition(IType type, IReference reference) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, ApiPlugin.getPluginIdentifier(),
+		IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
 				MessageFormat.format(SearchMessages.AbstractProblemDetector_could_not_locate_source_range, 
 						new String[] {reference.getReferencedMemberName(), type.getElementName()}));
 		throw new CoreException(status);

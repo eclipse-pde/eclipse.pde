@@ -182,7 +182,7 @@ public class ApiBaselinesConfigurationBlock {
 	 * @return the new {@link Key} for the {@link ApiUIPlugin} preference store
 	 */
 	protected final static Key getApiToolsKey(String key) {
-		return new Key(ApiPlugin.getPluginIdentifier(), key);
+		return new Key(ApiPlugin.PLUGIN_ID, key);
 	}
 
 	private static final Key KEY_MISSING_DEFAULT_API_PROFILE = getApiToolsKey(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE);

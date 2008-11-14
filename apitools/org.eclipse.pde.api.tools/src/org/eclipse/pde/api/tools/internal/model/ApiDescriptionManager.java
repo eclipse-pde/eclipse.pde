@@ -276,6 +276,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 				}
 				long timestamp = getLong(root, IApiXmlConstants.ATTR_MODIFICATION_STAMP);
 				String version = root.getAttribute(IApiXmlConstants.ATTR_VERSION);
+				description.setEmbeddedVersion(version);
 				if (IApiXmlConstants.API_DESCRIPTION_CURRENT_VERSION.equals(version)) {
 					description.fPackageTimeStamp = timestamp;
 					description.fManifestFile = project.getProject().getFile(JarFile.MANIFEST_NAME);
@@ -429,7 +430,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 	 * @throws CoreException
 	 */
 	private static void abort(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, ApiPlugin.getPluginIdentifier(), message, exception);
+		IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, message, exception);
 		throw new CoreException(status);
 	}	
 

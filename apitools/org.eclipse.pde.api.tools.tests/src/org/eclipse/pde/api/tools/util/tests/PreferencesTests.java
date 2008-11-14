@@ -11,8 +11,9 @@
 package org.eclipse.pde.api.tools.util.tests;
 
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
@@ -30,14 +31,18 @@ public class PreferencesTests extends AbstractApiTest {
 	 * to the test project
 	 */
 	public void testSetupSettings() {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_ERROR);
-		ApiPlugin.getDefault().savePluginPreferences();
-		assertTrue("The plugin setting should have been saved", !prefs.needsSaving());
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		assertNotNull("The instance node must exist", inode);
+		inode.put(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_ERROR);
+		try {
+			inode.flush();
+		} catch (BackingStoreException e1) {
+			fail(e1.getMessage());
+		}
 		
 		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 		ProjectScope scope = new ProjectScope(project.getProject());
-		IEclipsePreferences eprefs = scope.getNode(ApiPlugin.getPluginIdentifier());
+		IEclipsePreferences eprefs = scope.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The ApiPlugin section for project settings should be available", eprefs);
 		eprefs.put(IApiProblemTypes.ILLEGAL_REFERENCE, ApiPlugin.VALUE_IGNORE);
 		try {
@@ -51,7 +56,9 @@ public class PreferencesTests extends AbstractApiTest {
 	 * tests that the default preferences are set of the ApiPlugin
 	 */
 	public void testGetDefaultSeverity() {
-		String value = ApiPlugin.getDefault().getPluginPreferences().getDefaultString(IApiProblemTypes.ILLEGAL_EXTEND);
+		IEclipsePreferences dnode = new DefaultScope().getNode(ApiPlugin.PLUGIN_ID);
+		assertNotNull("the default node must exist", dnode);
+		String value = dnode.get(IApiProblemTypes.ILLEGAL_EXTEND, null);
 		assertEquals("The default value for RESTRICTION_NOEXTEND should be 'Warning'", ApiPlugin.VALUE_WARNING, value);
 	}
 	

@@ -31,7 +31,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
@@ -53,6 +54,7 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Base class for API builder tests
@@ -797,35 +799,39 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * Resets all of the builder options to their defaults after each test run
 	 */
 	private void resetBuilderOptions() {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
 		// usage
-		prefs.setToDefault(IApiProblemTypes.ILLEGAL_EXTEND);
-		prefs.setToDefault(IApiProblemTypes.ILLEGAL_IMPLEMENT);
-		prefs.setToDefault(IApiProblemTypes.ILLEGAL_INSTANTIATE);
-		prefs.setToDefault(IApiProblemTypes.ILLEGAL_REFERENCE);
-		prefs.setToDefault(IApiProblemTypes.ILLEGAL_OVERRIDE);
-		prefs.setToDefault(IApiProblemTypes.LEAK_EXTEND);
-		prefs.setToDefault(IApiProblemTypes.LEAK_FIELD_DECL);
-		prefs.setToDefault(IApiProblemTypes.LEAK_IMPLEMENT);
-		prefs.setToDefault(IApiProblemTypes.LEAK_METHOD_PARAM);
-		prefs.setToDefault(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE);
-		prefs.setToDefault(IApiProblemTypes.INVALID_JAVADOC_TAG);
+		inode.put(IApiProblemTypes.ILLEGAL_EXTEND, ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.ILLEGAL_REFERENCE, ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.ILLEGAL_OVERRIDE, ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.LEAK_EXTEND, ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.LEAK_FIELD_DECL, ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.LEAK_IMPLEMENT, ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.LEAK_METHOD_PARAM, ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.INVALID_JAVADOC_TAG, ApiPlugin.VALUE_IGNORE);
 		
 		// compatibilities
 		for (int i = 0, max = ApiPlugin.AllCompatibilityKeys.length; i < max; i++) {
-			prefs.setToDefault(ApiPlugin.AllCompatibilityKeys[i]);
+			inode.put(ApiPlugin.AllCompatibilityKeys[i], ApiPlugin.VALUE_ERROR);
 		}
 	
 		// version management
-		prefs.setToDefault(IApiProblemTypes.MISSING_SINCE_TAG);
-		prefs.setToDefault(IApiProblemTypes.MALFORMED_SINCE_TAG);
-		prefs.setToDefault(IApiProblemTypes.INVALID_SINCE_TAG_VERSION);
-		prefs.setToDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION);
-		prefs.setToDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE);
-		prefs.setToDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE);
+		inode.put(IApiProblemTypes.MISSING_SINCE_TAG, ApiPlugin.VALUE_ERROR);
+		inode.put(IApiProblemTypes.MALFORMED_SINCE_TAG, ApiPlugin.VALUE_ERROR);
+		inode.put(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, ApiPlugin.VALUE_ERROR);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_ERROR);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, ApiPlugin.VALUE_DISABLED);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_DISABLED);
 		
-		prefs.setToDefault(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE);
-		ApiPlugin.getDefault().savePluginPreferences();
+		inode.put(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, ApiPlugin.VALUE_WARNING);
+		try {
+			inode.flush();
+		} catch (BackingStoreException e) {
+			ApiPlugin.log(e);
+		}
 	}
 	
 	/**
@@ -834,14 +840,19 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * options to 'Ignore'
 	 */
 	protected void enableUsageOptions(boolean enabled) {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		prefs.setValue(IApiProblemTypes.ILLEGAL_EXTEND, value);
-		prefs.setValue(IApiProblemTypes.ILLEGAL_IMPLEMENT, value);
-		prefs.setValue(IApiProblemTypes.ILLEGAL_INSTANTIATE, value);
-		prefs.setValue(IApiProblemTypes.ILLEGAL_REFERENCE, value);
-		prefs.setValue(IApiProblemTypes.ILLEGAL_OVERRIDE, value);
-		ApiPlugin.getDefault().savePluginPreferences();
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		// usage
+		inode.put(IApiProblemTypes.ILLEGAL_EXTEND, value);
+		inode.put(IApiProblemTypes.ILLEGAL_IMPLEMENT, value);
+		inode.put(IApiProblemTypes.ILLEGAL_INSTANTIATE, value);
+		inode.put(IApiProblemTypes.ILLEGAL_REFERENCE, value);
+		inode.put(IApiProblemTypes.ILLEGAL_OVERRIDE, value);
+		try {
+			inode.flush();
+		} catch (BackingStoreException e) {
+			ApiPlugin.log(e);
+		}
 	}
 	
 	/**
@@ -850,14 +861,18 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * options to 'Ignore'
 	 */
 	protected void enableLeakOptions(boolean enabled) {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		prefs.setValue(IApiProblemTypes.LEAK_EXTEND, value);
-		prefs.setValue(IApiProblemTypes.LEAK_FIELD_DECL, value);
-		prefs.setValue(IApiProblemTypes.LEAK_IMPLEMENT, value);
-		prefs.setValue(IApiProblemTypes.LEAK_METHOD_PARAM, value);
-		prefs.setValue(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, value);
-		ApiPlugin.getDefault().savePluginPreferences();
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		inode.put(IApiProblemTypes.LEAK_EXTEND, value);
+		inode.put(IApiProblemTypes.LEAK_FIELD_DECL, value);
+		inode.put(IApiProblemTypes.LEAK_IMPLEMENT, value);
+		inode.put(IApiProblemTypes.LEAK_METHOD_PARAM, value);
+		inode.put(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, value);
+		try {
+			inode.flush();
+		} catch (BackingStoreException e) {
+			ApiPlugin.log(e);
+		}
 	}
 	
 	/**
@@ -866,9 +881,13 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * options to 'Ignore'
 	 */
 	protected void enableUnsupportedTagOptions(boolean enabled) {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(IApiProblemTypes.INVALID_JAVADOC_TAG, enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE);
-		ApiPlugin.getDefault().savePluginPreferences();
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		inode.put(IApiProblemTypes.INVALID_JAVADOC_TAG, enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE);
+		try {
+			inode.flush();
+		} catch (BackingStoreException e) {
+			ApiPlugin.log(e);
+		}
 	}
 	
 	/**
@@ -877,12 +896,16 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * options to 'Ignore'
 	 */
 	protected void enableCompatibilityOptions(boolean enabled) {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
 		for (int i = 0, max = ApiPlugin.AllCompatibilityKeys.length; i < max; i++) {
-			prefs.setValue(ApiPlugin.AllCompatibilityKeys[i], value);
+			inode.put(ApiPlugin.AllCompatibilityKeys[i], value);
 		}
-		ApiPlugin.getDefault().savePluginPreferences();
+		try {
+			inode.flush();
+		} catch (BackingStoreException e) {
+			ApiPlugin.log(e);
+		}
 	}
 	
 	/**
@@ -891,12 +914,16 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * options to 'Ignore'
 	 */
 	protected void enableSinceTagOptions(boolean enabled) {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		prefs.setValue(IApiProblemTypes.MISSING_SINCE_TAG, value);
-		prefs.setValue(IApiProblemTypes.MALFORMED_SINCE_TAG, value);
-		prefs.setValue(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, value);
-		ApiPlugin.getDefault().savePluginPreferences();
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		inode.put(IApiProblemTypes.MISSING_SINCE_TAG, value);
+		inode.put(IApiProblemTypes.MALFORMED_SINCE_TAG, value);
+		inode.put(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, value);
+		try {
+			inode.flush();
+		} catch (BackingStoreException e) {
+			ApiPlugin.log(e);
+		}
 	}
 	
 	/**
@@ -905,13 +932,17 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * options to 'Ignore' or 'Disabled'
 	 */
 	protected void enableVersionNumberOptions(boolean enabled) {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
 		String value2 = enabled ? ApiPlugin.VALUE_ENABLED : ApiPlugin.VALUE_DISABLED;
-		prefs.setValue(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, value);
-		prefs.setValue(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, value2);
-		prefs.setValue(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, value2);
-		ApiPlugin.getDefault().savePluginPreferences();
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, value);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, value2);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, value2);
+		try {
+			inode.flush();
+		} catch (BackingStoreException e) {
+			ApiPlugin.log(e);
+		}
 	}
 	
 	/**
@@ -920,10 +951,14 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * options to 'Ignore'
 	 */
 	protected void enableBaselineOptions(boolean enabled) {
-		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		prefs.setValue(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, value);
-		ApiPlugin.getDefault().savePluginPreferences();
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		inode.put(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, value);
+		try {
+			inode.flush();
+		} catch (BackingStoreException e) {
+			ApiPlugin.log(e);
+		}
 	}
 	
 	/** 
