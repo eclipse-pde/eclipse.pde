@@ -58,6 +58,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
+import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -99,9 +100,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 	private BundleDescription fBundleDescription;
 	
 	/**
-	 * Cached value for the lowest EE
+	 * Cached value for the lowest EEs
 	 */
-	private String lowestEE;
+	private String[] lowestEEs;
 
 	/**
 	 * Constructs a new API component from the specified location in the file system
@@ -910,24 +911,86 @@ public class BundleApiComponent extends AbstractApiComponent {
 		}
 		return fHasApiDescription;
 	}
-	public String getLowestEE() {
-		if (this.lowestEE != null) return this.lowestEE;
-		String temp = null;
+	public String[] getLowestEEs() {
+		if (this.lowestEEs != null) return this.lowestEEs;
+		String[] temp = null;
 		String[] executionEnvironments = this.getExecutionEnvironments();
-		switch(executionEnvironments.length) {
+		int length = executionEnvironments.length;
+		switch(length) {
 			case 0 :
 				return null;
 			case 1 :
-				temp = executionEnvironments[0];
+				temp = new String[] { executionEnvironments[0] };
 				break;
 			default :
-				// TODO compute the lowest EE
-				return null;
+				int values = ProfileModifiers.NO_PROFILE_VALUE;
+				for (int i = 0; i < length; i++) {
+					values |= ProfileModifiers.getValue(executionEnvironments[i]);
+				}
+				if (ProfileModifiers.isJRE(values)) {
+					if (ProfileModifiers.isJRE_1_1(values)) {
+						temp = new String[] { ProfileModifiers.JRE_1_1_NAME };
+					} else if (ProfileModifiers.isJ2SE_1_2(values)) {
+						temp = new String[] { ProfileModifiers.J2SE_1_2_NAME };
+					} else if (ProfileModifiers.isJ2SE_1_3(values)) {
+						temp = new String[] { ProfileModifiers.J2SE_1_3_NAME };
+					} else if (ProfileModifiers.isJ2SE_1_4(values)) {
+						temp = new String[] { ProfileModifiers.J2SE_1_4_NAME };
+					} else if (ProfileModifiers.isJ2SE_1_5(values)) {
+						temp = new String[] { ProfileModifiers.J2SE_1_5_NAME };
+					} else {
+						// this is 1.6
+						temp = new String[] { ProfileModifiers.JAVASE_1_6_NAME };
+					}
+				}
+				if (ProfileModifiers.isCDC_Foundation(values)) {
+					if (ProfileModifiers.isCDC_1_0_FOUNDATION_1_0(values)) {
+						if (temp != null) {
+							temp = new String[] { temp[0], ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME };
+						} else {
+							temp = new String[] { ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME };
+						}
+					} else {
+						if (temp != null) {
+							temp = new String[] { temp[0], ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME };
+						} else {
+							temp = new String[] { ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME };
+						}
+					}
+				}
+				if (ProfileModifiers.isOSGi(values)) {
+					if (ProfileModifiers.isOSGI_MINIMUM_1_0(values)) {
+						if (temp != null) {
+							int tempLength = temp.length;
+							System.arraycopy(temp, 0, (temp = new String[tempLength + 1]), 0, tempLength);
+							temp[tempLength] = ProfileModifiers.OSGI_MINIMUM_1_0_NAME;
+						} else {
+							temp = new String[] { ProfileModifiers.OSGI_MINIMUM_1_0_NAME };
+						}
+					} else if (ProfileModifiers.isOSGI_MINIMUM_1_1(values)) {
+						if (temp != null) {
+							int tempLength = temp.length;
+							System.arraycopy(temp, 0, (temp = new String[tempLength + 1]), 0, tempLength);
+							temp[tempLength] = ProfileModifiers.OSGI_MINIMUM_1_1_NAME;
+						} else {
+							temp = new String[] { ProfileModifiers.OSGI_MINIMUM_1_1_NAME };
+						}
+					} else {
+						// OSGI_MINIMUM_1_2
+						if (temp != null) {
+							int tempLength = temp.length;
+							System.arraycopy(temp, 0, (temp = new String[tempLength + 1]), 0, tempLength);
+							temp[tempLength] = ProfileModifiers.OSGI_MINIMUM_1_2_NAME;
+						} else {
+							temp = new String[] { ProfileModifiers.OSGI_MINIMUM_1_2_NAME };
+						}
+					}
+				}
 		}
+		this.lowestEEs = temp;
 		return temp;
 	}
-	public IApiDescription getSystemApiDescription() throws CoreException {
-		String lowestEE = getLowestEE();
-		return SystemLibraryApiDescription.newSystemLibraryApiDescription(lowestEE);
+	public IApiDescription getSystemApiDescription(int eeValue) throws CoreException {
+		return SystemLibraryApiDescription.newSystemLibraryApiDescription(eeValue);
 	}
 }

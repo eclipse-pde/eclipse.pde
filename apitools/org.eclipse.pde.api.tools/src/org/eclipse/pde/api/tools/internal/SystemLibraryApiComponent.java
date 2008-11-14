@@ -200,16 +200,16 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#getSystemApiDescription()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#getSystemApiDescription(int)
 	 */
-	public IApiDescription getSystemApiDescription() throws CoreException {
+	public IApiDescription getSystemApiDescription(int eeValue) throws CoreException {
 		return null;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#getLowestEE()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#getLowestEEs()
 	 */
-	public String getLowestEE() {
+	public String[] getLowestEEs() {
 		return null;
 	}
 }

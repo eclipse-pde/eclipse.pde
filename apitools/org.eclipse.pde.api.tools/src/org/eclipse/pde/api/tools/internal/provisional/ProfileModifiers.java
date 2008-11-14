@@ -34,17 +34,17 @@ public final class ProfileModifiers {
 
 	public static final int NO_PROFILE_VALUE = 0;
 	
-	public static final String CDC_1_0_FOUNDATION_1_0_NAME = "CDC-1.0_Foundation-1.0"; //$NON-NLS-1$
-	public static final String CDC_1_1_FOUNDATION_1_1_NAME = "CDC-1.1_Foundation-1.1"; //$NON-NLS-1$
+	public static final String CDC_1_0_FOUNDATION_1_0_NAME = "CDC-1.0/Foundation-1.0"; //$NON-NLS-1$
+	public static final String CDC_1_1_FOUNDATION_1_1_NAME = "CDC-1.1/Foundation-1.1"; //$NON-NLS-1$
 	public static final String J2SE_1_2_NAME = "J2SE-1.2"; //$NON-NLS-1$
 	public static final String J2SE_1_3_NAME = "J2SE-1.3"; //$NON-NLS-1$
 	public static final String J2SE_1_4_NAME = "J2SE-1.4"; //$NON-NLS-1$
 	public static final String J2SE_1_5_NAME = "J2SE-1.5"; //$NON-NLS-1$
 	public static final String JAVASE_1_6_NAME = "JavaSE-1.6"; //$NON-NLS-1$
 	public static final String JRE_1_1_NAME = "JRE-1.1"; //$NON-NLS-1$
-	public static final String OSGI_MINIMUM_1_0_NAME = "OSGi_Minimum-1.0"; //$NON-NLS-1$
-	public static final String OSGI_MINIMUM_1_1_NAME = "OSGi_Minimum-1.1"; //$NON-NLS-1$
-	public static final String OSGI_MINIMUM_1_2_NAME = "OSGi_Minimum-1.2"; //$NON-NLS-1$
+	public static final String OSGI_MINIMUM_1_0_NAME = "OSGi/Minimum-1.0"; //$NON-NLS-1$
+	public static final String OSGI_MINIMUM_1_1_NAME = "OSGi/Minimum-1.1"; //$NON-NLS-1$
+	public static final String OSGI_MINIMUM_1_2_NAME = "OSGi/Minimum-1.2"; //$NON-NLS-1$
 	
 	/**
 	 * Constant indicating the corresponding element has been defined in the CDC-1.0_Foundation-1.0 profile
@@ -55,6 +55,11 @@ public final class ProfileModifiers {
 	 * Constant indicating the corresponding element has been defined in the CDC-1.1_Foundation-1.1 profile
 	 */
 	public static final int CDC_1_1_FOUNDATION_1_1 = 0x0002;
+
+	/**
+	 * Constant indicating the corresponding element has been defined in the JRE-1.1 profile
+	 */
+	public static final int JRE_1_1 = 0x0004;
 
 	/**
 	 * Constant indicating the corresponding element has been defined in the J2SE-1.2 profile
@@ -82,11 +87,6 @@ public final class ProfileModifiers {
 	public static final int JAVASE_1_6 = 0x0080;
 
 	/**
-	 * Constant indicating the corresponding element has been defined in the JRE-1.1 profile
-	 */
-	public static final int JRE_1_1 = 0x0004;
-
-	/**
 	 * Constant indicating the corresponding element has been defined in the OSGi_Minimum-1.0 profile
 	 */
 	public static final int OSGI_MINIMUM_1_0 = 0x0100;
@@ -101,6 +101,21 @@ public final class ProfileModifiers {
 	 */
 	public static final int OSGI_MINIMUM_1_2 = 0x0400;
 	
+	/**
+	 * Constant indicating all the OSGi profiles are defined
+	 */
+	public static final int OSGI_MINIMUM_MASK = 0x0700;
+
+	/**
+	 * Constant indicating all the CDC/Foundation profiles are defined
+	 */
+	public static final int CDC_FOUNDATION_MAX = 0x0003;
+
+	/**
+	 * Constant indicating all the jres profiles are defined
+	 */
+	public static final int JRES_MAX = 0x00FC;
+
 	/**
 	 * Returns if the CDC_1_0_FOUNDATION_1_0 modifier has been set in the given modifiers.
 	 *
@@ -279,21 +294,25 @@ public final class ProfileModifiers {
 				return null;
 		}
 	}
-	
+	public static boolean isJRE(int value) {
+		return (value & JRES_MAX) != 0;
+	}	
 	public static boolean isJRE(String name) {
 		int value = getValue(name);
-		if (value == NO_PROFILE_VALUE) return false;
-		return (JRE_1_1 <= value) && (value <= JAVASE_1_6);
+		return isJRE(value);
 	}
 	public static boolean isOSGi(String name) {
 		int value = getValue(name);
-		if (value == NO_PROFILE_VALUE) return false;
-		return (OSGI_MINIMUM_1_0 <= value) && (value <= OSGI_MINIMUM_1_2);
+		return isOSGi(value);
 	}
-
+	public static boolean isOSGi(int value) {
+		return (value & OSGI_MINIMUM_MASK) != 0;
+	}
 	public static boolean isCDC_Foundation(String name) {
 		int value = getValue(name);
-		if (value == NO_PROFILE_VALUE) return false;
-		return (CDC_1_0_FOUNDATION_1_0 <= value) && (value <= CDC_1_1_FOUNDATION_1_1);
+		return isCDC_Foundation(value);
+	}
+	public static boolean isCDC_Foundation(int value) {
+		return (value & CDC_FOUNDATION_MAX) != 0;
 	}
 }

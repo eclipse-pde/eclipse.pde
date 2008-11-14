@@ -316,6 +316,26 @@ public class SystemLibraryApiDescription implements IApiDescription {
 		return SystemLibraryApiDescription.EMPTY_DESCRIPTION;
 	}
 
+	public static IApiDescription newSystemLibraryApiDescription(int eeID) {
+		if (ProfileModifiers.isJRE(eeID)) {
+			if (ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_JREs] == null) {
+				ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_JREs] = initialize("JREs", "/org/eclipse/pde/api/tools/internal/util/profiles/api_descriptions/jre.api_description", false); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_JREs];
+		} else if (ProfileModifiers.isOSGi(eeID)) {
+			if (ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_OSGis] == null) {
+				ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_OSGis] = initialize("OSGis", "/org/eclipse/pde/api/tools/internal/util/profiles/api_descriptions/osgi.api_description", true); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_OSGis];
+		} else if (ProfileModifiers.isCDC_Foundation(eeID)) {
+			if (ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_CDCs] == null) {
+				ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_CDCs] = initialize("CDCs", "/org/eclipse/pde/api/tools/internal/util/profiles/api_descriptions/cdc.api_description", true); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return ALL_SYSTEM_API_DESCRIPTIONS[INDEX_FOR_CDCs];
+		}
+		return SystemLibraryApiDescription.EMPTY_DESCRIPTION;
+	}
+
 	private static IApiDescription initialize(String eeID, String location, boolean isExhaustive) {
 		IApiDescription apiDesc = new SystemLibraryApiDescription(eeID, isExhaustive);
 		// first mark all packages as internal

@@ -913,7 +913,16 @@
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="2" name="AssertionError"/>
+        <type addedprofile="2" name="AssertionError">
+            <method addedprofile="2" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(C)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(D)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(F)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(J)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/Object;)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Z)V"/>
+        </type>
         <type name="Boolean">
             <field name="FALSE"/>
             <field name="TRUE"/>
@@ -953,7 +962,12 @@
             <method name="valueOf" signature="(Ljava/lang/String;)Ljava/lang/Byte;"/>
             <method name="valueOf" signature="(Ljava/lang/String;I)Ljava/lang/Byte;"/>
         </type>
-        <type addedprofile="2" name="CharSequence"/>
+        <type addedprofile="2" name="CharSequence">
+            <method addedprofile="2" name="charAt" signature="(I)C"/>
+            <method addedprofile="2" name="length" signature="()I"/>
+            <method addedprofile="2" name="subSequence" signature="(II)Ljava/lang/CharSequence;"/>
+            <method addedprofile="2" name="toString" signature="()Ljava/lang/String;"/>
+        </type>
         <type name="Character">
             <field name="COMBINING_SPACING_MARK"/>
             <field name="CONNECTOR_PUNCTUATION"/>
@@ -1673,7 +1687,13 @@
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="2" name="StackTraceElement"/>
+        <type addedprofile="2" name="StackTraceElement">
+            <method addedprofile="2" name="getClassName" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getFileName" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getLineNumber" signature="()I"/>
+            <method addedprofile="2" name="getMethodName" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="isNativeMethod" signature="()Z"/>
+        </type>
         <type name="StrictMath">
             <field name="E"/>
             <field name="PI"/>
@@ -2141,7 +2161,45 @@
         </type>
     </package>
     <package addedprofile="1" name="java.math">
-        <type addedprofile="2" name="BigDecimal"/>
+        <type addedprofile="2" name="BigDecimal">
+            <field addedprofile="2" name="ROUND_CEILING"/>
+            <field addedprofile="2" name="ROUND_DOWN"/>
+            <field addedprofile="2" name="ROUND_FLOOR"/>
+            <field addedprofile="2" name="ROUND_HALF_DOWN"/>
+            <field addedprofile="2" name="ROUND_HALF_EVEN"/>
+            <field addedprofile="2" name="ROUND_HALF_UP"/>
+            <field addedprofile="2" name="ROUND_UNNECESSARY"/>
+            <field addedprofile="2" name="ROUND_UP"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(D)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/math/BigInteger;)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/math/BigInteger;I)V"/>
+            <method addedprofile="2" name="abs" signature="()Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="add" signature="(Ljava/math/BigDecimal;)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="compareTo" signature="(Ljava/lang/Object;)I"/>
+            <method addedprofile="2" name="compareTo" signature="(Ljava/math/BigDecimal;)I"/>
+            <method addedprofile="2" name="divide" signature="(Ljava/math/BigDecimal;I)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="divide" signature="(Ljava/math/BigDecimal;II)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="doubleValue" signature="()D"/>
+            <method addedprofile="2" name="floatValue" signature="()F"/>
+            <method addedprofile="2" name="intValue" signature="()I"/>
+            <method addedprofile="2" name="longValue" signature="()J"/>
+            <method addedprofile="2" name="max" signature="(Ljava/math/BigDecimal;)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="min" signature="(Ljava/math/BigDecimal;)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="movePointLeft" signature="(I)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="movePointRight" signature="(I)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="multiply" signature="(Ljava/math/BigDecimal;)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="negate" signature="()Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="scale" signature="()I"/>
+            <method addedprofile="2" name="setScale" signature="(I)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="setScale" signature="(II)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="signum" signature="()I"/>
+            <method addedprofile="2" name="subtract" signature="(Ljava/math/BigDecimal;)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="toBigInteger" signature="()Ljava/math/BigInteger;"/>
+            <method addedprofile="2" name="unscaledValue" signature="()Ljava/math/BigInteger;"/>
+            <method addedprofile="2" name="valueOf" signature="(J)Ljava/math/BigDecimal;"/>
+            <method addedprofile="2" name="valueOf" signature="(JI)Ljava/math/BigDecimal;"/>
+        </type>
         <type name="BigInteger">
             <field name="ONE"/>
             <field name="ZERO"/>
@@ -2296,8 +2354,11 @@
             <method name="getOption" signature="(I)Ljava/lang/Object;"/>
             <method name="getTimeToLive" signature="()I"/>
             <method name="join" signature="(Ljava/net/InetAddress;)V"/>
+            <method addedprofile="2" name="joinGroup" signature="(Ljava/net/SocketAddress;Ljava/net/NetworkInterface;)V"/>
             <method name="leave" signature="(Ljava/net/InetAddress;)V"/>
+            <method addedprofile="2" name="leaveGroup" signature="(Ljava/net/SocketAddress;Ljava/net/NetworkInterface;)V"/>
             <method name="peek" signature="(Ljava/net/InetAddress;)I"/>
+            <method addedprofile="2" name="peekData" signature="(Ljava/net/DatagramPacket;)I"/>
             <method name="receive" signature="(Ljava/net/DatagramPacket;)V"/>
             <method name="send" signature="(Ljava/net/DatagramPacket;)V"/>
             <method name="setOption" signature="(ILjava/lang/Object;)V"/>
@@ -2365,7 +2426,9 @@
             <method name="usingProxy" signature="()Z"/>
         </type>
         <type addedprofile="2" name="Inet4Address"/>
-        <type addedprofile="2" name="Inet6Address"/>
+        <type addedprofile="2" name="Inet6Address">
+            <method addedprofile="2" name="isIPv4CompatibleAddress" signature="()Z"/>
+        </type>
         <type name="InetAddress">
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="getAddress" signature="()[B"/>
@@ -2390,7 +2453,17 @@
             <method addedprofile="2" name="isSiteLocalAddress" signature="()Z"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="2" name="InetSocketAddress"/>
+        <type addedprofile="2" name="InetSocketAddress">
+            <method addedprofile="2" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;I)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/net/InetAddress;I)V"/>
+            <method addedprofile="2" name="equals" signature="(Ljava/lang/Object;)Z"/>
+            <method addedprofile="2" name="getAddress" signature="()Ljava/net/InetAddress;"/>
+            <method addedprofile="2" name="getHostName" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getPort" signature="()I"/>
+            <method addedprofile="2" name="hashCode" signature="()I"/>
+            <method addedprofile="2" name="isUnresolved" signature="()Z"/>
+        </type>
         <type name="JarURLConnection">
             <field name="jarFileURLConnection"/>
             <method name="&lt;init&gt;" signature="(Ljava/net/URL;)V"/>
@@ -2429,7 +2502,14 @@
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="2" name="NetworkInterface"/>
+        <type addedprofile="2" name="NetworkInterface">
+            <method addedprofile="2" name="getByInetAddress" signature="(Ljava/net/InetAddress;)Ljava/net/NetworkInterface;"/>
+            <method addedprofile="2" name="getByName" signature="(Ljava/lang/String;)Ljava/net/NetworkInterface;"/>
+            <method addedprofile="2" name="getDisplayName" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getInetAddresses" signature="()Ljava/util/Enumeration;"/>
+            <method addedprofile="2" name="getName" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getNetworkInterfaces" signature="()Ljava/util/Enumeration;"/>
+        </type>
         <type name="NoRouteToHostException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
@@ -2439,12 +2519,16 @@
             <method name="getPassword" signature="()[C"/>
             <method name="getUserName" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="2" name="PortUnreachableException"/>
+        <type addedprofile="2" name="PortUnreachableException">
+            <method addedprofile="2" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
         <type name="ProtocolException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
         <type name="ServerSocket">
+            <method addedprofile="2" name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="&lt;init&gt;" signature="(II)V"/>
             <method name="&lt;init&gt;" signature="(IILjava/net/InetAddress;)V"/>
@@ -2515,7 +2599,9 @@
             <method name="shutdownOutput" signature="()V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="2" name="SocketAddress"/>
+        <type addedprofile="2" name="SocketAddress">
+            <method addedprofile="2" name="&lt;init&gt;" signature="()V"/>
+        </type>
         <type name="SocketException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
@@ -2532,6 +2618,7 @@
             <method name="close" signature="()V"/>
             <method name="connect" signature="(Ljava/lang/String;I)V"/>
             <method name="connect" signature="(Ljava/net/InetAddress;I)V"/>
+            <method addedprofile="2" name="connect" signature="(Ljava/net/SocketAddress;I)V"/>
             <method name="create" signature="(Z)V"/>
             <method name="getFileDescriptor" signature="()Ljava/io/FileDescriptor;"/>
             <method name="getInetAddress" signature="()Ljava/net/InetAddress;"/>
@@ -2541,6 +2628,7 @@
             <method name="getOutputStream" signature="()Ljava/io/OutputStream;"/>
             <method name="getPort" signature="()I"/>
             <method name="listen" signature="(I)V"/>
+            <method addedprofile="2" name="sendUrgentData" signature="(I)V"/>
             <method name="setOption" signature="(ILjava/lang/Object;)V"/>
             <method name="shutdownInput" signature="()V"/>
             <method name="shutdownOutput" signature="()V"/>
@@ -2576,9 +2664,50 @@
             <method name="implies" signature="(Ljava/security/Permission;)Z"/>
             <method name="newPermissionCollection" signature="()Ljava/security/PermissionCollection;"/>
         </type>
-        <type addedprofile="2" name="SocketTimeoutException"/>
-        <type addedprofile="2" name="URI"/>
-        <type addedprofile="2" name="URISyntaxException"/>
+        <type addedprofile="2" name="SocketTimeoutException">
+            <method addedprofile="2" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
+        <type addedprofile="2" name="URI">
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"/>
+            <method addedprofile="2" name="compareTo" signature="(Ljava/lang/Object;)I"/>
+            <method addedprofile="2" name="create" signature="(Ljava/lang/String;)Ljava/net/URI;"/>
+            <method addedprofile="2" name="getAuthority" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getFragment" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getHost" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getPath" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getPort" signature="()I"/>
+            <method addedprofile="2" name="getQuery" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getRawAuthority" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getRawFragment" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getRawPath" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getRawQuery" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getRawSchemeSpecificPart" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getRawUserInfo" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getScheme" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getSchemeSpecificPart" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getUserInfo" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="isAbsolute" signature="()Z"/>
+            <method addedprofile="2" name="isOpaque" signature="()Z"/>
+            <method addedprofile="2" name="normalize" signature="()Ljava/net/URI;"/>
+            <method addedprofile="2" name="parseServerAuthority" signature="()Ljava/net/URI;"/>
+            <method addedprofile="2" name="relativize" signature="(Ljava/net/URI;)Ljava/net/URI;"/>
+            <method addedprofile="2" name="resolve" signature="(Ljava/lang/String;)Ljava/net/URI;"/>
+            <method addedprofile="2" name="resolve" signature="(Ljava/net/URI;)Ljava/net/URI;"/>
+            <method addedprofile="2" name="toASCIIString" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="toURL" signature="()Ljava/net/URL;"/>
+        </type>
+        <type addedprofile="2" name="URISyntaxException">
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;I)V"/>
+            <method addedprofile="2" name="getIndex" signature="()I"/>
+            <method addedprofile="2" name="getInput" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getReason" signature="()Ljava/lang/String;"/>
+        </type>
         <type name="URL">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;)V"/>
@@ -3305,7 +3434,15 @@
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="2" name="CertPath"/>
+        <type addedprofile="2" name="CertPath">
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+            <method addedprofile="2" name="getCertificates" signature="()Ljava/util/List;"/>
+            <method addedprofile="2" name="getEncoded" signature="()[B"/>
+            <method addedprofile="2" name="getEncoded" signature="(Ljava/lang/String;)[B"/>
+            <method addedprofile="2" name="getEncodings" signature="()Ljava/util/Iterator;"/>
+            <method addedprofile="2" name="getType" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="writeReplace" signature="()Ljava/lang/Object;"/>
+        </type>
         <type name="Certificate">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
@@ -3519,7 +3656,10 @@
             <method name="getEncoded" signature="()[B"/>
             <method name="getFormat" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="2" name="PSSParameterSpec"/>
+        <type addedprofile="2" name="PSSParameterSpec">
+            <method addedprofile="2" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="2" name="getSaltLength" signature="()I"/>
+        </type>
         <type name="RSAKeyGenParameterSpec">
             <field name="F0"/>
             <field name="F4"/>
@@ -3752,7 +3892,29 @@
             <method name="setNumberFormat" signature="(Ljava/text/NumberFormat;)V"/>
             <method name="setTimeZone" signature="(Ljava/util/TimeZone;)V"/>
         </type>
-        <type addedprofile="2" name="DateFormat$Field"/>
+        <type addedprofile="2" name="DateFormat$Field">
+            <field addedprofile="2" name="AM_PM"/>
+            <field addedprofile="2" name="DAY_OF_MONTH"/>
+            <field addedprofile="2" name="DAY_OF_WEEK"/>
+            <field addedprofile="2" name="DAY_OF_WEEK_IN_MONTH"/>
+            <field addedprofile="2" name="DAY_OF_YEAR"/>
+            <field addedprofile="2" name="ERA"/>
+            <field addedprofile="2" name="HOUR0"/>
+            <field addedprofile="2" name="HOUR1"/>
+            <field addedprofile="2" name="HOUR_OF_DAY0"/>
+            <field addedprofile="2" name="HOUR_OF_DAY1"/>
+            <field addedprofile="2" name="MILLISECOND"/>
+            <field addedprofile="2" name="MINUTE"/>
+            <field addedprofile="2" name="MONTH"/>
+            <field addedprofile="2" name="SECOND"/>
+            <field addedprofile="2" name="TIME_ZONE"/>
+            <field addedprofile="2" name="WEEK_OF_MONTH"/>
+            <field addedprofile="2" name="WEEK_OF_YEAR"/>
+            <field addedprofile="2" name="YEAR"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;I)V"/>
+            <method addedprofile="2" name="getCalendarField" signature="()I"/>
+            <method addedprofile="2" name="ofCalendarField" signature="(I)Ljava/text/DateFormat$Field;"/>
+        </type>
         <type name="DateFormatSymbols">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/util/Locale;)V"/>
@@ -3869,7 +4031,9 @@
             <method name="parseObject" signature="(Ljava/lang/String;)Ljava/lang/Object;"/>
             <method name="parseObject" signature="(Ljava/lang/String;Ljava/text/ParsePosition;)Ljava/lang/Object;"/>
         </type>
-        <type addedprofile="2" name="Format$Field"/>
+        <type addedprofile="2" name="Format$Field">
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
         <type name="MessageFormat">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/util/Locale;)V"/>
@@ -3893,7 +4057,10 @@
             <method name="setLocale" signature="(Ljava/util/Locale;)V"/>
             <method name="toPattern" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="2" name="MessageFormat$Field"/>
+        <type addedprofile="2" name="MessageFormat$Field">
+            <field addedprofile="2" name="ARGUMENT"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
         <type name="NumberFormat">
             <field name="FRACTION_FIELD"/>
             <field name="INTEGER_FIELD"/>
@@ -3935,7 +4102,20 @@
             <method name="setMinimumIntegerDigits" signature="(I)V"/>
             <method name="setParseIntegerOnly" signature="(Z)V"/>
         </type>
-        <type addedprofile="2" name="NumberFormat$Field"/>
+        <type addedprofile="2" name="NumberFormat$Field">
+            <field addedprofile="2" name="CURRENCY"/>
+            <field addedprofile="2" name="DECIMAL_SEPARATOR"/>
+            <field addedprofile="2" name="EXPONENT"/>
+            <field addedprofile="2" name="EXPONENT_SIGN"/>
+            <field addedprofile="2" name="EXPONENT_SYMBOL"/>
+            <field addedprofile="2" name="FRACTION"/>
+            <field addedprofile="2" name="GROUPING_SEPARATOR"/>
+            <field addedprofile="2" name="INTEGER"/>
+            <field addedprofile="2" name="PERCENT"/>
+            <field addedprofile="2" name="PERMILLE"/>
+            <field addedprofile="2" name="SIGN"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
         <type name="ParseException">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;I)V"/>
             <method name="getErrorOffset" signature="()I"/>
@@ -3999,7 +4179,7 @@
             <method name="setText" signature="(Ljava/lang/String;)V"/>
         </type>
     </package>
-    <package addedprofile="1" name="java.text.resources" removedprofile="2">
+    <package addedprofile="1" name="java.text.resources">
         <type name="BreakIteratorRules">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="getContents" signature="()[[Ljava/lang/Object;"/>
@@ -4353,7 +4533,14 @@
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="2" name="Currency"/>
+        <type addedprofile="2" name="Currency">
+            <method addedprofile="2" name="getCurrencyCode" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getDefaultFractionDigits" signature="()I"/>
+            <method addedprofile="2" name="getInstance" signature="(Ljava/lang/String;)Ljava/util/Currency;"/>
+            <method addedprofile="2" name="getInstance" signature="(Ljava/util/Locale;)Ljava/util/Currency;"/>
+            <method addedprofile="2" name="getSymbol" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getSymbol" signature="(Ljava/util/Locale;)Ljava/lang/String;"/>
+        </type>
         <type name="Date">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(J)V"/>
@@ -4386,7 +4573,10 @@
             <method name="nextElement" signature="()Ljava/lang/Object;"/>
         </type>
         <type name="EventListener"/>
-        <type addedprofile="2" name="EventListenerProxy"/>
+        <type addedprofile="2" name="EventListenerProxy">
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/util/EventListener;)V"/>
+            <method addedprofile="2" name="getListener" signature="()Ljava/util/EventListener;"/>
+        </type>
         <type name="EventObject">
             <field name="source"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/Object;)V"/>
@@ -4479,14 +4669,32 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="values" signature="()Ljava/util/Collection;"/>
         </type>
-        <type addedprofile="2" name="IdentityHashMap"/>
+        <type addedprofile="2" name="IdentityHashMap">
+            <method addedprofile="2" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/util/Map;)V"/>
+            <method addedprofile="2" name="clone" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="2" name="entrySet" signature="()Ljava/util/Set;"/>
+        </type>
         <type name="Iterator">
             <method name="hasNext" signature="()Z"/>
             <method name="next" signature="()Ljava/lang/Object;"/>
             <method name="remove" signature="()V"/>
         </type>
-        <type addedprofile="2" name="LinkedHashMap"/>
-        <type addedprofile="2" name="LinkedHashSet"/>
+        <type addedprofile="2" name="LinkedHashMap">
+            <method addedprofile="2" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(IF)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(IFZ)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/util/Map;)V"/>
+            <method addedprofile="2" name="removeEldestEntry" signature="(Ljava/util/Map$Entry;)Z"/>
+        </type>
+        <type addedprofile="2" name="LinkedHashSet">
+            <method addedprofile="2" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(IF)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/util/Collection;)V"/>
+        </type>
         <type name="LinkedList">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/util/Collection;)V"/>
@@ -5248,7 +5456,10 @@
         </type>
     </package>
     <package addedprofile="1" name="javax.microedition.io">
-        <type addedprofile="2" name="CommConnection"/>
+        <type addedprofile="2" name="CommConnection">
+            <method addedprofile="2" name="getBaudRate" signature="()I"/>
+            <method addedprofile="2" name="setBaudRate" signature="(I)I"/>
+        </type>
         <type name="Connection">
             <method name="close" signature="()V"/>
         </type>
@@ -5358,7 +5569,9 @@
             <method name="setRequestMethod" signature="(Ljava/lang/String;)V"/>
             <method name="setRequestProperty" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="2" name="HttpsConnection"/>
+        <type addedprofile="2" name="HttpsConnection">
+            <method addedprofile="2" name="getSecurityInfo" signature="()Ljavax/microedition/io/SecurityInfo;"/>
+        </type>
         <type name="InputConnection">
             <method name="openDataInputStream" signature="()Ljava/io/DataInputStream;"/>
             <method name="openInputStream" signature="()Ljava/io/InputStream;"/>
@@ -5367,16 +5580,84 @@
             <method name="openDataOutputStream" signature="()Ljava/io/DataOutputStream;"/>
             <method name="openOutputStream" signature="()Ljava/io/OutputStream;"/>
         </type>
-        <type addedprofile="2" name="SecureConnection"/>
-        <type addedprofile="2" name="SecurityInfo"/>
-        <type addedprofile="2" name="ServerSocketConnection"/>
-        <type addedprofile="2" name="SocketConnection"/>
+        <type addedprofile="2" name="SecureConnection">
+            <method addedprofile="2" name="getSecurityInfo" signature="()Ljavax/microedition/io/SecurityInfo;"/>
+        </type>
+        <type addedprofile="2" name="SecurityInfo">
+            <method addedprofile="2" name="getCipherSuite" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getProtocolName" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getProtocolVersion" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getServerCertificate" signature="()Ljavax/microedition/pki/Certificate;"/>
+        </type>
+        <type addedprofile="2" name="ServerSocketConnection">
+            <method addedprofile="2" name="getLocalAddress" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getLocalPort" signature="()I"/>
+        </type>
+        <type addedprofile="2" name="SocketConnection">
+            <field addedprofile="2" name="DELAY"/>
+            <field addedprofile="2" name="KEEPALIVE"/>
+            <field addedprofile="2" name="LINGER"/>
+            <field addedprofile="2" name="RCVBUF"/>
+            <field addedprofile="2" name="SNDBUF"/>
+            <method addedprofile="2" name="getAddress" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getLocalAddress" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getLocalPort" signature="()I"/>
+            <method addedprofile="2" name="getPort" signature="()I"/>
+            <method addedprofile="2" name="getSocketOption" signature="(B)I"/>
+            <method addedprofile="2" name="setSocketOption" signature="(BI)V"/>
+        </type>
         <type name="StreamConnection"/>
         <type name="StreamConnectionNotifier">
             <method name="acceptAndOpen" signature="()Ljavax/microedition/io/StreamConnection;"/>
         </type>
-        <type addedprofile="2" name="UDPDatagramConnection"/>
+        <type addedprofile="2" name="UDPDatagramConnection">
+            <method addedprofile="2" name="getLocalAddress" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getLocalPort" signature="()I"/>
+        </type>
     </package>
-    <package addedprofile="2" name="javax.microedition.pki"/>
-    <package addedprofile="2" name="javax.security.auth.x500"/>
+    <package addedprofile="2" name="javax.microedition.pki">
+        <type addedprofile="2" name="Certificate">
+            <method addedprofile="2" name="getIssuer" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getNotAfter" signature="()J"/>
+            <method addedprofile="2" name="getNotBefore" signature="()J"/>
+            <method addedprofile="2" name="getSerialNumber" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getSigAlgName" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getSubject" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getType" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getVersion" signature="()Ljava/lang/String;"/>
+        </type>
+        <type addedprofile="2" name="CertificateException">
+            <field addedprofile="2" name="BAD_EXTENSIONS"/>
+            <field addedprofile="2" name="BROKEN_CHAIN"/>
+            <field addedprofile="2" name="CERTIFICATE_CHAIN_TOO_LONG"/>
+            <field addedprofile="2" name="EXPIRED"/>
+            <field addedprofile="2" name="INAPPROPRIATE_KEY_USAGE"/>
+            <field addedprofile="2" name="MISSING_SIGNATURE"/>
+            <field addedprofile="2" name="NOT_YET_VALID"/>
+            <field addedprofile="2" name="ROOT_CA_EXPIRED"/>
+            <field addedprofile="2" name="SITENAME_MISMATCH"/>
+            <field addedprofile="2" name="UNAUTHORIZED_INTERMEDIATE_CA"/>
+            <field addedprofile="2" name="UNRECOGNIZED_ISSUER"/>
+            <field addedprofile="2" name="UNSUPPORTED_PUBLIC_KEY_TYPE"/>
+            <field addedprofile="2" name="UNSUPPORTED_SIGALG"/>
+            <field addedprofile="2" name="VERIFICATION_FAILED"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljavax/microedition/pki/Certificate;B)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljavax/microedition/pki/Certificate;B)V"/>
+            <method addedprofile="2" name="getCertificate" signature="()Ljavax/microedition/pki/Certificate;"/>
+            <method addedprofile="2" name="getReason" signature="()B"/>
+        </type>
+    </package>
+    <package addedprofile="2" name="javax.security.auth.x500">
+        <type addedprofile="2" name="X500Principal">
+            <field addedprofile="2" name="CANONICAL"/>
+            <field addedprofile="2" name="RFC1779"/>
+            <field addedprofile="2" name="RFC2253"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/io/InputStream;)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+            <method addedprofile="2" name="&lt;init&gt;" signature="([B)V"/>
+            <method addedprofile="2" name="getEncoded" signature="()[B"/>
+            <method addedprofile="2" name="getName" signature="()Ljava/lang/String;"/>
+            <method addedprofile="2" name="getName" signature="(Ljava/lang/String;)Ljava/lang/String;"/>
+        </type>
+    </package>
 </component>

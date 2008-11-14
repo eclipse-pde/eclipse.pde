@@ -1027,7 +1027,10 @@
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="512" name="InheritableThreadLocal"/>
+        <type addedprofile="512" name="InheritableThreadLocal">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="childValue" signature="(Ljava/lang/Object;)Ljava/lang/Object;"/>
+        </type>
         <type name="InstantiationError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
@@ -1483,7 +1486,12 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="uncaughtException" signature="(Ljava/lang/Thread;Ljava/lang/Throwable;)V"/>
         </type>
-        <type addedprofile="512" name="ThreadLocal"/>
+        <type addedprofile="512" name="ThreadLocal">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="get" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="initialValue" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="set" signature="(Ljava/lang/Object;)V"/>
+        </type>
         <type name="Throwable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
@@ -2000,7 +2008,17 @@
             <method name="toExternalForm" signature="()Ljava/lang/String;"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="512" name="URLClassLoader"/>
+        <type addedprofile="512" name="URLClassLoader">
+            <method addedprofile="512" name="&lt;init&gt;" signature="([Ljava/net/URL;)V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="([Ljava/net/URL;Ljava/lang/ClassLoader;)V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="([Ljava/net/URL;Ljava/lang/ClassLoader;Ljava/net/URLStreamHandlerFactory;)V"/>
+            <method addedprofile="512" name="addURL" signature="(Ljava/net/URL;)V"/>
+            <method addedprofile="512" name="findResource" signature="(Ljava/lang/String;)Ljava/net/URL;"/>
+            <method addedprofile="512" name="findResources" signature="(Ljava/lang/String;)Ljava/util/Enumeration;"/>
+            <method addedprofile="512" name="getURLs" signature="()[Ljava/net/URL;"/>
+            <method addedprofile="512" name="newInstance" signature="([Ljava/net/URL;)Ljava/net/URLClassLoader;"/>
+            <method addedprofile="512" name="newInstance" signature="([Ljava/net/URL;Ljava/lang/ClassLoader;)Ljava/net/URLClassLoader;"/>
+        </type>
         <type name="URLConnection">
             <field name="allowUserInteraction"/>
             <field name="connected"/>
@@ -2129,15 +2147,43 @@
             <method name="implies" signature="(Ljava/security/CodeSource;)Z"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="512" name="GeneralSecurityException"/>
-        <type addedprofile="512" name="Guard"/>
-        <type addedprofile="512" name="GuardedObject"/>
-        <type addedprofile="512" name="InvalidKeyException"/>
-        <type addedprofile="512" name="InvalidParameterException"/>
-        <type addedprofile="512" name="Key"/>
-        <type addedprofile="512" name="KeyException"/>
-        <type addedprofile="512" name="NoSuchAlgorithmException"/>
-        <type addedprofile="512" name="NoSuchProviderException"/>
+        <type addedprofile="512" name="GeneralSecurityException">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
+        <type addedprofile="512" name="Guard">
+            <method addedprofile="512" name="checkGuard" signature="(Ljava/lang/Object;)V"/>
+        </type>
+        <type addedprofile="512" name="GuardedObject">
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/Object;Ljava/security/Guard;)V"/>
+            <method addedprofile="512" name="getObject" signature="()Ljava/lang/Object;"/>
+        </type>
+        <type addedprofile="512" name="InvalidKeyException">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
+        <type addedprofile="512" name="InvalidParameterException">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
+        <type addedprofile="512" name="Key">
+            <field addedprofile="512" name="serialVersionUID"/>
+            <method addedprofile="512" name="getAlgorithm" signature="()Ljava/lang/String;"/>
+            <method addedprofile="512" name="getEncoded" signature="()[B"/>
+            <method addedprofile="512" name="getFormat" signature="()Ljava/lang/String;"/>
+        </type>
+        <type addedprofile="512" name="KeyException">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
+        <type addedprofile="512" name="NoSuchAlgorithmException">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
+        <type addedprofile="512" name="NoSuchProviderException">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
         <type name="Permission">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method addedprofile="512" name="checkGuard" signature="(Ljava/lang/Object;)V"/>
@@ -2198,9 +2244,21 @@
             <method name="implies" signature="(Ljava/security/Permission;)Z"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="512" name="Provider"/>
-        <type addedprofile="512" name="PublicKey"/>
-        <type addedprofile="512" name="SecureClassLoader"/>
+        <type addedprofile="512" name="Provider">
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;DLjava/lang/String;)V"/>
+            <method addedprofile="512" name="getInfo" signature="()Ljava/lang/String;"/>
+            <method addedprofile="512" name="getName" signature="()Ljava/lang/String;"/>
+            <method addedprofile="512" name="getVersion" signature="()D"/>
+        </type>
+        <type addedprofile="512" name="PublicKey">
+            <field addedprofile="512" name="serialVersionUID"/>
+        </type>
+        <type addedprofile="512" name="SecureClassLoader">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/ClassLoader;)V"/>
+            <method addedprofile="512" name="defineClass" signature="(Ljava/lang/String;[BIILjava/security/CodeSource;)Ljava/lang/Class;"/>
+            <method addedprofile="512" name="getPermissions" signature="(Ljava/security/CodeSource;)Ljava/security/PermissionCollection;"/>
+        </type>
         <type name="Security">
             <method addedprofile="512" name="addProvider" signature="(Ljava/security/Provider;)I"/>
             <method name="getProperty" signature="(Ljava/lang/String;)Ljava/lang/String;"/>
@@ -2216,7 +2274,10 @@
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="512" name="SignatureException"/>
+        <type addedprofile="512" name="SignatureException">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
         <type name="UnresolvedPermission">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/security/cert/Certificate;)V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
@@ -2230,11 +2291,22 @@
     <package addedprofile="256" name="java.security.cert">
         <type name="Certificate">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+            <method addedprofile="512" name="getEncoded" signature="()[B"/>
+            <method addedprofile="512" name="getPublicKey" signature="()Ljava/security/PublicKey;"/>
             <method addedprofile="512" name="getType" signature="()Ljava/lang/String;"/>
+            <method addedprofile="512" name="toString" signature="()Ljava/lang/String;"/>
+            <method addedprofile="512" name="verify" signature="(Ljava/security/PublicKey;)V"/>
+            <method addedprofile="512" name="verify" signature="(Ljava/security/PublicKey;Ljava/lang/String;)V"/>
             <method addedprofile="512" name="writeReplace" signature="()Ljava/lang/Object;"/>
         </type>
-        <type addedprofile="512" name="CertificateEncodingException"/>
-        <type addedprofile="512" name="CertificateException"/>
+        <type addedprofile="512" name="CertificateEncodingException">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
+        <type addedprofile="512" name="CertificateException">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+        </type>
     </package>
     <package addedprofile="256" name="java.util">
         <type name="AbstractCollection">
@@ -2543,6 +2615,7 @@
             <method name="&lt;init&gt;" signature="(J)V"/>
             <method name="after" signature="(Ljava/util/Date;)Z"/>
             <method name="before" signature="(Ljava/util/Date;)Z"/>
+            <method addedprofile="512" name="clone" signature="()Ljava/lang/Object;"/>
             <method name="compareTo" signature="(Ljava/lang/Object;)I"/>
             <method name="compareTo" signature="(Ljava/util/Date;)I"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
@@ -2561,7 +2634,9 @@
             <method name="remove" signature="(Ljava/lang/Object;)Ljava/lang/Object;"/>
             <method name="size" signature="()I"/>
         </type>
-        <type addedprofile="512" name="EmptyStackException"/>
+        <type addedprofile="512" name="EmptyStackException">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+        </type>
         <type name="Enumeration">
             <method name="hasMoreElements" signature="()Z"/>
             <method name="nextElement" signature="()Ljava/lang/Object;"/>
@@ -2594,8 +2669,23 @@
             <method name="roll" signature="(IZ)V"/>
             <method name="setGregorianChange" signature="(Ljava/util/Date;)V"/>
         </type>
-        <type addedprofile="512" name="HashMap"/>
-        <type addedprofile="512" name="HashSet"/>
+        <type addedprofile="512" name="HashMap">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(IF)V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Map;)V"/>
+            <method addedprofile="512" name="clone" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="entrySet" signature="()Ljava/util/Set;"/>
+        </type>
+        <type addedprofile="512" name="HashSet">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(IF)V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Collection;)V"/>
+            <method addedprofile="512" name="clone" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="iterator" signature="()Ljava/util/Iterator;"/>
+            <method addedprofile="512" name="size" signature="()I"/>
+        </type>
         <type name="Hashtable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
@@ -2627,7 +2717,19 @@
             <method name="next" signature="()Ljava/lang/Object;"/>
             <method name="remove" signature="()V"/>
         </type>
-        <type addedprofile="512" name="LinkedList"/>
+        <type addedprofile="512" name="LinkedList">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Collection;)V"/>
+            <method addedprofile="512" name="addFirst" signature="(Ljava/lang/Object;)V"/>
+            <method addedprofile="512" name="addLast" signature="(Ljava/lang/Object;)V"/>
+            <method addedprofile="512" name="clone" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="getFirst" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="getLast" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="listIterator" signature="(I)Ljava/util/ListIterator;"/>
+            <method addedprofile="512" name="removeFirst" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="removeLast" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="size" signature="()I"/>
+        </type>
         <type name="List">
             <method name="add" signature="(ILjava/lang/Object;)V"/>
             <method name="add" signature="(Ljava/lang/Object;)Z"/>
@@ -2859,7 +2961,14 @@
             <method name="subSet" signature="(Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/SortedSet;"/>
             <method name="tailSet" signature="(Ljava/lang/Object;)Ljava/util/SortedSet;"/>
         </type>
-        <type addedprofile="512" name="Stack"/>
+        <type addedprofile="512" name="Stack">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="empty" signature="()Z"/>
+            <method addedprofile="512" name="peek" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="pop" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="push" signature="(Ljava/lang/Object;)Ljava/lang/Object;"/>
+            <method addedprofile="512" name="search" signature="(Ljava/lang/Object;)I"/>
+        </type>
         <type name="StringTokenizer">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
@@ -2887,8 +2996,35 @@
             <method name="setRawOffset" signature="(I)V"/>
             <method name="useDaylightTime" signature="()Z"/>
         </type>
-        <type addedprofile="512" name="TreeMap"/>
-        <type addedprofile="512" name="TreeSet"/>
+        <type addedprofile="512" name="TreeMap">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Comparator;)V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Map;)V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/SortedMap;)V"/>
+            <method addedprofile="512" name="clone" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="comparator" signature="()Ljava/util/Comparator;"/>
+            <method addedprofile="512" name="entrySet" signature="()Ljava/util/Set;"/>
+            <method addedprofile="512" name="firstKey" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="headMap" signature="(Ljava/lang/Object;)Ljava/util/SortedMap;"/>
+            <method addedprofile="512" name="lastKey" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="subMap" signature="(Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/SortedMap;"/>
+            <method addedprofile="512" name="tailMap" signature="(Ljava/lang/Object;)Ljava/util/SortedMap;"/>
+        </type>
+        <type addedprofile="512" name="TreeSet">
+            <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Collection;)V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Comparator;)V"/>
+            <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/SortedSet;)V"/>
+            <method addedprofile="512" name="clone" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="comparator" signature="()Ljava/util/Comparator;"/>
+            <method addedprofile="512" name="first" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="headSet" signature="(Ljava/lang/Object;)Ljava/util/SortedSet;"/>
+            <method addedprofile="512" name="iterator" signature="()Ljava/util/Iterator;"/>
+            <method addedprofile="512" name="last" signature="()Ljava/lang/Object;"/>
+            <method addedprofile="512" name="size" signature="()I"/>
+            <method addedprofile="512" name="subSet" signature="(Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/SortedSet;"/>
+            <method addedprofile="512" name="tailSet" signature="(Ljava/lang/Object;)Ljava/util/SortedSet;"/>
+        </type>
         <type name="Vector">
             <field name="capacityIncrement"/>
             <field name="elementCount"/>

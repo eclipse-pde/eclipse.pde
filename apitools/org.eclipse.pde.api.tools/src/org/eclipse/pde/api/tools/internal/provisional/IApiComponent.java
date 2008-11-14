@@ -40,12 +40,14 @@ public interface IApiComponent extends IApiTypeContainer {
 	public IApiDescription getApiDescription() throws CoreException;
 	
 	/**
-	 * Returns this component's system API description.
+	 * Returns the system API description that corresponds to the given execution environment id.
 	 * 
+	 * @param eeID the given execution environment id
 	 * @return API manifest
 	 * @throws CoreException if there was a problem creating the system API description for this component
+	 * @see ProfileModifiers for execution environment ids 
 	 */
-	public IApiDescription getSystemApiDescription() throws CoreException;
+	public IApiDescription getSystemApiDescription(int eeID) throws CoreException;
 	/**
 	 * Returns whether this component has an underlying API description. Even if a component
 	 * has no underlying description it will return one from {@link #getApiDescription()},
@@ -182,11 +184,17 @@ public interface IApiComponent extends IApiTypeContainer {
 	public boolean hasFragments();
 	
 	/**
-	 * Returns the lowest execution environment required by this component for building
+	 * Returns the lowest execution environments required by this component for building
 	 * and running. An execution environment is represented by a unique identifier
 	 * as defined by OSGi - for example "J2SE-1.4" or "CDC-1.0/Foundation-1.0".
 	 * 
-	 * @return execution environment identifier
+	 * <p>The result will be more than one execution environment when the corresponding api component
+	 * has a mixed of execution environments in the JRE family (JRE-1.1, J2SE-1.2,...) and in OSGi minimums
+	 * or cdc/foundation families.</p>
+	 * <p>Since the latter ones are not exact subsets of the ones from the JREs family, we need to return all
+	 * the incompatible ones.</p>
+	 * 
+	 * @return execution environment identifiers
 	 */
-	public String getLowestEE();
+	public String[] getLowestEEs();
 }
