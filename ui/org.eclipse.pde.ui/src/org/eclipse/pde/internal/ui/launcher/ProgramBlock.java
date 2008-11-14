@@ -44,6 +44,7 @@ public class ProgramBlock {
 				boolean enabled = fProductButton.getSelection();
 				fProductCombo.setEnabled(enabled);
 				fApplicationCombo.setEnabled(!enabled);
+				updateProductDecorator();
 			}
 
 			fTab.updateLaunchConfigurationDialog();
@@ -51,23 +52,32 @@ public class ProgramBlock {
 
 		public void modifyText(ModifyEvent e) {
 			if (e.getSource() == fProductCombo) {
-				String productValue = fProductCombo.getText();
-				String[] knownProducts = TargetPlatform.getProducts();
-				boolean found = false;
-				for (int i = 0; i < knownProducts.length; i++) {
-					String knownProduct = knownProducts[i];
-					if (knownProduct.equals(productValue)) {
-						found = true;
-						break;
-					}
-				}
-				if (found)
-					fProductComboDecoration.hide();
-				else
-					fProductComboDecoration.show();
-
-				fTab.updateLaunchConfigurationDialog();
+				updateProductDecorator();
 			}
+		}
+
+		private void updateProductDecorator() {
+			if (!fProductCombo.isEnabled()) {
+				fProductComboDecoration.hide();
+				return;
+			}
+
+			String productValue = fProductCombo.getText();
+			String[] knownProducts = TargetPlatform.getProducts();
+			boolean found = false;
+			for (int i = 0; i < knownProducts.length; i++) {
+				String knownProduct = knownProducts[i];
+				if (knownProduct.equals(productValue)) {
+					found = true;
+					break;
+				}
+			}
+			if (found)
+				fProductComboDecoration.hide();
+			else
+				fProductComboDecoration.show();
+
+			fTab.updateLaunchConfigurationDialog();
 		}
 	}
 
