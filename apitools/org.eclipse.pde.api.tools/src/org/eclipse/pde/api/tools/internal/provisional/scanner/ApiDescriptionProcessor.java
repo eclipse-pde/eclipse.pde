@@ -590,6 +590,12 @@ public class ApiDescriptionProcessor {
 		if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
 			abort(ScannerMessages.ComponentXMLScanner_0, null); 
 		}
+		String version = root.getAttribute(IApiXmlConstants.ATTR_VERSION);
+		ApiDescription desc = (ApiDescription) settings;
+		desc.setEmbeddedVersion(version);
+		//TODO for now this compares to 1.2, since the change from 1.1 -> 1.2 denotes the 
+		//@noextend change, not 1.1 -> current version
+		boolean earlierversion = desc.compareEmbeddedVersionTo("1.2") == 1; //$NON-NLS-1$
 		NodeList packages = root.getElementsByTagName(IApiXmlConstants.ELEMENT_PACKAGE);
 		NodeList types = null;
 		IPackageDescriptor packdesc = null;
@@ -607,9 +613,9 @@ public class ApiDescriptionProcessor {
 					abort("Missing type name", null); //$NON-NLS-1$
 				}
 				IReferenceTypeDescriptor typedesc = packdesc.getType(name); 
-				annotateDescriptor(project, settings, typedesc, type);
-				annotateMethodSettings(project, settings, typedesc, type);
-				annotateFieldSettings(project, settings, typedesc, type);
+				annotateDescriptor(project, settings, typedesc, type, earlierversion);
+				annotateMethodSettings(project, settings, typedesc, type, earlierversion);
+				annotateFieldSettings(project, settings, typedesc, type, earlierversion);
 			}
 		}
 	}
@@ -621,13 +627,14 @@ public class ApiDescriptionProcessor {
 	 * @param settings the settings to annotate
 	 * @param descriptor the current descriptor context
 	 * @param element the current element to annotate from
+	 * @param earlierversion if the version read from XML is older than the current tooling version
 	 */
-	private static void annotateDescriptor(IJavaProject project, IApiDescription settings, IElementDescriptor descriptor, Element element) {
+	private static void annotateDescriptor(IJavaProject project, IApiDescription settings, IElementDescriptor descriptor, Element element, boolean earlierversion) {
 		int typeVis = getVisibility(element);
 		if (typeVis != -1) {
 			settings.setVisibility(descriptor, typeVis);
 		}
-		settings.setRestrictions(descriptor, getRestrictions(project, element, descriptor));
+		settings.setRestrictions(descriptor, getRestrictions(project, element, descriptor, earlierversion));
 	}
 	
 	/**
@@ -636,9 +643,10 @@ public class ApiDescriptionProcessor {
 	 * @param project the {@link IJavaProject} context
 	 * @param element XML element
 	 * @param descriptor the {@link IElementDescriptor} to get the restrictions for
+	 * @param earlierversion if the version read from XML is older than the current tooling version
 	 * @return restriction settings
 	 */
-	private static int getRestrictions(final IJavaProject project, final Element element, final IElementDescriptor descriptor) {
+	private static int getRestrictions(final IJavaProject project, final Element element, final IElementDescriptor descriptor, boolean earlierversion) {
 		int res = RestrictionModifiers.NO_RESTRICTIONS;
 		switch(descriptor.getElementType()) {
 			case IElementDescriptor.FIELD: {
@@ -656,6 +664,9 @@ public class ApiDescriptionProcessor {
 			case IElementDescriptor.TYPE: {
 				IReferenceTypeDescriptor rtype = (IReferenceTypeDescriptor) descriptor;
 				res = annotateRestriction(element, IApiXmlConstants.ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, res);
+				if(earlierversion && RestrictionModifiers.isImplementRestriction(res)) {
+					res |= RestrictionModifiers.NO_EXTEND;
+				}
 				res = annotateRestriction(element, IApiXmlConstants.ATTR_EXTEND, RestrictionModifiers.NO_EXTEND, res);
 				if(!RestrictionModifiers.isExtendRestriction(res)) {
 					res = annotateRestriction(element, IApiXmlConstants.ATTR_SUBCLASS, RestrictionModifiers.NO_EXTEND, res);
@@ -667,7 +678,6 @@ public class ApiDescriptionProcessor {
 						type = project.findType(rtype.getQualifiedName());
 						if (type != null) {
 							if(Flags.isInterface(type.getFlags())) {
-								res &= ~RestrictionModifiers.NO_EXTEND;
 								res &= ~RestrictionModifiers.NO_INSTANTIATE;
 							}
 							else {
@@ -741,9 +751,10 @@ public class ApiDescriptionProcessor {
 	 * @param settings the {@link IApiDescription} to add the new {@link IFieldDescriptor} to
 	 * @param typedesc the containing type descriptor for this field
 	 * @param type the parent {@link Element}
+	 * @param earlierversion if the version read from XML is older than the current tooling version
 	 * @throws CoreException
 	 */
-	private static void annotateFieldSettings(IJavaProject project, IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type) throws CoreException {
+	private static void annotateFieldSettings(IJavaProject project, IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type, boolean earlierversion) throws CoreException {
 		NodeList fields = type.getElementsByTagName(IApiXmlConstants.ELEMENT_FIELD);
 		Element field = null;
 		IFieldDescriptor fielddesc = null;
@@ -755,7 +766,7 @@ public class ApiDescriptionProcessor {
 				abort(ScannerMessages.ComponentXMLScanner_1, null); 
 			}
 			fielddesc = typedesc.getField(name);
-			annotateDescriptor(project, settings, fielddesc, field);
+			annotateDescriptor(project, settings, fielddesc, field, earlierversion);
 		}
 	}
 	
@@ -767,9 +778,10 @@ public class ApiDescriptionProcessor {
 	 * @param settings the {@link IApiDescription} to add the new {@link IMethodDescriptor} to 
 	 * @param typedesc the containing type descriptor for this method
 	 * @param type the parent {@link Element}
+	 * @param earlierversion if the version read from XML is older than the current tooling version
 	 * @throws CoreException
 	 */
-	private static void annotateMethodSettings(IJavaProject project, IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type) throws CoreException {
+	private static void annotateMethodSettings(IJavaProject project, IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type, boolean earlierversion) throws CoreException {
 		NodeList methods = type.getElementsByTagName(IApiXmlConstants.ELEMENT_METHOD);
 		Element method = null;
 		IMethodDescriptor methoddesc = null;
@@ -787,7 +799,7 @@ public class ApiDescriptionProcessor {
 			// old files might use '.' instead of '/'
 			signature = signature.replace('.', '/');
 			methoddesc = typedesc.getMethod(name, signature);
-			annotateDescriptor(project, settings, methoddesc, method);
+			annotateDescriptor(project, settings, methoddesc, method, earlierversion);
 		}
 	}
 }

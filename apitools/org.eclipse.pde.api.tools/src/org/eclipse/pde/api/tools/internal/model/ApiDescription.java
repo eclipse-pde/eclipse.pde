@@ -279,11 +279,19 @@ public class ApiDescription implements IApiDescription {
 	}
 	
 	/**
-	 * Allows the embedded version of this API description to be set
+	 * Allows the embedded version of this API description to be set. If the 
+	 * given version string cannot be parsed to a valid version, the embedded version
+	 * will default to the current version, as specified in {@link IApiXmlConstants#API_DESCRIPTION_CURRENT_VERSION}
+	 * 
 	 * @param version the version to set on this description
 	 */
 	public void setEmbeddedVersion(String version) {
-		fEmbeddedVersion = Float.parseFloat(version);
+		try {
+			fEmbeddedVersion = Float.parseFloat(version);
+		}
+		catch(NumberFormatException nfe) {
+			fEmbeddedVersion = Float.parseFloat(IApiXmlConstants.API_DESCRIPTION_CURRENT_VERSION);
+		}
 	}
 	
 	/**
