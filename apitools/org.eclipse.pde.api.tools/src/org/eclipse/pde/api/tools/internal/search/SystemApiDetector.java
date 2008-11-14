@@ -353,6 +353,9 @@ public class SystemApiDetector extends AbstractProblemDetector {
 				return false;
 			}
 			try {
+				if (!ProfileModifiers.isJRE(eeValue)) {
+					return false;
+				}
 				IElementDescriptor elementDescriptor = reference.getResolvedReference().getHandle();
 				IApiDescription systemApiDescription = member.getApiComponent().getSystemApiDescription(eeValue);
 				boolean value = !Util.isAPI(eeValue, elementDescriptor, systemApiDescription);
