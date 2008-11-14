@@ -226,7 +226,7 @@ public class SystemApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: java.text.resources.BreakIteratorRules
 	 */
-	public void test9() {
+	public void _test9() {
 		IElementDescriptor elementDescriptor = resolveType("java.text.resources.BreakIteratorRules");
 		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.JRE_1_1_NAME), elementDescriptor, fJREManifest));
 		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.J2SE_1_2_NAME), elementDescriptor, fJREManifest));
@@ -243,7 +243,7 @@ public class SystemApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: java.text.resources.BreakIteratorRules#getContents()[[Ljava/lang/Object;
 	 */
-	public void test10() {
+	public void _test10() {
 		IElementDescriptor elementDescriptor = resolveMethod("java.text.resources.BreakIteratorRules", "getContents", "()[[Ljava/lang/Object;");
 		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.JRE_1_1_NAME), elementDescriptor, fJREManifest));
 		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.J2SE_1_2_NAME), elementDescriptor, fJREManifest));
