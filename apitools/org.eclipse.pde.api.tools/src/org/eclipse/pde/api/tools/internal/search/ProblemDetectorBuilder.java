@@ -163,14 +163,16 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 			fIllegalMethodRef = new IllegalMethodReferenceDetector();
 			fIllegalFieldRef = new IllegalFieldReferenceDetector();
 		}
-		if (project != null) {
-			if (!isIgnore(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, project)
-					 && fSystemApiDetector == null) {
+		if (false) {
+			if (project != null) {
+				if (!isIgnore(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, project)
+						 && fSystemApiDetector == null) {
+					fSystemApiDetector = new SystemApiDetector();
+				}
+			} else if (!Platform.isRunning()) {
+				//add detector by default only outside of the ide if we have no preference context
 				fSystemApiDetector = new SystemApiDetector();
 			}
-		} else if (!Platform.isRunning()) {
-			//add detector by default only outside of the ide if we have no preference context
-			fSystemApiDetector = new SystemApiDetector();
 		}
 		if (fIllegalExtends != null) {
 			fDetectors.add(fIllegalExtends);
