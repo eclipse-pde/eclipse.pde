@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.nls;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -40,8 +41,12 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 	private ModelChangeTable fModelChangeTable;
 	private boolean fCanceled;
 
-	public GetNonExternalizedStringsOperation(ISelection selection) {
+	//Azure: To indicate that only selected plug-ins under <code>fSelection</code> are to be externalized.
+	private boolean fExternalizeSelectedPluginsOnly;
+
+	public GetNonExternalizedStringsOperation(ISelection selection, boolean externalizeSelectedPluginsOnly) {
 		fSelection = selection;
+		fExternalizeSelectedPluginsOnly = externalizeSelectedPluginsOnly;
 	}
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -59,12 +64,29 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 
 			fModelChangeTable = new ModelChangeTable();
 
-			IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
-			monitor.beginTask(PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, pluginModels.length);
-			for (int i = 0; i < pluginModels.length && !fCanceled; i++) {
-				IProject project = pluginModels[i].getUnderlyingResource().getProject();
-				if (!WorkspaceModelManager.isBinaryProject(project))
-					getUnExternalizedStrings(project, new SubProgressMonitor(monitor, 1));
+			/*
+			 * Azure: This will add only the preselected plug-ins to the ModelChangeTable
+			 * instead of adding the list of all plug-ins in the workspace. This is useful
+			 * when the Internationalize action is run on a set of non-externalized plug-ins
+			 * where there is no need to display all non-externalized plug-ins in the
+			 * workspace, but only those selected.
+			 */
+			if (fExternalizeSelectedPluginsOnly) {
+				monitor.beginTask(PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, fSelectedModels.size());
+				Iterator iterator = fSelectedModels.iterator();
+				while (iterator.hasNext() && !fCanceled) {
+					IProject project = (IProject) iterator.next();
+					if (!WorkspaceModelManager.isBinaryProject(project))
+						getUnExternalizedStrings(project, new SubProgressMonitor(monitor, 1));
+				}
+			} else {
+				IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
+				monitor.beginTask(PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, pluginModels.length);
+				for (int i = 0; i < pluginModels.length && !fCanceled; i++) {
+					IProject project = pluginModels[i].getUnderlyingResource().getProject();
+					if (!WorkspaceModelManager.isBinaryProject(project))
+						getUnExternalizedStrings(project, new SubProgressMonitor(monitor, 1));
+				}
 			}
 		}
 	}

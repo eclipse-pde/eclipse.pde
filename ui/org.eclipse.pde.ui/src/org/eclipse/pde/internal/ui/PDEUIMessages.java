@@ -2478,6 +2478,46 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExternalizeStringsWizardPage_keySuggested;
 
+	public static String InternationalizeAction_internationalizeTitle;
+
+	public static String InternationalizeAction_internationalizeMessage;
+
+	public static String InternationalizeWizard_title;
+
+	public static String InternationalizeWizard_PluginPage_internationalizeList;
+
+	public static String InternationalizeWizard_PluginPage_availableList;
+
+	public static String InternationalizeWizard_PluginPage_filter;
+
+	public static String InternationalizeWizard_PluginPage_templateLabel;
+
+	public static String InternationalizeWizard_PluginPage_pageTitle;
+
+	public static String InternationalizeWizard_PluginPage_pageDescription;
+
+	public static String InternationalizeWizard_PluginPage_overwriteWithoutAsking;
+	public static String InternationalizeWizard_PluginPage_templateError;
+	public static String InternationalizeWizard_PluginPage_selectionError;
+	public static String InternationalizeWizard_PluginPage_individualFragments;
+
+	public static String InternationalizeWizard_LocalePage_pageTitle;
+
+	public static String InternationalizeWizard_LocalePage_pageDescription;
+
+	public static String InternationalizeWizard_LocalePage_internationalizeList;
+
+	public static String InternationalizeWizard_LocalePage_availableList;
+	public static String InternationalizeWizard_LocalePage_selectionError;
+
+	public static String InternationalizeWizard_LocalePage_filter;
+
+	public static String InternationalizeWizard_NLSFragmentGenerator_overwriteTitle;
+
+	public static String InternationalizeWizard_NLSFragmentGenerator_overwriteMessage;
+	public static String InternationalizeWizard_NLSFragmentGenerator_errorMessage;
+	public static String InternationalizeWizard_NLSFragmentGenerator_errorTitle;
+
 	public static String NewProjectCreationPage_target;
 
 	public static String NewProjectCreationPage_ftarget;

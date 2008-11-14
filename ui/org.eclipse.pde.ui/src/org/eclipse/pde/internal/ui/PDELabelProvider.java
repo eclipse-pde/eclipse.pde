@@ -147,6 +147,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ExecutionEnvironment) {
 			return getObjectText((ExecutionEnvironment) obj);
 		}
+		if (obj instanceof Locale) {
+			return getObjectText((Locale) obj);
+		}
 		return super.getText(obj);
 	}
 
@@ -312,6 +315,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 	 */
 	public String getObjectText(CtxHelpObject obj) {
 		return PDETextHelper.translateReadText(obj.getName());
+	}
+
+	private String getObjectText(Locale obj) {
+		String country = " (" + obj.getDisplayCountry() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return obj.getDisplayLanguage() + (" ()".equals(country) ? "" : country); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public String getObjectText(FeaturePlugin obj) {
@@ -547,6 +555,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ResolverError) {
 			return getObjectImage((ResolverError) obj);
 		}
+		if (obj instanceof Locale) {
+			return get(PDEPluginImages.DESC_DISCOVERY);
+		}
+
 		return super.getImage(obj);
 	}
 
