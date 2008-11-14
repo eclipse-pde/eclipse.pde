@@ -46,7 +46,7 @@ public interface IApiMember extends IApiElement {
 	 * 
 	 * @return member signature
 	 */
-	public String getSignature();	
+	public String getSignature();
 	
 	/**
 	 * Returns type generic signature information about this member or <code>null</code>
@@ -54,7 +54,7 @@ public interface IApiMember extends IApiElement {
 	 * 
 	 * @return generic type signature information for this type or <code>null</code>
 	 */
-	public String getGenericSignature();	
+	public String getGenericSignature();
 	
 	/**
 	 * Returns the API component this type originated from or <code>null</code>
