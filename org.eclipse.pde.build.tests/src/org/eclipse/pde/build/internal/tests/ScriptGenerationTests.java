@@ -871,17 +871,24 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder f1 = Utils.createFolder(buildFolder, "features/F1");
 		Utils.generateFeature(buildFolder, "F1", new String[] {"F2"}, new String[] {"P1"});
 		Utils.generateFeature(buildFolder, "F2", null, new String[] {"P2"});
+		
 		Utils.generateBundle(p1, "P1");
+		Utils.writeBuffer(p1.getFile("src/a.java"), new StringBuffer("class A implements foo {}"));
+		
 		Utils.generateBundle(p2, "P2");
+		Utils.writeBuffer(p2.getFile("src/b.java"), new StringBuffer("class B implements foo {}"));
 
-		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "F1"));
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "F1");
+		properties.put("archivesFormat", "*,*,*-folder");
+		properties.put("javacFailOnError", "false");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
 
-		Utils.writeBuffer(p1.getFile("temp.folder/@dot.bin.log"), new StringBuffer("compile!"));
-		Utils.writeBuffer(p2.getFile("temp.folder/@dot.bin.log"), new StringBuffer("me too!"));
-
-		runAntScript(f1.getFile("build.xml").getLocation().toOSString(), new String[] {"gather.logs"}, buildFolder.getLocation().toOSString(), null);
-		assertResourceFile(f1, "feature.temp.folder/plugins/P1_1.0.0/@dot.bin.log");
-		assertResourceFile(f1, "feature.temp.folder/plugins/P2_1.0.0/@dot.bin.log");
+		Set entries = new HashSet();
+		entries.add("plugins/P1_1.0.0/@dot.log");
+		entries.add("plugins/P2_1.0.0/@dot.log");
+		assertZipContents(f1, "F1_1.0.0.log.zip", entries);
 	}
 	
 	public void testBug239843_1() throws Exception {
@@ -978,5 +985,45 @@ public class ScriptGenerationTests extends PDETestCase {
 		buildProperties.put("customEESources", custom.getLocation().toOSString() + ".jar");
 		buildProperties.put("MyCustomProfile", "someLibrary.jar");
 		generateScripts(buildFolder, buildProperties);
+	}
+	
+	public void testRootFiles_1() throws Exception {
+		IFolder buildFolder = newTest("RootFiles_1");
+		IFolder f = Utils.createFolder(buildFolder, "features/F");
+		Utils.generateFeature(buildFolder, "F", null, null);
+		Properties properties = new Properties();
+		properties.put("root", "file:1, dir");
+		properties.put("root.folder.sub", "file:2");
+		properties.put("root.win32.win32.x86", "file:3");
+		properties.put("root.win32.win32.x86.folder.other", "file:4, other");
+		Utils.storeBuildProperties(f, properties);
+		
+		Utils.writeBuffer(f.getFile("1"), new StringBuffer("1"));
+		Utils.writeBuffer(f.getFile("2"), new StringBuffer("2"));
+		Utils.writeBuffer(f.getFile("3"), new StringBuffer("3"));
+		Utils.writeBuffer(f.getFile("4"), new StringBuffer("4"));
+		Utils.writeBuffer(f.getFile("dir/5"), new StringBuffer("5"));
+		Utils.writeBuffer(f.getFile("other/6"), new StringBuffer("6"));
+		
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "F");
+		properties.put("configs", "*,*,* & win32,win32,x86");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+		
+		Set zipEntries = new HashSet();
+		zipEntries.add("eclipse/1");
+		zipEntries.add("eclipse/sub/2");
+		zipEntries.add("eclipse/3");
+		zipEntries.add("eclipse/other/4");
+		zipEntries.add("eclipse/5");
+		zipEntries.add("eclipse/other/6");
+		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild-win32.win32.x86.zip", zipEntries);
+		
+		zipEntries.clear();
+		zipEntries.add("eclipse/1");
+		zipEntries.add("eclipse/sub/2");
+		zipEntries.add("eclipse/5");
+		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild.zip", zipEntries);
 	}
 }
