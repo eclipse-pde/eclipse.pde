@@ -359,6 +359,10 @@
             </parameter>
          </describer>
       </content-type>
+      <file-association
+            content-type="org.eclipse.jdt.core.javaProperties"
+            file-names=".options">
+      </file-association>
     </extension>
    
 </plugin>
