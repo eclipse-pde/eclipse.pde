@@ -1336,14 +1336,19 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Collects details from the given delta listing for version problems
 	 * @param deltas
-	 * @return
+	 * @return a {@link String} of the details why the version number should be changed
 	 */
 	private String collectDetails(final IDelta[] deltas) {
 		StringWriter writer = new StringWriter();
 		PrintWriter printWriter = new PrintWriter(writer);
-		for (int i = 0, max = deltas.length; i < max ; i++) {
+		//TODO contrived default for https://bugs.eclipse.org/bugs/show_bug.cgi?id=251313
+		int max = Math.min(20, deltas.length);
+		for (int i = 0; i < max; i++) {
 			printWriter.print("- "); //$NON-NLS-1$
 			printWriter.println(deltas[i].getMessage());
+			if(i == max-1 && max < deltas.length) {
+				printWriter.println(NLS.bind(BuilderMessages.BaseApiAnalyzer_more_version_problems, new Integer(deltas.length - max)));
+			}
 		}
 		printWriter.flush();
 		printWriter.close();
