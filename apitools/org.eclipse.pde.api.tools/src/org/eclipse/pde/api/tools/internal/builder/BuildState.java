@@ -157,38 +157,36 @@ public class BuildState {
 		}
 	}
 	
+	/**
+	 * @return the complete list of recorded breaking changes with duplicates removed, or 
+	 * an empty array, never <code>null</code>
+	 */
 	public IDelta[] getBreakingChanges() {
 		if (this.breakingChanges == null || this.breakingChanges.size() == 0) {
 			return EMPTY_DELTAS;
 		}
-		ArrayList collector = new ArrayList();
+		HashSet collector = new HashSet();
 		Collection values = this.breakingChanges.values();
 		for (Iterator iterator = values.iterator(); iterator.hasNext(); ) {
-			HashSet set = (HashSet) iterator.next();
-			for (Iterator iterator2 = set.iterator(); iterator2.hasNext(); ) {
-				collector.add(iterator2.next());
-			}
+			collector.addAll((HashSet) iterator.next());
 		}
-		IDelta[] result = new IDelta[collector.size()];
-		collector.toArray(result);
-		return result;
+		return (IDelta[]) collector.toArray(new IDelta[collector.size()]);
 	}
 
+	/**
+	 * @return the complete list of recorded compatible changes with duplicates removed,
+	 * or an empty array, never <code>null</code>
+	 */
 	public IDelta[] getCompatibleChanges() {
 		if (this.compatibleChanges == null || this.compatibleChanges.size() == 0) {
 			return EMPTY_DELTAS;
 		}
-		ArrayList collector = new ArrayList();
+		HashSet collector = new HashSet();
 		Collection values = this.compatibleChanges.values();
 		for (Iterator iterator = values.iterator(); iterator.hasNext(); ) {
-			HashSet set = (HashSet) iterator.next();
-			for (Iterator iterator2 = set.iterator(); iterator2.hasNext(); ) {
-				collector.add(iterator2.next());
-			}
+			collector.addAll((HashSet) iterator.next());
 		}
-		IDelta[] result = new IDelta[collector.size()];
-		collector.toArray(result);
-		return result;
+		return (IDelta[]) collector.toArray(new IDelta[collector.size()]);
 	}
 
 	/**
