@@ -71,6 +71,9 @@ public abstract class CommonUtilsTask extends Task {
 			// create a component for each jar/directory in the folder
 			File dir = new File(fileName);
 			File[] files = dir.listFiles();
+			if(files == null) {
+				throw new BuildException("The reference directory is empty: "+fileName);  //$NON-NLS-1$
+			}
 			List components = new ArrayList();
 			for (int i = 0; i < files.length; i++) {
 				File bundle = files[i];
