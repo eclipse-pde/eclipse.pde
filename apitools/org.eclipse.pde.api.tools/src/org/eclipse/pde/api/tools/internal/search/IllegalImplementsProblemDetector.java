@@ -64,8 +64,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	 */
 	public boolean considerReference(IReference reference) {
 		try {
-			if(isIllegalType(reference)) {
-				retainReference(reference);
+			if(super.considerReference(reference)) {
 				return true;
 			}
 			IApiType type = (IApiType) reference.getMember();
@@ -77,7 +76,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 					break;
 				}
 			}
-			if(inter != null && findRestrictedSuperinterfaces(reference.getReferencedTypeName(), inter)) {
+			if(inter != null && findRestrictedSuperinterfaces(type.getApiComponent(), reference.getReferencedTypeName(), inter)) {
 				retainReference(reference);
 				return true;
 			}
@@ -85,7 +84,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 		catch(CoreException ce) {
 			ApiPlugin.log(ce);
 		}
-		return super.considerReference(reference);
+		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -159,12 +158,16 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	
 	/**
 	 * Finds all of the implements restricted interfaces in the hierarchy of this given type
-	 * @param entryinterface
-	 * @param type
+	 * @param originalcomponent the original {@link IApiComponent}
+	 * @param entryinterface the name of the interface we originally entered the recursion with
+	 * @param type the {@link IApiType} to inspect the interfaces of
 	 * @throws CoreException
 	 */
-	private boolean findRestrictedSuperinterfaces(final String entryinterface, IApiType type) throws CoreException {
+	private boolean findRestrictedSuperinterfaces(final IApiComponent originalcomponent, final String entryinterface, IApiType type) throws CoreException {
 		IApiType[] inters = type.getSuperInterfaces();
+		if(inters.length == 0) {
+			return false;
+		}
 		IApiAnnotations annot = null;
 		IApiComponent comp = null;
 		for (int i = 0; i < inters.length; i++) {
@@ -172,11 +175,13 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 			if(comp == null) {
 				continue;
 			}
-			annot = comp.getApiDescription().resolveAnnotations(Factory.typeDescriptor(inters[i].getName()));
-			if(annot != null && RestrictionModifiers.isImplementRestriction(annot.getRestrictions())) {
-				return fRestrictedInterfaces.put(entryinterface, inters[i]) == null;
+			if(!comp.equals(originalcomponent)) {
+				annot = comp.getApiDescription().resolveAnnotations(Factory.typeDescriptor(inters[i].getName()));
+				if(annot != null && RestrictionModifiers.isImplementRestriction(annot.getRestrictions())) {
+					return fRestrictedInterfaces.put(entryinterface, inters[i]) == null;
+				}
 			}
-			return findRestrictedSuperinterfaces( entryinterface, inters[i]);
+			return findRestrictedSuperinterfaces(originalcomponent, entryinterface, inters[i]);
 		}
 		return false;
 	}
