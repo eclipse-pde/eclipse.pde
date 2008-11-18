@@ -125,6 +125,22 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 		}
 		return super.getMessageArgs(reference);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference#getMessageArgs(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+	 */
+	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
+		if(isIllegalType(reference)) {
+			return super.getQualifiedMessageArgs(reference);
+		}
+		if(fRestrictedInterfaces.size() > 0) {
+			IApiType type = (IApiType) reference.getResolvedReference();
+			IApiType inter = (IApiType) fRestrictedInterfaces.get(type.getName());
+			if(inter != null) {
+				return new String[] {getTypeName(type), inter.getName(), getTypeName(reference.getMember())};
+			}
+		}
+		return super.getQualifiedMessageArgs(reference);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference#getProblemFlags(org.eclipse.pde.api.tools.internal.provisional.model.IReference)

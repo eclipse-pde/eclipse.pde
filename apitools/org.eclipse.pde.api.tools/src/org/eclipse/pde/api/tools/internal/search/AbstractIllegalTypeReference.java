@@ -19,8 +19,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
-import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
@@ -80,28 +78,6 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 		Object componentId = fIllegalTypes.get(type.getName());
 		return componentId != null && type.getApiComponent().getId().equals(componentId);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#createProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
-	 */
-	protected IApiProblem createProblem(IReference reference) throws CoreException {
-		int lineNumber = reference.getLineNumber();
-		String typename = getTypeName(reference.getResolvedReference());
-		String ltypename = getTypeName(reference.getMember());
-		return ApiProblemFactory.newApiUsageProblem(
-				null,
-				ltypename,
-				new String[] {typename, ltypename}, 
-				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-				new Object[] {new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
-				lineNumber, 
-				IApiProblem.NO_CHARRANGE, 
-				IApiProblem.NO_CHARRANGE,
-				IElementDescriptor.TYPE, 
-				getProblemKind(),
-				getProblemFlags(reference));
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
