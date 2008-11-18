@@ -203,6 +203,21 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_REMOVED_PROFILE = "removedprofile"; //$NON-NLS-1$
 	/**
+	 * Constant representing the superclass attribute name in xml.
+	 * Value is <code>sc</code>
+	 */
+	public static final String ATTR_SUPER_CLASS = "sc"; //$NON-NLS-1$
+	/**
+	 * Constant representing the superinterfaces attribute name in xml.
+	 * Value is <code>sis</code>
+	 */
+	public static final String ATTR_SUPER_INTERFACES = "sis"; //$NON-NLS-1$
+	/**
+	 * Constant representing the interface flag attribute name in xml.
+	 * Value is <code>int</code>
+	 */
+	public static final String ATTR_INTERFACE = "int"; //$NON-NLS-1$
+	/**
 	 * Constant representing the status of a member attribute name in xml.
 	 * Value is <code>status</code>
 	 */

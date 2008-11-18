@@ -455,6 +455,17 @@ public class ApiDescription implements IApiDescription {
 			int removedProfile) {
 		return Status.OK_STATUS;
 	}
+	public IStatus setSuperclass(IElementDescriptor element, String superclass) {
+		return Status.OK_STATUS;
+	}
+	public IStatus setSuperinterfaces(IElementDescriptor element,
+			String superinterfaces) {
+		return Status.OK_STATUS;
+	}
+	public IStatus setInterface(IElementDescriptor element,
+			boolean interfaceFlag) {
+		return Status.OK_STATUS;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

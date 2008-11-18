@@ -28,6 +28,8 @@ import org.eclipse.pde.api.tools.internal.ApiAnnotations;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
+import org.eclipse.pde.api.tools.internal.descriptors.MethodDescriptorImpl;
+import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -40,6 +42,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.SystemApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
@@ -99,6 +102,9 @@ public class SystemLibraryApiDescription implements IApiDescription {
 		protected int removedProfile;
 		protected ManifestNode parent = null;
 		protected HashMap children = new HashMap(1);
+		protected String superclass;
+		protected String[] superinterfaces;
+		protected boolean isInterface;
 		
 		public ManifestNode(
 				ManifestNode parent,
@@ -471,12 +477,17 @@ public class SystemLibraryApiDescription implements IApiDescription {
 		return node;
 	}
  	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#resolveAPIDescription(java.lang.String, org.eclipse.pde.api.tools.model.component.IElementDescriptor)
-	 */
 	public IApiAnnotations resolveAnnotations(IElementDescriptor element) {
 		ManifestNode node = findNode(element, false);
-		if (node != null) {
+		if (node == null) {
+			// check hierarchy
+			if (element.getElementType() == IElementDescriptor.METHOD) {
+				MethodDescriptorImpl methodDescriptorImpl = (MethodDescriptorImpl) element;
+				// no need to do a lookup for types or fields
+				IElementDescriptor parent = element.getParent();
+				return resolveAnnotations0(element, methodDescriptorImpl, parent);
+			}
+		} else {
 			return resolveAnnotations(node, element);
 		}
 		return null;
@@ -621,5 +632,92 @@ public class SystemLibraryApiDescription implements IApiDescription {
 	 */
 	protected synchronized boolean isModified() {
 		return fModified;
+	}
+
+	public IStatus setSuperclass(IElementDescriptor element, String superclass) {
+		ManifestNode node = findNode(element, true);
+		if(node != null) {
+			modified();
+			node.superclass = superclass;
+			return Status.OK_STATUS;
+		}
+		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND,
+				MessageFormat.format("Failed to set API superclass: {0} not found in {1}", //$NON-NLS-1$
+						new String[]{element.toString(), fOwningComponentId}), null);
+	}
+
+	public IStatus setInterface(IElementDescriptor element,
+			boolean interfaceFlag) {
+		ManifestNode node = findNode(element, true);
+		if(node != null) {
+			modified();
+			node.isInterface = interfaceFlag;
+			return Status.OK_STATUS;
+		}
+		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND,
+				MessageFormat.format("Failed to set API superclass: {0} not found in {1}", //$NON-NLS-1$
+						new String[]{element.toString(), fOwningComponentId}), null);
+	}
+
+	public IStatus setSuperinterfaces(IElementDescriptor element,
+			String superinterfaces) {
+		ManifestNode node = findNode(element, true);
+		if(node != null) {
+			modified();
+			node.superinterfaces = superinterfaces != null ? superinterfaces.split(",") : null; //$NON-NLS-1$
+			return Status.OK_STATUS;
+		}
+		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND,
+				MessageFormat.format("Failed to set API superclass: {0} not found in {1}", //$NON-NLS-1$
+						new String[]{element.toString(), fOwningComponentId}), null);
+	}
+
+	private IApiAnnotations resolveAnnotations0(
+			IElementDescriptor element,
+			MethodDescriptorImpl methodDescriptorImpl,
+			IElementDescriptor parent) {
+		ManifestNode typeNode = findNode(parent, false);
+		if (typeNode != null) {
+			// should be the type node
+			if (typeNode.isInterface) {
+				// lookup through interfaces
+				String[] superinterfaces = typeNode.superinterfaces;
+				for (int i = 0, max = superinterfaces.length; i < max; i++) {
+					String superinterface = superinterfaces[i];
+					PackageDescriptorImpl packageDescriptorImpl = new PackageDescriptorImpl(getPackageName(superinterface));
+					IReferenceTypeDescriptor typeDescriptor = packageDescriptorImpl.getType(getSimpleName(superinterface));
+					IMethodDescriptor methodDescriptor = typeDescriptor.getMethod(
+							methodDescriptorImpl.getName(),
+							methodDescriptorImpl.getSignature());
+					IApiAnnotations resolveAnnotations = resolveAnnotations(methodDescriptor);
+					if (resolveAnnotations != null) {
+						return resolveAnnotations;
+					}
+				}
+			} else {
+				// lookup through superclasses
+				String superclass = typeNode.superclass;
+				if (superclass != null) {
+					PackageDescriptorImpl packageDescriptorImpl = new PackageDescriptorImpl(getPackageName(superclass));
+					IReferenceTypeDescriptor typeDescriptor = packageDescriptorImpl.getType(getSimpleName(superclass));
+					IMethodDescriptor methodDescriptor = typeDescriptor.getMethod(
+							methodDescriptorImpl.getName(),
+							methodDescriptorImpl.getSignature());
+					IApiAnnotations resolveAnnotations = resolveAnnotations(methodDescriptor);
+					if (resolveAnnotations != null) {
+						return resolveAnnotations;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private String getSimpleName(String typeName) {
+		return typeName.substring(typeName.lastIndexOf('.') + 1);
+	}
+
+	private String getPackageName(String typeName) {
+		return typeName.substring(0, typeName.lastIndexOf('.'));
 	}
 }

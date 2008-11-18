@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="OSGis" version="1.2">
     <package addedprofile="256" name="java.io">
-        <type name="BufferedInputStream">
+        <type int="false" name="BufferedInputStream" sc="java.io.FilterInputStream">
             <field name="buf"/>
             <field name="count"/>
             <field name="marklimit"/>
@@ -18,7 +18,7 @@
             <method name="reset" signature="()V"/>
             <method name="skip" signature="(J)J"/>
         </type>
-        <type name="BufferedOutputStream">
+        <type int="false" name="BufferedOutputStream" sc="java.io.FilterOutputStream">
             <field name="buf"/>
             <field name="count"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/OutputStream;)V"/>
@@ -27,7 +27,7 @@
             <method name="write" signature="(I)V"/>
             <method name="write" signature="([BII)V"/>
         </type>
-        <type name="BufferedReader">
+        <type int="false" name="BufferedReader" sc="java.io.Reader">
             <method name="&lt;init&gt;" signature="(Ljava/io/Reader;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/Reader;I)V"/>
             <method name="close" signature="()V"/>
@@ -40,7 +40,7 @@
             <method name="reset" signature="()V"/>
             <method name="skip" signature="(J)J"/>
         </type>
-        <type name="BufferedWriter">
+        <type int="false" name="BufferedWriter" sc="java.io.Writer">
             <method name="&lt;init&gt;" signature="(Ljava/io/Writer;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/Writer;I)V"/>
             <method name="close" signature="()V"/>
@@ -50,7 +50,7 @@
             <method name="write" signature="(Ljava/lang/String;II)V"/>
             <method name="write" signature="([CII)V"/>
         </type>
-        <type name="ByteArrayInputStream">
+        <type int="false" name="ByteArrayInputStream" sc="java.io.InputStream">
             <field name="buf"/>
             <field name="count"/>
             <field name="mark"/>
@@ -66,7 +66,7 @@
             <method name="reset" signature="()V"/>
             <method name="skip" signature="(J)J"/>
         </type>
-        <type name="ByteArrayOutputStream">
+        <type int="false" name="ByteArrayOutputStream" sc="java.io.OutputStream">
             <field name="buf"/>
             <field name="count"/>
             <method name="&lt;init&gt;" signature="()V"/>
@@ -80,11 +80,11 @@
             <method name="write" signature="([BII)V"/>
             <method name="writeTo" signature="(Ljava/io/OutputStream;)V"/>
         </type>
-        <type name="CharConversionException">
+        <type int="false" name="CharConversionException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="DataInput">
+        <type int="true" name="DataInput" sc="java.lang.Object">
             <method name="readBoolean" signature="()Z"/>
             <method name="readByte" signature="()B"/>
             <method name="readChar" signature="()C"/>
@@ -101,7 +101,7 @@
             <method name="readUnsignedShort" signature="()I"/>
             <method name="skipBytes" signature="(I)I"/>
         </type>
-        <type name="DataInputStream">
+        <type int="false" name="DataInputStream" sc="java.io.FilterInputStream" sis="java.io.DataInput">
             <method name="&lt;init&gt;" signature="(Ljava/io/InputStream;)V"/>
             <method name="read" signature="([B)I"/>
             <method name="read" signature="([BII)I"/>
@@ -122,7 +122,7 @@
             <method name="readUnsignedShort" signature="()I"/>
             <method name="skipBytes" signature="(I)I"/>
         </type>
-        <type name="DataOutput">
+        <type int="true" name="DataOutput" sc="java.lang.Object">
             <method name="write" signature="(I)V"/>
             <method name="write" signature="([B)V"/>
             <method name="write" signature="([BII)V"/>
@@ -138,7 +138,7 @@
             <method name="writeShort" signature="(I)V"/>
             <method name="writeUTF" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="DataOutputStream">
+        <type int="false" name="DataOutputStream" sc="java.io.FilterOutputStream" sis="java.io.DataOutput">
             <field name="written"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/OutputStream;)V"/>
             <method name="flush" signature="()V"/>
@@ -157,15 +157,15 @@
             <method name="writeShort" signature="(I)V"/>
             <method name="writeUTF" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="EOFException">
+        <type int="false" name="EOFException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Externalizable">
+        <type int="true" name="Externalizable" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="readExternal" signature="(Ljava/io/ObjectInput;)V"/>
             <method name="writeExternal" signature="(Ljava/io/ObjectOutput;)V"/>
         </type>
-        <type name="File">
+        <type int="false" name="File" sc="java.lang.Object" sis="java.io.Serializable,java.lang.Comparable">
             <field name="pathSeparator"/>
             <field name="pathSeparatorChar"/>
             <field name="separator"/>
@@ -205,7 +205,7 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="toURL" signature="()Ljava/net/URL;"/>
         </type>
-        <type name="FileDescriptor">
+        <type int="false" name="FileDescriptor" sc="java.lang.Object">
             <field name="err"/>
             <field name="in"/>
             <field name="out"/>
@@ -213,7 +213,7 @@
             <method name="sync" signature="()V"/>
             <method name="valid" signature="()Z"/>
         </type>
-        <type name="FileInputStream">
+        <type int="false" name="FileInputStream" sc="java.io.InputStream">
             <method name="&lt;init&gt;" signature="(Ljava/io/File;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/FileDescriptor;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
@@ -226,11 +226,11 @@
             <method name="read" signature="([BII)I"/>
             <method name="skip" signature="(J)J"/>
         </type>
-        <type name="FileNotFoundException">
+        <type int="false" name="FileNotFoundException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="FileOutputStream">
+        <type int="false" name="FileOutputStream" sc="java.io.OutputStream">
             <method name="&lt;init&gt;" signature="(Ljava/io/File;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/FileDescriptor;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
@@ -242,7 +242,7 @@
             <method name="write" signature="([B)V"/>
             <method name="write" signature="([BII)V"/>
         </type>
-        <type name="FilePermission">
+        <type int="false" name="FilePermission" sc="java.security.Permission" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="getActions" signature="()Ljava/lang/String;"/>
@@ -250,18 +250,18 @@
             <method name="implies" signature="(Ljava/security/Permission;)Z"/>
             <method name="newPermissionCollection" signature="()Ljava/security/PermissionCollection;"/>
         </type>
-        <type name="FileReader">
+        <type int="false" name="FileReader" sc="java.io.InputStreamReader">
             <method name="&lt;init&gt;" signature="(Ljava/io/File;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/FileDescriptor;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="FileWriter">
+        <type int="false" name="FileWriter" sc="java.io.OutputStreamWriter">
             <method name="&lt;init&gt;" signature="(Ljava/io/File;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/FileDescriptor;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Z)V"/>
         </type>
-        <type name="FilterInputStream">
+        <type int="false" name="FilterInputStream" sc="java.io.InputStream">
             <field name="in"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/InputStream;)V"/>
             <method name="available" signature="()I"/>
@@ -274,7 +274,7 @@
             <method name="reset" signature="()V"/>
             <method name="skip" signature="(J)J"/>
         </type>
-        <type name="FilterOutputStream">
+        <type int="false" name="FilterOutputStream" sc="java.io.OutputStream">
             <field name="out"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/OutputStream;)V"/>
             <method name="close" signature="()V"/>
@@ -283,11 +283,11 @@
             <method name="write" signature="([B)V"/>
             <method name="write" signature="([BII)V"/>
         </type>
-        <type name="IOException">
+        <type int="false" name="IOException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="InputStream">
+        <type int="false" name="InputStream" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="available" signature="()I"/>
             <method name="close" signature="()V"/>
@@ -299,7 +299,7 @@
             <method name="reset" signature="()V"/>
             <method name="skip" signature="(J)J"/>
         </type>
-        <type name="InputStreamReader">
+        <type int="false" name="InputStreamReader" sc="java.io.Reader">
             <method name="&lt;init&gt;" signature="(Ljava/io/InputStream;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/InputStream;Ljava/lang/String;)V"/>
             <method name="close" signature="()V"/>
@@ -308,29 +308,29 @@
             <method name="read" signature="([CII)I"/>
             <method name="ready" signature="()Z"/>
         </type>
-        <type name="InterruptedIOException">
+        <type int="false" name="InterruptedIOException" sc="java.io.IOException">
             <field name="bytesTransferred"/>
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="InvalidClassException">
+        <type int="false" name="InvalidClassException" sc="java.io.ObjectStreamException">
             <field name="classname"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
             <method name="getMessage" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="InvalidObjectException">
+        <type int="false" name="InvalidObjectException" sc="java.io.ObjectStreamException">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="NotActiveException">
+        <type int="false" name="NotActiveException" sc="java.io.ObjectStreamException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="NotSerializableException">
+        <type int="false" name="NotSerializableException" sc="java.io.ObjectStreamException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ObjectInput">
+        <type int="true" name="ObjectInput" sc="java.lang.Object" sis="java.io.DataInput">
             <method name="available" signature="()I"/>
             <method name="close" signature="()V"/>
             <method name="read" signature="()I"/>
@@ -339,7 +339,7 @@
             <method name="readObject" signature="()Ljava/lang/Object;"/>
             <method name="skip" signature="(J)J"/>
         </type>
-        <type name="ObjectInputStream">
+        <type int="false" name="ObjectInputStream" sc="java.io.InputStream" sis="java.io.ObjectInput,java.io.ObjectStreamConstants">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/InputStream;)V"/>
             <method name="available" signature="()I"/>
@@ -373,7 +373,7 @@
             <method name="resolveProxyClass" signature="([Ljava/lang/String;)Ljava/lang/Class;"/>
             <method name="skipBytes" signature="(I)I"/>
         </type>
-        <type name="ObjectInputStream$GetField">
+        <type int="false" name="ObjectInputStream$GetField" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="defaulted" signature="(Ljava/lang/String;)Z"/>
             <method name="get" signature="(Ljava/lang/String;B)B"/>
@@ -387,10 +387,10 @@
             <method name="get" signature="(Ljava/lang/String;Z)Z"/>
             <method name="getObjectStreamClass" signature="()Ljava/io/ObjectStreamClass;"/>
         </type>
-        <type name="ObjectInputValidation">
+        <type int="true" name="ObjectInputValidation" sc="java.lang.Object">
             <method name="validateObject" signature="()V"/>
         </type>
-        <type name="ObjectOutput">
+        <type int="true" name="ObjectOutput" sc="java.lang.Object" sis="java.io.DataOutput">
             <method name="close" signature="()V"/>
             <method name="flush" signature="()V"/>
             <method name="write" signature="(I)V"/>
@@ -398,7 +398,7 @@
             <method name="write" signature="([BII)V"/>
             <method name="writeObject" signature="(Ljava/lang/Object;)V"/>
         </type>
-        <type name="ObjectOutputStream">
+        <type int="false" name="ObjectOutputStream" sc="java.io.OutputStream" sis="java.io.ObjectOutput,java.io.ObjectStreamConstants">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/OutputStream;)V"/>
             <method name="annotateClass" signature="(Ljava/lang/Class;)V"/>
@@ -432,7 +432,7 @@
             <method name="writeStreamHeader" signature="()V"/>
             <method name="writeUTF" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ObjectOutputStream$PutField">
+        <type int="false" name="ObjectOutputStream$PutField" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="put" signature="(Ljava/lang/String;B)V"/>
             <method name="put" signature="(Ljava/lang/String;C)V"/>
@@ -445,7 +445,7 @@
             <method name="put" signature="(Ljava/lang/String;Z)V"/>
             <method name="write" signature="(Ljava/io/ObjectOutput;)V"/>
         </type>
-        <type name="ObjectStreamClass">
+        <type int="false" name="ObjectStreamClass" sc="java.lang.Object" sis="java.io.Serializable">
             <field name="NO_FIELDS"/>
             <method name="forClass" signature="()Ljava/lang/Class;"/>
             <method name="getField" signature="(Ljava/lang/String;)Ljava/io/ObjectStreamField;"/>
@@ -455,7 +455,7 @@
             <method name="lookup" signature="(Ljava/lang/Class;)Ljava/io/ObjectStreamClass;"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="ObjectStreamConstants">
+        <type int="true" name="ObjectStreamConstants" sc="java.lang.Object">
             <field name="PROTOCOL_VERSION_1"/>
             <field name="PROTOCOL_VERSION_2"/>
             <field name="SC_BLOCK_DATA"/>
@@ -484,11 +484,11 @@
             <field name="TC_STRING"/>
             <field name="baseWireHandle"/>
         </type>
-        <type name="ObjectStreamException">
+        <type int="false" name="ObjectStreamException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ObjectStreamField">
+        <type int="false" name="ObjectStreamField" sc="java.lang.Object" sis="java.lang.Comparable">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Class;)V"/>
             <method name="compareTo" signature="(Ljava/lang/Object;)I"/>
             <method name="getName" signature="()Ljava/lang/String;"/>
@@ -500,11 +500,11 @@
             <method name="setOffset" signature="(I)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="OptionalDataException">
+        <type int="false" name="OptionalDataException" sc="java.io.ObjectStreamException">
             <field name="eof"/>
             <field name="length"/>
         </type>
-        <type name="OutputStream">
+        <type int="false" name="OutputStream" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="close" signature="()V"/>
             <method name="flush" signature="()V"/>
@@ -512,7 +512,7 @@
             <method name="write" signature="([B)V"/>
             <method name="write" signature="([BII)V"/>
         </type>
-        <type name="OutputStreamWriter">
+        <type int="false" name="OutputStreamWriter" sc="java.io.Writer">
             <method name="&lt;init&gt;" signature="(Ljava/io/OutputStream;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/OutputStream;Ljava/lang/String;)V"/>
             <method name="close" signature="()V"/>
@@ -522,7 +522,7 @@
             <method name="write" signature="(Ljava/lang/String;II)V"/>
             <method name="write" signature="([CII)V"/>
         </type>
-        <type name="PrintStream">
+        <type int="false" name="PrintStream" sc="java.io.FilterOutputStream">
             <method name="&lt;init&gt;" signature="(Ljava/io/OutputStream;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/OutputStream;Z)V"/>
             <method name="checkError" signature="()Z"/>
@@ -551,7 +551,7 @@
             <method name="write" signature="(I)V"/>
             <method name="write" signature="([BII)V"/>
         </type>
-        <type name="PrintWriter">
+        <type int="false" name="PrintWriter" sc="java.io.Writer">
             <field name="out"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/OutputStream;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/OutputStream;Z)V"/>
@@ -586,7 +586,7 @@
             <method name="write" signature="([C)V"/>
             <method name="write" signature="([CII)V"/>
         </type>
-        <type name="PushbackInputStream">
+        <type int="false" name="PushbackInputStream" sc="java.io.FilterInputStream">
             <field name="buf"/>
             <field name="pos"/>
             <method name="&lt;init&gt;" signature="(Ljava/io/InputStream;)V"/>
@@ -601,7 +601,7 @@
             <method name="unread" signature="([B)V"/>
             <method name="unread" signature="([BII)V"/>
         </type>
-        <type name="RandomAccessFile">
+        <type int="false" name="RandomAccessFile" sc="java.lang.Object" sis="java.io.DataInput,java.io.DataOutput">
             <method name="&lt;init&gt;" signature="(Ljava/io/File;Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
             <method name="close" signature="()V"/>
@@ -643,7 +643,7 @@
             <method name="writeShort" signature="(I)V"/>
             <method name="writeUTF" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Reader">
+        <type int="false" name="Reader" sc="java.lang.Object">
             <field name="lock"/>
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/Object;)V"/>
@@ -657,16 +657,16 @@
             <method name="reset" signature="()V"/>
             <method name="skip" signature="(J)J"/>
         </type>
-        <type name="Serializable"/>
-        <type name="SerializablePermission">
+        <type int="true" name="Serializable" sc="java.lang.Object"/>
+        <type int="false" name="SerializablePermission" sc="java.security.BasicPermission">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
         </type>
-        <type name="StreamCorruptedException">
+        <type int="false" name="StreamCorruptedException" sc="java.io.ObjectStreamException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="StringReader">
+        <type int="false" name="StringReader" sc="java.io.Reader">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="close" signature="()V"/>
             <method name="mark" signature="(I)V"/>
@@ -677,7 +677,7 @@
             <method name="reset" signature="()V"/>
             <method name="skip" signature="(J)J"/>
         </type>
-        <type name="StringWriter">
+        <type int="false" name="StringWriter" sc="java.io.Writer">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="close" signature="()V"/>
@@ -689,23 +689,23 @@
             <method name="write" signature="(Ljava/lang/String;II)V"/>
             <method name="write" signature="([CII)V"/>
         </type>
-        <type name="SyncFailedException">
+        <type int="false" name="SyncFailedException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="UTFDataFormatException">
+        <type int="false" name="UTFDataFormatException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="UnsupportedEncodingException">
+        <type int="false" name="UnsupportedEncodingException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="WriteAbortedException">
+        <type int="false" name="WriteAbortedException" sc="java.io.ObjectStreamException">
             <field name="detail"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Exception;)V"/>
             <method name="getMessage" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="Writer">
+        <type int="false" name="Writer" sc="java.lang.Object">
             <field name="lock"/>
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/Object;)V"/>
@@ -719,24 +719,24 @@
         </type>
     </package>
     <package addedprofile="256" name="java.lang">
-        <type name="AbstractMethodError">
+        <type int="false" name="AbstractMethodError" sc="java.lang.IncompatibleClassChangeError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ArithmeticException">
+        <type int="false" name="ArithmeticException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ArrayIndexOutOfBoundsException">
+        <type int="false" name="ArrayIndexOutOfBoundsException" sc="java.lang.IndexOutOfBoundsException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ArrayStoreException">
+        <type int="false" name="ArrayStoreException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Boolean">
+        <type int="false" name="Boolean" sc="java.lang.Object" sis="java.io.Serializable">
             <field name="FALSE"/>
             <field name="TRUE"/>
             <field name="TYPE"/>
@@ -749,7 +749,7 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="valueOf" signature="(Ljava/lang/String;)Ljava/lang/Boolean;"/>
         </type>
-        <type name="Byte">
+        <type int="false" name="Byte" sc="java.lang.Number" sis="java.lang.Comparable">
             <field name="MAX_VALUE"/>
             <field name="MIN_VALUE"/>
             <field name="TYPE"/>
@@ -770,7 +770,7 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="valueOf" signature="(Ljava/lang/String;I)Ljava/lang/Byte;"/>
         </type>
-        <type name="Character">
+        <type int="false" name="Character" sc="java.lang.Object" sis="java.io.Serializable,java.lang.Comparable">
             <field name="COMBINING_SPACING_MARK"/>
             <field name="CONNECTOR_PUNCTUATION"/>
             <field name="CONTROL"/>
@@ -824,7 +824,7 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="toUpperCase" signature="(C)C"/>
         </type>
-        <type name="Class">
+        <type int="false" name="Class" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="forName" signature="(Ljava/lang/String;)Ljava/lang/Class;"/>
             <method name="forName" signature="(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;"/>
             <method name="getClassLoader" signature="()Ljava/lang/ClassLoader;"/>
@@ -860,19 +860,19 @@
             <method name="newInstance" signature="()Ljava/lang/Object;"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="ClassCastException">
+        <type int="false" name="ClassCastException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ClassCircularityError">
+        <type int="false" name="ClassCircularityError" sc="java.lang.LinkageError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ClassFormatError">
+        <type int="false" name="ClassFormatError" sc="java.lang.LinkageError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ClassLoader">
+        <type int="false" name="ClassLoader" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/ClassLoader;)V"/>
             <method name="defineClass" signature="(Ljava/lang/String;[BII)Ljava/lang/Class;"/>
@@ -896,7 +896,7 @@
             <method name="resolveClass" signature="(Ljava/lang/Class;)V"/>
             <method addedprofile="512" name="setSigners" signature="(Ljava/lang/Class;[Ljava/lang/Object;)V"/>
         </type>
-        <type name="ClassNotFoundException">
+        <type int="false" name="ClassNotFoundException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Throwable;)V"/>
@@ -904,15 +904,15 @@
             <method name="printStackTrace" signature="()V"/>
             <method name="printStackTrace" signature="(Ljava/io/PrintStream;)V"/>
         </type>
-        <type name="CloneNotSupportedException">
+        <type int="false" name="CloneNotSupportedException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Cloneable"/>
-        <type name="Comparable">
+        <type int="true" name="Cloneable" sc="java.lang.Object"/>
+        <type int="true" name="Comparable" sc="java.lang.Object">
             <method name="compareTo" signature="(Ljava/lang/Object;)I"/>
         </type>
-        <type name="Double">
+        <type int="false" name="Double" sc="java.lang.Number" sis="java.lang.Comparable">
             <field name="MAX_VALUE"/>
             <field name="MIN_VALUE"/>
             <field name="NEGATIVE_INFINITY"/>
@@ -943,19 +943,19 @@
             <method name="toString" signature="(D)Ljava/lang/String;"/>
             <method name="valueOf" signature="(Ljava/lang/String;)Ljava/lang/Double;"/>
         </type>
-        <type name="Error">
+        <type int="false" name="Error" sc="java.lang.Throwable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method addedprofile="1024" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Throwable;)V"/>
             <method addedprofile="1024" name="&lt;init&gt;" signature="(Ljava/lang/Throwable;)V"/>
         </type>
-        <type name="Exception">
+        <type int="false" name="Exception" sc="java.lang.Throwable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method addedprofile="1024" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Throwable;)V"/>
             <method addedprofile="1024" name="&lt;init&gt;" signature="(Ljava/lang/Throwable;)V"/>
         </type>
-        <type name="ExceptionInInitializerError">
+        <type int="false" name="ExceptionInInitializerError" sc="java.lang.LinkageError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/Throwable;)V"/>
@@ -963,7 +963,7 @@
             <method name="printStackTrace" signature="()V"/>
             <method name="printStackTrace" signature="(Ljava/io/PrintStream;)V"/>
         </type>
-        <type name="Float">
+        <type int="false" name="Float" sc="java.lang.Number" sis="java.lang.Comparable">
             <field name="MAX_VALUE"/>
             <field name="MIN_VALUE"/>
             <field name="NEGATIVE_INFINITY"/>
@@ -995,51 +995,51 @@
             <method name="toString" signature="(F)Ljava/lang/String;"/>
             <method name="valueOf" signature="(Ljava/lang/String;)Ljava/lang/Float;"/>
         </type>
-        <type name="IllegalAccessError">
+        <type int="false" name="IllegalAccessError" sc="java.lang.IncompatibleClassChangeError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="IllegalAccessException">
+        <type int="false" name="IllegalAccessException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="IllegalArgumentException">
+        <type int="false" name="IllegalArgumentException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="IllegalMonitorStateException">
+        <type int="false" name="IllegalMonitorStateException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="IllegalStateException">
+        <type int="false" name="IllegalStateException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="IllegalThreadStateException">
+        <type int="false" name="IllegalThreadStateException" sc="java.lang.IllegalArgumentException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="IncompatibleClassChangeError">
+        <type int="false" name="IncompatibleClassChangeError" sc="java.lang.LinkageError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="IndexOutOfBoundsException">
+        <type int="false" name="IndexOutOfBoundsException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="512" name="InheritableThreadLocal">
+        <type addedprofile="512" int="false" name="InheritableThreadLocal" sc="java.lang.ThreadLocal">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="childValue" signature="(Ljava/lang/Object;)Ljava/lang/Object;"/>
         </type>
-        <type name="InstantiationError">
+        <type int="false" name="InstantiationError" sc="java.lang.IncompatibleClassChangeError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="InstantiationException">
+        <type int="false" name="InstantiationException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Integer">
+        <type int="false" name="Integer" sc="java.lang.Number" sis="java.lang.Comparable">
             <field name="MAX_VALUE"/>
             <field name="MIN_VALUE"/>
             <field name="TYPE"/>
@@ -1069,19 +1069,19 @@
             <method addedprofile="512" name="valueOf" signature="(Ljava/lang/String;)Ljava/lang/Integer;"/>
             <method name="valueOf" signature="(Ljava/lang/String;I)Ljava/lang/Integer;"/>
         </type>
-        <type name="InternalError">
+        <type int="false" name="InternalError" sc="java.lang.VirtualMachineError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="InterruptedException">
+        <type int="false" name="InterruptedException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="LinkageError">
+        <type int="false" name="LinkageError" sc="java.lang.Error">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Long">
+        <type int="false" name="Long" sc="java.lang.Number" sis="java.lang.Comparable">
             <field name="MAX_VALUE"/>
             <field name="MIN_VALUE"/>
             <field name="TYPE"/>
@@ -1106,7 +1106,7 @@
             <method addedprofile="512" name="toString" signature="(JI)Ljava/lang/String;"/>
             <method name="valueOf" signature="(Ljava/lang/String;I)Ljava/lang/Long;"/>
         </type>
-        <type name="Math">
+        <type int="false" name="Math" sc="java.lang.Object">
             <field name="E"/>
             <field name="PI"/>
             <method name="IEEEremainder" signature="(DD)D"/>
@@ -1142,35 +1142,35 @@
             <method name="toDegrees" signature="(D)D"/>
             <method name="toRadians" signature="(D)D"/>
         </type>
-        <type name="NegativeArraySizeException">
+        <type int="false" name="NegativeArraySizeException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="NoClassDefFoundError">
+        <type int="false" name="NoClassDefFoundError" sc="java.lang.LinkageError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="NoSuchFieldError">
+        <type int="false" name="NoSuchFieldError" sc="java.lang.IncompatibleClassChangeError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="NoSuchFieldException">
+        <type int="false" name="NoSuchFieldException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="NoSuchMethodError">
+        <type int="false" name="NoSuchMethodError" sc="java.lang.IncompatibleClassChangeError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="NoSuchMethodException">
+        <type int="false" name="NoSuchMethodException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="NullPointerException">
+        <type int="false" name="NullPointerException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Number">
+        <type int="false" name="Number" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="byteValue" signature="()B"/>
             <method name="doubleValue" signature="()D"/>
@@ -1179,11 +1179,11 @@
             <method name="longValue" signature="()J"/>
             <method name="shortValue" signature="()S"/>
         </type>
-        <type name="NumberFormatException">
+        <type int="false" name="NumberFormatException" sc="java.lang.IllegalArgumentException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Object">
+        <type int="false" name="Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="clone" signature="()Ljava/lang/Object;"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
@@ -1197,11 +1197,11 @@
             <method name="wait" signature="(J)V"/>
             <method name="wait" signature="(JI)V"/>
         </type>
-        <type name="OutOfMemoryError">
+        <type int="false" name="OutOfMemoryError" sc="java.lang.VirtualMachineError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Process">
+        <type int="false" name="Process" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="destroy" signature="()V"/>
             <method name="exitValue" signature="()I"/>
@@ -1210,10 +1210,10 @@
             <method name="getOutputStream" signature="()Ljava/io/OutputStream;"/>
             <method name="waitFor" signature="()I"/>
         </type>
-        <type name="Runnable">
+        <type int="true" name="Runnable" sc="java.lang.Object">
             <method name="run" signature="()V"/>
         </type>
-        <type name="Runtime">
+        <type int="false" name="Runtime" sc="java.lang.Object">
             <method name="exec" signature="(Ljava/lang/String;)Ljava/lang/Process;"/>
             <method name="exec" signature="(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Process;"/>
             <method name="exec" signature="([Ljava/lang/String;)Ljava/lang/Process;"/>
@@ -1227,21 +1227,21 @@
             <method name="runFinalization" signature="()V"/>
             <method name="totalMemory" signature="()J"/>
         </type>
-        <type name="RuntimeException">
+        <type int="false" name="RuntimeException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method addedprofile="1024" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Throwable;)V"/>
             <method addedprofile="1024" name="&lt;init&gt;" signature="(Ljava/lang/Throwable;)V"/>
         </type>
-        <type name="RuntimePermission">
+        <type int="false" name="RuntimePermission" sc="java.security.BasicPermission">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
         </type>
-        <type name="SecurityException">
+        <type int="false" name="SecurityException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="SecurityManager">
+        <type int="false" name="SecurityManager" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="checkAccept" signature="(Ljava/lang/String;I)V"/>
             <method name="checkAccess" signature="(Ljava/lang/Thread;)V"/>
@@ -1278,7 +1278,7 @@
             <method name="getSecurityContext" signature="()Ljava/lang/Object;"/>
             <method name="getThreadGroup" signature="()Ljava/lang/ThreadGroup;"/>
         </type>
-        <type name="Short">
+        <type int="false" name="Short" sc="java.lang.Number" sis="java.lang.Comparable">
             <field name="MAX_VALUE"/>
             <field name="MIN_VALUE"/>
             <field name="TYPE"/>
@@ -1299,11 +1299,11 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="valueOf" signature="(Ljava/lang/String;I)Ljava/lang/Short;"/>
         </type>
-        <type name="StackOverflowError">
+        <type int="false" name="StackOverflowError" sc="java.lang.VirtualMachineError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="String">
+        <type int="false" name="String" sc="java.lang.Object" sis="java.io.Serializable,java.lang.Comparable">
             <field name="CASE_INSENSITIVE_ORDER"/>
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
@@ -1360,7 +1360,7 @@
             <method addedprofile="512" name="valueOf" signature="([C)Ljava/lang/String;"/>
             <method addedprofile="512" name="valueOf" signature="([CII)Ljava/lang/String;"/>
         </type>
-        <type name="StringBuffer">
+        <type int="false" name="StringBuffer" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
@@ -1396,12 +1396,12 @@
             <method name="substring" signature="(II)Ljava/lang/String;"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="StringIndexOutOfBoundsException">
+        <type int="false" name="StringIndexOutOfBoundsException" sc="java.lang.IndexOutOfBoundsException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="System">
+        <type int="false" name="System" sc="java.lang.Object">
             <field name="err"/>
             <field name="in"/>
             <field name="out"/>
@@ -1423,7 +1423,7 @@
             <method name="setProperties" signature="(Ljava/util/Properties;)V"/>
             <method name="setSecurityManager" signature="(Ljava/lang/SecurityManager;)V"/>
         </type>
-        <type name="Thread">
+        <type int="false" name="Thread" sc="java.lang.Object" sis="java.lang.Runnable">
             <field name="MAX_PRIORITY"/>
             <field name="MIN_PRIORITY"/>
             <field name="NORM_PRIORITY"/>
@@ -1460,10 +1460,10 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="yield" signature="()V"/>
         </type>
-        <type name="ThreadDeath">
+        <type int="false" name="ThreadDeath" sc="java.lang.Error">
             <method name="&lt;init&gt;" signature="()V"/>
         </type>
-        <type name="ThreadGroup">
+        <type int="false" name="ThreadGroup" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/ThreadGroup;Ljava/lang/String;)V"/>
             <method name="activeCount" signature="()I"/>
@@ -1486,13 +1486,13 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="uncaughtException" signature="(Ljava/lang/Thread;Ljava/lang/Throwable;)V"/>
         </type>
-        <type addedprofile="512" name="ThreadLocal">
+        <type addedprofile="512" int="false" name="ThreadLocal" sc="java.lang.Object">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="get" signature="()Ljava/lang/Object;"/>
             <method addedprofile="512" name="initialValue" signature="()Ljava/lang/Object;"/>
             <method addedprofile="512" name="set" signature="(Ljava/lang/Object;)V"/>
         </type>
-        <type name="Throwable">
+        <type int="false" name="Throwable" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method addedprofile="1024" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Throwable;)V"/>
@@ -1507,65 +1507,65 @@
             <method name="printStackTrace" signature="(Ljava/io/PrintWriter;)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="UnknownError">
+        <type int="false" name="UnknownError" sc="java.lang.VirtualMachineError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="UnsatisfiedLinkError">
+        <type int="false" name="UnsatisfiedLinkError" sc="java.lang.LinkageError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="UnsupportedOperationException">
+        <type int="false" name="UnsupportedOperationException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="VerifyError">
+        <type int="false" name="VerifyError" sc="java.lang.LinkageError">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="VirtualMachineError">
+        <type int="false" name="VirtualMachineError" sc="java.lang.Error">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Void">
+        <type int="false" name="Void" sc="java.lang.Object">
             <field name="TYPE"/>
         </type>
     </package>
     <package addedprofile="256" name="java.lang.ref">
-        <type name="PhantomReference">
+        <type int="false" name="PhantomReference" sc="java.lang.ref.Reference">
             <method name="&lt;init&gt;" signature="(Ljava/lang/Object;Ljava/lang/ref/ReferenceQueue;)V"/>
             <method name="get" signature="()Ljava/lang/Object;"/>
         </type>
-        <type name="Reference">
+        <type int="false" name="Reference" sc="java.lang.Object">
             <method name="clear" signature="()V"/>
             <method name="enqueue" signature="()Z"/>
             <method name="get" signature="()Ljava/lang/Object;"/>
             <method name="isEnqueued" signature="()Z"/>
         </type>
-        <type name="ReferenceQueue">
+        <type int="false" name="ReferenceQueue" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="poll" signature="()Ljava/lang/ref/Reference;"/>
             <method name="remove" signature="()Ljava/lang/ref/Reference;"/>
             <method name="remove" signature="(J)Ljava/lang/ref/Reference;"/>
         </type>
-        <type name="SoftReference">
+        <type int="false" name="SoftReference" sc="java.lang.ref.Reference">
             <method name="&lt;init&gt;" signature="(Ljava/lang/Object;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/Object;Ljava/lang/ref/ReferenceQueue;)V"/>
             <method name="get" signature="()Ljava/lang/Object;"/>
         </type>
-        <type name="WeakReference">
+        <type int="false" name="WeakReference" sc="java.lang.ref.Reference">
             <method name="&lt;init&gt;" signature="(Ljava/lang/Object;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/Object;Ljava/lang/ref/ReferenceQueue;)V"/>
         </type>
     </package>
     <package addedprofile="256" name="java.lang.reflect">
-        <type name="AccessibleObject">
+        <type int="false" name="AccessibleObject" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="isAccessible" signature="()Z"/>
             <method name="setAccessible" signature="(Z)V"/>
             <method name="setAccessible" signature="([Ljava/lang/reflect/AccessibleObject;Z)V"/>
         </type>
-        <type name="Array">
+        <type int="false" name="Array" sc="java.lang.Object">
             <method name="get" signature="(Ljava/lang/Object;I)Ljava/lang/Object;"/>
             <method name="getBoolean" signature="(Ljava/lang/Object;I)Z"/>
             <method name="getByte" signature="(Ljava/lang/Object;I)B"/>
@@ -1588,7 +1588,7 @@
             <method name="setLong" signature="(Ljava/lang/Object;IJ)V"/>
             <method name="setShort" signature="(Ljava/lang/Object;IS)V"/>
         </type>
-        <type name="Constructor">
+        <type int="false" name="Constructor" sc="java.lang.reflect.AccessibleObject" sis="java.lang.reflect.Member">
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="getDeclaringClass" signature="()Ljava/lang/Class;"/>
             <method name="getExceptionTypes" signature="()[Ljava/lang/Class;"/>
@@ -1599,7 +1599,7 @@
             <method name="newInstance" signature="([Ljava/lang/Object;)Ljava/lang/Object;"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="Field">
+        <type int="false" name="Field" sc="java.lang.reflect.AccessibleObject" sis="java.lang.reflect.Member">
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="get" signature="(Ljava/lang/Object;)Ljava/lang/Object;"/>
             <method name="getBoolean" signature="(Ljava/lang/Object;)Z"/>
@@ -1626,10 +1626,10 @@
             <method name="setShort" signature="(Ljava/lang/Object;S)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="InvocationHandler">
+        <type int="true" name="InvocationHandler" sc="java.lang.Object">
             <method name="invoke" signature="(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;"/>
         </type>
-        <type name="InvocationTargetException">
+        <type int="false" name="InvocationTargetException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/Throwable;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/Throwable;Ljava/lang/String;)V"/>
@@ -1637,14 +1637,14 @@
             <method name="printStackTrace" signature="()V"/>
             <method name="printStackTrace" signature="(Ljava/io/PrintStream;)V"/>
         </type>
-        <type name="Member">
+        <type int="true" name="Member" sc="java.lang.Object">
             <field name="DECLARED"/>
             <field name="PUBLIC"/>
             <method name="getDeclaringClass" signature="()Ljava/lang/Class;"/>
             <method name="getModifiers" signature="()I"/>
             <method name="getName" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="Method">
+        <type int="false" name="Method" sc="java.lang.reflect.AccessibleObject" sis="java.lang.reflect.Member">
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="getDeclaringClass" signature="()Ljava/lang/Class;"/>
             <method name="getExceptionTypes" signature="()[Ljava/lang/Class;"/>
@@ -1656,7 +1656,7 @@
             <method name="invoke" signature="(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="Modifier">
+        <type int="false" name="Modifier" sc="java.lang.Object">
             <field name="ABSTRACT"/>
             <field name="FINAL"/>
             <field name="INTERFACE"/>
@@ -1684,7 +1684,7 @@
             <method name="isVolatile" signature="(I)Z"/>
             <method name="toString" signature="(I)Ljava/lang/String;"/>
         </type>
-        <type name="Proxy">
+        <type int="false" name="Proxy" sc="java.lang.Object" sis="java.io.Serializable">
             <field name="h"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/reflect/InvocationHandler;)V"/>
             <method name="getInvocationHandler" signature="(Ljava/lang/Object;)Ljava/lang/reflect/InvocationHandler;"/>
@@ -1692,11 +1692,11 @@
             <method name="isProxyClass" signature="(Ljava/lang/Class;)Z"/>
             <method name="newProxyInstance" signature="(Ljava/lang/ClassLoader;[Ljava/lang/Class;Ljava/lang/reflect/InvocationHandler;)Ljava/lang/Object;"/>
         </type>
-        <type name="ReflectPermission">
+        <type int="false" name="ReflectPermission" sc="java.security.BasicPermission">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
         </type>
-        <type name="UndeclaredThrowableException">
+        <type int="false" name="UndeclaredThrowableException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="(Ljava/lang/Throwable;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/Throwable;Ljava/lang/String;)V"/>
             <method name="getUndeclaredThrowable" signature="()Ljava/lang/Throwable;"/>
@@ -1705,7 +1705,7 @@
         </type>
     </package>
     <package addedprofile="256" name="java.net">
-        <type name="Authenticator">
+        <type int="false" name="Authenticator" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="getPasswordAuthentication" signature="()Ljava/net/PasswordAuthentication;"/>
             <method name="getRequestingPort" signature="()I"/>
@@ -1716,22 +1716,22 @@
             <method name="requestPasswordAuthentication" signature="(Ljava/net/InetAddress;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/net/PasswordAuthentication;"/>
             <method name="setDefault" signature="(Ljava/net/Authenticator;)V"/>
         </type>
-        <type name="BindException">
+        <type int="false" name="BindException" sc="java.net.SocketException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ConnectException">
+        <type int="false" name="ConnectException" sc="java.net.SocketException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ContentHandler">
+        <type int="false" name="ContentHandler" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="getContent" signature="(Ljava/net/URLConnection;)Ljava/lang/Object;"/>
         </type>
-        <type name="ContentHandlerFactory">
+        <type int="true" name="ContentHandlerFactory" sc="java.lang.Object">
             <method name="createContentHandler" signature="(Ljava/lang/String;)Ljava/net/ContentHandler;"/>
         </type>
-        <type name="DatagramPacket">
+        <type int="false" name="DatagramPacket" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="([BI)V"/>
             <method name="&lt;init&gt;" signature="([BII)V"/>
             <method name="&lt;init&gt;" signature="([BIILjava/net/InetAddress;I)V"/>
@@ -1747,7 +1747,7 @@
             <method name="setLength" signature="(I)V"/>
             <method name="setPort" signature="(I)V"/>
         </type>
-        <type name="DatagramSocket">
+        <type int="false" name="DatagramSocket" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="&lt;init&gt;" signature="(ILjava/net/InetAddress;)V"/>
@@ -1767,7 +1767,7 @@
             <method name="setSendBufferSize" signature="(I)V"/>
             <method name="setSoTimeout" signature="(I)V"/>
         </type>
-        <type name="DatagramSocketImpl">
+        <type int="false" name="DatagramSocketImpl" sc="java.lang.Object" sis="java.net.SocketOptions">
             <field name="fd"/>
             <field name="localPort"/>
             <method name="&lt;init&gt;" signature="()V"/>
@@ -1786,10 +1786,10 @@
             <method name="setOption" signature="(ILjava/lang/Object;)V"/>
             <method name="setTimeToLive" signature="(I)V"/>
         </type>
-        <type name="FileNameMap">
+        <type int="true" name="FileNameMap" sc="java.lang.Object">
             <method name="getContentTypeFor" signature="(Ljava/lang/String;)Ljava/lang/String;"/>
         </type>
-        <type name="HttpURLConnection">
+        <type int="false" name="HttpURLConnection" sc="java.net.URLConnection">
             <field name="HTTP_ACCEPTED"/>
             <field name="HTTP_BAD_GATEWAY"/>
             <field name="HTTP_BAD_METHOD"/>
@@ -1840,7 +1840,7 @@
             <method name="setRequestMethod" signature="(Ljava/lang/String;)V"/>
             <method name="usingProxy" signature="()Z"/>
         </type>
-        <type name="InetAddress">
+        <type int="false" name="InetAddress" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="getAddress" signature="()[B"/>
             <method name="getAllByName" signature="(Ljava/lang/String;)[Ljava/net/InetAddress;"/>
@@ -1852,17 +1852,17 @@
             <method name="isMulticastAddress" signature="()Z"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="JarURLConnection">
+        <type int="false" name="JarURLConnection" sc="java.net.URLConnection">
             <field name="jarFileURLConnection"/>
             <method name="&lt;init&gt;" signature="(Ljava/net/URL;)V"/>
             <method name="getEntryName" signature="()Ljava/lang/String;"/>
             <method name="getJarFileURL" signature="()Ljava/net/URL;"/>
         </type>
-        <type name="MalformedURLException">
+        <type int="false" name="MalformedURLException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="MulticastSocket">
+        <type int="false" name="MulticastSocket" sc="java.net.DatagramSocket">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="getInterface" signature="()Ljava/net/InetAddress;"/>
@@ -1873,24 +1873,24 @@
             <method name="setInterface" signature="(Ljava/net/InetAddress;)V"/>
             <method name="setTimeToLive" signature="(I)V"/>
         </type>
-        <type name="NetPermission">
+        <type int="false" name="NetPermission" sc="java.security.BasicPermission">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
         </type>
-        <type name="NoRouteToHostException">
+        <type int="false" name="NoRouteToHostException" sc="java.net.SocketException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="PasswordAuthentication">
+        <type int="false" name="PasswordAuthentication" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;[C)V"/>
             <method name="getPassword" signature="()[C"/>
             <method name="getUserName" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="ProtocolException">
+        <type int="false" name="ProtocolException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ServerSocket">
+        <type int="false" name="ServerSocket" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="&lt;init&gt;" signature="(II)V"/>
             <method name="&lt;init&gt;" signature="(IILjava/net/InetAddress;)V"/>
@@ -1904,7 +1904,7 @@
             <method name="setSocketFactory" signature="(Ljava/net/SocketImplFactory;)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="Socket">
+        <type int="false" name="Socket" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;I)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;ILjava/net/InetAddress;I)V"/>
@@ -1931,11 +1931,11 @@
             <method name="setTcpNoDelay" signature="(Z)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="SocketException">
+        <type int="false" name="SocketException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="SocketImpl">
+        <type int="false" name="SocketImpl" sc="java.lang.Object" sis="java.net.SocketOptions">
             <field name="address"/>
             <field name="fd"/>
             <field name="localport"/>
@@ -1959,10 +1959,10 @@
             <method name="setOption" signature="(ILjava/lang/Object;)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="SocketImplFactory">
+        <type int="true" name="SocketImplFactory" sc="java.lang.Object">
             <method name="createSocketImpl" signature="()Ljava/net/SocketImpl;"/>
         </type>
-        <type name="SocketOptions">
+        <type int="true" name="SocketOptions" sc="java.lang.Object">
             <field name="IP_MULTICAST_IF"/>
             <field name="SO_BINDADDR"/>
             <field name="SO_LINGER"/>
@@ -1974,7 +1974,7 @@
             <method name="getOption" signature="(I)Ljava/lang/Object;"/>
             <method name="setOption" signature="(ILjava/lang/Object;)V"/>
         </type>
-        <type name="SocketPermission">
+        <type int="false" name="SocketPermission" sc="java.security.Permission" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="getActions" signature="()Ljava/lang/String;"/>
@@ -1982,7 +1982,7 @@
             <method name="implies" signature="(Ljava/security/Permission;)Z"/>
             <method name="newPermissionCollection" signature="()Ljava/security/PermissionCollection;"/>
         </type>
-        <type name="URL">
+        <type int="false" name="URL" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/net/URLStreamHandler;)V"/>
@@ -2008,7 +2008,7 @@
             <method name="toExternalForm" signature="()Ljava/lang/String;"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="512" name="URLClassLoader">
+        <type addedprofile="512" int="false" name="URLClassLoader" sc="java.security.SecureClassLoader">
             <method addedprofile="512" name="&lt;init&gt;" signature="([Ljava/net/URL;)V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="([Ljava/net/URL;Ljava/lang/ClassLoader;)V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="([Ljava/net/URL;Ljava/lang/ClassLoader;Ljava/net/URLStreamHandlerFactory;)V"/>
@@ -2019,7 +2019,7 @@
             <method addedprofile="512" name="newInstance" signature="([Ljava/net/URL;)Ljava/net/URLClassLoader;"/>
             <method addedprofile="512" name="newInstance" signature="([Ljava/net/URL;Ljava/lang/ClassLoader;)Ljava/net/URLClassLoader;"/>
         </type>
-        <type name="URLConnection">
+        <type int="false" name="URLConnection" sc="java.lang.Object">
             <field name="allowUserInteraction"/>
             <field name="connected"/>
             <field name="doInput"/>
@@ -2068,14 +2068,14 @@
             <method name="setUseCaches" signature="(Z)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="URLDecoder">
+        <type int="false" name="URLDecoder" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="decode" signature="(Ljava/lang/String;)Ljava/lang/String;"/>
         </type>
-        <type name="URLEncoder">
+        <type int="false" name="URLEncoder" sc="java.lang.Object">
             <method name="encode" signature="(Ljava/lang/String;)Ljava/lang/String;"/>
         </type>
-        <type name="URLStreamHandler">
+        <type int="false" name="URLStreamHandler" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="equals" signature="(Ljava/net/URL;Ljava/net/URL;)Z"/>
             <method name="getDefaultPort" signature="()I"/>
@@ -2088,31 +2088,31 @@
             <method name="setURL" signature="(Ljava/net/URL;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"/>
             <method name="toExternalForm" signature="(Ljava/net/URL;)Ljava/lang/String;"/>
         </type>
-        <type name="URLStreamHandlerFactory">
+        <type int="true" name="URLStreamHandlerFactory" sc="java.lang.Object">
             <method name="createURLStreamHandler" signature="(Ljava/lang/String;)Ljava/net/URLStreamHandler;"/>
         </type>
-        <type name="UnknownHostException">
+        <type int="false" name="UnknownHostException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="UnknownServiceException">
+        <type int="false" name="UnknownServiceException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
     </package>
     <package addedprofile="256" name="java.security">
-        <type name="AccessControlContext">
+        <type int="false" name="AccessControlContext" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="([Ljava/security/ProtectionDomain;)V"/>
             <method name="checkPermission" signature="(Ljava/security/Permission;)V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="hashCode" signature="()I"/>
         </type>
-        <type name="AccessControlException">
+        <type int="false" name="AccessControlException" sc="java.lang.SecurityException">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/security/Permission;)V"/>
             <method name="getPermission" signature="()Ljava/security/Permission;"/>
         </type>
-        <type name="AccessController">
+        <type int="false" name="AccessController" sc="java.lang.Object">
             <method name="checkPermission" signature="(Ljava/security/Permission;)V"/>
             <method name="doPrivileged" signature="(Ljava/security/PrivilegedAction;)Ljava/lang/Object;"/>
             <method name="doPrivileged" signature="(Ljava/security/PrivilegedAction;Ljava/security/AccessControlContext;)Ljava/lang/Object;"/>
@@ -2120,7 +2120,7 @@
             <method name="doPrivileged" signature="(Ljava/security/PrivilegedExceptionAction;Ljava/security/AccessControlContext;)Ljava/lang/Object;"/>
             <method name="getContext" signature="()Ljava/security/AccessControlContext;"/>
         </type>
-        <type name="AllPermission">
+        <type int="false" name="AllPermission" sc="java.security.Permission">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
@@ -2129,7 +2129,7 @@
             <method name="implies" signature="(Ljava/security/Permission;)Z"/>
             <method name="newPermissionCollection" signature="()Ljava/security/PermissionCollection;"/>
         </type>
-        <type name="BasicPermission">
+        <type int="false" name="BasicPermission" sc="java.security.Permission" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
@@ -2138,7 +2138,7 @@
             <method name="implies" signature="(Ljava/security/Permission;)Z"/>
             <method name="newPermissionCollection" signature="()Ljava/security/PermissionCollection;"/>
         </type>
-        <type name="CodeSource">
+        <type int="false" name="CodeSource" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="(Ljava/net/URL;[Ljava/security/cert/Certificate;)V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method addedprofile="512" name="getCertificates" signature="()[Ljava/security/cert/Certificate;"/>
@@ -2147,44 +2147,44 @@
             <method name="implies" signature="(Ljava/security/CodeSource;)Z"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="512" name="GeneralSecurityException">
+        <type addedprofile="512" int="false" name="GeneralSecurityException" sc="java.lang.Exception">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="512" name="Guard">
+        <type addedprofile="512" int="true" name="Guard" sc="java.lang.Object">
             <method addedprofile="512" name="checkGuard" signature="(Ljava/lang/Object;)V"/>
         </type>
-        <type addedprofile="512" name="GuardedObject">
+        <type addedprofile="512" int="false" name="GuardedObject" sc="java.lang.Object" sis="java.io.Serializable">
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/Object;Ljava/security/Guard;)V"/>
             <method addedprofile="512" name="getObject" signature="()Ljava/lang/Object;"/>
         </type>
-        <type addedprofile="512" name="InvalidKeyException">
+        <type addedprofile="512" int="false" name="InvalidKeyException" sc="java.security.KeyException">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="512" name="InvalidParameterException">
+        <type addedprofile="512" int="false" name="InvalidParameterException" sc="java.lang.IllegalArgumentException">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="512" name="Key">
+        <type addedprofile="512" int="true" name="Key" sc="java.lang.Object" sis="java.io.Serializable">
             <field addedprofile="512" name="serialVersionUID"/>
             <method addedprofile="512" name="getAlgorithm" signature="()Ljava/lang/String;"/>
             <method addedprofile="512" name="getEncoded" signature="()[B"/>
             <method addedprofile="512" name="getFormat" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="512" name="KeyException">
+        <type addedprofile="512" int="false" name="KeyException" sc="java.security.GeneralSecurityException">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="512" name="NoSuchAlgorithmException">
+        <type addedprofile="512" int="false" name="NoSuchAlgorithmException" sc="java.security.GeneralSecurityException">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="512" name="NoSuchProviderException">
+        <type addedprofile="512" int="false" name="NoSuchProviderException" sc="java.security.GeneralSecurityException">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Permission">
+        <type int="false" name="Permission" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method addedprofile="512" name="checkGuard" signature="(Ljava/lang/Object;)V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
@@ -2195,7 +2195,7 @@
             <method name="newPermissionCollection" signature="()Ljava/security/PermissionCollection;"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="PermissionCollection">
+        <type int="false" name="PermissionCollection" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="add" signature="(Ljava/security/Permission;)V"/>
             <method name="elements" signature="()Ljava/util/Enumeration;"/>
@@ -2204,29 +2204,29 @@
             <method name="setReadOnly" signature="()V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="Permissions">
+        <type int="false" name="Permissions" sc="java.security.PermissionCollection" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="add" signature="(Ljava/security/Permission;)V"/>
             <method name="elements" signature="()Ljava/util/Enumeration;"/>
             <method name="implies" signature="(Ljava/security/Permission;)Z"/>
         </type>
-        <type name="Policy">
+        <type int="false" name="Policy" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="getPermissions" signature="(Ljava/security/CodeSource;)Ljava/security/PermissionCollection;"/>
             <method name="getPolicy" signature="()Ljava/security/Policy;"/>
             <method name="refresh" signature="()V"/>
             <method name="setPolicy" signature="(Ljava/security/Policy;)V"/>
         </type>
-        <type name="Principal">
+        <type int="true" name="Principal" sc="java.lang.Object">
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="getName" signature="()Ljava/lang/String;"/>
             <method name="hashCode" signature="()I"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="PrivilegedAction">
+        <type int="true" name="PrivilegedAction" sc="java.lang.Object">
             <method name="run" signature="()Ljava/lang/Object;"/>
         </type>
-        <type name="PrivilegedActionException">
+        <type int="false" name="PrivilegedActionException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="(Ljava/lang/Exception;)V"/>
             <method name="getException" signature="()Ljava/lang/Exception;"/>
             <method name="printStackTrace" signature="()V"/>
@@ -2234,32 +2234,32 @@
             <method name="printStackTrace" signature="(Ljava/io/PrintWriter;)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="PrivilegedExceptionAction">
+        <type int="true" name="PrivilegedExceptionAction" sc="java.lang.Object">
             <method name="run" signature="()Ljava/lang/Object;"/>
         </type>
-        <type name="ProtectionDomain">
+        <type int="false" name="ProtectionDomain" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="(Ljava/security/CodeSource;Ljava/security/PermissionCollection;)V"/>
             <method name="getCodeSource" signature="()Ljava/security/CodeSource;"/>
             <method name="getPermissions" signature="()Ljava/security/PermissionCollection;"/>
             <method name="implies" signature="(Ljava/security/Permission;)Z"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type addedprofile="512" name="Provider">
+        <type addedprofile="512" int="false" name="Provider" sc="java.util.Properties">
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;DLjava/lang/String;)V"/>
             <method addedprofile="512" name="getInfo" signature="()Ljava/lang/String;"/>
             <method addedprofile="512" name="getName" signature="()Ljava/lang/String;"/>
             <method addedprofile="512" name="getVersion" signature="()D"/>
         </type>
-        <type addedprofile="512" name="PublicKey">
+        <type addedprofile="512" int="true" name="PublicKey" sc="java.lang.Object" sis="java.security.Key">
             <field addedprofile="512" name="serialVersionUID"/>
         </type>
-        <type addedprofile="512" name="SecureClassLoader">
+        <type addedprofile="512" int="false" name="SecureClassLoader" sc="java.lang.ClassLoader">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/ClassLoader;)V"/>
             <method addedprofile="512" name="defineClass" signature="(Ljava/lang/String;[BIILjava/security/CodeSource;)Ljava/lang/Class;"/>
             <method addedprofile="512" name="getPermissions" signature="(Ljava/security/CodeSource;)Ljava/security/PermissionCollection;"/>
         </type>
-        <type name="Security">
+        <type int="false" name="Security" sc="java.lang.Object">
             <method addedprofile="512" name="addProvider" signature="(Ljava/security/Provider;)I"/>
             <method name="getProperty" signature="(Ljava/lang/String;)Ljava/lang/String;"/>
             <method addedprofile="512" name="getProvider" signature="(Ljava/lang/String;)Ljava/security/Provider;"/>
@@ -2270,15 +2270,15 @@
             <method addedprofile="512" name="removeProvider" signature="(Ljava/lang/String;)V"/>
             <method name="setProperty" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
         </type>
-        <type name="SecurityPermission">
+        <type int="false" name="SecurityPermission" sc="java.security.BasicPermission">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="512" name="SignatureException">
+        <type addedprofile="512" int="false" name="SignatureException" sc="java.security.GeneralSecurityException">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="UnresolvedPermission">
+        <type int="false" name="UnresolvedPermission" sc="java.security.Permission" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/security/cert/Certificate;)V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="getActions" signature="()Ljava/lang/String;"/>
@@ -2289,7 +2289,7 @@
         </type>
     </package>
     <package addedprofile="256" name="java.security.cert">
-        <type name="Certificate">
+        <type int="false" name="Certificate" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method addedprofile="512" name="getEncoded" signature="()[B"/>
             <method addedprofile="512" name="getPublicKey" signature="()Ljava/security/PublicKey;"/>
@@ -2299,17 +2299,17 @@
             <method addedprofile="512" name="verify" signature="(Ljava/security/PublicKey;Ljava/lang/String;)V"/>
             <method addedprofile="512" name="writeReplace" signature="()Ljava/lang/Object;"/>
         </type>
-        <type addedprofile="512" name="CertificateEncodingException">
+        <type addedprofile="512" int="false" name="CertificateEncodingException" sc="java.security.cert.CertificateException">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type addedprofile="512" name="CertificateException">
+        <type addedprofile="512" int="false" name="CertificateException" sc="java.security.GeneralSecurityException">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
     </package>
     <package addedprofile="256" name="java.util">
-        <type name="AbstractCollection">
+        <type int="false" name="AbstractCollection" sc="java.lang.Object" sis="java.util.Collection">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="add" signature="(Ljava/lang/Object;)Z"/>
             <method name="addAll" signature="(Ljava/util/Collection;)Z"/>
@@ -2326,7 +2326,7 @@
             <method name="toArray" signature="([Ljava/lang/Object;)[Ljava/lang/Object;"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="AbstractList">
+        <type int="false" name="AbstractList" sc="java.util.AbstractCollection" sis="java.util.List">
             <field name="modCount"/>
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="add" signature="(ILjava/lang/Object;)V"/>
@@ -2346,7 +2346,7 @@
             <method name="set" signature="(ILjava/lang/Object;)Ljava/lang/Object;"/>
             <method name="subList" signature="(II)Ljava/util/List;"/>
         </type>
-        <type name="AbstractMap">
+        <type int="false" name="AbstractMap" sc="java.lang.Object" sis="java.util.Map">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="clear" signature="()V"/>
             <method name="containsKey" signature="(Ljava/lang/Object;)Z"/>
@@ -2364,7 +2364,7 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="values" signature="()Ljava/util/Collection;"/>
         </type>
-        <type name="AbstractSequentialList">
+        <type int="false" name="AbstractSequentialList" sc="java.util.AbstractList">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="add" signature="(ILjava/lang/Object;)V"/>
             <method name="addAll" signature="(ILjava/util/Collection;)Z"/>
@@ -2374,13 +2374,13 @@
             <method name="remove" signature="(I)Ljava/lang/Object;"/>
             <method name="set" signature="(ILjava/lang/Object;)Ljava/lang/Object;"/>
         </type>
-        <type name="AbstractSet">
+        <type int="false" name="AbstractSet" sc="java.util.AbstractCollection" sis="java.util.Set">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="hashCode" signature="()I"/>
             <method name="removeAll" signature="(Ljava/util/Collection;)Z"/>
         </type>
-        <type name="ArrayList">
+        <type int="false" name="ArrayList" sc="java.util.AbstractList" sis="java.util.List,java.lang.Cloneable,java.io.Serializable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/util/Collection;)V"/>
@@ -2404,7 +2404,7 @@
             <method name="toArray" signature="([Ljava/lang/Object;)[Ljava/lang/Object;"/>
             <method name="trimToSize" signature="()V"/>
         </type>
-        <type name="Arrays">
+        <type int="false" name="Arrays" sc="java.lang.Object">
             <method name="asList" signature="([Ljava/lang/Object;)Ljava/util/List;"/>
             <method name="binarySearch" signature="([BB)I"/>
             <method name="binarySearch" signature="([CC)I"/>
@@ -2461,7 +2461,7 @@
             <method name="sort" signature="([S)V"/>
             <method name="sort" signature="([SII)V"/>
         </type>
-        <type name="Calendar">
+        <type int="false" name="Calendar" sc="java.lang.Object" sis="java.io.Serializable,java.lang.Cloneable">
             <field name="AM"/>
             <field name="AM_PM"/>
             <field name="APRIL"/>
@@ -2549,7 +2549,7 @@
             <method name="setTimeZone" signature="(Ljava/util/TimeZone;)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="Collection">
+        <type int="true" name="Collection" sc="java.lang.Object">
             <method name="add" signature="(Ljava/lang/Object;)Z"/>
             <method name="addAll" signature="(Ljava/util/Collection;)Z"/>
             <method name="clear" signature="()V"/>
@@ -2566,7 +2566,7 @@
             <method name="toArray" signature="()[Ljava/lang/Object;"/>
             <method name="toArray" signature="([Ljava/lang/Object;)[Ljava/lang/Object;"/>
         </type>
-        <type name="Collections">
+        <type int="false" name="Collections" sc="java.lang.Object">
             <field name="EMPTY_LIST"/>
             <field name="EMPTY_MAP"/>
             <field name="EMPTY_SET"/>
@@ -2602,15 +2602,15 @@
             <method name="unmodifiableSortedMap" signature="(Ljava/util/SortedMap;)Ljava/util/SortedMap;"/>
             <method name="unmodifiableSortedSet" signature="(Ljava/util/SortedSet;)Ljava/util/SortedSet;"/>
         </type>
-        <type name="Comparator">
+        <type int="true" name="Comparator" sc="java.lang.Object">
             <method name="compare" signature="(Ljava/lang/Object;Ljava/lang/Object;)I"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
         </type>
-        <type name="ConcurrentModificationException">
+        <type int="false" name="ConcurrentModificationException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Date">
+        <type int="false" name="Date" sc="java.lang.Object" sis="java.io.Serializable,java.lang.Cloneable,java.lang.Comparable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(J)V"/>
             <method name="after" signature="(Ljava/util/Date;)Z"/>
@@ -2624,7 +2624,7 @@
             <method name="setTime" signature="(J)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="Dictionary">
+        <type int="false" name="Dictionary" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="elements" signature="()Ljava/util/Enumeration;"/>
             <method name="get" signature="(Ljava/lang/Object;)Ljava/lang/Object;"/>
@@ -2634,21 +2634,21 @@
             <method name="remove" signature="(Ljava/lang/Object;)Ljava/lang/Object;"/>
             <method name="size" signature="()I"/>
         </type>
-        <type addedprofile="512" name="EmptyStackException">
+        <type addedprofile="512" int="false" name="EmptyStackException" sc="java.lang.RuntimeException">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
         </type>
-        <type name="Enumeration">
+        <type int="true" name="Enumeration" sc="java.lang.Object">
             <method name="hasMoreElements" signature="()Z"/>
             <method name="nextElement" signature="()Ljava/lang/Object;"/>
         </type>
-        <type name="EventListener"/>
-        <type name="EventObject">
+        <type int="true" name="EventListener" sc="java.lang.Object"/>
+        <type int="false" name="EventObject" sc="java.lang.Object" sis="java.io.Serializable">
             <field name="source"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/Object;)V"/>
             <method name="getSource" signature="()Ljava/lang/Object;"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="GregorianCalendar">
+        <type int="false" name="GregorianCalendar" sc="java.util.Calendar">
             <field name="AD"/>
             <field name="BC"/>
             <method name="&lt;init&gt;" signature="()V"/>
@@ -2669,7 +2669,7 @@
             <method name="roll" signature="(IZ)V"/>
             <method name="setGregorianChange" signature="(Ljava/util/Date;)V"/>
         </type>
-        <type addedprofile="512" name="HashMap">
+        <type addedprofile="512" int="false" name="HashMap" sc="java.util.AbstractMap" sis="java.io.Serializable,java.lang.Cloneable,java.util.Map">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(I)V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(IF)V"/>
@@ -2677,7 +2677,7 @@
             <method addedprofile="512" name="clone" signature="()Ljava/lang/Object;"/>
             <method addedprofile="512" name="entrySet" signature="()Ljava/util/Set;"/>
         </type>
-        <type addedprofile="512" name="HashSet">
+        <type addedprofile="512" int="false" name="HashSet" sc="java.util.AbstractSet" sis="java.io.Serializable,java.lang.Cloneable,java.util.Set">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(I)V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(IF)V"/>
@@ -2686,7 +2686,7 @@
             <method addedprofile="512" name="iterator" signature="()Ljava/util/Iterator;"/>
             <method addedprofile="512" name="size" signature="()I"/>
         </type>
-        <type name="Hashtable">
+        <type int="false" name="Hashtable" sc="java.util.Dictionary" sis="java.util.Map,java.lang.Cloneable,java.io.Serializable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="&lt;init&gt;" signature="(IF)V"/>
@@ -2712,12 +2712,12 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="values" signature="()Ljava/util/Collection;"/>
         </type>
-        <type name="Iterator">
+        <type int="true" name="Iterator" sc="java.lang.Object">
             <method name="hasNext" signature="()Z"/>
             <method name="next" signature="()Ljava/lang/Object;"/>
             <method name="remove" signature="()V"/>
         </type>
-        <type addedprofile="512" name="LinkedList">
+        <type addedprofile="512" int="false" name="LinkedList" sc="java.util.AbstractSequentialList" sis="java.io.Serializable,java.lang.Cloneable,java.util.List">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Collection;)V"/>
             <method addedprofile="512" name="addFirst" signature="(Ljava/lang/Object;)V"/>
@@ -2730,7 +2730,7 @@
             <method addedprofile="512" name="removeLast" signature="()Ljava/lang/Object;"/>
             <method addedprofile="512" name="size" signature="()I"/>
         </type>
-        <type name="List">
+        <type int="true" name="List" sc="java.lang.Object" sis="java.util.Collection">
             <method name="add" signature="(ILjava/lang/Object;)V"/>
             <method name="add" signature="(Ljava/lang/Object;)Z"/>
             <method name="addAll" signature="(ILjava/util/Collection;)Z"/>
@@ -2757,7 +2757,7 @@
             <method name="toArray" signature="()[Ljava/lang/Object;"/>
             <method name="toArray" signature="([Ljava/lang/Object;)[Ljava/lang/Object;"/>
         </type>
-        <type name="ListIterator">
+        <type int="true" name="ListIterator" sc="java.lang.Object" sis="java.util.Iterator">
             <method name="add" signature="(Ljava/lang/Object;)V"/>
             <method name="hasNext" signature="()Z"/>
             <method name="hasPrevious" signature="()Z"/>
@@ -2768,13 +2768,13 @@
             <method name="remove" signature="()V"/>
             <method name="set" signature="(Ljava/lang/Object;)V"/>
         </type>
-        <type name="ListResourceBundle">
+        <type int="false" name="ListResourceBundle" sc="java.util.ResourceBundle">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="getContents" signature="()[[Ljava/lang/Object;"/>
             <method name="getKeys" signature="()Ljava/util/Enumeration;"/>
             <method name="handleGetObject" signature="(Ljava/lang/String;)Ljava/lang/Object;"/>
         </type>
-        <type name="Locale">
+        <type int="false" name="Locale" sc="java.lang.Object" sis="java.lang.Cloneable,java.io.Serializable">
             <field name="CANADA"/>
             <field name="CANADA_FRENCH"/>
             <field name="CHINA"/>
@@ -2821,7 +2821,7 @@
             <method name="setDefault" signature="(Ljava/util/Locale;)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="Map">
+        <type int="true" name="Map" sc="java.lang.Object">
             <method name="clear" signature="()V"/>
             <method name="containsKey" signature="(Ljava/lang/Object;)Z"/>
             <method name="containsValue" signature="(Ljava/lang/Object;)Z"/>
@@ -2837,23 +2837,23 @@
             <method name="size" signature="()I"/>
             <method name="values" signature="()Ljava/util/Collection;"/>
         </type>
-        <type name="Map$Entry">
+        <type int="true" name="Map$Entry" sc="java.lang.Object">
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="getKey" signature="()Ljava/lang/Object;"/>
             <method name="getValue" signature="()Ljava/lang/Object;"/>
             <method name="hashCode" signature="()I"/>
             <method name="setValue" signature="(Ljava/lang/Object;)Ljava/lang/Object;"/>
         </type>
-        <type name="MissingResourceException">
+        <type int="false" name="MissingResourceException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"/>
             <method name="getClassName" signature="()Ljava/lang/String;"/>
             <method name="getKey" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="NoSuchElementException">
+        <type int="false" name="NoSuchElementException" sc="java.lang.RuntimeException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Properties">
+        <type int="false" name="Properties" sc="java.util.Hashtable">
             <field name="defaults"/>
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/util/Properties;)V"/>
@@ -2865,7 +2865,7 @@
             <method addedprofile="512" name="setProperty" signature="(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;"/>
             <method name="store" signature="(Ljava/io/OutputStream;Ljava/lang/String;)V"/>
         </type>
-        <type name="PropertyPermission">
+        <type int="false" name="PropertyPermission" sc="java.security.BasicPermission">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
             <method name="equals" signature="(Ljava/lang/Object;)Z"/>
             <method name="getActions" signature="()Ljava/lang/String;"/>
@@ -2873,12 +2873,12 @@
             <method name="implies" signature="(Ljava/security/Permission;)Z"/>
             <method name="newPermissionCollection" signature="()Ljava/security/PermissionCollection;"/>
         </type>
-        <type name="PropertyResourceBundle">
+        <type int="false" name="PropertyResourceBundle" sc="java.util.ResourceBundle">
             <method name="&lt;init&gt;" signature="(Ljava/io/InputStream;)V"/>
             <method name="getKeys" signature="()Ljava/util/Enumeration;"/>
             <method name="handleGetObject" signature="(Ljava/lang/String;)Ljava/lang/Object;"/>
         </type>
-        <type name="Random">
+        <type int="false" name="Random" sc="java.lang.Object" sis="java.io.Serializable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(J)V"/>
             <method name="next" signature="(I)I"/>
@@ -2892,7 +2892,7 @@
             <method name="nextLong" signature="()J"/>
             <method name="setSeed" signature="(J)V"/>
         </type>
-        <type name="ResourceBundle">
+        <type int="false" name="ResourceBundle" sc="java.lang.Object">
             <field name="parent"/>
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="getBundle" signature="(Ljava/lang/String;)Ljava/util/ResourceBundle;"/>
@@ -2906,7 +2906,7 @@
             <method name="handleGetObject" signature="(Ljava/lang/String;)Ljava/lang/Object;"/>
             <method name="setParent" signature="(Ljava/util/ResourceBundle;)V"/>
         </type>
-        <type name="Set">
+        <type int="true" name="Set" sc="java.lang.Object" sis="java.util.Collection">
             <method name="add" signature="(Ljava/lang/Object;)Z"/>
             <method name="addAll" signature="(Ljava/util/Collection;)Z"/>
             <method name="clear" signature="()V"/>
@@ -2923,7 +2923,7 @@
             <method name="toArray" signature="()[Ljava/lang/Object;"/>
             <method name="toArray" signature="([Ljava/lang/Object;)[Ljava/lang/Object;"/>
         </type>
-        <type name="SimpleTimeZone">
+        <type int="false" name="SimpleTimeZone" sc="java.util.TimeZone">
             <method name="&lt;init&gt;" signature="(ILjava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(ILjava/lang/String;IIIIIIII)V"/>
             <method name="&lt;init&gt;" signature="(ILjava/lang/String;IIIIIIIII)V"/>
@@ -2945,7 +2945,7 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="useDaylightTime" signature="()Z"/>
         </type>
-        <type name="SortedMap">
+        <type int="true" name="SortedMap" sc="java.lang.Object" sis="java.util.Map">
             <method name="comparator" signature="()Ljava/util/Comparator;"/>
             <method name="firstKey" signature="()Ljava/lang/Object;"/>
             <method name="headMap" signature="(Ljava/lang/Object;)Ljava/util/SortedMap;"/>
@@ -2953,7 +2953,7 @@
             <method name="subMap" signature="(Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/SortedMap;"/>
             <method name="tailMap" signature="(Ljava/lang/Object;)Ljava/util/SortedMap;"/>
         </type>
-        <type name="SortedSet">
+        <type int="true" name="SortedSet" sc="java.lang.Object" sis="java.util.Set">
             <method name="comparator" signature="()Ljava/util/Comparator;"/>
             <method name="first" signature="()Ljava/lang/Object;"/>
             <method name="headSet" signature="(Ljava/lang/Object;)Ljava/util/SortedSet;"/>
@@ -2961,7 +2961,7 @@
             <method name="subSet" signature="(Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/SortedSet;"/>
             <method name="tailSet" signature="(Ljava/lang/Object;)Ljava/util/SortedSet;"/>
         </type>
-        <type addedprofile="512" name="Stack">
+        <type addedprofile="512" int="false" name="Stack" sc="java.util.Vector">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="empty" signature="()Z"/>
             <method addedprofile="512" name="peek" signature="()Ljava/lang/Object;"/>
@@ -2969,7 +2969,7 @@
             <method addedprofile="512" name="push" signature="(Ljava/lang/Object;)Ljava/lang/Object;"/>
             <method addedprofile="512" name="search" signature="(Ljava/lang/Object;)I"/>
         </type>
-        <type name="StringTokenizer">
+        <type int="false" name="StringTokenizer" sc="java.lang.Object" sis="java.util.Enumeration">
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Z)V"/>
@@ -2980,7 +2980,7 @@
             <method name="nextToken" signature="()Ljava/lang/String;"/>
             <method name="nextToken" signature="(Ljava/lang/String;)Ljava/lang/String;"/>
         </type>
-        <type name="TimeZone">
+        <type int="false" name="TimeZone" sc="java.lang.Object" sis="java.io.Serializable,java.lang.Cloneable">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="clone" signature="()Ljava/lang/Object;"/>
             <method name="getAvailableIDs" signature="()[Ljava/lang/String;"/>
@@ -2996,7 +2996,7 @@
             <method name="setRawOffset" signature="(I)V"/>
             <method name="useDaylightTime" signature="()Z"/>
         </type>
-        <type addedprofile="512" name="TreeMap">
+        <type addedprofile="512" int="false" name="TreeMap" sc="java.util.AbstractMap" sis="java.io.Serializable,java.lang.Cloneable,java.util.SortedMap">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Comparator;)V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Map;)V"/>
@@ -3010,7 +3010,7 @@
             <method addedprofile="512" name="subMap" signature="(Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/SortedMap;"/>
             <method addedprofile="512" name="tailMap" signature="(Ljava/lang/Object;)Ljava/util/SortedMap;"/>
         </type>
-        <type addedprofile="512" name="TreeSet">
+        <type addedprofile="512" int="false" name="TreeSet" sc="java.util.AbstractSet" sis="java.io.Serializable,java.lang.Cloneable,java.util.SortedSet">
             <method addedprofile="512" name="&lt;init&gt;" signature="()V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Collection;)V"/>
             <method addedprofile="512" name="&lt;init&gt;" signature="(Ljava/util/Comparator;)V"/>
@@ -3025,7 +3025,7 @@
             <method addedprofile="512" name="subSet" signature="(Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/SortedSet;"/>
             <method addedprofile="512" name="tailSet" signature="(Ljava/lang/Object;)Ljava/util/SortedSet;"/>
         </type>
-        <type name="Vector">
+        <type int="false" name="Vector" sc="java.util.AbstractList" sis="java.util.List,java.lang.Cloneable,java.io.Serializable">
             <field name="capacityIncrement"/>
             <field name="elementCount"/>
             <field name="elementData"/>
@@ -3076,7 +3076,7 @@
             <method name="toString" signature="()Ljava/lang/String;"/>
             <method name="trimToSize" signature="()V"/>
         </type>
-        <type name="WeakHashMap">
+        <type int="false" name="WeakHashMap" sc="java.util.AbstractMap" sis="java.util.Map">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(I)V"/>
             <method name="&lt;init&gt;" signature="(IF)V"/>
@@ -3092,7 +3092,7 @@
         </type>
     </package>
     <package addedprofile="256" name="java.util.zip">
-        <type name="CRC32">
+        <type int="false" name="CRC32" sc="java.lang.Object" sis="java.util.zip.Checksum">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="getValue" signature="()J"/>
             <method name="reset" signature="()V"/>
@@ -3100,17 +3100,17 @@
             <method name="update" signature="([B)V"/>
             <method name="update" signature="([BII)V"/>
         </type>
-        <type name="Checksum">
+        <type int="true" name="Checksum" sc="java.lang.Object">
             <method name="getValue" signature="()J"/>
             <method name="reset" signature="()V"/>
             <method name="update" signature="(I)V"/>
             <method name="update" signature="([BII)V"/>
         </type>
-        <type name="DataFormatException">
+        <type int="false" name="DataFormatException" sc="java.lang.Exception">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="Inflater">
+        <type int="false" name="Inflater" sc="java.lang.Object">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Z)V"/>
             <method name="end" signature="()V"/>
@@ -3130,7 +3130,7 @@
             <method name="setInput" signature="([B)V"/>
             <method name="setInput" signature="([BII)V"/>
         </type>
-        <type name="InflaterInputStream">
+        <type int="false" name="InflaterInputStream" sc="java.io.FilterInputStream">
             <field name="buf"/>
             <field name="inf"/>
             <field name="len"/>
@@ -3144,7 +3144,7 @@
             <method name="read" signature="([BII)I"/>
             <method name="skip" signature="(J)J"/>
         </type>
-        <type name="ZipEntry">
+        <type int="false" name="ZipEntry" sc="java.lang.Object" sis="java.util.zip.ZipConstants,java.lang.Cloneable">
             <field name="DEFLATED"/>
             <field name="STORED"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
@@ -3169,11 +3169,11 @@
             <method name="setTime" signature="(J)V"/>
             <method name="toString" signature="()Ljava/lang/String;"/>
         </type>
-        <type name="ZipException">
+        <type int="false" name="ZipException" sc="java.io.IOException">
             <method name="&lt;init&gt;" signature="()V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
         </type>
-        <type name="ZipFile">
+        <type int="false" name="ZipFile" sc="java.lang.Object" sis="java.util.zip.ZipConstants">
             <method name="&lt;init&gt;" signature="(Ljava/io/File;)V"/>
             <method name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method name="close" signature="()V"/>
@@ -3184,7 +3184,7 @@
             <method name="getName" signature="()Ljava/lang/String;"/>
             <method name="size" signature="()I"/>
         </type>
-        <type name="ZipInputStream">
+        <type int="false" name="ZipInputStream" sc="java.util.zip.InflaterInputStream" sis="java.util.zip.ZipConstants">
             <method name="&lt;init&gt;" signature="(Ljava/io/InputStream;)V"/>
             <method name="available" signature="()I"/>
             <method name="close" signature="()V"/>

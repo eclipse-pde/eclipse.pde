@@ -345,7 +345,8 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	protected boolean isProblem(IReference reference) {
 		// the reference must be in the system library
 		IApiMember member = reference.getMember();
-		String[] lowestEEs = member.getApiComponent().getLowestEEs();
+		IApiComponent apiComponent = member.getApiComponent();
+		String[] lowestEEs = apiComponent.getLowestEEs();
 		for (int i = 0, max = lowestEEs.length; i < max; i++) {
 			String lowestEE = lowestEEs[i];
 			int eeValue = ProfileModifiers.getValue(lowestEE); 
@@ -353,11 +354,8 @@ public class SystemApiDetector extends AbstractProblemDetector {
 				return false;
 			}
 			try {
-				if (!ProfileModifiers.isJRE(eeValue)) {
-					return false;
-				}
 				IElementDescriptor elementDescriptor = reference.getResolvedReference().getHandle();
-				IApiDescription systemApiDescription = member.getApiComponent().getSystemApiDescription(eeValue);
+				IApiDescription systemApiDescription = apiComponent.getSystemApiDescription(eeValue);
 				boolean value = !Util.isAPI(eeValue, elementDescriptor, systemApiDescription);
 				if (value) {
 					return true;
@@ -381,6 +379,10 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			switch(resolvePackages.length) {
 				case 1 :
 					if (resolvePackages[0].isSystemComponent()) {
+						switch(reference.getReferenceKind()) {
+							case ReferenceModifiers.REF_OVERRIDE :
+								return false;
+						}
 						retainReference(reference);
 						return true;
 					}

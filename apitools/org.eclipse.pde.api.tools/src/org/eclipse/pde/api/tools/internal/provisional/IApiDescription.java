@@ -53,6 +53,37 @@ public interface IApiDescription {
 	 */
 	public IStatus setRestrictions(IElementDescriptor element, int restrictions);
 	
+	/**
+	 * Sets the superclass for the specified element and returns a status describing whether the operation
+	 * succeeded.
+	 * 
+	 * @param element the element the restrictions apply to 
+	 * @param superclass the superclass name of the element
+	 *  
+	 * @return status of the operation
+	 */
+	public IStatus setSuperclass(IElementDescriptor element, String superclass);
+
+	/**
+	 * Sets the superclass for the specified element and returns a status describing whether the operation
+	 * succeeded.
+	 * 
+	 * @param element the element the restrictions apply to 
+	 * @param superclass the superclass name of the element
+	 *  
+	 * @return status of the operation
+	 */
+	public IStatus setSuperinterfaces(IElementDescriptor element, String superinterfaces);
+	/**
+	 * Sets the interface flag for the specified element and returns a status describing whether the operation
+	 * succeeded.
+	 * 
+	 * @param element the element the restrictions apply to 
+	 * @param interfaceFlag the interface flag of the element
+	 *  
+	 * @return status of the operation
+	 */
+	public IStatus setInterface(IElementDescriptor element, boolean interfaceFlag);
 
 	/**
 	 * Sets the visibility for the specified element in the context of the specified component

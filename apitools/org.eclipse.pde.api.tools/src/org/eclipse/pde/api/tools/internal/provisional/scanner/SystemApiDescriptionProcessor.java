@@ -175,6 +175,9 @@ public class SystemApiDescriptionProcessor {
 		settings.setRestrictions(descriptor, RestrictionModifiers.NO_RESTRICTIONS);
 		settings.setAddedProfile(descriptor, retrieveElementAttribute(element, IApiXmlConstants.ATTR_ADDED_PROFILE));
 		settings.setRemovedProfile(descriptor, retrieveElementAttribute(element, IApiXmlConstants.ATTR_REMOVED_PROFILE));
+		settings.setSuperclass(descriptor, retrieveStringElementAttribute(element, IApiXmlConstants.ATTR_SUPER_CLASS));
+		settings.setSuperinterfaces(descriptor, retrieveStringElementAttribute(element, IApiXmlConstants.ATTR_SUPER_INTERFACES));
+		settings.setInterface(descriptor, retrieveBooleanElementAttribute(element, IApiXmlConstants.ATTR_INTERFACE));
 	}
 	/**
 	 * Tests if the given restriction exists for the given element
@@ -193,7 +196,40 @@ public class SystemApiDescriptionProcessor {
 		}
 		return ProfileModifiers.NO_PROFILE_VALUE;
 	}
-
+	/**
+	 * Tests if the given restriction exists for the given element
+	 * and returns an updated restrictions flag.
+	 * 
+	 * @param element XML element
+	 * @param name attribute to test
+	 * @param flag bit mask for attribute
+	 * @param res flag to combine with 
+	 * @return updated flags
+	 */
+	private static String retrieveStringElementAttribute(Element element, String name) {
+		String value = element.getAttribute(name);
+		if (value.length() > 0) {
+			return value;
+		}
+		return null;
+	}
+	/**
+	 * Tests if the given restriction exists for the given element
+	 * and returns an updated restrictions flag.
+	 * 
+	 * @param element XML element
+	 * @param name attribute to test
+	 * @param flag bit mask for attribute
+	 * @param res flag to combine with 
+	 * @return updated flags
+	 */
+	private static boolean retrieveBooleanElementAttribute(Element element, String name) {
+		String value = element.getAttribute(name);
+		if (value.length() > 0) {
+			return Boolean.toString(true).equals(value);
+		}
+		return false;
+	}
 	/**
 	 * Annotates the supplied {@link IApiDescription} from all of the field elements
 	 * that are direct children of the specified {@link Element}. {@link IFieldDescriptor}s are created

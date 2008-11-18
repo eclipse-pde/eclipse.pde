@@ -78,6 +78,17 @@ public class CompositeApiDescription implements IApiDescription {
 			int removedProfile) {
 		return Status.OK_STATUS;
 	}
+	public IStatus setSuperclass(IElementDescriptor element, String superclass) {
+		return Status.OK_STATUS;
+	}
+	public IStatus setSuperinterfaces(IElementDescriptor element,
+			String superinterfaces) {
+		return Status.OK_STATUS;
+	}
+	public IStatus setInterface(IElementDescriptor element,
+			boolean interfaceFlag) {
+		return Status.OK_STATUS;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#setVisibility(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, int)
 	 */
