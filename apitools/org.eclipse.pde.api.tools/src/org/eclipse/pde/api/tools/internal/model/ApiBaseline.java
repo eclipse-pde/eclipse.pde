@@ -514,11 +514,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 						BundleDescription currentHost = hosts[i];
 						IApiComponent apiComponent = component.getBaseline().getApiComponent(currentHost.getName());
 						if (apiComponent != null) {
-							String[] packageNames = apiComponent.getPackageNames();
-							int index = Arrays.binarySearch(packageNames, packageName, null);
-							if (index >= 0) {
-								componentsList.add(apiComponent);
-							}
+							resolvePackage0(apiComponent, packageName, componentsList);
 						}
 					}
 				}
