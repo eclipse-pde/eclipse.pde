@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IField;
@@ -20,11 +23,15 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.pde.api.tools.internal.model.BundleApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
@@ -43,6 +50,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.1
  */
 public class SystemApiDetector extends AbstractProblemDetector {
+	private Map referenceEEs;
 	public SystemApiDetector() {
 	}
 	protected int getElementType(IReference reference) {
@@ -63,7 +71,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			throws CoreException {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		IApiMember member = reference.getMember();
-		String eeValue = getDisplay(member.getApiComponent().getLowestEEs());
+		String eeValue = ProfileModifiers.getName(((Integer) this.referenceEEs.get(reference)).intValue());
 		switch(resolvedReference.getType()) {
 			case IApiElement.TYPE : {
 				return new String[] {
@@ -131,7 +139,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			throws CoreException {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		IApiMember member = reference.getMember();
-		String eeValue = getDisplay(member.getApiComponent().getLowestEEs());
+		String eeValue = ProfileModifiers.getName(((Integer) this.referenceEEs.get(reference)).intValue());
 		switch(resolvedReference.getType()) {
 			case IApiElement.TYPE : {
 				return new String[] {
@@ -347,17 +355,39 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		IApiMember member = reference.getMember();
 		IApiComponent apiComponent = member.getApiComponent();
 		String[] lowestEEs = apiComponent.getLowestEEs();
-		for (int i = 0, max = lowestEEs.length; i < max; i++) {
+		loop: for (int i = 0, max = lowestEEs.length; i < max; i++) {
 			String lowestEE = lowestEEs[i];
 			int eeValue = ProfileModifiers.getValue(lowestEE); 
 			if (eeValue == ProfileModifiers.NO_PROFILE_VALUE) {
 				return false;
 			}
 			try {
-				IElementDescriptor elementDescriptor = reference.getResolvedReference().getHandle();
+				IApiMember resolvedReference = reference.getResolvedReference();
+				IElementDescriptor elementDescriptor = resolvedReference.getHandle();
 				IApiDescription systemApiDescription = apiComponent.getSystemApiDescription(eeValue);
 				boolean value = !Util.isAPI(eeValue, elementDescriptor, systemApiDescription);
 				if (value) {
+					/*
+					 * Make sure that the resolved reference doesn't below to one of the imported package of
+					 * the current component
+					 */
+					if (apiComponent instanceof BundleApiComponent) {
+						BundleDescription bundle = ((BundleApiComponent)apiComponent).getBundleDescription();
+						ImportPackageSpecification[] importPackages = bundle.getImportPackages();
+						String packageName = getPackageName(elementDescriptor);
+						for (int j = 0, max2 = importPackages.length; j < max2; j++) {
+							ImportPackageSpecification importPackageSpecification = importPackages[j];
+							// get the IPackageDescriptor for the element descriptor
+							String importPackageName = importPackageSpecification.getName();
+							if (importPackageName.equals(packageName)) {
+								continue loop;
+							}
+						}
+					}
+					if (this.referenceEEs == null) {
+						this.referenceEEs = new HashMap(3);
+					}
+					this.referenceEEs.put(reference, new Integer(eeValue));
 					return true;
 				}
 			} catch (CoreException e) {
@@ -365,6 +395,13 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			}
 		}
 		return false;
+	}
+	private static String getPackageName(IElementDescriptor elementDescriptor) {
+		IElementDescriptor currentDescriptor = elementDescriptor;
+		while (currentDescriptor != null && currentDescriptor.getElementType() != IElementDescriptor.PACKAGE) {
+			currentDescriptor = currentDescriptor.getParent();
+		}
+		return currentDescriptor == null ? Util.EMPTY_STRING : ((IPackageDescriptor) currentDescriptor).getName();
 	}
 	public boolean considerReference(IReference reference) {
 		IApiComponent apiComponent = reference.getMember().getApiComponent();
@@ -375,7 +412,8 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		int index = referencedTypeName.lastIndexOf('.');
 		if (index == -1) return false;
 		try {
-			IApiComponent[] resolvePackages = baseline.resolvePackage(apiComponent, referencedTypeName.substring(0, index));
+			String substring = referencedTypeName.substring(0, index);
+			IApiComponent[] resolvePackages = baseline.resolvePackage(apiComponent, substring);
 			switch(resolvePackages.length) {
 				case 1 :
 					if (resolvePackages[0].isSystemComponent()) {
@@ -394,18 +432,6 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	}
 
 	public int getReferenceKinds() {
-		return ReferenceModifiers.MASK_REF_ALL;
-	}
-	
-	private String getDisplay(String[] eeValues) {
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < eeValues.length; i++) {
-			String eeValue = eeValues[i];
-			if (i > 0) {
-				buffer.append(", "); //$NON-NLS-1$
-			}
-			buffer.append(eeValue);
-		}
-		return String.valueOf(buffer);
+		return ReferenceModifiers.MASK_REF_ALL & ~ReferenceModifiers.REF_OVERRIDE;
 	}
 }

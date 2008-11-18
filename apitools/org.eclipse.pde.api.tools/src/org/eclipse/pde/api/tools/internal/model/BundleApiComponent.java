@@ -761,7 +761,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * 
 	 * @return bundle description
 	 */
-	protected BundleDescription getBundleDescription() {
+	public BundleDescription getBundleDescription() {
 		return fBundleDescription;
 	}
 
