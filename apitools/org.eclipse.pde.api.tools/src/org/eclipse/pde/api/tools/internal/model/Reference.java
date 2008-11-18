@@ -257,10 +257,10 @@ public class Reference implements IReference {
 		}
 		if (getReferenceKind() == ReferenceModifiers.REF_INTERFACEMETHOD) {
 			// resolve method in super interfaces rather than class
-			IApiType[] interaces = type.getSuperInterfaces();
-			if (interaces != null) {
-				for (int i = 0; i < interaces.length; i++) {
-					if (resolveVirtualMethod(interaces[i], methodName, methodSignature)) {
+			IApiType[] interfaces = type.getSuperInterfaces();
+			if (interfaces != null) {
+				for (int i = 0; i < interfaces.length; i++) {
+					if (resolveVirtualMethod(interfaces[i], methodName, methodSignature)) {
 						return true;
 					}
 				}
