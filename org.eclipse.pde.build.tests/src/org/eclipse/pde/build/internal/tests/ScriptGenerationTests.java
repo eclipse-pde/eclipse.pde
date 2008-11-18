@@ -931,7 +931,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		StringBuffer buffer = new StringBuffer("osgi.java.profile.name=MyCustomProfile\n");
 		buffer.append("org.osgi.framework.system.packages=org.my.package\n");
 		buffer.append("org.osgi.framework.bootdelegation = org.my.package\n");
-		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.1\n");
+		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.2\n");
 		Utils.writeBuffer(custom.getFile("my.profile"), buffer);
 		
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
@@ -958,7 +958,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		StringBuffer buffer = new StringBuffer("osgi.java.profile.name=MyCustomProfile\n");
 		buffer.append("org.osgi.framework.system.packages=org.my.package\n");
 		buffer.append("org.osgi.framework.bootdelegation = org.my.package\n");
-		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.1\n");
+		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.2\n");
 		Utils.writeBuffer(custom.getFile("profiles/my.profile"), buffer);
 		Utils.writeBuffer(custom.getFile("profile.list"), new StringBuffer("java.profiles=profiles/my.profile\n"));
 		
