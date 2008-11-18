@@ -43,7 +43,10 @@ public abstract class CommonUtilsTask extends Task {
 		if (!installDir.mkdirs()) {
 			throw new BuildException("Could not create : " + installDir.getAbsolutePath()); //$NON-NLS-1$
 		}
-
+		File locationFile = new File(location);
+		if (!locationFile.exists()) {
+			throw new BuildException("File doesn't exist : " + location); //$NON-NLS-1$
+		}
 		try {
 			Util.unzip(location, installDir.getAbsolutePath());
 		} catch (IOException e) {
