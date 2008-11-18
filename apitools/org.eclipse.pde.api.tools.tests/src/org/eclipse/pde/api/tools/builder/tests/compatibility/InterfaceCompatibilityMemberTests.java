@@ -202,17 +202,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 */
 	private void xAddMethodNoImplement(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoImplement.java");
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_COMPATIBILITY,
-						IDelta.INTERFACE_ELEMENT_TYPE,
-						IDelta.ADDED,
-						IDelta.METHOD)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddMethodNoImplement", "addMethod(String)"};
-		setExpectedMessageArgs(args);
+		expectingNoProblems();
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -410,20 +400,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 */
 	private void xAddSuperInterfaceANoImplement(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceANoImplement.java");
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_COMPATIBILITY,
-						IDelta.INTERFACE_ELEMENT_TYPE,
-						IDelta.ADDED,
-						IDelta.SUPER_INTERFACE_WITH_METHODS)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{
-				PACKAGE_PREFIX + "AddInterfaceANoImplement",
-				"a.classes.hierarchy.InterfaceA",
-				"methodA()"};
-		setExpectedMessageArgs(args);
+		expectingNoProblems();
 		performCompatibilityTest(filePath, incremental);
 	}
 	
