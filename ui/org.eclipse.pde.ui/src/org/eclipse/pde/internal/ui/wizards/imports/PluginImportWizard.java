@@ -11,8 +11,8 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -22,8 +22,6 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
-import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IImportQuery;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
@@ -133,60 +131,11 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	}
 
 	private static void doImportOperation(final Shell shell, final int importType, final IPluginModelBase[] models, final boolean forceAutobuild, final boolean launchedConfiguration) {
-		PluginImportOperation.IImportQuery query = new ImportQuery(shell);
-		PluginImportOperation.IImportQuery executionQuery = new ImportQuery(shell);
-		final PluginImportOperation op = new PluginImportOperation(models, importType, query, executionQuery, forceAutobuild);
-		op.setLaunchedConfiguration(launchedConfiguration);
-		Job job = new Job(PDEUIMessages.ImportWizard_title) {
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					PDEPlugin.getWorkspace().run(op, monitor);
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-					return Status.CANCEL_STATUS;
-				}
-				return Status.OK_STATUS;
-			}
-		};
+		PluginImportOperation job = new PluginImportOperation(models, importType, forceAutobuild);
+		job.setPluginsInUse(launchedConfiguration);
+		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		job.setUser(true);
 		job.schedule();
-	}
-
-	private static class ReplaceDialog extends MessageDialog {
-		public ReplaceDialog(Shell parentShell, String dialogMessage) {
-			super(parentShell, PDEUIMessages.ImportWizard_messages_title, null, dialogMessage, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, PDEUIMessages.ImportWizard_noToAll, IDialogConstants.CANCEL_LABEL}, 0);
-		}
-	}
-
-	public static class ImportQuery implements IImportQuery {
-		public ImportQuery(Shell shell) {
-		}
-
-		private int yesToAll = 0;
-		private int[] RETURNCODES = {IImportQuery.YES, IImportQuery.YES, IImportQuery.NO, IImportQuery.NO, IImportQuery.CANCEL};
-
-		public int doQuery(final String message) {
-			if (yesToAll != 0) {
-				return yesToAll > 0 ? IImportQuery.YES : IImportQuery.NO;
-			}
-
-			final int[] result = {IImportQuery.CANCEL};
-			Display.getDefault().syncExec(new Runnable() {
-				public void run() {
-					ReplaceDialog dialog = new ReplaceDialog(Display.getDefault().getActiveShell(), message);
-					int retVal = dialog.open();
-					if (retVal >= 0) {
-						result[0] = RETURNCODES[retVal];
-						if (retVal == 1) {
-							yesToAll = 1;
-						} else if (retVal == 3) {
-							yesToAll = -1;
-						}
-					}
-				}
-			});
-			return result[0];
-		}
 	}
 
 	public IWizardPage getNextPage(IWizardPage page) {

@@ -1030,6 +1030,7 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestEditor_DetailExtension_edit;
 	public static String ManifestEditor_DetailExtension_up;
 	public static String ManifestEditor_DetailExtension_down;
+	public static String ManifestEditor_DetailExtension_missingExtPointSchema;
 
 	public static String ManifestEditor_ExportSection_title;
 	public static String ManifestEditor_ExportSection_desc;
@@ -1594,9 +1595,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginSelectionDialog_title;
 	public static String PluginSelectionDialog_message;
-	public static String PluginImportInfoDialog_message;
-
-	public static String PluginImportInfoDialog_title;
+	public static String PluginImportOperation_could_not_delete_project;
 
 	public static String PluginImportOperation_linking;
 	public static String PluginContentPage_appQuestion;
@@ -1660,8 +1659,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String ImportWizard_operation_creating;
 	public static String ImportWizard_operation_multiProblem;
-	public static String ImportWizard_operation_creating2;
-	public static String ImportWizard_operation_copyingSource;
+	public static String ImportWizard_operation_importingSource;
 
 	public static String FeatureImportWizard_FirstPage_title;
 	public static String FeatureImportWizard_FirstPage_desc;
@@ -2596,11 +2594,19 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginImportOperation_executionEnvironment;
 
+	public static String PluginImportOperation_Importing_plugin;
+
+	public static String PluginImportOperation_No_source_found_query;
+
+	public static String PluginImportOperation_Set_up_classpaths;
+
 	public static String PluginImportWizard_runningConfigDesc;
 
 	public static String PluginImportWizard_runningConfigsDesc;
 
 	public static String PluginImportWizard_runningConfigsTitle;
+
+	public static String PluginImportWizardDetailedPage_Show_source_plugins;
 
 	public static String LauncherUtils_title;
 

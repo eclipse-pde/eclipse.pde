@@ -35,11 +35,11 @@ public class ClasspathComputer {
 	private static final int SEVERITY_IGNORE = 1;
 
 	public static void setClasspath(IProject project, IPluginModelBase model) throws CoreException {
-		IClasspathEntry[] entries = getClasspath(project, model, false, true);
+		IClasspathEntry[] entries = getClasspath(project, model, null, false, true);
 		JavaCore.create(project).setRawClasspath(entries, null);
 	}
 
-	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, boolean clear, boolean overrideCompliance) throws CoreException {
+	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, Map sourceLibraryMap, boolean clear, boolean overrideCompliance) throws CoreException {
 		IJavaProject javaProject = JavaCore.create(project);
 		ArrayList result = new ArrayList();
 		IBuild build = getBuild(project);
@@ -53,7 +53,7 @@ public class ClasspathComputer {
 		result.add(createEntryUsingPreviousEntry(javaProject, ee, PDECore.REQUIRED_PLUGINS_CONTAINER_PATH));
 
 		// add own libraries/source
-		addSourceAndLibraries(project, model, build, clear, result);
+		addSourceAndLibraries(project, model, build, clear, sourceLibraryMap, result);
 
 		IClasspathEntry[] entries = (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 		IJavaModelStatus validation = JavaConventions.validateClasspath(javaProject, entries, javaProject.getOutputLocation());
@@ -64,7 +64,7 @@ public class ClasspathComputer {
 		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 	}
 
-	public static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear, ArrayList result) throws CoreException {
+	private static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear, Map sourceLibraryMap, ArrayList result) throws CoreException {
 
 		HashSet paths = new HashSet();
 
@@ -87,10 +87,11 @@ public class ClasspathComputer {
 			if (buildEntry != null) {
 				addSourceFolder(buildEntry, project, paths, result);
 			} else {
+				IPath sourceAttachment = sourceLibraryMap != null ? (IPath) sourceLibraryMap.get(libraries[i].getName()) : null;
 				if (libraries[i].getName().equals(".")) //$NON-NLS-1$
-					addJARdPlugin(project, ClasspathUtilCore.getFilename(model), attrs, result);
+					addJARdPlugin(project, ClasspathUtilCore.getFilename(model), sourceAttachment, attrs, result);
 				else
-					addLibraryEntry(project, libraries[i], attrs, result);
+					addLibraryEntry(project, libraries[i], sourceAttachment, attrs, result);
 			}
 		}
 		if (libraries.length == 0) {
@@ -100,7 +101,8 @@ public class ClasspathComputer {
 					addSourceFolder(buildEntry, project, paths, result);
 				}
 			} else if (ClasspathUtilCore.hasBundleStructure(model)) {
-				addJARdPlugin(project, ClasspathUtilCore.getFilename(model), attrs, result);
+				IPath sourceAttachment = sourceLibraryMap != null ? (IPath) sourceLibraryMap.get(".") : null; //$NON-NLS-1$
+				addJARdPlugin(project, ClasspathUtilCore.getFilename(model), sourceAttachment, attrs, result);
 			}
 		}
 	}
@@ -147,7 +149,7 @@ public class ClasspathComputer {
 		return (buildModel != null) ? buildModel.getBuild() : null;
 	}
 
-	private static void addLibraryEntry(IProject project, IPluginLibrary library, IClasspathAttribute[] attrs, ArrayList result) throws JavaModelException {
+	private static void addLibraryEntry(IProject project, IPluginLibrary library, IPath sourceAttachment, IClasspathAttribute[] attrs, ArrayList result) throws JavaModelException {
 		String name = ClasspathUtilCore.expandLibraryName(library.getName());
 		IResource jarFile = project.findMember(name);
 		if (jarFile == null)
@@ -162,34 +164,24 @@ public class ClasspathComputer {
 			}
 		}
 
-		IClasspathEntry entry = createClasspathEntry(project, jarFile, name, attrs, library.isExported());
+		IClasspathEntry entry = createClasspathEntry(project, jarFile, name, sourceAttachment, attrs, library.isExported());
 		if (!result.contains(entry))
 			result.add(entry);
 	}
 
-	private static void addJARdPlugin(IProject project, String filename, IClasspathAttribute[] attrs, ArrayList result) {
+	private static void addJARdPlugin(IProject project, String filename, IPath sourceAttachment, IClasspathAttribute[] attrs, ArrayList result) {
 		String name = ClasspathUtilCore.expandLibraryName(filename);
 		IResource jarFile = project.findMember(name);
 		if (jarFile != null) {
-			IClasspathEntry entry = createClasspathEntry(project, jarFile, filename, attrs, true);
+			IClasspathEntry entry = createClasspathEntry(project, jarFile, filename, sourceAttachment, attrs, true);
 			if (!result.contains(entry))
 				result.add(entry);
 		}
 	}
 
-	private static IClasspathEntry createClasspathEntry(IProject project, IResource library, String fileName, IClasspathAttribute[] attrs, boolean isExported) {
-		String sourceZipName = ClasspathUtilCore.getSourceZipName(fileName);
-		IResource resource = project.findMember(sourceZipName);
-		// if zip file does not exist, see if a directory with the source does.  This in necessary how we import source for individual source bundles.
-		if (resource == null && sourceZipName.endsWith(".zip")) { //$NON-NLS-1$
-			resource = project.findMember(sourceZipName.substring(0, sourceZipName.length() - 4));
-			if (resource == null)
-				// if we can't find the the source for a library, then try to find the common source location set up to share source from one jar to all libraries.
-				// see PluginImportOperation.linkSourceArchives
-				resource = project.getFile(project.getName() + "src.zip"); //$NON-NLS-1$
-		}
-		IPath srcAttachment = resource != null ? resource.getFullPath() : library.getFullPath();
-		return JavaCore.newLibraryEntry(library.getFullPath(), srcAttachment, null, new IAccessRule[0], attrs, isExported);
+	private static IClasspathEntry createClasspathEntry(IProject project, IResource library, String fileName, IPath sourceAttachment, IClasspathAttribute[] attrs, boolean isExported) {
+		IResource resource = sourceAttachment != null ? project.findMember(sourceAttachment) : project.findMember(ClasspathUtilCore.getSourceZipName(fileName));
+		return JavaCore.newLibraryEntry(library.getFullPath(), resource == null ? null : resource.getFullPath(), null, new IAccessRule[0], attrs, isExported);
 	}
 
 	private static String getExecutionEnvironment(BundleDescription bundleDescription) {
