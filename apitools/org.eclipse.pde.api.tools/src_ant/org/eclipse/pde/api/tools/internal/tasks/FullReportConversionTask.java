@@ -214,7 +214,7 @@ public class FullReportConversionTask extends Task {
 			e.printStackTrace();
 		}
 		if (parser == null) {
-			throw new BuildException("Could not create a sax parser"); //$NON-NLS-1$
+			throw new BuildException(Messages.fullReportTask_couldNotCreateSAXParser);
 		}
 
 		if (this.htmlReportsLocation == null) {
@@ -223,7 +223,10 @@ public class FullReportConversionTask extends Task {
 		this.htmlRoot = new File(this.htmlReportsLocation);
 		if (!this.htmlRoot.exists()) {
 			if (!this.htmlRoot.mkdirs()) {
-				throw new BuildException("Could not create file " + this.htmlReportsLocation); //$NON-NLS-1$
+				throw new BuildException(
+					Messages.bind(
+						Messages.fullReportTask_couldNotCreateFile,
+						this.htmlReportsLocation));
 			}
 		}
 		if (this.debug) {
@@ -274,15 +277,17 @@ public class FullReportConversionTask extends Task {
 					MessageFormat.format(
 						Messages.fullReportTask_indexheader,
 						new String[] {
-								"<p>List of <a href=\"" + allNonApiBundleSummary.link + "\">bundles not configured for API analysis</a>.</p>" //$NON-NLS-1$ //$NON-NLS-2$
+							Messages.bind(
+								Messages.fullReportTask_nonApiBundleSummary,
+								allNonApiBundleSummary.link)
 						}));
 			} else {
 				writer.println(
-						MessageFormat.format(
-							Messages.fullReportTask_indexheader,
-							new String[] {
-									"<p>All bundles have been converted to API tools.</p>"//$NON-NLS-1$
-							}));
+					MessageFormat.format(
+						Messages.fullReportTask_indexheader,
+						new String[] {
+							Messages.fullReportTask_apiBundleSummary
+						}));
 			}
 			Arrays.sort(summaries, new Comparator() {
 				public int compare(Object o1, Object o2) {

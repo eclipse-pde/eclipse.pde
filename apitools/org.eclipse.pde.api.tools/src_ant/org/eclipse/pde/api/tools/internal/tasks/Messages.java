@@ -23,7 +23,7 @@ public class Messages extends NLS {
 	public static String deltaReportTask_entry_major_version;
 	public static String deltaReportTask_entry_minor_version;
 	public static String deltaReportTask_missingXmlFileLocation;
-	public static String deltaReportTask_couldNotCreateSAXPArser;
+	public static String deltaReportTask_couldNotCreateSAXParser;
 
 	public static String fullReportTask_bundlesheader;
 	public static String fullReportTask_bundlesentry_even;
@@ -48,6 +48,10 @@ public class Messages extends NLS {
 	
 	public static String fullReportTask_missingXmlFilesLocation;
 	public static String fullReportTask_invalidDirectoryName;
+	public static String fullReportTask_couldNotCreateSAXParser;
+	public static String fullReportTask_couldNotCreateFile;
+	public static String fullReportTask_nonApiBundleSummary;
+	public static String fullReportTask_apiBundleSummary;
 
 	public static String printArguments;
 	public static String errorInComparison;

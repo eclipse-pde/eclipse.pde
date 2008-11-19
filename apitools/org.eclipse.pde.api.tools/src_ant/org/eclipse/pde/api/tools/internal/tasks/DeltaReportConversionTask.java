@@ -246,7 +246,7 @@ public class DeltaReportConversionTask extends Task {
 			e.printStackTrace();
 		}
 		if (parser == null) {
-			throw new BuildException(Messages.deltaReportTask_couldNotCreateSAXPArser);
+			throw new BuildException(Messages.deltaReportTask_couldNotCreateSAXParser);
 		}
 
 		File file = new File(this.xmlFileLocation);
