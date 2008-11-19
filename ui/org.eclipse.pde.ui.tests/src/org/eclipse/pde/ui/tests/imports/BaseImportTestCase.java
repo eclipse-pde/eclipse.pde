@@ -11,14 +11,13 @@
 package org.eclipse.pde.ui.tests.imports;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
-import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard.ImportQuery;
 import org.eclipse.pde.ui.tests.PDETestCase;
 
 public abstract class BaseImportTestCase extends PDETestCase {
@@ -68,16 +67,18 @@ public abstract class BaseImportTestCase extends PDETestCase {
 	}
 	
 	protected void runOperation(IPluginModelBase[] models, int type) {
-		PluginImportOperation.IImportQuery query = new ImportQuery(getShell());
-		PluginImportOperation.IImportQuery executionQuery = new ImportQuery(getShell());
-		final PluginImportOperation op = new PluginImportOperation(models, type, query, executionQuery, false);
-
-		try {
-			PDEPlugin.getWorkspace().run(op, new NullProgressMonitor());
-		} catch (OperationCanceledException e) {
-			fail("Import Operation failed: " + e);
-		} catch (CoreException e) {
-			fail("Import Operation failed: " + e);
+		PluginImportOperation job = new PluginImportOperation(models, type, false);
+		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
+		job.setSystem(true);
+		job.schedule();
+		try{
+			job.join();
+		} catch (InterruptedException e){
+			fail("Job interupted: " + e.getMessage());
+		}
+		IStatus status = job.getResult();
+		if (!status.isOK()){
+			fail("Import Operation failed: " + status.toString());
 		}
 	}
 
