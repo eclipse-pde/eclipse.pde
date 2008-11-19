@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
 import java.util.*;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.sourcelookup.*;
@@ -162,7 +163,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 
 	private ISourceContainer getArchiveSourceContainer(String location) throws JavaModelException {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-		IFile[] containers = root.findFilesForLocation(new Path(location));
+		IFile[] containers = root.findFilesForLocationURI(URIUtil.toURI(location));
 		for (int i = 0; i < containers.length; i++) {
 			IJavaElement element = JavaCore.create(containers[i]);
 			if (element instanceof IPackageFragmentRoot) {

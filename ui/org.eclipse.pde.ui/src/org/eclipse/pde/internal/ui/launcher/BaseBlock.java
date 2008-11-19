@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -136,6 +137,9 @@ public abstract class BaseBlock {
 		}
 	}
 
+	/**
+	 * Returns the selected workspace container,or <code>null</code>
+	 */
 	protected IContainer getContainer() {
 		String path = getLocation();
 		if (path.length() > 0) {
@@ -145,9 +149,11 @@ public abstract class BaseBlock {
 				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 				try {
 					path = manager.performStringSubstitution(path, false);
-					IContainer[] containers = root.findContainersForLocation(new Path(path));
-					if (containers.length > 0)
+					IPath uriPath = new Path(path).makeAbsolute();
+					IContainer[] containers = root.findContainersForLocationURI(URIUtil.toURI(uriPath));
+					if (containers.length > 0) {
 						res = containers[0];
+					}
 				} catch (CoreException e) {
 				}
 			} else {

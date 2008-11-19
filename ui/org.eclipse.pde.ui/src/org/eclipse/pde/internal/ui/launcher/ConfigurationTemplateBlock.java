@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -150,7 +151,8 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 				try {
 					path = manager.performStringSubstitution(path, false);
-					IFile[] containers = root.findFilesForLocation(new Path(path));
+					IPath uriPath = new Path(path).makeAbsolute();
+					IFile[] containers = root.findFilesForLocationURI(URIUtil.toURI(uriPath));
 					if (containers.length > 0)
 						res = containers[0];
 				} catch (CoreException e) {
