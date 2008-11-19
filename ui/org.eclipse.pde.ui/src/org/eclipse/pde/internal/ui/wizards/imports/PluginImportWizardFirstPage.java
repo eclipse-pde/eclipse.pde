@@ -57,6 +57,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	public static String TARGET_PLATFORM = "targetPlatform"; //$NON-NLS-1$
 	private IPluginModelBase[] models = new IPluginModelBase[0];
+	private PDEState state;
 	private boolean canceled = false;
 
 	public PluginImportWizardFirstPage(String name) {
@@ -349,6 +350,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				models = PluginRegistry.getExternalModels();
+				state = PDECore.getDefault().getModelManager().getState();
 				monitor.done();
 			}
 		};
@@ -379,7 +381,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				} catch (MalformedURLException e) {
 					all = urls;
 				}
-				PDEState state = new PDEState(all, false, monitor);
+				state = new PDEState(all, false, monitor);
 				models = state.getTargetModels();
 				canceled = monitor.isCanceled();
 				monitor.done();
@@ -404,6 +406,14 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			resolveArbitraryLocation(dropLocation);
 		}
 		return models;
+	}
+
+	/**
+	 * @return the state the was used to resolve the models, will be <code>null</code> unless
+	 * getModels() has been called previously.
+	 */
+	public PDEState getState() {
+		return state;
 	}
 
 	/* (non-Javadoc)

@@ -21,10 +21,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.*;
@@ -53,7 +53,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private TableViewer fAvailableListViewer;
 	private Text fFilterText;
 	private VersionFilter fVersionFilter;
-	private AvailableFilter fFilter;
+	private AvailableFilter fAvailableFilter;
+	private SourcePluginFilter fSourceFilter;
 	// fSelected is used to track the selection in a hash set so we can efficiently
 	// filter selected items out of the available item list
 	private Set fSelected;
@@ -65,8 +66,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private Button fRemoveAllButton;
 	private Button fAddRequiredButton;
 	private Button fFilterOldVersionButton;
+	private Button fFilterSourcePluginsButton;
 
 	private static final String SETTINGS_SHOW_LATEST = "showLatestPluginsOnly"; //$NON-NLS-1$
+	private static final String SETTINGS_SHOW_SOURCE = "showSourcePlugins"; //$NON-NLS-1$
 
 	private class AvailableFilter extends ViewerFilter {
 		private Pattern fPattern;
@@ -131,7 +134,28 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				return true;
 			return hVersion.equals(plugin.getBundleDescription().getVersion());
 		}
+	}
 
+	/**
+	 * This filter is used to remove source plug-ins from view
+	 * 
+	 */
+	private class SourcePluginFilter extends ViewerFilter {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof IPluginModelBase) {
+				PDEState state = fPage1.getState();
+				if (state != null) {
+					BundleDescription description = ((IPluginModelBase) element).getBundleDescription();
+					if (description != null) {
+						return state.getBundleSourceEntry(description.getBundleId()) == null;
+					}
+				}
+			}
+			return true;
+		}
 	}
 
 	public PluginImportWizardDetailedPage(String pageName, PluginImportWizardFirstPage firstPage) {
@@ -160,10 +184,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		Composite buttonContainer = new Composite(container, SWT.NONE);
 		buttonContainer.setLayout(GridLayoutFactory.fillDefaults().create());
 		createComputationsOption(buttonContainer, 3);
-		createFilterOption(buttonContainer, 3);
+		createFilterOptions(buttonContainer, 3);
 
 		addViewerListeners();
-		addFilter();
+		addFilters();
 
 		initialize();
 		setControl(container);
@@ -171,7 +195,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PLUGIN_IMPORT_SECOND_PAGE);
 	}
 
-	private void createFilterOption(Composite container, int span) {
+	private void createFilterOptions(Composite container, int span) {
 		Composite parent = new Composite(container, SWT.NONE);
 		parent.setLayout(GridLayoutFactory.swtDefaults().margins(5, 0).create());
 		fFilterOldVersionButton = new Button(parent, SWT.CHECK);
@@ -188,24 +212,48 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 		fFilterOldVersionButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fAvailableListViewer.removeFilter(fVersionFilter);
 				if (fFilterOldVersionButton.getSelection()) {
 					fAvailableListViewer.addFilter(fVersionFilter);
+				} else {
+					fAvailableListViewer.removeFilter(fVersionFilter);
 				}
-				fAvailableListViewer.getTable().setRedraw(false);
-				fAvailableListViewer.refresh();
-				fAvailableListViewer.getTable().setRedraw(true);
 			}
+		});
 
+		fFilterSourcePluginsButton = new Button(parent, SWT.CHECK);
+		fFilterSourcePluginsButton.setText(PDEUIMessages.PluginImportWizardDetailedPage_Show_source_plugins);
+		gData = new GridData(GridData.FILL_HORIZONTAL);
+		gData.horizontalSpan = span;
+		fFilterSourcePluginsButton.setLayoutData(gData);
+
+		if (getDialogSettings().get(SETTINGS_SHOW_SOURCE) != null) {
+			fFilterSourcePluginsButton.setSelection(getDialogSettings().getBoolean(SETTINGS_SHOW_SOURCE));
+		} else {
+			fFilterSourcePluginsButton.setSelection(false);
+		}
+
+		fFilterSourcePluginsButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (fFilterSourcePluginsButton.getSelection()) {
+					fAvailableListViewer.removeFilter(fSourceFilter);
+				} else {
+					fAvailableListViewer.addFilter(fSourceFilter);
+				}
+			}
 		});
 	}
 
-	private void addFilter() {
+	private void addFilters() {
 		fVersionFilter = new VersionFilter();
 		fVersionFilter.setModel(fModels);
-		fFilter = new AvailableFilter();
-		fAvailableListViewer.addFilter(fFilter);
+		fAvailableFilter = new AvailableFilter();
+		fSourceFilter = new SourcePluginFilter();
+		fAvailableListViewer.addFilter(fAvailableFilter);
 		fAvailableListViewer.addFilter(fVersionFilter);
+		if (!fFilterSourcePluginsButton.getSelection()) {
+			fAvailableListViewer.addFilter(fSourceFilter);
+		}
+
 		fFilterJob = new WorkbenchJob("FilterJob") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				handleFilter();
@@ -416,7 +464,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	protected void refreshPage() {
 		fImportListViewer.getTable().removeAll();
 		fSelected.clear();
-		fFilter.setPattern("*"); //$NON-NLS-1$
+		fAvailableFilter.setPattern("*"); //$NON-NLS-1$
 		fVersionFilter.setModel(fModels);
 		fAvailableListViewer.refresh();
 		pageChanged();
@@ -487,11 +535,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		String newFilter;
 		if (fFilterText == null || (newFilter = fFilterText.getText().trim()).length() == 0)
 			newFilter = "*"; //$NON-NLS-1$
-		changed = fFilter.setPattern(newFilter);
+		changed = fAvailableFilter.setPattern(newFilter);
 		if (changed) {
-			fAvailableListViewer.getTable().setRedraw(false);
 			fAvailableListViewer.refresh();
-			fAvailableListViewer.getTable().setRedraw(true);
 			updateButtonEnablement(false, false);
 		}
 	}
@@ -632,6 +678,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(SETTINGS_SHOW_LATEST, fFilterOldVersionButton.getSelection());
+		settings.put(SETTINGS_SHOW_SOURCE, fFilterSourcePluginsButton.getSelection());
 		super.storeSettings();
 	}
 
