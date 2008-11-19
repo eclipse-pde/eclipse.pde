@@ -31,11 +31,11 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
  */
 public class CompareProfilesTask extends CommonUtilsTask {
 	
-	private static final String REPORT_XML_FILE_NAME = "compare.xml"; //$NON-NLS-1$
-	private static final String REFERENCE = "reference"; //$NON-NLS-1$
 	private static final String CURRENT = "currentProfile"; //$NON-NLS-1$
-	private static final String REFERENCE_PROFILE_NAME = "reference_profile"; //$NON-NLS-1$
 	private static final String CURRENT_PROFILE_NAME = "current_profile"; //$NON-NLS-1$
+	private static final String REFERENCE = "reference"; //$NON-NLS-1$
+	private static final String REFERENCE_PROFILE_NAME = "reference_profile"; //$NON-NLS-1$
+	private static final String REPORT_XML_FILE_NAME = "compare.xml"; //$NON-NLS-1$
 
 	public void execute() throws BuildException {
 		if (this.debug) {
@@ -48,13 +48,14 @@ public class CompareProfilesTask extends CommonUtilsTask {
 				|| this.reportLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
-			writer.println("Missing arguments :"); //$NON-NLS-1$
-			writer.print("reference location :"); //$NON-NLS-1$
-			writer.println(this.referenceLocation);
-			writer.print("current profile location :"); //$NON-NLS-1$
-			writer.println(this.profileLocation);
-			writer.print("report location :"); //$NON-NLS-1$
-			writer.println(this.reportLocation);
+			writer.println(
+				Messages.bind(Messages.printArguments,
+					new String[] {
+						this.referenceLocation,
+						this.profileLocation,
+						this.reportLocation,
+					})
+			);
 			writer.flush();
 			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
@@ -118,5 +119,40 @@ public class CompareProfilesTask extends CommonUtilsTask {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Set the debug value.
+	 *
+	 * @param debugValue the given debug value
+	 */
+	public void setDebug(String debugValue) {
+		this.debug = Boolean.toString(true).equals(debugValue); 
+	}
+	/**
+	 * Set the profile location.
+	 * 
+	 * @param profileLocation the given location for the profile to analyze
+	 */
+	public void setProfile(String profileLocation) {
+		this.profileLocation = profileLocation;
+	}
+	/**
+	 * Set the reference profile location.
+	 * 
+	 * @param profileLocation the given location for the reference profile to analyze
+	 */
+	public void setReference(String referenceLocation) {
+		this.referenceLocation = referenceLocation;
+	}
+	/**
+	 * Set the location where the report should be dropped.
+	 * 
+	 * <p>Once the task is completed, a report file called "compare.xml" is dumped into this location.</p>
+	 * 
+	 * @param profileLocation the given location for the reference profile to analyze
+	 */
+	public void setReport(String reportLocation) {
+		this.reportLocation = reportLocation;
 	}
 }

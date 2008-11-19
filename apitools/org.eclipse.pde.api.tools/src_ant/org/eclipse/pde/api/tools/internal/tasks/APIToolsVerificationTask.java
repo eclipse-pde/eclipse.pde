@@ -557,13 +557,14 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 				|| this.reportLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
-			writer.println("Missing arguments :"); //$NON-NLS-1$
-			writer.print("reference location :"); //$NON-NLS-1$
-			writer.println(this.referenceLocation);
-			writer.print("current profile location :"); //$NON-NLS-1$
-			writer.println(this.profileLocation);
-			writer.print("report location :"); //$NON-NLS-1$
-			writer.println(this.reportLocation);
+			writer.println(
+				Messages.bind(Messages.printArguments,
+					new String[] {
+						this.referenceLocation,
+						this.profileLocation,
+						this.reportLocation,
+					})
+			);
 			writer.flush();
 			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
