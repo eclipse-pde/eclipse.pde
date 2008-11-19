@@ -302,7 +302,7 @@ public class FullReportConversionTask extends Task {
 			writer.println(Messages.fullReportTask_indexfooter);
 			writer.flush();
 		} catch (IOException e) {
-			throw new BuildException("An IOException occured while dumping : " + htmlFile.getAbsolutePath()); //$NON-NLS-1$
+			throw new BuildException(Messages.bind(Messages.fullReportTask_ioexceptionDumpingHtmlFile, htmlFile.getAbsolutePath()));
 		} finally {
 			if (writer != null) {
 				writer.close();
@@ -347,7 +347,7 @@ public class FullReportConversionTask extends Task {
 		File parent = htmlFile.getParentFile();
 		if (!parent.exists()) {
 			if (!parent.mkdirs()) {
-				throw new BuildException("Could not create file " + htmlName); //$NON-NLS-1$
+				throw new BuildException(Messages.bind(Messages.fullReportTask_couldNotCreateFile, htmlName));
 			}
 		}
 		PrintWriter writer = null;
@@ -359,16 +359,16 @@ public class FullReportConversionTask extends Task {
 			} else {
 				dumpHeader(writer, report);
 				// generate compatibility category
-				dumpProblems(writer, "Compatibility", report.getProblems(APIToolsVerificationTask.COMPATIBILITY)); //$NON-NLS-1$
+				dumpProblems(writer, Messages.fullReportTask_compatibility_header, report.getProblems(APIToolsVerificationTask.COMPATIBILITY));
 				writer.println(Messages.fullReportTask_categoryseparator);
-				dumpProblems(writer, "API Usage", report.getProblems(APIToolsVerificationTask.USAGE)); //$NON-NLS-1$
+				dumpProblems(writer, Messages.fullReportTask_api_usage_header, report.getProblems(APIToolsVerificationTask.USAGE));
 				writer.println(Messages.fullReportTask_categoryseparator);
-				dumpProblems(writer, "Bundle Version", report.getProblems(APIToolsVerificationTask.BUNDLE_VERSION)); //$NON-NLS-1$
+				dumpProblems(writer, Messages.fullReportTask_bundle_version_header, report.getProblems(APIToolsVerificationTask.BUNDLE_VERSION));
 				dumpFooter(writer);
 			}
 			writer.flush();
 		} catch (IOException e) {
-			throw new BuildException("An IOException occured while dumping : " + htmlName); //$NON-NLS-1$
+			throw new BuildException(Messages.bind(Messages.fullReportTask_ioexceptionDumpingHtmlFile, htmlName));
 		} finally {
 			if (writer != null) {
 				writer.close();

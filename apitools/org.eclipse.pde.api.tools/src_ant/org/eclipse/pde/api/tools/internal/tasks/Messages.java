@@ -52,6 +52,10 @@ public class Messages extends NLS {
 	public static String fullReportTask_couldNotCreateFile;
 	public static String fullReportTask_nonApiBundleSummary;
 	public static String fullReportTask_apiBundleSummary;
+	public static String fullReportTask_ioexceptionDumpingHtmlFile;
+	public static String fullReportTask_compatibility_header;
+	public static String fullReportTask_api_usage_header;
+	public static String fullReportTask_bundle_version_header;
 
 	public static String printArguments;
 	public static String errorInComparison;
