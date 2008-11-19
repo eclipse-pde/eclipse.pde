@@ -34,7 +34,7 @@ import org.eclipse.pde.api.tools.internal.util.TarException;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * Common code for ant task.
+ * Common code for api tooling ant task.
  *
  */
 abstract class CommonUtilsTask extends Task {
