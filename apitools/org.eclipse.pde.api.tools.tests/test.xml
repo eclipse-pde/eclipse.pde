@@ -56,7 +56,7 @@
     <property name="api-tools-plugins-folder" 
               value="${eclipse-home}/api_tools_plugins_folder"/>
     <delete dir="${api-tools-plugins-folder}" quiet="true"/>
-    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <!-- Use a subdir 'data' so that the JCL jars are put in jdt-model-folder and are deleted at the end of the tests. -->
       <property name="data-dir" value="${api-tools-plugins-folder}/data"/>
       <property name="plugin-name" value="${plugin-name}"/>
