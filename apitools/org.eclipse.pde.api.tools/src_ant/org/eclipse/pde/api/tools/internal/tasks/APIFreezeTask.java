@@ -10,21 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.LineNumberReader;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -47,14 +40,69 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class APIFreezeTask extends CommonUtilsTask {
 	
 	public static class APIFreezeDeltaVisitor extends DeltaXmlVisitor {
-		private String excludeListLocation;
 		private Set excludedElement;
+		private String excludeListLocation;
 		private List nonExcludedElements;
 
 		public APIFreezeDeltaVisitor(String excludeListLocation) throws CoreException {
 			super();
 			this.excludeListLocation = excludeListLocation;
 			this.nonExcludedElements = new ArrayList();
+		}
+		private boolean checkExclude(IDelta delta) {
+			if (this.excludedElement == null) {
+				this.excludedElement = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation);
+			}
+			return isExcluded(delta);
+		}
+		public String getPotentialExcludeList() {
+			if (this.nonExcludedElements == null) return Util.EMPTY_STRING;
+			Collections.sort(this.nonExcludedElements);
+			StringWriter stringWriter = new StringWriter();
+			PrintWriter writer = new PrintWriter(stringWriter);
+			for (Iterator iterator = this.nonExcludedElements.iterator(); iterator.hasNext(); ) {
+				writer.println(iterator.next());
+			}
+			writer.close();
+			return String.valueOf(stringWriter.getBuffer());
+		}
+		private boolean isExcluded(IDelta delta) {
+			String typeName = delta.getTypeName();
+			StringBuffer buffer = new StringBuffer();
+			String componentId = delta.getApiComponentID();
+			if (componentId != null) {
+				buffer.append(componentId).append(':');
+			}
+			if (typeName != null) {
+				buffer.append(typeName);
+			}
+			int flags = delta.getFlags();
+			switch(flags) {
+				case IDelta.TYPE_MEMBER :
+					buffer.append('.').append(delta.getKey());
+					break;
+				case IDelta.METHOD :
+				case IDelta.CONSTRUCTOR :
+				case IDelta.ENUM_CONSTANT :
+				case IDelta.METHOD_WITH_DEFAULT_VALUE :
+				case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+				case IDelta.FIELD :
+					buffer.append('#').append(delta.getKey());
+					break;
+				case IDelta.MAJOR_VERSION :
+				case IDelta.MINOR_VERSION :
+					buffer
+						.append(Util.getDeltaFlagsName(flags))
+						.append('_')
+						.append(Util.getDeltaKindName(delta.getKind()));
+					break;
+			}
+			String excludeListKey = String.valueOf(buffer);
+			if (this.excludedElement.contains(excludeListKey)) {
+				return true;
+			}
+			this.nonExcludedElements.add(excludeListKey);
+			return false;
 		}
 		protected void processLeafDelta(IDelta delta) {
 			if (DeltaProcessor.isCompatible(delta)) {
@@ -123,136 +171,21 @@ public class APIFreezeTask extends CommonUtilsTask {
 				}
 			}
 		}
-		private boolean checkExclude(IDelta delta) {
-			if (this.excludedElement == null) {
-				initializeExcludedElement();
-			}
-			return isExcluded(delta);
-		}
-		private boolean isExcluded(IDelta delta) {
-			String typeName = delta.getTypeName();
-			StringBuffer buffer = new StringBuffer();
-			String componentId = delta.getApiComponentID();
-			if (componentId != null) {
-				buffer.append(componentId).append(':');
-			}
-			if (typeName != null) {
-				buffer.append(typeName);
-			}
-			int flags = delta.getFlags();
-			switch(flags) {
-				case IDelta.TYPE_MEMBER :
-					buffer.append('.').append(delta.getKey());
-					break;
-				case IDelta.METHOD :
-				case IDelta.CONSTRUCTOR :
-				case IDelta.ENUM_CONSTANT :
-				case IDelta.METHOD_WITH_DEFAULT_VALUE :
-				case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-				case IDelta.FIELD :
-					buffer.append('#').append(delta.getKey());
-					break;
-				case IDelta.MAJOR_VERSION :
-				case IDelta.MINOR_VERSION :
-					buffer
-						.append(Util.getDeltaFlagsName(flags))
-						.append('_')
-						.append(Util.getDeltaKindName(delta.getKind()));
-					break;
-			}
-			String excludeListKey = String.valueOf(buffer);
-			if (this.excludedElement.contains(excludeListKey)) {
-				return true;
-			}
-			this.nonExcludedElements.add(excludeListKey);
-			return false;
-		}
-		private void initializeExcludedElement() {
-			this.excludedElement = new HashSet();
-			if (this.excludeListLocation == null) return;
-			File file = new File(this.excludeListLocation);
-			if (!file.exists()) return;
-			InputStream stream = null;
-			char[] contents = null;
-			try {
-				stream = new BufferedInputStream(new FileInputStream(file));
-				contents = Util.getInputStreamAsCharArray(stream, -1, "ISO-8859-1"); //$NON-NLS-1$
-			} catch (FileNotFoundException e) {
-				// ignore
-			} catch (IOException e) {
-				// ignore
-			} finally {
-				if (stream != null) {
-					try {
-						stream.close();
-					} catch (IOException e) {
-						// ignore
-					}
-				}
-			}
-			if (contents == null) return;
-			LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));
-			String line = null;
-			try {
-				while ((line = reader.readLine()) != null) {
-					if (line.startsWith("#")) continue; //$NON-NLS-1$
-					this.excludedElement.add(line);
-				}
-			} catch (IOException e) {
-				// ignore
-			} finally {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-		
-		public String getPotentialExcludeList() {
-			if (this.nonExcludedElements == null) return Util.EMPTY_STRING;
-			Collections.sort(this.nonExcludedElements);
-			StringWriter stringWriter = new StringWriter();
-			PrintWriter writer = new PrintWriter(stringWriter);
-			for (Iterator iterator = this.nonExcludedElements.iterator(); iterator.hasNext(); ) {
-				writer.println(iterator.next());
-			}
-			writer.close();
-			return String.valueOf(stringWriter.getBuffer());
-		}
 	}
 
-	private static final String REFERENCE = "reference"; //$NON-NLS-1$
 	private static final String CURRENT = "currentProfile"; //$NON-NLS-1$
-	private static final String REFERENCE_PROFILE_NAME = "reference_profile"; //$NON-NLS-1$
 	private static final String CURRENT_PROFILE_NAME = "current_profile"; //$NON-NLS-1$
+	private static final String REFERENCE = "reference"; //$NON-NLS-1$
+	private static final String REFERENCE_PROFILE_NAME = "reference_profile"; //$NON-NLS-1$
 
 	private boolean debug;
 
-	private String referenceLocation;
-	private String profileLocation;
-	private String reportLocation;
 	private String eeFileLocation;
 	private String excludeListLocation;
+	private String profileLocation;
+	private String referenceLocation;
+	private String reportLocation;
 
-	public void setProfile(String profileLocation) {
-		this.profileLocation = profileLocation;
-	}
-	public void setReference(String referenceLocation) {
-		this.referenceLocation = referenceLocation;
-	}
-	public void setReport(String reportLocation) {
-		this.reportLocation = reportLocation;
-	}
-	public void setExcludeList(String excludeListLocation) {
-		this.excludeListLocation = excludeListLocation;
-	}
-	public void setEEFile(String eeFileLocation) {
-		this.eeFileLocation = eeFileLocation;
-	}
-	public void setDebug(String debugValue) {
-		this.debug = Boolean.toString(true).equals(debugValue); 
-	}
 	public void execute() throws BuildException {
 		if (this.debug) {
 			System.out.println("reference : " + this.referenceLocation); //$NON-NLS-1$
@@ -269,13 +202,14 @@ public class APIFreezeTask extends CommonUtilsTask {
 				|| this.reportLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
-			writer.println("Missing arguments :"); //$NON-NLS-1$
-			writer.print("reference location :"); //$NON-NLS-1$
-			writer.println(this.referenceLocation);
-			writer.print("current profile location :"); //$NON-NLS-1$
-			writer.println(this.profileLocation);
-			writer.print("report location :"); //$NON-NLS-1$
-			writer.println(this.reportLocation);
+			writer.println(
+				Messages.bind(Messages.printArguments,
+					new String[] {
+						this.referenceLocation,
+						this.profileLocation,
+						this.reportLocation,
+					})
+			);
 			writer.flush();
 			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
@@ -285,21 +219,17 @@ public class APIFreezeTask extends CommonUtilsTask {
 		if (this.debug) {
 			time = System.currentTimeMillis();
 		}
-		File tempDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
-		
-		File referenceInstallDir = new File(tempDir, REFERENCE);
-		extractSDK(referenceInstallDir, this.referenceLocation);
+		File referenceInstallDir = extractSDK(REFERENCE, this.referenceLocation);
 
-		File profileInstallDir = new File(tempDir, CURRENT);
-		extractSDK(profileInstallDir, this.profileLocation);
+		File profileInstallDir = extractSDK(CURRENT, this.profileLocation);
 		if (this.debug) {
 			System.out.println("Extraction of both archives : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
 		// run the comparison
 		// create profile for the reference
-		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(tempDir, REFERENCE), this.eeFileLocation);
-		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(tempDir, CURRENT), this.eeFileLocation);
+		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir, REFERENCE), this.eeFileLocation);
+		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(profileInstallDir, CURRENT), this.eeFileLocation);
 		
 		IDelta delta = null;
 		if (this.debug) {
@@ -315,16 +245,16 @@ public class APIFreezeTask extends CommonUtilsTask {
 			}
 			referenceProfile.dispose();
 			currentProfile.dispose();
-			Util.delete(referenceInstallDir);
-			Util.delete(profileInstallDir);
+			deleteProfile(this.referenceLocation, REFERENCE);
+			deleteProfile(this.profileLocation, CURRENT);
 			if (this.debug) {
 				System.out.println("Cleanup : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				time = System.currentTimeMillis();
 			}
 		}
 		if (delta == null) {
-			// an error occured during the comparison
-			throw new BuildException("An error occured during the comparison"); //$NON-NLS-1$
+			// an error occurred during the comparison
+			throw new BuildException(Messages.errorInComparison);
 		}
 		if (delta != ApiComparator.NO_DELTA) {
 			// dump the report in the appropriate folder
@@ -338,7 +268,8 @@ public class APIFreezeTask extends CommonUtilsTask {
 				File outputDir = outputFile.getParentFile();
 				if (!outputDir.exists()) {
 					if (!outputDir.mkdirs()) {
-						throw new BuildException("An error occured creating the parent of the report file : " + this.reportLocation); //$NON-NLS-1$
+						throw new BuildException(
+							Messages.bind(Messages.errorCreatingParentReportFile, this.reportLocation));
 					}
 				}
 			}
@@ -372,5 +303,23 @@ public class APIFreezeTask extends CommonUtilsTask {
 				System.out.println("Report generation : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+	}
+	public void setDebug(String debugValue) {
+		this.debug = Boolean.toString(true).equals(debugValue); 
+	}
+	public void setEEFile(String eeFileLocation) {
+		this.eeFileLocation = eeFileLocation;
+	}
+	public void setExcludeList(String excludeListLocation) {
+		this.excludeListLocation = excludeListLocation;
+	}
+	public void setProfile(String profileLocation) {
+		this.profileLocation = profileLocation;
+	}
+	public void setReference(String referenceLocation) {
+		this.referenceLocation = referenceLocation;
+	}
+	public void setReport(String reportLocation) {
+		this.reportLocation = reportLocation;
 	}
 }

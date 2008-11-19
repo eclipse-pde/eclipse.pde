@@ -42,6 +42,17 @@ public class Messages extends NLS {
 	public static String fullReportTask_indexsummary_even;
 	public static String fullReportTask_indexsummary_odd;
 
+	public static String printArguments;
+	public static String errorInComparison;
+	public static String errorCreatingParentReportFile;
+	public static String errorCreatingReportDirectory;
+	public static String directoryIsEmpty;
+	public static String fileDoesnotExist;
+	public static String couldNotDelete;
+	public static String couldNotCreate;
+	public static String couldNotUnzip;
+	public static String couldNotUntar;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

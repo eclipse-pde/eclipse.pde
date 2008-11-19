@@ -14,13 +14,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.LineNumberReader;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,22 +59,88 @@ import org.w3c.dom.NodeList;
  * Ant task to run the API tool verification during Eclipse build.
  */
 public class APIToolsVerificationTask extends CommonUtilsTask {
-	public static final String BUNDLE_VERSION = "bundleVersion"; //$NON-NLS-1$
-	public static final String USAGE = "usage"; //$NON-NLS-1$
-	public static final String COMPATIBILITY = "compatibility"; //$NON-NLS-1$
-	private static final Summary[] NO_SUMMARIES = new Summary[0];
-	
 	/**
 	 * This filter store is only used to filter problem using existing filters.
 	 * It doesn't add or remove any filters.
 	 */
 	private static class AntFilterStore implements IApiFilterStore {
 		private static final String GLOBAL = "!global!"; //$NON-NLS-1$
-		private Map fFilterMap;
+		private static int loadIntegerAttribute(Element element, String name) {
+			String value = element.getAttribute(name);
+			if(value.length() == 0) {
+				return -1;
+			}
+			try {
+				int number = Integer.parseInt(value);
+				return number;
+			}
+			catch(NumberFormatException nfe) {}
+			return -1;
+		}
 		private boolean debug;
+
+		private Map fFilterMap;
 
 		public AntFilterStore(boolean debug, String filtersRoot, String componentID) {
 			this.initialize(filtersRoot, componentID);
+		}
+
+		public void addFilters(IApiProblem[] problems) {
+			// do nothing
+		}
+
+		public void addFilters(IApiProblemFilter[] filters) {
+			// do nothing
+		}
+
+		private boolean argumentsEquals(String[] problemMessageArguments,
+				String[] filterProblemMessageArguments) {
+			// filter problems message arguments are always simple name
+			// problem message arguments are fully qualified name outside the IDE
+			int length = problemMessageArguments.length;
+			if (length == filterProblemMessageArguments.length) {
+				for (int i = 0; i < length; i++) {
+					String problemMessageArgument = problemMessageArguments[i];
+					String filterProblemMessageArgument = filterProblemMessageArguments[i];
+					if (problemMessageArgument.equals(filterProblemMessageArgument)) {
+						continue;
+					}
+					int index = problemMessageArgument.lastIndexOf('.');
+					int filterProblemIndex = filterProblemMessageArgument.lastIndexOf('.');
+					if (index == -1) {
+						if (filterProblemIndex == -1) {
+							return false; // simple names should match
+						}
+						if (filterProblemMessageArgument.substring(filterProblemIndex + 1).equals(problemMessageArgument)) {
+							continue;
+						} else {
+							return false;
+						}
+					} else if (filterProblemIndex != -1) {
+						return false; // fully qualified name should match
+					} else {
+						if (problemMessageArgument.substring(index + 1).equals(filterProblemMessageArgument)) {
+							continue;
+						} else {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+
+		public void dispose() {
+			// do nothing
+		}
+
+		public IApiProblemFilter[] getFilters(IResource resource) {
+			return null;
+		}
+
+		public IResource[] getResources() {
+			return null;
 		}
 
 		/**
@@ -202,26 +265,6 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			}
 		}
 
-		public void addFilters(IApiProblemFilter[] filters) {
-			// do nothing
-		}
-
-		public void addFilters(IApiProblem[] problems) {
-			// do nothing
-		}
-
-		public void dispose() {
-			// do nothing
-		}
-
-		public IApiProblemFilter[] getFilters(IResource resource) {
-			return null;
-		}
-
-		public IResource[] getResources() {
-			return null;
-		}
-
 		public boolean isFiltered(IApiProblem problem) {
 			if (this.fFilterMap == null || this.fFilterMap.isEmpty()) return false;
 			String typeName = problem.getTypeName();
@@ -268,66 +311,14 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			}
 			return false;
 		}
-
-		private boolean argumentsEquals(String[] problemMessageArguments,
-				String[] filterProblemMessageArguments) {
-			// filter problems message arguments are always simple name
-			// problem message arguments are fully qualified name outside the IDE
-			int length = problemMessageArguments.length;
-			if (length == filterProblemMessageArguments.length) {
-				for (int i = 0; i < length; i++) {
-					String problemMessageArgument = problemMessageArguments[i];
-					String filterProblemMessageArgument = filterProblemMessageArguments[i];
-					if (problemMessageArgument.equals(filterProblemMessageArgument)) {
-						continue;
-					}
-					int index = problemMessageArgument.lastIndexOf('.');
-					int filterProblemIndex = filterProblemMessageArgument.lastIndexOf('.');
-					if (index == -1) {
-						if (filterProblemIndex == -1) {
-							return false; // simple names should match
-						}
-						if (filterProblemMessageArgument.substring(filterProblemIndex + 1).equals(problemMessageArgument)) {
-							continue;
-						} else {
-							return false;
-						}
-					} else if (filterProblemIndex != -1) {
-						return false; // fully qualified name should match
-					} else {
-						if (problemMessageArgument.substring(index + 1).equals(filterProblemMessageArgument)) {
-							continue;
-						} else {
-							return false;
-						}
-					}
-				}
-				return true;
-			}
-			return false;
-		}
-
 		public boolean removeFilters(IApiProblemFilter[] filters) {
 			return false;
 		}
-		private static int loadIntegerAttribute(Element element, String name) {
-			String value = element.getAttribute(name);
-			if(value.length() == 0) {
-				return -1;
-			}
-			try {
-				int number = Integer.parseInt(value);
-				return number;
-			}
-			catch(NumberFormatException nfe) {}
-			return -1;
-		}
 	}
-	
 	private static class Summary {
-		List apiUsageProblems = new ArrayList();
-		List apiCompatibilityProblems = new ArrayList();
 		List apiBundleVersionProblems = new ArrayList();
+		List apiCompatibilityProblems = new ArrayList();
+		List apiUsageProblems = new ArrayList();
 		String componentID;
 
 		public Summary(String componentID, IApiProblem[] apiProblems) {
@@ -346,7 +337,6 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 				}
 			}
 		}
-		
 		private void dumpProblems(String title, List problemsList,
 				PrintWriter printWriter) {
 			printWriter.println(title);
@@ -359,17 +349,6 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 				printWriter.println("None"); //$NON-NLS-1$
 			}
 		}
-
-		public String getTitle() {
-			StringWriter writer = new StringWriter();
-			PrintWriter printWriter = new PrintWriter(writer);
-			printTitle(printWriter);
-
-			printWriter.flush();
-			printWriter.close();
-			return String.valueOf(writer.getBuffer());
-		}
-
 		public String getDetails() {
 			StringWriter writer = new StringWriter();
 			PrintWriter printWriter = new PrintWriter(writer);
@@ -385,21 +364,15 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			printWriter.close();
 			return String.valueOf(writer.getBuffer());
 		}
-
-		public String toString() {
+		public String getTitle() {
 			StringWriter writer = new StringWriter();
 			PrintWriter printWriter = new PrintWriter(writer);
 			printTitle(printWriter);
-
-			dumpProblems("Usage", apiUsageProblems, printWriter); //$NON-NLS-1$
-			dumpProblems("Compatibility", apiCompatibilityProblems, printWriter); //$NON-NLS-1$
-			dumpProblems("Bundle versions", apiBundleVersionProblems, printWriter); //$NON-NLS-1$
 
 			printWriter.flush();
 			printWriter.close();
 			return String.valueOf(writer.getBuffer());
 		}
-
 		private void printTitle(PrintWriter printWriter) {
 			printWriter.print("Results for " + this.componentID + " : "); //$NON-NLS-1$ //$NON-NLS-2$
 			printWriter.print('(');
@@ -419,43 +392,147 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			printWriter.print(apiBundleVersionProblems.size());
 			printWriter.println(')');
 		}
+		public String toString() {
+			StringWriter writer = new StringWriter();
+			PrintWriter printWriter = new PrintWriter(writer);
+			printTitle(printWriter);
+
+			dumpProblems("Usage", apiUsageProblems, printWriter); //$NON-NLS-1$
+			dumpProblems("Compatibility", apiCompatibilityProblems, printWriter); //$NON-NLS-1$
+			dumpProblems("Bundle versions", apiBundleVersionProblems, printWriter); //$NON-NLS-1$
+
+			printWriter.flush();
+			printWriter.close();
+			return String.valueOf(writer.getBuffer());
+		}
 	}
-	private static final String REFERENCE = "reference"; //$NON-NLS-1$
+	public static final String BUNDLE_VERSION = "bundleVersion"; //$NON-NLS-1$
+	public static final String COMPATIBILITY = "compatibility"; //$NON-NLS-1$
+	
 	private static final String CURRENT = "currentProfile"; //$NON-NLS-1$
-	private static final String REFERENCE_PROFILE_NAME = "reference_profile"; //$NON-NLS-1$
+	
 	private static final String CURRENT_PROFILE_NAME = "current_profile"; //$NON-NLS-1$
+	private static final Summary[] NO_SUMMARIES = new Summary[0];
+	private static final String REFERENCE = "reference"; //$NON-NLS-1$
+	private static final String REFERENCE_PROFILE_NAME = "reference_profile"; //$NON-NLS-1$
+	public static final String USAGE = "usage"; //$NON-NLS-1$
 
-	private boolean debug;
-
-	private String referenceLocation;
-	private String profileLocation;
-	private String reportLocation;
-	private String eeFileLocation;
+	private Set excludedElement;
 	private String excludeListLocation;
 	private String filterStoreRoot;
-	private Set excludedElement;	
 
-	public void setProfile(String profileLocation) {
-		this.profileLocation = profileLocation;
+	private Summary[] createAllSummaries(Map allProblems) {
+		Set entrySet = allProblems.entrySet();
+		int size = entrySet.size();
+		if (size == 0) {
+			return NO_SUMMARIES;
+		}
+		List allEntries = new ArrayList();
+		allEntries.addAll(entrySet);
+		Collections.sort(allEntries, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				Map.Entry entry1 = (Map.Entry) o1;
+				Map.Entry entry2 = (Map.Entry) o2;
+				return ((String) entry1.getKey()).compareTo((String) entry2.getKey());
+			}
+		});
+		Summary[] summaries = new Summary[size];
+		int i = 0;
+		for (Iterator iterator = allEntries.iterator(); iterator.hasNext();) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			summaries[i++] = createProblemSummary((String) entry.getKey(), (IApiProblem[]) entry.getValue());
+		}
+		if (this.debug) {
+			dumpSummaries(summaries);
+		}
+		return summaries;
 	}
-	public void setReference(String referenceLocation) {
-		this.referenceLocation = referenceLocation;
+	private Summary createProblemSummary(String componentID, IApiProblem[] apiProblems) {
+		return new Summary(componentID, apiProblems);
 	}
-	public void setReport(String reportLocation) {
-		this.reportLocation = reportLocation;
+	private void dumpReport(Summary[] summaries, List bundlesNames) {
+		for (int i = 0, max = summaries.length; i < max; i++) {
+			Summary summary = summaries[i];
+			String contents = null;
+			String componentID = summary.componentID;
+			if (this.excludedElement != null && this.excludedElement.contains(componentID)) {
+				continue;
+			}
+			try {
+				Document document = Util.newDocument();
+				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
+				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_REPORT_CURRENT_VERSION);
+				report.setAttribute(IApiXmlConstants.ATTR_COMPONENT_ID, componentID);
+				document.appendChild(report);
+				
+				Element category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
+				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_COMPATIBILITY));
+				category.setAttribute(IApiXmlConstants.ATTR_VALUE, COMPATIBILITY);
+				insertAPIProblems(category, document, summary.apiCompatibilityProblems);
+				report.appendChild(category);
+
+				category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
+				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_USAGE));
+				category.setAttribute(IApiXmlConstants.ATTR_VALUE, USAGE);
+				insertAPIProblems(category, document, summary.apiUsageProblems);
+				report.appendChild(category);
+				
+				category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
+				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_VERSION));
+				category.setAttribute(IApiXmlConstants.ATTR_VALUE, BUNDLE_VERSION);
+				insertAPIProblems(category, document, summary.apiBundleVersionProblems);
+				report.appendChild(category);
+
+				contents = Util.serializeDocument(document);
+			} catch (DOMException e) {
+				throw new BuildException(e);
+			} catch (CoreException e) {
+				throw new BuildException(e);
+			}
+			if (contents != null) {
+				saveReport(componentID, contents);
+			}
+		}
+		if (bundlesNames != null && bundlesNames.size() != 0) {
+			String contents = null;
+			try {
+				Document document = Util.newDocument();
+				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
+				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_REPORT_CURRENT_VERSION);
+				document.appendChild(report);
+				
+				for (Iterator iterator = bundlesNames.iterator(); iterator.hasNext();) {
+					String bundleName = (String) iterator.next();
+					if (this.excludedElement == null || !this.excludedElement.contains(bundleName)) {
+						Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
+						bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
+						report.appendChild(bundle);
+					}
+				}
+				contents = Util.serializeDocument(document);
+			} catch (DOMException e) {
+				throw new BuildException(e);
+			} catch (CoreException e) {
+				throw new BuildException(e);
+			}
+			if (contents != null) {
+				saveReport("allNonApiBundles", contents); //$NON-NLS-1$
+			}
+		}
 	}
-	public void setEEFile(String eeFileLocation) {
-		this.eeFileLocation = eeFileLocation;
+	private void dumpSummaries(Summary[] summaries) {
+		for (int i = 0, max = summaries.length; i < max; i++) {
+			System.out.println(summaries[i].getTitle());
+		}
+		for (int i = 0, max = summaries.length; i < max; i++) {
+			System.out.println(summaries[i].getDetails());
+		}
 	}
-	public void setDebug(String debugValue) {
-		this.debug = Boolean.toString(true).equals(debugValue); 
-	}
-	public void setFilterStoreRoot(String filterStoreRoot) {
-		this.filterStoreRoot = filterStoreRoot; 
-	}
-	public void setExcludeList(String excludeListLocation) {
-		this.excludeListLocation = excludeListLocation;
-	}
+	/**
+	 * Run the api tools verification task
+	 * 
+	 * @throws BuildException exception is thrown if anything goes wrong during the verification
+	 */
 	public void execute() throws BuildException {
 		if (this.debug) {
 			System.out.println("reference : " + this.referenceLocation); //$NON-NLS-1$
@@ -473,7 +550,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			}
 		}
 		if (this.excludeListLocation != null) {
-			initializeExcludedElement();
+			this.excludedElement = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation);
 		}
 		if (this.referenceLocation == null
 				|| this.profileLocation == null
@@ -496,21 +573,17 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		if (this.debug) {
 			time = System.currentTimeMillis();
 		}
-		File tempDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
-		
-		File referenceInstallDir = new File(tempDir, REFERENCE);
-		extractSDK(referenceInstallDir, this.referenceLocation);
+		File referenceInstallDir = extractSDK(REFERENCE, this.referenceLocation);
 
-		File profileInstallDir = new File(tempDir, CURRENT);
-		extractSDK(profileInstallDir, this.profileLocation);
+		File profileInstallDir = extractSDK(CURRENT, this.profileLocation);
 		if (this.debug) {
-			System.out.println("Extraction of both archives : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("Preparation of profile installation : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
 		// run the comparison
 		// create profile for the reference
-		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(tempDir, REFERENCE), this.eeFileLocation);
-		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(tempDir, CURRENT), this.eeFileLocation);
+		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir, REFERENCE), this.eeFileLocation);
+		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(profileInstallDir, CURRENT), this.eeFileLocation);
 		
 		if (this.debug) {
 			System.out.println("Creation of both profiles : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -599,8 +672,8 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			}
 			referenceProfile.dispose();
 			currentProfile.dispose();
-			Util.delete(referenceInstallDir);
-			Util.delete(profileInstallDir);
+			deleteProfile(this.referenceLocation, REFERENCE);
+			deleteProfile(this.profileLocation, CURRENT);
 			if (this.debug) {
 				System.out.println("Cleanup : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -618,173 +691,6 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		if (this.filterStoreRoot == null) return null;
 		return new AntFilterStore(this.debug, this.filterStoreRoot, name);
 	}
-	private boolean isApiToolsComponent(IApiComponent apiComponent) {
-		File file = new File(apiComponent.getLocation());
-		if (file.exists()) {
-			if (file.isDirectory()) {
-				// directory binary bundle
-				File apiDescription = new File(file, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
-				return apiDescription.exists();
-			}
-			ZipFile zipFile = null;
-			try {
-				zipFile = new ZipFile(file);
-				return zipFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME) != null;
-			} catch (ZipException e) {
-				// ignore
-			} catch (IOException e) {
-				// ignore
-			} finally {
-				try {
-					if (zipFile != null) zipFile.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-		return false;
-	}
-	private Summary[] createAllSummaries(Map allProblems) {
-		Set entrySet = allProblems.entrySet();
-		int size = entrySet.size();
-		if (size == 0) {
-			return NO_SUMMARIES;
-		}
-		List allEntries = new ArrayList();
-		allEntries.addAll(entrySet);
-		Collections.sort(allEntries, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				Map.Entry entry1 = (Map.Entry) o1;
-				Map.Entry entry2 = (Map.Entry) o2;
-				return ((String) entry1.getKey()).compareTo((String) entry2.getKey());
-			}
-		});
-		Summary[] summaries = new Summary[size];
-		int i = 0;
-		for (Iterator iterator = allEntries.iterator(); iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			summaries[i++] = createProblemSummary((String) entry.getKey(), (IApiProblem[]) entry.getValue());
-		}
-		if (this.debug) {
-			dumpSummaries(summaries);
-		}
-		return summaries;
-	}
-	private void dumpReport(Summary[] summaries, List bundlesNames) {
-		for (int i = 0, max = summaries.length; i < max; i++) {
-			Summary summary = summaries[i];
-			String contents = null;
-			String componentID = summary.componentID;
-			if (this.excludedElement != null && this.excludedElement.contains(componentID)) {
-				continue;
-			}
-			try {
-				Document document = Util.newDocument();
-				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
-				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_REPORT_CURRENT_VERSION);
-				report.setAttribute(IApiXmlConstants.ATTR_COMPONENT_ID, componentID);
-				document.appendChild(report);
-				
-				Element category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
-				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_COMPATIBILITY));
-				category.setAttribute(IApiXmlConstants.ATTR_VALUE, COMPATIBILITY);
-				insertAPIProblems(category, document, summary.apiCompatibilityProblems);
-				report.appendChild(category);
-
-				category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
-				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_USAGE));
-				category.setAttribute(IApiXmlConstants.ATTR_VALUE, USAGE);
-				insertAPIProblems(category, document, summary.apiUsageProblems);
-				report.appendChild(category);
-				
-				category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
-				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_VERSION));
-				category.setAttribute(IApiXmlConstants.ATTR_VALUE, BUNDLE_VERSION);
-				insertAPIProblems(category, document, summary.apiBundleVersionProblems);
-				report.appendChild(category);
-
-				contents = Util.serializeDocument(document);
-			} catch (DOMException e) {
-				throw new BuildException(e);
-			} catch (CoreException e) {
-				throw new BuildException(e);
-			}
-			if (contents != null) {
-				saveReport(componentID, contents);
-			}
-		}
-		if (bundlesNames != null && bundlesNames.size() != 0) {
-			String contents = null;
-			try {
-				Document document = Util.newDocument();
-				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
-				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_REPORT_CURRENT_VERSION);
-				document.appendChild(report);
-				
-				for (Iterator iterator = bundlesNames.iterator(); iterator.hasNext();) {
-					String bundleName = (String) iterator.next();
-					if (this.excludedElement == null || !this.excludedElement.contains(bundleName)) {
-						Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
-						bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
-						report.appendChild(bundle);
-					}
-				}
-				contents = Util.serializeDocument(document);
-			} catch (DOMException e) {
-				throw new BuildException(e);
-			} catch (CoreException e) {
-				throw new BuildException(e);
-			}
-			if (contents != null) {
-				saveReport("allNonApiBundles", contents); //$NON-NLS-1$
-			}
-		}
-	}
-	private void saveReport(String componentID, String contents) {
-		File dir = new File(this.reportLocation);
-		if (!dir.exists()) {
-			if (!dir.mkdirs()) {
-				throw new BuildException("Could not create report directory : " + this.reportLocation); //$NON-NLS-1$
-			}
-		}
-		File reportComponentIDDir = new File(dir, componentID);
-		if (!reportComponentIDDir.exists()) {
-			if (!reportComponentIDDir.mkdirs()) {
-				throw new BuildException("Could not create report directory : " + reportComponentIDDir); //$NON-NLS-1$
-			}
-		}
-		File reportFile = new File(reportComponentIDDir, "report.xml"); //$NON-NLS-1$
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter(reportFile));
-			writer.write(contents);
-			writer.flush();
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-	}
-	private Summary createProblemSummary(String componentID, IApiProblem[] apiProblems) {
-		return new Summary(componentID, apiProblems);
-	}
-	
-	private void dumpSummaries(Summary[] summaries) {
-		for (int i = 0, max = summaries.length; i < max; i++) {
-			System.out.println(summaries[i].getTitle());
-		}
-		for (int i = 0, max = summaries.length; i < max; i++) {
-			System.out.println(summaries[i].getDetails());
-		}
-	}
-	
-	
 	/**
 	 * Returns an element that contains all the api problem nodes.
 	 *
@@ -843,44 +749,141 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			apiProblems.appendChild(element);
 		}
 	}
-	private void initializeExcludedElement() {
-		this.excludedElement = new HashSet();
-		File file = new File(this.excludeListLocation);
-		if (!file.exists()) return;
-		InputStream stream = null;
-		char[] contents = null;
-		try {
-			stream = new BufferedInputStream(new FileInputStream(file));
-			contents = Util.getInputStreamAsCharArray(stream, -1, "ISO-8859-1"); //$NON-NLS-1$
-		} catch (FileNotFoundException e) {
-			// ignore
-		} catch (IOException e) {
-			// ignore
-		} finally {
-			if (stream != null) {
+	private boolean isApiToolsComponent(IApiComponent apiComponent) {
+		File file = new File(apiComponent.getLocation());
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				// directory binary bundle
+				File apiDescription = new File(file, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
+				return apiDescription.exists();
+			}
+			ZipFile zipFile = null;
+			try {
+				zipFile = new ZipFile(file);
+				return zipFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME) != null;
+			} catch (ZipException e) {
+				// ignore
+			} catch (IOException e) {
+				// ignore
+			} finally {
 				try {
-					stream.close();
+					if (zipFile != null) zipFile.close();
 				} catch (IOException e) {
 					// ignore
 				}
 			}
 		}
-		if (contents == null) return;
-		LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));
-		String line = null;
-		try {
-			while ((line = reader.readLine()) != null) {
-				if (line.startsWith("#")) continue; //$NON-NLS-1$
-				this.excludedElement.add(line);
-			}
-		} catch (IOException e) {
-			// ignore
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) {
-				// ignore
+		return false;
+	}
+	private void saveReport(String componentID, String contents) {
+		File dir = new File(this.reportLocation);
+		if (!dir.exists()) {
+			if (!dir.mkdirs()) {
+				throw new BuildException(Messages.bind(Messages.errorCreatingReportDirectory, this.reportLocation));
 			}
 		}
+		File reportComponentIDDir = new File(dir, componentID);
+		if (!reportComponentIDDir.exists()) {
+			if (!reportComponentIDDir.mkdirs()) {
+				throw new BuildException(Messages.bind(Messages.errorCreatingReportDirectory, reportComponentIDDir));
+			}
+		}
+		File reportFile = new File(reportComponentIDDir, "report.xml"); //$NON-NLS-1$
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new FileWriter(reportFile));
+			writer.write(contents);
+			writer.flush();
+		} catch (IOException e) {
+			ApiPlugin.log(e);
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+	}
+	/**
+	 * Set the debug value.
+	 *
+	 * @param debugValue the given debug value
+	 */
+	public void setDebug(String debugValue) {
+		this.debug = Boolean.toString(true).equals(debugValue); 
+	}
+	/**
+	 * Set the ee file to use.
+	 * 
+	 *  <p>By default a ee file corresponding to a JavaSE-1.6 execution environment.
+	 *  This file is optional.</p>
+	 *
+	 * @param eeFileLocation the given execution environment file
+	 */
+	public void setEEFile(String eeFileLocation) {
+		this.eeFileLocation = eeFileLocation;
+	}
+	/**
+	 * Set the exclude list location.
+	 * 
+	 * <p>The exclude list is used to know what bundles should excluded from the xml report generated by the task
+	 * execution.</p>`
+	 *
+	 * @param excludeListLocation the given location for the excluded list file
+	 */
+	public void setExcludeList(String excludeListLocation) {
+		this.excludeListLocation = excludeListLocation;
+	}
+	/**
+	 * Set the filter store root.
+	 * 
+	 * <p>The argument is the root directory of the .api_filters files that should be used to filter potential
+	 * problems created by the api tooling analysis. The root needs to contain the following structure:</p>
+	 * <pre>
+	 * root
+	 *  |
+	 *  +-- component name (i.e. org.eclipse.jface)
+	 *         |
+	 *         +--- .api_filters
+	 * </pre>
+	 *
+	 * @param filterStoreRoot the root of the .api_filters files
+	 */
+	public void setFilterStoreRoot(String filterStoreRoot) {
+		this.filterStoreRoot = filterStoreRoot; 
+	}
+	
+	/**
+	 * Set the profile location.
+	 * 
+	 * @param profileLocation the given location for the profile to analyze
+	 */
+	public void setProfile(String profileLocation) {
+		this.profileLocation = profileLocation;
+	}
+	/**
+	 * Set the reference profile location.
+	 * 
+	 * @param profileLocation the given location for the reference profile to analyze
+	 */
+	public void setReference(String referenceLocation) {
+		this.referenceLocation = referenceLocation;
+	}
+	/**
+	 * Set the location where the reports should be dropped.
+	 * 
+	 * <p>Once the task is completed, reports are dropped in this directory using a structure similar to
+	 * the filter root. A subfolder is created for each component that has some problems to be reported.
+	 * The subfolder contains a unique file called "report.xml".</p>
+	 * 
+	 * <p>A special folder called "allNonApiBundles" is also created in this folder that contains a xml file called
+	 * "report.xml". This file lists all the bundles that are not using the api tooling nature.</p>
+	 * 
+	 * @param profileLocation the given location for the reference profile to analyze
+	 */
+	public void setReport(String reportLocation) {
+		this.reportLocation = reportLocation;
 	}
 }

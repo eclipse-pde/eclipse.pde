@@ -10,10 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.LineNumberReader;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -22,43 +30,20 @@ import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.util.TarException;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Common code for ant task.
  *
  */
-public abstract class CommonUtilsTask extends Task {
-	private static final String PLUGINS_FOLDER_NAME = "plugins"; //$NON-NLS-1$
-	private static final String ECLIPSE_FOLDER_NAME = "eclipse"; //$NON-NLS-1$
+abstract class CommonUtilsTask extends Task {
 	private static final String CVS_FOLDER_NAME = "CVS"; //$NON-NLS-1$
+	private static final String ECLIPSE_FOLDER_NAME = "eclipse"; //$NON-NLS-1$
+	protected static final String ISO_8859_1 = "ISO-8859-1"; //$NON-NLS-1$
+	private static final String PLUGINS_FOLDER_NAME = "plugins"; //$NON-NLS-1$
 
-	public static void extractSDK(File installDir, String location) {
-		if (installDir.exists()) {
-			// delta existing folder
-			if (!Util.delete(installDir)) {
-				throw new BuildException("Could not delete : " + installDir.getAbsolutePath()); //$NON-NLS-1$
-			}
-		}
-		if (!installDir.mkdirs()) {
-			throw new BuildException("Could not create : " + installDir.getAbsolutePath()); //$NON-NLS-1$
-		}
-		File locationFile = new File(location);
-		if (!locationFile.exists()) {
-			throw new BuildException("File doesn't exist : " + location); //$NON-NLS-1$
-		}
-		try {
-			Util.unzip(location, installDir.getAbsolutePath());
-		} catch (IOException e) {
-			throw new BuildException("Could not unzip SDK into : " + installDir.getAbsolutePath()); //$NON-NLS-1$
-		}
-	}
-	
-	public static String getInstallDir(File dir, String profileInstallName) {
-		return new File(new File(new File(dir, profileInstallName), ECLIPSE_FOLDER_NAME), PLUGINS_FOLDER_NAME).getAbsolutePath();
-	}
-
-	public static IApiBaseline createProfile(String profileName, String fileName, String eeFileLocation) {
+	protected static IApiBaseline createProfile(String profileName, File dir, String eeFileLocation) {
 		try {
 			IApiBaseline baseline = null;
 			if (ApiPlugin.isRunningInFramework()) {
@@ -69,10 +54,11 @@ public abstract class CommonUtilsTask extends Task {
 				baseline = ApiModelFactory.newApiBaseline(profileName, Util.getEEDescriptionFile());
 			}
 			// create a component for each jar/directory in the folder
-			File dir = new File(fileName);
 			File[] files = dir.listFiles();
 			if(files == null) {
-				throw new BuildException("The reference directory is empty: "+fileName);  //$NON-NLS-1$
+				throw new BuildException(
+						Messages.bind(Messages.directoryIsEmpty,
+						dir.getAbsolutePath()));
 			}
 			List components = new ArrayList();
 			for (int i = 0; i < files.length; i++) {
@@ -93,5 +79,137 @@ public abstract class CommonUtilsTask extends Task {
 			return null;
 		}
 	}
+	protected static void deleteProfile(String referenceLocation, String installDirName) {
+		if (Util.isArchive(referenceLocation)) {
+			File tempDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
+			File installDir = new File(tempDir, installDirName);
+			Util.delete(installDir);
+		}
+	}
+	protected static File extractSDK(String installDirName, String location) {
+		File file = new File(location);
+		File locationFile = file;
+		if (!locationFile.exists()) {
+			throw new BuildException(Messages.bind(Messages.fileDoesnotExist, location));
+		}
+		if (isArchive(location)) {
+			File tempDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
+			File installDir = new File(tempDir, installDirName);
+			if (installDir.exists()) {
+				// delta existing folder
+				if (!Util.delete(installDir)) {
+					throw new BuildException(
+						Messages.bind(
+							Messages.couldNotDelete,
+							installDir.getAbsolutePath()));
+				}
+			}
+			if (!installDir.mkdirs()) {
+				throw new BuildException(
+						Messages.bind(
+								Messages.couldNotCreate,
+								installDir.getAbsolutePath()));
+			}
+			try {
+				if (isZipJarFile(location)) {
+					Util.unzip(location, installDir.getAbsolutePath());
+				} else if (isTGZFile(location)) {
+					Util.guntar(location, installDir.getAbsolutePath());
+				}
+			} catch (IOException e) {
+				throw new BuildException(
+					Messages.bind(
+						Messages.couldNotUnzip,
+						new String[] {
+								location,
+								installDir.getAbsolutePath()
+						}));
+			} catch (TarException e) {
+				throw new BuildException(
+						Messages.bind(
+								Messages.couldNotUntar,
+								new String[] {
+										location,
+										installDir.getAbsolutePath()
+								}));
+			}
+			return installDir;
+		} else {
+			return locationFile;
+		}
+	}
+	protected static File getInstallDir(File dir, String profileInstallName) {
+		if (isArchive(dir.getName())) {
+			return new File(new File(new File(dir, profileInstallName), ECLIPSE_FOLDER_NAME), PLUGINS_FOLDER_NAME);
+		} else {
+			return new File(new File(dir, ECLIPSE_FOLDER_NAME), PLUGINS_FOLDER_NAME);
+		}
+	}
+	private static boolean isArchive(String fileName) {
+		return isZipJarFile(fileName) || isTGZFile(fileName);
+	}
+	private static boolean isTGZFile(String fileName) {
+		String normalizedFileName = fileName.toLowerCase();
+		return normalizedFileName.endsWith(".tar.gz") //$NON-NLS-1$
+			|| normalizedFileName.endsWith(".tgz"); //$NON-NLS-1$
+	}
+	private static boolean isZipJarFile(String fileName) {
+		String normalizedFileName = fileName.toLowerCase();
+		return normalizedFileName.endsWith(".zip") //$NON-NLS-1$
+			|| normalizedFileName.endsWith(".jar"); //$NON-NLS-1$
+	}
+	protected static Set initializeExcludedElement(String excludeListLocation) {
+		Set excludedElement = new HashSet();
+		if (excludeListLocation == null){
+			return excludedElement;
+		}
+		File file = new File(excludeListLocation);
+		if (!file.exists()) {
+			return excludedElement;
+		}
+		InputStream stream = null;
+		char[] contents = null;
+		try {
+			stream = new BufferedInputStream(new FileInputStream(file));
+			contents = Util.getInputStreamAsCharArray(stream, -1, CommonUtilsTask.ISO_8859_1);
+		} catch (FileNotFoundException e) {
+			// ignore
+		} catch (IOException e) {
+			// ignore
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+		if (contents == null) {
+			return excludedElement;
+		}
+		LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));
+		String line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				if (line.startsWith("#")) continue; //$NON-NLS-1$
+				excludedElement.add(line);
+			}
+		} catch (IOException e) {
+			// ignore
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
+		return excludedElement;
+	}
+	protected boolean debug;
+	protected String eeFileLocation;
+	protected String profileLocation;
+	protected String referenceLocation;
 
+	protected String reportLocation;
 }

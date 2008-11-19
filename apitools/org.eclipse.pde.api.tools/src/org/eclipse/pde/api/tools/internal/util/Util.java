@@ -33,6 +33,7 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -2314,6 +2315,44 @@ public final class Util {
 				zipIn.close();
 				zis.close();
 			} catch (IOException ioe) {
+			}
+		}
+	}
+	/**
+	 * Unzip the contents of the given zip in the given directory (create it if it doesn't exist)
+	 */
+	public static void guntar(String zipPath, String destDirPath) throws TarException, IOException {
+		TarFile tarFile = new TarFile(zipPath);
+		Enumeration entries = tarFile.entries();
+		byte[] buf = new byte[8192];
+		for (;entries.hasMoreElements(); ) {
+			TarEntry zEntry;
+			while ((zEntry = (TarEntry) entries.nextElement()) != null) {
+				// if it is empty directory, create it
+				if (zEntry.getFileType() == TarEntry.DIRECTORY) {
+					new File(destDirPath, zEntry.getName()).mkdirs();
+					continue;
+				}
+				// if it is a file, extract it
+				String filePath = zEntry.getName();
+				int lastSeparator = filePath.lastIndexOf("/"); //$NON-NLS-1$
+				String fileDir = ""; //$NON-NLS-1$
+				if (lastSeparator >= 0) {
+					fileDir = filePath.substring(0, lastSeparator);
+				}
+				//create directory for a file
+				new File(destDirPath, fileDir).mkdirs();
+				//write file
+				File outFile = new File(destDirPath, filePath);
+				BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
+				int n = 0;
+				InputStream inputStream = tarFile.getInputStream(zEntry);
+				BufferedInputStream stream = new BufferedInputStream(inputStream);
+				while ((n = stream.read(buf)) >= 0) {
+					outputStream.write(buf, 0, n);
+				}
+				outputStream.close();
+				stream.close();
 			}
 		}
 	}

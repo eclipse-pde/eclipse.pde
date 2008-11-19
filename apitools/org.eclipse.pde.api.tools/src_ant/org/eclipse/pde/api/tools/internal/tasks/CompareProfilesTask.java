@@ -16,59 +16,29 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.comparator.DeltaXmlVisitor;
-import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Ant task to compare API profiles.
  */
-public class CompareProfilesTask extends Task {
+public class CompareProfilesTask extends CommonUtilsTask {
 	
 	private static final String REPORT_XML_FILE_NAME = "compare.xml"; //$NON-NLS-1$
-	private static final String PLUGINS_FOLDER_NAME = "plugins"; //$NON-NLS-1$
-	private static final String ECLIPSE_FOLDER_NAME = "eclipse"; //$NON-NLS-1$
-	private static final String CVS_FOLDER_NAME = "CVS"; //$NON-NLS-1$
 	private static final String REFERENCE = "reference"; //$NON-NLS-1$
 	private static final String CURRENT = "currentProfile"; //$NON-NLS-1$
 	private static final String REFERENCE_PROFILE_NAME = "reference_profile"; //$NON-NLS-1$
 	private static final String CURRENT_PROFILE_NAME = "current_profile"; //$NON-NLS-1$
 
-	private static final boolean DEBUG = true;
-
-	String referenceLocation;
-	String profileLocation;
-	String reportLocation;
-	String eeFileLocation;
-
-	public void setProfile(String profileLocation) {
-		this.profileLocation = profileLocation;
-	}
-	public void setReference(String referenceLocation) {
-		this.referenceLocation = referenceLocation;
-	}
-	public void setReport(String reportLocation) {
-		this.reportLocation = reportLocation;
-	}
-	
-	public void setEEFile(String eeFileLocation) {
-		this.eeFileLocation = eeFileLocation;
-	}
-	
 	public void execute() throws BuildException {
-		if (DEBUG) {
+		if (this.debug) {
 			System.out.println("reference : " + this.referenceLocation); //$NON-NLS-1$
 			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
 			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
@@ -89,16 +59,15 @@ public class CompareProfilesTask extends Task {
 			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
-		// unzip reference
-		File tempDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
-		extractSDK(tempDir, REFERENCE, this.referenceLocation);
+		// create reference
+		File referenceInstallDir = extractSDK(REFERENCE, this.referenceLocation);
 
-		extractSDK(tempDir, CURRENT, this.profileLocation);
+		File profileInstallDir = extractSDK(CURRENT, this.profileLocation);
 
 		// run the comparison
 		// create profile for the reference
-		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(tempDir, REFERENCE), this.eeFileLocation);
-		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(tempDir, CURRENT), this.eeFileLocation);
+		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir, REFERENCE), this.eeFileLocation);
+		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(profileInstallDir, CURRENT), this.eeFileLocation);
 		
 		IDelta delta = null;
 		
@@ -107,10 +76,12 @@ public class CompareProfilesTask extends Task {
 		} finally {
 			referenceProfile.dispose();
 			currentProfile.dispose();
+			deleteProfile(this.referenceLocation, REFERENCE);
+			deleteProfile(this.profileLocation, CURRENT);
 		}
 		if (delta == null) {
 			// an error occured during the comparison
-			throw new BuildException("An error occured during the comparison"); //$NON-NLS-1$
+			throw new BuildException(Messages.errorInComparison);
 		}
 		if (delta != ApiComparator.NO_DELTA) {
 			// dump the report in the appropriate folder
@@ -118,7 +89,7 @@ public class CompareProfilesTask extends Task {
 			File outputDir = new File(this.reportLocation);
 			if (!outputDir.exists()) {
 				if (!outputDir.mkdirs()) {
-					throw new BuildException("An error occured during the comparison"); //$NON-NLS-1$
+					throw new BuildException(Messages.errorInComparison);
 				}
 			}
 			File outputFile = new File(this.reportLocation, REPORT_XML_FILE_NAME);
@@ -146,61 +117,6 @@ public class CompareProfilesTask extends Task {
 					// ignore
 				}
 			}
-		}
-	}
-	private static void extractSDK(File tempDir, String dirName, String location) {
-		File installDir = new File(tempDir, dirName);
-		if (installDir.exists()) {
-			// delta existing folder
-			if (!Util.delete(installDir)) {
-				throw new BuildException("Could not delete : " + installDir.getAbsolutePath()); //$NON-NLS-1$
-			}
-		}
-		if (!installDir.mkdirs()) {
-			throw new BuildException("Could not create : " + installDir.getAbsolutePath()); //$NON-NLS-1$
-		}
-
-		try {
-			Util.unzip(location, installDir.getAbsolutePath());
-		} catch (IOException e) {
-			throw new BuildException("Could not unzip SDK into : " + installDir.getAbsolutePath()); //$NON-NLS-1$
-		}
-	}
-	
-	private static String getInstallDir(File dir, String profileInstallName) {
-		return new File(new File(new File(dir, profileInstallName), ECLIPSE_FOLDER_NAME), PLUGINS_FOLDER_NAME).getAbsolutePath();
-	}
-
-	private static IApiBaseline createProfile(String profileName, String fileName, String eeFileLocation) {
-		try {
-			IApiBaseline baseline = null;
-			if (ApiPlugin.isRunningInFramework()) {
-				baseline = ApiModelFactory.newApiBaseline(profileName);
-			} else if (eeFileLocation != null) {
-				baseline = ApiModelFactory.newApiBaseline(profileName, new File(eeFileLocation));
-			} else {
-				baseline = ApiModelFactory.newApiBaseline(profileName, Util.getEEDescriptionFile());
-			}
-			// create a component for each jar/directory in the folder
-			File dir = new File(fileName);
-			File[] files = dir.listFiles();
-			List components = new ArrayList();
-			for (int i = 0; i < files.length; i++) {
-				File bundle = files[i];
-				if (!bundle.getName().equals(CVS_FOLDER_NAME)) {
-					// ignore CVS folder
-					IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
-					if(component != null) {
-						components.add(component);
-					}
-				}
-			}
-			
-			baseline.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
-			return baseline;
-		} catch (CoreException e) {
-			e.printStackTrace();
-			return null;
 		}
 	}
 }
