@@ -195,11 +195,14 @@ public class FullReportConversionTask extends Task {
 			System.out.println("htmlReportsLocation : " + this.htmlReportsLocation); //$NON-NLS-1$
 		}
 		if (this.xmlReportsLocation == null) {
-			throw new BuildException("The directory that contains xml reports must be specified"); //$NON-NLS-1$
+			throw new BuildException(Messages.fullReportTask_missingXmlFilesLocation);
 		}
 		this.reportsRoot = new File(this.xmlReportsLocation);
 		if (!this.reportsRoot.exists() || !this.reportsRoot.isDirectory()) {
-			throw new BuildException("This is not a valid directory name : " + this.xmlReportsLocation); //$NON-NLS-1$
+			throw new BuildException(
+				Messages.bind(
+					Messages.fullReportTask_invalidDirectoryName,
+					this.xmlReportsLocation));
 		}
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser parser = null;
