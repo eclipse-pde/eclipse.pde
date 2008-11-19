@@ -90,6 +90,7 @@
             <method addedprofile="16" name="getListeners" signature="(Ljava/lang/Class;)[Ljava/util/EventListener;"/>
         </type>
         <type name="Canvas">
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/awt/GraphicsConfiguration;)V"/>
             <method addedprofile="32" name="createBufferStrategy" signature="(I)V"/>
             <method addedprofile="32" name="createBufferStrategy" signature="(ILjava/awt/BufferCapabilities;)V"/>
             <method addedprofile="16" name="getAccessibleContext" signature="()Ljavax/accessibility/AccessibleContext;"/>
@@ -124,6 +125,10 @@
             <field addedprofile="32" name="RED"/>
             <field addedprofile="32" name="WHITE"/>
             <field addedprofile="32" name="YELLOW"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(FFFF)V"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(IIII)V"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(IZ)V"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/awt/color/ColorSpace;[FF)V"/>
             <method addedprofile="8" name="createContext" signature="(Ljava/awt/image/ColorModel;Ljava/awt/Rectangle;Ljava/awt/geom/Rectangle2D;Ljava/awt/geom/AffineTransform;Ljava/awt/RenderingHints;)Ljava/awt/PaintContext;"/>
             <method addedprofile="8" name="getAlpha" signature="()I"/>
             <method addedprofile="8" name="getColorComponents" signature="(Ljava/awt/color/ColorSpace;[F)[F"/>
@@ -260,6 +265,7 @@
         <type name="Cursor">
             <field addedprofile="8" name="CUSTOM_CURSOR"/>
             <field addedprofile="8" name="name"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method addedprofile="8" name="getName" signature="()Ljava/lang/String;"/>
             <method addedprofile="8" name="getSystemCustomCursor" signature="(Ljava/lang/String;)Ljava/awt/Cursor;"/>
         </type>
@@ -269,6 +275,15 @@
         <type addedprofile="128" name="Desktop$Action"/>
         <type name="Dialog">
             <field addedprofile="128" name="DEFAULT_MODALITY_TYPE"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/awt/Dialog;)V"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/awt/Dialog;Ljava/lang/String;)V"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/awt/Dialog;Ljava/lang/String;Z)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Dialog;Ljava/lang/String;ZLjava/awt/GraphicsConfiguration;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Frame;Ljava/lang/String;ZLjava/awt/GraphicsConfiguration;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Window;Ljava/awt/Dialog$ModalityType;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Window;Ljava/lang/String;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Window;Ljava/lang/String;Ljava/awt/Dialog$ModalityType;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Window;Ljava/lang/String;Ljava/awt/Dialog$ModalityType;Ljava/awt/GraphicsConfiguration;)V"/>
             <method addedprofile="16" name="getAccessibleContext" signature="()Ljavax/accessibility/AccessibleContext;"/>
             <method addedprofile="128" name="getModalityType" signature="()Ljava/awt/Dialog$ModalityType;"/>
             <method addedprofile="32" name="isUndecorated" signature="()Z"/>
@@ -293,6 +308,9 @@
             <method addedprofile="8" name="pop" signature="()V"/>
             <method addedprofile="8" name="push" signature="(Ljava/awt/EventQueue;)V"/>
         </type>
+        <type name="FileDialog">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/awt/Dialog;Ljava/lang/String;I)V"/>
+        </type>
         <type name="FlowLayout">
             <field addedprofile="8" name="LEADING"/>
             <field addedprofile="8" name="TRAILING"/>
@@ -316,6 +334,8 @@
             <field addedprofile="16" name="TRUETYPE_FONT"/>
             <field addedprofile="64" name="TYPE1_FONT"/>
             <field addedprofile="8" name="pointSize"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Font;)V"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/util/Map;)V"/>
             <method addedprofile="8" name="canDisplay" signature="(C)Z"/>
             <method addedprofile="64" name="canDisplay" signature="(I)Z"/>
             <method addedprofile="8" name="canDisplayUpTo" signature="(Ljava/lang/String;)I"/>
@@ -380,6 +400,8 @@
             <field addedprofile="32" name="MAXIMIZED_HORIZ"/>
             <field addedprofile="32" name="MAXIMIZED_VERT"/>
             <field addedprofile="8" name="NORMAL"/>
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/awt/GraphicsConfiguration;)V"/>
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/awt/GraphicsConfiguration;)V"/>
             <method addedprofile="16" name="getAccessibleContext" signature="()Ljavax/accessibility/AccessibleContext;"/>
             <method addedprofile="32" name="getExtendedState" signature="()I"/>
             <method addedprofile="8" name="getFrames" signature="()[Ljava/awt/Frame;"/>
@@ -445,6 +467,7 @@
             <field addedprofile="32" name="LINE_START"/>
             <field addedprofile="32" name="PAGE_END"/>
             <field addedprofile="32" name="PAGE_START"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(IIIIDDIILjava/awt/Insets;II)V"/>
         </type>
         <type name="GridBagLayout">
             <method addedprofile="32" name="adjustForGravity" signature="(Ljava/awt/GridBagConstraints;Ljava/awt/Rectangle;)V"/>
@@ -682,6 +705,8 @@
         <type addedprofile="128" name="TrayIcon"/>
         <type addedprofile="128" name="TrayIcon$MessageType"/>
         <type name="Window">
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/awt/Window;)V"/>
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/awt/Window;Ljava/awt/GraphicsConfiguration;)V"/>
             <method addedprofile="32" name="addWindowFocusListener" signature="(Ljava/awt/event/WindowFocusListener;)V"/>
             <method addedprofile="32" name="addWindowStateListener" signature="(Ljava/awt/event/WindowStateListener;)V"/>
             <method addedprofile="8" name="applyResourceBundle" signature="(Ljava/lang/String;)V"/>
@@ -768,6 +793,8 @@
             <field addedprofile="8" name="javaJVMLocalObjectMimeType"/>
             <field addedprofile="8" name="javaRemoteObjectMimeType"/>
             <field addedprofile="8" name="javaSerializedObjectMimeType"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/ClassLoader;)V"/>
             <method addedprofile="8" name="equals" signature="(Ljava/lang/String;)Z"/>
             <method addedprofile="16" name="getDefaultRepresentationClass" signature="()Ljava/lang/Class;"/>
             <method addedprofile="16" name="getDefaultRepresentationClassAsString" signature="()Ljava/lang/String;"/>
@@ -826,9 +853,14 @@
             <method addedprofile="32" name="dragMouseMoved" signature="(Ljava/awt/dnd/DragSourceDragEvent;)V"/>
         </type>
         <type name="DragSourceDragEvent">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/dnd/DragSourceContext;IIIII)V"/>
             <method addedprofile="32" name="getGestureModifiersEx" signature="()I"/>
         </type>
+        <type name="DragSourceDropEvent">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/dnd/DragSourceContext;IZII)V"/>
+        </type>
         <type name="DragSourceEvent">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/dnd/DragSourceContext;II)V"/>
             <method addedprofile="32" name="getLocation" signature="()Ljava/awt/Point;"/>
             <method addedprofile="32" name="getX" signature="()I"/>
             <method addedprofile="32" name="getY" signature="()I"/>
@@ -843,12 +875,15 @@
         <type addedprofile="8" name="AWTEventListener"/>
         <type addedprofile="32" name="AWTEventListenerProxy"/>
         <type name="ActionEvent">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/Object;ILjava/lang/String;JI)V"/>
             <method addedprofile="32" name="getWhen" signature="()J"/>
         </type>
         <type name="AdjustmentEvent">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Adjustable;IIIZ)V"/>
             <method addedprofile="32" name="getValueIsAdjusting" signature="()Z"/>
         </type>
         <type name="FocusEvent">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Component;IZLjava/awt/Component;)V"/>
             <method addedprofile="32" name="getOppositeComponent" signature="()Ljava/awt/Component;"/>
         </type>
         <type addedprofile="16" name="HierarchyBoundsAdapter"/>
@@ -870,6 +905,7 @@
             <method addedprofile="8" name="isAltGraphDown" signature="()Z"/>
         </type>
         <type addedprofile="8" name="InputMethodEvent">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Component;IJLjava/text/AttributedCharacterIterator;ILjava/awt/font/TextHitInfo;Ljava/awt/font/TextHitInfo;)V"/>
             <method addedprofile="32" name="getWhen" signature="()J"/>
         </type>
         <type addedprofile="8" name="InputMethodListener"/>
@@ -963,6 +999,7 @@
             <field addedprofile="8" name="VK_UNDERSCORE"/>
             <field addedprofile="8" name="VK_UNDO"/>
             <field addedprofile="64" name="VK_WINDOWS"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Component;IJIICI)V"/>
             <method addedprofile="32" name="getKeyLocation" signature="()I"/>
             <method addedprofile="16" name="setSource" signature="(Ljava/lang/Object;)V"/>
         </type>
@@ -977,13 +1014,17 @@
             <field addedprofile="32" name="BUTTON3"/>
             <field addedprofile="32" name="MOUSE_WHEEL"/>
             <field addedprofile="32" name="NOBUTTON"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Component;IJIIIIIIZI)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Component;IJIIIIZI)V"/>
             <method addedprofile="32" name="getButton" signature="()I"/>
             <method addedprofile="128" name="getLocationOnScreen" signature="()Ljava/awt/Point;"/>
             <method addedprofile="32" name="getMouseModifiersText" signature="(I)Ljava/lang/String;"/>
             <method addedprofile="128" name="getXOnScreen" signature="()I"/>
             <method addedprofile="128" name="getYOnScreen" signature="()I"/>
         </type>
-        <type addedprofile="32" name="MouseWheelEvent"/>
+        <type addedprofile="32" name="MouseWheelEvent">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Component;IJIIIIIIZIII)V"/>
+        </type>
         <type addedprofile="32" name="MouseWheelListener"/>
         <type name="WindowAdapter">
             <method addedprofile="32" name="windowGainedFocus" signature="(Ljava/awt/event/WindowEvent;)V"/>
@@ -994,6 +1035,9 @@
             <field addedprofile="32" name="WINDOW_GAINED_FOCUS"/>
             <field addedprofile="32" name="WINDOW_LOST_FOCUS"/>
             <field addedprofile="32" name="WINDOW_STATE_CHANGED"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Window;III)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Window;ILjava/awt/Window;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Window;ILjava/awt/Window;II)V"/>
             <method addedprofile="32" name="getNewState" signature="()I"/>
             <method addedprofile="32" name="getOldState" signature="()I"/>
             <method addedprofile="32" name="getOppositeWindow" signature="()Ljava/awt/Window;"/>
@@ -1003,6 +1047,7 @@
     </package>
     <package addedprofile="8" name="java.awt.font">
         <type name="FontRenderContext">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/geom/AffineTransform;Ljava/lang/Object;Ljava/lang/Object;)V"/>
             <method addedprofile="32" name="equals" signature="(Ljava/awt/font/FontRenderContext;)Z"/>
             <method addedprofile="128" name="getAntiAliasingHint" signature="()Ljava/lang/Object;"/>
             <method addedprofile="128" name="getFractionalMetricsHint" signature="()Ljava/lang/Object;"/>
@@ -1010,6 +1055,7 @@
             <method addedprofile="128" name="isTransformed" signature="()Z"/>
         </type>
         <type name="GlyphMetrics">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(ZFFLjava/awt/geom/Rectangle2D;B)V"/>
             <method addedprofile="32" name="getAdvanceX" signature="()F"/>
             <method addedprofile="32" name="getAdvanceY" signature="()F"/>
         </type>
@@ -1096,6 +1142,7 @@
             <method addedprofile="16" name="setCompositionEnabled" signature="(Z)V"/>
         </type>
         <type name="InputMethodHighlight">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(ZIILjava/util/Map;)V"/>
             <method addedprofile="16" name="getStyle" signature="()Ljava/util/Map;"/>
         </type>
         <type name="InputSubset">
@@ -1123,6 +1170,7 @@
         <type addedprofile="8" name="ColorConvertOp"/>
         <type name="ColorModel">
             <field addedprofile="8" name="transferType"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(I[ILjava/awt/color/ColorSpace;ZZII)V"/>
             <method addedprofile="8" name="coerceData" signature="(Ljava/awt/image/WritableRaster;Z)Ljava/awt/image/ColorModel;"/>
             <method addedprofile="8" name="createCompatibleSampleModel" signature="(II)Ljava/awt/image/SampleModel;"/>
             <method addedprofile="8" name="createCompatibleWritableRaster" signature="(II)Ljava/awt/image/WritableRaster;"/>
@@ -1155,6 +1203,7 @@
             <method addedprofile="8" name="isCompatibleSampleModel" signature="(Ljava/awt/image/SampleModel;)Z"/>
         </type>
         <type addedprofile="8" name="ComponentColorModel">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/color/ColorSpace;ZZII)V"/>
             <method addedprofile="32" name="getDataElement" signature="([FI)I"/>
             <method addedprofile="32" name="getDataElements" signature="([FILjava/lang/Object;)Ljava/lang/Object;"/>
             <method addedprofile="32" name="getNormalizedComponents" signature="(Ljava/lang/Object;[FI)[F"/>
@@ -1169,6 +1218,7 @@
         <type addedprofile="8" name="DataBufferShort"/>
         <type addedprofile="8" name="DataBufferUShort"/>
         <type name="DirectColorModel">
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/awt/color/ColorSpace;IIIIIZI)V"/>
             <method addedprofile="8" name="coerceData" signature="(Ljava/awt/image/WritableRaster;Z)Ljava/awt/image/ColorModel;"/>
             <method addedprofile="8" name="createCompatibleWritableRaster" signature="(II)Ljava/awt/image/WritableRaster;"/>
             <method addedprofile="8" name="getAlpha" signature="(Ljava/lang/Object;)I"/>
@@ -1185,6 +1235,8 @@
         </type>
         <type addedprofile="8" name="ImagingOpException"/>
         <type name="IndexColorModel">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(II[IIILjava/math/BigInteger;)V"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(II[IIZII)V"/>
             <method addedprofile="8" name="convertToIntDiscrete" signature="(Ljava/awt/image/Raster;Z)Ljava/awt/image/BufferedImage;"/>
             <method addedprofile="8" name="createCompatibleSampleModel" signature="(II)Ljava/awt/image/SampleModel;"/>
             <method addedprofile="8" name="createCompatibleWritableRaster" signature="(II)Ljava/awt/image/WritableRaster;"/>
@@ -1257,6 +1309,8 @@
         <type addedprofile="32" name="Encoder"/>
         <type addedprofile="32" name="EventHandler"/>
         <type name="EventSetDescriptor">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/reflect/Method;Ljava/lang/reflect/Method;Ljava/lang/reflect/Method;Ljava/lang/reflect/Method;)V"/>
             <method addedprofile="32" name="getGetListenerMethod" signature="()Ljava/lang/reflect/Method;"/>
         </type>
         <type addedprofile="32" name="ExceptionListener"/>
@@ -1314,7 +1368,9 @@
             <method addedprofile="8" name="hasListeners" signature="(Ljava/lang/String;)Z"/>
             <method addedprofile="8" name="removeVetoableChangeListener" signature="(Ljava/lang/String;Ljava/beans/VetoableChangeListener;)V"/>
         </type>
-        <type addedprofile="32" name="XMLDecoder"/>
+        <type addedprofile="32" name="XMLDecoder">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/io/InputStream;Ljava/lang/Object;Ljava/beans/ExceptionListener;Ljava/lang/ClassLoader;)V"/>
+        </type>
         <type addedprofile="32" name="XMLEncoder"/>
     </package>
     <package addedprofile="8" name="java.beans.beancontext"/>
@@ -1333,6 +1389,7 @@
         <type addedprofile="64" name="Closeable"/>
         <type addedprofile="128" name="Console"/>
         <type name="File">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/net/URI;)V"/>
             <method addedprofile="128" name="canExecute" signature="()Z"/>
             <method addedprofile="8" name="compareTo" signature="(Ljava/io/File;)I"/>
             <method addedprofile="8" name="compareTo" removedprofile="64" signature="(Ljava/lang/Object;)I"/>
@@ -1367,11 +1424,19 @@
             <method addedprofile="32" name="getChannel" signature="()Ljava/nio/channels/FileChannel;"/>
         </type>
         <type name="FileOutputStream">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/io/File;Z)V"/>
             <method addedprofile="32" name="getChannel" signature="()Ljava/nio/channels/FileChannel;"/>
         </type>
         <type addedprofile="8" name="FilePermission"/>
+        <type name="FileWriter">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/io/File;Z)V"/>
+        </type>
         <type addedprofile="64" name="Flushable"/>
         <type addedprofile="128" name="IOError"/>
+        <type name="InputStreamReader">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/io/InputStream;Ljava/nio/charset/Charset;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/io/InputStream;Ljava/nio/charset/CharsetDecoder;)V"/>
+        </type>
         <type name="ObjectInputStream">
             <method addedprofile="16" name="readClassDescriptor" signature="()Ljava/io/ObjectStreamClass;"/>
             <method addedprofile="8" name="readFields" signature="()Ljava/io/ObjectInputStream$GetField;"/>
@@ -1403,9 +1468,27 @@
             <field addedprofile="16" name="TC_PROXYCLASSDESC"/>
         </type>
         <type addedprofile="8" name="ObjectStreamField">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Class;Z)V"/>
             <method addedprofile="32" name="isUnshared" signature="()Z"/>
         </type>
+        <type name="OutputStreamWriter">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/io/OutputStream;Ljava/nio/charset/Charset;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/io/OutputStream;Ljava/nio/charset/CharsetEncoder;)V"/>
+        </type>
+        <type name="PipedInputStream">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/io/PipedOutputStream;I)V"/>
+        </type>
+        <type name="PipedReader">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/io/PipedWriter;I)V"/>
+        </type>
         <type name="PrintStream">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/io/File;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/io/File;Ljava/lang/String;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/io/OutputStream;ZLjava/lang/String;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
             <method addedprofile="64" name="append" signature="(C)Ljava/io/PrintStream;"/>
             <method addedprofile="64" name="append" signature="(C)Ljava/lang/Appendable;"/>
             <method addedprofile="64" name="append" signature="(Ljava/lang/CharSequence;)Ljava/io/PrintStream;"/>
@@ -1420,6 +1503,10 @@
         </type>
         <type name="PrintWriter">
             <field addedprofile="8" name="out"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/io/File;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/io/File;Ljava/lang/String;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V"/>
             <method addedprofile="64" name="append" signature="(C)Ljava/io/PrintWriter;"/>
             <method addedprofile="64" name="append" signature="(C)Ljava/io/Writer;"/>
             <method addedprofile="64" name="append" signature="(C)Ljava/lang/Appendable;"/>
@@ -1658,6 +1745,7 @@
             <method addedprofile="64" name="isSynthetic" signature="()Z"/>
         </type>
         <type name="ClassLoader">
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/lang/ClassLoader;)V"/>
             <method addedprofile="32" name="clearAssertionStatus" signature="()V"/>
             <method addedprofile="64" name="defineClass" signature="(Ljava/lang/String;Ljava/nio/ByteBuffer;Ljava/security/ProtectionDomain;)Ljava/lang/Class;"/>
             <method addedprofile="8" name="defineClass" signature="(Ljava/lang/String;[BIILjava/security/ProtectionDomain;)Ljava/lang/Class;"/>
@@ -1677,6 +1765,7 @@
             <method addedprofile="32" name="setPackageAssertionStatus" signature="(Ljava/lang/String;Z)V"/>
         </type>
         <type name="ClassNotFoundException">
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Throwable;)V"/>
             <method addedprofile="32" name="getCause" signature="()Ljava/lang/Throwable;"/>
             <method addedprofile="8" name="getException" signature="()Ljava/lang/Throwable;"/>
         </type>
@@ -1697,6 +1786,14 @@
         </type>
         <type addedprofile="64" name="Enum"/>
         <type addedprofile="64" name="EnumConstantNotPresentException"/>
+        <type name="Error">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Throwable;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/Throwable;)V"/>
+        </type>
+        <type name="Exception">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Throwable;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/Throwable;)V"/>
+        </type>
         <type name="ExceptionInInitializerError">
             <method addedprofile="32" name="getCause" signature="()Ljava/lang/Throwable;"/>
         </type>
@@ -1792,6 +1889,10 @@
             <method addedprofile="32" name="maxMemory" signature="()J"/>
             <method addedprofile="16" name="removeShutdownHook" signature="(Ljava/lang/Thread;)Z"/>
         </type>
+        <type name="RuntimeException">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Throwable;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/Throwable;)V"/>
+        </type>
         <type addedprofile="8" name="RuntimePermission"/>
         <type name="SecurityManager">
             <method addedprofile="8" name="checkPermission" signature="(Ljava/security/Permission;)V"/>
@@ -1804,7 +1905,9 @@
             <method addedprofile="64" name="reverseBytes" signature="(S)S"/>
             <method addedprofile="64" name="valueOf" signature="(S)Ljava/lang/Short;"/>
         </type>
-        <type addedprofile="32" name="StackTraceElement"/>
+        <type addedprofile="32" name="StackTraceElement">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V"/>
+        </type>
         <type addedprofile="16" name="StrictMath">
             <method addedprofile="64" name="cbrt" signature="(D)D"/>
             <method addedprofile="128" name="copySign" signature="(DD)D"/>
@@ -1831,6 +1934,10 @@
         </type>
         <type name="String">
             <field addedprofile="8" name="CASE_INSENSITIVE_ORDER"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/StringBuilder;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="([BIILjava/nio/charset/Charset;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="([BLjava/nio/charset/Charset;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="([III)V"/>
             <method addedprofile="64" name="codePointAt" signature="(I)I"/>
             <method addedprofile="64" name="codePointBefore" signature="(I)I"/>
             <method addedprofile="64" name="codePointCount" signature="(II)I"/>
@@ -1853,6 +1960,7 @@
             <method addedprofile="32" name="subSequence" signature="(II)Ljava/lang/CharSequence;"/>
         </type>
         <type name="StringBuffer">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/CharSequence;)V"/>
             <method addedprofile="64" name="append" signature="(C)Ljava/lang/AbstractStringBuilder;"/>
             <method addedprofile="64" name="append" signature="(C)Ljava/lang/Appendable;"/>
             <method addedprofile="64" name="append" signature="(D)Ljava/lang/AbstractStringBuilder;"/>
@@ -1937,6 +2045,7 @@
             <method addedprofile="8" name="setProperty" signature="(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;"/>
         </type>
         <type name="Thread">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/ThreadGroup;Ljava/lang/Runnable;Ljava/lang/String;J)V"/>
             <method addedprofile="64" name="getAllStackTraces" signature="()Ljava/util/Map;"/>
             <method addedprofile="8" name="getContextClassLoader" signature="()Ljava/lang/ClassLoader;"/>
             <method addedprofile="64" name="getDefaultUncaughtExceptionHandler" signature="()Ljava/lang/Thread$UncaughtExceptionHandler;"/>
@@ -1958,6 +2067,8 @@
             <method addedprofile="64" name="remove" signature="()V"/>
         </type>
         <type name="Throwable">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/Throwable;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/Throwable;)V"/>
             <method addedprofile="32" name="getCause" signature="()Ljava/lang/Throwable;"/>
             <method addedprofile="32" name="getStackTrace" signature="()[Ljava/lang/StackTraceElement;"/>
             <method addedprofile="32" name="initCause" signature="(Ljava/lang/Throwable;)Ljava/lang/Throwable;"/>
@@ -2071,6 +2182,18 @@
             <field addedprofile="64" name="ONE"/>
             <field addedprofile="64" name="TEN"/>
             <field addedprofile="64" name="ZERO"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(DLjava/math/MathContext;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(ILjava/math/MathContext;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(J)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(JLjava/math/MathContext;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/math/MathContext;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/math/BigInteger;ILjava/math/MathContext;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/math/BigInteger;Ljava/math/MathContext;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="([C)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="([CII)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="([CIILjava/math/MathContext;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="([CLjava/math/MathContext;)V"/>
             <method addedprofile="64" name="abs" signature="(Ljava/math/MathContext;)Ljava/math/BigDecimal;"/>
             <method addedprofile="64" name="add" signature="(Ljava/math/BigDecimal;Ljava/math/MathContext;)Ljava/math/BigDecimal;"/>
             <method addedprofile="64" name="byteValueExact" signature="()B"/>
@@ -2137,12 +2260,18 @@
         <type addedprofile="128" name="CookiePolicy"/>
         <type addedprofile="128" name="CookieStore"/>
         <type name="DatagramPacket">
+            <method addedprofile="8" name="&lt;init&gt;" signature="([BII)V"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="([BIILjava/net/InetAddress;I)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="([BIILjava/net/SocketAddress;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="([BILjava/net/SocketAddress;)V"/>
             <method addedprofile="8" name="getOffset" signature="()I"/>
             <method addedprofile="32" name="getSocketAddress" signature="()Ljava/net/SocketAddress;"/>
             <method addedprofile="8" name="setData" signature="([BII)V"/>
             <method addedprofile="32" name="setSocketAddress" signature="(Ljava/net/SocketAddress;)V"/>
         </type>
         <type name="DatagramSocket">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/net/DatagramSocketImpl;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/net/SocketAddress;)V"/>
             <method addedprofile="32" name="bind" signature="(Ljava/net/SocketAddress;)V"/>
             <method addedprofile="8" name="connect" signature="(Ljava/net/InetAddress;I)V"/>
             <method addedprofile="32" name="connect" signature="(Ljava/net/SocketAddress;)V"/>
@@ -2218,6 +2347,7 @@
         <type addedprofile="128" name="InterfaceAddress"/>
         <type addedprofile="8" name="JarURLConnection"/>
         <type name="MulticastSocket">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/net/SocketAddress;)V"/>
             <method addedprofile="32" name="getLoopbackMode" signature="()Z"/>
             <method addedprofile="32" name="getNetworkInterface" signature="()Ljava/net/NetworkInterface;"/>
             <method addedprofile="8" name="getTimeToLive" signature="()I"/>
@@ -2261,6 +2391,7 @@
             <method addedprofile="32" name="setReuseAddress" signature="(Z)V"/>
         </type>
         <type name="Socket">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/net/Proxy;)V"/>
             <method addedprofile="32" name="bind" signature="(Ljava/net/SocketAddress;)V"/>
             <method addedprofile="32" name="connect" signature="(Ljava/net/SocketAddress;)V"/>
             <method addedprofile="32" name="connect" signature="(Ljava/net/SocketAddress;I)V"/>
@@ -2312,6 +2443,8 @@
         </type>
         <type addedprofile="32" name="URISyntaxException"/>
         <type name="URL">
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/net/URLStreamHandler;)V"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/net/URL;Ljava/lang/String;Ljava/net/URLStreamHandler;)V"/>
             <method addedprofile="16" name="getAuthority" signature="()Ljava/lang/String;"/>
             <method addedprofile="16" name="getContent" signature="([Ljava/lang/Class;)Ljava/lang/Object;"/>
             <method addedprofile="32" name="getDefaultPort" signature="()I"/>
@@ -2466,6 +2599,8 @@
             <field addedprofile="8" name="serialVersionUID"/>
         </type>
         <type name="UnicastRemoteObject">
+            <method addedprofile="8" name="&lt;init&gt;" signature="(I)V"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(ILjava/rmi/server/RMIClientSocketFactory;Ljava/rmi/server/RMIServerSocketFactory;)V"/>
             <method addedprofile="8" name="exportObject" signature="(Ljava/rmi/Remote;I)Ljava/rmi/Remote;"/>
             <method addedprofile="8" name="exportObject" signature="(Ljava/rmi/Remote;ILjava/rmi/server/RMIClientSocketFactory;Ljava/rmi/server/RMIServerSocketFactory;)Ljava/rmi/Remote;"/>
             <method addedprofile="8" name="unexportObject" signature="(Ljava/rmi/Remote;Z)Z"/>
@@ -2473,6 +2608,7 @@
     </package>
     <package addedprofile="4" name="java.security">
         <type addedprofile="8" name="AccessControlContext">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/security/AccessControlContext;Ljava/security/DomainCombiner;)V"/>
             <method addedprofile="16" name="getDomainCombiner" signature="()Ljava/security/DomainCombiner;"/>
         </type>
         <type addedprofile="8" name="AccessControlException"/>
@@ -2493,6 +2629,7 @@
         <type addedprofile="8" name="BasicPermission"/>
         <type addedprofile="64" name="CodeSigner"/>
         <type addedprofile="8" name="CodeSource">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/net/URL;[Ljava/security/CodeSigner;)V"/>
             <method addedprofile="64" name="getCodeSigners" signature="()[Ljava/security/CodeSigner;"/>
         </type>
         <type addedprofile="16" name="DomainCombiner"/>
@@ -2577,6 +2714,7 @@
         </type>
         <type addedprofile="8" name="PrivilegedExceptionAction"/>
         <type addedprofile="8" name="ProtectionDomain">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/security/CodeSource;Ljava/security/PermissionCollection;Ljava/lang/ClassLoader;[Ljava/security/Principal;)V"/>
             <method addedprofile="32" name="getClassLoader" signature="()Ljava/lang/ClassLoader;"/>
             <method addedprofile="32" name="getPrincipals" signature="()[Ljava/security/Principal;"/>
         </type>
@@ -2598,6 +2736,7 @@
             <method addedprofile="64" name="defineClass" signature="(Ljava/lang/String;Ljava/nio/ByteBuffer;Ljava/security/CodeSource;)Ljava/lang/Class;"/>
         </type>
         <type name="SecureRandom">
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/security/SecureRandomSpi;Ljava/security/Provider;)V"/>
             <method addedprofile="8" name="generateSeed" signature="(I)[B"/>
             <method addedprofile="64" name="getAlgorithm" signature="()Ljava/lang/String;"/>
             <method addedprofile="8" name="getInstance" signature="(Ljava/lang/String;)Ljava/security/SecureRandom;"/>
@@ -2684,6 +2823,7 @@
         <type addedprofile="32" name="PolicyNode"/>
         <type addedprofile="32" name="PolicyQualifierInfo"/>
         <type addedprofile="32" name="TrustAnchor">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljavax/security/auth/x500/X500Principal;Ljava/security/PublicKey;[B)V"/>
             <method addedprofile="64" name="getCA" signature="()Ljavax/security/auth/x500/X500Principal;"/>
         </type>
         <type name="X509CRL">
@@ -2749,6 +2889,7 @@
         <type addedprofile="64" name="MGF1ParameterSpec"/>
         <type addedprofile="32" name="PSSParameterSpec">
             <field addedprofile="64" name="DEFAULT"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/security/spec/AlgorithmParameterSpec;II)V"/>
             <method addedprofile="64" name="getDigestAlgorithm" signature="()Ljava/lang/String;"/>
             <method addedprofile="64" name="getMGFAlgorithm" signature="()Ljava/lang/String;"/>
             <method addedprofile="64" name="getMGFParameters" signature="()Ljava/security/spec/AlgorithmParameterSpec;"/>
@@ -2762,7 +2903,12 @@
         <type addedprofile="8" name="Array">
             <method addedprofile="128" name="free" signature="()V"/>
         </type>
-        <type addedprofile="8" name="BatchUpdateException"/>
+        <type addedprofile="8" name="BatchUpdateException">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;I[ILjava/lang/Throwable;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;[ILjava/lang/Throwable;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;[ILjava/lang/Throwable;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="([ILjava/lang/Throwable;)V"/>
+        </type>
         <type addedprofile="8" name="Blob">
             <method addedprofile="128" name="free" signature="()V"/>
             <method addedprofile="128" name="getBinaryStream" signature="(JJ)Ljava/io/InputStream;"/>
@@ -2810,6 +2956,9 @@
             <method addedprofile="32" name="setSavepoint" signature="()Ljava/sql/Savepoint;"/>
             <method addedprofile="32" name="setSavepoint" signature="(Ljava/lang/String;)Ljava/sql/Savepoint;"/>
             <method addedprofile="8" name="setTypeMap" signature="(Ljava/util/Map;)V"/>
+        </type>
+        <type name="DataTruncation">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(IZZIILjava/lang/Throwable;)V"/>
         </type>
         <type name="DatabaseMetaData">
             <field addedprofile="32" name="attributeNoNulls"/>
@@ -3045,6 +3194,8 @@
         <type addedprofile="8" name="SQLData"/>
         <type addedprofile="128" name="SQLDataException"/>
         <type name="SQLException">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;ILjava/lang/Throwable;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V"/>
             <method addedprofile="128" name="iterator" signature="()Ljava/util/Iterator;"/>
         </type>
         <type addedprofile="128" name="SQLFeatureNotSupportedException"/>
@@ -3073,6 +3224,10 @@
         <type addedprofile="128" name="SQLTransactionRollbackException"/>
         <type addedprofile="128" name="SQLTransientConnectionException"/>
         <type addedprofile="128" name="SQLTransientException"/>
+        <type name="SQLWarning">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;ILjava/lang/Throwable;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V"/>
+        </type>
         <type addedprofile="128" name="SQLXML"/>
         <type addedprofile="32" name="Savepoint"/>
         <type name="Statement">
@@ -3152,6 +3307,7 @@
             <method addedprofile="8" name="setText" signature="(Ljava/text/CharacterIterator;)V"/>
         </type>
         <type name="CollationKey">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method addedprofile="8" name="compareTo" removedprofile="64" signature="(Ljava/lang/Object;)I"/>
         </type>
         <type name="Collator">
@@ -3188,6 +3344,8 @@
             <method addedprofile="8" name="setMonetaryDecimalSeparator" signature="(C)V"/>
         </type>
         <type name="FieldPosition">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/text/Format$Field;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/text/Format$Field;I)V"/>
             <method addedprofile="32" name="getFieldAttribute" signature="()Ljava/text/Format$Field;"/>
             <method addedprofile="8" name="setBeginIndex" signature="(I)V"/>
             <method addedprofile="8" name="setEndIndex" signature="(I)V"/>
@@ -3197,6 +3355,7 @@
         </type>
         <type addedprofile="32" name="Format$Field"/>
         <type name="MessageFormat">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/util/Locale;)V"/>
             <method addedprofile="32" name="formatToCharacterIterator" signature="(Ljava/lang/Object;)Ljava/text/AttributedCharacterIterator;"/>
             <method addedprofile="32" name="getFormatsByArgumentIndex" signature="()[Ljava/text/Format;"/>
             <method addedprofile="32" name="setFormatByArgumentIndex" signature="(ILjava/text/Format;)V"/>
@@ -3375,6 +3534,7 @@
         <type addedprofile="8" name="HashMap"/>
         <type addedprofile="8" name="HashSet"/>
         <type name="Hashtable">
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/util/Map;)V"/>
             <method addedprofile="8" name="containsValue" signature="(Ljava/lang/Object;)Z"/>
             <method addedprofile="8" name="entrySet" signature="()Ljava/util/Set;"/>
             <method addedprofile="8" name="keySet" signature="()Ljava/util/Set;"/>
@@ -3418,6 +3578,7 @@
         </type>
         <type name="Locale">
             <field addedprofile="128" name="ROOT"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
             <method addedprofile="8" name="getAvailableLocales" signature="()[Ljava/util/Locale;"/>
             <method addedprofile="8" name="getISOCountries" signature="()[Ljava/lang/String;"/>
             <method addedprofile="8" name="getISOLanguages" signature="()[Ljava/lang/String;"/>
@@ -3441,6 +3602,7 @@
         </type>
         <type addedprofile="8" name="PropertyPermission"/>
         <type name="PropertyResourceBundle">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/io/Reader;)V"/>
             <method addedprofile="128" name="handleKeySet" signature="()Ljava/util/Set;"/>
         </type>
         <type addedprofile="64" name="Queue"/>
@@ -3472,6 +3634,8 @@
             <field addedprofile="32" name="STANDARD_TIME"/>
             <field addedprofile="32" name="UTC_TIME"/>
             <field addedprofile="32" name="WALL_TIME"/>
+            <method addedprofile="8" name="&lt;init&gt;" signature="(ILjava/lang/String;IIIIIIIII)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(ILjava/lang/String;IIIIIIIIIII)V"/>
             <method addedprofile="8" name="getDSTSavings" signature="()I"/>
             <method addedprofile="32" name="getOffset" signature="(J)I"/>
             <method addedprofile="8" name="hasSameRules" signature="(Ljava/util/TimeZone;)Z"/>
@@ -3495,6 +3659,8 @@
             <method addedprofile="8" name="hasSameRules" signature="(Ljava/util/TimeZone;)Z"/>
         </type>
         <type addedprofile="16" name="Timer">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/String;Z)V"/>
             <method addedprofile="64" name="purge" signature="()I"/>
         </type>
         <type addedprofile="16" name="TimerTask"/>
@@ -3535,6 +3701,7 @@
         <type addedprofile="64" name="UnknownFormatConversionException"/>
         <type addedprofile="64" name="UnknownFormatFlagsException"/>
         <type name="Vector">
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/util/Collection;)V"/>
             <method addedprofile="8" name="add" signature="(ILjava/lang/Object;)V"/>
             <method addedprofile="8" name="add" signature="(Ljava/lang/Object;)Z"/>
             <method addedprofile="8" name="addAll" signature="(ILjava/util/Collection;)Z"/>
@@ -3552,7 +3719,9 @@
             <method addedprofile="8" name="toArray" signature="()[Ljava/lang/Object;"/>
             <method addedprofile="8" name="toArray" signature="([Ljava/lang/Object;)[Ljava/lang/Object;"/>
         </type>
-        <type addedprofile="8" name="WeakHashMap"/>
+        <type addedprofile="8" name="WeakHashMap">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/util/Map;)V"/>
+        </type>
     </package>
     <package addedprofile="64" name="java.util.concurrent">
         <type name="AbstractExecutorService">
@@ -3560,6 +3729,9 @@
             <method addedprofile="128" name="newTaskFor" signature="(Ljava/util/concurrent/Callable;)Ljava/util/concurrent/RunnableFuture;"/>
         </type>
         <type addedprofile="128" name="BlockingDeque"/>
+        <type name="ConcurrentHashMap">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(IF)V"/>
+        </type>
         <type addedprofile="128" name="ConcurrentNavigableMap"/>
         <type addedprofile="128" name="ConcurrentSkipListMap"/>
         <type addedprofile="128" name="ConcurrentSkipListSet"/>
@@ -3644,6 +3816,9 @@
         <type name="JarEntry">
             <method addedprofile="64" name="getCodeSigners" signature="()[Ljava/security/CodeSigner;"/>
         </type>
+        <type name="JarFile">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/io/File;ZI)V"/>
+        </type>
         <type addedprofile="64" name="Pack200"/>
         <type addedprofile="64" name="Pack200$Packer"/>
         <type addedprofile="64" name="Pack200$Unpacker"/>
@@ -3693,12 +3868,14 @@
         </type>
         <type addedprofile="128" name="InflaterOutputStream"/>
         <type name="ZipEntry">
+            <method addedprofile="8" name="&lt;init&gt;" signature="(Ljava/util/zip/ZipEntry;)V"/>
             <method addedprofile="8" name="setCompressedSize" signature="(J)V"/>
         </type>
         <type addedprofile="128" name="ZipError"/>
         <type name="ZipFile">
             <field addedprofile="16" name="OPEN_DELETE"/>
             <field addedprofile="16" name="OPEN_READ"/>
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/io/File;I)V"/>
             <method addedprofile="8" name="size" signature="()I"/>
         </type>
         <type name="ZipInputStream">
@@ -3713,7 +3890,9 @@
             <field addedprofile="64" name="TOGGLE_EXPAND"/>
             <field addedprofile="128" name="TOGGLE_POPUP"/>
         </type>
-        <type addedprofile="64" name="AccessibleAttributeSequence"/>
+        <type addedprofile="64" name="AccessibleAttributeSequence">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(IILjavax/swing/text/AttributeSet;)V"/>
+        </type>
         <type name="AccessibleContext">
             <field addedprofile="16" name="ACCESSIBLE_ACTION_PROPERTY"/>
             <field addedprofile="64" name="ACCESSIBLE_COMPONENT_BOUNDS_CHANGED"/>
@@ -3781,7 +3960,9 @@
         <type addedprofile="64" name="AccessibleStreamable"/>
         <type addedprofile="16" name="AccessibleTable"/>
         <type addedprofile="16" name="AccessibleTableModelChange"/>
-        <type addedprofile="64" name="AccessibleTextSequence"/>
+        <type addedprofile="64" name="AccessibleTextSequence">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(IILjava/lang/String;)V"/>
+        </type>
     </package>
     <package addedprofile="128" name="javax.activation"/>
     <package addedprofile="64" name="javax.activity"/>
@@ -3868,27 +4049,51 @@
     <package addedprofile="128" name="javax.lang.model.util"/>
     <package addedprofile="64" name="javax.management">
         <type name="AttributeList">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/util/List;)V"/>
             <method addedprofile="128" name="asList" signature="()Ljava/util/List;"/>
         </type>
         <type addedprofile="128" name="DescriptorKey"/>
         <type addedprofile="128" name="DescriptorRead"/>
         <type addedprofile="128" name="ImmutableDescriptor"/>
         <type addedprofile="128" name="JMX"/>
+        <type name="MBeanAttributeInfo">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZZZLjavax/management/Descriptor;)V"/>
+        </type>
+        <type name="MBeanConstructorInfo">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;[Ljavax/management/MBeanParameterInfo;Ljavax/management/Descriptor;)V"/>
+        </type>
         <type name="MBeanFeatureInfo">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljavax/management/Descriptor;)V"/>
             <method addedprofile="128" name="getDescriptor" signature="()Ljavax/management/Descriptor;"/>
         </type>
         <type name="MBeanInfo">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;[Ljavax/management/MBeanAttributeInfo;[Ljavax/management/MBeanConstructorInfo;[Ljavax/management/MBeanOperationInfo;[Ljavax/management/MBeanNotificationInfo;Ljavax/management/Descriptor;)V"/>
             <method addedprofile="128" name="getDescriptor" signature="()Ljavax/management/Descriptor;"/>
+        </type>
+        <type name="MBeanNotificationInfo">
+            <method addedprofile="128" name="&lt;init&gt;" signature="([Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljavax/management/Descriptor;)V"/>
+        </type>
+        <type name="MBeanOperationInfo">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;[Ljavax/management/MBeanParameterInfo;Ljava/lang/String;ILjavax/management/Descriptor;)V"/>
+        </type>
+        <type name="MBeanParameterInfo">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljavax/management/Descriptor;)V"/>
         </type>
         <type name="MBeanServerDelegate">
             <field addedprofile="128" name="DELEGATE_NAME"/>
         </type>
         <type name="MBeanServerInvocationHandler">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljavax/management/MBeanServerConnection;Ljavax/management/ObjectName;Z)V"/>
             <method addedprofile="128" name="getMBeanServerConnection" signature="()Ljavax/management/MBeanServerConnection;"/>
             <method addedprofile="128" name="getObjectName" signature="()Ljavax/management/ObjectName;"/>
             <method addedprofile="128" name="isMXBean" signature="()Z"/>
         </type>
         <type addedprofile="128" name="MXBean"/>
+        <type name="NotificationBroadcasterSupport">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/util/concurrent/Executor;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/util/concurrent/Executor;[Ljavax/management/MBeanNotificationInfo;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="([Ljavax/management/MBeanNotificationInfo;)V"/>
+        </type>
         <type name="ObjectName">
             <field addedprofile="128" name="WILDCARD"/>
             <method addedprofile="128" name="compareTo" signature="(Ljavax/management/ObjectName;)I"/>
@@ -3901,6 +4106,8 @@
         </type>
         <type addedprofile="128" name="StandardEmitterMBean"/>
         <type name="StandardMBean">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/Class;Z)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/Object;Ljava/lang/Class;Z)V"/>
             <method addedprofile="128" name="postDeregister" signature="()V"/>
             <method addedprofile="128" name="postRegister" signature="(Ljava/lang/Boolean;)V"/>
             <method addedprofile="128" name="preDeregister" signature="()V"/>
@@ -3928,12 +4135,28 @@
     </package>
     <package addedprofile="64" name="javax.management.openmbean">
         <type name="ArrayType">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljavax/management/openmbean/SimpleType;Z)V"/>
             <method addedprofile="128" name="getArrayType" signature="(Ljavax/management/openmbean/OpenType;)Ljavax/management/openmbean/ArrayType;"/>
             <method addedprofile="128" name="getPrimitiveArrayType" signature="(Ljava/lang/Class;)Ljavax/management/openmbean/ArrayType;"/>
             <method addedprofile="128" name="isPrimitiveArray" signature="()Z"/>
         </type>
         <type addedprofile="128" name="CompositeDataInvocationHandler"/>
         <type addedprofile="128" name="CompositeDataView"/>
+        <type name="OpenMBeanAttributeInfoSupport">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljavax/management/openmbean/OpenType;ZZZLjavax/management/Descriptor;)V"/>
+        </type>
+        <type name="OpenMBeanConstructorInfoSupport">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;[Ljavax/management/openmbean/OpenMBeanParameterInfo;Ljavax/management/Descriptor;)V"/>
+        </type>
+        <type name="OpenMBeanInfoSupport">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;[Ljavax/management/openmbean/OpenMBeanAttributeInfo;[Ljavax/management/openmbean/OpenMBeanConstructorInfo;[Ljavax/management/openmbean/OpenMBeanOperationInfo;[Ljavax/management/MBeanNotificationInfo;Ljavax/management/Descriptor;)V"/>
+        </type>
+        <type name="OpenMBeanOperationInfoSupport">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;[Ljavax/management/openmbean/OpenMBeanParameterInfo;Ljavax/management/openmbean/OpenType;ILjavax/management/Descriptor;)V"/>
+        </type>
+        <type name="OpenMBeanParameterInfoSupport">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;Ljavax/management/openmbean/OpenType;Ljavax/management/Descriptor;)V"/>
+        </type>
         <type name="OpenType">
             <field addedprofile="128" name="ALLOWED_CLASSNAMES_LIST"/>
         </type>
@@ -4077,10 +4300,14 @@
         <type addedprofile="128" name="ConfigurationSpi"/>
         <type addedprofile="64" name="CredentialException"/>
         <type addedprofile="64" name="CredentialNotFoundException"/>
+        <type name="LoginContext">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljavax/security/auth/Subject;Ljavax/security/auth/callback/CallbackHandler;Ljavax/security/auth/login/Configuration;)V"/>
+        </type>
     </package>
     <package addedprofile="32" name="javax.security.auth.spi"/>
     <package addedprofile="32" name="javax.security.auth.x500">
         <type name="X500Principal">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/util/Map;)V"/>
             <method addedprofile="128" name="getName" signature="(Ljava/lang/String;Ljava/util/Map;)Ljava/lang/String;"/>
         </type>
     </package>
@@ -4096,6 +4323,7 @@
             <method addedprofile="64" name="getTransmitters" signature="()Ljava/util/List;"/>
         </type>
         <type name="MidiFileFormat">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(IFIIJLjava/util/Map;)V"/>
             <method addedprofile="64" name="getProperty" signature="(Ljava/lang/String;)Ljava/lang/Object;"/>
             <method addedprofile="64" name="properties" signature="()Ljava/util/Map;"/>
         </type>
@@ -4112,10 +4340,12 @@
     <package addedprofile="16" name="javax.sound.midi.spi"/>
     <package addedprofile="16" name="javax.sound.sampled">
         <type name="AudioFileFormat">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljavax/sound/sampled/AudioFileFormat$Type;Ljavax/sound/sampled/AudioFormat;ILjava/util/Map;)V"/>
             <method addedprofile="64" name="getProperty" signature="(Ljava/lang/String;)Ljava/lang/Object;"/>
             <method addedprofile="64" name="properties" signature="()Ljava/util/Map;"/>
         </type>
         <type name="AudioFormat">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Ljavax/sound/sampled/AudioFormat$Encoding;FIIIFZLjava/util/Map;)V"/>
             <method addedprofile="64" name="getProperty" signature="(Ljava/lang/String;)Ljava/lang/Object;"/>
             <method addedprofile="64" name="properties" signature="()Ljava/util/Map;"/>
         </type>
@@ -4325,14 +4555,19 @@
             <method addedprofile="128" name="setTransferHandler" signature="(Ljavax/swing/TransferHandler;)V"/>
         </type>
         <type name="JButton">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljavax/swing/Action;)V"/>
             <method addedprofile="16" name="configurePropertiesFromAction" signature="(Ljavax/swing/Action;)V"/>
         </type>
         <type name="JCheckBox">
             <field addedprofile="16" name="BORDER_PAINTED_FLAT_CHANGED_PROPERTY"/>
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljavax/swing/Action;)V"/>
             <method addedprofile="16" name="configurePropertiesFromAction" signature="(Ljavax/swing/Action;)V"/>
             <method addedprofile="16" name="createActionPropertyChangeListener" signature="(Ljavax/swing/Action;)Ljava/beans/PropertyChangeListener;"/>
             <method addedprofile="16" name="isBorderPaintedFlat" signature="()Z"/>
             <method addedprofile="16" name="setBorderPaintedFlat" signature="(Z)V"/>
+        </type>
+        <type name="JCheckBoxMenuItem">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljavax/swing/Action;)V"/>
         </type>
         <type name="JColorChooser">
             <method addedprofile="32" name="getDragEnabled" signature="()Z"/>
@@ -4440,6 +4675,12 @@
             <method addedprofile="16" name="setSelectedFrame" signature="(Ljavax/swing/JInternalFrame;)V"/>
         </type>
         <type name="JDialog">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Dialog;Ljava/lang/String;ZLjava/awt/GraphicsConfiguration;)V"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/awt/Frame;Ljava/lang/String;ZLjava/awt/GraphicsConfiguration;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Window;Ljava/awt/Dialog$ModalityType;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Window;Ljava/lang/String;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Window;Ljava/lang/String;Ljava/awt/Dialog$ModalityType;)V"/>
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Window;Ljava/lang/String;Ljava/awt/Dialog$ModalityType;Ljava/awt/GraphicsConfiguration;)V"/>
             <method addedprofile="128" name="getTransferHandler" signature="()Ljavax/swing/TransferHandler;"/>
             <method addedprofile="32" name="isDefaultLookAndFeelDecorated" signature="()Z"/>
             <method addedprofile="32" name="setDefaultLookAndFeelDecorated" signature="(Z)V"/>
@@ -4468,6 +4709,8 @@
         <type addedprofile="32" name="JFormattedTextField$AbstractFormatterFactory"/>
         <type name="JFrame">
             <field addedprofile="16" name="EXIT_ON_CLOSE"/>
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/awt/GraphicsConfiguration;)V"/>
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/awt/GraphicsConfiguration;)V"/>
             <method addedprofile="128" name="getTransferHandler" signature="()Ljavax/swing/TransferHandler;"/>
             <method addedprofile="32" name="isDefaultLookAndFeelDecorated" signature="()Z"/>
             <method addedprofile="32" name="setDefaultLookAndFeelDecorated" signature="(Z)V"/>
@@ -4506,6 +4749,7 @@
         </type>
         <type addedprofile="128" name="JList$DropLocation"/>
         <type name="JMenu">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljavax/swing/Action;)V"/>
             <method addedprofile="32" name="applyComponentOrientation" signature="(Ljava/awt/ComponentOrientation;)V"/>
             <method addedprofile="16" name="createActionComponent" signature="(Ljavax/swing/Action;)Ljavax/swing/JMenuItem;"/>
             <method addedprofile="32" name="getMenuListeners" signature="()[Ljavax/swing/event/MenuListener;"/>
@@ -4515,6 +4759,7 @@
             <method addedprofile="16" name="processKeyBinding" signature="(Ljavax/swing/KeyStroke;Ljava/awt/event/KeyEvent;IZ)Z"/>
         </type>
         <type name="JMenuItem">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljavax/swing/Action;)V"/>
             <method addedprofile="128" name="actionPropertyChanged" signature="(Ljavax/swing/Action;Ljava/lang/String;)V"/>
             <method addedprofile="16" name="configurePropertiesFromAction" signature="(Ljavax/swing/Action;)V"/>
             <method addedprofile="16" name="createActionPropertyChangeListener" signature="(Ljavax/swing/Action;)Ljava/beans/PropertyChangeListener;"/>
@@ -4544,8 +4789,12 @@
             <method addedprofile="32" name="setIndeterminate" signature="(Z)V"/>
         </type>
         <type name="JRadioButton">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljavax/swing/Action;)V"/>
             <method addedprofile="16" name="configurePropertiesFromAction" signature="(Ljavax/swing/Action;)V"/>
             <method addedprofile="16" name="createActionPropertyChangeListener" signature="(Ljavax/swing/Action;)Ljava/beans/PropertyChangeListener;"/>
+        </type>
+        <type name="JRadioButtonMenuItem">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljavax/swing/Action;)V"/>
         </type>
         <type name="JRootPane">
             <field addedprofile="32" name="COLOR_CHOOSER_DIALOG"/>
@@ -4590,6 +4839,7 @@
         <type name="JTabbedPane">
             <field addedprofile="32" name="SCROLL_TAB_LAYOUT"/>
             <field addedprofile="32" name="WRAP_TAB_LAYOUT"/>
+            <method addedprofile="32" name="&lt;init&gt;" signature="(II)V"/>
             <method addedprofile="32" name="getChangeListeners" signature="()[Ljavax/swing/event/ChangeListener;"/>
             <method addedprofile="32" name="getDisplayedMnemonicIndexAt" signature="(I)I"/>
             <method addedprofile="32" name="getMnemonicAt" signature="(I)I"/>
@@ -4645,7 +4895,12 @@
             <method addedprofile="32" name="getActionListeners" signature="()[Ljava/awt/event/ActionListener;"/>
             <method addedprofile="16" name="setAction" signature="(Ljavax/swing/Action;)V"/>
         </type>
+        <type name="JToggleButton">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljavax/swing/Action;)V"/>
+        </type>
         <type name="JToolBar">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/lang/String;)V"/>
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/lang/String;I)V"/>
             <method addedprofile="16" name="createActionComponent" signature="(Ljavax/swing/Action;)Ljavax/swing/JButton;"/>
             <method addedprofile="32" name="isRollover" signature="()Z"/>
             <method addedprofile="32" name="setRollover" signature="(Z)V"/>
@@ -4685,6 +4940,8 @@
             <method addedprofile="16" name="setUI" signature="(Ljavax/swing/plaf/ViewportUI;)V"/>
         </type>
         <type name="JWindow">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/awt/GraphicsConfiguration;)V"/>
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/awt/Window;Ljava/awt/GraphicsConfiguration;)V"/>
             <method addedprofile="128" name="getTransferHandler" signature="()Ljavax/swing/TransferHandler;"/>
             <method addedprofile="128" name="setTransferHandler" signature="(Ljavax/swing/TransferHandler;)V"/>
         </type>
@@ -4844,9 +5101,12 @@
             <method addedprofile="16" name="getShadowColor" signature="()Ljava/awt/Color;"/>
         </type>
         <type name="LineBorder">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/awt/Color;IZ)V"/>
             <method addedprofile="16" name="getRoundedCorners" signature="()Z"/>
         </type>
         <type name="MatteBorder">
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/awt/Insets;Ljava/awt/Color;)V"/>
+            <method addedprofile="16" name="&lt;init&gt;" signature="(Ljava/awt/Insets;Ljavax/swing/Icon;)V"/>
             <method addedprofile="16" name="getBorderInsets" signature="()Ljava/awt/Insets;"/>
             <method addedprofile="16" name="getMatteColor" signature="()Ljava/awt/Color;"/>
             <method addedprofile="16" name="getTileIcon" signature="()Ljavax/swing/Icon;"/>
@@ -4872,15 +5132,20 @@
             <method addedprofile="16" name="getListeners" signature="(Ljava/lang/Class;)[Ljava/util/EventListener;"/>
         </type>
         <type name="HyperlinkEvent">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/Object;Ljavax/swing/event/HyperlinkEvent$EventType;Ljava/net/URL;Ljava/lang/String;Ljavax/swing/text/Element;)V"/>
             <method addedprofile="32" name="getSourceElement" signature="()Ljavax/swing/text/Element;"/>
         </type>
         <type name="InternalFrameEvent">
             <method addedprofile="16" name="getInternalFrame" signature="()Ljavax/swing/JInternalFrame;"/>
         </type>
+        <type name="MenuDragMouseEvent">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/awt/Component;IJIIIIIIZ[Ljavax/swing/MenuElement;Ljavax/swing/MenuSelectionManager;)V"/>
+        </type>
         <type addedprofile="128" name="RowSorterEvent"/>
         <type addedprofile="128" name="RowSorterEvent$Type"/>
         <type addedprofile="128" name="RowSorterListener"/>
         <type name="SwingPropertyChangeSupport">
+            <method addedprofile="128" name="&lt;init&gt;" signature="(Ljava/lang/Object;Z)V"/>
             <method addedprofile="32" name="getPropertyChangeListeners" signature="()[Ljava/beans/PropertyChangeListener;"/>
             <method addedprofile="32" name="getPropertyChangeListeners" signature="(Ljava/lang/String;)[Ljava/beans/PropertyChangeListener;"/>
             <method addedprofile="128" name="isNotifyOnEDT" signature="()Z"/>
@@ -4926,6 +5191,9 @@
         </type>
     </package>
     <package addedprofile="8" name="javax.swing.plaf.basic">
+        <type name="BasicArrowButton">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(ILjava/awt/Color;Ljava/awt/Color;Ljava/awt/Color;Ljava/awt/Color;)V"/>
+        </type>
         <type name="BasicBorders">
             <method addedprofile="16" name="getButtonBorder" signature="()Ljavax/swing/border/Border;"/>
             <method addedprofile="16" name="getInternalFrameBorder" signature="()Ljavax/swing/border/Border;"/>
@@ -5586,6 +5854,8 @@
     </package>
     <package addedprofile="32" name="javax.xml.transform.dom">
         <type name="DOMResult">
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Lorg/w3c/dom/Node;Lorg/w3c/dom/Node;)V"/>
+            <method addedprofile="64" name="&lt;init&gt;" signature="(Lorg/w3c/dom/Node;Lorg/w3c/dom/Node;Ljava/lang/String;)V"/>
             <method addedprofile="64" name="getNextSibling" signature="()Lorg/w3c/dom/Node;"/>
             <method addedprofile="64" name="setNextSibling" signature="(Lorg/w3c/dom/Node;)V"/>
         </type>
@@ -5624,6 +5894,9 @@
         <type addedprofile="64" name="CODESET_INCOMPATIBLE"/>
         <type addedprofile="16" name="CharSeqHelper"/>
         <type addedprofile="16" name="CharSeqHolder"/>
+        <type name="CompletionStatus">
+            <method name="&lt;init&gt;" removedprofile="32" signature="(I)V"/>
+        </type>
         <type addedprofile="16" name="CompletionStatusHelper"/>
         <type addedprofile="16" name="CurrentHelper"/>
         <type addedprofile="16" name="CurrentHolder"/>
@@ -5730,6 +6003,9 @@
         </type>
         <type addedprofile="16" name="BindingIteratorOperations"/>
         <type addedprofile="32" name="BindingIteratorPOA"/>
+        <type name="BindingType">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(I)V"/>
+        </type>
         <type addedprofile="32" name="NamingContextExt"/>
         <type addedprofile="32" name="NamingContextExtHelper">
             <method addedprofile="64" name="unchecked_narrow" signature="(Lorg/omg/CORBA/Object;)Lorg/omg/CosNaming/NamingContextExt;"/>
@@ -5742,10 +6018,26 @@
         </type>
         <type addedprofile="16" name="NamingContextOperations"/>
         <type addedprofile="32" name="NamingContextPOA"/>
+        <type name="_BindingIteratorStub">
+            <method name="&lt;init&gt;" removedprofile="32" signature="(Lorg/omg/CORBA/portable/Delegate;)V"/>
+        </type>
         <type addedprofile="32" name="_NamingContextExtStub"/>
+        <type name="_NamingContextStub">
+            <method name="&lt;init&gt;" removedprofile="32" signature="(Lorg/omg/CORBA/portable/Delegate;)V"/>
+        </type>
     </package>
     <package addedprofile="32" name="org.omg.CosNaming.NamingContextExtPackage"/>
-    <package addedprofile="8" name="org.omg.CosNaming.NamingContextPackage"/>
+    <package addedprofile="8" name="org.omg.CosNaming.NamingContextPackage">
+        <type name="CannotProceed">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/String;Lorg/omg/CosNaming/NamingContext;[Lorg/omg/CosNaming/NameComponent;)V"/>
+        </type>
+        <type name="NotFound">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(Ljava/lang/String;Lorg/omg/CosNaming/NamingContextPackage/NotFoundReason;[Lorg/omg/CosNaming/NameComponent;)V"/>
+        </type>
+        <type name="NotFoundReason">
+            <method addedprofile="32" name="&lt;init&gt;" signature="(I)V"/>
+        </type>
+    </package>
     <package addedprofile="32" name="org.omg.Dynamic"/>
     <package addedprofile="32" name="org.omg.DynamicAny">
         <type name="DynAnyFactoryHelper">

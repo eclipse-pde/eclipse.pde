@@ -274,4 +274,21 @@ public class SystemApiDescriptionTests extends TestCase {
 		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME), elementDescriptor, fCDCManifest));
 		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME), elementDescriptor, fCDCManifest));
 	}
+	/**
+	 * Tests API description: java.lang.RuntimeException(Throwable)
+	 */
+	public void test12() {
+		IElementDescriptor elementDescriptor = resolveMethod("java.lang.RuntimeException", "<init>", "(Ljava/lang/Throwable;)V");
+		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.JRE_1_1_NAME), elementDescriptor, fJREManifest));
+		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.J2SE_1_2_NAME), elementDescriptor, fJREManifest));
+		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.J2SE_1_3_NAME), elementDescriptor, fJREManifest));
+		assertTrue(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.J2SE_1_4_NAME), elementDescriptor, fJREManifest));
+		assertTrue(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.J2SE_1_5_NAME), elementDescriptor, fJREManifest));
+		assertTrue(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.JAVASE_1_6_NAME), elementDescriptor, fJREManifest));
+		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.OSGI_MINIMUM_1_0_NAME), elementDescriptor, fOSGiManifest));
+		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.OSGI_MINIMUM_1_1_NAME), elementDescriptor, fOSGiManifest));
+		assertTrue(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.OSGI_MINIMUM_1_2_NAME), elementDescriptor, fOSGiManifest));
+		assertFalse(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME), elementDescriptor, fCDCManifest));
+		assertTrue(Util.isAPI(ProfileModifiers.getValue(ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME), elementDescriptor, fCDCManifest));
+	}	
 }
