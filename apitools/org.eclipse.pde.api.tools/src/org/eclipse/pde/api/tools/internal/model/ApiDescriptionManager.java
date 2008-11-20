@@ -120,7 +120,11 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 		IJavaProject project = component.getJavaProject();
 		ProjectApiDescription description = (ProjectApiDescription) fDescriptions.get(project);
 		if (description == null) {
-			description = new ProjectApiDescription(component);
+			if (Util.isApiProject(project)) {
+				description = new ProjectApiDescription(component);
+			} else {
+				description = new NonApiProjectDescription(component);
+			}
 			try {
 				restoreDescription(project, description);
 			} catch (CoreException e) {

@@ -162,14 +162,10 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 */
 	protected IApiDescription createLocalApiDescription() throws CoreException {
 		long time = System.currentTimeMillis();
-		IApiDescription apiDesc = null;
 		if(Util.isApiProject(getJavaProject())) {
 			setHasApiDescription(true);
-			apiDesc = ApiDescriptionManager.getDefault().getApiDescription(this, getBundleDescription());
 		}
-		else {
-			apiDesc = super.createLocalApiDescription();
-		}
+		IApiDescription apiDesc = ApiDescriptionManager.getDefault().getApiDescription(this, getBundleDescription());
 		if (DEBUG) {
 			System.out.println("Time to create api description for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
