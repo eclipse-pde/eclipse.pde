@@ -42,13 +42,108 @@ import org.xml.sax.helpers.DefaultHandler;
  * into html reports.
  */
 public class DeltaReportConversionTask extends Task {
+	static final class ConverterDefaultHandler extends DefaultHandler {
+		private String[] arguments;
+		private List argumentsList;
+		private String componentID;
+		private boolean debug;
+		private String elementType;
+		private int flags;
+		private String key;
+		private String kind;
+		private Map map;
+		private String typename;
+
+		public ConverterDefaultHandler(boolean debug) {
+			this.map = new HashMap();
+			this.debug = debug;
+		}
+		public void endElement(String uri, String localName, String name)
+			throws SAXException {
+			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
+				Entry entry = new Entry(
+						elementType,
+						flags,
+						key,
+						kind,
+						typename,
+						this.arguments);
+				Object object = this.map.get(this.componentID);
+				if (object != null) {
+					((List) object).add(entry);
+				} else {
+					ArrayList value = new ArrayList();
+					value.add(entry);
+					this.map.put(componentID, value);
+				}
+			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
+				if (this.argumentsList != null && this.argumentsList.size() != 0) {
+					this.arguments = new String[this.argumentsList.size()];
+					this.argumentsList.toArray(this.arguments);
+				}
+			}
+		}
+
+		public Map getEntries() {
+			return this.map;
+		}
+		/*
+		 * Only used in debug mode
+		 */
+		private void printAttribute(Attributes attributes, String name) {
+			System.out.println("\t" + name + " = " + String.valueOf(attributes.getValue(name))); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		public void startElement(String uri, String localName,
+				String name, Attributes attributes) throws SAXException {
+			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
+				if (debug) {
+					System.out.println("name : " + name); //$NON-NLS-1$
+					/*<delta
+					 *  compatible="true"
+					 *  componentId="org.eclipse.equinox.p2.ui_0.1.0"
+					 *  element_type="CLASS_ELEMENT_TYPE"
+					 *  flags="25"
+					 *  key="schedule(Lorg/eclipse/equinox/internal/provisional/p2/ui/operations/ProvisioningOperation;Lorg/eclipse/swt/widgets/Shell;I)Lorg/eclipse/core/runtime/jobs/Job;"
+					 *  kind="ADDED"
+					 *  modifiers="9"
+					 *  restrictions="0"
+					 *  type_name="org.eclipse.equinox.internal.provisional.p2.ui.ProvisioningOperationRunner"/>
+					 */
+					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_COMPATIBLE);
+					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
+					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE);
+					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_FLAGS);
+					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_KEY);
+					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_MODIFIERS);
+					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_RESTRICTIONS);
+					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_TYPE_NAME);
+				}
+				componentID = attributes.getValue(IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
+				
+				elementType = attributes.getValue(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE);
+				flags = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_NAME_FLAGS));
+				kind = attributes.getValue(IApiXmlConstants.ATTR_NAME_KIND);
+				typename = attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
+				key = attributes.getValue(IApiXmlConstants.ATTR_NAME_KEY);
+			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
+				if (this.argumentsList == null) {
+					this.argumentsList = new ArrayList();
+				} else {
+					this.argumentsList.clear();
+				}
+			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENT.equals(name)) {
+				this.argumentsList.add(attributes.getValue(IApiXmlConstants.ATTR_VALUE));
+			}
+		}
+	}
 	static class Entry {
+		String[] arguments;
 		String elementType;
 		int flags;
 		String key;
 		String kind;
 		String typeName;
-		String[] arguments;
 
 		public Entry(
 				String elementType, int flags, String key, String kind,
@@ -119,168 +214,13 @@ public class DeltaReportConversionTask extends Task {
 			return String.valueOf(buffer);
 		}
 	}
-	static final class ConverterDefaultHandler extends DefaultHandler {
-		private Map map;
-		private boolean debug;
-		private String[] arguments;
-		private String elementType;
-		private int flags;
-		private String kind;
-		private String typename;
-		private String key;
-		private String componentID;
-		private List argumentsList;
-
-		public ConverterDefaultHandler(boolean debug) {
-			this.map = new HashMap();
-			this.debug = debug;
-		}
-		public void startElement(String uri, String localName,
-				String name, Attributes attributes) throws SAXException {
-			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
-				if (debug) {
-					System.out.println("name : " + name); //$NON-NLS-1$
-					/*<delta
-					 *  compatible="true"
-					 *  componentId="org.eclipse.equinox.p2.ui_0.1.0"
-					 *  element_type="CLASS_ELEMENT_TYPE"
-					 *  flags="25"
-					 *  key="schedule(Lorg/eclipse/equinox/internal/provisional/p2/ui/operations/ProvisioningOperation;Lorg/eclipse/swt/widgets/Shell;I)Lorg/eclipse/core/runtime/jobs/Job;"
-					 *  kind="ADDED"
-					 *  modifiers="9"
-					 *  restrictions="0"
-					 *  type_name="org.eclipse.equinox.internal.provisional.p2.ui.ProvisioningOperationRunner"/>
-					 */
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_COMPATIBLE);
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE);
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_FLAGS);
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_KEY);
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_MODIFIERS);
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_RESTRICTIONS);
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_TYPE_NAME);
-				}
-				componentID = attributes.getValue(IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
-				
-				elementType = attributes.getValue(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE);
-				flags = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_NAME_FLAGS));
-				kind = attributes.getValue(IApiXmlConstants.ATTR_NAME_KIND);
-				typename = attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
-				key = attributes.getValue(IApiXmlConstants.ATTR_NAME_KEY);
-			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
-				if (this.argumentsList == null) {
-					this.argumentsList = new ArrayList();
-				} else {
-					this.argumentsList.clear();
-				}
-			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENT.equals(name)) {
-				this.argumentsList.add(attributes.getValue(IApiXmlConstants.ATTR_VALUE));
-			}
-		}
-
-		public void endElement(String uri, String localName, String name)
-			throws SAXException {
-			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
-				Entry entry = new Entry(
-						elementType,
-						flags,
-						key,
-						kind,
-						typename,
-						this.arguments);
-				Object object = this.map.get(this.componentID);
-				if (object != null) {
-					((List) object).add(entry);
-				} else {
-					ArrayList value = new ArrayList();
-					value.add(entry);
-					this.map.put(componentID, value);
-				}
-			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
-				if (this.argumentsList != null && this.argumentsList.size() != 0) {
-					this.arguments = new String[this.argumentsList.size()];
-					this.argumentsList.toArray(this.arguments);
-				}
-			}
-		}
-		public Map getEntries() {
-			return this.map;
-		}
-
-		/*
-		 * Only used in debug mode
-		 */
-		private void printAttribute(Attributes attributes, String name) {
-			System.out.println("\t" + name + " = " + String.valueOf(attributes.getValue(name))); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
 	boolean debug;
 
-	private String xmlFileLocation;
 	private String htmlFileLocation;
+	private String xmlFileLocation;
 
-	public void setXmlFile(String xmlFileLocation) {
-		this.xmlFileLocation = xmlFileLocation;
-	}
-	public void setHtmlFile(String htmlFileLocation) {
-		this.htmlFileLocation = htmlFileLocation;
-	}
-	public void setDebug(String debugValue) {
-		this.debug = Boolean.toString(true).equals(debugValue); 
-	}
-	public void execute() throws BuildException {
-		if (this.debug) {
-			System.out.println("xmlFileLocation : " + this.xmlFileLocation); //$NON-NLS-1$
-			System.out.println("htmlFileLocation : " + this.htmlFileLocation); //$NON-NLS-1$
-		}
-		if (this.xmlFileLocation == null) {
-			throw new BuildException(Messages.deltaReportTask_missingXmlFileLocation);
-		}
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser parser = null;
-		try {
-			parser = factory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		}
-		if (parser == null) {
-			throw new BuildException(Messages.deltaReportTask_couldNotCreateSAXParser);
-		}
-
-		File file = new File(this.xmlFileLocation);
-		if (this.htmlFileLocation == null) {
-			this.htmlFileLocation = extractNameFromXMLName();
-			if (this.debug) {
-				System.out.println("output name :" + this.htmlFileLocation); //$NON-NLS-1$
-			}
-		}
-		try {
-			ConverterDefaultHandler defaultHandler = new ConverterDefaultHandler(this.debug);
-			parser.parse(file, defaultHandler);
-			StringBuffer buffer = new StringBuffer();
-			dumpEntries(defaultHandler.getEntries(), buffer);
-			writeOutput(buffer);
-		} catch (SAXException e) {
-			// ignore
-		} catch (IOException e) {
-			// ignore
-		}
-	}
-
-	private void writeOutput(StringBuffer buffer) throws IOException {
-		FileWriter writer = null;
-		BufferedWriter bufferedWriter = null;
-		try {
-			writer = new FileWriter(this.htmlFileLocation);
-			bufferedWriter = new BufferedWriter(writer);
-			bufferedWriter.write(String.valueOf(buffer));
-		} finally {
-			if (bufferedWriter != null) {
-				bufferedWriter.close();
-			}
-		}
+	private void dumpEndEntryForComponent(StringBuffer buffer, String componentID) {
+		buffer.append(NLS.bind(Messages.deltaReportTask_endComponentEntry, componentID));
 	}
 	private void dumpEntries(Map entries, StringBuffer buffer) {
 		dumpHeader(buffer);
@@ -347,19 +287,100 @@ public class DeltaReportConversionTask extends Task {
 	private void dumpEntryForComponent(StringBuffer buffer, String componentID) {
 		buffer.append(NLS.bind(Messages.deltaReportTask_componentEntry, componentID));
 	}
+
 	private void dumpFooter(StringBuffer buffer) {
 		buffer.append(Messages.deltaReportTask_footer);
 	}
 	private void dumpHeader(StringBuffer buffer) {
 		buffer.append(Messages.deltaReportTask_header);
 	}
-	private void dumpEndEntryForComponent(StringBuffer buffer, String componentID) {
-		buffer.append(NLS.bind(Messages.deltaReportTask_endComponentEntry, componentID));
+	/**
+	 * Run the ant task
+	 */
+	public void execute() throws BuildException {
+		if (this.debug) {
+			System.out.println("xmlFileLocation : " + this.xmlFileLocation); //$NON-NLS-1$
+			System.out.println("htmlFileLocation : " + this.htmlFileLocation); //$NON-NLS-1$
+		}
+		if (this.xmlFileLocation == null) {
+			throw new BuildException(Messages.deltaReportTask_missingXmlFileLocation);
+		}
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		SAXParser parser = null;
+		try {
+			parser = factory.newSAXParser();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		}
+		if (parser == null) {
+			throw new BuildException(Messages.deltaReportTask_couldNotCreateSAXParser);
+		}
+
+		File file = new File(this.xmlFileLocation);
+		if (this.htmlFileLocation == null) {
+			this.htmlFileLocation = extractNameFromXMLName();
+			if (this.debug) {
+				System.out.println("output name :" + this.htmlFileLocation); //$NON-NLS-1$
+			}
+		}
+		try {
+			ConverterDefaultHandler defaultHandler = new ConverterDefaultHandler(this.debug);
+			parser.parse(file, defaultHandler);
+			StringBuffer buffer = new StringBuffer();
+			dumpEntries(defaultHandler.getEntries(), buffer);
+			writeOutput(buffer);
+		} catch (SAXException e) {
+			// ignore
+		} catch (IOException e) {
+			// ignore
+		}
 	}
 	private String extractNameFromXMLName() {
 		int index = this.xmlFileLocation.lastIndexOf('.');
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(this.xmlFileLocation.substring(0, index)).append(".html"); //$NON-NLS-1$
 		return String.valueOf(buffer);
+	}
+	/**
+	 * Set the debug value.
+	 *
+	 * @param debugValue the given debug value
+	 */
+	public void setDebug(String debugValue) {
+		this.debug = Boolean.toString(true).equals(debugValue); 
+	}
+	/**
+	 * Set the path of the converted html file.
+	 * 
+	 * <p>This is optional. If not set, the html file name is retrieved from the xml file
+	 * name by replacing ".xml" in ".html".</p>
+	 * 
+	 * @param htmlFilePath the path of the converted html file
+	 */
+	public void setHtmlFile(String htmlFilePath) {
+		this.htmlFileLocation = htmlFilePath;
+	}
+	/**
+	 * Set the path of the xml file to convert to html.
+	 * 
+	 * @param xmlFilePath the path of the xml file to convert to html
+	 */
+	public void setXmlFile(String xmlFilePath) {
+		this.xmlFileLocation = xmlFilePath;
+	}
+	private void writeOutput(StringBuffer buffer) throws IOException {
+		FileWriter writer = null;
+		BufferedWriter bufferedWriter = null;
+		try {
+			writer = new FileWriter(this.htmlFileLocation);
+			bufferedWriter = new BufferedWriter(writer);
+			bufferedWriter.write(String.valueOf(buffer));
+		} finally {
+			if (bufferedWriter != null) {
+				bufferedWriter.close();
+			}
+		}
 	}
 }

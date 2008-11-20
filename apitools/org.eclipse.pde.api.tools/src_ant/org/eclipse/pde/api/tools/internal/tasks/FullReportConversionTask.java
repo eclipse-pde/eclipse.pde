@@ -42,105 +42,16 @@ import com.ibm.icu.text.MessageFormat;
  * into html reports.
  */
 public class FullReportConversionTask extends Task {
-	private static final String[] NO_PROBLEMS = new String[0];
-	private static final String[] NO_NON_API_BUNDLES = NO_PROBLEMS;
-
-	static private final class Summary {
-		String componentID;
-		int compatibilityNumber;
-		int apiUsageNumber;
-		int bundleVersionNumber;
-		String link;
-		
-		public Summary(Report report) {
-			super();
-			this.apiUsageNumber = report.getProblemSize(APIToolsVerificationTask.USAGE);
-			this.bundleVersionNumber = report.getProblemSize(APIToolsVerificationTask.BUNDLE_VERSION);
-			this.compatibilityNumber = report.getProblemSize(APIToolsVerificationTask.COMPATIBILITY);
-			this.componentID = report.componentID;
-			this.link = report.link;
-		}
-		
-		public String toString() {
-			return MessageFormat.format("{0} : compatibility {1}, api usage {2}, bundler version {3}, link {4}", //$NON-NLS-1$
-					new String[] {
-						this.componentID,
-						Integer.toString(this.compatibilityNumber),
-						Integer.toString(this.apiUsageNumber),
-						Integer.toString(this.bundleVersionNumber),
-						this.link
-					});
-		}
-	}
-	static private final class Report {
-		String componentID;
-		Map problemsPerCategories;
-		List nonApiBundles;
-		String link;
-
-		Report(String componentID) {
-			this.componentID = componentID;
-		}
-
-		public void addProblem(String category, String problemMessage) {
-			if (this.problemsPerCategories == null) {
-				this.problemsPerCategories = new HashMap();
-			}
-			List problemsList = (List) this.problemsPerCategories.get(category);
-			if (problemsList == null) {
-				problemsList = new ArrayList();
-				this.problemsPerCategories.put(category, problemsList);
-			}
-			problemsList.add(problemMessage);
-		}
-		
-		public void addNonApiBundles(String bundleName) {
-			if (this.nonApiBundles == null) {
-				this.nonApiBundles = new ArrayList();
-			}
-			this.nonApiBundles.add(bundleName);
-		}
-
-		public String[] getNonApiBundles() {
-			if (this.nonApiBundles == null || this.nonApiBundles.size() == 0) {
-				return NO_NON_API_BUNDLES;
-			}
-			String[] nonApiBundlesNames = new String[this.nonApiBundles.size()];
-			this.nonApiBundles.toArray(nonApiBundlesNames);
-			return nonApiBundlesNames;
-		}
-		
-		public String[] getProblems(String category) {
-			if (this.problemsPerCategories == null) return NO_PROBLEMS;
-			List problemsList = (List) this.problemsPerCategories.get(category);
-			int size = problemsList == null ? 0 : problemsList.size();
-			if (size == 0) {
-				return NO_PROBLEMS;
-			}
-			String[] problemsMessages = new String[size];
-			problemsList.toArray(problemsMessages);
-			return problemsMessages;
-		}
-		public int getProblemSize(String category) {
-			if (this.problemsPerCategories == null) return 0;
-			List problemsList = (List) this.problemsPerCategories.get(category);
-			return problemsList == null ? 0 : problemsList.size();
-		}
-		
-		public void setLink(String link) {
-			this.link = link;
-		}
-		public boolean hasNonApiBundles() {
-			return this.nonApiBundles != null && this.nonApiBundles.size() != 0;
-		}
-	}
 	static final class ConverterDefaultHandler extends DefaultHandler {
+		String category;
 		boolean debug;
 		Report report;
-		String category;
 
 		public ConverterDefaultHandler(boolean debug) {
 			this.debug = debug;
+		}
+		public Report getReport() {
+			return this.report;
 		}
 		public void startElement(String uri, String localName,
 				String name, Attributes attributes) throws SAXException {
@@ -169,26 +80,273 @@ public class FullReportConversionTask extends Task {
 				this.report.addNonApiBundles(bundleName);
 			}
 		}
-		public Report getReport() {
-			return this.report;
+	}
+	static private final class Report {
+		String componentID;
+		String link;
+		List nonApiBundles;
+		Map problemsPerCategories;
+
+		Report(String componentID) {
+			this.componentID = componentID;
+		}
+
+		public void addNonApiBundles(String bundleName) {
+			if (this.nonApiBundles == null) {
+				this.nonApiBundles = new ArrayList();
+			}
+			this.nonApiBundles.add(bundleName);
+		}
+		
+		public void addProblem(String category, String problemMessage) {
+			if (this.problemsPerCategories == null) {
+				this.problemsPerCategories = new HashMap();
+			}
+			List problemsList = (List) this.problemsPerCategories.get(category);
+			if (problemsList == null) {
+				problemsList = new ArrayList();
+				this.problemsPerCategories.put(category, problemsList);
+			}
+			problemsList.add(problemMessage);
+		}
+
+		public String[] getNonApiBundles() {
+			if (this.nonApiBundles == null || this.nonApiBundles.size() == 0) {
+				return NO_NON_API_BUNDLES;
+			}
+			String[] nonApiBundlesNames = new String[this.nonApiBundles.size()];
+			this.nonApiBundles.toArray(nonApiBundlesNames);
+			return nonApiBundlesNames;
+		}
+		
+		public String[] getProblems(String category) {
+			if (this.problemsPerCategories == null) return NO_PROBLEMS;
+			List problemsList = (List) this.problemsPerCategories.get(category);
+			int size = problemsList == null ? 0 : problemsList.size();
+			if (size == 0) {
+				return NO_PROBLEMS;
+			}
+			String[] problemsMessages = new String[size];
+			problemsList.toArray(problemsMessages);
+			return problemsMessages;
+		}
+		public int getProblemSize(String category) {
+			if (this.problemsPerCategories == null) return 0;
+			List problemsList = (List) this.problemsPerCategories.get(category);
+			return problemsList == null ? 0 : problemsList.size();
+		}
+		
+		public boolean hasNonApiBundles() {
+			return this.nonApiBundles != null && this.nonApiBundles.size() != 0;
+		}
+		public void setLink(String link) {
+			this.link = link;
 		}
 	}
+
+	static private final class Summary {
+		int apiUsageNumber;
+		int bundleVersionNumber;
+		int compatibilityNumber;
+		String componentID;
+		String link;
+		
+		public Summary(Report report) {
+			super();
+			this.apiUsageNumber = report.getProblemSize(APIToolsVerificationTask.USAGE);
+			this.bundleVersionNumber = report.getProblemSize(APIToolsVerificationTask.BUNDLE_VERSION);
+			this.compatibilityNumber = report.getProblemSize(APIToolsVerificationTask.COMPATIBILITY);
+			this.componentID = report.componentID;
+			this.link = report.link;
+		}
+		
+		public String toString() {
+			return MessageFormat.format("{0} : compatibility {1}, api usage {2}, bundler version {3}, link {4}", //$NON-NLS-1$
+					new String[] {
+						this.componentID,
+						Integer.toString(this.compatibilityNumber),
+						Integer.toString(this.apiUsageNumber),
+						Integer.toString(this.bundleVersionNumber),
+						this.link
+					});
+		}
+	}
+	private static final String[] NO_PROBLEMS = new String[0];
+	private static final String[] NO_NON_API_BUNDLES = NO_PROBLEMS;
 	boolean debug;
 
-	private String xmlReportsLocation;
 	private String htmlReportsLocation;
-	private File reportsRoot;
 	private File htmlRoot;
+	private File reportsRoot;
+	private String xmlReportsLocation;
 
-	public void setXmlReportDirectory(String xmlFileLocation) {
-		this.xmlReportsLocation = xmlFileLocation;
+	private void dumpFooter(PrintWriter writer) {
+		writer.println(Messages.fullReportTask_apiproblemfooter);
 	}
-	public void setHtmlReportDirectory(String htmlFileLocation) {
-		this.htmlReportsLocation = htmlFileLocation;
+	private void dumpHeader(PrintWriter writer, Report report) {
+		writer.println(
+			MessageFormat.format(
+				Messages.fullReportTask_apiproblemheader,
+				new String[] {
+						report.componentID
+				}));
+		// dump the summary
+		writer.println(
+			MessageFormat.format(
+				Messages.fullReportTask_apiproblemsummary,
+				new String[] {
+					Integer.toString(report.getProblemSize(APIToolsVerificationTask.COMPATIBILITY)),
+					Integer.toString(report.getProblemSize(APIToolsVerificationTask.USAGE)),
+					Integer.toString(report.getProblemSize(APIToolsVerificationTask.BUNDLE_VERSION)),
+				}));
 	}
-	public void setDebug(String debugValue) {
-		this.debug = Boolean.toString(true).equals(debugValue); 
+	private void dumpIndexEntry(int i, PrintWriter writer, Summary summary) {
+		if (debug) {
+			System.out.println(summary);
+		}
+		if ((i % 2) == 0) {
+			writer.println(
+					MessageFormat.format(
+						Messages.fullReportTask_indexsummary_even,
+						new String[] {
+							summary.componentID,
+							Integer.toString(summary.compatibilityNumber),
+							Integer.toString(summary.apiUsageNumber),
+							Integer.toString(summary.bundleVersionNumber),
+							summary.link,
+						}));
+		} else {
+			writer.println(
+				MessageFormat.format(
+					Messages.fullReportTask_indexsummary_odd,
+					new String[] {
+						summary.componentID,
+						Integer.toString(summary.compatibilityNumber),
+						Integer.toString(summary.apiUsageNumber),
+						Integer.toString(summary.bundleVersionNumber),
+						summary.link,
+					}));
+		}
 	}
+	private void dumpIndexFile(File reportsRoot, Summary[] summaries, Summary allNonApiBundleSummary) {
+		File htmlFile = new File(this.htmlReportsLocation, "index.html"); //$NON-NLS-1$
+		PrintWriter writer = null;
+		try {
+			FileWriter fileWriter = new FileWriter(htmlFile);
+			writer = new PrintWriter(new BufferedWriter(fileWriter));
+			if (allNonApiBundleSummary != null) {
+				writer.println(
+					MessageFormat.format(
+						Messages.fullReportTask_indexheader,
+						new String[] {
+							Messages.bind(
+								Messages.fullReportTask_nonApiBundleSummary,
+								allNonApiBundleSummary.link)
+						}));
+			} else {
+				writer.println(
+					MessageFormat.format(
+						Messages.fullReportTask_indexheader,
+						new String[] {
+							Messages.fullReportTask_apiBundleSummary
+						}));
+			}
+			Arrays.sort(summaries, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					Summary summary1 = (Summary) o1; 
+					Summary summary2 = (Summary) o2;
+					return summary1.componentID.compareTo(summary2.componentID);
+				}
+			});
+			for (int i = 0, max = summaries.length; i < max; i++) {
+				dumpIndexEntry(i, writer, summaries[i]);
+			}
+			writer.println(Messages.fullReportTask_indexfooter);
+			writer.flush();
+		} catch (IOException e) {
+			throw new BuildException(Messages.bind(Messages.fullReportTask_ioexceptionDumpingHtmlFile, htmlFile.getAbsolutePath()));
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	private void dumpNonApiBundles(PrintWriter writer, Report report) {
+		writer.println(Messages.fullReportTask_bundlesheader);
+		String[] nonApiBundleNames = report.getNonApiBundles();
+		for (int i = 0; i < nonApiBundleNames.length; i++) {
+			String bundleName = nonApiBundleNames[i];
+			if ((i % 2) == 0) {
+				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_even, new String[] { bundleName }));
+			} else { 
+				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_odd, new String[] { bundleName }));
+			}
+		}
+		writer.println(Messages.fullReportTask_bundlesfooter);
+	}
+	private void dumpProblems(PrintWriter writer, String categoryName, String[] problemMessages) {
+		if (problemMessages != null && problemMessages.length != 0) {
+			writer.println(
+					MessageFormat.format(
+						Messages.fullReportTask_categoryheader,
+						new String[] {categoryName}));
+			for (int i = 0, max = problemMessages.length; i < max; i++) {
+				String problemMessage = problemMessages[i];
+				if ((i % 2) == 0) {
+					writer.println(MessageFormat.format(Messages.fullReportTask_problementry_even, new String[] { problemMessage }));
+				} else { 
+					writer.println(MessageFormat.format(Messages.fullReportTask_problementry_odd, new String[] { problemMessage }));
+				}
+			}
+			writer.println(Messages.fullReportTask_categoryfooter);
+		} else {
+			writer.println(
+					MessageFormat.format(
+						Messages.fullReportTask_category_no_elements,
+						new String[] {categoryName}));
+		}
+	}
+
+	private void dumpReport(File xmlFile, Report report) {
+		// create file writer
+		// generate the html file name from the xml file name
+		String htmlName = extractNameFromXMLName(xmlFile);
+		report.setLink(extractLinkFrom(htmlName));
+		File htmlFile = new File(htmlName);
+		File parent = htmlFile.getParentFile();
+		if (!parent.exists()) {
+			if (!parent.mkdirs()) {
+				throw new BuildException(Messages.bind(Messages.fullReportTask_couldNotCreateFile, htmlName));
+			}
+		}
+		PrintWriter writer = null;
+		try {
+			FileWriter fileWriter = new FileWriter(htmlFile);
+			writer = new PrintWriter(new BufferedWriter(fileWriter));
+			if (report.hasNonApiBundles()) {
+				dumpNonApiBundles(writer, report);
+			} else {
+				dumpHeader(writer, report);
+				// generate compatibility category
+				dumpProblems(writer, Messages.fullReportTask_compatibility_header, report.getProblems(APIToolsVerificationTask.COMPATIBILITY));
+				writer.println(Messages.fullReportTask_categoryseparator);
+				dumpProblems(writer, Messages.fullReportTask_api_usage_header, report.getProblems(APIToolsVerificationTask.USAGE));
+				writer.println(Messages.fullReportTask_categoryseparator);
+				dumpProblems(writer, Messages.fullReportTask_bundle_version_header, report.getProblems(APIToolsVerificationTask.BUNDLE_VERSION));
+				dumpFooter(writer);
+			}
+			writer.flush();
+		} catch (IOException e) {
+			throw new BuildException(Messages.bind(Messages.fullReportTask_ioexceptionDumpingHtmlFile, htmlName));
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	/**
+	 * Run the ant task
+	 */
 	public void execute() throws BuildException {
 		if (this.debug) {
 			System.out.println("xmlReportsLocation : " + this.xmlReportsLocation); //$NON-NLS-1$
@@ -266,115 +424,6 @@ public class FullReportConversionTask extends Task {
 			// ignore
 		}
 	}
-	private void dumpIndexFile(File reportsRoot, Summary[] summaries, Summary allNonApiBundleSummary) {
-		File htmlFile = new File(this.htmlReportsLocation, "index.html"); //$NON-NLS-1$
-		PrintWriter writer = null;
-		try {
-			FileWriter fileWriter = new FileWriter(htmlFile);
-			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			if (allNonApiBundleSummary != null) {
-				writer.println(
-					MessageFormat.format(
-						Messages.fullReportTask_indexheader,
-						new String[] {
-							Messages.bind(
-								Messages.fullReportTask_nonApiBundleSummary,
-								allNonApiBundleSummary.link)
-						}));
-			} else {
-				writer.println(
-					MessageFormat.format(
-						Messages.fullReportTask_indexheader,
-						new String[] {
-							Messages.fullReportTask_apiBundleSummary
-						}));
-			}
-			Arrays.sort(summaries, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					Summary summary1 = (Summary) o1; 
-					Summary summary2 = (Summary) o2;
-					return summary1.componentID.compareTo(summary2.componentID);
-				}
-			});
-			for (int i = 0, max = summaries.length; i < max; i++) {
-				dumpIndexEntry(i, writer, summaries[i]);
-			}
-			writer.println(Messages.fullReportTask_indexfooter);
-			writer.flush();
-		} catch (IOException e) {
-			throw new BuildException(Messages.bind(Messages.fullReportTask_ioexceptionDumpingHtmlFile, htmlFile.getAbsolutePath()));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
-		}
-	}
-	private void dumpIndexEntry(int i, PrintWriter writer, Summary summary) {
-		if (debug) {
-			System.out.println(summary);
-		}
-		if ((i % 2) == 0) {
-			writer.println(
-					MessageFormat.format(
-						Messages.fullReportTask_indexsummary_even,
-						new String[] {
-							summary.componentID,
-							Integer.toString(summary.compatibilityNumber),
-							Integer.toString(summary.apiUsageNumber),
-							Integer.toString(summary.bundleVersionNumber),
-							summary.link,
-						}));
-		} else {
-			writer.println(
-				MessageFormat.format(
-					Messages.fullReportTask_indexsummary_odd,
-					new String[] {
-						summary.componentID,
-						Integer.toString(summary.compatibilityNumber),
-						Integer.toString(summary.apiUsageNumber),
-						Integer.toString(summary.bundleVersionNumber),
-						summary.link,
-					}));
-		}
-	}
-
-	private void dumpReport(File xmlFile, Report report) {
-		// create file writer
-		// generate the html file name from the xml file name
-		String htmlName = extractNameFromXMLName(xmlFile);
-		report.setLink(extractLinkFrom(htmlName));
-		File htmlFile = new File(htmlName);
-		File parent = htmlFile.getParentFile();
-		if (!parent.exists()) {
-			if (!parent.mkdirs()) {
-				throw new BuildException(Messages.bind(Messages.fullReportTask_couldNotCreateFile, htmlName));
-			}
-		}
-		PrintWriter writer = null;
-		try {
-			FileWriter fileWriter = new FileWriter(htmlFile);
-			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			if (report.hasNonApiBundles()) {
-				dumpNonApiBundles(writer, report);
-			} else {
-				dumpHeader(writer, report);
-				// generate compatibility category
-				dumpProblems(writer, Messages.fullReportTask_compatibility_header, report.getProblems(APIToolsVerificationTask.COMPATIBILITY));
-				writer.println(Messages.fullReportTask_categoryseparator);
-				dumpProblems(writer, Messages.fullReportTask_api_usage_header, report.getProblems(APIToolsVerificationTask.USAGE));
-				writer.println(Messages.fullReportTask_categoryseparator);
-				dumpProblems(writer, Messages.fullReportTask_bundle_version_header, report.getProblems(APIToolsVerificationTask.BUNDLE_VERSION));
-				dumpFooter(writer);
-			}
-			writer.flush();
-		} catch (IOException e) {
-			throw new BuildException(Messages.bind(Messages.fullReportTask_ioexceptionDumpingHtmlFile, htmlName));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
-		}
-	}
 	private String extractLinkFrom(String fileName) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('.').append(fileName.substring(this.htmlRoot.getAbsolutePath().length()).replace('\\', '/'));
@@ -388,59 +437,31 @@ public class FullReportConversionTask extends Task {
 		File htmlFile = new File(this.htmlReportsLocation, String.valueOf(buffer));
 		return htmlFile.getAbsolutePath();
 	}
-	private void dumpFooter(PrintWriter writer) {
-		writer.println(Messages.fullReportTask_apiproblemfooter);
+	/**
+	 * Set the debug value.
+	 *
+	 * @param debugValue the given debug value
+	 */
+	public void setDebug(String debugValue) {
+		this.debug = Boolean.toString(true).equals(debugValue); 
 	}
-	private void dumpHeader(PrintWriter writer, Report report) {
-		writer.println(
-			MessageFormat.format(
-				Messages.fullReportTask_apiproblemheader,
-				new String[] {
-						report.componentID
-				}));
-		// dump the summary
-		writer.println(
-			MessageFormat.format(
-				Messages.fullReportTask_apiproblemsummary,
-				new String[] {
-					Integer.toString(report.getProblemSize(APIToolsVerificationTask.COMPATIBILITY)),
-					Integer.toString(report.getProblemSize(APIToolsVerificationTask.USAGE)),
-					Integer.toString(report.getProblemSize(APIToolsVerificationTask.BUNDLE_VERSION)),
-				}));
+	/**
+	 * Set the location where the html reports should be dumped.
+	 * 
+	 * <p>This is optional. If not set, the html files are created in the same folder as the
+	 * xml file.</p>
+	 * 
+	 * @param profileLocation the given the location where the html reports should be dumped
+	 */
+	public void setHtmlReportDirectory(String htmlFileLocation) {
+		this.htmlReportsLocation = htmlFileLocation;
 	}
-	private void dumpProblems(PrintWriter writer, String categoryName, String[] problemMessages) {
-		if (problemMessages != null && problemMessages.length != 0) {
-			writer.println(
-					MessageFormat.format(
-						Messages.fullReportTask_categoryheader,
-						new String[] {categoryName}));
-			for (int i = 0, max = problemMessages.length; i < max; i++) {
-				String problemMessage = problemMessages[i];
-				if ((i % 2) == 0) {
-					writer.println(MessageFormat.format(Messages.fullReportTask_problementry_even, new String[] { problemMessage }));
-				} else { 
-					writer.println(MessageFormat.format(Messages.fullReportTask_problementry_odd, new String[] { problemMessage }));
-				}
-			}
-			writer.println(Messages.fullReportTask_categoryfooter);
-		} else {
-			writer.println(
-					MessageFormat.format(
-						Messages.fullReportTask_category_no_elements,
-						new String[] {categoryName}));
-		}
-	}
-	private void dumpNonApiBundles(PrintWriter writer, Report report) {
-		writer.println(Messages.fullReportTask_bundlesheader);
-		String[] nonApiBundleNames = report.getNonApiBundles();
-		for (int i = 0; i < nonApiBundleNames.length; i++) {
-			String bundleName = nonApiBundleNames[i];
-			if ((i % 2) == 0) {
-				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_even, new String[] { bundleName }));
-			} else { 
-				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_odd, new String[] { bundleName }));
-			}
-		}
-		writer.println(Messages.fullReportTask_bundlesfooter);
+	/**
+	 * Set the location where the xml reports should be retrieved.
+	 * 
+	 * @param profileLocation the given location to retrieve the xml reports
+	 */
+	public void setXmlReportDirectory(String xmlFileLocation) {
+		this.xmlReportsLocation = xmlFileLocation;
 	}
 }
