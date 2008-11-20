@@ -1,4 +1,4 @@
-package org.eclipse.pde.build.internal.tests;
+package org.eclipse.pde.build.internal.tests.p2;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -10,7 +10,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.pde.build.internal.tests.p2.P2TestCase;
+import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 
 public class P2Tests extends P2TestCase {

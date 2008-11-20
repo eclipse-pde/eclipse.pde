@@ -808,9 +808,10 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		if (bundle == null)
 			return true;
 
-		Properties properties = (Properties) bundle.getUserObject();
-		if (properties != null && properties.containsKey(ECLIPSE_BUNDLE_SHAPE)) {
-			return properties.get(ECLIPSE_BUNDLE_SHAPE).equals("dir"); //$NON-NLS-1$
+		Dictionary properties = (Dictionary) bundle.getUserObject();
+		String shape = null;
+		if (properties != null && (shape = (String) properties.get(ECLIPSE_BUNDLE_SHAPE)) != null) {
+			return shape.equals("dir"); //$NON-NLS-1$
 		}
 
 		// launcher fragments are a special case, they have no bundle-classpath and they must

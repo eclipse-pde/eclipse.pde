@@ -11,9 +11,11 @@ package org.eclipse.pde.internal.build.builder;
 
 import java.io.*;
 import java.util.*;
+import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.ClasspathComputer3_0.ClasspathElement;
@@ -31,9 +33,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Represents a entry that must be compiled and which is listed in the build.properties file.
 	 */
-	static protected class CompiledEntry {
-		static final byte JAR = 0;
-		static final byte FOLDER = 1;
+	static public class CompiledEntry {
+		static public final byte JAR = 0;
+		static public final byte FOLDER = 1;
 		private final String name;
 		private String resolvedName;
 		private final String[] source;
@@ -51,7 +53,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			this.excludedFromJar = excludedFromJar;
 		}
 
-		protected String getName(boolean resolved) {
+		public String getName(boolean resolved) {
 			if (!resolved)
 				return name;
 
@@ -113,6 +115,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private boolean dotOnTheClasspath = false;
 	private boolean binaryPlugin = false;
 	private boolean signJars = false;
+
+	public static boolean p2Gathering = false;
 
 	/**
 	 * @see AbstractScriptGenerator#generate()
@@ -264,7 +268,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generateBuildJarsTargetForSourceGathering();
 			generateEmptyBuildSourcesTarget();
 		}
-		generateGatherBinPartsTarget();
+
+		if (p2Gathering)
+			generatePublishGatherBinPartsTarget();
+		else
+			generateGatherBinPartsTarget();
 		generateBuildZipsTarget();
 		generateGatherSourcesTarget();
 		generateGatherIndividualSourcesTarget();
@@ -507,6 +515,28 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
 			script.printCopyTask(null, baseDestination.toString(), new FileSet[] {fileSet}, false, false);
 		}
+		script.printTargetEnd();
+	}
+
+	private void generatePublishGatherBinPartsTarget() throws CoreException {
+		script.println();
+		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, null, null, null);
+
+		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
+
+		String files = JarFile.MANIFEST_NAME + "," + Constants.PLUGIN_FILENAME_DESCRIPTOR + "," + Constants.FRAGMENT_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$
+		FileSet metadata = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, files, null, exclude, null, null);
+		script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), new FileSet[] {metadata}, true, true);
+		genarateIdReplacementCall(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+
+		script.println("<eclipse.gatherBundle "); //$NON-NLS-1$
+		script.println("   metadataRepository=\"file:${buildDirectory}/buildRepo\""); //$NON-NLS-1$
+		script.println("   artifactRepository=\"file:${buildDirectory}/buildRepo\""); //$NON-NLS-1$
+		script.println("   buildResultFolder=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
+		if (associatedEntry != null && associatedEntry.unpackSet())
+			script.println("  unpack=\"" + String.valueOf(associatedEntry.isUnpack()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("/>"); //$NON-NLS-1$
 		script.printTargetEnd();
 	}
 

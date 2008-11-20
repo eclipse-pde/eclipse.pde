@@ -13,6 +13,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.pde.build.internal.tests.*;
+import org.eclipse.pde.build.internal.tests.p2.P2Tests;
+import org.eclipse.pde.build.internal.tests.p2.PublishingTests;
 
 public class PDEBuildTestSuite {
 
@@ -22,6 +24,7 @@ public class PDEBuildTestSuite {
 		suite.addTestSuite(ScriptGenerationTests.class);
 		suite.addTestSuite(ProductTests.class);
 		suite.addTestSuite(P2Tests.class);
+		suite.addTestSuite(PublishingTests.class);
 		suite.addTest(AssembleTests.suite());
 
 		if(System.getProperty("pde.build.includeFetch") != null)

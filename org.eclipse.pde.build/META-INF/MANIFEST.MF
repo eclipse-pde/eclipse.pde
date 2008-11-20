@@ -12,7 +12,8 @@ Require-Bundle:
  org.eclipse.core.runtime.compatibility;bundle-version="[3.1.100,4.0.0)";resolution:=optional,
  org.eclipse.osgi;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.equinox.p2.metadata.generator;resolution:=optional,
- org.eclipse.equinox.p2.jarprocessor;bundle-version="[1.0.0,2.0.0)"
+ org.eclipse.equinox.p2.jarprocessor;bundle-version="[1.0.0,2.0.0)",
+ org.eclipse.equinox.p2.publisher;bundle-version="1.0.0";resolution:=optional
 Export-Package: 
  org.eclipse.pde.build,
  org.eclipse.pde.internal.build;x-friends:="org.eclipse.pde.core,org.eclipse.pde.ui",
@@ -24,7 +25,12 @@ Export-Package:
  org.eclipse.pde.internal.build.site;x-friends:="org.eclipse.pde.core,org.eclipse.pde.ui",
  org.eclipse.pde.internal.build.site.compatibility;x-internal:=true,
  org.eclipse.pde.internal.swt.tools;x-internal:=true
-Import-Package: com.ibm.icu.util
+Import-Package: com.ibm.icu.util,
+ org.eclipse.equinox.internal.p2.core.helpers,
+ org.eclipse.equinox.internal.provisional.p2.artifact.repository,
+ org.eclipse.equinox.internal.provisional.p2.core,
+ org.eclipse.equinox.internal.provisional.p2.metadata,
+ org.eclipse.equinox.internal.provisional.p2.metadata.repository
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
