@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
@@ -130,7 +131,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * The associated {@link IJavaProject}, if there is one
 	 */
 	private IJavaProject fJavaProject = null;
-	
+	/**
+	 * The current preferences to use when the platform is not running.
+	 */
+	private Properties fPreferences = null;
 	/**
 	 * Method used for initializing tracing in the API tool builder
 	 */
@@ -148,8 +152,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(org.eclipse.pde.api.tools.internal.builder.BuildState, org.eclipse.pde.api.tools.internal.provisional.IApiProfile, org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String[], java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void analyzeComponent(final BuildState state, final IApiFilterStore filterStore, final IApiBaseline baseline, final IApiComponent component,
-			final String[] typenames, final String[] changedtypes, IProgressMonitor monitor) {
+	public void analyzeComponent(
+			final BuildState state,
+			final IApiFilterStore filterStore,
+			final Properties preferences,
+			final IApiBaseline baseline,
+			final IApiComponent component,
+			final String[] typenames,
+			final String[] changedtypes,
+			IProgressMonitor monitor) {
 		try {
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 6 + (changedtypes == null ? 0 : changedtypes.length));
 			fJavaProject = getJavaProject(component);

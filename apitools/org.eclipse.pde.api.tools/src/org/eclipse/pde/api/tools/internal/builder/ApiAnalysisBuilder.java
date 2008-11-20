@@ -394,7 +394,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				// Compatibility checks
 				IApiComponent apiComponent = wsprofile.getApiComponent(id);
 				if(apiComponent != null) {
-					fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, null, null, localMonitor.newChild(1));
+					fAnalyzer.analyzeComponent(fBuildState, null, null, profile, apiComponent, null, null, localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
 					createMarkers();
 					updateMonitor(localMonitor, 1);
@@ -616,7 +616,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					collectAllQualifiedNames(fTypesToCheck, tnames, cnames, localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
 					IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline();
-					fAnalyzer.analyzeComponent(fBuildState, null, profile, apiComponent, (String[])tnames.toArray(new String[tnames.size()]), (String[])cnames.toArray(new String[cnames.size()]), localMonitor.newChild(1));
+					fAnalyzer.analyzeComponent(fBuildState, null, null, profile, apiComponent, (String[])tnames.toArray(new String[tnames.size()]), (String[])cnames.toArray(new String[cnames.size()]), localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
 					createMarkers();
 					updateMonitor(localMonitor, 1);
