@@ -273,4 +273,48 @@ public class ClassUsageTests extends UsageTest {
 		expectingNoProblems();
 		deployTest("testC7", inc);
 	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255804
+	 */
+	public void testClassIndirectImplements6F() {
+		x8(false);
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255804
+	 */
+	public void testClassIndirectImplements6I() {
+		x8(true);
+	}
+	
+	private void x8(boolean inc) {
+		expectingNoProblems();
+		deployTest("testC8", inc);
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255804
+	 */
+	public void testClassIndirectImplements7F() {
+		x9(false);
+	}
+	
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255804
+	 */
+	public void testClassIndirectImplements7I() {
+		x9(true);
+	}
+	
+	private void x9(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS)
+		});
+		String typename = "testC9";
+		setExpectedMessageArgs(new String[][] {
+				{"INoImpl1", typename}
+		});
+		deployTest(typename, inc);
+	}
 }

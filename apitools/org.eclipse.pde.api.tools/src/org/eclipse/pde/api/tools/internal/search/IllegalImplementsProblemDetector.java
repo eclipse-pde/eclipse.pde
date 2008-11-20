@@ -163,13 +163,31 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 		if(type == null) {
 			return false;
 		}
-		IApiType[] sinters = type.getSuperInterfaces();
-		for (int i = 0; i < sinters.length; i++) {
-			if(sinters[i].getName().equals(iname)) {
-				return true;
-			}
+		if(isImplemented(iname, type.getSuperInterfaces())) {
+			return true;
 		}
 		return isImplemented(type.getSuperclass(), iname);
+	}
+	
+	/**
+	 * Inspects the hierarchy of super-interfaces to determine if an interface with the given name is
+	 * implemented or not
+	 * @param iname the name of the interface to find
+	 * @param interfaces the collection of interfaces to inspect
+	 * @return true if the interface is implemented, false otherwise
+	 * @throws CoreException
+	 */
+	private boolean isImplemented(final String iname, IApiType[] interfaces) throws CoreException {
+		if(interfaces.length == 0) {
+			return false;
+		}
+		for (int i = 0; i < interfaces.length; i++) {
+			if(interfaces[i].getName().equals(iname)) {
+				return true;
+			}
+			return isImplemented(iname, interfaces[i].getSuperInterfaces());
+		}
+		return false;
 	}
 	
 	/**
