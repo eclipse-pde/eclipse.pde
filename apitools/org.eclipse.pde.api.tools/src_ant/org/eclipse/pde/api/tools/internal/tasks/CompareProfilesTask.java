@@ -132,6 +132,10 @@ public class CompareProfilesTask extends CommonUtilsTask {
 	/**
 	 * Set the profile location.
 	 * 
+	 * <p>If the location is a directory, it has to be an Eclipse installation folder. This is the folder that contains
+	 * the eclipse executable.
+	 * </p>
+	 * 
 	 * @param profileLocation the given location for the profile to analyze
 	 */
 	public void setProfile(String profileLocation) {
@@ -139,6 +143,10 @@ public class CompareProfilesTask extends CommonUtilsTask {
 	}
 	/**
 	 * Set the reference profile location.
+	 * 
+	 * <p>If the location is a directory, it has to be an Eclipse installation folder. This is the folder that contains
+	 * the eclipse executable.
+	 * </p>
 	 * 
 	 * @param profileLocation the given location for the reference profile to analyze
 	 */

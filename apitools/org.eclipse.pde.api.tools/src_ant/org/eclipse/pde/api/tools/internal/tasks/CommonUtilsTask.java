@@ -142,7 +142,7 @@ abstract class CommonUtilsTask extends Task {
 		if (isArchive(dir.getName())) {
 			return new File(new File(new File(dir, profileInstallName), ECLIPSE_FOLDER_NAME), PLUGINS_FOLDER_NAME);
 		} else {
-			return new File(new File(dir, ECLIPSE_FOLDER_NAME), PLUGINS_FOLDER_NAME);
+			return new File(dir, PLUGINS_FOLDER_NAME);
 		}
 	}
 	private static boolean isArchive(String fileName) {
