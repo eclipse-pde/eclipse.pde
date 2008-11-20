@@ -45,6 +45,11 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_ELEMENT_KIND = "elementkind"; //$NON-NLS-1$
 	/**
+	 * Constant representing the element severity attribute of an {@link IApiProblem} in xml.
+	 * Value is: <code>severity</code>
+	 */
+	public static final String ATTR_SEVERITY = "severity"; //$NON-NLS-1$
+	/**
 	 * Constant representing the extend attribute for a type xml node.
 	 * Value is: <code>extend</code>
 	 */

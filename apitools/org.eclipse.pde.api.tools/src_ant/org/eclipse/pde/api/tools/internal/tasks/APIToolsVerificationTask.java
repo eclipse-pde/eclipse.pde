@@ -720,6 +720,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			element.setAttribute(IApiXmlConstants.ATTR_CHAR_START, Integer.toString(problem.getCharStart()));
 			element.setAttribute(IApiXmlConstants.ATTR_CHAR_END, Integer.toString(problem.getCharEnd()));
 			element.setAttribute(IApiXmlConstants.ATTR_ELEMENT_KIND, Integer.toString(problem.getElementKind()));
+			element.setAttribute(IApiXmlConstants.ATTR_SEVERITY, Integer.toString(problem.getSeverity()));
 			element.setAttribute(IApiXmlConstants.ATTR_KIND, Integer.toString(problem.getKind()));
 			element.setAttribute(IApiXmlConstants.ATTR_FLAGS, Integer.toString(problem.getFlags()));
 			element.setAttribute(IApiXmlConstants.ATTR_MESSAGE, problem.getMessage());
