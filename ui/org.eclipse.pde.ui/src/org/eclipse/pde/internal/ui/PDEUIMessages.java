@@ -1724,11 +1724,15 @@ public class PDEUIMessages extends NLS {
 	public static String RuntimeWorkbenchShortcut_select_run;
 	public static String RuntimeInfoSection_addEntry;
 	public static String RuntimeInfoSection_rename;
+	public static String RuntimeInstallJob_Creating_installable_unit;
+
 	public static String RuntimeInstallJob_ErrorCouldNotFindUnitInRepo;
 
 	public static String RuntimeInstallJob_ErrorCouldNotGetIdOrVersion;
 
 	public static String RuntimeInstallJob_ErrorCouldntOpenProfile;
+
+	public static String RuntimeInstallJob_Job_name_installing;
 
 	public static String BaseExtensionPointMainPage_pluginId_tooltip;
 	public static String BaseExtensionPointMainPage_schemaLocation_tooltip;

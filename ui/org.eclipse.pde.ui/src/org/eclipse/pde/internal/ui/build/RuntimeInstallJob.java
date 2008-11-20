@@ -78,10 +78,13 @@ public class RuntimeInstallJob extends Job {
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
+			monitor.beginTask(PDEUIMessages.RuntimeInstallJob_Job_name_installing, 12 + (2 * fInfo.items.length));
+
 			// p2 needs to know about the generated repos
 			URI destination = new File(fInfo.destinationDirectory).toURI();
-			ProvisioningUtil.loadArtifactRepository(destination, monitor);
-			IMetadataRepository metaRepo = ProvisioningUtil.loadMetadataRepository(destination, monitor);
+			ProvisioningUtil.loadArtifactRepository(destination, new SubProgressMonitor(monitor, 1));
+
+			IMetadataRepository metaRepo = ProvisioningUtil.loadMetadataRepository(destination, new SubProgressMonitor(monitor, 1));
 
 			IProfile profile = ProvisioningUtil.getProfile(IProfileRegistry.SELF);
 			if (profile == null) {
@@ -90,6 +93,10 @@ public class RuntimeInstallJob extends Job {
 
 			List toInstall = new ArrayList();
 			for (int i = 0; i < fInfo.items.length; i++) {
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+				monitor.subTask(MessageFormat.format(PDEUIMessages.RuntimeInstallJob_Creating_installable_unit, new String[] {fInfo.items[i].toString()}));
 
 				//Get the installable unit from the repo
 				String id = null;
@@ -118,7 +125,7 @@ public class RuntimeInstallJob extends Job {
 				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
 
 				// Find out if the profile already has that iu installed												
-				queryMatches = profile.query(new InstallableUnitQuery(id), new Collector(), monitor);
+				queryMatches = profile.query(new InstallableUnitQuery(id), new Collector(), new SubProgressMonitor(monitor, 0));
 				if (queryMatches.size() == 0) {
 					// Just install the new iu into the profile
 					toInstall.add(iuToInstall);
@@ -126,6 +133,7 @@ public class RuntimeInstallJob extends Job {
 					// There is an existing iu that we need to replace using an installable unit patch
 					toInstall.add(createInstallableUnitPatch(id, version));
 				}
+				monitor.worked(2);
 
 			}
 
@@ -135,22 +143,28 @@ public class RuntimeInstallJob extends Job {
 				if (request == null || accumulatedStatus.getSeverity() == IStatus.CANCEL || !(accumulatedStatus.isOK() || accumulatedStatus.getSeverity() == IStatus.INFO)) {
 					return accumulatedStatus;
 				}
-				// TODO Use provisioning context to improve performance
-				ProvisioningPlan thePlan = ProvisioningUtil.getProvisioningPlan(request, new ProvisioningContext(), monitor);
+
+				ProvisioningPlan thePlan = ProvisioningUtil.getProvisioningPlan(request, new ProvisioningContext(new URI[] {destination}), new SubProgressMonitor(monitor, 5));
 				IStatus status = thePlan.getStatus();
 				if (status.getSeverity() == IStatus.CANCEL || !(status.isOK() || status.getSeverity() == IStatus.INFO)) {
 					return status;
 				}
-				status = ProvisioningUtil.performProvisioningPlan(thePlan, new DefaultPhaseSet(), profile, monitor);
+
+				status = ProvisioningUtil.performProvisioningPlan(thePlan, new DefaultPhaseSet(), profile, new SubProgressMonitor(monitor, 5));
+
 				return status;
 			}
+
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+			return Status.OK_STATUS;
+
 		} catch (ProvisionException e) {
 			return e.getStatus();
+		} finally {
+			monitor.done();
 		}
-		if (monitor.isCanceled()) {
-			return Status.CANCEL_STATUS;
-		}
-		return Status.OK_STATUS;
 	}
 
 	/**
