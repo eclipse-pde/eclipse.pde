@@ -85,6 +85,17 @@ public class BundleApiComponent extends AbstractApiComponent {
 	private Dictionary fManifest;
 	
 	/**
+	 * Manifest headers that are maintained after {@link BundleDescription} creation.
+	 * Only these headers are maintained in the manifest dictionary to reduce footprint.  
+	 */
+	private static final String[] MANIFEST_HEADERS = new String[] {
+		IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE,
+		Constants.BUNDLE_CLASSPATH,
+		Constants.BUNDLE_NAME,
+		Constants.BUNDLE_VERSION
+	};
+	
+	/**
 	 * Whether there is an underlying .api_description file
 	 */
 	private boolean fHasApiDescription = false;
@@ -147,6 +158,21 @@ public class BundleApiComponent extends AbstractApiComponent {
 	}
 
 	/**
+	 * Reduce the manifest to only contain required headers after {@link BundleDescription} creation.
+	 */
+	protected synchronized void doManifestCompaction() {
+		Dictionary temp = fManifest;
+		fManifest = new Hashtable(MANIFEST_HEADERS.length);
+		for (int i = 0; i < MANIFEST_HEADERS.length; i++) {
+			String header = MANIFEST_HEADERS[i];
+			Object value = temp.get(header);
+			if (value != null) {
+				fManifest.put(header, value);
+			}
+		}
+	}
+	
+	/**
 	 * Returns if the bundle at the specified location is a valid bundle or not.
 	 * Validity is determined via the existence of a readable manifest file
 	 * @param location
@@ -179,6 +205,8 @@ public class BundleApiComponent extends AbstractApiComponent {
 		} catch (BundleException e) {
 			abort("Unable to create API component from specified location: " + fLocation, e); //$NON-NLS-1$
 		}
+		// compact manifest after initialization - only keep used headers
+		doManifestCompaction();
 	}
 	
 	/**
