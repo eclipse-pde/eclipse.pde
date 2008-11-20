@@ -67,8 +67,8 @@ public class CompareProfilesTask extends CommonUtilsTask {
 
 		// run the comparison
 		// create profile for the reference
-		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir, REFERENCE), this.eeFileLocation);
-		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(profileInstallDir, CURRENT), this.eeFileLocation);
+		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
+		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(profileInstallDir), this.eeFileLocation);
 		
 		IDelta delta = null;
 		
@@ -77,8 +77,8 @@ public class CompareProfilesTask extends CommonUtilsTask {
 		} finally {
 			referenceProfile.dispose();
 			currentProfile.dispose();
-			deleteProfile(this.referenceLocation, REFERENCE);
-			deleteProfile(this.profileLocation, CURRENT);
+			deleteProfile(this.referenceLocation, referenceInstallDir);
+			deleteProfile(this.profileLocation, profileInstallDir);
 		}
 		if (delta == null) {
 			// an error occured during the comparison

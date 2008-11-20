@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -420,6 +421,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 	private Set excludedElement;
 	private String excludeListLocation;
 	private String filterStoreRoot;
+	private Properties properties;
 
 	private Summary[] createAllSummaries(Map allProblems) {
 		Set entrySet = allProblems.entrySet();
@@ -583,8 +585,8 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		}
 		// run the comparison
 		// create profile for the reference
-		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir, REFERENCE), this.eeFileLocation);
-		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(profileInstallDir, CURRENT), this.eeFileLocation);
+		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
+		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(profileInstallDir), this.eeFileLocation);
 		
 		if (this.debug) {
 			System.out.println("Creation of both profiles : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -611,7 +613,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 				allApiBundles.add(name);
 				BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 				try {
-					analyzer.analyzeComponent(null, getFilterStore(name), referenceProfile, apiComponent, null, null, new NullProgressMonitor());
+					analyzer.analyzeComponent(null, getFilterStore(name), this.properties, referenceProfile, apiComponent, null, null, new NullProgressMonitor());
 					IApiProblem[] problems = analyzer.getProblems();
 					if (problems.length != 0) {
 						allProblems.put(name, problems);
@@ -673,8 +675,8 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			}
 			referenceProfile.dispose();
 			currentProfile.dispose();
-			deleteProfile(this.referenceLocation, REFERENCE);
-			deleteProfile(this.profileLocation, CURRENT);
+			deleteProfile(this.referenceLocation, referenceInstallDir);
+			deleteProfile(this.profileLocation, profileInstallDir);
 			if (this.debug) {
 				System.out.println("Cleanup : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}

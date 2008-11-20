@@ -79,11 +79,9 @@ abstract class CommonUtilsTask extends Task {
 			return null;
 		}
 	}
-	protected static void deleteProfile(String referenceLocation, String installDirName) {
-		if (Util.isArchive(referenceLocation)) {
-			File tempDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
-			File installDir = new File(tempDir, installDirName);
-			Util.delete(installDir);
+	protected static void deleteProfile(String referenceLocation, File folder) {
+		if (isArchive(referenceLocation)) {
+			Util.delete(folder.getParentFile());
 		}
 	}
 	protected static File extractSDK(String installDirName, String location) {
@@ -133,17 +131,13 @@ abstract class CommonUtilsTask extends Task {
 										installDir.getAbsolutePath()
 								}));
 			}
-			return installDir;
+			return new File(installDir, ECLIPSE_FOLDER_NAME);
 		} else {
 			return locationFile;
 		}
 	}
-	protected static File getInstallDir(File dir, String profileInstallName) {
-		if (isArchive(dir.getName())) {
-			return new File(new File(new File(dir, profileInstallName), ECLIPSE_FOLDER_NAME), PLUGINS_FOLDER_NAME);
-		} else {
-			return new File(dir, PLUGINS_FOLDER_NAME);
-		}
+	protected static File getInstallDir(File dir) {
+		return new File(dir, PLUGINS_FOLDER_NAME);
 	}
 	private static boolean isArchive(String fileName) {
 		return isZipJarFile(fileName) || isTGZFile(fileName);
