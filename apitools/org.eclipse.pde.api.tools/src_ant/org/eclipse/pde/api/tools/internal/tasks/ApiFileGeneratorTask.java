@@ -95,16 +95,32 @@ public class ApiFileGeneratorTask extends Task {
 	String projectLocation;
 	String targetFolder;
 
+	/**
+	 * Set the project name
+	 * @param projectName the given project name
+	 */
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
 	}
+	/**
+	 * Set the project location
+	 * @param projectName the given project location
+	 */
 	public void setProjectLocation(String projectLocation) {
 		this.projectLocation = projectLocation;
 	}
+	/**
+	 * Set the target folder.
+	 *
+	 * @param targetFolder the given target folder
+	 */
 	public void setTargetFolder(String targetFolder) {
 		this.targetFolder = targetFolder;
 	}
 	
+	/**
+	 * Execute the ant task
+	 */
 	public void execute() throws BuildException {
 		if (DEBUG) {
 			System.out.println(this.targetFolder);

@@ -12,6 +12,9 @@ package org.eclipse.pde.api.tools.internal.tasks;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * All externalized messages found in the ant tasks.
+ */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.tasks.messages"; //$NON-NLS-1$
 
