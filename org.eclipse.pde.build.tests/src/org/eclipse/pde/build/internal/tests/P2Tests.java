@@ -1,6 +1,7 @@
 package org.eclipse.pde.build.internal.tests;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -216,5 +217,37 @@ public class P2Tests extends P2TestCase {
 		
 		IInstallableUnit iu = getIU(repository, "tooling" + p2Config + "org.eclipse.core.runtime");
 		assertTouchpoint(iu, "configure", "markStarted(started: true);");
+	}
+	
+	public void testBug255518() throws Exception {
+		IFolder buildFolder = newTest("255518");
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+		
+		IFile productFile = buildFolder.getFile("rcp.product");
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String [] { "org.junit4", "org.eclipse.pde.build"}, false);
+		
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("configs", Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch());
+
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.flavor", "tooling");
+		properties.put("p2.publish.artifacts", "true");
+
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+		
+		File plugins = repo.getFolder("plugins").getLocation().toFile();
+		File [] bundles = plugins.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.startsWith("org.junit4_") || name.startsWith("org.eclipse.pde.build");
+			}});
+		assertTrue(bundles.length == 2);
+		assertJarVerifies(bundles[0]);
+		assertJarVerifies(bundles[1]);
 	}
 }
