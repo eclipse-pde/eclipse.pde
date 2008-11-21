@@ -13,6 +13,8 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
@@ -35,6 +37,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Detects leaks in method return types and parameters
@@ -93,6 +97,18 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 							return false;
 						}
 					}
+					return true;
+				}
+			} else {
+				// could be a reference to a top level secondary/non-public type
+				if (isEnclosingTypeVisible(type)) {
+					// this is an unexpected condition - the enclosing type is visible, but it has no annotations - log an error
+					ApiPlugin.log(
+						new Status(
+							IStatus.INFO, ApiPlugin.PLUGIN_ID,
+							MessageFormat.format(SearchMessages.MethodLeakDetector_0, new String[]{type.getName()})));
+				} else {
+					// enclosing type is not visible - this is a problem
 					return true;
 				}
 			}

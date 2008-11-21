@@ -496,7 +496,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 		expectingNoProblems();
 		String typename = "testMRL14";
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				null, 
 				false, 
@@ -524,7 +524,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 		expectingNoProblems();
 		String typename = "testMRL15";
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				null, 
 				false, 
@@ -552,11 +552,39 @@ public class MethodReturnTypeLeak extends LeakTest {
 		expectingNoProblems();
 		String typename = "testMRL16";
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				null, 
 				false, 
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	/**
+	 * Tests a method leaking a non public top level type as a return type
+	 */
+	public void testMethodReturnLeak17F() {
+		x17(false);
+	}
+	
+	/**
+	 * Tests a method leaking a non public top level type as a return type
+	 */
+	public void testMethodReturnType17I() {
+		x17(true);
+	}
+	
+	private void x17(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(1));
+		String typename = "testMRL17";
+		setExpectedMessageArgs(new String[][] {{"outer", typename, "m1()"}});
+		deployLeakTest(new String[] {TESTING_PACKAGE}, 
+				new String[] {typename}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename},
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+		
  }

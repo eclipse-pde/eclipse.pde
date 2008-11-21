@@ -13,6 +13,8 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
@@ -24,9 +26,10 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Detects leaked types.
@@ -54,15 +57,12 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 			if (((Flags.AccPublic | Flags.AccProtected) & modifiers) > 0) {
 				try {
 					IApiAnnotations annotations = member.getApiComponent().getApiDescription().resolveAnnotations(member.getHandle());
+					// annotations can be null for members in top level non public types, but they are not visible/API
 					if (annotations != null) {
 						if (isApplicable(annotations) && isEnclosingTypeVisible(member)) {
 							retainReference(reference);
 							return true;
 						}
-					} else {
-						// TODO: can be null for top level non-public types
-						retainReference(reference);
-						return true;
 					}
 				} catch (CoreException e) {
 					ApiPlugin.log(e.getStatus());
@@ -72,25 +72,6 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 		return false;
 	}
 	
-	/**
-	 * Returns whether all enclosing types of the given member are visible.
-	 * 
-	 * @param member member
-	 * @return whether all enclosing types of the given member are visible
-	 * @throws CoreException
-	 */
-	protected boolean isEnclosingTypeVisible(IApiMember member) throws CoreException {
-		IApiType type = member.getEnclosingType();
-		while (type != null) {
-			if (((Flags.AccPublic | Flags.AccProtected) & type.getModifiers()) == 0) {
-				// the type is private or default protection, do not retain the reference
-				return false;
-			}
-			type = type.getEnclosingType();
-		}
-		return true;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
@@ -98,7 +79,21 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 		IApiMember member = reference.getResolvedReference();
 		try {
 			IApiAnnotations annotations = member.getApiComponent().getApiDescription().resolveAnnotations(member.getHandle());
-			return VisibilityModifiers.isPrivate(annotations.getVisibility());
+			if (annotations != null) {
+				return VisibilityModifiers.isPrivate(annotations.getVisibility());
+			} else {
+				// could be a reference to a top level secondary/non-public type
+				if (isEnclosingTypeVisible(member)) {
+					// this is an unexpected condition - the enclosing type is visible, but it has no annotations - log an error
+					ApiPlugin.log(
+						new Status(
+							IStatus.INFO, ApiPlugin.PLUGIN_ID,
+							MessageFormat.format(SearchMessages.AbstractTypeLeakDetector_0, new String[]{member.getName()})));
+				} else {
+					// enclosing type is not visible - this is a problem
+					return true;
+				}
+			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}

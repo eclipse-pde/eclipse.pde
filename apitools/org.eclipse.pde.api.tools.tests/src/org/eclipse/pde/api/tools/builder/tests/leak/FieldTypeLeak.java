@@ -271,4 +271,67 @@ public class FieldTypeLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}	
+	
+	/**
+	 * Tests a field of an internal type does not create a leak when the type
+	 * is not visible - a top level non public type.
+	 */
+	public void testFieldTypeLeak7F() {
+		x7(false);
+	}
+	
+	/**
+	 * Tests a field of an internal type does not create a leak when the type
+	 * is not visible - a top level non public type.
+	 */
+	public void testFieldTypeLeak7I() {
+		x7(true);
+	}
+	
+	private void x7(boolean inc) {
+		String typename = "testFTL7";
+		// no problems expected
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}		
+	
+	/**
+	 * Tests that API type leaks are properly reported on fields
+	 * with a top level non-public type
+	 */
+	public void testFieldTypeLeak8F() {
+		x8(false);
+	}
+	
+	/**
+	 *  Tests that API type leaks are properly reported on fields
+	 * with a top level non-public type
+	 */
+	public void testFieldTypeLeak8I() {
+		x8(true);
+	}
+	
+	private void x8(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(4));
+		String typename = "testFTL8";
+		String fieldType = "outerFTL8";
+		setExpectedMessageArgs(new String[][] {
+				{fieldType, typename, "f1"},
+				{fieldType, typename, "f2"},
+				{fieldType, typename, "f3"},
+				{fieldType, typename, "f4"},
+		});
+		deployLeakTest(new String[] {TESTING_PACKAGE}, 
+				new String[] {typename}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}	
 }

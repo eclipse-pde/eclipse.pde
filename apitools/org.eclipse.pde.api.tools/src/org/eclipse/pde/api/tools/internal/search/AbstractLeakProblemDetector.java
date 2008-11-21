@@ -12,6 +12,11 @@ package org.eclipse.pde.api.tools.internal.search;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.Flags;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -39,6 +44,45 @@ public abstract class AbstractLeakProblemDetector extends AbstractProblemDetecto
 	 */
 	protected boolean isNonAPIReference(IReference reference) {
 		String packageName = Util.getPackageName(reference.getReferencedTypeName());
-		return fNonApiPackageNames.contains(packageName);
+		if (fNonApiPackageNames.contains(packageName)) {
+			return true;
+		}
+		// could be a reference to a package visible type
+		IApiMember member = reference.getMember();
+		IApiType type = null;
+		if (member.getType() == IApiElement.TYPE) {
+			type = (IApiType) member;
+		} else {
+			type = (IApiType) member.getAncestor(IApiElement.TYPE);
+		}
+		String origin = Util.getPackageName(type.getName());
+		if (packageName.equals(origin)) {
+			return true; // possible package visible reference
+		}
+		return false;
 	}
+	
+	/**
+	 * Returns whether all enclosing types of the given member are visible.
+	 * 
+	 * @param member member
+	 * @return whether all enclosing types of the given member are visible
+	 * @throws CoreException
+	 */
+	protected boolean isEnclosingTypeVisible(IApiMember member) throws CoreException {
+		IApiType type = null;
+		if (member.getType() == IApiElement.TYPE) {
+			type = (IApiType) member;
+		} else {
+			type = member.getEnclosingType();
+		}
+		while (type != null) {
+			if (((Flags.AccPublic | Flags.AccProtected) & type.getModifiers()) == 0) {
+				// the type is private or default protection, do not retain the reference
+				return false;
+			}
+			type = type.getEnclosingType();
+		}
+		return true;
+	}	
 }

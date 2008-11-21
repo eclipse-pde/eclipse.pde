@@ -288,8 +288,8 @@ public class ClassImplementsLeak extends LeakTest {
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
@@ -321,8 +321,8 @@ public class ClassImplementsLeak extends LeakTest {
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
@@ -354,12 +354,39 @@ public class ClassImplementsLeak extends LeakTest {
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME},
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME},
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+"."+typename}, 
 				true, 
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	/**
+	 * Tests that an API class that implements a top level non public type is a leak.
+	 */
+	public void testClassImplementsLeak11F() {
+		x11(false);
+	}
+	
+	/**
+	 * Tests that an API class that implements a top level non public type is a leak.
+	 */
+	public void testClassImplementsLeak11I() {
+		x11(true);
+	}
+	
+	private void x11(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		String typename = "test31";
+		setExpectedMessageArgs(new String[][] {{"Iouter", typename}});
+		deployLeakTest(new String[] {TESTING_PACKAGE}, 
+				new String[] {typename}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}	
 }

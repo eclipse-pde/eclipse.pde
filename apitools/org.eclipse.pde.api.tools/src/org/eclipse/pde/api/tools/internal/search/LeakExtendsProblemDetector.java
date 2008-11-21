@@ -80,48 +80,52 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 				if (type.isClass()) {
 					int modifiers = 0;
 					IApiAnnotations annotations = component.getApiDescription().resolveAnnotations(type.getHandle());
-					if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
-						// The no extend restriction means only public members can be seen
-						modifiers = Flags.AccPublic;
-					} else {
-						if (Flags.isFinal(type.getModifiers())) {
-							// if final then only public members can be seen
+					if (annotations != null) {
+						// if annotations are null, the reference should not have been retained
+						// as it indicates a reference from a top level non public type
+						if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
+							// The no extend restriction means only public members can be seen
 							modifiers = Flags.AccPublic;
 						} else {
-							// public and protected members can be seen
-							modifiers = Flags.AccPublic | Flags.AccProtected;
+							if (Flags.isFinal(type.getModifiers())) {
+								// if final then only public members can be seen
+								modifiers = Flags.AccPublic;
+							} else {
+								// public and protected members can be seen
+								modifiers = Flags.AccPublic | Flags.AccProtected;
+							}
 						}
-					}
-					IApiType nonApiSuper = type.getSuperclass();
-					// collect all visible methods in non-API types
-					Set methoods = new HashSet();
-					while (!isAPIType(nonApiSuper)) {
-						if (hasVisibleField(nonApiSuper, modifiers)) {
-							// a visible field in a non-API type is a definite leak
-							return true;
-						}
-						gatherVisibleMethods(nonApiSuper, methoods, modifiers);
-						nonApiSuper = nonApiSuper.getSuperclass();
-					}
-					if (methoods.size() > 0) {
-						// check if the visible members are part of an API interface/class
-						List apiTypes = new LinkedList();
-						apiTypes.add(type);
-						gatherAPISuperTypes(apiTypes, type);
-						Iterator iterator2 = apiTypes.iterator();
-						while (iterator2.hasNext()) {
-							IApiType t2 = (IApiType) iterator2.next();
-							Set apiMembers = new HashSet();
-							gatherVisibleMethods(t2, apiMembers, modifiers);
-							methoods.removeAll(apiMembers);
-							if (methoods.size() == 0) {
-								// there are no visible methods left that are not part of an API type/interface
-								return false;
-							}	
+						IApiType nonApiSuper = type.getSuperclass();
+						// collect all visible methods in non-API types
+						Set methoods = new HashSet();
+						while (!isAPIType(nonApiSuper)) {
+							if (hasVisibleField(nonApiSuper, modifiers)) {
+								// a visible field in a non-API type is a definite leak
+								return true;
+							}
+							gatherVisibleMethods(nonApiSuper, methoods, modifiers);
+							nonApiSuper = nonApiSuper.getSuperclass();
 						}
 						if (methoods.size() > 0) {
-							// there are visible members that are not part of an API type/interface
-							return true;
+							// check if the visible members are part of an API interface/class
+							List apiTypes = new LinkedList();
+							apiTypes.add(type);
+							gatherAPISuperTypes(apiTypes, type);
+							Iterator iterator2 = apiTypes.iterator();
+							while (iterator2.hasNext()) {
+								IApiType t2 = (IApiType) iterator2.next();
+								Set apiMembers = new HashSet();
+								gatherVisibleMethods(t2, apiMembers, modifiers);
+								methoods.removeAll(apiMembers);
+								if (methoods.size() == 0) {
+									// there are no visible methods left that are not part of an API type/interface
+									return false;
+								}	
+							}
+							if (methoods.size() > 0) {
+								// there are visible members that are not part of an API type/interface
+								return true;
+							}
 						}
 					}
 				} else {
@@ -206,6 +210,10 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 	private boolean isAPIType(IApiType type) throws CoreException {
 		IApiDescription description = type.getApiComponent().getApiDescription();
 		IApiAnnotations annotations = description.resolveAnnotations(type.getHandle());
+		if (annotations == null) {
+			// top level non-public top can have no annotations - they are not API
+			return false;
+		}
 		return VisibilityModifiers.isAPI(annotations.getVisibility());
 	}	
 	

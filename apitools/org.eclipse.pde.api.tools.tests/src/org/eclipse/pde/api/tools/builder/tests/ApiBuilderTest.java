@@ -14,6 +14,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -25,6 +26,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
@@ -515,6 +517,18 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		try {
 			IPath path = assertProject(sourcenames, packagenames, internalpnames);
 			doBuild(buildtype, (buildworkspace ? null : path));
+			// should be no compilation problems
+			IMarker[] markers = getEnv().getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", false, IResource.DEPTH_INFINITE);
+			if (markers.length > 0) {
+				List errors = new ArrayList<IMarker>(markers.length);
+				for (int i = 0; i < markers.length; i++) {
+					if (markers[i].getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
+						System.out.println(markers[i].getAttribute(IMarker.MESSAGE));
+						errors.add(markers[i]);
+					}
+				}
+				assertEquals("Should be no compilation errors", 0, errors.size());
+			}
 			if(expectingproblems || expectingproblemson != null) {
 				IJavaProject jproject = getEnv().getJavaProject(path);
 				for(int i = 0; i < expectingproblemson.length; i++) {

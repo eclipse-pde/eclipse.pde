@@ -620,5 +620,32 @@ public class ClassExtendsLeak extends LeakTest {
 				false, 
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
-	}		
+	}	
+	
+	/**
+	 * Tests that an API class that extends an top level non public type is a leak.
+	 */
+	public void testClassExtendsLeak30F() {
+		x30(false);
+	}
+	
+	/**
+	 * Tests that an API class that extends an top level non public type is a leak.
+	 */
+	public void testClassExtendsLeak30I() {
+		x30(true);
+	}
+	
+	private void x30(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		String typename = "test30";
+		setExpectedMessageArgs(new String[][] {{"outer", typename}});
+		deployLeakTest(new String[] {TESTING_PACKAGE}, 
+				new String[] {typename}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}			
 }

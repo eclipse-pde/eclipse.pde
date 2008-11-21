@@ -197,10 +197,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	}
 	
 	private void x5(boolean inc) {
-		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		expectingNoProblems();
 		String typename = "Etest5";
-		String innertype = "inner";
-		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, innertype}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -286,15 +284,13 @@ public class InterfaceExtendsLeak extends LeakTest {
 	}
 	
 	private void x8(boolean inc) {
-		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId(), 
-				getDefaultProblemId(), getDefaultProblemId(), getDefaultProblemId()});
+		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId(), getDefaultProblemId()});
 		String typename = "Etest8";
-		String innertype1 = "inner";
-		String innertype2 = "inner2";
+		String inner = "inner";
 		String innertype3 = "inner3";
-		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},	{TESTING_INTERNAL_INTERFACE_NAME, innertype1},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype3}, {TESTING_INTERNAL_INTERFACE_NAME, innertype1},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype3},
+				{TESTING_INTERNAL_INTERFACE_NAME, inner}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -336,4 +332,31 @@ public class InterfaceExtendsLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	/**
+	 * Tests extending a non public top level interface is a leak of a non-API type.
+	 */
+	public void testInterfaceExtendsLeak10F() {
+		x10(false);
+	}
+	
+	/**
+	 * Tests extending a non public top level interface is a leak of a non-API type.
+	 */
+	public void testInterfaceExtendsLeak10I() {
+		x10(true);
+	}
+	
+	private void x10(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		String typename = "Etest10";
+		setExpectedMessageArgs(new String[][] {{"Iouter", typename}});
+		deployLeakTest(new String[] {TESTING_PACKAGE}, 
+				new String[] {typename}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename},
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}	
 }

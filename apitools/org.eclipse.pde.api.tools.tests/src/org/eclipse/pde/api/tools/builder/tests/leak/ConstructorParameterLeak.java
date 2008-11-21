@@ -230,8 +230,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	private void x6(boolean inc) {
 		expectingNoProblems();
 		String typename = "testCPL6";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				null, 
 				false, 
@@ -291,8 +291,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	private void x8(boolean inc) {
 		expectingNoProblems();
 		String typename = "testCPL8";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				null, 
 				false, 
@@ -461,4 +461,32 @@ public class ConstructorParameterLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
+	
+	
+	/**
+	 * Tests that a non public top level type parameter is a leak on a constructor
+	 */
+	public void testConstructorParameterLeak14F() {
+		x14(false);
+	}
+	
+	/**
+	 * Tests that a non public top level type parameter is a leak on a constructor
+	 */
+	public void testConstructorParameterLeak14I() {
+		x14(true);
+	}
+	
+	private void x14(boolean inc) {
+		setExpectedProblemIds(new int[] {getDefaultProblemId()});
+		String typename = "testCPL14";
+		setExpectedMessageArgs(new String[][] {{"outer", typename}});
+		deployLeakTest(new String[] {TESTING_PACKAGE}, 
+				new String[] {typename}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}	
 }
