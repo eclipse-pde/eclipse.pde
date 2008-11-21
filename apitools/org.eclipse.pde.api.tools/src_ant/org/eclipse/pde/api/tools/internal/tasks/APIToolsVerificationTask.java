@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -615,6 +616,8 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 				try {
 					analyzer.analyzeComponent(null, getFilterStore(name), this.properties, referenceProfile, apiComponent, null, null, new NullProgressMonitor());
 					IApiProblem[] problems = analyzer.getProblems();
+					// remove duplicates
+					problems = removeDuplicates(problems);
 					if (problems.length != 0) {
 						allProblems.put(name, problems);
 					}
@@ -689,6 +692,24 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			ApiPlugin.log(e);
 			throw e;
 		}
+	}
+	private IApiProblem[] removeDuplicates(IApiProblem[] problems) {
+		int length = problems.length;
+		if (length <= 1) return problems;
+		Set uniqueProblems = new HashSet(length);
+		List allProblems = null;
+		for (int i = 0; i < length; i++) {
+			IApiProblem apiProblem = problems[i];
+			String message = apiProblem.getMessage();
+			if (!uniqueProblems.contains(message)) {
+				if (allProblems == null) {
+					allProblems = new ArrayList(length);
+				}
+				uniqueProblems.add(message);
+				allProblems.add(apiProblem);
+			}
+		}
+		return (IApiProblem[]) allProblems.toArray(new IApiProblem[allProblems.size()]);
 	}
 	private IApiFilterStore getFilterStore(String name) {
 		if (this.filterStoreRoot == null) return null;
