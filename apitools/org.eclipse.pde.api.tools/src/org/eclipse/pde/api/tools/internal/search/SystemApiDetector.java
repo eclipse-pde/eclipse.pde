@@ -213,6 +213,62 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					}
 					return pos;
 				} else {
+					IApiMember apiMember = reference.getMember();
+					switch(apiMember.getType()) {
+						case IApiElement.FIELD : {
+							IField javaField = type.getField(apiMember.getName());
+							Position pos = null;
+							if (javaField.exists()) {
+								ISourceRange range = javaField.getNameRange();
+								if(range != null) {
+									pos = new Position(range.getOffset(), range.getLength()); 
+								}
+							}
+							if(pos == null) {
+								noSourcePosition(type, reference);
+							}
+							return pos;
+						}
+						case IApiElement.METHOD : {
+							// reference in a method declaration
+							IApiMethod method = (IApiMethod) reference.getMember();
+							String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
+							for (int i = 0; i < parameterTypes.length; i++) {
+								parameterTypes[i] = parameterTypes[i].replace('/', '.');
+							}
+							String methodname = method.getName();
+							if(method.isConstructor()) {
+								IApiType enclosingType = method.getEnclosingType();
+								if (enclosingType.isMemberType() && !Flags.isStatic(enclosingType.getModifiers())) {
+									// remove the synthetic argument that corresponds to the enclosing type
+									int length = parameterTypes.length - 1;
+									System.arraycopy(parameterTypes, 1, (parameterTypes = new String[length]), 0, length);
+								}
+								methodname = enclosingType.getSimpleName();
+							}
+							IMethod Qmethod = type.getMethod(methodname, parameterTypes);
+							IMethod[] methods = type.getMethods();
+							IMethod match = null;
+							for (int i = 0; i < methods.length; i++) {
+								IMethod m = methods[i];
+								if (m.isSimilar(Qmethod)) {
+									match = m;
+									break;
+								}
+							}
+							Position pos = null;
+							if (match != null) {
+								ISourceRange range = match.getNameRange();
+								if(range != null) {
+									pos = new Position(range.getOffset(), range.getLength());
+								}
+							}
+							if(pos == null) {
+								noSourcePosition(type, reference);
+							}
+							return pos;
+						}
+					}
 					// reference in a type declaration
 					ISourceRange range = type.getNameRange();
 					Position pos = null;
@@ -419,6 +475,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					if (resolvePackages[0].isSystemComponent()) {
 						switch(reference.getReferenceKind()) {
 							case ReferenceModifiers.REF_OVERRIDE :
+							case ReferenceModifiers.REF_CONSTANTPOOL :
 								return false;
 						}
 						retainReference(reference);
