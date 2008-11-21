@@ -1328,6 +1328,12 @@ public final class Util {
 					case IApiProblem.INDIRECT_REFERENCE: {
 						return "INDIRECT_REFERENCE"; //$NON-NLS-1$
 					}
+					case IApiProblem.METHOD: {
+						return "METHOD"; //$NON-NLS-1$
+					}
+					case IApiProblem.FIELD: {
+						return "FIELD"; //$NON-NLS-1$
+					}
 				}
 			}
 		}
@@ -1433,6 +1439,9 @@ public final class Util {
 			}
 			case IApiProblem.UNSUPPORTED_TAG_USE: {
 				return "UNSUPPORTED_TAG_USE"; //$NON-NLS-1$
+			}
+			case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES: {
+				return "INVALID_REFERENCE_IN_SYSTEM_LIBRARIES"; //$NON-NLS-1$
 			}
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$

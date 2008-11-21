@@ -170,9 +170,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				if(fBuildState == null) {
 					fBuildState = getBuildState();
 				}
-				if (filterStore != null) {
-					this.fFilterStore = filterStore;
-				}
+				this.fFilterStore = filterStore;
+				this.fPreferences = preferences;
 				//compatibility checks
 				if(reference != null) {
 					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {reference.getId(), baseline.getName()}));
@@ -1518,7 +1517,17 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	private boolean isProblemFiltered(IApiProblem problem) {
 		if (fJavaProject == null) {
 			if (this.fFilterStore != null) {
-				return this.fFilterStore.isFiltered(problem);
+				boolean filtered = this.fFilterStore.isFiltered(problem);
+				if (filtered) {
+					return true;
+				}
+			}
+			if (this.fPreferences != null) {
+				String key = ApiProblemFactory.getProblemSeverityId(problem);
+				if (key != null) {
+					String value = this.fPreferences.getProperty(key, null);
+					return ApiPlugin.VALUE_IGNORE.equals(value);
+				}
 			}
 			return false;
 		}

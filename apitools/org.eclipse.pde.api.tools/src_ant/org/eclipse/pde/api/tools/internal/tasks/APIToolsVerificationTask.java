@@ -722,7 +722,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			element.setAttribute(IApiXmlConstants.ATTR_CHAR_START, Integer.toString(problem.getCharStart()));
 			element.setAttribute(IApiXmlConstants.ATTR_CHAR_END, Integer.toString(problem.getCharEnd()));
 			element.setAttribute(IApiXmlConstants.ATTR_ELEMENT_KIND, Integer.toString(problem.getElementKind()));
-			element.setAttribute(IApiXmlConstants.ATTR_SEVERITY, Integer.toString(problem.getSeverity()));
+			element.setAttribute(IApiXmlConstants.ATTR_SEVERITY, Integer.toString(getSeverity(problem)));
 			element.setAttribute(IApiXmlConstants.ATTR_KIND, Integer.toString(problem.getKind()));
 			element.setAttribute(IApiXmlConstants.ATTR_FLAGS, Integer.toString(problem.getFlags()));
 			element.setAttribute(IApiXmlConstants.ATTR_MESSAGE, problem.getMessage());
@@ -752,6 +752,25 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			}
 			apiProblems.appendChild(element);
 		}
+	}
+	/**
+	 * By default, we return a warning severity.
+	 * @param problem the given problem
+	 * @return the problem's severity
+	 */
+	private int getSeverity(IApiProblem problem) {
+		if (this.properties != null) {
+			String key = ApiProblemFactory.getProblemSeverityId(problem);
+			if (key != null) {
+				String value = this.properties.getProperty(key, null);
+				if (value != null) {
+					if (ApiPlugin.VALUE_ERROR.equals(value)) {
+						return ApiPlugin.SEVERITY_ERROR;
+					}
+				}
+			}
+		}
+		return ApiPlugin.SEVERITY_WARNING;
 	}
 	private boolean isApiToolsComponent(IApiComponent apiComponent) {
 		File file = new File(apiComponent.getLocation());
@@ -873,7 +892,39 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 	public void setFilterStoreRoot(String filterStoreRoot) {
 		this.filterStoreRoot = filterStoreRoot; 
 	}
-	
+	/**
+	 * Set the preferences for the task.
+	 * 
+	 * <p>The preferences are used to either ignore problems or set the severity to {@link ApiPlugin#SEVERITY_WARNING}
+	 * or {@link ApiPlugin#SEVERITY_ERROR} for the found problems according to the values of the corresponding problem
+	 * preference keys.</p>
+	 * <p>If the given location doesn't exist, the preferences won't be set.</p>
+	 *
+	 * @param preferencesLocation the location of the preference file
+	 */
+	public void setPreferences(String preferencesLocation) {
+		File preferencesFile = new File(preferencesLocation);
+		if (!preferencesFile.exists()) {
+			return;
+		}
+		BufferedInputStream inputStream = null;
+		try {
+			inputStream = new BufferedInputStream(new FileInputStream(preferencesFile));
+			Properties temp = new Properties();
+			temp.load(inputStream);
+			this.properties = temp; 
+		} catch (IOException e) {
+			// ignore
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch(IOException e) {
+					// ignore
+				}
+			}
+		}
+	}
 	/**
 	 * Set the profile location.
 	 * 
