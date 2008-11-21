@@ -14,15 +14,12 @@ package org.eclipse.pde.api.tools.internal.provisional;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.api.tools.internal.CompositeApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
-import org.eclipse.pde.api.tools.internal.descriptors.ResourceDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IResourceDescriptor;
 import org.eclipse.pde.api.tools.internal.search.TypeScope;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -43,16 +40,6 @@ public class Factory {
 	 */
 	public static IPackageDescriptor packageDescriptor(String packageName) {
 		return new PackageDescriptorImpl(packageName);
-	}
-	
-	/**
-	 * Returns a resource descriptor for the given path.
-	 * 
-	 * @param resource the handle to the backing {@link IResource}
-	 * @return an {@link IResourceDescriptor} for the given resource
-	 */
-	public static IResourceDescriptor resourceDescriptor(IResource resource) {
-		return new ResourceDescriptorImpl(resource);
 	}
 	
 	/**
