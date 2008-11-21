@@ -262,7 +262,7 @@ public class ApiProblem implements IApiProblem {
 		return super.equals(obj);
 	}
 	/**
-	 * COmpares the complete list of message arguments
+	 * Compares the complete list of message arguments
 	 * @param arguments
 	 * @return true if all of the arguments are equal, false otherwise
 	 */
