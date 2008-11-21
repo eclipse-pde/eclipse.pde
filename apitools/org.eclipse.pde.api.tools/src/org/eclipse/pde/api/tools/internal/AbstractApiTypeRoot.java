@@ -15,7 +15,7 @@ import java.io.InputStream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.model.ApiElement;
-import org.eclipse.pde.api.tools.internal.model.cache.TypeStructureBuilder;
+import org.eclipse.pde.api.tools.internal.model.TypeStructureBuilder;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;

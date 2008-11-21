@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.pde.api.tools.internal.model.cache.MethodKey;
+import org.eclipse.pde.api.tools.internal.model.MethodKey;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
