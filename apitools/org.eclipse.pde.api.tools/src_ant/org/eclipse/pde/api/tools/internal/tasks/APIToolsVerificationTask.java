@@ -899,6 +899,23 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 	 * or {@link ApiPlugin#SEVERITY_ERROR} for the found problems according to the values of the corresponding problem
 	 * preference keys.</p>
 	 * <p>If the given location doesn't exist, the preferences won't be set.</p>
+	 * <p>The lines that start with a '#' are ignored. The format of the preferences file looks like this:</p>
+	 * <pre>
+	 * #Thu Nov 20 17:35:06 EST 2008
+	 * ANNOTATION_ELEMENT_TYPE_ADDED_METHOD_WITHOUT_DEFAULT_VALUE=Ignore
+	 * ANNOTATION_ELEMENT_TYPE_CHANGED_TYPE_CONVERSION=Ignore
+	 * ANNOTATION_ELEMENT_TYPE_REMOVED_FIELD=Ignore
+	 * ANNOTATION_ELEMENT_TYPE_REMOVED_METHOD=Ignore
+	 * ANNOTATION_ELEMENT_TYPE_REMOVED_TYPE_MEMBER=Warning
+	 * API_COMPONENT_ELEMENT_TYPE_REMOVED_API_TYPE=Ignore
+	 * API_COMPONENT_ELEMENT_TYPE_REMOVED_TYPE=Ignore
+	 * CLASS_ELEMENT_TYPE_ADDED_METHOD=Error
+	 * CLASS_ELEMENT_TYPE_ADDED_RESTRICTIONS=Ignore
+	 * CLASS_ELEMENT_TYPE_ADDED_TYPE_PARAMETER=Ignore
+	 * CLASS_ELEMENT_TYPE_CHANGED_CONTRACTED_SUPERINTERFACES_SET=Ignore
+	 * ...
+	 * </pre>
+	 * <p>The keys can be found in {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes}.</p>
 	 *
 	 * @param preferencesLocation the location of the preference file
 	 */
