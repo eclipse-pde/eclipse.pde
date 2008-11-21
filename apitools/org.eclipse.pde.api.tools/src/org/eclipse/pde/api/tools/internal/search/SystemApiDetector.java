@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -216,57 +217,15 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					IApiMember apiMember = reference.getMember();
 					switch(apiMember.getType()) {
 						case IApiElement.FIELD : {
-							IField javaField = type.getField(apiMember.getName());
-							Position pos = null;
-							if (javaField.exists()) {
-								ISourceRange range = javaField.getNameRange();
-								if(range != null) {
-									pos = new Position(range.getOffset(), range.getLength()); 
-								}
-							}
-							if(pos == null) {
-								noSourcePosition(type, reference);
-							}
-							return pos;
+							IApiField field = (IApiField) reference.getMember();
+							return getSourceRangeForField(type, reference,
+									field);
 						}
 						case IApiElement.METHOD : {
 							// reference in a method declaration
 							IApiMethod method = (IApiMethod) reference.getMember();
-							String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
-							for (int i = 0; i < parameterTypes.length; i++) {
-								parameterTypes[i] = parameterTypes[i].replace('/', '.');
-							}
-							String methodname = method.getName();
-							if(method.isConstructor()) {
-								IApiType enclosingType = method.getEnclosingType();
-								if (enclosingType.isMemberType() && !Flags.isStatic(enclosingType.getModifiers())) {
-									// remove the synthetic argument that corresponds to the enclosing type
-									int length = parameterTypes.length - 1;
-									System.arraycopy(parameterTypes, 1, (parameterTypes = new String[length]), 0, length);
-								}
-								methodname = enclosingType.getSimpleName();
-							}
-							IMethod Qmethod = type.getMethod(methodname, parameterTypes);
-							IMethod[] methods = type.getMethods();
-							IMethod match = null;
-							for (int i = 0; i < methods.length; i++) {
-								IMethod m = methods[i];
-								if (m.isSimilar(Qmethod)) {
-									match = m;
-									break;
-								}
-							}
-							Position pos = null;
-							if (match != null) {
-								ISourceRange range = match.getNameRange();
-								if(range != null) {
-									pos = new Position(range.getOffset(), range.getLength());
-								}
-							}
-							if(pos == null) {
-								noSourcePosition(type, reference);
-							}
-							return pos;
+							return getSourceRangeForMethod(type, reference,
+									method);
 						}
 					}
 					// reference in a type declaration
@@ -329,22 +288,10 @@ public class SystemApiDetector extends AbstractProblemDetector {
 						pos = new Position(offset, line.length());
 					}
 					return pos;
-				} else {
-					// reference in a field declaration
-					IApiField field = (IApiField) reference.getMember();
-					IField javaField = type.getField(field.getName());
-					Position pos = null;
-					if (javaField.exists()) {
-						ISourceRange range = javaField.getNameRange();
-						if(range != null) {
-							pos = new Position(range.getOffset(), range.getLength()); 
-						}
-					}
-					if(pos == null) {
-						noSourcePosition(type, reference);
-					}
-					return pos;
 				}
+				// reference in a field declaration
+				IApiField field = (IApiField) reference.getMember();
+				return getSourceRangeForField(type, reference, field);
 			}
 			case IApiElement.METHOD : {
 				if (reference.getLineNumber() >= 0) {
@@ -358,49 +305,67 @@ public class SystemApiDetector extends AbstractProblemDetector {
 						noSourcePosition(type, reference);
 					}
 					return pos;
-				} else {
-					// reference in a method declaration
-					IApiMethod method = (IApiMethod) reference.getMember();
-					String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
-					for (int i = 0; i < parameterTypes.length; i++) {
-						parameterTypes[i] = parameterTypes[i].replace('/', '.');
-					}
-					String methodname = method.getName();
-					if(method.isConstructor()) {
-						IApiType enclosingType = method.getEnclosingType();
-						if (enclosingType.isMemberType() && !Flags.isStatic(enclosingType.getModifiers())) {
-							// remove the synthetic argument that corresponds to the enclosing type
-							int length = parameterTypes.length - 1;
-							System.arraycopy(parameterTypes, 1, (parameterTypes = new String[length]), 0, length);
-						}
-						methodname = enclosingType.getSimpleName();
-					}
-					IMethod Qmethod = type.getMethod(methodname, parameterTypes);
-					IMethod[] methods = type.getMethods();
-					IMethod match = null;
-					for (int i = 0; i < methods.length; i++) {
-						IMethod m = methods[i];
-						if (m.isSimilar(Qmethod)) {
-							match = m;
-							break;
-						}
-					}
-					Position pos = null;
-					if (match != null) {
-						ISourceRange range = match.getNameRange();
-						if(range != null) {
-							pos = new Position(range.getOffset(), range.getLength());
-						}
-					}
-					if(pos == null) {
-						noSourcePosition(type, reference);
-					}
-					return pos;
 				}
+				// reference in a method declaration
+				IApiMethod method = (IApiMethod) reference.getMember();
+				return getSourceRangeForMethod(type, reference, method);
 			}
 			default :
 				return null;
 		}
+	}
+	private Position getSourceRangeForField(IType type, IReference reference,
+			IApiField field) throws JavaModelException, CoreException {
+		IField javaField = type.getField(field.getName());
+		Position pos = null;
+		if (javaField.exists()) {
+			ISourceRange range = javaField.getNameRange();
+			if(range != null) {
+				pos = new Position(range.getOffset(), range.getLength()); 
+			}
+		}
+		if(pos == null) {
+			noSourcePosition(type, reference);
+		}
+		return pos;
+	}
+	private Position getSourceRangeForMethod(IType type, IReference reference,
+			IApiMethod method) throws CoreException, JavaModelException {
+		String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
+		for (int i = 0; i < parameterTypes.length; i++) {
+			parameterTypes[i] = parameterTypes[i].replace('/', '.');
+		}
+		String methodname = method.getName();
+		if(method.isConstructor()) {
+			IApiType enclosingType = method.getEnclosingType();
+			if (enclosingType.isMemberType() && !Flags.isStatic(enclosingType.getModifiers())) {
+				// remove the synthetic argument that corresponds to the enclosing type
+				int length = parameterTypes.length - 1;
+				System.arraycopy(parameterTypes, 1, (parameterTypes = new String[length]), 0, length);
+			}
+			methodname = enclosingType.getSimpleName();
+		}
+		IMethod Qmethod = type.getMethod(methodname, parameterTypes);
+		IMethod[] methods = type.getMethods();
+		IMethod match = null;
+		for (int i = 0; i < methods.length; i++) {
+			IMethod m = methods[i];
+			if (m.isSimilar(Qmethod)) {
+				match = m;
+				break;
+			}
+		}
+		Position pos = null;
+		if (match != null) {
+			ISourceRange range = match.getNameRange();
+			if(range != null) {
+				pos = new Position(range.getOffset(), range.getLength());
+			}
+		}
+		if(pos == null) {
+			noSourcePosition(type, reference);
+		}
+		return pos;
 	}
 
 	/* (non-Javadoc)
