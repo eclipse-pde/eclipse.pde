@@ -42,6 +42,12 @@
 			</classpath>
 			<src path="src_ant/"/>
 		</javac>
+		<copy todir="${destdir}" failonerror="true" overwrite="false">
+			<fileset dir="src_ant/">
+				<exclude name="**/*.java"/>
+				<exclude name="**/package.htm*"/>
+			</fileset>
+		</copy>
 		<jar destfile="${build.result.folder}/lib/apitooling-ant.jar" basedir="${destdir}"/>
 		<delete dir="${temp.folder}"/>
 	</target>
