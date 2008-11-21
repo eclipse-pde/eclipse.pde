@@ -233,7 +233,6 @@ public class ExportDestinationTab extends AbstractExportTab {
 	}
 
 	protected boolean doInstall() {
-		System.out.println(fInstallButton.getSelection());
 		return fInstallButton.getSelection();
 	}
 
