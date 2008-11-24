@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal;
+package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,13 +18,12 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.pde.api.tools.internal.model.ApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
-import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 
 /**
  * Common implementation of an {@link IApiTypeContainer}

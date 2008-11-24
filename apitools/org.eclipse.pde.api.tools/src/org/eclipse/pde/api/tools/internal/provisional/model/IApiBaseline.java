@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.internal.provisional.model;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 
 /**
  * A collection of related API components that together make up

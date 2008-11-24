@@ -34,7 +34,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
  * 
  * @since 1.0.0
  */
-public class ApiDescriptionVisitor {
+public abstract class ApiDescriptionVisitor {
 
 	/**
 	 * Visits an element in the manifest and returns whether children nodes

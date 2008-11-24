@@ -16,8 +16,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.test.performance.Dimension;
 
@@ -60,7 +60,7 @@ public class ApiDescriptionTests extends PerformanceTest {
 		
 		// WARM-UP
 		IProject proj = getEnv().getWorkspace().getRoot().getProject("org.eclipse.jdt.ui");	
-		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor();
+		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor() {};
 		for (int j = 0; j < 2; j++) {
 			// *** clean & visit API description ***
 			proj.build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);

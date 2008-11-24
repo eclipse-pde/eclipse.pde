@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal;
+package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 
 /**
  * A class file corresponding to a resource in the workspace.

@@ -20,13 +20,13 @@ import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.model.ApiElement;
-import org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer;
-import org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 
 /**
  * A search scope containing only types from one component. More efficient than a general purpose

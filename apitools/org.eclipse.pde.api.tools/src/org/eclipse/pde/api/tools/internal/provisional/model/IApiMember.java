@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.internal.provisional.model;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 
 

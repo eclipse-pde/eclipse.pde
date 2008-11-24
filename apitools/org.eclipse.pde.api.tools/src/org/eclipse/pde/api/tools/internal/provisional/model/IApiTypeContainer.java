@@ -8,10 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal.provisional;
+package org.eclipse.pde.api.tools.internal.provisional.model;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 
 /**
  * A container which can contain a set of source or class files.

@@ -8,11 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal.provisional;
+package org.eclipse.pde.api.tools.internal.provisional.model;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 
 /**
  * Handle to the structure of a class, interface, annotation, or enum.

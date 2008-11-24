@@ -24,9 +24,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.BundleVersionRange;
 import org.eclipse.pde.api.tools.internal.RequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
-import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 
 /**
  * @since 1.0.0

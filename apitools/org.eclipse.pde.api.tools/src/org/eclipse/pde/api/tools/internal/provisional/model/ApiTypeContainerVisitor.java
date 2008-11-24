@@ -8,14 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal.provisional;
+package org.eclipse.pde.api.tools.internal.provisional.model;
+
 
 /**
  * Visits {@link IApiTypeRoot}s in an {@link IApiTypeContainer}
  * 
  * @since 1.0.0
  */
-public class ApiTypeContainerVisitor {	
+public abstract class ApiTypeContainerVisitor {	
 
 	/**
 	 * Visits a component in the container and returns whether class files

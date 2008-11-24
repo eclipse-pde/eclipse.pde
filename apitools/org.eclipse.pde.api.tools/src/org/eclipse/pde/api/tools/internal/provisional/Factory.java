@@ -14,12 +14,14 @@ package org.eclipse.pde.api.tools.internal.provisional;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.pde.api.tools.internal.CompositeApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
+import org.eclipse.pde.api.tools.internal.model.CompositeApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.search.TypeScope;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
