@@ -989,9 +989,9 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 	/**
 	 * Set the location where the reports should be dropped.
 	 * 
-	 * <p>Once the task is completed, reports are dropped in this directory using a structure similar to
-	 * the filter root. A subfolder is created for each component that has some problems to be reported.
-	 * The subfolder contains a unique file called "report.xml".</p>
+	 * <p>Once the task is completed, reports are available in this directory using a structure
+	 * similar to the filter root. A sub-folder is created for each component that has problems
+	 * to be reported. Each sub-folder contains a file called "report.xml". </p>
 	 * 
 	 * <p>A special folder called "allNonApiBundles" is also created in this folder that contains a xml file called
 	 * "report.xml". This file lists all the bundles that are not using the api tooling nature.</p>
