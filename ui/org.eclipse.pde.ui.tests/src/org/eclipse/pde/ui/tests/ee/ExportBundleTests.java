@@ -89,6 +89,9 @@ public class ExportBundleTests extends PDETestCase {
 			PluginExportOperation job = new PluginExportOperation(info, "Test-Export");
 			job.schedule();
 			job.join();
+			if (job.hasAntErrors()){
+				fail("Export job had ant errors");
+			}
 			IStatus result = job.getResult();
 			assertTrue("Export job had errors", result.isOK());
 			
@@ -127,6 +130,9 @@ public class ExportBundleTests extends PDETestCase {
 			PluginExportOperation job = new PluginExportOperation(info, "Test-Export");
 			job.schedule();
 			job.join();
+			if (job.hasAntErrors()){
+				fail("Export job had ant errors");
+			}
 			IStatus result = job.getResult();
 			assertTrue("Export job had errors", result.isOK());
 			

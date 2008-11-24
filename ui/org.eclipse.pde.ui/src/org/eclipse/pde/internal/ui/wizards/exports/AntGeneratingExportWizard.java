@@ -14,21 +14,31 @@ import com.ibm.icu.text.MessageFormat;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.build.BaseBuildAction;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Document;
 
 public abstract class AntGeneratingExportWizard extends BaseExportWizard {
@@ -158,6 +168,37 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 
 	protected String getExportOperation() {
 		return fPage.doExportToDirectory() ? "directory" : "zip"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	protected class AntErrorDialog extends MessageDialog {
+		private File fLogLocation;
+
+		public AntErrorDialog(File logLocation) {
+			super(PlatformUI.getWorkbench().getDisplay().getActiveShell(), PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, null, null, MessageDialog.ERROR, new String[] {IDialogConstants.OK_LABEL}, 0);
+			fLogLocation = logLocation;
+		}
+
+		protected Control createMessageArea(Composite composite) {
+			Link link = new Link(composite, SWT.WRAP);
+			try {
+				link.setText(NLS.bind(PDEUIMessages.PluginExportWizard_Ant_errors_during_export_logs_generated, "<a>" + fLogLocation.getCanonicalPath() + "</a>")); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (IOException e) {
+				PDEPlugin.log(e);
+			}
+			GridData data = new GridData();
+			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
+			link.setLayoutData(data);
+			link.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					try {
+						Program.launch(fLogLocation.getCanonicalPath());
+					} catch (IOException ex) {
+						PDEPlugin.log(ex);
+					}
+				}
+			});
+			return link;
+		}
 	}
 
 }

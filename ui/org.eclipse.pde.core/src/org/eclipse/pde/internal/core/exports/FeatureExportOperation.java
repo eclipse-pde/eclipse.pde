@@ -26,7 +26,6 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
@@ -96,13 +95,10 @@ public class FeatureExportOperation extends Job {
 			}
 		} catch (InvocationTargetException e) {
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getCause() != null ? e.getCause() : e);
+		} finally {
+			monitor.done();
 		}
-		if (fHasErrors) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_CompilationErrors, fInfo.destinationDirectory));
-		}
-		monitor.done();
 		return Status.OK_STATUS;
-
 	}
 
 	/**
@@ -610,7 +606,7 @@ public class FeatureExportOperation extends Job {
 			target.appendChild(child);
 			root.appendChild(target);
 
-			if (fHasErrors) {
+			if (hasAntErrors()) {
 				target = doc.createElement("target"); //$NON-NLS-1$
 				target.setAttribute("name", "zip.logs"); //$NON-NLS-1$ //$NON-NLS-2$
 				child = doc.createElement("zip"); //$NON-NLS-1$
@@ -621,7 +617,7 @@ public class FeatureExportOperation extends Job {
 			}
 			XMLPrintHandler.writeFile(doc, scriptFile);
 
-			String[] targets = fHasErrors ? new String[] {"zip.logs", "clean"} //$NON-NLS-1$ //$NON-NLS-2$
+			String[] targets = hasAntErrors() ? new String[] {"zip.logs", "clean"} //$NON-NLS-1$ //$NON-NLS-2$
 					: new String[] {"clean"}; //$NON-NLS-1$
 			AntRunner runner = new AntRunner();
 			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
@@ -722,6 +718,10 @@ public class FeatureExportOperation extends Job {
 
 	public static void errorFound() {
 		fHasErrors = true;
+	}
+
+	public boolean hasAntErrors() {
+		return fHasErrors;
 	}
 
 	protected boolean shouldAddPlugin(BundleDescription bundle, Dictionary environment) {

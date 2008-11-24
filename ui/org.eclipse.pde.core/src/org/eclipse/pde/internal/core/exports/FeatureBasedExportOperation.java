@@ -43,6 +43,9 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 			if (fInfo.useJarFormat)
 				createPostProcessingFiles();
 			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), new SubProgressMonitor(monitor, 7));
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
 		} catch (IOException e) {
 			PDECore.log(e);
 		} catch (CoreException e) {
@@ -60,9 +63,6 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 			}
 			cleanup(null, new SubProgressMonitor(monitor, 3));
 			monitor.done();
-		}
-		if (monitor.isCanceled()) {
-			return Status.CANCEL_STATUS;
 		}
 		return Status.OK_STATUS;
 	}

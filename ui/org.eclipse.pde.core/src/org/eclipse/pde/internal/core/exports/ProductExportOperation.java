@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
@@ -52,73 +53,80 @@ public class ProductExportOperation extends FeatureExportOperation {
 			configurations = new String[][] {{TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL()}};
 
 		Properties versionAdvice = new Properties();
-		monitor.beginTask("", 10 * configurations.length); //$NON-NLS-1$
-		for (int i = 0; i < configurations.length; i++) {
-			try {
-				String[] config = configurations[i];
-				if (config[0].equals("macosx") && fInfo.targets == null) //$NON-NLS-1$
-					createMacScript(config, new SubProgressMonitor(monitor, 1));
-				// create a feature to wrap all plug-ins and features
-				String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
-				fFeatureLocation = fBuildTempLocation + File.separator + featureID;
-
-				createFeature(featureID, fFeatureLocation, config, true);
-				createBuildPropertiesFile(fFeatureLocation, config);
-				doExport(featureID, null, fFeatureLocation, config[0], config[1], config[2], new SubProgressMonitor(monitor, 8));
-			} catch (IOException e) {
-				PDECore.log(e);
-			} catch (InvocationTargetException e) {
-				return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
-			} catch (CoreException e) {
-				return e.getStatus();
-			} finally {
-
-				// Append platform specific version information so that it is available for the p2 post script
-				String versionsPrefix = fProduct.useFeatures() ? IPDEBuildConstants.DEFAULT_FEATURE_VERSION_FILENAME_PREFIX : IPDEBuildConstants.DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX;
-				File versionFile = new File(fFeatureLocation, versionsPrefix + IPDEBuildConstants.PROPERTIES_FILE_SUFFIX);
-				InputStream stream = null;
-				try {
-					stream = new BufferedInputStream(new FileInputStream(versionFile));
-					versionAdvice.load(stream);
-				} catch (IOException e) {
-				} finally {
-					try {
-						if (stream != null)
-							stream.close();
-					} catch (IOException e) {
-					}
-				}
-
-				// Clean up generated files
-				for (int j = 0; j < fInfo.items.length; j++) {
-					try {
-						deleteBuildFiles(fInfo.items[j]);
-					} catch (CoreException e) {
-						PDECore.log(e);
-					}
-				}
-				cleanup(fInfo.targets == null ? null : configurations[i], new SubProgressMonitor(monitor, 1));
-			}
-		}
-
 		try {
-			// Run postscript to generate p2 metadata for product
-			String postScript = PackageScriptGenerator.generateP2ProductScript(fFeatureLocation, fProduct.getModel().getInstallLocation(), versionAdvice);
-			if (postScript != null) {
+			monitor.beginTask("", 10 * configurations.length); //$NON-NLS-1$
+			for (int i = 0; i < configurations.length; i++) {
 				try {
-					Map properties = new HashMap();
-					setP2MetaDataProperties(properties);
-					runScript(postScript, null, properties, monitor);
+					String[] config = configurations[i];
+					if (config[0].equals("macosx") && fInfo.targets == null) //$NON-NLS-1$
+						createMacScript(config, new SubProgressMonitor(monitor, 1));
+					// create a feature to wrap all plug-ins and features
+					String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
+					fFeatureLocation = fBuildTempLocation + File.separator + featureID;
+
+					createFeature(featureID, fFeatureLocation, config, true);
+					createBuildPropertiesFile(fFeatureLocation, config);
+					doExport(featureID, null, fFeatureLocation, config[0], config[1], config[2], new SubProgressMonitor(monitor, 8));
+				} catch (IOException e) {
+					PDECore.log(e);
 				} catch (InvocationTargetException e) {
 					return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
+				} catch (CoreException e) {
+					return e.getStatus();
+				} finally {
+
+					// Append platform specific version information so that it is available for the p2 post script
+					String versionsPrefix = fProduct.useFeatures() ? IPDEBuildConstants.DEFAULT_FEATURE_VERSION_FILENAME_PREFIX : IPDEBuildConstants.DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX;
+					File versionFile = new File(fFeatureLocation, versionsPrefix + IPDEBuildConstants.PROPERTIES_FILE_SUFFIX);
+					InputStream stream = null;
+					try {
+						stream = new BufferedInputStream(new FileInputStream(versionFile));
+						versionAdvice.load(stream);
+					} catch (IOException e) {
+					} finally {
+						try {
+							if (stream != null)
+								stream.close();
+						} catch (IOException e) {
+						}
+					}
+
+					// Clean up generated files
+					for (int j = 0; j < fInfo.items.length; j++) {
+						try {
+							deleteBuildFiles(fInfo.items[j]);
+						} catch (CoreException e) {
+							PDECore.log(e);
+						}
+					}
+					cleanup(fInfo.targets == null ? null : configurations[i], new SubProgressMonitor(monitor, 1));
 				}
 			}
-		} catch (CoreException e) {
-			return e.getStatus();
-		}
 
-		cleanup(null, new SubProgressMonitor(monitor, 1));
-		monitor.done();
+			try {
+				// Run postscript to generate p2 metadata for product
+				String postScript = PackageScriptGenerator.generateP2ProductScript(fFeatureLocation, fProduct.getModel().getInstallLocation(), versionAdvice);
+				if (postScript != null) {
+					try {
+						Map properties = new HashMap();
+						setP2MetaDataProperties(properties);
+						runScript(postScript, null, properties, monitor);
+					} catch (InvocationTargetException e) {
+						return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
+					}
+				}
+			} catch (CoreException e) {
+				return e.getStatus();
+			}
+
+			cleanup(null, new SubProgressMonitor(monitor, 1));
+			if (hasAntErrors()) {
+				return new Status(IStatus.WARNING, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_CompilationErrors, fInfo.destinationDirectory));
+			}
+
+		} finally {
+			monitor.done();
+		}
 		return Status.OK_STATUS;
 	}
 

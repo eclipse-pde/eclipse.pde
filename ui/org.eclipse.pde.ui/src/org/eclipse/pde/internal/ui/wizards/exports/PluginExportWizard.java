@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.io.File;
 import javax.xml.parsers.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -20,6 +21,7 @@ import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.build.RuntimeInstallJob;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.w3c.dom.*;
 
@@ -55,13 +57,24 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 			RuntimeInstallJob.modifyInfoForInstall(info);
 		}
 
-		PluginExportOperation job = new PluginExportOperation(info, PDEUIMessages.PluginExportJob_name);
+		final PluginExportOperation job = new PluginExportOperation(info, PDEUIMessages.PluginExportJob_name);
 		job.setUser(true);
 		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PLUGIN_OBJ);
 		job.addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
-				if (event.getResult().isOK() && installAfterExport) {
+				if (job.hasAntErrors()) {
+					// If there were errors when running the ant scripts, inform the user where the logs can be found.
+					final File logLocation = new File(info.destinationDirectory, "logs.zip"); //$NON-NLS-1$
+					if (logLocation.exists()) {
+						PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+							public void run() {
+								AntErrorDialog dialog = new AntErrorDialog(logLocation);
+								dialog.open();
+							}
+						});
+					}
+				} else if (event.getResult().isOK() && installAfterExport) {
 					// Install the export into the current running platform
 					RuntimeInstallJob installJob = new RuntimeInstallJob(PDEUIMessages.PluginExportWizard_InstallJobName, info);
 					installJob.setUser(true);
