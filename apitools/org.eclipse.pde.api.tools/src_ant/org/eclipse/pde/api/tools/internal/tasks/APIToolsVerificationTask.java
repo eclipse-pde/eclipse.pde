@@ -858,10 +858,10 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		this.debug = Boolean.toString(true).equals(debugValue); 
 	}
 	/**
-	 * Set the ee file to use.
-	 * 
-	 *  <p>By default a ee file corresponding to a JavaSE-1.6 execution environment.
-	 *  This file is optional.</p>
+	 * Set the execution environment file to use.
+	 * <p>By default, an execution environment file corresponding to a JavaSE-1.6 execution environment
+	 * is used.</p>
+	 * <p>The file is specified using an absolute path. This is optional.</p> 
 	 *
 	 * @param eeFileLocation the given execution environment file
 	 */
