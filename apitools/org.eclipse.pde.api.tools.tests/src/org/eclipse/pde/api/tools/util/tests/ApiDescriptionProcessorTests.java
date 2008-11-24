@@ -36,7 +36,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
+import org.eclipse.pde.api.tools.internal.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;

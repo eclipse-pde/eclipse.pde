@@ -19,12 +19,12 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.model.DirectoryApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-import org.eclipse.pde.api.tools.internal.provisional.model.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 
 /**
  * This class tests the class file scanner and the class file visitor

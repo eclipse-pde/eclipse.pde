@@ -45,7 +45,11 @@ import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.ApiDescription;
+import org.eclipse.pde.api.tools.internal.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.BundleVersionRange;
+import org.eclipse.pde.api.tools.internal.CompositeApiDescription;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.RequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -60,7 +64,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.TargetWeaver;
@@ -295,7 +298,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * 		component
 	 * @throws CoreException if an error occurs
 	 */
-	protected static void initializeApiDescription(IApiDescription apiDesc, BundleDescription bundle, Set packages) throws CoreException {
+	public static void initializeApiDescription(IApiDescription apiDesc, BundleDescription bundle, Set packages) throws CoreException {
 		Iterator iterator = packages.iterator();
 		while (iterator.hasNext()) {
 			String name = (String) iterator.next();

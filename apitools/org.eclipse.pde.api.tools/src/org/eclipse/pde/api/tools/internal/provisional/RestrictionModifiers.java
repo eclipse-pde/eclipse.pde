@@ -15,7 +15,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
  * 
  * @since 1.0.0
  */
-public class RestrictionModifiers {
+public final class RestrictionModifiers {
 
 	/**
 	 * Restriction kind constant indicating there are no restrictions on a type
@@ -46,6 +46,12 @@ public class RestrictionModifiers {
 	 * Bit mask of all restrictions.
 	 */
 	public static final int ALL_RESTRICTIONS = 0xFF;
+	
+	/**
+	 * Constructor
+	 * no instantiating
+	 */
+	private RestrictionModifiers() {}
 	
 	/**
 	 * Returns if the no_implement modifier has been set in the specified modifiers

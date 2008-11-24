@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
-import org.eclipse.pde.api.tools.internal.model.ApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;

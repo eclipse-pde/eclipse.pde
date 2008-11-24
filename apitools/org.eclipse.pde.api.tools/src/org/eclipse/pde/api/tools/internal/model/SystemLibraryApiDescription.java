@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.ApiAnnotations;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
+import org.eclipse.pde.api.tools.internal.SystemApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.descriptors.MethodDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
@@ -43,7 +44,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.SystemApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

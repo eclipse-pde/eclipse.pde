@@ -22,9 +22,10 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.pde.api.tools.internal.ApiDescription;
+import org.eclipse.pde.api.tools.internal.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
-import org.eclipse.pde.api.tools.internal.model.ApiDescription;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -37,7 +38,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescri
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**

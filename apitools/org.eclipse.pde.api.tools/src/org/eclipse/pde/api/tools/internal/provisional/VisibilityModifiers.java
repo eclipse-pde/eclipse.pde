@@ -15,7 +15,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
  * 
  * @since 1.0.0
  */
-public class VisibilityModifiers {
+public final class VisibilityModifiers {
 	
 	/**
 	 * Visibility constant indicating an element is public API.
@@ -42,6 +42,12 @@ public class VisibilityModifiers {
 	 * Bit mask of all visibilities.
 	 */
 	public static final int ALL_VISIBILITIES = 0xFFFF;
+	
+	/**
+	 * Constructor
+	 * no instantiating
+	 */
+	private VisibilityModifiers() {}
 	
 	/**
 	 * Returns if the modifier is 'API'

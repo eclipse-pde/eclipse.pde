@@ -117,6 +117,12 @@ public final class ProfileModifiers {
 	public static final int JRES_MAX = 0x00FC;
 
 	/**
+	 * Constructor
+	 * no instantiating
+	 */
+	private ProfileModifiers() {}
+	
+	/**
 	 * Returns if the CDC_1_0_FOUNDATION_1_0 modifier has been set in the given modifiers.
 	 *
 	 * @param modifiers the given modifiers

@@ -26,7 +26,7 @@ import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
  * 
  * @since 1.0.0
  */
-public class JavadocTagManager {
+public final class JavadocTagManager {
 
 	/**
 	 * Cache for the contributed javadoc tags. 

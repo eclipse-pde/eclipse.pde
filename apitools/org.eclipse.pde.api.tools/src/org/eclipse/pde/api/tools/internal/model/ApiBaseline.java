@@ -53,6 +53,7 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.pde.api.tools.internal.AnyValue;
+import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.CoreMessages;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -551,6 +552,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	
 	/**
 	 * @return the OSGi state for this {@link IApiProfile}
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public State getState() {
 		if(fState == null) {
@@ -596,6 +599,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Returns all errors in the state.
 	 * 
 	 * @return state errors
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public ResolverError[] getErrors() {
 		List errs = new ArrayList();
@@ -727,8 +732,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Clear cached settings for the given package.
 	 * 
 	 * @param packageName
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
-	protected synchronized void clearPackage(String packageName) {
+	public synchronized void clearPackage(String packageName) {
 		if(fComponentsProvidingPackageCache != null) {
 			fComponentsProvidingPackageCache.remove(packageName);
 		}

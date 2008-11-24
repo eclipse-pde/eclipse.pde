@@ -18,7 +18,7 @@ public class Messages extends NLS {
 	public static String ApiType_1;
 	public static String ApiType_2;
 	public static String ApiType_3;
-	public static String TypeStructureCache_0;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
