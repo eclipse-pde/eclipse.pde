@@ -16,7 +16,7 @@ import org.eclipse.osgi.util.NLS;
  * 
  */
 public class SearchMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.search.searchmessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.builder.searchmessages"; //$NON-NLS-1$
 	public static String AbstractProblemDetector_could_not_locate_source_range;
 	public static String AbstractTypeLeakDetector_0;
 	public static String MethodLeakDetector_0;
