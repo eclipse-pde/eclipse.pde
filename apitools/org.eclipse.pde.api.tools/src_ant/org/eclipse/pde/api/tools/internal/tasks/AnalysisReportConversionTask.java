@@ -484,7 +484,7 @@ public class AnalysisReportConversionTask extends Task {
 	 * xml files.</p>
 	 * <p>The location is set using an absolute path.</p>
 	 * 
-	 * @param profileLocation the given the location where the html reports are generated
+	 * @param htmlFileLocation the given the location where the html reports are generated
 	 */
 	public void setHtmlReportDirectory(String htmlFileLocation) {
 		this.htmlReportsLocation = htmlFileLocation;
@@ -493,7 +493,8 @@ public class AnalysisReportConversionTask extends Task {
 	 * Set the location where the xml reports are retrieved.
 	 * 
 	 * <p>The location is set using an absolute path.</p>
-	 * @param profileLocation the given location to retrieve the xml reports
+	 *
+	 * @param xmlFileLocation the given location to retrieve the xml reports
 	 */
 	public void setXmlReportDirectory(String xmlFileLocation) {
 		this.xmlReportsLocation = xmlFileLocation;
