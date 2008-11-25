@@ -123,6 +123,8 @@ public class CompareProfilesTask extends CommonUtilsTask {
 
 	/**
 	 * Set the debug value.
+	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
+	 * <p>Default is <code>false</code>.</p>
 	 *
 	 * @param debugValue the given debug value
 	 */
