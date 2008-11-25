@@ -34,6 +34,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); }"));
 		Utils.writeBuffer(bundle.getFile("src/b/B.java"), new StringBuffer("package b; public class B { int i = 0; }"));
 		Utils.writeBuffer(bundle.getFile("about.txt"), new StringBuffer("All about bundle."));
+		Utils.writeBuffer(bundle.getFile("META-INF/p2.inf"), new StringBuffer("instructions.install=myRandomAction(foo: bar);"));
 		Properties properties = new Properties();
 		properties.put("bin.includes", "META-INF/, ., about.txt");
 		Attributes manifestAdditions = new Attributes();
@@ -78,5 +79,6 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getId(), "bundle");
 		assertEquals(iu.getVersion(), new Version("1.0.0.v1234"));
 		assertRequires(iu, "osgi.bundle", "org.eclipse.osgi");
+		assertTouchpoint(iu, "install", "myRandomAction");
 	}
 }

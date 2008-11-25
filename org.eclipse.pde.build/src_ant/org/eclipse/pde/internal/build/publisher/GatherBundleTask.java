@@ -18,7 +18,6 @@ import org.apache.tools.ant.types.PatternSet.NameEntry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.p2.publisher.IPublisherInfo;
 import org.eclipse.equinox.p2.publisher.PublisherInfo;
-import org.eclipse.equinox.p2.publisher.eclipse.BundleNestedAdvice;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.Utils;
@@ -26,7 +25,6 @@ import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator.CompiledEntry;
 
 public class GatherBundleTask extends AbstractPublisherTask {
-	//private String bundleDirectory = null;
 	private String buildResultFolder = null;
 	private String unpack = null;
 
@@ -51,7 +49,6 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	protected PublisherInfo createPublisherInfo() {
 		PublisherInfo info = new PublisherInfo();
 		info.setArtifactOptions(IPublisherInfo.A_PUBLISH);
-		info.addAdvice(new BundleNestedAdvice());
 		return info;
 	}
 
