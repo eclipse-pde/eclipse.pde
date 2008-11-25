@@ -478,19 +478,21 @@ public class AnalysisReportConversionTask extends Task {
 		this.debug = Boolean.toString(true).equals(debugValue); 
 	}
 	/**
-	 * Set the location where the html reports should be dumped.
+	 * Set the location where the html reports are generated.
 	 * 
 	 * <p>This is optional. If not set, the html files are created in the same folder as the
-	 * xml file.</p>
+	 * xml files.</p>
+	 * <p>The location is set using an absolute path.</p>
 	 * 
-	 * @param profileLocation the given the location where the html reports should be dumped
+	 * @param profileLocation the given the location where the html reports are generated
 	 */
 	public void setHtmlReportDirectory(String htmlFileLocation) {
 		this.htmlReportsLocation = htmlFileLocation;
 	}
 	/**
-	 * Set the location where the xml reports should be retrieved.
+	 * Set the location where the xml reports are retrieved.
 	 * 
+	 * <p>The location is set using an absolute path.</p>
 	 * @param profileLocation the given location to retrieve the xml reports
 	 */
 	public void setXmlReportDirectory(String xmlFileLocation) {

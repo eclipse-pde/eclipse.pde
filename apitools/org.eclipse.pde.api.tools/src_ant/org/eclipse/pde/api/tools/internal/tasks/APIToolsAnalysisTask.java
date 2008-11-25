@@ -890,6 +890,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * javax.servlet.jsp
 	 * ...
 	 * </pre>
+	 * <p>The location is set using an absolute path.</p>
 	 *
 	 * @param excludeListLocation the given location for the excluded list file
 	 */
@@ -938,6 +939,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * ...
 	 * </pre>
 	 * <p>The keys can be found in {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes}.</p>
+	 * <p>The location is set using an absolute path.</p>
 	 *
 	 * @param preferencesLocation the location of the preference file
 	 */
@@ -985,6 +987,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * the Eclipse installation folder. This is the directory is which you can find the 
 	 * Eclipse executable.
 	 * </p>
+	 * <p>The location is set using an absolute path.</p>
 	 *
 	 * @param baselineLocation the given location for the reference profile to analyze
 	 */
