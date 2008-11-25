@@ -171,9 +171,9 @@ public class FullReportConversionTask extends Task {
 		
 		public Summary(Report report) {
 			super();
-			this.apiUsageNumber = report.getProblemSize(APIToolsVerificationTask.USAGE);
-			this.bundleVersionNumber = report.getProblemSize(APIToolsVerificationTask.BUNDLE_VERSION);
-			this.compatibilityNumber = report.getProblemSize(APIToolsVerificationTask.COMPATIBILITY);
+			this.apiUsageNumber = report.getProblemSize(APIToolsAnalysisTask.USAGE);
+			this.bundleVersionNumber = report.getProblemSize(APIToolsAnalysisTask.BUNDLE_VERSION);
+			this.compatibilityNumber = report.getProblemSize(APIToolsAnalysisTask.COMPATIBILITY);
 			this.componentID = report.componentID;
 			this.link = report.link;
 		}
@@ -213,9 +213,9 @@ public class FullReportConversionTask extends Task {
 			MessageFormat.format(
 				Messages.fullReportTask_apiproblemsummary,
 				new String[] {
-					Integer.toString(report.getProblemSize(APIToolsVerificationTask.COMPATIBILITY)),
-					Integer.toString(report.getProblemSize(APIToolsVerificationTask.USAGE)),
-					Integer.toString(report.getProblemSize(APIToolsVerificationTask.BUNDLE_VERSION)),
+					Integer.toString(report.getProblemSize(APIToolsAnalysisTask.COMPATIBILITY)),
+					Integer.toString(report.getProblemSize(APIToolsAnalysisTask.USAGE)),
+					Integer.toString(report.getProblemSize(APIToolsAnalysisTask.BUNDLE_VERSION)),
 				}));
 	}
 	private void dumpIndexEntry(int i, PrintWriter writer, Summary summary) {
@@ -358,11 +358,11 @@ public class FullReportConversionTask extends Task {
 			} else {
 				dumpHeader(writer, report);
 				// generate compatibility category
-				dumpProblems(writer, Messages.fullReportTask_compatibility_header, report.getProblems(APIToolsVerificationTask.COMPATIBILITY));
+				dumpProblems(writer, Messages.fullReportTask_compatibility_header, report.getProblems(APIToolsAnalysisTask.COMPATIBILITY));
 				writer.println(Messages.fullReportTask_categoryseparator);
-				dumpProblems(writer, Messages.fullReportTask_api_usage_header, report.getProblems(APIToolsVerificationTask.USAGE));
+				dumpProblems(writer, Messages.fullReportTask_api_usage_header, report.getProblems(APIToolsAnalysisTask.USAGE));
 				writer.println(Messages.fullReportTask_categoryseparator);
-				dumpProblems(writer, Messages.fullReportTask_bundle_version_header, report.getProblems(APIToolsVerificationTask.BUNDLE_VERSION));
+				dumpProblems(writer, Messages.fullReportTask_bundle_version_header, report.getProblems(APIToolsAnalysisTask.BUNDLE_VERSION));
 				dumpFooter(writer);
 			}
 			writer.flush();

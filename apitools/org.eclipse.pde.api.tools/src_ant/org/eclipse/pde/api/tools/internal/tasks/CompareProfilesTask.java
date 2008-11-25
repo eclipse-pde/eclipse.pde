@@ -39,11 +39,11 @@ public class CompareProfilesTask extends CommonUtilsTask {
 
 	public void execute() throws BuildException {
 		if (this.debug) {
-			System.out.println("reference : " + this.referenceLocation); //$NON-NLS-1$
+			System.out.println("reference : " + this.baselineLocation); //$NON-NLS-1$
 			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
 			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
 		}
-		if (this.referenceLocation == null
+		if (this.baselineLocation == null
 				|| this.profileLocation == null
 				|| this.reportLocation == null) {
 			StringWriter out = new StringWriter();
@@ -51,7 +51,7 @@ public class CompareProfilesTask extends CommonUtilsTask {
 			writer.println(
 				Messages.bind(Messages.printArguments,
 					new String[] {
-						this.referenceLocation,
+						this.baselineLocation,
 						this.profileLocation,
 						this.reportLocation,
 					})
@@ -61,7 +61,7 @@ public class CompareProfilesTask extends CommonUtilsTask {
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		// create reference
-		File referenceInstallDir = extractSDK(REFERENCE, this.referenceLocation);
+		File referenceInstallDir = extractSDK(REFERENCE, this.baselineLocation);
 
 		File profileInstallDir = extractSDK(CURRENT, this.profileLocation);
 
@@ -77,7 +77,7 @@ public class CompareProfilesTask extends CommonUtilsTask {
 		} finally {
 			referenceProfile.dispose();
 			currentProfile.dispose();
-			deleteProfile(this.referenceLocation, referenceInstallDir);
+			deleteProfile(this.baselineLocation, referenceInstallDir);
 			deleteProfile(this.profileLocation, profileInstallDir);
 		}
 		if (delta == null) {
@@ -130,35 +130,38 @@ public class CompareProfilesTask extends CommonUtilsTask {
 		this.debug = Boolean.toString(true).equals(debugValue); 
 	}
 	/**
-	 * Set the profile location.
+	 * Set the location of the current product or profile that you want to compare against
+	 * the reference baseline.
 	 * 
-	 * <p>If the location is a directory, it has to be an Eclipse installation folder. This is the folder that contains
-	 * the eclipse executable.
+	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to 
+	 * the Eclipse installation folder. This is the directory is which you can find the 
+	 * Eclipse executable.
 	 * </p>
-	 * 
+	 *
 	 * @param profileLocation the given location for the profile to analyze
 	 */
 	public void setProfile(String profileLocation) {
 		this.profileLocation = profileLocation;
 	}
 	/**
-	 * Set the reference profile location.
+	 * Set the location of the reference baseline.
 	 * 
-	 * <p>If the location is a directory, it has to be an Eclipse installation folder. This is the folder that contains
-	 * the eclipse executable.
+	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to 
+	 * the Eclipse installation folder. This is the directory is which you can find the 
+	 * Eclipse executable.
 	 * </p>
-	 * 
-	 * @param profileLocation the given location for the reference profile to analyze
+	 *
+	 * @param baselineLocation the given location for the reference profile to analyze
 	 */
-	public void setReference(String referenceLocation) {
-		this.referenceLocation = referenceLocation;
+	public void setBaseline(String baselineLocation) {
+		this.baselineLocation = baselineLocation;
 	}
 	/**
-	 * Set the location where the report should be dropped.
+	 * Set the output location where the report will be generated.
 	 * 
-	 * <p>Once the task is completed, a report file called "compare.xml" is dumped into this location.</p>
+	 * <p>Once the task is completed, a report file called "compare.xml" is generated into this location.</p>
 	 * 
-	 * @param profileLocation the given location for the reference profile to analyze
+	 * @param reportLocation the output location where the report will be generated
 	 */
 	public void setReport(String reportLocation) {
 		this.reportLocation = reportLocation;

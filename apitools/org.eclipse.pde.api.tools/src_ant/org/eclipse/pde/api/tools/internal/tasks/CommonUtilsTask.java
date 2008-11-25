@@ -203,7 +203,7 @@ abstract class CommonUtilsTask extends Task {
 	protected boolean debug;
 	protected String eeFileLocation;
 	protected String profileLocation;
-	protected String referenceLocation;
+	protected String baselineLocation;
 
 	protected String reportLocation;
 }

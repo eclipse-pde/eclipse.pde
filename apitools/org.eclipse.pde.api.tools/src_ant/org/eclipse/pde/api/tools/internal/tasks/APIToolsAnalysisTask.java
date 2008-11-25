@@ -59,7 +59,7 @@ import org.w3c.dom.NodeList;
 /**
  * Ant task to run the API tool verification during Eclipse build.
  */
-public class APIToolsVerificationTask extends CommonUtilsTask {
+public class APIToolsAnalysisTask extends CommonUtilsTask {
 	/**
 	 * This filter store is only used to filter problem using existing filters.
 	 * It doesn't add or remove any filters.
@@ -420,7 +420,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 
 	private Set excludedElement;
 	private String excludeListLocation;
-	private String filterStoreRoot;
+	private String filters;
 	private Properties properties;
 
 	private Summary[] createAllSummaries(Map allProblems) {
@@ -537,11 +537,11 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 	 */
 	public void execute() throws BuildException {
 		if (this.debug) {
-			System.out.println("reference : " + this.referenceLocation); //$NON-NLS-1$
+			System.out.println("reference : " + this.baselineLocation); //$NON-NLS-1$
 			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
 			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
-			if (this.filterStoreRoot != null) {
-				System.out.println("filter store : " + this.filterStoreRoot); //$NON-NLS-1$
+			if (this.filters != null) {
+				System.out.println("filter store : " + this.filters); //$NON-NLS-1$
 			} else {
 				System.out.println("No filter store"); //$NON-NLS-1$
 			}
@@ -554,7 +554,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		if (this.excludeListLocation != null) {
 			this.excludedElement = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation);
 		}
-		if (this.referenceLocation == null
+		if (this.baselineLocation == null
 				|| this.profileLocation == null
 				|| this.reportLocation == null) {
 			StringWriter out = new StringWriter();
@@ -562,7 +562,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			writer.println(
 				Messages.bind(Messages.printArguments,
 					new String[] {
-						this.referenceLocation,
+						this.baselineLocation,
 						this.profileLocation,
 						this.reportLocation,
 					})
@@ -576,7 +576,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		if (this.debug) {
 			time = System.currentTimeMillis();
 		}
-		File referenceInstallDir = extractSDK(REFERENCE, this.referenceLocation);
+		File referenceInstallDir = extractSDK(REFERENCE, this.baselineLocation);
 
 		File profileInstallDir = extractSDK(CURRENT, this.profileLocation);
 		if (this.debug) {
@@ -677,7 +677,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 			}
 			referenceProfile.dispose();
 			currentProfile.dispose();
-			deleteProfile(this.referenceLocation, referenceInstallDir);
+			deleteProfile(this.baselineLocation, referenceInstallDir);
 			deleteProfile(this.profileLocation, profileInstallDir);
 			if (this.debug) {
 				System.out.println("Cleanup : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -711,8 +711,8 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		return (IApiProblem[]) allProblems.toArray(new IApiProblem[allProblems.size()]);
 	}
 	private IApiFilterStore getFilterStore(String name) {
-		if (this.filterStoreRoot == null) return null;
-		return new AntFilterStore(this.debug, this.filterStoreRoot, name);
+		if (this.filters == null) return null;
+		return new AntFilterStore(this.debug, this.filters, name);
 	}
 	/**
 	 * Returns an element that contains all the api problem nodes.
@@ -895,7 +895,7 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		this.excludeListLocation = excludeListLocation;
 	}
 	/**
-	 * Set the filter store root.
+	 * Set the root directory of API filters to use during the analysis.
 	 * 
 	 * <p>The argument is the root directory of the .api_filters files that should be used to filter potential
 	 * problems created by the api tooling analysis. The root needs to contain the following structure:</p>
@@ -907,19 +907,19 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 	 *         +--- .api_filters
 	 * </pre>
 	 *
-	 * @param filterStoreRoot the root of the .api_filters files
+	 * @param filters the root of the .api_filters files
 	 */
-	public void setFilterStoreRoot(String filterStoreRoot) {
-		this.filterStoreRoot = filterStoreRoot; 
+	public void setFilters(String filters) {
+		this.filters = filters; 
 	}
 	/**
 	 * Set the preferences for the task.
 	 * 
-	 * <p>The preferences are used to either ignore problems or set the severity to {@link ApiPlugin#SEVERITY_WARNING}
-	 * or {@link ApiPlugin#SEVERITY_ERROR} for the found problems according to the values of the corresponding problem
-	 * preference keys.</p>
+	 * <p>The preferences are used to configure problem severities. Problem severities have
+	 * three possible values: Ignore, Warning, or Error. The set of problems detected is defined
+	 * by corresponding problem preference keys in API tools.</p>
 	 * <p>If the given location doesn't exist, the preferences won't be set.</p>
-	 * <p>The lines that start with a '#' are ignored. The format of the preferences file looks like this:</p>
+	 * <p>Lines starting with a '#' are ignored. The format of the preferences file looks like this:</p>
 	 * <pre>
 	 * #Thu Nov 20 17:35:06 EST 2008
 	 * ANNOTATION_ELEMENT_TYPE_ADDED_METHOD_WITHOUT_DEFAULT_VALUE=Ignore
@@ -963,10 +963,12 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		}
 	}
 	/**
-	 * Set the profile location.
+	 * Set the location of the current product or profile that you want to compare against
+	 * the reference baseline.
 	 * 
-	 * <p>If the location is a directory, it has to be an Eclipse installation folder. This is the folder that contains
-	 * the eclipse executable.
+	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to 
+	 * the Eclipse installation folder. This is the directory is which you can find the 
+	 * Eclipse executable.
 	 * </p>
 	 *
 	 * @param profileLocation the given location for the profile to analyze
@@ -975,19 +977,20 @@ public class APIToolsVerificationTask extends CommonUtilsTask {
 		this.profileLocation = profileLocation;
 	}
 	/**
-	 * Set the reference profile location.
+	 * Set the location of the reference baseline.
 	 * 
-	 * <p>If the location is a directory, it has to be an Eclipse installation folder. This is the folder that contains
-	 * the eclipse executable.
+	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to 
+	 * the Eclipse installation folder. This is the directory is which you can find the 
+	 * Eclipse executable.
 	 * </p>
 	 *
-	 * @param profileLocation the given location for the reference profile to analyze
+	 * @param baselineLocation the given location for the reference profile to analyze
 	 */
-	public void setReference(String referenceLocation) {
-		this.referenceLocation = referenceLocation;
+	public void setBaseline(String baselineLocation) {
+		this.baselineLocation = baselineLocation;
 	}
 	/**
-	 * Set the location where the reports should be dropped.
+	 * Set the output location where the reports will be generated.
 	 * 
 	 * <p>Once the task is completed, reports are available in this directory using a structure
 	 * similar to the filter root. A sub-folder is created for each component that has problems
