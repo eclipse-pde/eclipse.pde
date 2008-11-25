@@ -96,14 +96,16 @@ public class ApiFileGeneratorTask extends Task {
 	String targetFolder;
 
 	/**
-	 * Set the project name
+	 * Set the project name.
+	 * 
 	 * @param projectName the given project name
 	 */
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
 	}
 	/**
-	 * Set the project location
+	 * Set the project location.
+	 * 
 	 * @param projectName the given project location
 	 */
 	public void setProjectLocation(String projectLocation) {
