@@ -366,7 +366,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 *
 	 * @param baselineLocation the given location for the reference profile to analyze
 	 */
-	public void setReference(String baselineLocation) {
+	public void setBaseline(String baselineLocation) {
 		this.baselineLocation = baselineLocation;
 	}
 	/**
