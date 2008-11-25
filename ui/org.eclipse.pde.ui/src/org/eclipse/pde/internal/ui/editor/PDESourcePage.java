@@ -15,12 +15,11 @@ import java.util.ResourceBundle;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.*;
@@ -394,8 +393,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 			PDEFormTextEditorContributor textContributor = (PDEFormTextEditorContributor) contributor;
 			setAction(PDEActionConstants.OPEN, textContributor.getHyperlinkAction());
 			setAction(PDEActionConstants.FORMAT, textContributor.getFormatAction());
-			if (textContributor.supportsContentAssist())
-				createContentAssistAction();
 		}
 
 		// Create the quick outline action
@@ -414,13 +411,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		action.setId(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE);
 		action.setImageDescriptor(PDEPluginImages.DESC_OVERVIEW_OBJ);
 		setAction(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE, action);
-	}
-
-	private void createContentAssistAction() {
-		IAction contentAssist = new ContentAssistAction(getBundleForConstructedKeys(), "ContentAssistProposal.", this); //$NON-NLS-1$
-		contentAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		setAction("ContentAssist", contentAssist); //$NON-NLS-1$
-		markAsStateDependentAction("ContentAssist", true); //$NON-NLS-1$
 	}
 
 	public final void selectionChanged(SelectionChangedEvent event) {

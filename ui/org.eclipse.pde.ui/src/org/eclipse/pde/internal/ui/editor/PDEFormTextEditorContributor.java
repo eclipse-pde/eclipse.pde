@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,13 +61,13 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 
 			ITextEditor textEditor = (part instanceof ITextEditor) ? (ITextEditor) part : null;
 			if (fCorrectionAssist != null)
-				fCorrectionAssist.setAction(getAction(textEditor, ITextEditorActionConstants.QUICK_ASSIST)); //$NON-NLS-1$
+				fCorrectionAssist.setAction(getAction(textEditor, ITextEditorActionConstants.QUICK_ASSIST));
 			if (fHyperlinkAction != null)
 				fHyperlinkAction.setTextEditor(textEditor);
 			if (fFormatAction != null)
 				fFormatAction.setTextEditor(textEditor);
 			if (fContentAssist != null)
-				fContentAssist.setAction(getAction(textEditor, "ContentAssist")); //$NON-NLS-1$
+				fContentAssist.setAction(getAction(textEditor, ITextEditorActionConstants.CONTENT_ASSIST));
 		}
 	}
 
