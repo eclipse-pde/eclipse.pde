@@ -61,7 +61,11 @@ public class ReferenceAnalyzer {
 	/**
 	 * Empty result collection.
 	 */
-	private static final IApiProblem[] EMPTY_RESULT = new IApiProblem[0];	
+	private static final IApiProblem[] EMPTY_RESULT = new IApiProblem[0];
+	/**
+	 * No problem detector to use
+	 */
+	private static final IApiProblemDetector[] NO_PROBLEM_DETECTORS = new IApiProblemDetector[0];
 	
 	/**
 	 * Visits each class file, extracting references.
@@ -337,7 +341,7 @@ public class ReferenceAnalyzer {
 	 * @param reference reference
 	 * @return a string key for the given reference.
 	 */
-	private String createSignatureKey(IReference reference) {
+	private String createSignatureKey(IReference reference) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(reference.getMember().getApiComponent().getId());
 		buffer.append("#"); //$NON-NLS-1$
@@ -410,44 +414,47 @@ public class ReferenceAnalyzer {
 	 * @return problem detectors
 	 */
 	private IApiProblemDetector[] buildProblemDetectors(IApiComponent component) {
-		long start = System.currentTimeMillis();
-		IApiComponent[] components = component.getBaseline().getPrerequisiteComponents(new IApiComponent[]{component});
-		final ProblemDetectorBuilder visitor = new ProblemDetectorBuilder(component);
-		for (int i = 0; i < components.length; i++) {
-			IApiComponent prereq = components[i];
-			if (!prereq.equals(component)) {
-				visitor.setOwningComponent(prereq);
-				try {
-					prereq.getApiDescription().accept(visitor);
-				} catch (CoreException e) {
-					ApiPlugin.log(e.getStatus());
-				}
-			}
-		}
-		long end = System.currentTimeMillis();
-		if (DEBUG) {
-			System.out.println("Time to build problem detectors: " + (end-start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
-		}		
-		// add names from the leak component as well
-		ApiDescriptionVisitor nameVisitor = new ApiDescriptionVisitor() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
-			 */
-			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
-				if (element.getElementType() == IElementDescriptor.PACKAGE) {
-					if (VisibilityModifiers.isPrivate(description.getVisibility())) {
-						visitor.addNonApiPackageName(((IPackageDescriptor)element).getName());
+		try {
+			long start = System.currentTimeMillis();
+			IApiComponent[] components = component.getBaseline().getPrerequisiteComponents(new IApiComponent[]{component});
+			final ProblemDetectorBuilder visitor = new ProblemDetectorBuilder(component);
+			for (int i = 0; i < components.length; i++) {
+				IApiComponent prereq = components[i];
+				if (!prereq.equals(component)) {
+					visitor.setOwningComponent(prereq);
+					try {
+						prereq.getApiDescription().accept(visitor);
+					} catch (CoreException e) {
+						ApiPlugin.log(e.getStatus());
 					}
 				}
-				return false;
 			}
-		};
-		try {
+			long end = System.currentTimeMillis();
+			if (DEBUG) {
+				System.out.println("Time to build problem detectors: " + (end-start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
+			}		
+			// add names from the leak component as well
+			ApiDescriptionVisitor nameVisitor = new ApiDescriptionVisitor() {
+				/* (non-Javadoc)
+				 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
+				 */
+				public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
+					if (element.getElementType() == IElementDescriptor.PACKAGE) {
+						if (VisibilityModifiers.isPrivate(description.getVisibility())) {
+							visitor.addNonApiPackageName(((IPackageDescriptor)element).getName());
+						}
+					}
+					return false;
+				}
+			};
 			component.getApiDescription().accept(nameVisitor);
+			List detectors = visitor.getProblemDetectors();
+			int size = detectors.size();
+			if (size == 0) return NO_PROBLEM_DETECTORS;
+			return (IApiProblemDetector[]) detectors.toArray(new IApiProblemDetector[size]);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
-		List detectors = visitor.getProblemDetectors();
-		return (IApiProblemDetector[]) detectors.toArray(new IApiProblemDetector[detectors.size()]);
+		return NO_PROBLEM_DETECTORS;
 	}
 }

@@ -322,71 +322,76 @@ public class ApiComparator {
 			final IApiBaseline profile,
 			final int visibilityModifiers,
 			final boolean force) {
-		if (referenceProfile == null || profile == null) {
-			throw new IllegalArgumentException("None of the profiles must be null"); //$NON-NLS-1$
-		}
-		IApiComponent[] apiComponents = referenceProfile.getApiComponents();
-		IApiComponent[] apiComponents2 = profile.getApiComponents();
-		Set apiComponentsIds = new HashSet();
-		final Delta globalDelta = new Delta();
-		for (int i = 0, max = apiComponents.length; i < max; i++) {
-			IApiComponent apiComponent = apiComponents[i];
-			if (!apiComponent.isSystemComponent()) {
-				String id = apiComponent.getId();
-				IApiComponent apiComponent2 = profile.getApiComponent(id);
-				IDelta delta = null;
-				if (apiComponent2 == null) {
-					// report removal of an API component
-					delta =
-						new Delta(
-								null,
-								IDelta.API_PROFILE_ELEMENT_TYPE,
-								IDelta.REMOVED,
-								IDelta.API_COMPONENT,
-								null,
-								id,
-								id);
-				} else {
-					apiComponentsIds.add(id);
-					String versionString = apiComponent.getVersion();
-					String versionString2 = apiComponent2.getVersion();
-					checkBundleVersionChanges(apiComponent2, id, versionString, versionString2, globalDelta);
-					if (!versionString.equals(versionString2)
-							|| force) {
-						long time = System.currentTimeMillis();
-						try {
-							delta = compare(apiComponent, apiComponent2, referenceProfile, profile, visibilityModifiers);
-						} finally {
-							if (DEBUG) {
-								System.out.println("Time spent for " + id+ " " + versionString + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-							}
-						}
-					}
-				}
-				if (delta != null && delta != NO_DELTA) {
-					globalDelta.add(delta);
-				}
+		try {
+			if (referenceProfile == null || profile == null) {
+				throw new IllegalArgumentException("None of the profiles must be null"); //$NON-NLS-1$
 			}
-		}
-		for (int i = 0, max = apiComponents2.length; i < max; i++) {
-			IApiComponent apiComponent = apiComponents2[i];
-			if (!apiComponent.isSystemComponent()) {
-				String id = apiComponent.getId();
-				if (!apiComponentsIds.contains(id)) {
-					// addition of an API component
-					globalDelta.add(
+			IApiComponent[] apiComponents = referenceProfile.getApiComponents();
+			IApiComponent[] apiComponents2 = profile.getApiComponents();
+			Set apiComponentsIds = new HashSet();
+			final Delta globalDelta = new Delta();
+			for (int i = 0, max = apiComponents.length; i < max; i++) {
+				IApiComponent apiComponent = apiComponents[i];
+				if (!apiComponent.isSystemComponent()) {
+					String id = apiComponent.getId();
+					IApiComponent apiComponent2 = profile.getApiComponent(id);
+					IDelta delta = null;
+					if (apiComponent2 == null) {
+						// report removal of an API component
+						delta =
 							new Delta(
 									null,
 									IDelta.API_PROFILE_ELEMENT_TYPE,
-									IDelta.ADDED,
+									IDelta.REMOVED,
 									IDelta.API_COMPONENT,
 									null,
 									id,
-									id));
+									id);
+					} else {
+						apiComponentsIds.add(id);
+						String versionString = apiComponent.getVersion();
+						String versionString2 = apiComponent2.getVersion();
+						checkBundleVersionChanges(apiComponent2, id, versionString, versionString2, globalDelta);
+						if (!versionString.equals(versionString2)
+								|| force) {
+							long time = System.currentTimeMillis();
+							try {
+								delta = compare(apiComponent, apiComponent2, referenceProfile, profile, visibilityModifiers);
+							} finally {
+								if (DEBUG) {
+									System.out.println("Time spent for " + id+ " " + versionString + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+								}
+							}
+						}
+					}
+					if (delta != null && delta != NO_DELTA) {
+						globalDelta.add(delta);
+					}
 				}
 			}
+			for (int i = 0, max = apiComponents2.length; i < max; i++) {
+				IApiComponent apiComponent = apiComponents2[i];
+				if (!apiComponent.isSystemComponent()) {
+					String id = apiComponent.getId();
+					if (!apiComponentsIds.contains(id)) {
+						// addition of an API component
+						globalDelta.add(
+								new Delta(
+										null,
+										IDelta.API_PROFILE_ELEMENT_TYPE,
+										IDelta.ADDED,
+										IDelta.API_COMPONENT,
+										null,
+										id,
+										id));
+					}
+				}
+			}
+			return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
 		}
-		return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
+		return null;
 	}
 
 	private static void checkBundleVersionChanges(IApiComponent apiComponent2, String id, String apiComponentVersion, String apiComponentVersion2, Delta globalDelta) {
@@ -459,45 +464,50 @@ public class ApiComparator {
 			final int visibilityModifiers,
 			final boolean force) {
 		
-		if (component == null) {
-			throw new IllegalArgumentException("The composent cannot be null"); //$NON-NLS-1$
-		}
-		if (referenceProfile == null) {
-			throw new IllegalArgumentException("The reference profile cannot be null"); //$NON-NLS-1$
-		}
-		IDelta delta = null;
-		if (!component.isSystemComponent()) {
-			String id = component.getId();
-			IApiComponent apiComponent2 = referenceProfile.getApiComponent(id);
-			if (apiComponent2 == null) {
-				// report addition of an API component
-				delta =
-					new Delta(
-						null,
-						IDelta.API_PROFILE_ELEMENT_TYPE,
-						IDelta.ADDED,
-						IDelta.API_COMPONENT,
-						null,
-						id,
-						id);
-			} else {
-				if (!component.getVersion().equals(apiComponent2.getVersion())
-						|| force) {
-					long time = System.currentTimeMillis();
-					try {
-						delta = compare(apiComponent2, component, visibilityModifiers);
-					} finally {
-						if (DEBUG) {
-							System.out.println("Time spent for " + id+ " " + component.getVersion() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		try {
+			if (component == null) {
+				throw new IllegalArgumentException("The composent cannot be null"); //$NON-NLS-1$
+			}
+			if (referenceProfile == null) {
+				throw new IllegalArgumentException("The reference profile cannot be null"); //$NON-NLS-1$
+			}
+			IDelta delta = null;
+			if (!component.isSystemComponent()) {
+				String id = component.getId();
+				IApiComponent apiComponent2 = referenceProfile.getApiComponent(id);
+				if (apiComponent2 == null) {
+					// report addition of an API component
+					delta =
+						new Delta(
+							null,
+							IDelta.API_PROFILE_ELEMENT_TYPE,
+							IDelta.ADDED,
+							IDelta.API_COMPONENT,
+							null,
+							id,
+							id);
+				} else {
+					if (!component.getVersion().equals(apiComponent2.getVersion())
+							|| force) {
+						long time = System.currentTimeMillis();
+						try {
+							delta = compare(apiComponent2, component, visibilityModifiers);
+						} finally {
+							if (DEBUG) {
+								System.out.println("Time spent for " + id+ " " + component.getVersion() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+							}
 						}
 					}
 				}
+				if (delta != null && delta != NO_DELTA) {
+					return delta;
+				}
 			}
-			if (delta != null && delta != NO_DELTA) {
-				return delta;
-			}
+			return NO_DELTA;
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
 		}
-		return NO_DELTA;
+		return null;
 	}
 
 	/**
@@ -519,10 +529,15 @@ public class ApiComparator {
 			final IApiComponent component,
 			final int visibilityModifiers) {
 
-		if (referenceComponent == null || component == null) {
-			throw new IllegalArgumentException("One of the given components is null"); //$NON-NLS-1$
+		try {
+			if (referenceComponent == null || component == null) {
+				throw new IllegalArgumentException("One of the given components is null"); //$NON-NLS-1$
+			}
+			return compare(referenceComponent, component, referenceComponent.getBaseline(), component.getBaseline(), visibilityModifiers);
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
 		}
-		return compare(referenceComponent, component, referenceComponent.getBaseline(), component.getBaseline(), visibilityModifiers);
+		return null;
 	}
 	/**
 	 * Returns a delta that corresponds to the comparison of the two given API components.
@@ -570,48 +585,64 @@ public class ApiComparator {
 			final IApiBaseline referenceProfile,
 			final IApiBaseline profile,
 			final int visibilityModifiers) {
-	
-		if (referenceProfile == null || profile == null) {
-			throw new IllegalArgumentException("The profiles cannot be null"); //$NON-NLS-1$
-		}
-		if (referenceComponent == null) {
-			if (component2 == null) {
-				throw new IllegalArgumentException("Both components cannot be null"); //$NON-NLS-1$
-			}
-			return new Delta(
-					null,
-					IDelta.API_PROFILE_ELEMENT_TYPE,
-					IDelta.ADDED,
-					IDelta.API_COMPONENT,
-					null,
-					component2.getId(),
-					Util.getDeltaComponentID(component2));
-		} else if (component2 == null) {
-			String referenceComponentId = referenceComponent.getId();
-			return new Delta(
-					null,
-					IDelta.API_PROFILE_ELEMENT_TYPE,
-					IDelta.REMOVED,
-					IDelta.API_COMPONENT,
-					null,
-					referenceComponentId,
-					Util.getDeltaComponentID(referenceComponent));
-		}
-		String referenceComponentId = referenceComponent.getId();
-		final Delta globalDelta = new Delta();
-
-		// check the EE first
-		Set referenceEEs = Util.convertAsSet(referenceComponent.getExecutionEnvironments());
-		Set componentsEEs = Util.convertAsSet(component2.getExecutionEnvironments());
+		try {
 		
-		for (Iterator iterator = referenceEEs.iterator(); iterator.hasNext(); ) {
-			String currentEE = (String) iterator.next();
-			if (!componentsEEs.remove(currentEE)) {
+			if (referenceProfile == null || profile == null) {
+				throw new IllegalArgumentException("The profiles cannot be null"); //$NON-NLS-1$
+			}
+			if (referenceComponent == null) {
+				if (component2 == null) {
+					throw new IllegalArgumentException("Both components cannot be null"); //$NON-NLS-1$
+				}
+				return new Delta(
+						null,
+						IDelta.API_PROFILE_ELEMENT_TYPE,
+						IDelta.ADDED,
+						IDelta.API_COMPONENT,
+						null,
+						component2.getId(),
+						Util.getDeltaComponentID(component2));
+			} else if (component2 == null) {
+				String referenceComponentId = referenceComponent.getId();
+				return new Delta(
+						null,
+						IDelta.API_PROFILE_ELEMENT_TYPE,
+						IDelta.REMOVED,
+						IDelta.API_COMPONENT,
+						null,
+						referenceComponentId,
+						Util.getDeltaComponentID(referenceComponent));
+			}
+			String referenceComponentId = referenceComponent.getId();
+			final Delta globalDelta = new Delta();
+	
+			// check the EE first
+			Set referenceEEs = Util.convertAsSet(referenceComponent.getExecutionEnvironments());
+			Set componentsEEs = Util.convertAsSet(component2.getExecutionEnvironments());
+			
+			for (Iterator iterator = referenceEEs.iterator(); iterator.hasNext(); ) {
+				String currentEE = (String) iterator.next();
+				if (!componentsEEs.remove(currentEE)) {
+					globalDelta.add(
+							new Delta(
+									Util.getDeltaComponentID(referenceComponent),
+									IDelta.API_COMPONENT_ELEMENT_TYPE,
+									IDelta.REMOVED,
+									IDelta.EXECUTION_ENVIRONMENT,
+									RestrictionModifiers.NO_RESTRICTIONS,
+									0,
+									null,
+									referenceComponentId,
+									new String[] { currentEE, Util.getDeltaComponentID(referenceComponent)}));
+				}
+			}
+			for (Iterator iterator = componentsEEs.iterator(); iterator.hasNext(); ) {
+				String currentEE = (String) iterator.next();
 				globalDelta.add(
 						new Delta(
 								Util.getDeltaComponentID(referenceComponent),
 								IDelta.API_COMPONENT_ELEMENT_TYPE,
-								IDelta.REMOVED,
+								IDelta.ADDED,
 								IDelta.EXECUTION_ENVIRONMENT,
 								RestrictionModifiers.NO_RESTRICTIONS,
 								0,
@@ -619,22 +650,6 @@ public class ApiComparator {
 								referenceComponentId,
 								new String[] { currentEE, Util.getDeltaComponentID(referenceComponent)}));
 			}
-		}
-		for (Iterator iterator = componentsEEs.iterator(); iterator.hasNext(); ) {
-			String currentEE = (String) iterator.next();
-			globalDelta.add(
-					new Delta(
-							Util.getDeltaComponentID(referenceComponent),
-							IDelta.API_COMPONENT_ELEMENT_TYPE,
-							IDelta.ADDED,
-							IDelta.EXECUTION_ENVIRONMENT,
-							RestrictionModifiers.NO_RESTRICTIONS,
-							0,
-							null,
-							referenceComponentId,
-							new String[] { currentEE, Util.getDeltaComponentID(referenceComponent)}));
-		}
-		try {
 			return internalCompare(referenceComponent, component2, referenceProfile, profile, visibilityModifiers, globalDelta);
 		} catch(CoreException e) {
 			// null means an error case

@@ -38,7 +38,9 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -160,7 +162,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/**
 	 * Reduce the manifest to only contain required headers after {@link BundleDescription} creation.
 	 */
-	protected synchronized void doManifestCompaction() {
+	protected synchronized void doManifestCompaction() throws CoreException {
 		Dictionary temp = fManifest;
 		fManifest = new Hashtable(MANIFEST_HEADERS.length);
 		for (int i = 0; i < MANIFEST_HEADERS.length; i++) {
@@ -389,6 +391,13 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#createApiTypeContainers()
 	 */
 	protected List createApiTypeContainers() throws CoreException {
+		if (this.fBundleDescription == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
 		List containers = new ArrayList(5);
 		try {
 			List all = new ArrayList();
@@ -491,7 +500,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * @return {@link IApiTypeContainer} or <code>null</code>
 	 * @exception IOException
 	 */
-	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException {
+	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException, CoreException {
 		File bundle = new File(fLocation);
 		if (bundle.isDirectory()) {
 			// bundle is folder
@@ -750,21 +759,42 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getExecutionEnvironments()
 	 */
-	public String[] getExecutionEnvironments() {
+	public String[] getExecutionEnvironments() throws CoreException {
+		if (this.fBundleDescription == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
 		return fBundleDescription.getExecutionEnvironments();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getId()
 	 */
-	public String getId() {
+	public String getId() throws CoreException {
+		if (this.fBundleDescription == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
 		return fBundleDescription.getSymbolicName();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getRequiredComponents()
 	 */
-	public IRequiredComponentDescription[] getRequiredComponents() {
+	public IRequiredComponentDescription[] getRequiredComponents() throws CoreException {
+		if (this.fBundleDescription == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
 		BundleSpecification[] requiredBundles = fBundleDescription.getRequiredBundles();
 		IRequiredComponentDescription[] req = new IRequiredComponentDescription[requiredBundles.length];
 		for (int i = 0; i < requiredBundles.length; i++) {
@@ -780,7 +810,14 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getVersion()
 	 */
-	public String getVersion() {
+	public String getVersion() throws CoreException {
+		if (this.fBundleDescription == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
 		return fBundleDescription.getVersion().toString();
 	}
 	
@@ -789,7 +826,14 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * 
 	 * @return bundle description
 	 */
-	public BundleDescription getBundleDescription() {
+	public BundleDescription getBundleDescription() throws CoreException {
+		if (this.fBundleDescription == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
 		return fBundleDescription;
 	}
 
@@ -836,7 +880,14 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see IApiComponent#isSourceComponent()
 	 */
-	public boolean isSourceComponent() {
+	public boolean isSourceComponent() throws CoreException {
+		if (this.fManifest == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
 		ManifestElement[] sourceBundle = null;
 		try {
 			sourceBundle = ManifestElement.parseHeader(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE, (String) fManifest.get(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE));
@@ -908,14 +959,28 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiComponent#isFragment()
 	 */
-	public boolean isFragment() {
+	public boolean isFragment() throws CoreException {
+		if (this.fBundleDescription == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
 		return fBundleDescription.getHost() != null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiComponent#hasFragments()
 	 */
-	public boolean hasFragments() {
+	public boolean hasFragments() throws CoreException {
+		if (this.fBundleDescription == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
 		return fBundleDescription.getFragments().length != 0;
 	}
 	
@@ -939,7 +1004,10 @@ public class BundleApiComponent extends AbstractApiComponent {
 		}
 		return fHasApiDescription;
 	}
-	public String[] getLowestEEs() {
+	/**
+	 * @see IApiComponent#getLowestEEs()
+	 */
+	public String[] getLowestEEs() throws CoreException {
 		if (this.lowestEEs != null) return this.lowestEEs;
 		String[] temp = null;
 		String[] executionEnvironments = this.getExecutionEnvironments();

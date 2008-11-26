@@ -277,7 +277,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Adds an {@link IApiComponent} to the fComponentsById mapping
 	 * @param component
 	 */
-	private void addComponent(IApiComponent component) {
+	private void addComponent(IApiComponent component) throws CoreException {
 		if(component == null) {
 			return;
 		}
@@ -288,9 +288,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 	
 	/* (non-Javadoc)
-	 * @see IApiProfile#addApiComponents(org.eclipse.pde.api.tools.model.component.IApiComponent[], boolean)
+	 * @see IApiBaseline#addApiComponents(org.eclipse.pde.api.tools.model.component.IApiComponent[], boolean)
 	 */
-	public void addApiComponents(IApiComponent[] components) {
+	public void addApiComponents(IApiComponent[] components) throws CoreException {
 		HashSet ees = new HashSet();
 		for (int i = 0; i < components.length; i++) {
 			BundleApiComponent component = (BundleApiComponent) components[i];
@@ -426,7 +426,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 	
 	/* (non-Javadoc)
-	 * @see IApiProfile#getApiComponents()
+	 * @see IApiBaseline#getApiComponents()
 	 */
 	public IApiComponent[] getApiComponents() {
 		loadBaselineInfos();
@@ -438,7 +438,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfile#resolvePackage(org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String)
+	 * @see IApiBaseline#resolvePackage(IApiComponent, String)
 	 */
 	public synchronized IApiComponent[] resolvePackage(IApiComponent sourceComponent, String packageName) throws CoreException {
 		HashMap componentsForPackage = null;
@@ -563,7 +563,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfile#getApiComponent(java.lang.String)
+	 * @see IApiBaseline#getApiComponent(String)
 	 */
 	public IApiComponent getApiComponent(String id) {
 		loadBaselineInfos();
@@ -574,7 +574,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiState#getExecutionEnvironment()
+	 * @see IApiBaseline#getExecutionEnvironment()
 	 */
 	public String getExecutionEnvironment() {
 		return fExecutionEnvironment;
@@ -640,7 +640,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 	
 	/* (non-Javadoc)
-	 * @see IApiProfile#dispose()
+	 * @see IApiBaseline#dispose()
 	 */
 	public void dispose() {
 		if (ApiPlugin.isRunningInFramework()) {
@@ -676,9 +676,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProfile#getDependentComponents(org.eclipse.pde.api.tools.IApiComponent[])
+	 * @see IApiBaseline#getDependentComponents(IApiComponent[])
 	 */
-	public IApiComponent[] getDependentComponents(IApiComponent[] components) {
+	public IApiComponent[] getDependentComponents(IApiComponent[] components) throws CoreException {
 		ArrayList bundles = getBundleDescriptions(components);
 		BundleDescription[] bundleDescriptions = getState().getStateHelper().getDependentBundles((BundleDescription[]) bundles.toArray(new BundleDescription[bundles.size()]));
 		return getApiComponents(bundleDescriptions);
@@ -708,7 +708,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @param components API components
 	 * @return corresponding bundle descriptions
 	 */
-	private ArrayList getBundleDescriptions(IApiComponent[] components) {
+	private ArrayList getBundleDescriptions(IApiComponent[] components) throws CoreException {
 		ArrayList bundles = new ArrayList(components.length);
 		for (int i = 0; i < components.length; i++) {
 			IApiComponent component = components[i];
@@ -720,9 +720,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProfile#getPrerequisiteComponents(org.eclipse.pde.api.tools.IApiComponent[])
+	 * @see org.eclipse.pde.api.tools.IApiBaseline#getPrerequisiteComponents(org.eclipse.pde.api.tools.IApiComponent[])
 	 */
-	public IApiComponent[] getPrerequisiteComponents(IApiComponent[] components) {
+	public IApiComponent[] getPrerequisiteComponents(IApiComponent[] components) throws CoreException {
 		ArrayList bundles = getBundleDescriptions(components);
 		BundleDescription[] bundlesDescriptions = getState().getStateHelper().getPrerequisites((BundleDescription[]) bundles.toArray(new BundleDescription[bundles.size()]));
 		return getApiComponents(bundlesDescriptions);
@@ -749,7 +749,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfile#getExecutionEnvironmentStatus()
+	 * @see IApiBaseline#getExecutionEnvironmentStatus()
 	 */
 	public IStatus getExecutionEnvironmentStatus() {
 		return fEEStatus;
@@ -766,7 +766,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	public void vmAdded(IVMInstall vm) {
 		if (!(vm instanceof VMStandin)) {
 			// there may be a better fit for VMs/EEs
-			rebindVM();
+			try {
+				rebindVM();
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
 		}
 	}
 
@@ -778,7 +782,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			String property = event.getProperty();
 			if (IVMInstallChangedListener.PROPERTY_INSTALL_LOCATION.equals(property) ||
 					IVMInstallChangedListener.PROPERTY_LIBRARY_LOCATIONS.equals(property)) {
-				rebindVM();
+				try {
+					rebindVM();
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+				}
 			}
 		}
 	}
@@ -786,7 +794,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Re-binds the VM this baseline is bound to.
 	 */
-	private void rebindVM() {
+	private void rebindVM() throws CoreException {
 		fVMBinding = null;
 		IApiComponent[] components = getApiComponents();
 		HashSet ees = new HashSet();
@@ -801,7 +809,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 */
 	public void vmRemoved(IVMInstall vm) {
 		if (vm.equals(fVMBinding)) {
-			rebindVM();
+			try {
+				rebindVM();
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
 		}
 	}
 }

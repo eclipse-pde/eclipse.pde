@@ -172,7 +172,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	 * @param id the given id
 	 * @return the {@link IApiTypeContainer}s
 	 */
-	protected synchronized IApiTypeContainer[] getApiTypeContainers(String id) {
+	protected synchronized IApiTypeContainer[] getApiTypeContainers(String id) throws CoreException {
 		if (fApiTypeContainers == null) {
 			try {
 				fApiTypeContainers = createApiTypeContainers();

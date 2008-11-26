@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.ui.internal;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -62,8 +63,12 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 			if(comp.isSystemComponent()) {
 				return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
 			}
-			if (comp.isFragment()) {
-				return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_FRAGMENT);
+			try {
+				if (comp.isFragment()) {
+					return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_FRAGMENT);
+				}
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
 			}
 			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE);
 		}
@@ -83,23 +88,27 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
-		if (element instanceof IApiComponent) {
-			IApiComponent comp = (IApiComponent) element;
-			return MessageFormat.format(Messages.ApiToolsLabelProvider_0, new String[]{comp.getId(), comp.getVersion()});
-		}
-		if (element instanceof File) {
-			try {
-				return ((File)element).getCanonicalPath();
-			} catch (IOException e) {
-				return ((File)element).getName();
+		try {
+			if (element instanceof IApiComponent) {
+				IApiComponent comp = (IApiComponent) element;
+				return MessageFormat.format(Messages.ApiToolsLabelProvider_0, new String[]{comp.getId(), comp.getVersion()});
 			}
-		}
-		if(element instanceof IApiBaseline) {
-			IApiBaseline profile  = (IApiBaseline) element;
-			return profile.getName();
-		}
-		if(element instanceof EEEntry) {
-			return ((EEEntry)element).toString();
+			if (element instanceof File) {
+				try {
+					return ((File)element).getCanonicalPath();
+				} catch (IOException e) {
+					return ((File)element).getName();
+				}
+			}
+			if(element instanceof IApiBaseline) {
+				IApiBaseline profile  = (IApiBaseline) element;
+				return profile.getName();
+			}
+			if(element instanceof EEEntry) {
+				return ((EEEntry)element).toString();
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
 		}
 		return "<unknown>"; //$NON-NLS-1$
 	}

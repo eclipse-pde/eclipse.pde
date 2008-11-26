@@ -106,16 +106,16 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractClassFileContainer#getClassFileContainers()
+	 * @see org.eclipse.pde.api.tools.internal.model.AbstractApiTypeContainer#getApiTypeContainers()
 	 */
 	public synchronized IApiTypeContainer[] getApiTypeContainers() {
 		return super.getApiTypeContainers();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractClassFileContainer#getClassFileContainers()
+	 * @see org.eclipse.pde.api.tools.internal.model.AbstractApiTypeContainer#getApiTypeContainers()
 	 */
-	public synchronized IApiTypeContainer[] getApiTypeContainers(String id) {
+	public synchronized IApiTypeContainer[] getApiTypeContainers(String id) throws CoreException {
 		if (this.hasFragments()) {
 			return super.getApiTypeContainers(id);
 		} else {
@@ -143,7 +143,7 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#newProblemFilter(org.eclipse.pde.api.tools.internal.provisional.IApiProblem)
 	 */
-	public IApiProblemFilter newProblemFilter(IApiProblem problem) {
+	public IApiProblemFilter newProblemFilter(IApiProblem problem) throws CoreException {
 		//TODO either expose a way to make problems or change the method to accept the parts of a problem
 		return new ApiProblemFilter(getId(), problem);
 	}

@@ -642,12 +642,16 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager#getWorkspaceProfile()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager#getWorkspaceBaseline()
 	 */
 	public synchronized IApiBaseline getWorkspaceBaseline() {
 		if(ApiPlugin.isRunningInFramework()) {
 			if(this.workspacebaseline == null) {
-				this.workspacebaseline = createWorkspaceBaseline();
+				try {
+					this.workspacebaseline = createWorkspaceBaseline();
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+				}
 			}
 			return this.workspacebaseline;
 		}
@@ -669,7 +673,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * Creates a workspace {@link IApiProfile}
 	 * @return a new workspace {@link IApiProfile} or <code>null</code>
 	 */
-	private IApiBaseline createWorkspaceBaseline() {
+	private IApiBaseline createWorkspaceBaseline() throws CoreException {
 		long time = System.currentTimeMillis();
 		IApiBaseline baseline = null; 
 		try {

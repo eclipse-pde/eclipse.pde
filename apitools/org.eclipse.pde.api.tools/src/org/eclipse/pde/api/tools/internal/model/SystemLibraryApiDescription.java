@@ -399,7 +399,11 @@ public class SystemLibraryApiDescription implements IApiDescription {
 	 * @see org.eclipse.pde.api.tools.IApiManifest#visit(org.eclipse.pde.api.tools.ApiManifestVisitor)
 	 */
 	public void accept(ApiDescriptionVisitor visitor) {
-		visitChildren(visitor, fPackageMap);
+		try {
+			visitChildren(visitor, fPackageMap);
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
 	}
 	/**
 	 * Visits all children nodes in the given children map.
@@ -407,7 +411,7 @@ public class SystemLibraryApiDescription implements IApiDescription {
 	 * @param visitor visitor to visit
 	 * @param childrenMap map of element name to manifest nodes
 	 */
-	protected void visitChildren(ApiDescriptionVisitor visitor, Map childrenMap) {
+	protected void visitChildren(ApiDescriptionVisitor visitor, Map childrenMap) throws CoreException {
 		List elements = new ArrayList(childrenMap.keySet());
 		Collections.sort(elements);
 		Iterator iterator = elements.iterator();
@@ -424,7 +428,7 @@ public class SystemLibraryApiDescription implements IApiDescription {
 	 * @param visitor visitor to visit
 	 * @param node node to visit
 	 */
-	private void visitNode(ApiDescriptionVisitor visitor, ManifestNode node) {
+	private void visitNode(ApiDescriptionVisitor visitor, ManifestNode node) throws CoreException {
 		IApiAnnotations desc = new ApiAnnotations(
 				VisibilityModifiers.API,
 				RestrictionModifiers.NO_RESTRICTIONS,

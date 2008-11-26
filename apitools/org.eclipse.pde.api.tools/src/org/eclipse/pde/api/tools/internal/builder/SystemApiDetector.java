@@ -373,16 +373,16 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	 */
 	protected boolean isProblem(IReference reference) {
 		// the reference must be in the system library
-		IApiMember member = reference.getMember();
-		IApiComponent apiComponent = member.getApiComponent();
-		String[] lowestEEs = apiComponent.getLowestEEs();
-		loop: for (int i = 0, max = lowestEEs.length; i < max; i++) {
-			String lowestEE = lowestEEs[i];
-			int eeValue = ProfileModifiers.getValue(lowestEE); 
-			if (eeValue == ProfileModifiers.NO_PROFILE_VALUE) {
-				return false;
-			}
-			try {
+		try {
+			IApiMember member = reference.getMember();
+			IApiComponent apiComponent = member.getApiComponent();
+			String[] lowestEEs = apiComponent.getLowestEEs();
+			loop: for (int i = 0, max = lowestEEs.length; i < max; i++) {
+				String lowestEE = lowestEEs[i];
+				int eeValue = ProfileModifiers.getValue(lowestEE); 
+				if (eeValue == ProfileModifiers.NO_PROFILE_VALUE) {
+					return false;
+				}
 				IApiMember resolvedReference = reference.getResolvedReference();
 				IElementDescriptor elementDescriptor = resolvedReference.getHandle();
 				IApiDescription systemApiDescription = apiComponent.getSystemApiDescription(eeValue);
@@ -411,9 +411,9 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					this.referenceEEs.put(reference, new Integer(eeValue));
 					return true;
 				}
-			} catch (CoreException e) {
-				ApiPlugin.log(e);
 			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
 		}
 		return false;
 	}
@@ -425,14 +425,14 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		return currentDescriptor == null ? Util.EMPTY_STRING : ((IPackageDescriptor) currentDescriptor).getName();
 	}
 	public boolean considerReference(IReference reference) {
-		IApiComponent apiComponent = reference.getMember().getApiComponent();
-		IApiBaseline baseline = apiComponent.getBaseline();
-		if (baseline == null) return false;
-		String referencedTypeName = reference.getReferencedTypeName();
-		// extract the package name
-		int index = referencedTypeName.lastIndexOf('.');
-		if (index == -1) return false;
 		try {
+			IApiComponent apiComponent = reference.getMember().getApiComponent();
+			IApiBaseline baseline = apiComponent.getBaseline();
+			if (baseline == null) return false;
+			String referencedTypeName = reference.getReferencedTypeName();
+			// extract the package name
+			int index = referencedTypeName.lastIndexOf('.');
+			if (index == -1) return false;
 			String substring = referencedTypeName.substring(0, index);
 			IApiComponent[] resolvePackages = baseline.resolvePackage(apiComponent, substring);
 			switch(resolvePackages.length) {

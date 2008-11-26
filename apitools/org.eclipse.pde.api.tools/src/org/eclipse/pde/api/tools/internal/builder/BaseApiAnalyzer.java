@@ -203,6 +203,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			//tag validation
 			checkTagValidation(changedtypes, component, localMonitor.newChild(1));
 			updateMonitor(localMonitor);
+		} catch(CoreException e) {
+			ApiPlugin.log(e);
 		}
 		finally {
 			if(monitor != null) {
@@ -219,7 +221,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param component the given component
 	 */
 	private ReexportedBundleVersionInfo checkBundleVersionsOfReexportedBundles(
-			IApiComponent reference, IApiComponent component) {
+			IApiComponent reference, IApiComponent component) throws CoreException {
 		IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
 		int length = requiredComponents.length;
 		ReexportedBundleVersionInfo info = null;
@@ -568,7 +570,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param typenames
 	 * @param monitor progress monitor
 	 */
-	private void checkApiUsage(final IApiComponent component, final String[] typenames, IProgressMonitor monitor) {
+	private void checkApiUsage(final IApiComponent component, final String[] typenames, IProgressMonitor monitor) throws CoreException {
 		if(ignoreApiUsageScan()) {
 			if(DEBUG) {
 				System.out.println("Ignoring API usage scan"); //$NON-NLS-1$
@@ -607,7 +609,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param reference 
 	 * @param component
 	 */
-	private void checkCompatibility(final String typeName, final IApiComponent reference, final IApiComponent component) {
+	private void checkCompatibility(final String typeName, final IApiComponent reference, final IApiComponent component) throws CoreException {
 		if (DEBUG) {
 			System.out.println("comparing profiles ["+reference.getId()+"] and ["+component.getId()+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
@@ -699,7 +701,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param reference
 	 * @param component
 	 */
-	private void checkCompatibility(final IApiComponent reference, final IApiComponent component) {
+	private void checkCompatibility(final IApiComponent reference, final IApiComponent component) throws CoreException {
 		long time = System.currentTimeMillis();
 		IDelta delta = null;
 		if (reference == null) {
@@ -749,7 +751,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param delta
 	 * @param component
 	 */
-	private void checkSinceTags(final Delta delta, final IApiComponent component) {
+	private void checkSinceTags(final Delta delta, final IApiComponent component) throws CoreException {
 		if(ignoreSinceTagCheck(null)) {
 			return;
 		}
@@ -1106,7 +1108,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param reference
 	 * @param component
 	 */
-	private void checkApiComponentVersion(final IApiComponent reference, final IApiComponent component) {
+	private void checkApiComponentVersion(final IApiComponent reference, final IApiComponent component) throws CoreException {
 		if(ignoreComponentVersionCheck() || reference == null || component == null) {
 			if(DEBUG) {
 				System.out.println("Ignoring component version check"); //$NON-NLS-1$

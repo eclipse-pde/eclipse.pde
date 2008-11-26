@@ -74,9 +74,13 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected boolean isProblem(IReference reference) {
-		IApiMember type = reference.getResolvedReference();
-		Object componentId = fIllegalTypes.get(type.getName());
-		return componentId != null && type.getApiComponent().getId().equals(componentId);
+		try {
+			IApiMember type = reference.getResolvedReference();
+			Object componentId = fIllegalTypes.get(type.getName());
+			return componentId != null && type.getApiComponent().getId().equals(componentId);
+		} catch (CoreException e) {
+			return false;
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)

@@ -14,6 +14,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.builder.TypeScope;
 import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.model.CompositeApiTypeContainer;
@@ -89,8 +90,9 @@ public class Factory {
 	 * 
 	 * @param components API components
 	 * @return search scope
+	 * @throws CoreException if the baseline of the given components is disposed
 	 */
-	public static IApiTypeContainer newScope(IApiComponent[] components) {
+	public static IApiTypeContainer newScope(IApiComponent[] components) throws CoreException {
 		List compList = new LinkedList();
 		for (int i = 0; i < components.length; i++) {
 			compList.add(components[i]);

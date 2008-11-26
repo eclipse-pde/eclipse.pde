@@ -30,14 +30,16 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * Returns this component's symbolic name.
 	 * 
 	 * @return component's symbolic name
+	 * @throws CoreException if its baseline is disposed
 	 */
-	public String getId();
+	public String getId() throws CoreException;
 	
 	/**
 	 * Returns this component's API description.
 	 * 
 	 * @return API manifest
 	 * @throws CoreException if there was a problem creating the API description for this component
+	 * @throws CoreException if its baseline is disposed
 	 */
 	public IApiDescription getApiDescription() throws CoreException;
 	
@@ -48,6 +50,7 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * @return API manifest
 	 * @throws CoreException if there was a problem creating the system API description for this component
 	 * @see ProfileModifiers for execution environment ids 
+	 * @throws CoreException if its baseline is disposed
 	 */
 	public IApiDescription getSystemApiDescription(int eeID) throws CoreException;
 	/**
@@ -64,8 +67,9 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * Returns this component's version identifier.
 	 * 
 	 * @return component version
+	 * @throws CoreException if its baseline is disposed
 	 */
-	public String getVersion(); 
+	public String getVersion() throws CoreException;
 	
 	/**
 	 * Returns the execution environments required by this component for building
@@ -74,8 +78,9 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * Any of the environments will allow this component to be resolved.
 	 * 
 	 * @return execution environment identifier
+	 * @throws CoreException if its baseline is disposed
 	 */
-	public String[] getExecutionEnvironments();
+	public String[] getExecutionEnvironments() throws CoreException;
 	
 	/**
 	 * Returns {@link IApiTypeContainer}s containing the {@link IApiTypeRoot}s associated with
@@ -95,16 +100,18 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * 
 	 * @param id the given component id
 	 * @return {@link IApiTypeContainer}s
+	 * @throws CoreException if its baseline is disposed
 	 */
-	public IApiTypeContainer[] getApiTypeContainers(String id);
+	public IApiTypeContainer[] getApiTypeContainers(String id) throws CoreException;
 
 	/**
 	 * Returns a collection of descriptions of components required by this
 	 * component or an empty collection if none.
 	 * 
 	 * @return required component descriptions, possibly empty
+	 * @throws CoreException if its baseline is disposed
 	 */
-	public IRequiredComponentDescription[] getRequiredComponents();	
+	public IRequiredComponentDescription[] getRequiredComponents() throws CoreException;
 	
 	/**
 	 * Returns the location of this API component.
@@ -136,8 +143,9 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * </ul>
 	 *
 	 * @return true if the component is a source component, false otherwise
+	 * @throws CoreException if its baseline is disposed
 	 */
-	public boolean isSourceComponent();
+	public boolean isSourceComponent() throws CoreException;
 	
 	/**
 	 * Disposes this API component. Clients must call this method when done
@@ -150,15 +158,16 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * Returns the {@link IApiBaseline} this component is contained in.
 	 * 
 	 * @return the parent {@link IApiBaseline}
+	 * @throws CoreException if its baseline is disposed
 	 */
-	public IApiBaseline getBaseline();
+	public IApiBaseline getBaseline() throws CoreException;
 		
 	/**
 	 * Returns a store of problem filters defined for this component or <code>null</code>
 	 * if none.
 	 * 
 	 * @return filter store or <code>null</code>
-	 * @throws CoreException
+	 * @throws CoreException if its baseline is disposed
 	 */
 	public IApiFilterStore getFilterStore() throws CoreException;
 	
@@ -168,22 +177,25 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * 
 	 * @param problem
 	 * @return new problem filter
+	 * @throws CoreException if its baseline is disposed
 	 */
-	public IApiProblemFilter newProblemFilter(IApiProblem problem);
+	public IApiProblemFilter newProblemFilter(IApiProblem problem) throws CoreException;
 	
 	/**
 	 * Returns whether this API component is a fragment.
 	 * 
 	 * @return whether this API component is a fragment
+	 * @throws CoreException if its baseline is disposed
 	 */
-	public boolean isFragment();
+	public boolean isFragment() throws CoreException;
 	
 	/**
 	 * Returns whether this API component is the host of one or more fragments.
 	 * 
 	 * @return whether this API component is the host of one or more fragments
+	 * @throws CoreException if its baseline is disposed
 	 */
-	public boolean hasFragments();
+	public boolean hasFragments() throws CoreException;
 	
 	/**
 	 * Returns the lowest execution environments required by this component for building
@@ -197,6 +209,7 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * the incompatible ones.</p>
 	 * 
 	 * @return execution environment identifiers
+	 * @throws CoreException if its baseline is disposed
 	 */
-	public String[] getLowestEEs();
+	public String[] getLowestEEs() throws CoreException;
 }

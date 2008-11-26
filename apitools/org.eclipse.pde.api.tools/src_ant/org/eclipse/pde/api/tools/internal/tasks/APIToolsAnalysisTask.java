@@ -35,6 +35,7 @@ import java.util.zip.ZipFile;
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
@@ -606,7 +607,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				visitedApiComponentNames.add(name);
 				if (apiComponent.isSystemComponent()) continue;
 				if (!isApiToolsComponent(apiComponent)) {
-					allNonApiBundles.add(apiComponent.getId());
+					allNonApiBundles.add(name);
 					continue;
 				}
 				apiToolsComponents++;
@@ -669,6 +670,11 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 							IDelta.API_COMPONENT);
 					allProblems.put(id, new IApiProblem[] { problem });
 				}
+			}
+		} catch(CoreException e) {
+			IStatus status = e.getStatus();
+			if (status == null || status.getMessage() != ApiPlugin.BASELINE_IS_DISPOSED) {
+				throw new BuildException(e);
 			}
 		} finally {
 			if (this.debug) {

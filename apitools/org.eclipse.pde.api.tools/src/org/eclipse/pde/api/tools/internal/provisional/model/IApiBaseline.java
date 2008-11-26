@@ -46,8 +46,9 @@ public interface IApiBaseline extends IApiElement {
 	 * Adds the given API components to this profile, excluding all the source components.
 	 * 
 	 * @param components components to add
+	 * @throws CoreException if the baseline is disposed
 	 */
-	public void addApiComponents(IApiComponent[] components);
+	public void addApiComponents(IApiComponent[] components) throws CoreException;
 	
 	/**
 	 * Returns the API components that provides the specified package when referenced from
@@ -107,7 +108,7 @@ public interface IApiBaseline extends IApiElement {
 	 * 
 	 * @throws CoreException if closing fails
 	 */
-	public void close() throws CoreException;	
+	public void close() throws CoreException;
 	
 	/**
 	 * Returns all components in this profile depending on the given components.
@@ -115,9 +116,10 @@ public interface IApiBaseline extends IApiElement {
 	 * 
 	 * @param components the initial set of components
 	 * @return an array of components for the given roots and all
-	 * 	components in the state that depend on them
+	 * components in the state that depend on them
+	 * @throws CoreException if the baseline is disposed
 	 */
-	public IApiComponent[] getDependentComponents(IApiComponent[] components);
+	public IApiComponent[] getDependentComponents(IApiComponent[] components) throws CoreException;
 
 	/**
 	 * Returns all the prerequisite components in this profile for the given components. 
@@ -125,8 +127,9 @@ public interface IApiBaseline extends IApiElement {
 	 * 
 	 * @param components the initial set of components
 	 * @return an array of components for the given leaves and their
-	 * 	prerequisite components in this profile
+	 * prerequisite components in this profile
+	 * @throws CoreException if the baseline is disposed
 	 */
-	public IApiComponent[] getPrerequisiteComponents(IApiComponent[] components);
+	public IApiComponent[] getPrerequisiteComponents(IApiComponent[] components) throws CoreException;
 	
 }

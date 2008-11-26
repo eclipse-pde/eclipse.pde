@@ -124,6 +124,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 */
 	public static final String BUILDER_ID = PLUGIN_ID + ".apiAnalysisBuilder" ; //$NON-NLS-1$
 	
+	public static final String BASELINE_IS_DISPOSED = "baseline is disposed"; //$NON-NLS-1$
 	/**
 	 * Singleton instance of the plugin
 	 */

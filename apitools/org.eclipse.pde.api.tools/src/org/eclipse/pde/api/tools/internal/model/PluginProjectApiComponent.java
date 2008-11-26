@@ -24,7 +24,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -285,7 +287,14 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#createClassFileContainer(java.lang.String)
 	 */
-	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException {
+	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException, CoreException {
+		if (this.fPathToOutputContainers == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
 		IApiTypeContainer container = (IApiTypeContainer) fPathToOutputContainers.get(path);
 		if (container == null) {
 			// could be a binary jar included in the plug-in, just look for it
@@ -323,6 +332,13 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 * @return {@link IApiTypeContainer} or <code>null</code>
 	 */
 	private IApiTypeContainer getApiTypeContainer(String location, IApiComponent component) throws CoreException {
+		if (this.fOutputLocationToContainer == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
 		IResource res = fProject.getProject().findMember(new Path(location));
 		if (res != null) {
 			IPackageFragmentRoot root = fProject.getPackageFragmentRoot(res);

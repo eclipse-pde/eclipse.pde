@@ -343,6 +343,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 			}
 			updateMonitor(monitor, 0);
+		} catch(CoreException e) {
+			IStatus status = e.getStatus();
+			if (status == null || status.getMessage() != ApiPlugin.BASELINE_IS_DISPOSED) {
+				throw e;
+			}
 		} finally {
 			fTypes.clear();
 			fPackages.clear();

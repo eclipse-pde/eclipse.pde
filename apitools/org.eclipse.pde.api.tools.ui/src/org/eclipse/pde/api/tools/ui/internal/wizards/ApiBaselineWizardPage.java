@@ -102,13 +102,17 @@ public class ApiBaselineWizardPage extends WizardPage {
 		 */
 		public Object[] getChildren(Object parentElement) {
 			if(parentElement instanceof IApiComponent) {
-				IApiComponent component = (IApiComponent) parentElement;
-				String[] ees = component.getExecutionEnvironments();
-				ArrayList entries = new ArrayList(ees.length);
-				for(int i = 0; i < ees.length; i++) {
-					entries.add(new EEEntry(ees[i]));
+				try {
+					IApiComponent component = (IApiComponent) parentElement;
+					String[] ees = component.getExecutionEnvironments();
+					ArrayList entries = new ArrayList(ees.length);
+					for(int i = 0; i < ees.length; i++) {
+						entries.add(new EEEntry(ees[i]));
+					}
+					return entries.toArray();
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
 				}
-				return entries.toArray();
 			}
 			return null;
 		}
@@ -118,8 +122,12 @@ public class ApiBaselineWizardPage extends WizardPage {
 		 */
 		public boolean hasChildren(Object element) {
 			if(element instanceof IApiComponent) {
-				IApiComponent component = (IApiComponent) element;
-				return component.getExecutionEnvironments().length > 0;
+				try {
+					IApiComponent component = (IApiComponent) element;
+					return component.getExecutionEnvironments().length > 0;
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+				}
 			}
 			return false;
 		}
@@ -157,7 +165,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {	
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask(WizardMessages.ApiProfileWizardPage_0, 10);
 			Path path = new Path(location);
 			File plugins = path.append("plugins").toFile(); //$NON-NLS-1$
@@ -182,7 +190,11 @@ public class ApiBaselineWizardPage extends WizardPage {
 				subMonitor.worked(1);
 			}
 			subMonitor.done();
-			fProfile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
+			try {
+				fProfile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
 			monitor.worked(1);
 			monitor.done();
 		}
@@ -375,9 +387,14 @@ public class ApiBaselineWizardPage extends WizardPage {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if(element instanceof IApiComponent) {
 					IApiComponent component = (IApiComponent) element;
-					if(component.isSourceComponent() || component.isSystemComponent()) {
-						return false;
+					try {
+						if(component.isSourceComponent() || component.isSystemComponent()) {
+							return false;
+						}
+					} catch (CoreException e) {
+						ApiPlugin.log(e);
 					}
+					return true;
 				}
 				return !(element instanceof SystemLibraryApiComponent);
 			}
