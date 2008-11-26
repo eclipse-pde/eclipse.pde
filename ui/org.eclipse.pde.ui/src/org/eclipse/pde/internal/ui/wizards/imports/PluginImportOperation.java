@@ -171,6 +171,9 @@ public class PluginImportOperation extends Job {
 
 			// Create the project or ask to overwrite if project exists
 			IProject project = createProject(model, new SubProgressMonitor(monitor, 1));
+			if (project == null) {
+				return;
+			}
 
 			// Target Weaving: if we are importing plug-ins in the runtime workbench from the host workbench, import everything as-is and return
 			if (Platform.inDevelopmentMode()) {
