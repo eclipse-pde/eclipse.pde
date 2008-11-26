@@ -49,7 +49,7 @@ import org.osgi.framework.BundleException;
  * ways to import a plugin: as binary, as binary with linked source,
  * and as source. 
  */
-public class PluginImportOperation extends Job {
+public class PluginImportOperation extends WorkspaceJob {
 
 	public static final int IMPORT_BINARY = 1;
 	public static final int IMPORT_BINARY_WITH_LINKS = 2;
@@ -95,9 +95,9 @@ public class PluginImportOperation extends Job {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IStatus run(IProgressMonitor monitor) {
+	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask(PDEUIMessages.ImportWizard_operation_creating, fModels.length + 1);
 			MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK, PDEUIMessages.ImportWizard_operation_multiProblem, null);
