@@ -221,7 +221,7 @@ public class PluginImportHelper {
 		}
 	}
 
-	public static void collectNonJavaFiles(IImportStructureProvider provider, Object element, ArrayList collected) {
+	public static void collectNonJavaNonBuildFiles(IImportStructureProvider provider, Object element, ArrayList collected) {
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
@@ -230,6 +230,9 @@ public class PluginImportHelper {
 					// ignore source folders
 					if (folderContainsFileExtension(provider, curr, ".java")) //$NON-NLS-1$
 						continue;
+					if (provider.getFullPath(curr).equals("META-INF/")) { //$NON-NLS-1$
+						continue;
+					}
 					collected.add(curr);
 				} else if (!provider.getLabel(curr).endsWith(".java")) { //$NON-NLS-1$
 					collected.add(curr);

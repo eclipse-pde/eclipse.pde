@@ -231,12 +231,12 @@ public class PluginImportOperation extends Job {
 			// Import source from known source locations
 			Map sourceMap = importSourceArchives(project, model, IMPORT_BINARY, new SubProgressMonitor(monitor, 1));
 
+			// Import additional source files such as schema files for easy access, see bug 139161
+			importAdditionalSourceFiles(project, model, new SubProgressMonitor(monitor, 1));
+
 			// Extract the required bundle files and modify the imported manifest to have the correct classpath
 			importRequiredPluginFiles(project, model, new SubProgressMonitor(monitor, 1));
 			modifyBundleClasspathHeader(project, model);
-
-			// Import additional source files such as schema files for easy access, see bug 139161
-			importAdditionalSourceFiles(project, model, new SubProgressMonitor(monitor, 1));
 
 			// Mark the project as binary
 			RepositoryProvider.map(project, PDECore.BINARY_REPOSITORY_PROVIDER);
@@ -274,12 +274,12 @@ public class PluginImportOperation extends Job {
 			// Link source from known source locations
 			Map sourceMap = importSourceArchives(project, model, IMPORT_BINARY_WITH_LINKS, new SubProgressMonitor(monitor, 1));
 
+			// Import additional source files such as schema files for easy access, see bug 139161
+			importAdditionalSourceFiles(project, model, new SubProgressMonitor(monitor, 1));
+
 			// Extract the required bundle files and modify the imported manifest to have the correct classpath
 			importRequiredPluginFiles(project, model, new SubProgressMonitor(monitor, 1));
 			modifyBundleClasspathHeader(project, model);
-
-			// Import additional source files such as schema files for easy access, see bug 139161
-			importAdditionalSourceFiles(project, model, new SubProgressMonitor(monitor, 1));
 
 			// Mark the project as binary
 			RepositoryProvider.map(project, PDECore.BINARY_REPOSITORY_PROVIDER);
@@ -631,11 +631,11 @@ public class PluginImportOperation extends Job {
 					IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
 					throw new CoreException(status);
 				}
-				PluginImportHelper.collectNonJavaFiles(provider, provider.getRoot(), collected);
+				PluginImportHelper.collectNonJavaNonBuildFiles(provider, provider.getRoot(), collected);
 				PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 			} else {
 				ArrayList collected = new ArrayList();
-				PluginImportHelper.collectNonJavaFiles(FileSystemStructureProvider.INSTANCE, sourceLocation, collected);
+				PluginImportHelper.collectNonJavaNonBuildFiles(FileSystemStructureProvider.INSTANCE, sourceLocation, collected);
 				PluginImportHelper.importContent(sourceLocation, project.getFullPath(), FileSystemStructureProvider.INSTANCE, collected, monitor);
 			}
 		}
