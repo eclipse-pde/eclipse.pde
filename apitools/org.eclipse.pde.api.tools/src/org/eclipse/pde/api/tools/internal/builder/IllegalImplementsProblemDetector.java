@@ -185,7 +185,9 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 			if(interfaces[i].getName().equals(iname)) {
 				return true;
 			}
-			return isImplemented(iname, interfaces[i].getSuperInterfaces());
+			if(isImplemented(iname, interfaces[i].getSuperInterfaces())) {
+				return true;
+			}
 		}
 		return false;
 	}
