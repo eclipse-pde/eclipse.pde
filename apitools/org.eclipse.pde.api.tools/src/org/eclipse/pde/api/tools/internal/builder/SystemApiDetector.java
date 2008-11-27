@@ -73,19 +73,23 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		IApiMember member = reference.getMember();
 		String eeValue = ProfileModifiers.getName(((Integer) this.referenceEEs.get(reference)).intValue());
+		String simpleTypeName = getSimpleTypeName(resolvedReference);
+		if (simpleTypeName.indexOf('$') != -1) {
+			simpleTypeName = simpleTypeName.replace('$', '.');
+		}
 		switch(resolvedReference.getType()) {
 			case IApiElement.TYPE : {
 				return new String[] {
-						getSimpleTypeName(member),
-						getSimpleTypeName(resolvedReference),
+						getDisplay(member, false),
+						simpleTypeName,
 						eeValue,
 				};
 			}
 			case IApiElement.FIELD : {
 				IApiField field = (IApiField) resolvedReference;
 				return new String[] {
-						getSimpleTypeName(member),
-						getSimpleTypeName(resolvedReference),
+						getDisplay(member, false),
+						simpleTypeName,
 						field.getName(),
 						eeValue,
 				};
@@ -94,14 +98,14 @@ public class SystemApiDetector extends AbstractProblemDetector {
 				IApiMethod method = (IApiMethod) resolvedReference;
 				if (method.isConstructor()) {
 					return new String[] {
-							getSimpleTypeName(member),
-							Signature.toString(method.getSignature(), getSimpleTypeName(method), null, false, false),
+							getDisplay(member, false),
+							Signature.toString(method.getSignature(), simpleTypeName, null, false, false),
 							eeValue,
 					};
 				} else {
 					return new String[] {
-							getSimpleTypeName(member),
-							getSimpleTypeName(resolvedReference),
+							getDisplay(member, false),
+							simpleTypeName,
 							Signature.toString(method.getSignature(), method.getName(), null, false, false),
 							eeValue,
 					};
@@ -112,6 +116,44 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		}
 	}
 
+	private String getDisplay(IApiMember member, boolean qualified) throws CoreException {
+		String typeName = qualified ? getTypeName(member) : getSimpleTypeName(member);
+		if (typeName.indexOf('$') != -1) {
+			typeName = typeName.replace('$', '.');
+		}
+		switch(member.getType()) {
+			case IApiElement.FIELD : {
+				StringBuffer buffer = new StringBuffer();
+				IApiField field = (IApiField) member;
+				buffer
+					.append(typeName)
+					.append('.')
+					.append(field.getName());
+				return String.valueOf(buffer);
+			}
+			case IApiElement.METHOD : {
+				// reference in a method declaration
+				IApiMethod method = (IApiMethod) member;
+				String signature = method.getSignature();
+				signature = signature.replace('/', '.');
+				if (method.isConstructor()) {
+					String simpleTypeName = getSimpleTypeName(method);
+					if (simpleTypeName.indexOf('$') != -1) {
+						simpleTypeName = simpleTypeName.replace('$', '.');
+					}
+					return Signature.toString(signature, simpleTypeName, null, false, false);
+				} else {
+					StringBuffer buffer = new StringBuffer();
+					buffer
+						.append(typeName)
+						.append('.')
+						.append(Signature.toString(signature, method.getName(), null, false, false));
+					return String.valueOf(buffer);
+				}
+			}
+		}
+		return typeName;
+	}
 	protected int getProblemFlags(IReference reference) {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		switch(resolvedReference.getType()) {
@@ -141,19 +183,23 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		IApiMember member = reference.getMember();
 		String eeValue = ProfileModifiers.getName(((Integer) this.referenceEEs.get(reference)).intValue());
+		String typeName = getTypeName(resolvedReference);
+		if (typeName.indexOf('$') != -1) {
+			typeName = typeName.replace('$', '.');
+		}
 		switch(resolvedReference.getType()) {
 			case IApiElement.TYPE : {
 				return new String[] {
-						getTypeName(member),
-						getTypeName(resolvedReference),
+						getDisplay(member, true),
+						typeName,
 						eeValue,
 				};
 			}
 			case IApiElement.FIELD : {
 				IApiField field = (IApiField) resolvedReference;
 				return new String[] {
-						getTypeName(member),
-						getTypeName(resolvedReference),
+						getDisplay(member, true),
+						typeName,
 						field.getName(),
 						eeValue,
 				};
@@ -161,15 +207,19 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			case IApiElement.METHOD : {
 				IApiMethod method = (IApiMethod) resolvedReference;
 				if (method.isConstructor()) {
+					String simpleTypeName = getSimpleTypeName(method);
+					if (simpleTypeName.indexOf('$') != -1) {
+						simpleTypeName = simpleTypeName.replace('$', '.');
+					}
 					return new String[] {
-							getTypeName(member),
-							Signature.toString(method.getSignature(), getSimpleTypeName(method), null, false, false),
+							getDisplay(member, true),
+							Signature.toString(method.getSignature(), simpleTypeName, null, false, false),
 							eeValue,
 					};
 				} else {
 					return new String[] {
-							getTypeName(member),
-							getTypeName(resolvedReference),
+							getDisplay(member, true),
+							typeName,
 							Signature.toString(method.getSignature(), method.getName(), null, false, false),
 							eeValue,
 					};
