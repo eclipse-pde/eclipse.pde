@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -79,7 +80,7 @@ public class LaunchPluginValidator {
 				if (version == null) {
 					list.add("org.eclipse.core.contenttype"); //$NON-NLS-1$
 					list.add("org.eclipse.core.jobs"); //$NON-NLS-1$
-					list.add("org.eclipse.equinox.common"); //$NON-NLS-1$
+					list.add(IPDEBuildConstants.BUNDLE_EQUINOX_COMMON);
 					list.add("org.eclipse.equinox.preferences"); //$NON-NLS-1$
 					list.add("org.eclipse.equinox.registry"); //$NON-NLS-1$
 					list.add("org.eclipse.core.runtime.compatibility.registry"); //$NON-NLS-1$

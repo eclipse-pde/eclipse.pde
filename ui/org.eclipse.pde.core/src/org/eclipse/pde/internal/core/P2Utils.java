@@ -10,26 +10,32 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.BundleHelper;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 
 /**
- * Temporary utilities until P2 and FrameworkAdmin are graduated into the SDK.
+ * Utilities to read and write bundle and source information files.
  * 
  * @since 3.4
  */
 public class P2Utils {
 
-	private static final String SRC_BUNDLE_TXT_FOLDER = "org.eclipse.equinox.source"; //$NON-NLS-1$
-	private static final String BUNDLE_TXT_FOLDER = "org.eclipse.equinox.simpleconfigurator"; //$NON-NLS-1$
-	private static final String SRC_BUNDLE_TXT_PATH = SRC_BUNDLE_TXT_FOLDER + File.separator + "source.info"; //$NON-NLS-1$
-	private static final String BUNDLE_TXT_PATH = BUNDLE_TXT_FOLDER + File.separator + "bundles.info"; //$NON-NLS-1$
+	private static final String SRC_INFO_FOLDER = "org.eclipse.equinox.source"; //$NON-NLS-1$
+	private static final String BUNDLE_INFO_FOLDER = IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR;
+	private static final String SRC_INFO_PATH = SRC_INFO_FOLDER + File.separator + "source.info"; //$NON-NLS-1$
+	private static final String BUNDLE_INFO_PATH = BUNDLE_INFO_FOLDER + File.separator + "bundles.info"; //$NON-NLS-1$
 
 	public static final String P2_FLAVOR_DEFAULT = "tooling"; //$NON-NLS-1$
 
@@ -39,7 +45,7 @@ public class P2Utils {
 	 * is assumed to be at a fixed location relative to the configuration area URL.
 	 * This method will also look for a "source.info".  If available, any source
 	 * bundles found will also be added to the returned list.  If bundle URLs found
-	 * in the bundles.txt are relative, they will be appended to platformHome to
+	 * in the bundles.info are relative, they will be appended to platformHome to
 	 * make them absolute.
 	 * 
 	 * @param platformHome absolute path in the local file system to an installation
@@ -48,114 +54,32 @@ public class P2Utils {
 	 * 	to locate a bundles.info
 	 */
 	public static URL[] readBundlesTxt(String platformHome, URL configurationArea) {
-		Path basePath = new Path(platformHome);
+		IPath basePath = new Path(platformHome);
 		if (configurationArea == null) {
 			return null;
 		}
 		try {
-			URL bundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(BUNDLE_TXT_PATH));
-
-			File file = P2Utils.toFile(bundlesTxt);
-			if (file == null || !file.exists())
-				return null;
-
-			List bundles = getBundlesFromFile(bundlesTxt, basePath);
-
+			URL bundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(BUNDLE_INFO_PATH));
+			File home = basePath.toFile();
+			BundleInfo bundles[] = getBundlesFromFile(bundlesTxt, home);
 			if (bundles == null) {
 				return null;
 			}
-
-			URL srcBundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(SRC_BUNDLE_TXT_PATH));
-			List srcBundles = getBundlesFromFile(srcBundlesTxt, basePath);
+			int length = bundles.length;
+			URL srcBundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(SRC_INFO_PATH));
+			BundleInfo srcBundles[] = getBundlesFromFile(srcBundlesTxt, home);
 
 			if (srcBundles != null) {
-				bundles.addAll(srcBundles);
+				length += srcBundles.length;
 			}
-			return (URL[]) bundles.toArray(new URL[bundles.size()]);
 
-		} catch (MalformedURLException e) {
-			PDECore.log(e);
-			return null;
-		}
-	}
-
-	/**
-	 * Reads a file containing bundle entries of the following format:
-	 * <pre>symbolicName,version,location,start level,expectedState</pre>
-	 * Returns a list of URL locations, one for each bundle entry or <code>
-	 * null</code> if there is a problem reading the file.
-	 * 
-	 * @param file the URL of the file to read
-	 * @param basePath the path describing the base location of the platform install
-	 * @return list containing URL locations or <code>null</code>
-	 */
-	private static List getBundlesFromFile(URL fileURL, Path basePath) {
-		List bundles = new ArrayList();
-		try {
-			BufferedReader r = new BufferedReader(new InputStreamReader(fileURL.openStream()));
-
-			String line;
-			try {
-				//URL baseUrl = new URL(url, "./"); //$NON-NLS-1$
-				while ((line = r.readLine()) != null) {
-					if (line.startsWith("#")) //$NON-NLS-1$
-						continue;
-					line = line.trim();
-					if (line.length() == 0)
-						continue;
-
-					// (expectedState is an integer).
-					if (line.startsWith("org.eclipse.equinox.simpleconfigurator.baseUrl" + "=")) { //$NON-NLS-1$ //$NON-NLS-2$
-						continue;
-					}
-					StringTokenizer tok = new StringTokenizer(line, ",", true); //$NON-NLS-1$
-					String symbolicName = tok.nextToken();
-					if (symbolicName.equals(",")) //$NON-NLS-1$
-						symbolicName = null;
-					else
-						tok.nextToken(); // ,
-
-					String version = tok.nextToken();
-					if (version.equals(",")) //$NON-NLS-1$
-						version = null;
-					else
-						tok.nextToken(); // ,
-
-					String urlSt = tok.nextToken();
-					if (urlSt.equals(",")) { //$NON-NLS-1$
-						if (symbolicName != null && version != null)
-							urlSt = symbolicName + "_" + version + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
-						else
-							urlSt = null;
-					} else
-						tok.nextToken(); // ,
-					try {
-						URL bundleUrl = new URL(urlSt);
-						Path path = new Path(bundleUrl.getFile());
-						if (!path.isAbsolute()) {
-							urlSt = basePath.append(path).toOSString();
-							bundleUrl = new URL("file:" + urlSt); //$NON-NLS-1$
-						}
-						bundles.add(bundleUrl);
-					} catch (MalformedURLException e) {
-						//bundles.add(getUrlInFull(urlSt, baseUrl));
-						return null;
-					}
-
-					tok.nextToken(); // start level
-					tok.nextToken(); // ,
-					tok.nextToken(); // expected state
-
-				}
-			} catch (IOException e) {
-				return null;
-			} finally {
-				try {
-					r.close();
-				} catch (IOException ex) {
-					return null;
-				}
+			URL[] urls = new URL[length];
+			copyURLs(urls, 0, bundles);
+			if (srcBundles != null) {
+				copyURLs(urls, bundles.length, srcBundles);
 			}
+			return urls;
+
 		} catch (MalformedURLException e) {
 			PDECore.log(e);
 			return null;
@@ -163,7 +87,37 @@ public class P2Utils {
 			PDECore.log(e);
 			return null;
 		}
-		return bundles;
+	}
+
+	/**
+	 * Copies URLs from the given bundle info objects into the specified array starting at the given index.
+	 * 
+	 * @param dest array to copy URLs into
+	 * @param start index to start copying into
+	 * @param infos associated bundle infos
+	 * @throws MalformedURLException
+	 */
+	private static void copyURLs(URL[] dest, int start, BundleInfo[] infos) throws MalformedURLException {
+		for (int i = 0; i < infos.length; i++) {
+			dest[start++] = infos[i].getLocation().toURL();
+		}
+	}
+
+	/**
+	 * Returns a list of {@link BundleInfo} for each bundle entry or <code>null</code> if there
+	 * is a problem reading the file.
+	 * 
+	 * @param file the URL of the file to read
+	 * @param home the path describing the base location of the platform install
+	 * @return list containing URL locations or <code>null</code>
+	 * @throws IOException 
+	 */
+	private static BundleInfo[] getBundlesFromFile(URL fileURL, File home) throws IOException {
+		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) PDECore.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
+		if (manipulator == null) {
+			return null;
+		}
+		return manipulator.loadConfiguration(fileURL, home);
 	}
 
 	/**
@@ -172,7 +126,7 @@ public class P2Utils {
 	 * launch.  Will also create a source.info containing all of the 
 	 * source bundles in the launch. The map of bundles must be of the form 
 	 * IModelPluginBase to a String ("StartLevel:AutoStart").  Returns the 
-	 * URL location of the bundle.txt or <code>null</code> if there was a 
+	 * URL location of the bundle.info or <code>null</code> if there was a 
 	 * problem creating it.
 	 * 
 	 * @param bundles map containing all bundles to write to the bundles.info, maps IPluginModelBase to String ("StartLevel:AutoStart")
@@ -185,93 +139,69 @@ public class P2Utils {
 		if (bundles.size() == 0) {
 			return null;
 		}
-		File bundlesTxt = new File(directory, BUNDLE_TXT_PATH);
-		File srcBundlesTxt = new File(directory, SRC_BUNDLE_TXT_PATH);
-		BufferedWriter out = null;
-		BufferedWriter srcOut = null;
-		try {
-			new File(directory, SRC_BUNDLE_TXT_FOLDER).mkdirs();
-			new File(directory, BUNDLE_TXT_FOLDER).mkdirs();
-			bundlesTxt.createNewFile();
-			srcBundlesTxt.createNewFile();
-			out = new BufferedWriter(new FileWriter(bundlesTxt));
-			srcOut = new BufferedWriter(new FileWriter(srcBundlesTxt));
-			for (Iterator iterator = bundles.keySet().iterator(); iterator.hasNext();) {
-				IPluginModelBase currentModel = (IPluginModelBase) iterator.next();
-				IPluginBase base = currentModel.getPluginBase();
+		List bundleInfo = new ArrayList(bundles.size());
+		List sourceInfo = new ArrayList(bundles.size());
+		for (Iterator iterator = bundles.keySet().iterator(); iterator.hasNext();) {
+			IPluginModelBase currentModel = (IPluginModelBase) iterator.next();
+			IPluginBase base = currentModel.getPluginBase();
 
+			BundleInfo info = new BundleInfo();
+			String installLocation = currentModel.getInstallLocation();
+			if (installLocation != null) {
+				info.setLocation(new File(installLocation).toURI());
 				if (base instanceof PluginBase && ((PluginBase) base).getBundleSourceEntry() != null) {
-					String modelName = base.getId();
-					srcOut.write(modelName);
-					srcOut.write(',');
-					srcOut.write(base.getVersion());
-					srcOut.write(',');
-					String installLocation = currentModel.getInstallLocation();
-					if (installLocation != null) {
-						File location = new File(installLocation);
-						try {
-							srcOut.write(location.toURL().toString());
-						} catch (MalformedURLException e) {
-							PDECore.log(e);
-						}
-					} else {
-						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "While creating source.info, could not find the bundle location for bundle " + currentModel)); //$NON-NLS-1$
-					}
-					srcOut.write(",-1,false"); //$NON-NLS-1$
-					srcOut.newLine();
+					info.setSymbolicName(base.getId());
+					info.setVersion(base.getVersion());
+					info.setStartLevel(-1);
+					info.setMarkedAsStarted(false);
+					sourceInfo.add(info);
 				} else if (base != null) {
-					String modelName = base.getId();
-					out.write(modelName);
-					out.write(',');
-					out.write(base.getVersion());
-					out.write(',');
-					String installLocation = currentModel.getInstallLocation();
-					if (installLocation != null) {
-						File location = new File(installLocation);
-						try {
-							out.write(location.toURL().toString());
-						} catch (MalformedURLException e) {
-							PDECore.log(e);
-						}
-					} else {
-						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "While creating bundles.info, could not find the bundle location for bundle " + currentModel)); //$NON-NLS-1$
-					}
-					out.write(',');
+					info.setSymbolicName(base.getId());
+					info.setVersion(base.getVersion());
 					String currentLevel = (String) bundles.get(currentModel);
 					int index = currentLevel.indexOf(':');
-					String level = index > 0 ? currentLevel.substring(0, index) : "default"; //$NON-NLS-1$
+					String levelString = index > 0 ? currentLevel.substring(0, index) : "default"; //$NON-NLS-1$
 					String auto = index > 0 && index < currentLevel.length() - 1 ? currentLevel.substring(index + 1) : "default"; //$NON-NLS-1$
-					if ("default".equals(auto)) //$NON-NLS-1$
-						auto = Boolean.toString(defaultAutoStart);
-					if ("default".equals(level)) //$NON-NLS-1$
-						level = Integer.toString(defaultStartLevel);
-					out.write(level);
-					out.write(',');
-					out.write(auto);
-					out.newLine();
+					boolean isAuto = true;
+					int level = -1;
+					if ("default".equals(auto)) {//$NON-NLS-1$
+						isAuto = defaultAutoStart;
+					} else {
+						isAuto = Boolean.valueOf(auto).booleanValue();
+					}
+					if ("default".equals(levelString)) {//$NON-NLS-1$
+						level = defaultStartLevel;
+					} else {
+						try {
+							level = Integer.parseInt(levelString);
+						} catch (NumberFormatException e) {
+							PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Error writing bundles, could not parse start level for bundle " + currentModel)); //$NON-NLS-1$
+						}
+					}
+					info.setMarkedAsStarted(isAuto);
+					info.setStartLevel(level);
+					bundleInfo.add(info);
 				}
+			} else {
+				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Error writing bundles, could not find the bundle location for bundle " + currentModel)); //$NON-NLS-1$
 			}
-			out.flush();
-			out.close();
-			srcOut.flush();
-			srcOut.close();
+		}
+
+		File bundlesTxt = new File(directory, BUNDLE_INFO_PATH);
+		File srcBundlesTxt = new File(directory, SRC_INFO_PATH);
+
+		BundleInfo[] infos = (BundleInfo[]) bundleInfo.toArray(new BundleInfo[bundleInfo.size()]);
+		BundleInfo[] sources = (BundleInfo[]) sourceInfo.toArray(new BundleInfo[sourceInfo.size()]);
+
+		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
+		try {
+			manipulator.saveConfiguration(infos, bundlesTxt, null);
+			manipulator.saveConfiguration(sources, srcBundlesTxt, null);
 		} catch (IOException e) {
 			PDECore.logException(e);
 			return null;
-		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-				}
-			}
-			if (srcOut != null) {
-				try {
-					srcOut.close();
-				} catch (IOException e) {
-				}
-			}
 		}
+
 		if (!bundlesTxt.exists()) {
 			return null;
 		}
@@ -327,15 +257,15 @@ public class P2Utils {
 				String modelName = desc.getSymbolicName();
 				if (modelName != null && osgiStartLevels.containsKey(modelName)) {
 					bundleMap.put(currentModel, osgiStartLevels.get(modelName));
-				} else if ("org.eclipse.equinox.simpleconfigurator".equals(modelName)) { //$NON-NLS-1$
+				} else if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
 					bundleMap.put(currentModel, "1:true"); //$NON-NLS-1$
-				} else if ("org.eclipse.equinox.common".equals(modelName)) { //$NON-NLS-1$
+				} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
 					bundleMap.put(currentModel, "2:true"); //$NON-NLS-1$
-				} else if ("org.eclipse.osgi".equals(modelName)) { //$NON-NLS-1$
+				} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
 					bundleMap.put(currentModel, "-1:true"); //$NON-NLS-1$
-				} else if ("org.eclipse.update.configurator".equals(modelName)) { //$NON-NLS-1$
+				} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
 					bundleMap.put(currentModel, "3:true"); //$NON-NLS-1$
-				} else if ("org.eclipse.core.runtime".equals(modelName)) { //$NON-NLS-1$
+				} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
 					if (TargetPlatformHelper.getTargetVersion() > 3.1) {
 						bundleMap.put(currentModel, "default:true"); //$NON-NLS-1$
 					} else {
@@ -348,24 +278,6 @@ public class P2Utils {
 		}
 
 		return writeBundlesTxt(bundleMap, 4, false, directory);
-	}
-
-	/**
-	 * Returns the URL as a local file, or <code>null</code> if the given
-	 * URL does not represent a local file.
-	 * @param url The url to return the file for
-	 * @return The local file corresponding to the given url, or <code>null</code>
-	 */
-	public static File toFile(URL url) {
-		try {
-			if (!"file".equalsIgnoreCase(url.getProtocol())) //$NON-NLS-1$
-				return null;
-			//assume all illegal characters have been properly encoded, so use URI class to unencode
-			return new File(new URI(url.toExternalForm()));
-		} catch (Exception e) {
-			//URL contains unencoded characters
-			return new File(url.getFile());
-		}
 	}
 
 }

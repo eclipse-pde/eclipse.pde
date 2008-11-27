@@ -18,6 +18,7 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.IStateDeltaListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -479,8 +480,8 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	}
 
 	public void registryChanged(IRegistryChangeEvent event) {
-		final IExtensionDelta[] applicationDeltas = event.getExtensionDeltas("org.eclipse.core.runtime", "applications"); //$NON-NLS-1$ //$NON-NLS-2$
-		final IExtensionDelta[] productDeltas = event.getExtensionDeltas("org.eclipse.core.runtime", "products"); //$NON-NLS-1$ //$NON-NLS-2$
+		final IExtensionDelta[] applicationDeltas = event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, "applications"); //$NON-NLS-1$
+		final IExtensionDelta[] productDeltas = event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, "products"); //$NON-NLS-1$
 		if (applicationDeltas.length + productDeltas.length == 0)
 			return;
 

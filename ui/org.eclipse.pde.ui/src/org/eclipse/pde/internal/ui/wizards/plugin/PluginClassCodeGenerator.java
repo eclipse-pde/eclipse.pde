@@ -16,9 +16,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginReference;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.ui.templates.PluginReference;
-
 public class PluginClassCodeGenerator {
 	private PluginFieldData fPluginData;
 	private IProject fProject;
@@ -183,7 +183,7 @@ public class PluginClassCodeGenerator {
 		if (fPluginData.isUIPlugin())
 			result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
 		if (!fPluginData.isLegacy() && fPluginData.getOSGiFramework() == null)
-			result.add(new PluginReference("org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
+			result.add(new PluginReference(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, null, 0));
 		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -65,23 +66,23 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		Properties properties = new Properties();
 		properties.setProperty("osgi.install.area", "file:" + TargetPlatform.getLocation()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.put("osgi.framework", LaunchConfigurationHelper.getBundleURL("org.eclipse.osgi", fAllBundles, false)); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("osgi.framework", LaunchConfigurationHelper.getBundleURL(IPDEBuildConstants.BUNDLE_OSGI, fAllBundles, false)); //$NON-NLS-1$
 		int start = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
 		properties.put("osgi.bundles.defaultStartLevel", Integer.toString(start)); //$NON-NLS-1$
 		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, true);
 
 		String bundles = null;
-		if (fAllBundles.containsKey("org.eclipse.equinox.simpleconfigurator")) { //$NON-NLS-1$
+		if (fAllBundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
 			// If simple configurator is being used, we need to write out the bundles.txt instead of writing out the list in the config.ini
 			URL bundlesTxt = P2Utils.writeBundlesTxt(fModels, start, autostart, getConfigDir(configuration));
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
-				if (fAllBundles.get("org.eclipse.update.configurator") != null) { //$NON-NLS-1$
+				if (fAllBundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR) != null) {
 					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			StringBuffer buffer = new StringBuffer();
-			IPluginModelBase model = (IPluginModelBase) fAllBundles.get("org.eclipse.equinox.simpleconfigurator"); //$NON-NLS-1$
+			IPluginModelBase model = (IPluginModelBase) fAllBundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR);
 			buffer.append(LaunchConfigurationHelper.getBundleURL(model, true));
 			appendStartData(buffer, (String) fModels.get(model), autostart);
 			bundles = buffer.toString();
@@ -105,7 +106,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
 			String id = model.getPluginBase().getId();
-			if (!"org.eclipse.osgi".equals(id)) { //$NON-NLS-1$
+			if (!IPDEBuildConstants.BUNDLE_OSGI.equals(id)) {
 				if (buffer.length() > 0)
 					buffer.append(","); //$NON-NLS-1$
 				buffer.append(LaunchConfigurationHelper.getBundleURL(model, true));
@@ -160,12 +161,12 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 			fAllBundles.put(model.getPluginBase().getId(), model);
 		}
 
-		if (!fAllBundles.containsKey("org.eclipse.osgi")) { //$NON-NLS-1$
+		if (!fAllBundles.containsKey(IPDEBuildConstants.BUNDLE_OSGI)) {
 			// implicitly add it
-			IPluginModelBase model = PluginRegistry.findModel("org.eclipse.osgi"); //$NON-NLS-1$
+			IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_OSGI);
 			if (model != null) {
 				fModels.put(model, "default:default"); //$NON-NLS-1$
-				fAllBundles.put("org.eclipse.osgi", model); //$NON-NLS-1$
+				fAllBundles.put(IPDEBuildConstants.BUNDLE_OSGI, model);
 			} else {
 				String message = PDEUIMessages.EquinoxLaunchConfiguration_oldTarget;
 				throw new CoreException(LauncherUtils.createErrorStatus(message));

@@ -22,6 +22,7 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.exports.ProductExportOperation;
@@ -114,7 +115,7 @@ public class ProductExportWizard extends BaseExportWizard {
 		}
 		// implicitly add the new launcher plug-in/fragment if we are to use the
 		// new launching story and the launcher plug-in/fragment are not already included in the .product file
-		IPluginModelBase launcherPlugin = PluginRegistry.findModel("org.eclipse.equinox.launcher"); //$NON-NLS-1$
+		IPluginModelBase launcherPlugin = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER);
 		if (launcherPlugin != null) {
 			BundleDescription bundle = launcherPlugin.getBundleDescription();
 			if (bundle != null && !list.contains(bundle)) {

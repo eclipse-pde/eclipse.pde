@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.osgi.framework.Bundle;
@@ -76,7 +77,7 @@ public class ExecutionEnvironmentProfileManager {
 				files[i].delete();
 			}
 			// create current profiles
-			Bundle bundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
+			Bundle bundle = Platform.getBundle(IPDEBuildConstants.BUNDLE_OSGI);
 			IExecutionEnvironment[] environments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
 			for (int i = 0; i < environments.length; i++) {
 				IExecutionEnvironment env = environments[i];

@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.core.converter;
 import java.io.InputStream;
 import java.util.*;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
@@ -78,7 +78,7 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 				requiresExpanded = true;
 				if (requires == null) {
 					requires = new ArrayList(1);
-					requires.add(new Prerequisite(PluginConverter.PI_RUNTIME, TARGET21_STRING, false, false, IModel.PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL));
+					requires.add(new Prerequisite(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, TARGET21_STRING, false, false, IModel.PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL));
 					requires.add(new Prerequisite(PluginConverter.PI_RUNTIME_COMPATIBILITY, null, false, false, null));
 				} else {
 					//Add elements on the requirement list of ui and help.
@@ -92,7 +92,7 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 							requires.add(i + 1, new Prerequisite("org.eclipse.ui.ide", null, true, analyzed.isExported(), null)); //$NON-NLS-1$ 
 						} else if ("org.eclipse.help".equals(analyzed.getName())) { //$NON-NLS-1$ 
 							requires.add(i + 1, new Prerequisite("org.eclipse.help.base", null, true, analyzed.isExported(), null)); //$NON-NLS-1$ 
-						} else if (PluginConverter.PI_RUNTIME.equals(analyzed.getName()) && !compatibilityFound) {
+						} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(analyzed.getName()) && !compatibilityFound) {
 							requires.add(i + 1, new Prerequisite(PluginConverter.PI_RUNTIME_COMPATIBILITY, null, false, analyzed.isExported(), null));
 						}
 					}
@@ -101,9 +101,9 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 					}
 					//Remove any prereq on runtime and add a prereq on runtime 2.1
 					//This is used to recognize the version for which the given plugin was initially targeted.
-					Prerequisite runtimePrereq = new Prerequisite(PluginConverter.PI_RUNTIME, null, false, false, null);
+					Prerequisite runtimePrereq = new Prerequisite(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, null, false, false, null);
 					requires.remove(runtimePrereq);
-					requires.add(new Prerequisite(PluginConverter.PI_RUNTIME, TARGET21_STRING, false, false, IModel.PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL));
+					requires.add(new Prerequisite(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, TARGET21_STRING, false, false, IModel.PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL));
 				}
 			}
 			if (requires == null)

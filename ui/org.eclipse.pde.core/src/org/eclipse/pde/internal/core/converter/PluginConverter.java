@@ -14,26 +14,15 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.core.resources.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.Build;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.converter.PluginConverterParser.PluginInfo;
@@ -74,7 +63,6 @@ public class PluginConverter {
 	static public final String FRAGMENT_MANIFEST = "fragment.xml"; //$NON-NLS-1$
 	static public final String GENERATED_FROM = "Generated-from"; //$NON-NLS-1$
 	static public final String MANIFEST_TYPE_ATTRIBUTE = "type"; //$NON-NLS-1$
-	protected static final String PI_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	protected static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
 	protected static final String PI_RUNTIME_COMPATIBILITY = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$
 	static public final String PLUGIN_MANIFEST = "plugin.xml"; //$NON-NLS-1$

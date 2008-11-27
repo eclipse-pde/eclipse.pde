@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.core.builders.PluginRebuilder;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 public class PDECore extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
@@ -263,5 +264,18 @@ public class PDECore extends Plugin {
 			fModelManager.shutdown();
 			fModelManager = null;
 		}
+	}
+
+	/**
+	 * Returns a service with the specified name or <code>null</code> if none.
+	 * 
+	 * @param serviceName name of service
+	 * @return service object or <code>null</code> if none
+	 */
+	public Object acquireService(String serviceName) {
+		ServiceReference reference = fBundleContext.getServiceReference(serviceName);
+		if (reference == null)
+			return null;
+		return fBundleContext.getService(reference);
 	}
 }

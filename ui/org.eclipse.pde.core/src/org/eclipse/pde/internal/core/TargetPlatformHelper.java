@@ -20,6 +20,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.VersionUtil;
@@ -161,7 +162,7 @@ public class TargetPlatformHelper {
 	}
 
 	public static void checkPluginPropertiesConsistency(Map map, File configDir) {
-		File runtimeDir = new File(configDir, "org.eclipse.core.runtime"); //$NON-NLS-1$
+		File runtimeDir = new File(configDir, IPDEBuildConstants.BUNDLE_CORE_RUNTIME);
 		if (runtimeDir.exists() && runtimeDir.isDirectory()) {
 			long timestamp = runtimeDir.lastModified();
 			Iterator iter = map.values().iterator();
@@ -291,7 +292,7 @@ public class TargetPlatformHelper {
 	}
 
 	public static String getTargetVersionString() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.osgi"); //$NON-NLS-1$
+		IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_OSGI);
 		if (model == null)
 			return ICoreConstants.TARGET35;
 

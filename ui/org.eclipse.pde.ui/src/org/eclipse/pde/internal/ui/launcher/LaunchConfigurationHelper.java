@@ -21,6 +21,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -114,13 +115,13 @@ public class LaunchConfigurationHelper {
 		}
 		String osgiBundles = properties.getProperty(PROP_OSGI_BUNDLES);
 		// if we are launching using P2, write out P2 files (bundles.txt) and add P2 property to config.ini
-		if (osgiBundles != null && osgiBundles.indexOf("org.eclipse.equinox.simpleconfigurator") != -1 && map.containsKey("org.eclipse.equinox.simpleconfigurator")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (osgiBundles != null && osgiBundles.indexOf(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != -1 && map.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
 			URL bundlesTxt = P2Utils.writeBundlesTxt(map.values(), osgiBundles, directory);
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
 
 				// if we have simple configurator and update configurator together, ensure update doesn't reconcile
-				if (map.get("org.eclipse.update.configurator") != null) { //$NON-NLS-1$
+				if (map.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR) != null) {
 					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
@@ -138,7 +139,7 @@ public class LaunchConfigurationHelper {
 		if (!properties.containsKey("osgi.configuration.cascaded")) //$NON-NLS-1$
 			properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!properties.containsKey(PROP_OSGI_FRAMEWORK))
-			properties.setProperty(PROP_OSGI_FRAMEWORK, "org.eclipse.osgi"); //$NON-NLS-1$
+			properties.setProperty(PROP_OSGI_FRAMEWORK, IPDEBuildConstants.BUNDLE_OSGI);
 		if (!properties.containsKey("osgi.splashPath") && productID != null) //$NON-NLS-1$
 			addSplashLocation(properties, productID, map);
 		// if osgi.splashPath is set, try to resolve relative paths to absolute paths
@@ -165,7 +166,7 @@ public class LaunchConfigurationHelper {
 		// if simple configurator isn't selected & isn't in bundle list... hack it
 
 		// if using p2's simple configurator, a bundles.txt will be written, so we only need simple configurator in the config.ini
-		if (map.get("org.eclipse.equinox.simpleconfigurator") != null) //$NON-NLS-1$
+		if (map.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != null)
 			return "org.eclipse.equinox.simpleconfigurator@1:start"; //$NON-NLS-1$
 
 		StringBuffer buffer = new StringBuffer();
@@ -186,8 +187,8 @@ public class LaunchConfigurationHelper {
 		}
 
 		// if org.eclipse.update.configurator is not included (LIKE IN BASIC RCP APPLICATION), then write out all bundles in osgi.bundles - bug 170772
-		if (!initialBundleSet.contains("org.eclipse.update.configurator")) { //$NON-NLS-1$
-			initialBundleSet.add("org.eclipse.osgi"); //$NON-NLS-1$
+		if (!initialBundleSet.contains(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR)) {
+			initialBundleSet.add(IPDEBuildConstants.BUNDLE_OSGI);
 			Iterator iter = map.keySet().iterator();
 			while (iter.hasNext()) {
 				String id = iter.next().toString();
@@ -196,7 +197,7 @@ public class LaunchConfigurationHelper {
 						buffer.append(',');
 					buffer.append(id);
 					// if we are working with core.runtime, we need to ensure it's started
-					if ("org.eclipse.core.runtime".equals(id)) { //$NON-NLS-1$
+					if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(id)) {
 						buffer.append("@start"); //$NON-NLS-1$
 					}
 				}

@@ -23,6 +23,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -126,7 +127,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		if (header == null)
 			return new HashSet(0);
 		Set plugins = (header instanceof RequireBundleHeader) ? findManifestPlugins((RequireBundleHeader) header, ignorePkgs) : findManifestPlugins(ignorePkgs);
-		if (plugins.contains("org.eclipse.core.runtime")) //$NON-NLS-1$
+		if (plugins.contains(IPDEBuildConstants.BUNDLE_CORE_RUNTIME))
 			plugins.add("system.bundle"); //$NON-NLS-1$
 		return plugins;
 	}

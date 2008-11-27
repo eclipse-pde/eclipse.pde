@@ -21,6 +21,7 @@ import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.util.Headers;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -42,15 +43,13 @@ public class MinimalState {
 
 	private boolean fNoProfile;
 
-	private static final String DEFAULT_SYSTEM_BUNDLE = "org.eclipse.osgi"; //$NON-NLS-1$
-
 	protected static boolean DEBUG = false;
 
 	protected static StateObjectFactory stateObjectFactory;
 
 	protected static String DIR;
 
-	protected String fSystemBundle = DEFAULT_SYSTEM_BUNDLE;
+	protected String fSystemBundle = IPDEBuildConstants.BUNDLE_OSGI;
 
 	static {
 		DEBUG = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/cache")); //$NON-NLS-1$ //$NON-NLS-2$

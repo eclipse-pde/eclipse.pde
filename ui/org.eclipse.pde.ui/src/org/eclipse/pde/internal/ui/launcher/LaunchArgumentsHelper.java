@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -215,8 +216,7 @@ public class LaunchArgumentsHelper {
 
 	public static String[] constructClasspath(ILaunchConfiguration configuration) throws CoreException {
 		double targetVersion = TargetPlatformHelper.getTargetVersion();
-		String jarPath = targetVersion >= 3.3 ? getEquinoxStartupPath("org.eclipse.equinox.launcher") //$NON-NLS-1$
-				: getStartupJarPath();
+		String jarPath = targetVersion >= 3.3 ? getEquinoxStartupPath(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER) : getStartupJarPath();
 		if (jarPath == null && targetVersion < 3.3)
 			jarPath = getEquinoxStartupPath("org.eclipse.core.launcher"); //$NON-NLS-1$
 
@@ -234,7 +234,7 @@ public class LaunchArgumentsHelper {
 	}
 
 	private static String getEquinoxStartupPath(String packageName) throws CoreException {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.equinox.launcher"); //$NON-NLS-1$
+		IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER);
 		if (model != null) {
 			IResource resource = model.getUnderlyingResource();
 			// found in the target
@@ -271,7 +271,7 @@ public class LaunchArgumentsHelper {
 				}
 			}
 		}
-		Bundle bundle = Platform.getBundle("org.eclipse.equinox.launcher"); //$NON-NLS-1$
+		Bundle bundle = Platform.getBundle(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER);
 		if (bundle != null) {
 			try {
 				URL url = FileLocator.resolve(bundle.getEntry("/")); //$NON-NLS-1$
