@@ -161,7 +161,7 @@ public class ApiFileGeneratorTask extends Task {
 		}
 		// check if the .api_description file exists in source
 		File apiDescriptionFile = new File(root, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
-		File targetProjectFolder = new File(this.targetFolder, this.projectName); 
+		File targetProjectFolder = new File(this.targetFolder, this.projectName);
 		// check if the project contains the api tools nature
 		File dotProjectFile = new File(root, ".project"); //$NON-NLS-1$
 		
@@ -229,46 +229,48 @@ public class ApiFileGeneratorTask extends Task {
 		// check the manifest file
 		String componentName = this.projectName;
 		String componentID = this.projectName;
-		if (manifestMap != null && DEBUG) {
-			for (Iterator iterator = manifestMap.keySet().iterator(); iterator.hasNext(); ) {
-				Object key = iterator.next();
-				System.out.print("key = " + key); //$NON-NLS-1$
-				System.out.println(" value = " + manifestMap.get(key)); //$NON-NLS-1$
-			}
-			String localization = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_LOCALIZATION);
-			String name = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_NAME);
-			String nameKey = (name != null && name.startsWith("%")) ? name.substring(1) : null; //$NON-NLS-1$;
-			if (nameKey != null) {
-				Properties properties = new Properties();
-				BufferedInputStream inputStream = null;
-				try {
-					inputStream = new BufferedInputStream(new FileInputStream(new File(targetProjectFolder, localization + ".properties"))); //$NON-NLS-1$
-					properties.load(inputStream);
-				} catch(IOException e) {
-					ApiPlugin.log(e);
-				} finally {
-					if (inputStream != null) {
-						try {
-							inputStream.close();
-						} catch(IOException e) {
-							// ignore
+		if (DEBUG) {
+			if (manifestMap != null) {
+				for (Iterator iterator = manifestMap.keySet().iterator(); iterator.hasNext();) {
+					Object key = iterator.next();
+					System.out.print("key = " + key); //$NON-NLS-1$
+					System.out.println(" value = " + manifestMap.get(key)); //$NON-NLS-1$
+				}
+				String localization = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_LOCALIZATION);
+				String name = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_NAME);
+				String nameKey = (name != null && name.startsWith("%")) ? name.substring(1) : null; //$NON-NLS-1$;
+				if (nameKey != null) {
+					Properties properties= new Properties();
+					BufferedInputStream inputStream = null;
+					try {
+						inputStream = new BufferedInputStream(new FileInputStream(new File(targetProjectFolder, localization + ".properties"))); //$NON-NLS-1$
+						properties.load(inputStream);
+					} catch (IOException e) {
+						ApiPlugin.log(e);
+					} finally {
+						if (inputStream != null) {
+							try {
+								inputStream.close();
+							} catch (IOException e) {
+								// ignore
+							}
 						}
 					}
-				}
-				String property = properties.getProperty(nameKey);
-				if (property != null) {
-					componentName = property.trim();
-				}
-			} else {
-				componentName = name;
-			}
-			String symbolicName = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME);
-			if (symbolicName != null) {
-				int indexOf = symbolicName.indexOf(';');
-				if (indexOf == -1) {
-					componentID = symbolicName.trim();
+					String property = properties.getProperty(nameKey);
+					if (property != null) {
+						componentName = property.trim();
+					}
 				} else {
-					componentID = symbolicName.substring(0, indexOf).trim();
+					componentName= name;
+				}
+				String symbolicName = (String)manifestMap.get(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME);
+				if (symbolicName != null) {
+					int indexOf = symbolicName.indexOf(';');
+					if (indexOf == -1) {
+						componentID = symbolicName.trim();
+					} else {
+						componentID = symbolicName.substring(0, indexOf).trim();
+					}
 				}
 			}
 		}
@@ -288,8 +290,8 @@ public class ApiFileGeneratorTask extends Task {
 	/**
 	 * Resolves the compiler compliance based on the BREE entry in the MANIFEST.MF file
 	 * @param manifestmap
-	 * @return The derived {@link JavaCore#COMPILER_COMPLIANCE} from the BREE in the manifest map, 
-	 * or {@link JavaCore#VERSION_1_3} if there is no BREE entry in the map or if the BREE entry does not directly map 
+	 * @return The derived {@link JavaCore#COMPILER_COMPLIANCE} from the BREE in the manifest map,
+	 * or {@link JavaCore#VERSION_1_3} if there is no BREE entry in the map or if the BREE entry does not directly map
 	 * to one of {"1.3", "1.4", "1.5", "1.6"}.
 	 */
 	private String resolveCompliance(Map manifestmap) {
