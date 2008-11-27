@@ -427,6 +427,10 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			IApiMember member = reference.getMember();
 			IApiComponent apiComponent = member.getApiComponent();
 			String[] lowestEEs = apiComponent.getLowestEEs();
+			if (lowestEEs == null) {
+				// this should not be true for Eclipse bundle as they should always have a EE set
+				return false;
+			}
 			loop: for (int i = 0, max = lowestEEs.length; i < max; i++) {
 				String lowestEE = lowestEEs[i];
 				int eeValue = ProfileModifiers.getValue(lowestEE); 
