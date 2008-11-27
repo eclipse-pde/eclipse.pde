@@ -59,6 +59,9 @@ import org.eclipse.jdt.internal.core.builder.ReferenceCollection;
 import org.eclipse.jdt.internal.core.builder.State;
 import org.eclipse.jdt.internal.core.builder.StringSet;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.ResolverError;
+import org.eclipse.osgi.service.resolver.VersionConstraint;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
@@ -69,6 +72,7 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -207,7 +211,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	public static void cleanupMarkers(IResource resource) {
 		cleanupUsageMarkers(resource);
-		cleanupCompatibiltiyMarkers(resource);
+		cleanupCompatibilityMarkers(resource);
 		cleanupUnsupportedTagMarkers(resource);
 	}
 	
@@ -225,12 +229,25 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			ApiPlugin.log(e.getStatus());
 		}
 	}
-	
+	/**
+	 * Cleans up Api Baseline with errors markers on the specified project
+	 * @param project the given project
+	 */
+	private static void cleanupApiBaselineWithErrorsMarkers(IProject project) {
+		try {
+			if(DEBUG) {
+				System.out.println("cleaning api baseline with errors marker"); //$NON-NLS-1$
+			}
+			project.deleteMarkers(IApiMarkerConstants.API_BASELINE_ERROR_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+		} catch (CoreException e) {
+			ApiPlugin.log(e.getStatus());
+		}
+	}
 	/**
 	 * Cleans up only API compatibility markers on the given {@link IResource}
-	 * @param resource
+	 * @param resource the given resource
 	 */
-	private static void cleanupCompatibiltiyMarkers(IResource resource) {
+	private static void cleanupCompatibilityMarkers(IResource resource) {
 		try {
 			if (resource != null && resource.isAccessible()) {
 				resource.deleteMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
@@ -239,6 +256,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					// on full builds
 					resource.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 					resource.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+					resource.deleteMarkers(IApiMarkerConstants.API_BASELINE_ERROR_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 				}
 			}
 		} catch(CoreException e) {
@@ -381,9 +399,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			fBuildState = new BuildState();
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
 			localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_initializing_analyzer, fCurrentProject.getName()));
-			IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline();
 			cleanupMarkers(fCurrentProject);
-			cleanupUnsupportedTagMarkers(fCurrentProject);
+			IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline();
 			IPluginModelBase currentModel = getCurrentModel();
 			if (currentModel != null) {
 				localMonitor.subTask(BuilderMessages.building_workspace_profile);
@@ -662,7 +679,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			updateMonitor(monitor, 0);
 			cleanupUnsupportedTagMarkers(file);
 			updateMonitor(monitor, 0);
-			cleanupCompatibiltiyMarkers(file);
+			cleanupCompatibilityMarkers(file);
 			updateMonitor(monitor, 0);
 			cnames.add(type.getFullyQualifiedName());
 			try {
@@ -766,7 +783,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			// clean up all existing markers
 			cleanupUsageMarkers(fCurrentProject);
-			cleanupCompatibiltiyMarkers(fCurrentProject);
+			cleanupCompatibilityMarkers(fCurrentProject);
 			cleanupUnsupportedTagMarkers(fCurrentProject);
 			updateMonitor(localmonitor, 1);
 			//clean up the .api_settings
@@ -799,7 +816,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (internedQualifiedNames.length < fPackages.elementSize) {
 			internedQualifiedNames = null;
 		}
-		char[][] internedSimpleNames = ReferenceCollection.internSimpleNames(fTypes);
+		char[][] internedSimpleNames = ReferenceCollection.internSimpleNames(fTypes, true);
 		// if a well known name was found then we can skip over these
 		if (internedSimpleNames.length < fTypes.elementSize) {
 			internedSimpleNames = null;
@@ -810,7 +827,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			String typeLocator = (String) keyTable[i];
 			if (typeLocator != null) {
 				ReferenceCollection refs = (ReferenceCollection) valueTable[i];
-				if (refs.includes(internedQualifiedNames, internedSimpleNames)) {
+				if (refs.includes(internedQualifiedNames, internedSimpleNames, null)) {
 					IFile file = fCurrentProject.getFile(typeLocator);
 					if (file == null) {
 						continue next;
@@ -1005,8 +1022,58 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	/**
 	 * @return the workspace {@link IApiProfile}
 	 */
-	private IApiBaseline getWorkspaceProfile() {
-		return ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
+	private IApiBaseline getWorkspaceProfile() throws CoreException {
+		IApiBaseline workspaceBaseline = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
+		ResolverError[] errors = workspaceBaseline.getErrors();
+		if (errors != null) {
+			createBaselineErrorMarker(errors);
+			if (ApiPlugin.getDefault().getEnableState(IApiProblemTypes.ABORT_BUILD_WHEN_BASELINE_CONTAINS_ERRORS, this.fCurrentProject).equals(ApiPlugin.VALUE_ENABLED)) {
+				// abort
+				throw new OperationCanceledException();
+			}
+		} else {
+			// clear marker if any
+			cleanupApiBaselineWithErrorsMarkers(this.fCurrentProject);
+		}
+		return workspaceBaseline;
+	}
+	
+	private void createBaselineErrorMarker(ResolverError[] errors) throws CoreException {
+		IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.API_BASELINE_ERROR_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+		if (markers.length > 0) {
+			// the marker already exists
+			return;
+		}
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0, max = errors.length; i < max; i++) {
+			ResolverError error = errors[i];
+			VersionConstraint constraint = error.getUnsatisfiedConstraint();
+			VersionRange versionRange = constraint.getVersionRange();
+			String minimum = versionRange == null ? BuilderMessages.undefinedRange : versionRange.getMinimum().toString();
+			String maximum = versionRange == null ? BuilderMessages.undefinedRange : versionRange.getMaximum().toString();
+			buffer.append(
+				BuilderMessages.bind(
+						BuilderMessages.reportUnsatisfiedConstraint,
+						new String[] {
+								constraint.getName(),
+								minimum,
+								maximum
+						}
+				));
+		}
+		IMarker marker = this.fCurrentProject.createMarker(IApiMarkerConstants.API_BASELINE_ERROR_PROBLEM_MARKER);
+		marker.setAttributes(
+			new String[] {
+					IMarker.MESSAGE,
+					IMarker.SEVERITY,
+					IMarker.SOURCE_ID
+			},
+			new Object[] {
+				BuilderMessages.bind(BuilderMessages.ApiBaselineHasErrors, String.valueOf(buffer)),
+				new Integer(IMarker.SEVERITY_ERROR),
+				ApiAnalysisBuilder.SOURCE
+			}
+		);
 	}
 	
 	/**

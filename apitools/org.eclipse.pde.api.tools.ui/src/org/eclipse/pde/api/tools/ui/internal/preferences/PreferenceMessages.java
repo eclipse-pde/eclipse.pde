@@ -71,6 +71,7 @@ public class PreferenceMessages extends NLS {
 	public static String ProjectSelectionDialog_checkbox_text;
 	public static String ApiProfilesConfigurationBlock_options_group_title;
 	public static String ApiProfilesConfigurationBlock_missing_default_api_profile_message;
+	public static String ApiProfilesConfigurationBlock_abort_build_when_errors;
 
 	public static String API_COMPONENT_REMOVED_API_TYPE;
 	public static String API_COMPONENT_REMOVED_TYPE;

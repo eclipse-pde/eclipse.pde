@@ -364,4 +364,8 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		this.block.performApply();
 		applyChanges();
 	}
+	protected void performDefaults() {
+		this.block.performDefaults();
+		applyChanges();
+	}
 }

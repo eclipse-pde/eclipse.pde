@@ -47,10 +47,15 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String MARKER_ATTR_MESSAGE_ARGUMENTS = "messagearguments"; //$NON-NLS-1$
 	/**
-	 * Constant representing the id for the default API profile problem marker.
+	 * Constant representing the id for the default API baseline problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.api_profile</code>
 	 */
 	public static final String DEFAULT_API_BASELINE_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_profile"; //$NON-NLS-1$
+	/**
+	 * Constant representing the id for the API baseline with errors problem marker.
+	 * Value is: <code>org.eclipse.pde.api.tools.api_baseline_with_errors</code>
+	 */
+	public static final String API_BASELINE_ERROR_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_baseline_with_errors"; //$NON-NLS-1$
 	/**
 	 * Constant representing the id for the compatibility problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.compatibility</code> 

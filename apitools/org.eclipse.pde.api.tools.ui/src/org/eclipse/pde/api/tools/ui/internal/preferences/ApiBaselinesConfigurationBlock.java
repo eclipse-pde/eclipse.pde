@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -29,7 +30,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -186,12 +189,14 @@ public class ApiBaselinesConfigurationBlock {
 	}
 
 	private static final Key KEY_MISSING_DEFAULT_API_PROFILE = getApiToolsKey(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE);
+	private static final Key KEY_ABORT_BUILD_WHEN_BASELINE_CONTAINS_ERRORS = getApiToolsKey(IApiProblemTypes.ABORT_BUILD_WHEN_BASELINE_CONTAINS_ERRORS);
 
 	/**
 	 * An array of all of the keys for the page
 	 */
 	private static Key[] fgAllKeys = {
-		KEY_MISSING_DEFAULT_API_PROFILE
+		KEY_MISSING_DEFAULT_API_PROFILE,
+		KEY_ABORT_BUILD_WHEN_BASELINE_CONTAINS_ERRORS,
 	};
 
 	/**
@@ -211,7 +216,7 @@ public class ApiBaselinesConfigurationBlock {
 		ApiPlugin.VALUE_WARNING,
 		ApiPlugin.VALUE_IGNORE,
 	};
-	
+
 	/**
 	 * Default selection listener for controls on the page
 	 */
@@ -223,14 +228,24 @@ public class ApiBaselinesConfigurationBlock {
 				data.key.setStoredValue(fLookupOrder[0], combo.getText(), fManager);
 				fDirty = true;
 				ApiBaselinePreferencePage.rebuildcount = 0;
+			} else if (e.widget instanceof Button) {
+				Button button = (Button) e.widget;
+				ControlData data = (ControlData) button.getData();
+				data.key.setStoredValue(fLookupOrder[0], data.getValue(button.getSelection()), fManager);
+				fDirty = true;
+				ApiBaselinePreferencePage.rebuildcount = 0;
 			}
 		}
 	};
 
 	/**
-	 * Listing of all of the {@link Combo}s added to the block
+	 * The {@link Combo} added to the block
 	 */
 	private Combo fCombo = null;
+	/**
+	 * The {@link Button} added to the block
+	 */
+	private Button fCheckbox = null;
 	
 	/**
 	 * The context of settings locations to search for values in
@@ -290,9 +305,34 @@ public class ApiBaselinesConfigurationBlock {
 		fParent = parent;
 		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		Group optionsProfileGroup = SWTFactory.createGroup(fMainComp, PreferenceMessages.ApiProfilesConfigurationBlock_options_group_title, 2, 1, GridData.FILL_BOTH);
-		this.fCombo = createComboControl(optionsProfileGroup, PreferenceMessages.ApiProfilesConfigurationBlock_missing_default_api_profile_message, KEY_MISSING_DEFAULT_API_PROFILE);
+		this.fCombo = createComboControl(
+				optionsProfileGroup,
+				PreferenceMessages.ApiProfilesConfigurationBlock_missing_default_api_profile_message,
+				KEY_MISSING_DEFAULT_API_PROFILE);
+		this.fCheckbox = addCheckBox(
+				optionsProfileGroup,
+				PreferenceMessages.ApiProfilesConfigurationBlock_abort_build_when_errors,
+				KEY_ABORT_BUILD_WHEN_BASELINE_CONTAINS_ERRORS,
+				new String[] { ApiPlugin.VALUE_ENABLED, ApiPlugin.VALUE_DISABLED });
 		Dialog.applyDialogFont(fMainComp);
 		return fMainComp;
+	}
+	protected Button addCheckBox(Composite parent, String label, Key key, String[] values) {
+		ControlData data= new ControlData(key, values);
+		Font dialogFont = JFaceResources.getDialogFont();
+		
+		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		
+		Button checkBox= new Button(parent, SWT.CHECK);
+		checkBox.setFont(dialogFont);
+		checkBox.setText(label);
+		checkBox.setData(data);
+		checkBox.setLayoutData(gd);
+		checkBox.addSelectionListener(this.selectionlistener);
+		
+		String currValue= key.getStoredValue(fLookupOrder, false, fManager);
+		checkBox.setSelection(data.getSelection(currValue) == 0);
+		return checkBox;
 	}
 
 	/**
@@ -353,20 +393,30 @@ public class ApiBaselinesConfigurationBlock {
 			defval = fgAllKeys[i].getStoredValue(fLookupOrder, true, fManager);
 			fgAllKeys[i].setStoredValue(fLookupOrder[0], defval, fManager);
 		}
-		updateCombos();
+		updateControls();
 		fDirty = true;
+		ApiBaselinePreferencePage.rebuildcount = 0;
 	}
 	
 	/**
-	 * Updates all of the registered {@link Combo}s on the page.
-	 * Registration implies that the {@link Combo} control was added to the listing 
-	 * of fCombos
+	 * Updates all of the registered {@link Control}s on the page.
 	 */
-	private void updateCombos() {
+	private void updateControls() {
 		if (this.fCombo != null) {
 			ControlData data = (ControlData) fCombo.getData();
-			this.fCombo.select(data.getSelection(data.getKey().getStoredValue(fLookupOrder, false, fManager)));
+			this.fCombo.select(data.getSelection(getValue(data.getKey())));
 		}
+		if (this.fCheckbox != null) {
+			ControlData data= (ControlData) this.fCheckbox.getData();
+			String currValue= getValue(data.getKey());
+			this.fCheckbox.setSelection(data.getSelection(currValue) == 0);
+		}
+	}
+	protected String getValue(Key key) {
+		if (fOldProjectSettings != null) {
+			return (String) fOldProjectSettings.get(key);
+		}
+		return key.getStoredValue(fLookupOrder, false, fManager);
 	}
 
 	/**
@@ -384,11 +434,11 @@ public class ApiBaselinesConfigurationBlock {
 	 */
 	protected Combo createComboControl(Composite parent, String label, Key key) {
 		Label lbl = new Label(parent, SWT.NONE);
-		GridData gd = new GridData(GridData.BEGINNING, GridData.CENTER, true, false);
+		GridData gd = new GridData(SWT.BEGINNING, SWT.CENTER, true, false);
 		lbl.setLayoutData(gd);
 		lbl.setText(label);
 		Combo combo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
-		gd = new GridData(GridData.END, GridData.CENTER, false, false);
+		gd = new GridData(SWT.END, SWT.CENTER, false, false);
 		combo.setLayoutData(gd);
 		ControlData data = new ControlData(key, SEVERITIES); 
 		combo.setData(data);

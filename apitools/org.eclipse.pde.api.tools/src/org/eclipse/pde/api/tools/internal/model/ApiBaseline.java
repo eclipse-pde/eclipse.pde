@@ -603,15 +603,21 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public ResolverError[] getErrors() {
-		List errs = new ArrayList();
+		List errs = null;
 		BundleDescription[] bundles = getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			ResolverError[] errors = getState().getResolverErrors(bundles[i]);
 			for (int j = 0; j < errors.length; j++) {
+				if (errs == null) {
+					errs = new ArrayList();
+				}
 				errs.add(errors[j]);
 			}
 		}
-		return (ResolverError[]) errs.toArray(new ResolverError[errs.size()]);
+		if (errs != null) {
+			return (ResolverError[]) errs.toArray(new ResolverError[errs.size()]);
+		}
+		return null;
 	}
 	
 	/**

@@ -822,7 +822,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		FontMetrics fontMetrics= gc.getFontMetrics();
 		gc.dispose();
 		return Dialog.convertWidthInCharsToPixels(fontMetrics, chars);
-	}	
+	}
 
 	protected Button addCheckBox(Composite parent, String label, Key key, String[] values, int indent) {
 		ControlData data= new ControlData(key, values);
