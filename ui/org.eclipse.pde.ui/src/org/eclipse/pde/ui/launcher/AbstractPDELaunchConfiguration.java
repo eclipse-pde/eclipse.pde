@@ -42,7 +42,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#isLaunchProblem(org.eclipse.core.resources.IMarker)
 	 */
 	protected boolean isLaunchProblem(IMarker problemMarker) throws CoreException {
-		return super.isLaunchProblem(problemMarker) && problemMarker.getType().equals(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER) && problemMarker.getType().equals(PDEMarkerFactory.MARKER_ID);
+		return super.isLaunchProblem(problemMarker) && (problemMarker.getType().equals(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER) || problemMarker.getType().equals(PDEMarkerFactory.MARKER_ID));
 	}
 
 	/*
