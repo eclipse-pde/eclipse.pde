@@ -218,6 +218,9 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		IApiProblemTypes.TYPE_PARAMETER_ADDED_INTERFACE_BOUND,
 		IApiProblemTypes.TYPE_PARAMETER_CHANGED_INTERFACE_BOUND,
 		IApiProblemTypes.TYPE_PARAMETER_REMOVED_INTERFACE_BOUND,
+		IApiProblemTypes.TYPE_PARAMETER_REMOVED_INTERFACE_BOUND,
+		IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
+//		IApiProblemTypes.REPORT_API_CHANGE_WHEN_MINOR_VERSION_INCREMENTED,
 	};
 	/**
 	 * A set of listeners that want to participate in the saving life-cycle of the workbench
@@ -467,7 +470,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		}
 		String value = service.getString(PLUGIN_ID, prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
 		if(value == null) {
-			value = service.getString(PLUGIN_ID, prefkey, VALUE_IGNORE, new IScopeContext[]{new DefaultScope()}); 
+			value = service.getString(PLUGIN_ID, prefkey, VALUE_DISABLED, new IScopeContext[]{new DefaultScope()}); 
 		}
 		return value;
 	}

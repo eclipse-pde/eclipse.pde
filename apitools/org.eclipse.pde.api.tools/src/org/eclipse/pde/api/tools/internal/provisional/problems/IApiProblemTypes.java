@@ -169,6 +169,9 @@ public interface IApiProblemTypes {
 	public static final String TYPE_PARAMETER_REMOVED_INTERFACE_BOUND =
 		Util.getDeltaPrefererenceKey(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUND);
 
+	public static final String REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED =
+		"report_api_breakage_when_major_version_incremented"; //$NON-NLS-1$
+
 	// Version numbering problems
 	public static final String MISSING_SINCE_TAG = "missing_since_tag"; //$NON-NLS-1$
 	public static final String MALFORMED_SINCE_TAG = "malformed_since_tag"; //$NON-NLS-1$

@@ -45,6 +45,8 @@ public class PreferenceMessages extends NLS {
 	public static String CompatibilityMethodElement;
 	public static String CompatibilityConstructorElement;
 	public static String CompatibilityTypeParameterElement;
+	public static String CompatibilityReportApiBreakageWhenMajorVersionIncremented;
+	public static String CompatibilityReportApiChangeWhenMinorVersionIncremented;
 
 	public static String ApiErrorsWarningsConfigurationBlock_error;
 	public static String ApiErrorsWarningsConfigurationBlock_warning;

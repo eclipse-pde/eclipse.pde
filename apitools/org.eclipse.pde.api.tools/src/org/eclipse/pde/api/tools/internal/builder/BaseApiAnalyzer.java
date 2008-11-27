@@ -380,6 +380,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		ignore &= plugin.getSeverityLevel(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, project) == ApiPlugin.SEVERITY_IGNORE;
 		return ignore;
 	}
+	/**
+	 * @return if the API usage scan should be ignored
+	 */
+	private boolean reportApiBreakageWhenMajorVersionIncremented() {
+		if (fJavaProject == null) {
+			// we ignore it for non-OSGi case
+			return false;
+		}
+		return ApiPlugin.getDefault().getEnableState(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, fJavaProject.getProject().getProject()).equals(ApiPlugin.VALUE_ENABLED);
+	}
 	
 	/**
 	 * @return if the default API baseline check should be ignored or not
@@ -943,8 +953,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		try {
 			Version referenceVersion = new Version(reference.getVersion());
 			Version componentVersion = new Version(component.getVersion());
-			if (referenceVersion.getMajor() < componentVersion.getMajor()) {
-				// API breakage are ok in this case
+			if ((referenceVersion.getMajor() < componentVersion.getMajor())
+					&& !reportApiBreakageWhenMajorVersionIncremented()) {
+				// API breakage are ok in this case and we don't want them to be reported
 				fBuildState.addBreakingChange(delta);
 				return null;
 			}

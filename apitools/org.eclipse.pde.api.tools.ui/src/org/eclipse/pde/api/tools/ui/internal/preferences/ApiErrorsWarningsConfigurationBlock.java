@@ -386,6 +386,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 		getApiToolsKey(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE);
 	private static final Key KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE =
 		getApiToolsKey(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE);
+	private static final Key KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED = 
+		getApiToolsKey(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED);
 
 	private final int API_SCANNING_USAGE_PAGE_ID = 0;
 	private final int COMPATIBILITY_PAGE_ID = 1;
@@ -574,6 +576,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_INCOMPATIBLE_API_COMPONENT_VERSION,
 		KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE,
 		KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE,
+		KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
+//		KEY_REPORT_API_CHANGE_WHEN_MINOR_VERSION_INCREMENTED,
 	};
 
 	/**
@@ -953,6 +957,19 @@ public class ApiErrorsWarningsConfigurationBlock {
 			}
 			case COMPATIBILITY_PAGE_ID : {
 				// compatibility
+				Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_HORIZONTAL);
+				addCheckBox(
+					vcomp,
+					PreferenceMessages.CompatibilityReportApiBreakageWhenMajorVersionIncremented,
+					KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
+					new String[] { ApiPlugin.VALUE_ENABLED, ApiPlugin.VALUE_DISABLED },
+					2);
+//				addCheckBox(
+//					vcomp,
+//					PreferenceMessages.CompatibilityReportApiChangeWhenMinorVersionIncremented,
+//					KEY_REPORT_API_CHANGE_WHEN_MINOR_VERSION_INCREMENTED,
+//					new String[] { ApiPlugin.VALUE_ENABLED, ApiPlugin.VALUE_DISABLED },
+//					2);
 				ScrolledComposite scomp = new ScrolledComposite(page, SWT.H_SCROLL | SWT.V_SCROLL);
 				scomp.setExpandHorizontal(true);
 				scomp.setExpandVertical(true);
