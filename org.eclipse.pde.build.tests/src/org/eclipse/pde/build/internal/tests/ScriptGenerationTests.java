@@ -166,7 +166,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 	}
 
-	public void testBug221855() throws Exception {
+	public void _testBug221855() throws Exception {
 		IFolder buildFolder = newTest("221855");
 		IFolder tempFolder = Utils.createFolder(buildFolder, "temp");
 		Utils.generateBundle(tempFolder, "org.eclipse.pde.build.test.221855");
