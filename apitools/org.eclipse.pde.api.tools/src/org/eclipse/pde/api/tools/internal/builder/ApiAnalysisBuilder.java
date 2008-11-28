@@ -1026,10 +1026,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		IApiBaseline workspaceBaseline = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
 		ResolverError[] errors = workspaceBaseline.getErrors();
 		if (errors != null) {
-			createBaselineErrorMarker(errors);
-			if (ApiPlugin.getDefault().getEnableState(IApiProblemTypes.ABORT_BUILD_WHEN_BASELINE_CONTAINS_ERRORS, this.fCurrentProject).equals(ApiPlugin.VALUE_ENABLED)) {
-				// abort
-				throw new OperationCanceledException();
+			if (createBaselineErrorMarker(errors)) {
+				if (ApiPlugin.getDefault().getEnableState(IApiProblemTypes.ABORT_BUILD_WHEN_BASELINE_CONTAINS_ERRORS, this.fCurrentProject).equals(ApiPlugin.VALUE_ENABLED)) {
+					// abort
+					throw new OperationCanceledException();
+				}
 			}
 		} else {
 			// clear marker if any
@@ -1038,19 +1039,23 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		return workspaceBaseline;
 	}
 	
-	private void createBaselineErrorMarker(ResolverError[] errors) throws CoreException {
+	private boolean createBaselineErrorMarker(ResolverError[] errors) throws CoreException {
 		IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.API_BASELINE_ERROR_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		if (markers.length > 0) {
 			// the marker already exists
-			return;
+			return true;
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuffer buffer = null;
 		for (int i = 0, max = errors.length; i < max; i++) {
 			ResolverError error = errors[i];
 			VersionConstraint constraint = error.getUnsatisfiedConstraint();
+			if (constraint == null) continue;
 			VersionRange versionRange = constraint.getVersionRange();
 			String minimum = versionRange == null ? BuilderMessages.undefinedRange : versionRange.getMinimum().toString();
 			String maximum = versionRange == null ? BuilderMessages.undefinedRange : versionRange.getMaximum().toString();
+			if (buffer == null) {
+				buffer = new StringBuffer();
+			}
 			buffer.append(
 				BuilderMessages.bind(
 						BuilderMessages.reportUnsatisfiedConstraint,
@@ -1060,6 +1065,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 								maximum
 						}
 				));
+		}
+		if (buffer == null) {
+			// these are not errors with missing constraints
+			return false;
 		}
 		IMarker marker = this.fCurrentProject.createMarker(IApiMarkerConstants.API_BASELINE_ERROR_PROBLEM_MARKER);
 		marker.setAttributes(
@@ -1074,6 +1083,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				ApiAnalysisBuilder.SOURCE
 			}
 		);
+		return true;
 	}
 	
 	/**
