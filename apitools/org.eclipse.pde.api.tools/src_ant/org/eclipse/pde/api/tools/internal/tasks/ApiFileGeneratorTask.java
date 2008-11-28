@@ -89,7 +89,7 @@ public class ApiFileGeneratorTask extends Task {
 		}
 	}
 
-	private static final boolean DEBUG = false;
+	boolean debug;
 
 	String projectName;
 	String projectLocation;
@@ -119,12 +119,23 @@ public class ApiFileGeneratorTask extends Task {
 	public void setTargetFolder(String targetFolder) {
 		this.targetFolder = targetFolder;
 	}
+
+	/**
+	 * Set the debug value.
+	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
+	 * <p>Default is <code>false</code>.</p>
+	 *
+	 * @param debugValue the given debug value
+	 */
+	public void setDebug(String debugValue) {
+		this.debug = Boolean.toString(true).equals(debugValue); 
+	}
 	
 	/**
 	 * Execute the ant task
 	 */
 	public void execute() throws BuildException {
-		if (DEBUG) {
+		if (this.debug) {
 			System.out.println(this.targetFolder);
 			System.out.println(this.projectLocation);
 			System.out.println(this.projectName);
@@ -140,7 +151,7 @@ public class ApiFileGeneratorTask extends Task {
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
-		if (DEBUG) {
+		if (this.debug) {
 			if (packageNames != null) {
 				System.out.println("List all package names"); //$NON-NLS-1$
 				for (int i = 0, max = packageNames.length; i < max; i++) {
@@ -154,7 +165,7 @@ public class ApiFileGeneratorTask extends Task {
 		// collect all compilation units
 		File root = new File(this.projectLocation);
 		if (!root.exists() || !root.isDirectory()) {
-			if (DEBUG) {
+			if (this.debug) {
 				System.err.println("Should be a directory : " + this.projectLocation); //$NON-NLS-1$
 			}
 			return;
@@ -212,7 +223,7 @@ public class ApiFileGeneratorTask extends Task {
 		if (allFiles != null) {
 			for (int i = 0, max = allFiles.length; i < max; i++) {
 				CompilationUnit unit = new CompilationUnit(allFiles[i].getAbsolutePath());
-				if (DEBUG) {
+				if (this.debug) {
 					System.out.println("Unit name[" + i + "] : " + unit.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
@@ -229,7 +240,7 @@ public class ApiFileGeneratorTask extends Task {
 		// check the manifest file
 		String componentName = this.projectName;
 		String componentID = this.projectName;
-		if (DEBUG) {
+		if (this.debug) {
 			if (manifestMap != null) {
 				for (Iterator iterator = manifestMap.keySet().iterator(); iterator.hasNext();) {
 					Object key = iterator.next();
