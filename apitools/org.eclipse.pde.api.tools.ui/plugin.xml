@@ -195,6 +195,9 @@
          <markerTypeReference
                id="org.eclipse.pde.api.tools.unsupported_tags">
          </markerTypeReference>
+         <markerTypeReference
+               id="org.eclipse.pde.api.tools.api_component_resolution">
+         </markerTypeReference>
       </markerTypeCategory>
    </extension>
     <extension
@@ -220,8 +223,10 @@
              markerType="org.eclipse.pde.api.tools.marker.sincetags"/>
         <markerAttributeGrouping
               defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
-              markerType="org.eclipse.pde.api.tools.unsupported_tags">
-        </markerAttributeGrouping>
+              markerType="org.eclipse.pde.api.tools.unsupported_tags"/>
+        <markerAttributeGrouping
+              defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
+              markerType="org.eclipse.pde.api.tools.api_component_resolution"/>
     </extension>
    <extension
          point="org.eclipse.ui.ide.markerResolution">

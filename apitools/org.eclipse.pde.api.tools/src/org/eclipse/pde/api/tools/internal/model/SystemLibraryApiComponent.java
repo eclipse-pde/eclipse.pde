@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
@@ -112,35 +113,35 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getExecutionEnvironments()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getExecutionEnvironments()
 	 */
 	public String[] getExecutionEnvironments() {
 		return fExecEnv;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getId()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getId()
 	 */
 	public String getId() {
 		return fExecEnv[0];
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getLocation()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getLocation()
 	 */
 	public String getLocation() {
 		return fLocation;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getRequiredComponents()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getRequiredComponents()
 	 */
 	public IRequiredComponentDescription[] getRequiredComponents() {
 		return new IRequiredComponentDescription[0];
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getVersion()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getVersion()
 	 */
 	public String getVersion() {
 		return fVersion;
@@ -168,7 +169,7 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#isSystemComponent()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#isSystemComponent()
 	 */
 	public boolean isSystemComponent() {
 		return true;
@@ -210,6 +211,12 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#getLowestEEs()
 	 */
 	public String[] getLowestEEs() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getErrors()
+	 */
+	public ResolverError[] getErrors() throws CoreException {
 		return null;
 	}
 }

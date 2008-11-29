@@ -389,10 +389,18 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final Key KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED = 
 		getApiToolsKey(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED);
 
+	private static final Key KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT = 
+		getApiToolsKey(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT);
+
 	private final int API_SCANNING_USAGE_PAGE_ID = 0;
 	private final int COMPATIBILITY_PAGE_ID = 1;
 	private final int VERSION_MANAGEMENT_PAGE_ID = 2;
-	
+	private final int API_COMPONENT_RESOLUTION_PAGE_ID = 3;
+
+	private static Key[] fgAllApiComponentResolutionKeys = {
+		KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
+	};
+
 	private static Key[] fgAllCompatibilityKeys = {
 		KEY_API_COMPONENT_REMOVED_API_TYPE,
 		KEY_API_COMPONENT_REMOVED_TYPE,
@@ -577,7 +585,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE,
 		KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE,
 		KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
-//		KEY_REPORT_API_CHANGE_WHEN_MINOR_VERSION_INCREMENTED,
+		KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
 	};
 
 	/**
@@ -678,6 +686,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 					break;
 				case COMPATIBILITY_PAGE_ID :
 					setAllTo(this.newValue, fgAllCompatibilityKeys);
+					break;
+				case API_COMPONENT_RESOLUTION_PAGE_ID :
+					setAllTo(this.newValue, fgAllApiComponentResolutionKeys);
 					break;
 			}
 		}
@@ -804,6 +815,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 				folder,
 				PreferenceMessages.ApiToolingNotificationsBlock_2,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_9); 
+		createPage(
+				API_COMPONENT_RESOLUTION_PAGE_ID,
+				folder,
+				PreferenceMessages.ApiToolingNotificationsBlock_3,
+				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_10); 
 		restoreExpansionState();
 		validateSettings(null, null, null);
 		Dialog.applyDialogFont(fMainComp);
@@ -953,6 +969,18 @@ public class ApiErrorsWarningsConfigurationBlock {
 					KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE,
 					new String[] { ApiPlugin.VALUE_DISABLED, ApiPlugin.VALUE_ENABLED },
 					2);
+				break;
+			}
+			case API_COMPONENT_RESOLUTION_PAGE_ID : {
+				Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
+				initializeComboControls(vcomp,
+					new String[] {
+						PreferenceMessages.ReportApiComponentResolutionFailure,
+					},
+					new Key[] {
+						KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
+					}
+				);
 				break;
 			}
 			case COMPATIBILITY_PAGE_ID : {

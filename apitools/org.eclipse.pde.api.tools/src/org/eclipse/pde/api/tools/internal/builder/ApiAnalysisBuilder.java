@@ -59,9 +59,6 @@ import org.eclipse.jdt.internal.core.builder.ReferenceCollection;
 import org.eclipse.jdt.internal.core.builder.State;
 import org.eclipse.jdt.internal.core.builder.StringSet;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.ResolverError;
-import org.eclipse.osgi.service.resolver.VersionConstraint;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
@@ -72,7 +69,6 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -230,20 +226,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 	}
 	/**
-	 * Cleans up Api Baseline with errors markers on the specified project
-	 * @param project the given project
-	 */
-	private static void cleanupApiBaselineWithErrorsMarkers(IProject project) {
-		try {
-			if(DEBUG) {
-				System.out.println("cleaning api baseline with errors marker"); //$NON-NLS-1$
-			}
-			project.deleteMarkers(IApiMarkerConstants.API_BASELINE_ERROR_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-		} catch (CoreException e) {
-			ApiPlugin.log(e.getStatus());
-		}
-	}
-	/**
 	 * Cleans up only API compatibility markers on the given {@link IResource}
 	 * @param resource the given resource
 	 */
@@ -256,7 +238,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					// on full builds
 					resource.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 					resource.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
-					resource.deleteMarkers(IApiMarkerConstants.API_BASELINE_ERROR_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+					resource.deleteMarkers(IApiMarkerConstants.API_COMPONENT_RESOLUTION_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 				}
 			}
 		} catch(CoreException e) {
@@ -442,20 +424,22 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			fCurrentProject.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 			fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+			fCurrentProject.deleteMarkers(IApiMarkerConstants.API_COMPONENT_RESOLUTION_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
 		IApiProblem[] problems = fAnalyzer.getProblems();
 		String type = null;
 		for(int i = 0; i < problems.length; i++) {
-			type = getProblemTypeFromCategory(problems[i].getCategory(), problems[i].getKind());
+			int category = problems[i].getCategory();
+			type = getProblemTypeFromCategory(category, problems[i].getKind());
 			if(type == null) {
 				continue;
 			}
 			if(DEBUG) {
 				System.out.println("creating marker for: "+problems[i].toString()); //$NON-NLS-1$
 			}
-			createMarkerForProblem(type, problems[i]);
+			createMarkerForProblem(category, type, problems[i]);
 		}
 	}
 	
@@ -467,6 +451,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private String getProblemTypeFromCategory(int category, int kind) {
 		switch(category) {
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : {
+				return IApiMarkerConstants.API_COMPONENT_RESOLUTION_PROBLEM_MARKER;
+			}
 			case IApiProblem.CATEGORY_API_PROFILE: {
 				return IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER;
 			}
@@ -495,7 +482,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * attributes
 	 * @param problem the problem to create a marker from
 	 */
-	private void createMarkerForProblem(String type, IApiProblem problem) {
+	private void createMarkerForProblem(int category, String type, IApiProblem problem) {
 		IResource resource = resolveResource(problem);
 		if(resource == null) {
 			return;
@@ -503,9 +490,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			IMarker marker = resource.createMarker(type);
 			int line = problem.getLineNumber();
-			if(!type.equals(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER) &&
-					!type.equals(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER)) {
-				line += 1;
+			switch(category) {
+				case IApiProblem.CATEGORY_VERSION :
+				case IApiProblem.CATEGORY_API_PROFILE :
+				case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION :
+					break;
+				default :
+					line++;
 			}
 			marker.setAttributes(
 					new String[] {
@@ -1023,69 +1014,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @return the workspace {@link IApiProfile}
 	 */
 	private IApiBaseline getWorkspaceProfile() throws CoreException {
-		IApiBaseline workspaceBaseline = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
-		ResolverError[] errors = workspaceBaseline.getErrors();
-		if (errors != null) {
-			if (createBaselineErrorMarker(errors)) {
-				if (ApiPlugin.getDefault().getEnableState(IApiProblemTypes.ABORT_BUILD_WHEN_BASELINE_CONTAINS_ERRORS, this.fCurrentProject).equals(ApiPlugin.VALUE_ENABLED)) {
-					// abort
-					throw new OperationCanceledException();
-				}
-			}
-		} else {
-			// clear marker if any
-			cleanupApiBaselineWithErrorsMarkers(this.fCurrentProject);
-		}
-		return workspaceBaseline;
+		return ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
 	}
-	
-	private boolean createBaselineErrorMarker(ResolverError[] errors) throws CoreException {
-		IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.API_BASELINE_ERROR_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
-		if (markers.length > 0) {
-			// the marker already exists
-			return true;
-		}
-		StringBuffer buffer = null;
-		for (int i = 0, max = errors.length; i < max; i++) {
-			ResolverError error = errors[i];
-			VersionConstraint constraint = error.getUnsatisfiedConstraint();
-			if (constraint == null) continue;
-			VersionRange versionRange = constraint.getVersionRange();
-			String minimum = versionRange == null ? BuilderMessages.undefinedRange : versionRange.getMinimum().toString();
-			String maximum = versionRange == null ? BuilderMessages.undefinedRange : versionRange.getMaximum().toString();
-			if (buffer == null) {
-				buffer = new StringBuffer();
-			}
-			buffer.append(
-				BuilderMessages.bind(
-						BuilderMessages.reportUnsatisfiedConstraint,
-						new String[] {
-								constraint.getName(),
-								minimum,
-								maximum
-						}
-				));
-		}
-		if (buffer == null) {
-			// these are not errors with missing constraints
-			return false;
-		}
-		IMarker marker = this.fCurrentProject.createMarker(IApiMarkerConstants.API_BASELINE_ERROR_PROBLEM_MARKER);
-		marker.setAttributes(
-			new String[] {
-					IMarker.MESSAGE,
-					IMarker.SEVERITY,
-					IMarker.SOURCE_ID
-			},
-			new Object[] {
-				BuilderMessages.bind(BuilderMessages.ApiBaselineHasErrors, String.valueOf(buffer)),
-				new Integer(IMarker.SEVERITY_ERROR),
-				ApiAnalysisBuilder.SOURCE
-			}
-		);
-		return true;
-	}
-	
 	/**
 	 * Returns is the given classpath entry is optional or not
 	 * @param entry

@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.internal.provisional.model;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.osgi.service.resolver.ResolverError;
 
 /**
  * A collection of related API components that together make up
@@ -70,13 +69,6 @@ public interface IApiBaseline extends IApiElement {
 	 * @return API component or <code>null</code>
 	 */
 	public IApiComponent getApiComponent(String id);
-	
-	/**
-	 * Returns the list of errors found during the baseline resolution.
-	 * 
-	 * @return the list of errors or <code>null</code>  if none
-	 */
-	public ResolverError[] getErrors();
 	/**
 	 * Returns the execution environment this profile is resolved with, or
 	 * <code>null</code> if none (not yet determined or unable to bind to an

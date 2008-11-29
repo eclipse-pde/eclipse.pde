@@ -28,6 +28,7 @@ public class MarkerMessages extends NLS {
 	public static String FilterProblemResolution_since_tag;
 	public static String FilterProblemResolution_usage;
 	public static String FilterProblemResolution_version_number;
+	public static String FilterProblemResolution_api_component;
 	public static String RemoveUnsupportedTagOperation_removeing_unsupported_tag;
 
 	public static String SinceTagResolution_missing0;

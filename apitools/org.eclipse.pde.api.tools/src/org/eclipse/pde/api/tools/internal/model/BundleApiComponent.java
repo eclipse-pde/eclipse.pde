@@ -45,6 +45,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
@@ -1088,5 +1089,24 @@ public class BundleApiComponent extends AbstractApiComponent {
 	}
 	public IApiDescription getSystemApiDescription(int eeValue) throws CoreException {
 		return SystemLibraryApiDescription.newSystemLibraryApiDescription(eeValue);
+	}
+	public ResolverError[] getErrors() throws CoreException {
+		if (this.fBundleDescription == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.BASELINE_IS_DISPOSED));
+		}
+		IApiElement ancestor = getAncestor(IApiElement.BASELINE);
+		if (ancestor != null) {
+			if (ancestor instanceof ApiBaseline) {
+				ApiBaseline baseline = (ApiBaseline) ancestor;
+				ResolverError[] resolverErrors = baseline.getState().getResolverErrors(this.fBundleDescription);
+				if (resolverErrors.length == 0) return null;
+				return resolverErrors;
+			}
+		}
+		return null;
 	}
 }

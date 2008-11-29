@@ -1245,22 +1245,22 @@ public final class Util {
 	 * @return the string of the api problem category
 	 */
 	public static String getProblemCategory(int category) {
-		if(category == IApiProblem.CATEGORY_COMPATIBILITY) {
-			return "COMPATIBILITY"; //$NON-NLS-1$
+		switch(category) {
+			case IApiProblem.CATEGORY_COMPATIBILITY :
+				return "COMPATIBILITY"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_SINCETAGS :
+				return "SINCETAGS"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_USAGE :
+				return "USAGE"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_VERSION :
+				return "VERSION"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_API_PROFILE :
+				return "API_PROFILE"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION :
+				return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
+			default :
+				return "UNKNOWN_CATEGORY"; //$NON-NLS-1$
 		}
-		if(category == IApiProblem.CATEGORY_SINCETAGS) {
-			return "SINCETAGS"; //$NON-NLS-1$
-		}
-		if(category == IApiProblem.CATEGORY_USAGE) {
-			return "USAGE"; //$NON-NLS-1$
-		}
-		if(category == IApiProblem.CATEGORY_VERSION) {
-			return "VERSION"; //$NON-NLS-1$
-		}
-		if(category == IApiProblem.CATEGORY_API_PROFILE) {
-			return "API_PROFILE"; //$NON-NLS-1$
-		}
-		return "UNKNOWN_CATEGORY"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -1273,12 +1273,13 @@ public final class Util {
 	public static String getProblemElementKind(int category, int kind) {
 		switch(category) {
 			case IApiProblem.CATEGORY_COMPATIBILITY:
-			case IApiProblem.CATEGORY_SINCETAGS:{
+			case IApiProblem.CATEGORY_SINCETAGS: {
 				return getDeltaElementType(kind);
 			}
 			case IApiProblem.CATEGORY_USAGE:
 			case IApiProblem.CATEGORY_VERSION:
-			case IApiProblem.CATEGORY_API_PROFILE: {
+			case IApiProblem.CATEGORY_API_PROFILE:
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				return getDescriptorKind(kind);
 			}
 		}
@@ -1299,7 +1300,8 @@ public final class Util {
 			case IApiProblem.CATEGORY_SINCETAGS:
 			case IApiProblem.CATEGORY_USAGE:
 			case IApiProblem.CATEGORY_VERSION:
-			case IApiProblem.CATEGORY_API_PROFILE: {
+			case IApiProblem.CATEGORY_API_PROFILE:
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				switch(flags) {
 					case IApiProblem.LEAK_EXTENDS: {
 						return "LEAK_EXTENDS"; //$NON-NLS-1$
@@ -1337,7 +1339,7 @@ public final class Util {
 				}
 			}
 		}
-		return "UNKNOWN_KIND"; //$NON-NLS-1$
+		return "UNKNOWN_FLAG"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -1364,6 +1366,9 @@ public final class Util {
 			case IApiProblem.CATEGORY_API_PROFILE: {
 				return getApiProfileProblemKindName(kind);
 			}
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
+				return getApiComponentResolutionProblemKindName(kind);
+			}
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$
 	}
@@ -1377,6 +1382,20 @@ public final class Util {
 		switch(kind) {
 			case IApiProblem.API_PROFILE_MISSING: {
 				return "API_PROFILE_MISSING"; //$NON-NLS-1$
+			}
+		}
+		return "UNKOWN_KIND"; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns the string representation of the API profile problem kind
+	 * @param kind
+	 * @return the string of the API profile problem kind
+	 */
+	public static String getApiComponentResolutionProblemKindName(int kind) {
+		switch(kind) {
+			case IApiProblem.API_COMPONENT_RESOLUTION: {
+				return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
 			}
 		}
 		return "UNKOWN_KIND"; //$NON-NLS-1$

@@ -52,10 +52,10 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String DEFAULT_API_BASELINE_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_profile"; //$NON-NLS-1$
 	/**
-	 * Constant representing the id for the API baseline with errors problem marker.
-	 * Value is: <code>org.eclipse.pde.api.tools.api_baseline_with_errors</code>
+	 * Constant representing the id for the API component resolution problem marker.
+	 * Value is: <code>org.eclipse.pde.api.tools.api_component_resolution</code>
 	 */
-	public static final String API_BASELINE_ERROR_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_baseline_with_errors"; //$NON-NLS-1$
+	public static final String API_COMPONENT_RESOLUTION_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_component_resolution"; //$NON-NLS-1$
 	/**
 	 * Constant representing the id for the compatibility problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.compatibility</code> 
@@ -121,6 +121,11 @@ public interface IApiMarkerConstants {
 	 * Value is: <code>7</code>
 	 */
 	public static final int DUPLICATE_TAG_MARKER_ID = 7;
+	/**
+	 * Constant representing the apiMarkerID value for api component resolution markers.
+	 * Value is: <code>8</code>
+	 */
+	public static final int API_COMPONENT_RESOLUTION_MARKER_ID = 8;
 	/**
 	 * Constant representing the description for the bundle version marker.
 	 * Value is: <code>description</code>

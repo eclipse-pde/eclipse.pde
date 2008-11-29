@@ -57,8 +57,8 @@
     <attribute name="apiMarkerID"/>
  </extension>
  <extension
-       id="org.eclipse.pde.api.tools.api_baseline_with_errors"
-       name="%markerApiBaselineWithErrors.name"
+       id="org.eclipse.pde.api.tools.api_component_resolution"
+       name="%markerApiComponentResolution.name"
        point="org.eclipse.core.resources.markers">
     <super type="org.eclipse.core.resources.problemmarker"/>
     <persistent value="true"/>

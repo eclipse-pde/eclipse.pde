@@ -120,25 +120,34 @@ public class ApiProblemFactory {
 	}
 	
 	/**
-	 * Creates a new API usage {@link IApiProblem}
+	 * Creates a new API profile {@link IApiProblem}
 	 * @param resourcepath the path to the resource this problem was found in
-	 * @param typeName the type name this problem was found in
-	 * @param messageargs listing of arguments to pass in to the localized message.
 	 * The arguments are passed into the string in the order they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
-	 * @param linenumber the number of the line the problem occurred on
-	 * @param charstart the start of a char selection range
-	 * @param charend the end of a char selection range
 	 * @param element the element kind
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for API usage
 	 */
-	public static IApiProblem newApiProfileProblem(String resourcepath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind) {
+	public static IApiProblem newApiProfileProblem(String resourcepath, String[] argumentids, Object[] arguments, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_API_PROFILE, element, kind, IApiProblem.NO_FLAGS);
-		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
+		return newApiProblem(resourcepath, null, null, argumentids, arguments, -1, -1, -1, id);
 	}
-	
+	/**
+	 * Creates a new API component resolution {@link IApiProblem}
+	 * @param resourcepath the path to the resource this problem was found in
+	 * @param messageargs listing of arguments to pass in to the localized message.
+	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param argumentids the ids of arguments passed into the problem
+	 * @param arguments the arguments that correspond to the listing of ids
+	 * @param element the element kind
+	 * @param kind the kind
+	 * @return a new {@link IApiProblem} for API usage
+	 */
+	public static IApiProblem newApiComponentResolutionProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int element, int kind) {
+		int id = createProblemId(IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION, element, kind, IApiProblem.NO_FLAGS);
+		return newApiProblem(resourcepath, null, messageargs, argumentids, arguments, -1, -1, -1, id);
+	}
 	/**
 	 * Creates a new since tag {@link IApiProblem}
 	 * @param resourcepath the path to the resource this problem was found in
@@ -547,6 +556,14 @@ public class ApiProblemFactory {
 						}
 					}
 				}
+				break;
+			}
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
+				switch(kind) {
+					case IApiProblem.API_COMPONENT_RESOLUTION: {
+						return 99;
+					}
+				}
 			}
 		}
 		return 0;
@@ -562,6 +579,11 @@ public class ApiProblemFactory {
 	 */
 	public static String getProblemSeverityId(IApiProblem problem) {
 		switch(problem.getCategory()) {
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION :
+				switch(problem.getKind()) {
+					case IApiProblem.API_COMPONENT_RESOLUTION: return IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT;
+			}
+			break;
 			case IApiProblem.CATEGORY_API_PROFILE: {
 				switch(problem.getKind()) {
 					case IApiProblem.API_PROFILE_MISSING: return IApiProblemTypes.MISSING_DEFAULT_API_BASELINE;
@@ -644,6 +666,9 @@ public class ApiProblemFactory {
 		}
 		if(IApiProblemTypes.INVALID_SINCE_TAG_VERSION.equals(prefkey)) {
 			return IApiProblem.SINCE_TAG_INVALID;
+		}
+		if(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT.equals(prefkey)) {
+			return IApiProblem.API_COMPONENT_RESOLUTION;
 		}
 		if(prefkey != null) {
 			if(prefkey.indexOf("ADDED") > -1) { //$NON-NLS-1$

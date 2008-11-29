@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.provisional.model;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
@@ -212,4 +213,11 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * @throws CoreException if its baseline is disposed
 	 */
 	public String[] getLowestEEs() throws CoreException;
+	/**
+	 * Returns the list of errors found during the component resolution.
+	 * 
+	 * @return the list of errors or <code>null</code>  if none
+	 * @throws CoreException if its baseline is disposed
+	 */
+	public ResolverError[] getErrors() throws CoreException;
 }

@@ -100,6 +100,10 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 					fCategory = MarkerMessages.FilterProblemResolution_default_profile;
 					break;
 				}
+				case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
+					fCategory = MarkerMessages.FilterProblemResolution_api_component;
+					break;
+				}
 				case IApiProblem.CATEGORY_SINCETAGS: {
 					fCategory = MarkerMessages.FilterProblemResolution_since_tag;
 					break;

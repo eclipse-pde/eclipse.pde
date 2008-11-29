@@ -26,6 +26,7 @@ public class PreferenceMessages extends NLS {
 	public static String ApiProblemSeveritiesNoInstanciate;
 	public static String ApiProblemSeveritiesConfigurationBlock_8;
 	public static String ApiProblemSeveritiesConfigurationBlock_9;
+	public static String ApiProblemSeveritiesConfigurationBlock_10;
 	public static String ApiProfilesPreferencePage_0;
 	public static String ApiProfilesPreferencePage_1;
 	public static String ApiProfilesPreferencePage_2;
@@ -36,6 +37,7 @@ public class PreferenceMessages extends NLS {
 	public static String ApiToolingNotificationsBlock_0;
 	public static String ApiToolingNotificationsBlock_1;
 	public static String ApiToolingNotificationsBlock_2;
+	public static String ApiToolingNotificationsBlock_3;
 	public static String CompatibilityAPIComponentElement;
 	public static String CompatibilityAnnotationElement;
 	public static String CompatibilityInterfaceElement;
@@ -46,7 +48,8 @@ public class PreferenceMessages extends NLS {
 	public static String CompatibilityConstructorElement;
 	public static String CompatibilityTypeParameterElement;
 	public static String CompatibilityReportApiBreakageWhenMajorVersionIncremented;
-	public static String CompatibilityReportApiChangeWhenMinorVersionIncremented;
+
+	public static String ReportApiComponentResolutionFailure;
 
 	public static String ApiErrorsWarningsConfigurationBlock_error;
 	public static String ApiErrorsWarningsConfigurationBlock_warning;
@@ -71,7 +74,6 @@ public class PreferenceMessages extends NLS {
 	public static String ProjectSelectionDialog_checkbox_text;
 	public static String ApiProfilesConfigurationBlock_options_group_title;
 	public static String ApiProfilesConfigurationBlock_missing_default_api_profile_message;
-	public static String ApiProfilesConfigurationBlock_abort_build_when_errors;
 
 	public static String API_COMPONENT_REMOVED_API_TYPE;
 	public static String API_COMPONENT_REMOVED_TYPE;

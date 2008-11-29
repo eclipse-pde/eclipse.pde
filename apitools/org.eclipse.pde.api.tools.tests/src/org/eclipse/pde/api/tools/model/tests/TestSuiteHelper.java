@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.compiler.batch.Main;
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
@@ -199,6 +200,9 @@ public class TestSuiteHelper {
 			}
 			public IApiDescription getSystemApiDescription(int value)
 					throws CoreException {
+				return null;
+			}
+			public ResolverError[] getErrors() throws CoreException {
 				return null;
 			}
 		};

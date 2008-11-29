@@ -50,6 +50,9 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.service.resolver.ResolverError;
+import org.eclipse.osgi.service.resolver.VersionConstraint;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
@@ -163,14 +166,50 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		try {
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 6 + (changedtypes == null ? 0 : changedtypes.length));
 			fJavaProject = getJavaProject(component);
+			this.fFilterStore = filterStore;
+			this.fPreferences = preferences;
+			ResolverError[] errors = component.getErrors();
+			if (errors != null) {
+				// check if all errors have a constraint
+				StringBuffer buffer = null;
+				for (int i = 0, max = errors.length; i < max; i++) {
+					ResolverError error = errors[i];
+					VersionConstraint constraint = error.getUnsatisfiedConstraint();
+					if (constraint == null) continue;
+					VersionRange versionRange = constraint.getVersionRange();
+					String minimum = versionRange == null ? BuilderMessages.undefinedRange : versionRange.getMinimum().toString();
+					String maximum = versionRange == null ? BuilderMessages.undefinedRange : versionRange.getMaximum().toString();
+					if (buffer == null) {
+						buffer = new StringBuffer();
+					}
+					if (i > 0) {
+						buffer.append(',');
+					}
+					buffer.append(
+						BuilderMessages.bind(
+								BuilderMessages.reportUnsatisfiedConstraint,
+								new String[] {
+										constraint.getName(),
+										minimum,
+										maximum
+								}
+						));
+				}
+				if (buffer != null) {
+					// api component has errors that should be reported
+					createApiComponentResolutionProblem(component, String.valueOf(buffer));
+					if (baseline == null) {
+						checkDefaultBaselineSet();
+					}
+					return;
+				}
+			}
 			if(baseline != null) {
 				IApiComponent reference = baseline.getApiComponent(component.getId());
 				this.fBuildState = state;
 				if(fBuildState == null) {
 					fBuildState = getBuildState();
 				}
-				this.fFilterStore = filterStore;
-				this.fPreferences = preferences;
 				//compatibility checks
 				if(reference != null) {
 					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {reference.getId(), baseline.getName()}));
@@ -400,7 +439,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
-	
 	/**
 	 * Whether to ignore since tag checks. If <code>null</code> is passed in we are asking if all since tag checks should be ignored,
 	 * if a pref is specified we only want to know if that kind should be ignored
@@ -1037,7 +1075,21 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		return null;
 	}
-	
+	/**
+	 * Creates an {@link IApiProblem} for the given api component
+	 * @param component
+	 * @return a new api component resolution problem or <code>null</code>
+	 */
+	private void createApiComponentResolutionProblem(final IApiComponent component, final String message) throws CoreException {
+		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem(
+				Path.EMPTY.toPortableString(),
+				new String[] {component.getId(), message },
+				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
+				new Object[] {new Integer(IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID)},
+				IElementDescriptor.RESOURCE,
+				IApiProblem.API_COMPONENT_RESOLUTION);
+		addProblem(problem);
+	}
 	/**
 	 * Processes a delta to know if we need to check for since tag or version numbering problems
 	 * @param jproject
@@ -1457,13 +1509,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		IApiProblem problem = ApiProblemFactory.newApiProfileProblem(
 				Path.EMPTY.toPortableString(),
-				null,
-				null,
 				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
 				new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)},
-				-1,
-				-1,
-				-1,
 				IElementDescriptor.RESOURCE,
 				IApiProblem.API_PROFILE_MISSING);
 		addProblem(problem);

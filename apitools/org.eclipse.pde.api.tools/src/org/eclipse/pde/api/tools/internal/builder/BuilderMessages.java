@@ -31,7 +31,6 @@ public class BuilderMessages extends NLS {
 	public static String build_wrongFileFormat;
 	public static String build_saveStateComplete;
 	public static String build_cannotSaveState;
-	public static String ApiBaselineHasErrors;
 	public static String undefinedRange;
 	public static String reportUnsatisfiedConstraint;
 

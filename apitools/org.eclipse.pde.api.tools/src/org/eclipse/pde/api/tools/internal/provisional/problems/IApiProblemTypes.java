@@ -181,7 +181,7 @@ public interface IApiProblemTypes {
 	public static final String INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE = "incompatible_api_component_version_include_major_without_breaking_change"; //$NON-NLS-1$
 
 	public static final String MISSING_DEFAULT_API_BASELINE = "missing_default_api_profile"; //$NON-NLS-1$
-	public static final String ABORT_BUILD_WHEN_BASELINE_CONTAINS_ERRORS = "abort_build_when_baseline_contains_errors"; //$NON-NLS-1$
+	public static final String REPORT_RESOLUTION_ERRORS_API_COMPONENT = "report_resolution_errors_api_component"; //$NON-NLS-1$
 	
 	// API usage problems
 	/**

@@ -45,6 +45,10 @@ public interface IApiProblem {
 	public static final int CATEGORY_API_PROFILE = 0x50000000;
 	
 	/**
+	 * Constant representing the api component resolution problem category
+	 */
+	public static final int CATEGORY_API_COMPONENT_RESOLUTION = 0x60000000;
+	/**
 	 * Constant representing the offset of the message key portion of the id bit mask.
 	 */
 	public static final int OFFSET_MESSAGE = 0;
@@ -337,7 +341,15 @@ public interface IApiProblem {
 	 * @see #getKind()
 	 */
 	public static final int API_PROFILE_MISSING = 1;
-	
+
+	/**
+	 * Constant representing the value of a API component resolution {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>1</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int API_COMPONENT_RESOLUTION = 1;
 	/**
 	 * Returns the severity of the problem. See the severity constants defined in
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.ApiPlugin} class.
