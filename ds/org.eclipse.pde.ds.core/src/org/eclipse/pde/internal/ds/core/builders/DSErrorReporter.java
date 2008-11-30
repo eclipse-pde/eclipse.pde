@@ -316,6 +316,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void validatePropertySpecificTypeValue(String type, String value,
 			Element element) {
 
+		if (type == null) { // if null, we assume string
+			type = IDSConstants.VALUE_PROPERTY_TYPE_STRING;
+		}
 		// Validate Double, Long, Float, Integer, Byte, Short and
 		// String
 		if (!type.equals(IDSConstants.VALUE_PROPERTY_TYPE_CHAR)
