@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 	public void projectionEnabled() {
 		IBaseModel model = getInputContext().getModel();
 		if (model instanceof IEditingModel) {
-			fFoldingStructureProvider = FoldingStructureProviderFactory.createProvider(this, (IEditingModel) model);
+			fFoldingStructureProvider = getFoldingStructureProvider((IEditingModel) model);
 			if (fFoldingStructureProvider != null) {
 				fFoldingStructureProvider.initialize();
 				IReconciler rec = getSourceViewerConfiguration().getReconciler(getSourceViewer());
@@ -97,6 +97,10 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 				}
 			}
 		}
+	}
+
+	protected IFoldingStructureProvider getFoldingStructureProvider(IEditingModel model) {
+		return null;
 	}
 
 	public void projectionDisabled() {

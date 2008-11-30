@@ -192,40 +192,6 @@
             %wizard.profile.name
          </description>
       </wizard>
-      <wizard
-            category="org.eclipse.pde.userAssistance"
-            class="org.eclipse.pde.internal.ui.wizards.cheatsheet.NewCSFileWizard"
-            icon="$nl$/icons/etool16/new_cheatsheet_wiz.gif"
-            id="org.eclipse.pde.ui.NewCheatSheetWizard"
-            name="%new.cheat.sheet">
-         <description>
-         	%new.cheat.sheet.description
-         </description>
-      </wizard>
-      <category
-            id="org.eclipse.pde.userAssistance"
-            name="%category.name.user.assistance">
-      </category>
-      <wizard
-            category="org.eclipse.pde.userAssistance"
-            class="org.eclipse.pde.internal.ui.wizards.toc.NewTocFileWizard"
-            icon="$nl$/icons/etool16/toc_wiz.gif"
-            id="org.eclipse.pde.ui.NewTOCWizard"
-            name="%new.toc.name">
-         <description>
-            %new.toc.description
-         </description>
-      </wizard>
-      <wizard
-            category="org.eclipse.pde.userAssistance"
-            class="org.eclipse.pde.internal.ui.wizards.ctxhelp.NewCtxHelpWizard"
-            icon="$nl$/icons/etool16/ctx_help_wiz.gif"
-            id="org.eclipse.pde.ui.NewContextHelpWizard"
-            name="%new.ctxhelp.name">
-         <description>
-            %new.ctxhelp.description
-         </description>
-      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">
@@ -391,7 +357,7 @@
             class="org.eclipse.pde.internal.ui.samples.SampleEditor"
             id="org.eclipse.pde.ui.sampleEditor">
       </editor>
-      <editor
+<!--      <editor
             class="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditorContributor"
             icon="$nl$/icons/obj16/cheatsheet_obj.gif"
@@ -411,7 +377,7 @@
                contentTypeId="org.eclipse.pde.compositeCheatSheet">
          </contentTypeBinding>
       </editor>
-      <editor
+-->      <editor
             default="false"
             icon="$nl$/icons/obj16/discovery.gif"
             id="org.eclipse.pde.ui.schemaPreviewLauncher"
@@ -421,7 +387,7 @@
                contentTypeId="org.eclipse.pde.schema">
          </contentTypeBinding>
       </editor>
-      <editor
+<!--      <editor
             class="org.eclipse.pde.internal.ui.editor.toc.TocEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.toc.TocEditorContributor"
             default="true"
@@ -443,7 +409,7 @@
                contentTypeId="org.eclipse.pde.ctxHelpFile">
          </contentTypeBinding>
       </editor>
-   </extension>
+-->   </extension>
    <extension
          point="org.eclipse.ui.views">
       <category

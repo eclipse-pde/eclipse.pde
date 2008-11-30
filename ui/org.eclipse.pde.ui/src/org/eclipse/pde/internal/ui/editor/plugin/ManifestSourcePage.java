@@ -17,12 +17,10 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
@@ -302,4 +300,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		}
 	}
 
+	protected IFoldingStructureProvider getFoldingStructureProvider(IEditingModel model) {
+		return new PluginFoldingStructureProvider(this, model);
+	}
 }

@@ -27,8 +27,7 @@ import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
@@ -707,4 +706,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		}
 	}
 
+	protected IFoldingStructureProvider getFoldingStructureProvider(IEditingModel model) {
+		return new BundleFoldingStructureProvider(this, model);
+	}
 }

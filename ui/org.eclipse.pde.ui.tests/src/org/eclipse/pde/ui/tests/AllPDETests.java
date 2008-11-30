@@ -15,7 +15,6 @@ import junit.framework.TestSuite;
 import org.eclipse.pde.ui.tests.ee.ExportBundleTests;
 import org.eclipse.pde.ui.tests.imports.AllImportTests;
 import org.eclipse.pde.ui.tests.model.bundle.AllBundleModelTests;
-import org.eclipse.pde.ui.tests.model.cheatsheet.AllCheatSheetModelTests;
 import org.eclipse.pde.ui.tests.model.xml.AllXMLModelTests;
 import org.eclipse.pde.ui.tests.nls.AllNLSTests;
 import org.eclipse.pde.ui.tests.runtime.AllPDERuntimeTests;
@@ -31,7 +30,6 @@ public class AllPDETests {
 		suite.addTest(AllImportTests.suite());
 		suite.addTest(AllBundleModelTests.suite());
 		suite.addTest(AllXMLModelTests.suite());
-		suite.addTest(AllCheatSheetModelTests.suite());
 		suite.addTest(AllNLSTests.suite());
 		suite.addTest(AllPDERuntimeTests.suite());
 		suite.addTest(ExportBundleTests.suite());

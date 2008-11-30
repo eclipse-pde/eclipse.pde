@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -215,7 +215,7 @@ public class SplashConfigurationSection extends PDESection {
 		data.horizontalSpan = F_NUM_COLUMNS - 1;
 		fFieldTemplateCombo.getControl().setLayoutData(data);
 		// Add "none" element
-		fFieldTemplateCombo.add(PDEUIMessages.SimpleCSCommandDetails_6, 0);
+		fFieldTemplateCombo.add(PDEUIMessages.SplashConfigurationSection_none, 0);
 		// Add all splash screen types in exact order found
 		for (int i = 0; i < ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES.length; i++) {
 			int position = i + 1;
@@ -455,7 +455,7 @@ public class SplashConfigurationSection extends PDESection {
 		ISplashInfo info = getSplashInfo();
 		if (info.isDefinedSplashHandlerType() == false) {
 			// No splash handler type defined, set "none" in combo box
-			fFieldTemplateCombo.setText(PDEUIMessages.SimpleCSCommandDetails_6);
+			fFieldTemplateCombo.setText(PDEUIMessages.SplashConfigurationSection_none);
 			return;
 		}
 		String splashHandlerType = info.getFieldSplashHandlerType();

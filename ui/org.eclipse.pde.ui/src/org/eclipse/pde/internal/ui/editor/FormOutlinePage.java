@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,16 +48,22 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 	}
 
 	public class BasicLabelProvider extends LabelProvider {
+		private ILabelProvider fWrappedLabelProvider;
+
+		public BasicLabelProvider(ILabelProvider ilp) {
+			fWrappedLabelProvider = ilp;
+		}
+
 		public String getText(Object obj) {
 			if (obj instanceof IFormPage)
 				return ((IFormPage) obj).getTitle();
-			return PDEPlugin.getDefault().getLabelProvider().getText(obj);
+			return fWrappedLabelProvider.getText(obj);
 		}
 
 		public Image getImage(Object obj) {
 			if (obj instanceof IFormPage)
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PAGE_OBJ);
-			return PDEPlugin.getDefault().getLabelProvider().getImage(obj);
+			return fWrappedLabelProvider.getImage(obj);
 		}
 	}
 
@@ -121,7 +127,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 	 * @return
 	 */
 	public ILabelProvider createLabelProvider() {
-		return new BasicLabelProvider();
+		return new BasicLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 	}
 
 	public void dispose() {

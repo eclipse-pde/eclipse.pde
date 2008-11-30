@@ -30,8 +30,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddTargetPluginsWizard_windowTitle;
 
-	public static String BaseCheatSheetCreationOperation_0;
-
 	public static String BaseExtensionPointMainPage_errorMsgPluginNotFound;
 
 	public static String BuildSiteJob_name;
@@ -42,23 +40,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String CalculateUsesOperation_calculatingDirective;
 
-	public static String CheatSheetFileWizardPage_1;
-
-	public static String CheatSheetFileWizardPage_2;
-
-	public static String CheatSheetFileWizardPage_4;
-
-	public static String CheatSheetFileWizardPage_5;
-
-	public static String CheatSheetFileWizardPage_6;
-
-	public static String CheatSheetFileWizardPage_7;
-
-	public static String CheatSheetFileWizardPage_8;
-
 	public static String ContentSection_includeOptional;
-
-	public static String CSAbstractPage_msgRegisterThisCheatSheet;
 
 	public static String DependenciesView_showStateAction_description;
 
@@ -161,73 +143,6 @@ public class PDEUIMessages extends NLS {
 	public static String CommandList_groupName;
 
 	public static String CommandSerializerPart_name;
-
-	public static String CompCSCreationOperation_conclusion;
-
-	public static String CompCSCreationOperation_group;
-
-	public static String CompCSCreationOperation_introduction;
-
-	public static String CompCSCreationOperation_task;
-
-	public static String CompCSCreationOperation_title;
-
-	public static String CompCSDependenciesDetails_group;
-
-	public static String CompCSDependenciesDetails_task;
-
-	public static String CompCSDetails_Name;
-
-	public static String CompCSDetails_sectionDescription;
-
-	public static String CompCSEnclosingTextDetails_Conclusion;
-
-	public static String CompCSEnclosingTextDetails_ConclusionDescription;
-
-	public static String CompCSEnclosingTextDetails_EnclosingText;
-
-	public static String CompCSEnclosingTextDetails_Introduction;
-
-	public static String CompCSEnclosingTextDetails_IntroductionDescription;
-
-	public static String CompCSEnclosingTextDetails_SectionDescription;
-
-	public static String CompCSFileValidator_errorInvalidSimpleCS;
-
-	public static String CompCSGroupValidator_errorChildlessGroup;
-
-	public static String CompCSMasterTreeSection_addGroup;
-
-	public static String CompCSMasterTreeSection_addTask;
-
-	public static String CompCSTaskDetails_Name;
-
-	public static String CompCSTaskDetails_Path;
-
-	public static String CompCSTaskDetails_SectionDescription;
-
-	public static String CompCSTaskDetails_simpleCSWizardDescription;
-
-	public static String CompCSTaskDetails_simpleCSWizardTitle;
-
-	public static String CompCSTaskDetails_SkipLabel;
-
-	public static String CompCSTaskGroupDetails_Choice;
-
-	public static String CompCSTaskGroupDetails_KindToolTip;
-
-	public static String CompCSTaskGroupDetails_Name;
-
-	public static String CompCSTaskGroupDetails_SectionDescription;
-
-	public static String CompCSTaskGroupDetails_Sequence;
-
-	public static String CompCSTaskGroupDetails_Set;
-
-	public static String CompCSTaskGroupDetails_SkipLabel;
-
-	public static String CompCSTaskGroupDetails_Type;
-
 	public static String CompilersConfigurationTab_incompatEnv;
 
 	public static String ContainerRenameParticipant_renameFolders;
@@ -385,17 +300,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String SchemaPreviewLauncher_msgSaveChanges;
 
-	public static String SimpleCSCommandDetails_msgFieldDisabledCommand;
-
-	public static String SimpleCSCommandDetails_UICheckBoxOptionalCommand;
-
-	public static String SimpleCSItemDetails_msgFieldDisabledOptional;
-
-	public static String SimpleCSMasterTreeSection_msgButtonDisabledCommand;
-
-	public static String SimpleCSMasterTreeSection_msgButtonDisabledOptional;
-
 	public static String EditorSourcePage_name;
+
+	public static String SplashConfigurationSection_none;
 
 	public static String SplashConfigurationSection_msgDecorationTemplateSupport;
 
@@ -436,62 +343,6 @@ public class PDEUIMessages extends NLS {
 	public static String StateViewPage_title;
 
 	public static String TargetContentPage_title;
-
-	public static String TocPage_title;
-	public static String TocPage_msgRegisterThisTOC;
-	public static String TocPage_msgTOCLoadFailure;
-	public static String TocPage_msgTOCParsingFailure;
-	public static String TocPage_addTopic;
-	public static String TocPage_addLink;
-	public static String TocPage_addAnchor;
-	public static String TocPage_remove;
-	public static String TocPage_up;
-	public static String TocPage_down;
-
-	public static String TocPage_TocTopic;
-	public static String TocPage_TocLink;
-	public static String TocPage_TocAnchor;
-
-	public static String TocPage_invalidTocFile;
-	public static String TocPage_invalidHTMLFile;
-
-	public static String TocTreeSection_title;
-	public static String TocTreeSection_sectionDescription;
-
-	public static String TocDetails_title;
-	public static String TocDetails_name_desc;
-	public static String TocDetails_name;
-	public static String TocDetails_anchor_desc;
-	public static String TocDetails_anchor;
-	public static String TocDetails_topic_desc;
-	public static String TocDetails_topic;
-
-	public static String TocAnchorDetails_title;
-	public static String TocAnchorDetails_id;
-	public static String TocAnchorDetails_sectionDescription;
-
-	public static String TocLinkDetails_title;
-	public static String TocLinkDetails_tocPath;
-	public static String TocLinkDetails_tocPath_desc;
-
-	public static String TocTopicDetails_title;
-	public static String TocTopicDetails_name_desc;
-	public static String TocTopicDetails_page_desc;
-
-	public static String TocFileValidator_errorInvalidTOC;
-	public static String TocFileValidator_errorSameTOC;
-
-	public static String TocDetails_browseSelection;
-	public static String TocDetails_browseMessage;
-
-	public static String TocLinkDetails_browseSelection;
-	public static String TocLinkDetails_browseMessage;
-
-	public static String TocWizardPage_book;
-
-	public static String RegisterTocWizard_registerTOC;
-	public static String RegisterTocWizardPage_wizardPageDescription;
-	public static String RegisterTocWizardPage_labelPrimary;
 
 	public static String UpdateActivationResolution_bundleActivationPolicy_desc;
 	public static String UpdateActivationResolution_bundleActivationPolicy_label;
@@ -551,18 +402,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewCategoryNameDialog_name;
 
-	public static String NewCheatSheetFileWizard_0;
-
-	public static String NewCtxHelpOperation_ExampleContextId;
-
-	public static String NewCtxHelpOperation_ExampleTopicLabel;
-
-	public static String NewCtxHelpWizard_NewContextHelp;
-
-	public static String NewCtxHelpWizardPage_contextHelpDescription;
-
-	public static String NewCtxHelpWizardPage_contextHelpTitle;
-
 	public static String NewLibraryPluginCreationPage_pdependencies;
 
 	public static String OpenSchemaAction_errorMsgSchemaNotFound;
@@ -596,44 +435,6 @@ public class PDEUIMessages extends NLS {
 	public static String ProvisionerListSelectionPage_title;
 
 	public static String QuickOutlinePopupDialog_infoTextPressEscToExit;
-
-	public static String RegisterCSOperation_addNewCSExtensionNewPlugin;
-
-	public static String RegisterCSOperation_errorManifestReadOnly;
-
-	public static String RegisterCSOperation_modCSElementExistingPlugin;
-
-	public static String RegisterCSOperation_modCSExtensionExistingPlugin;
-
-	public static String RegisterCSOperation_newCSExtensionExistingPlugin;
-
-	public static String RegisterCSWizard_registerCheatSheet;
-
-	public static String RegisterCSWizardPage_buttonNew;
-
-	public static String RegisterCSWizardPage_dialogTitleNewCategory;
-
-	public static String RegisterCSWizardPage_groupRegistration;
-
-	public static String RegisterCSWizardPage_labelCategory;
-
-	public static String RegisterCSWizardPage_labelDescription;
-
-	public static String RegisterCSWizardPage_labelInstructionText;
-
-	public static String RegisterCSWizardPage_toolTipNewCategory;
-
-	public static String RegisterCSWizardPage_wizardPageDescription;
-
-	public static String RegisterCtxHelpWizard_0;
-
-	public static String RegisterCtxHelpWizard_2;
-
-	public static String RegisterCtxHelpWizard_3;
-
-	public static String RegisterCtxHelpWizard_4;
-
-	public static String RegisterCtxHelpWizard_5;
 
 	public static String RemoveUnknownExecEnvironments_label;
 
@@ -678,106 +479,6 @@ public class PDEUIMessages extends NLS {
 	public static String SchemaIncludesSection_missingWarningTitle;
 
 	public static String ShowDescriptionAction_schemaNotAvail;
-
-	public static String SimpleCheatSheetCreationOperation_0;
-
-	public static String SimpleCheatSheetCreationOperation_1;
-
-	public static String SimpleCheatSheetCreationOperation_2;
-
-	public static String SimpleCheatSheetCreationOperation_3;
-
-	public static String SimpleCSAddStepAction_0;
-
-	public static String SimpleCSAddSubStepAction_0;
-
-	public static String SimpleCSAddSubStepAction_1;
-
-	public static String SimpleCSCommandDetails_6;
-
-	public static String SimpleCSCommandDetails_DFErrorBody;
-
-	public static String SimpleCSCommandDetails_DFErrorTitle;
-
-	public static String SimpleCSDescriptionDetails_0;
-
-	public static String SimpleCSDetails_0;
-
-	public static String SimpleCSDetails_2;
-
-	public static String SimpleCSDetails_3;
-
-	public static String SimpleCSElementSection_0;
-
-	public static String SimpleCSElementSection_1;
-
-	public static String SimpleCSElementSection_2;
-
-	public static String SimpleCSElementSection_3;
-
-	public static String SimpleCSElementSection_4;
-
-	public static String SimpleCSElementSection_5;
-
-	public static String SimpleCSElementSection_6;
-
-	public static String SimpleCSElementSection_7;
-
-	public static String SimpleCSFileWizardPage_errorInvalidProjectSelected;
-
-	public static String SimpleCSFileWizardPage_simpleCSWizardDescription;
-
-	public static String SimpleCSHelpDetails_HelpContextID;
-
-	public static String SimpleCSHelpDetails_HelpDocumentLink;
-
-	public static String SimpleCSHelpDetails_selectHelpDocument;
-
-	public static String SimpleCSHelpDetails_helpDocumentSelection;
-
-	public static String SimpleCSHelpDetails_Type;
-
-	public static String SimpleCSHelpDetails_Value;
-
-	public static String SimpleCSIntroDetails_2;
-
-	public static String SimpleCSIntroDetails_3;
-
-	public static String SimpleCSItemDetails_0;
-
-	public static String SimpleCSItemDetails_11;
-
-	public static String SimpleCSItemDetails_10;
-
-	public static String SimpleCSItemDetails_12;
-
-	public static String SimpleCSItemDetails_14;
-
-	public static String SimpleCSItemDetails_5;
-
-	public static String SimpleCSItemDetails_6;
-
-	public static String SimpleCSItemDetails_7;
-
-	public static String SimpleCSItemDetails_8;
-
-	public static String SimpleCSItemDetails_9;
-
-	public static String SimpleCSRemoveStepAction_0;
-
-	public static String SimpleCSRemoveSubStepAction_0;
-
-	public static String SimpleCSSharedUIFactory_1;
-
-	public static String SimpleCSSharedUIFactory_2;
-
-	public static String SimpleCSSubItemDetails_0;
-
-	public static String SimpleCSSubItemDetails_10;
-
-	public static String SimpleCSSubItemDetails_11;
-
-	public static String SimpleCSSubItemDetails_3;
 
 	public static String TableSection_itemCount;
 
@@ -1537,15 +1238,6 @@ public class PDEUIMessages extends NLS {
 	public static String NewExtensionPointWizard_wtitle;
 	public static String NewExtensionPointWizard_title;
 	public static String NewExtensionPointWizard_desc;
-
-	public static String NewTocFileWizard_title;
-	public static String TocWizardPage_title;
-	public static String TocWizardPage_desc;
-	public static String TocWizardPage_emptyTocName;
-
-	public static String TocHTMLWizard_title;
-	public static String TocHTMLWizard_desc;
-	public static String TocHTMLWizardPage_badExtension;
 
 	public static String NewSchemaFileWizard_wtitle;
 	public static String NewSchemaFileWizard_title;
@@ -2933,72 +2625,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String CompilersConfigurationTab_buildPropertiesErrors;
 
-	public static String CtxHelpCommandDetails_command;
-
-	public static String CtxHelpCommandDetails_commandDetails;
-
-	public static String CtxHelpCommandDetails_label;
-
-	public static String CtxHelpCommandDetails_specifyDisplayLabel;
-
-	public static String CtxHelpCommandDetails_specifyTheCommand;
-
-	public static String CtxHelpContextDetails_contextDetails;
-
-	public static String CtxHelpContextDetails_description;
-
-	public static String CtxHelpContextDetails_id;
-
-	public static String CtxHelpContextDetails_specifyDescription;
-
-	public static String CtxHelpContextDetails_specifyID;
-
-	public static String CtxHelpContextDetails_specifyTitle;
-
-	public static String CtxHelpContextDetails_title;
-
-	public static String CtxHelpDescriptionDetails_description;
-
-	public static String CtxHelpDescriptionDetails_specifyDescription;
-
-	public static String CtxHelpEditor_0;
-
-	public static String CtxHelpPage_contextHelp;
-
-	public static String CtxHelpPage_errorParsing;
-
-	public static String CtxHelpPage_failedToLoad;
-
-	public static String CtxHelpTopicDetails_label;
-
-	public static String CtxHelpTopicDetails_location;
-
-	public static String CtxHelpTopicDetails_specifyLabel;
-
-	public static String CtxHelpTopicDetails_specifyLocation;
-
-	public static String CtxHelpTreeSection_addCommand;
-
-	public static String CtxHelpTreeSection_addContext;
-
-	public static String CtxHelpTreeSection_addTopic;
-
-	public static String CtxHelpTreeSection_contextHelp;
-
-	public static String CtxHelpTreeSection_defaultCommandName;
-
-	public static String CtxHelpTreeSection_defaultContextName;
-
-	public static String CtxHelpTreeSection_defaultTopicName;
-
-	public static String CtxHelpTreeSection_editContextHelpStructure;
-
-	public static String CtxHelpTreeSection_newCommand;
-
-	public static String CtxHelpTreeSection_newContext;
-
-	public static String CtxHelpTreeSection_newTopic;
-
 	public static String PluginsView_description;
 
 	public static String TargetProfileWindow_additionalLocations;
@@ -3241,12 +2867,6 @@ public class PDEUIMessages extends NLS {
 	public static String XMLSyntaxColorTab_externalizedStrings;
 
 	public static String XMLContentAssistProcessor_schemaLocation;
-
-	public static String SimpleCSPage_0;
-
-	public static String SimpleCSPage_msgCheatSheetLoadFailure;
-
-	public static String SimpleCSPage_msgCheatSheetParsingFailure;
 
 	public static String PDEJavaHelper_msgContentAssistAvailable;
 

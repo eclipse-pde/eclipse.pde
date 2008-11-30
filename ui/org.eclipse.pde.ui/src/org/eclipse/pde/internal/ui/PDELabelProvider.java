@@ -26,23 +26,14 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.core.ictxhelp.ICtxHelpConstants;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.itarget.*;
-import org.eclipse.pde.internal.core.itoc.ITocConstants;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.bundle.*;
-import org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject;
-import org.eclipse.pde.internal.core.text.toc.TocObject;
-import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -89,18 +80,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ISchemaObject) {
 			return getObjectText((ISchemaObject) obj);
-		}
-		if (obj instanceof ISimpleCSObject) {
-			return getObjectText((ISimpleCSObject) obj);
-		}
-		if (obj instanceof ICompCSObject) {
-			return getObjectText((ICompCSObject) obj);
-		}
-		if (obj instanceof TocObject) {
-			return getObjectText((TocObject) obj);
-		}
-		if (obj instanceof CtxHelpObject) {
-			return getObjectText((CtxHelpObject) obj);
 		}
 		if (obj instanceof FeaturePlugin) {
 			return getObjectText((FeaturePlugin) obj);
@@ -272,51 +251,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return text.toString();
 	}
 
-	/**
-	 * @param obj
-	 */
-	public String getObjectText(ISimpleCSObject obj) {
-		int limit = 50;
-
-		if (obj.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
-			limit = 40;
-		} else if (obj.getType() == ISimpleCSConstants.TYPE_ITEM) {
-			limit = 36;
-		} else if (obj.getType() == ISimpleCSConstants.TYPE_INTRO) {
-			limit = 36;
-		} else if (obj.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-			limit = 32;
-		}
-		return PDETextHelper.truncateAndTrailOffText(PDETextHelper.translateReadText(obj.getName()), limit);
-	}
-
-	/**
-	 * @param obj
-	 */
-	public String getObjectText(ICompCSObject obj) {
-		int limit = 40;
-		ICompCSObject parent = obj.getParent();
-		while (parent != null) {
-			limit = limit - 4;
-			parent = parent.getParent();
-		}
-		return PDETextHelper.truncateAndTrailOffText(PDETextHelper.translateReadText(obj.getName()), limit);
-	}
-
-	/**
-	 * @param obj
-	 */
-	public String getObjectText(TocObject obj) {
-		return PDETextHelper.translateReadText(obj.getName());
-	}
-
-	/**
-	 * @param obj
-	 */
-	public String getObjectText(CtxHelpObject obj) {
-		return PDETextHelper.translateReadText(obj.getName());
-	}
-
 	private String getObjectText(Locale obj) {
 		String country = " (" + obj.getDisplayCountry() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		return obj.getDisplayLanguage() + (" ()".equals(country) ? "" : country); //$NON-NLS-1$//$NON-NLS-2$
@@ -466,18 +400,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ISchemaElement) {
 			return getObjectImage((ISchemaElement) obj);
-		}
-		if (obj instanceof ISimpleCSObject) {
-			return getObjectImage((ISimpleCSObject) obj);
-		}
-		if (obj instanceof ICompCSObject) {
-			return getObjectImage((ICompCSObject) obj);
-		}
-		if (obj instanceof TocObject) {
-			return getObjectImage((TocObject) obj);
-		}
-		if (obj instanceof CtxHelpObject) {
-			return getObjectImage((CtxHelpObject) obj);
 		}
 		if (obj instanceof ISchemaAttribute) {
 			return getObjectImage((ISchemaAttribute) obj);
@@ -695,92 +617,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(IPluginExtensionPoint point) {
 		return get(PDEPluginImages.DESC_EXT_POINT_OBJ);
-	}
-
-	private Image getObjectImage(ISimpleCSObject object) {
-
-		if (object.getType() == ISimpleCSConstants.TYPE_ITEM) {
-			return get(PDEPluginImages.DESC_CSITEM_OBJ);
-		} else if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-			return get(PDEPluginImages.DESC_CSSUBITEM_OBJ);
-		} else if (object.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) {
-			return get(PDEPluginImages.DESC_CSUNSUPPORTED_OBJ);
-		} else if (object.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) {
-			return get(PDEPluginImages.DESC_CSUNSUPPORTED_OBJ);
-		} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
-			return get(PDEPluginImages.DESC_SIMPLECS_OBJ);
-		} else if (object.getType() == ISimpleCSConstants.TYPE_INTRO) {
-			return get(PDEPluginImages.DESC_CSINTRO_OBJ);
-		} else if (object.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) {
-			return get(PDEPluginImages.DESC_CSUNSUPPORTED_OBJ);
-		}
-		return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
-	}
-
-	/**
-	 * @param object
-	 */
-	private Image getObjectImage(ICompCSObject object) {
-
-		if (object.getType() == ICompCSConstants.TYPE_TASK) {
-			return get(PDEPluginImages.DESC_SIMPLECS_OBJ);
-		} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
-			return get(PDEPluginImages.DESC_CSTASKGROUP_OBJ);
-		} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
-			return get(PDEPluginImages.DESC_COMPCS_OBJ);
-		}
-		return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
-	}
-
-	/**
-	 * @param object
-	 */
-	private Image getObjectImage(TocObject object) {
-		switch (object.getType()) {
-			case ITocConstants.TYPE_TOC : {
-				return get(PDEPluginImages.DESC_TOC_OBJ);
-			}
-			case ITocConstants.TYPE_TOPIC : { //Return the leaf topic icon for a topic with no children
-				if (object.getChildren().isEmpty()) {
-					return get(PDEPluginImages.DESC_TOC_LEAFTOPIC_OBJ);
-				}
-				//Return the regular topic icon for a topic with children
-				return get(PDEPluginImages.DESC_TOC_TOPIC_OBJ);
-			}
-			case ITocConstants.TYPE_LINK : {
-				return get(PDEPluginImages.DESC_TOC_LINK_OBJ);
-			}
-			case ITocConstants.TYPE_ANCHOR : {
-				return get(PDEPluginImages.DESC_TOC_ANCHOR_OBJ);
-			}
-			default :
-				return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
-		}
-	}
-
-	/**
-	 * @param object
-	 */
-	private Image getObjectImage(CtxHelpObject object) {
-		switch (object.getType()) {
-			case ICtxHelpConstants.TYPE_ROOT : {
-				return get(PDEPluginImages.DESC_TOC_OBJ);
-			}
-			case ICtxHelpConstants.TYPE_CONTEXT : {
-				return get(PDEPluginImages.DESC_CTXHELP_CONTEXT_OBJ);
-			}
-			case ICtxHelpConstants.TYPE_DESCRIPTION : {
-				return get(PDEPluginImages.DESC_CTXHELP_DESC_OBJ);
-			}
-			case ICtxHelpConstants.TYPE_TOPIC : {
-				return get(PDEPluginImages.DESC_TOC_LEAFTOPIC_OBJ);
-			}
-			case ICtxHelpConstants.TYPE_COMMAND : {
-				return get(PDEPluginImages.DESC_CTXHELP_COMMAND_OBJ);
-			}
-			default :
-				return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
-		}
 	}
 
 	private Image getObjectImage(ISchemaElement element) {
