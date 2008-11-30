@@ -13,6 +13,7 @@
 package org.eclipse.pde.internal.ds.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -104,9 +105,24 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 
 		String header = bundleModel.getBundle().getHeader(DS_MANIFEST_KEY);
 		if (header != null) {
+			if (containsValue(header, filePath)) {
+				return;
+			}
 			filePath = header + ", " + filePath; //$NON-NLS-1$
 		}
 		bundleModel.getBundle().setHeader(DS_MANIFEST_KEY, filePath);
+	}
+
+	private boolean containsValue(String header, String value) {
+		value = value.trim();
+		StringTokenizer st = new StringTokenizer(header, ",");
+		while (st.hasMoreElements()) {
+			String token = st.nextToken();
+			if (value.equals(token.trim())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected void createContent() throws CoreException {
