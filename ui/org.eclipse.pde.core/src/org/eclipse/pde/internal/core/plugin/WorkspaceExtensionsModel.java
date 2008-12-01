@@ -10,13 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -27,6 +23,7 @@ import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
+import org.osgi.framework.Constants;
 
 public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements IEditableModel, IBundlePluginModelProvider {
 	private static final long serialVersionUID = 1L;
@@ -36,7 +33,7 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 	private transient IBundlePluginModelBase fBundleModel;
 
 	protected NLResourceHelper createNLResourceHelper() {
-		return new NLResourceHelper("plugin", getNLLookupLocations()); //$NON-NLS-1$
+		return new NLResourceHelper(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME, getNLLookupLocations());
 	}
 
 	public URL getNLLookupLocation() {

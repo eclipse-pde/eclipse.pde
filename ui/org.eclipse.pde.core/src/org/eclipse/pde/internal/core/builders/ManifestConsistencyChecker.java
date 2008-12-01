@@ -22,6 +22,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Constants;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
@@ -149,7 +150,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (model instanceof IBundlePluginModelBase) {
 			localization = ((IBundlePluginModelBase) model).getBundleLocalization();
 		} else {
-			localization = "plugin"; //$NON-NLS-1$
+			localization = Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 		}
 		if (localization != null)
 			return file.getProjectRelativePath().equals(new Path(localization + ".properties")); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.bundle;
 
 import java.io.InputStream;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IEditableModel;
@@ -19,11 +18,10 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDEManager;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.WorkspaceExtensionsModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.osgi.framework.Constants;
 
 public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginModelBase implements IBundlePluginModelBase {
 
@@ -68,7 +66,7 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 
 	public String getBundleLocalization() {
 		IBundle bundle = fBundleModel != null ? fBundleModel.getBundle() : null;
-		return bundle != null ? bundle.getLocalization() : null;
+		return bundle != null ? bundle.getLocalization() : Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 	}
 
 	protected NLResourceHelper createNLResourceHelper() {

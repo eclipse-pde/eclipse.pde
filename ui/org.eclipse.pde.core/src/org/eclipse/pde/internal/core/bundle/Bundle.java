@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.bundle;
 
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
@@ -58,7 +57,8 @@ public class Bundle extends BundleObject implements IBundle {
 	}
 
 	public String getLocalization() {
-		return getHeader(Constants.BUNDLE_LOCALIZATION);
+		String localization = getHeader(Constants.BUNDLE_LOCALIZATION);
+		return localization != null ? localization : Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 	}
 
 	public void setLocalization(String localization) {

@@ -10,15 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,9 +20,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.internal.core.NLResourceHelper;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEManager;
+import org.eclipse.pde.internal.core.*;
+import org.osgi.framework.Constants;
 
 /**
  * This class only represents 3.0 style plug-ins
@@ -46,7 +39,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 	private IBuildModel fBuildModel;
 
 	protected NLResourceHelper createNLResourceHelper() {
-		return new NLResourceHelper("plugin", PDEManager.getNLLookupLocations(this)); //$NON-NLS-1$
+		return new NLResourceHelper(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME, PDEManager.getNLLookupLocations(this));
 	}
 
 	public URL getNLLookupLocation() {

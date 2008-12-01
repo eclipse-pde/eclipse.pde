@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,44 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.ListIterator;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.builders.SchemaTransformer;
-import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
-import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
-import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
+import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
-import org.eclipse.pde.internal.core.plugin.WorkspaceExtensionsModel;
-import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
+import org.osgi.framework.Constants;
 
 public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
@@ -138,9 +119,9 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 				if (model instanceof IBundlePluginModelBase) {
 					localization = ((IBundlePluginModelBase) model).getBundleLocalization();
 				} else if (model != null) {
-					localization = "plugin"; //$NON-NLS-1$
+					localization = Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 				}
-				if (localization != null && filename.startsWith(localization)) {
+				if (localization != null && file.getProjectRelativePath().toString().startsWith(localization)) {
 					((AbstractNLModel) model).resetNLResourceHelper();
 				}
 			}
@@ -404,14 +385,13 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * 
 	 */
 	protected boolean isInterestingFolder(IFolder folder) {
-		if (folder.getName().equals("META-INF") && folder.getParent() instanceof IProject) { //$NON-NLS-1$
+		String folderName = folder.getName();
+		if (("META-INF".equals(folderName) || "OSGI-INF".equals(folderName) || "schema".equals(folderName)) && folder.getParent() instanceof IProject) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return true;
 		}
-
-		if (folder.getName().equals("schema") && folder.getParent() instanceof IProject) { //$NON-NLS-1$
+		if ("OSGI-INF/l10n".equals(folder.getProjectRelativePath().toString())) { //$NON-NLS-1$
 			return true;
 		}
-
 		return false;
 	}
 

@@ -12,13 +12,8 @@ package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.Iterator;
 import java.util.Map;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.jface.text.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.osgi.framework.Constants;
@@ -142,7 +137,8 @@ public class Bundle implements IBundle {
 	}
 
 	public String getLocalization() {
-		return getHeader(Constants.BUNDLE_LOCALIZATION);
+		String localization = getHeader(Constants.BUNDLE_LOCALIZATION);
+		return localization != null ? localization : Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 	}
 
 	public void setLocalization(String localization) {

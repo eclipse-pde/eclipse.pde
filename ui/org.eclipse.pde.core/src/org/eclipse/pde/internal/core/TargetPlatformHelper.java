@@ -183,7 +183,7 @@ public class TargetPlatformHelper {
 					if (files[i].isDirectory())
 						continue;
 					String name = files[i].getName();
-					if (name.startsWith("plugin") && name.endsWith(".properties") //$NON-NLS-1$ //$NON-NLS-2$
+					if (name.startsWith(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME) && name.endsWith(".properties") //$NON-NLS-1$
 							&& files[i].lastModified() > timestamp) {
 						return true;
 					}

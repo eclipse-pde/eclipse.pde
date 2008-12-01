@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,18 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 
 	public BundleLocalizationTestCase() {
 		super(Constants.BUNDLE_LOCALIZATION);
+	}
+	
+	public void testGetLocalizationDefault() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Manifest-Version: 1.0\n");
+		buffer.append("Bundle-ManifestVersion: 2\n");
+		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		fDocument.set(buffer.toString());
+		load();
+
+		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
+		assertEquals(((BundleLocalizationHeader) header).getLocalization(), Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME);
 	}
 
 	public void testGetLocalization() {

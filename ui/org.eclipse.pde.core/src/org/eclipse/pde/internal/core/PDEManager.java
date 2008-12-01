@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,16 +12,13 @@ package org.eclipse.pde.internal.core;
 
 import java.net.URL;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
+import org.osgi.framework.Constants;
 
 public class PDEManager {
 
@@ -97,7 +94,7 @@ public class PDEManager {
 		if (model instanceof ExternalPluginModelBase)
 			return ((ExternalPluginModelBase) model).getLocalization();
 
-		return "plugin"; //$NON-NLS-1$
+		return Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 	}
 
 }
