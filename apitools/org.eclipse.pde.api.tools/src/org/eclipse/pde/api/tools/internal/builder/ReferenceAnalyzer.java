@@ -86,7 +86,7 @@ public class ReferenceAnalyzer {
 		}
 		
 		public boolean visitPackage(String packageName) {
-			fMonitor.subTask(MessageFormat.format(SearchMessages.SearchEngine_0, new String[]{packageName}));
+			fMonitor.subTask(MessageFormat.format(BuilderMessages.ReferenceAnalyzer_checking_api_used_by, new String[]{packageName}));
 			return true;
 		}
 
@@ -100,6 +100,10 @@ public class ReferenceAnalyzer {
 		public void visit(String packageName, IApiTypeRoot classFile) {
 			if (!fMonitor.isCanceled()) {
 				try {
+					//don't process inner/anonymous/local types, this is done in the extractor
+					if(classFile.getTypeName().indexOf('$') > -1) {
+						return;
+					}
 					IApiType type = classFile.getStructure();
 					List references = type.extractReferences(fAllReferenceKinds, null);
 					// keep potential matches
@@ -165,15 +169,15 @@ public class ReferenceAnalyzer {
 			// 1. index problem detectors
 			indexProblemDetectors(detectors);
 			// 2. extract references
-			SubMonitor localMonitor = SubMonitor.convert(monitor,SearchMessages.SearchEngine_2, 3);
-			localMonitor.subTask(SearchMessages.SearchEngine_3); 
+			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.ReferenceAnalyzer_analyzing_api, 3);
+			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use); 
 			extractReferences(scope, localMonitor);
 			localMonitor.worked(1);
 			if (localMonitor.isCanceled()) {
 				return EMPTY_RESULT;
 			}
 			// 3. resolve problematic references
-			localMonitor.subTask(SearchMessages.SearchEngine_3);
+			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
 			resolveReferences(fReferences, localMonitor);
 			localMonitor.worked(1);
 			if (localMonitor.isCanceled()) {
@@ -181,7 +185,7 @@ public class ReferenceAnalyzer {
 			}		
 			// 4. create problems
 			List allProblems = new LinkedList();
-			localMonitor.subTask(SearchMessages.SearchEngine_3);
+			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
 			for (int i = 0; i < detectors.length; i++) {
 				IApiProblemDetector detector = detectors[i];
 				List problems = detector.createProblems();
@@ -254,7 +258,7 @@ public class ReferenceAnalyzer {
 	 * @exception CoreException if the scan fails
 	 */
 	private void extractReferences(IApiTypeContainer scope, IProgressMonitor monitor) throws CoreException {
-		fStatus = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, SearchMessages.SearchEngine_1, null); 
+		fStatus = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, BuilderMessages.ReferenceAnalyzer_api_analysis_error, null); 
 		String[] packageNames = scope.getPackageNames();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, packageNames.length);
 		ApiTypeContainerVisitor visitor = new Visitor(localMonitor);

@@ -88,7 +88,7 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 					ApiPlugin.log(
 						new Status(
 							IStatus.INFO, ApiPlugin.PLUGIN_ID,
-							MessageFormat.format(SearchMessages.AbstractTypeLeakDetector_0, new String[]{member.getName()})));
+							MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, new String[]{member.getName()})));
 				} else {
 					// enclosing type is not visible - this is a problem
 					return true;

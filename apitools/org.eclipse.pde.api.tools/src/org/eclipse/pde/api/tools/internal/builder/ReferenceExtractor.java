@@ -12,22 +12,27 @@ package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.Stack;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.ClassAdapter;
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
@@ -263,6 +268,9 @@ public class ReferenceExtractor extends ClassAdapter {
 			this.labelsToLocalMarkers = null;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.objectweb.asm.MethodAdapter#visitVarInsn(int, int)
+		 */
 		public void visitVarInsn(int opcode, int var) {
 			switch(opcode) {
 				case Opcodes.ASTORE :
@@ -271,7 +279,7 @@ public class ReferenceExtractor extends ClassAdapter {
 					}
 			}
 		}
-
+		
 		/* (non-Javadoc)
 		 * @see org.objectweb.asm.MethodAdapter#visitFieldInsn(int, java.lang.String, java.lang.String, java.lang.String)
 		 */
@@ -413,7 +421,23 @@ public class ReferenceExtractor extends ClassAdapter {
 			this.lastLineNumber = line;
 			this.linePositionTracker.addLineInfo(line, start);
 		}
+		
+		public void visitCode() {
+			super.visitCode();
+		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("Method visitor for: "); //$NON-NLS-1$
+			buffer.append(methodName);
+			buffer.append("\nCurrent line number: "); //$NON-NLS-1$
+			buffer.append(lastLineNumber);
+			return buffer.toString();
+		}
+		
 		/**
 		 * Creates a type from a type description. Works around bugs creating
 		 * types from array type signatures in ASM.
@@ -457,6 +481,13 @@ public class ReferenceExtractor extends ClassAdapter {
 					case Opcodes.INSTANCEOF: {
 						kind = ReferenceModifiers.REF_INSTANCEOF;
 						break;
+					}
+					case Opcodes.NEW: {
+						//handle it only for anonymous / local types
+						Reference ref = (Reference) fAnonymousTypes.get(processName(type.getInternalName()));
+						if(ref != null) {
+							this.linePositionTracker.addLocation(ref);
+						}
 					}
 				}
 				if(kind != -1) {
@@ -673,6 +704,9 @@ public class ReferenceExtractor extends ClassAdapter {
 			this.label = label;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
 		public int compareTo(Object o) {
 			return this.line - ((LineInfo) o).line;
 		}
@@ -703,8 +737,16 @@ public class ReferenceExtractor extends ClassAdapter {
 		}
 	}
 
-	private List collector = null;
-	String classname = null;
+	/**
+	 * The list we collect references in. Entries in the list are
+	 * of the type {@link org.eclipse.pde.api.tools.internal.provisional.builder.IReference}
+	 */
+	private Set collector = null;
+	
+	/**
+	 * The full internal name of the class we are extracting refs from
+	 */
+	private String classname = null;
 
 	/**
 	 * Current type being visited.
@@ -724,6 +766,11 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * is exited, the stack is popped.
 	 */
 	private Stack fSuperStack = new Stack();
+	
+	/**
+	 * Mapping of anonymous type names to their reference
+	 */
+	private HashMap fAnonymousTypes = new HashMap();
 
 	/**
 	 * Whether to extract references to elements within the classfile
@@ -743,6 +790,9 @@ public class ReferenceExtractor extends ClassAdapter {
 		ReferenceModifiers.MASK_REF_ALL ^
 			(ReferenceModifiers.REF_EXTENDS | ReferenceModifiers.REF_IMPLEMENTS);
 	
+	/**
+	 * If members should be visited for type visits
+	 */
 	private boolean fIsVisitMembers = false;
 	
 	/**
@@ -758,7 +808,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * @param collector the listing of references to annotate from this pass
 	 * @param referenceKinds kinds of references to extract as defined by {@link ReferenceModifiers}
 	 */
-	public ReferenceExtractor(IApiType type, List collector, int referenceKinds) {
+	public ReferenceExtractor(IApiType type, Set collector, int referenceKinds) {
 		super(new ClassNode());
 		fType = type;
 		this.collector = collector;
@@ -766,6 +816,22 @@ public class ReferenceExtractor extends ClassAdapter {
 		fIsVisitMembers = (VISIT_MEMBERS_MASK & fReferenceKinds) > 0; 
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Reference extractor for: "); //$NON-NLS-1$
+		buffer.append(fType.getName());
+		buffer.append("\n"); //$NON-NLS-1$
+		buffer.append("Reference kinds: "); //$NON-NLS-1$
+		buffer.append(Util.getReferenceKind(fReferenceKinds));
+		buffer.append("\n"); //$NON-NLS-1$
+		buffer.append("Is visiting members: "); //$NON-NLS-1$
+		buffer.append(fIsVisitMembers);
+		return buffer.toString();
+	}
+	
 	/**
 	 * Returns whether to consider a reference to the specified type.
 	 * Configured by setting to include references within the same
@@ -800,13 +866,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		String referencedTypeName = ref.getReferencedTypeName();
 		int index = referencedTypeName.lastIndexOf('$');
 		if (index > -1) {
-			String num = referencedTypeName.substring(index + 1);
-			try {
-				Integer.parseInt(num);
-				// if we can parse a number, this is an anonymous type ref
-				return false;
-			} catch (NumberFormatException e) {
-			}
+			
 		}
 		if (ref.getReferenceKind() == ReferenceModifiers.REF_VIRTUALMETHOD || ref.getReferenceKind() == ReferenceModifiers.REF_OVERRIDE) {
 			return true;
@@ -999,9 +1059,8 @@ public class ReferenceExtractor extends ClassAdapter {
 				}
 			}
 		}
-
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.objectweb.asm.ClassVisitor#visitEnd()
 	 */
@@ -1035,6 +1094,54 @@ public class ReferenceExtractor extends ClassAdapter {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String, java.lang.String, java.lang.String, int)
+	 */
+	public void visitInnerClass(String name, String outerName, String innerName, int access) {
+		try {
+			String pname = processName(name);
+			if(fType.getName().equals(pname) || !pname.startsWith(fType.getName())) {
+				return;
+			}
+			IApiComponent comp = fType.getApiComponent();
+			if(comp == null) {
+				return;
+			}
+			AbstractApiTypeRoot root = (AbstractApiTypeRoot) comp.findTypeRoot(pname);
+			if(root != null) {
+				IApiType type = root.getStructure();
+				Set refs = null;
+				if(type.isAnonymous() || type.isLocal()) {
+					//visit the class files for the dependent anonymous and local inner types
+					refs = processInnerClass(type, ReferenceModifiers.REF_EXTENDS);
+					fAnonymousTypes.put(pname, refs.iterator().next());
+				}
+				else {
+					refs = processInnerClass(type, fReferenceKinds);
+				}
+				if(refs != null) {
+					this.collector.addAll(refs);
+				}
+			}
+		}
+		catch(CoreException ce) {}
+	}
+	
+	/**
+	 * Processes the dependent inner class
+	 * @param type
+	 * @param refkinds
+	 * @return
+	 * @throws CoreException
+	 */
+	private Set processInnerClass(IApiType type, int refkinds) throws CoreException {
+		HashSet refs = new HashSet();
+		ReferenceExtractor extractor = new ReferenceExtractor(type, refs, refkinds);
+		ClassReader reader = new ClassReader(((AbstractApiTypeRoot)type.getTypeRoot()).getContents());
+		reader.accept(extractor, ClassReader.SKIP_FRAMES);
+		return refs;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.objectweb.asm.ClassVisitor#visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
 	 */
@@ -1078,7 +1185,7 @@ public class ReferenceExtractor extends ClassAdapter {
 					this.addTypeReference(Type.getReturnType(desc), ReferenceModifiers.REF_RETURNTYPE);
 					if(exceptions != null) {
 						for(int i = 0; i < exceptions.length; i++) {
-							this.addTypeReference(Type.getObjectType(exceptions[i]),ReferenceModifiers.REF_THROWS);
+							this.addTypeReference(Type.getObjectType(exceptions[i]), ReferenceModifiers.REF_THROWS);
 						}
 					}
 				}

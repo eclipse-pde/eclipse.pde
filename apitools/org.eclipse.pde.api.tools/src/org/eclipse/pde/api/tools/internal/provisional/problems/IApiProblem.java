@@ -325,6 +325,24 @@ public interface IApiProblem {
 	public static final int FIELD = 9;
 	
 	/**
+	 * Flags to indicate a local type (a class defined in a method)
+	 * <br>
+	 * Value is: <code>10</code>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int LOCAL_TYPE = 10;
+	
+	/**
+	 * Flags to indicate an anonymous type
+	 * <br>
+	 * Value is: <code>11</code>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int ANONYMOUS_TYPE = 11;
+	
+	/**
 	 * Flags to indicate an indirect reference
 	 * <br>
 	 * Value is: <code>10</code>

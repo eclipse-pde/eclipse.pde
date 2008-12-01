@@ -396,7 +396,14 @@ public class ApiProblemFactory {
 						}
 						break;
 					}
-					case IApiProblem.ILLEGAL_EXTEND: return 9;
+					case IApiProblem.ILLEGAL_EXTEND: {
+						switch(flags) {
+							case IApiProblem.NO_FLAGS: return 9;
+							case IApiProblem.LOCAL_TYPE : return 25;
+							case IApiProblem.ANONYMOUS_TYPE: return 28;
+						}
+						break;
+					}
 					case IApiProblem.ILLEGAL_INSTANTIATE: return 10;
 					case IApiProblem.ILLEGAL_OVERRIDE: return 11;
 					case IApiProblem.ILLEGAL_REFERENCE: {

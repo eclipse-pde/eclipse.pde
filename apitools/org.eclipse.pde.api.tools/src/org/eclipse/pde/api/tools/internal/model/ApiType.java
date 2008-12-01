@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,10 +49,6 @@ public class ApiType extends ApiMember implements IApiType {
 	private String fSuperclassName;
 	private String[] fSuperInterfaceNames;
 	private String fEnclosingTypeName;
-	private int fBits = 0;
-	
-	private static final int LOCAL_TYPE = 1;
-	private static final int ANONYMOUS_TYPE = 2;
 	
 	private static final IApiMethod[] EMPTY_METHODS = new IApiMethod[0];
 	private static final IApiField[] EMPTY_FIELDS = new IApiField[0];
@@ -92,6 +89,31 @@ public class ApiType extends ApiMember implements IApiType {
 	private IApiTypeRoot fStorage;
 	
 	/**
+	 * The signature of the enclosing method if this is a local type
+	 */
+	private String fEnclosingMethodSignature = null;
+	
+	/**
+	 * The name of the method that encloses this type if it is local
+	 */
+	private String fEnclosingMethodName = null;
+	
+	/**
+	 * If this is an anonymous class or not
+	 */
+	private boolean fAnonymous = false;
+	
+	/**
+	 * cached enclosing type once it has been successfully calculated
+	 */
+	private IApiType fEnclosingType = null;
+	
+	/**
+	 * The method that encloses this type
+	 */
+	private IApiMethod fEnclosingMethod = null;
+	
+	/**
 	 * Creates an API type. Note that if an API component is not specified,
 	 * then some operations will not be available (navigating super types,
 	 * member types, etc).
@@ -114,11 +136,11 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#extractReferences(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public List extractReferences(int referenceMask, IProgressMonitor monitor) throws CoreException {
-		List references = new LinkedList();
+		HashSet references = new HashSet();
 		ReferenceExtractor extractor = new ReferenceExtractor(this, references, referenceMask);
 		ClassReader reader = new ClassReader(((AbstractApiTypeRoot)fStorage).getContents());
 		reader.accept(extractor, ClassReader.SKIP_FRAMES);
-		return references;
+		return new LinkedList(references);
 	}
 
 	/* (non-Javadoc)
@@ -277,8 +299,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @throws CoreException
 	 */
 	private void requiresApiComponent() throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
-			Messages.ApiType_2));
+		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Messages.ApiType_2));
 	}
 
 	/* (non-Javadoc)
@@ -303,30 +324,53 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isAnonymous()
 	 */
 	public boolean isAnonymous() {
-		return (fBits & ANONYMOUS_TYPE) != 0;
+		return fAnonymous;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isLocal()
 	 */
 	public boolean isLocal() {
-		return (fBits & LOCAL_TYPE) != 0;
+		return fEnclosingMethodName != null || fEnclosingMethodSignature != null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getTypeRoot()
+	 */
+	public IApiTypeRoot getTypeRoot() {
+		return fStorage;
 	}
 	
 	/**
 	 * Used when building a type structure.
 	 */
 	public void setAnonymous() {
-		fBits |= ANONYMOUS_TYPE;
+		fAnonymous = true;
 	}
 	
 	/**
-	 * Used when building a type structure.
+	 * Sets the signature of the method that encloses this local type
+	 * @param signature the signature of the method. 
+	 * @see org.eclipse.jdt.core.Signature for more information
 	 */
-	public void setLocal() {
-		fBits |= LOCAL_TYPE;
+	public void setEnclosingMethodInfo(String name, String signature) {
+		fEnclosingMethodName = name;
+		fEnclosingMethodSignature = signature;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getEnclosingMethod()
+	 */
+	public IApiMethod getEnclosingMethod() {
+		if(fEnclosingMethod == null && fEnclosingMethodName != null) {
+			try {
+				fEnclosingMethod = getEnclosingType().getMethod(fEnclosingMethodName, fEnclosingMethodSignature);
+			}
+			catch (CoreException ce) {}
+		}
+		return fEnclosingMethod;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isClass()
 	 */
@@ -507,6 +551,9 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	public String getSimpleName() {
 		String name = getName();
+		if(this.isLocal() || this.isAnonymous()) {
+			return getAnonymousTypeName(name);
+		}
 		int index = name.lastIndexOf('$');
 		if (index == -1) {
 			index = name.lastIndexOf('.');
@@ -514,19 +561,56 @@ public class ApiType extends ApiMember implements IApiType {
 		if (index != -1) {
 			return name.substring(index + 1);
 		}
+		
 		return name;
+	}
+	
+	/**
+	 * Returns the name of an anonymous or local type with all 
+	 * qualification removed.
+	 * For example:
+	 * <pre><code>
+	 *  Class$3inner --> inner
+	 *  Class$3 --> null
+	 * </code></pre>
+	 * @param name the name to resolve
+	 * @return the name of an anonymous or local type with qualification removed or <code>null</code>
+	 * if the anonymous type has no name
+	 */
+	protected String getAnonymousTypeName(String name) {
+		if(name != null) {
+			int idx = name.lastIndexOf('$');
+			if(idx > -1) {
+				String num = name.substring(idx+1, name.length());
+				try {
+					Integer.parseInt(num);
+					return null;
+				}
+				catch(NumberFormatException nfe) {}
+				for(int i = 0; i < name.length(); i++) {
+					if(!Character.isDigit(num.charAt(i))) {
+						return num.substring(i, num.length());
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.model.ApiMember#getEnclosingType()
 	 */
 	public IApiType getEnclosingType() throws CoreException {
+		if(fEnclosingType != null) {
+			return fEnclosingType;
+		}
 		IApiType enclosing = super.getEnclosingType();
 		if (enclosing == null && fEnclosingTypeName != null) {
 			// anonymous or local
 			IApiTypeRoot root = getApiComponent().findTypeRoot(fEnclosingTypeName);
 			if (root != null) {
-				return root.getStructure();
+				fEnclosingType = root.getStructure();
+				return fEnclosingType;
 			}
 		}
 		return enclosing;

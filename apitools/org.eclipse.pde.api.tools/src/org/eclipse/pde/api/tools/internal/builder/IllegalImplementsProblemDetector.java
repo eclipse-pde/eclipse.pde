@@ -82,7 +82,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 			}
 		}
 		catch(CoreException ce) {
-			ApiPlugin.log(ce);
+			//ApiPlugin.log(ce);
 		}
 		return false;
 	}

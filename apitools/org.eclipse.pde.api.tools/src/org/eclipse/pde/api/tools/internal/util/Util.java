@@ -244,8 +244,6 @@ public final class Util {
 
 	public static final String UNKNOWN_FLAGS = "UNKNOWN_FLAGS"; //$NON-NLS-1$
 	public static final String UNKNOWN_KIND = "UNKOWN_KIND"; //$NON-NLS-1$
-	
-	public static final IApiTypeRoot[] NO_CLASS_FILES = new IApiTypeRoot[0];
 
 	// Trace for delete operation
 	/*
@@ -357,7 +355,7 @@ public final class Util {
 					// read reference type
 					int lastDotPosition = i;
 					i++;
-					while(i < chars.length && (currentChar = chars[i]) != ';') {
+					while(i < chars.length && currentChar != ';' && currentChar != '<' ) {
 						switch(currentChar) {
 							case '/' :
 							case '.' :
@@ -365,9 +363,10 @@ public final class Util {
 								break;
 						}
 						i++;
+						currentChar = chars[i];
 					}
 					buffer.append(chars, lastDotPosition + 1, i - lastDotPosition - 1);
-					buffer.append(';');
+					buffer.append(currentChar);
 					break;
 				}
 				case 'Q': {

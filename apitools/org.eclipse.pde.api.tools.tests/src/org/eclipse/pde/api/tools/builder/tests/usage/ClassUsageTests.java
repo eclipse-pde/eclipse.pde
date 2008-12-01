@@ -47,7 +47,7 @@ public class ClassUsageTests extends UsageTest {
 	 * @param kind
 	 * @return the problem id
 	 */
-	private int getProblemId(int kind, int flags) {
+	protected int getProblemId(int kind, int flags) {
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_USAGE, 
 				IElementDescriptor.TYPE, 
@@ -314,6 +314,192 @@ public class ClassUsageTests extends UsageTest {
 		String typename = "testC9";
 		setExpectedMessageArgs(new String[][] {
 				{"INoImpl1", typename}
+		});
+		deployTest(typename, inc);
+	}
+	
+	/**
+	 * Tests a local type defined in a method illegally extending a
+	 * restricted type using a full build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends1F() {
+		x10(false);
+	}
+	
+	/**
+	 * Tests a local type defined in a method illegally extending a
+	 * restricted type using an incremental build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends1I() {
+		x10(true);
+	}
+	
+	private void x10(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
+		});
+		String typename = "testA1";
+		setExpectedMessageArgs(new String[][] {
+				{"inner", "x.y.z.testA1", "m1()", CLASS_NAME}	
+		});
+		deployTest(typename, inc);
+	}
+	
+	/**
+	 * Tests an anonymous type defined in the return statement of a method illegally extending a
+	 * restricted type using a full build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends2F() {
+		x11(false);
+	}
+	
+	/**
+	 * Tests an anonymous type defined in the return statement of a method illegally extending a
+	 * restricted type using an incremental build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends2I() {
+		x11(true);
+	}
+	
+	private void x11(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
+		});
+		String typename = "testA2";
+		setExpectedMessageArgs(new String[][] {
+				{"x.y.z.testA2.m1()", CLASS_NAME}	
+		});
+		deployTest(typename, inc);
+	}
+	
+	/**
+	 * Tests an anonymous type defined in a method field illegally extending a
+	 * restricted type using a full build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends3F() {
+		x12(false);
+	}
+	
+	/**
+	 * Tests an anonymous type defined in a method field illegally extending a
+	 * restricted type using an incremental build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends3I() {
+		x12(true);
+	}
+	
+	private void x12(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
+		});
+		String typename = "testA3";
+		setExpectedMessageArgs(new String[][] {
+				{"x.y.z.testA3.m1()", CLASS_NAME}	
+		});
+		deployTest(typename, inc);
+	}
+	
+	/**
+	 * Tests an anonymous type defined in a class field illegally extending a
+	 * restricted type using a full build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends4F() {
+		x13(false);
+	}
+	
+	/**
+	 * Tests an anonymous type defined in a method field illegally extending a
+	 * restricted type using an incremental build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends4I() {
+		x13(true);
+	}
+	
+	private void x13(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
+		});
+		String typename = "testA4";
+		setExpectedMessageArgs(new String[][] {
+				{"x.y.z.testA4", CLASS_NAME}	
+		});
+		deployTest(typename, inc);
+	}
+	
+	/**
+	 * Tests a local type defined in a constructor illegally extending a
+	 * restricted type using a full build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends5F() {
+		x14(false);
+	}
+	
+	/**
+	 * Tests a local type defined in a constructor illegally extending a
+	 * restricted type using an incremental build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends5I() {
+		x14(true);
+	}
+	
+	private void x14(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
+		});
+		String typename = "testA5";
+		setExpectedMessageArgs(new String[][] {
+				{"inner", "x.y.z.testA5", "testA5()", CLASS_NAME}	
+		});
+		deployTest(typename, inc);
+	}
+	
+	/**
+	 * Tests a local anonymous field defined in a constructor illegally extending a
+	 * restricted type using a full build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends6F() {
+		x15(false);
+	}
+	
+	/**
+	 * Tests a local anonymous field defined in a constructor illegally extending a
+	 * restricted type using an incremental build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends6I() {
+		x15(true);
+	}
+	
+	private void x15(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
+		});
+		String typename = "testA6";
+		setExpectedMessageArgs(new String[][] {
+				{"x.y.z.testA6.testA6()", CLASS_NAME}	
 		});
 		deployTest(typename, inc);
 	}

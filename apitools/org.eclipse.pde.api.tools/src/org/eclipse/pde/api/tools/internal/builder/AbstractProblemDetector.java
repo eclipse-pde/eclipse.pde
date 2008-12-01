@@ -203,6 +203,10 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	protected String getTypeName(IApiMember member) throws CoreException {
 		switch (member.getType()) {
 			case IApiElement.TYPE:
+				IApiType type = (IApiType) member;
+				if(type.isAnonymous() || type.isLocal()) {
+					return type.getEnclosingType().getName();
+				}
 				return member.getName();
 			default:
 				return member.getEnclosingType().getName();
@@ -232,9 +236,13 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @throws CoreException
 	 */
 	protected void noSourcePosition(IType type, IReference reference) throws CoreException {
+		String name = reference.getReferencedMemberName();
+		if(name == null) {
+			name = BuilderMessages.IllegalExtendsProblemDetector_an_anonymous_declaration;
+		}
 		IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
-				MessageFormat.format(SearchMessages.AbstractProblemDetector_could_not_locate_source_range, 
-						new String[] {reference.getReferencedMemberName(), type.getElementName()}));
+				MessageFormat.format(BuilderMessages.AbstractProblemDetector_could_not_locate_src_pos, 
+						new String[] {name, type.getElementName()}));
 		throw new CoreException(status);
 	}
 	

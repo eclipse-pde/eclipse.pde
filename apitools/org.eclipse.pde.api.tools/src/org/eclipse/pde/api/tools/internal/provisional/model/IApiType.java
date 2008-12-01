@@ -25,6 +25,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IApiType extends IApiMember {
 
 	/**
+	 * Returns the {@link IApiMethod} that encloses this type, iff this type is
+	 * a local type (class defined in a method body). A call to this method will
+	 * load the enclosing type to find the enclosing method.
+	 * 
+	 * @return the {@link IApiMethod} that encloses this type or <code>null</code>
+	 */
+	public IApiMethod getEnclosingMethod();
+	
+	/**
 	 * Returns the field with the specified name
 	 * in this type (for example, <code>"bar"</code>), or <code>null</code>
 	 * if none.
@@ -200,6 +209,13 @@ public interface IApiType extends IApiMember {
 	 * @return unqualified name
 	 */
 	public String getSimpleName();
+	
+	/**
+	 * Returns the {@link IApiTypeRoot} that this type is defined in
+	 * 
+	 * @return the {@link IApiTypeRoot} this type is defined in
+	 */
+	public IApiTypeRoot getTypeRoot();
 	
 	/**
 	 * Extracts and returns all references made from this type of the specified kind.

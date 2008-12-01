@@ -78,7 +78,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 		}
 		super.visit(version, access, name, signature, superName, interfaces);
 	}
-
+	
 	/**
 	 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String, java.lang.String, java.lang.String, int)
 	 */
@@ -86,9 +86,6 @@ public class TypeStructureBuilder extends ClassAdapter {
 		super.visitInnerClass(name, outerName, innerName, access);
 		String currentName = name.replace('/', '.');
 		if (currentName.equals(fType.getName())) {
-			if (outerName == null) {
-				fType.setLocal();
-			}
 			if (innerName == null) {
 				fType.setAnonymous();
 			}
@@ -105,12 +102,25 @@ public class TypeStructureBuilder extends ClassAdapter {
 			}
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.objectweb.asm.ClassAdapter#visitOuterClass(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public void visitOuterClass(String owner, String name, String desc) {
+		fType.setEnclosingMethodInfo(name, desc);
+	}
 
+	/* (non-Javadoc)
+	 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
+	 */
 	public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
 		fType.addField(name, desc, signature, access, value);
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.objectweb.asm.ClassAdapter#visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
+	 */
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 		String[] names = null;
 		if (exceptions != null && exceptions.length > 0) {

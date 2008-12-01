@@ -285,7 +285,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		fCurrentProject = getProject();
 		fAnalyzer = getAnalyzer();
-		if (fCurrentProject == null || !fCurrentProject.isAccessible() || !fCurrentProject.hasNature(ApiPlugin.NATURE_ID) ||
+		if (fCurrentProject == null || 
+				!fCurrentProject.isAccessible() || 
+				!fCurrentProject.hasNature(ApiPlugin.NATURE_ID) ||
 				hasBeenBuilt(fCurrentProject)) {
 			return new IProject[0];
 		}
@@ -629,7 +631,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					collectAllQualifiedNames(fTypesToCheck, tnames, cnames, localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
 					IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline();
-					fAnalyzer.analyzeComponent(fBuildState, null, null, profile, apiComponent, (String[])tnames.toArray(new String[tnames.size()]), (String[])cnames.toArray(new String[cnames.size()]), localMonitor.newChild(1));
+					fAnalyzer.analyzeComponent(fBuildState, 
+							null, 
+							null, 
+							profile, 
+							apiComponent, 
+							(String[])tnames.toArray(new String[tnames.size()]), 
+							(String[])cnames.toArray(new String[cnames.size()]), 
+							localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
 					createMarkers();
 					updateMonitor(localMonitor, 1);
@@ -677,13 +686,15 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				cleanupUsageMarkers(file);
 				updateMonitor(monitor, 0);
 				types = unit.getAllTypes();
+				String tname = null;
 				for (int i = 0; i < types.length; i++) {
 					IType type2 = types[i];
 					if (type2.isMember()) {
-						tnames.add(type2.getFullyQualifiedName('$'));
+						tname = type2.getFullyQualifiedName('$');
 					} else {
-						tnames.add(type2.getFullyQualifiedName());
+						tname = type2.getFullyQualifiedName();
 					}
+					tnames.add(tname);
 				}
 			} catch (JavaModelException e) {
 				ApiPlugin.log(e.getStatus());
