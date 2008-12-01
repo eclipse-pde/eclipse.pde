@@ -608,4 +608,54 @@ public class MethodParameterLeak extends LeakTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}	
+	
+	public void tesMethodParameterLeak19F() {
+		x19(false);
+	}
+	
+	public void testMethodParameterLeak19I() {
+		x19(true);
+	}
+	
+	/**
+	 * Tests that a protected method with an internal parameter is not reported in a final class
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
+	 * @param inc
+	 */
+	private void x19(boolean inc) {
+		expectingNoProblems();
+		String typename = "testMPL19";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	public void tesMethodParameterLeak20F() {
+		x20(false);
+	}
+	
+	public void testMethodParameterLeak20I() {
+		x20(true);
+	}
+	
+	/**
+	 * Tests that a protected method with an internal parameter is not reported in a final class
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
+	 * @param inc
+	 */
+	private void x20(boolean inc) {
+		expectingNoProblems();
+		String typename = "testMPL20";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				new String[] {TESTING_PACKAGE+"."+typename}, 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
 }

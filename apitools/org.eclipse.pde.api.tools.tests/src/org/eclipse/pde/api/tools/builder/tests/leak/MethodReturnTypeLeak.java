@@ -331,13 +331,11 @@ public class MethodReturnTypeLeak extends LeakTest {
 	}
 	
 	private void x9(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemIdSet(4));
+		setExpectedProblemIds(getDefaultProblemIdSet(2));
 		String typename = "testMRL9";
 		setExpectedMessageArgs(new String[][] {
 				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"},
-				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"}});
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"}});
 		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
 				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
@@ -583,6 +581,56 @@ public class MethodReturnTypeLeak extends LeakTest {
 				new String[] {TESTING_PACKAGE_INTERNAL}, 
 				new String[] {TESTING_PACKAGE+"."+typename},
 				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	public void testMethodReturnType18F() {
+		x18(false);
+	}
+	
+	public void testMethodReturnType18I() {
+		x18(true);
+	}
+	
+	/**
+	 * Tests that a protected method in a final class does not report any return type leaks
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
+	 * @param inc
+	 */
+	private void x18(boolean inc) {
+		expectingNoProblems();
+		String typename = "testMRL18";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	public void testMethodReturnType19F() {
+		x19(false);
+	}
+	
+	public void testMethodReturnType19I() {
+		x19(true);
+	}
+	
+	/**
+	 * Tests that a protected method(s) in a final class does not report any return type leaks
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
+	 * @param inc
+	 */
+	private void x19(boolean inc) {
+		expectingNoProblems();
+		String typename = "testMRL19";
+		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
+				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
+				new String[] {TESTING_PACKAGE_INTERNAL}, 
+				null, 
+				false, 
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}

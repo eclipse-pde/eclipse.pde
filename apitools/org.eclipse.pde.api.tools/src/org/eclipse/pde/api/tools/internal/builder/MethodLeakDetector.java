@@ -201,6 +201,11 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 		return false;
 	}
 	
+	/**
+	 * Returns if the source API restrictions for the given member matches the restrictions in the parent API description
+	 * @param member
+	 * @return true if it matches, false otherwise
+	 */
 	protected boolean matchesSourceApiRestrictions(IApiMember member) {
 		IApiComponent apiComponent = member.getApiComponent();
 		try {
@@ -227,8 +232,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 						return  (ares & RestrictionModifiers.NO_REFERENCE) == 0; 
 					}
 					else {
-						return true;
-						//return fSourceRestriction != 0;
+						return !(Util.isProtected(method.getModifiers()) && Util.isFinal(method.getEnclosingType().getModifiers()));
 					}
 				}
 			} else {
@@ -240,6 +244,11 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 		return false;
 	}	
 	
+	/**
+	 * Returns if the source modifiers for the given member match the ones specified in the detector
+	 * @param member
+	 * @return true if the modifiers match, false otherwise
+	 */
 	protected boolean matchesSourceModifiers(IApiMember member) {
 		while (member != null) {
 			int modifiers = member.getModifiers();
