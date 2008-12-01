@@ -32,7 +32,7 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
 		fDocument.set(buffer.toString());
 		load();
 
@@ -44,7 +44,7 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
 		buffer.append(fHeaderName);
 		buffer.append(": plugin\n");
 		fDocument.set(buffer.toString());
@@ -59,7 +59,7 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
 		fDocument.set(buffer.toString());
 		load(true);
 
@@ -84,7 +84,7 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
 		buffer.append(fHeaderName);
 		buffer.append(": oldLocalization\n");
 		fDocument.set(buffer.toString());
