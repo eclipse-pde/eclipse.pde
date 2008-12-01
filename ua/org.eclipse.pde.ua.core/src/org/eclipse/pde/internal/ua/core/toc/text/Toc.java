@@ -47,7 +47,7 @@ public class Toc extends TocTopic {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#getType()
+	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getType()
 	 */
 	public int getType() {
 		return TYPE_TOC;

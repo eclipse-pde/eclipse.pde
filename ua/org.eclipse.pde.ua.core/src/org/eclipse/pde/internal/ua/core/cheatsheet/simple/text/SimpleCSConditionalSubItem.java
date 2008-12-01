@@ -35,9 +35,9 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
 	 * #
-	 * addSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem
+	 * addSubItem(org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem
 	 * )
 	 */
 	public void addSubItem(ISimpleCSSubItem subitem) {
@@ -48,7 +48,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
 	 * #getCondition()
 	 */
 	public String getCondition() {
@@ -59,7 +59,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
 	 * #getSubItems()
 	 */
 	public ISimpleCSSubItem[] getSubItems() {
@@ -73,8 +73,8 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem
-	 * #removeSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
+	 * #removeSubItem(org.eclipse.pde.internal.ua.core.icheatsheet.simple.
 	 * ISimpleCSSubItem)
 	 */
 	public void removeSubItem(ISimpleCSSubItem subitem) {
@@ -85,7 +85,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSConditionalSubItem
 	 * #setCondition(java.lang.String)
 	 */
 	public void setCondition(String condition) {
@@ -96,7 +96,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getChildren
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getChildren
 	 * ()
 	 */
 	public List getChildren() {
@@ -108,7 +108,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getName
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getName
 	 * ()
 	 */
 	public String getName() {
@@ -120,7 +120,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getType
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getType
 	 * ()
 	 */
 	public int getType() {

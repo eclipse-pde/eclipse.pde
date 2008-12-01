@@ -36,7 +36,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#getReturns
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#getReturns
 	 * ()
 	 */
 	public String getReturns() {
@@ -46,7 +46,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#
 	 * getSerialization()
 	 */
 	public String getSerialization() {
@@ -57,7 +57,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#setReturns
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#setReturns
 	 * (java.lang.String)
 	 */
 	public void setReturns(String returns) {
@@ -67,7 +67,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSCommand#
 	 * setSerialization(java.lang.String)
 	 */
 	public void setSerialization(String serialization) {
@@ -77,7 +77,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#
+	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
 	public List getChildren() {
@@ -88,7 +88,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
 	 * ()
 	 */
 	public String getName() {
@@ -100,7 +100,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
 	 * ()
 	 */
 	public int getType() {

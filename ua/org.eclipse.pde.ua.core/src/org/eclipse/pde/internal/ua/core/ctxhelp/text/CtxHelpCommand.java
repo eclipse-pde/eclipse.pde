@@ -30,7 +30,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.text.toc.TocObject#canBeParent()
+	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canBeParent()
 	 */
 	public boolean canBeParent() {
 		return false;
@@ -39,7 +39,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#getType()
+	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getType()
 	 */
 	public int getType() {
 		return TYPE_COMMAND;
@@ -48,7 +48,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#getName()
+	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getName()
 	 */
 	public String getName() {
 		return getLabel();
@@ -96,8 +96,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canAddChild(
-	 * org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject)
+	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddChild(org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject)
 	 */
 	public boolean canAddChild(int objectType) {
 		return false;
@@ -107,7 +106,7 @@ public class CtxHelpCommand extends CtxHelpObject {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canAddSibling
+	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddSibling
 	 * (int)
 	 */
 	public boolean canAddSibling(int objectType) {

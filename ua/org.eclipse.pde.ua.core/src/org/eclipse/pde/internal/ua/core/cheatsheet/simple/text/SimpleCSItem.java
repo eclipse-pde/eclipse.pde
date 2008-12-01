@@ -38,8 +38,8 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItem
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#addSubItem
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void addSubItem(ISimpleCSSubItemObject subitem) {
 		addChildNode((IDocumentElementNode) subitem, true);
@@ -49,9 +49,9 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItem
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#addSubItem
 	 * (int,
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void addSubItem(int index, ISimpleCSSubItemObject subitem) {
 		addChildNode((IDocumentElementNode) subitem, index, true);
@@ -61,7 +61,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getDescription
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getDescription
 	 * ()
 	 */
 	public ISimpleCSDescription getDescription() {
@@ -72,7 +72,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getDialog
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getDialog
 	 * ()
 	 */
 	public boolean getDialog() {
@@ -83,8 +83,8 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getNextSibling
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getNextSibling
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public ISimpleCSSubItemObject getNextSibling(ISimpleCSSubItemObject subitem) {
 		return (ISimpleCSSubItemObject) getNextSibling(
@@ -94,7 +94,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#
 	 * getOnCompletion()
 	 */
 	public ISimpleCSOnCompletion getOnCompletion() {
@@ -104,9 +104,9 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#
 	 * getPreviousSibling
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public ISimpleCSSubItemObject getPreviousSibling(
 			ISimpleCSSubItemObject subitem) {
@@ -118,7 +118,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getSkip()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getSkip()
 	 */
 	public boolean getSkip() {
 		return getBooleanAttributeValue(ATTRIBUTE_SKIP, false);
@@ -127,7 +127,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#
 	 * getSubItemCount()
 	 */
 	public int getSubItemCount() {
@@ -138,7 +138,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getSubItems
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getSubItems
 	 * ()
 	 */
 	public ISimpleCSSubItemObject[] getSubItems() {
@@ -152,7 +152,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getTitle()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#getTitle()
 	 */
 	public String getTitle() {
 		return getXMLAttributeValue(ATTRIBUTE_TITLE);
@@ -162,7 +162,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#hasSubItems
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#hasSubItems
 	 * ()
 	 */
 	public boolean hasSubItems() {
@@ -173,8 +173,8 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#indexOfSubItem
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#indexOfSubItem
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public int indexOfSubItem(ISimpleCSSubItemObject subitem) {
 		return indexOf((IDocumentElementNode) subitem);
@@ -184,8 +184,8 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#isFirstSubItem
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#isFirstSubItem
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public boolean isFirstSubItem(ISimpleCSSubItemObject subitem) {
 		return isFirstChildNode((IDocumentElementNode) subitem,
@@ -196,8 +196,8 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#isLastSubItem
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#isLastSubItem
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public boolean isLastSubItem(ISimpleCSSubItemObject subitem) {
 		return isLastChildNode((IDocumentElementNode) subitem,
@@ -208,8 +208,8 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#moveSubItem
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject,
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#moveSubItem
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject,
 	 * int)
 	 */
 	public void moveSubItem(ISimpleCSSubItemObject subitem, int newRelativeIndex) {
@@ -220,8 +220,8 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#removeSubItem
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void removeSubItem(ISimpleCSSubItemObject subitem) {
 		removeChildNode((IDocumentElementNode) subitem, true);
@@ -231,7 +231,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#removeSubItem
 	 * (int)
 	 */
 	public void removeSubItem(int index) {
@@ -242,8 +242,8 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setDescription
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#setDescription
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSDescription)
 	 */
 	public void setDescription(ISimpleCSDescription description) {
 		setChildNode((IDocumentElementNode) description,
@@ -254,7 +254,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setDialog
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#setDialog
 	 * (boolean)
 	 */
 	public void setDialog(boolean dialog) {
@@ -264,9 +264,9 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#
 	 * setOnCompletion
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSOnCompletion)
 	 */
 	public void setOnCompletion(ISimpleCSOnCompletion onCompletion) {
 		setChildNode((IDocumentElementNode) onCompletion,
@@ -277,7 +277,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setSkip
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#setSkip
 	 * (boolean)
 	 */
 	public void setSkip(boolean skip) {
@@ -288,7 +288,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setTitle
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSItem#setTitle
 	 * (java.lang.String)
 	 */
 	public void setTitle(String title) {
@@ -299,7 +299,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
 	 * getContextId()
 	 */
 	public String getContextId() {
@@ -310,7 +310,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
 	 * getHref()
 	 */
 	public String getHref() {
@@ -321,7 +321,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
 	 * setContextId(java.lang.String)
 	 */
 	public void setContextId(String contextId) {
@@ -332,7 +332,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSHelpObject#
 	 * setHref(java.lang.String)
 	 */
 	public void setHref(String href) {
@@ -343,7 +343,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#getExecutable
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRun#getExecutable
 	 * ()
 	 */
 	public ISimpleCSRunContainerObject getExecutable() {
@@ -354,9 +354,9 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#setExecutable
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRun#setExecutable
 	 * (
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunContainerObject
 	 * )
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
@@ -368,7 +368,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
 	 * ()
 	 */
 	public String getName() {
@@ -379,7 +379,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
 	 * ()
 	 */
 	public int getType() {
@@ -390,7 +390,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.simple.SimpleCSObject#getChildren
 	 * ()
 	 */
 	public List getChildren() {

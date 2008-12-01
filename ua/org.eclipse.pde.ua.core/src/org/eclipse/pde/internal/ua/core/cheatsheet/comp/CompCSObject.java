@@ -77,7 +77,7 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#getChildren
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getChildren
 	 * ()
 	 */
 	public abstract List getChildren();
@@ -86,7 +86,7 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#getCompCS()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getCompCS()
 	 */
 	public ICompCS getCompCS() {
 		return fModel.getCompCS();
@@ -96,7 +96,7 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#getModel()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getModel()
 	 */
 	public ICompCSModel getModel() {
 		return fModel;
@@ -106,7 +106,7 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#getName()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getName()
 	 */
 	public abstract String getName();
 
@@ -114,7 +114,7 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#getParent()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getParent()
 	 */
 	public ICompCSObject getParent() {
 		return fParent;
@@ -124,7 +124,7 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#getType()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getType()
 	 */
 	public abstract int getType();
 
@@ -132,7 +132,7 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#parse(org
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#parse(org
 	 * .w3c.dom.Element)
 	 */
 	public void parse(Element element) {
@@ -145,7 +145,7 @@ public abstract class CompCSObject extends PlatformObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#reset()
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#reset()
 	 */
 	public abstract void reset();
 
@@ -153,8 +153,8 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#setModel
-	 * (org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#setModel
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel)
 	 */
 	public void setModel(ICompCSModel model) {
 		fModel = model;
@@ -307,7 +307,7 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#getElement()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getElement()
 	 */
 	public abstract String getElement();
 }

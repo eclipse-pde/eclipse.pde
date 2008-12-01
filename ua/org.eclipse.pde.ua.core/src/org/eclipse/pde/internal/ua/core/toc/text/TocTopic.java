@@ -82,7 +82,7 @@ public class TocTopic extends TocObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#canBeParent()
+	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#canBeParent()
 	 */
 	public boolean canBeParent() {
 		return true;
@@ -91,7 +91,7 @@ public class TocTopic extends TocObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#getName()
+	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getName()
 	 */
 	public String getName() {
 		return getFieldLabel();
@@ -100,7 +100,7 @@ public class TocTopic extends TocObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.text.toc.TocObject#getPath()
+	 * @see org.eclipse.pde.internal.ua.core.text.toc.TocObject#getPath()
 	 */
 	public String getPath() {
 		return getFieldRef();
@@ -109,7 +109,7 @@ public class TocTopic extends TocObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#getType()
+	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getType()
 	 */
 	public int getType() {
 		return TYPE_TOPIC;
@@ -119,8 +119,8 @@ public class TocTopic extends TocObject {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.toc.TocObject#isFirstChildObject(org.eclipse
-	 * .pde.internal.core.toc.TocObject)
+	 * org.eclipse.pde.internal.ua.core.toc.TocObject#isFirstChildObject(org.eclipse
+	 * .pde.internal.ua.core.toc.TocObject)
 	 */
 	public boolean isFirstChildObject(TocObject tocObject) {
 		return super.isFirstChildNode(tocObject, TocObject.class);
@@ -130,8 +130,8 @@ public class TocTopic extends TocObject {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.toc.TocObject#isLastChildObject(org.eclipse
-	 * .pde.internal.core.toc.TocObject)
+	 * org.eclipse.pde.internal.ua.core.toc.TocObject#isLastChildObject(org.eclipse
+	 * .pde.internal.ua.core.toc.TocObject)
 	 */
 	public boolean isLastChildObject(TocObject tocObject) {
 		return super.isLastChildNode(tocObject, TocObject.class);
@@ -172,7 +172,7 @@ public class TocTopic extends TocObject {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.toc.TocObject#moveChild(org.eclipse.pde
+	 * org.eclipse.pde.internal.ua.core.toc.TocObject#moveChild(org.eclipse.pde
 	 * .internal.core.toc.TocObject, int)
 	 */
 	public void moveChild(TocObject tocObject, int newRelativeIndex) {

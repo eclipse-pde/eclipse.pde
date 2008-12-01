@@ -32,7 +32,7 @@ public class CtxHelpDescription extends CtxHelpObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.text.toc.TocObject#canBeParent()
+	 * @see org.eclipse.pde.internal.ua.core.text.toc.TocObject#canBeParent()
 	 */
 	public boolean canBeParent() {
 		return false;
@@ -41,7 +41,8 @@ public class CtxHelpDescription extends CtxHelpObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#getType()
+	 * @see
+	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getType()
 	 */
 	public int getType() {
 		return TYPE_DESCRIPTION;
@@ -50,7 +51,8 @@ public class CtxHelpDescription extends CtxHelpObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#getName()
+	 * @see
+	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#getName()
 	 */
 	public String getName() {
 		return getDescription();
@@ -79,8 +81,8 @@ public class CtxHelpDescription extends CtxHelpObject {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canAddChild(
-	 * org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject)
+	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddChild
+	 * (org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject)
 	 */
 	public boolean canAddChild(int objectType) {
 		return false;
@@ -90,7 +92,7 @@ public class CtxHelpDescription extends CtxHelpObject {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canAddSibling
+	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddSibling
 	 * (int)
 	 */
 	public boolean canAddSibling(int objectType) {
@@ -100,9 +102,8 @@ public class CtxHelpDescription extends CtxHelpObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.pde.internal.core.text.DocumentElementNode#getTerminateIndent
-	 * ()
+	 * @see org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#
+	 * getTerminateIndent()
 	 */
 	protected String getTerminateIndent() {
 		return ""; //$NON-NLS-1$

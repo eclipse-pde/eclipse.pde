@@ -59,7 +59,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel#getCompCS()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel#getCompCS()
 	 */
 	public ICompCS getCompCS() {
 		if (fCompCS == null) {
@@ -72,7 +72,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel#getFactory()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel#getFactory()
 	 */
 	public ICompCSModelFactory getFactory() {
 		if (fFactory == null) {

@@ -34,7 +34,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#getLabel
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#getLabel
 	 * ()
 	 */
 	public String getLabel() {
@@ -45,7 +45,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#getSkip
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#getSkip
 	 * ()
 	 */
 	public boolean getSkip() {
@@ -56,7 +56,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#getWhen
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#getWhen
 	 * ()
 	 */
 	public String getWhen() {
@@ -67,7 +67,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#setLabel
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#setLabel
 	 * (java.lang.String)
 	 */
 	public void setLabel(String label) {
@@ -78,7 +78,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#setSkip
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#setSkip
 	 * (boolean)
 	 */
 	public void setSkip(boolean skip) {
@@ -89,7 +89,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#setWhen
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSSubItem#setWhen
 	 * (java.lang.String)
 	 */
 	public void setWhen(String when) {
@@ -100,7 +100,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#getExecutable
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRun#getExecutable
 	 * ()
 	 */
 	public ISimpleCSRunContainerObject getExecutable() {
@@ -111,9 +111,9 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#setExecutable
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRun#setExecutable
 	 * (
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunContainerObject
 	 * )
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
@@ -124,7 +124,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#
+	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
 	public List getChildren() {
@@ -138,7 +138,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
 	 * ()
 	 */
 	public String getName() {
@@ -149,7 +149,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
 	 * ()
 	 */
 	public int getType() {

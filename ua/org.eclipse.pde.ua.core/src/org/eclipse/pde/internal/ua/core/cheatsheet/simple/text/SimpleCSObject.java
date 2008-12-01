@@ -39,7 +39,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#
+	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
 	public List getChildren() {
@@ -50,7 +50,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getModel
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getModel
 	 * ()
 	 */
 	public ISimpleCSModel getModel() {
@@ -61,7 +61,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getName
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getName
 	 * ()
 	 */
 	public abstract String getName();
@@ -70,7 +70,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getParent
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getParent
 	 * ()
 	 */
 	public ISimpleCSObject getParent() {
@@ -81,7 +81,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getSimpleCS
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getSimpleCS
 	 * ()
 	 */
 	public ISimpleCS getSimpleCS() {
@@ -92,7 +92,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getType
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#getType
 	 * ()
 	 */
 	public abstract int getType();
@@ -101,7 +101,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#parse
 	 * (org.w3c.dom.Element)
 	 */
 	public void parse(Element element) {
@@ -114,8 +114,8 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#setModel
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject#setModel
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModel)
 	 */
 	public void setModel(ISimpleCSModel model) {
 		setSharedModel(model);
@@ -137,7 +137,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#
 	 * createDocumentTextNode()
 	 */
 	protected IDocumentTextNode createDocumentTextNode() {

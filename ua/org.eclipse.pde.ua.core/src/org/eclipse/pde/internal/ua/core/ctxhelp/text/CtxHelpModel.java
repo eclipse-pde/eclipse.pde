@@ -53,7 +53,7 @@ public class CtxHelpModel extends XMLEditingModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.text.AbstractEditingModel#
+	 * @see org.eclipse.pde.internal.core.text.AbstractEditingModel#
 	 * createNLResourceHelper()
 	 */
 	protected NLResourceHelper createNLResourceHelper() {
@@ -65,7 +65,7 @@ public class CtxHelpModel extends XMLEditingModel {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ITocModel#getFactory()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ITocModel#getFactory()
 	 */
 	public CtxHelpDocumentFactory getFactory() {
 		if (fFactory == null) {
@@ -77,7 +77,7 @@ public class CtxHelpModel extends XMLEditingModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ITocModel#getToc()
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ITocModel#getToc()
 	 */
 	public CtxHelpRoot getCtxHelpRoot() {
 		if (fRoot == null) {

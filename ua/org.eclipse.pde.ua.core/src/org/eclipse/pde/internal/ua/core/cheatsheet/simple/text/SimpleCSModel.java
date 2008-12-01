@@ -60,7 +60,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.text.AbstractEditingModel#
+	 * @see org.eclipse.pde.internal.core.text.AbstractEditingModel#
 	 * createNLResourceHelper()
 	 */
 	protected NLResourceHelper createNLResourceHelper() {
@@ -72,7 +72,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel#getFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModel#getFactory
 	 * ()
 	 */
 	public ISimpleCSModelFactory getFactory() {
@@ -83,7 +83,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel#getSimpleCS
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModel#getSimpleCS
 	 * ()
 	 */
 	public ISimpleCS getSimpleCS() {

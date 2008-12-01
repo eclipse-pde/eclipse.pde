@@ -43,7 +43,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getChildren()
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getChildren()
 	 */
 	public List getChildren() {
 		return new ArrayList();
@@ -53,14 +53,14 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getElement()
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getElement()
 	 */
 	public abstract String getElement();
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getName()
+	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getName()
 	 */
 	public String getName() {
 		return fFieldContent;
@@ -69,7 +69,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getType()
+	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getType()
 	 */
 	public abstract int getType();
 
@@ -77,7 +77,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseContent
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseContent
 	 * (org.w3c.dom.Element)
 	 */
 	protected void parseContent(Element element) {
@@ -90,7 +90,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseAttributes
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseAttributes
 	 * (org.w3c.dom.Element)
 	 */
 	protected void parseAttributes(Element element) {
@@ -101,7 +101,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseElement
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
 	 * (org.w3c.dom.Element)
 	 */
 	protected void parseElement(Element element) {
@@ -112,7 +112,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseText(
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseText(
 	 * org.w3c.dom.Text)
 	 */
 	protected void parseText(Text text) {
@@ -122,7 +122,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#reset()
+	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#reset()
 	 */
 	public void reset() {
 		fFieldContent = null;
@@ -132,7 +132,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#writeAttributes
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeAttributes
 	 * (java.lang.StringBuffer)
 	 */
 	protected void writeAttributes(StringBuffer buffer) {
@@ -143,7 +143,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#writeElements
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeElements
 	 * (java.lang.String, java.io.PrintWriter)
 	 */
 	protected void writeElements(String indent, PrintWriter writer) {
@@ -163,7 +163,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.comp.ICompCSDataObject#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDataObject#
 	 * getFieldContent()
 	 */
 	public String getFieldContent() {
@@ -173,7 +173,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.comp.ICompCSDataObject#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDataObject#
 	 * setFieldContent(java.lang.String)
 	 */
 	public void setFieldContent(String content) {

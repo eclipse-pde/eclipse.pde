@@ -283,7 +283,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCS()
 	 */
 	public ISimpleCS createSimpleCS() {
@@ -294,9 +294,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSAction
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
 	 */
 	public ISimpleCSAction createSimpleCSAction(ISimpleCSObject parent) {
 		return new SimpleCSAction(fModel);
@@ -306,9 +306,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSCommand
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
 	 */
 	public ISimpleCSCommand createSimpleCSCommand(ISimpleCSObject parent) {
 		return new SimpleCSCommand(fModel);
@@ -318,9 +318,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSConditionalSubItem
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
 	 */
 	public ISimpleCSConditionalSubItem createSimpleCSConditionalSubItem(
 			ISimpleCSObject parent) {
@@ -331,9 +331,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSDescription
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
 	 */
 	public ISimpleCSDescription createSimpleCSDescription(ISimpleCSObject parent) {
 		return new SimpleCSDescription(fModel);
@@ -343,9 +343,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSIntro
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
 	 */
 	public ISimpleCSIntro createSimpleCSIntro(ISimpleCSObject parent) {
 		return new SimpleCSIntro(fModel);
@@ -355,9 +355,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSItem
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
 	 */
 	public ISimpleCSItem createSimpleCSItem(ISimpleCSObject parent) {
 		return new SimpleCSItem(fModel);
@@ -367,9 +367,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSOnCompletion
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
 	 */
 	public ISimpleCSOnCompletion createSimpleCSOnCompletion(
 			ISimpleCSObject parent) {
@@ -380,9 +380,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSPerformWhen
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
 	 */
 	public ISimpleCSPerformWhen createSimpleCSPerformWhen(ISimpleCSObject parent) {
 		return new SimpleCSPerformWhen(fModel);
@@ -392,9 +392,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSRepeatedSubItem
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
 	 */
 	public ISimpleCSRepeatedSubItem createSimpleCSRepeatedSubItem(
 			ISimpleCSObject parent) {
@@ -405,9 +405,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
 	 * #createSimpleCSSubItem
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
 	 */
 	public ISimpleCSSubItem createSimpleCSSubItem(ISimpleCSObject parent) {
 		return new SimpleCSSubItem(fModel);

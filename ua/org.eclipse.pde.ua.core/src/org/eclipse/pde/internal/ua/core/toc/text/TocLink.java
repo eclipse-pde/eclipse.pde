@@ -71,7 +71,7 @@ public class TocLink extends TocObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.text.toc.TocObject#canBeParent()
+	 * @see org.eclipse.pde.internal.ua.core.text.toc.TocObject#canBeParent()
 	 */
 	public boolean canBeParent() {
 		return false;
@@ -80,7 +80,7 @@ public class TocLink extends TocObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#getType()
+	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getType()
 	 */
 	public int getType() {
 		return TYPE_LINK;
@@ -89,7 +89,7 @@ public class TocLink extends TocObject {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.toc.TocObject#getName()
+	 * @see org.eclipse.pde.internal.ua.core.toc.TocObject#getName()
 	 */
 	public String getName() {
 		return getFieldTocPath();

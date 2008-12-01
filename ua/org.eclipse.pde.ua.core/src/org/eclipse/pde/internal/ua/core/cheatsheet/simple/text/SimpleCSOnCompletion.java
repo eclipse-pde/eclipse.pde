@@ -33,7 +33,7 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSOnCompletion
 	 * #getContent()
 	 */
 	public String getContent() {
@@ -44,7 +44,7 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSOnCompletion
 	 * #setContent(java.lang.String)
 	 */
 	public void setContent(String content) {
@@ -54,7 +54,7 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#
+	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
 	public List getChildren() {
@@ -65,7 +65,7 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
 	 * ()
 	 */
 	public String getName() {
@@ -76,7 +76,7 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
 	 * ()
 	 */
 	public int getType() {
@@ -86,7 +86,7 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#
 	 * isContentCollapsed()
 	 */
 	public boolean isContentCollapsed() {

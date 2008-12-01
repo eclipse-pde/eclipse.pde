@@ -134,7 +134,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSModel#isEditable()
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSModel#isEditable()
 	 */
 	public boolean isEditable() {
 		return fEditable;
@@ -159,7 +159,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSModel#isInSync()
+	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSModel#isInSync()
 	 */
 	public boolean isInSync() {
 		IPath path = fFile.getLocation();
@@ -172,7 +172,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSModel#load()
+	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSModel#load()
 	 */
 	public void load() throws CoreException {
 		if (fFile.exists()) {

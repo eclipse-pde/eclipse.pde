@@ -53,7 +53,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getChildren()
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getChildren()
 	 */
 	public List getChildren() {
 		ArrayList list = new ArrayList();
@@ -67,7 +67,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getName()
+	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getName()
 	 */
 	public String getName() {
 		return fFieldName;
@@ -76,7 +76,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getType()
+	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getType()
 	 */
 	public int getType() {
 		return TYPE_COMPOSITE_CHEATSHEET;
@@ -86,7 +86,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseAttributes
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseAttributes
 	 * (org.w3c.dom.Element)
 	 */
 	protected void parseAttributes(Element element) {
@@ -99,7 +99,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseElement
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
 	 * (org.w3c.dom.Element)
 	 */
 	protected void parseElement(Element element) {
@@ -120,7 +120,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#reset()
+	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#reset()
 	 */
 	public void reset() {
 		fFieldName = null;
@@ -131,7 +131,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#write(java
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#write(java
 	 * .lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
@@ -150,7 +150,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#writeAttributes
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeAttributes
 	 * (java.lang.StringBuffer)
 	 */
 	protected void writeAttributes(StringBuffer buffer) {
@@ -168,7 +168,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#writeElements
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeElements
 	 * (java.lang.String, java.io.PrintWriter)
 	 */
 	protected void writeElements(String indent, PrintWriter writer) {
@@ -183,7 +183,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS#getFieldName()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#getFieldName()
 	 */
 	public String getFieldName() {
 		return fFieldName;
@@ -193,7 +193,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS#getFieldTaskObject
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#getFieldTaskObject
 	 * ()
 	 */
 	public ICompCSTaskObject getFieldTaskObject() {
@@ -204,7 +204,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS#setFieldName(java
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#setFieldName(java
 	 * .lang.String)
 	 */
 	public void setFieldName(String name) {
@@ -219,8 +219,8 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS#setFieldTaskObject
-	 * (org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS#setFieldTaskObject
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject)
 	 */
 	public void setFieldTaskObject(ICompCSTaskObject taskObject) {
 		ICompCSObject old = fFieldTaskObject;
@@ -234,7 +234,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#getElement()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject#getElement()
 	 */
 	public String getElement() {
 		return ELEMENT_COMPOSITE_CHEATSHEET;
@@ -244,7 +244,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseText(
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseText(
 	 * org.w3c.dom.Text)
 	 */
 	protected void parseText(Text text) {

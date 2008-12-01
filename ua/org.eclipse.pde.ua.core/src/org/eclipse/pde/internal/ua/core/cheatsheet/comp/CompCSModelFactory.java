@@ -36,7 +36,7 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCS()
 	 */
 	public ICompCS createCompCS() {
@@ -46,9 +46,9 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSDependency
-	 * (org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)
 	 */
 	public ICompCSDependency createCompCSDependency(ICompCSObject parent) {
 		return new CompCSDependency(fModel, parent);
@@ -57,9 +57,9 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSIntro
-	 * (org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)
 	 */
 	public ICompCSIntro createCompCSIntro(ICompCSObject parent) {
 		return new CompCSIntro(fModel, parent);
@@ -68,9 +68,9 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSOnCompletion
-	 * (org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)
 	 */
 	public ICompCSOnCompletion createCompCSOnCompletion(ICompCSObject parent) {
 		return new CompCSOnCompletion(fModel, parent);
@@ -79,9 +79,9 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSParam
-	 * (org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)
 	 */
 	public ICompCSParam createCompCSParam(ICompCSObject parent) {
 		return new CompCSParam(fModel, parent);
@@ -90,9 +90,9 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSTask
-	 * (org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)
 	 */
 	public ICompCSTask createCompCSTask(ICompCSObject parent) {
 		return new CompCSTask(fModel, parent);
@@ -101,9 +101,9 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory#
 	 * createCompCSTaskGroup
-	 * (org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject)
 	 */
 	public ICompCSTaskGroup createCompCSTaskGroup(ICompCSObject parent) {
 		return new CompCSTaskGroup(fModel, parent);

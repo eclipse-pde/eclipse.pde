@@ -48,7 +48,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSTaskObject#getChildren
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#getChildren
 	 * ()
 	 */
 	public List getChildren() {
@@ -59,7 +59,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSTaskObject#getName()
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#getName()
 	 */
 	public String getName() {
 		return fFieldName;
@@ -69,7 +69,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSTaskObject#getType()
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#getType()
 	 */
 	public int getType() {
 		return TYPE_TASK;
@@ -79,7 +79,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getElement()
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getElement()
 	 */
 	public String getElement() {
 		return ELEMENT_TASK;
@@ -89,7 +89,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseElement
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
 	 * (org.w3c.dom.Element)
 	 */
 	protected void parseElement(Element element) {
@@ -109,8 +109,8 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask#addFieldParam
-	 * (org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSParam)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask#addFieldParam
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam)
 	 */
 	public void addFieldParam(ICompCSParam param) {
 		fFieldParams.add(param);
@@ -123,7 +123,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask#getFieldParams
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask#getFieldParams
 	 * ()
 	 */
 	public ICompCSParam[] getFieldParams() {
@@ -135,8 +135,8 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask#removeFieldParam
-	 * (org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSParam)
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask#removeFieldParam
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam)
 	 */
 	public void removeFieldParam(ICompCSParam param) {
 		fFieldParams.remove(param);
@@ -149,7 +149,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSTaskObject#reset()
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#reset()
 	 */
 	public void reset() {
 		super.reset();
@@ -161,7 +161,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSTaskObject#writeElements
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSTaskObject#writeElements
 	 * (java.lang.String, java.io.PrintWriter)
 	 */
 	protected void writeElements(String indent, PrintWriter writer) {
@@ -179,7 +179,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask#hasFieldParams
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask#hasFieldParams
 	 * ()
 	 */
 	public boolean hasFieldParams() {
@@ -193,7 +193,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask#getFieldParam
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask#getFieldParam
 	 * (java.lang.String)
 	 */
 	public ICompCSParam getFieldParam(String name) {

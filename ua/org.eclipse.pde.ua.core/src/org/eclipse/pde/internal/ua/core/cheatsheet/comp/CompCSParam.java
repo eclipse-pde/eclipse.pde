@@ -47,7 +47,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getChildren()
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getChildren()
 	 */
 	public List getChildren() {
 		return new ArrayList();
@@ -57,7 +57,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getElement()
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getElement()
 	 */
 	public String getElement() {
 		return ELEMENT_PARAM;
@@ -66,7 +66,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getName()
+	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getName()
 	 */
 	public String getName() {
 		return fFieldName;
@@ -75,7 +75,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getType()
+	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#getType()
 	 */
 	public int getType() {
 		return TYPE_PARAM;
@@ -85,7 +85,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseAttributes
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseAttributes
 	 * (org.w3c.dom.Element)
 	 */
 	protected void parseAttributes(Element element) {
@@ -101,7 +101,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseElement
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseElement
 	 * (org.w3c.dom.Element)
 	 */
 	protected void parseElement(Element element) {
@@ -111,7 +111,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#reset()
+	 * @see org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#reset()
 	 */
 	public void reset() {
 		fFieldName = null;
@@ -122,7 +122,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#writeAttributes
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeAttributes
 	 * (java.lang.StringBuffer)
 	 */
 	protected void writeAttributes(StringBuffer buffer) {
@@ -147,7 +147,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#writeElements
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#writeElements
 	 * (java.lang.String, java.io.PrintWriter)
 	 */
 	protected void writeElements(String indent, PrintWriter writer) {
@@ -158,7 +158,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSParam#getFieldName
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam#getFieldName
 	 * ()
 	 */
 	public String getFieldName() {
@@ -169,7 +169,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSParam#getFieldValue
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam#getFieldValue
 	 * ()
 	 */
 	public String getFieldValue() {
@@ -180,7 +180,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSParam#setFieldName
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam#setFieldName
 	 * (java.lang.String)
 	 */
 	public void setFieldName(String name) {
@@ -195,7 +195,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSParam#setFieldValue
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam#setFieldValue
 	 * (java.lang.String)
 	 */
 	public void setFieldValue(String value) {
@@ -210,7 +210,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseText(
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject#parseText(
 	 * org.w3c.dom.Text)
 	 */
 	protected void parseText(Text text) {

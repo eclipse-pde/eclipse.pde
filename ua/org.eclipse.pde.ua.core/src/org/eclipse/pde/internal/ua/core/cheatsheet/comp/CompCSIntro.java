@@ -35,7 +35,7 @@ public class CompCSIntro extends CompCSDataObject implements ICompCSIntro {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSDataObject#getElement
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSDataObject#getElement
 	 * ()
 	 */
 	public String getElement() {
@@ -46,7 +46,7 @@ public class CompCSIntro extends CompCSDataObject implements ICompCSIntro {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.cheatsheet.comp.CompCSDataObject#getType()
+	 * org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSDataObject#getType()
 	 */
 	public int getType() {
 		return TYPE_INTRO;

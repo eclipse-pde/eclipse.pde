@@ -35,9 +35,9 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSPerformWhen
 	 * #addExecutable
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject)
 	 */
 	public void addExecutable(ISimpleCSRunObject executable) {
 		addChildNode((IDocumentElementNode) executable, true);
@@ -47,7 +47,7 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSPerformWhen
 	 * #getCondition()
 	 */
 	public String getCondition() {
@@ -58,7 +58,7 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSPerformWhen
 	 * #getExecutables()
 	 */
 	public ISimpleCSRunObject[] getExecutables() {
@@ -72,9 +72,9 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSPerformWhen
 	 * #removeExecutable
-	 * (org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject)
 	 */
 	public void removeExecutable(ISimpleCSRunObject executable) {
 		removeChildNode((IDocumentElementNode) executable, true);
@@ -84,7 +84,7 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSPerformWhen
 	 * #setCondition(java.lang.String)
 	 */
 	public void setCondition(String condition) {
@@ -94,7 +94,7 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#
+	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
 	public List getChildren() {
@@ -105,7 +105,7 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
 	 * ()
 	 */
 	public String getName() {
@@ -117,7 +117,7 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
 	 * ()
 	 */
 	public int getType() {

@@ -30,7 +30,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * getConfirm()
 	 */
 	public boolean getConfirm() {
@@ -40,7 +40,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * getRequired()
 	 */
 	public boolean getRequired() {
@@ -50,7 +50,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * getTranslate()
 	 */
 	public String getTranslate() {
@@ -61,7 +61,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getWhen
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#getWhen
 	 * ()
 	 */
 	public String getWhen() {
@@ -71,7 +71,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * setConfirm(boolean)
 	 */
 	public void setConfirm(boolean confirm) {
@@ -81,7 +81,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * setRequired(boolean)
 	 */
 	public void setRequired(boolean required) {
@@ -91,7 +91,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#
 	 * setTranslate(java.lang.String)
 	 */
 	public void setTranslate(String translate) {
@@ -102,7 +102,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setWhen
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSRunObject#setWhen
 	 * (java.lang.String)
 	 */
 	public void setWhen(String when) {

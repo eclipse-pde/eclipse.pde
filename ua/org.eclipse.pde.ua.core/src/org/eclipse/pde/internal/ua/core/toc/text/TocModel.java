@@ -57,7 +57,7 @@ public class TocModel extends XMLEditingModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.internal.core.text.AbstractEditingModel#
+	 * @see org.eclipse.pde.internal.core.text.AbstractEditingModel#
 	 * createNLResourceHelper()
 	 */
 	protected NLResourceHelper createNLResourceHelper() {
@@ -69,7 +69,7 @@ public class TocModel extends XMLEditingModel {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.icheatsheet.simple.ITocModel#getFactory()
+	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ITocModel#getFactory()
 	 */
 	public TocDocumentFactory getFactory() {
 		return fFactory;
@@ -78,7 +78,7 @@ public class TocModel extends XMLEditingModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ITocModel#getToc()
+	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ITocModel#getToc()
 	 */
 	public Toc getToc() {
 		if (fToc == null) {

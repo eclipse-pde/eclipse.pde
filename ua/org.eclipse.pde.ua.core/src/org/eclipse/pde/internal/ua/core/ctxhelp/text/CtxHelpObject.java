@@ -97,7 +97,7 @@ public abstract class CtxHelpObject extends DocumentObject implements
 	}
 
 	/**
-	 * @return true iff this object is capable of containing children.
+	 * @return true if this object is capable of containing children.
 	 */
 	public abstract boolean canBeParent();
 
@@ -228,7 +228,7 @@ public abstract class CtxHelpObject extends DocumentObject implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.core.toc.TocObject#moveChild(org.eclipse.pde
+	 * org.eclipse.pde.internal.ua.core.toc.TocObject#moveChild(org.eclipse.pde
 	 * .internal.core.toc.TocObject, int)
 	 */
 	public void moveChild(CtxHelpObject object, int newRelativeIndex) {
