@@ -1102,39 +1102,55 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		int kind = delta.getKind();
 		if (DeltaProcessor.isCompatible(delta)) {
 			int modifiers = delta.getModifiers();
-			if (!RestrictionModifiers.isReferenceRestriction(delta.getRestrictions())
-					&& (Util.isPublic(modifiers) || (Util.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())))) {
-				// if protected, we only want to check @since tags if the enclosing class can be subclassed
-				switch(kind) {
-					case IDelta.ADDED :
-						// if public, we always want to check @since tags
-						switch(flags) {
-							case IDelta.TYPE_MEMBER :
-							case IDelta.METHOD :
-							case IDelta.CONSTRUCTOR :
-							case IDelta.ENUM_CONSTANT :
-							case IDelta.METHOD_WITH_DEFAULT_VALUE :
-							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-							case IDelta.FIELD :
-							case IDelta.TYPE :
+			if (!RestrictionModifiers.isReferenceRestriction(delta.getRestrictions())) {
+				if (Util.isVisible(delta)) {
+					if (Util.isProtected(modifiers)) {
+						String typeName = delta.getTypeName();
+						if (typeName != null) {
+							IApiTypeRoot typeRoot = null;
+							try {
+								typeRoot = component.findTypeRoot(typeName);
+								if (Util.isFinal(typeRoot.getStructure().getModifiers())) {
+									// no @since tag to report for new protected methods inside a final class
+									return;
+								}
+							} catch (CoreException e) {
+								// ignore
+							}
+						}
+					}
+					// if protected, we only want to check @since tags if the enclosing class can be subclassed
+					switch(kind) {
+						case IDelta.ADDED :
+							// if public, we always want to check @since tags
+							switch(flags) {
+								case IDelta.TYPE_MEMBER :
+								case IDelta.METHOD :
+								case IDelta.CONSTRUCTOR :
+								case IDelta.ENUM_CONSTANT :
+								case IDelta.METHOD_WITH_DEFAULT_VALUE :
+								case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+								case IDelta.FIELD :
+								case IDelta.TYPE :
+									if (DEBUG) {
+										String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
+										System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
+									}
+									this.fBuildState.addCompatibleChange(delta);
+									fPendingDeltaInfos.add(delta);
+									break;
+							}
+							break;
+						case IDelta.CHANGED :
+							if (flags == IDelta.INCREASE_ACCESS) {
 								if (DEBUG) {
 									String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
 									System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
 								}
 								this.fBuildState.addCompatibleChange(delta);
 								fPendingDeltaInfos.add(delta);
-								break;
-						}
-						break;
-					case IDelta.CHANGED :
-						if (flags == IDelta.INCREASE_ACCESS) {
-							if (DEBUG) {
-								String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
-								System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
 							}
-							this.fBuildState.addCompatibleChange(delta);
-							fPendingDeltaInfos.add(delta);
-						}
+					}
 				}
 			}
 		} else {

@@ -53,7 +53,23 @@ public class MissingSinceTagTests extends SinceTagTest {
 			args[0] = new String[]{messageArg};
 			setExpectedMessageArgs(args);		
 	}
+	/**
+	 * Tests adding a non-visible method
+	 */
+	private void xAddNonVisibleMethod2(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNonVisibleMethod2.java");
+		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "method()");
+		performCompatibilityTest(filePath, incremental);
+	}
 	
+	public void testAddNonVisibleMethod2I() throws Exception {
+		xAddNonVisibleMethod2(true);
+	}
+	
+	public void testAddNonVisibleMethod2F() throws Exception {
+		xAddNonVisibleMethod2(false);
+	}
+
 	/**
 	 * Tests adding a field
 	 */
