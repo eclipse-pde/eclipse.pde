@@ -15,10 +15,12 @@ import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.plugin.*;
@@ -639,6 +641,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	public void refresh() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		fExtensionTree.setInput(model.getPluginBase());
+		reportMissingExtensionPointSchemas(model.getPluginBase());
 		selectFirstExtension();
 		getManagedForm().fireSelectionChanged(ExtensionsSection.this, fExtensionTree.getSelection());
 		super.refresh();
@@ -662,9 +665,29 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			IPluginObject parent = changeObject instanceof IPluginExtension ? ((IPluginModelBase) getPage().getModel()).getPluginBase() : pobj.getParent();
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				fExtensionTree.refresh(parent);
+				if (changeObject instanceof IPluginExtension) {
+					IPluginExtension ext = (IPluginExtension) changeObject;
+					if (ext.getSchema() == null)
+						reportMissingExtensionPointSchema(ext.getPoint());
+				}
 				fExtensionTree.setSelection(new StructuredSelection(changeObject), true);
 				fExtensionTree.getTree().setFocus();
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
+				if (changeObject instanceof IPluginExtension) {
+					IPluginExtension ext = (IPluginExtension) changeObject;
+					IPluginExtension[] extensions = ((IPluginBase) parent).getExtensions();
+					boolean found = false;
+					// search if there is at least another extension extending the same point than the one being removed
+					for (int i = 0; i < extensions.length; i++) {
+						String point = extensions[i].getPoint();
+						if (ext.getPoint().equals(point)) {
+							found = true;
+							break;
+						}
+					}
+					if (!found)
+						getManagedForm().getMessageManager().removeMessage(ext.getPoint());
+				}
 				fExtensionTree.remove(pobj);
 			} else {
 				if (event.getChangedProperty().equals(IPluginParent.P_SIBLING_ORDER)) {
@@ -1673,4 +1696,16 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return selection.size() == 1;
 	}
 
+	private void reportMissingExtensionPointSchemas(IPluginBase pluginBase) {
+		IPluginExtension[] extensions = pluginBase.getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			IPluginExtension ext = extensions[i];
+			if (ext.getSchema() == null)
+				reportMissingExtensionPointSchema(ext.getPoint());
+		}
+	}
+
+	private void reportMissingExtensionPointSchema(String point) {
+		getManagedForm().getMessageManager().addMessage(point, NLS.bind(PDEUIMessages.ManifestEditor_DetailExtension_missingExtPointSchema, point), null, IMessageProvider.WARNING);
+	}
 }
