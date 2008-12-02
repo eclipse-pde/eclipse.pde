@@ -18,14 +18,9 @@ import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ua.core.toc.text.TocModel;
 import org.eclipse.pde.internal.ua.core.toc.text.TocObject;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
-/**
- * TocFormOutlinePage
- *
- */
 public class TocFormOutlinePage extends FormOutlinePage {
 	/**
 	 * @param editor

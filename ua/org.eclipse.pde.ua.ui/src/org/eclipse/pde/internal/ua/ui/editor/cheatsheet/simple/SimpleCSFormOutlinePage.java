@@ -19,14 +19,9 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
-/**
- * SimpleCSFormOutlinePage
- *
- */
 public class SimpleCSFormOutlinePage extends FormOutlinePage {
 
 	/**

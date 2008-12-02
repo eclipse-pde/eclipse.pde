@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
-import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPluginImages;
 import org.eclipse.ui.IWorkbench;
 
 public class NewTocFileWizard extends TocHTMLWizard {

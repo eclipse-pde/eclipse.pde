@@ -26,7 +26,6 @@ import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.editor.IFoldingStructureProvider;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 
 /**
