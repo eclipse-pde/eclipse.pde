@@ -254,5 +254,9 @@
             class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
             markerType="org.eclipse.pde.api.tools.unsupported_tags">
       </markerResolutionGenerator>
+      <markerResolutionGenerator
+            class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
+            markerType="org.eclipse.pde.api.tools.api_component_resolution">
+      </markerResolutionGenerator>
    </extension>
 </plugin>

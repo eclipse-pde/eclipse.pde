@@ -50,6 +50,7 @@ public class PreferenceMessages extends NLS {
 	public static String CompatibilityReportApiBreakageWhenMajorVersionIncremented;
 
 	public static String ReportApiComponentResolutionFailure;
+	public static String ReportApiComponentResolutionFailureDescription;
 
 	public static String ApiErrorsWarningsConfigurationBlock_error;
 	public static String ApiErrorsWarningsConfigurationBlock_warning;

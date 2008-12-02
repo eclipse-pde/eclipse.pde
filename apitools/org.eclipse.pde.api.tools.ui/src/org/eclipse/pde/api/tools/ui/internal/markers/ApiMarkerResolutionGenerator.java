@@ -66,7 +66,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 				return new IMarkerResolution[] {new DuplicateTagResolution(marker)};
 			}
 			case IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID: {
-				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
+				return new IMarkerResolution[] {new UpdateProjectSettingResolution(marker)};
 			}
 			default :
 				return NO_RESOLUTIONS;
