@@ -537,6 +537,23 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * @throws BuildException exception is thrown if anything goes wrong during the verification
 	 */
 	public void execute() throws BuildException {
+		if (this.baselineLocation == null
+				|| this.profileLocation == null
+				|| this.reportLocation == null) {
+			StringWriter out = new StringWriter();
+			PrintWriter writer = new PrintWriter(out);
+			writer.println(
+				Messages.bind(Messages.printArguments,
+					new String[] {
+						this.baselineLocation,
+						this.profileLocation,
+						this.reportLocation,
+					})
+			);
+			writer.flush();
+			writer.close();
+			throw new BuildException(String.valueOf(out.getBuffer()));
+		}
 		if (this.debug) {
 			System.out.println("reference : " + this.baselineLocation); //$NON-NLS-1$
 			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
@@ -554,23 +571,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		}
 		if (this.excludeListLocation != null) {
 			this.excludedElement = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation);
-		}
-		if (this.baselineLocation == null
-				|| this.profileLocation == null
-				|| this.reportLocation == null) {
-			StringWriter out = new StringWriter();
-			PrintWriter writer = new PrintWriter(out);
-			writer.println(
-				Messages.bind(Messages.printArguments,
-					new String[] {
-						this.baselineLocation,
-						this.profileLocation,
-						this.reportLocation,
-					})
-			);
-			writer.flush();
-			writer.close();
-			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		// unzip reference
 		long time = 0;

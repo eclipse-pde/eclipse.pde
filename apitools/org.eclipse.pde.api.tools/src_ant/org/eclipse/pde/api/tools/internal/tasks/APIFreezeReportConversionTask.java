@@ -298,12 +298,12 @@ public class APIFreezeReportConversionTask extends Task {
 	 * Run the ant task
 	 */
 	public void execute() throws BuildException {
+		if (this.xmlFileLocation == null) {
+			throw new BuildException(Messages.deltaReportTask_missingXmlFileLocation);
+		}
 		if (this.debug) {
 			System.out.println("xmlFileLocation : " + this.xmlFileLocation); //$NON-NLS-1$
 			System.out.println("htmlFileLocation : " + this.htmlFileLocation); //$NON-NLS-1$
-		}
-		if (this.xmlFileLocation == null) {
-			throw new BuildException(Messages.deltaReportTask_missingXmlFileLocation);
 		}
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser parser = null;

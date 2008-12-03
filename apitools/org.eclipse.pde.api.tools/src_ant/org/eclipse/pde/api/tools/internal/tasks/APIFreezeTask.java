@@ -184,16 +184,6 @@ public class APIFreezeTask extends CommonUtilsTask {
 	private String excludeListLocation;
 
 	public void execute() throws BuildException {
-		if (this.debug) {
-			System.out.println("reference : " + this.baselineLocation); //$NON-NLS-1$
-			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
-			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
-			if (this.excludeListLocation != null) {
-				System.out.println("exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
-			} else {
-				System.out.println("No exclude list location"); //$NON-NLS-1$
-			}
-		}
 		if (this.baselineLocation == null
 				|| this.profileLocation == null
 				|| this.reportLocation == null) {
@@ -210,6 +200,16 @@ public class APIFreezeTask extends CommonUtilsTask {
 			writer.flush();
 			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
+		}
+		if (this.debug) {
+			System.out.println("reference : " + this.baselineLocation); //$NON-NLS-1$
+			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
+			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
+			if (this.excludeListLocation != null) {
+				System.out.println("exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
+			} else {
+				System.out.println("No exclude list location"); //$NON-NLS-1$
+			}
 		}
 		// unzip reference
 		long time = 0;

@@ -38,11 +38,6 @@ public class CompareProfilesTask extends CommonUtilsTask {
 	private static final String REPORT_XML_FILE_NAME = "compare.xml"; //$NON-NLS-1$
 
 	public void execute() throws BuildException {
-		if (this.debug) {
-			System.out.println("reference : " + this.baselineLocation); //$NON-NLS-1$
-			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
-			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
-		}
 		if (this.baselineLocation == null
 				|| this.profileLocation == null
 				|| this.reportLocation == null) {
@@ -59,6 +54,11 @@ public class CompareProfilesTask extends CommonUtilsTask {
 			writer.flush();
 			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
+		}
+		if (this.debug) {
+			System.out.println("reference : " + this.baselineLocation); //$NON-NLS-1$
+			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
+			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
 		}
 		// create reference
 		File referenceInstallDir = extractSDK(REFERENCE, this.baselineLocation);

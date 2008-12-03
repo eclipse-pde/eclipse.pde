@@ -17,7 +17,9 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -137,6 +139,23 @@ public class ApiFileGeneratorTask extends Task {
 	 * Execute the ant task
 	 */
 	public void execute() throws BuildException {
+		if (this.projectName == null
+				|| this.projectLocation == null
+				|| this.targetFolder == null) {
+			StringWriter out = new StringWriter();
+			PrintWriter writer = new PrintWriter(out);
+			writer.println(
+				Messages.bind(Messages.api_generation_printArguments2,
+					new String[] {
+						this.projectName,
+						this.projectLocation,
+						this.targetFolder
+					})
+			);
+			writer.flush();
+			writer.close();
+			throw new BuildException(String.valueOf(out.getBuffer()));
+		}
 		if (this.debug) {
 			System.out.println(this.targetFolder);
 			System.out.println(this.projectLocation);
