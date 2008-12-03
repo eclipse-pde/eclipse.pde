@@ -26,6 +26,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.Inst
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.equinox.internal.provisional.p2.query.Collector;
+import org.eclipse.equinox.internal.provisional.p2.query.Query;
 import org.eclipse.equinox.internal.provisional.p2.ui.actions.InstallAction;
 import org.eclipse.equinox.internal.provisional.p2.ui.operations.ProvisioningUtil;
 import org.eclipse.osgi.service.resolver.VersionRange;
@@ -117,7 +118,8 @@ public class RuntimeInstallJob extends Job {
 				version = QualifierReplacer.replaceQualifierInVersion(version, id, null, null);
 
 				// Check if the right version exists in the new meta repo
-				Collector queryMatches = metaRepo.query(new InstallableUnitQuery(id, new Version(version)), new Collector(), monitor);
+				Version newVersion = new Version(version);
+				Collector queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), new Collector(), monitor);
 				if (queryMatches.size() == 0) {
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), MessageFormat.format(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
 				}
@@ -131,7 +133,8 @@ public class RuntimeInstallJob extends Job {
 					toInstall.add(iuToInstall);
 				} else {
 					// There is an existing iu that we need to replace using an installable unit patch
-					toInstall.add(createInstallableUnitPatch(id, version));
+					Version existingVersion = ((IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0]).getVersion();
+					toInstall.add(createInstallableUnitPatch(id, newVersion, existingVersion, profile, monitor));
 				}
 				monitor.worked(2);
 
@@ -173,9 +176,12 @@ public class RuntimeInstallJob extends Job {
 	 * 
 	 * @param id id of the installable unit that is having a version change
 	 * @param version the new version to require
+	 * @param existingVersion an existing version of the plug-in that this patch will replaced, used to generate lifecycle
+	 * @param profile the profile we are installing in
+	 * @param monitor progress monitor
 	 * @return an installable unit patch
 	 */
-	private IInstallableUnitPatch createInstallableUnitPatch(String id, String version) {
+	private IInstallableUnitPatch createInstallableUnitPatch(final String id, final Version version, final Version existingVersion, IProfile profile, IProgressMonitor monitor) {
 		InstallableUnitPatchDescription iuPatchDescription = new MetadataFactory.InstallableUnitPatchDescription();
 		iuPatchDescription.setId(id + ".patch"); //$NON-NLS-1$
 		iuPatchDescription.setVersion(new Version("1.0.0." + QualifierReplacer.getDateQualifier())); //$NON-NLS-1$
@@ -185,14 +191,34 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.addProvidedCapabilities(list);
 
 		RequiredCapability applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
-		RequiredCapability newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(new Version(version), true, new Version(version), true), null, false, false);
+		RequiredCapability newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(version, true, version, true), null, false, false);
 		iuPatchDescription.setRequirementChanges(new RequirementChange[] {new RequirementChange(applyTo, newValue)});
 
 		iuPatchDescription.setApplicabilityScope(new RequiredCapability[0][0]);
 
-		iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(applyTo.getNamespace(), applyTo.getName(), applyTo.getRange(), null, false, false, false));
+		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
+		Collector queryMatches = profile.query(new Query() {
+			public boolean isMatch(Object candidate) {
+				if (candidate instanceof IInstallableUnit) {
+					RequiredCapability[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
+					for (int i = 0; i < reqs.length; i++) {
+						if (reqs[i].getName().equals(id)) {
+							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqs[i].getRange())) {
+								return true;
+							}
+						}
+					}
+				}
+				return false;
+			}
+		}, new Collector(), monitor);
+		if (!queryMatches.isEmpty()) {
+			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
+			iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));
+		}
+
+		iuPatchDescription.setProperty(IInstallableUnit.PROP_TYPE_PATCH, Boolean.TRUE.toString());
 
 		return MetadataFactory.createInstallableUnitPatch(iuPatchDescription);
 	}
-
 }
