@@ -284,7 +284,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	}
 
 	protected boolean allowBinaryCycles() {
-		return fOptionsTab.useJARFormat();
+		return fOptionsTab.doBinaryCycles();
 	}
 
 	protected boolean doGenerateAntFile() {
