@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -38,8 +40,11 @@ import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
+import org.eclipse.pde.api.tools.internal.model.ArchiveApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.model.CompositeApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.model.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.BundleException;
@@ -96,7 +101,7 @@ public class ApiFileGenerationTask extends Task {
 	String projectName;
 	String projectLocation;
 	String targetFolder;
-	String binaryFolder;
+	String binaryLocations;
 
 	/**
 	 * Set the project name.
@@ -129,15 +134,16 @@ public class ApiFileGenerationTask extends Task {
 		this.targetFolder = targetLocation;
 	}
 	/**
-	 * Set the binary folder.
+	 * Set the binary locations.
 	 * 
-	 * <br><br>This is the folder that contains all the .class files for the given project.
-	 * <br><br>It should be specified using an absolute path.
+	 * <br><br>This is a list of folders or jar files that contains all the .class files for the given project.
+	 * They are separated by the platform path separator.
+	 * <br><br>They should be specified using absolute paths.
 	 *
-	 * @param binaryFolder the given binary folder
+	 * @param binaryLocations the given binary locations
 	 */
-	public void setBinary(String binaryFolder) {
-		this.binaryFolder = binaryFolder;
+	public void setBinary(String binaryLocations) {
+		this.binaryLocations = binaryLocations;
 	}
 	/**
 	 * Set the debug value.
@@ -154,7 +160,7 @@ public class ApiFileGenerationTask extends Task {
 	 * Execute the ant task
 	 */
 	public void execute() throws BuildException {
-		if (this.binaryFolder == null
+		if (this.binaryLocations == null
 				|| this.projectName == null
 				|| this.projectLocation == null
 				|| this.targetFolder == null) {
@@ -165,7 +171,7 @@ public class ApiFileGenerationTask extends Task {
 					new String[] {
 						this.projectName,
 						this.projectLocation,
-						this.binaryFolder,
+						this.binaryLocations,
 						this.targetFolder
 					})
 			);
@@ -176,7 +182,7 @@ public class ApiFileGenerationTask extends Task {
 		if (this.debug) {
 			System.out.println("Project name : " + this.projectName); //$NON-NLS-1$
 			System.out.println("Project location : " + this.projectLocation); //$NON-NLS-1$
-			System.out.println("Binary folder : " + this.binaryFolder); //$NON-NLS-1$
+			System.out.println("Binary locations : " + this.binaryLocations); //$NON-NLS-1$
 			System.out.println("Target folder : " + this.targetFolder); //$NON-NLS-1$
 		}
 		// collect all compilation units
@@ -210,7 +216,28 @@ public class ApiFileGenerationTask extends Task {
 			return;
 		}
 		// create the directory class file container used to resolve signatures during tag scanning
-		DirectoryApiTypeContainer classFileContainer = new DirectoryApiTypeContainer(null, this.binaryFolder);
+		String[] allBinaryLocations = this.binaryLocations.split(File.pathSeparator);
+		IApiTypeContainer classFileContainer = null;
+		if (allBinaryLocations.length == 1) {
+			String location = allBinaryLocations[0];
+			classFileContainer = getContainer(location);
+			if (classFileContainer == null) {
+				throw new BuildException(
+						Messages.bind(Messages.api_generation_invalidBinaryLocation, location));
+			}
+		} else {
+			List allContainers = new ArrayList();
+			for (int i = 0; i < allBinaryLocations.length; i++) {
+				String binaryLocation = allBinaryLocations[i];
+				IApiTypeContainer container = getContainer(binaryLocation);
+				if (container == null) {
+					throw new BuildException(
+							Messages.bind(Messages.api_generation_invalidBinaryLocation, binaryLocation));
+				}
+				allContainers.add(container);
+			}
+			classFileContainer = new CompositeApiTypeContainer(null, allContainers);
+		}
 		String[] packageNames = null;
 		try {
 			packageNames = classFileContainer.getPackageNames();
@@ -338,6 +365,15 @@ public class ApiFileGenerationTask extends Task {
 		}
 	}
 
+	private IApiTypeContainer getContainer(String location) {
+		File f = new File(location);
+		if (!f.exists()) return null;
+		if (isZipJarFile(location)) {
+			return new ArchiveApiTypeContainer(null, location);
+		} else {
+			return new DirectoryApiTypeContainer(null, location);
+		}
+	}
 	/**
 	 * Resolves the compiler compliance based on the BREE entry in the MANIFEST.MF file
 	 * @param manifestmap
@@ -389,6 +425,11 @@ public class ApiFileGenerationTask extends Task {
 			}
 		}
 		return false;
+	}
+	private static boolean isZipJarFile(String fileName) {
+		String normalizedFileName = fileName.toLowerCase();
+		return normalizedFileName.endsWith(".zip") //$NON-NLS-1$
+			|| normalizedFileName.endsWith(".jar"); //$NON-NLS-1$
 	}
 	/**
 	 * Check if the given source contains an source extension point.
