@@ -136,8 +136,8 @@ public class ApiFileGenerationTask extends Task {
 	/**
 	 * Set the binary locations.
 	 * 
-	 * <br><br>This is a list of folders or jar files that contains all the .class files for the given project.
-	 * They are separated by the platform path separator.
+	 * <br><br>This is a list of folders or jar files that contain all the .class files for the given project.
+	 * They are separated by the platform path separator. Each entry must exist.
 	 * <br><br>They should be specified using absolute paths.
 	 *
 	 * @param binaryLocations the given binary locations

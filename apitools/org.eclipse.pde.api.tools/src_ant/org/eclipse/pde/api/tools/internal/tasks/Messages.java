@@ -77,6 +77,7 @@ public class Messages extends NLS {
 	public static String api_generation_printArguments2;
 	public static String api_generation_projectLocationNotADirectory;
 	public static String api_generation_targetFolderNotADirectory;
+	public static String api_generation_invalidBinaryLocation;
 
 	static {
 		// initialize resource bundle
