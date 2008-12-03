@@ -50,6 +50,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Ant task to generate the .api_description file during the Eclipse build.
+ * @deprecated This task is deprecated and will be removed once PDE/Build and the Eclipse builder will use the new task
+ * ApiFileGenerationTask.
  */
 public class ApiFileGeneratorTask extends Task {
 
