@@ -918,7 +918,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	private void replaceManifestValue(String location, String attribute, String newVersion) {
 		Manifest manifest = null;
 		try {
-			InputStream is = new BufferedInputStream(new FileInputStream(location));
+			//work around for bug 256787 
+			InputStream is = new SequenceInputStream(new BufferedInputStream(new FileInputStream(location)), new ByteArrayInputStream("\n".getBytes())); //$NON-NLS-1$
 			try {
 				manifest = new Manifest(is);
 			} finally {
@@ -935,6 +936,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			os = new BufferedOutputStream(new FileOutputStream(location));
 			try {
 				manifest.write(os);
+				os.write("\n".getBytes()); //$NON-NLS-1$
 			} finally {
 				os.close();
 			}

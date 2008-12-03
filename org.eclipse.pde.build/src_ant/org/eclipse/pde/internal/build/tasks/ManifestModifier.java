@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,11 +25,11 @@ import org.apache.tools.ant.Task;
  */
 public class ManifestModifier extends Task {
 	private String manifestLocation;
-	private Map newValues = new HashMap();
+	private final Map newValues = new HashMap();
 	private static String DELIM = "#|"; //$NON-NLS-1$
 	private Manifest manifest = null;
 	private boolean contentChanged = false;
-	
+
 	/**
 	 * Indicate new values to add to the manifest. The format of the parameter is key|value#key|value#...
 	 * If a value is specified to null, the key will be removed from the manifest. 
@@ -57,12 +57,13 @@ public class ManifestModifier extends Task {
 	private void writeManifest() {
 		if (!contentChanged)
 			return;
-		
+
 		OutputStream os = null;
 		try {
 			os = new BufferedOutputStream(new FileOutputStream(manifestLocation));
 			try {
 				manifest.write(os);
+				os.write("\n".getBytes()); //$NON-NLS-1$ //256787
 			} finally {
 				os.close();
 			}
@@ -92,7 +93,8 @@ public class ManifestModifier extends Task {
 
 	private void loadManifest() {
 		try {
-			InputStream is = new BufferedInputStream(new FileInputStream(manifestLocation));
+			//work around for bug 256787 
+			InputStream is = new SequenceInputStream(new BufferedInputStream(new FileInputStream(manifestLocation)), new ByteArrayInputStream("\n".getBytes())); //$NON-NLS-1$
 			try {
 				manifest = new Manifest(is);
 			} finally {

@@ -1026,4 +1026,23 @@ public class ScriptGenerationTests extends PDETestCase {
 		zipEntries.add("eclipse/5");
 		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild.zip", zipEntries);
 	}
+	
+	public void testBug256787() throws Exception {
+		IFolder buildFolder = newTest("256787");
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<project name=\"test\" basedir=\".\">   \n");
+		buffer.append("   <target name=\"main\">               \n");
+		buffer.append("      <eclipse.versionReplacer path=\"");
+		buffer.append(buildFolder.getLocation().toOSString());
+		buffer.append("\" version=\"3.5.0.v20081125\" />       \n");
+		buffer.append("   </target>                            \n");
+		buffer.append("</project>                              \n");
+		
+		IFile xml = buildFolder.getFile("build.xml");
+		Utils.writeBuffer(xml, buffer);
+		
+		runAntScript(xml.getLocation().toOSString(), new String[] {"main"}, buildFolder.getLocation().toOSString(), null);
+		assertLogContainsLine(buildFolder.getFile("META-INF/MANIFEST.MF"), "Bundle-RequiredExecutionEnvironment: J2SE-1.4");
+	}
 }
