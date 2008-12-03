@@ -57,6 +57,7 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.StringMatcher;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -209,12 +210,12 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		});
 		text.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-                if (e.keyCode == SWT.ARROW_DOWN) {
-                	if(tableviewer != null) {
-                		tableviewer.getTable().setFocus();
-                	}
+				if (e.keyCode == SWT.ARROW_DOWN) {
+					if(tableviewer != null) {
+						tableviewer.getTable().setFocus();
+					}
 				}
-            }
+			}
 		});
 		
 		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_8, 1, 50);
@@ -308,9 +309,11 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		ArrayList pjs = new ArrayList();
 		for(int i = 0; i < projects.length; i++) {
 			try {
-				if((projects[i].hasNature(JavaCore.NATURE_ID) && projects[i].hasNature("org.eclipse.pde.PluginNature"))  //$NON-NLS-1$
-							&& !projects[i].hasNature(ApiPlugin.NATURE_ID)) {
-					pjs.add(projects[i]);
+				IProject project = projects[i];
+				if((project.hasNature(JavaCore.NATURE_ID) && project.hasNature("org.eclipse.pde.PluginNature")) //$NON-NLS-1$
+							&& !project.hasNature(ApiPlugin.NATURE_ID)
+							&& (project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY) == null)) {
+					pjs.add(project);
 				}
 			}
 			catch(CoreException ce) {}
