@@ -41,10 +41,6 @@ public class GatheringComputer implements IPathComputer {
 		filesMap.put(new File(prefix, file), prefix);
 	}
 
-	public void addFile(String prefix, File file) {
-		filesMap.put(file, prefix);
-	}
-
 	public File[] getFiles() {
 		Set keys = filesMap.keySet();
 		return (File[]) keys.toArray(new File[keys.size()]);

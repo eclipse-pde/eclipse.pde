@@ -47,6 +47,15 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	// The 64 characters that are legal in a version qualifier, in lexicographical order.
 	private static final String BASE_64_ENCODING = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
 
+	// regex expressions and keys for parsing feature root properties
+	private static final String REGEX_ROOT_CONFIG = "^root((\\.[\\w-\\*]+){3})$"; //$NON-NLS-1$
+	private static final String REGEX_ROOT_CONFIG_FOLDER = "^root((\\.[\\w-\\*]+){3})?\\.folder\\.(.*)$"; //$NON-NLS-1$
+	private static final String REGEX_ROOT_CONFIG_PERMISSIONS = "^root((\\.[\\w-\\*]+){3})?\\.permissions\\.(.*)$"; //$NON-NLS-1$
+	private static final String REGEX_ROOT_CONFIG_LINK = "^root((\\.[\\w-\\*]+){3})?\\.link$"; //$NON-NLS-1$
+	public static final String ROOT_PERMISSIONS = "!!ROOT.PERMISSIONS!!"; //$NON-NLS-1$
+	public static final String ROOT_LINK = "!!ROOT.LINK!!"; //$NON-NLS-1$
+	public static final String ROOT_COMMON = "!!COMMON!!"; //$NON-NLS-1$
+
 	/** 
 	 * returns a value 1 - 64 for valid qualifier characters.  Returns 0 for non-valid characters 
 	 */
@@ -471,6 +480,82 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 				return i;
 		}
 		return -1;
+	}
+
+	/**
+	 * Process root file properties.  
+	 * Resulting map is from config string to a property map.  The format of the property map is:
+	 * 1) folder -> fileset to copy.  folder can be "" (the root) or an actual folder
+	 * 2) ROOT_PERMISSIONS + rights -> fileset to set rights for
+	 * 3) ROOT_LINK -> comma separated list: (target, link)*
+	 * 
+	 * Properties that are common across all configs are available under the ROOT_COMMON key.
+	 * They are also optionally merged into each individual config.
+
+	 * @param properties - build.properties for a feature
+	 * @param mergeCommon - whether or not to merge the common properties into each config
+	 * @return Map
+	 */
+	static public Map processRootProperties(Properties properties, boolean mergeCommon) {
+		Map map = new HashMap();
+		Map common = new HashMap();
+		for (Enumeration keys = properties.keys(); keys.hasMoreElements();) {
+			String entry = (String) keys.nextElement();
+			String config = null;
+			String entryKey = null;
+
+			if (entry.equals(ROOT) || entry.matches(REGEX_ROOT_CONFIG)) {
+				config = entry.length() > 4 ? entry.substring(5) : ""; //$NON-NLS-1$
+				entryKey = ""; //$NON-NLS-1$
+			} else if (entry.matches(REGEX_ROOT_CONFIG_FOLDER)) {
+				int folderIdx = entry.indexOf(FOLDER_INFIX);
+				config = (folderIdx > 5) ? entry.substring(5, folderIdx) : ""; //$NON-NLS-1$
+				entryKey = entry.substring(folderIdx + 8);
+			} else if (entry.matches(REGEX_ROOT_CONFIG_PERMISSIONS)) {
+				int permissionIdx = entry.indexOf(PERMISSIONS_INFIX);
+				config = (permissionIdx > 5) ? entry.substring(5, permissionIdx) : ""; //$NON-NLS-1$
+				entryKey = ROOT_PERMISSIONS + entry.substring(permissionIdx + 13);
+			} else if (entry.matches(REGEX_ROOT_CONFIG_LINK)) {
+				int linkIdx = entry.indexOf(LINK_SUFFIX);
+				config = (linkIdx > 5) ? entry.substring(5, linkIdx) : ""; //$NON-NLS-1$
+				entryKey = ROOT_LINK;
+			}
+
+			if (config != null) {
+				Map submap = (config.length() == 0) ? common : (Map) map.get(config);
+				if (submap == null) {
+					submap = new HashMap();
+					map.put(config, submap);
+				}
+				if (submap.containsKey(entryKey)) {
+					String existing = (String) submap.get(entryKey);
+					submap.put(entryKey, existing + "," + properties.getProperty(entry)); //$NON-NLS-1$
+				} else {
+					submap.put(entryKey, properties.get(entry));
+				}
+			}
+		}
+
+		//merge the common properties into each of the configs
+		if (common.size() > 0 && mergeCommon) {
+			for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				Map submap = (Map) map.get(key);
+				for (Iterator commonKeys = common.keySet().iterator(); commonKeys.hasNext();) {
+					String commonKey = (String) commonKeys.next();
+					if (submap.containsKey(commonKey)) {
+						String existing = (String) submap.get(commonKey);
+						submap.put(commonKey, existing + "," + common.get(commonKey)); //$NON-NLS-1$
+					} else {
+						submap.put(commonKey, common.get(commonKey));
+					}
+				}
+			}
+		}
+
+		//and also add the common properties independently
+		map.put(ROOT_COMMON, common);
+		return map;
 	}
 
 	public static void generatePermissions(Properties featureProperties, Config aConfig, String targetRootProperty, AntScript script) {

@@ -319,4 +319,45 @@ public class Utils {
 				}
 		}
 	}
+	
+	public static void copy(File source, File target) throws IOException {
+		if (!source.exists())
+			return;
+		if (source.isDirectory()) {
+			if (target.exists() && target.isFile())
+				target.delete();
+			if (!target.exists())
+				target.mkdirs();
+			File[] children = source.listFiles();
+			for (int i = 0; i < children.length; i++)
+				copy(children[i], new File(target, children[i].getName()));
+			return;
+		}
+		InputStream input = null;
+		OutputStream output = null;
+		try {
+			input = new BufferedInputStream(new FileInputStream(source));
+			output = new BufferedOutputStream(new FileOutputStream(target));
+
+			byte[] buffer = new byte[8192];
+			int bytesRead = 0;
+			while ((bytesRead = input.read(buffer)) != -1)
+				output.write(buffer, 0, bytesRead);
+		} finally {
+			if (input != null) {
+				try{
+					input.close();
+				} catch (IOException e) {
+					//ignore
+				}
+			}
+			if (output != null) {
+				try {
+					output.close();
+				} catch (IOException e) {
+					//ignore
+				}
+			}
+		}
+	}
 }

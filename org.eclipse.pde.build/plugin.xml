@@ -16,6 +16,11 @@
       		class="org.eclipse.pde.internal.build.publisher.GatherBundleTask">
       </antTask>
       <antTask
+      		library="lib/pdebuild-ant.jar"
+      		name="eclipse.gatherFeature"
+      		class="org.eclipse.pde.internal.build.publisher.GatherFeatureTask">
+      </antTask>
+      <antTask
             library="lib/pdebuild-ant.jar"
             name="eclipse.fetch"
             class="org.eclipse.pde.internal.build.tasks.FetchTask">

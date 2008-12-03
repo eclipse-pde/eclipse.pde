@@ -18,6 +18,8 @@ public interface IBuildPropertiesConstants {
 	public final static String ROOT = "root"; //$NON-NLS-1$
 	public final static String ROOT_FOLDER_PREFIX = ROOT_PREFIX + "folder."; //$NON-NLS-1$
 	public final static String FOLDER_INFIX = ".folder."; //$NON-NLS-1$
+	public final static String PERMISSIONS_INFIX = ".permissions."; //$NON-NLS-1$
+	public final static String LINK_SUFFIX = ".link"; //$NON-NLS-1$
 
 	public final static String TRUE = "true"; //$NON-NLS-1$
 	public final static String FALSE = "false"; //$NON-NLS-1$

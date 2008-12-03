@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM - Initial API and implementation
+ *     G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
+ *******************************************************************************/
+
 package org.eclipse.pde.internal.build.builder;
 
 import java.io.File;
@@ -35,6 +47,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	private String customCallbacksBuildpath = null;
 	private String customCallbacksFailOnError = null;
 	private String customCallbacksInheritAll = null;
+
+	public static boolean p2Gathering = false;
 
 	public FeatureBuildScriptGenerator(BuildTimeFeature feature) {
 		this.feature = feature;
@@ -134,7 +148,11 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		generateBuildJarsTarget();
 		generateBuildZipsTarget();
 		generateBuildUpdateJarTarget();
-		generateGatherBinPartsTarget();
+
+		if (p2Gathering)
+			generatePublishBinPartsTarget();
+		else
+			generateGatherBinPartsTarget();
 		generateZipDistributionWholeTarget();
 		generateZipSourcesTarget();
 		generateZipLogsTarget();
@@ -273,6 +291,31 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetEnd();
 	}
 
+	private void generatePublishBinPartsTarget() throws CoreException {
+		script.println();
+		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, null, null, null);
+
+		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
+		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
+
+		script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER));
+
+		//if (include != null) {
+		FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
+		script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER), new FileSet[] {fileSet}, true, false);
+		generateIdReplacerCall(Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER));
+		//}
+
+		script.println("<eclipse.gatherFeature "); //$NON-NLS-1$
+		script.println("   metadataRepository=\"file:${buildDirectory}/buildRepo\""); //$NON-NLS-1$
+		script.println("   artifactRepository=\"file:${buildDirectory}/buildRepo\""); //$NON-NLS-1$
+		script.println("   buildResultFolder=\"" + Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
+		script.println("/>"); //$NON-NLS-1$
+
+		script.printTargetEnd();
+	}
+
 	/**
 	 * Add the <code>gather.bin.parts</code> target to the given Ant script
 	 * 
@@ -302,42 +345,11 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printAntCallTask(TARGET_CHILDREN, true, params);
 
 		if (include != null) {
-			//			if (include != null || exclude != null) {
 			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
-			//			}
+
 			// Generate the parameters for the Id Replacer.
-			String featureVersionInfo = ""; //$NON-NLS-1$
-			// Here we get all the included features (independently of the config being built so the version numbers in the feature can be replaced)
-			FeatureEntry[] includedFeatures = feature.getRawIncludedFeatureReferences();
-			for (int i = 0; i < includedFeatures.length; i++) {
-				String versionRequested = includedFeatures[i].getVersion();
-				BuildTimeFeature includedFeature = null;
-				try {
-					includedFeature = getSite(false).findFeature(includedFeatures[i].getId(), versionRequested, true);
-				} catch (CoreException e) {
-					absorbExceptionIfOptionalFeature(includedFeatures[i], e);
-					continue;
-				}
-				//VersionedIdentifier includedFeatureVersionId = includedFeature.getVersionedIdentifier();
-				if (needsReplacement(versionRequested))
-					featureVersionInfo += (includedFeature.getId() + ':' + extract3Segments(versionRequested) + ',' + includedFeature.getVersion() + ',');
-			}
-			String pluginVersionInfo = ""; //$NON-NLS-1$
-			// Here we get all the included plugins (independently of the config being built so the version numbers in the feature can be replaced)
-			FeatureEntry[] pluginsIncluded = feature.getRawPluginEntries();
-			for (int i = 0; i < pluginsIncluded.length; i++) {
-				BundleDescription model;
-				// If we ask for 0.0.0, the call to the registry must have null as a parameter
-				String versionRequested = pluginsIncluded[i].getVersion();
-				String entryIdentifier = pluginsIncluded[i].getId();
-				model = getSite(false).getRegistry().getResolvedBundle(entryIdentifier, versionRequested);
-				if (model != null) {
-					if (needsReplacement(versionRequested))
-						pluginVersionInfo += (entryIdentifier + ':' + extract3Segments(versionRequested) + ',' + model.getVersion() + ',');
-				}
-			}
-			script.println("<eclipse.idReplacer featureFilePath=\"" + AntScript.getEscaped(root) + '/' + Constants.FEATURE_FILENAME_DESCRIPTOR + "\"  selfVersion=\"" + feature.getVersion() + "\" featureIds=\"" + featureVersionInfo + "\" pluginIds=\"" + pluginVersionInfo + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			generateIdReplacerCall(root);
 		}
 		generateRootFilesAndPermissionsCalls();
 		if (customFeatureCallbacks != null) {
@@ -345,6 +357,41 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		}
 		script.printTargetEnd();
 		generateRootFilesAndPermissions();
+	}
+
+	private void generateIdReplacerCall(String root) throws CoreException {
+		String featureVersionInfo = ""; //$NON-NLS-1$
+		// Here we get all the included features (independently of the config being built so the version numbers in the feature can be replaced)
+		FeatureEntry[] includedFeatures = feature.getRawIncludedFeatureReferences();
+		for (int i = 0; i < includedFeatures.length; i++) {
+			String versionRequested = includedFeatures[i].getVersion();
+			BuildTimeFeature includedFeature = null;
+			try {
+				includedFeature = getSite(false).findFeature(includedFeatures[i].getId(), versionRequested, true);
+			} catch (CoreException e) {
+				absorbExceptionIfOptionalFeature(includedFeatures[i], e);
+				continue;
+			}
+			//VersionedIdentifier includedFeatureVersionId = includedFeature.getVersionedIdentifier();
+			if (needsReplacement(versionRequested))
+				featureVersionInfo += (includedFeature.getId() + ':' + extract3Segments(versionRequested) + ',' + includedFeature.getVersion() + ',');
+		}
+		String pluginVersionInfo = ""; //$NON-NLS-1$
+		// Here we get all the included plugins (independently of the config being built so the version numbers in the feature can be replaced)
+		FeatureEntry[] pluginsIncluded = feature.getRawPluginEntries();
+		for (int i = 0; i < pluginsIncluded.length; i++) {
+			BundleDescription model;
+			// If we ask for 0.0.0, the call to the registry must have null as a parameter
+			String versionRequested = pluginsIncluded[i].getVersion();
+			String entryIdentifier = pluginsIncluded[i].getId();
+			model = getSite(false).getRegistry().getResolvedBundle(entryIdentifier, versionRequested);
+			if (model != null) {
+				if (needsReplacement(versionRequested))
+					pluginVersionInfo += (entryIdentifier + ':' + extract3Segments(versionRequested) + ',' + model.getVersion() + ',');
+			}
+		}
+
+		script.println("<eclipse.idReplacer featureFilePath=\"" + AntScript.getEscaped(root) + '/' + Constants.FEATURE_FILENAME_DESCRIPTOR + "\"  selfVersion=\"" + feature.getVersion() + "\" featureIds=\"" + featureVersionInfo + "\" pluginIds=\"" + pluginVersionInfo + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 
 	private boolean needsReplacement(String s) {
@@ -410,38 +457,10 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 	private void generateCopyRootFiles(Config aConfig) throws CoreException {
 		Properties properties = getBuildProperties();
-		Map foldersToCopy = new HashMap(2);
-
-		/* normal root files */
-		String baseList = getBuildProperties().getProperty(ROOT, ""); //$NON-NLS-1$
-		String fileList = getBuildProperties().getProperty(ROOT_PREFIX + aConfig.toString("."), ""); //$NON-NLS-1$ //$NON-NLS-2$
-		fileList = (fileList.length() == 0 ? "" : fileList + ',') + baseList; //$NON-NLS-1$
-		if (fileList.length() > 0)
-			foldersToCopy.put("", fileList); //$NON-NLS-1$
-
-		/* root files going to subfolders */
-		String configPrefix = ROOT_PREFIX + aConfig.toString(".") + FOLDER_INFIX; //$NON-NLS-1$
-		for (Iterator it = properties.keySet().iterator(); it.hasNext();) {
-			String key = (String) it.next();
-			String folder = null;
-			if (key.startsWith(ROOT_FOLDER_PREFIX)) {
-				folder = key.substring(ROOT_FOLDER_PREFIX.length(), key.length());
-			} else if (key.startsWith(configPrefix)) {
-				folder = key.substring(configPrefix.length(), key.length());
-			}
-			if (folder != null) {
-				String value = properties.getProperty(key);
-				if (foldersToCopy.containsKey(folder)) {
-					String set = (String) foldersToCopy.get(folder);
-					set += "," + value; //$NON-NLS-1$
-					foldersToCopy.put(folder, set);
-				} else {
-					foldersToCopy.put(folder, value);
-				}
-			}
-		}
-
-		if (foldersToCopy.isEmpty())
+		String configKey = aConfig.toString("."); //$NON-NLS-1$
+		Map root = Utils.processRootProperties(properties, true);
+		Map foldersToCopy = root.containsKey(configKey) ? (Map) root.get(configKey) : (Map) root.get(Utils.ROOT_COMMON);
+		if (foldersToCopy == null || foldersToCopy.isEmpty())
 			return;
 
 		String configName = aConfig.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
@@ -451,8 +470,11 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		director.getAssemblyData().addRootFileProvider(aConfig, feature);
 
 		Object[] folders = foldersToCopy.keySet().toArray();
+		String fileList = null;
 		for (int i = 0; i < folders.length; i++) {
 			String folder = (String) folders[i];
+			if (folder.equals(Utils.ROOT_LINK) || folder.startsWith(Utils.ROOT_PERMISSIONS))
+				continue;
 			fileList = (String) foldersToCopy.get(folder);
 			String[] files = Utils.getArrayFromString(fileList, ","); //$NON-NLS-1$
 			FileSet[] fileSet = new FileSet[files.length];

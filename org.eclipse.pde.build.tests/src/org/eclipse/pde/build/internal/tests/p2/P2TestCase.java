@@ -61,8 +61,12 @@ public class P2TestCase extends PDETestCase {
 	}
 	
 	public void assertTouchpoint(IInstallableUnit iu, String phase, String action) {
-		String data = iu.getTouchpointData()[0].getInstruction(phase).getBody();
-		assertTrue(data.indexOf(action) != -1);
+		TouchpointData[] data = iu.getTouchpointData();
+		for (int i = 0; i < data.length; i++) {
+			if (data[i].getInstruction(phase).getBody().indexOf(action) > -1)
+				return;
+		}
+		fail("Action not found:" + action);
 	}
 	
 	public void assertProvides(IInstallableUnit iu, String namespace, String name) {
