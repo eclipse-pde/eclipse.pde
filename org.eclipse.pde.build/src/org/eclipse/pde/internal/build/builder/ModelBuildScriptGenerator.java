@@ -115,6 +115,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private boolean dotOnTheClasspath = false;
 	private boolean binaryPlugin = false;
 	private boolean signJars = false;
+	private Map workspaceOutputFolders = null;
 
 	public static boolean p2Gathering = false;
 
@@ -195,6 +196,16 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		customCallbacksBuildpath = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_BUILDPATH, "."); //$NON-NLS-1$
 		customCallbacksFailOnError = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_FAILONERROR, FALSE);
 		customCallbacksInheritAll = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_INHERITALL);
+
+		if (featureGenerator != null && featureGenerator.useWorkspaceBinaries() && havePDEUIState()) {
+			PDEUIStateWrapper wrapper = getSite(false).getSiteContentProvider().getInitialState();
+			if (wrapper != null && wrapper.getOutputFolders() != null) {
+				Map folders = wrapper.getOutputFolders();
+				if (folders.containsKey(model.getSymbolicName())) {
+					workspaceOutputFolders = (Map) folders.get(model.getSymbolicName());
+				}
+			}
+		}
 	}
 
 	protected static boolean findAndReplaceDot(String[] classpathInfo) {
@@ -1143,23 +1154,42 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + name, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, references);
 		}
 
-		script.printComment("compile the source code"); //$NON-NLS-1$
-		JavacTask javac = new JavacTask();
-		javac.setClasspathId(name + PROPERTY_CLASSPATH);
-		javac.setBootClasspath(Utils.getPropertyFormat(PROPERTY_BUNDLE_BOOTCLASSPATH));
-		javac.setDestdir(destdir);
-		javac.setFailOnError(Utils.getPropertyFormat(PROPERTY_JAVAC_FAIL_ON_ERROR));
-		javac.setDebug(Utils.getPropertyFormat(PROPERTY_JAVAC_DEBUG_INFO));
-		javac.setVerbose(Utils.getPropertyFormat(PROPERTY_JAVAC_VERBOSE));
-		javac.setIncludeAntRuntime("no"); //$NON-NLS-1$
-		javac.setSource(Utils.getPropertyFormat(PROPERTY_BUNDLE_JAVAC_SOURCE));
-		javac.setTarget(Utils.getPropertyFormat(PROPERTY_BUNDLE_JAVAC_TARGET));
-		javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
-		javac.setSrcdir(sources);
-		javac.setLogExtension(Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
-		generateCompilerSettings(javac, entry, classpath);
+		FileSet[] workspaceFiles = null;
+		String outputKey = name.equals(EXPANDED_DOT) ? DOT : name;
+		if (workspaceOutputFolders != null && workspaceOutputFolders.containsKey(outputKey)) {
+			Set paths = (Set) workspaceOutputFolders.get(outputKey);
+			workspaceFiles = new FileSet[paths.size()];
 
-		script.print(javac);
+			int i = 0;
+			for (Iterator iterator = paths.iterator(); iterator.hasNext();) {
+				IPath path = (IPath) iterator.next();
+				workspaceFiles[i++] = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/" + path.toOSString(), null, null, null, "**/package.htm*", null, null); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			//if entry is a folder, copy over the class files, otherwise they will be jarred from where they are.
+			if (entry.getType() == CompiledEntry.FOLDER) {
+				script.printCopyTask(null, destdir, workspaceFiles, true, false);
+			}
+		} else {
+			script.printComment("compile the source code"); //$NON-NLS-1$
+			JavacTask javac = new JavacTask();
+			javac.setClasspathId(name + PROPERTY_CLASSPATH);
+			javac.setBootClasspath(Utils.getPropertyFormat(PROPERTY_BUNDLE_BOOTCLASSPATH));
+			javac.setDestdir(destdir);
+			javac.setFailOnError(Utils.getPropertyFormat(PROPERTY_JAVAC_FAIL_ON_ERROR));
+			javac.setDebug(Utils.getPropertyFormat(PROPERTY_JAVAC_DEBUG_INFO));
+			javac.setVerbose(Utils.getPropertyFormat(PROPERTY_JAVAC_VERBOSE));
+			javac.setIncludeAntRuntime("no"); //$NON-NLS-1$
+			javac.setSource(Utils.getPropertyFormat(PROPERTY_BUNDLE_JAVAC_SOURCE));
+			javac.setTarget(Utils.getPropertyFormat(PROPERTY_BUNDLE_JAVAC_TARGET));
+			javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
+			javac.setSrcdir(sources);
+			javac.setLogExtension(Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
+			generateCompilerSettings(javac, entry, classpath);
+
+			script.print(javac);
+		}
+
 		script.printComment("Copy necessary resources"); //$NON-NLS-1$
 		FileSet[] fileSets = new FileSet[sources.length];
 		for (int i = 0; i < sources.length; i++) {
@@ -1180,7 +1210,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String jarLocation = getJARLocation(entry.getName(true));
 		if (entry.getType() != CompiledEntry.FOLDER) {
 			script.printMkdirTask(new Path(jarLocation).removeLastSegments(1).toString());
-			script.printJarTask(jarLocation, destdir, getEmbeddedManifestFile(entry, destdir));
+			if (workspaceFiles != null)
+				script.printJarTask(jarLocation, destdir, workspaceFiles, getEmbeddedManifestFile(entry, destdir), null, "preserve"); //$NON-NLS-1$
+			else
+				script.printJarTask(jarLocation, destdir, getEmbeddedManifestFile(entry, destdir));
 			script.printDeleteTask(destdir, null, null);
 		}
 

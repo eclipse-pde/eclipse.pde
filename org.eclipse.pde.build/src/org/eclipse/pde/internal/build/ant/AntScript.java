@@ -154,6 +154,23 @@ public class AntScript implements IAntScript {
 		output.println("/>"); //$NON-NLS-1$
 	}
 
+	public void printJarTask(String jarFile, String baseDir, FileSet[] otherFiles, String manifestAttribute, String filesetManifest, String duplicate) {
+		printTab();
+		output.print("<jar"); //$NON-NLS-1$
+		printAttribute("destfile", jarFile, true); //$NON-NLS-1$
+		printAttribute("basedir", baseDir, true); //$NON-NLS-1$
+		printAttribute("manifest", manifestAttribute, false); //$NON-NLS-1$
+		printAttribute("filesetmanifest", filesetManifest, false); //$NON-NLS-1$
+		printAttribute("duplicate", duplicate, false); //$NON-NLS-1$
+		output.println(">"); //$NON-NLS-1$
+		indent++;
+		for (int i = 0; i < otherFiles.length; i++)
+			if (otherFiles[i] != null)
+				otherFiles[i].print(this);
+		indent--;
+		output.println("</jar>"); //$NON-NLS-1$
+	}
+
 	/**
 	 * Print the <code>available</code> Ant task to this script. This task sets a property
 	 * value if the given file exists at runtime.

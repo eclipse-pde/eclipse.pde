@@ -53,6 +53,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected boolean generateJnlp = false;
 	protected boolean generateFeatureVersionSuffix = false;
 	protected boolean parallel = false;
+	protected boolean workspaceBinaries = false;
 	protected int threadCount = -1;
 	protected int threadsPerProcessor = -1;
 	protected String[] eeSources = null;
@@ -211,6 +212,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setGenerateJnlp(generateJnlp);
 			generator.setGenerateVersionSuffix(generateFeatureVersionSuffix);
 			generator.setProduct(product);
+			generator.setUseWorkspaceBinaries(workspaceBinaries);
 		}
 
 		if (generator != null) {
@@ -570,5 +572,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	public String[] getEESources() {
 		return eeSources;
+	}
+
+	public void setUseWorkspaceBinaries(boolean workspaceBinaries) {
+		this.workspaceBinaries = workspaceBinaries;
 	}
 }

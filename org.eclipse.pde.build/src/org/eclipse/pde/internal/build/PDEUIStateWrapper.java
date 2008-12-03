@@ -18,34 +18,41 @@ import org.eclipse.osgi.service.resolver.State;
 public class PDEUIStateWrapper {
 	private State state;
 	private HashMap classpath;
+	// Map of source entries to their output folders
+	private Map outputFolders;
 	private Map patchData;
 	private long nextId;
-	
+
 	public void setState(State s) {
 		state = s;
 	}
-	
-	public void setExtraData(HashMap classpath, Map patch) {
+
+	public void setExtraData(HashMap classpath, Map patch, Map outputFolders) {
 		this.classpath = classpath;
 		this.patchData = patch;
+		this.outputFolders = outputFolders;
 	}
-	
+
 	public State getState() {
 		return state;
 	}
-	
+
 	public HashMap getClasspaths() {
 		return classpath;
+	}
+
+	public Map getOutputFolders() {
+		return outputFolders;
 	}
 
 	public Map getPatchData() {
 		return patchData;
 	}
-	
+
 	public void setNextId(long nextId) {
 		this.nextId = nextId;
 	}
-	
+
 	public long getNextId() {
 		return nextId;
 	}

@@ -51,6 +51,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	protected boolean signJars = false;
 	protected String product = null;
 	protected boolean generateJnlp = false;
+	protected boolean workspaceBinaries = false;
 
 	public BuildDirector() {
 		super();
@@ -653,5 +654,13 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 	public AssemblyInformation getAssemblyData() {
 		return assemblyData;
+	}
+
+	public boolean useWorkspaceBinaries() {
+		return workspaceBinaries;
+	}
+
+	public void setUseWorkspaceBinaries(boolean workspaceBinaries) {
+		this.workspaceBinaries = workspaceBinaries;
 	}
 }
