@@ -73,6 +73,11 @@ public class Messages extends NLS {
 	public static String couldNotUnzip;
 	public static String couldNotUntar;
 
+	public static String api_generation_printArguments;
+	public static String api_generation_printArguments2;
+	public static String api_generation_projectLocationNotADirectory;
+	public static String api_generation_targetFolderNotADirectory;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
