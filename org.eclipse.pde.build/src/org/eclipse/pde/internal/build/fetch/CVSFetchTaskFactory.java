@@ -55,6 +55,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	private static final String PROP_MODULE = "module"; //$NON-NLS-1$
 	private static final String PROP_TAG = "tag"; //$NON-NLS-1$
 	private static final String PROP_QUIET = "quiet"; //$NON-NLS-1$
+	private static final String PROP_REALLYQUIET = "reallyquiet"; //$NON-NLS-1$
 	private static final String PROP_FILETOCHECK = "fileToCheck"; //$NON-NLS-1$
 	private static final String PROP_ELEMENTNAME = "elementName"; //$NON-NLS-1$
 
@@ -80,6 +81,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		params.put(PROP_TAG, entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG));
 		params.put(PROP_CVSROOT, entryInfos.get(KEY_CVSROOT));
 		params.put(PROP_QUIET, "${cvs.quiet}"); //$NON-NLS-1$
+		params.put(PROP_REALLYQUIET, "${cvs.reallyquiet}"); //$NON-NLS-1$
 		// the call to CVS requires us to pass a destination directory for the files that we are
 		// retrieving, so give it the /plugins dir here
 		if (prebuilt) {
@@ -137,14 +139,14 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 			String tag = (String) entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG);
 			String cvsRoot = (String) entryInfos.get(KEY_CVSROOT);
 			String dest = "true".equalsIgnoreCase((String) entryInfos.get(KEY_PREBUILT)) ? destination.removeLastSegments(1).toString() : destination.toString(); //$NON-NLS-1$
-			printCVSTask("export -r " + tag + ' ' + filePath.toString(), cvsRoot, dest, null, null, "true", null, null, "${fetch.failonerror}", script); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			printCVSTask("export -r " + tag + ' ' + filePath.toString(), cvsRoot, dest, null, null, "true", Utils.getPropertyFormat(PROP_REALLYQUIET), null, null, "${fetch.failonerror}", script); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-5$
 			script.println("<move file=\"" + destination + '/' + filePath + "\"" + " tofile=\"" + destination.append(file) + "\" failonerror=\"false\" />"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
 
 	public void addTargets(IAntScript script) {
 		script.printTargetDeclaration(TARGET_GET_FROM_CVS, null, null, "${fileToCheck}", null); //$NON-NLS-1$
-		printCVSTask("export -d ${" + PROP_ELEMENTNAME + "}", "${" + PROP_CVSROOT + "}", "${" + PROP_DESTINATIONFOLDER + "}", "${" + PROP_MODULE + "}", "${" + PROP_TAG + "}", "${" + PROP_QUIET + "}", null, "CVS - ${" + PROP_MODULE + "}", script); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$ //$NON-NLS-13$ //$NON-NLS-14$
+		printCVSTask("export -d " + Utils.getPropertyFormat(PROP_ELEMENTNAME), Utils.getPropertyFormat(PROP_CVSROOT), Utils.getPropertyFormat(PROP_DESTINATIONFOLDER), Utils.getPropertyFormat(PROP_MODULE), Utils.getPropertyFormat(PROP_TAG), Utils.getPropertyFormat(PROP_QUIET), Utils.getPropertyFormat(PROP_REALLYQUIET), null, "CVS - " + Utils.getPropertyFormat(PROP_MODULE), script); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printTargetEnd();
 	}
 
@@ -206,10 +208,11 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	 * @param module the module name to check out
 	 * @param tag the tag of the module to check out
 	 * @param quiet whether or not to print informational messages to the output
+	 * @param reallyquiet whether or not to print any messages to the output
 	 * @param passFile the name of the password file
 	 */
-	private void printCVSTask(String command, String cvsRoot, String dest, String module, String tag, String quiet, String passFile, String taskname, IAntScript script) {
-		printCVSTask(command, cvsRoot, dest, module, tag, quiet, passFile, taskname, null, script);
+	private void printCVSTask(String command, String cvsRoot, String dest, String module, String tag, String quiet, String reallyquiet, String passFile, String taskname, IAntScript script) {
+		printCVSTask(command, cvsRoot, dest, module, tag, quiet, reallyquiet, passFile, taskname, null, script);
 	}
 
 	/**
@@ -221,10 +224,11 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	 * @param module the module name to check out
 	 * @param tag the tag of the module to check out
 	 * @param quiet whether or not to print informational messages to the output
+	 * @param reallyquiet whether or not to print any messages to the output
 	 * @param passFile the name of the password file
 	 * @param failOnError whether or not to throw an exception if something goes wrong
 	 */
-	private void printCVSTask(String command, String cvsRoot, String dest, String module, String tag, String quiet, String passFile, String taskname, String failOnError, IAntScript script) {
+	private void printCVSTask(String command, String cvsRoot, String dest, String module, String tag, String quiet, String reallyquiet, String passFile, String taskname, String failOnError, IAntScript script) {
 		script.printTabs();
 		script.print("<cvs"); //$NON-NLS-1$
 		script.printAttribute("command", command, false); //$NON-NLS-1$
@@ -233,6 +237,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		script.printAttribute("package", module, false); //$NON-NLS-1$
 		script.printAttribute("tag", tag, false); //$NON-NLS-1$
 		script.printAttribute("quiet", quiet, false); //$NON-NLS-1$
+		script.printAttribute("reallyquiet", reallyquiet, false); //$NON-NLS-1$
 		script.printAttribute("passfile", passFile, false); //$NON-NLS-1$
 		script.printAttribute("taskname", taskname, false); //$NON-NLS-1$
 		script.printAttribute("failonerror", failOnError, false); //$NON-NLS-1$
