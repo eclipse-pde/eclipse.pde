@@ -27,10 +27,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class EnumDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
-		if (true) return new TestSuite(EnumDeltaTests.class);
-		TestSuite suite = new TestSuite(EnumDeltaTests.class.getName());
-		suite.addTest(new EnumDeltaTests("test12"));
-		return suite;
+		return new TestSuite(EnumDeltaTests.class);
 	}
 
 	public EnumDeltaTests(String name) {

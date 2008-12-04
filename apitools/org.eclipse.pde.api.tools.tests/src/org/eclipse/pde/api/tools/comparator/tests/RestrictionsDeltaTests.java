@@ -26,10 +26,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 public class RestrictionsDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
-		if (true) return new TestSuite(RestrictionsDeltaTests.class);
-		TestSuite suite = new TestSuite(RestrictionsDeltaTests.class.getName());
-		suite.addTest(new RestrictionsDeltaTests("test13"));
-		return suite;
+		return new TestSuite(RestrictionsDeltaTests.class);
 	}
 
 	public RestrictionsDeltaTests(String name) {

@@ -28,10 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 public class BundlesDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
-		if (true) return new TestSuite(BundlesDeltaTests.class);
-		TestSuite suite = new TestSuite(BundlesDeltaTests.class.getName());
-		suite.addTest(new BundlesDeltaTests("test14"));
-		return suite;
+		return new TestSuite(BundlesDeltaTests.class);
 	}
 
 	public BundlesDeltaTests(String name) {

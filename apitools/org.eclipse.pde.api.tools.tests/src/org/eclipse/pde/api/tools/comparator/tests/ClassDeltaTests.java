@@ -34,10 +34,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class ClassDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
-		if (true) return new TestSuite(ClassDeltaTests.class);
-		TestSuite suite = new TestSuite(ClassDeltaTests.class.getName());
-		suite.addTest(new ClassDeltaTests("test139"));
-		return suite;
+		return new TestSuite(ClassDeltaTests.class);
 	}
 
 	public ClassDeltaTests(String name) {

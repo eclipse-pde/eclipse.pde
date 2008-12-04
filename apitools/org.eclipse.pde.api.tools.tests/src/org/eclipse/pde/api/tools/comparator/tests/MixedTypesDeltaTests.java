@@ -25,10 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 public class MixedTypesDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
-		if (true) return new TestSuite(MixedTypesDeltaTests.class);
-		TestSuite suite = new TestSuite(MixedTypesDeltaTests.class.getName());
-		suite.addTest(new MixedTypesDeltaTests("test3"));
-		return suite;
+		return new TestSuite(MixedTypesDeltaTests.class);
 	}
 
 	public MixedTypesDeltaTests(String name) {

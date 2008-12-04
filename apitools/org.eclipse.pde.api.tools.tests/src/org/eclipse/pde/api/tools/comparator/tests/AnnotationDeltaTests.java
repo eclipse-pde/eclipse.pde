@@ -25,10 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 public class AnnotationDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
-		if (true) return new TestSuite(AnnotationDeltaTests.class);
-		TestSuite suite = new TestSuite(AnnotationDeltaTests.class.getName());
-		suite.addTest(new AnnotationDeltaTests("test6"));
-		return suite;
+		return new TestSuite(AnnotationDeltaTests.class);
 	}
 
 	public AnnotationDeltaTests(String name) {
