@@ -69,6 +69,10 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	public static void setDebug(boolean debugValue) {
 		DEBUG = debugValue || Util.DEBUG;
 	}
+	/**
+	 * Represents no filters
+	 */
+	private static IApiProblemFilter[] NO_FILTERS = new IApiProblemFilter[0];
 	
 	/**
 	 * The mapping of filters for this store.
@@ -77,6 +81,11 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * </pre>
 	 */
 	private HashMap fFilterMap = null;
+	
+	/**
+	 * Map used to collect unused {@link IApiProblemFilter}s
+	 */
+	private HashMap fUnusedFilters = null;
 	
 	/**
 	 * The backing {@link IJavaProject}
@@ -227,7 +236,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		initializeApiFilters();
 		Map pTypeNames = (Map) fFilterMap.get(resource);
 		if(pTypeNames == null) {
-			return new IApiProblemFilter[0];
+			return NO_FILTERS;
 		}
 		List allFilters = new ArrayList();
 		for (Iterator iterator = pTypeNames.values().iterator(); iterator.hasNext(); ) {
@@ -262,6 +271,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			filter = filters[i];
 			IApiProblem underlyingProblem = filter.getUnderlyingProblem();
 			if(underlyingProblem.equals(problem)) {
+				recordFilterUsed(resource, filter);
 				return true;
 			}
 		}
@@ -275,6 +285,10 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		if(fFilterMap != null) {
 			fFilterMap.clear();
 			fFilterMap = null;
+		}
+		if(fUnusedFilters != null) {
+			fUnusedFilters.clear();
+			fUnusedFilters = null;
 		}
  		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
@@ -420,7 +434,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		}
 		fFilterMap = new HashMap(5);
 		IPath filepath = getFilterFilePath();
-		IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(filepath);
+		IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(filepath, true);
 		if(file == null) {
 			return;
 		}
@@ -596,6 +610,71 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		IPath path = fProject.getPath();
 		path = path.append(".settings").append(IApiCoreConstants.API_FILTERS_XML_NAME); //$NON-NLS-1$
 		return path;
+	}
+	
+	/**
+	 * Start recording filter usage for this store.
+	 */
+	public void recordFilterUsage() {
+		initializeApiFilters();
+		fUnusedFilters = new HashMap();
+		IResource resource = null;
+		Map types = null;
+		Set values = null;
+		for(Iterator iter = fFilterMap.keySet().iterator(); iter.hasNext();) {
+			resource = (IResource) iter.next();
+			types = (Map) fFilterMap.get(resource);
+			values = new HashSet();
+			fUnusedFilters.put(resource, values);
+			for(Iterator iter2 = types.keySet().iterator(); iter2.hasNext();) {
+				values.addAll((Set) types.get(iter2.next()));
+			}
+		}
+	}
+	
+	/**
+	 * records that the following filter has been used
+	 * @param resource
+	 * @param filter
+	 */
+	private void recordFilterUsed(IResource resource, IApiProblemFilter filter) {
+		if(fUnusedFilters != null) {
+			Set unused = (Set) fUnusedFilters.get(resource);
+			if(unused != null) {
+				unused.remove(filter);
+				if(unused.isEmpty()) {
+					fUnusedFilters.remove(resource);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Returns all of the unused filters for this store at the moment in time this
+	 * method is called.
+	 * @return the listing of currently unused filters or an empty list, never <code>null</code>
+	 */
+	public IApiProblemFilter[] getUnusedFilters(IResource resource) {
+		if(fUnusedFilters != null) {
+			Set unused = new HashSet();
+			Set set = null;
+			if(resource != null) {
+				set = (Set)fUnusedFilters.get(resource);
+				if(set != null) {
+					unused.addAll(set);
+				}
+			}
+			else {
+				for(Iterator iter = fUnusedFilters.keySet().iterator(); iter.hasNext();) {
+					set = (Set) fUnusedFilters.get(iter.next());
+					if(set != null) {
+						unused.addAll(set);
+					}
+				}
+			}
+			return (IApiProblemFilter[]) unused.toArray(new IApiProblemFilter[unused.size()]);
+		}
+		return NO_FILTERS;
 	}
 	
 	/* (non-Javadoc)

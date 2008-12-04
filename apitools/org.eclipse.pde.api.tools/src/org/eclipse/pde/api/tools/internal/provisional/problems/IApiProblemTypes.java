@@ -235,4 +235,8 @@ public interface IApiProblemTypes {
 	 * to the corresponding EE of the bundle
 	 */
 	public static final String INVALID_REFERENCE_IN_SYSTEM_LIBRARIES = "INVALID_REFERENCE_IN_SYSTEM_LIBRARIES"; //$NON-NLS-1$
+	/**
+	 * Key for the severity of an unused API problem filter.
+	 */
+	public static final String UNUSED_PROBLEM_FILTERS = "UNUSED_PROBLEM_FILTERS"; //$NON-NLS-1$
 }

@@ -120,7 +120,7 @@
       <page
             category="org.eclipse.pde.internal.ui.properties.pluginDevelopmentPage"
             class="org.eclipse.pde.api.tools.ui.internal.properties.ApiErrorsWarningsPropertyPage"
-            id="org.eclipse.pde.api.tools.ui.apitools.proppage"
+            id="org.eclipse.pde.api.tools.ui.apitools.warningspage"
             name="%ApiErrorsWarningsPage.name">
          <keywordReference
                id="org.eclipse.pde.api.tools.ui.apitools.prefpage">
@@ -198,6 +198,9 @@
          <markerTypeReference
                id="org.eclipse.pde.api.tools.api_component_resolution">
          </markerTypeReference>
+         <markerTypeReference
+               id="org.eclipse.pde.api.tools.unused_filters">
+         </markerTypeReference>
       </markerTypeCategory>
    </extension>
     <extension
@@ -227,6 +230,10 @@
         <markerAttributeGrouping
               defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
               markerType="org.eclipse.pde.api.tools.api_component_resolution"/>
+       <markerAttributeGrouping
+             defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
+             markerType="org.eclipse.pde.api.tools.unused_filters">
+       </markerAttributeGrouping>
     </extension>
    <extension
          point="org.eclipse.ui.ide.markerResolution">
@@ -257,6 +264,10 @@
       <markerResolutionGenerator
             class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
             markerType="org.eclipse.pde.api.tools.api_component_resolution">
+      </markerResolutionGenerator>
+      <markerResolutionGenerator
+            class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
+            markerType="org.eclipse.pde.api.tools.unused_filters">
       </markerResolutionGenerator>
    </extension>
 </plugin>

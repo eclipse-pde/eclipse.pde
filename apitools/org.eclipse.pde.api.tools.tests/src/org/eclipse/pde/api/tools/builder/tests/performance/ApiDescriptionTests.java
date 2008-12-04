@@ -64,7 +64,7 @@ public class ApiDescriptionTests extends PerformanceTest {
 		for (int j = 0; j < 2; j++) {
 			// *** clean & visit API description ***
 			proj.build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
-			IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
+			IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 			IApiComponent component = profile.getApiComponent(proj.getName());
 			component.getApiDescription().accept(visitor);
 		}
@@ -74,7 +74,7 @@ public class ApiDescriptionTests extends PerformanceTest {
 			
 			// *** clean API description ***
 			proj.build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
-			IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
+			IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 			IApiComponent component = profile.getApiComponent(proj.getName());
 				
 			// ** Visit API description ***

@@ -63,7 +63,7 @@ public class CreateApiFilterOperation extends UIJob {
 			if(project == null) {
 				return Status.CANCEL_STATUS;
 			}
-			IApiComponent component = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline().getApiComponent(project.getName());
+			IApiComponent component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project.getName());
 			if(component == null) {
 				return Status.CANCEL_STATUS;
 			}

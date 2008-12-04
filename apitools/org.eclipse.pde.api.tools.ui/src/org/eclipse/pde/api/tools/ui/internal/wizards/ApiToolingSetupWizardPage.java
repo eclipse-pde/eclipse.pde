@@ -496,13 +496,13 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 * Notifies the user that they have no default API profile
 	 */
 	private void notifyNoDefaultProfile() {
-		if(ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline() == null) {
+		if(ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline() == null) {
 			UIJob job = new UIJob("No default API profile detected")  { //$NON-NLS-1$
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					boolean doit = MessageDialog.openQuestion(getShell(), WizardMessages.ApiToolingSetupWizardPage_1, WizardMessages.ApiToolingSetupWizardPage_2 +
 					WizardMessages.ApiToolingSetupWizardPage_3);
 					if(doit) {
-						SWTFactory.showPreferencePage(getShell(), IApiToolsConstants.ID_PROFILES_PREF_PAGE, null);
+						SWTFactory.showPreferencePage(getShell(), IApiToolsConstants.ID_BASELINES_PREF_PAGE, null);
 					}
 					return Status.OK_STATUS;
 				}

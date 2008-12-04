@@ -175,7 +175,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			// build after revert
 			incrementalBuild();
 		}
-		IApiBaselineManager manager = ApiPlugin.getDefault().getApiProfileManager();
+		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 		IApiBaseline baseline = manager.getDefaultApiBaseline();
 		if (baseline == null) {
 			// create the API baseline

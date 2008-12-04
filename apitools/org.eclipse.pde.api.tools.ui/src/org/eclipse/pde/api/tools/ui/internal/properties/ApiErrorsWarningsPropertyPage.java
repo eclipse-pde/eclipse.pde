@@ -15,6 +15,7 @@ import java.util.HashMap;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsConfigurationBlock;
@@ -78,7 +79,7 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage implements IWork
 				public void widgetSelected(SelectionEvent e) {
 					HashMap data = new HashMap();
 					data.put(ApiErrorsWarningsPreferencePage.NO_LINK, Boolean.TRUE);
-					SWTFactory.showPreferencePage(getShell(), "org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage", data); //$NON-NLS-1$
+					SWTFactory.showPreferencePage(getShell(), IApiToolsConstants.ID_ERRORS_WARNINGS_PREF_PAGE, data);
 				};
 			});
 		}

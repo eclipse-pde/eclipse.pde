@@ -70,7 +70,7 @@ public class AbstractApiTest extends TestCase {
 	 */
 	protected IApiComponent getProjectApiComponent(String projectname) {
 		IJavaProject project = getTestingJavaProject(projectname);
-		IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
+		IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 		assertNotNull("the workspace profile must exist", profile);
 		return profile.getApiComponent(project.getElementName());
 	}

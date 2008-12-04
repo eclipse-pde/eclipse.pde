@@ -246,6 +246,22 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	}
 	
 	/**
+	 * Returns all of the unused API problem filters markers on the given resource to infinite depth
+	 * @param resource
+	 * @return
+	 * @throws CoreException
+	 */
+	protected IMarker[] getAllUnusedApiProblemFilterMarkers(IResource resource) throws CoreException {
+		if(resource == null) {
+			return NO_MARKERS;
+		}
+		if(!resource.isAccessible()) {
+			return NO_MARKERS;
+		}
+		return resource.findMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+	}
+	
+	/**
 	 * Returns all of the markers from the testing workspace
 	 * @return
 	 */
@@ -278,6 +294,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			addToList(problems, getAllSinceTagMarkers(resource));
 			addToList(problems, getAllVersionMarkers(resource));
 			addToList(problems, getAllUnsupportedTagMarkers(resource));
+			addToList(problems, getAllUnusedApiProblemFilterMarkers(resource));
 			
 			//additional markers
 			if(additionalMarkerType != null) {
@@ -331,7 +348,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @return
 	 */
 	protected IApiBaseline getWorkspaceProfile() {
-		return ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
+		return ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 	}
 	
 	/* (non-Javadoc)

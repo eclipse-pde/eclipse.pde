@@ -1380,9 +1380,7 @@ public final class Util {
 	 */
 	public static String getApiProfileProblemKindName(int kind) {
 		switch(kind) {
-			case IApiProblem.API_PROFILE_MISSING: {
-				return "API_PROFILE_MISSING"; //$NON-NLS-1$
-			}
+			case IApiProblem.API_PROFILE_MISSING: return "API_PROFILE_MISSING"; //$NON-NLS-1$
 		}
 		return "UNKOWN_KIND"; //$NON-NLS-1$
 	}
@@ -1408,24 +1406,12 @@ public final class Util {
 	 */
 	public static String getVersionProblemKindName(int kind) {
 		switch(kind) {
-			case IApiProblem.MINOR_VERSION_CHANGE: {
-				return "MINOR_VERSION_CHANGE"; //$NON-NLS-1$
-			}
-			case IApiProblem.MAJOR_VERSION_CHANGE: {
-				return "MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
-			}
-			case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE: {
-				return "MAJOR_VERSION_CHANGE_NO_BREAKAGE"; //$NON-NLS-1$
-			}
-			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API: {
-				return "MINOR_VERSION_CHANGE_NO_NEW_API"; //$NON-NLS-1$
-			}
-			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE: {
-				return "REEXPORTED_MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
-			}
-			case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE: {
-				return "REEXPORTED_MINOR_VERSION_CHANGE"; //$NON-NLS-1$
-			}
+			case IApiProblem.MINOR_VERSION_CHANGE: return "MINOR_VERSION_CHANGE"; //$NON-NLS-1$
+			case IApiProblem.MAJOR_VERSION_CHANGE: return "MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
+			case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE: return "MAJOR_VERSION_CHANGE_NO_BREAKAGE"; //$NON-NLS-1$
+			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API: return "MINOR_VERSION_CHANGE_NO_NEW_API"; //$NON-NLS-1$
+			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE: return "REEXPORTED_MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
+			case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE: return "REEXPORTED_MINOR_VERSION_CHANGE"; //$NON-NLS-1$
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$
 	}
@@ -1438,30 +1424,15 @@ public final class Util {
 	 */
 	public static String getUsageProblemKindName(int kind) {
 		switch(kind) {
-			case IApiProblem.ILLEGAL_EXTEND: {
-				return "ILLEGAL_EXTEND"; //$NON-NLS-1$
-			}
-			case IApiProblem.ILLEGAL_IMPLEMENT: {
-				return "ILLEGAL_IMPLEMENT"; //$NON-NLS-1$
-			}
-			case IApiProblem.ILLEGAL_INSTANTIATE: {
-				return "ILLEGAL_INSTANTIATE"; //$NON-NLS-1$
-			}
-			case IApiProblem.ILLEGAL_REFERENCE: {
-				return "ILLEGAL_REFERENCE"; //$NON-NLS-1$
-			}
-			case IApiProblem.ILLEGAL_OVERRIDE: {
-				return "ILLEGAL_OVERRIDE"; //$NON-NLS-1$
-			}
-			case IApiProblem.API_LEAK: {
-				return "API_LEAK"; //$NON-NLS-1$
-			}
-			case IApiProblem.UNSUPPORTED_TAG_USE: {
-				return "UNSUPPORTED_TAG_USE"; //$NON-NLS-1$
-			}
-			case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES: {
-				return "INVALID_REFERENCE_IN_SYSTEM_LIBRARIES"; //$NON-NLS-1$
-			}
+			case IApiProblem.ILLEGAL_EXTEND: return "ILLEGAL_EXTEND"; //$NON-NLS-1$
+			case IApiProblem.ILLEGAL_IMPLEMENT: return "ILLEGAL_IMPLEMENT"; //$NON-NLS-1$
+			case IApiProblem.ILLEGAL_INSTANTIATE: return "ILLEGAL_INSTANTIATE"; //$NON-NLS-1$
+			case IApiProblem.ILLEGAL_REFERENCE: return "ILLEGAL_REFERENCE"; //$NON-NLS-1$
+			case IApiProblem.ILLEGAL_OVERRIDE: return "ILLEGAL_OVERRIDE"; //$NON-NLS-1$
+			case IApiProblem.API_LEAK: return "API_LEAK"; //$NON-NLS-1$
+			case IApiProblem.UNSUPPORTED_TAG_USE: return "UNSUPPORTED_TAG_USE"; //$NON-NLS-1$
+			case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES: return "INVALID_REFERENCE_IN_SYSTEM_LIBRARIES"; //$NON-NLS-1$
+			case IApiProblem.UNUSED_PROBLEM_FILTERS: return "UNUSED_PROBLEM_FILTERS"; //$NON-NLS-1$
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$
 	}
@@ -1474,15 +1445,9 @@ public final class Util {
 	 */
 	public static String getTagsProblemKindName(int kind) {
 		switch(kind) {
-			case IApiProblem.SINCE_TAG_INVALID: {
-				return "INVALID_SINCE_TAGS"; //$NON-NLS-1$
-			}
-			case IApiProblem.SINCE_TAG_MALFORMED: {
-				return "MALFORMED_SINCE_TAGS"; //$NON-NLS-1$
-			}
-			case IApiProblem.SINCE_TAG_MISSING: {
-				return "MISSING_SINCE_TAGS"; //$NON-NLS-1$
-			}
+			case IApiProblem.SINCE_TAG_INVALID: return "INVALID_SINCE_TAGS"; //$NON-NLS-1$
+			case IApiProblem.SINCE_TAG_MALFORMED: return "MALFORMED_SINCE_TAGS"; //$NON-NLS-1$
+			case IApiProblem.SINCE_TAG_MISSING: return "MISSING_SINCE_TAGS"; //$NON-NLS-1$
 		}
 		return "UNKNOWN_KIND"; //$NON-NLS-1$
 	}
@@ -1557,6 +1522,13 @@ public final class Util {
 		}
 	}
 	
+	/**
+	 * Returns if the {@link AbstractTypeDeclaration} is static or not (has the static
+	 * keyword or not)
+	 * 
+	 * @param typeDeclaration
+	 * @return true if it is static, false otherwise
+	 */
 	private static boolean isStatic(AbstractTypeDeclaration typeDeclaration) {
 		List modifiers = typeDeclaration.modifiers();
 		if (modifiers.isEmpty()) return false;

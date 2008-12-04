@@ -103,4 +103,17 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 	public IApiProblem getUnderlyingProblem() {
 		return fProblem;
 	}
+	
+	/**
+	 * @return returns a handle that can be used to identify the filter
+	 */
+	public String getHandle() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(fProblem.getResourcePath());
+		buffer.append("]"); //$NON-NLS-1$
+		buffer.append(fProblem.getTypeName());
+		buffer.append("]"); //$NON-NLS-1$
+		buffer.append(fProblem.getId());
+		return buffer.toString();
+	}
 }

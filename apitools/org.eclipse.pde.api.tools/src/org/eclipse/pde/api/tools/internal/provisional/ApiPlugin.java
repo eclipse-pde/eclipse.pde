@@ -299,12 +299,12 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	}
 
 	/**
-	 * Returns the {@link IApiProfileManager}, allowing clients to add/remove and search
-	 * for {@link IApiProfile}s stored in the manager.
+	 * Returns the {@link IApiBaselineManager}, allowing clients to add/remove and search
+	 * for {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}s stored in the manager.
 	 * 
 	 * @return the singleton instance of the {@link IApiProfileManager}
 	 */
-	public IApiBaselineManager getApiProfileManager() {
+	public IApiBaselineManager getApiBaselineManager() {
 		return ApiBaselineManager.getManager();
 	}
 	

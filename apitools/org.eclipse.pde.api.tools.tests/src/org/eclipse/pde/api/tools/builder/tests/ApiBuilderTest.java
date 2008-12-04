@@ -269,6 +269,30 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	}
 	
 	/**
+	 * Adds the given source to the given package with the specified project and returns the 
+	 * path the {@link IPackageFragment} the source was added to.
+	 * @param sourcepath
+	 * @param project the project to add to
+	 * @param packagename the package name to add the source to (will be created if it does not exist)
+	 * @param sourcename the name of the new source to add
+	 * @return the path to the {@link IPackageFragment} the source was added to
+	 * @throws JavaModelException
+	 */
+	protected IPath assertSource(IPath sourcepath, IProject project, String packagename, String sourcename) throws JavaModelException {
+		IPath ppath = project.getFullPath();
+		assertTrue("The path for '"+project.getName()+"' must exist", !ppath.isEmpty());
+		IPath frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
+		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
+		IPath packpath = getEnv().addPackage(frpath, packagename);
+		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
+		String contents = getSourceContents(sourcepath, sourcename);
+		assertNotNull("the source contents for '"+sourcename+"' must exist", contents);
+		IPath cpath = getEnv().addClass(packpath, sourcename, contents);
+		assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
+		return packpath;
+	}
+	
+	/**
 	 * Deploys a standard API usage test with the test project being created and the given source is imported in the testing project
 	 * into the given project.
 	 * 
@@ -465,7 +489,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * </ol>
 	 * @param path the path of the project to build or <code>null</code> if the workspace should be built
 	 */
-	private void doBuild(int type, IPath path) {
+	protected void doBuild(int type, IPath path) {
 		switch(type) {
 			case IncrementalProjectBuilder.FULL_BUILD: {
 				if(path == null) {
@@ -826,6 +850,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		inode.put(IApiProblemTypes.LEAK_METHOD_PARAM, ApiPlugin.VALUE_WARNING);
 		inode.put(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, ApiPlugin.VALUE_WARNING);
 		inode.put(IApiProblemTypes.INVALID_JAVADOC_TAG, ApiPlugin.VALUE_IGNORE);
+		inode.put(IApiProblemTypes.UNUSED_PROBLEM_FILTERS, ApiPlugin.VALUE_WARNING);
 		
 		// compatibilities
 		for (int i = 0, max = ApiPlugin.AllCompatibilityKeys.length; i < max; i++) {
@@ -862,6 +887,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		inode.put(IApiProblemTypes.ILLEGAL_INSTANTIATE, value);
 		inode.put(IApiProblemTypes.ILLEGAL_REFERENCE, value);
 		inode.put(IApiProblemTypes.ILLEGAL_OVERRIDE, value);
+		inode.put(IApiProblemTypes.UNUSED_PROBLEM_FILTERS, value);
 		try {
 			inode.flush();
 		} catch (BackingStoreException e) {

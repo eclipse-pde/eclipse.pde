@@ -17,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
 public class MarkerMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.markers.markermessages"; //$NON-NLS-1$
 	public static String AddNoReferenceTagResolution_add_noreference_tag;
+	public static String ApiMarkerResolutionGenerator_api_problem_filters;
 	public static String CreateApiFilterOperation_0;
 	public static String DefaultApiProfileResolution_0;
 	public static String DefaultApiProfileResolution_1;
@@ -29,6 +30,15 @@ public class MarkerMessages extends NLS {
 	public static String FilterProblemResolution_usage;
 	public static String FilterProblemResolution_version_number;
 	public static String FilterProblemResolution_api_component;
+	public static String OpenPropertyPageResolution_element_cannot_be_null;
+	public static String OpenPropertyPageResolution_open_the_property_page;
+	public static String OpenPropertyPageResolution_opening_property_page_job_name;
+	public static String OpenPropertyPageResolution_opens_the_property_page;
+	public static String OpenPropertyPageResolution_page_id_cannot_be_null;
+	public static String OpenPropertyPageResolution_the_page_name_cannot_be_null;
+	public static String RemoveFilterProblemResolution_remove_unused_filter;
+	public static String RemoveFilterProblemResolution_remove_unused_filter_job_name;
+	public static String RemoveFilterProblemResolution_removes_selected_problem_filter;
 	public static String RemoveUnsupportedTagOperation_removeing_unsupported_tag;
 	
 	public static String UpdateProjectSettingsResolution_0;

@@ -179,4 +179,24 @@
           type="text">
     </fileTypes>
  </extension>
+ <extension
+       id="org.eclipse.pde.api.tools.unused_filters"
+       name="%markerUnusedFilters.name"
+       point="org.eclipse.core.resources.markers">
+    <super
+          type="org.eclipse.core.resources.problemmarker">
+    </super>
+    <super
+          type="org.eclipse.core.resources.textmarker">
+    </super>
+    <persistent
+          value="true">
+    </persistent>
+    <attribute
+          name="kind">
+    </attribute>
+    <attribute
+          name="apiMarkerID">
+    </attribute>
+ </extension>
 </plugin>

@@ -384,7 +384,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
 			localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_initializing_analyzer, fCurrentProject.getName()));
 			cleanupMarkers(fCurrentProject);
-			IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline();
+			IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 			IPluginModelBase currentModel = getCurrentModel();
 			if (currentModel != null) {
 				localMonitor.subTask(BuilderMessages.building_workspace_profile);
@@ -468,6 +468,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			case IApiProblem.CATEGORY_USAGE: {
 				if(kind == IApiProblem.UNSUPPORTED_TAG_USE) {
 					return IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER;
+				}
+				if(kind == IApiProblem.UNUSED_PROBLEM_FILTERS) {
+					return IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER;
 				}
 				return IApiMarkerConstants.API_USAGE_PROBLEM_MARKER;
 			}
@@ -630,7 +633,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						 cnames = new ArrayList(fTypesToCheck.size());
 					collectAllQualifiedNames(fTypesToCheck, tnames, cnames, localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
-					IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline();
+					IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 					fAnalyzer.analyzeComponent(fBuildState, 
 							null, 
 							null, 
@@ -1025,7 +1028,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @return the workspace {@link IApiProfile}
 	 */
 	private IApiBaseline getWorkspaceProfile() throws CoreException {
-		return ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
+		return ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 	}
 	/**
 	 * Returns is the given classpath entry is optional or not

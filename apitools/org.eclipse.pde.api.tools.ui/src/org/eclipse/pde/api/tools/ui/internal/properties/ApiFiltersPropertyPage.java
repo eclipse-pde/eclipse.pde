@@ -405,7 +405,7 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		IProject project  = getProject();
 		IApiFilterStore store = null;
 		if(project != null) {
-			IApiComponent component = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline().getApiComponent(project.getName());
+			IApiComponent component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project.getName());
 			if(component != null) {
 				return component.getFilterStore();
 			}

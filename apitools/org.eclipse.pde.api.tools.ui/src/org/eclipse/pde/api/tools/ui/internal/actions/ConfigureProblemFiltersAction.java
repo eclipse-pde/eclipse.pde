@@ -7,6 +7,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -35,7 +36,7 @@ public class ConfigureProblemFiltersAction implements IObjectActionDelegate {
 			return;
 		}
 		SWTFactory.showPropertiesDialog(ApiUIPlugin.getShell(),
-				"org.eclipse.pde.api.tools.ui.apitools.filterspage",  //$NON-NLS-1$
+				IApiToolsConstants.ID_FILTERS_PROP_PAGE,
 				element, 
 				null);
 	}

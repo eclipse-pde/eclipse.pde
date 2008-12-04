@@ -11,9 +11,19 @@
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
+import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 
@@ -39,13 +49,20 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			case IApiMarkerConstants.API_USAGE_MARKER_ID : {
 				int problemid = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, -1);
 				int flags  = ApiProblemFactory.getProblemFlags(problemid);
-				if(ApiProblemFactory.getProblemKind(problemid) == IApiProblem.API_LEAK &&
-						(flags == IApiProblem.LEAK_METHOD_PARAMETER || 
+				switch(ApiProblemFactory.getProblemKind(problemid)) {
+					case IApiProblem.API_LEAK: {
+						if(flags == IApiProblem.LEAK_METHOD_PARAMETER || 
 						 flags == IApiProblem.LEAK_METHOD_PARAMETER ||
-						 flags == IApiProblem.LEAK_RETURN_TYPE)) {
-					return new IMarkerResolution[] {new FilterProblemResolution(marker), new AddNoReferenceTagResolution(marker)};
+						 flags == IApiProblem.LEAK_RETURN_TYPE) {
+							return new IMarkerResolution[] {new FilterProblemResolution(marker), new AddNoReferenceTagResolution(marker)};
+						}
+						break;
+					}
+					default: {
+						return new IMarkerResolution[] {new FilterProblemResolution(marker)};
+					}
 				}
-				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
+				return NO_RESOLUTIONS;
 			}
 			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID : {
 				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
@@ -68,11 +85,57 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			case IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID: {
 				return new IMarkerResolution[] {new UpdateProjectSettingResolution(marker)};
 			}
-			default :
-				return NO_RESOLUTIONS;
+			case IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID: {
+				IApiProblemFilter filter = resolveFilter(marker);
+				if(filter != null) {
+					return new IMarkerResolution[] {
+							new RemoveFilterProblemResolution(filter),
+							new OpenPropertyPageResolution(
+									MarkerMessages.ApiMarkerResolutionGenerator_api_problem_filters,
+									IApiToolsConstants.ID_FILTERS_PROP_PAGE,
+									marker.getResource().getProject())};
+				}
+				else {
+					return new IMarkerResolution[] {
+							new OpenPropertyPageResolution(
+									MarkerMessages.ApiMarkerResolutionGenerator_api_problem_filters,
+									IApiToolsConstants.ID_FILTERS_PROP_PAGE,
+									marker.getResource().getProject())};
+				}
+			}
+			default : return NO_RESOLUTIONS;
 		}
 	}
-
+	
+	/**
+	 * resolves the {@link IApiProblemFilter} for the given marker
+	 * @param marker
+	 */
+	private IApiProblemFilter resolveFilter(IMarker marker) {
+		try {
+			String filterhandle = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID, null);
+			String[] values = filterhandle.split("]"); //$NON-NLS-1$
+			IProject project = marker.getResource().getProject();
+			IApiComponent component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(project.getName());
+			if(component != null) {
+				IApiFilterStore store = component.getFilterStore();
+				IPath path = new Path(values[0]);
+				IResource resource = project.findMember(path);
+				if(resource == null) {
+					resource = project.getFile(path);
+				}
+				IApiProblemFilter[] filters = store.getFilters(resource);
+				for (int i = 0; i < filters.length; i++) {
+					if(filters[i].getUnderlyingProblem().getId() == Integer.parseInt(values[2])) {
+						return filters[i];
+					}
+				}
+			}
+		}
+		catch(CoreException ce) {}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse.core.resources.IMarker)
 	 */

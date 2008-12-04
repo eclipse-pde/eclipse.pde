@@ -244,6 +244,14 @@ public interface IApiProblem {
 	 */
 	public static final int INVALID_REFERENCE_IN_SYSTEM_LIBRARIES = 9;
 	/**
+	 * Constant representing the value of an unused API problem filter {@link IApiProblem} kind
+	 * <br>
+	 * Value is:<code>10</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int UNUSED_PROBLEM_FILTERS = 10;
+	/**
 	 * Flags to indicate a leak from extending a non-API type. 
 	 * <br>
 	 * Value is: <code>1</code>

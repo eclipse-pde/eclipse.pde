@@ -429,19 +429,12 @@ public class ApiProblemFactory {
 					case IApiProblem.DUPLICATE_TAG_USE: return 22;
 					case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES :
 						switch(flags) {
-							case IApiProblem.METHOD :
-								// problem message for wrong reference to method
-								return 33;
-							case IApiProblem.CONSTRUCTOR_METHOD :
-								// problem message for wrong reference to constructor
-								return 34;
-							case IApiProblem.FIELD :
-								// problem message for wrong reference to field
-								return 35;
-							default:
-								 // problem message for wrong reference to type
-								return 36;
+							case IApiProblem.METHOD : return 33;
+							case IApiProblem.CONSTRUCTOR_METHOD : return 34;
+							case IApiProblem.FIELD : return 35;
+							default: return 36;
 						}
+					case IApiProblem.UNUSED_PROBLEM_FILTERS: return 30;
 				}
 				break;
 			}
@@ -629,6 +622,7 @@ public class ApiProblemFactory {
 					case IApiProblem.UNSUPPORTED_TAG_USE: return IApiProblemTypes.INVALID_JAVADOC_TAG;
 					case IApiProblem.DUPLICATE_TAG_USE: return IApiProblemTypes.INVALID_JAVADOC_TAG;
 					case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES: return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
+					case IApiProblem.UNUSED_PROBLEM_FILTERS: return IApiProblemTypes.UNUSED_PROBLEM_FILTERS;
 				}
 				break;
 			}
@@ -664,6 +658,9 @@ public class ApiProblemFactory {
 		}
 		if(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES.equals(prefkey)) {
 			return IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
+		}
+		if(IApiProblemTypes.UNUSED_PROBLEM_FILTERS.equals(prefkey)) {
+			return IApiProblem.UNUSED_PROBLEM_FILTERS;
 		}
 		if(IApiProblemTypes.MISSING_SINCE_TAG.equals(prefkey)) {
 			return IApiProblem.SINCE_TAG_MISSING;

@@ -171,7 +171,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	protected void createBaseline() throws Exception {
 		String zipPath = getBaselineLocation();
 		if (zipPath != null) {
-			IApiBaselineManager manager = ApiPlugin.getDefault().getApiProfileManager();
+			IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 			IPath path = new Path(zipPath);
 			String id = path.lastSegment();
 			IApiBaseline perfline = manager.getApiBaseline(id);

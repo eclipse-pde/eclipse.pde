@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><component id="usagetests" version="2">
+    <resource path="src/x/y/z/testUF1.java" type="x.y.z.testUF1">
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="internal"/>
+                <message_argument value="testUF1"/>
+                <message_argument value="m1(internal)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

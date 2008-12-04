@@ -73,10 +73,29 @@ public interface IApiToolsConstants {
 	public static final String IMG_WIZBAN_PROFILE = "IMG_WIZBAN_PROFILE"; //$NON-NLS-1$
 	
 	/**
-	 * Id for the Api profiles preference page.
+	 * Id for the Api baselines preference page.
+	 * <br>
+	 * Value is: <code>org.eclipse.pde.api.tools.ui.apiprofiles.prefpage</code>
 	 */
-	public static final String ID_PROFILES_PREF_PAGE = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$
-	
+	public static final String ID_BASELINES_PREF_PAGE = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$
+	/**
+	 * Id for the API errors / warnings preference page
+	 * <br>
+	 * Value is: <code>org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage</code> 
+	 */
+	public static final String ID_ERRORS_WARNINGS_PREF_PAGE = "org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage"; //$NON-NLS-1$
+	/**
+	 * The id for the API problem filters property page
+	 * <br>
+	 * Value is: <code>org.eclipse.pde.api.tools.ui.apitools.filterspage</code>
+	 */
+	public static final String ID_FILTERS_PROP_PAGE = "org.eclipse.pde.api.tools.ui.apitools.filterspage"; //$NON-NLS-1$
+	/**
+	 * The id for the API errors / warnings property page
+	 * <br>
+	 * Value is: <code>org.eclipse.pde.api.tools.ui.apitools.warningspage</code>
+	 */
+	public static final String ID_ERRORS_WARNINGS_PROP_PAGE = "org.eclipse.pde.api.tools.ui.apitools.warningspage"; //$NON-NLS-1$
 	/**
 	 * Key for filter resolution image
 	 */
@@ -86,4 +105,9 @@ public interface IApiToolsConstants {
 	 * Key for enabled remove image
 	 */
 	public static final String IMG_ELCL_REMOVE = "IMG_ELCL_REMOVE"; //$NON-NLS-1$
+	
+	/**
+	 * Key for the open page image
+	 */
+	public static final String IMG_ELCL_OPEN_PAGE = "IMG_ELCL_OPEN_PAGE"; //$NON-NLS-1$
 }

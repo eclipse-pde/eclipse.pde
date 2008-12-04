@@ -121,7 +121,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	protected boolean isDefaultProfile(Object element) {
 		if(element instanceof IApiBaseline) {
 			IApiBaseline profile = (IApiBaseline) element;
-			IApiBaseline def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline();
+			IApiBaseline def = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 			if(def != null) {
 				return profile.getName().equals(def.getName());
 			}

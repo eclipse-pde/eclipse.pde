@@ -36,6 +36,12 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String MARKER_ATTR_HANDLE_ID = "org.eclipse.jdt.internal.core.JavaModelManager.handleId" ; //$NON-NLS-1$
 	/**
+	 * Constant representing the handle id for an {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter}
+	 * <br>
+	 * Value is: <code>filterhandle</code>
+	 */
+	public static final String MARKER_ATTR_FILTER_HANDLE_ID = "filterhandle"; //$NON-NLS-1$
+	/**
 	 * Constant representing the name of the @since tag version attribute on API tooling markers,
 	 * or the new value for the bundle version.
 	 * Value is: <code>version</code>
@@ -66,6 +72,12 @@ public interface IApiMarkerConstants {
 	 * Value is: <code>org.eclipse.pde.api.tools.api_usage</code> 
 	 */
 	public static final String API_USAGE_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_usage"; //$NON-NLS-1$
+	/**
+	 * Constant representing the id for the unused problem filter problem markers
+	 * <br>
+	 * Value is: <code>org.eclipse.pde.api.tools.unused_filter</code>
+	 */
+	public static final String UNUSED_FILTER_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".unused_filters"; //$NON-NLS-1$
 	/**
 	 * Constant representing the id for the version numbering problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.version_numbering</code> 
@@ -126,6 +138,11 @@ public interface IApiMarkerConstants {
 	 * Value is: <code>8</code>
 	 */
 	public static final int API_COMPONENT_RESOLUTION_MARKER_ID = 8;
+	/**
+	 * Constant representing the apiMarkerID value for unused problem filter markers.
+	 * Value is: <code>9</code>
+	 */
+	public static final int UNUSED_PROBLEM_FILTER_MARKER_ID = 9;
 	/**
 	 * Constant representing the description for the bundle version marker.
 	 * Value is: <code>description</code>

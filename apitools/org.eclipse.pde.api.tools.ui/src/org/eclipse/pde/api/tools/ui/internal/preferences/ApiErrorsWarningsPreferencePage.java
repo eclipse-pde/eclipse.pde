@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
@@ -95,8 +96,8 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 					HashMap data = new HashMap();
 					data.put(NO_LINK, Boolean.TRUE);
 					PreferencesUtil.createPropertyDialogOn(getShell(), ((IJavaProject) psd.getFirstResult()).getProject(), 
-							"org.eclipse.pde.api.tools.ui.apitools.proppage",  //$NON-NLS-1$
-							new String[] { "org.eclipse.pde.api.tools.ui.apitools.proppage" }, data).open(); //$NON-NLS-1$
+							IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE,
+							new String[] { IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE }, data).open();
 				}
 			};
 		});

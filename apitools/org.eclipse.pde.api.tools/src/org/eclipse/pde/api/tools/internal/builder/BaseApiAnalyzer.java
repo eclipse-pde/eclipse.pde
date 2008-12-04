@@ -55,10 +55,12 @@ import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -81,6 +83,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -168,6 +171,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			fJavaProject = getJavaProject(component);
 			this.fFilterStore = filterStore;
 			this.fPreferences = preferences;
+			if(!ignoreUnusedProblemFilterCheck()) {
+				((ApiFilterStore)component.getFilterStore()).recordFilterUsage();
+			}
 			ResolverError[] errors = component.getErrors();
 			if (errors != null) {
 				// check if all errors have a constraint
@@ -242,6 +248,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			//tag validation
 			checkTagValidation(changedtypes, component, localMonitor.newChild(1));
 			updateMonitor(localMonitor);
+			//check for unused filters
+			checkUnusedProblemFilters(component, typenames, localMonitor.newChild(1));
+			updateMonitor(localMonitor);
 		} catch(CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -252,6 +261,98 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 
+	/**
+	 * Checks for unused API problem filters
+	 * @param reference
+	 * @param typenames
+	 * @param monitor
+	 */
+	private void checkUnusedProblemFilters(IApiComponent reference, String[] typenames, IProgressMonitor monitor) {
+		if(ignoreUnusedProblemFilterCheck()) {
+			if(DEBUG) {
+				System.out.println("Ignoring unused problem filter check"); //$NON-NLS-1$
+			}
+			updateMonitor(monitor, 1);
+			return;
+		}
+		try {
+			ApiFilterStore store = (ApiFilterStore)reference.getFilterStore();
+			IJavaElement element = null;
+			if(typenames != null) {
+				//incremental
+				for (int i = 0; i < typenames.length; i++) {
+					element = fJavaProject.findType(typenames[i]);
+					if(element != null) {
+						element.getResource().deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+						createUnusedApiFilterProblems(store.getUnusedFilters(element.getResource()));
+					}
+				}
+			}
+			else {
+				//full build, clean up all old markers
+				fJavaProject.getProject().deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				createUnusedApiFilterProblems(store.getUnusedFilters(null));
+			}
+		}
+		catch(CoreException ce) {
+			//ignore, just don't create problems
+		}
+		finally {
+			updateMonitor(monitor, 1);
+		}
+	}
+
+	/**
+	 * Creates a new unused {@link IApiProblemFilter} problem
+	 * @param filters the filters to create the problems for
+	 * @return a new {@link IApiProblem} for unused problem filters or <code>null</code>
+	 */
+	private void createUnusedApiFilterProblems(IApiProblemFilter[] filters) {
+		if(fJavaProject == null) {
+			return;
+		}
+		IApiProblemFilter filter = null;
+		for (int i = 0; i < filters.length; i++) {
+			filter = filters[i];
+			IApiProblem problem = filter.getUnderlyingProblem();
+			if(problem == null) {
+				return;
+			}
+			IResource resource = null;
+			int charstart = -1, charend = -1, line = -1;
+			try {
+				IType type = fJavaProject.findType(problem.getTypeName());
+				if(type != null) {
+					resource = type.getUnderlyingResource();
+					ISourceRange range = type.getNameRange();
+					if(range != null) {
+						charstart = range.getOffset();
+						charend = charstart + range.getLength();
+						IDocument doc = Util.getDocument(type.getCompilationUnit());
+						line = doc.getLineOfOffset(charstart);
+					}
+				}
+				else {
+					resource = fJavaProject.getProject().findMember(problem.getResourcePath());
+				}
+			}
+			catch(Exception jme) {}
+			if(resource == null) {
+				return;
+			}
+			addProblem(ApiProblemFactory.newApiUsageProblem(resource.getProjectRelativePath().toPortableString(), 
+					problem.getTypeName(), 
+					new String[] {filter.getUnderlyingProblem().getMessage()}, //message args
+					new String[] {IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
+					new Object[] {((ApiProblemFilter)filter).getHandle(), new Integer(IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID)}, 
+					line, 
+					charstart, 
+					charend, 
+					problem.getElementKind(), 
+					IApiProblem.UNUSED_PROBLEM_FILTERS));
+		}
+	}
+	
 	/**
 	 * Check the version changes of re-exported bundles to make sure that the given component
 	 * version is modified accordingly.
@@ -494,6 +595,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return true;
 		}
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_JAVADOC_TAG, fJavaProject.getProject()) == ApiPlugin.SEVERITY_IGNORE;
+	}
+	/**
+	 * @return if the unused problem filter check should be ignored or not
+	 */
+	private boolean ignoreUnusedProblemFilterCheck() {
+		if(fJavaProject == null) {
+			return true;
+		}
+		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.UNUSED_PROBLEM_FILTERS, fJavaProject.getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
 	/**
 	 * Checks the validation of tags for the given {@link IApiComponent}

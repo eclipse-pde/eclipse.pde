@@ -174,7 +174,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	
 	private IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("a").append("b").append("c");
 	private IPath PLUGIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-plugins");
-	private IApiBaselineManager fPMmanager = ApiPlugin.getDefault().getApiProfileManager();
+	private IApiBaselineManager fPMmanager = ApiPlugin.getDefault().getApiBaselineManager();
 	private final String TESTING_PACKAGE = "a.b.c";
 	
 	/**

@@ -75,7 +75,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		}
 	}
 	
-	private IApiBaselineManager manager = ApiPlugin.getDefault().getApiProfileManager();
+	private IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 
 	private static HashSet removed = new HashSet(8);
 	private CheckboxTableViewer tableviewer = null;
@@ -250,7 +250,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	 * updates the buttons on the page
 	 */
 	protected void initialize() {
-		IApiBaseline def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline();
+		IApiBaseline def = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 		if(def != null) {
 			tableviewer.setCheckedElements(new Object[] {def});
 		}
@@ -265,7 +265,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		if(element instanceof IApiBaseline) {
 			IApiBaseline profile = (IApiBaseline) element;
 			if(newdefault == null) {
-				IApiBaseline def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline();
+				IApiBaseline def = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 				if(def != null) {
 					return profile.getName().equals(def.getName());
 				}
@@ -322,7 +322,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		for(Iterator iter = backingcollection.iterator(); iter.hasNext();) {
 			manager.addApiBaseline((IApiBaseline) iter.next());
 		}
-		IApiBaseline def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiBaseline();
+		IApiBaseline def = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 		if(def != null && !def.getName().equals(newdefault)) {
 			manager.setDefaultApiBaseline(newdefault);
 			needsbuild = true;

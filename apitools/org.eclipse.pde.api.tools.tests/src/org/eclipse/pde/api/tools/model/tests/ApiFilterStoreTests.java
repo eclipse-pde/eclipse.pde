@@ -263,7 +263,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
 			IResource jar = project.findMember("component_c_1.0.0.jar");
 			assertNotNull("the component_c jar cannot be null", jar);
-			IApiBaseline profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceBaseline();
+			IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 			IApiComponent component = ApiModelFactory.newApiComponent(profile, jar.getLocation().toOSString());
 			profile.addApiComponents(new IApiComponent[] { component });
 			assertNotNull("the new component cannot be null", component);
