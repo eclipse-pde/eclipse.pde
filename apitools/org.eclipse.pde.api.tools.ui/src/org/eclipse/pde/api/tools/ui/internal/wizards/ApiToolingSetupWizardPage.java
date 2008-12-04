@@ -52,12 +52,12 @@ import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.StringMatcher;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -312,7 +312,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 				IProject project = projects[i];
 				if((project.hasNature(JavaCore.NATURE_ID) && project.hasNature("org.eclipse.pde.PluginNature")) //$NON-NLS-1$
 							&& !project.hasNature(ApiPlugin.NATURE_ID)
-							&& (project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY) == null)) {
+							&& !Util.isBinaryProject(project)) {
 					pjs.add(project);
 				}
 			}
