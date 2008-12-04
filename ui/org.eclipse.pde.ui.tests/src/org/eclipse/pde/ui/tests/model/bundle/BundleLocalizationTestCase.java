@@ -36,8 +36,7 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 		fDocument.set(buffer.toString());
 		load();
 
-		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		assertEquals(((BundleLocalizationHeader) header).getLocalization(), Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME);
+		assertEquals(fModel.getBundle().getLocalization(), Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME);
 	}
 
 	public void testGetLocalization() {
