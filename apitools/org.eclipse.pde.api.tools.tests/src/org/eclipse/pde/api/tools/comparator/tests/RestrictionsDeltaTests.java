@@ -27,6 +27,9 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
 		return new TestSuite(RestrictionsDeltaTests.class);
+//		TestSuite suite = new TestSuite(RestrictionsDeltaTests.class.getName());
+//		suite.addTest(new RestrictionsDeltaTests("test6"));
+//		return suite;
 	}
 
 	public RestrictionsDeltaTests(String name) {

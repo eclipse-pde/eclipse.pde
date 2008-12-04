@@ -26,6 +26,9 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
 		return new TestSuite(MixedTypesDeltaTests.class);
+//		TestSuite suite = new TestSuite(MixedTypesDeltaTests.class.getName());
+//		suite.addTest(new MixedTypesDeltaTests("test6"));
+//		return suite;
 	}
 
 	public MixedTypesDeltaTests(String name) {

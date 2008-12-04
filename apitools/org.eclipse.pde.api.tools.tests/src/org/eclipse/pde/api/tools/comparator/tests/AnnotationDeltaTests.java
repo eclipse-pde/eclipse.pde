@@ -26,6 +26,9 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
 		return new TestSuite(AnnotationDeltaTests.class);
+//		TestSuite suite = new TestSuite(AnnotationDeltaTests.class.getName());
+//		suite.addTest(new AnnotationDeltaTests("test6"));
+//		return suite;
 	}
 
 	public AnnotationDeltaTests(String name) {

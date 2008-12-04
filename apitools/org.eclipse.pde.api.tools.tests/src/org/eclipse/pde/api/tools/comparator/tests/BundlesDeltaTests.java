@@ -29,6 +29,9 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
 		return new TestSuite(BundlesDeltaTests.class);
+//		TestSuite suite = new TestSuite(BundlesDeltaTests.class.getName());
+//		suite.addTest(new BundlesDeltaTests("test6"));
+//		return suite;
 	}
 
 	public BundlesDeltaTests(String name) {

@@ -35,6 +35,9 @@ public class ClassDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
 		return new TestSuite(ClassDeltaTests.class);
+//		TestSuite suite = new TestSuite(ClassDeltaTests.class.getName());
+//		suite.addTest(new ClassDeltaTests("test6"));
+//		return suite;
 	}
 
 	public ClassDeltaTests(String name) {

@@ -27,6 +27,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 public class InterfaceDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		return new TestSuite(InterfaceDeltaTests.class);
+//		TestSuite suite = new TestSuite(InterfaceDeltaTests.class.getName());
+//		suite.addTest(new InterfaceDeltaTests("test6"));
+//		return suite;
 	}
 
 	public String getTestRoot() {

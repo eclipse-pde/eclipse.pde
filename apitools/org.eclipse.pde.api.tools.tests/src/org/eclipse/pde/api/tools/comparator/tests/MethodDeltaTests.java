@@ -29,7 +29,10 @@ public class MethodDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
 		return new TestSuite(MethodDeltaTests.class);
-	}
+//		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
+//		suite.addTest(new MethodDeltaTests("test6"));
+//		return suite;
+		}
 
 	public MethodDeltaTests(String name) {
 		super(name);

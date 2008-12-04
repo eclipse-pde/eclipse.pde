@@ -28,6 +28,9 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
 		return new TestSuite(EnumDeltaTests.class);
+//		TestSuite suite = new TestSuite(EnumDeltaTests.class.getName());
+//		suite.addTest(new EnumDeltaTests("test6"));
+//		return suite;
 	}
 
 	public EnumDeltaTests(String name) {
