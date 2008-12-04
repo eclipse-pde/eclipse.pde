@@ -321,7 +321,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			IResource resource = null;
 			int charstart = -1, charend = -1, line = -1;
 			try {
-				IType type = fJavaProject.findType(problem.getTypeName());
+				IType type = fJavaProject.findType(problem.getTypeName().replace('$', '.'));
 				if(type != null) {
 					resource = type.getUnderlyingResource();
 					ISourceRange range = type.getNameRange();
