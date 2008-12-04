@@ -63,7 +63,8 @@ public class ManifestModifier extends Task {
 			os = new BufferedOutputStream(new FileOutputStream(manifestLocation));
 			try {
 				manifest.write(os);
-				os.write("\n".getBytes()); //$NON-NLS-1$ //256787
+				//work around bug 256787
+				os.write(new byte[] {'\n'});
 			} finally {
 				os.close();
 			}
@@ -94,7 +95,7 @@ public class ManifestModifier extends Task {
 	private void loadManifest() {
 		try {
 			//work around for bug 256787 
-			InputStream is = new SequenceInputStream(new BufferedInputStream(new FileInputStream(manifestLocation)), new ByteArrayInputStream("\n".getBytes())); //$NON-NLS-1$
+			InputStream is = new SequenceInputStream(new BufferedInputStream(new FileInputStream(manifestLocation)), new ByteArrayInputStream(new byte[] {'\n'}));
 			try {
 				manifest = new Manifest(is);
 			} finally {

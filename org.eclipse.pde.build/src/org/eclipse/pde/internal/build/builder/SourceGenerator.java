@@ -919,7 +919,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		Manifest manifest = null;
 		try {
 			//work around for bug 256787 
-			InputStream is = new SequenceInputStream(new BufferedInputStream(new FileInputStream(location)), new ByteArrayInputStream("\n".getBytes())); //$NON-NLS-1$
+			InputStream is = new SequenceInputStream(new BufferedInputStream(new FileInputStream(location)), new ByteArrayInputStream(new byte[] {'\n'}));
 			try {
 				manifest = new Manifest(is);
 			} finally {
@@ -936,7 +936,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			os = new BufferedOutputStream(new FileOutputStream(location));
 			try {
 				manifest.write(os);
-				os.write("\n".getBytes()); //$NON-NLS-1$
+				os.write(new byte[] {'\n'});
 			} finally {
 				os.close();
 			}
