@@ -79,6 +79,12 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		customCallbacksBuildpath = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_BUILDPATH, "."); //$NON-NLS-1$
 		customCallbacksFailOnError = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_FAILONERROR, FALSE);
 		customCallbacksInheritAll = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_INHERITALL);
+
+		String sourceFeatureName = getBuildProperties().getProperty(PROPERTY_SOURCE_FEATURE_NAME);
+		if (sourceFeatureName == null)
+			sourceFeatureName = feature.getId().endsWith(".source") ? feature.getId() : feature.getId() + ".source"; //$NON-NLS-1$ //$NON-NLS-2$
+		sourceFeatureFullNameVersioned = sourceFeatureName + "_" + feature.getVersion(); //$NON-NLS-1$
+
 	}
 
 	public void generate() throws CoreException {
