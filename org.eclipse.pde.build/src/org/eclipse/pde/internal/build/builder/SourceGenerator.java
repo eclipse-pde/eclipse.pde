@@ -287,7 +287,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		FeatureEntry result = new FeatureEntry(sourceFeature.getId(), sourceFeature.getVersion(), true);
 		sourceFeature.addEntry(result);
 		// create the directory for the plugin
-		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, false));
+		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, true));
 		File sourcePluginDir = sourcePluginDirURL.toFile();
 		sourcePluginDir.mkdirs();
 
@@ -345,7 +345,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			}
 		}
 		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(result.getId());
+		BundleDescription oldBundle = state.getResolvedBundle(result.getId(), result.getVersion());
 		if (oldBundle != null)
 			state.getState().removeBundle(oldBundle);
 		state.addBundle(sourcePluginDir);
@@ -354,7 +354,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private void create30SourceFragment(FeatureEntry fragment, FeatureEntry plugin) throws CoreException {
 		// create the directory for the plugin
-		Path sourceFragmentDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, false));
+		Path sourceFragmentDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, true));
 		File sourceFragmentDir = new File(sourceFragmentDirURL.toOSString());
 		new File(sourceFragmentDir, "META-INF").mkdirs(); //$NON-NLS-1$
 		try {
@@ -430,7 +430,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
 		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(fragment.getId());
+		BundleDescription oldBundle = state.getResolvedBundle(fragment.getId(), fragment.getVersion());
 		if (oldBundle != null)
 			state.getState().removeBundle(oldBundle);
 		state.addBundle(sourceFragmentDir);
@@ -497,7 +497,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
 		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(fragment.getId());
+		BundleDescription oldBundle = state.getResolvedBundle(fragment.getId(), fragment.getVersion());
 		if (oldBundle != null)
 			state.getState().removeBundle(oldBundle);
 		state.addBundle(sourceFragmentDir);
@@ -676,7 +676,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	}
 
 	public void generateSourcePlugin(FeatureEntry sourceEntry, BundleDescription originalBundle) throws CoreException {
-		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(sourceEntry, false));
+		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(sourceEntry, true));
 
 		Manifest manifest = new Manifest();
 		Attributes attributes = manifest.getMainAttributes();
@@ -795,7 +795,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		generateSourceFiles(sourcePluginDirURL, sourceEntry, template, localizationEntry);
 
 		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(sourceEntry.getId());
+		BundleDescription oldBundle = state.getResolvedBundle(sourceEntry.getId(), sourceEntry.getVersion());
 		if (oldBundle != null)
 			state.getState().removeBundle(oldBundle);
 		state.addBundle(sourcePluginDirURL.toFile());
@@ -809,7 +809,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		sourceFeature.addEntry(result);
 
 		// create the directory for the plugin
-		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, false));
+		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, true));
 		File sourcePluginDir = sourcePluginDirURL.toFile();
 		new File(sourcePluginDir, "META-INF").mkdirs(); //$NON-NLS-1$
 
@@ -853,7 +853,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		generateSourceFiles(sourcePluginDirURL, result, "sourceTemplatePlugin", null); //$NON-NLS-1$
 
 		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(result.getId());
+		BundleDescription oldBundle = state.getResolvedBundle(result.getId(), result.getVersion());
 		String oldBundleLocation = null;
 		if (oldBundle != null) {
 			oldBundleLocation = oldBundle.getLocation();

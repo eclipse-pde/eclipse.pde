@@ -109,7 +109,7 @@ public class SourceTests extends PDETestCase {
 		properties.put("configs", os + "," + ws + "," + arch);
 		generateScripts(buildFolder, properties);
 
-		String fragmentName = "rcp.source." + os + "." + ws + "." + arch;
+		String fragmentName = "rcp.source." + os + "." + ws + "." + arch + "_1.0.0";
 		IFolder sourceFragment = buildFolder.getFolder("plugins/" + fragmentName);
 
 		// check the manifest for a correct platform filter
@@ -506,4 +506,38 @@ public class SourceTests extends PDETestCase {
 		//if we failed to account for the source features, then osgi would not have been in the state and 
 		//org.apache.ant would have failed to resolve and generateScripts would have thrown an exception
 	}
+	
+	public void testBug257761() throws Exception {
+		IFolder buildFolder = newTest("257761");
+		IFolder a1 = Utils.createFolder(buildFolder, "plugins/a1");
+		IFolder a2 = Utils.createFolder(buildFolder, "plugins/a2");
+		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
+		
+		Utils.generateFeature(buildFolder, "sdk", new String [] { "sdk.source"}, new String [] { "a;version=1.0.0", "a;version=2.0.0"});
+		Properties properties = new Properties();
+		properties.put("generate.feature@sdk.source", "sdk");
+		properties.put("individualSourceBundles", "true");
+		Utils.storeBuildProperties(sdk, properties);
+		
+		Utils.generateBundleManifest(a1, "a", "1.0.0", null);
+		Utils.generatePluginBuildProperties(a1, null);
+		Utils.writeBuffer(a1.getFile("src/a.java"), new StringBuffer("class a{}"));
+		
+		Utils.generateBundleManifest(a2, "a", "2.0.0", null);
+		Utils.generatePluginBuildProperties(a2, null);
+		Utils.writeBuffer(a2.getFile("src/a.java"), new StringBuffer("class a{}"));
+		
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "sdk");
+		properties.put("baseLocation", "");
+		properties.put("archivesFormat", "*,*,*-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+		
+		runBuild(buildFolder);
+		assertResourceFile(buildFolder, "tmp/eclipse/plugins/a.source_1.0.0.jar");
+		assertResourceFile(buildFolder, "tmp/eclipse/plugins/a.source_2.0.0.jar");
+	}
+	
+	
+	
 }
