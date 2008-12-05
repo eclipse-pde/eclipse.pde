@@ -345,7 +345,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			}
 		}
 		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(result.getId(), result.getVersion());
+		BundleDescription oldBundle = state.getResolvedBundle(result.getId());
 		if (oldBundle != null)
 			state.getState().removeBundle(oldBundle);
 		state.addBundle(sourcePluginDir);
@@ -430,7 +430,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
 		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(fragment.getId(), fragment.getVersion());
+		BundleDescription oldBundle = state.getResolvedBundle(fragment.getId());
 		if (oldBundle != null)
 			state.getState().removeBundle(oldBundle);
 		state.addBundle(sourceFragmentDir);
@@ -497,7 +497,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
 		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(fragment.getId(), fragment.getVersion());
+		BundleDescription oldBundle = state.getResolvedBundle(fragment.getId());
 		if (oldBundle != null)
 			state.getState().removeBundle(oldBundle);
 		state.addBundle(sourceFragmentDir);
@@ -853,7 +853,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		generateSourceFiles(sourcePluginDirURL, result, "sourceTemplatePlugin", null); //$NON-NLS-1$
 
 		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(result.getId(), result.getVersion());
+		BundleDescription oldBundle = state.getResolvedBundle(result.getId());
 		String oldBundleLocation = null;
 		if (oldBundle != null) {
 			oldBundleLocation = oldBundle.getLocation();
