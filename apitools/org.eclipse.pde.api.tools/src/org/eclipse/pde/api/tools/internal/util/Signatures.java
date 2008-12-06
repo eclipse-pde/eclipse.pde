@@ -122,14 +122,15 @@ public final class Signatures {
 	 */
 	public static String getTypeSignature(IApiType type) {
 		StringBuffer buffer = new StringBuffer();
-		String sig = type.getGenericSignature();
+		buffer.append(type.getSignature().replace('/', '.'));
+		String sig = type.getGenericSignature().replace('/', '.');
 		if(sig != null) {
-			buffer.append(Signature.toString(sig));
+			buffer.append(sig);
 		}
 		else {
 			buffer.append(type.getName());
 		}
-		return buffer.toString();
+		return Signature.toString(buffer.toString());
 	}
 
 	/**

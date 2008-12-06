@@ -163,7 +163,7 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 		IApiMethod apimethod = type.getEnclosingMethod();
 		if(apimethod != null) {
 			String signature = Signatures.processMethodSignature(apimethod);
-			String methodname = Signatures.processMethodName(type, apimethod.getName());
+			String methodname = Signatures.processMethodName(type.getEnclosingType(), apimethod.getName());
 			IMethod method = jtype.getMethod(methodname, Signature.getParameterTypes(signature));
 			if(method.exists()) {
 				return method;
