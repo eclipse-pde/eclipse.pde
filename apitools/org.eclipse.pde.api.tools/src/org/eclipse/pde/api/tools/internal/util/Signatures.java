@@ -123,9 +123,9 @@ public final class Signatures {
 	public static String getTypeSignature(IApiType type) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(type.getSignature().replace('/', '.'));
-		String sig = type.getGenericSignature().replace('/', '.');
+		String sig = type.getGenericSignature();
 		if(sig != null) {
-			buffer.append(sig);
+			buffer.append(sig.replace('/', '.'));
 		}
 		else {
 			buffer.append(type.getName());
