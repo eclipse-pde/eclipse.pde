@@ -37,7 +37,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionProcessor;
-import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
@@ -111,7 +111,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		 */
 		public boolean visit(MethodDeclaration node) {
 			if(node.getName().getFullyQualifiedName().equals(membername)) {
-				String sig = Util.getMethodSignatureFromNode(node);
+				String sig = Signatures.getMethodSignatureFromNode(node);
 				if(signature.equals(sig)) {
 					Javadoc docnode = node.getJavadoc();
 					assertNotNull("the method: "+membername+" ["+signature+"] must have a javadoc node", docnode);

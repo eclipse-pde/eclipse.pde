@@ -25,6 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -228,7 +229,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 				Element type = (Element) fTypeStack.peek();
 				annotateElementAttributes(description, type);
 				fPackage.appendChild(type);
-				type.setAttribute(IApiXmlConstants.ATTR_NAME, Util.getTypeName(typeDesc.getQualifiedName()));
+				type.setAttribute(IApiXmlConstants.ATTR_NAME, Signatures.getTypeName(typeDesc.getQualifiedName()));
 				break;
 			}
 			case IElementDescriptor.METHOD: {

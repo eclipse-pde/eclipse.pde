@@ -58,6 +58,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -140,7 +141,7 @@ public class TagScanner {
 					}
 					case ASTNode.METHOD_DECLARATION: {
 						MethodDeclaration method = (MethodDeclaration) parent;
-						String signature = Util.getMethodSignatureFromNode(method);
+						String signature = Signatures.getMethodSignatureFromNode(method);
 						if(signature != null) {
 							String methodname = method.getName().getFullyQualifiedName();
 							int member = IApiJavadocTag.MEMBER_METHOD;
@@ -434,12 +435,12 @@ public class TagScanner {
 						if (descriptor.getName().equals(method.getName())) {
 							String signature = method.getSignature();
 							String descriptorSignature = descriptor.getSignature().replace('/', '.');
-							if (Util.matchesSignatures(descriptorSignature, signature.replace('/', '.'))) {
+							if (Signatures.matchesSignatures(descriptorSignature, signature.replace('/', '.'))) {
 								return descriptor.getEnclosingType().getMethod(method.getName(), signature);
 							}
 							String genericSignature = method.getGenericSignature();
 							if (genericSignature != null) {
-								if (Util.matchesSignatures(descriptorSignature, genericSignature.replace('/', '.'))) {
+								if (Signatures.matchesSignatures(descriptorSignature, genericSignature.replace('/', '.'))) {
 									return descriptor.getEnclosingType().getMethod(method.getName(), signature);
 								}
 							}

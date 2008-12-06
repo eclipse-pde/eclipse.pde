@@ -16,6 +16,7 @@ import java.io.FileFilter;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
@@ -109,19 +110,19 @@ public class UtilTests extends TestCase {
 	 * Test convert(String descriptor) method
 	 */
 	public void testConvertDescriptor() {
-		assertEquals("Wrong conversion", "(QObject;QException;)V", Util.dequalifySignature("(Ljava/lang/Object;Ljava/lang/Exception;)V"));
-		assertEquals("Wrong conversion", "(QObject;QException;)QException;", Util.dequalifySignature("(Ljava/lang/Object;Ljava/lang/Exception;)Ljava/lang/Exception;"));
-		assertEquals("Wrong conversion", "(IJCQObject;IJCQException;IJC)I", Util.dequalifySignature("(IJCLjava/lang/Object;IJCLjava/lang/Exception;IJC)I"));
-		assertEquals("Wrong conversion", "([IJC[[[QObject;IJCQException;IJC)I", Util.dequalifySignature("([IJC[[[Ljava/lang/Object;IJCLjava/lang/Exception;IJC)I"));
-		assertEquals("Wrong conversion", "(QObject;QException;)V", Util.dequalifySignature("(Ljava.lang.Object;Ljava.lang.Exception;)V"));
-		assertEquals("Wrong conversion", "(QObject;QException;)QException;", Util.dequalifySignature("(Ljava.lang.Object;Ljava.lang.Exception;)Ljava.lang.Exception;"));
-		assertEquals("Wrong conversion", "(IJCQObject;IJCQException;IJC)I", Util.dequalifySignature("(IJCLjava.lang.Object;IJCLjava.lang.Exception;IJC)I"));
-		assertEquals("Wrong conversion", "([IJC[[[QObject;IJCQException;IJC)I", Util.dequalifySignature("([IJC[[[Ljava.lang.Object;IJCLjava.lang.Exception;IJC)I"));
-		assertEquals("Wrong conversion", "(QList;)QList;", Util.dequalifySignature("(Ljava.util.List;)Ljava.util.List;"));
-		assertEquals("wrong conversion", "(QList;)QList;", Util.dequalifySignature("(QList;)QList;"));
-		assertEquals("wrong converstion", "(QLanguage;)V;", Util.dequalifySignature("(Lfoo.test.Language;)V;"));
-		assertEquals("wrong converstion", "(QJokes;)V;", Util.dequalifySignature("(Lfoo.test.Jokes;)V;"));
-		assertEquals("wrong conversion", "(QDiff;)Z", Util.dequalifySignature("(LDiff;)Z"));
+		assertEquals("Wrong conversion", "(QObject;QException;)V", Signatures.dequalifySignature("(Ljava/lang/Object;Ljava/lang/Exception;)V"));
+		assertEquals("Wrong conversion", "(QObject;QException;)QException;", Signatures.dequalifySignature("(Ljava/lang/Object;Ljava/lang/Exception;)Ljava/lang/Exception;"));
+		assertEquals("Wrong conversion", "(IJCQObject;IJCQException;IJC)I", Signatures.dequalifySignature("(IJCLjava/lang/Object;IJCLjava/lang/Exception;IJC)I"));
+		assertEquals("Wrong conversion", "([IJC[[[QObject;IJCQException;IJC)I", Signatures.dequalifySignature("([IJC[[[Ljava/lang/Object;IJCLjava/lang/Exception;IJC)I"));
+		assertEquals("Wrong conversion", "(QObject;QException;)V", Signatures.dequalifySignature("(Ljava.lang.Object;Ljava.lang.Exception;)V"));
+		assertEquals("Wrong conversion", "(QObject;QException;)QException;", Signatures.dequalifySignature("(Ljava.lang.Object;Ljava.lang.Exception;)Ljava.lang.Exception;"));
+		assertEquals("Wrong conversion", "(IJCQObject;IJCQException;IJC)I", Signatures.dequalifySignature("(IJCLjava.lang.Object;IJCLjava.lang.Exception;IJC)I"));
+		assertEquals("Wrong conversion", "([IJC[[[QObject;IJCQException;IJC)I", Signatures.dequalifySignature("([IJC[[[Ljava.lang.Object;IJCLjava.lang.Exception;IJC)I"));
+		assertEquals("Wrong conversion", "(QList;)QList;", Signatures.dequalifySignature("(Ljava.util.List;)Ljava.util.List;"));
+		assertEquals("wrong conversion", "(QList;)QList;", Signatures.dequalifySignature("(QList;)QList;"));
+		assertEquals("wrong converstion", "(QLanguage;)V;", Signatures.dequalifySignature("(Lfoo.test.Language;)V;"));
+		assertEquals("wrong converstion", "(QJokes;)V;", Signatures.dequalifySignature("(Lfoo.test.Jokes;)V;"));
+		assertEquals("wrong conversion", "(QDiff;)Z", Signatures.dequalifySignature("(LDiff;)Z"));
 	}
 	
 	/**

@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -344,7 +345,7 @@ public class ClassUsageTests extends UsageTest {
 		});
 		String typename = "testA1";
 		setExpectedMessageArgs(new String[][] {
-				{"inner", "x.y.z.testA1", "m1()", CLASS_NAME}	
+				{"inner", "x.y.z.testA1.m1()", CLASS_NAME}	
 		});
 		deployTest(typename, inc);
 	}
@@ -374,9 +375,16 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
 		});
 		String typename = "testA2";
-		setExpectedMessageArgs(new String[][] {
-				{"x.y.z.testA2.m1()", CLASS_NAME}	
-		});
+		if(getTestCompliance().compareTo(CompilerOptions.VERSION_1_5) > -1) {
+			setExpectedMessageArgs(new String[][] {
+					{"x.y.z.testA2.m1()", CLASS_NAME}	
+			});
+		}
+		else {
+			setExpectedMessageArgs(new String[][] {
+					{"x.y.z.testA2", CLASS_NAME}	
+			});
+		}
 		deployTest(typename, inc);
 	}
 	
@@ -405,9 +413,16 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
 		});
 		String typename = "testA3";
-		setExpectedMessageArgs(new String[][] {
-				{"x.y.z.testA3.m1()", CLASS_NAME}	
-		});
+		if(getTestCompliance().compareTo(CompilerOptions.VERSION_1_5) > -1) {
+			setExpectedMessageArgs(new String[][] {
+					{"x.y.z.testA3.m1()", CLASS_NAME}	
+			});
+		}
+		else {
+			setExpectedMessageArgs(new String[][] {
+					{"x.y.z.testA3", CLASS_NAME}	
+			});
+		}
 		deployTest(typename, inc);
 	}
 	
@@ -468,7 +483,7 @@ public class ClassUsageTests extends UsageTest {
 		});
 		String typename = "testA5";
 		setExpectedMessageArgs(new String[][] {
-				{"inner", "x.y.z.testA5", "testA5()", CLASS_NAME}	
+				{"inner", "x.y.z.testA5.testA5()", CLASS_NAME}	
 		});
 		deployTest(typename, inc);
 	}
@@ -498,9 +513,16 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
 		});
 		String typename = "testA6";
-		setExpectedMessageArgs(new String[][] {
-				{"x.y.z.testA6.testA6()", CLASS_NAME}	
-		});
+		if(getTestCompliance().compareTo(CompilerOptions.VERSION_1_5) > -1) {
+			setExpectedMessageArgs(new String[][] {
+					{"x.y.z.testA6.testA6()", CLASS_NAME}	
+			});
+		}
+		else {
+			setExpectedMessageArgs(new String[][] {
+					{"x.y.z.testA6", CLASS_NAME}	
+			});
+		}
 		deployTest(typename, inc);
 	}
 }

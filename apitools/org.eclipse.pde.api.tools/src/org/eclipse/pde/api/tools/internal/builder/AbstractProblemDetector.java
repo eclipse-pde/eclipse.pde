@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -202,14 +203,24 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 */
 	protected String getTypeName(IApiMember member) throws CoreException {
 		switch (member.getType()) {
-			case IApiElement.TYPE:
+			case IApiElement.TYPE: {
 				IApiType type = (IApiType) member;
-				if(type.isAnonymous() || type.isLocal()) {
-					return type.getEnclosingType().getName();
+				if(type.isAnonymous()) {
+					return member.getEnclosingType().getName();
+				}
+				else if(type.isLocal()) {
+					String name = member.getEnclosingType().getName();
+					int idx = name.indexOf('$');
+					if(idx > -1) {
+						return name.substring(0, idx);
+					}
+					return name;
 				}
 				return member.getName();
-			default:
+			}
+			default: {
 				return member.getEnclosingType().getName();
+			}
 		}
 	}
 	
@@ -236,9 +247,16 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @throws CoreException
 	 */
 	protected void noSourcePosition(IType type, IReference reference) throws CoreException {
+		IApiMember member = reference.getMember();
 		String name = reference.getReferencedMemberName();
-		if(name == null) {
-			name = BuilderMessages.IllegalExtendsProblemDetector_an_anonymous_declaration;
+		if(member.getType() == IApiElement.TYPE) {
+			IApiType atype = (IApiType) member;
+			if(atype.isAnonymous()) {
+				name = BuilderMessages.IllegalExtendsProblemDetector_an_anonymous_declaration;
+			}
+			else if(atype.isLocal()) {
+				name = NLS.bind(BuilderMessages.AbstractProblemDetector_local_type_T, atype.getName());
+			}
 		}
 		IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
 				MessageFormat.format(BuilderMessages.AbstractProblemDetector_could_not_locate_src_pos, 

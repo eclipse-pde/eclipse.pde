@@ -38,6 +38,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescri
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -616,7 +617,7 @@ public class ApiDescriptionTests extends TestCase {
 	public void test209335() {
 		String typename = "x.y.z.209335";
 		String packageName = Util.getPackageName(typename);
-		String tName = Util.getTypeName(typename);
+		String tName = Signatures.getTypeName(typename);
 		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
 		IApiAnnotations description = fManifest.resolveAnnotations(type);
 		assertTrue("The description must be null", description == null);
@@ -631,7 +632,7 @@ public class ApiDescriptionTests extends TestCase {
 	 */
 	protected void resolveType(String typeName, int expectedVisibility, int expectedRestrictions) {
 		String packageName = Util.getPackageName(typeName);
-		String tName = Util.getTypeName(typeName);
+		String tName = Signatures.getTypeName(typeName);
 		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
 		IApiAnnotations description = fManifest.resolveAnnotations(type);
 		assertEquals("Wrong visibility", expectedVisibility, description.getVisibility());

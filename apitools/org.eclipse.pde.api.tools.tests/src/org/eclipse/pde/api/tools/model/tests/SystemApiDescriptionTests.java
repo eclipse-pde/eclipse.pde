@@ -23,6 +23,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -49,7 +50,7 @@ public class SystemApiDescriptionTests extends TestCase {
 			String typeName,
 			String fieldName) {
 		String packageName = Util.getPackageName(typeName);
-		String tName = Util.getTypeName(typeName);
+		String tName = Signatures.getTypeName(typeName);
 		return Factory.packageDescriptor(packageName).getType(tName).getField(fieldName);
 	}
 	/**
@@ -64,7 +65,7 @@ public class SystemApiDescriptionTests extends TestCase {
 			String methodName,
 			String methodSignature) {
 		String packageName = Util.getPackageName(typeName);
-		String tName = Util.getTypeName(typeName);
+		String tName = Signatures.getTypeName(typeName);
 		return
 			Factory.packageDescriptor(packageName).getType(tName).getMethod(methodName, methodSignature);
 	}
@@ -77,7 +78,7 @@ public class SystemApiDescriptionTests extends TestCase {
 	 */
 	protected IReferenceTypeDescriptor resolveType(String typeName) {
 		String packageName = Util.getPackageName(typeName);
-		String tName = Util.getTypeName(typeName);
+		String tName = Signatures.getTypeName(typeName);
 		return Factory.packageDescriptor(packageName).getType(tName);
 	}
 	/**

@@ -83,18 +83,11 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
-import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
-import org.eclipse.jdt.core.dom.ParameterizedType;
-import org.eclipse.jdt.core.dom.PrimitiveType;
-import org.eclipse.jdt.core.dom.QualifiedType;
-import org.eclipse.jdt.core.dom.SimpleType;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -336,53 +329,6 @@ public final class Util {
 				collector.add(currentFile);
 			}
 		}
-	}
-
-	/**
-	 * Convert fully qualified signature to unqualified one.
-	 * The descriptor can be dot or slashed based.
-	 * 
-	 * @param descriptor the given descriptor to convert
-	 * @return the converted signature
-	 */
-	public static String dequalifySignature(String signature) {
-		StringBuffer buffer = new StringBuffer();
-		char[] chars = signature.toCharArray();
-		for (int i = 0, max = chars.length; i < max; i++) {
-			char currentChar = chars[i];
-			switch(currentChar) {
-				case 'L' : {
-					buffer.append('Q');
-					// read reference type
-					int lastDotPosition = i;
-					i++;
-					while(i < chars.length && currentChar != ';' && currentChar != '<' ) {
-						switch(currentChar) {
-							case '/' :
-							case '.' :
-								lastDotPosition = i;
-								break;
-						}
-						i++;
-						currentChar = chars[i];
-					}
-					buffer.append(chars, lastDotPosition + 1, i - lastDotPosition - 1);
-					buffer.append(currentChar);
-					break;
-				}
-				case 'Q': {
-					while(i < chars.length && currentChar != ';') {
-						buffer.append(currentChar);
-						currentChar = chars[++i];
-					}
-				}
-				//$FALL-THROUGH$
-				default: {
-					buffer.append(currentChar);
-				}
-			}
-		}
-		return String.valueOf(buffer);
 	}
 
 	/**
@@ -1138,7 +1084,7 @@ public final class Util {
 					for (Iterator iterator = list.iterator(); iterator.hasNext(); ) {
 						IMethod method2 = (IMethod) iterator.next();
 						try {
-							if (Util.matchesSignatures(method2.getSignature(), signature)) {
+							if (Signatures.matchesSignatures(method2.getSignature(), signature)) {
 								return method2;
 							}
 						} catch (JavaModelException e) {
@@ -1364,7 +1310,7 @@ public final class Util {
 				return getVersionProblemKindName(kind);
 			}
 			case IApiProblem.CATEGORY_API_PROFILE: {
-				return getApiProfileProblemKindName(kind);
+				return getApiBaselineProblemKindName(kind);
 			}
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				return getApiComponentResolutionProblemKindName(kind);
@@ -1378,7 +1324,7 @@ public final class Util {
 	 * @param kind
 	 * @return the string of the API profile problem kind
 	 */
-	public static String getApiProfileProblemKindName(int kind) {
+	public static String getApiBaselineProblemKindName(int kind) {
 		switch(kind) {
 			case IApiProblem.API_PROFILE_MISSING: return "API_PROFILE_MISSING"; //$NON-NLS-1$
 		}
@@ -1453,38 +1399,11 @@ public final class Util {
 	}
 
 	/**
-	 * Creates a method signature from a specified {@link MethodDeclaration}
-	 * @param node
-	 * @return the signature for the given method node or <code>null</code>
-	 */
-	public static String getMethodSignatureFromNode(MethodDeclaration node) {
-		Assert.isNotNull(node);
-		List params = node.parameters();
-		List rparams = getParametersTypeNames(params);
-		if(rparams.size() == params.size()) {
-			if(!node.isConstructor()) {
-				Type returnType = node.getReturnType2();
-				if (returnType != null) {
-					String rtype = Util.getTypeSignature(returnType);
-					if(rtype != null) {
-						return Signature.createMethodSignature((String[]) rparams.toArray(new String[rparams.size()]), rtype);
-					}
-				}
-			}
-			else {
-				collectSyntheticParam(node, rparams);
-				return Signature.createMethodSignature((String[]) rparams.toArray(new String[rparams.size()]), Signature.SIG_VOID);
-			}
-		}
-		return null;
-	}
-	
-	/**
 	 * Collects the synthetic parameter of the fully qualified name of the enclosing context for a constructor of an inner type 
 	 * @param method the constructor declaration
 	 * @param rparams the listing of parameters to add to
 	 */
-	private static void collectSyntheticParam(final MethodDeclaration method, List rparams) {
+	static void collectSyntheticParam(final MethodDeclaration method, List rparams) {
 		Assert.isNotNull(method);
 		if(isInTopLevelType(method)) {
 			return;
@@ -1551,25 +1470,6 @@ public final class Util {
 	private static boolean isInTopLevelType(final MethodDeclaration method) {
 		AbstractTypeDeclaration type = (AbstractTypeDeclaration) method.getParent();
 		return type != null && type.isPackageMemberTypeDeclaration();
-	}
-	
-	/**
-	 * Returns the listing of the signatures of the parameters passed in
-	 * @param rawparams
-	 * @return a listing of signatures for the specified parameters
-	 */
-	public static List getParametersTypeNames(List rawparams) {
-		List rparams = new ArrayList(rawparams.size());
-		SingleVariableDeclaration param = null;
-		String pname = null;
-		for(Iterator iter = rawparams.iterator(); iter.hasNext();) {
-			param = (SingleVariableDeclaration) iter.next();
-			pname = getTypeSignature(param.getType());
-			if(pname != null) {
-				rparams.add(pname);
-			}
-		}
-		return rparams;
 	}
 	
 	/**
@@ -1892,53 +1792,6 @@ public final class Util {
 		String pkg = index == -1 ? DEFAULT_PACKAGE_NAME : fullyQualifiedName.substring(0, index);
 		String type = index == -1 ? fullyQualifiedName : fullyQualifiedName.substring(index + 1);
 		return Factory.packageDescriptor(pkg).getType(type);
-	}
-	
-	/**
-	 * Returns the simple name of the type, by stripping off the last '.' segment and returning it.
-	 * This method assumes that qualified type names are '.' separated. If the type specified is a package
-	 * than an empty string is returned.
-	 * @param qualifiedname the fully qualified name of a type, '.' separated (e.g. a.b.c.Type)
-	 * @return the simple name from the qualified name. For example if the qualified name is a.b.c.Type this method 
-	 * will return Type (stripping off the package qualification)
-	 */
-	public static String getTypeName(String qualifiedname) {
-		int idx = qualifiedname.lastIndexOf('.');
-		idx++;
-		if(idx > 0) {
-			return qualifiedname.substring(idx, qualifiedname.length());
-		}
-		// default package
-		return qualifiedname;
-	}
-	
-	/**
-	 * Processes the signature for the given {@link Type}
-	 * @param type the type to process
-	 * @return the signature for the type or <code>null</code> if one could not be 
-	 * derived
-	 */
-	public static String getTypeSignature(Type type) {
-		switch(type.getNodeType()) {
-		case ASTNode.SIMPLE_TYPE: {
-			return Signature.createTypeSignature(((SimpleType) type).getName().getFullyQualifiedName(), false);
-		}
-		case ASTNode.QUALIFIED_TYPE: {
-			return Signature.createTypeSignature(((QualifiedType)type).getName().getFullyQualifiedName(), false);
-		}
-		case ASTNode.ARRAY_TYPE: {
-			ArrayType a = (ArrayType) type;
-			return Signature.createArraySignature(getTypeSignature(a.getElementType()), a.getDimensions());
-		}
-		case ASTNode.PARAMETERIZED_TYPE: {
-			//we don't need to care about the other scoping types only the base type
-			return getTypeSignature(((ParameterizedType) type).getType());
-		}
-		case ASTNode.PRIMITIVE_TYPE: {
-			return Signature.createTypeSignature(((PrimitiveType)type).getPrimitiveTypeCode().toString(), false);
-		}
-		}
-		return null;
 	}
 	
 	public static boolean isAbstract(int accessFlags) {
@@ -2614,55 +2467,6 @@ public final class Util {
 		return null;
 	}
 
-	/**
-	 * Returns if the given signatures match. Where signatures are considered to match
-	 * iff the return type, name and parameters are the same.
-	 * @param signature
-	 * @param signature2
-	 * @return true if the signatures are equal, false otherwise
-	 */
-	public static boolean matchesSignatures(String signature, String signature2) {
-		if (!matches(Signature.getReturnType(signature), Signature.getReturnType(signature2))) {
-			return false;
-		}
-		String[] parameterTypes = Signature.getParameterTypes(signature);
-		String[] parameterTypes2 = Signature.getParameterTypes(signature2);
-		int length = parameterTypes.length;
-		int length2 = parameterTypes2.length;
-		if (length != length2) return false;
-		for (int i = 0; i < length2; i++) {
-			if (!matches(parameterTypes[i], parameterTypes2[i])) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	/**
-	 * Returns if the two types match. Types are considered to match 
-	 * iff the type name and array count (if any) are the same
-	 * @param type
-	 * @param type2
-	 * @return true if the type names match, false otherwise
-	 */
-	private static boolean matches(String type, String type2) {
-		if (Signature.getArrayCount(type) == Signature.getArrayCount(type2)) {
-			String el1 = Signature.getElementType(type);
-			String el2 = Signature.getElementType(type2);
-			String signatureSimpleName = Signature.getSignatureSimpleName(el1);
-			String signatureSimpleName2 = Signature.getSignatureSimpleName(el2);
-			if (signatureSimpleName.equals(signatureSimpleName2)) {
-				return true;
-			}
-			int index = signatureSimpleName2.lastIndexOf('.');
-			if (index != -1) {
-				// the right side is a member type
-				return signatureSimpleName.equals(signatureSimpleName2.subSequence(index + 1, signatureSimpleName2.length()));
-			}
-		}
-		return false;
-	}
-	
 	/**
 	 * Turns the given array of strings into a {@link HashSet}
 	 * @param values

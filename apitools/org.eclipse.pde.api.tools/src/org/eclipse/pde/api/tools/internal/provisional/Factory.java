@@ -24,6 +24,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescri
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -55,7 +56,7 @@ public class Factory {
 	 */
 	public static IReferenceTypeDescriptor typeDescriptor(String fullyQualifiedName) {
 		String packageName = Util.getPackageName(fullyQualifiedName);
-		String typeName = Util.getTypeName(fullyQualifiedName);
+		String typeName = Signatures.getTypeName(fullyQualifiedName);
 		return packageDescriptor(packageName).getType(typeName);
 	}
 	

@@ -63,7 +63,7 @@ import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
@@ -123,7 +123,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		 */
 		public boolean visit(MethodDeclaration node) {
 			if(name.equals(node.getName().getFullyQualifiedName())) {
-				if(signature.equals(Util.getMethodSignatureFromNode(node))) {
+				if(signature.equals(Signatures.getMethodSignatureFromNode(node))) {
 					updateTag(node);
 				}
 			}

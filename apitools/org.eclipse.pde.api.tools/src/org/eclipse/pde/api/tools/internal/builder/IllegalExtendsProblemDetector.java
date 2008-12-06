@@ -27,7 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
-import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 /**
  * Detects when a type illegally extends another type.
@@ -55,7 +55,7 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 	 */
 	protected int getProblemFlags(IReference reference) {
 		IApiType type = (IApiType) reference.getMember();
-		if(type.isLocal() && !type.isAnonymous()) {
+		if(type.isLocal()) {
 			return IApiProblem.LOCAL_TYPE;
 		}
 		if(type.isAnonymous()) {
@@ -71,51 +71,39 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 		return IApiProblemTypes.ILLEGAL_EXTEND;
 	}
 	
-	/**
-	 * Processes the method name. In the event it is a constructor the simple name of
-	 * the enclosing type is returned
-	 * @param type
-	 * @param methodname
-	 * @return
-	 * @throws CoreException
-	 */
-	protected String processMethodName(IApiType type, String methodname) throws CoreException {
-		if("<init>".equals(methodname)) { //$NON-NLS-1$
-			IApiType enclosingtype = type.getEnclosingType();
-			return enclosingtype.getSimpleName();
-		}
-		return methodname;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractIllegalTypeReference#getMessageArgs(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
 	 */
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		ApiType ltype = (ApiType) reference.getMember();
 		if(ltype.isAnonymous()) {
-			IApiType etype = ltype.getEnclosingType(); 
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(etype.getName());
+			IApiType etype = ltype.getEnclosingType();
+			String signature = Signatures.getTypeSignature(etype);
 			IApiMethod method = ltype.getEnclosingMethod();
 			if(method != null) {
-				String methodname = processMethodName(ltype, method.getName());
-				if(methodname != null) {
-					buffer.append(".").append(Signature.toString(processMethodSignature(method), methodname, null, false, false)); //$NON-NLS-1$
-				}
+				signature = Signatures.getMethodSignature(method);
 			}
-			return new String[] {buffer.toString(), getSimpleTypeName(reference.getResolvedReference())};
+			return new String[] {signature, getSimpleTypeName(reference.getResolvedReference())};
 		}
 		if(ltype.isLocal()) {
 			//local types are always defined in methods, include enclosing method infos in message
 			IApiType etype = ltype.getEnclosingType(); 
 			IApiMethod method = ltype.getEnclosingMethod();
-			String methodname = processMethodName(ltype, method.getName());
-			return new String[] {
-					getAnonymousTypeName(reference.getMember().getName()),
-					etype.getName(),
-					Signature.toString(processMethodSignature(method), methodname, null, false, false),
-					getSimpleTypeName(reference.getResolvedReference())
-			};
+			if(method != null) {
+				String methodsig = Signatures.getQualifiedMethodSignature(etype, method);
+				return new String[] {
+						getAnonymousTypeName(reference.getMember().getName()),
+						methodsig,
+						getSimpleTypeName(reference.getResolvedReference())
+				};
+			}
+			else {
+				String typesig = Signatures.getTypeSignature(etype);
+				return new String[] {
+						getAnonymousTypeName(reference.getMember().getName()), 
+						typesig, 
+						getSimpleTypeName(reference.getResolvedReference())};
+			}
 		}
 		return super.getMessageArgs(reference);
 	}
@@ -145,13 +133,12 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 		}
 		if(ltype.isLocal()) {
 			String name = ltype.getSimpleName();
-			ltype.getName();
 			ICompilationUnit cunit = type.getCompilationUnit();
 			if(cunit.isWorkingCopy()) {
 				cunit.reconcile(AST.JLS3, false, null, null);
 			}
 			IMethod method = getEnclosingMethod(ltype, type);
-			IType localtype = null;
+			IType localtype = type;
 			if(method != null) {
 				localtype = method.getType(name, 1);
 			}
@@ -165,20 +152,6 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 	}
 	
 	/**
-	 * Collects which signature to use and de-qualifies it. If there is a generic signature
-	 * it is returned, otherwise the standard signature is used
-	 * @param method
-	 * @return the de-qualified signature for the method
-	 */
-	protected String processMethodSignature(IApiMethod method) {
-		String signature = method.getGenericSignature();
-		if(signature == null) {
-			signature = method.getSignature();
-		}
-		return Util.dequalifySignature(signature);
-	}
-	
-	/**
 	 * Returns the enclosing {@link IMethod} for the given type or <code>null</code>
 	 * if it cannot be computed
 	 * @param type
@@ -189,8 +162,8 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 	private IMethod getEnclosingMethod(ApiType type, IType jtype) throws CoreException { 
 		IApiMethod apimethod = type.getEnclosingMethod();
 		if(apimethod != null) {
-			String signature = processMethodSignature(apimethod);
-			String methodname = processMethodName(type, apimethod.getName());
+			String signature = Signatures.processMethodSignature(apimethod);
+			String methodname = Signatures.processMethodName(type, apimethod.getName());
 			IMethod method = jtype.getMethod(methodname, Signature.getParameterTypes(signature));
 			if(method.exists()) {
 				return method;

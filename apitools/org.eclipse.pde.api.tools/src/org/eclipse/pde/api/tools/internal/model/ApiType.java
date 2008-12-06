@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.model;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ import com.ibm.icu.text.MessageFormat;
  * Base implementation of {@link IApiType}
  * 
  * @since 1.0.0
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ApiType extends ApiMember implements IApiType {
@@ -61,7 +62,7 @@ public class ApiType extends ApiMember implements IApiType {
 	/**
 	 * Maps method name/signature pair to method element.
 	 */
-	private Map fMethods;
+	private LinkedHashMap fMethods;
 	
 	/**
 	 * Map of member type names to class file (or null until resolved)
@@ -102,6 +103,11 @@ public class ApiType extends ApiMember implements IApiType {
 	 * If this is an anonymous class or not
 	 */
 	private boolean fAnonymous = false;
+	
+	/**
+	 * If this is a local type or not (class defined in a method)
+	 */
+	private boolean fLocal = false;
 	
 	/**
 	 * cached enclosing type once it has been successfully calculated
@@ -174,7 +180,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	public ApiMethod addMethod(String name, String signature, String genericSig, int modifiers, String[] exceptions) {
 		if (fMethods == null) {
-			fMethods = new HashMap();
+			fMethods = new LinkedHashMap();
 		}
 		ApiMethod method = new ApiMethod(this, name, signature, genericSig, modifiers, exceptions);
 		fMethods.put(new MethodKey(name, signature), method);
@@ -331,7 +337,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isLocal()
 	 */
 	public boolean isLocal() {
-		return fEnclosingMethodName != null || fEnclosingMethodSignature != null;
+		return fLocal;
 	}
 	
 	/* (non-Javadoc)
@@ -349,6 +355,13 @@ public class ApiType extends ApiMember implements IApiType {
 	}
 	
 	/**
+	 * Used when building a type structure for pre-1.5 sources
+	 */
+	public void setLocal() {
+		fLocal = true;
+	}
+	
+	/**
 	 * Sets the signature of the method that encloses this local type
 	 * @param signature the signature of the method. 
 	 * @see org.eclipse.jdt.core.Signature for more information
@@ -362,9 +375,14 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getEnclosingMethod()
 	 */
 	public IApiMethod getEnclosingMethod() {
-		if(fEnclosingMethod == null && fEnclosingMethodName != null) {
+		if(!fLocal) {
+			return null;
+		}
+		if(fEnclosingMethod == null) { 
 			try {
-				fEnclosingMethod = getEnclosingType().getMethod(fEnclosingMethodName, fEnclosingMethodSignature);
+				if(fEnclosingMethodName != null) {
+					fEnclosingMethod = getEnclosingType().getMethod(fEnclosingMethodName, fEnclosingMethodSignature);
+				}
 			}
 			catch (CoreException ce) {}
 		}
@@ -399,7 +417,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isMemberType()
 	 */
 	public boolean isMemberType() {
-		return fEnclosingTypeName != null;
+		return fEnclosingTypeName != null && !(fLocal || fAnonymous);
 	}
 	
 	/* (non-Javadoc)
@@ -607,12 +625,33 @@ public class ApiType extends ApiMember implements IApiType {
 		IApiType enclosing = super.getEnclosingType();
 		if (enclosing == null && fEnclosingTypeName != null) {
 			// anonymous or local
-			IApiTypeRoot root = getApiComponent().findTypeRoot(fEnclosingTypeName);
+			String name = fEnclosingTypeName;
+			if(fLocal) {
+				name = processLocalTypeEnclosingTypeName(fEnclosingTypeName);
+			}
+			IApiTypeRoot root = getApiComponent().findTypeRoot(name);
 			if (root != null) {
 				fEnclosingType = root.getStructure();
 				return fEnclosingType;
 			}
 		}
 		return enclosing;
+	}
+	
+	/**
+	 * Processes the local types' enclosing type's name and collects the enclosing methods' index as well
+	 * @param name
+	 * @return
+	 */
+	public String processLocalTypeEnclosingTypeName(String name) {
+		String signature = name;
+		int idx = signature.lastIndexOf('$');
+		if(idx > -1) {
+			try {
+				return signature.substring(0, idx);
+			}
+			catch(NumberFormatException nfe) {}
+		}
+		return signature;
 	}
 }

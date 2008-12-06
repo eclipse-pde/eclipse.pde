@@ -70,6 +70,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ScannerMessages;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.text.edits.TextEdit;
 import org.w3c.dom.Element;
@@ -263,7 +264,7 @@ public class ApiDescriptionProcessor {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodDeclaration)
 		 */
 		public boolean visit(MethodDeclaration node) {
-			String signature = Util.getMethodSignatureFromNode(node);
+			String signature = Signatures.getMethodSignatureFromNode(node);
 			if(signature != null) {
 				updateDocNode(findDescriptorByName(node.getName().getFullyQualifiedName(), signature), node, getType(), IApiJavadocTag.MEMBER_METHOD);
 			}

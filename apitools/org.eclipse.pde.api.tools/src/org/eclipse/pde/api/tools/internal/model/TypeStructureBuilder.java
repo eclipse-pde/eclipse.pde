@@ -89,6 +89,9 @@ public class TypeStructureBuilder extends ClassAdapter {
 			if (innerName == null) {
 				fType.setAnonymous();
 			}
+			else if(outerName == null) {
+				fType.setLocal();
+			}
 		}
 		if (outerName != null && innerName != null) {
 			// technically speaking innerName != null is not necessary, but this is a workaround for some
@@ -166,5 +169,15 @@ public class TypeStructureBuilder extends ClassAdapter {
 			ApiPlugin.log(e);
 		}
 		return visitor.fType;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Type structure builder for: ").append(fType.getName()); //$NON-NLS-1$
+		buffer.append("\nBacked by file: ").append(fFile.getName()); //$NON-NLS-1$
+		return buffer.toString();
 	}
 }
