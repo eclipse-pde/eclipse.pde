@@ -31,6 +31,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	private static final String S_QUALIFIER = "qualifier"; //$NON-NLS-1$
 	private static final String S_QUALIFIER_NAME = "qualifierName"; //$NON-NLS-1$
 	private static final String S_ALLOW_BINARY_CYCLES = "allowBinaryCycles"; //$NON-NLS-1$
+	private static final String S_USE_WORKSPACE_COMPILED_CLASSES = "useWorkspaceCompiledClasses"; //$NON-NLS-1$
 
 	private Button fIncludeSource;
 	protected Button fJarButton;
@@ -40,6 +41,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	private Button fQualifierButton;
 	private Text fQualifierText;
 	private Button fAllowBinaryCycles;
+	private Button fUseWSCompiledClasses;
 
 	public ExportOptionsTab(BaseExportWizardPage page) {
 		super(page);
@@ -56,6 +58,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 		addQualifierOption(container);
 		addAntSection(container);
 		addAllowBinaryCyclesSection(container);
+		addUseWorkspaceCompiledClassesSection(container);
 
 		return container;
 	}
@@ -77,6 +80,11 @@ public class ExportOptionsTab extends AbstractExportTab {
 	protected void addAllowBinaryCyclesSection(Composite comp) {
 		fAllowBinaryCycles = new Button(comp, SWT.CHECK);
 		fAllowBinaryCycles.setText(PDEUIMessages.ExportOptionsTab_allowBinaryCycles);
+	}
+
+	protected void addUseWorkspaceCompiledClassesSection(Composite comp) {
+		fUseWSCompiledClasses = new Button(comp, SWT.CHECK);
+		fUseWSCompiledClasses.setText("Use class files compiled in the workspace");
 	}
 
 	protected String getJarButtonText() {
@@ -143,6 +151,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 		fQualifierText.setText(getInitialQualifierText(settings));
 		fQualifierText.setEnabled(fQualifierButton.getSelection());
 		fAllowBinaryCycles.setSelection(getInitialAllowBinaryCyclesSelection(settings));
+		fUseWSCompiledClasses.setSelection(getInitialUseWorkspaceCompiledClassesSelection(settings));
 		hookListeners();
 	}
 
@@ -153,6 +162,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 		settings.put(S_QUALIFIER, fQualifierButton.getSelection());
 		settings.put(S_QUALIFIER_NAME, fQualifierText.getText());
 		settings.put(S_ALLOW_BINARY_CYCLES, fAllowBinaryCycles.getSelection());
+		settings.put(S_USE_WORKSPACE_COMPILED_CLASSES, fUseWSCompiledClasses.getSelection());
 		saveCombo(settings, S_ANT_FILENAME, fAntCombo);
 	}
 
@@ -165,12 +175,17 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 	protected boolean getInitialJarButtonSelection(IDialogSettings settings) {
 		String selected = settings.get(S_JAR_FORMAT);
-		return selected == null ? TargetPlatformHelper.getTargetVersion() >= 3.1 : "true".equals(selected); //$NON-NLS-1$
+		return selected == null ? TargetPlatformHelper.getTargetVersion() >= 3.1 : Boolean.valueOf(selected).booleanValue();
 	}
 
 	protected boolean getInitialAllowBinaryCyclesSelection(IDialogSettings settings) {
 		String selected = settings.get(S_ALLOW_BINARY_CYCLES);
-		return selected == null ? true : "true".equals(selected); //$NON-NLS-1$
+		return selected == null ? true : Boolean.valueOf(selected).booleanValue();
+	}
+
+	protected boolean getInitialUseWorkspaceCompiledClassesSelection(IDialogSettings settings) {
+		String selected = settings.get(S_USE_WORKSPACE_COMPILED_CLASSES);
+		return selected == null ? false : Boolean.valueOf(selected).booleanValue();
 	}
 
 	protected void hookListeners() {
@@ -231,6 +246,10 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 	protected boolean doBinaryCycles() {
 		return fAllowBinaryCycles.getSelection();
+	}
+
+	protected boolean useWorkspaceCompiledClasses() {
+		return fUseWSCompiledClasses.getSelection();
 	}
 
 	protected boolean useJARFormat() {

@@ -80,6 +80,7 @@ public class ExportBundleTests extends PDETestCase {
 			info.useJarFormat = true;
 			info.exportSource = false;
 			info.allowBinaryCycles = false;
+			info.useWorkspaceCompiledClasses = false;
 			info.destinationDirectory = EXPORT_PATH.toOSString();
 			info.zipFileName = null;
 			info.items = new Object[]{PluginRegistry.findModel(project.getProject())};
@@ -121,6 +122,7 @@ public class ExportBundleTests extends PDETestCase {
 			info.useJarFormat = true;
 			info.exportSource = false;
 			info.allowBinaryCycles = false;
+			info.useWorkspaceCompiledClasses = false;
 			info.destinationDirectory = EXPORT_PATH.toOSString();
 			info.zipFileName = null;
 			info.items = new Object[]{PluginRegistry.findModel(project.getProject())};

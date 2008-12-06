@@ -287,6 +287,10 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		return fOptionsTab.doBinaryCycles();
 	}
 
+	protected boolean useWorkspaceCompiledClasses() {
+		return fOptionsTab.useWorkspaceCompiledClasses();
+	}
+
 	protected boolean doGenerateAntFile() {
 		return fOptionsTab.doGenerateAntFile();
 	}

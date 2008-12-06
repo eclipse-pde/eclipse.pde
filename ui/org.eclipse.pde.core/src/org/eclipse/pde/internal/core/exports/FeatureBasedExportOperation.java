@@ -33,7 +33,7 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			createDestination();
-			monitor.beginTask("", 10); //$NON-NLS-1$
+			monitor.beginTask("Exporting...", 33); //$NON-NLS-1$
 			// create a feature to contain all plug-ins
 			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
@@ -42,12 +42,14 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 			createBuildPropertiesFile(fFeatureLocation);
 			if (fInfo.useJarFormat)
 				createPostProcessingFiles();
-			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), new SubProgressMonitor(monitor, 7));
+			IStatus status = testBuildWorkspaceBeforeExport(new SubProgressMonitor(monitor, 10));
+			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), new SubProgressMonitor(monitor, 20));
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
+			return status;
 		} catch (IOException e) {
-			PDECore.log(e);
+			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e);
 		} catch (CoreException e) {
 			return e.getStatus();
 		} catch (InvocationTargetException e) {
@@ -64,7 +66,6 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 			cleanup(null, new SubProgressMonitor(monitor, 3));
 			monitor.done();
 		}
-		return Status.OK_STATUS;
 	}
 
 	protected abstract void createPostProcessingFiles();

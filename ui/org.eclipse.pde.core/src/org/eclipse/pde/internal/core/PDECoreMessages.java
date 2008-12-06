@@ -259,6 +259,14 @@ public class PDECoreMessages extends NLS {
 
 	public static String FeatureExportOperation_CompilationErrors;
 
+	public static String FeatureExportOperation_runningAssemblyScript;
+
+	public static String FeatureExportOperation_runningBuildScript;
+
+	public static String FeatureExportOperation_runningPackagerScript;
+
+	public static String FeatureExportOperation_workspaceBuildErrorsFoundDuringExport;
+
 	public static String TargetPlatformResetJob_resetTarget;
 
 	public static String XMLErrorReporter_ExternalEntityResolution;

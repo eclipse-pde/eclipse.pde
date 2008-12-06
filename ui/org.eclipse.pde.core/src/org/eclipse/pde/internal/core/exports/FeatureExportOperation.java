@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
+import org.eclipse.pde.internal.core.PDECoreMessages;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -26,6 +28,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
@@ -47,6 +50,7 @@ public class FeatureExportOperation extends Job {
 	private String fDevProperties;
 	private static boolean fHasErrors;
 	protected HashMap fAntBuildProperties;
+	protected WorkspaceExportHelper fWorkspaceExportHelper;
 
 	protected State fStateCopy;
 
@@ -76,29 +80,32 @@ public class FeatureExportOperation extends Job {
 			if (configurations == null)
 				configurations = new String[][] {null};
 
-			monitor.beginTask("", configurations.length * fInfo.items.length * 11); //$NON-NLS-1$
+			monitor.beginTask("Exporting...", (configurations.length * fInfo.items.length * 23) + (configurations.length * 5) + 10); //$NON-NLS-1$
+			IStatus status = testBuildWorkspaceBeforeExport(new SubProgressMonitor(monitor, 10));
 			for (int i = 0; i < configurations.length; i++) {
 				for (int j = 0; j < fInfo.items.length; j++) {
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
 					try {
-						doExport((IFeatureModel) fInfo.items[j], configurations[i], new SubProgressMonitor(monitor, 9));
+						doExport((IFeatureModel) fInfo.items[j], configurations[i], new SubProgressMonitor(monitor, 20));
 					} catch (CoreException e) {
 						return e.getStatus();
 					} finally {
-						cleanup(configurations[i], new SubProgressMonitor(monitor, 1));
+						cleanup(configurations[i], new SubProgressMonitor(monitor, 3));
 					}
 				}
 				if (fInfo.exportMetadata && !fInfo.toDirectory) {
-					appendMetadataToArchive(configurations[i], new SubProgressMonitor(monitor, 1));
+					appendMetadataToArchive(configurations[i], new SubProgressMonitor(monitor, 5));
 				}
 			}
+			return status;
 		} catch (InvocationTargetException e) {
+			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getCause() != null ? e.getCause() : e);
+		} catch (CoreException e) {
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getCause() != null ? e.getCause() : e);
 		} finally {
 			monitor.done();
 		}
-		return Status.OK_STATUS;
 	}
 
 	/**
@@ -205,17 +212,21 @@ public class FeatureExportOperation extends Job {
 
 	protected void doExport(String featureID, String version, String featureLocation, String os, String ws, String arch, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
 		fHasErrors = false;
-		monitor.beginTask("", 9); //$NON-NLS-1$
-		monitor.setTaskName(PDECoreMessages.FeatureExportJob_taskName);
+
 		try {
+			monitor.beginTask("", 10); //$NON-NLS-1$
+			monitor.setTaskName(PDECoreMessages.FeatureExportJob_taskName);
 			HashMap properties = createAntBuildProperties(os, ws, arch);
 			BuildScriptGenerator generator = new BuildScriptGenerator();
 			setupGenerator(generator, featureID, version, os, ws, arch, featureLocation);
 			generator.generate();
 			monitor.worked(1);
+			monitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningBuildScript);
 			runScript(getBuildScriptName(featureLocation), getBuildExecutionTargets(), properties, new SubProgressMonitor(monitor, 2));
+			monitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningAssemblyScript);
 			runScript(getAssemblyScriptName(featureID, os, ws, arch, featureLocation), new String[] {"main"}, //$NON-NLS-1$
 					properties, new SubProgressMonitor(monitor, 2));
+			monitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningPackagerScript);
 			runScript(getPackagerScriptName(featureID, os, ws, arch, featureLocation), null, properties, new SubProgressMonitor(monitor, 2));
 			properties.put("destination.temp.folder", fBuildTempLocation + "/pde.logs"); //$NON-NLS-1$ //$NON-NLS-2$
 			runScript(getBuildScriptName(featureLocation), new String[] {"gather.logs"}, properties, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
@@ -505,7 +516,14 @@ public class FeatureExportOperation extends Job {
 		generator.setArchivesFormat(format);
 		generator.setPDEState(getState(os, ws, arch));
 		generator.setNextId(TargetPlatformHelper.getPDEState().getNextId());
-		generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()));
+
+		if (fInfo.useWorkspaceCompiledClasses) {
+			generator.setUseWorkspaceBinaries(true);
+			generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()), getWorkspaceExportHelper().getWorkspaceOutputFolders(fInfo.items));
+		} else {
+			generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()));
+		}
+
 		AbstractScriptGenerator.setForceUpdateJar(false);
 		AbstractScriptGenerator.setEmbeddedSource(fInfo.exportSource);
 
@@ -732,4 +750,41 @@ public class FeatureExportOperation extends Job {
 		}
 		return false;
 	}
+
+	/**
+	 * If we are exporting using the compiled classes from the workspace, this method will
+	 * start an incremental build and test for build errors.  Returns a status explaining
+	 * any errors found or Status.OK_STATUS.
+	 * @param monitor progress monitor
+	 * @return status explaining build errors or an OK status.
+	 * @throws CoreException
+	 */
+	protected IStatus testBuildWorkspaceBeforeExport(IProgressMonitor monitor) throws CoreException {
+		try {
+			monitor.beginTask("", 50); //$NON-NLS-1$
+			if (fInfo.useWorkspaceCompiledClasses) {
+				getWorkspaceExportHelper().buildBeforeExport(fInfo.items, new SubProgressMonitor(monitor, 45));
+				Set errors = getWorkspaceExportHelper().checkForErrors(fInfo.items);
+				if (!errors.isEmpty()) {
+					monitor.worked(5);
+					return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_workspaceBuildErrorsFoundDuringExport, errors.toString()));
+				}
+				monitor.worked(5);
+			}
+			return Status.OK_STATUS;
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * @return an instance of the WorkspaceExportHelper used to set up exports using class files built in the workspace
+	 */
+	protected WorkspaceExportHelper getWorkspaceExportHelper() {
+		if (fWorkspaceExportHelper == null) {
+			fWorkspaceExportHelper = new WorkspaceExportHelper();
+		}
+		return fWorkspaceExportHelper;
+	}
+
 }

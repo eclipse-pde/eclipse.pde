@@ -17,6 +17,7 @@ public class FeatureExportInfo {
 	public boolean exportSource;
 	public boolean exportMetadata;
 	public boolean allowBinaryCycles;
+	public boolean useWorkspaceCompiledClasses;
 	public String destinationDirectory;
 	public String zipFileName;
 	public String qualifier;
