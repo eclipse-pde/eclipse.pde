@@ -86,7 +86,7 @@ public class OSGiLaunchConfigurationInitializer {
 		if (buffer.length() > 0)
 			buffer.append(","); //$NON-NLS-1$
 		String id = model.getPluginBase().getId();
-		String value = BundleLauncherHelper.writeBundles(model, getStartLevel(id), getAutoStart(id));
+		String value = BundleLauncherHelper.writeBundleEntry(model, getStartLevel(id), getAutoStart(id));
 		buffer.append(value);
 	}
 

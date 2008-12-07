@@ -24,7 +24,23 @@ public class BundleLauncherHelper {
 		return getWorkspaceBundleMap(configuration, null);
 	}
 
-	public static Map getWorkspaceBundleMap(ILaunchConfiguration configuration, Set set) throws CoreException {
+	public static Map getTargetBundleMap(ILaunchConfiguration configuration) throws CoreException {
+		return getTargetBundleMap(configuration, null);
+	}
+
+	public static Map getMergedBundleMap(ILaunchConfiguration configuration) throws CoreException {
+		Set set = new HashSet();
+		Map map = getWorkspaceBundleMap(configuration, set);
+		map.putAll(getTargetBundleMap(configuration, set));
+		return map;
+	}
+
+	public static IPluginModelBase[] getMergedBundles(ILaunchConfiguration configuration) throws CoreException {
+		Map map = getMergedBundleMap(configuration);
+		return (IPluginModelBase[]) map.keySet().toArray(new IPluginModelBase[map.size()]);
+	}
+
+	private static Map getWorkspaceBundleMap(ILaunchConfiguration configuration, Set set) throws CoreException {
 		String selected = configuration.getAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, ""); //$NON-NLS-1$
 		Map map = new HashMap();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
@@ -42,6 +58,7 @@ public class BundleLauncherHelper {
 				IPluginModelBase[] models = entry.getWorkspaceModels();
 				for (int i = 0; i < models.length; i++) {
 					IPluginBase base = models[i].getPluginBase();
+					// TODO Very similar to logic in LaunchPluginValidator
 					// match only if...
 					// a) if we have the same version
 					// b) no version
@@ -71,16 +88,7 @@ public class BundleLauncherHelper {
 		return map;
 	}
 
-	public static IPluginModelBase[] getWorkspaceBundles(ILaunchConfiguration configuration) throws CoreException {
-		Map map = getWorkspaceBundleMap(configuration);
-		return (IPluginModelBase[]) map.keySet().toArray(new IPluginModelBase[map.size()]);
-	}
-
-	public static Map getTargetBundleMap(ILaunchConfiguration configuration) throws CoreException {
-		return getTargetBundleMap(configuration, new HashSet());
-	}
-
-	public static Map getTargetBundleMap(ILaunchConfiguration configuration, Set set) throws CoreException {
+	private static Map getTargetBundleMap(ILaunchConfiguration configuration, Set set) throws CoreException {
 		String selected = configuration.getAttribute(IPDELauncherConstants.TARGET_BUNDLES, ""); //$NON-NLS-1$
 		Map map = new HashMap();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
@@ -97,37 +105,22 @@ public class BundleLauncherHelper {
 			if (entry != null) {
 				IPluginModelBase[] models = entry.getExternalModels();
 				for (int i = 0; i < models.length; i++) {
-					IPluginBase base = models[i].getPluginBase();
-					// match only if...
-					// a) if we have the same version
-					// b) no version
-					// c) all else fails, if there's just one bundle available, use it
-					if (base.getVersion().equals(version) || version == null || models.length == 1)
-						map.put(models[i], token.substring(index + 1));
+					if (models[i].isEnabled()) {
+						IPluginBase base = models[i].getPluginBase();
+						// match only if...
+						// a) if we have the same version
+						// b) no version
+						// c) all else fails, if there's just one bundle available, use it
+						if (base.getVersion().equals(version) || version == null || models.length == 1)
+							map.put(models[i], token.substring(index + 1));
+					}
 				}
 			}
 		}
 		return map;
 	}
 
-	public static IPluginModelBase[] getTargetBundles(ILaunchConfiguration configuration) throws CoreException {
-		Map map = getTargetBundleMap(configuration);
-		return (IPluginModelBase[]) map.keySet().toArray(new IPluginModelBase[map.size()]);
-	}
-
-	public static Map getMergedMap(ILaunchConfiguration configuration) throws CoreException {
-		Set set = new HashSet();
-		Map map = getWorkspaceBundleMap(configuration, set);
-		map.putAll(getTargetBundleMap(configuration, set));
-		return map;
-	}
-
-	public static IPluginModelBase[] getMergedBundles(ILaunchConfiguration configuration) throws CoreException {
-		Map map = getMergedMap(configuration);
-		return (IPluginModelBase[]) map.keySet().toArray(new IPluginModelBase[map.size()]);
-	}
-
-	public static String writeBundles(IPluginModelBase model, String startLevel, String autoStart) {
+	public static String writeBundleEntry(IPluginModelBase model, String startLevel, String autoStart) {
 		IPluginBase base = model.getPluginBase();
 		String id = base.getId();
 		StringBuffer buffer = new StringBuffer(id);

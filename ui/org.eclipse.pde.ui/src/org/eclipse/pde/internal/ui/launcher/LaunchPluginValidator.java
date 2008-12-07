@@ -200,15 +200,18 @@ public class LaunchPluginValidator {
 				if (entry != null) {
 					IPluginModelBase matchingModels[] = attribute.equals(IPDELauncherConstants.SELECTED_TARGET_PLUGINS) ? entry.getExternalModels() : entry.getWorkspaceModels();
 					for (int j = 0; j < matchingModels.length; j++) {
-						// the logic here is this (see bug 225644)
-						// a) if we come across a bundle that has the right version, immediately add it
-						// b) if there's no version, add it
-						// c) if there's only one instance of that bundle in the list of ids... add it
-						if (version == null || matchingModels[j].getPluginBase().getVersion().equals(version)) {
-							set.add(matchingModels[j]);
-						} else if (matchingModels.length == 1) {
-							if (unmatchedEntries.remove(id) == null) {
-								unmatchedEntries.put(id, matchingModels[j]);
+						if (matchingModels[j].isEnabled()) {
+							// TODO Very similar logic to BundleLauncherHelper
+							// the logic here is this (see bug 225644)
+							// a) if we come across a bundle that has the right version, immediately add it
+							// b) if there's no version, add it
+							// c) if there's only one instance of that bundle in the list of ids... add it
+							if (version == null || matchingModels[j].getPluginBase().getVersion().equals(version)) {
+								set.add(matchingModels[j]);
+							} else if (matchingModels.length == 1) {
+								if (unmatchedEntries.remove(id) == null) {
+									unmatchedEntries.put(id, matchingModels[j]);
+								}
 							}
 						}
 					}

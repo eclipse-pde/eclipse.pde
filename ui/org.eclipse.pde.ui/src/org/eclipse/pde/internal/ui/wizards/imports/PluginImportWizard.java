@@ -106,7 +106,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 				if (configuration == null)
 					continue;
 				try {
-					Map workspaceBundleMap = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null);
+					Map workspaceBundleMap = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
 					for (Iterator iter = workspaceBundleMap.keySet().iterator(); iter.hasNext();) {
 						IPluginModelBase bm = (IPluginModelBase) iter.next();
 						BundleDescription description = bm.getBundleDescription();

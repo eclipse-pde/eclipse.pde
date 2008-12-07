@@ -153,7 +153,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		fModels = BundleLauncherHelper.getMergedMap(configuration);
+		fModels = BundleLauncherHelper.getMergedBundleMap(configuration);
 		fAllBundles = new HashMap(fModels.size());
 		Iterator iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
