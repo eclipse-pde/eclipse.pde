@@ -56,7 +56,7 @@ public class ApiDescriptionTests extends PerformanceTest {
 	 * @throws Exception
 	 */
 	public void testCleanVisit() throws Exception {
-		tagAsGlobalSummary("Build API description from source tags", Dimension.ELAPSED_PROCESS);
+		tagAsSummary("Build API description from source tags", Dimension.ELAPSED_PROCESS);
 		
 		// WARM-UP
 		IProject proj = getEnv().getWorkspace().getRoot().getProject("org.eclipse.jdt.ui");	

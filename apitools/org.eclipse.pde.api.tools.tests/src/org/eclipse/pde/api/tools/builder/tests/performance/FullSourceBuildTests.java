@@ -65,7 +65,7 @@ public class FullSourceBuildTests extends PerformanceTest {
 	 * @throws Exception
 	 */
 	public void testFullBuild() throws Exception {
-		tagAsGlobalSummary("Full Build", Dimension.ELAPSED_PROCESS);
+		tagAsSummary("Full Build", Dimension.ELAPSED_PROCESS);
 		
 		// get everything built
 		fullBuild();
@@ -108,7 +108,7 @@ public class FullSourceBuildTests extends PerformanceTest {
 	 * @throws Exception
 	 */
 	public void testCleanFullBuild() throws Exception {
-		tagAsGlobalSummary("Clean & Full Build", Dimension.ELAPSED_PROCESS);
+		tagAsSummary("Clean & Full Build", Dimension.ELAPSED_PROCESS);
 		
 		// get everything built
 		fullBuild();
