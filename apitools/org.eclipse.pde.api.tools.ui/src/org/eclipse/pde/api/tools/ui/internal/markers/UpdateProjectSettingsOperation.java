@@ -27,13 +27,13 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Operation for creating a new API problem filter
+ * Operation for setting "resolution errors" problem to ignore.
  * 
  * @see IApiProblem
  * @see IApiProblemFilter
  * @see IApiFilterStore
  * 
- * @since 1.0.0
+ * @since 1.1
  */
 public class UpdateProjectSettingsOperation extends UIJob {
 
