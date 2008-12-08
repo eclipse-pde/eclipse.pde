@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
-
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.w3c.dom.Element;
@@ -36,7 +35,11 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.println(indent + "<feature id=\"" + fId + "\" version=\"" + fVersion + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.print(indent + "<feature id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals("0.0.0")) { //$NON-NLS-1$
+			writer.print(" version=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		writer.println("/>"); //$NON-NLS-1$
 	}
 
 	public String getId() {
@@ -52,7 +55,10 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 	}
 
 	public void setVersion(String version) {
+		String old = fVersion;
 		fVersion = version;
+		if (isEditable())
+			firePropertyChanged("version", old, fVersion); //$NON-NLS-1$
 	}
 
 }

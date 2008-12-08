@@ -45,7 +45,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	 */
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<plugin id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fVersion != null && !fVersion.equals("0.0.0")) { //$NON-NLS-1$
+		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals("0.0.0")) { //$NON-NLS-1$
 			writer.print(" version=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (PluginRegistry.findModel(fId) instanceof IFragmentModel)
@@ -72,7 +72,10 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	}
 
 	public void setVersion(String version) {
+		String old = fVersion;
 		fVersion = version;
+		if (isEditable())
+			firePropertyChanged("version", old, fVersion); //$NON-NLS-1$
 	}
 
 }

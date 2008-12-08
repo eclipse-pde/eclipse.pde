@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
-
-import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 
 import java.util.ArrayList;
 import org.eclipse.jface.action.*;
@@ -27,6 +25,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
@@ -61,15 +60,16 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	}
 
 	private static String[] getButtonLabels() {
-		String[] labels = new String[8];
+		String[] labels = new String[9];
 		labels[0] = PDEUIMessages.Product_FeatureSection_add;
 		labels[1] = PDEUIMessages.Product_FeatureSection_remove;
 		labels[2] = PDEUIMessages.Product_PluginSection_removeAll;
-		labels[3] = PDEUIMessages.Product_FeatureSection_up;
-		labels[4] = PDEUIMessages.Product_FeatureSection_down;
-		labels[5] = null;
+		labels[3] = PDEUIMessages.Product_FeatureSection_properties;
+		labels[4] = PDEUIMessages.Product_FeatureSection_up;
+		labels[5] = PDEUIMessages.Product_FeatureSection_down;
 		labels[6] = null;
-		labels[7] = PDEUIMessages.Product_FeatureSection_newFeature;
+		labels[7] = null;
+		labels[8] = PDEUIMessages.Product_FeatureSection_newFeature;
 		return labels;
 	}
 
@@ -102,7 +102,8 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 
 		tablePart.setButtonEnabled(3, isEditable());
 		tablePart.setButtonEnabled(4, isEditable());
-		tablePart.setButtonEnabled(7, isEditable());
+		tablePart.setButtonEnabled(5, isEditable());
+		tablePart.setButtonEnabled(8, isEditable());
 
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
@@ -154,13 +155,29 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 				handleRemoveAll();
 				break;
 			case 3 :
-				handleUp();
+				handleProperties();
 				break;
 			case 4 :
+				handleUp();
+				break;
+			case 5 :
 				handleDown();
 				break;
-			case 7 :
+			case 8 :
 				handleNewFeature();
+		}
+	}
+
+	private void handleProperties() {
+		IStructuredSelection ssel = (IStructuredSelection) fFeatureTable.getSelection();
+		if (ssel.size() == 1) {
+			IProductFeature feature = (IProductFeature) ssel.toArray()[0];
+			VersionDialog dialog = new VersionDialog(PDEPlugin.getActiveWorkbenchShell(), isEditable(), feature.getVersion());
+			dialog.create();
+			SWTUtil.setDialogSize(dialog, 400, 200);
+			if (dialog.open() == Window.OK) {
+				feature.setVersion(dialog.getVersion());
+			}
 		}
 	}
 

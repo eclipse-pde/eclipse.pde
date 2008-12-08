@@ -1806,6 +1806,7 @@ public class PDEUIMessages extends NLS {
 	public static String ProductExportWizardPage_browse;
 	public static String Product_PluginSection_removeAll;
 	public static String Product_PluginSection_newPlugin;
+	public static String Product_FeatureSection_properties;
 	public static String Product_DependenciesPage_title;
 	public static String ProductFileWizadPage_groupTitle;
 	public static String Product_PluginSection_newFragment;
@@ -2909,5 +2910,7 @@ public class PDEUIMessages extends NLS {
 	public static String PDECompilersConfigurationBlock_error;
 	public static String PDECompilersConfigurationBlock_warning;
 	public static String PDECompilersConfigurationBlock_ignore;
+
+	public static String VersionDialog_text;
 
 }

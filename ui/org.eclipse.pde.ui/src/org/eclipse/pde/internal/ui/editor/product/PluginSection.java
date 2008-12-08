@@ -66,16 +66,17 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	}
 
 	private static String[] getButtonLabels() {
-		String[] labels = new String[9];
+		String[] labels = new String[10];
 		labels[0] = PDEUIMessages.Product_PluginSection_add;
 		labels[1] = PDEUIMessages.Product_PluginSection_working;
 		labels[2] = PDEUIMessages.Product_PluginSection_required;
 		labels[3] = PDEUIMessages.PluginSection_remove;
 		labels[4] = PDEUIMessages.Product_PluginSection_removeAll;
-		labels[5] = null;
+		labels[5] = PDEUIMessages.Product_FeatureSection_properties;
 		labels[6] = null;
-		labels[7] = PDEUIMessages.Product_PluginSection_newPlugin;
-		labels[8] = PDEUIMessages.Product_PluginSection_newFragment;
+		labels[7] = null;
+		labels[8] = PDEUIMessages.Product_PluginSection_newPlugin;
+		labels[9] = PDEUIMessages.Product_PluginSection_newFragment;
 		return labels;
 	}
 
@@ -116,8 +117,9 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 		// remove buttons will be updated on refresh
 
-		tablePart.setButtonEnabled(7, isEditable());
+		tablePart.setButtonEnabled(5, isEditable());
 		tablePart.setButtonEnabled(8, isEditable());
+		tablePart.setButtonEnabled(9, isEditable());
 
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
@@ -176,6 +178,9 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			case 4 :
 				handleRemoveAll();
 				break;
+			case 5 :
+				handleProperties();
+				break;
 			case 7 :
 				handleNewPlugin();
 				break;
@@ -203,6 +208,19 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == Window.OK) {
 			addPlugin(wizard.getPluginId(), wizard.getPluginVersion());
+		}
+	}
+
+	private void handleProperties() {
+		IStructuredSelection ssel = (IStructuredSelection) fPluginTable.getSelection();
+		if (ssel.size() == 1) {
+			IProductPlugin plugin = (IProductPlugin) ssel.toArray()[0];
+			VersionDialog dialog = new VersionDialog(PDEPlugin.getActiveWorkbenchShell(), isEditable(), plugin.getVersion());
+			dialog.create();
+			SWTUtil.setDialogSize(dialog, 400, 200);
+			if (dialog.open() == Window.OK) {
+				plugin.setVersion(dialog.getVersion());
+			}
 		}
 	}
 
@@ -381,7 +399,8 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			Object[] bundles = dialog.getResult();
 			for (int i = 0; i < bundles.length; i++) {
 				BundleDescription desc = (BundleDescription) bundles[i];
-				addPlugin(desc.getSymbolicName(), desc.getVersion().toString());
+				addPlugin(desc.getSymbolicName(), "0.0.0"); //$NON-NLS-1$
+				//addPlugin(desc.getSymbolicName(), desc.getVersion().toString());
 			}
 		}
 	}
@@ -454,6 +473,8 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 				table.setSelection(count - 1);
 			}
 
+		} else if (e.getChangeType() == IModelChangedEvent.CHANGE) {
+			fPluginTable.refresh();
 		}
 		updateRemoveButtons(false, true);
 	}

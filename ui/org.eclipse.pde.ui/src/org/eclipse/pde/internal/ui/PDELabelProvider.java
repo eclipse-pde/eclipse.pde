@@ -184,15 +184,15 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(IProductPlugin obj) {
-		if (isFullNameModeEnabled()) {
-			String id = obj.getId();
-			IPluginModelBase model = PluginRegistry.findModel(obj.getId());
-			if (model != null) {
-				return model.getPluginBase().getTranslatedName();
-			}
-			return id != null ? id : "?"; //$NON-NLS-1$
-		}
-		return preventNull(obj.getId());
+		// TODO, should we just get the model and call the proper method?
+		String name = obj.getId();
+		String version = obj.getVersion();
+		String text;
+		if (version != null && version.length() > 0)
+			text = name + ' ' + formatVersion(obj.getVersion());
+		else
+			text = name;
+		return preventNull(text);
 	}
 
 	public String getObjectText(BundleDescription bundle) {
