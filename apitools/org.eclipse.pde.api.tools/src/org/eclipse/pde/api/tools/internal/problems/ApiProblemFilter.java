@@ -109,11 +109,19 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 	 */
 	public String getHandle() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(fProblem.getResourcePath());
-		buffer.append("]"); //$NON-NLS-1$
-		buffer.append(fProblem.getTypeName());
-		buffer.append("]"); //$NON-NLS-1$
 		buffer.append(fProblem.getId());
+		buffer.append("%]"); //$NON-NLS-1$
+		buffer.append(fProblem.getResourcePath());
+		buffer.append("%]"); //$NON-NLS-1$
+		buffer.append(fProblem.getTypeName());
+		buffer.append("%]"); //$NON-NLS-1$
+		String[] margs = fProblem.getMessageArguments();
+		for(int i = 0; i < margs.length; i++) {
+			buffer.append(margs[i]);
+			if(i < margs.length-1) {
+				buffer.append(',');
+			}
+		}
 		return buffer.toString();
 	}
 }

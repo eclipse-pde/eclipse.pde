@@ -400,6 +400,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 
 	private static Key[] fgAllApiComponentResolutionKeys = {
 		KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
+		KEY_UNUSED_PROBLEM_FILTERS
 	};
 
 	private static Key[] fgAllCompatibilityKeys = {
@@ -486,7 +487,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_LEAK_METHOD_RETURN_TYPE,
 		KEY_INVALID_JAVADOC_TAG,
 		KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
-		KEY_UNUSED_PROBLEM_FILTERS
 	};
 
 	private static Key[] fgAllVersionManagementKeys = {
@@ -902,12 +902,10 @@ public class ApiErrorsWarningsConfigurationBlock {
 						new String[] {
 							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_tag_use,
 							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_reference_in_system_libraries,
-							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_unused_problem_filters
 						},
 						new Key[] {
 							KEY_INVALID_JAVADOC_TAG,
 							KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
-							KEY_UNUSED_PROBLEM_FILTERS
 						});
 				
 				client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);
@@ -981,9 +979,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 				initializeComboControls(vcomp,
 					new String[] {
 						PreferenceMessages.ReportApiComponentResolutionFailure,
+						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_unused_problem_filters
 					},
 					new Key[] {
 						KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
+						KEY_UNUSED_PROBLEM_FILTERS
 					}
 				);
 				break;

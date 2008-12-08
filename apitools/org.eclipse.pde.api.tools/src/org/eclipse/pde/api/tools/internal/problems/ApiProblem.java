@@ -317,6 +317,8 @@ public class ApiProblem implements IApiProblem {
 		buffer.append(Util.getProblemFlagsName(getCategory(), getFlags())).append("\n"); //$NON-NLS-1$
 		buffer.append("\tmessage id: "); //$NON-NLS-1$
 		buffer.append(getMessageid());
+		buffer.append("\n\tmessage:"); //$NON-NLS-1$
+		buffer.append(getMessage());
 		return buffer.toString();
 	}	
 	

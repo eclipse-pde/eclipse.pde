@@ -119,14 +119,15 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			IApiComponent component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(project.getName());
 			if(component != null) {
 				IApiFilterStore store = component.getFilterStore();
-				IPath path = new Path(values[0]);
+				IPath path = new Path(values[1]);
 				IResource resource = project.findMember(path);
 				if(resource == null) {
 					resource = project.getFile(path);
 				}
+				int hashcode = computeProblemHashcode(filterhandle);
 				IApiProblemFilter[] filters = store.getFilters(resource);
 				for (int i = 0; i < filters.length; i++) {
-					if(filters[i].getUnderlyingProblem().getId() == Integer.parseInt(values[2])) {
+					if(filters[i].getUnderlyingProblem().hashCode() == hashcode) {
 						return filters[i];
 					}
 				}
@@ -134,6 +135,48 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 		}
 		catch(CoreException ce) {}
 		return null;
+	}
+	
+	/**
+	 * Computes the hashcode of the {@link IApiProblem} from the api filter handle
+	 * @param filterhandle
+	 * @return the hashcode of the {@link IApiProblem} that the given filter handle is for
+	 */
+	private int computeProblemHashcode(String filterhandle) {
+		if(filterhandle == null) {
+			return -1;
+		}
+		String[] args = filterhandle.split("%]"); //$NON-NLS-1$
+		int hashcode = 0;
+		try {
+			//the problem id
+			hashcode += Integer.parseInt(args[0]);
+			//the resource path
+			hashcode += args[1].hashCode();
+			//the type name
+			hashcode += args[2].hashCode();
+			//the message arguments
+			String[] margs = args[3].split(","); //$NON-NLS-1$
+			hashcode += argumentsHashcode(margs);
+		}
+		catch(Exception e) {}
+		return hashcode;
+	}
+	
+	/**
+	 * Returns the deep hash code of the complete listing of message arguments
+	 * @param arguments
+	 * @return the hash code of the message arguments
+	 */
+	private int argumentsHashcode(String[] arguments) {
+		if(arguments == null) {
+			return 0;
+		}
+		int hashcode = 0;
+		for(int i = 0; i < arguments.length; i++) {
+			hashcode += arguments[i].hashCode();
+		}
+		return hashcode;
 	}
 	
 	/* (non-Javadoc)
