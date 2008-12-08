@@ -25,6 +25,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.build.IBuildModelFactory;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -72,16 +77,18 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	 */
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
-		monitor.beginTask(Messages.DSCreationOperation_title, 2);
+		monitor.beginTask(Messages.DSCreationOperation_title, 3);
 		createContent();
 		monitor.worked(1);
 		openFile();
-		writeDSPropIntoManifest(fFile.getProject(), new SubProgressMonitor(
+		writeManifest(fFile.getProject(), new SubProgressMonitor(
+				monitor, 1));
+		writeBuildProperties(fFile.getProject(), new SubProgressMonitor(
 				monitor, 1));
 		monitor.done();
 	}
 
-	private void writeDSPropIntoManifest(IProject project,
+	private void writeManifest(IProject project,
 			SubProgressMonitor monitor) {
 
 		PDEModelUtility.modifyModel(new ModelModification(project) {
@@ -93,6 +100,39 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 					updateManifest((IBundlePluginModelBase) model, monitor);
 			}
 		}, monitor);
+		monitor.done();
+
+	}
+
+	private void writeBuildProperties(final IProject project,
+			SubProgressMonitor monitor) {
+
+		PDEModelUtility.modifyModel(new ModelModification(project
+				.getFile(PDEModelUtility.F_BUILD)) {
+			protected void modifyModel(IBaseModel model,
+					IProgressMonitor monitor) throws CoreException {
+				if (!(model instanceof IBuildModel))
+					return;
+				IFile file = project.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+				if (file.exists()) {
+					WorkspaceBuildModel wbm = new WorkspaceBuildModel(file);
+					wbm.load();
+					if (!wbm.isLoaded())
+						return;
+					IBuildModelFactory factory = wbm.getFactory();
+					String path = fFile.getFullPath().removeFirstSegments(1).toPortableString();
+					IBuildEntry entry = wbm.getBuild().getEntry(
+							IBuildEntry.BIN_INCLUDES);
+					if (entry == null) {
+						entry = factory.createEntry(IBuildEntry.BIN_INCLUDES);
+						wbm.getBuild().add(entry);
+					}
+					entry.addToken(path);
+					wbm.save();
+				}
+			}
+		}, null);
+
 		monitor.done();
 
 	}
@@ -141,13 +181,9 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	protected void initializeDS(IDSComponent component, IFile file) {
 		IDSDocumentFactory factory = component.getModel().getFactory();
 
-		// Element: implemenation
 		IDSImplementation implementation = factory.createImplementation();
 		implementation.setClassName(fImplementationClass);
 		component.setImplementation(implementation);
-
-		// Component Attributes
-
 		component.setAttributeName(fComponentName);
 
 		try {
