@@ -28,5 +28,10 @@
          </description>
       </wizard>
    </extension>
-
+   
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.pde.ui.PDEPerspective">
+         <newWizardShortcut id="org.eclipse.pde.ds.ui.wizard"/>
+      </perspectiveExtension>
+   </extension> 
 </plugin>
