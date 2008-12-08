@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ds.ui.wizards;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -166,7 +167,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		fDSComponentNameText.setText(""); //$NON-NLS-1$
 		fDSComponentNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				setPageComplete(checkPageComplete());
+				setPageComplete(isPageComplete());
 			}
 		});
 		setComponentName();
@@ -180,15 +181,15 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		fDSImplementationClassHyperlink
 				.addHyperlinkListener(new IHyperlinkListener() {
 
-					public void linkActivated(HyperlinkEvent e) {
+			public void linkActivated(HyperlinkEvent e) {
 						String value = fDSImplementationClassText.getText();
 						value = handleLinkActivated(value, false);
 						if (value != null)
 							fDSImplementationClassText.setText(value);
 
-					}
+			}
 
-					private String handleLinkActivated(String value,
+			private String handleLinkActivated(String value,
 							boolean isInter) {
 						Object object = fSelection.getFirstElement();
 						if (object != null) {
@@ -216,29 +217,29 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 										SWTUtil.setDialogSize(dialog, 400, 500);
 										if (dialog.open() == Window.OK) {
 											return wizard.getQualifiedName();
-										}
-									}
 								}
+							}
+						}
 							} catch (PartInitException e1) {
 							} catch (CoreException e1) {
-							}
+					}
 						}
 						return null;
 					}
 
-					public void linkEntered(HyperlinkEvent e) {
+			public void linkEntered(HyperlinkEvent e) {
 						fDSImplementationClassHyperlink.setForeground(Display
 								.getDefault().getSystemColor(
 										SWT.COLOR_DARK_BLUE));
 					}
 
-					public void linkExited(HyperlinkEvent e) {
+			public void linkExited(HyperlinkEvent e) {
 						fDSImplementationClassHyperlink.setForeground(Display
 								.getDefault().getSystemColor(SWT.COLOR_BLUE));
 
-					}
+			}
 
-				});
+		});
 
 		// Implementation Class Text
 		fDSImplementationClassText = new Text(fGroup, SWT.SINGLE | SWT.BORDER);
@@ -249,7 +250,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		fDSImplementationClassText.setText(""); //$NON-NLS-1$
 		fDSImplementationClassText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				setPageComplete(checkPageComplete());
+				setPageComplete(isPageComplete());
 			}
 		});
 
@@ -289,7 +290,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 				}
 			}
 		});
-
+		validatePage();
 	}
 
 	public String getDSComponentNameValue() {
@@ -311,7 +312,8 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
+	 * @see
+	 * org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
 	 */
 	protected IStatus validateLinkedResource() {
 		return new Status(IStatus.OK, Activator.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
@@ -322,14 +324,23 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	}
 
 	public boolean isPageComplete() {
-		return checkPageComplete();
+		return checkPageComplete() & validatePage();
 	}
 
 	public void saveSettings(IDialogSettings settings) {
 		settings.put(S_COMPONENT_NAME, getFileName());
-
 	}
-	
-	
+
+	protected boolean validatePage() {
+		if (fDSImplementationClassText != null) {
+			IStatus status = ResourcesPlugin.getWorkspace().validateName(
+					fDSImplementationClassText.getText(), IResource.FILE);
+			if (!status.isOK()) {
+				setErrorMessage(status.getMessage());
+				return false;
+			}
+		}
+		return super.validatePage();
+	}
 
 }
