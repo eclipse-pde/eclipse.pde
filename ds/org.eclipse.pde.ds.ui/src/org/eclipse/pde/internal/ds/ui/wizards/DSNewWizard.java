@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ds.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -40,6 +41,7 @@ public class DSNewWizard extends Wizard implements INewWizard {
 	
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		setWindowTitle(Messages.DSNewWizard_title);
+		setDialogSettings(Activator.getDefault().getDialogSettings());
 		fMainPage = new DSFileWizardPage(currentSelection);
 	}
 
@@ -50,7 +52,10 @@ public class DSNewWizard extends Wizard implements INewWizard {
 	 */
 	public boolean performFinish() {
 		try {
-
+			IDialogSettings settings = getDialogSettings();
+			if (settings != null) {
+				fMainPage.saveSettings(settings);
+			}
 			IRunnableWithProgress op = new DSCreationOperation(fMainPage
 					.createNewFile(), fMainPage.getDSComponentNameValue(),
 					fMainPage.getDSImplementationClassValue());

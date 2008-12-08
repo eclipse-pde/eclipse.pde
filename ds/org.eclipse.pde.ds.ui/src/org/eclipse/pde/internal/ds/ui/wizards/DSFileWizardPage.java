@@ -27,6 +27,7 @@ import org.eclipse.jdt.internal.core.JavaElement;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -64,7 +65,9 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 
 	private static final String F_FILE_EXTENSION = "xml"; //$NON-NLS-1$
 
-	private static final String F_COMPONENT_NAME = "component.xml"; //$NON-NLS-1$
+	private static final String F_DEFAULT_COMPONENT_NAME = "component.xml"; //$NON-NLS-1$
+
+	private static final String S_COMPONENT_NAME = "component"; //$NON-NLS-1$
 
 	private Group fGroup;
 
@@ -93,7 +96,6 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		setDescription(Messages.DSFileWizardPage_description);
 		// Force the file extension to be 'xml'
 		setFileExtension(F_FILE_EXTENSION);
-		setFileName(F_COMPONENT_NAME);
 	}
 
 	private void setComponentName() {
@@ -134,6 +136,17 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	}
 
 	protected void createAdvancedControls(Composite parent) {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			String component = settings.get(S_COMPONENT_NAME);
+			if (component != null && !component.equals("")) { //$NON-NLS-1$
+				setFileName(component);
+			} else {
+				setFileName(F_DEFAULT_COMPONENT_NAME);
+			}
+		} else {
+			setFileName(F_DEFAULT_COMPONENT_NAME);
+		}
 
 		// Controls Group
 		fGroup = new Group(parent, SWT.NONE);
@@ -311,5 +324,12 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	public boolean isPageComplete() {
 		return checkPageComplete();
 	}
+
+	public void saveSettings(IDialogSettings settings) {
+		settings.put(S_COMPONENT_NAME, getFileName());
+
+	}
+	
+	
 
 }
