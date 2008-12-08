@@ -302,6 +302,14 @@ public class ApiFileGenerationTask extends Task {
 					tagScanner.scan(unit, apiDescription, classFileContainer, options);
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
+				} finally {
+					try {
+						if (classFileContainer != null) {
+							classFileContainer.close();
+						}
+					} catch (CoreException e) {
+						//ignore
+					}
 				}
 			}
 		}
