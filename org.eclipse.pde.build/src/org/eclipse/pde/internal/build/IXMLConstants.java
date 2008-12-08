@@ -35,6 +35,7 @@ public interface IXMLConstants {
 	public static final String TARGET_CHILDREN = "children"; //$NON-NLS-1$
 	public static final String TARGET_CLEAN = "clean"; //$NON-NLS-1$
 	public static final String TARGET_FETCH = "fetch"; //$NON-NLS-1$
+	public static final String TARGET_API_GENERATION = "apitools.generation"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_BIN_PARTS = "gather.bin.parts"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_LOGS = "gather.logs"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_SOURCES = "gather.sources"; //$NON-NLS-1$
@@ -147,6 +148,8 @@ public interface IXMLConstants {
 	public static final String PROPERTY_JARING_MANIFEST = "jaringManifest"; //$NON-NLS-1$
 	public static final String PROPERTY_JARING_TASK = "jaringTask"; //$NON-NLS-1$
 	public static final String PROPERTY_OMIT_ROOTFILES = "updateJar.omitRootfiles"; //$NON-NLS-1$
+	public static final String PROPERTY_GENERATE_API_DESCRIPTION = "generateAPIDescription"; //$NON-NLS-1$
+	public static final String PROPERTY_BINARY_FOLDERS = "binary.folders"; //$NON-NLS-1$
 
 	//Jar processor properties
 	public static final String PROPERTY_SIGN_ALIAS = "sign.alias"; //$NON-NLS-1$

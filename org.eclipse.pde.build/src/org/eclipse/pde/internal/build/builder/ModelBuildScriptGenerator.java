@@ -292,6 +292,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		generateCleanTarget();
 		generateRefreshTarget();
 		generateZipPluginTarget();
+		generateAPIToolsTarget();
 		generateEpilogue();
 	}
 
@@ -529,6 +530,53 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetEnd();
 	}
 
+	private void generateAPIToolsTarget() {
+		script.println();
+		script.printTargetDeclaration(TARGET_API_GENERATION, null, PROPERTY_GENERATE_API_DESCRIPTION, null, null);
+		script.printTab();
+		script.print("<apitooling.apigeneration "); //$NON-NLS-1$
+		script.printAttribute("projectName", Utils.getPropertyFormat(PROPERTY_PROJECT_NAME), true); //$NON-NLS-1$
+		script.printAttribute("project", Utils.getPropertyFormat(PROPERTY_PROJECT_LOCATION), true); //$NON-NLS-1$
+		script.printAttribute("binary", Utils.getPropertyFormat(PROPERTY_BINARY_FOLDERS), true); //$NON-NLS-1$
+		script.printAttribute("target", Utils.getPropertyFormat(PROPERTY_TARGET_FOLDER), true); //$NON-NLS-1$
+		script.println("/>"); //$NON-NLS-1$
+		script.printTargetEnd();
+	}
+
+	private void generateAPIToolsCall(String[] binaries, boolean dotIncluded, String target) throws CoreException {
+		Set classpathEntries = new HashSet(Arrays.asList(getClasspathEntries(model)));
+		StringBuffer binaryFolders = new StringBuffer();
+		for (int i = 0; i < binaries.length; i++) {
+			if (binaries[i] != null) {
+				if (i > 0)
+					binaryFolders.append(File.pathSeparator);
+				binaryFolders.append(target + '/' + binaries[i]);
+				classpathEntries.remove(binaries[i]);
+			}
+		}
+		if (dotIncluded) {
+			if (binaryFolders.length() > 0)
+				binaryFolders.append(File.pathSeparator);
+			binaryFolders.append(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT);
+			classpathEntries.remove(EXPANDED_DOT);
+		}
+		for (Iterator iterator = classpathEntries.iterator(); iterator.hasNext();) {
+			String entry = (String) iterator.next();
+			if (binaryFolders.length() > 0)
+				binaryFolders.append(File.pathSeparator);
+			if (entry.equals(EXPANDED_DOT))
+				binaryFolders.append(target);
+			else
+				binaryFolders.append(target + '/' + entry);
+		}
+		Map params = new HashMap();
+		params.put(PROPERTY_PROJECT_NAME, Utils.getPropertyFormat(PROPERTY_BUNDLE_ID) + "_" + Utils.getPropertyFormat(PROPERTY_BUNDLE_VERSION)); //$NON-NLS-1$
+		params.put(PROPERTY_PROJECT_LOCATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
+		params.put(PROPERTY_BINARY_FOLDERS, binaryFolders.toString());
+		params.put(PROPERTY_TARGET_FOLDER, target);
+		script.printAntCallTask(TARGET_API_GENERATION, true, params);
+	}
+
 	private void generatePublishGatherBinPartsTarget() throws CoreException {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, null, null, null);
@@ -633,6 +681,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		generatePermissionProperties(root);
 		genarateIdReplacementCall(destination.toString());
+		generateAPIToolsCall(fileSetValues, dotIncluded, root);
 
 		if (customBuildCallbacks != null) {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
