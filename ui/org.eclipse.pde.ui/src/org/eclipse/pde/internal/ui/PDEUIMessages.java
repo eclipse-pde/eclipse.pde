@@ -629,6 +629,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_IncludedFeatures_title;
 	public static String FeatureEditor_IncludedFeatures_desc;
 	public static String FeatureEditor_IncludedFeatures_new;
+	public static String FeatureEditor_IncludedFeatures_up;
+	public static String FeatureEditor_IncludedFeatures_down;
 	public static String FeatureEditor_IncludedFeatures_sortAlpha;
 
 	public static String SiteEditor_IncludedFeaturesDetailsSection_title;

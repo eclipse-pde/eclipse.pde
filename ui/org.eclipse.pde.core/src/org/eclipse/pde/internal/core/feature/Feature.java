@@ -749,4 +749,17 @@ public class Feature extends VersionableObject implements IFeature {
 	public void setCopyright(String copyright) {
 		fCopyright = copyright;
 	}
+
+	public void swap(IFeatureChild feature1, IFeatureChild feature2) {
+		int index1 = fChildren.indexOf(feature1);
+		int index2 = fChildren.indexOf(feature2);
+		if (index1 == -1 || index2 == -1)
+			return;
+
+		fChildren.set(index2, feature1);
+		fChildren.set(index1, feature2);
+
+		fireStructureChanged(feature1, IModelChangedEvent.CHANGE);
+	}
+
 }

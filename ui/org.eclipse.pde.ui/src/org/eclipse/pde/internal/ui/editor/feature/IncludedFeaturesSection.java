@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -42,7 +43,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class IncludedFeaturesSection extends TableSection implements IFeatureModelListener {
+public class IncludedFeaturesSection extends TableSection implements IFeatureModelListener, IPropertyChangeListener {
 	private TableViewer fIncludesViewer;
 
 	private Action fNewAction;
@@ -63,7 +64,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	}
 
 	public IncludedFeaturesSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_IncludedFeatures_new});
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_IncludedFeatures_new, PDEUIMessages.FeatureEditor_IncludedFeatures_up, PDEUIMessages.FeatureEditor_IncludedFeatures_down});
 		getSection().setText(PDEUIMessages.FeatureEditor_IncludedFeatures_title);
 		getSection().setDescription(PDEUIMessages.FeatureEditor_IncludedFeatures_desc);
 		getTablePart().setEditable(false);
@@ -114,8 +115,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 			}
 		});
 		// Add sort action to the tool bar
-		fSortAction = new SortAction(getStructuredViewerPart().getViewer(), PDEUIMessages.FeatureEditor_IncludedFeatures_sortAlpha, ListUtil.NAME_COMPARATOR, null, null);
-
+		fSortAction = new SortAction(getStructuredViewerPart().getViewer(), PDEUIMessages.FeatureEditor_IncludedFeatures_sortAlpha, ListUtil.NAME_COMPARATOR, null, this);
 		toolBarManager.add(fSortAction);
 
 		toolBarManager.update(true);
@@ -128,8 +128,17 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	}
 
 	protected void buttonSelected(int index) {
-		if (index == 0)
-			handleNew();
+		switch (index) {
+			case 0 :
+				handleNew();
+				break;
+			case 1 :
+				handleUp();
+				break;
+			case 2 :
+				handleDown();
+				break;
+		}
 	}
 
 	public void dispose() {
@@ -158,6 +167,21 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
+	private void handleUp() {
+		int index = getTablePart().getTableViewer().getTable().getSelectionIndex();
+		if (index < 1)
+			return;
+		swap(index, index - 1);
+	}
+
+	private void handleDown() {
+		Table table = getTablePart().getTableViewer().getTable();
+		int index = table.getSelectionIndex();
+		if (index == table.getItemCount() - 1)
+			return;
+		swap(index, index + 1);
+	}
+
 	private void handleNew() {
 		BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
@@ -179,6 +203,16 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 				}
 			}
 		});
+	}
+
+	public void swap(int index1, int index2) {
+		Table table = getTablePart().getTableViewer().getTable();
+		IFeatureChild feature1 = ((IFeatureChild) table.getItem(index1).getData());
+		IFeatureChild feature2 = ((IFeatureChild) table.getItem(index2).getData());
+
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeature feature = model.getFeature();
+		feature.swap(feature1, feature2);
 	}
 
 	private void doAdd(Object[] candidates) throws CoreException {
@@ -291,6 +325,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
+		updateButtons();
 	}
 
 	public void initialize() {
@@ -310,7 +345,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		Object obj = e.getChangedObjects()[0];
 		if (obj instanceof IFeatureChild) {
 			if (e.getChangeType() == IModelChangedEvent.CHANGE) {
-				fIncludesViewer.update(obj, null);
+				fIncludesViewer.refresh();
 			} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 				fIncludesViewer.add(e.getChangedObjects());
 				if (e.getChangedObjects().length > 0) {
@@ -384,7 +419,19 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		fIncludesViewer.setInput(feature);
+		updateButtons();
 		super.refresh();
+	}
+
+	private void updateButtons() {
+		TablePart tablePart = getTablePart();
+		Table table = tablePart.getTableViewer().getTable();
+		TableItem[] tableSelection = table.getSelection();
+		boolean hasSelection = tableSelection.length > 0;
+		// up/down buttons
+		boolean canMove = table.getItemCount() > 1 && tableSelection.length == 1 && !fSortAction.isChecked();
+		tablePart.setButtonEnabled(1, canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
+		tablePart.setButtonEnabled(2, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
 	}
 
 	/**
@@ -460,6 +507,12 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 
 	protected boolean createCount() {
 		return true;
+	}
+
+	public void propertyChange(PropertyChangeEvent event) {
+		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
+			updateButtons();
+		}
 	}
 
 }
