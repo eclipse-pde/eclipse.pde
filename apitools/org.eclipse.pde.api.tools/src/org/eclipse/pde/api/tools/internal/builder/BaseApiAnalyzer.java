@@ -280,11 +280,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			IJavaElement element = null;
 			if(typenames != null) {
 				//incremental
+				IResource resource = null;
 				for (int i = 0; i < typenames.length; i++) {
 					element = fJavaProject.findType(typenames[i]);
 					if(element != null) {
-						element.getResource().deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-						createUnusedApiFilterProblems(store.getUnusedFilters(element.getResource()));
+						resource = element.getUnderlyingResource();
+						if(resource != null) {
+							resource.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+							createUnusedApiFilterProblems(store.getUnusedFilters(element.getResource()));
+						}
 					}
 				}
 			}
