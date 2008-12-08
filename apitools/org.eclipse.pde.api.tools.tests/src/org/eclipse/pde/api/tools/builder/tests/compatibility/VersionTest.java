@@ -278,4 +278,57 @@ public class VersionTest extends CompatibilityTest {
 	public void testRemoveInternalClassF() throws Exception {
 		xRemoveInternalClass(false);
 	}
+	
+	public void testBreakApiRegardlessOfMajorVersionI() throws Exception {
+		xRegardlessMajorInc(true);
+	}
+	
+	public void testBreakApiRegardlessOfMajorVersionF() throws Exception {
+		xRegardlessMajorInc(false);
+	}
+	
+	/**
+	 * Tests API breakage still reported when major version increment but preference set to
+	 * warn of breakage regardless of major version change is set.
+	 */
+	private void xRegardlessMajorInc(boolean incremental) throws Exception {
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		assertNotNull("The instance pref node must exist", inode);
+		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_ENABLED);
+		inode.put(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, ApiPlugin.VALUE_ENABLED);
+		inode.flush();
+		
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IDelta.CLASS_ELEMENT_TYPE,
+						IDelta.REMOVED,
+						IDelta.METHOD)
+			};
+		setExpectedProblemIds(ids);
+		String[][] args = new String[1][];
+		args[0] = new String[]{PACKAGE_PREFIX + "BreakApi", "method()"};
+		setExpectedMessageArgs(args);
+		
+		// break the API be removing a method
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("BreakApi.java");
+		updateWorkspaceFile(
+				filePath,
+				getUpdateFilePath(filePath.lastSegment()));
+		
+		// update manifest major version
+		IFile file = getEnv().getWorkspace().getRoot().getFile(MANIFEST_PATH);
+		assertTrue("Missing manifest", file.exists());
+		String content = Util.getFileContentAsString(file.getLocation().toFile());
+		content = content.replace("1.0.0", "2.0.0");
+		getEnv().addFile(MANIFEST_PATH.removeLastSegments(1), MANIFEST_PATH.lastSegment(), content);
+		
+		if (incremental) {
+			incrementalBuild();
+		} else {
+			fullBuild();
+		}
+		ApiProblem[] problems = getEnv().getProblemsFor(filePath, null);
+		assertProblems(problems);
+	}	
 }
