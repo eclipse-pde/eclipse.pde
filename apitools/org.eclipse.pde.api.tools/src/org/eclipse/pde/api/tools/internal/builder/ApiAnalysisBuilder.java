@@ -225,6 +225,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			ApiPlugin.log(e.getStatus());
 		}
 	}
+	
 	/**
 	 * Cleans up only API compatibility markers on the given {@link IResource}
 	 * @param resource the given resource
@@ -790,6 +791,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			cleanupUsageMarkers(fCurrentProject);
 			cleanupCompatibilityMarkers(fCurrentProject);
 			cleanupUnsupportedTagMarkers(fCurrentProject);
+			fCurrentProject.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			updateMonitor(localmonitor, 1);
 			//clean up the .api_settings
 			cleanupApiDescription(fCurrentProject);
