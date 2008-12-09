@@ -114,7 +114,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	private IApiProblemFilter resolveFilter(IMarker marker) {
 		try {
 			String filterhandle = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID, null);
-			String[] values = filterhandle.split("]"); //$NON-NLS-1$
+			String[] values = filterhandle.split("%]"); //$NON-NLS-1$
 			IProject project = marker.getResource().getProject();
 			IApiComponent component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(project.getName());
 			if(component != null) {
