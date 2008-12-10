@@ -99,7 +99,7 @@ public class BundleLauncherHelper {
 			int versionIndex = idVersion.indexOf(VERSION_SEPARATOR);
 			String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
 			String version = (versionIndex > 0) ? idVersion.substring(versionIndex + 1) : null;
-			if (set.contains(id))
+			if (set != null && set.contains(id))
 				continue;
 			ModelEntry entry = PluginRegistry.findEntry(id);
 			if (entry != null) {
