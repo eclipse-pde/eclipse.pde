@@ -10,7 +10,7 @@
 package org.eclipse.pde.build.internal.tests;
 
 import java.io.File;
-import java.util.Properties;
+import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -164,5 +164,40 @@ public class AssembleTests extends PDETestCase {
 		
 		File resultFolder = new File(buildFolder.getLocation().toFile(), "tmp/eclipse/plugins");
 		assertEquals(resultFolder.list().length, 3);
+	}
+	
+	public void testBug255824() throws Exception {
+		IFolder buildFolder = newTest("255824");
+		
+		IFolder a = Utils.createFolder(buildFolder, "plugins/A");
+		Utils.generateBundle(a, "A");
+		Utils.writeBuffer(a.getFile("src/a.java"), new StringBuffer("class A {}"));
+		
+		IFolder b = Utils.createFolder(buildFolder, "plugins/B_1.0.0");
+		Utils.generateBundle(b, "B");
+		b.getFile("build.properties").delete(true, null);
+		
+		Utils.generateFeature(buildFolder, "F", null, new String [] { "A;unpack=false", "B"});
+		
+		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
+		buildProperties.put("topLevelElementId", "F");
+		buildProperties.put("archivePrefix", "eclipse");
+		buildProperties.put("collectingFolder", "e4");
+		buildProperties.put("baseLocation", "");
+		
+		Utils.storeBuildProperties(buildFolder, buildProperties);
+		
+		runBuild(buildFolder);
+		
+		Set entries = new HashSet();
+		entries.add("eclipse/plugins/A_1.0.0.jar");
+		entries.add("eclipse/plugins/B_1.0.0/META-INF/MANIFEST.MF");
+		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild.zip", entries);
+
+		buildProperties.put("archivesFormat", "*,*,*-folder");
+		Utils.storeBuildProperties(buildFolder, buildProperties);
+		runBuild(buildFolder);
+		assertResourceFile(buildFolder, "tmp/e4/plugins/A_1.0.0.jar");
+		assertResourceFile(buildFolder, "tmp/e4/plugins/B_1.0.0/META-INF/MANIFEST.MF");
 	}
 }

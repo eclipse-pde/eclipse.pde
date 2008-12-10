@@ -324,7 +324,8 @@ public class SourceTests extends PDETestCase {
 		IFile jar = buildFolder.getFile("bundleA.source_1.0.0.jar");
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(jar.getLocation().toFile()));
 		org.eclipse.pde.internal.build.Utils.transferStreams(in, out);
-
+		zip.close();
+		
 		entries.clear();
 		entries.add("about.html");
 		assertZipContents(buildFolder, "bundleA.source_1.0.0.jar", entries);
@@ -424,7 +425,9 @@ public class SourceTests extends PDETestCase {
 		assertResourceFile(binaryASource, "A.java");
 
 		IFile manifestFile = plugins.getFile("bundleA.source_1.0.0/META-INF/MANIFEST.MF");
-		Manifest manifest = new Manifest(manifestFile.getContents());
+		InputStream contents = manifestFile.getContents();
+		Manifest manifest = new Manifest(contents);
+		contents.close();
 		Attributes attr = manifest.getMainAttributes();
 		assertEquals(attr.getValue("Bundle-Version"), "1.0.0");
 		assertEquals(attr.getValue("Bundle-SymbolicName"), "bundleA.source");

@@ -68,9 +68,9 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 				location = new Path(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
 			}
 			if (isFolder) {
-				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + getFinalName(plugins[i], ShapeAdvisor.FOLDER), new FileSet[] {new FileSet(location, null, null, null, excludedFiles, null, null)}, false, false);
+				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' + getFinalName(plugins[i], ShapeAdvisor.FOLDER), new FileSet[] {new FileSet(location, null, null, null, excludedFiles, null, null)}, false, false);
 			} else {
-				script.printCopyFileTask(location, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + getFinalName(plugins[i], ShapeAdvisor.FILE), false);
+				script.printCopyFileTask(location, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' + getFinalName(plugins[i], ShapeAdvisor.FILE), false);
 			}
 		}
 
@@ -82,7 +82,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 				IPath relative = featureLocation.removeFirstSegments(baseLocation.segmentCount());
 				location = new Path(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
 			}
-			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + getFinalName(features[i]), new FileSet[] {new FileSet(location, null, null, null, null, null, null)}, false, false);
+			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES) + '/' + getFinalName(features[i]), new FileSet[] {new FileSet(location, null, null, null, null, null, null)}, false, false);
 		}
 
 		if (packagingProperties.size() != 0) {
@@ -171,9 +171,9 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			return new Object[] {getFinalName(feature), ShapeAdvisor.FOLDER};
 		return shapeAdvisor.getFinalShape(feature);
 	}
-	
+
 	protected void printP2GenerationModeCondition() {
 		// "final" if we are overriding, else "incremental"
-		script.printConditionIsSet(PROPERTY_P2_GENERATION_MODE, "final", PROPERTY_P2_FINAL_MODE_OVERRIDE, "incremental");  //$NON-NLS-1$//$NON-NLS-2$
+		script.printConditionIsSet(PROPERTY_P2_GENERATION_MODE, "final", PROPERTY_P2_FINAL_MODE_OVERRIDE, "incremental"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 }
