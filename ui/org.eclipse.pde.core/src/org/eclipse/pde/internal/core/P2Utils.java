@@ -99,7 +99,7 @@ public class P2Utils {
 	 */
 	private static void copyURLs(URL[] dest, int start, BundleInfo[] infos) throws MalformedURLException {
 		for (int i = 0; i < infos.length; i++) {
-			dest[start++] = infos[i].getLocation().toURL();
+			dest[start++] = new File(infos[i].getLocation()).toURL();
 		}
 	}
 
