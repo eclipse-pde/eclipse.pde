@@ -62,7 +62,7 @@ public class P2Utils {
 			URL bundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(BUNDLE_INFO_PATH));
 			File home = basePath.toFile();
 			BundleInfo bundles[] = getBundlesFromFile(bundlesTxt, home);
-			if (bundles == null) {
+			if (bundles == null || bundles.length == 0) {
 				return null;
 			}
 			int length = bundles.length;
@@ -75,7 +75,7 @@ public class P2Utils {
 
 			URL[] urls = new URL[length];
 			copyURLs(urls, 0, bundles);
-			if (srcBundles != null) {
+			if (srcBundles != null && srcBundles.length > 0) {
 				copyURLs(urls, bundles.length, srcBundles);
 			}
 			return urls;
