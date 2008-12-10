@@ -12,8 +12,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -138,17 +137,20 @@ public class PDEState extends MinimalState {
 		fState = stateObjectFactory.createState(resolve);
 		monitor.beginTask("", urls.length); //$NON-NLS-1$
 		for (int i = 0; i < urls.length; i++) {
-			File file = new File(urls[i].getFile());
 			try {
+				File file = new File(new URI(urls[i].toExternalForm()));
 				if (monitor.isCanceled())
-					// if canceled, stop loading bundles
+					// if cancelled, stop loading bundles
 					return;
 				monitor.subTask(file.getName());
 				addBundle(file, -1);
 			} catch (PluginConversionException e) {
 			} catch (CoreException e) {
+			} catch (URISyntaxException e) {
+				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Invalid manifest format at " + urls[i].toExternalForm(), //$NON-NLS-1$
+						null));
 			} catch (IOException e) {
-				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Invalid manifest format at " + file.getAbsolutePath(), //$NON-NLS-1$
+				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Invalid manifest format at " + urls[i].toExternalForm(), //$NON-NLS-1$
 						null));
 			} finally {
 				monitor.worked(1);
@@ -233,22 +235,26 @@ public class PDEState extends MinimalState {
 
 	private long computeTimestamp(URL[] urls, long timestamp) {
 		for (int i = 0; i < urls.length; i++) {
-			File file = new File(urls[i].getFile());
-			if (file.exists()) {
-				if (file.isFile()) {
-					timestamp ^= file.lastModified();
-				} else {
-					File manifest = new File(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
-					if (manifest.exists())
-						timestamp ^= manifest.lastModified();
-					manifest = new File(file, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-					if (manifest.exists())
-						timestamp ^= manifest.lastModified();
-					manifest = new File(file, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
-					if (manifest.exists())
-						timestamp ^= manifest.lastModified();
+			try {
+				File file = new File(new URI(urls[i].toExternalForm()));
+				if (file.exists()) {
+					if (file.isFile()) {
+						timestamp ^= file.lastModified();
+					} else {
+						File manifest = new File(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+						if (manifest.exists())
+							timestamp ^= manifest.lastModified();
+						manifest = new File(file, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+						if (manifest.exists())
+							timestamp ^= manifest.lastModified();
+						manifest = new File(file, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
+						if (manifest.exists())
+							timestamp ^= manifest.lastModified();
+					}
+					timestamp ^= file.getAbsolutePath().hashCode();
 				}
-				timestamp ^= file.getAbsolutePath().hashCode();
+			} catch (URISyntaxException e) {
+				// Just skip bad URIs, like we would skip missing files
 			}
 		}
 		return timestamp;
@@ -422,16 +428,17 @@ public class PDEState extends MinimalState {
 		// add new Bundles to the State
 		ArrayList descriptions = new ArrayList(newBundleURLs.length);
 		for (int i = 0; i < newBundleURLs.length; i++) {
-			File file = new File(newBundleURLs[i].getFile());
 			try {
+				File file = new File(new URI(newBundleURLs[i].toExternalForm()));
 				BundleDescription desc = addBundle(file, -1);
 				if (desc != null)
 					descriptions.add(desc);
 			} catch (PluginConversionException e) {
 			} catch (CoreException e) {
+			} catch (URISyntaxException e) {
+				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Invalid manifest format at " + newBundleURLs[i].toExternalForm(), null)); //$NON-NLS-1$
 			} catch (IOException e) {
-				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Invalid manifest format at " + file.getAbsolutePath(), //$NON-NLS-1$
-						null));
+				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Invalid manifest format at " + newBundleURLs[i].toExternalForm(), null)); //$NON-NLS-1$
 			}
 		}
 		// compute Timestamp and save all new information
