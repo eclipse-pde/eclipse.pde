@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
@@ -86,11 +85,7 @@ public class ApiModelFactory {
 		IPath path = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		if (path != null && path.isPrefixOf(pathForLocation)) {
 			if(isValidProject(location)) {
-				if (isBinaryProject(location)) {
-					component = new BundleApiComponent(profile, location);
-				} else {
-					component = new PluginProjectApiComponent(profile, location, model);
-				}
+				component = new PluginProjectApiComponent(profile, location, model);
 			}
 		} else {
 			component = new BundleApiComponent(profile, location);
@@ -117,23 +112,6 @@ public class ApiModelFactory {
 		IPath path = new Path(location);
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
 		return project != null && project.exists();
-	}
-	
-	/**
-	 * Returns if the specified location is an imported binary project.
-	 * <p>
-	 * We accept projects that are plug-ins even if not API enabled (i.e.
-	 * with API nature), as we still need them to make a complete
-	 * API profile without resolution errors.
-	 * </p> 
-	 * @param location
-	 * @return true if the location is an imported binary project, false otherwise
-	 * @throws CoreException
-	 */
-	private static boolean isBinaryProject(String location) throws CoreException {
-		IPath path = new Path(location);
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
-		return project != null && Util.isBinaryProject(project);
 	}
 
 	/**
