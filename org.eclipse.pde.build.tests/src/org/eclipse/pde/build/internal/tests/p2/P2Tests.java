@@ -256,7 +256,10 @@ public class P2Tests extends P2TestCase {
 
 	public void testBug258126() throws Exception {
 		IFolder buildFolder = newTest("258126");
-
+		
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
 		Utils.generateFeature(buildFolder, "F", null, new String[] {"org.eclipse.osgi;unpack=false", "org.eclipse.core.runtime;unpack=false"});
@@ -272,7 +275,10 @@ public class P2Tests extends P2TestCase {
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
-		properties.put("configs", "win32,win32,x86");
+		properties.put("configs", "win32,win32,x86");		
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		
 		properties.put("archivesFormat", "win32,win32,x86-folder");
 		properties.put("generate.p2.metadata", "true");
 		properties.put("p2.metadata.repo", repoLocation);
