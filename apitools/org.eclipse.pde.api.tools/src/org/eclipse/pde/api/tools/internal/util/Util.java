@@ -88,10 +88,10 @@ import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
-import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
@@ -460,7 +460,7 @@ public final class Util {
 	 */
 	public static String generateEEContents(IVMInstall vm, String eeId) throws IOException {
 		StringBuffer buffer = new StringBuffer();
-		appendProperty(buffer, EEVMType.PROP_JAVA_HOME, vm.getInstallLocation().getCanonicalPath());
+		appendProperty(buffer, ExecutionEnvironmentDescription.JAVA_HOME, vm.getInstallLocation().getCanonicalPath());
 		StringBuffer paths = new StringBuffer();
 		LibraryLocation[] libraryLocations = JavaRuntime.getLibraryLocations(vm);
 		for (int i = 0; i < libraryLocations.length; i++) {
@@ -470,8 +470,8 @@ public final class Util {
 				paths.append(File.pathSeparatorChar);
 			}
 		}
-		appendProperty(buffer, EEVMType.PROP_BOOT_CLASS_PATH, paths.toString());
-		appendProperty(buffer, EEVMType.PROP_CLASS_LIB_LEVEL, eeId);
+		appendProperty(buffer, ExecutionEnvironmentDescription.BOOT_CLASS_PATH, paths.toString());
+		appendProperty(buffer, ExecutionEnvironmentDescription.CLASS_LIB_LEVEL, eeId);
 		return  buffer.toString();
 	}
 	
@@ -860,21 +860,15 @@ public final class Util {
 	}
 
 	/**
-	 * Retrieve EE properties from the ee.file property.
-	 * @param eeFileProperty the given ee.file property
+	 * Returns the OSGi profile properties corresponding to the given execution
+	 * environment id, or <code>null</code> if none.
+	 * 
+	 * @param eeId OSGi profile identifier
 	 *
-	 * @return the corresponding properties or null if none
+	 * @return the corresponding properties or <code>null</code> if none
 	 */
-	public static Properties getEEProfile(File eeFileProperty) {
-		if (!eeFileProperty.exists()) {
-			return null;
-		}
-		EEVMType.clearProperties(eeFileProperty);
-		String ee = EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, eeFileProperty);
-		if (ee == null) {
-			return null;
-		}
-		String profileName = ee + ".profile"; //$NON-NLS-1$
+	public static Properties getEEProfile(String eeId) {
+		String profileName = eeId + ".profile"; //$NON-NLS-1$
 		InputStream stream = Util.class.getResourceAsStream("profiles/" + profileName); //$NON-NLS-1$
 		if (stream != null) {
 			try {

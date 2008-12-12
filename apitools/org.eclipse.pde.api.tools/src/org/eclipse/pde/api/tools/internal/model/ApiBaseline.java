@@ -36,13 +36,13 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.PropertyChangeEvent;
 import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -154,32 +154,32 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	public ApiBaseline(String name, File eeDescription) throws CoreException {
 		this(name);
 		fAutoResolve = false;
-		EEVMType.clearProperties(eeDescription);
-		String profile = EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, eeDescription);
-		initialize(profile, eeDescription);
+		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(eeDescription);
+		String profile = ee.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
+		initialize(ee);
 		fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID,
 				MessageFormat.format(CoreMessages.ApiProfile_1, new String[]{profile}));
 	}
 
 	/**
 	 * Initializes this baseline to resolve in the execution environment
-	 * associated with the given symbolic name.
+	 * associated with the given description.
 	 * 
-	 * @param environmentId execution environment symbolic name
-	 * @param eeFile execution environment description file
+	 * @param ee execution environment description
 	 * @throws CoreException if unable to initialize based on the given id
 	 */
-	private void initialize(String environmentId, File eeFile) throws CoreException {
+	private void initialize(ExecutionEnvironmentDescription ee) throws CoreException {
 		Properties properties = null;
+		String environmentId = ee.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
 		if (ApiPlugin.isRunningInFramework()) {
 			properties = getJavaProfileProperties(environmentId);
 		} else {
-			properties = Util.getEEProfile(eeFile);
+			properties = Util.getEEProfile(environmentId);
 		}
 		if (properties == null) {
 			abort("Unknown execution environment: " + environmentId, null); //$NON-NLS-1$
 		} else {
-			initialize(properties, eeFile);
+			initialize(properties, ee);
 		}
 	}
 
@@ -225,10 +225,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Initializes this baseline from the given properties.
 	 * 
 	 * @param profile OGSi profile properties
-	 * @param description execution environment description file
+	 * @param description execution environment description
 	 * @throws CoreException if unable to initialize
 	 */
-	private void initialize(Properties profile, File description) throws CoreException {
+	private void initialize(Properties profile, ExecutionEnvironmentDescription description) throws CoreException {
 		String value = profile.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 		Dictionary dictionary = new Hashtable();
 		String[] systemPackages = null;
@@ -376,7 +376,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 							File file = Util.createEEFile(bestFit, systemEE);
 							JavaRuntime.addVMInstallChangedListener(this);
 							fVMBinding = bestFit;
-							initialize(systemEE, file);
+							ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
+							initialize(ee);
 						} catch (CoreException e) {
 							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_2, e);
 						} catch (IOException e) {

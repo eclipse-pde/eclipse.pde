@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -65,8 +64,9 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	 * @param profile owning profile
 	 * @param description EE file
 	 * @param systemPackages exported system packages
+	 * @exception CoreException if unable to read the execution environment description file
 	 */
-	public SystemLibraryApiComponent(IApiBaseline profile, File description, String[] systemPackages) {
+	public SystemLibraryApiComponent(IApiBaseline profile, ExecutionEnvironmentDescription description, String[] systemPackages) throws CoreException {
 		super(profile);
 		init(description);
 		fSystemPackages = systemPackages;
@@ -152,13 +152,12 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	 * 
 	 * @param description EE file
 	 */
-	private void init(File description) {
-		EEVMType.clearProperties(description);
-		fLibraries = EEVMType.getLibraryLocations(description);
-		fExecEnv = new String[]{EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, description)};
+	private void init(ExecutionEnvironmentDescription description) throws CoreException {
+		fLibraries = description.getLibraryLocations();
+		fExecEnv = new String[]{description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL)};
 		fVersion = fExecEnv[0];
 		setName(fExecEnv[0]);
-		fLocation = EEVMType.getProperty(EEVMType.PROP_JAVA_HOME, description);
+		fLocation = description.getProperty(ExecutionEnvironmentDescription.JAVA_HOME);
 	}
 
 	/* (non-Javadoc)
