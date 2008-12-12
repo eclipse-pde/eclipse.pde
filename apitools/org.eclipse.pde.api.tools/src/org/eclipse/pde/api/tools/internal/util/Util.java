@@ -110,7 +110,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.internal.core.PDECore;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Version;
 import org.w3c.dom.Document;
@@ -1974,11 +1973,7 @@ public final class Util {
 		return isProtected(modifiers) || isPublic(modifiers);
 	}
 	public static boolean isBinaryProject(IProject project) {
-		try {
-			return project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY) != null;
-		} catch (CoreException e) {
-			return false;
-		}
+		return org.eclipse.pde.internal.core.WorkspaceModelManager.isBinaryProject(project);
 	}
 	/**
 	 * Returns a new XML document.
