@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 257143
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
@@ -182,7 +183,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 					String pName = new String(packageName);
 					String label = cName + " - " + pName; //$NON-NLS-1$
 					String content = pName + "." + cName; //$NON-NLS-1$
-					Image image = (Flags.isInterface(modifiers)) ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS) : PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
+					Image image = (Flags.isInterface(modifiers)) ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_INTERFACE) : PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
 					addProposalToCollection(c, startOffset, length, label, content, image);
 				}
 			};
