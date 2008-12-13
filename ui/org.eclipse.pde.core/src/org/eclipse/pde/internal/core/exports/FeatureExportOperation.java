@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
-import org.eclipse.pde.internal.core.PDECoreMessages;
-
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -378,6 +376,7 @@ public class FeatureExportOperation extends Job {
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_FEATURE_TEMP_FOLDER, fBuildTempLocation + "/destination"); //$NON-NLS-1$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 			fAntBuildProperties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_GENERATE_API_DESCRIPTION, "true"); //$NON-NLS-1$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_OS, os);
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_WS, ws);
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_ARCH, arch);
