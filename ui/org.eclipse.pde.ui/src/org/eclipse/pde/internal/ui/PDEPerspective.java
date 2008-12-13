@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.ui.*;
-import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 public class PDEPerspective implements IPerspectiveFactory {
 
@@ -26,16 +24,6 @@ public class PDEPerspective implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout factory) {
 		this.factory = factory;
 		addViews();
-		addActionSets();
-		addNewWizardShortcuts();
-		addPerspectiveShortcuts();
-		addViewShortcuts();
-	}
-
-	private void addPerspectiveShortcuts() {
-		factory.addPerspectiveShortcut("org.eclipse.ui.resourcePerspective"); //$NON-NLS-1$
-		factory.addPerspectiveShortcut(JavaUI.ID_PERSPECTIVE);
-		factory.addPerspectiveShortcut(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
 	}
 
 	private void addViews() {
@@ -55,32 +43,4 @@ public class PDEPerspective implements IPerspectiveFactory {
 		factory.addView(IPageLayout.ID_OUTLINE, IPageLayout.RIGHT, 0.75f, factory.getEditorArea());
 	}
 
-	private void addActionSets() {
-		factory.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
-		factory.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
-		factory.addActionSet(JavaUI.ID_ACTION_SET);
-		factory.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);
-		factory.addActionSet("org.eclipse.debug.ui.breakpointActionSet"); //$NON-NLS-1$
-	}
-
-	private void addNewWizardShortcuts() {
-		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewProductConfigurationWizard"); //$NON-NLS-1$
-		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewProfileWizard"); //$NON-NLS-1$
-		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewPackageCreationWizard"); //$NON-NLS-1$
-		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewClassCreationWizard"); //$NON-NLS-1$
-		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard"); //$NON-NLS-1$
-		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewSourceFolderCreationWizard"); //$NON-NLS-1$
-		factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");//$NON-NLS-1$
-		factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");//$NON-NLS-1$
-	}
-
-	private void addViewShortcuts() {
-		factory.addShowViewShortcut(JavaUI.ID_PACKAGES);
-		factory.addShowViewShortcut("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
-		factory.addShowViewShortcut(IPDEUIConstants.PLUGINS_VIEW_ID);
-		factory.addShowViewShortcut(ProjectExplorer.VIEW_ID);
-		factory.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
-		factory.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
-		factory.addShowViewShortcut(IPageLayout.ID_OUTLINE);
-	}
 }

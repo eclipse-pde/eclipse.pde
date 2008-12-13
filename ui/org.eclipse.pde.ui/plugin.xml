@@ -1593,12 +1593,78 @@
    </extension>
    <extension
           point="org.eclipse.ui.perspectiveExtensions">
-       <perspectiveExtension targetID="org.eclipse.pde.ui.PDEPerspective">
-          <actionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
-          <showInPart
-                id="org.eclipse.team.ui.GenericHistoryView">
-          </showInPart>
-       </perspectiveExtension>
+       <perspectiveExtension
+            targetID="org.eclipse.pde.ui.PDEPerspective">
+         <actionSet
+               id="org.eclipse.debug.ui.breakpointActionSet">
+         </actionSet>
+         <actionSet
+               id="org.eclipse.jdt.ui.JavaElementCreationActionSet">
+         </actionSet>
+         <actionSet
+                id="org.eclipse.debug.ui.launchActionSet">
+          </actionSet>
+          <actionSet
+                id="org.eclipse.debug.ui.debugActionSet">
+          </actionSet>
+          <actionSet
+                id="org.eclipse.jdt.ui.JavaActionSet">
+          </actionSet>
+         <showInPart
+               id="org.eclipse.team.ui.GenericHistoryView">
+         </showInPart>
+         <perspectiveShortcut
+               id="org.eclipse.ui.resourcePerspective">
+         </perspectiveShortcut>
+          <perspectiveShortcut
+                id="org.eclipse.jdt.ui.JavaPerspective">
+          </perspectiveShortcut>
+          <perspectiveShortcut
+                id="org.eclipse.debug.ui.DebugPerspective">
+          </perspectiveShortcut>
+          <viewShortcut
+                id="org.eclipse.jdt.ui.PackagesView">
+          </viewShortcut>
+          <viewShortcut
+                id="org.eclipse.pde.ui.PluginsView">
+          </viewShortcut>
+          <viewShortcut
+                id="org.eclipse.ui.navigator.ProjectExplorer">
+          </viewShortcut>
+          <viewShortcut
+                id="org.eclipse.ui.views.ProblemView">
+          </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.ui.views.TaskList">
+         </viewShortcut>
+          <viewShortcut
+                id="org.eclipse.ui.views.ContentOutline">
+          </viewShortcut>
+          <newWizardShortcut
+                id="org.eclipse.pde.ui.NewProductConfigurationWizard">
+          </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.pde.ui.NewProfileWizard">
+         </newWizardShortcut>
+          <newWizardShortcut
+                id="org.eclipse.jdt.ui.wizards.NewPackageCreationWizard">
+          </newWizardShortcut>
+          <newWizardShortcut
+                id="org.eclipse.jdt.ui.wizards.NewClassCreationWizard">
+          </newWizardShortcut>
+          <newWizardShortcut
+                id="org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard">
+          </newWizardShortcut>
+          <newWizardShortcut
+                id="org.eclipse.jdt.ui.wizards.NewSourceFolderCreationWizard">
+          </newWizardShortcut>
+          <newWizardShortcut
+                id="org.eclipse.ui.wizards.new.file">
+          </newWizardShortcut>
+          <newWizardShortcut
+                id="org.eclipse.ui.wizards.new.folder">
+          </newWizardShortcut>
+      </perspectiveExtension>
     </extension>
     <extension
          point="org.eclipse.pde.ui.osgiFrameworks">

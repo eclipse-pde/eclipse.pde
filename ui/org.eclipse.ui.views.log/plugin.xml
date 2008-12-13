@@ -19,6 +19,12 @@
                id="org.eclipse.pde.runtime.LogView">
          </viewShortcut>
       </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.pde.ui.PDEPerspective">
+         <viewShortcut
+               id="org.eclipse.pde.runtime.LogView">
+         </viewShortcut>
+      </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
