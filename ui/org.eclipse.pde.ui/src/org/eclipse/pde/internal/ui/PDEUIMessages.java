@@ -1428,6 +1428,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String RuntimeInstallJob_ErrorCouldntOpenProfile;
 
+	public static String RuntimeInstallJob_installPatchDescription;
+	public static String RuntimeInstallJob_installPatchName;
+
 	public static String RuntimeInstallJob_Job_name_installing;
 
 	public static String BaseExtensionPointMainPage_pluginId_tooltip;

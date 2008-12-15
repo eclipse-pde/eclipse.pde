@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
 
-import com.ibm.icu.text.MessageFormat;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ import org.eclipse.equinox.internal.provisional.p2.query.Query;
 import org.eclipse.equinox.internal.provisional.p2.ui.actions.InstallAction;
 import org.eclipse.equinox.internal.provisional.p2.ui.operations.ProvisioningUtil;
 import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
@@ -97,7 +97,7 @@ public class RuntimeInstallJob extends Job {
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				monitor.subTask(MessageFormat.format(PDEUIMessages.RuntimeInstallJob_Creating_installable_unit, new String[] {fInfo.items[i].toString()}));
+				monitor.subTask(NLS.bind(PDEUIMessages.RuntimeInstallJob_Creating_installable_unit, fInfo.items[i].toString()));
 
 				//Get the installable unit from the repo
 				String id = null;
@@ -111,7 +111,7 @@ public class RuntimeInstallJob extends Job {
 				}
 
 				if (id == null && version == null) {
-					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), MessageFormat.format(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotGetIdOrVersion, new String[] {fInfo.items[i].toString()}));
+					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotGetIdOrVersion, fInfo.items[i].toString()));
 				}
 
 				// Use the same qualifier replacement as the export operation used
@@ -121,7 +121,7 @@ public class RuntimeInstallJob extends Job {
 				Version newVersion = new Version(version);
 				Collector queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), new Collector(), monitor);
 				if (queryMatches.size() == 0) {
-					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), MessageFormat.format(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
+					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
 				}
 
 				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
@@ -184,6 +184,8 @@ public class RuntimeInstallJob extends Job {
 	private IInstallableUnitPatch createInstallableUnitPatch(final String id, final Version version, final Version existingVersion, IProfile profile, IProgressMonitor monitor) {
 		InstallableUnitPatchDescription iuPatchDescription = new MetadataFactory.InstallableUnitPatchDescription();
 		iuPatchDescription.setId(id + ".patch"); //$NON-NLS-1$
+		iuPatchDescription.setProperty(IInstallableUnit.PROP_NAME, NLS.bind(PDEUIMessages.RuntimeInstallJob_installPatchName, id));
+		iuPatchDescription.setProperty(IInstallableUnit.PROP_DESCRIPTION, PDEUIMessages.RuntimeInstallJob_installPatchDescription);
 		iuPatchDescription.setVersion(new Version("1.0.0." + QualifierReplacer.getDateQualifier())); //$NON-NLS-1$
 
 		ArrayList list = new ArrayList(1);
