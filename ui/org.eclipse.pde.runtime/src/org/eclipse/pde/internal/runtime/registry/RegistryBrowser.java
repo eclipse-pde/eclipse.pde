@@ -187,9 +187,15 @@ public class RegistryBrowser extends ViewPart {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fFilteredTree = new RegistryFilteredTree(this, composite, SWT.MULTI, new PatternFilter());
+		// need to give filter Textbox some space from the border
+		Composite filterComposite = fFilteredTree.getFilterControl().getParent(); // FilteredTree new look lays filter Text on additional composite
+		GridData gd = (GridData) filterComposite.getLayoutData();
+		gd.verticalIndent = 2;
+		gd.horizontalIndent = 2;
+
 		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		Tree tree = fFilteredTree.getViewer().getTree();
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 		fFilteredTree.setLayoutData(gd);
 		fTreeViewer = fFilteredTree.getViewer();
 		fContentProvider = new RegistryBrowserContentProvider(this);

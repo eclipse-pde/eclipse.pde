@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
@@ -31,7 +30,7 @@ public class FormFilteredTree extends FilteredTree {
 	private FormEntry fEntryFilter;
 
 	public FormFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
-		super(parent, treeStyle, filter);
+		super(parent, treeStyle, filter, true);
 	}
 
 	protected void createControl(Composite parent, int treeStyle) {
@@ -39,24 +38,8 @@ public class FormFilteredTree extends FilteredTree {
 		GridLayout layout = FormLayoutFactory.createClearGridLayout(false, 1);
 		// Space between filter text field and tree viewer
 		layout.verticalSpacing = 3;
+		super.createControl(parent, treeStyle);
 		setLayout(layout);
-		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		if (showFilterControls) {
-			filterComposite = new Composite(this, SWT.NONE);
-			GridLayout filterLayout = FormLayoutFactory.createClearGridLayout(false, 2);
-			filterLayout.horizontalSpacing = 5;
-			filterComposite.setLayout(filterLayout);
-			filterComposite.setFont(parent.getFont());
-			createFilterControls(filterComposite);
-			filterComposite.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		}
-
-		treeComposite = new Composite(this, SWT.NONE);
-		treeComposite.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		treeComposite.setLayoutData(data);
-		createTreeControl(treeComposite, treeStyle);
 	}
 
 	/* (non-Javadoc)
@@ -71,10 +54,12 @@ public class FormFilteredTree extends FilteredTree {
 	}
 
 	protected Text doCreateFilterText(Composite parent) {
-		int style = SWT.SINGLE | toolkit.getBorderStyle();
-		fEntryFilter = new FormEntry(parent, toolkit, null, style);
-		// Needed otherwise borders are missing on Windows Classic Theme
-		toolkit.paintBordersFor(parent);
+		int borderStyle = toolkit.getBorderStyle();
+		if (borderStyle != SWT.NONE) {
+			toolkit.setBorderStyle(SWT.NONE);
+			fEntryFilter = new FormEntry(parent, toolkit, null, SWT.SINGLE);
+			toolkit.setBorderStyle(borderStyle);
+		}
 		setBackground(toolkit.getColors().getBackground());
 		return fEntryFilter.getText();
 	}

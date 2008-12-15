@@ -92,7 +92,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	class CheckboxFilteredTree extends FilteredTree {
 
 		public CheckboxFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
-			super(parent, treeStyle, filter);
+			super(parent, treeStyle, filter, true);
 		}
 
 		protected TreeViewer doCreateTreeViewer(Composite parent, int style) {

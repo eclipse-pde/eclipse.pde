@@ -220,18 +220,14 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		fComposite.setLayout(layout);
 		fComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		fFilteredTree = new FilteredTree(fComposite, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE, new PatternFilter());
-		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-
+		fFilteredTree = new FilteredTree(fComposite, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE, new PatternFilter(), true);
 		// need to give filter Textbox some space from the border
-		Text filterText = fFilteredTree.getFilterControl();
-		if (filterText != null) {
-			Layout filterLayout = filterText.getParent().getLayout();
-			if (filterLayout instanceof GridLayout) {
-				((GridLayout) filterLayout).marginHeight = 4;
-				((GridLayout) filterLayout).marginWidth = 3;
-			}
-		}
+		Composite filterComposite = fFilteredTree.getFilterControl().getParent(); // FilteredTree new look lays filter Text on additional composite
+		GridData gd = (GridData) filterComposite.getLayoutData();
+		gd.verticalIndent = 2;
+		gd.horizontalIndent = 2;
+
+		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		fTreeViewer = fFilteredTree.getViewer();
 		fTreeViewer.setContentProvider(new StateContentProvider());

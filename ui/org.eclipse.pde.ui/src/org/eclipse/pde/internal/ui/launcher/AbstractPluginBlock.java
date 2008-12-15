@@ -584,11 +584,7 @@ public abstract class AbstractPluginBlock {
 
 	public void enableViewer(boolean enable) {
 		viewerEnabled = enable;
-		fPluginTreeViewer.getTree().setEnabled(enable);
-		Text filterText = fPluginFilteredTree.getFilterControl();
-		if (filterText != null) {
-			filterText.setEnabled(enable);
-		}
+		fPluginFilteredTree.setEnabled(enable);
 		fAddRequiredButton.setEnabled(enable);
 		fDefaultsButton.setEnabled(enable);
 		fWorkingSetButton.setEnabled(enable);

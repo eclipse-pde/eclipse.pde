@@ -13,7 +13,7 @@
  *     Michael Rennie <Michael_Rennie@ca.ibm.com> - bug 208637
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218648 
  *     Tuukka Lehtonen <tuukka.lehtonen@semantum.fi>  - bug 247907
-*******************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
 
@@ -167,6 +167,7 @@ public class LogView extends ViewPart implements ILogListener {
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		readLogFile();
 		createViewer(composite);
@@ -463,12 +464,12 @@ public class LogView extends ViewPart implements ILogListener {
 	 */
 	private void showFilterText(boolean visible) {
 		fMemento.putBoolean(P_SHOW_FILTER_TEXT, visible);
-		Composite ctrl = fFilteredTree.getFilterControl().getParent();
-		GridData gd = (GridData) ctrl.getLayoutData();
+
+		Composite filterComposite = fFilteredTree.getFilterControl().getParent(); // FilteredTree new look lays filter Text on additional composite
+
+		GridData gd = (GridData) filterComposite.getLayoutData();
 		gd.exclude = !visible;
-		ctrl.setVisible(visible);
-		gd.verticalIndent = 8;
-		gd.horizontalIndent = 4;
+		filterComposite.setVisible(visible);
 		if (!visible) // reset control if we aren't visible
 			fFilteredTree.getFilterControl().setText(Messages.LogView_show_filter_initialText);
 		fFilteredTree.layout(false);
@@ -483,8 +484,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private void createViewer(Composite parent) {
-
-		fFilteredTree = new FilteredTree(parent, SWT.FULL_SELECTION, new PatternFilter() {
+		PatternFilter filter = new PatternFilter() {
 			protected boolean isLeafMatch(Viewer viewer, Object element) {
 				if (element instanceof LogEntry) {
 					LogEntry logEntry = (LogEntry) element;
@@ -495,7 +495,15 @@ public class LogView extends ViewPart implements ILogListener {
 				}
 				return false;
 			}
-		}, true);
+		};
+		fFilteredTree = new FilteredTree(parent, SWT.FULL_SELECTION, filter, true);
+		// need to give filter Textbox some space from the border
+		Composite filterComposite = fFilteredTree.getFilterControl().getParent(); // FilteredTree new look lays filter Text on additional composite
+		GridData gd = (GridData) filterComposite.getLayoutData();
+		gd.verticalIndent = 2;
+		gd.horizontalIndent = 1;
+		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		fFilteredTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fFilteredTree.setInitialText(Messages.LogView_show_filter_initialText);
 		fTree = fFilteredTree.getViewer().getTree();
 		fTree.setLinesVisible(true);

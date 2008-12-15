@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -45,7 +46,7 @@ class FilteredCheckboxTree extends FilteredTree {
 	 * @param filter The pattern filter that will be used to filter elements
 	 */
 	public FilteredCheckboxTree(Composite parent, int treeStyle, PatternFilter filter) {
-		super(parent, treeStyle, filter);
+		super(parent, treeStyle, filter, true);
 	}
 
 	/*
@@ -434,4 +435,11 @@ class FilteredCheckboxTree extends FilteredTree {
 
 	} // end of FilterableCheckboxTreeViewer
 
+	public void setEnabled(boolean enabled) {
+		int filterColor = enabled ? SWT.COLOR_LIST_BACKGROUND : SWT.COLOR_WIDGET_BACKGROUND;
+		filterComposite.setBackground(getDisplay().getSystemColor(filterColor));
+		filterText.setEnabled(enabled);
+		treeViewer.getTree().setEnabled(enabled);
+
+	}
 }

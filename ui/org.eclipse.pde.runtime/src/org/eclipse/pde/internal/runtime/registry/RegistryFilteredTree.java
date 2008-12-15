@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -22,37 +19,8 @@ public class RegistryFilteredTree extends FilteredTree {
 	private RegistryBrowser browser;
 
 	public RegistryFilteredTree(RegistryBrowser browser, Composite parent, int treeStyle, PatternFilter filter) {
-		super(parent, treeStyle, filter);
+		super(parent, treeStyle, filter, true);
 		this.browser = browser;
-	}
-
-	protected void createControl(Composite parent, int treeStyle) {
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		setLayout(layout);
-		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		if (showFilterControls) {
-			filterComposite = new Composite(this, SWT.NONE);
-			GridLayout filterLayout = new GridLayout(2, false);
-			filterLayout.marginHeight = 4;
-			filterLayout.marginWidth = 3;
-			filterComposite.setLayout(filterLayout);
-			filterComposite.setFont(parent.getFont());
-
-			createFilterControls(filterComposite);
-			filterComposite.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		}
-
-		treeComposite = new Composite(this, SWT.NONE);
-		GridLayout treeCompositeLayout = new GridLayout();
-		treeCompositeLayout.marginHeight = 0;
-		treeCompositeLayout.marginWidth = 0;
-		treeComposite.setLayout(treeCompositeLayout);
-		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		treeComposite.setLayoutData(data);
-		createTreeControl(treeComposite, treeStyle);
 	}
 
 	protected void updateToolbar(boolean visible) {
