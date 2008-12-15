@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.ui.editor.target;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.ControlContribution;
@@ -24,7 +26,8 @@ import org.eclipse.pde.internal.core.LoadTargetOperation;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.swt.SWT;
@@ -34,6 +37,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.progress.IProgressService;
 
 public class TargetEditor extends PDEFormEditor {
@@ -92,13 +96,19 @@ public class TargetEditor extends PDEFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
 	 */
-	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		File file = (File) input.getAdapter(File.class);
 		if (file != null) {
 			String name = file.getName();
 			if (name.endsWith(".target")) { //$NON-NLS-1$
-				IEditorInput in = new SystemFileEditorInput(file);
-				manager.putContext(in, new TargetInputContext(this, in, true));
+				IFileStore store;
+				try {
+					store = EFS.getStore(file.toURI());
+					IEditorInput in = new FileStoreEditorInput(store);
+					manager.putContext(in, new TargetInputContext(this, in, true));
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
 			}
 		}
 	}

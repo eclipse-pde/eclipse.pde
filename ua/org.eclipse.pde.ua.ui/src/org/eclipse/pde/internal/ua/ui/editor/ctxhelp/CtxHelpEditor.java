@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.ui.editor.ctxhelp;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.ControlContribution;
@@ -33,7 +35,10 @@ import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpTopic;
 import org.eclipse.pde.internal.ua.ui.IConstants;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ua.ui.wizards.ctxhelp.RegisterCtxHelpWizard;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
+import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.swt.SWT;
@@ -45,6 +50,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
@@ -220,11 +226,13 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
 	 */
-	protected void createSystemFileContexts(InputContextManager contexts, SystemFileEditorInput input) {
-		File file = (File) input.getAdapter(File.class);
-		if (file != null) {
-			IEditorInput in = new SystemFileEditorInput(file);
+	protected void createSystemFileContexts(InputContextManager contexts, FileStoreEditorInput input) {
+		try {
+			IFileStore store = EFS.getStore(input.getURI());
+			IEditorInput in = new FileStoreEditorInput(store);
 			contexts.putContext(in, new CtxHelpInputContext(this, in, true));
+		} catch (CoreException e) {
+			PDEUserAssistanceUIPlugin.logException(e);
 		}
 	}
 

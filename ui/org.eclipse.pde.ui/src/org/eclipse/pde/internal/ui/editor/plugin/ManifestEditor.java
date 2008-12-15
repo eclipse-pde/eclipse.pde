@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.zip.ZipFile;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -37,6 +39,7 @@ import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.osgi.service.prefs.BackingStoreException;
@@ -132,8 +135,14 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			}
 		} else {
 			File file = new File(location, filename);
-			if (file.exists())
-				input = new SystemFileEditorInput(file);
+			if (file.exists()) {
+				IFileStore store;
+				try {
+					store = EFS.getStore(file.toURI());
+					input = new FileStoreEditorInput(store);
+				} catch (CoreException e) {
+				}
+			}
 		}
 		return openEditor(input);
 	}
@@ -308,8 +317,8 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		}
 	}
 
-	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
-		File file = (File) input.getAdapter(File.class);
+	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
+		File file = new File(input.getURI());
 		File manifestFile = null;
 		File buildFile = null;
 		File pluginFile = null;
@@ -330,17 +339,24 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			buildFile = new File(dir, ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
 			manifestFile = new File(dir, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 		}
-		if (manifestFile.exists()) {
-			IEditorInput in = new SystemFileEditorInput(manifestFile);
-			manager.putContext(in, new BundleInputContext(this, in, file == manifestFile));
-		}
-		if (pluginFile.exists()) {
-			SystemFileEditorInput in = new SystemFileEditorInput(pluginFile);
-			manager.putContext(in, new PluginInputContext(this, in, file == pluginFile, name.equals("fragment.xml"))); //$NON-NLS-1$
-		}
-		if (buildFile.exists()) {
-			SystemFileEditorInput in = new SystemFileEditorInput(buildFile);
-			manager.putContext(in, new BuildInputContext(this, in, file == buildFile));
+		try {
+			if (manifestFile.exists()) {
+				IFileStore store = EFS.getStore(manifestFile.toURI());
+				IEditorInput in = new FileStoreEditorInput(store);
+				manager.putContext(in, new BundleInputContext(this, in, file == manifestFile));
+			}
+			if (pluginFile.exists()) {
+				IFileStore store = EFS.getStore(pluginFile.toURI());
+				IEditorInput in = new FileStoreEditorInput(store);
+				manager.putContext(in, new PluginInputContext(this, in, file == pluginFile, name.equals("fragment.xml"))); //$NON-NLS-1$
+			}
+			if (buildFile.exists()) {
+				IFileStore store = EFS.getStore(buildFile.toURI());
+				IEditorInput in = new FileStoreEditorInput(store);
+				manager.putContext(in, new BuildInputContext(this, in, file == buildFile));
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 	}
 

@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.ui.editor.plugin.PluginExportAction;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
@@ -77,7 +78,7 @@ public class BuildEditor extends MultiSourceEditor {
 		close(false);
 	}
 
-	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		manager.putContext(input, new BuildInputContext(this, input, true));
 	}
 

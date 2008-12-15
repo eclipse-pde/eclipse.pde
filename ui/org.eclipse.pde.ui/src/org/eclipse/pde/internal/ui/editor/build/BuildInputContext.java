@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
@@ -55,8 +54,8 @@ public class BuildInputContext extends InputContext {
 				IFile file = ((IFileEditorInput) input).getFile();
 				model.setUnderlyingResource(file);
 				model.setCharset(file.getCharset());
-			} else if (input instanceof SystemFileEditorInput) {
-				File file = (File) ((SystemFileEditorInput) input).getAdapter(File.class);
+			} else if (input instanceof IURIEditorInput) {
+				File file = (File) ((IURIEditorInput) input).getAdapter(File.class);
 				model.setInstallLocation(file.getParent());
 				model.setCharset(getDefaultCharset());
 			} else {

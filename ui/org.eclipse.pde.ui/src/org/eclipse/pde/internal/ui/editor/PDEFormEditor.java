@@ -43,8 +43,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.part.MultiPageEditorSite;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -194,9 +193,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		if (input instanceof IFileEditorInput) {
 			// resource - find the project
 			createResourceContexts(contextManager, (IFileEditorInput) input);
-		} else if (input instanceof SystemFileEditorInput) {
-			// system file - find the file system folder
-			createSystemFileContexts(contextManager, (SystemFileEditorInput) input);
 		} else if (input instanceof IStorageEditorInput) {
 			createStorageContexts(contextManager, (IStorageEditorInput) input);
 		} else if (input instanceof IURIEditorInput) {
@@ -205,18 +201,17 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 				IFileStore store = EFS.getStore(uriEditorInput.getURI());
 				if (!EFS.SCHEME_FILE.equals(store.getFileSystem().getScheme()))
 					return;
+				FileStoreEditorInput sinput = new FileStoreEditorInput(store);
+				createSystemFileContexts(contextManager, sinput);
 			} catch (CoreException e) {
 				return;
 			}
-			File file = new File(uriEditorInput.getURI());
-			SystemFileEditorInput sinput = new SystemFileEditorInput(file);
-			createSystemFileContexts(contextManager, sinput);
 		}
 	}
 
 	protected abstract void createResourceContexts(InputContextManager contexts, IFileEditorInput input);
 
-	protected abstract void createSystemFileContexts(InputContextManager contexts, SystemFileEditorInput input);
+	protected abstract void createSystemFileContexts(InputContextManager contexts, FileStoreEditorInput input);
 
 	protected abstract void createStorageContexts(InputContextManager contexts, IStorageEditorInput input);
 

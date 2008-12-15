@@ -11,14 +11,18 @@
 
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple;
 
-import java.io.File;
-
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ua.ui.IConstants;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ua.ui.editor.cheatsheet.CSAbstractEditor;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.ui.IEditorInput;
@@ -26,16 +30,10 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 
-/**
- * SimpleCheatSheetEditor
- *
- */
 public class SimpleCSEditor extends CSAbstractEditor {
 
-	/**
-	 * 
-	 */
 	public SimpleCSEditor() {
 		super();
 	}
@@ -107,11 +105,13 @@ public class SimpleCSEditor extends CSAbstractEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
 	 */
-	protected void createSystemFileContexts(InputContextManager contexts, SystemFileEditorInput input) {
-		File file = (File) input.getAdapter(File.class);
-		if (file != null) {
-			IEditorInput in = new SystemFileEditorInput(file);
+	protected void createSystemFileContexts(InputContextManager contexts, FileStoreEditorInput input) {
+		try {
+			IFileStore store = EFS.getStore(input.getURI());
+			IEditorInput in = new FileStoreEditorInput(store);
 			contexts.putContext(in, new SimpleCSInputContext(this, in, true));
+		} catch (CoreException e) {
+			PDEUserAssistanceUIPlugin.logException(e);
 		}
 	}
 

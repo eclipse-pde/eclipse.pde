@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -23,7 +25,8 @@ import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.ManifestDocumentSetupParticipant;
 import org.eclipse.pde.internal.ui.editor.context.UTF8InputContext;
 import org.eclipse.text.edits.*;
@@ -48,28 +51,25 @@ public class BundleInputContext extends UTF8InputContext {
 	 */
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		BundleModel model = null;
-		if (input instanceof IStorageEditorInput) {
-			boolean isReconciling = input instanceof IFileEditorInput;
-			IDocument document = getDocumentProvider().getDocument(input);
-			model = new BundleModel(document, isReconciling);
-			if (input instanceof IFileEditorInput) {
-				IFile file = ((IFileEditorInput) input).getFile();
-				model.setUnderlyingResource(file);
-				model.setCharset(file.getCharset());
-			} else if (input instanceof SystemFileEditorInput) {
-				File file = (File) ((SystemFileEditorInput) input).getAdapter(File.class);
-				IPath path = new Path(file.getAbsolutePath()).removeLastSegments(2);
-				model.setInstallLocation(path.addTrailingSeparator().toString());
-				model.setCharset(getDefaultCharset());
-			} else if (input instanceof JarEntryEditorInput) {
-				File file = (File) ((JarEntryEditorInput) input).getAdapter(File.class);
-				model.setInstallLocation(file.toString());
-				model.setCharset(getDefaultCharset());
-			} else {
-				model.setCharset(getDefaultCharset());
-			}
-			model.load();
+		boolean isReconciling = input instanceof IFileEditorInput;
+		IDocument document = getDocumentProvider().getDocument(input);
+		model = new BundleModel(document, isReconciling);
+		if (input instanceof IFileEditorInput) {
+			IFile file = ((IFileEditorInput) input).getFile();
+			model.setUnderlyingResource(file);
+			model.setCharset(file.getCharset());
+		} else if (input instanceof IURIEditorInput) {
+			IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
+			model.setInstallLocation(store.getParent().getParent().toString());
+			model.setCharset(getDefaultCharset());
+		} else if (input instanceof JarEntryEditorInput) {
+			File file = (File) ((JarEntryEditorInput) input).getAdapter(File.class);
+			model.setInstallLocation(file.toString());
+			model.setCharset(getDefaultCharset());
+		} else {
+			model.setCharset(getDefaultCharset());
 		}
+		model.load();
 		return model;
 	}
 

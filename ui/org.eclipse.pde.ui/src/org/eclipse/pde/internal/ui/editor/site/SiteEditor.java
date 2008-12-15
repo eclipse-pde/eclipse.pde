@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jan 27, 2004
- */
+
 package org.eclipse.pde.internal.ui.editor.site;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Locale;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class SiteEditor extends MultiSourceEditor {
@@ -85,7 +86,7 @@ public class SiteEditor extends MultiSourceEditor {
 		close(false);
 	}
 
-	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		File file = (File) input.getAdapter(File.class);
 		File siteFile = null;
 
@@ -93,8 +94,14 @@ public class SiteEditor extends MultiSourceEditor {
 		if (name.equals("site.xml")) { //$NON-NLS-1$
 			siteFile = file;
 			if (siteFile.exists()) {
-				IEditorInput in = new SystemFileEditorInput(siteFile);
-				manager.putContext(in, new SiteInputContext(this, in, file == siteFile));
+				IFileStore store;
+				try {
+					store = EFS.getStore(siteFile.toURI());
+					IEditorInput in = new FileStoreEditorInput(store);
+					manager.putContext(in, new SiteInputContext(this, in, file == siteFile));
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
 			}
 		}
 	}

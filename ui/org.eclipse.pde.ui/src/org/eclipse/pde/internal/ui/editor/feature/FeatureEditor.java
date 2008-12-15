@@ -12,7 +12,10 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.io.File;
 import java.util.Locale;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -31,6 +34,7 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -62,10 +66,16 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 				IEditorInput input = null;
 				if (resource != null)
 					input = new FileEditorInput((IFile) resource);
-				else
-					input = new SystemFileEditorInput(new File(model.getInstallLocation(), "feature.xml")); //$NON-NLS-1$
+				else {
+					File file = new File(model.getInstallLocation(), "feature.xml"); //$NON-NLS-1$
+					IFileStore store = EFS.getStore(file.toURI());
+					input = new FileStoreEditorInput(store);
+				}
 				IDE.openEditor(PDEPlugin.getActivePage(), input, IPDEUIConstants.FEATURE_EDITOR_ID, true);
 			} catch (PartInitException e) {
+				PDEPlugin.logException(e);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
 			}
 		} else {
 			Display.getCurrent().beep();
@@ -145,7 +155,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 			removePage(context.getId());
 	}
 
-	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		File file = (File) input.getAdapter(File.class);
 		File buildFile = null;
 		File featureFile = null;
@@ -159,13 +169,19 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 			File dir = file.getParentFile();
 			featureFile = createFeatureFile(dir);
 		}
-		if (featureFile.exists()) {
-			SystemFileEditorInput in = new SystemFileEditorInput(featureFile);
-			manager.putContext(in, new FeatureInputContext(this, in, file == featureFile));
-		}
-		if (buildFile.exists()) {
-			SystemFileEditorInput in = new SystemFileEditorInput(buildFile);
-			manager.putContext(in, new BuildInputContext(this, in, file == buildFile));
+		try {
+			if (featureFile.exists()) {
+				IFileStore store = EFS.getStore(featureFile.toURI());
+				IEditorInput in = new FileStoreEditorInput(store);
+				manager.putContext(in, new FeatureInputContext(this, in, file == featureFile));
+			}
+			if (buildFile.exists()) {
+				IFileStore store = EFS.getStore(buildFile.toURI());
+				IEditorInput in = new FileStoreEditorInput(store);
+				manager.putContext(in, new BuildInputContext(this, in, file == buildFile));
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 	}
 

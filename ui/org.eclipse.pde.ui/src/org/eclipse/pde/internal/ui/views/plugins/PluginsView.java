@@ -13,9 +13,10 @@ package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.io.*;
 import java.util.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaUI;
@@ -31,7 +32,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
 import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
@@ -45,6 +45,7 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.progress.*;
@@ -657,9 +658,13 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		try {
 			if (editorId == null || editorId.equals("@system")) //$NON-NLS-1$
 				editorId = DEFAULT_EDITOR_ID;
-			page.openEditor(new SystemFileEditorInput(adapter.getFile()), editorId);
+			IFileStore store = EFS.getStore(adapter.getFile().toURI());
+			IEditorInput in = new FileStoreEditorInput(store);
+			page.openEditor(in, editorId);
 			adapter.setEditorId(editorId);
 		} catch (PartInitException e) {
+			PDEPlugin.logException(e);
+		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}

@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.ua.ui.editor.ctxhelp;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
@@ -21,11 +23,11 @@ import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpModel;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.IURIEditorInput;
 
 /**
  * The input context for the context help editor, based on an xml file containing
@@ -55,9 +57,9 @@ public class CtxHelpInputContext extends XMLInputContext {
 				IFile file = ((IFileEditorInput) input).getFile();
 				model.setUnderlyingResource(file);
 				model.setCharset(file.getCharset());
-			} else if (input instanceof SystemFileEditorInput) {
-				File file = (File) ((SystemFileEditorInput) input).getAdapter(File.class);
-				model.setInstallLocation(file.getParent());
+			} else if (input instanceof IURIEditorInput) {
+				IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
+				model.setInstallLocation(store.getParent().getParent().toString());
 				model.setCharset(getDefaultCharset());
 			} else if (input instanceof JarEntryEditorInput) {
 				File file = (File) ((JarEntryEditorInput) input).getAdapter(File.class);

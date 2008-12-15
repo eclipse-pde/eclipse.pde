@@ -1098,13 +1098,6 @@
       </decorator>
    </extension>
    <extension
-         point="org.eclipse.ui.elementFactories">
-      <factory
-            class="org.eclipse.pde.internal.ui.editor.SystemFileEditorInputFactory"
-            id="org.eclipse.pde.ui.systemFileEditorInputFactory">
-      </factory>
-   </extension>
-   <extension
          point="org.eclipse.jdt.ui.javaElementFilters">
       <filter
             targetId="org.eclipse.jdt.ui.PackageExplorer"

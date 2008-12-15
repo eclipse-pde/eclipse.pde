@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.io.File;
 import java.util.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
@@ -19,7 +21,8 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.plugin.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -40,31 +43,29 @@ public class PluginInputContext extends XMLInputContext {
 	 */
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		PluginModelBase model = null;
-		if (input instanceof IStorageEditorInput) {
-			boolean isReconciling = input instanceof IFileEditorInput;
-			IDocument document = getDocumentProvider().getDocument(input);
-			if (fIsFragment) {
-				model = new FragmentModel(document, isReconciling);
-			} else {
-				model = new PluginModel(document, isReconciling);
-			}
-			if (input instanceof IFileEditorInput) {
-				IFile file = ((IFileEditorInput) input).getFile();
-				model.setUnderlyingResource(file);
-				model.setCharset(file.getCharset());
-			} else if (input instanceof SystemFileEditorInput) {
-				File file = (File) ((SystemFileEditorInput) input).getAdapter(File.class);
-				model.setInstallLocation(file.getParent());
-				model.setCharset(getDefaultCharset());
-			} else if (input instanceof JarEntryEditorInput) {
-				File file = (File) ((JarEntryEditorInput) input).getAdapter(File.class);
-				model.setInstallLocation(file.toString());
-				model.setCharset(getDefaultCharset());
-			} else {
-				model.setCharset(getDefaultCharset());
-			}
-			model.load();
+		boolean isReconciling = input instanceof IFileEditorInput;
+		IDocument document = getDocumentProvider().getDocument(input);
+		if (fIsFragment) {
+			model = new FragmentModel(document, isReconciling);
+		} else {
+			model = new PluginModel(document, isReconciling);
 		}
+		if (input instanceof IFileEditorInput) {
+			IFile file = ((IFileEditorInput) input).getFile();
+			model.setUnderlyingResource(file);
+			model.setCharset(file.getCharset());
+		} else if (input instanceof IURIEditorInput) {
+			IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
+			model.setInstallLocation(store.getParent().toString());
+			model.setCharset(getDefaultCharset());
+		} else if (input instanceof JarEntryEditorInput) {
+			File file = (File) ((JarEntryEditorInput) input).getAdapter(File.class);
+			model.setInstallLocation(file.toString());
+			model.setCharset(getDefaultCharset());
+		} else {
+			model.setCharset(getDefaultCharset());
+		}
+		model.load();
 		return model;
 	}
 

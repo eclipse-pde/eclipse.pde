@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,9 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
@@ -53,8 +53,8 @@ public class SchemaInputContext extends XMLInputContext {
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
-		if (input instanceof SystemFileEditorInput)
-			return createExternalModel((SystemFileEditorInput) input);
+		if (input instanceof FileStoreEditorInput)
+			return createExternalModel((FileStoreEditorInput) input);
 
 		if (!(input instanceof IFileEditorInput)) {
 			if (input instanceof IStorageEditorInput)
@@ -71,7 +71,7 @@ public class SchemaInputContext extends XMLInputContext {
 		return schema;
 	}
 
-	private IBaseModel createExternalModel(SystemFileEditorInput input) {
+	private IBaseModel createExternalModel(FileStoreEditorInput input) {
 		File file = (File) input.getAdapter(File.class);
 		SchemaDescriptor sd = new SchemaDescriptor(file);
 

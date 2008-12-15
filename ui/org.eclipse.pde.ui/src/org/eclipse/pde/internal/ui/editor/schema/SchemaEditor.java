@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,6 +32,7 @@ import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class SchemaEditor extends MultiSourceEditor {
@@ -95,7 +99,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		close(false);
 	}
 
-	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		manager.putContext(input, new SchemaInputContext(this, input, true));
 	}
 
@@ -187,7 +191,13 @@ public class SchemaEditor extends MultiSourceEditor {
 			return false;
 		}
 		// Create the editor input
-		IEditorInput input = new SystemFileEditorInput(file);
+		IEditorInput input = null;
+		try {
+			IFileStore store = EFS.getStore(file.toURI());
+			input = new FileStoreEditorInput(store);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 		return openEditor(input);
 	}
 

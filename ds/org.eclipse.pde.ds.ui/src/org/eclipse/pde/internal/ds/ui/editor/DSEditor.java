@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
-import java.io.File;
-
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -27,13 +27,13 @@ import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 
 public class DSEditor extends MultiSourceEditor {
 
@@ -76,12 +76,13 @@ public class DSEditor extends MultiSourceEditor {
 	}
 
 	protected void createSystemFileContexts(InputContextManager contexts,
-			SystemFileEditorInput input) {
-		File file = (File) input.getAdapter(File.class);
-		if (file != null) {
-			IEditorInput in = new SystemFileEditorInput(file);
+			FileStoreEditorInput input) {
+		try {
+			IFileStore store = EFS.getStore(input.getURI());
+			IEditorInput in = new FileStoreEditorInput(store);
 			contexts.putContext(in, new DSInputContext(this, in, true));
-			
+		} catch (CoreException e) {
+			Activator.logException(e);
 		}
 	}
 

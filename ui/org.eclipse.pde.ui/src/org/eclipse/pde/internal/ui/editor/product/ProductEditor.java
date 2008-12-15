@@ -12,7 +12,10 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import java.io.File;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -21,6 +24,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 
 public class ProductEditor extends PDELauncherFormEditor {
 
@@ -70,13 +74,19 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
 	 */
-	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		File file = (File) input.getAdapter(File.class);
 		if (file != null) {
 			String name = file.getName();
 			if (name.endsWith(".product")) { //$NON-NLS-1$
-				IEditorInput in = new SystemFileEditorInput(file);
-				manager.putContext(in, new ProductInputContext(this, in, true));
+				IFileStore store;
+				try {
+					store = EFS.getStore(file.toURI());
+					IEditorInput in = new FileStoreEditorInput(store);
+					manager.putContext(in, new ProductInputContext(this, in, true));
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
 			}
 		}
 	}

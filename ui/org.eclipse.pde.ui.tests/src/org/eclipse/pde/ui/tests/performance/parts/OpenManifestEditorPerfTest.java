@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,30 +12,21 @@ package org.eclipse.pde.ui.tests.performance.parts;
 
 import java.io.File;
 import java.net.URL;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.IPreferenceConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDE;
 import org.osgi.framework.Bundle;
 
-/**
- * OpenManifestEditorPerfTest
- *
- */
 public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 
 	private static final String F_PLUGIN_FILE = "/tests/performance/plugin/org.eclipse.jdt.ui/plugin.xml"; //$NON-NLS-1$
@@ -142,7 +133,8 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	 */
 	private void executeTestRun(File file) throws Exception {
 		// Create the file editor input
-		SystemFileEditorInput editorInput = new SystemFileEditorInput(file);
+		IFileStore store = EFS.getStore(file.toURI());
+		FileStoreEditorInput editorInput = new FileStoreEditorInput(store);
 		// Warm-up Iterations
 		for (int i = 0; i < F_WARMUP_ITERATIONS; i++) {
 			IEditorPart editorPart = openEditor(editorInput);
