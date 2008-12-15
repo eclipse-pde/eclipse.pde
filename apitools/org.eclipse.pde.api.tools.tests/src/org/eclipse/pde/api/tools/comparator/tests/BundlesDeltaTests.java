@@ -188,18 +188,6 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		IApiBaseline afterState = getAfterState();
 		IApiComponent referenceComponent = beforeState.getApiComponent("deltatest1");
 		IApiComponent component = afterState.getApiComponent("deltatest1");
-		try {
-			ApiComparator.compare(referenceComponent, null, VisibilityModifiers.API);
-			assertFalse("Should not be reached", true);
-		} catch (IllegalArgumentException e) {
-			// ignore
-		}
-		try {
-			ApiComparator.compare(null, component, VisibilityModifiers.API);
-			assertFalse("Should not be reached", true);
-		} catch (IllegalArgumentException e) {
-			// ignore
-		}
 
 		IDelta delta = ApiComparator.compare(null, component, beforeState, afterState);
 		assertNotNull("No delta", delta);
