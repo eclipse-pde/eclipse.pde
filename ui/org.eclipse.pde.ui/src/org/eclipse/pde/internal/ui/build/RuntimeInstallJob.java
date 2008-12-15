@@ -186,7 +186,9 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.setId(id + ".patch"); //$NON-NLS-1$
 		iuPatchDescription.setProperty(IInstallableUnit.PROP_NAME, NLS.bind(PDEUIMessages.RuntimeInstallJob_installPatchName, id));
 		iuPatchDescription.setProperty(IInstallableUnit.PROP_DESCRIPTION, PDEUIMessages.RuntimeInstallJob_installPatchDescription);
-		iuPatchDescription.setVersion(new Version("1.0.0." + QualifierReplacer.getDateQualifier())); //$NON-NLS-1$
+		Version patchVersion = new Version("1.0.0." + QualifierReplacer.getDateQualifier()); //$NON-NLS-1$
+		iuPatchDescription.setVersion(patchVersion);
+		iuPatchDescription.setUpdateDescriptor(MetadataFactory.createUpdateDescriptor(iuPatchDescription.getId(), new VersionRange(new Version(0, 0, 0), true, patchVersion, false), 0, null));
 
 		ArrayList list = new ArrayList(1);
 		list.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, iuPatchDescription.getId(), iuPatchDescription.getVersion()));
