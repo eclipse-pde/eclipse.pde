@@ -26,6 +26,7 @@ import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -47,6 +48,8 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.ViewPart;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 public class LogView extends ViewPart implements ILogListener {
 	public static final String P_LOG_WARNING = "warning"; //$NON-NLS-1$
@@ -56,9 +59,9 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final String P_LOG_LIMIT = "limit"; //$NON-NLS-1$
 	public static final String P_USE_LIMIT = "useLimit"; //$NON-NLS-1$
 	public static final String P_SHOW_ALL_SESSIONS = "allSessions"; //$NON-NLS-1$
-	private static final String P_COLUMN_1 = "column2"; //$NON-NLS-1$
-	private static final String P_COLUMN_2 = "column3"; //$NON-NLS-1$
-	private static final String P_COLUMN_3 = "column4"; //$NON-NLS-1$
+	protected static final String P_COLUMN_1 = "column2"; //$NON-NLS-1$
+	protected static final String P_COLUMN_2 = "column3"; //$NON-NLS-1$
+	protected static final String P_COLUMN_3 = "column4"; //$NON-NLS-1$
 	public static final String P_ACTIVATE = "activate"; //$NON-NLS-1$
 	public static final String P_SHOW_FILTER_TEXT = "show_filter_text"; //$NON-NLS-1$
 	public static final String P_ORDER_TYPE = "orderType"; //$NON-NLS-1$
@@ -492,7 +495,7 @@ public class LogView extends ViewPart implements ILogListener {
 				}
 				return false;
 			}
-		});
+		}, true);
 		fFilteredTree.setInitialText(Messages.LogView_show_filter_initialText);
 		fTree = fFilteredTree.getViewer().getTree();
 		fTree.setLinesVisible(true);
@@ -1165,29 +1168,6 @@ public class LogView extends ViewPart implements ILogListener {
 		if (fMemento.getString(P_SHOW_ALL_SESSIONS) == null) {
 			fMemento.putString(P_SHOW_ALL_SESSIONS, "true"); //$NON-NLS-1$
 		}
-		Integer width = fMemento.getInteger(P_COLUMN_1);
-		if (width == null || width.intValue() == 0) {
-			fMemento.putInteger(P_COLUMN_1, 300);
-		}
-		width = fMemento.getInteger(P_COLUMN_2);
-		if (width == null || width.intValue() == 0) {
-			fMemento.putInteger(P_COLUMN_2, 150);
-		}
-		width = fMemento.getInteger(P_COLUMN_3);
-		if (width == null || width.intValue() == 0) {
-			fMemento.putInteger(P_COLUMN_3, 150);
-		}
-		if (fMemento.getString(P_ACTIVATE) == null) {
-			fMemento.putString(P_ACTIVATE, "true"); //$NON-NLS-1$
-		}
-		if (fMemento.getBoolean(P_SHOW_FILTER_TEXT) == null) {
-			fMemento.putBoolean(P_SHOW_FILTER_TEXT, true);
-		}
-		fMemento.putInteger(P_ORDER_VALUE, DESCENDING);
-		fMemento.putInteger(P_ORDER_TYPE, DATE);
-		if (fMemento.getInteger(P_GROUP_BY) == null) {
-			fMemento.putInteger(P_GROUP_BY, GROUP_BY_NONE);
-		}
 	}
 
 	public void saveState(IMemento memento) {
@@ -1520,42 +1500,36 @@ public class LogView extends ViewPart implements ILogListener {
 	 * @return the plugin preferences
 	 */
 	private Preferences getLogPreferences() {
-		return Activator.getDefault().getPluginPreferences();
+		return (new InstanceScope()).getNode(Activator.PLUGIN_ID);
 	}
 
 	private void readSettings() {
 		IDialogSettings s = getLogSettings();
-		Preferences p = getLogPreferences();
-		if (s == null || p == null) {
+		if (s == null) {
 			initializeMemento();
-			return;
-		}
-		try {
+		} else {
 			fMemento.putString(P_USE_LIMIT, s.getBoolean(P_USE_LIMIT) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_LOG_INFO, s.getBoolean(P_LOG_INFO) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_LOG_OK, s.getBoolean(P_LOG_OK) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_LOG_WARNING, s.getBoolean(P_LOG_WARNING) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_LOG_ERROR, s.getBoolean(P_LOG_ERROR) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_SHOW_ALL_SESSIONS, s.getBoolean(P_SHOW_ALL_SESSIONS) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-			fMemento.putInteger(P_LOG_LIMIT, s.getInt(P_LOG_LIMIT));
-			fMemento.putInteger(P_COLUMN_1, p.getInt(P_COLUMN_1) > 0 ? p.getInt(P_COLUMN_1) : 300);
-			fMemento.putInteger(P_COLUMN_2, p.getInt(P_COLUMN_2) > 0 ? p.getInt(P_COLUMN_2) : 150);
-			fMemento.putInteger(P_COLUMN_3, p.getInt(P_COLUMN_3) > 0 ? p.getInt(P_COLUMN_3) : 150);
-			fMemento.putString(P_ACTIVATE, p.getBoolean(P_ACTIVATE) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-			int order = p.getInt(P_ORDER_VALUE);
-			fMemento.putInteger(P_ORDER_VALUE, order == 0 ? DESCENDING : order);
-			fMemento.putInteger(P_ORDER_TYPE, p.getInt(P_ORDER_TYPE));
-			fMemento.putBoolean(P_SHOW_FILTER_TEXT, p.getBoolean(P_SHOW_FILTER_TEXT));
-			fMemento.putInteger(P_GROUP_BY, p.getInt(P_GROUP_BY));
-		} catch (NumberFormatException e) {
-			fMemento.putInteger(P_LOG_LIMIT, 50);
-			fMemento.putInteger(P_COLUMN_1, 300);
-			fMemento.putInteger(P_COLUMN_2, 150);
-			fMemento.putInteger(P_COLUMN_3, 150);
-			fMemento.putInteger(P_ORDER_TYPE, DATE);
-			fMemento.putInteger(P_ORDER_VALUE, DESCENDING);
-			fMemento.putInteger(P_GROUP_BY, GROUP_BY_NONE);
+			try {
+				fMemento.putInteger(P_LOG_LIMIT, s.getInt(P_LOG_LIMIT));
+			} catch (NumberFormatException e) {
+				fMemento.putInteger(P_LOG_LIMIT, 50);
+			}
 		}
+
+		Preferences p = getLogPreferences(); // never returns null
+		fMemento.putInteger(P_COLUMN_1, p.getInt(P_COLUMN_1, 300));
+		fMemento.putInteger(P_COLUMN_2, p.getInt(P_COLUMN_2, 150));
+		fMemento.putInteger(P_COLUMN_3, p.getInt(P_COLUMN_3, 150));
+		fMemento.putBoolean(P_ACTIVATE, p.getBoolean(P_ACTIVATE, true));
+		fMemento.putInteger(P_ORDER_VALUE, p.getInt(P_ORDER_VALUE, DESCENDING));
+		fMemento.putInteger(P_ORDER_TYPE, p.getInt(P_ORDER_TYPE, LogView.DATE));
+		fMemento.putBoolean(P_SHOW_FILTER_TEXT, p.getBoolean(P_SHOW_FILTER_TEXT, true));
+		fMemento.putInteger(P_GROUP_BY, p.getInt(P_GROUP_BY, LogView.GROUP_BY_NONE));
 	}
 
 	private void writeSettings() {
@@ -1578,15 +1552,19 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private void writeViewSettings() {
 		Preferences preferences = getLogPreferences();
-		preferences.setValue(P_COLUMN_1, fMemento.getInteger(P_COLUMN_1).intValue());
-		preferences.setValue(P_COLUMN_2, fMemento.getInteger(P_COLUMN_2).intValue());
-		preferences.setValue(P_COLUMN_3, fMemento.getInteger(P_COLUMN_3).intValue());
-		preferences.setValue(P_ACTIVATE, fMemento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
-		int order = fMemento.getInteger(P_ORDER_VALUE).intValue();
-		preferences.setValue(P_ORDER_VALUE, order == 0 ? DESCENDING : order);
-		preferences.setValue(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
-		preferences.setValue(P_SHOW_FILTER_TEXT, fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue());
-		preferences.setValue(P_GROUP_BY, fMemento.getInteger(P_GROUP_BY).intValue());
+		preferences.putInt(P_COLUMN_1, fMemento.getInteger(P_COLUMN_1).intValue());
+		preferences.putInt(P_COLUMN_2, fMemento.getInteger(P_COLUMN_2).intValue());
+		preferences.putInt(P_COLUMN_3, fMemento.getInteger(P_COLUMN_3).intValue());
+		preferences.putBoolean(P_ACTIVATE, fMemento.getBoolean(P_ACTIVATE).booleanValue());
+		preferences.putInt(P_ORDER_VALUE, fMemento.getInteger(P_ORDER_VALUE).intValue());
+		preferences.putInt(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
+		preferences.putBoolean(P_SHOW_FILTER_TEXT, fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue());
+		preferences.putInt(P_GROUP_BY, fMemento.getInteger(P_GROUP_BY).intValue());
+		try {
+			preferences.flush();
+		} catch (BackingStoreException e) {
+			// empty
+		}
 	}
 
 	public void sortByDateDescending() {
