@@ -18,6 +18,7 @@ public class Messages extends NLS {
 	public static String ApiType_1;
 	public static String ApiType_2;
 	public static String ApiType_3;
+	public static String ApiScope_0;
 	
 	static {
 		// initialize resource bundle

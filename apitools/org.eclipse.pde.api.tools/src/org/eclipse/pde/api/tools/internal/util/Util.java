@@ -107,6 +107,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -2548,5 +2549,26 @@ public final class Util {
 			return (eeValue >= addedProfile) && (eeValue < removedProfile); 
 		}
 		return eeValue >= addedProfile;
+	}
+	
+	public static String getApiElementType(int type) {
+		switch(type) {
+			case IApiElement.API_TYPE_CONTAINER :
+				return "API_TYPE_CONTAINER"; //$NON-NLS-1$
+			case IApiElement.API_TYPE_ROOT :
+				return "API_TYPE_ROOT"; //$NON-NLS-1$
+			case IApiElement.BASELINE :
+				return "BASELINE"; //$NON-NLS-1$
+			case IApiElement.COMPONENT :
+				return "COMPONENT"; //$NON-NLS-1$
+			case IApiElement.FIELD :
+				return "FIELD"; //$NON-NLS-1$
+			case IApiElement.METHOD :
+				return "METHOD"; //$NON-NLS-1$
+			case IApiElement.TYPE :
+				return "TYPE"; //$NON-NLS-1$
+			default:
+				return "UNKNOWN"; //$NON-NLS-1$
+		}
 	}
 }

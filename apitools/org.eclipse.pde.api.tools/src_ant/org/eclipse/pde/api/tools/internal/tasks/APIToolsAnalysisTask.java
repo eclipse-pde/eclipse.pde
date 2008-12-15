@@ -411,12 +411,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	public static final String BUNDLE_VERSION = "bundleVersion"; //$NON-NLS-1$
 	public static final String COMPATIBILITY = "compatibility"; //$NON-NLS-1$
 	
-	private static final String CURRENT = "currentProfile"; //$NON-NLS-1$
-	
-	private static final String CURRENT_PROFILE_NAME = "current_profile"; //$NON-NLS-1$
 	private static final Summary[] NO_SUMMARIES = new Summary[0];
-	private static final String REFERENCE = "reference"; //$NON-NLS-1$
-	private static final String REFERENCE_PROFILE_NAME = "reference_profile"; //$NON-NLS-1$
 	public static final String USAGE = "usage"; //$NON-NLS-1$
 
 	private Set excludedElement;
@@ -537,16 +532,16 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * @throws BuildException exception is thrown if anything goes wrong during the verification
 	 */
 	public void execute() throws BuildException {
-		if (this.baselineLocation == null
-				|| this.profileLocation == null
+		if (this.referenceBaselineLocation == null
+				|| this.currentBaselineLocation == null
 				|| this.reportLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(
 				Messages.bind(Messages.printArguments,
 					new String[] {
-						this.baselineLocation,
-						this.profileLocation,
+						this.referenceBaselineLocation,
+						this.currentBaselineLocation,
 						this.reportLocation,
 					})
 			);
@@ -555,8 +550,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		if (this.debug) {
-			System.out.println("reference : " + this.baselineLocation); //$NON-NLS-1$
-			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
+			System.out.println("reference : " + this.referenceBaselineLocation); //$NON-NLS-1$
+			System.out.println("baseline to compare : " + this.currentBaselineLocation); //$NON-NLS-1$
 			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
 			if (this.filters != null) {
 				System.out.println("filter store : " + this.filters); //$NON-NLS-1$
@@ -577,27 +572,27 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		if (this.debug) {
 			time = System.currentTimeMillis();
 		}
-		File referenceInstallDir = extractSDK(REFERENCE, this.baselineLocation);
+		File referenceInstallDir = extractSDK(REFERENCE, this.referenceBaselineLocation);
 
-		File profileInstallDir = extractSDK(CURRENT, this.profileLocation);
+		File baselineInstallDir = extractSDK(CURRENT, this.currentBaselineLocation);
 		if (this.debug) {
-			System.out.println("Preparation of profile installation : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("Preparation of baseline installation : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
 		// run the comparison
-		// create profile for the reference
-		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
-		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(profileInstallDir), this.eeFileLocation);
+		// create baseline for the reference
+		IApiBaseline referenceBaseline = createBaseline(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
+		IApiBaseline currentBaseline = createBaseline(CURRENT_PROFILE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
 		
 		if (this.debug) {
-			System.out.println("Creation of both profiles : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("Creation of both baselines : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
 		Map allProblems = new HashMap();
 		List allNonApiBundles = new ArrayList();
 		List allApiBundles = new ArrayList();
 		try {
-			IApiComponent[] apiComponents = currentProfile.getApiComponents();
+			IApiComponent[] apiComponents = currentBaseline.getApiComponents();
 			int length = apiComponents.length;
 			int apiToolsComponents = 0;
 			Set visitedApiComponentNames = new HashSet();
@@ -614,7 +609,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				allApiBundles.add(name);
 				BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 				try {
-					analyzer.analyzeComponent(null, getFilterStore(name), this.properties, referenceProfile, apiComponent, null, null, new NullProgressMonitor());
+					analyzer.analyzeComponent(null, getFilterStore(name), this.properties, referenceBaseline, apiComponent, null, null, new NullProgressMonitor());
 					IApiProblem[] problems = analyzer.getProblems();
 					// remove duplicates
 					problems = removeDuplicates(problems);
@@ -629,27 +624,27 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				}
 			}
 			if (debug) {
-				System.out.println("Total number of components in current profile :" + length); //$NON-NLS-1$
-				System.out.println("Total number of api tools components in current profile :" + allApiBundles.size()); //$NON-NLS-1$
+				System.out.println("Total number of components in current baseline :" + length); //$NON-NLS-1$
+				System.out.println("Total number of api tools components in current baseline :" + allApiBundles.size()); //$NON-NLS-1$
 				System.out.println("Details:"); //$NON-NLS-1$
 				Collections.sort(allApiBundles);
 				for (Iterator iterator = allApiBundles.iterator(); iterator.hasNext(); ) {
 					System.out.println(iterator.next());
 				}
 				System.out.println("=============================================================================="); //$NON-NLS-1$
-				System.out.println("Total number of non-api tools components in current profile :" + allNonApiBundles.size()); //$NON-NLS-1$
+				System.out.println("Total number of non-api tools components in current baseline :" + allNonApiBundles.size()); //$NON-NLS-1$
 				System.out.println("Details:"); //$NON-NLS-1$
 				Collections.sort(allNonApiBundles);
 				for (Iterator iterator = allNonApiBundles.iterator(); iterator.hasNext(); ) {
 					System.out.println(iterator.next());
 				}
 			}
-			IApiComponent[] baselineApiComponents = referenceProfile.getApiComponents();
+			IApiComponent[] baselineApiComponents = referenceBaseline.getApiComponents();
 			for (int i = 0, max = baselineApiComponents.length; i < max; i++) {
 				IApiComponent apiComponent = baselineApiComponents[i];
 				String id = apiComponent.getId();
 				if (!visitedApiComponentNames.remove(id)) {
-					//remove component in the current profile
+					//remove component in the current baseline
 					IApiProblem problem = ApiProblemFactory.newApiProblem(id,
 							null,
 							new String[] { id },
@@ -681,10 +676,10 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				System.out.println("API tools verification check : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				time = System.currentTimeMillis();
 			}
-			referenceProfile.dispose();
-			currentProfile.dispose();
-			deleteProfile(this.baselineLocation, referenceInstallDir);
-			deleteProfile(this.profileLocation, profileInstallDir);
+			referenceBaseline.dispose();
+			currentBaseline.dispose();
+			deleteBaseline(this.referenceBaselineLocation, referenceInstallDir);
+			deleteBaseline(this.currentBaselineLocation, baselineInstallDir);
 			if (this.debug) {
 				System.out.println("Cleanup : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -973,7 +968,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		}
 	}
 	/**
-	 * Set the location of the current product or profile that you want to compare against
+	 * Set the location of the current product or baseline that you want to compare against
 	 * the reference baseline.
 	 * 
 	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to 
@@ -981,10 +976,10 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * Eclipse executable.
 	 * </p>
 	 *
-	 * @param profileLocation the given location for the profile to analyze
+	 * @param baselineLocation the given location for the baseline to analyze
 	 */
-	public void setProfile(String profileLocation) {
-		this.profileLocation = profileLocation;
+	public void setProfile(String baselineLocation) {
+		this.currentBaselineLocation = baselineLocation;
 	}
 	/**
 	 * Set the location of the reference baseline.
@@ -995,10 +990,10 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * </p>
 	 * <p>The location is set using an absolute path.</p>
 	 *
-	 * @param baselineLocation the given location for the reference profile to analyze
+	 * @param baselineLocation the given location for the reference baseline to analyze
 	 */
 	public void setBaseline(String baselineLocation) {
-		this.baselineLocation = baselineLocation;
+		this.referenceBaselineLocation = baselineLocation;
 	}
 	/**
 	 * Set the output location where the reports will be generated.
@@ -1010,7 +1005,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * <p>A special folder called "allNonApiBundles" is also created in this folder that contains a xml file called
 	 * "report.xml". This file lists all the bundles that are not using the api tooling nature.</p>
 	 * 
-	 * @param profileLocation the given location for the reference profile to analyze
+	 * @param baselineLocation the given location for the reference baseline to analyze
 	 */
 	public void setReport(String reportLocation) {
 		this.reportLocation = reportLocation;

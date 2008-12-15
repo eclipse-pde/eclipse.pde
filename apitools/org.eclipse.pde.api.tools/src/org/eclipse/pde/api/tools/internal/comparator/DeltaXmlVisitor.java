@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.internal.comparator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
+import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -52,6 +53,7 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor#visit(org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta)
 	 */
 	public boolean visit(IDelta delta) {
+		if (delta == ApiComparator.NO_DELTA) return false;
 		if (delta.getChildren().length == 0) {
 			processLeafDelta(delta);
 		}

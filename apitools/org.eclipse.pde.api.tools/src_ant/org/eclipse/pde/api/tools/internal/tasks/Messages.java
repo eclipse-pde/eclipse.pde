@@ -78,6 +78,8 @@ public class Messages extends NLS {
 	public static String api_generation_projectLocationNotADirectory;
 	public static String api_generation_targetFolderNotADirectory;
 	public static String api_generation_invalidBinaryLocation;
+	
+	public static String comparison_invalidRegularExpression;
 
 	static {
 		// initialize resource bundle

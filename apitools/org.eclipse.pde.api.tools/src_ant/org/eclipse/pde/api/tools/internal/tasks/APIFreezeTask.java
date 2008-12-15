@@ -172,28 +172,22 @@ public class APIFreezeTask extends CommonUtilsTask {
 			}
 		}
 	}
-
-	private static final String CURRENT = "currentProfile"; //$NON-NLS-1$
-	private static final String CURRENT_PROFILE_NAME = "current_profile"; //$NON-NLS-1$
-	private static final String REFERENCE = "reference"; //$NON-NLS-1$
-	private static final String REFERENCE_PROFILE_NAME = "reference_profile"; //$NON-NLS-1$
-
 	private boolean debug;
 
 	private String eeFileLocation;
 	private String excludeListLocation;
 
 	public void execute() throws BuildException {
-		if (this.baselineLocation == null
-				|| this.profileLocation == null
+		if (this.referenceBaselineLocation == null
+				|| this.currentBaselineLocation == null
 				|| this.reportLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(
 				Messages.bind(Messages.printArguments,
 					new String[] {
-						this.baselineLocation,
-						this.profileLocation,
+						this.referenceBaselineLocation,
+						this.currentBaselineLocation,
 						this.reportLocation,
 					})
 			);
@@ -202,8 +196,8 @@ public class APIFreezeTask extends CommonUtilsTask {
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		if (this.debug) {
-			System.out.println("reference : " + this.baselineLocation); //$NON-NLS-1$
-			System.out.println("profile to compare : " + this.profileLocation); //$NON-NLS-1$
+			System.out.println("reference : " + this.referenceBaselineLocation); //$NON-NLS-1$
+			System.out.println("baseline to compare : " + this.currentBaselineLocation); //$NON-NLS-1$
 			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
 			if (this.excludeListLocation != null) {
 				System.out.println("exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
@@ -216,34 +210,34 @@ public class APIFreezeTask extends CommonUtilsTask {
 		if (this.debug) {
 			time = System.currentTimeMillis();
 		}
-		File referenceInstallDir = extractSDK(REFERENCE, this.baselineLocation);
+		File referenceInstallDir = extractSDK(REFERENCE, this.referenceBaselineLocation);
 
-		File profileInstallDir = extractSDK(CURRENT, this.profileLocation);
+		File baselineInstallDir = extractSDK(CURRENT, this.currentBaselineLocation);
 		if (this.debug) {
 			System.out.println("Extraction of both archives : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
 		// run the comparison
-		// create profile for the reference
-		IApiBaseline referenceProfile = createProfile(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
-		IApiBaseline currentProfile = createProfile(CURRENT_PROFILE_NAME, getInstallDir(profileInstallDir), this.eeFileLocation);
+		// create baseline for the reference
+		IApiBaseline referenceBaseline = createBaseline(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
+		IApiBaseline currentBaseline = createBaseline(CURRENT_PROFILE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
 		
 		IDelta delta = null;
 		if (this.debug) {
-			System.out.println("Creation of both profiles : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("Creation of both baselines : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
 		try {
-			delta = ApiComparator.compare(referenceProfile, currentProfile, VisibilityModifiers.API, true);
+			delta = ApiComparator.compare(referenceBaseline, currentBaseline, VisibilityModifiers.API, true);
 		} finally {
 			if (this.debug) {
 				System.out.println("API freeze check : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				time = System.currentTimeMillis();
 			}
-			referenceProfile.dispose();
-			currentProfile.dispose();
-			deleteProfile(this.baselineLocation, referenceInstallDir);
-			deleteProfile(this.profileLocation, profileInstallDir);
+			referenceBaseline.dispose();
+			currentBaseline.dispose();
+			deleteBaseline(this.referenceBaselineLocation, referenceInstallDir);
+			deleteBaseline(this.currentBaselineLocation, baselineInstallDir);
 			if (this.debug) {
 				System.out.println("Cleanup : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				time = System.currentTimeMillis();
@@ -266,7 +260,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 				if (!outputDir.exists()) {
 					if (!outputDir.mkdirs()) {
 						throw new BuildException(
-							Messages.bind(Messages.errorCreatingParentReportFile, this.reportLocation));
+							Messages.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
 					}
 				}
 			}
@@ -343,7 +337,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 		this.excludeListLocation = excludeListLocation;
 	}
 	/**
-	 * Set the location of the current product or profile that you want to compare against
+	 * Set the location of the current product or baseline that you want to compare against
 	 * the reference baseline.
 	 * 
 	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to 
@@ -351,10 +345,10 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 * Eclipse executable.
 	 * </p>
 	 *
-	 * @param profileLocation the given location for the profile to analyze
+	 * @param baselineLocation the given location for the baseline to analyze
 	 */
-	public void setProfile(String profileLocation) {
-		this.profileLocation = profileLocation;
+	public void setProfile(String baselineLocation) {
+		this.currentBaselineLocation = baselineLocation;
 	}
 	/**
 	 * Set the location of the reference baseline.
@@ -364,10 +358,10 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 * Eclipse executable.
 	 * </p>
 	 *
-	 * @param baselineLocation the given location for the reference profile to analyze
+	 * @param baselineLocation the given location for the reference baseline to analyze
 	 */
 	public void setBaseline(String baselineLocation) {
-		this.baselineLocation = baselineLocation;
+		this.referenceBaselineLocation = baselineLocation;
 	}
 	/**
 	 * Set the given report file name to be generated.

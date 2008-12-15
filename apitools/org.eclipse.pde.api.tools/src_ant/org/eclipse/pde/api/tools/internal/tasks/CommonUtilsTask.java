@@ -43,15 +43,21 @@ abstract class CommonUtilsTask extends Task {
 	protected static final String ISO_8859_1 = "ISO-8859-1"; //$NON-NLS-1$
 	private static final String PLUGINS_FOLDER_NAME = "plugins"; //$NON-NLS-1$
 
-	protected static IApiBaseline createProfile(String profileName, File dir, String eeFileLocation) {
+	protected static final String CURRENT = "currentBaseline"; //$NON-NLS-1$
+	protected static final String CURRENT_PROFILE_NAME = "current_baseline"; //$NON-NLS-1$
+	protected static final String REFERENCE = "referenceBaseline"; //$NON-NLS-1$
+	protected static final String REFERENCE_PROFILE_NAME = "reference_baseline"; //$NON-NLS-1$
+
+
+	protected static IApiBaseline createBaseline(String baselineName, File dir, String eeFileLocation) {
 		try {
 			IApiBaseline baseline = null;
 			if (ApiPlugin.isRunningInFramework()) {
-				baseline = ApiModelFactory.newApiBaseline(profileName);
+				baseline = ApiModelFactory.newApiBaseline(baselineName);
 			} else if (eeFileLocation != null) {
-				baseline = ApiModelFactory.newApiBaseline(profileName, new File(eeFileLocation));
+				baseline = ApiModelFactory.newApiBaseline(baselineName, new File(eeFileLocation));
 			} else {
-				baseline = ApiModelFactory.newApiBaseline(profileName, Util.getEEDescriptionFile());
+				baseline = ApiModelFactory.newApiBaseline(baselineName, Util.getEEDescriptionFile());
 			}
 			// create a component for each jar/directory in the folder
 			File[] files = dir.listFiles();
@@ -79,7 +85,7 @@ abstract class CommonUtilsTask extends Task {
 			return null;
 		}
 	}
-	protected static void deleteProfile(String referenceLocation, File folder) {
+	protected static void deleteBaseline(String referenceLocation, File folder) {
 		if (isArchive(referenceLocation)) {
 			Util.delete(folder.getParentFile());
 		}
@@ -202,8 +208,8 @@ abstract class CommonUtilsTask extends Task {
 	}
 	protected boolean debug;
 	protected String eeFileLocation;
-	protected String profileLocation;
-	protected String baselineLocation;
+	protected String currentBaselineLocation;
+	protected String referenceBaselineLocation;
 
 	protected String reportLocation;
 }
