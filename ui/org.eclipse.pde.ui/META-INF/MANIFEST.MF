@@ -53,7 +53,6 @@ Export-Package:
  org.eclipse.pde.internal.ui.wizards.product;x-friends:="org.eclipse.pde.ui.templates",
  org.eclipse.pde.internal.ui.wizards.provisioner;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.provisioner.p2;x-internal:=true,
- org.eclipse.pde.internal.ui.wizards.provisioner.update;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.site;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.target;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.templates;x-internal:=true,
