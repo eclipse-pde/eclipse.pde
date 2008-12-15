@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,10 @@ public interface ISite extends ISiteObject {
 
 	String P_DESCRIPTION = "description"; //$NON-NLS-1$
 
+	String P_DIGEST_URL = "digestURL"; //$NON-NLS-1$
+
+	String P_ASSOCIATE_SITES_URL = "associateSitesURL"; //$NON-NLS-1$
+
 	void setType(String type) throws CoreException;
 
 	String getType();
@@ -32,9 +36,17 @@ public interface ISite extends ISiteObject {
 
 	void setMirrorsURL(String url) throws CoreException;
 
+	void setDigestURL(String url) throws CoreException;
+
+	void setAssociateSitesURL(String url) throws CoreException;
+
 	String getURL();
 
 	String getMirrorsURL();
+
+	String getDigestURL();
+
+	String getAssociateSitesURL();
 
 	ISiteDescription getDescription();
 

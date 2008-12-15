@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,15 +13,10 @@ package org.eclipse.pde.internal.core.site;
 import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Vector;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.internal.core.isite.ISite;
-import org.eclipse.pde.internal.core.isite.ISiteArchive;
-import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
-import org.eclipse.pde.internal.core.isite.ISiteDescription;
-import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -34,6 +29,8 @@ public class Site extends SiteObject implements ISite {
 	private String type;
 	private String url;
 	private String mirrorsUrl;
+	private String digestUrl;
+	private String associateSitesUrl;
 	private ISiteDescription description;
 
 	/**
@@ -68,6 +65,40 @@ public class Site extends SiteObject implements ISite {
 	 */
 	public String getURL() {
 		return url;
+	}
+
+	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISite#setDigestURL(String)
+	 */
+	public void setDigestURL(String url) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.digestUrl;
+		this.digestUrl = url;
+		firePropertyChanged(P_DIGEST_URL, oldValue, url);
+	}
+
+	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISite#getDigestURL()
+	 */
+	public String getDigestURL() {
+		return digestUrl;
+	}
+
+	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISite#setAssociateSitesURL(String)
+	 */
+	public void setAssociateSitesURL(String url) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.associateSitesUrl;
+		this.associateSitesUrl = url;
+		firePropertyChanged(P_ASSOCIATE_SITES_URL, oldValue, url);
+	}
+
+	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISite#getAssociateSitesURL()
+	 */
+	public String getAssociateSitesURL() {
+		return associateSitesUrl;
 	}
 
 	/**
@@ -211,12 +242,16 @@ public class Site extends SiteObject implements ISite {
 		type = null;
 		url = null;
 		mirrorsUrl = null;
+		digestUrl = null;
+		associateSitesUrl = null;
 	}
 
 	protected void parse(Node node) {
-		type = getNodeAttribute(node, "type"); //$NON-NLS-1$
-		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
-		mirrorsUrl = getNodeAttribute(node, "mirrorsURL"); //$NON-NLS-1$
+		type = getNodeAttribute(node, P_TYPE);
+		url = getNodeAttribute(node, P_URL);
+		mirrorsUrl = getNodeAttribute(node, P_MIRRORS_URL);
+		digestUrl = getNodeAttribute(node, P_DIGEST_URL);
+		associateSitesUrl = getNodeAttribute(node, P_ASSOCIATE_SITES_URL);
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -243,7 +278,7 @@ public class Site extends SiteObject implements ISite {
 			((SiteCategoryDefinition) def).parse(child);
 			((SiteCategoryDefinition) def).setInTheModel(true);
 			categoryDefs.add(def);
-		} else if (tag.equals("description")) { //$NON-NLS-1$
+		} else if (tag.equals(P_DESCRIPTION)) {
 			if (description != null)
 				return;
 			description = getModel().getFactory().createDescription(this);
@@ -259,6 +294,10 @@ public class Site extends SiteObject implements ISite {
 			setURL(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_MIRRORS_URL)) {
 			setMirrorsURL(newValue != null ? newValue.toString() : null);
+		} else if (name.equals(P_DIGEST_URL)) {
+			setDigestURL(newValue != null ? newValue.toString() : null);
+		} else if (name.equals(P_ASSOCIATE_SITES_URL)) {
+			setAssociateSitesURL(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_DESCRIPTION) && newValue instanceof ISiteDescription) {
 			setDescription((ISiteDescription) newValue);
 		} else
@@ -269,9 +308,11 @@ public class Site extends SiteObject implements ISite {
 		writer.print(indent + "<site"); //$NON-NLS-1$
 		String indent2 = indent + INDENT;
 		String indenta = indent + INDENT + INDENT;
-		writeIfDefined(indenta, writer, "type", getType()); //$NON-NLS-1$
-		writeIfDefined(indenta, writer, "url", getURL()); //$NON-NLS-1$
-		writeIfDefined(indenta, writer, "mirrorsURL", getMirrorsURL()); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, P_TYPE, getType());
+		writeIfDefined(indenta, writer, P_URL, getURL());
+		writeIfDefined(indenta, writer, P_MIRRORS_URL, getMirrorsURL());
+		writeIfDefined(indenta, writer, P_DIGEST_URL, getDigestURL());
+		writeIfDefined(indenta, writer, P_ASSOCIATE_SITES_URL, getAssociateSitesURL());
 		writer.println(">"); //$NON-NLS-1$
 
 		if (description != null) {
