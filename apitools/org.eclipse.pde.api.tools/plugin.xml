@@ -175,7 +175,7 @@
  <extension
        point="org.eclipse.team.core.fileTypes">
     <fileTypes
-          extension=".api_filters"
+          extension="api_filters"
           type="text">
     </fileTypes>
  </extension>
