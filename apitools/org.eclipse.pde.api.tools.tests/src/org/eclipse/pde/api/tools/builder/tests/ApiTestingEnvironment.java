@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -55,6 +56,11 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Whether to revert vs. reset the workspace
 	 */
 	private boolean fRevert = false;
+	
+	/**
+	 * The default path to be used to revert the workspace to (if revert is enabled)
+	 */
+	private IPath fRevertSourcePath = null;
 	
 	/**
 	 * Modified files for each build so that we can undo the changes incrementally
@@ -122,6 +128,39 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			ApiPlugin.log(ce);
 		}
 		return jproject;
+	}
+	
+	/**
+	 * Performs a clean build on the project using the builder with the given builder id
+	 * @param project
+	 * @param builderid
+	 */
+	public void cleanBuild(IProject project, String builderid) {
+		try {
+			getProject(project.getName()).build(IncrementalProjectBuilder.CLEAN_BUILD, builderid, null, null);
+		} catch (CoreException e) {}
+	}
+	
+	/**
+	 * Incrementally builds the given project using the builder with the given builder id
+	 * @param project
+	 * @param builderid
+	 */
+	public void incrementalBuild(IProject project, String builderid) {
+		try {
+			getProject(project.getName()).build(IncrementalProjectBuilder.INCREMENTAL_BUILD, builderid, null, null);
+		} catch (CoreException e) {}
+	}
+	
+	/**
+	 * Performs a full build on the given project using the builder with the given builder id
+	 * @param project
+	 * @param builderid
+	 */
+	public void fullBuild(IProject project, String builderid) {
+		try {
+			getProject(project.getName()).build(IncrementalProjectBuilder.FULL_BUILD, builderid, null, null);
+		} catch (CoreException e) {}
 	}
 	
 	/**
@@ -407,9 +446,32 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	}
 	
 	/**
+	 * Sets the default revert source path to the given path.
+	 * This path is only consulted if the workspace is to be reverted. Setting the path to <code>null</code>
+	 * will result in all workspace modifications being deleted if a call to {@link #revertWorkspace()} is made.
+	 * @param path
+	 */
+	protected void setRevertSourcePath(IPath path) {
+		fRevertSourcePath = path;
+	}
+	
+	/**
+	 * @return the currently set source path to use when reverting changes to the workspace.
+	 */
+	protected IPath getRevertSourcePath() {
+		return fRevertSourcePath;
+	}
+	
+	/**
 	 * Reverts changes in the workspace - added, removed, changed files
 	 */
 	public void revertWorkspace() {
+		/*if(fRevertSourcePath == null) {
+			fAdded.clear();
+			fChanged.clear();
+			fRemoved.clear();
+			return;
+		}*/
 		
 		// remove each added file
 		Iterator<IPath> iterator = fAdded.iterator();
@@ -546,6 +608,17 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		}
 		return super.addFile(root, fileName, contents);
 	}	
+	
+	public void setBuildOrder(IProject[] projects) {
+		if(projects == null) {
+			setBuildOrder((String[])null);
+		}
+		String[] pnames = new String[projects.length];
+		for(int i = 0; i < projects.length; i++) {
+			pnames[i] = projects[i].getName();
+		}
+		setBuildOrder(pnames);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#addClass(org.eclipse.core.runtime.IPath, java.lang.String, java.lang.String)

@@ -16,10 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.test.performance.Dimension;
 
 /**
@@ -48,14 +45,14 @@ public class FullSourceBuildTests extends PerformanceTest {
 	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#getBaselineLocation()
 	 */
 	protected String getBaselineLocation() {
-		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf").append("bin-baseline.zip").toOSString();
+		return getTestSourcePath().append("bin-baseline.zip").toOSString();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#getWorkspaceLocation()
 	 */
 	protected String getWorkspaceLocation() {
-		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf").append("source-ws.zip").toOSString();
+		return getTestSourcePath().append("source-ws.zip").toOSString();
 	}	
 	
 	/**
@@ -70,10 +67,6 @@ public class FullSourceBuildTests extends PerformanceTest {
 		// get everything built
 		fullBuild();
 		IProject[] ps = getEnv().getWorkspace().getRoot().getProjects();
-		IJavaProject[] projects = new IJavaProject[ps.length];
-		for (int i = 0; i < ps.length; i++) {
-			projects[i] = JavaCore.create(ps[i]);
-		}
 		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(ps);
 		IProject[] order = po.projects;
 		
@@ -113,10 +106,6 @@ public class FullSourceBuildTests extends PerformanceTest {
 		// get everything built
 		fullBuild();
 		IProject[] ps = getEnv().getWorkspace().getRoot().getProjects();
-		IJavaProject[] projects = new IJavaProject[ps.length];
-		for (int i = 0; i < ps.length; i++) {
-			projects[i] = JavaCore.create(ps[i]);
-		}
 		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(ps);
 		IProject[] order = po.projects;
 

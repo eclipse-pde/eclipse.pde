@@ -11,25 +11,19 @@
 package org.eclipse.pde.api.tools.builder.tests.performance;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -45,9 +39,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
-import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 /**
  * Base class for performance tests
@@ -68,7 +59,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
 	protected IPath getTestSourcePath() {
-		return new Path("compat");
+		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf");
 	}
 	
 	/* (non-Javadoc)
@@ -90,7 +81,10 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
 			FullSourceBuildTests.class,
-			ApiDescriptionTests.class
+			ApiDescriptionTests.class,
+			IncrementalBuildTests.class,
+			EnumIncrementalBuildTests.class,
+			AnnotationIncrementalBuildTests.class
 		};
 		return classes;
 	}
@@ -179,7 +173,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 				// create the API baseline
 				IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(id);
 				long start = System.currentTimeMillis();
-				System.out.println("Unzipping "+zipPath);
+				System.out.println("Unzipping baseline: "+zipPath);
 				System.out.print("	in "+baselineLocation.toOSString()+"...");
 				Util.unzip(zipPath, baselineLocation.toOSString());
 				System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");	
@@ -193,6 +187,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 				}
 				perfline.addApiComponents(components);
 				manager.addApiBaseline(perfline);
+				System.out.println("Setting default baseline to be: "+perfline.getName());
 				manager.setDefaultApiBaseline(perfline.getName());			
 			}
 			IApiBaseline baseline = manager.getDefaultApiBaseline();
@@ -215,9 +210,16 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		// Modify resources workspace preferences to avoid disturbing tests while running them
 		IEclipsePreferences resourcesPreferences = new InstanceScope().getNode(ResourcesPlugin.PI_RESOURCES);
 		resourcesPreferences.put(ResourcesPlugin.PREF_AUTO_REFRESH, "false");
+		
+		// do not show the dialog if a build fails...will lock the workspace
+		IEclipsePreferences antuiprefs = new InstanceScope().getNode("org.eclipse.ant.ui");
+		antuiprefs.put("errorDialog", "false");
+		
 		workspace.getDescription().setSnapshotInterval(Long.MAX_VALUE);
 		workspace.getDescription().setAutoBuilding(false);
 
+		
+		
 		// Get projects directories
 		long start = System.currentTimeMillis();
 		String fullSourceZipPath = getWorkspaceLocation();
@@ -245,6 +247,12 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 			System.out.println("\t" + projects[i].getName());
 			createExistingProject(projects[i]);
 		}
+		System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");
+		
+		System.out.println("Setting build order of projects...");
+		start = System.currentTimeMillis();
+		IProject[] pjs = getEnv().getWorkspace().computeProjectOrder(getEnv().getWorkspace().getRoot().getProjects()).projects;
+		getEnv().setBuildOrder(pjs);
 		System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");
 	}		
 	
@@ -295,109 +303,6 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		TestSuite suite = new TestSuite(PerformanceTest.class.getName());
 		collectTests(suite);
 		return suite;
-	}
-	
-	/**
-	 * Creates a project contained in the given directory.
-	 * 
-	 * @param projectDir directory containing existing project
-	 */
-	protected void createExistingProject(File projectDir) throws Exception {
-		String projectName = projectDir.getName();
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IProject project = workspace.getRoot().getProject(projectName);
-		IProjectDescription description = workspace.newProjectDescription(projectName);
-		IPath locationPath = new Path(projectDir.getAbsolutePath());
-		description.setLocation(locationPath);
-		
-		// import from file system
-		File importSource = null;
-		// import project from location copying files - use default project
-		// location for this workspace
-		URI locationURI = description.getLocationURI();
-		// if location is null, project already exists in this location or
-		// some error condition occured.
-		assertNotNull("project description location is null", locationURI);
-		importSource = new File(locationURI);
-		IProjectDescription desc = workspace.newProjectDescription(projectName);
-		desc.setBuildSpec(description.getBuildSpec());
-		desc.setComment(description.getComment());
-		desc.setDynamicReferences(description.getDynamicReferences());
-		desc.setNatureIds(description.getNatureIds());
-		desc.setReferencedProjects(description.getReferencedProjects());
-		description = desc;
-
-		project.create(description, null);
-		project.open(null);
-
-		// import operation to import project files
-		List filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
-		ImportOperation operation = new ImportOperation(
-				project.getFullPath(), importSource,
-				FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
-					public String queryOverwrite(String pathString) {
-						return IOverwriteQuery.ALL;
-					}
-				}, filesToImport);
-		operation.setOverwriteResources(true);
-		operation.setCreateContainerStructure(false);
-		operation.run(new NullProgressMonitor());
-	}	
-	
-	/**
-	 * Updates the contents of a workspace file at the specified location (full path),
-	 * with the contents of a local file at the given replacement location (absolute path).
-	 * 
-	 * @param workspaceLocation
-	 * @param replacementLocation
-	 */
-	protected void updateWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
-		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
-		assertTrue("Workspace file does not exist: " + workspaceLocation.toString(), file.exists());
-		File replacement = replacementLocation.toFile();
-		assertTrue("Replacement file does not exist: " + replacementLocation.toOSString(), replacement.exists());
-		FileInputStream stream = new FileInputStream(replacement);
-		file.setContents(stream, false, true, null);
-		stream.close();
-	}
-	
-	/**
-	 * Updates the contents of a workspace file at the specified location (full path),
-	 * with the contents of a local file at the given replacement location (absolute path).
-	 * 
-	 * @param workspaceLocation
-	 * @param replacementLocation
-	 */
-	protected void createWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
-		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
-		assertFalse("Workspace file should not exist: " + workspaceLocation.toString(), file.exists());
-		File replacement = replacementLocation.toFile();
-		assertTrue("Replacement file does not exist: " + replacementLocation.toOSString(), replacement.exists());
-		FileInputStream stream = new FileInputStream(replacement);
-		file.create(stream, false, null);
-		stream.close();
-	}
-	
-	/**
-	 * Deletes the workspace file at the specified location (full path).
-	 * 
-	 * @param workspaceLocation
-	 */
-	protected void deleteWorkspaceFile(IPath workspaceLocation) throws Exception {
-		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
-		assertTrue("Workspace file does not exist: " + workspaceLocation.toString(), file.exists());
-		file.delete(false, null);
-	}	
-	
-	/**
-	 * Returns a path in the local file system to an updated file based on this tests source path
-	 * and filename.
-	 * 
-	 * @param filename name of file to update
-	 * @return path to the file in the local file system
-	 */
-	protected IPath getUpdateFilePath(String filename) {
-		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(filename);
 	}
 	
 	/**

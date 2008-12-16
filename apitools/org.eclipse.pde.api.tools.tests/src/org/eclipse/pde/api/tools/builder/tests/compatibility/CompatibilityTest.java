@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -23,26 +19,19 @@ import java.util.jar.JarFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
-import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 
 /**
@@ -51,11 +40,6 @@ import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
  * @since 1.0
  */
 public abstract class CompatibilityTest extends ApiBuilderTest {
-
-	/**
-	 * 
-	 */
-	public static final String BASELINE = "baseline";
 
 	/**
 	 * Constructor
@@ -205,144 +189,8 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		getEnv().setRevert(false);
-	}
-	
-	/**
-	 * Exports the project as an API component to be used in an API baseline.
-	 * 
-	 * @param project project to export
-	 * @param apiComponent associated API component from the workspace profile
-	 * @param baselineLocation local file system directory to host exported component
-	 */
-	private void exportApiComponent(IProject project, IApiComponent apiComponent, IPath baselineLocation) throws Exception {
-		File root = baselineLocation.toFile();
-		File componentDir = new File(root, project.getName());
-		componentDir.mkdirs();
-		IResource[] members = project.members();
-		// copy root files and manifest
-		for (int i = 0; i < members.length; i++) {
-			IResource res = members[i];
-			if (res.getType() == IResource.FILE) {
-				copyFile(componentDir, (IFile)res);
-			} else if (res.getType() == IResource.FOLDER) {
-				if (res.getName().equals("META-INF")) {
-					File manDir = new File(componentDir, "META-INF");
-					manDir.mkdirs();
-					copyFile(manDir, ((IFolder)res).getFile("MANIFEST.MF"));
-				}
-			}
-		}
-		// copy over .class files
-		IFolder output = project.getFolder("bin");
-		copyFolder(output, componentDir);
-		// API Description
-		ApiSettingsXmlVisitor visitor = new ApiSettingsXmlVisitor(apiComponent);
-		apiComponent.getApiDescription().accept(visitor);
-		String xml = visitor.getXML();
-		File desc = new File(componentDir, ".api_description");
-		desc.createNewFile();
-		FileOutputStream stream = new FileOutputStream(desc);
-		stream.write(xml.getBytes("UTF-8"));
-		stream.close();
-	}
-	
-	/**
-	 * Copy the folder contents to the local file system.
-	 * 
-	 * @param folder workspace folder
-	 * @param dir local directory
-	 */
-	private void copyFolder(IFolder folder, File dir) throws Exception {
-		IResource[] members = folder.members();
-		for (int i = 0; i < members.length; i++) {
-			IResource res = members[i];
-			if (res.getType() == IResource.FILE) {
-				IFile file = (IFile) res;
-				copyFile(dir, file);
-			} else {
-				IFolder nested = (IFolder) res;
-				File next = new File(dir, nested.getName());
-				next.mkdirs();
-				copyFolder(nested, next);
-			}
-		}
-	}
-	
-	/**
-	 * Copies the given file to the given directory.
-	 * 
-	 * @param dir
-	 * @param file
-	 */
-	private void copyFile(File dir, IFile file) throws Exception {
-		File local = new File(dir, file.getName());
-		local.createNewFile();
-		FileOutputStream stream = new FileOutputStream(local);
-		InputStream contents = file.getContents();
-		byte[] bytes = Util.getInputStreamAsByteArray(contents, -1);
-		stream.write(bytes);
-		contents.close();
-		stream.close();
 	}	
 	
-	/**
-	 * Updates the contents of a workspace file at the specified location (full path),
-	 * with the contents of a local file at the given replacement location (absolute path).
-	 * 
-	 * @param workspaceLocation
-	 * @param replacementLocation
-	 */
-	protected void updateWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
-		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
-		assertTrue("Workspace file does not exist: " + workspaceLocation.toString(), file.exists());
-		File replacement = replacementLocation.toFile();
-		assertTrue("Replacement file does not exist: " + replacementLocation.toOSString(), replacement.exists());
-		FileInputStream stream = new FileInputStream(replacement);
-		file.setContents(stream, false, true, null);
-		stream.close();
-		getEnv().changed(workspaceLocation);
-	}
-	
-	/**
-	 * Updates the contents of a workspace file at the specified location (full path),
-	 * with the contents of a local file at the given replacement location (absolute path).
-	 * 
-	 * @param workspaceLocation
-	 * @param replacementLocation
-	 */
-	protected void createWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
-		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
-		assertFalse("Workspace file should not exist: " + workspaceLocation.toString(), file.exists());
-		File replacement = replacementLocation.toFile();
-		assertTrue("Replacement file does not exist: " + replacementLocation.toOSString(), replacement.exists());
-		FileInputStream stream = new FileInputStream(replacement);
-		file.create(stream, false, null);
-		stream.close();
-		getEnv().added(workspaceLocation);
-	}
-	
-	/**
-	 * Deletes the workspace file at the specified location (full path).
-	 * 
-	 * @param workspaceLocation
-	 */
-	protected void deleteWorkspaceFile(IPath workspaceLocation) throws Exception {
-		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
-		assertTrue("Workspace file does not exist: " + workspaceLocation.toString(), file.exists());
-		file.delete(false, null);
-		getEnv().removed(workspaceLocation);
-	}	
-	
-	/**
-	 * Returns a path in the local file system to an updated file based on this tests source path
-	 * and filename.
-	 * 
-	 * @param filename name of file to update
-	 * @return path to the file in the local file system
-	 */
-	protected IPath getUpdateFilePath(String filename) {
-		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(filename);
-	}
 	/**
 	 * Performs a compatibility test. The workspace file at the specified (full workspace path)
 	 * location is updated with a corresponding file from test data. A build is performed
@@ -362,18 +210,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			} else {
 				fullBuild();
 			}
-			IMarker[] jdtMarkers = getEnv().getAllJDTMarkers(workspaceFile);
-			int length = jdtMarkers.length;
-			if (length != 0) {
-				for (int i = 0; i < length; i++) {
-					boolean condition = jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR;
-					if (condition) {
-						System.err.println("workspace file : " + workspaceFile.toOSString());
-						System.err.println(jdtMarkers[i].getAttribute(IMarker.MESSAGE));
-					}
-					assertFalse("Should not be a JDT error", condition);
-				}
-			}
+			expectingNoJDTProblemsFor(workspaceFile);
 			ApiProblem[] problems = getEnv().getProblemsFor(workspaceFile, null);
 			assertProblems(problems);
 	}
