@@ -134,7 +134,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		String textType = file.getName().equals("plugin.xml") || //$NON-NLS-1$
 				file.getName().equals("fragment.xml") ? //$NON-NLS-1$
 		"PLUGIN2" //$NON-NLS-1$
-				: file.getFileExtension(); //$NON-NLS-1$
+				: file.getFileExtension();
 		change.setTextType(textType);
 		parentChange.add(change);
 		fFileChanges.put(file, change);
