@@ -206,10 +206,10 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			case IApiElement.TYPE: {
 				IApiType type = (IApiType) member;
 				if(type.isAnonymous()) {
-					return member.getEnclosingType().getName();
+					return getTypeName(member.getEnclosingType());
 				}
 				else if(type.isLocal()) {
-					String name = member.getEnclosingType().getName();
+					String name = getTypeName(member.getEnclosingType());
 					int idx = name.indexOf('$');
 					if(idx > -1) {
 						return name.substring(0, idx);
@@ -219,7 +219,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 				return member.getName();
 			}
 			default: {
-				return member.getEnclosingType().getName();
+				return getTypeName(member.getEnclosingType());
 			}
 		}
 	}
@@ -232,10 +232,23 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 */
 	protected String getSimpleTypeName(IApiMember member) throws CoreException {
 		switch (member.getType()) {
-			case IApiElement.TYPE:
-				return ((IApiType)member).getSimpleName();
+			case IApiElement.TYPE: {
+				IApiType type = (IApiType) member;
+				if(type.isAnonymous()) {
+					return getSimpleTypeName(type.getEnclosingType());
+				}
+				else if(type.isLocal()) {
+					String name = getSimpleTypeName(member.getEnclosingType());
+					int idx = name.indexOf('$');
+					if(idx > -1) {
+						return name.substring(0, idx);
+					}
+					return name;
+				}
+				return type.getSimpleName();
+			}
 			default:
-				return member.getEnclosingType().getSimpleName();
+				return getSimpleTypeName(member.getEnclosingType());
 		}
 	}	
 	
