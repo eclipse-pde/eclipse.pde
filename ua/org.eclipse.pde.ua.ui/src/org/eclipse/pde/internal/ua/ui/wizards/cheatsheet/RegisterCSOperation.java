@@ -42,6 +42,7 @@ import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSConstants;
+import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -55,11 +56,8 @@ import org.osgi.framework.Constants;
 public class RegisterCSOperation extends WorkspaceModifyOperation {
 
 	public final static String F_CS_EXTENSION_POINT_ID = "org.eclipse.ui.cheatsheets.cheatSheetContent"; //$NON-NLS-1$
-
 	public static final String F_CS_EXTENSION_ID = "org.eclipse.ui.cheatsheets"; //$NON-NLS-1$
-
 	public static final String F_CS_ATTRIBUTE_CONTENT_FILE = "contentFile"; //$NON-NLS-1$
-
 	public static final String F_CS_ATTRIBUTE_COMPOSITE = "composite"; //$NON-NLS-1$
 
 	private IRegisterCSData fRegisterCSData;
@@ -146,7 +144,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		// but not the manifest.mf file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, CSWizardMessages.RegisterCSOperation_errorMessage, null));
+			throw new CoreException(new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR, CSWizardMessages.RegisterCSOperation_errorMessage, null));
 		}
 		// Perform the modification of the plugin manifest file
 		ModelModification mod = new ModelModification(fRegisterCSData.getPluginProject()) {
@@ -373,15 +371,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		monitor.worked(1);
 
 		IPluginBase base = model.getPluginBase();
-		// Set schema version
-		double targetVersion = TargetPlatformHelper.getTargetVersion();
-		String version = null;
-		if (targetVersion < 3.2) {
-			version = ICoreConstants.TARGET30;
-		} else {
-			version = ICoreConstants.TARGET32;
-		}
-		base.setSchemaVersion(version);
+		base.setSchemaVersion(TargetPlatformHelper.getSchemaVersion());
 		// Create the cheat sheet extension
 		base.add(createExtensionCheatSheet(model));
 		// Update progress work units

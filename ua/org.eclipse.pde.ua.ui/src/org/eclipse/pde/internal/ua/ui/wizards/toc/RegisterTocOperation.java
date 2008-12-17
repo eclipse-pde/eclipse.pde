@@ -41,32 +41,23 @@ import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ua.core.toc.ITocConstants;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.osgi.framework.Constants;
 
-/**
- * RegisterTocOperation
- */
 public class RegisterTocOperation extends WorkspaceModifyOperation {
 
 	public final static String F_TOC_EXTENSION_POINT_ID = "org.eclipse.help.toc"; //$NON-NLS-1$
-
 	public static final String F_HELP_EXTENSION_ID = "org.eclipse.help"; //$NON-NLS-1$
-
 	public static final String F_TOC_ATTRIBUTE_FILE = "file"; //$NON-NLS-1$
-
 	public final static String F_TOC_ATTRIBUTE_PRIMARY = "primary"; //$NON-NLS-1$
-
 	public final static String F_TOC_ATTRIBUTE_EXTRADIR = "extradir"; //$NON-NLS-1$
-
 	public final static String F_TOC_ATTRIBUTE_CATEGORY = "category"; //$NON-NLS-1$
 
 	private IRegisterTOCData fPage;
-
 	private Shell fShell;
 
 	/**
@@ -149,7 +140,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		// but not the manifest.mf file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, TocWizardMessages.RegisterTocOperation_errorMessage1, null));
+			throw new CoreException(new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR, TocWizardMessages.RegisterTocOperation_errorMessage1, null));
 		}
 		// Perform the modification of the plugin manifest file
 		ModelModification mod = new ModelModification(fPage.getPluginProject()) {
@@ -316,15 +307,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		monitor.worked(1);
 
 		IPluginBase base = model.getPluginBase();
-		// Set schema version
-		double targetVersion = TargetPlatformHelper.getTargetVersion();
-		String version = null;
-		if (targetVersion < 3.2) {
-			version = ICoreConstants.TARGET30;
-		} else {
-			version = ICoreConstants.TARGET32;
-		}
-		base.setSchemaVersion(version);
+		base.setSchemaVersion(TargetPlatformHelper.getSchemaVersion());
 		// Create the cheat sheet extension
 		base.add(createExtensionToc(model));
 		// Update progress work units
@@ -349,7 +332,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		// than the manifest file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, TocWizardMessages.RegisterTocOperation_errorMessage2, null));
+			throw new CoreException(new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR, TocWizardMessages.RegisterTocOperation_errorMessage2, null));
 		}
 		// Perform the modification of the manifest file
 		ModelModification mod = new ModelModification(fPage.getPluginProject()) {

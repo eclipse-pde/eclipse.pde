@@ -40,6 +40,7 @@ import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ua.core.ctxhelp.ICtxHelpConstants;
+import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ua.ui.editor.ctxhelp.CtxHelpEditor;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.util.ModelModification;
@@ -97,7 +98,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 	private void modifyExistingPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, CtxWizardMessages.RegisterCtxHelpOperation_errorMessage1, null));
+			throw new CoreException(new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR, CtxWizardMessages.RegisterCtxHelpOperation_errorMessage1, null));
 		}
 		// Perform the modification of the plugin manifest file
 		ModelModification mod = new ModelModification(fProject) {
@@ -177,14 +178,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		monitor.worked(1);
 
 		IPluginBase base = model.getPluginBase();
-		double targetVersion = TargetPlatformHelper.getTargetVersion();
-		String version = null;
-		if (targetVersion < 3.2) {
-			version = ICoreConstants.TARGET30;
-		} else {
-			version = ICoreConstants.TARGET32;
-		}
-		base.setSchemaVersion(version);
+		base.setSchemaVersion(TargetPlatformHelper.getSchemaVersion());
 
 		addExtensionToModel(model);
 		monitor.worked(1);
@@ -206,7 +200,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		// than the manifest file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, CtxWizardMessages.RegisterCtxHelpOperation_errorMessage2, null));
+			throw new CoreException(new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR, CtxWizardMessages.RegisterCtxHelpOperation_errorMessage2, null));
 		}
 		// Perform the modification of the manifest file
 		ModelModification mod = new ModelModification(fProject) {
