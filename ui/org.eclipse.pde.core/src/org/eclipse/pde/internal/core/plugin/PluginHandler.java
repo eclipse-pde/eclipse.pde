@@ -12,20 +12,12 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.io.StringReader;
 import java.util.Stack;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.IdUtil;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
+import org.w3c.dom.*;
+import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class PluginHandler extends DefaultHandler {
@@ -111,7 +103,12 @@ public class PluginHandler extends DefaultHandler {
 	 */
 	public void processingInstruction(String target, String data) throws SAXException {
 		if ("eclipse".equals(target)) { //$NON-NLS-1$
-			fSchemaVersion = "version=\"3.0\"".equals(data) ? "3.0" : "3.2"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			// Data should be of the form: version="<version>"
+			if (data.length() > 10 && data.substring(0, 9).equals("version=\"") && data.charAt(data.length() - 1) == '\"') { //$NON-NLS-1$
+				fSchemaVersion = TargetPlatformHelper.getSchemaVersionForTargetVersion(data.substring(9, data.length() - 1));
+			} else {
+				fSchemaVersion = TargetPlatformHelper.getSchemaVersion();
+			}
 		}
 	}
 

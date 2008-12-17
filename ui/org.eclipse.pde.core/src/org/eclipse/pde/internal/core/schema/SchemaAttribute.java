@@ -184,7 +184,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 				writer.println(indent2 + "</documentation>"); //$NON-NLS-1$
 			}
 			if (getBasedOn() != null || getKind() != STRING || isDeprecated() || isTranslatable()) {
-				writer.println(indent2 + "<appinfo>"); //$NON-NLS-1$
+				writer.println(indent2 + (getSchema().getSchemaVersion() >= 3.4 ? "<appinfo>" : "<appInfo>")); //$NON-NLS-1$ //$NON-NLS-2$
 				writer.print(indent3 + "<meta.attribute"); //$NON-NLS-1$
 				String kindValue = null;
 				switch (getKind()) { // TODO let's use some constants ;D
@@ -206,7 +206,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 				if (isDeprecated())
 					writer.print(" deprecated=\"true\""); //$NON-NLS-1$
 				writer.println("/>"); //$NON-NLS-1$
-				writer.println(indent2 + "</appinfo>"); //$NON-NLS-1$
+				writer.println(indent2 + (getSchema().getSchemaVersion() >= 3.4 ? "</appinfo>" : "</appInfo>")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			writer.println(annIndent + "</annotation>"); //$NON-NLS-1$
 		}

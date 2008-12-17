@@ -173,4 +173,10 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	 * @return the replacement schema 
 	 */
 	public String getDeprecatedSuggestion();
+
+	/**
+	 * Returns the schema version to use when writing xml
+	 * @return schema version
+	 */
+	public double getSchemaVersion();
 }

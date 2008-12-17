@@ -17,8 +17,9 @@ import java.util.*;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.XMLDefaultHandler;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.util.*;
 import org.w3c.dom.*;
@@ -47,6 +48,8 @@ public class Schema extends PlatformObject implements ISchema {
 	private Vector fReferences;
 
 	private String fDescription;
+
+	private double fTargetVersion;
 
 	private String fName = ""; //$NON-NLS-1$
 
@@ -955,11 +958,12 @@ public class Schema extends PlatformObject implements ISchema {
 		String indent2 = INDENT + INDENT;
 		String indent3 = indent2 + INDENT;
 		writer.println(indent + "<annotation>"); //$NON-NLS-1$
-		writer.println(indent2 + "<appinfo>"); //$NON-NLS-1$
+
+		writer.println(indent2 + (getSchemaVersion() >= 3.4 ? "<appinfo>" : "<appInfo>")); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(indent3 + "<meta.schema plugin=\"" + fPluginID + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(" id=\"" + fPointID + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(" name=\"" + getName() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println(indent2 + "</appinfo>"); //$NON-NLS-1$
+		writer.println(indent2 + (getSchemaVersion() >= 3.4 ? "</appinfo>" : "</appInfo>")); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(indent2 + "<documentation>"); //$NON-NLS-1$
 		writer.println(indent3 + getWritableDescription());
 		writer.println(indent2 + "</documentation>"); //$NON-NLS-1$
@@ -1024,5 +1028,22 @@ public class Schema extends PlatformObject implements ISchema {
 				return ((SchemaRootElement) next).isInternal();
 		}
 		return false;
+	}
+
+	public double getSchemaVersion() {
+		if (fTargetVersion == 0) {
+			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fPluginID);
+			if (model != null) {
+				IPluginBase base = model.getPluginBase();
+				if (base != null) {
+					fTargetVersion = Double.parseDouble(base.getSchemaVersion());
+				}
+			}
+			if (fTargetVersion == 0) {
+				// Use default for target platform
+				fTargetVersion = Double.parseDouble(TargetPlatformHelper.getSchemaVersion());
+			}
+		}
+		return fTargetVersion;
 	}
 }

@@ -90,7 +90,7 @@ public class IdUtil {
 	public static String getFullId(IPluginExtension extension) {
 		String id = extension.getId();
 		IPluginBase plugin = extension.getPluginBase();
-		if ("3.2".equals(plugin.getSchemaVersion())) { //$NON-NLS-1$
+		if (Double.parseDouble(plugin.getSchemaVersion()) >= 3.2) {
 			if (id.indexOf('.') > 0)
 				return id;
 		}
@@ -109,7 +109,7 @@ public class IdUtil {
 
 		if ((point instanceof PluginExtensionPointNode) && (model != null)) {
 			String pointId = point.getId();
-			if ("3.2".equals(model.getPluginBase().getSchemaVersion()) && pointId.indexOf('.') > 0) //$NON-NLS-1$
+			if (Double.parseDouble(model.getPluginBase().getSchemaVersion()) >= 3.2 && pointId.indexOf('.') > 0)
 				return pointId;
 			String id = null;
 			if (model instanceof IFragmentModel) {

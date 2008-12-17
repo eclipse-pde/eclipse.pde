@@ -344,6 +344,40 @@ public class TargetPlatformHelper {
 		return Double.parseDouble(getTargetVersionString());
 	}
 
+	/**
+	 * Returns the schema version to use when targetting a specific version.
+	 * If <code>null</code> is* passed as the version, the current target platform's
+	 * version is used (result of getTargetVersion()).
+	 * @param targetVersion the plugin version being targeted or <code>null</code>
+	 * @return a string version
+	 */
+	public static String getSchemaVersionForTargetVersion(String targetVersion) {
+		double target;
+		if (targetVersion == null) {
+			target = getTargetVersion();
+		} else {
+			target = Double.parseDouble(targetVersion);
+		}
+		// In 3.4 the schemas changed the spelling of appInfo to appinfo to be w3c compliant, see bug 213255.
+		String schemaVersion = ICoreConstants.TARGET34;
+		if (target < 3.2) {
+			// Default schema version is 3.0
+			schemaVersion = ICoreConstants.TARGET30;
+		} else if (target < 3.4) {
+			// In 3.2 the way periods in ids was changed
+			schemaVersion = ICoreConstants.TARGET32;
+		}
+		return schemaVersion;
+	}
+
+	/**
+	 * Gets the schema version to use for the current target platform
+	 * @return String schema version for the current target platform
+	 */
+	public static String getSchemaVersion() {
+		return getSchemaVersionForTargetVersion(null);
+	}
+
 	public static PDEState getPDEState() {
 		return PDECore.getDefault().getModelManager().getState();
 	}

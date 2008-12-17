@@ -13,10 +13,8 @@ package org.eclipse.pde.internal.core.text.plugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.internal.core.text.DocumentHandler;
-import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentTextNode;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.text.*;
 import org.xml.sax.SAXException;
 
 public class PluginDocumentHandler extends DocumentHandler {
@@ -58,7 +56,12 @@ public class PluginDocumentHandler extends DocumentHandler {
 	 */
 	public void processingInstruction(String target, String data) throws SAXException {
 		if ("eclipse".equals(target)) { //$NON-NLS-1$
-			fSchemaVersion = "version=\"3.0\"".equals(data) ? "3.0" : "3.2"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			// Data should be of the form: version="<version>"
+			if (data.length() > 10 && data.substring(0, 9).equals("version=\"") && data.charAt(data.length() - 1) == '\"') { //$NON-NLS-1$
+				fSchemaVersion = TargetPlatformHelper.getSchemaVersionForTargetVersion(data.substring(9, data.length() - 1));
+			} else {
+				fSchemaVersion = TargetPlatformHelper.getSchemaVersion();
+			}
 		}
 	}
 

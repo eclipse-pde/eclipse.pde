@@ -66,7 +66,7 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 	private void createNewFile(IFile file) throws CoreException {
 		WorkspacePluginModelBase model = (WorkspacePluginModelBase) getModel(file);
 		IPluginBase base = model.getPluginBase();
-		base.setSchemaVersion(TargetPlatformHelper.getTargetVersion() < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
+		base.setSchemaVersion(TargetPlatformHelper.getSchemaVersion());
 		base.add(createIntroExtension(model));
 		base.add(createIntroConfigExtension(model));
 		model.save();

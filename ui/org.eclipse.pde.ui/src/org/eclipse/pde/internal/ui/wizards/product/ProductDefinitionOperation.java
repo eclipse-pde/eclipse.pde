@@ -333,7 +333,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private void createNewFile(IFile file, IProgressMonitor monitor) throws CoreException {
 		WorkspacePluginModelBase model = (WorkspacePluginModelBase) getModel(file);
 		IPluginBase base = model.getPluginBase();
-		base.setSchemaVersion(TargetPlatformHelper.getTargetVersion() < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
+		base.setSchemaVersion(TargetPlatformHelper.getSchemaVersion());
 		base.add(createExtension(model));
 		// Update the splash handler.  Update plug-in model and copy files
 		updateSplashHandler(model, monitor);

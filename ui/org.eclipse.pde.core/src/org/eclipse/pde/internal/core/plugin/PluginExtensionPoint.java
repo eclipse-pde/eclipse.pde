@@ -11,13 +11,9 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.Node;
 
 public class PluginExtensionPoint extends IdentifiablePluginObject implements IPluginExtensionPoint {
@@ -45,7 +41,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 		String pointId = getId();
 		IPluginModelBase modelBase = getPluginModel();
 		IPluginBase pluginBase = modelBase.getPluginBase();
-		if ("3.2".equals(pluginBase.getSchemaVersion())) { //$NON-NLS-1$
+		if (Double.parseDouble(pluginBase.getSchemaVersion()) >= 3.2) {
 			if (pointId.indexOf('.') > 0)
 				return pointId;
 		}

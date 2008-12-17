@@ -55,6 +55,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 	private boolean fResult;
 
+	/**
+	 * @param data
+	 * @param provider representation of the project
+	 * @param contentWizard wizard to run to get details for the chosen template, may be <code>null</code> if a template is not being used
+	 */
 	public NewProjectCreationOperation(IFieldData data, IProjectProvider provider, IPluginContentWizard contentWizard) {
 		fData = data;
 		fProjectProvider = provider;
@@ -143,7 +148,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 		IPluginBase pluginBase = fModel.getPluginBase();
 		String targetVersion = ((AbstractFieldData) fData).getTargetVersion();
-		pluginBase.setSchemaVersion(Double.parseDouble(targetVersion) < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
+		pluginBase.setSchemaVersion(TargetPlatformHelper.getSchemaVersionForTargetVersion(targetVersion));
 		pluginBase.setId(fData.getId());
 		pluginBase.setVersion(fData.getVersion());
 		pluginBase.setName(fData.getName());
