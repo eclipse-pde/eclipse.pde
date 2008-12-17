@@ -502,6 +502,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printAttribute("metadataRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
 			script.printAttribute("artifactRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
 			script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$
+			script.printAttribute("site", Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE), true); //$NON-NLS-1$
 			script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
 			if (!havePDEUIState() || rootFileProviders.size() > 0)
 				script.printAttribute("mode", "incremental", true); //$NON-NLS-1$ //$NON-NLS-2$
