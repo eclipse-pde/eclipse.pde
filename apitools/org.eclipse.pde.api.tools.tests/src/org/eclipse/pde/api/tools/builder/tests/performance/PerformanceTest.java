@@ -22,7 +22,9 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -158,6 +160,17 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	}	
 	
 	/**
+	 * Performs a clean and full build on the projects in the workspace computed ordering
+	 * @throws CoreException
+	 */
+	protected void orderedBuild(IProject[] projects) throws CoreException {
+		for (int i = 0; i < projects.length; i++) {
+			projects[i].build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+			projects[i].build(IncrementalProjectBuilder.FULL_BUILD, null);
+		}
+	}
+	
+	/**
 	 * Creates the API baseline for this test.
 	 * 
 	 * @throws Exception
@@ -247,12 +260,6 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 			System.out.println("\t" + projects[i].getName());
 			createExistingProject(projects[i]);
 		}
-		System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");
-		
-		System.out.println("Setting build order of projects...");
-		start = System.currentTimeMillis();
-		IProject[] pjs = getEnv().getWorkspace().computeProjectOrder(getEnv().getWorkspace().getRoot().getProjects()).projects;
-		getEnv().setBuildOrder(pjs);
 		System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");
 	}		
 	

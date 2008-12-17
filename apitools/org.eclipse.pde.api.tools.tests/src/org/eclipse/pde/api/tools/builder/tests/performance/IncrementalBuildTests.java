@@ -281,14 +281,14 @@ public class IncrementalBuildTests extends PerformanceTest {
 		
 		//WARM-UP, must do full build with Java build to get the state
 		System.out.println("Warm-up clean builds...");
-		IProject proj = getEnv().getWorkspace().getRoot().getProject(projectname);
-		getEnv().cleanBuild();
 		for(int i = 0; i < 2; i++) {
-			getEnv().fullBuild();
+			cleanBuild();
+			fullBuild();
 		}
 		
 		//TEST
 		System.out.println("Testing incremental builds...");
+		IProject proj = getEnv().getWorkspace().getRoot().getProject(projectname);
 		IType type = JavaCore.create(proj).findType(typename);
 		IPath file = type.getPath();
 		for(int i = 0; i < 100; i++) {

@@ -609,15 +609,15 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		return super.addFile(root, fileName, contents);
 	}	
 	
-	public void setBuildOrder(IProject[] projects) {
-		if(projects == null) {
-			setBuildOrder((String[])null);
-		}
-		String[] pnames = new String[projects.length];
-		for(int i = 0; i < projects.length; i++) {
-			pnames[i] = projects[i].getName();
-		}
-		setBuildOrder(pnames);
+	/**
+	 * Returns the listing of projects in the order the workspace has computed they should be built.
+	 * This method calls out to {@link org.eclipse.core.resources.IWorkspace#computeProjectOrder(IProject[])}, which
+	 * can slow down testing with successive calls.
+	 * 
+	 * @return a build-ordered listing of the workspace projects
+	 */
+	public IProject[] getProjectBuildOrder() {
+		return getWorkspace().computeProjectOrder(getWorkspace().getRoot().getProjects()).projects;
 	}
 	
 	/* (non-Javadoc)

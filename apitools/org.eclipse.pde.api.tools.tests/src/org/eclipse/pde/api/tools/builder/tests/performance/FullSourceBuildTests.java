@@ -13,9 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.performance;
 import junit.framework.Test;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.test.performance.Dimension;
 
@@ -66,16 +64,11 @@ public class FullSourceBuildTests extends PerformanceTest {
 		
 		// get everything built
 		fullBuild();
-		IProject[] ps = getEnv().getWorkspace().getRoot().getProjects();
-		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(ps);
-		IProject[] order = po.projects;
+		IProject[] projects = getEnv().getProjectBuildOrder();
 		
 		// WARM-UP
 		for (int j = 0; j < 2; j++) {
-			// *** build each project ***
-			for (int i = 0; i < order.length; i++) {
-				order[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
-			}
+			orderedBuild(projects);
 		}
 		
 		// TEST
@@ -83,8 +76,8 @@ public class FullSourceBuildTests extends PerformanceTest {
 			startMeasuring();
 			
 			// *** build each project ***
-			for (int i = 0; i < order.length; i++) {
-				order[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
+			for (int i = 0; i < projects.length; i++) {
+				projects[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
 			}
 			
 			stopMeasuring();
@@ -105,17 +98,11 @@ public class FullSourceBuildTests extends PerformanceTest {
 		
 		// get everything built
 		fullBuild();
-		IProject[] ps = getEnv().getWorkspace().getRoot().getProjects();
-		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(ps);
-		IProject[] order = po.projects;
+		IProject[] projects = getEnv().getProjectBuildOrder();
 
 		// WARM-UP
 		for (int j = 0; j < 2; j++) {
-			// *** build each project ***
-			for (int i = 0; i < order.length; i++) {
-				order[i].build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
-				order[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
-			}
+			orderedBuild(projects);
 		}
 		
 		// TEST
@@ -123,9 +110,9 @@ public class FullSourceBuildTests extends PerformanceTest {
 			startMeasuring();
 			
 			// *** build each project ***
-			for (int i = 0; i < order.length; i++) {
-				order[i].build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
-				order[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
+			for (int i = 0; i < projects.length; i++) {
+				projects[i].build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
+				projects[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
 			}
 			
 			stopMeasuring();
