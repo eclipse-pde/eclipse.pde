@@ -28,6 +28,7 @@ import org.eclipse.pde.api.tools.problems.tests.ApiProblemFactoryTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;
 import org.eclipse.pde.api.tools.reference.tests.SearchScopeTests;
 import org.eclipse.pde.api.tools.util.tests.HeadlessApiProfileManagerTests;
+import org.eclipse.pde.api.tools.util.tests.SignaturesTests;
 import org.eclipse.pde.api.tools.util.tests.UtilTests;
 
 /**
@@ -56,6 +57,7 @@ public class ApiToolsTestSuite extends TestSuite {
 		addTest(new TestSuite(TagScannerTests.class));
 		addTest(new TestSuite(ComponentManifestTests.class));
 		addTest(new TestSuite(UtilTests.class));
+		addTest(new TestSuite(SignaturesTests.class));
 		addTest(new TestSuite(ApiBaselineTests.class));
 		addTest(new TestSuite(ApiTypeContainerTests.class));
 		addTest(new TestSuite(ClassFileScannerTests.class));
@@ -66,7 +68,5 @@ public class ApiToolsTestSuite extends TestSuite {
 		addTest(new TestSuite(ApiProblemTests.class));
 		addTest(new TestSuite(ApiProblemFactoryTests.class));
 		addTest(new TestSuite(OSGiLessAnalysisTests.class));
-		//addTest(new TestSuite(ExportComponentTests.class));
-		/*addTest(new TestSuite(DiscouragedAccessTests.class));*/
 	}	
 }

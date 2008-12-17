@@ -23,6 +23,7 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 /**
  * Detects when a method illegally overrides another method.
@@ -71,7 +72,7 @@ public class IllegalOverrideProblemDetector extends AbstractIllegalMethodReferen
 		return new String[] {
 				getTypeName(method),
 				getTypeName(reference.getMember()),
-				Signature.toString(method.getSignature(), method.getName(), null, false, false)};
+				Signatures.getMethodSignature(method)};
 	}
 
 	/* (non-Javadoc)

@@ -616,7 +616,7 @@ public class ApiDescriptionTests extends TestCase {
 	 */
 	public void test209335() {
 		String typename = "x.y.z.209335";
-		String packageName = Util.getPackageName(typename);
+		String packageName = Signatures.getPackageName(typename);
 		String tName = Signatures.getTypeName(typename);
 		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
 		IApiAnnotations description = fManifest.resolveAnnotations(type);
@@ -631,7 +631,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * @param expectedRestrictions expected visibility restriction modifiers
 	 */
 	protected void resolveType(String typeName, int expectedVisibility, int expectedRestrictions) {
-		String packageName = Util.getPackageName(typeName);
+		String packageName = Signatures.getPackageName(typeName);
 		String tName = Signatures.getTypeName(typeName);
 		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
 		IApiAnnotations description = fManifest.resolveAnnotations(type);

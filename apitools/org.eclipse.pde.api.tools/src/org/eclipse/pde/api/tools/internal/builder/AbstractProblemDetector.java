@@ -38,6 +38,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 import com.ibm.icu.text.MessageFormat;
@@ -209,6 +210,32 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					return getTypeName(member.getEnclosingType());
 				}
 				else if(type.isLocal()) {
+					return getTypeName(member.getEnclosingType());
+				}
+				return member.getName();
+			}
+			default: {
+				return getTypeName(member.getEnclosingType());
+			}
+		}
+	}
+	
+	/**
+	 * Returns the qualified type name to display. This method delegates to the 
+	 * {@link Signatures} class to build the display signatures
+	 * @param member
+	 * @return fully qualified display signature for the given {@link IApiType} or enclosing
+	 * type if the member is not a type itself
+	 * @throws CoreException
+	 */
+	protected String getQualifiedTypeName(IApiMember member) throws CoreException {
+		switch (member.getType()) {
+			case IApiElement.TYPE: {
+				IApiType type = (IApiType) member;
+				if(type.isAnonymous()) {
+					return getQualifiedTypeName(member.getEnclosingType());
+				}
+				else if(type.isLocal()) {
 					String name = getTypeName(member.getEnclosingType());
 					int idx = name.indexOf('$');
 					if(idx > -1) {
@@ -216,10 +243,10 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					}
 					return name;
 				}
-				return member.getName();
+				return Signatures.getQualifiedTypeSignature((IApiType) member);
 			}
 			default: {
-				return getTypeName(member.getEnclosingType());
+				return getQualifiedTypeName(member.getEnclosingType());
 			}
 		}
 	}
@@ -245,7 +272,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					}
 					return name;
 				}
-				return type.getSimpleName();
+				return Signatures.getTypeName(Signatures.getTypeSignature(type));
 			}
 			default:
 				return getSimpleTypeName(member.getEnclosingType());
@@ -262,6 +289,9 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	protected void noSourcePosition(IType type, IReference reference) throws CoreException {
 		IApiMember member = reference.getMember();
 		String name = reference.getReferencedMemberName();
+		if(name == null) {
+			name = reference.getReferencedTypeName();
+		}
 		if(member.getType() == IApiElement.TYPE) {
 			IApiType atype = (IApiType) member;
 			if(atype.isAnonymous()) {
@@ -301,7 +331,8 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		while(line.charAt(offset) == ' ') {
 			offset++;
 		}
-		if(line.charAt(offset) == '(') {
+		if(line.charAt(offset) == '(' ||
+				line.charAt(offset) == '<') {
 			return start;
 		}
 		return findMethodNameStart(namepart, line, offset);
@@ -365,19 +396,34 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		if (linenumber > 0) {
 			linenumber--;
 		}
+		String methodname = name;
+		int idx = methodname.indexOf('$');
+		if(idx > -1) {
+			methodname = methodname.substring(0, idx);
+		}
+		idx = methodname.indexOf(Signatures.getLT());
+		if(idx > -1) {
+			methodname = methodname.substring(0, idx);
+		}
 		int offset = document.getLineOffset(linenumber);
 		String line = document.get(offset, document.getLineLength(linenumber));
-		int first = findMethodNameStart(name, line, 0);
-		if(first < 0) {
-			name = "super"; //$NON-NLS-1$
+		int start = line.indexOf('=');
+		if(start < 0) {
+			start = line.indexOf("new"); //$NON-NLS-1$
+			if(start < 0) {
+				start = 0;
+			}
 		}
-		first = findMethodNameStart(name, line, 0);
+		int first = findMethodNameStart(methodname, line, start);
+		if(first < 0) {
+			methodname = "super"; //$NON-NLS-1$
+			first = findMethodNameStart(methodname, line, start);
+		}
 		if(first > -1) {
-			return new Position(offset + first, name.length());
+			return new Position(offset + first, methodname.length());
 		}
 		return null;
 	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#createProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */

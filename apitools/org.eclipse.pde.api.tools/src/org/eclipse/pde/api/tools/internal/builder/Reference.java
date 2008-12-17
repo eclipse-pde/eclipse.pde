@@ -18,6 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -211,7 +212,7 @@ public class Reference implements IReference {
 			IApiComponent sourceComponent = getMember().getApiComponent();
 			if(sourceComponent != null) {
 				IApiTypeRoot result = Util.getClassFile(
-						sourceComponent.getBaseline().resolvePackage(sourceComponent, Util.getPackageName(getReferencedTypeName())),
+						sourceComponent.getBaseline().resolvePackage(sourceComponent, Signatures.getPackageName(getReferencedTypeName())),
 						getReferencedTypeName());
 				if(result != null) {
 					IApiType type = result.getStructure();

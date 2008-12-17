@@ -359,20 +359,6 @@ public final class Util {
 	}
 	
 	/**
-	 * Returns if the specified signature is qualified or not.
-	 * Qualification is determined if there is a token in the signature the begins with an 'L'.
-	 * @param signature
-	 * @return true if the signature is qualified, false otherwise
-	 */
-	public static boolean isQualifiedSignature(String signature) {
-		StringTokenizer tokenizer = new StringTokenizer(signature, "();IJCSBDFTZ!["); //$NON-NLS-1$
-		if(tokenizer.hasMoreTokens()) {
-			return tokenizer.nextToken().charAt(0) == 'L';
-		}
-		return false;
-	}
-	
-	/**
 	 * Copies the given file to the new file
 	 * @param file
 	 * @param newFile
@@ -1464,16 +1450,6 @@ public final class Util {
 	private static boolean isInTopLevelType(final MethodDeclaration method) {
 		AbstractTypeDeclaration type = (AbstractTypeDeclaration) method.getParent();
 		return type != null && type.isPackageMemberTypeDeclaration();
-	}
-	
-	/**
-	 * The type name is dot-separated
-	 * @param typeName the given type name
-	 * @return the package name for the given type name or an empty string if none
-	 */
-	public static String getPackageName(String typeName) {
-		int index = typeName.lastIndexOf('.');
-		return index == -1 ? DEFAULT_PACKAGE_NAME : typeName.substring(0, index);
 	}
 	
 	/**

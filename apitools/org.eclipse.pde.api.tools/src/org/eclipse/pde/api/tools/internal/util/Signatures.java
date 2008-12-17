@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -44,21 +45,6 @@ public final class Signatures {
 	private Signatures() {}
 	
 	/**
-	 * Processes the method name. In the event it is a constructor the simple name of
-	 * the enclosing type is returned
-	 * @param type
-	 * @param methodname
-	 * @return
-	 * @throws CoreException
-	 */
-	public static String processMethodName(IApiType type, String methodname) throws CoreException {
-		if("<init>".equals(methodname)) { //$NON-NLS-1$
-			return type.getSimpleName();
-		}
-		return methodname;
-	}
-	
-	/**
 	 * Collects which signature to use and de-qualifies it. If there is a generic signature
 	 * it is returned, otherwise the standard signature is used
 	 * @param method
@@ -74,24 +60,18 @@ public final class Signatures {
 	
 	/**
 	 * Returns the signature to use to display this {@link IApiMethod}.
-	 * This method will load the enclosing type to qualify the method signature.
+	 * This method will load the enclosing type in the event the method is a constructor.
 	 * @param method
 	 * @return the display signature to use for this {@link IApiMethod}
+	 * @throws CoreException if a lookup to the parent type of the method fails
 	 */
-	public static String getMethodSignature(IApiMethod method) {
-		StringBuffer buffer = new StringBuffer();
-		try {
-			IApiType type = method.getEnclosingType();
-			buffer.append(getTypeSignature(type)).append('.');
-			String methodsig = method.getGenericSignature();
-			if(methodsig == null) {
-				methodsig = method.getSignature();
-			}
-			String methodname = processMethodName(type, method.getName());
-			return Signature.toString(Signatures.dequalifySignature(methodsig), methodname, null, false, false);
+	public static String getMethodSignature(IApiMethod method) throws CoreException {
+		String methodsig = method.getGenericSignature();
+		if(methodsig == null) {
+			methodsig = method.getSignature();
 		}
-		catch(CoreException ce) {}
-		return buffer.toString();
+		String methodname = getMethodName(method);
+		return Signature.toString(dequalifySignature(methodsig), methodname, null, false, false);
 	}
 	
 	/**
@@ -99,20 +79,40 @@ public final class Signatures {
 	 * @param type
 	 * @param method
 	 * @return the given type qualified signature of the given method
+	 * @throws CoreException if a lookup to the parent type of the given method fails
 	 */
-	public static String getQualifiedMethodSignature(IApiType type, IApiMethod method) {
+	public static String getQualifiedMethodSignature(IApiMethod method) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
-		try {
-			buffer.append(getTypeSignature(type)).append('.');
-			String methodsig = method.getGenericSignature();
-			if(methodsig == null) {
-				methodsig = method.getSignature();
-			}
-			String methodname = processMethodName(type, method.getName());
-			buffer.append(Signature.toString(Signatures.dequalifySignature(methodsig), methodname, null, false, false));
+		IApiType type = method.getEnclosingType();
+		if(type != null) {
+			buffer.append(getQualifiedTypeSignature(type)).append('.');
 		}
-		catch(CoreException ce) {}
+		String methodsig = method.getGenericSignature();
+		if(methodsig == null) {
+			methodsig = method.getSignature();
+		}
+		String methodname = getMethodName(method);
+		buffer.append(Signature.toString(dequalifySignature(methodsig), methodname, null, false, false));
 		return buffer.toString();
+	}
+	
+	/**
+	 * Returns the name to use for the method. If the method is a constructor,
+	 * the enclosing type is loaded to get its simple name
+	 * @param method
+	 * @return the name for the method. If the method is a constructor the simple name
+	 * of the enclosing type is substituted.
+	 * @throws CoreException
+	 */
+	public static String getMethodName(IApiMethod method) throws CoreException {
+		String mname = method.getName();
+		if("<init>".equals(method.getName())) { //$NON-NLS-1$
+			IApiType type = method.getEnclosingType();
+			if(type != null) {
+				return type.getSimpleName();
+			}
+		}
+		return mname;
 	}
 	
 	/**
@@ -120,19 +120,123 @@ public final class Signatures {
 	 * @param type
 	 * @return the display signature to use for the given {@link IApiType}
 	 */
-	public static String getTypeSignature(IApiType type) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(type.getSignature().replace('/', '.'));
-		String sig = type.getGenericSignature();
-		if(sig != null) {
-			buffer.append(sig.replace('/', '.'));
-		}
-		else {
-			buffer.append(type.getName());
-		}
-		return Signature.toString(buffer.toString());
+	public static String getQualifiedTypeSignature(IApiType type) {
+		return getTypeSignature(type.getSignature(), type.getGenericSignature(), true);
 	}
 
+	/**
+	 * Returns the de-qualified signature for the given {@link IApiType} 
+	 * 
+	 * @param type the type to get the signature for
+	 * @return the de-qualified signature for the given {@link IApiType}
+	 */
+	public static String getTypeSignature(IApiType type) {
+		return getTypeSignature(type.getSignature(), type.getGenericSignature(), false);
+	}
+	
+	/**
+	 * Returns the display-able representation of the given signature and generic signature
+	 * @param signature
+	 * @param genericsignature
+	 * @param qualified
+	 * @return
+	 */
+	public static String getTypeSignature(String signature, String genericsignature, boolean qualified) {
+		StringBuffer buffer = new StringBuffer();
+		String sig = signature.replace('/', '.');
+		if(qualified == false) {
+			sig = dequalifySignature(sig);
+		}
+		buffer.append(Signature.toString(sig.replace('$', '.')));
+		if(genericsignature != null) {
+			appendTypeParameters(buffer, Signature.getTypeParameters(genericsignature.replace('/', '.')));
+		}
+		return buffer.toString(); 
+	}
+	
+	/**
+	 * Returns the name of an anonymous or local type with all 
+	 * qualification removed.
+	 * For example:
+	 * <pre><code>
+	 *  Class$3inner --> inner
+	 *  Class$3 --> null
+	 * </code></pre>
+	 * @param name the name to resolve
+	 * @return the name of an anonymous or local type with qualification removed or <code>null</code>
+	 * if the anonymous type has no name
+	 */
+	public static String getAnonymousTypeName(String name) {
+		if(name != null) {
+			int idx = name.lastIndexOf('$');
+			if(idx > -1) {
+				String num = name.substring(idx+1, name.length());
+				try {
+					Integer.parseInt(num);
+					return null;
+				}
+				catch(NumberFormatException nfe) {}
+				for(int i = 0; i < name.length(); i++) {
+					if(!Character.isDigit(num.charAt(i))) {
+						return num.substring(i, num.length());
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Appends the given listing of type parameter names to the signature contained in the 
+	 * given buffer
+	 * @param buffer
+	 * @param parameters
+	 */
+	public static void appendTypeParameters(StringBuffer buffer, String[] parameters) {
+		if(parameters == null) {
+			return;
+		}
+		if(parameters.length == 0) {
+			return;
+		}
+		buffer.append(getLT());
+		for(int i = 0; i < parameters.length; i++) {
+			if(i > 0) {
+				buffer.append(getComma());
+			}
+			buffer.append(Signature.getTypeVariable(parameters[i]));
+		}
+		buffer.append(getGT());
+	}
+	
+	/**
+	 * Returns a comma and space used for displaying comma-separated lists
+	 * in signatures.
+	 * 
+	 * @return the string rendering for a comma and following space
+	 */
+	public static String getComma() {
+		return ", "; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns the string for rendering the '<code>&lt;</code>' character.
+	 *
+	 * @return the string for rendering '<code>&lt;</code>'
+	 */
+	public static String getLT() {
+		return "<"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the string for rendering the '<code>&gt;</code>' character.
+	 *
+	 * @return the string for rendering '<code>&gt;</code>'
+	 */
+	public static String getGT() {
+		return ">"; //$NON-NLS-1$
+	}
+	
 	/**
 	 * Convert fully qualified signature to unqualified one.
 	 * The descriptor can be dot or slashed based.
@@ -208,11 +312,13 @@ public final class Signatures {
 	}
 
 	/**
-	 * Returns the listing of the signatures of the parameters passed in
+	 * Returns the listing of the signatures of the parameters passed in, where the 
+	 * list elements are all {@link SingleVariableDeclaration}s and the elements in the returned list are
+	 * of type {@link String}
 	 * @param rawparams
 	 * @return a listing of signatures for the specified parameters
 	 */
-	public static List getParametersTypeNames(List rawparams) {
+	private static List getParametersTypeNames(List rawparams) {
 		List rparams = new ArrayList(rawparams.size());
 		SingleVariableDeclaration param = null;
 		String pname = null;
@@ -308,17 +414,55 @@ public final class Signatures {
 		if (Signature.getArrayCount(type) == Signature.getArrayCount(type2)) {
 			String el1 = Signature.getElementType(type);
 			String el2 = Signature.getElementType(type2);
-			String signatureSimpleName = Signature.getSignatureSimpleName(el1);
-			String signatureSimpleName2 = Signature.getSignatureSimpleName(el2);
-			if (signatureSimpleName.equals(signatureSimpleName2)) {
-				return true;
-			}
-			int index = signatureSimpleName2.lastIndexOf('.');
-			if (index != -1) {
-				// the right side is a member type
-				return signatureSimpleName.equals(signatureSimpleName2.subSequence(index + 1, signatureSimpleName2.length()));
+			String[] typeargs1 = Signature.getTypeArguments(el1);
+			String[] typeargs2 = Signature.getTypeArguments(el2);
+			if(typeargs1.length == typeargs2.length) {
+				if(typeargs1.length > 0) {
+					for(int i = 0; i < typeargs1.length; i++) {
+						if(!matches(typeargs1[i], typeargs2[i])) {
+							return false;
+						}
+					}
+					return true;
+				}
+				else {
+					String signatureSimpleName = Signature.getSignatureSimpleName(el1);
+					String signatureSimpleName2 = Signature.getSignatureSimpleName(el2);
+					if (signatureSimpleName.equals(signatureSimpleName2)) {
+						return true;
+					}
+					int index = signatureSimpleName2.lastIndexOf('.');
+					if (index != -1) {
+						// the right side is a member type
+						return signatureSimpleName.equals(signatureSimpleName2.subSequence(index + 1, signatureSimpleName2.length()));
+					}
+				}
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns if the specified signature is qualified or not.
+	 * Qualification is determined if there is a token in the signature the begins with an 'L'.
+	 * @param signature
+	 * @return true if the signature is qualified, false otherwise
+	 */
+	public static boolean isQualifiedSignature(String signature) {
+		StringTokenizer tokenizer = new StringTokenizer(signature, "();IJCSBDFTZ!["); //$NON-NLS-1$
+		if(tokenizer.hasMoreTokens()) {
+			return tokenizer.nextToken().charAt(0) == 'L';
+		}
+		return false;
+	}
+
+	/**
+	 * The type name is dot-separated
+	 * @param typeName the given type name
+	 * @return the package name for the given type name or an empty string if none
+	 */
+	public static String getPackageName(String typeName) {
+		int index = typeName.lastIndexOf('.');
+		return index == -1 ? Util.DEFAULT_PACKAGE_NAME : typeName.substring(0, index);
 	}
 }

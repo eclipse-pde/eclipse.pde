@@ -37,6 +37,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.signature.SignatureReader;
 
@@ -66,7 +67,7 @@ public class ClassFileComparator {
 			return true;
 		}
 		try {
-			String packageName = Util.getPackageName(exceptionName);
+			String packageName = Signatures.getPackageName(exceptionName);
 			IApiTypeRoot result = Util.getClassFile(
 					profile.resolvePackage(apiComponent, packageName),
 					exceptionName);
@@ -75,7 +76,7 @@ public class ClassFileComparator {
 				IApiType exception = result.getStructure();
 				while (!Util.isJavaLangObject(exception.getName())) {
 					String superName = exception.getSuperclassName();
-					packageName = Util.getPackageName(superName);
+					packageName = Signatures.getPackageName(superName);
 					result = Util.getClassFile(
 							profile.resolvePackage(apiComponent, packageName),
 							superName);
@@ -2989,7 +2990,7 @@ public class ClassFileComparator {
 	}
 	
 	private IApiTypeRoot getType(String typeName, IApiComponent component, IApiBaseline profile) throws CoreException {
-		String packageName = Util.getPackageName(typeName);
+		String packageName = Signatures.getPackageName(typeName);
 		IApiComponent[] components = profile.resolvePackage(component, packageName);
 		if (components == null) {
 			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), component.getId()});

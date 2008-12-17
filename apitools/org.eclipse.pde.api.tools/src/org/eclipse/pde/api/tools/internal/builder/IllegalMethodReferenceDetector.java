@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.internal.builder;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -21,6 +20,7 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 /**
  * Detects when a 'no reference' method is called.
@@ -60,23 +60,15 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 	 */
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();
-		String genericSignature = method.getGenericSignature();
-		String signature = null;
-		if (genericSignature != null) {
-			signature = genericSignature;
-		} else {
-			signature = method.getSignature();
-		}
 		if (method.isConstructor()) {
 			return new String[] {
-				Signature.toString(signature, getSimpleTypeName(method), null, false, false), 
+				Signatures.getMethodSignature(method), 
 				getSimpleTypeName(reference.getMember())};
 		}
 		return new String[] {
 			getSimpleTypeName(method), 
 			getSimpleTypeName(reference.getMember()), 
-			Signature.toString(signature, method.getName(), null, false, false)
-		};
+			Signatures.getMethodSignature(method)};
 	}
 
 	/* (non-Javadoc)
@@ -100,10 +92,9 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 	 */
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();
-		String methodName = method.getName();
-		if (method.isConstructor()) {
-			methodName = getSimpleTypeName(method);
-		}
-		return new String[] {getTypeName(method), getTypeName(reference.getMember()), Signature.toString(method.getSignature(), methodName, null, false, false)};
+		return new String[] {
+				getQualifiedTypeName(method), 
+				getQualifiedTypeName(reference.getMember()),
+				Signatures.getMethodSignature(method)};
 	}
 }

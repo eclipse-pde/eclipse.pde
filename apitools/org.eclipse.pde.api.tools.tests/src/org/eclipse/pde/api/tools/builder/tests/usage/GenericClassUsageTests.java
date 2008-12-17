@@ -120,7 +120,7 @@ public class GenericClassUsageTests extends ClassUsageTests {
 		});
 		String typename = "testGA4";
 		setExpectedMessageArgs(new String[][] {
-				{"x.y.z.testGA4", CLASS_NAME}
+				{"x.y.z.testGA4<T>", CLASS_NAME}
 		});
 		deployTest(typename, inc);
 	}
@@ -144,7 +144,7 @@ public class GenericClassUsageTests extends ClassUsageTests {
 		});
 		String typename = "testGA5";
 		setExpectedMessageArgs(new String[][] {
-				{"inner", "x.y.z.testGA5", "testGA5(Object[], List<String>)", CLASS_NAME}
+				{"inner", "x.y.z.testGA5.testGA5(Object[], List<String>)", CLASS_NAME}
 		});
 		deployTest(typename, inc);
 	}
@@ -168,7 +168,7 @@ public class GenericClassUsageTests extends ClassUsageTests {
 		});
 		String typename = "testGA6";
 		setExpectedMessageArgs(new String[][] {
-				{"inner", "x.y.z.testGA6", "m1(Object[], List<String>)", CLASS_NAME}
+				{"inner", "x.y.z.testGA6.m1(Object[], List<String>)", CLASS_NAME}
 		});
 		deployTest(typename, inc);
 	}
@@ -179,5 +179,35 @@ public class GenericClassUsageTests extends ClassUsageTests {
 	
 	public void testLocalTypeGeneircMethod2I() {
 		x6(true);
+	}
+	
+	public void testGenericInstantiate1F() {
+		x7(false);
+	}
+	
+	public void testGenericInstantiate1I() {
+		x7(true);
+	}
+	
+	/**
+	 * Tests that a problem is correctly created for an illegal instantiate when the 
+	 * constructor being called has generics i.e.
+	 * <pre>
+	 * <code>Clazz clazz = new Clazz&lt;String&gt;();</code>
+	 * </pre>
+	 * 
+	 * @param inc
+	 */
+	private void x7(boolean inc) {
+		setExpectedProblemIds(new int[] {
+			getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS),
+			getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
+		});
+		String typename = "testC10";
+		setExpectedMessageArgs(new String[][] {
+				{GENERIC_CLASS_NAME+"<T>", typename},
+				{GENERIC_CLASS_NAME+"<T>", INNER_NAME1}
+		});
+		deployTest(typename, inc);
 	}
 }

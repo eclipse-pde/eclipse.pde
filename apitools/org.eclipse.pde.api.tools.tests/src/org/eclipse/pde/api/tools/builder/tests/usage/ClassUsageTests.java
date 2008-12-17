@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
+import junit.framework.Test;
+
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
 
 /**
  * Tests a variety of class usages where the callee has API restrictions
@@ -26,6 +25,7 @@ import junit.framework.Test;
 public class ClassUsageTests extends UsageTest {
 
 	protected static final String CLASS_NAME = "ClassUsageClass";
+	protected static final String GENERIC_CLASS_NAME = "GenericClassUsageClass";
 	
 	/**
 	 * Constructor
@@ -375,16 +375,9 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
 		});
 		String typename = "testA2";
-		if(getTestCompliance().compareTo(CompilerOptions.VERSION_1_5) > -1) {
-			setExpectedMessageArgs(new String[][] {
-					{"x.y.z.testA2.m1()", CLASS_NAME}	
-			});
-		}
-		else {
-			setExpectedMessageArgs(new String[][] {
-					{"x.y.z.testA2", CLASS_NAME}	
-			});
-		}
+		setExpectedMessageArgs(new String[][] {
+				{"x.y.z.testA2.m1()", CLASS_NAME}	
+		});
 		deployTest(typename, inc);
 	}
 	
@@ -413,16 +406,9 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
 		});
 		String typename = "testA3";
-		if(getTestCompliance().compareTo(CompilerOptions.VERSION_1_5) > -1) {
-			setExpectedMessageArgs(new String[][] {
-					{"x.y.z.testA3.m1()", CLASS_NAME}	
-			});
-		}
-		else {
-			setExpectedMessageArgs(new String[][] {
-					{"x.y.z.testA3", CLASS_NAME}	
-			});
-		}
+		setExpectedMessageArgs(new String[][] {
+				{"x.y.z.testA3.m1()", CLASS_NAME}	
+		});
 		deployTest(typename, inc);
 	}
 	
@@ -513,16 +499,9 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
 		});
 		String typename = "testA6";
-		if(getTestCompliance().compareTo(CompilerOptions.VERSION_1_5) > -1) {
-			setExpectedMessageArgs(new String[][] {
-					{"x.y.z.testA6.testA6()", CLASS_NAME}	
-			});
-		}
-		else {
-			setExpectedMessageArgs(new String[][] {
-					{"x.y.z.testA6", CLASS_NAME}	
-			});
-		}
+		setExpectedMessageArgs(new String[][] {
+				{"x.y.z.testA6.testA6()", CLASS_NAME}	
+		});
 		deployTest(typename, inc);
 	}
 }

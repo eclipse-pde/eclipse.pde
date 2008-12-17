@@ -111,7 +111,7 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getQualifiedMessageArgs(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
-		return new String[] {getTypeName(reference.getResolvedReference()), getTypeName(reference.getMember())};
+		return new String[] {getQualifiedTypeName(reference.getResolvedReference()), getQualifiedTypeName(reference.getMember())};
 	}
 	
 	/* (non-Javadoc)

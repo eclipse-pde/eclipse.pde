@@ -136,7 +136,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 			IApiType type = (IApiType) reference.getResolvedReference();
 			IApiType inter = (IApiType) fRestrictedInterfaces.get(type.getName());
 			if(inter != null) {
-				return new String[] {getTypeName(type), inter.getName(), getTypeName(reference.getMember())};
+				return new String[] {getQualifiedTypeName(type), inter.getName(), getQualifiedTypeName(reference.getMember())};
 			}
 		}
 		return super.getQualifiedMessageArgs(reference);

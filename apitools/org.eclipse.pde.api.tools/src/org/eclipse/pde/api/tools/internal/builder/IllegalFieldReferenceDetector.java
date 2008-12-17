@@ -123,7 +123,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 */
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiField field = (IApiField) reference.getResolvedReference();
-		return new String[] {getTypeName(field), getTypeName(reference.getMember()), field.getName()};
+		return new String[] {getQualifiedTypeName(field), getQualifiedTypeName(reference.getMember()), field.getName()};
 	}
 
 	/* (non-Javadoc)

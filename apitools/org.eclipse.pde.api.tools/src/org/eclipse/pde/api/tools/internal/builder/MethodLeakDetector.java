@@ -36,6 +36,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 import com.ibm.icu.text.MessageFormat;
@@ -137,11 +138,10 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getMember();
 		IApiType type = (IApiType) reference.getResolvedReference();
-		String methodName = method.getName();
-		if (method.isConstructor()) {
-			methodName = getSimpleTypeName(method);
-		}
-		return new String[] {getTypeName(type), getTypeName(method), Signature.toString(method.getSignature(), methodName, null, false, false)};
+		return new String[] {
+				getQualifiedTypeName(type), 
+				getQualifiedTypeName(method), 
+				Signatures.getMethodSignature(method)};
 	}
 	
 	/* (non-Javadoc)

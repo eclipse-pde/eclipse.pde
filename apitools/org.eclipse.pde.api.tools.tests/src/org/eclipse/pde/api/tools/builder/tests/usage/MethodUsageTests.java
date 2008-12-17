@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 public class MethodUsageTests extends UsageTest {
 	
 	protected static final String METHOD_CLASS_NAME = "MethodUsageClass";
-	protected static final String GENERIC_METHOD_CLASS_NAME = "GenericMethodUsageClass";
+	protected static final String GENERIC_METHOD_CLASS_NAME = "GenericMethodUsageClass<T>";
 	protected static final String GENERIC_METHOD_CLASS_NAME2 = "GenericMethodUsageClass2";
 	protected static final String METHOD_INTERFACE_NAME = "MethodUsageInterface";
 	protected static final String METHOD_ENUM_NAME = "MethodUsageEnum";

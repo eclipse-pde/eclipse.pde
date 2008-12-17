@@ -78,10 +78,10 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 		ApiType ltype = (ApiType) reference.getMember();
 		if(ltype.isAnonymous()) {
 			IApiType etype = ltype.getEnclosingType();
-			String signature = Signatures.getTypeSignature(etype);
+			String signature = Signatures.getQualifiedTypeSignature(etype);
 			IApiMethod method = ltype.getEnclosingMethod();
 			if(method != null) {
-				signature = Signatures.getMethodSignature(method);
+				signature = Signatures.getQualifiedMethodSignature(method);
 			}
 			return new String[] {signature, getSimpleTypeName(reference.getResolvedReference())};
 		}
@@ -90,18 +90,17 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 			IApiType etype = ltype.getEnclosingType(); 
 			IApiMethod method = ltype.getEnclosingMethod();
 			if(method != null) {
-				String methodsig = Signatures.getQualifiedMethodSignature(etype, method);
+				String methodsig = Signatures.getQualifiedMethodSignature(method);
 				return new String[] {
-						getAnonymousTypeName(reference.getMember().getName()),
+						Signatures.getAnonymousTypeName(reference.getMember().getName()),
 						methodsig,
 						getSimpleTypeName(reference.getResolvedReference())
 				};
 			}
 			else {
-				String typesig = Signatures.getTypeSignature(etype);
 				return new String[] {
-						getAnonymousTypeName(reference.getMember().getName()), 
-						typesig, 
+						Signatures.getAnonymousTypeName(reference.getMember().getName()), 
+						getSimpleTypeName(etype), 
 						getSimpleTypeName(reference.getResolvedReference())};
 			}
 		}
@@ -112,7 +111,11 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractIllegalTypeReference#getQualifiedMessageArgs(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
 	 */
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
-		return this.getMessageArgs(reference);
+		ApiType ltype = (ApiType) reference.getMember();
+		if(ltype.isLocal() || ltype.isAnonymous()) {
+			return this.getMessageArgs(reference);
+		}
+		return super.getQualifiedMessageArgs(reference);
 	}
 	
 	/* (non-Javadoc)
@@ -163,7 +166,7 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 		IApiMethod apimethod = type.getEnclosingMethod();
 		if(apimethod != null) {
 			String signature = Signatures.processMethodSignature(apimethod);
-			String methodname = Signatures.processMethodName(type.getEnclosingType(), apimethod.getName());
+			String methodname = Signatures.getMethodName(apimethod);
 			IMethod method = jtype.getMethod(methodname, Signature.getParameterTypes(signature));
 			if(method.exists()) {
 				return method;

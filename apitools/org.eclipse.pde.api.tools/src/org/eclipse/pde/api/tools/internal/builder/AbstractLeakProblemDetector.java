@@ -18,7 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
-import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 
 /**
@@ -43,7 +43,7 @@ public abstract class AbstractLeakProblemDetector extends AbstractProblemDetecto
 	 * @return whether the referenced type name matches a non-API package
 	 */
 	protected boolean isNonAPIReference(IReference reference) {
-		String packageName = Util.getPackageName(reference.getReferencedTypeName());
+		String packageName = Signatures.getPackageName(reference.getReferencedTypeName());
 		if (fNonApiPackageNames.contains(packageName)) {
 			return true;
 		}
@@ -55,7 +55,7 @@ public abstract class AbstractLeakProblemDetector extends AbstractProblemDetecto
 		} else {
 			type = (IApiType) member.getAncestor(IApiElement.TYPE);
 		}
-		String origin = Util.getPackageName(type.getName());
+		String origin = Signatures.getPackageName(type.getName());
 		if (packageName.equals(origin)) {
 			return true; // possible package visible reference
 		}

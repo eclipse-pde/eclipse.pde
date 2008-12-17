@@ -32,6 +32,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -288,7 +289,7 @@ public class ApiType extends ApiMember implements IApiType {
 		if (getApiComponent() == null) {
 			requiresApiComponent();
 		}
-		String packageName = Util.getPackageName(qName);
+		String packageName = Signatures.getPackageName(qName);
 		IApiComponent[] components = getApiComponent().getBaseline().
 			resolvePackage(getApiComponent(), packageName);
 		IApiTypeRoot result = Util.getClassFile(components, qName);
@@ -375,9 +376,6 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getEnclosingMethod()
 	 */
 	public IApiMethod getEnclosingMethod() {
-		if(!fLocal) {
-			return null;
-		}
 		if(fEnclosingMethod == null) { 
 			try {
 				if(fEnclosingMethodName != null) {
@@ -622,36 +620,12 @@ public class ApiType extends ApiMember implements IApiType {
 		if(fEnclosingType != null) {
 			return fEnclosingType;
 		}
-		IApiType enclosing = super.getEnclosingType();
-		if (enclosing == null && fEnclosingTypeName != null) {
-			// anonymous or local
-			String name = fEnclosingTypeName;
-			if(fLocal) {
-				name = processLocalTypeEnclosingTypeName(fEnclosingTypeName);
-			}
-			IApiTypeRoot root = getApiComponent().findTypeRoot(name);
-			if (root != null) {
+		if(fEnclosingTypeName != null) {
+			IApiTypeRoot root = getApiComponent().findTypeRoot(fEnclosingTypeName);
+			if(root != null) {
 				fEnclosingType = root.getStructure();
-				return fEnclosingType;
 			}
 		}
-		return enclosing;
-	}
-	
-	/**
-	 * Processes the local types' enclosing type's name and collects the enclosing methods' index as well
-	 * @param name
-	 * @return
-	 */
-	public String processLocalTypeEnclosingTypeName(String name) {
-		String signature = name;
-		int idx = signature.lastIndexOf('$');
-		if(idx > -1) {
-			try {
-				return signature.substring(0, idx);
-			}
-			catch(NumberFormatException nfe) {}
-		}
-		return signature;
+		return fEnclosingType;
 	}
 }

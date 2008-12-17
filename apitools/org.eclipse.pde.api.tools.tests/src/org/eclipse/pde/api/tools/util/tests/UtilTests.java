@@ -16,7 +16,6 @@ import java.io.FileFilter;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
@@ -29,22 +28,6 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 public class UtilTests extends TestCase {
 
 	private static final IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test_source");
-	
-	/**
-	 * Tests that a fully qualified type has its package removed correctly
-	 */
-	public void testResolvePackageNameFullyQualifiedType() {
-		String pname = Util.getPackageName("a.b.c.Type");
-		assertEquals("The package name should be 'a.b.c'", "a.b.c", pname);
-	}
-	
-	/**
-	 * Tests that passing in a non-fully qualified type returns the empty package
-	 */
-	public void testResolvePackageNameTypeNoQualification() {
-		String pname = Util.getPackageName("Type");
-		assertEquals("the default package should be returned", "", pname);
-	}
 	
 	/**
 	 * Tests that passing in <code>null</code> to the getAllFiles(..) method
@@ -104,35 +87,6 @@ public class UtilTests extends TestCase {
 	 */
 	public void testisNotArchive() {
 		assertTrue("Test.notzip is not an archive", !Util.isArchive("Test.notzip"));
-	}
-
-	/**
-	 * Test convert(String descriptor) method
-	 */
-	public void testConvertDescriptor() {
-		assertEquals("Wrong conversion", "(QObject;QException;)V", Signatures.dequalifySignature("(Ljava/lang/Object;Ljava/lang/Exception;)V"));
-		assertEquals("Wrong conversion", "(QObject;QException;)QException;", Signatures.dequalifySignature("(Ljava/lang/Object;Ljava/lang/Exception;)Ljava/lang/Exception;"));
-		assertEquals("Wrong conversion", "(IJCQObject;IJCQException;IJC)I", Signatures.dequalifySignature("(IJCLjava/lang/Object;IJCLjava/lang/Exception;IJC)I"));
-		assertEquals("Wrong conversion", "([IJC[[[QObject;IJCQException;IJC)I", Signatures.dequalifySignature("([IJC[[[Ljava/lang/Object;IJCLjava/lang/Exception;IJC)I"));
-		assertEquals("Wrong conversion", "(QObject;QException;)V", Signatures.dequalifySignature("(Ljava.lang.Object;Ljava.lang.Exception;)V"));
-		assertEquals("Wrong conversion", "(QObject;QException;)QException;", Signatures.dequalifySignature("(Ljava.lang.Object;Ljava.lang.Exception;)Ljava.lang.Exception;"));
-		assertEquals("Wrong conversion", "(IJCQObject;IJCQException;IJC)I", Signatures.dequalifySignature("(IJCLjava.lang.Object;IJCLjava.lang.Exception;IJC)I"));
-		assertEquals("Wrong conversion", "([IJC[[[QObject;IJCQException;IJC)I", Signatures.dequalifySignature("([IJC[[[Ljava.lang.Object;IJCLjava.lang.Exception;IJC)I"));
-		assertEquals("Wrong conversion", "(QList;)QList;", Signatures.dequalifySignature("(Ljava.util.List;)Ljava.util.List;"));
-		assertEquals("wrong conversion", "(QList;)QList;", Signatures.dequalifySignature("(QList;)QList;"));
-		assertEquals("wrong converstion", "(QLanguage;)V;", Signatures.dequalifySignature("(Lfoo.test.Language;)V;"));
-		assertEquals("wrong converstion", "(QJokes;)V;", Signatures.dequalifySignature("(Lfoo.test.Jokes;)V;"));
-		assertEquals("wrong conversion", "(QDiff;)Z", Signatures.dequalifySignature("(LDiff;)Z"));
-	}
-	
-	/**
-	 * Tests the isQualifiedSignature method
-	 */
-	public void testIsQualified() {
-		assertTrue("should return true", Util.isQualifiedSignature("(Ljava/lang/Object;Ljava/lang/Exception;)V"));
-		assertTrue("should return false", !Util.isQualifiedSignature("(IJCQObject;IJCQException;IJC)I"));
-		assertTrue("should return true", Util.isQualifiedSignature("(IJCLjava.lang.Object;IJCLjava.lang.Exception;IJC)I"));
-		assertTrue("should return false", !Util.isQualifiedSignature("([IJC[[[QObject;IJCQException;IJC)I"));
 	}
 	
 	/*

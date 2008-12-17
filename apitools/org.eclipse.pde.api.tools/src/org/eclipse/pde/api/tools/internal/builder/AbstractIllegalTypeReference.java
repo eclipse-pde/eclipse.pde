@@ -70,38 +70,6 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 		return fIllegalTypes.containsKey(reference.getReferencedTypeName());
 	}
 	
-	/**
-	 * Returns the name of an anonymous or local type with all 
-	 * qualification removed.
-	 * For example:
-	 * <pre><code>
-	 *  Class$3inner --> inner
-	 *  Class$3 --> null
-	 * </code></pre>
-	 * @param name the name to resolve
-	 * @return the name of an anonymous or local type with qualification removed or <code>null</code>
-	 * if the anonymous type has no name
-	 */
-	protected String getAnonymousTypeName(String name) {
-		if(name != null) {
-			int idx = name.lastIndexOf('$');
-			if(idx > -1) {
-				String num = name.substring(idx+1, name.length());
-				try {
-					Integer.parseInt(num);
-					return null;
-				}
-				catch(NumberFormatException nfe) {}
-				for(int i = 0; i < name.length(); i++) {
-					if(!Character.isDigit(num.charAt(i))) {
-						return num.substring(i, num.length());
-					}
-				}
-			}
-		}
-		return null;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
@@ -140,14 +108,18 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getMessageArgs(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
-		return new String[] {getSimpleTypeName(reference.getResolvedReference()), getSimpleTypeName(reference.getMember())};
+		return new String[] {
+				getSimpleTypeName(reference.getResolvedReference()), 
+				getSimpleTypeName(reference.getMember())};
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getQualifiedMessageArgs(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
-		return new String[] {getTypeName(reference.getResolvedReference()), getTypeName(reference.getMember())};
+		return new String[] {
+				getQualifiedTypeName(reference.getResolvedReference()), 
+				getQualifiedTypeName(reference.getMember())};
 	}
 	
 	/* (non-Javadoc)

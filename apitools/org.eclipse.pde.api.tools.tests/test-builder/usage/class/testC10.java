@@ -8,11 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package c;
+package x.y.z;
+
+import c.GenericClassUsageClass;
 
 /**
-* @param <T>
-* @noinstantiate This class is not intended to be instantiated by clients.
-*/
-public class GenericClassUsageClass<T extends Number> {
+ *
+ */
+public class testC10 {
+
+	class inner {
+		void m1() {
+			GenericClassUsageClass<Number> clazz = new GenericClassUsageClass<Number>();
+		}
+	}
+	
+	public void m1() {
+		GenericClassUsageClass<Number> clazz = new GenericClassUsageClass<Number>();
+	}
 }

@@ -49,7 +49,7 @@ public class SystemApiDescriptionTests extends TestCase {
 	protected IFieldDescriptor resolveField(
 			String typeName,
 			String fieldName) {
-		String packageName = Util.getPackageName(typeName);
+		String packageName = Signatures.getPackageName(typeName);
 		String tName = Signatures.getTypeName(typeName);
 		return Factory.packageDescriptor(packageName).getType(tName).getField(fieldName);
 	}
@@ -64,7 +64,7 @@ public class SystemApiDescriptionTests extends TestCase {
 			String typeName,
 			String methodName,
 			String methodSignature) {
-		String packageName = Util.getPackageName(typeName);
+		String packageName = Signatures.getPackageName(typeName);
 		String tName = Signatures.getTypeName(typeName);
 		return
 			Factory.packageDescriptor(packageName).getType(tName).getMethod(methodName, methodSignature);
@@ -77,7 +77,7 @@ public class SystemApiDescriptionTests extends TestCase {
 	 * @param removedProfile expected removed profile modifiers
 	 */
 	protected IReferenceTypeDescriptor resolveType(String typeName) {
-		String packageName = Util.getPackageName(typeName);
+		String packageName = Signatures.getPackageName(typeName);
 		String tName = Signatures.getTypeName(typeName);
 		return Factory.packageDescriptor(packageName).getType(tName);
 	}

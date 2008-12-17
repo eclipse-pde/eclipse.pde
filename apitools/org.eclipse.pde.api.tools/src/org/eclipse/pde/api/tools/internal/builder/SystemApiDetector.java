@@ -183,7 +183,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		IApiMember member = reference.getMember();
 		String eeValue = ProfileModifiers.getName(((Integer) this.referenceEEs.get(reference)).intValue());
-		String typeName = getTypeName(resolvedReference);
+		String typeName = getQualifiedTypeName(resolvedReference);
 		if (typeName.indexOf('$') != -1) {
 			typeName = typeName.replace('$', '.');
 		}

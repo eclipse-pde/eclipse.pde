@@ -121,7 +121,10 @@ public class LeakFieldProblemDetector extends AbstractTypeLeakDetector {
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiField field = (IApiField) reference.getMember();
 		IApiType type = (IApiType) reference.getResolvedReference();
-		return new String[] {getTypeName(type), getTypeName(field), field.getName()};
+		return new String[] {
+				getQualifiedTypeName(type), 
+				getQualifiedTypeName(field), 
+				field.getName()};
 	}	
 	
 	/* (non-Javadoc)
