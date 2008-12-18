@@ -14,12 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.Flags;
-import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -43,6 +39,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -51,9 +48,17 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.1
  */
 public class SystemApiDetector extends AbstractProblemDetector {
+	
 	private Map referenceEEs;
-	public SystemApiDetector() {
-	}
+	
+	/**
+	 * Constructor
+	 */
+	public SystemApiDetector() {}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#getElementType(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+	 */
 	protected int getElementType(IReference reference) {
 		IApiMember member = reference.getMember();
 		switch(member.getType()) {
@@ -68,6 +73,9 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#getMessageArgs(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+	 */
 	protected String[] getMessageArgs(IReference reference)
 			throws CoreException {
 		IApiMember resolvedReference = reference.getResolvedReference();
@@ -116,6 +124,13 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		}
 	}
 
+	/**
+	 * Returns the signature to display for found problems
+	 * @param member the member to get the signature from
+	 * @param qualified if the returned signature should be type-qualified or not
+	 * @return
+	 * @throws CoreException
+	 */
 	private String getDisplay(IApiMember member, boolean qualified) throws CoreException {
 		String typeName = qualified ? getTypeName(member) : getSimpleTypeName(member);
 		if (typeName.indexOf('$') != -1) {
@@ -134,26 +149,18 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			case IApiElement.METHOD : {
 				// reference in a method declaration
 				IApiMethod method = (IApiMethod) member;
-				String signature = method.getSignature();
-				signature = signature.replace('/', '.');
-				if (method.isConstructor()) {
-					String simpleTypeName = getSimpleTypeName(method);
-					if (simpleTypeName.indexOf('$') != -1) {
-						simpleTypeName = simpleTypeName.replace('$', '.');
-					}
-					return Signature.toString(signature, simpleTypeName, null, false, false);
-				} else {
-					StringBuffer buffer = new StringBuffer();
-					buffer
-						.append(typeName)
-						.append('.')
-						.append(Signature.toString(signature, method.getName(), null, false, false));
-					return String.valueOf(buffer);
+				if(qualified) {
+					return Signatures.getMethodSignature(method);
 				}
+				return Signatures.getQualifiedMethodSignature(method);
 			}
 		}
 		return typeName;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#getProblemFlags(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+	 */
 	protected int getProblemFlags(IReference reference) {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		switch(resolvedReference.getType()) {
@@ -167,19 +174,26 @@ public class SystemApiDetector extends AbstractProblemDetector {
 				}
 				return IApiProblem.METHOD;
 			}
-			case IApiElement.FIELD :
+			case IApiElement.FIELD : {
 				return IApiProblem.FIELD;
-			default :
-				return 0;
+			}
+			default : {
+				return IApiProblem.NO_FLAGS;
+			}
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#getProblemKind()
+	 */
 	protected int getProblemKind() {
 		return IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
 	}
 
-	protected String[] getQualifiedMessageArgs(IReference reference)
-			throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#getQualifiedMessageArgs(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+	 */
+	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		IApiMember member = reference.getMember();
 		String eeValue = ProfileModifiers.getName(((Integer) this.referenceEEs.get(reference)).intValue());
@@ -230,12 +244,17 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#getSeverityKey()
+	 */
 	protected String getSeverityKey() {
 		return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
 	}
 
-	protected Position getSourceRange(IType type, IDocument document,
-			IReference reference) throws CoreException, BadLocationException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+	 */
+	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		IApiMember resolvedReference = reference.getResolvedReference();
 		switch(resolvedReference.getType()) {
 			case IApiElement.TYPE : {
@@ -268,14 +287,12 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					switch(apiMember.getType()) {
 						case IApiElement.FIELD : {
 							IApiField field = (IApiField) reference.getMember();
-							return getSourceRangeForField(type, reference,
-									field);
+							return getSourceRangeForField(type, reference, field);
 						}
 						case IApiElement.METHOD : {
 							// reference in a method declaration
 							IApiMethod method = (IApiMethod) reference.getMember();
-							return getSourceRangeForMethod(type, reference,
-									method);
+							return getSourceRangeForMethod(type, reference, method);
 						}
 					}
 					// reference in a type declaration
@@ -293,51 +310,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			case IApiElement.FIELD : {
 				int linenumber = reference.getLineNumber();
 				if (linenumber > 0) {
-					linenumber--;
-				}
-				if (linenumber > 0) {
-					IApiField field = (IApiField) resolvedReference;
-					String name = field.getName();
-					int offset = document.getLineOffset(linenumber);
-					String line = document.get(offset, document.getLineLength(linenumber));
-					IApiType parent = field.getEnclosingType();
-					String qname = parent.getName()+"."+name; //$NON-NLS-1$
-					int first = line.indexOf(qname);
-					if(first < 0) {
-						qname = parent.getName()+"."+name; //$NON-NLS-1$
-						first = line.indexOf(qname);
-					}
-					if(first < 0) {
-						qname = "super."+name; //$NON-NLS-1$
-						first = line.indexOf(qname);
-					}
-					if(first < 0) {
-						qname = "this."+name; //$NON-NLS-1$
-						first = line.indexOf(qname);
-					}
-					if(first < 0) {
-						//try a pattern [.*fieldname] 
-						//the field might be ref'd via a constant, e.g. enum constant
-						int idx = line.indexOf(name);
-						while(idx > -1) {
-							if(line.charAt(idx-1) == '.') {
-								first = idx;
-								qname = name;
-								break;
-							}
-							idx = line.indexOf(name, idx+1);
-						}
-					}
-					Position pos = null;
-					if(first > -1) {
-						pos = new Position(offset + first, qname.length());
-					}
-					else {
-						//optimistically select the whole line since we can't find the correct variable name and we can't just select
-						//the first occurrence
-						pos = new Position(offset, line.length());
-					}
-					return pos;
+					return getFieldNameRange((IApiField) resolvedReference, document, reference);
 				}
 				// reference in a field declaration
 				IApiField field = (IApiField) reference.getMember();
@@ -346,11 +319,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			case IApiElement.METHOD : {
 				if (reference.getLineNumber() >= 0) {
 					IApiMethod method = (IApiMethod) resolvedReference;
-					String name = method.getName();
-					if(method.isConstructor()) {
-						name = getSimpleTypeName(method);
-					}
-					Position pos = getMethodNameRange(name, document, reference);
+					Position pos = getMethodNameRange(Signatures.getMethodName(method), document, reference);
 					if(pos == null) {
 						noSourcePosition(type, reference);
 					}
@@ -363,59 +332,6 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			default :
 				return null;
 		}
-	}
-	private Position getSourceRangeForField(IType type, IReference reference,
-			IApiField field) throws JavaModelException, CoreException {
-		IField javaField = type.getField(field.getName());
-		Position pos = null;
-		if (javaField.exists()) {
-			ISourceRange range = javaField.getNameRange();
-			if(range != null) {
-				pos = new Position(range.getOffset(), range.getLength()); 
-			}
-		}
-		if(pos == null) {
-			noSourcePosition(type, reference);
-		}
-		return pos;
-	}
-	private Position getSourceRangeForMethod(IType type, IReference reference,
-			IApiMethod method) throws CoreException, JavaModelException {
-		String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
-		for (int i = 0; i < parameterTypes.length; i++) {
-			parameterTypes[i] = parameterTypes[i].replace('/', '.');
-		}
-		String methodname = method.getName();
-		if(method.isConstructor()) {
-			IApiType enclosingType = method.getEnclosingType();
-			if (enclosingType.isMemberType() && !Flags.isStatic(enclosingType.getModifiers())) {
-				// remove the synthetic argument that corresponds to the enclosing type
-				int length = parameterTypes.length - 1;
-				System.arraycopy(parameterTypes, 1, (parameterTypes = new String[length]), 0, length);
-			}
-			methodname = enclosingType.getSimpleName();
-		}
-		IMethod Qmethod = type.getMethod(methodname, parameterTypes);
-		IMethod[] methods = type.getMethods();
-		IMethod match = null;
-		for (int i = 0; i < methods.length; i++) {
-			IMethod m = methods[i];
-			if (m.isSimilar(Qmethod)) {
-				match = m;
-				break;
-			}
-		}
-		Position pos = null;
-		if (match != null) {
-			ISourceRange range = match.getNameRange();
-			if(range != null) {
-				pos = new Position(range.getOffset(), range.getLength());
-			}
-		}
-		if(pos == null) {
-			noSourcePosition(type, reference);
-		}
-		return pos;
 	}
 
 	/* (non-Javadoc)
@@ -471,13 +387,23 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		}
 		return false;
 	}
-	private static String getPackageName(IElementDescriptor elementDescriptor) {
+	
+	/**
+	 * Returns the name of the parent packages for the given {@link IElementDescriptor}
+	 * @param elementDescriptor
+	 * @return the parent package for the given {@link IElementDescriptor}
+	 */
+	private String getPackageName(IElementDescriptor elementDescriptor) {
 		IElementDescriptor currentDescriptor = elementDescriptor;
 		while (currentDescriptor != null && currentDescriptor.getElementType() != IElementDescriptor.PACKAGE) {
 			currentDescriptor = currentDescriptor.getParent();
 		}
 		return currentDescriptor == null ? Util.EMPTY_STRING : ((IPackageDescriptor) currentDescriptor).getName();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+	 */
 	public boolean considerReference(IReference reference) {
 		try {
 			IApiComponent apiComponent = reference.getMember().getApiComponent();
@@ -490,7 +416,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			String substring = referencedTypeName.substring(0, index);
 			IApiComponent[] resolvePackages = baseline.resolvePackage(apiComponent, substring);
 			switch(resolvePackages.length) {
-				case 1 :
+				case 1 : {
 					if (resolvePackages[0].isSystemComponent()) {
 						switch(reference.getReferenceKind()) {
 							case ReferenceModifiers.REF_OVERRIDE :
@@ -500,6 +426,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 						retainReference(reference);
 						return true;
 					}
+				}
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
@@ -507,6 +434,9 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector#getReferenceKinds()
+	 */
 	public int getReferenceKinds() {
 		return ReferenceModifiers.MASK_REF_ALL & ~ReferenceModifiers.REF_OVERRIDE;
 	}

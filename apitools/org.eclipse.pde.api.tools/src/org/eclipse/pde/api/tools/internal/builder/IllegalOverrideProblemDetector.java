@@ -11,8 +11,6 @@
 package org.eclipse.pde.api.tools.internal.builder;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.text.BadLocationException;
@@ -79,32 +77,7 @@ public class IllegalOverrideProblemDetector extends AbstractIllegalMethodReferen
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
-		IApiMethod method = (IApiMethod) reference.getResolvedReference();
-		String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
-		for (int i = 0; i < parameterTypes.length; i++) {
-			parameterTypes[i] = parameterTypes[i].replace('/', '.');
-		}
-		IMethod Qmethod = type.getMethod(method.getName(), parameterTypes);
-		IMethod[] methods = type.getMethods();
-		IMethod match = null;
-		for (int i = 0; i < methods.length; i++) {
-			IMethod m = methods[i];
-			if (m.isSimilar(Qmethod)) {
-				match = m;
-				break;
-			}
-		}
-		Position pos = null;
-		if (match != null) {
-			ISourceRange range = match.getNameRange();
-			if(range != null) {
-				pos = new Position(range.getOffset(), range.getLength());
-			}
-		}
-		if(pos == null) {
-			noSourcePosition(type, reference);
-		}
-		return pos;
+		return getSourceRangeForMethod(type, reference, (IApiMethod) reference.getResolvedReference());
 	}
 	
 	/* (non-Javadoc)

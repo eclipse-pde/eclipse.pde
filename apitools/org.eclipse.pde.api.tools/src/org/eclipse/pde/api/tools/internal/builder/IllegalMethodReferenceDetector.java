@@ -76,11 +76,7 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 	 */
 	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		IApiMethod method = (IApiMethod) reference.getResolvedReference();
-		String name = method.getName();
-		if(method.isConstructor()) {
-			name = getSimpleTypeName(method);
-		}
-		Position pos = getMethodNameRange(name, document, reference);
+		Position pos = getMethodNameRange(Signatures.getMethodName(method), document, reference);
 		if(pos == null) {
 			noSourcePosition(type, reference);
 		}

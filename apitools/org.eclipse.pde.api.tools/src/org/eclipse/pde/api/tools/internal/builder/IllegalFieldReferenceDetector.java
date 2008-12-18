@@ -24,7 +24,6 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
@@ -63,8 +62,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (fIllegalFields.containsKey(
-				new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName()))) {
+		if (fIllegalFields.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName()))) {
 			retainReference(reference);
 			return true;
 		}
@@ -115,7 +113,10 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 */
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		IApiField field = (IApiField) reference.getResolvedReference();
-		return new String[] {getSimpleTypeName(field), getSimpleTypeName(reference.getMember()), field.getName()};
+		return new String[] {
+				getSimpleTypeName(field), 
+				getSimpleTypeName(reference.getMember()), 
+				field.getName()};
 	}
 
 	/* (non-Javadoc)
@@ -123,59 +124,17 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 */
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiField field = (IApiField) reference.getResolvedReference();
-		return new String[] {getQualifiedTypeName(field), getQualifiedTypeName(reference.getMember()), field.getName()};
+		return new String[] {
+				getQualifiedTypeName(field), 
+				getQualifiedTypeName(reference.getMember()), 
+				field.getName()};
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
-		IApiField field = (IApiField) reference.getResolvedReference();
-		String name = field.getName();
-		int linenumber = reference.getLineNumber();
-		if (linenumber > 0) {
-			linenumber--;
-		}
-		int offset = document.getLineOffset(linenumber);
-		String line = document.get(offset, document.getLineLength(linenumber));
-		IApiType parent = field.getEnclosingType();
-		String qname = parent.getName()+"."+name; //$NON-NLS-1$
-		int first = line.indexOf(qname);
-		if(first < 0) {
-			qname = parent.getName()+"."+name; //$NON-NLS-1$
-			first = line.indexOf(qname);
-		}
-		if(first < 0) {
-			qname = "super."+name; //$NON-NLS-1$
-			first = line.indexOf(qname);
-		}
-		if(first < 0) {
-			qname = "this."+name; //$NON-NLS-1$
-			first = line.indexOf(qname);
-		}
-		if(first < 0) {
-			//try a pattern [.*fieldname] 
-			//the field might be ref'd via a constant, e.g. enum constant
-			int idx = line.indexOf(name);
-			while(idx > -1) {
-				if(line.charAt(idx-1) == '.') {
-					first = idx;
-					qname = name;
-					break;
-				}
-				idx = line.indexOf(name, idx+1);
-			}
-		}
-		Position pos = null;
-		if(first > -1) {
-			pos = new Position(offset + first, qname.length());
-		}
-		else {
-			//optimistically select the whole line since we can't find the correct variable name and we can't just select
-			//the first occurrence
-			pos = new Position(offset, line.length());
-		}
-		return pos;
+		return getFieldNameRange((IApiField) reference.getResolvedReference(), document, reference);
 	}
 
 	/* (non-Javadoc)

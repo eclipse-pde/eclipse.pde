@@ -16,10 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Flags;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -125,11 +122,10 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getMember();
 		IApiType type = (IApiType) reference.getResolvedReference();
-		String methodName = method.getName();
-		if (method.isConstructor()) {
-			methodName = getSimpleTypeName(method);
-		}
-		return new String[] {getSimpleTypeName(type), getSimpleTypeName(method), Signature.toString(method.getSignature(), methodName, null, false, false)};
+		return new String[] {
+				getSimpleTypeName(type), 
+				getSimpleTypeName(method), 
+				Signatures.getMethodSignature(method)};
 	}
 	
 	/* (non-Javadoc)
@@ -148,43 +144,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
-		// report the marker on the method
-		IApiMethod method = (IApiMethod) reference.getMember();
-		String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
-		for (int i = 0; i < parameterTypes.length; i++) {
-			parameterTypes[i] = parameterTypes[i].replace('/', '.');
-		}
-		String methodname = method.getName();
-		if(method.isConstructor()) {
-			IApiType enclosingType = method.getEnclosingType();
-			if (enclosingType.isMemberType() && !Flags.isStatic(enclosingType.getModifiers())) {
-				// remove the synthetic argument that corresponds to the enclosing type
-				int length = parameterTypes.length - 1;
-				System.arraycopy(parameterTypes, 1, (parameterTypes = new String[length]), 0, length);
-			}
-			methodname = enclosingType.getSimpleName();
-		}
-		IMethod Qmethod = type.getMethod(methodname, parameterTypes);
-		IMethod[] methods = type.getMethods();
-		IMethod match = null;
-		for (int i = 0; i < methods.length; i++) {
-			IMethod m = methods[i];
-			if (m.isSimilar(Qmethod)) {
-				match = m;
-				break;
-			}
-		}
-		Position pos = null;
-		if (match != null) {
-			ISourceRange range = match.getNameRange();
-			if(range != null) {
-				pos = new Position(range.getOffset(), range.getLength());
-			}
-		}
-		if(pos == null) {
-			noSourcePosition(type, reference);
-		}
-		return pos;
+		return getSourceRangeForMethod(type, reference, (IApiMethod) reference.getMember());
 	}
 
 	/* (non-Javadoc)

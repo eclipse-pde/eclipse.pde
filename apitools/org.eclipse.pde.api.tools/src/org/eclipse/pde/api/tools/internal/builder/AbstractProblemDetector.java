@@ -19,10 +19,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -35,7 +41,9 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetecto
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
@@ -382,6 +390,156 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	protected abstract boolean isProblem(IReference reference);
 	
 	/**
+	 * Tries to find the given {@link IApiMethod} in the given {@link IType}. If a matching method is not
+	 * found <code>null</code> is returned 
+	 * @param type the type top look in for the given {@link IApiMethod}
+	 * @param method the {@link IApiMethod} to look for
+	 * @return the {@link IMethod} from the given {@link IType} that matches the given {@link IApiMethod} or <code>null</code> if no
+	 * matching method is found
+	 * @throws JavaModelException
+	 * @throws CoreException
+	 */
+	protected IMethod findMethodInType(IType type, IApiMethod method) throws JavaModelException, CoreException {
+		String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
+		for (int i = 0; i < parameterTypes.length; i++) {
+			parameterTypes[i] = parameterTypes[i].replace('/', '.');
+		}
+		String methodname = method.getName();
+		if(method.isConstructor()) {
+			IApiType enclosingType = method.getEnclosingType();
+			if (enclosingType.isMemberType() && !Flags.isStatic(enclosingType.getModifiers())) {
+				// remove the synthetic argument that corresponds to the enclosing type
+				int length = parameterTypes.length - 1;
+				System.arraycopy(parameterTypes, 1, (parameterTypes = new String[length]), 0, length);
+			}
+			methodname = enclosingType.getSimpleName();
+		}
+		IMethod Qmethod = type.getMethod(methodname, parameterTypes);
+		IMethod[] methods = type.getMethods();
+		IMethod match = null;
+		for (int i = 0; i < methods.length; i++) {
+			IMethod m = methods[i];
+			if (m.isSimilar(Qmethod)) {
+				match = m;
+				break;
+			}
+		}
+		return match;
+	}
+	
+	/**
+	 * Returns the source range for the given {@link IApiMethod} within the given {@link IType}
+	 * @param type the type to look for the method within
+	 * @param reference the reference the method comes from
+	 * @param method the {@link IApiMethod} to look for the source range for
+	 * @return the {@link ISourceRange} in the {@link IType} enclosing the given {@link IApiMethod}
+	 * @throws CoreException
+	 * @throws JavaModelException
+	 */
+	protected Position getSourceRangeForMethod(IType type, IReference reference, IApiMethod method) throws CoreException, JavaModelException {
+		IMethod match = findMethodInType(type, method);
+		Position pos = null;
+		if (match != null) {
+			ISourceRange range = match.getNameRange();
+			if(range != null) {
+				pos = new Position(range.getOffset(), range.getLength());
+			}
+		}
+		if(pos == null) {
+			noSourcePosition(type, reference);
+		}
+		return pos;
+	}
+	
+	/**
+	 * Returns the source range to use for the given field within the given {@link IType}
+	 * @param type the type to look in for the given {@link IApiField}
+	 * @param reference the reference the field is involved in
+	 * @param field the field to find the range for
+	 * @return the {@link ISourceRange} in the given {@link IType} that encloses the given {@link IApiField} 
+	 * @throws JavaModelException
+	 * @throws CoreException
+	 */
+	protected Position getSourceRangeForField(IType type, IReference reference, IApiField field) throws JavaModelException, CoreException {
+		IField javaField = type.getField(field.getName());
+		Position pos = null;
+		if (javaField.exists()) {
+			ISourceRange range = javaField.getNameRange();
+			if(range != null) {
+				pos = new Position(range.getOffset(), range.getLength()); 
+			}
+		}
+		if(pos == null) {
+			noSourcePosition(type, reference);
+		}
+		return pos;
+	}
+	
+	/**
+	 * Returns the range of the name of the given {@link IApiField} to select when creating {@link IApiProblem}s.
+	 * Source ranges are computed and tried in the following order:
+	 * <ol>
+	 * <li>Try the type-qualified name of the variable</li>
+	 * <li>Try looking for 'super.variable'</li>
+	 * <li>Try looking for 'this.variable'</li>
+	 * <li>Try looking for pattern '*.variable'</li>
+	 * <li>Else select the entire line optimistically</li>
+	 * </ol>
+	 * @param field the field to find the name range for
+	 * @param document the document to look within
+	 * @param reference the reference the field is from
+	 * @return the range of text to select, or <code>null</code> if one could not be computed
+	 * @throws BadLocationException
+	 * @throws CoreException
+	 */
+	protected Position getFieldNameRange(IApiField field, IDocument document, IReference reference) throws BadLocationException, CoreException {
+		int linenumber = reference.getLineNumber();
+		if (linenumber > 0) {
+			linenumber--;
+		}
+		if (linenumber > 0) {
+			int offset = document.getLineOffset(linenumber);
+			String line = document.get(offset, document.getLineLength(linenumber));
+			String name = field.getName();
+			IApiType parent = field.getEnclosingType();
+			String qname = parent.getName()+"."+name; //$NON-NLS-1$
+			int first = line.indexOf(qname);
+			if(first < 0) {
+				qname = "super."+name; //$NON-NLS-1$
+				first = line.indexOf(qname);
+			}
+			if(first < 0) {
+				qname = "this."+name; //$NON-NLS-1$
+				first = line.indexOf(qname);
+			}
+			if(first < 0) {
+				//try a pattern [.*fieldname] 
+				//the field might be ref'd via a constant, e.g. enum constant
+				int idx = line.indexOf(name);
+				while(idx > -1) {
+					if(line.charAt(idx-1) == '.') {
+						first = idx;
+						qname = name;
+						break;
+					}
+					idx = line.indexOf(name, idx+1);
+				}
+			}
+			Position pos = null;
+			if(first > -1) {
+				pos = new Position(offset + first, qname.length());
+			}
+			else {
+				//optimistically select the whole line since we can't find the correct variable name and we can't just select
+				//the first occurrence
+				pos = new Position(offset, line.length());
+			}
+			return pos;
+		}
+		return null;
+	}
+	
+	/**
 	 * Searches for the name of a method at the line number specified in the given
 	 * reference.
 	 * 
@@ -411,6 +569,14 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		if(start < 0) {
 			start = line.indexOf("new"); //$NON-NLS-1$
 			if(start < 0) {
+				start = 0;
+			}
+		}
+		else {
+			char charat = line.charAt(start-1);
+			//make sure its not '==' | '!=' | '<=' | '>='
+			if(line.charAt(start+1) == '=' ||
+					charat == '!' || charat == '<' || charat == '>') {
 				start = 0;
 			}
 		}
