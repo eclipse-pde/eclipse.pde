@@ -19,5 +19,4 @@ public class AllTocModelTests {
 		TestSuite suite = new TestSuite("Test Suite for testing the context help model"); //$NON-NLS-1$
 		return suite;
 	}
-
 }
