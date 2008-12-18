@@ -55,11 +55,11 @@ public class FormFilteredTree extends FilteredTree {
 
 	protected Text doCreateFilterText(Composite parent) {
 		int borderStyle = toolkit.getBorderStyle();
-		if (borderStyle != SWT.NONE) {
-			toolkit.setBorderStyle(SWT.NONE);
-			fEntryFilter = new FormEntry(parent, toolkit, null, SWT.SINGLE);
-			toolkit.setBorderStyle(borderStyle);
-		}
+
+		toolkit.setBorderStyle(SWT.NONE); // we don't want Forms border around tree filter
+		fEntryFilter = new FormEntry(parent, toolkit, null, SWT.SINGLE);
+		toolkit.setBorderStyle(borderStyle); // restore Forms border settings
+
 		setBackground(toolkit.getColors().getBackground());
 		return fEntryFilter.getText();
 	}
