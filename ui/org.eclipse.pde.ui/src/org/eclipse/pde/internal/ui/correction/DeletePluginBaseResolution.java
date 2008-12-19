@@ -16,8 +16,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.ui.IMarkerResolution;
 
 public class DeletePluginBaseResolution extends AbstractPDEMarkerResolution {
 
@@ -34,7 +39,20 @@ public class DeletePluginBaseResolution extends AbstractPDEMarkerResolution {
 			marker.delete();
 			marker.getResource().deleteMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
 			marker.getResource().delete(true, new NullProgressMonitor());
+
+			//Since the plugin.xml is now deleted, remove the corresponding entry from the build.properties as well
+			IResource buildProperties = marker.getResource().getParent().findMember(IPDEBuildConstants.PROPERTIES_FILE);
+			if (buildProperties == null)
+				return;
+
+			IMarker removePluginEntryMarker = buildProperties.createMarker(String.valueOf(AbstractPDEMarkerResolution.REMOVE_TYPE));
+			removePluginEntryMarker.setAttribute(PDEMarkerFactory.BK_BUILD_ENTRY, IBuildEntry.BIN_INCLUDES);
+			removePluginEntryMarker.setAttribute(PDEMarkerFactory.BK_BUILD_TOKEN, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+
+			IMarkerResolution removeBuildEntryResolution = new RemoveBuildEntryResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, removePluginEntryMarker);
+			removeBuildEntryResolution.run(removePluginEntryMarker);
 		} catch (CoreException e) {
+			PDEPlugin.log(e);
 		}
 	}
 
