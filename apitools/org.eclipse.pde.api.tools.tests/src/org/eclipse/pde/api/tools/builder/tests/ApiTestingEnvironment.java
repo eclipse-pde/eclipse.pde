@@ -393,7 +393,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#getProblemsFor(org.eclipse.core.runtime.IPath, java.lang.String)
 	 */
-	public ApiProblem[] getProblemsFor(IPath path, String additionalMarkerType){	
+	public ApiProblem[] getProblemsFor(IPath path, String additionalMarkerType){
 		IMarker[] markers = getMarkersFor(path, additionalMarkerType);
 		ArrayList<ApiProblem> problems = new ArrayList<ApiProblem>();
 		for(int i = 0; i < markers.length; i++) {
