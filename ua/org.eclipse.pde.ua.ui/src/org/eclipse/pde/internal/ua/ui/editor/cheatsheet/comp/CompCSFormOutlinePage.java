@@ -19,14 +19,9 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
-/**
- * CompCSFormOutlinePage
- *
- */
 public class CompCSFormOutlinePage extends FormOutlinePage {
 
 	/**
