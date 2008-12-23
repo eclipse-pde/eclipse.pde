@@ -436,8 +436,10 @@ class FilteredCheckboxTree extends FilteredTree {
 	} // end of FilterableCheckboxTreeViewer
 
 	public void setEnabled(boolean enabled) {
-		int filterColor = enabled ? SWT.COLOR_LIST_BACKGROUND : SWT.COLOR_WIDGET_BACKGROUND;
-		filterComposite.setBackground(getDisplay().getSystemColor(filterColor));
+		if ((filterText.getStyle() & SWT.CANCEL) == 0) { // filter uses FilteredTree new look, not native 
+			int filterColor = enabled ? SWT.COLOR_LIST_BACKGROUND : SWT.COLOR_WIDGET_BACKGROUND;
+			filterComposite.setBackground(getDisplay().getSystemColor(filterColor));
+		}
 		filterText.setEnabled(enabled);
 		treeViewer.getTree().setEnabled(enabled);
 
