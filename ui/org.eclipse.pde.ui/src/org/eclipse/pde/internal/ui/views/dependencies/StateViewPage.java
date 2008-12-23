@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.dialogs.FilteredTree;
@@ -220,12 +219,31 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		fComposite.setLayout(layout);
 		fComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		fFilteredTree = new FilteredTree(fComposite, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE, new PatternFilter(), true);
-		// need to give filter Textbox some space from the border
-		Composite filterComposite = fFilteredTree.getFilterControl().getParent(); // FilteredTree new look lays filter Text on additional composite
-		GridData gd = (GridData) filterComposite.getLayoutData();
-		gd.verticalIndent = 2;
-		gd.horizontalIndent = 2;
+		fFilteredTree = new FilteredTree(fComposite, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE, new PatternFilter(), true) {
+			protected void createControl(Composite parent, int treeStyle) {
+				super.createControl(parent, treeStyle);
+
+				// add 2px margin around filter text
+
+				FormLayout layout = new FormLayout();
+				layout.marginHeight = 0;
+				layout.marginWidth = 0;
+				setLayout(layout);
+
+				FormData data = new FormData();
+				data.top = new FormAttachment(0, 2);
+				data.left = new FormAttachment(0, 2);
+				data.right = new FormAttachment(100, -2);
+				filterComposite.setLayoutData(data);
+
+				data = new FormData();
+				data.top = new FormAttachment(filterComposite, 2);
+				data.left = new FormAttachment(0, 0);
+				data.right = new FormAttachment(100, 0);
+				data.bottom = new FormAttachment(100, 0);
+				treeComposite.setLayoutData(data);
+			}
+		};
 
 		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
