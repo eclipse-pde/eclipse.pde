@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.runtime.registry.model;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
@@ -23,11 +23,6 @@ import org.osgi.service.packageadmin.PackageAdmin;
 public class LocalRegistryBackend implements IRegistryEventListener, BundleListener, ServiceListener, RegistryBackend {
 
 	private BackendChangeListener listener;
-	private RegistryModel model;
-
-	public void setRegistryModel(RegistryModel model) {
-		this.model = model;
-	}
 
 	public void setRegistryListener(BackendChangeListener listener) {
 		this.listener = listener;
@@ -63,25 +58,25 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#start(org.osgi.framework.Bundle)
 	 */
-	public void start(Bundle bundle) throws BundleException {
-		PDERuntimePlugin.getDefault().getBundleContext().getBundle(bundle.getId().longValue()).start();
+	public void start(long id) throws BundleException {
+		PDERuntimePlugin.getDefault().getBundleContext().getBundle(id).start();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#stop(org.osgi.framework.Bundle)
 	 */
-	public void stop(Bundle bundle) throws BundleException {
-		PDERuntimePlugin.getDefault().getBundleContext().getBundle(bundle.getId().longValue()).stop();
+	public void stop(long id) throws BundleException {
+		PDERuntimePlugin.getDefault().getBundleContext().getBundle(id).stop();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#diagnose(org.osgi.framework.Bundle)
 	 */
-	public MultiStatus diagnose(Bundle bundle) {
+	public MultiStatus diagnose(long id) {
 		PlatformAdmin plaformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
 		State state = plaformAdmin.getState(false);
 
-		BundleDescription desc = state.getBundle(bundle.getId().longValue());
+		BundleDescription desc = state.getBundle(id);
 
 		PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
 		VersionConstraint[] unsatisfied = platformAdmin.getStateHelper().getUnsatisfiedConstraints(desc);
@@ -103,31 +98,26 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		return problems;
 	}
 
-	public Map initializeBundles() {
+	public void initializeBundles() {
 		org.osgi.framework.Bundle[] newBundles = PDERuntimePlugin.getDefault().getBundleContext().getBundles();
-		Map tmp = new HashMap(newBundles.length);
 		for (int i = 0; i < newBundles.length; i++) {
 			if (newBundles[i].getHeaders().get(Constants.FRAGMENT_HOST) == null) {
 				Bundle ba = createBundleAdapter(newBundles[i]);
-				tmp.put(ba.getId(), ba);
+				listener.addBundle(ba);
 			}
 		}
-		return tmp;
 	}
 
-	public Map initializeExtensionPoints() {
+	public void initializeExtensionPoints() {
 		IExtensionPoint[] extPoints = Platform.getExtensionRegistry().getExtensionPoints();
-		Map tmp = new HashMap(extPoints.length);
+		ExtensionPoint[] extPts = new ExtensionPoint[extPoints.length];
 		for (int i = 0; i < extPoints.length; i++) {
-			ExtensionPoint epa = createExtensionPointAdapter(extPoints[i]);
-			tmp.put(epa.getUniqueIdentifier(), epa);
+			extPts[i] = createExtensionPointAdapter(extPoints[i]);
 		}
-		return tmp;
+		listener.addExtensionPoints(extPts);
 	}
 
-	public Map initializeServices() {
-		Map result = new HashMap();
-
+	public void initializeServices() {
 		ServiceReference[] references = null;
 		try {
 			references = PDERuntimePlugin.getDefault().getBundleContext().getAllServiceReferences(null, null);
@@ -135,48 +125,61 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		}
 
 		if (references == null) {
-			return null;
+			return;
 		}
 
 		for (int i = 0; i < references.length; i++) {
 			ServiceRegistration service = createServiceReferenceAdapter(references[i]);
-			result.put(service.getId(), service);
+			listener.addService(service);
 		}
-
-		return result;
 	}
 
 	private Bundle createBundleAdapter(org.osgi.framework.Bundle bundle) {
-		String symbolicName = bundle.getSymbolicName();
-		String version = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
-		int state = bundle.getState();
-		Long id = new Long(bundle.getBundleId());
-		String location = createLocation(bundle);
-		BundlePrerequisite[] imports = (BundlePrerequisite[]) getManifestHeaderArray(bundle, Constants.REQUIRE_BUNDLE);
-		BundleLibrary[] libraries = (BundleLibrary[]) getManifestHeaderArray(bundle, Constants.BUNDLE_CLASSPATH);
-		boolean isEnabled = getIsEnabled(bundle);
+		Bundle adapter = new Bundle();
+		adapter.setSymbolicName(bundle.getSymbolicName());
+		adapter.setVersion((String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
+		adapter.setState(bundle.getState());
+		adapter.setId(bundle.getBundleId());
+		adapter.setEnabled(getIsEnabled(bundle));
+		adapter.setLocation(createLocation(bundle));
 
-		return new Bundle(model, symbolicName, version, state, id, location, imports, libraries, isEnabled);
+		BundlePrerequisite[] imports = (BundlePrerequisite[]) getManifestHeaderArray(bundle, Constants.REQUIRE_BUNDLE);
+		if (imports != null)
+			adapter.setImports(imports);
+
+		BundleLibrary[] libraries = (BundleLibrary[]) getManifestHeaderArray(bundle, Constants.BUNDLE_CLASSPATH);
+		if (libraries != null)
+			adapter.setLibraries(libraries);
+
+		return adapter;
 	}
 
 	private Extension createExtensionAdapter(IExtension extension) {
-		String namespaceIdentifier = extension.getNamespaceIdentifier();
-		String label = extension.getLabel();
-		String extensionPointUniqueIdentifier = extension.getExtensionPointUniqueIdentifier();
-		Long contributor = getBundleId(extension.getContributor().getName());
+		Extension adapter = new Extension();
+		adapter.setNamespaceIdentifier(extension.getNamespaceIdentifier());
+		adapter.setLabel(extension.getLabel());
+		adapter.setExtensionPointUniqueIdentifier(extension.getExtensionPointUniqueIdentifier());
+		adapter.setContributor(getBundleId(extension.getContributor().getName()));
 
 		IConfigurationElement[] elements = extension.getConfigurationElements();
-		ConfigurationElement[] configurationElements = new ConfigurationElement[elements.length];
-		for (int i = 0; i < elements.length; i++) {
-			configurationElements[i] = createConfigurationElement(elements[i]);
+		if (elements.length > 0) {
+			ConfigurationElement[] configurationElements = new ConfigurationElement[elements.length];
+			for (int i = 0; i < elements.length; i++) {
+				configurationElements[i] = createConfigurationElement(elements[i]);
+			}
+			adapter.setConfigurationElements(configurationElements);
 		}
-		return new Extension(model, namespaceIdentifier, label, extensionPointUniqueIdentifier, configurationElements, contributor);
+
+		return adapter;
 	}
 
 	private ConfigurationElement createConfigurationElement(IConfigurationElement config) {
+		ConfigurationElement element = new ConfigurationElement();
+		element.setName(createName(config));
 		Attribute[] attributes = createConfigurationElementAttributes(config);
-		String name = createName(config);
-		return new ConfigurationElement(model, name, attributes);
+		if (attributes != null)
+			element.setElements(attributes);
+		return element;
 	}
 
 	private static Long getBundleId(String name) {
@@ -185,29 +188,37 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	}
 
 	private ExtensionPoint createExtensionPointAdapter(IExtensionPoint extensionPoint) {
-		String label = extensionPoint.getLabel();
-		String uniqueIdentifier = extensionPoint.getUniqueIdentifier();
-		String namespaceIdentifier = extensionPoint.getNamespaceIdentifier();
-		Long contributor = getBundleId(extensionPoint.getContributor().getName());
+		ExtensionPoint adapter = new ExtensionPoint();
+		adapter.setLabel(extensionPoint.getLabel());
+		adapter.setUniqueIdentifier(extensionPoint.getUniqueIdentifier());
+		adapter.setNamespaceIdentifier(extensionPoint.getNamespaceIdentifier());
+		adapter.setContributor(getBundleId(extensionPoint.getContributor().getName()));
+
 		Extension[] extensions = createExtensionAdapters(extensionPoint.getExtensions());
-		ExtensionPoint adapter = new ExtensionPoint(model, label, uniqueIdentifier, namespaceIdentifier, contributor);
 		adapter.getExtensions().addAll(Arrays.asList(extensions));
 		return adapter;
 	}
 
 	private ServiceRegistration createServiceReferenceAdapter(ServiceReference ref) {
-		Long id = (Long) ref.getProperty(org.osgi.framework.Constants.SERVICE_ID);
-		String bundle = ref.getBundle().getSymbolicName();
+		ServiceRegistration service = new ServiceRegistration();
+		service.setId(((Long) ref.getProperty(org.osgi.framework.Constants.SERVICE_ID)).longValue());
+		service.setBundle(ref.getBundle().getSymbolicName());
+
 		org.osgi.framework.Bundle[] usingBundles = ref.getUsingBundles();
-		Long[] usingBundlesIds = null;
+		long[] usingBundlesIds = null;
 		if (usingBundles != null) {
-			usingBundlesIds = new Long[usingBundles.length];
+			usingBundlesIds = new long[usingBundles.length];
 			for (int i = 0; i < usingBundles.length; i++) {
-				usingBundlesIds[i] = new Long(usingBundles[i].getBundleId());
+				usingBundlesIds[i] = usingBundles[i].getBundleId();
 			}
 		}
+		if (usingBundlesIds != null)
+			service.setUsingBundles(usingBundlesIds);
+
 		String[] classes = (String[]) ref.getProperty(org.osgi.framework.Constants.OBJECTCLASS);
-		return new ServiceRegistration(model, id, bundle, usingBundlesIds, classes);
+		if (classes != null)
+			service.setClasses(classes);
+		return service;
 	}
 
 	private static boolean getIsEnabled(org.osgi.framework.Bundle bundle) {
@@ -248,19 +259,23 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 				return null;
 			if (headerKey.equals(Constants.BUNDLE_CLASSPATH)) {
 				BundleLibrary[] array = new BundleLibrary[elements.length];
-				for (int i = 0; i < elements.length; i++)
-					array[i] = new BundleLibrary(model, elements[i].getValue());
+				for (int i = 0; i < elements.length; i++) {
+					BundleLibrary library = new BundleLibrary();
+					library.setLibrary(elements[i].getValue());
+					array[i] = library;
+				}
 				return array;
 			} else if (headerKey.equals(Constants.REQUIRE_BUNDLE)) {
 				BundlePrerequisite[] array = new BundlePrerequisite[elements.length];
 				for (int i = 0; i < elements.length; i++) {
 					ManifestElement element = elements[i];
-					String name = element.getValue();
-					String version = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
 
+					BundlePrerequisite prereq = new BundlePrerequisite();
+					prereq.setName(element.getValue());
+					prereq.setVersion(element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE));
 					String visibility = element.getDirective(Constants.VISIBILITY_DIRECTIVE);
-					boolean isExported = Constants.VISIBILITY_REEXPORT.equals(visibility);
-					array[i] = new BundlePrerequisite(model, name, version, isExported);
+					prereq.setExported(Constants.VISIBILITY_REEXPORT.equals(visibility));
+					array[i] = prereq;
 				}
 				return array;
 			}
@@ -274,7 +289,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 
 		Attribute[] catts = new Attribute[atts.length];
 		for (int i = 0; i < atts.length; i++)
-			catts[i] = new Attribute(model, atts[i], config.getAttribute(atts[i]));
+			catts[i] = new Attribute(atts[i], config.getAttribute(atts[i]));
 
 		IConfigurationElement[] children = config.getChildren();
 		Attribute[] result = new Attribute[children.length + catts.length];
@@ -390,10 +405,9 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		listener.removeExtensionPoints(createExtensionPointAdapters(extensionPoints));
 	}
 
-	public void setEnabled(Bundle bundle, boolean enabled) {
+	public void setEnabled(long id, boolean enabled) {
 		State state = PDERuntimePlugin.getDefault().getState();
-		long bundleId = bundle.getId().longValue();
-		BundleDescription desc = state.getBundle(bundleId);
+		BundleDescription desc = state.getBundle(id);
 
 		if (enabled) {
 			DisabledInfo[] infos = state.getDisabledInfos(desc);
@@ -407,33 +421,8 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 			platformAdmin.addDisabledInfo(info);
 		}
 
-		org.osgi.framework.Bundle b = PDERuntimePlugin.getDefault().getBundleContext().getBundle(bundleId);
+		org.osgi.framework.Bundle b = PDERuntimePlugin.getDefault().getBundleContext().getBundle(id);
 		PackageAdmin packageAdmin = PDERuntimePlugin.getDefault().getPackageAdmin();
 		packageAdmin.refreshPackages(new org.osgi.framework.Bundle[] {b});
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#setEnabled(org.osgi.framework.Bundle, boolean)
-	 */
-	public void setEnabled(org.osgi.framework.Bundle bundle, boolean enabled) {
-		PlatformAdmin plaformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-		State state = plaformAdmin.getState(false);
-
-		BundleDescription desc = state.getBundle(bundle.getBundleId());
-
-		if (enabled) {
-			DisabledInfo[] infos = state.getDisabledInfos(desc);
-			for (int i = 0; i < infos.length; i++) {
-				PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-				platformAdmin.removeDisabledInfo(infos[i]);
-			}
-		} else {
-			DisabledInfo info = new DisabledInfo("org.eclipse.pde.ui", "Disabled via PDE", desc); //$NON-NLS-1$ //$NON-NLS-2$
-			PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-			platformAdmin.addDisabledInfo(info);
-		}
-
-		PackageAdmin packageAdmin = PDERuntimePlugin.getDefault().getPackageAdmin();
-		packageAdmin.refreshPackages(new org.osgi.framework.Bundle[] {bundle});
 	}
 }

@@ -19,11 +19,11 @@ public interface BackendChangeListener {
 
 	void updateService(ServiceRegistration adapter);
 
-	void addExtensions(Extension[] createExtensionAdapters);
+	void addExtensions(Extension[] extensions);
 
-	void removeExtensions(Extension[] createExtensionAdapters);
+	void removeExtensions(Extension[] extensions);
 
-	void addExtensionPoints(ExtensionPoint[] createExtensionPointAdapters);
+	void addExtensionPoints(ExtensionPoint[] extensionPoints);
 
-	void removeExtensionPoints(ExtensionPoint[] createExtensionPointAdapters);
+	void removeExtensionPoints(ExtensionPoint[] extensionPoints);
 }

@@ -16,8 +16,11 @@ public class Attribute extends ModelObject {
 	private String name;
 	private String value;
 
-	public Attribute(RegistryModel model, String name, String value) {
-		super(model);
+	public Attribute() {
+		// empty
+	}
+
+	public Attribute(String name, String value) {
 		this.name = name;
 		this.value = value;
 	}
@@ -28,5 +31,13 @@ public class Attribute extends ModelObject {
 
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 }

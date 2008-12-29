@@ -12,20 +12,34 @@ package org.eclipse.pde.internal.runtime.registry.model;
 
 public class ServiceRegistration extends ModelObject {
 
-	private Long id;
+	private long id;
 	private String bundle;
-	private Long[] usingBundles;
-	private String[] classes;
+	private long[] usingBundles = new long[0];
+	private String[] classes = new String[0];
 
-	public ServiceRegistration(RegistryModel model, Long id, String bundle, Long[] usingBundles, String[] classes) {
-		super(model);
+	public void setId(long id) {
 		this.id = id;
+	}
+
+	public void setBundle(String bundle) {
 		this.bundle = bundle;
+	}
+
+	public void setUsingBundles(long[] usingBundles) {
+		if (usingBundles == null)
+			throw new IllegalArgumentException();
+
 		this.usingBundles = usingBundles;
+	}
+
+	public void setClasses(String[] classes) {
+		if (usingBundles == null)
+			throw new IllegalArgumentException();
+
 		this.classes = classes;
 	}
 
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -37,15 +51,15 @@ public class ServiceRegistration extends ModelObject {
 		return bundle;
 	}
 
-	public Long[] getUsingBundles() {
+	public long[] getUsingBundles() {
 		return usingBundles;
 	}
 
 	public boolean equals(Object obj) {
-		return (obj instanceof ServiceRegistration) && (id.equals(((ServiceRegistration) obj).id));
+		return (obj instanceof ServiceRegistration) && (id == (((ServiceRegistration) obj).id));
 	}
 
 	public int hashCode() {
-		return id.intValue();
+		return (int) id;
 	}
 }

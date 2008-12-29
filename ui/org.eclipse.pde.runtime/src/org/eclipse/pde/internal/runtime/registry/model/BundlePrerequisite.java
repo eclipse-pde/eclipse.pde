@@ -16,11 +16,16 @@ public class BundlePrerequisite extends ModelObject {
 	private String name;
 	private String version;
 
-	public BundlePrerequisite(RegistryModel model, String name, String version, boolean isExported) {
-		super(model);
-		this.name = name;
-		this.version = version;
+	public void setExported(boolean isExported) {
 		this.isExported = isExported;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
 	public boolean isExported() {
@@ -28,12 +33,10 @@ public class BundlePrerequisite extends ModelObject {
 	}
 
 	public String getName() {
-		if (version != null) {
-			if (Character.isDigit(version.charAt(0)))
-				version = '(' + version + ')';
-			return name + ' ' + version;
-		}
-
 		return name;
+	}
+
+	public String getVersion() {
+		return version;
 	}
 }

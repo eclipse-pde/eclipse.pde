@@ -12,13 +12,9 @@ package org.eclipse.pde.internal.runtime.registry.model;
 
 public abstract class ModelObject {
 
-	private RegistryModel model;
+	protected RegistryModel model;
 
-	public ModelObject(RegistryModel model) {
+	public void setModel(RegistryModel model) {
 		this.model = model;
-	}
-
-	public RegistryModel getModel() {
-		return model;
 	}
 }

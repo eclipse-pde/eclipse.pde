@@ -175,8 +175,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		if (element instanceof ServiceRegistration) {
 			ServiceRegistration ref = (ServiceRegistration) element;
 			String[] classes = ref.getClasses();
-			Long id = ref.getId();
-			String identifier = " (id=" + id.toString() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			String identifier = " (id=" + ref.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			return Arrays.asList(classes).toString().concat(identifier);
 		}
 		if (element instanceof Folder) {
@@ -215,8 +214,17 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 				return NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_nameIdBind, id, name);
 			return id;
 		}
-		if (element instanceof BundlePrerequisite)
-			return ((BundlePrerequisite) element).getName();
+		if (element instanceof BundlePrerequisite) {
+			BundlePrerequisite prereq = (BundlePrerequisite) element;
+			String version = prereq.getVersion();
+			if (version != null) {
+				if (Character.isDigit(version.charAt(0)))
+					version = '(' + version + ')';
+				return prereq.getName() + ' ' + version;
+			}
+
+			return prereq.getName();
+		}
 
 		if (element instanceof BundleLibrary)
 			return ((BundleLibrary) element).getLibrary();

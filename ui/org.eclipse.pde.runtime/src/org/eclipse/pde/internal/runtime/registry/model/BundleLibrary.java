@@ -14,12 +14,11 @@ public class BundleLibrary extends ModelObject {
 
 	private String library;
 
-	public BundleLibrary(RegistryModel model, String library) {
-		super(model);
-		this.library = library;
-	}
-
 	public String getLibrary() {
 		return library;
+	}
+
+	public void setLibrary(String name) {
+		library = name;
 	}
 }

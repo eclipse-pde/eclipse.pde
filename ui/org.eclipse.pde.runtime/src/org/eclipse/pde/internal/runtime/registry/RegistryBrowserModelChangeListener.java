@@ -68,7 +68,8 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 						fRegistryBrowser.add(object);
 					} else {
 						Object topLevelElement = getTopLevelElement(object);
-						fRegistryBrowser.refresh(topLevelElement);
+						if (topLevelElement != null)
+							fRegistryBrowser.refresh(topLevelElement);
 					}
 					break;
 				case ModelChangeDelta.REMOVED :
@@ -76,7 +77,8 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 						fRegistryBrowser.remove(object);
 					} else {
 						Object topLevelElement = getTopLevelElement(object);
-						fRegistryBrowser.refresh(topLevelElement);
+						if (topLevelElement != null)
+							fRegistryBrowser.refresh(topLevelElement);
 					}
 					break;
 				case ModelChangeDelta.STARTED :
@@ -88,7 +90,8 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 						fRegistryBrowser.refresh(object);
 					} else {
 						Object topLevelElement = getTopLevelElement(object);
-						fRegistryBrowser.refresh(topLevelElement);
+						if (topLevelElement != null)
+							fRegistryBrowser.refresh(topLevelElement);
 					}
 					break;
 			}

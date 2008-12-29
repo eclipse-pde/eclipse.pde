@@ -19,9 +19,10 @@ public class RegistryModel {
 
 	private BackendChangeListener backendListener = new BackendChangeListener() {
 		public void addBundle(Bundle adapter) {
+			adapter.setModel(RegistryModel.this);
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.ADDED);
 
-			bundles.put(adapter.getId(), adapter);
+			bundles.put(new Long(adapter.getId()), adapter);
 
 			fireModelChangeEvent(new ModelChangeDelta[] {delta});
 		}
@@ -29,21 +30,24 @@ public class RegistryModel {
 		public void removeBundle(Bundle adapter) {
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.REMOVED);
 
-			bundles.remove(adapter.getId());
+			bundles.remove(new Long(adapter.getId()));
 
 			fireModelChangeEvent(new ModelChangeDelta[] {delta});
+			adapter.setModel(null);
 		}
 
 		public void updateBundle(Bundle adapter, int updated) {
+			adapter.setModel(RegistryModel.this);
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, updated);
 
-			bundles.put(adapter.getId(), adapter); // replace old with new one
+			bundles.put(new Long(adapter.getId()), adapter); // replace old with new one
 
 			fireModelChangeEvent(new ModelChangeDelta[] {delta});
 		}
 
 		public void addService(ServiceRegistration adapter) {
-			services.put(adapter.getId(), adapter);
+			adapter.setModel(RegistryModel.this);
+			services.put(new Long(adapter.getId()), adapter);
 
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.ADDED);
 
@@ -51,15 +55,17 @@ public class RegistryModel {
 		}
 
 		public void removeService(ServiceRegistration adapter) {
-			services.remove(adapter.getId());
+			services.remove(new Long(adapter.getId()));
 
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.REMOVED);
 
 			fireModelChangeEvent(new ModelChangeDelta[] {delta});
+			adapter.setModel(null);
 		}
 
 		public void updateService(ServiceRegistration adapter) {
-			services.put(adapter.getId(), adapter);
+			adapter.setModel(RegistryModel.this);
+			services.put(new Long(adapter.getId()), adapter);
 
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.UPDATED);
 
@@ -68,6 +74,7 @@ public class RegistryModel {
 
 		public void addExtensions(Extension[] extensionAdapters) {
 			for (int i = 0; i < extensionAdapters.length; i++) {
+				extensionAdapters[i].setModel(RegistryModel.this);
 				String id = extensionAdapters[i].getExtensionPointUniqueIdentifier();
 				ExtensionPoint extPoint = (ExtensionPoint) extensionPoints.get(id);
 				extPoint.getExtensions().add(extensionAdapters[i]);
@@ -92,10 +99,15 @@ public class RegistryModel {
 				delta[i] = new ModelChangeDelta(extensionAdapters[i], ModelChangeDelta.REMOVED);
 			}
 			fireModelChangeEvent(delta);
+
+			for (int i = 0; i < extensionAdapters.length; i++) {
+				extensionAdapters[i].setModel(null);
+			}
 		}
 
 		public void addExtensionPoints(ExtensionPoint[] extensionPointAdapters) {
 			for (int i = 0; i < extensionPointAdapters.length; i++) {
+				extensionPointAdapters[i].setModel(RegistryModel.this);
 				extensionPoints.put(extensionPointAdapters[i].getUniqueIdentifier(), extensionPointAdapters[i]);
 			}
 
@@ -116,6 +128,10 @@ public class RegistryModel {
 				delta[i] = new ModelChangeDelta(extensionPointAdapters[i], ModelChangeDelta.REMOVED);
 			}
 			fireModelChangeEvent(delta);
+
+			for (int i = 0; i < extensionPointAdapters.length; i++) {
+				extensionPointAdapters[i].setModel(null);
+			}
 		}
 	};
 
@@ -126,17 +142,20 @@ public class RegistryModel {
 	protected RegistryBackend backend;
 
 	public RegistryModel(RegistryBackend backend) {
+		bundles = Collections.synchronizedMap(new HashMap());
+		services = Collections.synchronizedMap(new HashMap());
+		extensionPoints = Collections.synchronizedMap(new HashMap());
+
 		this.backend = backend;
 		backend.setRegistryListener(backendListener);
-		backend.setRegistryModel(this);
 	}
 
 	public void connect() {
 		backend.connect();
 
-		bundles = backend.initializeBundles();
-		services = backend.initializeServices();
-		extensionPoints = backend.initializeExtensionPoints();
+		backend.initializeBundles();
+		backend.initializeServices();
+		backend.initializeExtensionPoints();
 	}
 
 	public void disconnect() {

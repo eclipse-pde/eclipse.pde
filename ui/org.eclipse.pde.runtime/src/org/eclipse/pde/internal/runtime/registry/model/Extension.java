@@ -5,15 +5,29 @@ public class Extension extends ModelObject {
 	private String namespaceIdentifier;
 	private String label;
 	private String extensionPointUniqueIdentifier;
-	private ConfigurationElement[] configurationElements;
+	private ConfigurationElement[] configurationElements = new ConfigurationElement[0];
 	private Long contributor;
 
-	public Extension(RegistryModel model, String namespaceIdentifier, String label, String extensionPointUniqueIdentifier, ConfigurationElement[] cfg, Long contributor) {
-		super(model);
+	public void setNamespaceIdentifier(String namespaceIdentifier) {
 		this.namespaceIdentifier = namespaceIdentifier;
+	}
+
+	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public void setExtensionPointUniqueIdentifier(String extensionPointUniqueIdentifier) {
 		this.extensionPointUniqueIdentifier = extensionPointUniqueIdentifier;
-		this.configurationElements = cfg;
+	}
+
+	public void setConfigurationElements(ConfigurationElement[] configurationElements) {
+		if (configurationElements == null)
+			throw new IllegalArgumentException();
+
+		this.configurationElements = configurationElements;
+	}
+
+	public void setContributor(Long contributor) {
 		this.contributor = contributor;
 	}
 
@@ -57,10 +71,14 @@ public class Extension extends ModelObject {
 	}
 
 	public ExtensionPoint getExtensionPoint() {
-		return getModel().getExtensionPoint(extensionPointUniqueIdentifier);
+		if (model == null)
+			return null;
+		return model.getExtensionPoint(extensionPointUniqueIdentifier);
 	}
 
 	public Bundle getContributor() {
-		return getModel().getBundle(contributor);
+		if (model == null)
+			return null;
+		return model.getBundle(contributor);
 	}
 }

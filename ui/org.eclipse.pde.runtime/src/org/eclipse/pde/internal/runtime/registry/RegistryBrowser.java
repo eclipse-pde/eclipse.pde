@@ -11,9 +11,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -45,7 +48,6 @@ public class RegistryBrowser extends ViewPart {
 	private FilteredTree fFilteredTree;
 	private TreeViewer fTreeViewer;
 	private IMemento fMemento;
-	private int fTotalItems = 0;
 
 	private RegistryModel model;
 	private ModelChangeListener listener;
@@ -126,12 +128,19 @@ public class RegistryBrowser extends ViewPart {
 		}
 	}
 
-	public RegistryBrowser() {
+	private void initializeModel() {
 		model = RegistryModelFactory.getRegistryModel("local"); //$NON-NLS-1$
-		model.connect();
-
-		listener = new RegistryBrowserModelChangeListener(this);
+		fTreeViewer.setInput(model);
+		listener = new RegistryBrowserModelChangeListener(RegistryBrowser.this);
 		model.addModelChangeListener(listener);
+
+		Job job = new Job(PDERuntimeMessages.RegistryBrowser_InitializingView) {
+			public IStatus run(IProgressMonitor monitor) {
+				model.connect();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
@@ -214,7 +223,7 @@ public class RegistryBrowser extends ViewPart {
 		if (fShowDisabledAction.isChecked())
 			fTreeViewer.addFilter(fDisabledFilter);
 
-		updateItems(true);
+		initializeModel();
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fTreeViewer.getControl(), IHelpContextIds.REGISTRY_VIEW);
 
@@ -311,7 +320,7 @@ public class RegistryBrowser extends ViewPart {
 			public void run() {
 				BusyIndicator.showWhile(fTreeViewer.getTree().getDisplay(), new Runnable() {
 					public void run() {
-						updateItems(true);
+						refresh(fTreeViewer.getInput());
 					}
 				});
 			}
@@ -364,7 +373,7 @@ public class RegistryBrowser extends ViewPart {
 		fShowExtensionsOnlyAction = new Action(PDERuntimeMessages.RegistryBrowser_showExtOnlyLabel) {
 			public void run() {
 				// refreshAction takes into account checked state of fShowExtensionsOnlyAction
-				// (via updateItems(true)
+				// showExtensionsOnly()
 				fRefreshAction.run();
 			}
 		};
@@ -409,7 +418,7 @@ public class RegistryBrowser extends ViewPart {
 				List bundles = getSelectedBundles();
 				for (Iterator it = bundles.iterator(); it.hasNext();) {
 					Bundle bundle = (Bundle) it.next();
-					bundle.setEnabled(true);
+					bundle.enable();
 				}
 			}
 		};
@@ -419,7 +428,7 @@ public class RegistryBrowser extends ViewPart {
 				List bundles = getSelectedBundles();
 				for (Iterator it = bundles.iterator(); it.hasNext();) {
 					Bundle bundle = (Bundle) it.next();
-					bundle.setEnabled(false);
+					bundle.disable();
 				}
 			}
 		};
@@ -432,7 +441,7 @@ public class RegistryBrowser extends ViewPart {
 					MultiStatus problems = bundle.diagnose();
 
 					Dialog dialog;
-					if (problems.getChildren().length > 0) {
+					if ((problems != null) && (problems.getChildren().length > 0)) {
 						dialog = new DiagnosticsDialog(getSite().getShell(), PDERuntimeMessages.RegistryView_diag_dialog_title, null, problems, IStatus.WARNING);
 						dialog.open();
 					} else {
@@ -457,18 +466,6 @@ public class RegistryBrowser extends ViewPart {
 		return fShowExtensionsOnlyAction.isChecked();
 	}
 
-	protected void updateItems(boolean resetInput) {
-		Object[] input = null;
-		if (showExtensionsOnly())
-			input = model.getExtensionPoints();
-		else
-			input = model.getBundles();
-		fTotalItems = input.length;
-		if (resetInput)
-			fTreeViewer.setInput(input);
-		updateTitle();
-	}
-
 	public void updateTitle() {
 		setContentDescription(getTitleSummary());
 	}
@@ -484,7 +481,11 @@ public class RegistryBrowser extends ViewPart {
 		String type = fShowExtensionsOnlyAction.isChecked() ? PDERuntimeMessages.RegistryView_folders_extensionPoints : PDERuntimeMessages.RegistryBrowser_plugins;
 		if (tree == null)
 			return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {"0", "0", type})); //$NON-NLS-1$ //$NON-NLS-2$
-		return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {Integer.toString(tree.getItemCount()), Integer.toString(fTotalItems), type}));
+		return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {Integer.toString(tree.getItemCount()), Integer.toString(getTotalCount()), type}));
+	}
+
+	private int getTotalCount() {
+		return showExtensionsOnly() ? model.getExtensionPoints().length : model.getBundles().length;
 	}
 
 	private boolean isBundleSelected() {
@@ -579,7 +580,6 @@ public class RegistryBrowser extends ViewPart {
 	protected void add(Object parent, Object object) {
 		if (fDrillDownAdapter.canGoHome())
 			return;
-		fTotalItems += 1;
 		fTreeViewer.add(parent, object);
 		updateTitle();
 	}
@@ -587,7 +587,6 @@ public class RegistryBrowser extends ViewPart {
 	public void remove(Object object) {
 		if (fDrillDownAdapter.canGoHome())
 			return;
-		fTotalItems -= 1;
 		fTreeViewer.remove(object);
 		updateTitle();
 	}
@@ -596,7 +595,10 @@ public class RegistryBrowser extends ViewPart {
 		fTreeViewer.update(object, null);
 	}
 
-	public void refresh(Object object) {
+	public static int count = 0;
+
+	void refresh(Object object) {
 		fTreeViewer.refresh(object);
+		updateTitle();
 	}
 }

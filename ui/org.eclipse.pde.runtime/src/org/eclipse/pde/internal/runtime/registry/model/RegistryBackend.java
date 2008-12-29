@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry.model;
 
-import java.util.Map;
 import org.eclipse.core.runtime.MultiStatus;
 import org.osgi.framework.BundleException;
 
@@ -20,22 +19,20 @@ public interface RegistryBackend {
 
 	public void disconnect();
 
-	public void setEnabled(Bundle bundle, boolean enabled);
+	public void setEnabled(long id, boolean enabled);
 
-	public void start(Bundle bundle) throws BundleException;
+	public void start(long id) throws BundleException;
 
-	public void stop(Bundle bundle) throws BundleException;
+	public void stop(long id) throws BundleException;
 
-	public MultiStatus diagnose(Bundle bundle);
+	public MultiStatus diagnose(long id);
 
-	public Map initializeBundles();
+	public void initializeBundles();
 
-	public Map initializeExtensionPoints();
+	public void initializeExtensionPoints();
 
 	public void setRegistryListener(BackendChangeListener listener);
 
-	public void setRegistryModel(RegistryModel listener);
-
-	public Map initializeServices();
+	public void initializeServices();
 
 }

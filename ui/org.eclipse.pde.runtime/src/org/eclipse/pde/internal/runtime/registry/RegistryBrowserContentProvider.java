@@ -18,10 +18,10 @@ import org.eclipse.pde.internal.runtime.registry.model.*;
 public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	public boolean isInExtensionSet;
 
-	//private RegistryBrowser fRegistryBrowser;
+	private RegistryBrowser fRegistryBrowser;
 
 	public RegistryBrowserContentProvider(RegistryBrowser registryBrowser) {
-		//fRegistryBrowser = registryBrowser;
+		fRegistryBrowser = registryBrowser;
 	}
 
 	public void dispose() { // nothing to dispose
@@ -32,8 +32,15 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	}
 
 	public Object[] getChildren(Object element) {
-		if (element == null)
-			return null;
+		if (element instanceof RegistryModel) {
+			RegistryModel model = (RegistryModel) element;
+
+			if (fRegistryBrowser.showExtensionsOnly()) {
+				return model.getExtensionPoints();
+			}
+
+			return model.getBundles();
+		}
 
 		if (element instanceof Extension)
 			return ((Extension) element).getConfigurationElements();
@@ -58,7 +65,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 
 			// filter out empty folders
 			ArrayList folderList = new ArrayList();
-			folderList.add(new Attribute(bundle.getModel(), Attribute.F_LOCATION, bundle.getLocation()));
+			folderList.add(new Attribute(Attribute.F_LOCATION, bundle.getLocation()));
 
 			for (int i = 0; i < folders.length; i++) {
 				if ((folders[i].getChildren() != null) && (folders[i].getChildren().length > 0))

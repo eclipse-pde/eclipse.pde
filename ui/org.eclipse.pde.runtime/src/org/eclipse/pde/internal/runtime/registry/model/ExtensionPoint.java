@@ -11,12 +11,24 @@ public class ExtensionPoint extends ModelObject {
 	private Long contributor;
 	private List extensions = new ArrayList();
 
-	public ExtensionPoint(RegistryModel model, String label, String uniqueIdentifier, String namespaceIdentifier, Long contributor) {
-		super(model);
+	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public void setUniqueIdentifier(String uniqueIdentifier) {
 		this.uniqueIdentifier = uniqueIdentifier;
+	}
+
+	public void setNamespaceIdentifier(String namespaceIdentifier) {
 		this.namespaceIdentifier = namespaceIdentifier;
+	}
+
+	public void setContributor(Long contributor) {
 		this.contributor = contributor;
+	}
+
+	public void setExtensions(List extensions) {
+		this.extensions = extensions;
 	}
 
 	public List getExtensions() {
@@ -40,7 +52,9 @@ public class ExtensionPoint extends ModelObject {
 	}
 
 	public Bundle getContributor() {
-		return getModel().getBundle(contributor);
+		if (model == null)
+			return null;
+		return model.getBundle(contributor);
 	}
 
 	public boolean equals(Object obj) {

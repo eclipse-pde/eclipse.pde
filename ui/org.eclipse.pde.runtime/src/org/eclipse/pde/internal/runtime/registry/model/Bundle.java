@@ -13,22 +13,48 @@ public class Bundle extends ModelObject {
 	private String symbolicName;
 	private String location;
 	private boolean isEnabled;
-	private BundlePrerequisite[] imports;
+	private BundlePrerequisite[] imports = new BundlePrerequisite[0];
 	private String version;
 	private int state;
-	private Long id;
-	private BundleLibrary[] libraries;
+	private long id;
+	private BundleLibrary[] libraries = new BundleLibrary[0];
 
-	public Bundle(RegistryModel model, String symbolicName, String version, int state, Long id, String location, BundlePrerequisite[] prereq, BundleLibrary[] libs, boolean isEnabled) {
-		super(model);
+	public void setSymbolicName(String symbolicName) {
 		this.symbolicName = symbolicName;
-		this.version = version;
-		this.state = state;
-		this.id = id;
+	}
+
+	public void setLocation(String location) {
 		this.location = location;
-		this.imports = prereq;
-		this.libraries = libs;
-		this.isEnabled = isEnabled;
+	}
+
+	public void setImports(BundlePrerequisite[] imports) {
+		if (imports == null)
+			throw new IllegalArgumentException();
+
+		this.imports = imports;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setEnabled(boolean enabled) {
+		isEnabled = enabled;
+	}
+
+	public void setLibraries(BundleLibrary[] libraries) {
+		if (libraries == null)
+			throw new IllegalArgumentException();
+
+		this.libraries = libraries;
 	}
 
 	public String getSymbolicName() {
@@ -59,45 +85,63 @@ public class Bundle extends ModelObject {
 		return state;
 	}
 
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 
 	public void start() throws BundleException {
-		getModel().backend.start(this);
+		if (model == null)
+			return;
+		model.backend.start(id);
 	}
 
 	public void stop() throws BundleException {
-		getModel().backend.stop(this);
+		if (model == null)
+			return;
+		model.backend.stop(id);
 	}
 
-	public void setEnabled(boolean enabled) {
-		getModel().backend.setEnabled(this, enabled);
+	public void enable() {
+		if (model == null)
+			return;
+		model.backend.setEnabled(id, true);
+	}
+
+	public void disable() {
+		if (model == null)
+			return;
+		model.backend.setEnabled(id, false);
 	}
 
 	public MultiStatus diagnose() {
-		return getModel().backend.diagnose(this);
+		if (model == null)
+			return null;
+		return model.backend.diagnose(id);
 	}
 
 	public ExtensionPoint[] getExtensionPoints() {
-		ExtensionPoint[] extPoints = getModel().getExtensionPoints();
+		if (model == null)
+			return new ExtensionPoint[0];
+		ExtensionPoint[] extPoints = model.getExtensionPoints();
 		List result = new ArrayList();
 
 		for (int i = 0; i < extPoints.length; i++) {
-			if (id.equals(extPoints[i].getContributorId()))
+			if (extPoints[i].getContributorId().longValue() == id)
 				result.add(extPoints[i]);
 		}
 		return (ExtensionPoint[]) result.toArray(new ExtensionPoint[result.size()]);
 	}
 
 	public Extension[] getExtensions() {
-		ExtensionPoint[] extPoints = getModel().getExtensionPoints();
+		if (model == null)
+			return new Extension[0];
+		ExtensionPoint[] extPoints = model.getExtensionPoints();
 		List result = new ArrayList();
 
 		for (int i = 0; i < extPoints.length; i++) {
 			for (Iterator it = extPoints[i].getExtensions().iterator(); it.hasNext();) {
 				Extension a = (Extension) it.next();
-				if (id.equals(a.getContributorId()))
+				if (a.getContributorId().longValue() == id)
 					result.add(a);
 			}
 
@@ -106,7 +150,9 @@ public class Bundle extends ModelObject {
 	}
 
 	public ServiceRegistration[] getRegisteredServices() {
-		ServiceRegistration[] services = getModel().getServices();
+		if (model == null)
+			return new ServiceRegistration[0];
+		ServiceRegistration[] services = model.getServices();
 		List result = new ArrayList();
 
 		for (int i = 0; i < services.length; i++) {
@@ -117,14 +163,16 @@ public class Bundle extends ModelObject {
 	}
 
 	public ServiceRegistration[] getServicesInUse() {
-		ServiceRegistration[] services = getModel().getServices();
+		if (model == null)
+			return new ServiceRegistration[0];
+		ServiceRegistration[] services = model.getServices();
 		List result = new ArrayList();
 
 		for (int i = 0; i < services.length; i++) {
-			Long[] usingBundles = services[i].getUsingBundles();
+			long[] usingBundles = services[i].getUsingBundles();
 			if (usingBundles != null) {
 				for (int j = usingBundles.length; j < usingBundles.length; j++)
-					if (id.equals(usingBundles[j]))
+					if (id == usingBundles[j])
 						result.add(services[i]);
 			}
 		}
@@ -132,11 +180,10 @@ public class Bundle extends ModelObject {
 	}
 
 	public boolean equals(Object obj) {
-		return (obj instanceof Bundle) && (id.equals(((Bundle) obj).id));
+		return (obj instanceof Bundle) && (id == ((Bundle) obj).id);
 	}
 
 	public int hashCode() {
-		return id.intValue();
+		return (int) id;
 	}
-
 }
