@@ -192,8 +192,8 @@ public class RuntimeInstallJob extends Job {
 		list.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, iuPatchDescription.getId(), iuPatchDescription.getVersion()));
 		iuPatchDescription.addProvidedCapabilities(list);
 
-		RequiredCapability applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
-		RequiredCapability newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(version, true, version, true), null, false, false);
+		IRequiredCapability applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
+		IRequiredCapability newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(version, true, version, true), null, false, false);
 		iuPatchDescription.setRequirementChanges(new RequirementChange[] {new RequirementChange(applyTo, newValue)});
 
 		iuPatchDescription.setApplicabilityScope(new RequiredCapability[0][0]);
@@ -202,7 +202,7 @@ public class RuntimeInstallJob extends Job {
 		Collector queryMatches = profile.query(new Query() {
 			public boolean isMatch(Object candidate) {
 				if (candidate instanceof IInstallableUnit) {
-					RequiredCapability[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
+					IRequiredCapability[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
 					for (int i = 0; i < reqs.length; i++) {
 						if (reqs[i].getName().equals(id)) {
 							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqs[i].getRange())) {
