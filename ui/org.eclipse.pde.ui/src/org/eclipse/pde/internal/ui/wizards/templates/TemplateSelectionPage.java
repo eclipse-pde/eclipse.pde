@@ -125,7 +125,6 @@ public class TemplateSelectionPage extends WizardPage {
 		viewer.setInput(PDEPlugin.getDefault());
 		// add all wizard pages to wizard.  Just don't iniatilize them right away (bug 174457)
 		initializeWizardPages();
-		fTablePart.selectAll(true);
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TEMPLATE_SELECTION);
