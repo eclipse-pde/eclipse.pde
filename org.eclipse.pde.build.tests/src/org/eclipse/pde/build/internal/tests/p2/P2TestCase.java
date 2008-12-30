@@ -61,7 +61,7 @@ public class P2TestCase extends PDETestCase {
 	}
 	
 	public void assertTouchpoint(IInstallableUnit iu, String phase, String action) {
-		TouchpointData[] data = iu.getTouchpointData();
+		ITouchpointData[] data = iu.getTouchpointData();
 		for (int i = 0; i < data.length; i++) {
 			if (data[i].getInstruction(phase).getBody().indexOf(action) > -1)
 				return;
@@ -70,7 +70,7 @@ public class P2TestCase extends PDETestCase {
 	}
 	
 	public void assertProvides(IInstallableUnit iu, String namespace, String name) {
-		ProvidedCapability [] caps = iu.getProvidedCapabilities();
+		IProvidedCapability [] caps = iu.getProvidedCapabilities();
 		for (int i = 0; i < caps.length; i++) {
 			if (caps[i].getNamespace().equals(namespace) && caps[i].getName().equals(name))
 				return;
@@ -80,7 +80,7 @@ public class P2TestCase extends PDETestCase {
 	}
 	
 	public void assertRequires(IInstallableUnit iu, String namespace, String name) {
-		RequiredCapability[] reqs = iu.getRequiredCapabilities();
+		IRequiredCapability[] reqs = iu.getRequiredCapabilities();
 		for (int i = 0; i < reqs.length; i++) {
 			if (reqs[i].getNamespace().equals(namespace) && reqs[i].getName().equals(name))
 				return;
@@ -93,7 +93,7 @@ public class P2TestCase extends PDETestCase {
 		outer: for (Iterator iterator = requiredIUs.iterator(); iterator.hasNext();) {
 			IInstallableUnit reqIU = (IInstallableUnit) iterator.next();
 		
-			RequiredCapability[] reqs = iu.getRequiredCapabilities();
+			IRequiredCapability[] reqs = iu.getRequiredCapabilities();
 			for (int i = 0; i < reqs.length; i++) {
 				if (reqs[i].getNamespace().equals(IU_NAMESPACE) && reqs[i].getName().equals(reqIU.getId()) && reqs[i].getRange().isIncluded(reqIU.getVersion())) {
 					iterator.remove();
