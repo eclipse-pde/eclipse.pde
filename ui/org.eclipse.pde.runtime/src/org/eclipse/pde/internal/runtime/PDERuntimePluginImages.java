@@ -75,6 +75,7 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_IMP_OBJ = create(PATH_OBJ, "bundle-importer.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXP_OBJ = create(PATH_OBJ, "bundle-exporter.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SERVICE_OBJ = create(PATH_OBJ, "int_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PROPERTY_OBJ = create(PATH_OBJ, "property_obj.gif"); //$NON-NLS-1$
 
 	/*
 	 * Overlays

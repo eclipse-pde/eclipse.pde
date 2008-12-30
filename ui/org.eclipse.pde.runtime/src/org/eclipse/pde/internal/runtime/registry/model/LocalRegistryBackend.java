@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wolfgang Schell <ws@jetztgrad.net> - bug 259348
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry.model;
 
@@ -216,8 +217,21 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 			service.setUsingBundles(usingBundlesIds);
 
 		String[] classes = (String[]) ref.getProperty(org.osgi.framework.Constants.OBJECTCLASS);
-		if (classes != null)
+		String[] propertyKeys = ref.getPropertyKeys();
+		Property[] properties = null;
+		if (propertyKeys != null) {
+			properties = new Property[propertyKeys.length];
+			for (int p = 0; p < propertyKeys.length; p++) {
+				String key = propertyKeys[p];
+				Object value = ref.getProperty(key);
+				properties[p] = new Property(key, ServiceRegistration.toString(value));
+			}
+		}
+
+		if (classes != null) {
 			service.setClasses(classes);
+			service.setProperties(properties);
+		}
 		return service;
 	}
 

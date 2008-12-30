@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wolfgang Schell <ws@jetztgrad.net> - bug 259348
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
@@ -88,6 +89,11 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			ExtensionPoint extensionPoint = (ExtensionPoint) element;
 			Object[] objs = extensionPoint.getExtensions().toArray();
 			return objs;
+		}
+
+		if (element instanceof ServiceRegistration) {
+			ServiceRegistration serviceRegistration = (ServiceRegistration) element;
+			return serviceRegistration.getProperties();
 		}
 
 		if (element instanceof Object[]) {

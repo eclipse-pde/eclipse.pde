@@ -40,6 +40,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image fExporterImage;
 	private Image fImporterImage;
 	private Image fServiceImage;
+	private Image fPropertyImage;
 	private TreeViewer fViewer;
 
 	public RegistryBrowserLabelProvider(TreeViewer viewer) {
@@ -59,6 +60,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		fExporterImage = PDERuntimePluginImages.DESC_EXP_OBJ.createImage();
 		fImporterImage = PDERuntimePluginImages.DESC_IMP_OBJ.createImage();
 		fServiceImage = PDERuntimePluginImages.DESC_SERVICE_OBJ.createImage();
+		fPropertyImage = PDERuntimePluginImages.DESC_PROPERTY_OBJ.createImage();
 
 		ImageDescriptor activePluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_RUN_CO}});
 		fActivePluginImage = activePluginDesc.createImage();
@@ -94,6 +96,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		fImporterImage.dispose();
 		fExporterImage.dispose();
 		fServiceImage.dispose();
+		fPropertyImage.dispose();
 	}
 
 	public Image getImage(Object element) {
@@ -118,6 +121,10 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 
 		if (element instanceof ServiceRegistration) {
 			return fServiceImage;
+		}
+
+		if (element instanceof Property) {
+			return fPropertyImage;
 		}
 
 		if (element instanceof Folder) {
@@ -235,6 +242,10 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		if (element instanceof Attribute) {
 			Attribute attribute = (Attribute) element;
 			return attribute.getName() + " = " + attribute.getValue(); //$NON-NLS-1$
+		}
+		if (element instanceof Property) {
+			Property property = (Property) element;
+			return property.getName() + " = " + property.getValue(); //$NON-NLS-1$
 		}
 
 		return super.getText(element);
