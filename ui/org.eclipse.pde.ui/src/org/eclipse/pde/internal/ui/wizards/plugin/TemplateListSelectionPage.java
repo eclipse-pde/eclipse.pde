@@ -210,4 +210,19 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 		}
 		super.setVisible(visible);
 	}
+
+	/**
+	 * @return Returns <code>false</code> if no Template is available,
+	 * and <code>true</code> otherwise.
+	 */
+	public boolean isAnyTemplateAvailable() {
+		if (wizardSelectionViewer != null) {
+			wizardSelectionViewer.refresh();
+			Object firstElement = wizardSelectionViewer.getElementAt(0);
+			if (firstElement != null) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

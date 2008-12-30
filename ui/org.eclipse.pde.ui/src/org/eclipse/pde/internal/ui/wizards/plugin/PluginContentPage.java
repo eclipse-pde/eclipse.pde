@@ -378,4 +378,12 @@ public class PluginContentPage extends ContentPage {
 		settings.put(S_API_ANALYSIS, fApiAnalysisButton.getSelection());
 		settings.put(S_RCP_PLUGIN, fYesButton.getSelection());
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
+	 */
+	public boolean canFlipToNextPage() {
+		TemplateListSelectionPage templatePage = (TemplateListSelectionPage) getNextPage();
+		return super.canFlipToNextPage() && templatePage.isAnyTemplateAvailable();
+	}
 }
