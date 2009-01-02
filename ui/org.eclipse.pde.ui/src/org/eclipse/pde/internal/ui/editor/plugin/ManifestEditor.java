@@ -250,7 +250,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 		IPluginBase pluginBase = model.getPluginBase(true);
 		try {
-			pluginBase.setSchemaVersion(TargetPlatformHelper.getTargetVersion() < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
+			pluginBase.setSchemaVersion(TargetPlatformHelper.getSchemaVersion());
 		} catch (CoreException e) {
 		}
 		model.save();
