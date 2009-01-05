@@ -41,6 +41,9 @@ public class GatherFeatureAction extends FeaturesAction {
 		ArrayList ius = new ArrayList();
 
 		Collection collection = info.getAdvice(null, false, null, null, FeatureRootAdvice.class);
+		if (collection.size() == 0)
+			return ius;
+
 		FeatureRootAdvice advice = (FeatureRootAdvice) collection.iterator().next();
 		String[] configs = advice.getConfigs();
 		for (int i = 0; i < configs.length; i++) {

@@ -25,7 +25,6 @@ import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
 
 public class PublishingTests extends P2TestCase {
 
@@ -79,7 +78,7 @@ public class PublishingTests extends P2TestCase {
 
 		IInstallableUnit iu = getIU(repository, "bundle");
 		assertEquals(iu.getId(), "bundle");
-		assertEquals(iu.getVersion(), new Version("1.0.0.v1234"));
+		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
 		assertRequires(iu, "osgi.bundle", "org.eclipse.osgi");
 		assertTouchpoint(iu, "install", "myRandomAction");
 	}
@@ -119,31 +118,31 @@ public class PublishingTests extends P2TestCase {
 
 		String buildXMLPath = executableFeature.getFile("build.xml").getLocation().toOSString();
 		runAntScript(buildXMLPath, new String[] {"gather.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
-		
+
 		String executable = "org.eclipse.equinox.executable";
 		String fileName = features[0].getName();
 		String version = fileName.substring(fileName.indexOf('_') + 1);
 		Set entries = new HashSet();
 		entries.add("launcher");
 		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.aix.motif.ppc_" + version, entries);
-		
+
 		entries.add("about.html");
 		entries.add("libcairo-swt.so");
 		entries.add("about_files/about_cairo.html");
 		entries.add("about_files/mpl-v11.txt");
 		entries.add("about_files/pixman-licenses.txt");
 		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.linux.gtk.x86_" + version, entries);
-		
+
 		entries.add("Eclipse.app/Contents/Info.plist");
 		entries.add("Eclipse.app/Contents/MacOS/eclipse.ini");
 		entries.add("Eclipse.app/Contents/MacOS/launcher");
 		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.macosx.carbon.ppc_" + version, entries);
-		
+
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		assertNotNull(repository);
 
 		IInstallableUnit iu = getIU(repository, "org.eclipse.equinox.executable_root.linux.gtk.ppc");
-		assertEquals(iu.getVersion(), new Version(version));
+		assertEquals(iu.getVersion().toString(), version);
 		assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:libcairo-swt.so, permissions:755);");
 	}
 }

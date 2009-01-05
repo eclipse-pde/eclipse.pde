@@ -12,9 +12,9 @@ package org.eclipse.pde.internal.build.publisher;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.equinox.internal.p2.publisher.FileSetDescriptor;
+import org.eclipse.equinox.internal.provisional.p2.core.Version;
 import org.eclipse.equinox.p2.publisher.AbstractAdvice;
 import org.eclipse.pde.internal.build.Config;
-import org.osgi.framework.Version;
 
 public class FeatureRootAdvice extends AbstractAdvice {
 	private static final int IDX_COMPUTER = 0;
