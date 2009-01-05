@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -677,6 +677,8 @@ public final class Util {
 			case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE : return "API_METHOD_WITHOUT_DEFAULT_VALUE"; //$NON-NLS-1$
 			case IDelta.TYPE_ARGUMENT : return "TYPE_ARGUMENT"; //$NON-NLS-1$
 			case IDelta.SUPER_INTERFACE_WITH_METHODS : return "SUPER_INTERFACE_WITH_METHODS"; //$NON-NLS-1$
+			case IDelta.REEXPORTED_API_TYPE : return "REEXPORTED_API_TYPE"; //$NON-NLS-1$
+			case IDelta.REEXPORTED_TYPE : return "REEXPORTED_TYPE"; //$NON-NLS-1$
 		}
 		return UNKNOWN_FLAGS;
 	}
@@ -2448,7 +2450,14 @@ public final class Util {
 		return set;
 	}
 
-	public static String getDeltaComponentID(IApiComponent component) {
+	/**
+	 * Returns an identifier for the given API component including its version identifier
+	 * (component id + _ + major + _ + minor + _ + micro)
+	 *  
+	 * @param component API component
+	 * @return API component + version identifier
+	 */
+	public static String getDeltaComponentVersionsId(IApiComponent component) {
 		try {
 			StringBuffer buffer = new StringBuffer(component.getId());
 			String version = component.getVersion();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 	private boolean isExcluded(IDelta delta) {
 		String typeName = delta.getTypeName();
 		StringBuffer buffer = new StringBuffer();
-		String componentId = delta.getApiComponentID();
+		String componentId = delta.getComponentVersionId();
 		if (componentId != null) {
 			buffer.append(componentId).append(':');
 		}

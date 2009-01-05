@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -830,6 +830,30 @@ public interface IDelta {
 	 */
 	public static final int SUPER_INTERFACE_WITH_METHODS = 69;
 	/**
+	 * Delta kind flag that denotes a re-exported type has been added or removed.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int REEXPORTED_TYPE = 70;
+	/**
+	 * Delta kind flag that denotes changing the visibility of a re-exported type from VisibilityModifiers.API to another visibility.
+	 * As a consequence, the corresponding re-exported type is no longer an API type.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int REEXPORTED_API_TYPE = 71;
+	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
 	 * 
 	 * @return true if the receiver has no children deltas, false otherwise.
@@ -921,10 +945,18 @@ public interface IDelta {
 	public int getModifiers();
 	
 	/**
-	 * Returns the component id in which the given delta is reported. Might be null if the delta
-	 * is reported against an api profile.
+	 * Returns the component identifier including its version identifier in which the given delta is
+	 * reported, or <code>null</code>. Can be <code>null</code> if the delta is reported against an
+	 * API profile.
 	 * 
-	 * @return the component id in which the given delta is reported, null if none
+	 * @return the component id in which the given delta is reported, or <code>null</code> if none
 	 */
-	public String getApiComponentID();
+	public String getComponentVersionId();
+	
+	/**
+	 * Update component version id.
+	 * 
+	 * @param value the new component version ID
+	 */
+	public void setComponentVersionId(String value);
 }

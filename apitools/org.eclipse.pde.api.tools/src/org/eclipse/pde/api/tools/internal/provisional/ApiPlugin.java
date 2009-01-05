@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,6 +152,8 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	public static String[] AllCompatibilityKeys = new String[] {
 		IApiProblemTypes.API_COMPONENT_REMOVED_TYPE,
 		IApiProblemTypes.API_COMPONENT_REMOVED_API_TYPE,
+		IApiProblemTypes.API_COMPONENT_REMOVED_REEXPORTED_TYPE,
+		IApiProblemTypes.API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
 		IApiProblemTypes.ANNOTATION_REMOVED_FIELD,
 		IApiProblemTypes.ANNOTATION_REMOVED_METHOD,
 		IApiProblemTypes.ANNOTATION_REMOVED_TYPE_MEMBER,

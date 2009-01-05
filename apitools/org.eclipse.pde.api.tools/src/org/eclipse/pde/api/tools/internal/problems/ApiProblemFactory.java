@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -553,6 +553,8 @@ public class ApiProblemFactory {
 							case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE: return 130;
 							case IDelta.TYPE_ARGUMENT: return 107;
 							case IDelta.SUPERCLASS: return 131;
+							case IDelta.REEXPORTED_API_TYPE: return 134;
+							case IDelta.REEXPORTED_TYPE: return 135;
 						}
 					}
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
+import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor;
@@ -65,7 +66,7 @@ public class ApiComparator {
 			if (version.getMajor() != version2.getMajor()) {
 				globalDelta.add(
 					new Delta(
-						Util.getDeltaComponentID(apiComponent2),
+						Util.getDeltaComponentVersionsId(apiComponent2),
 						IDelta.API_COMPONENT_ELEMENT_TYPE,
 						IDelta.CHANGED,
 						IDelta.MAJOR_VERSION,
@@ -81,7 +82,7 @@ public class ApiComparator {
 			} else if (version.getMinor() != version2.getMinor()) {
 				globalDelta.add(
 					new Delta(
-						Util.getDeltaComponentID(apiComponent2),
+						Util.getDeltaComponentVersionsId(apiComponent2),
 						IDelta.API_COMPONENT_ELEMENT_TYPE,
 						IDelta.CHANGED,
 						IDelta.MINOR_VERSION,
@@ -367,7 +368,7 @@ public class ApiComparator {
 						IDelta.API_COMPONENT,
 						null,
 						component2.getId(),
-						Util.getDeltaComponentID(component2));
+						Util.getDeltaComponentVersionsId(component2));
 			} else if (component2 == null) {
 				String referenceComponentId = referenceComponent.getId();
 				return new Delta(
@@ -377,7 +378,7 @@ public class ApiComparator {
 						IDelta.API_COMPONENT,
 						null,
 						referenceComponentId,
-						Util.getDeltaComponentID(referenceComponent));
+						Util.getDeltaComponentVersionsId(referenceComponent));
 			}
 			String referenceComponentId = referenceComponent.getId();
 			final Delta globalDelta = new Delta();
@@ -391,7 +392,7 @@ public class ApiComparator {
 				if (!componentsEEs.remove(currentEE)) {
 					globalDelta.add(
 							new Delta(
-									Util.getDeltaComponentID(referenceComponent),
+									Util.getDeltaComponentVersionsId(referenceComponent),
 									IDelta.API_COMPONENT_ELEMENT_TYPE,
 									IDelta.REMOVED,
 									IDelta.EXECUTION_ENVIRONMENT,
@@ -399,14 +400,14 @@ public class ApiComparator {
 									0,
 									null,
 									referenceComponentId,
-									new String[] { currentEE, Util.getDeltaComponentID(referenceComponent)}));
+									new String[] { currentEE, Util.getDeltaComponentVersionsId(referenceComponent)}));
 				}
 			}
 			for (Iterator iterator = componentsEEs.iterator(); iterator.hasNext(); ) {
 				String currentEE = (String) iterator.next();
 				globalDelta.add(
 						new Delta(
-								Util.getDeltaComponentID(referenceComponent),
+								Util.getDeltaComponentVersionsId(referenceComponent),
 								IDelta.API_COMPONENT_ELEMENT_TYPE,
 								IDelta.ADDED,
 								IDelta.EXECUTION_ENVIRONMENT,
@@ -414,7 +415,7 @@ public class ApiComparator {
 								0,
 								null,
 								referenceComponentId,
-								new String[] { currentEE, Util.getDeltaComponentID(referenceComponent)}));
+								new String[] { currentEE, Util.getDeltaComponentVersionsId(referenceComponent)}));
 			}
 			return internalCompare(referenceComponent, component2, referenceBaseline, baseline, visibilityModifiers, globalDelta);
 		} catch(CoreException e) {
@@ -501,7 +502,7 @@ public class ApiComparator {
 			if (refElementDescription != null) {
 				refVisibility = refElementDescription.getVisibility();
 			}
-			String deltaComponentID = Util.getDeltaComponentID(component2);
+			String deltaComponentID = Util.getDeltaComponentVersionsId(component2);
 			if (typeRoot == null) {
 				if (isAPI(visibility, typeDescriptor2)) {
 					return new Delta(
@@ -745,7 +746,42 @@ public class ApiComparator {
 								} else{
 									typeRoot2 = component2.findTypeRoot(typeName, id);
 								}
-								String deltaComponentID = Util.getDeltaComponentID(component2);
+								String deltaComponentID = null;
+								IApiComponent provider = null;
+								IApiDescription providerApiDesc = null;
+								boolean reexported = false;
+								if (typeRoot2 == null) {
+									// check if the type is provided by a required component (it could have been moved/re-exported)
+									IApiComponent[] providers = component2.getBaseline().resolvePackage(component2, packageName);
+									int index = 0;
+									while (typeRoot2 == null && index < providers.length) {
+										IApiComponent p = providers[index];
+										if (!p.equals(component2)) {
+											if ("org.eclipse.swt".equals(p.getId())) { //$NON-NLS-1$
+												typeRoot2 = p.findTypeRoot(typeName);
+											} else {
+												typeRoot2 = p.findTypeRoot(typeName, p.getId());
+											}
+											if (typeRoot2 != null) {
+												provider = p;
+												providerApiDesc = p.getApiDescription();
+												IRequiredComponentDescription[] required = component2.getRequiredComponents();
+												for (int k = 0; k < required.length; k++) {
+													IRequiredComponentDescription description = required[k];
+													if (description.getId().equals(p.getId())) {
+														reexported = description.isExported();
+														break;
+													}
+												}
+											}
+										}
+										index++;
+									}
+								} else {
+									provider = component2;
+									providerApiDesc = apiDescription2;
+								}
+								deltaComponentID = Util.getDeltaComponentVersionsId(component2);
 								if(typeRoot2 == null) {
 									if ((visibility & visibilityModifiers) == 0) {
 										// we skip the class file according to their visibility
@@ -768,14 +804,14 @@ public class ApiComparator {
 													typeDescriptor.getModifiers(),
 													typeName,
 													typeName,
-													new String[] { typeName, deltaComponentID}));
+													new String[] { typeName, deltaComponentID }));
 								} else {
 									if ((visibility & visibilityModifiers) == 0) {
 										// we skip the class file according to their visibility
 										return;
 									}
 									IApiType typeDescriptor2 = typeRoot2.getStructure();
-									IApiAnnotations elementDescription2 = apiDescription2.resolveAnnotations(typeDescriptor2.getHandle());
+									IApiAnnotations elementDescription2 = providerApiDesc.resolveAnnotations(typeDescriptor2.getHandle());
 									int visibility2 = 0;
 									if (elementDescription2 != null) {
 										visibility2 = elementDescription2.getVisibility();
@@ -787,19 +823,21 @@ public class ApiComparator {
 											return;
 										}
 									}
-									if (isAPI(visibility, typeDescriptor) && !isAPI(visibility2, typeDescriptor2)) {
-										globalDelta.add(
+									if (isAPI(visibility, typeDescriptor)) {
+										if (!isAPI(visibility2, typeDescriptor2)) {
+											globalDelta.add(
 												new Delta(
-														deltaComponentID,
-														IDelta.API_COMPONENT_ELEMENT_TYPE,
-														IDelta.REMOVED,
-														IDelta.API_TYPE,
-														elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
-														typeDescriptor2.getModifiers(),
-														typeName,
-														typeName,
-														new String[] { typeName, deltaComponentID}));
-										return;
+													deltaComponentID,
+													IDelta.API_COMPONENT_ELEMENT_TYPE,
+													IDelta.REMOVED,
+													reexported ?  IDelta.REEXPORTED_API_TYPE : IDelta.API_TYPE,
+													elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
+													typeDescriptor2.getModifiers(),
+													typeName,
+													typeName,
+													new String[] { typeName, deltaComponentID }));
+											return;
+										}
 									}
 									if ((visibility2 & visibilityModifiers) == 0) {
 										// we simply report a changed visibility
@@ -816,7 +854,7 @@ public class ApiComparator {
 														new String[] { typeName, deltaComponentID}));
 									}
 									typeRootBaseLineNames.add(typeName);
-									ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, typeRoot2, component, component2, referenceBaseline, baseline, visibilityModifiers);
+									ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, typeRoot2, component, provider, referenceBaseline, baseline, visibilityModifiers);
 									IDelta delta = comparator.getDelta();
 									IStatus status = comparator.getStatus();
 									if(status != null) {
@@ -833,6 +871,129 @@ public class ApiComparator {
 					});
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
+				}
+			}
+		}
+		IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
+		int length = requiredComponents.length;
+		if (length != 0) {
+			for (int j = 0; j < length; j++) {
+				IRequiredComponentDescription description = requiredComponents[j];
+				if (description.isExported()) {
+					final String currentComponentID = Util.getDeltaComponentVersionsId(component);
+					String descriptionID = description.getId();
+					IApiComponent currentRequiredApiComponent = referenceBaseline.getApiComponent(descriptionID);
+					final IApiDescription reexportedApiDescription = currentRequiredApiComponent.getApiDescription();
+					IApiTypeContainer[] apiTypeContainers = currentRequiredApiComponent.getApiTypeContainers();
+					if (apiTypeContainers != null) {
+						for (int i = 0, max = apiTypeContainers.length; i < max; i++) {
+							IApiTypeContainer container = apiTypeContainers[i];
+							try {
+								container.accept(new ApiTypeContainerVisitor() {
+									public void visit(String packageName, IApiTypeRoot typeRoot) {
+										String typeName = typeRoot.getTypeName();
+										try {
+											IApiType typeDescriptor = typeRoot.getStructure();
+											IApiAnnotations elementDescription = reexportedApiDescription.resolveAnnotations(typeDescriptor.getHandle());
+											if (typeDescriptor.isMemberType() || typeDescriptor.isAnonymous() || typeDescriptor.isLocal()) {
+												// we skip nested types (member, local and anonymous)
+												return;
+											}
+											int visibility = 0;
+											if (elementDescription != null) {
+												visibility = elementDescription.getVisibility();
+											}
+											IApiTypeRoot typeRoot2 = null;
+											if (isSWT) {
+												typeRoot2 = component2.findTypeRoot(typeName);
+											} else{
+												typeRoot2 = component2.findTypeRoot(typeName, id);
+											}
+											IApiDescription providerApiDesc = null;
+											if (typeRoot2 == null) {
+												// check if the type is provided by a required component (it could have been moved/re-exported)
+												IApiComponent[] providers = component2.getBaseline().resolvePackage(component2, packageName);
+												int index = 0;
+												while (typeRoot2 == null && index < providers.length) {
+													IApiComponent p = providers[index];
+													if (!p.equals(component2)) {
+														if ("org.eclipse.swt".equals(p.getId())) { //$NON-NLS-1$
+															typeRoot2 = p.findTypeRoot(typeName);
+														} else {
+															typeRoot2 = p.findTypeRoot(typeName, p.getId());
+														}
+														if (typeRoot2 != null) {
+															providerApiDesc = p.getApiDescription();
+														}
+													}
+													index++;
+												}
+											} else {
+												providerApiDesc = apiDescription2;
+											}
+											if(typeRoot2 == null) {
+												if ((visibility & visibilityModifiers) == 0) {
+													// we skip the class file according to their visibility
+													return;
+												}
+												if (visibilityModifiers == VisibilityModifiers.API) {
+													// if the visibility is API, we only consider public and protected types
+													if (Util.isDefault(typeDescriptor.getModifiers())
+																|| Util.isPrivate(typeDescriptor.getModifiers())) {
+														return;
+													}
+												}
+												globalDelta.add(
+														new Delta(
+																currentComponentID,
+																IDelta.API_COMPONENT_ELEMENT_TYPE,
+																IDelta.REMOVED,
+																IDelta.REEXPORTED_TYPE,
+																RestrictionModifiers.NO_RESTRICTIONS,
+																typeDescriptor.getModifiers(),
+																typeName,
+																typeName,
+																new String[] { typeName, currentComponentID }));
+											} else {
+												typeRootBaseLineNames.add(typeName);
+												IApiType typeDescriptor2 = typeRoot2.getStructure();
+												IApiAnnotations elementDescription2 = providerApiDesc.resolveAnnotations(typeDescriptor2.getHandle());
+												int visibility2 = 0;
+												if (elementDescription2 != null) {
+													visibility2 = elementDescription2.getVisibility();
+												}
+												// if the visibility is API, we only consider public and protected types
+												if (Util.isDefault(typeDescriptor.getModifiers())
+														|| Util.isPrivate(typeDescriptor.getModifiers())) {
+													return;
+												}
+												if (isAPI(visibility, typeDescriptor)) {
+													if (!isAPI(visibility2, typeDescriptor2)) {
+														globalDelta.add(
+															new Delta(
+																currentComponentID,
+																IDelta.API_COMPONENT_ELEMENT_TYPE,
+																IDelta.REMOVED,
+																IDelta.REEXPORTED_API_TYPE,
+																elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
+																typeDescriptor2.getModifiers(),
+																typeName,
+																typeName,
+																new String[] { typeName, currentComponentID }));
+														return;
+													}
+												}
+											}
+										} catch (CoreException e) {
+											ApiPlugin.log(e);
+										}
+									}
+								});
+							} catch (CoreException e) {
+								ApiPlugin.log(e);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -858,7 +1019,7 @@ public class ApiComparator {
 									return;
 								}
 								typeRootBaseLineNames.add(typeName);
-								String deltaComponentID = Util.getDeltaComponentID(component2);
+								String deltaComponentID = Util.getDeltaComponentVersionsId(component2);
 								globalDelta.add(
 										new Delta(
 												deltaComponentID,
@@ -869,7 +1030,7 @@ public class ApiComparator {
 												type.getModifiers(),
 												typeName,
 												typeName,
-												new String[] { typeName, deltaComponentID}));
+												new String[] { typeName, deltaComponentID }));
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
 							}
@@ -877,6 +1038,63 @@ public class ApiComparator {
 					});
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
+				}
+			}
+		}
+		requiredComponents = component2.getRequiredComponents();
+		length = requiredComponents.length;
+		if (length != 0) {
+			for (int j = 0; j < length; j++) {
+				IRequiredComponentDescription description = requiredComponents[j];
+				if (description.isExported()) {
+					final String currentComponentID = Util.getDeltaComponentVersionsId(component);
+					String descriptionID = description.getId();
+					IApiComponent currentRequiredApiComponent = baseline.getApiComponent(descriptionID);
+					IApiTypeContainer[] apiTypeContainers = currentRequiredApiComponent.getApiTypeContainers();
+					final IApiDescription reexportedApiDescription = currentRequiredApiComponent.getApiDescription();
+					if (apiTypeContainers != null) {
+						for (int i = 0, max = apiTypeContainers.length; i < max; i++) {
+							IApiTypeContainer container = apiTypeContainers[i];
+							try {
+								container.accept(new ApiTypeContainerVisitor() {
+									public void visit(String packageName, IApiTypeRoot typeRoot) {
+										String typeName = typeRoot.getTypeName();
+										try {
+											IApiType typeDescriptor = typeRoot.getStructure();
+											IApiAnnotations elementDescription = reexportedApiDescription.resolveAnnotations(typeDescriptor.getHandle());
+											if (typeDescriptor.isMemberType() || typeDescriptor.isAnonymous() || typeDescriptor.isLocal()) {
+												// we skip nested types (member, local and anonymous)
+												return;
+											}
+											if (filterType(visibilityModifiers, elementDescription, typeDescriptor)) {
+												return;
+											}
+											if (typeRootBaseLineNames.contains(typeName)) {
+												// already processed
+												return;
+											}
+											typeRootBaseLineNames.add(typeName);
+											globalDelta.add(
+													new Delta(
+															currentComponentID,
+															IDelta.API_COMPONENT_ELEMENT_TYPE,
+															IDelta.ADDED,
+															IDelta.REEXPORTED_TYPE,
+															elementDescription != null ? elementDescription.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
+															typeDescriptor.getModifiers(),
+															typeName,
+															typeName,
+															new String[] { typeName, currentComponentID }));
+										} catch (CoreException e) {
+											ApiPlugin.log(e);
+										}
+									}
+								});
+							} catch (CoreException e) {
+								ApiPlugin.log(e);
+							}
+						}
+					}
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -227,6 +227,10 @@ public class ApiErrorsWarningsConfigurationBlock {
 		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_API_TYPE);
 	private static final Key KEY_API_COMPONENT_REMOVED_TYPE =
 		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_TYPE);
+	private static final Key KEY_API_COMPONENT_REMOVED_REEXPORTED_API_TYPE =
+		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_REEXPORTED_API_TYPE);
+	private static final Key KEY_API_COMPONENT_REMOVED_REEXPORTED_TYPE =
+		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_REEXPORTED_TYPE);
 	
 	private static final Key KEY_ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE =
 		getApiToolsKey(IApiProblemTypes.ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE);
@@ -1022,10 +1026,14 @@ public class ApiErrorsWarningsConfigurationBlock {
 						new String[] {
 								PreferenceMessages.API_COMPONENT_REMOVED_API_TYPE,
 								PreferenceMessages.API_COMPONENT_REMOVED_TYPE,
+								PreferenceMessages.API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
+								PreferenceMessages.API_COMPONENT_REMOVED_REEXPORTED_TYPE,
 						},
 						new Key[] {
 								KEY_API_COMPONENT_REMOVED_API_TYPE,
 								KEY_API_COMPONENT_REMOVED_TYPE,
+								KEY_API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
+								KEY_API_COMPONENT_REMOVED_REEXPORTED_TYPE,
 						});
 				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityClassElement);
 				initializeComboControls(

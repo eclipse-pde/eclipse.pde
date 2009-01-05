@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,10 +161,10 @@ public class ClassFileComparator {
 		this.delta.add(delta);
 	}
 	private void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IApiType type, String key, String data) {
-		this.addDelta(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, type.getName(), key, data));
+		this.addDelta(new Delta(Util.getDeltaComponentVersionsId(this.component2), elementType, kind, flags, restrictions, modifiers, type.getName(), key, data));
 	}
 	private void addDelta(int elementType, int kind, int flags, int restrictions, int modifiers, IApiType type, String key, String[] datas) {
-		this.addDelta(new Delta(Util.getDeltaComponentID(this.component2), elementType, kind, flags, restrictions, modifiers, type.getName(), key, datas));
+		this.addDelta(new Delta(Util.getDeltaComponentVersionsId(this.component2), elementType, kind, flags, restrictions, modifiers, type.getName(), key, datas));
 	}
 	/**
 	 * Checks if the super-class set has been change in any way compared to the baseline (grown or reduced or types changed)
@@ -471,7 +471,7 @@ public class ClassFileComparator {
 								typeMember.getModifiers(),
 								this.type1,
 								typeMember.getName(),
-								new String[] { typeMember.getName().replace('$', '.'), Util.getDeltaComponentID(component2)});
+								new String[] { typeMember.getName().replace('$', '.'), Util.getDeltaComponentVersionsId(component2)});
 					} catch (CoreException e) {
 						reportStatus(e);
 					}
@@ -506,7 +506,7 @@ public class ClassFileComparator {
 						if (memberTypeElementDescription2 != null) {
 							memberTypeVisibility2 = memberTypeElementDescription2.getVisibility();
 						}
-						String deltaComponentID = Util.getDeltaComponentID(component2);
+						String deltaComponentID = Util.getDeltaComponentVersionsId(component2);
 						int restrictions = memberTypeElementDescription2 != null ? memberTypeElementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
 						if (Util.isFinal(this.type2.getModifiers())) {
 							restrictions |= RestrictionModifiers.NO_EXTEND;
@@ -586,7 +586,7 @@ public class ClassFileComparator {
 							typeMember.getModifiers(),
 							this.type1,
 							typeMember.getName(),
-							new String[] { typeMember.getName().replace('$', '.'), Util.getDeltaComponentID(component2)});
+							new String[] { typeMember.getName().replace('$', '.'), Util.getDeltaComponentVersionsId(component2)});
 				} catch (CoreException e) {
 					reportStatus(e);
 				}
@@ -1006,8 +1006,8 @@ public class ClassFileComparator {
 									IDelta.RESTRICTIONS,
 									restrictions2,
 									typeAccess,
-									this.type1,
-									this.type1.getName(),
+									this.type2,
+									this.type2.getName(),
 									Util.getDescriptorName(type1));
 							}
 						} else {
@@ -1022,8 +1022,8 @@ public class ClassFileComparator {
 											IDelta.RESTRICTIONS,
 											restrictions2,
 											typeAccess,
-											this.type1,
-											this.type1.getName(),
+											this.type2,
+											this.type2.getName(),
 											Util.getDescriptorName(type1));
 								}
 							}
@@ -1038,8 +1038,8 @@ public class ClassFileComparator {
 											IDelta.RESTRICTIONS,
 											restrictions2,
 											typeAccess,
-											this.type1,
-											this.type1.getName(),
+											this.type2,
+											this.type2.getName(),
 											Util.getDescriptorName(type1));
 								}
 							}

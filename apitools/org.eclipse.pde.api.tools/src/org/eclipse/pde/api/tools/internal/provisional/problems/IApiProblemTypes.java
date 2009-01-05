@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,11 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE);
 	public static final String API_COMPONENT_REMOVED_API_TYPE =
 		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_TYPE);
+	// Compatibility problems
+	public static final String API_COMPONENT_REMOVED_REEXPORTED_TYPE =
+		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_TYPE);
+	public static final String API_COMPONENT_REMOVED_REEXPORTED_API_TYPE =
+		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE);
 	public static final String ANNOTATION_REMOVED_FIELD =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.FIELD);
 	public static final String ANNOTATION_REMOVED_METHOD =
