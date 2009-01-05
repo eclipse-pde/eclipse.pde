@@ -351,6 +351,60 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 	}
 
+	static public void copyFile(String src, String dest) throws IOException {
+		File source = new File(src);
+		if (!source.exists())
+			return;
+		File destination = new File(dest);
+		File destDir = destination.getParentFile();
+		if ((!destDir.exists() && !destDir.mkdirs()) || destDir.isFile())
+			return; //we will fail trying to create the file, TODO log warning/error
+
+		copy(source, destination);
+	}
+
+	/**
+	 * Transfers all available bytes from the given input stream to the given output stream. 
+	 * Regardless of failure, this method closes both streams.
+	 * @throws IOException 
+	 */
+	static public void copy(File source, File destination) throws IOException {
+		InputStream in = null;
+		OutputStream out = null;
+		try {
+			in = new BufferedInputStream(new FileInputStream(source));
+			out = new BufferedOutputStream(new FileOutputStream(destination));
+			final byte[] buffer = new byte[8192];
+			while (true) {
+				int bytesRead = -1;
+				bytesRead = in.read(buffer);
+				if (bytesRead == -1)
+					break;
+				out.write(buffer, 0, bytesRead);
+			}
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} finally {
+				if (out != null)
+					out.close();
+			}
+		}
+	}
+
+	public static void writeBuffer(StringBuffer buffer, File outputFile) throws IOException {
+		FileOutputStream stream = null;
+		try {
+			outputFile.getParentFile().mkdirs();
+			stream = new FileOutputStream(outputFile);
+			stream.write(buffer.toString().getBytes());
+		} finally {
+			if (stream != null)
+				stream.close();
+		}
+	}
+
 	public static FeatureEntry[] getPluginEntry(BuildTimeFeature feature, String pluginId, boolean raw) {
 		FeatureEntry[] plugins;
 		if (raw)
@@ -915,6 +969,11 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 				return false;
 		}
 		return true;
+	}
+
+	public static Version extract3Segments(String s) {
+		Version tmp = new Version(s);
+		return new Version(tmp.getMajor(), tmp.getMinor(), tmp.getMicro());
 	}
 
 }

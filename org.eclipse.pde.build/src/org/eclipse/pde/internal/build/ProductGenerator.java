@@ -70,7 +70,11 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			//configuration/config.ini
 			String custom = findConfigFile(config.getOs());
 			if (custom != null) {
-				copyFile(custom, rootLocation + "/configuration/config.ini"); //$NON-NLS-1$
+				try {
+					Utils.copyFile(custom, rootLocation + "/configuration/config.ini"); //$NON-NLS-1$
+				} catch (IOException e) {
+					//ignore
+				}
 			} else {
 				createConfigIni(config, rootLocation);
 			}
@@ -122,47 +126,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private void initialize() throws CoreException {
 		productFile = loadProduct(product);
-	}
-
-	private void copyFile(String src, String dest) {
-		File source = new File(src);
-		if (!source.exists())
-			return;
-		File destination = new File(dest);
-		File destDir = destination.getParentFile();
-		if ((!destDir.exists() && !destDir.mkdirs()) || destDir.isFile())
-			return; //we will fail trying to create the file, TODO log warning/error
-
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			in = new BufferedInputStream(new FileInputStream(source));
-			out = new BufferedOutputStream(new FileOutputStream(destination));
-
-			//Transfer bytes from in to out
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-		} catch (IOException e) {
-			//nothing
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					//nothing
-				}
-			}
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					//nothing
-				}
-			}
-		}
 	}
 
 	private byte determineConfigStyle(Config config) throws CoreException {
