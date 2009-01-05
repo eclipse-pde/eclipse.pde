@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,62 @@
 package a.b.c;
 
 /**
- * Test unsupported @noreference tag on final fields in an inner class
+ * Test supported @noreference tag on static final fields in inner / outer classes
  */
 public class test3 {
-	
-	class inner {
+	/**
+	 * @noreference
+	 */
+	public static final Object f1 = null;
+	/**
+	 * @noreference
+	 */
+	protected static final int f2 = 0;
+	/**
+	 * @noreference
+	 */
+	private static final char[] f3 = {};
+	static class inner {
 		/**
 		 * @noreference
 		 */
-		public final Object f1 = null;
+		public static final Object f1 = null;
 		/**
 		 * @noreference
 		 */
-		protected final int f2 = 0;
+		protected static final int f2 = 0;
 		/**
 		 * @noreference
 		 */
-		private final char[] f3 = {};
+		private static final char[] f3 = {};
+		static class inner2 {
+			/**
+			 * @noreference
+			 */
+			public static final Object f1 = null;
+			/**
+			 * @noreference
+			 */
+			protected static final int f2 = 0;
+			/**
+			 * @noreference
+			 */
+			private static final char[] f3 = {};
+		}
 	}
+}
+
+class outer {
+	/**
+	 * @noreference
+	 */
+	public static final Object f1 = null;
+	/**
+	 * @noreference
+	 */
+	protected static final int f2 = 0;
+	/**
+	 * @noreference
+	 */
+	private static final char[] f3 = {};
 }

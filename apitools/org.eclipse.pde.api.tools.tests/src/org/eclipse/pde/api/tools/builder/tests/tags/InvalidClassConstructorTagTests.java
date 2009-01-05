@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
+import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests unsupported javadoc tags on class constructors
@@ -38,489 +38,291 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 		return super.getTestSourcePath().append("class");
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
-	 */
-	protected void assertProblems(ApiProblem[] problems) {
-		String message = null;
-		for(int i = 0; i < problems.length; i++) {
-			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("a constructor") || message.endsWith("a private constructor"));
-		}
-	}
-	
 	/**
 	 * @return the test for this class
 	 */
 	public static Test suite() {
 		return buildTestSuite(InvalidClassConstructorTagTests.class);
 	}
-	
-	/**
-	 * Tests the unsupported @noreference Javadoc tag on private constructors in a class 
-	 * is detected properly using an incremental build
-	 */
+
 	public void testInvalidClassMethodTag1I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test31", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x1(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noreference Javadoc tag on private constructors in a class 
-	 * is detected properly using a full build
-	 */
 	public void testInvalidClassMethodTag1F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test31", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x1(false);
 	}
 	
 	/**
-	 * Tests the unsupported @noreference Javadoc tag on private constructors in an outer class 
-	 * is detected properly using an incremental build
+	 * Tests the unsupported @noreference Javadoc tag on private constructors in a variety of inner / outer classes 
+	 * is detected properly
 	 */
+	private void x1(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(8));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_private_constructor},
+				{"@noreference", BuilderMessages.TagValidator_private_constructor},
+				{"@noreference", BuilderMessages.TagValidator_private_constructor},
+				{"@noreference", BuilderMessages.TagValidator_private_constructor},
+				{"@noreference", BuilderMessages.TagValidator_private_constructor},
+				{"@noreference", BuilderMessages.TagValidator_private_constructor},
+				{"@noreference", BuilderMessages.TagValidator_private_constructor},
+				{"@noreference", BuilderMessages.TagValidator_private_constructor}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test15", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidClassMethodTag2I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test32", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x2(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noreference Javadoc tag on private constructors in an outer class 
-	 * is detected properly using a full build
-	 */
 	public void testInvalidClassMethodTag2F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test32", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x2(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noreference Javadoc tag on private constructors in an inner class 
-	 * is detected properly using an incremental build
+	 * Tests the unsupported @noreference Javadoc tag on private constructors in a class in the default package 
+	 * is detected properly
 	 */
+	private void x2(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_private_constructor},
+				{"@noreference", BuilderMessages.TagValidator_private_constructor}
+		});
+		deployTagTest("", 
+				"test16", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidClassMethodTag3I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test33", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x3(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noreference Javadoc tag on private constructors in an inner class 
-	 * is detected properly using a full build
-	 */
 	public void testInvalidClassMethodTag3F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test33", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x3(false);
+	}
+
+	/**
+	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in a variety of inner / outer classes 
+	 * is detected properly
+	 */
+	private void x3(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(8));
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test17", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests the unsupported @noreference Javadoc tag on private constructors in a variety of inner / outer classes 
-	 * is detected properly using an incremental build
-	 */
 	public void testInvalidClassMethodTag4I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test34", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x4(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noreference Javadoc tag on private constructors in a variety of inner / outer classes 
-	 * is detected properly using a full build
-	 */
 	public void testInvalidClassMethodTag4F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test34", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x4(false);
+	}
+
+	/**
+	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in a class in the default package 
+	 * is detected properly
+	 */
+	private void x4(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}
+		});
+		deployTagTest("", 
+				"test18", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests the unsupported @noreference Javadoc tag on private constructors in a class in the default package 
-	 * is detected properly using an incremental build
-	 */
 	public void testInvalidClassMethodTag5I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test35", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x5(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noreference Javadoc tag on private constructors in a class in the default package 
-	 * is detected properly using a full build
-	 */
 	public void testInvalidClassMethodTag5F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test35", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x5(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in a class 
-	 * is detected properly using an incremental build
+	 * Tests the unsupported @noextend Javadoc tag on constructors in a variety of inner / outer classes 
+	 * is detected properly
 	 */
+	private void x5(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(8));
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_a_constructor},
+				{"@noextend", BuilderMessages.TagValidator_a_constructor},
+				{"@noextend", BuilderMessages.TagValidator_a_constructor},
+				{"@noextend", BuilderMessages.TagValidator_a_constructor},
+				{"@noextend", BuilderMessages.TagValidator_a_constructor},
+				{"@noextend", BuilderMessages.TagValidator_a_constructor},
+				{"@noextend", BuilderMessages.TagValidator_a_constructor},
+				{"@noextend", BuilderMessages.TagValidator_a_constructor}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test19", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidClassMethodTag6I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test36", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x6(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in a class 
-	 * is detected properly using a full build
-	 */
 	public void testInvalidClassMethodTag6F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test36", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x6(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in an outer class 
-	 * is detected properly using an incremental build
+	 * Tests the unsupported @noextend Javadoc tag on constructors in a class in the default package 
+	 * is detected properly
 	 */
+	private void x6(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_a_constructor},	
+				{"@noextend", BuilderMessages.TagValidator_a_constructor}
+		});
+		deployTagTest("", 
+				"test20", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidClassMethodTag7I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test37", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x7(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in an outer class 
-	 * is detected properly using a full build
-	 */
 	public void testInvalidClassMethodTag7F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test37", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x7(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in an inner class 
-	 * is detected properly using an incremental build
+	 * Tests the unsupported @nooverride Javadoc tag on constructors in a variety of inner / outer classes 
+	 * is detected properly
 	 */
+	private void x7(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(8));
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test21", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidClassMethodTag8I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test38", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x8(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in an inner class 
-	 * is detected properly using a full build
-	 */
+	
 	public void testInvalidClassMethodTag8F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test38", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x8(false);
 	}
 	
 	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in a variety of inner / outer classes 
-	 * is detected properly using an incremental build
+	 * Tests the unsupported @nooverride Javadoc tag on constructors in a class in the default package 
+	 * is detected properly
 	 */
+	private void x8(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor}
+		});
+		deployTagTest("", 
+				"test22", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+	
 	public void testInvalidClassMethodTag9I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test39", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x9(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in a variety of inner / outer classes 
-	 * is detected properly using a full build
-	 */
 	public void testInvalidClassMethodTag9F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test39", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x9(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in a class in the default package 
-	 * is detected properly using an incremental build
+	 * Tests the unsupported @noimplement Javadoc tag on constructors in a variety of inner / outer classes 
+	 * is detected properly
 	 */
+	private void x9(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(8));
+		setExpectedMessageArgs(new String[][] {
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test23", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidClassMethodTag10I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test40", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x10(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noinstantiate Javadoc tag on constructors in a class in the default package 
-	 * is detected properly using a full build
-	 */
 	public void testInvalidClassMethodTag10F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test40", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noextend Javadoc tag on constructors in a class 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag11I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test41", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noextend Javadoc tag on constructors in a class 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag11F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test41", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noextend Javadoc tag on constructors in an outer class 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag12I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test42", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noextend Javadoc tag on constructors in an outer class 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag12F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test42", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noextend Javadoc tag on constructors in an inner class 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag13I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test43", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noextend Javadoc tag on constructors in an inner class 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag13F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test43", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noextend Javadoc tag on constructors in a variety of inner / outer classes 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag14I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test44", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noextend Javadoc tag on constructors in a variety of inner / outer classes 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag14F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test44", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noextend Javadoc tag on constructors in a class in the default package 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag15I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test45", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noextend Javadoc tag on constructors in a class in the default package 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag15F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test45", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride Javadoc tag on constructors in a class 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag16I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test46", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride Javadoc tag on constructors in a class 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag16F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test46", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride Javadoc tag on constructors in an outer class 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag17I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test47", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride Javadoc tag on constructors in an outer class 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag17F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test47", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride Javadoc tag on constructors in an inner class 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag18I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test48", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride Javadoc tag on constructors in an inner class 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag18F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test48", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride Javadoc tag on constructors in a variety of inner / outer classes 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag19I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test49", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride Javadoc tag on constructors in a variety of inner / outer classes 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag19F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test49", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride Javadoc tag on constructors in a class in the default package 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag20I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test50", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride Javadoc tag on constructors in a class in the default package 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag20F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test50", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement Javadoc tag on constructors in a class 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag21I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test51", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement Javadoc tag on constructors in a class 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag21F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test51", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement Javadoc tag on constructors in an outer class 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag22I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test52", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement Javadoc tag on constructors in an outer class 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag22F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test52", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement Javadoc tag on constructors in an inner class 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag23I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test53", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement Javadoc tag on constructors in an inner class 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag23F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test53", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement Javadoc tag on constructors in a variety of inner / outer classes 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag24I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test54", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement Javadoc tag on constructors in a variety of inner / outer classes 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag24F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test54", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x10(false);
 	}
 	
 	/**
 	 * Tests the unsupported @noimplement Javadoc tag on constructors in a class in the default package 
-	 * is detected properly using an incremental build
+	 * is detected properly
 	 */
-	public void testInvalidClassMethodTag25I() {
+	private void x10(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test55", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement Javadoc tag on constructors in a class in the default package 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag25F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test55", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests multiple unsupported Javadoc tags on constructors in a class 
-	 * is detected properly using an incremental build
-	 */
-	public void testInvalidClassMethodTag26I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test56", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests multiple unsupported Javadoc tags on constructors in a class 
-	 * is detected properly using a full build
-	 */
-	public void testInvalidClassMethodTag26F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test56", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor}
+		});
+		deployTagTest("", 
+				"test24", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 }

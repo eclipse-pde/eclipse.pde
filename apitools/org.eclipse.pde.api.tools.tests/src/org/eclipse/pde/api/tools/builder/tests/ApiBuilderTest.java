@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ import org.eclipse.pde.api.tools.builder.tests.leak.LeakTest;
 import org.eclipse.pde.api.tools.builder.tests.tags.TagTest;
 import org.eclipse.pde.api.tools.builder.tests.usage.UsageTest;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -696,7 +697,48 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * Method that can be overridden for custom assertion of the problems after the build
 	 * @param problems the complete listing of problems from the testing environment
 	 */
-	protected void assertProblems(ApiProblem[] problems) {}
+	protected void assertProblems(ApiProblem[] problems) {
+		int[] expectedProblemIds = getExpectedProblemIds();
+		int length = problems.length;
+		if (expectedProblemIds.length != length) {
+			for (int i = 0; i < length; i++) {
+				System.err.println(problems[i]);
+			}
+		}
+		assertEquals("Wrong number of problems", expectedProblemIds.length, length);
+		String[][] args = getExpectedMessageArgs();
+		if (args != null) {
+			// compare messages
+			ArrayList<String> messages = new ArrayList<String>();
+			for (int i = 0; i < length; i++) {
+				messages.add(problems[i].getMessage());
+			}
+			for (int i = 0; i < expectedProblemIds.length; i++) {
+				String[] messageArgs = args[i];
+				int messageId = ApiProblemFactory.getProblemMessageId(expectedProblemIds[i]);
+				String message = ApiProblemFactory.getLocalizedMessage(messageId, messageArgs);
+				assertTrue("Missing expected problem: " + message, messages.remove(message));
+			}
+			if(messages.size() > 0) {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append('[');
+				for(String problem: messages) {
+					buffer.append(problem).append(',');
+				}
+				buffer.append(']');
+				fail("There was no problems that matched the arguments: "+buffer.toString());
+			}
+		} else {
+			// compare id's
+			ArrayList<Integer> messages = new ArrayList<Integer>();
+			for (int i = 0; i < length; i++) {
+				messages.add(new Integer(problems[i].getProblemId()));
+			}
+			for (int i = 0; i < expectedProblemIds.length; i++) {
+				assertTrue("Missing expected problem: " + expectedProblemIds[i], messages.remove(new Integer(expectedProblemIds[i])));
+			}
+		}
+	}
 	
 	/**
 	 * Sets the ids of the problems you expect to see from deploying a builder test

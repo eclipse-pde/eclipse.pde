@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,25 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
 
 /**
- * Test unsupported @noreference tag on static final fields in an enum
+ * Test unsupported @noextend tag on fields in a enum in the default package
  */
 public enum test6 {
 	
 	A;
 	
 	/**
-	 * @noreference
+	 * @noextend
 	 */
-	public static final Object f1 = null;
+	public Object f1 = null;
 	/**
-	 * @noreference
+	 * @noextend
 	 */
-	protected static final int f2 = 0;
+	protected int f2 = 0;
 	/**
-	 * @noreference
+	 * @noextend
 	 */
-	private static final char[] f3 = {};
+	private static char[] f3 = {};
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
 
 /**
- * Test unsupported @noextend tag on outer interface methods
+ * Test unsupported @noextend tag on methods in an interface in the default package
  */
 public interface test2 {
-	
-}
-
-interface outer {
 	/**
 	 * @noextend
 	 * @return

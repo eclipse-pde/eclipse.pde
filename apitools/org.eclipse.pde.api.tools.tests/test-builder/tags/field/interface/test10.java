@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,11 @@
  *******************************************************************************/
 
 /**
- * Test unsupported @noinstantiate tag on a field in an interface in the default package
+ * Test unsupported @noreference tag on a final field in an interface in the default package
  */
 public interface test10 {
 	/**
-	 * @noinstantiate
+	 * @noreference
 	 */
-	public Object f1 = null;
+	public final Object f1 = null;
 }

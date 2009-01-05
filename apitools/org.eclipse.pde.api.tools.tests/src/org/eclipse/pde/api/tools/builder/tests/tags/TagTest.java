@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,21 @@ public abstract class TagTest extends ApiBuilderTest {
 	 */
 	public TagTest(String name) {
 		super(name);
+	}
+	
+	/**
+	 * Sets the message arguments we are expecting for the given test, the number of times denoted
+	 * by count
+	 * @param tagname
+	 * @param context
+	 * @param count
+	 */
+	protected void setExpectedMessageArgs(String tagname, String context, int count) {
+		String[][] args = new String[count][];
+		for(int i = 0; i < count; i++) {
+			args[i] = new String[] {tagname, context};
+		}
+		setExpectedMessageArgs(args);
 	}
 	
 	/**

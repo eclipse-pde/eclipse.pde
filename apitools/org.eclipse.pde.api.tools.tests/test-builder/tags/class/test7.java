@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,33 @@
 package a.b.c;
 
 /**
- * Tests invalid @noimplement tag on outer type
+ * Tests invalid @noextend tags on nested final inner classes
  */
 public class test7 {
 
+	/**
+	 * @noextend
+	 */
+	final class inner {
+		
+	}
+	
+	class inner2 {
+		/**
+		 * @noextend
+		 */
+		final class inner3 {
+			
+		}
+	}
 }
 
-/**
- * @noimplement
- */
-class OuterNoRef2 {
+class outer {
 	
+	/**
+	 * @noextend
+	 */
+	final class inner {
+		
+	}
 }

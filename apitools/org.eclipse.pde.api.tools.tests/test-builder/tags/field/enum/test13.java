@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,27 +11,34 @@
 package a.b.c;
 
 /**
- * Test unsupported @noextend tag on fields in an inner enum
+ * Test unsupported @noreference tag on enum constants in inner / outer enums
  */
 public enum test13 {
 	
+	/**
+	 * @noreference
+	 */
 	A;
-	
 	static enum inner {
 		
+		/**
+		 * @noreference
+		 */
 		A;
-		
-		/**
-		 * @noextend
-		 */
-		public Object f1 = null;
-		/**
-		 * @noextend
-		 */
-		protected int f2 = 0;
-		/**
-		 * @noextend
-		 */
-		private static char[] f3 = {};
+		enum inner2 {
+			
+			/**
+			 * @noreference
+			 */
+			A;
+		}
 	}
+}
+
+enum outer {
+	
+	/**
+	 * @noreference
+	 */
+	A;
 }

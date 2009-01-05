@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,17 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
 
 /**
- * Test unsupported @nooverride tag on private class methods
+ * Test unsupported @noreference tag on private constructors in the default package
  */
 public class test16 {
 	/**
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 * @return
+	 * Constructor
+	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
-	private int m1() {
-		return 0;
+	private test16() {
+		
+	}
+	
+	/**
+	 * Constructor
+	 * @noreference This constructor is not intended to be referenced by clients.
+	 */
+	private test16(int i) {
+		
 	}
 }

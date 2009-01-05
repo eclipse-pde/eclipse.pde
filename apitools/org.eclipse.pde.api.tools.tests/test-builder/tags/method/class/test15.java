@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,39 +8,78 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package a.b.c;
+
 
 /**
- * Test supported @noinstantiate tag on class methods in the default package
+ * Test unsupported @noreference tag on private constructors in outer / inner classes
  */
 public class test15 {
 	/**
-	 * @noinstantiate
-	 * @return
+	 * Constructor
+	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
-	public int m1() {
-		return 0;
-	}
-	
-	/**
-	 * @noinstantiate
-	 * @return
-	 */
-	public final char m2() {
-		return 's';
-	}
-	
-	/**
-	 * @noinstantiate
-	 */
-	protected void m3() {
+	private test15() {
 		
 	}
 	
 	/**
-	 * @noinstantiate
-	 * @return
+	 * Constructor
+	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
-	protected static Object m4() {
-		return null;
+	private test15(int i) {
+		
+	}
+	static class inner {
+		/**
+		 * Constructor
+		 * @noreference This constructor is not intended to be referenced by clients.
+		 */
+		private inner() {
+			
+		}
+		
+		/**
+		 * Constructor
+		 * @noreference This constructor is not intended to be referenced by clients.
+		 */
+		private inner(int i) {
+			
+		}
+		class inner2 {
+			/**
+			 * Constructor
+			 * @noreference This constructor is not intended to be referenced by clients.
+			 */
+			private inner2() {
+				
+			}
+			
+			/**
+			 * Constructor
+			 * @noreference This constructor is not intended to be referenced by clients.
+			 */
+			private inner2(int i) {
+				
+			}
+		}
+	}
+}
+
+class outer {
+	/**
+	 * Constructor
+	 * @noreference This constructor is not intended to be referenced by clients.
+	 */
+	private outer() {
+		
+	}
+	
+	/**
+	 * Constructor
+	 * @noreference This constructor is not intended to be referenced by clients.
+	 */
+	private outer(int i) {
+		
 	}
 }

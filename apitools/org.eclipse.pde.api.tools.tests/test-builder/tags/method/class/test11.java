@@ -1,47 +1,43 @@
-/*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package a.b.c;
 
+
 /**
- * Test unsupported @noinstantiate tag on class methods
+ * Test supported @noreference tag on private methods in outer / inner classes
  */
 public class test11 {
 	/**
-	 * @noinstantiate
+	 * @noreference 
 	 * @return
 	 */
-	public int m1() {
+	private int m1() {
 		return 0;
 	}
-	
+	static class inner {
+		/**
+		 * @noreference 
+		 * @return
+		 */
+		private int m1() {
+			return 0;
+		}
+		static class inner2 {
+			/**
+			 * @noreference 
+			 * @return
+			 */
+			private int m1() {
+				return 0;
+			}
+		}
+	}
+}
+
+class outer {
 	/**
-	 * @noinstantiate
+	 * @noreference 
 	 * @return
 	 */
-	public final char m2() {
-		return 's';
-	}
-	
-	/**
-	 * @noinstantiate
-	 */
-	protected void m3() {
-		
-	}
-	
-	/**
-	 * @noinstantiate
-	 * @return
-	 */
-	protected static Object m4() {
-		return null;
+	private int m1() {
+		return 0;
 	}
 }

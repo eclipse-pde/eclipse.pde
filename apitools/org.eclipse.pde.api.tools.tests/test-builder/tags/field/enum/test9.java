@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,56 +11,56 @@
 package a.b.c;
 
 /**
- * Test supported @noreference tag on static final fields in inner / outer enums
+ * Test unsupported @nooverride tag on fields in inner / outer enums
  */
 public enum test9 {
 	
 	A;
 	
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	public static final Object f1 = null;
+	public Object f1 = null;
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	protected static final int f2 = 0;
+	protected int f2 = 0;
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	private static final char[] f3 = {};
+	private char[] f3 = {};
 	static enum inner {
 		
 		A;
 		
 		/**
-		 * @noreference
+		 * @nooverride
 		 */
-		public static final Object f1 = null;
+		public static Object f1 = null;
 		/**
-		 * @noreference
+		 * @nooverride
 		 */
-		protected static final int f2 = 0;
+		protected int f2 = 0;
 		/**
-		 * @noreference
+		 * @nooverride
 		 */
-		private static final char[] f3 = {};
-		static enum inner2 {
+		private static char[] f3 = {};
+		enum inner2 {
 			
 			A;
 			
 			/**
-			 * @noreference
+			 * @nooverride
 			 */
-			public static final Object f1 = null;
+			public Object f1 = null;
 			/**
-			 * @noreference
+			 * @nooverride
 			 */
-			protected static final int f2 = 0;
+			protected int f2 = 0;
 			/**
-			 * @noreference
+			 * @nooverride
 			 */
-			private static final char[] f3 = {};
+			private char[] f3 = {};
 		}
 	}
 }
@@ -70,15 +70,15 @@ enum outer {
 	A;
 	
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	public static final Object f1 = null;
+	public Object f1 = null;
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	protected static final int f2 = 0;
+	protected int f2 = 0;
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	private static final char[] f3 = {};
+	private static char[] f3 = {};
 }

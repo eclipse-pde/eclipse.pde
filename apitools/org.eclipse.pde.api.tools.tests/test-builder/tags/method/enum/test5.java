@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,55 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package a.b.c;
 
 /**
- * Test unsupported @noextend tag on methods in an enum in the default package
+ * Test unsupported @noimplement tag on methods in outer / inner enums
  */
 public enum test5 {
 	A;
-	
+	enum inner {
+		A;
+		/**
+		 * @noimplement
+		 * @return
+		 */
+		public int m1() {
+			return 0;
+		}
+		
+		/**
+		 * @noimplement
+		 * @return
+		 */
+		public final char m2() {
+			return 's';
+		}
+		enum inner2 {
+			A;
+			/**
+			 * @noimplement
+			 * @return
+			 */
+			public int m1() {
+				return 0;
+			}
+			
+			/**
+			 * @noimplement
+			 * @return
+			 */
+			public final char m2() {
+				return 's';
+			}
+		}
+	}
+}
+
+enum outer {
+	A;
 	/**
-	 * @noextend
+	 * @noimplement
 	 * @return
 	 */
 	public int m1() {
@@ -24,10 +64,10 @@ public enum test5 {
 	}
 	
 	/**
-	 * @noextend
+	 * @noimplement
 	 * @return
 	 */
-	public char m2() {
+	public final char m2() {
 		return 's';
 	}
 }

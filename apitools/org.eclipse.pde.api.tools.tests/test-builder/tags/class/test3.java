@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,38 @@
 package a.b.c;
 
 /**
- * Tests an invalid @noreference tag on a member class
+ * Tests invalid @noimplement tags on nested inner types
+ * @noimplement
  */
 public class test3 {
 
 	/**
-	 * @noreference
+	 * @noimplement
 	 */
-	class inner {
+	class InnerNoRef4 {
+		
+	}
+	
+	class InnerNoRef4_1 {
+		/**
+		 * @noimplement
+		 */
+		class Inner2NoRef4 {
+			
+		}
+	}
+	
+	class InnerNoRef4_2 {
+		
+	}
+}
+
+class OuterNoRef4 {
+	
+	/**
+	 * @noimplement
+	 */
+	class InnerNoRef4 {
 		
 	}
 }

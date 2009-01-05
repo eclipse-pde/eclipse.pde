@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,37 +10,14 @@
  *******************************************************************************/
 
 /**
- * Test supported @noextend tag on class methods in the default package
+ * Test supported @nooverride tag on final class methods in the default package
  */
 public class test10 {
 	/**
-	 * @noextend
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @return
 	 */
-	public int m1() {
+	public final int m1() {
 		return 0;
-	}
-	
-	/**
-	 * @noextend
-	 * @return
-	 */
-	public final char m2() {
-		return 's';
-	}
-	
-	/**
-	 * @noextend
-	 */
-	protected void m3() {
-		
-	}
-	
-	/**
-	 * @noextend
-	 * @return
-	 */
-	protected static Object m4() {
-		return null;
 	}
 }

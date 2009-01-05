@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,42 +10,44 @@
  *******************************************************************************/
 package a.b.c;
 
+
 /**
- * Test supported @noextend tag on outer class methods
+ * Test supported @nooverride tag on private methods in outer / inner classes
  */
 public class test7 {
-	
+	/**
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @return
+	 */
+	private int m1() {
+		return 0;
+	}
+	static class inner {
+		/**
+		 * @nooverride This method is not intended to be re-implemented or extended by clients.
+		 * @return
+		 */
+		private int m1() {
+			return 0;
+		}
+		static class inner2 {
+			/**
+			 * @nooverride This method is not intended to be re-implemented or extended by clients.
+			 * @return
+			 */
+			private int m1() {
+				return 0;
+			}
+		}
+	}
 }
 
 class outer {
 	/**
-	 * @noextend
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @return
 	 */
-	public int m1() {
+	private int m1() {
 		return 0;
-	}
-	
-	/**
-	 * @noextend
-	 * @return
-	 */
-	public final char m2() {
-		return 's';
-	}
-	
-	/**
-	 * @noextend
-	 */
-	protected void m3() {
-		
-	}
-	
-	/**
-	 * @noextend
-	 * @return
-	 */
-	protected static Object m4() {
-		return null;
 	}
 }

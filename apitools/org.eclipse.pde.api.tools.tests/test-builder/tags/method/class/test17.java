@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,78 @@
  *******************************************************************************/
 package a.b.c;
 
+
 /**
- * Test supported @nooverride tag on private outer class methods
+ * Test supported @noinstantiate tag on constructors in outer / inner classes
  */
 public class test17 {
 	
+	/**
+	 * Constructor
+	 * @noinstantiate This constructor is not intended to be referenced by clients.
+	 */
+	public test17() {
+		
+	}
+	
+	/**
+	 * Constructor
+	 * @noinstantiate This constructor is not intended to be referenced by clients.
+	 */
+	public test17(int i) {
+		
+	}
+	
+	static class inner {
+		/**
+		 * Constructor
+		 * @noinstantiate This constructor is not intended to be referenced by clients.
+		 */
+		public inner() {
+			
+		}
+		
+		/**
+		 * Constructor
+		 * @noinstantiate This constructor is not intended to be referenced by clients.
+		 */
+		protected inner(int i) {
+			
+		}
+		static class inner2 {
+			/**
+			 * Constructor
+			 * @noinstantiate This constructor is not intended to be referenced by clients.
+			 */
+			public inner2() {
+				
+			}
+			
+			/**
+			 * Constructor
+			 * @noinstantiate This constructor is not intended to be referenced by clients.
+			 */
+			protected inner2(int i) {
+				
+			}
+		}
+	}
 }
 
 class outer {
 	/**
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 * @return
+	 * Constructor
+	 * @noinstantiate This constructor is not intended to be referenced by clients.
 	 */
-	private int m1() {
-		return 0;
+	public outer() {
+		
+	}
+	
+	/**
+	 * Constructor
+	 * @noinstantiate This constructor is not intended to be referenced by clients.
+	 */
+	protected outer(int i) {
+		
 	}
 }

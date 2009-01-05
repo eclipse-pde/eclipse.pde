@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,62 +11,62 @@
 package a.b.c;
 
 /**
- * Test supported @noreference tag on static final fields in inner / outer classes
+ * Test unsupported @nooverride tag on fields in inner / outer classes
  */
 public class test9 {
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	public static final Object f1 = null;
+	public Object f1 = null;
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	protected static final int f2 = 0;
+	protected int f2 = 0;
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	private static final char[] f3 = {};
+	private char[] f3 = {};
 	static class inner {
 		/**
-		 * @noreference
+		 * @nooverride
 		 */
-		public static final Object f1 = null;
+		public static Object f1 = null;
 		/**
-		 * @noreference
+		 * @nooverride
 		 */
-		protected static final int f2 = 0;
+		protected int f2 = 0;
 		/**
-		 * @noreference
+		 * @nooverride
 		 */
-		private static final char[] f3 = {};
-		static class inner2 {
+		private static char[] f3 = {};
+		class inner2 {
 			/**
-			 * @noreference
+			 * @nooverride
 			 */
-			public static final Object f1 = null;
+			public Object f1 = null;
 			/**
-			 * @noreference
+			 * @nooverride
 			 */
-			protected static final int f2 = 0;
+			protected int f2 = 0;
 			/**
-			 * @noreference
+			 * @nooverride
 			 */
-			private static final char[] f3 = {};
+			private char[] f3 = {};
 		}
 	}
 }
 
 class outer {
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	public static final Object f1 = null;
+	public Object f1 = null;
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	protected static final int f2 = 0;
+	protected int f2 = 0;
 	/**
-	 * @noreference
+	 * @nooverride
 	 */
-	private static final char[] f3 = {};
+	private static char[] f3 = {};
 }

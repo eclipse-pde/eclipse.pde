@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
 
 /**
- * Test supported @noextend tag on class methods
+ * Test supported @noinstantiate tag on class methods in the default package
  */
 public class test6 {
 	/**
-	 * @noextend
+	 * @noinstantiate
 	 * @return
 	 */
 	public int m1() {
@@ -23,7 +22,7 @@ public class test6 {
 	}
 	
 	/**
-	 * @noextend
+	 * @noinstantiate
 	 * @return
 	 */
 	public final char m2() {
@@ -31,14 +30,14 @@ public class test6 {
 	}
 	
 	/**
-	 * @noextend
+	 * @noinstantiate
 	 */
 	protected void m3() {
 		
 	}
 	
 	/**
-	 * @noextend
+	 * @noinstantiate
 	 * @return
 	 */
 	protected static Object m4() {

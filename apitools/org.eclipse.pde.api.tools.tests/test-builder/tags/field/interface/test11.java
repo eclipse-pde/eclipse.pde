@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,26 @@
 package a.b.c;
 
 /**
- * Test unsupported @noimplement tag on a field in an interface
+ * Test unsupported @noreference tag on fields in outer / inner interface
  */
 public interface test11 {
+	interface inner {
+		/**
+		 * @noreference
+		 */
+		public final int f2 = 0;
+		interface inner2 {
+			/**
+			 * @noreference
+			 */
+			public final char[] f3 = {};
+		}
+	}
+}
+
+interface outer {
 	/**
-	 * @noimplement
+	 * @noreference
 	 */
-	public Object f1 = null;
+	public final Object f1 = null;
 }

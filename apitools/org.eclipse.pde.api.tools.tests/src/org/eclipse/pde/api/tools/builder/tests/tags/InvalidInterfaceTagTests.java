@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
+import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -52,377 +52,157 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.TagTest#getDefaultProblemId()
 	 */
 	protected int getDefaultProblemId() {
-		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.UNSUPPORTED_TAG_USE, IApiProblem.NO_FLAGS);
+		return ApiProblemFactory.createProblemId(
+				IApiProblem.CATEGORY_USAGE, 
+				IElementDescriptor.TYPE, 
+				IApiProblem.UNSUPPORTED_TAG_USE, 
+				IApiProblem.NO_FLAGS);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
-	 */
-	protected void assertProblems(ApiProblem[] problems) {
-		String message = null;
-		for(int i = 0; i < problems.length; i++) {
-			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("an interface"));
-		}
-	}
-	
-	/**
-	 * Tests having an @noreference tag on an interface in package a.b.c
-	 * using an incremental build
-	 */
 	public void testInvalidInterfaceTag1I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x1(true);
 	}
 	
-	/**
-	 * Tests having an @noreference tag on an interface in package a.b.c
-	 * using a full build
-	 */
 	public void testInvalidInterfaceTag1F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x1(false);
 	}
 	
 	/**
-	 * Tests having an @noreference tag on an outer interface in package a.b.c
-	 * using an incremental build
+	 * Tests having an @noreference tag on a variety of inner / outer / top-level interfaces in package a.b.c
 	 */
+	private void x1(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_an_interface},
+				{"@noreference", BuilderMessages.TagValidator_an_interface},
+				{"@noreference", BuilderMessages.TagValidator_an_interface},
+				{"@noreference", BuilderMessages.TagValidator_an_interface}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test1", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+	
 	public void testInvalidInterfaceTag2I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x2(true);
 	}
 	
-	/**
-	 * Tests having an @noreference tag on an outer interface in package a.b.c
-	 * using a full build
-	 */
 	public void testInvalidInterfaceTag2F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x2(false);
 	}
-	
+
 	/**
-	 * Tests having an @noreference tag on an inner interface in package a.b.c
-	 * using an incremental build
+	 * Tests having an @noreference tag on an interface in the default package
 	 */
+	private void x2(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_an_interface}	
+		});
+		deployTagTest("", 
+				"test2", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidInterfaceTag3I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x3(true);
 	}
 	
-	/**
-	 * Tests having an @noreference tag on an inner interface in package a.b.c
-	 * using a full build
-	 */
 	public void testInvalidInterfaceTag3F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x3(false);
 	}
 	
 	/**
-	 * Tests having an @noreference tag on a variety of inner / outer / top-level interfaces in package a.b.c
-	 * using an incremental build
+	 * Tests having an @nooverride tag on a variety of inner / outer / top-level interfaces in package a.b.c
 	 */
+	private void x3(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_an_interface},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test3", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+	
 	public void testInvalidInterfaceTag4I() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x4(true);
 	}
 	
-	/**
-	 * Tests having an @noreference tag on a variety of inner / outer / top-level interfaces in package a.b.c
-	 * using a full build
-	 */
 	public void testInvalidInterfaceTag4F() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x4(false);
 	}
 	
 	/**
-	 * Tests having an @noreference tag on an interface in the default package
-	 * using an incremental build
+	 * Tests having an @nooverride tag on an interface in the default package
 	 */
+	private void x4(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_an_interface}	
+		});
+		deployTagTest("", 
+				"test4", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidInterfaceTag5I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest("", "test5", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x5(true);
 	}
 	
-	/**
-	 * Tests having an @noreference tag on an interface in the default package
-	 * using a full build
-	 */
 	public void testInvalidInterfaceTag5F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest("", "test5", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x5(false);
 	}
-	
-	/**
-	 * Tests having an @nooverride tag on an interface in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag11I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @nooverride tag on an interface in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag11F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @nooverride tag on an outer interface in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag12I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @nooverride tag on an outer interface in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag12F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @nooverride tag on an inner interface in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag13I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @nooverride tag on an inner interface in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag13F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @nooverride tag on a variety of inner / outer / top-level interfaces in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag14I() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @nooverride tag on a variety of inner / outer / top-level interfaces in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag14F() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @nooverride tag on an interface in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag15I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test15", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @nooverride tag on an interface in the default package
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag15F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test15", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having more than one invalid tag on an interface in the testing package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag16I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having more than one invalid tag on an interface in the testing package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag16F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having more than one invalid tag on an outer interface in the testing package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag17I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having more than one invalid tag on an outer interface in the testing package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag17F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having more than one invalid tag on an inner interface in the testing package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag18I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having more than one invalid tag on an inner interface in the testing package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag18F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having a variety of invalid tags on a variety of inner / outer / top-level interfaces in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag19I() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having a variety of invalid tags on a variety of inner / outer / top-level interfaces in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag19F() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having more than one invalid tag on an interface in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag20I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test20", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having more than one invalid tag on an interface in the default package
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag20F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test20", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noinstantiate tag on an interface in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag21I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noinstantiate tag on an interface in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag21F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noinstantiate tag on an outer interface in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag22I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test22", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noinstantiate tag on an outer interface in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag22F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test22", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noinstantiate tag on an inner interface in package a.b.c
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceTag23I() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test23", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noinstantiate tag on an inner interface in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag23F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest(TESTING_PACKAGE, "test23", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
+
 	/**
 	 * Tests having an @noinstantiate tag on a variety of inner / outer / top-level interfaces in package a.b.c
-	 * using an incremental build
 	 */
-	public void testInvalidInterfaceTag24I() {
+	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployTagTest(TESTING_PACKAGE, "test24", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test5", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests having an @noinstantiate tag on a variety of inner / outer / top-level interfaces in package a.b.c
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag24F() {
-		setExpectedProblemIds(getDefaultProblemSet(4));
-		deployTagTest(TESTING_PACKAGE, "test24", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	public void testInvalidInterfaceTag6I() {
+		x6(true);
 	}
-	
+
+	public void testInvalidInterfaceTag6F() {
+		x6(false);
+	}
+
 	/**
 	 * Tests having an @noinstantiate tag on an interface in the default package
-	 * using an incremental build
 	 */
-	public void testInvalidInterfaceTag25I() {
+	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest("", "test25", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests having an @noinstantiate tag on an interface in the default package
-	 * using a full build
-	 */
-	public void testInvalidInterfaceTag25F() {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		deployTagTest("", "test25", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface}	
+		});
+		deployTagTest("", 
+				"test6", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 }

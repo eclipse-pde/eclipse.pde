@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,18 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
+
 
 /**
- * Tests an invalid @noextend tag on a member enum
+ * Test unsupported @noinstantiate tag on an enum in the default package
+ * @noinstantiate
  */
 public enum test8 {
 
-	A;
-	/**
-	 * @noextend
-	 */
-	enum InnerNoRef3 {
-		
-	}
 }

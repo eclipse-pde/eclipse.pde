@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
-import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
+import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests invalid javadoc tags on enum methods
@@ -46,17 +46,6 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		return super.getTestSourcePath().append("enum");
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
-	 */
-	protected void assertProblems(ApiProblem[] problems) {
-		String message = null;
-		for(int i = 0; i < problems.length; i++) {
-			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("an enum method") || message.endsWith("a pivate enum method"));
-		}
-	}
-	
 	/**
 	 * @return the test for this class
 	 */
@@ -64,381 +53,219 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		return buildTestSuite(InvalidEnumMethodTagTests.class);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on enum methods
-	 * using an incremental build
-	 */
 	public void testInvalidEnumMethodTag1I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x1(true);
 	}
-	
-	/**
-	 * Tests the unsupported @noextend tag on enum methods
-	 * using a full build
-	 */
+
 	public void testInvalidEnumMethodTag1F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x1(false);
 	}
 	
 	/**
-	 * Tests the unsupported @noextend tag on outer enum methods
-	 * using an incremental build
+	 * Tests the unsupported @noextend tag on a variety of inner / outer enum methods
+	 * using a full build
 	 */
+	public void x1(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test1", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+	
 	public void testInvalidEnumMethodTag2I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x2(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on outer enum methods
-	 * using a full build
-	 */
 	public void testInvalidEnumMethodTag2F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x2(false);
 	}
 	
 	/**
-	 * Tests the unsupported @noextend tag on inner enum methods
-	 * using an incremental build
+	 * Tests the unsupported @noextend tag on enum methods in the default package
+	 * using a full build
 	 */
+	private void x2(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method}
+		});
+		deployTagTest("", 
+				"test2", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+	
 	public void testInvalidEnumMethodTag3I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x3(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on inner enum methods
-	 * using a full build
-	 */
 	public void testInvalidEnumMethodTag3F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x3(false);
 	}
 	
 	/**
-	 * Tests the unsupported @noextend tag on a variety of inner / outer enum methods
+	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer enum methods
 	 * using an incremental build
 	 */
+	public void x3(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test3", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+	
 	public void testInvalidEnumMethodTag4I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x4(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on a variety of inner / outer enum methods
-	 * using a full build
-	 */
 	public void testInvalidEnumMethodTag4F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x4(false);
 	}
 	
 	/**
-	 * Tests the unsupported @noextend tag on enum methods in the default package
+	 * Tests the unsupported @noinstantiate tag on enum methods in the default package
 	 * using an incremental build
 	 */
+	private void x4(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method}
+		});
+		deployTagTest("", 
+				"test4", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+	
 	public void testInvalidEnumMethodTag5I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test5", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x5(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on enum methods in the default package
-	 * using a full build
-	 */
 	public void testInvalidEnumMethodTag5F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test5", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x5(false);
 	}
 	
 	/**
-	 * Tests the unsupported @noinstantiate tag on enum methods
-	 * using an incremental build
+	 * Tests the unsupported @noimplement tag on a variety of inner / outer enum methods
+	 * using a full build
 	 */
+	public void x5(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedMessageArgs(new String[][] {
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test5", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidEnumMethodTag6I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x6(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noinstantiate tag on enum methods
-	 * using a full build
-	 */
 	public void testInvalidEnumMethodTag6F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x6(false);
 	}
 	
 	/**
-	 * Tests the unsupported @noinstantiate tag on outer enum methods
-	 * using an incremental build
+	 * Tests the unsupported @noimplement tag on enum methods in the default package
+	 * using a full build
 	 */
+	private void x6(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method}
+		});
+		deployTagTest("", 
+				"test6", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+	
 	public void testInvalidEnumMethodTag7I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x7(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noinstantiate tag on on outer enum methods
-	 * using a full build
-	 */
 	public void testInvalidEnumMethodTag7F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x7(false);
 	}
 	
 	/**
-	 * Tests the unsupported @noinstantiate tag on inner enum methods
+	 * Tests the unsupported @nooverride tag on a variety of inner / outer enum methods
 	 * using an incremental build
 	 */
+	public void x7(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test7", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+	
 	public void testInvalidEnumMethodTag8I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x8(true);
 	}
-	
-	/**
-	 * Tests the unsupported @noinstantiate tag on inner enum methods
-	 * using a full build
-	 */
+
 	public void testInvalidEnumMethodTag8F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer enum methods
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag9I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer enum methods
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag9F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noinstantiate tag on enum methods in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag10I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test10", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noinstantiate tag on enum methods in the default package
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag10F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test10", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on enum methods
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag11I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on enum methods
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag11F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on outer enum methods
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag12I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on outer enum methods
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag12F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on inner enum methods
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag13I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on inner enum methods
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag13F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on a variety of inner / outer enum methods
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag14I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on a variety of inner / outer enum methods
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag14F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on enum methods in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag15I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test15", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on enum methods in the default package
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag15F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test15", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on enum methods
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag16I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on enum methods
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag16F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on outer enum methods
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag17I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on outer enum methods
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag17F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on inner enum methods
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag18I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on inner enum methods
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag18F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on a variety of inner / outer enum methods
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag19I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on a variety of inner / outer enum methods
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag19F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x8(false);
 	}
 	
 	/**
 	 * Tests the unsupported @nooverride tag on enum methods in the default package
 	 * using an incremental build
 	 */
-	public void testInvalidEnumMethodTag20I() {
+	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test20", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on enum methods in the default package
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag20F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test20", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests all the unsupported tags on a variety of enum methods
-	 * using an incremental build
-	 */
-	public void testInvalidEnumMethodTag21I() {
-		setExpectedProblemIds(getDefaultProblemSet(24));
-		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests all the unsupported tags on a variety of enum methods
-	 * using a full build
-	 */
-	public void testInvalidEnumMethodTag21F() {
-		setExpectedProblemIds(getDefaultProblemSet(24));
-		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}
+		});
+		deployTagTest("", 
+				"test8", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 }

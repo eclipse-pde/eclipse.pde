@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
+import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests invalid javadoc tags on interface methods
@@ -45,392 +45,212 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 		return buildTestSuite(InvalidInterfaceMethodTagTests.class);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
-	 */
-	protected void assertProblems(ApiProblem[] problems) {
-		String message = null;
-		for(int i = 0; i < problems.length; i++) {
-			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("an interface method"));
-		}
-	}
-	
-	/**
-	 * Tests the unsupported @noextend tag on interface methods
-	 * using an incremental build
-	 */
 	public void testInvalidInterfaceMethodTag1I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x1(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on interface methods
-	 * using a full build
-	 */
 	public void testInvalidInterfaceMethodTag1F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x1(false);
+	}
+
+	/**
+	 * Tests the unsupported @noextend tag on a variety of inner / outer interface methods
+	 */
+	private void x1(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_an_interface_method},
+				{"@noextend", BuilderMessages.TagValidator_an_interface_method},
+				{"@noextend", BuilderMessages.TagValidator_an_interface_method},
+				{"@noextend", BuilderMessages.TagValidator_an_interface_method},
+				{"@noextend", BuilderMessages.TagValidator_an_interface_method},
+				{"@noextend", BuilderMessages.TagValidator_an_interface_method}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test1", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on outer interface methods
-	 * using an incremental build
-	 */
 	public void testInvalidInterfaceMethodTag2I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x2(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on outer interface methods
-	 * using a full build
-	 */
 	public void testInvalidInterfaceMethodTag2F() {
+		x2(false);
+	}
+
+	/**
+	 * Tests the unsupported @noextend tag on interface methods in the default package
+	 */
+	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_an_interface_method},
+				{"@noextend", BuilderMessages.TagValidator_an_interface_method}
+		});
+		deployTagTest("", 
+				"test2", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on inner interface methods
-	 * using an incremental build
-	 */
 	public void testInvalidInterfaceMethodTag3I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x3(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on inner interface methods
-	 * using a full build
-	 */
 	public void testInvalidInterfaceMethodTag3F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x3(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noextend tag on a variety of inner / outer interface methods
-	 * using an incremental build
+	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer interface methods
 	 */
+	private void x3(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test3", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidInterfaceMethodTag4I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x4(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on a variety of inner / outer interface methods
-	 * using a full build
-	 */
 	public void testInvalidInterfaceMethodTag4F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x4(false);
+	}	
+
+	/**
+	 * Tests the unsupported @noinstantiate tag on interface methods in the default package
+	 */
+	private void x4(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method}
+		});
+		deployTagTest("", 
+				"test4", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on interface methods in the default package
-	 * using an incremental build
-	 */
 	public void testInvalidInterfaceMethodTag5I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test5", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x5(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noextend tag on interface methods in the default package
-	 * using a full build
-	 */
 	public void testInvalidInterfaceMethodTag5F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test5", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x5(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noinstantiate tag on interface methods
-	 * using an incremental build
+	 * Tests the unsupported @noimplement tag on a variety of inner / outer interface methods
 	 */
+	private void x5(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedMessageArgs(new String[][] {
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_method}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test5", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidInterfaceMethodTag6I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x6(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noinstantiate tag on interface methods
-	 * using a full build
-	 */
 	public void testInvalidInterfaceMethodTag6F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x6(false);
 	}
 	
 	/**
-	 * Tests the unsupported @noinstantiate tag on outer interface methods
-	 * using an incremental build
+	 * Tests the unsupported @noimplement tag on interface methods in the default package
 	 */
+	private void x6(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_method},
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_method}
+		});
+		deployTagTest("", 
+				"test6", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+	
 	public void testInvalidInterfaceMethodTag7I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x7(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noinstantiate tag on on outer interface methods
-	 * using a full build
-	 */
+	
 	public void testInvalidInterfaceMethodTag7F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x7(false);
+	}
+
+	/**
+	 * Tests the unsupported @nooverride tag on a variety of inner / outer interface methods
+	 */
+	private void x7(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_method}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test7", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests the unsupported @noinstantiate tag on inner interface methods
-	 * using an incremental build
-	 */
 	public void testInvalidInterfaceMethodTag8I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x8(true);
 	}
 	
-	/**
-	 * Tests the unsupported @noinstantiate tag on inner interface methods
-	 * using a full build
-	 */
 	public void testInvalidInterfaceMethodTag8F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x8(false);
 	}
-	
-	/**
-	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer interface methods
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag9I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer interface methods
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag9F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noinstantiate tag on interface methods in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag10I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test10", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noinstantiate tag on interface methods in the default package
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag10F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test10", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on interface methods
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag11I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on interface methods
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag11F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on outer interface methods
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag12I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on outer interface methods
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag12F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on inner interface methods
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag13I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on inner interface methods
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag13F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on a variety of inner / outer interface methods
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag14I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on a variety of inner / outer interface methods
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag14F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on interface methods in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag15I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test15", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @noimplement tag on interface methods in the default package
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag15F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test15", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on interface methods
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag16I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on interface methods
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag16F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on outer interface methods
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag17I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on outer interface methods
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag17F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on inner interface methods
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag18I() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on inner interface methods
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag18F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on a variety of inner / outer interface methods
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag19I() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on a variety of inner / outer interface methods
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag19F() {
-		setExpectedProblemIds(getDefaultProblemSet(6));
-		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
+
 	/**
 	 * Tests the unsupported @nooverride tag on interface methods in the default package
-	 * using an incremental build
 	 */
-	public void testInvalidInterfaceMethodTag20I() {
+	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test20", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests the unsupported @nooverride tag on interface methods in the default package
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag20F() {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		deployTagTest("", "test20", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests all the unsupported tags on a variety of interface methods
-	 * using an incremental build
-	 */
-	public void testInvalidInterfaceMethodTag21I() {
-		setExpectedProblemIds(getDefaultProblemSet(24));
-		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests all the unsupported tags on a variety of interface methods
-	 * using a full build
-	 */
-	public void testInvalidInterfaceMethodTag21F() {
-		setExpectedProblemIds(getDefaultProblemSet(24));
-		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_method}
+		});
+		deployTagTest("", 
+				"test8", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 }

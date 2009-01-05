@@ -1,26 +1,66 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package a.b.c;
 
 
 /**
- * Test supported @nooverride tag on private methods in outer / inner classes
+ * Test supported @noextend tag on constructors in outer / inner classes
  */
 public class test19 {
+	/**
+	 * Constructor
+	 * @noextend This constructor is not intended to be referenced by clients.
+	 */
+	public test19() {
+		
+	}
 	
+	/**
+	 * Constructor
+	 * @noextend This constructor is not intended to be referenced by clients.
+	 */
+	public test19(int i) {
+		
+	}
 	static class inner {
 		/**
-		 * @nooverride This method is not intended to be re-implemented or extended by clients.
-		 * @return
+		 * Constructor
+		 * @noextend This constructor is not intended to be referenced by clients.
 		 */
-		private int m1() {
-			return 0;
+		public inner() {
+			
+		}
+		
+		/**
+		 * Constructor
+		 * @noextend This constructor is not intended to be referenced by clients.
+		 */
+		protected inner(int i) {
+			
 		}
 		static class inner2 {
 			/**
-			 * @nooverride This method is not intended to be re-implemented or extended by clients.
-			 * @return
+			 * Constructor
+			 * @noextend This constructor is not intended to be referenced by clients.
 			 */
-			private int m1() {
-				return 0;
+			public inner2() {
+				
+			}
+			
+			/**
+			 * Constructor
+			 * @noextend This constructor is not intended to be referenced by clients.
+			 */
+			protected inner2(int i) {
+				
 			}
 		}
 	}
@@ -28,10 +68,18 @@ public class test19 {
 
 class outer {
 	/**
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 * @return
+	 * Constructor
+	 * @noextend This constructor is not intended to be referenced by clients.
 	 */
-	private int m1() {
-		return 0;
+	public outer() {
+		
+	}
+	
+	/**
+	 * Constructor
+	 * @noextend This constructor is not intended to be referenced by clients.
+	 */
+	protected outer(int i) {
+		
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,26 @@
 package a.b.c;
 
 /**
- * Test unsupported @noextend tag on a field in an inner annotation
+ * Test unsupported @noinstantiate tag on fields in outer / inner annotation
  */
 public @interface test3 {
 	@interface inner {
 		/**
-		 * @noextend
+		 * @noinstantiate
 		 */
-		public Object f1 = null;
+		public int f2 = 0;
+		@interface inner2 {
+			/**
+			 * @noinstantiate
+			 */
+			public char[] f3 = {};
+		}
 	}
+}
+
+@interface outer {
+	/**
+	 * @noinstantiate
+	 */
+	public static Object f1 = null;
 }

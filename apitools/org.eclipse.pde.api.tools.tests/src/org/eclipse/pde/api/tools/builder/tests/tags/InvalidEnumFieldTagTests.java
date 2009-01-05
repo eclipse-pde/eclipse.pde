@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
-import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
+import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests the use of invalid tags on enum fields
@@ -47,562 +47,376 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
-	 */
-	protected void assertProblems(ApiProblem[] problems) {
-		String message = null;
-		for(int i = 0; i < problems.length; i++) {
-			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("an enum field") || message.endsWith("an enum constant")
-					|| message.endsWith("a private enum field"));
-		}
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
 	 */
 	protected String getTestCompliance() {
 		return CompilerOptions.VERSION_1_5;
 	}
 	
-	/**
-	 * Tests an invalid @noreference tag on three final fields in an enum
-	 * using an incremental build
-	 */
 	public void testInvalidEnumFieldTag1I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x1(true);
+	}
+
+	public void testInvalidEnumFieldTag1F() {
+		x1(false);
 	}
 	
 	/**
 	 * Tests an invalid @noreference tag on three final fields in an enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag1F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three final fields in an outer enum
 	 * using an incremental build
 	 */
+	private void x1(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(12));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test1", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidEnumFieldTag2I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x2(true);
 	}
 	
-	/**
-	 * Tests a invalid @noreference tag on three final fields in an outer enum
-	 * using a full build
-	 */
 	public void testInvalidEnumFieldTag2F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x2(false);
 	}
 	
 	/**
-	 * Tests an invalid @noreference tag on three final fields in an inner enum
-	 * using an incremental build
+	 * Tests a valid @noreference tag on three final fields in an enum in the default package
+	 * using a full build
 	 */
+	private void x2(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(3));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest("", 
+				"test2", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
 	public void testInvalidEnumFieldTag3I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x3(true);
 	}
 	
-	/**
-	 * Tests a invalid @noreference tag on three final fields in an inner enum
-	 * using a full build
-	 */
 	public void testInvalidEnumFieldTag3F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on final fields in inner / outer enums
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag4I() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noreference tag on final fields in inner /outer enums
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag4F() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a valid @noreference tag on three final fields in an enum in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag5I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test5", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a valid @noreference tag on three final fields in an enum in the default package
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag5F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test5", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three static final fields in an enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag6I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three static final fields in an enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag6F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three static final fields in an outer enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag7I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noreference tag on three static final fields in an outer enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag7F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three static final fields in an inner enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag8I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noreference tag on three static final fields in an inner enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag8F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on static final fields in inner / outer enums
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag9I() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x3(false);
 	}
 	
 	/**
 	 * Tests a invalid @noreference tag on static final fields in inner /outer enums
 	 * using a full build
 	 */
-	public void testInvalidEnumFieldTag9F() {
+	private void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test3", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
+	public void testInvalidEnumFieldTag4I() {
+		x4(true);
+	}
+	
+	public void testInvalidEnumFieldTag4F() {
+		x4(false);	
 	}
 	
 	/**
 	 * Tests a valid @noreference tag on three static final fields in an enum in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag10I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test10", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a valid @noreference tag on three static final fields in an enum in the default package
 	 * using a full build
 	 */
-	public void testInvalidEnumFieldTag10F() {
+	private void x4(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test10", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest("", 
+				"test4", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests an invalid @noextend tag on three fields in an enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag11I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	public void testInvalidEnumFieldTag5I() {
+		x5(true);
 	}
 	
-	/**
-	 * Tests an invalid @noextend tag on three fields in an enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag11F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noextend tag on three fields in an outer enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag12I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noextend tag on three fields in an outer enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag12F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noextend tag on three fields in an inner enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag13I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noextend tag on three fields in an inner enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag13F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	public void testInvalidEnumFieldTag5F() {
+		x5(false);
 	}
 	
 	/**
 	 * Tests an invalid @noextend tag on fields in inner / outer enums
 	 * using an incremental build
 	 */
-	public void testInvalidEnumFieldTag14I() {
+	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_private_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_private_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_private_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test5", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
-	
-	/**
-	 * Tests a invalid @noextend tag on fields in inner /outer enums
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag14F() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.FULL_BUILD, true);
+
+	public void testInvalidEnumFieldTag6I() {
+		x6(true);
+	}
+
+	public void testInvalidEnumFieldTag6F() {
+		x6(false);
 	}
 	
 	/**
 	 * Tests a valid @noextend tag on three fields in an enum in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag15I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test15", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a valid @noextend tag on three fields in an enum in the default package
 	 * using a full build
 	 */
-	public void testInvalidEnumFieldTag15F() {
+	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test15", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest("", 
+				"test6", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests an invalid @noimplement tag on three fields in an enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag16I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	public void testInvalidEnumFieldTag7I() {
+		x7(true);
 	}
-	
-	/**
-	 * Tests an invalid @noimplement tag on three fields in an enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag16F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noimplement tag on three fields in an outer enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag17I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noimplement tag on three fields in an outer enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag17F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noimplement tag on three fields in an inner enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag18I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noimplement tag on three fields in an inner enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag18F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noimplement tag on fields in inner / outer enums
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag19I() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+
+	public void testInvalidEnumFieldTag7F() {
+		x7(false);
 	}
 	
 	/**
 	 * Tests a invalid @noimplement tag on fields in inner /outer enums
 	 * using a full build
 	 */
-	public void testInvalidEnumFieldTag19F() {
+	private void x7(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_private_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_private_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_private_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test7", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+
+	public void testInvalidEnumFieldTag8I() {
+		x8(true);
+	}
+	
+	public void testInvalidEnumFieldTag8F() {
+		x8(false);
 	}
 	
 	/**
 	 * Tests a valid @noimplement tag on three fields in an enum in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag20I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test20", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a valid @noimplement tag on three fields in an enum in the default package
 	 * using a full build
 	 */
-	public void testInvalidEnumFieldTag20F() {
+	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test20", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest("", 
+				"test8", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests an invalid @nooverride tag on three fields in an enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag21I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	public void testInvalidEnumFieldTag9I() {
+		x9(true);
 	}
-	
-	/**
-	 * Tests an invalid @nooverride tag on three fields in an enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag21F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @nooverride tag on three fields in an outer enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag22I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test22", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @nooverride tag on three fields in an outer enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag22F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test22", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @nooverride tag on three fields in an inner enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag23I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test23", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @nooverride tag on three fields in an inner enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag23F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test23", true, IncrementalProjectBuilder.FULL_BUILD, true);
+
+	public void testInvalidEnumFieldTag9F() {
+		x9(false);
 	}
 	
 	/**
 	 * Tests an invalid @nooverride tag on fields in inner / outer enums
 	 * using an incremental build
 	 */
-	public void testInvalidEnumFieldTag24I() {
+	private void x9(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test24", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_private_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_private_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_private_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test9", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests a invalid @nooverride tag on fields in inner /outer enums
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag24F() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test24", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	public void testInvalidEnumFieldTag10I() {
+		x10(true);
+	}
+
+	public void testInvalidEnumFieldTag10F() {
+		x10(false);
 	}
 	
 	/**
 	 * Tests a valid @nooverride tag on three fields in an enum in the default package
 	 * using an incremental build
 	 */
-	public void testInvalidEnumFieldTag25I() {
+	private void x10(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test25", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest("", 
+				"test10", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests a valid @nooverride tag on three fields in an enum in the default package
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag25F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test25", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	public void testInvalidEnumFieldTag11I() {
+		x11(true);
 	}
 	
-	/**
-	 * Tests an invalid @noinstantiate tag on three fields in an enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag26I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test26", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noinstantiate tag on three fields in an enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag26F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test26", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noinstantiate tag on three fields in an outer enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag27I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test27", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noinstantiate tag on three fields in an outer enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag27F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test27", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noinstantiate tag on three fields in an inner enum
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag28I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test28", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noinstantiate tag on three fields in an inner enum
-	 * using a full build
-	 */
-	public void testInvalidEnumFieldTag28F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test28", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noinstantiate tag on fields in inner / outer enums
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag29I() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test29", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	public void testInvalidEnumFieldTag11F() {
+		x11(false);
 	}
 	
 	/**
 	 * Tests a invalid @noinstantiate tag on fields in inner /outer enums
 	 * using a full build
 	 */
-	public void testInvalidEnumFieldTag29F() {
+	private void x11(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test29", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_private_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_private_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_private_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test11", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
 	
-	/**
-	 * Tests a valid @noinstantiate tag on three fields in an enum in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidEnumFieldTag30I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test30", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	public void testInvalidEnumFieldTag12I() {
+		x12(true);
 	}
 	
+	public void testInvalidEnumFieldTag12F() {
+		x12(false);
+	}
+
 	/**
 	 * Tests a valid @noinstantiate tag on three fields in an enum in the default package
 	 * using a full build
 	 */
-	public void testInvalidEnumFieldTag30F() {
+	private void x12(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test30", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_private_enum_field}
+		});
+		deployTagTest("", 
+				"test12", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
 	}
-
+	
 }

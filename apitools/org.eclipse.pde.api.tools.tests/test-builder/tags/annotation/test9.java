@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,13 @@
 package a.b.c;
 
 /**
- * Tests invalid @noextend tags on nested inner annotations
- * @noextend
+ * Tests invalid @noinstantiate tags on nested inner annotations
+ * @noinstantiate
  */
 public @interface test9 {
 
 	/**
-	 * @noextend
+	 * @noinstantiate
 	 */
 	@interface inner {
 		
@@ -25,7 +25,7 @@ public @interface test9 {
 	
 	@interface inner1 {
 		/**
-		 * @noextend
+		 * @noinstantiate
 		 */
 		@interface inner2 {
 			
@@ -40,7 +40,7 @@ public @interface test9 {
 @interface outer {
 	
 	/**
-	 * @noextend
+	 * @noinstantiate
 	 */
 	@interface inner {
 		

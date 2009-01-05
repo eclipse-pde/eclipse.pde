@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
@@ -5,7 +15,6 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
-import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -68,17 +77,6 @@ public class InvalidDuplicateTagsTests extends TagTest {
 		return CompilerOptions.VERSION_1_5;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
-	 */
-	protected void assertProblems(ApiProblem[] problems) {
-		String message = null;
-		for(int i = 0; i < problems.length; i++) {
-			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("already defined on this element"));
-		}
-	}
-	
 	/**
 	 * Tests a class that has duplicate tags is properly detected using an incremental build 
 	 */
@@ -96,6 +94,12 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	private void x1(boolean inc) {
 		setProblemId(IElementDescriptor.TYPE, IApiProblem.DUPLICATE_TAG_USE);
 		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend"},
+				{"@noinstantiate"},
+				{"@noextend"},
+				{"@noinstantiate"}
+		});
 		deployTagTest(TESTING_PACKAGE, 
 				"test1", 
 				true, 
@@ -120,6 +124,11 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	private void x2(boolean inc) {
 		setProblemId(IElementDescriptor.TYPE, IApiProblem.DUPLICATE_TAG_USE);
 		setExpectedProblemIds(getDefaultProblemSet(3));
+		setExpectedMessageArgs(new String[][] {
+				{"@noimplement"},
+				{"@noimplement"},
+				{"@noimplement"}
+		});
 		deployTagTest(TESTING_PACKAGE, 
 				"test2", 
 				true, 
@@ -144,6 +153,11 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	private void x3(boolean inc) {
 		setProblemId(IElementDescriptor.FIELD, IApiProblem.DUPLICATE_TAG_USE);
 		setExpectedProblemIds(getDefaultProblemSet(3));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"}
+		});
 		deployTagTest(TESTING_PACKAGE, 
 				"test3", 
 				true, 
@@ -168,6 +182,11 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	private void x4(boolean inc) {
 		setProblemId(IElementDescriptor.FIELD, IApiProblem.DUPLICATE_TAG_USE);
 		setExpectedProblemIds(getDefaultProblemSet(3));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"}	
+		});
 		deployTagTest(TESTING_PACKAGE, 
 				"test4", 
 				true, 
@@ -192,6 +211,12 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	private void x5(boolean inc) {
 		setProblemId(IElementDescriptor.FIELD, IApiProblem.DUPLICATE_TAG_USE);
 		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"}
+		});
 		deployTagTest(TESTING_PACKAGE, 
 				"test5", 
 				true, 
@@ -216,6 +241,14 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	private void x6(boolean inc) {
 		setProblemId(IElementDescriptor.METHOD, IApiProblem.DUPLICATE_TAG_USE);
 		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"},
+				{"@nooverride"},
+				{"@nooverride"},
+				{"@nooverride"}
+		});
 		deployTagTest(TESTING_PACKAGE, 
 				"test6", 
 				true, 
@@ -240,6 +273,14 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	private void x7(boolean inc) {
 		setProblemId(IElementDescriptor.METHOD, IApiProblem.DUPLICATE_TAG_USE);
 		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"},
+		});
 		deployTagTest(TESTING_PACKAGE, 
 				"test7", 
 				true, 
@@ -264,6 +305,14 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	private void x8(boolean inc) {
 		setProblemId(IElementDescriptor.METHOD, IApiProblem.DUPLICATE_TAG_USE);
 		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"},
+				{"@noreference"},
+		});
 		deployTagTest(TESTING_PACKAGE, 
 				"test8", 
 				true, 

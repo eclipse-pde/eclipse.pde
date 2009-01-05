@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,21 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
 
 /**
- * Test supported @nooverride tag on final outer class methods
+ * Test supported @nooverride tag on constructors in the default package
  */
 public class test22 {
-	
-}
-
-class outer {
 	/**
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 * @return
+	 * Constructor
+	 * @nooverride This constructor is not intended to be referenced by clients.
 	 */
-	public final int m1() {
-		return 0;
+	public test22() {
+		
+	}
+	
+	/**
+	 * Constructor
+	 * @nooverride This constructor is not intended to be referenced by clients.
+	 */
+	protected test22(int i) {
+		
 	}
 }

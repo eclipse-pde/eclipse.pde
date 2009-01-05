@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
+import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
  * Tests invalid tags on fields in classes
@@ -44,556 +44,370 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	public static Test suite() {
 		return buildTestSuite(InvalidClassFieldTagTests.class);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
-	 */
-	protected void assertProblems(ApiProblem[] problems) {
-		String message = null;
-		for(int i = 0; i < problems.length; i++) {
-			message = problems[i].getMessage();
-			assertTrue("The problem message is not correct: "+message, message.endsWith("a field") || message.endsWith("a final field") 
-					|| message.endsWith("a private field"));
-		}
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three final fields in a class
-	 * using an incremental build
-	 */
+		
 	public void testInvalidClassFieldTag1I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x1(true);
 	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three final fields in a class
-	 * using a full build
-	 */
+
 	public void testInvalidClassFieldTag1F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test1", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three final fields in an outer class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag2I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noreference tag on three final fields in an outer class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag2F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test2", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three final fields in an inner class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag3I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noreference tag on three final fields in an inner class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag3F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test3", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x1(false);
 	}
 	
 	/**
 	 * Tests an invalid @noreference tag on final fields in inner / outer classes
 	 * using an incremental build
 	 */
-	public void testInvalidClassFieldTag4I() {
+	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_private_field},
+				{"@noreference", BuilderMessages.TagValidator_private_field},
+				{"@noreference", BuilderMessages.TagValidator_private_field},
+				{"@noreference", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test1", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
 	}
 	
-	/**
-	 * Tests a invalid @noreference tag on final fields in inner /outer class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag4F() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test4", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	public void testInvalidClassFieldTag2I() {
+		x2(true);
+	}
+
+	public void testInvalidClassFieldTag2F() {
+		x2(false);
 	}
 	
 	/**
 	 * Tests a valid @noreference tag on three final fields in a class in the default package
 	 * using an incremental build
 	 */
-	public void testInvalidClassFieldTag5I() {
+	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test5", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest("", 
+				"test2", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
 	}
 	
-	/**
-	 * Tests a valid @noreference tag on three final fields in a class in the default package
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag5F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test5", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	public void testInvalidClassFieldTag3I() {
+		x3(true);
 	}
 	
-	/**
-	 * Tests an invalid @noreference tag on three static final fields in a class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag6I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three static final fields in a class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag6F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three static final fields in an outer class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag7I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noreference tag on three static final fields in an outer class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag7F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on three static final fields in an inner class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag8I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noreference tag on three static final fields in an inner class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag8F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test8", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noreference tag on static final fields in inner / outer classes
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag9I() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	public void testInvalidClassFieldTag3F() {
+		x3(false);
 	}
 	
 	/**
 	 * Tests a invalid @noreference tag on static final fields in inner /outer class
 	 * using a full build
 	 */
-	public void testInvalidClassFieldTag9F() {
+	private void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test9", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_private_field},
+				{"@noreference", BuilderMessages.TagValidator_private_field},
+				{"@noreference", BuilderMessages.TagValidator_private_field},
+				{"@noreference", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test3", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	public void testInvalidClassFieldTag4I() {
+		x4(true);
+	}
+	
+	public void testInvalidClassFieldTag4F() {
+		x4(false);
 	}
 	
 	/**
 	 * Tests a valid @noreference tag on three static final fields in a class in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag10I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test10", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a valid @noreference tag on three static final fields in a class in the default package
 	 * using a full build
 	 */
-	public void testInvalidClassFieldTag10F() {
+	private void x4(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test10", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_a_final_field},
+				{"@noreference", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest("", 
+				"test4", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
 	}
 	
-	/**
-	 * Tests an invalid @noextend tag on three fields in a class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag11I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	public void testInvalidClassFieldTag5I() {
+		x5(true);
 	}
-	
-	/**
-	 * Tests an invalid @noextend tag on three fields in a class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag11F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test11", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noextend tag on three fields in an outer class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag12I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noextend tag on three fields in an outer class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag12F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test12", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noextend tag on three fields in an inner class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag13I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noextend tag on three fields in an inner class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag13F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test13", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noextend tag on fields in inner / outer classes
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag14I() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+
+	public void testInvalidClassFieldTag5F() {
+		x5(false);
 	}
 	
 	/**
 	 * Tests a invalid @noextend tag on fields in inner /outer class
 	 * using a full build
 	 */
-	public void testInvalidClassFieldTag14F() {
+	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test14", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_a_field},
+				{"@noextend", BuilderMessages.TagValidator_a_field},
+				{"@noextend", BuilderMessages.TagValidator_a_field},
+				{"@noextend", BuilderMessages.TagValidator_a_field},
+				{"@noextend", BuilderMessages.TagValidator_a_field},
+				{"@noextend", BuilderMessages.TagValidator_a_field},
+				{"@noextend", BuilderMessages.TagValidator_a_field},
+				{"@noextend", BuilderMessages.TagValidator_a_field},
+				{"@noextend", BuilderMessages.TagValidator_private_field},
+				{"@noextend", BuilderMessages.TagValidator_private_field},
+				{"@noextend", BuilderMessages.TagValidator_private_field},
+				{"@noextend", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test5", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	public void testInvalidClassFieldTag6I() {
+		x6(true);
+	}
+
+	public void testInvalidClassFieldTag6F() {
+		x6(false);
 	}
 	
 	/**
 	 * Tests a valid @noextend tag on three fields in a class in the default package
 	 * using an incremental build
 	 */
-	public void testInvalidClassFieldTag15I() {
+	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test15", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_a_field},
+				{"@noextend", BuilderMessages.TagValidator_a_field},
+				{"@noextend", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest("", 
+				"test6", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
 	}
 	
-	/**
-	 * Tests a valid @noextend tag on three fields in a class in the default package
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag15F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test15", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	public void testInvalidClassFieldTag7I() {
+		x7(true);
 	}
-	
-	/**
-	 * Tests an invalid @noimplement tag on three fields in a class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag16I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noimplement tag on three fields in a class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag16F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test16", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noimplement tag on three fields in an outer class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag17I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noimplement tag on three fields in an outer class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag17F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test17", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noimplement tag on three fields in an inner class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag18I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noimplement tag on three fields in an inner class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag18F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test18", true, IncrementalProjectBuilder.FULL_BUILD, true);
+
+	public void testInvalidClassFieldTag7F() {
+		x7(false);
 	}
 	
 	/**
 	 * Tests an invalid @noimplement tag on fields in inner / outer classes
 	 * using an incremental build
 	 */
-	public void testInvalidClassFieldTag19I() {
+	private void x7(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noimplement", BuilderMessages.TagValidator_a_field},
+				{"@noimplement", BuilderMessages.TagValidator_a_field},
+				{"@noimplement", BuilderMessages.TagValidator_a_field},
+				{"@noimplement", BuilderMessages.TagValidator_a_field},
+				{"@noimplement", BuilderMessages.TagValidator_a_field},
+				{"@noimplement", BuilderMessages.TagValidator_a_field},
+				{"@noimplement", BuilderMessages.TagValidator_a_field},
+				{"@noimplement", BuilderMessages.TagValidator_a_field},
+				{"@noimplement", BuilderMessages.TagValidator_private_field},
+				{"@noimplement", BuilderMessages.TagValidator_private_field},
+				{"@noimplement", BuilderMessages.TagValidator_private_field},
+				{"@noimplement", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test7", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+
+	public void testInvalidClassFieldTag8I() {
+		x8(true);
 	}
 	
-	/**
-	 * Tests a invalid @noimplement tag on fields in inner /outer class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag19F() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test19", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	public void testInvalidClassFieldTag8F() {
+		x8(false);
 	}
 	
 	/**
 	 * Tests a valid @noimplement tag on three fields in a class in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag20I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test20", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a valid @noimplement tag on three fields in a class in the default package
 	 * using a full build
 	 */
-	public void testInvalidClassFieldTag20F() {
+	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test20", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noimplement", BuilderMessages.TagValidator_a_field},
+				{"@noimplement", BuilderMessages.TagValidator_a_field},
+				{"@noimplement", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest("", 
+				"test8", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+
+	public void testInvalidClassFieldTag9I() {
+		x9(true);
 	}
 	
-	/**
-	 * Tests an invalid @nooverride tag on three fields in a class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag21I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @nooverride tag on three fields in a class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag21F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test21", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @nooverride tag on three fields in an outer class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag22I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test22", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @nooverride tag on three fields in an outer class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag22F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test22", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @nooverride tag on three fields in an inner class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag23I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test23", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @nooverride tag on three fields in an inner class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag23F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test23", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @nooverride tag on fields in inner / outer classes
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag24I() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test24", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	public void testInvalidClassFieldTag9F() {
+		x9(false);
 	}
 	
 	/**
 	 * Tests a invalid @nooverride tag on fields in inner /outer class
 	 * using a full build
 	 */
-	public void testInvalidClassFieldTag24F() {
+	private void x9(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test24", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_a_field},
+				{"@nooverride", BuilderMessages.TagValidator_a_field},
+				{"@nooverride", BuilderMessages.TagValidator_a_field},
+				{"@nooverride", BuilderMessages.TagValidator_a_field},
+				{"@nooverride", BuilderMessages.TagValidator_a_field},
+				{"@nooverride", BuilderMessages.TagValidator_a_field},
+				{"@nooverride", BuilderMessages.TagValidator_a_field},
+				{"@nooverride", BuilderMessages.TagValidator_a_field},
+				{"@nooverride", BuilderMessages.TagValidator_private_field},
+				{"@nooverride", BuilderMessages.TagValidator_private_field},
+				{"@nooverride", BuilderMessages.TagValidator_private_field},
+				{"@nooverride", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test9", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+
+	public void testInvalidClassFieldTag10I() {
+		x10(true);
+	}
+	
+	public void testInvalidClassFieldTag10F() {
+		x10(false);
 	}
 	
 	/**
 	 * Tests a valid @nooverride tag on three fields in a class in the default package
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag25I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test25", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a valid @nooverride tag on three fields in a class in the default package
 	 * using a full build
 	 */
-	public void testInvalidClassFieldTag25F() {
+	private void x10(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test25", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_a_field},
+				{"@nooverride", BuilderMessages.TagValidator_a_field},
+				{"@nooverride", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest("", 
+				"test10", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+
+	public void testInvalidClassFieldTag11I() {
+		x11(true);
 	}
 	
-	/**
-	 * Tests an invalid @noinstantiate tag on three fields in a class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag26I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test26", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noinstantiate tag on three fields in a class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag26F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test26", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noinstantiate tag on three fields in an outer class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag27I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test27", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noinstantiate tag on three fields in an outer class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag27F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test27", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noinstantiate tag on three fields in an inner class
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag28I() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test28", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a invalid @noinstantiate tag on three fields in an inner class
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag28F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test28", true, IncrementalProjectBuilder.FULL_BUILD, true);
-	}
-	
-	/**
-	 * Tests an invalid @noinstantiate tag on fields in inner / outer classes
-	 * using an incremental build
-	 */
-	public void testInvalidClassFieldTag29I() {
-		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test29", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+	public void testInvalidClassFieldTag11F() {
+		x11(false);
 	}
 	
 	/**
 	 * Tests a invalid @noinstantiate tag on fields in inner /outer class
 	 * using a full build
 	 */
-	public void testInvalidClassFieldTag29F() {
+	private void x11(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(12));
-		deployTagTest(TESTING_PACKAGE, "test29", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_private_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_private_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_private_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest(TESTING_PACKAGE, 
+				"test11", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
+	}
+	
+	public void testInvalidClassFieldTag12I() {
+		x12(true);
+	}
+
+	public void testInvalidClassFieldTag12F() {
+		x12(false);
 	}
 	
 	/**
 	 * Tests a valid @noinstantiate tag on three fields in a class in the default package
 	 * using an incremental build
 	 */
-	public void testInvalidClassFieldTag30I() {
+	private void x12(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test30", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-	}
-	
-	/**
-	 * Tests a valid @noinstantiate tag on three fields in a class in the default package
-	 * using a full build
-	 */
-	public void testInvalidClassFieldTag30F() {
-		setExpectedProblemIds(getDefaultProblemSet(3));
-		deployTagTest(TESTING_PACKAGE, "test30", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_private_field}
+		});
+		deployTagTest("", 
+				"test12", 
+				true, 
+				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				true);
 	}
 }

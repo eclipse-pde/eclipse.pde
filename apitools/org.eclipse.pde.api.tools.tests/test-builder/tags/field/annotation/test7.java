@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,26 @@
 package a.b.c;
 
 /**
- * Test unsupported @noinstantiate tag on an outer annotation field
+ * Test unsupported @nooverride tag on fields in outer / inner annotation
  */
 public @interface test7 {
-	
+	@interface inner {
+		/**
+		 * @nooverride
+		 */
+		public int f2 = 0;
+		@interface inner2 {
+			/**
+			 * @nooverride
+			 */
+			public char[] f3 = {};
+		}
+	}
 }
 
 @interface outer {
 	/**
-	 * @noinstantiate
+	 * @nooverride
 	 */
 	public static Object f1 = null;
 }

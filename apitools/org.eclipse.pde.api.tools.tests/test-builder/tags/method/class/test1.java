@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,110 @@
  *******************************************************************************/
 package a.b.c;
 
+
 /**
- * Test unsupported @noimplement tag on class methods
+ * Test supported @noimplement tag on methods in outer / inner classes
  */
 public class test1 {
+	
+	/**
+	 * @noimplement
+	 * @return
+	 */
+	public int m1() {
+		return 0;
+	}
+	
+	/**
+	 * @noimplement
+	 * @return
+	 */
+	public final char m2() {
+		return 's';
+	}
+	
+	/**
+	 * @noimplement
+	 */
+	protected void m3() {
+		
+	}
+	
+	/**
+	 * @noimplement
+	 * @return
+	 */
+	protected static Object m4() {
+		return null;
+	}
+	
+	static class inner {
+		/**
+		 * @noimplement
+		 * @return
+		 */
+		public int m1() {
+			return 0;
+		}
+		
+		/**
+		 * @noimplement
+		 * @return
+		 */
+		public final char m2() {
+			return 's';
+		}
+		
+		/**
+		 * @noimplement
+		 */
+		protected void m3() {
+			
+		}
+		
+		/**
+		 * @noimplement
+		 * @return
+		 */
+		protected static Object m4() {
+			return null;
+		}
+		static class inner2 {
+			/**
+			 * @noimplement
+			 * @return
+			 */
+			public int m1() {
+				return 0;
+			}
+			
+			/**
+			 * @noimplement
+			 * @return
+			 */
+			public final char m2() {
+				return 's';
+			}
+			
+			/**
+			 * @noimplement
+			 */
+			protected void m3() {
+				
+			}
+			
+			/**
+			 * @noimplement
+			 * @return
+			 */
+			protected static Object m4() {
+				return null;
+			}
+		}
+	}
+}
+
+class outer {
 	/**
 	 * @noimplement
 	 * @return

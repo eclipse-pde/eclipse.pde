@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,26 +11,34 @@
 package a.b.c;
 
 /**
- * Test unsupported @noimplement tag on fields in an outer enum
+ * Test unsupported @noimplement tag on enum constants in inner / outer enums
  */
 public enum test17 {
-
+	
+	/**
+	 * @noimplement
+	 */
+	A;
+	static enum inner {
+		
+		/**
+		 * @noimplement
+		 */
+		A;
+		enum inner2 {
+			
+			/**
+			 * @noimplement
+			 */
+			A;
+		}
+	}
 }
 
 enum outer {
 	
+	/**
+	 * @noimplement
+	 */
 	A;
-	
-	/**
-	 * @noimplement
-	 */
-	public Object f1 = null;
-	/**
-	 * @noimplement
-	 */
-	protected int f2 = 0;
-	/**
-	 * @noimplement
-	 */
-	private static char[] f3 = {};
 }

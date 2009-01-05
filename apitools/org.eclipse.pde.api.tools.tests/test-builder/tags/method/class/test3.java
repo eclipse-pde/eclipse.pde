@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,46 @@
  *******************************************************************************/
 package a.b.c;
 
+
 /**
- * Test supported @noimplement tag on class methods
+ * Test supported @noextend tag on methods in outer / inner classes
  */
 public class test3 {
 	
+	/**
+	 * @noextend
+	 * @return
+	 */
+	public int m1() {
+		return 0;
+	}
+	
+	/**
+	 * @noextend
+	 * @return
+	 */
+	public final char m2() {
+		return 's';
+	}
+	
+	/**
+	 * @noextend
+	 */
+	protected void m3() {
+		
+	}
+	
+	/**
+	 * @noextend
+	 * @return
+	 */
+	protected static Object m4() {
+		return null;
+	}
+	
 	static class inner {
 		/**
-		 * @noimplement
+		 * @noextend
 		 * @return
 		 */
 		public int m1() {
@@ -25,7 +57,7 @@ public class test3 {
 		}
 		
 		/**
-		 * @noimplement
+		 * @noextend
 		 * @return
 		 */
 		public final char m2() {
@@ -33,18 +65,83 @@ public class test3 {
 		}
 		
 		/**
-		 * @noimplement
+		 * @noextend
 		 */
 		protected void m3() {
 			
 		}
 		
 		/**
-		 * @noimplement
+		 * @noextend
 		 * @return
 		 */
 		protected static Object m4() {
 			return null;
 		}
+		static class inner2 {
+			/**
+			 * @noextend
+			 * @return
+			 */
+			public int m1() {
+				return 0;
+			}
+			
+			/**
+			 * @noextend
+			 * @return
+			 */
+			public final char m2() {
+				return 's';
+			}
+			
+			/**
+			 * @noextend
+			 */
+			protected void m3() {
+				
+			}
+			
+			/**
+			 * @noextend
+			 * @return
+			 */
+			protected static Object m4() {
+				return null;
+			}
+		}
+	}
+}
+
+class outer {
+	/**
+	 * @noextend
+	 * @return
+	 */
+	public int m1() {
+		return 0;
+	}
+	
+	/**
+	 * @noextend
+	 * @return
+	 */
+	public final char m2() {
+		return 's';
+	}
+	
+	/**
+	 * @noextend
+	 */
+	protected void m3() {
+		
+	}
+	
+	/**
+	 * @noextend
+	 * @return
+	 */
+	protected static Object m4() {
+		return null;
 	}
 }

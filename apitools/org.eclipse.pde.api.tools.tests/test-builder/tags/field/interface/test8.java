@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
 
 /**
- * Test unsupported @noinstantiate tag on a field in an inner interface
+ * Test unsupported @nooverride tag on a field in an interface in the default package
  */
 public interface test8 {
-	interface inner {
-		/**
-		 * @noinstantiate
-		 */
-		public Object f1 = null;
-	}
+	/**
+	 * @nooverride
+	 */
+	public Object f1 = null;
 }

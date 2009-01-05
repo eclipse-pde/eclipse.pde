@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -29,8 +26,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
-import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
-import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -179,34 +174,6 @@ public abstract class UsageTest extends ApiBuilderTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		createExistingProjects("usageprojects", false);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
-	 */
-	@Override
-	protected void assertProblems(ApiProblem[] problems) {
-		int[] pids = getExpectedProblemIds();
-		assertEquals("The number of problems should match the number of specified problem ids", pids.length, problems.length);
-		String[][] margs = getExpectedMessageArgs();
-		if(margs != null) {
-			ArrayList<String[]> args = new ArrayList<String[]>(Arrays.asList(margs));
-			String message = null;
-			int messageid = -1;
-			loop: for(int i = 0; i < problems.length; i++) {
-				for(Iterator<String[]> iter = args.iterator(); iter.hasNext();) {
-					messageid = ApiProblemFactory.getProblemMessageId(problems[i].getProblemId());
-					message = ApiProblemFactory.getLocalizedMessage(messageid, iter.next());
-					if(problems[i].getMessage().equals(message)) {
-						iter.remove();
-						continue loop;
-					}
-				}
-			}
-			if(args.size() > 0) {
-				fail("There was no problem that matched the arguments: "+Arrays.toString(args.iterator().next()));
-			}
-		}
 	}
 	
 	/**

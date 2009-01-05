@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -68,44 +64,6 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	
 	private IPath getFilterFilePath(String testname) {
 		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(fRootPath).append(testname).append(".api_filters");
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
-	 */
-	@Override
-	protected void assertProblems(ApiProblem[] problems) {
-		int[] expectedProblemIds = getExpectedProblemIds();
-		int length = problems.length;
-		if (expectedProblemIds.length != length) {
-			for (int i = 0; i < length; i++) {
-				System.err.println(problems[i]);
-			}
-		}
-		assertEquals("Wrong number of problems", expectedProblemIds.length, length);
-		String[][] args = getExpectedMessageArgs();
-		if (args != null) {
-			// compare messages
-			Set<String> set = new HashSet<String>();
-			for (int i = 0; i < length; i++) {
-				set.add(problems[i].getMessage());
-			}
-			for (int i = 0; i < expectedProblemIds.length; i++) {
-				String[] messageArgs = args[i];
-				int messageId = ApiProblemFactory.getProblemMessageId(expectedProblemIds[i]);
-				String message = ApiProblemFactory.getLocalizedMessage(messageId, messageArgs);
-				assertTrue("Missing expected problem: " + message, set.remove(message));
-			}
-		} else {
-			// compare id's
-			Set<Integer> set = new HashSet<Integer>();
-			for (int i = 0; i < length; i++) {
-				set.add(new Integer(problems[i].getProblemId()));
-			}
-			for (int i = 0; i < expectedProblemIds.length; i++) {
-				assertTrue("Missing expected problem: " + expectedProblemIds[i], set.remove(new Integer(expectedProblemIds[i])));
-			}
-		}
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,30 +11,46 @@
 package a.b.c;
 
 /**
- * Test unsupported @noinstantiate tag on methods in outer / inner annotations
+ * Test unsupported tags on fields in outer / inner annotation
  */
 public @interface test9 {
 	@interface inner {
 		/**
+		 * @nooverride
+		 * @noimplement
 		 * @noinstantiate
+		 * @noextend
+		 * @noreference
 		 * @return
 		 */
 		public int m1();
 		
 		/**
+		 * @nooverride
+		 * @noimplement
 		 * @noinstantiate
+		 * @noextend
+		 * @noreference
 		 * @return
 		 */
 		public abstract char m2();
 		@interface inner2 {
 			/**
+			 * @nooverride
+			 * @noimplement
 			 * @noinstantiate
+			 * @noextend
+			 * @noreference
 			 * @return
 			 */
 			public int m1();
 			
 			/**
+			 * @nooverride
+			 * @noimplement
 			 * @noinstantiate
+			 * @noextend
+			 * @noreference
 			 * @return
 			 */
 			public abstract char m2();
@@ -44,13 +60,21 @@ public @interface test9 {
 
 @interface outer {
 	/**
+	 * @nooverride
+	 * @noimplement
 	 * @noinstantiate
+	 * @noextend
+	 * @noreference
 	 * @return
 	 */
 	public int m1();
 	
 	/**
+	 * @nooverride
+	 * @noimplement
 	 * @noinstantiate
+	 * @noextend
+	 * @noreference
 	 * @return
 	 */
 	public abstract char m2();

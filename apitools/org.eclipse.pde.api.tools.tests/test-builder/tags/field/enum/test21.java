@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,34 @@
 package a.b.c;
 
 /**
- * Test unsupported @nooverride tag on fields in a enum
+ * Test unsupported @noinstantiate tag on enum constants in inner / outer enums
  */
 public enum test21 {
 	
+	/**
+	 * @noinstantiate
+	 */
 	A;
+	static enum inner {
+		
+		/**
+		 * @noinstantiate
+		 */
+		A;
+		enum inner2 {
+			
+			/**
+			 * @noinstantiate
+			 */
+			A;
+		}
+	}
+}
+
+enum outer {
 	
 	/**
-	 * @nooverride
+	 * @noinstantiate
 	 */
-	public Object f1 = null;
-	/**
-	 * @nooverride
-	 */
-	protected int f2 = 0;
-	/**
-	 * @nooverride
-	 */
-	private static char[] f3 = {};
+	A;
 }
