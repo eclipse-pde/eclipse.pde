@@ -206,15 +206,12 @@ public class PluginImportHelper {
 				String name = provider.getLabel(curr);
 				if (provider.isFolder(curr)) {
 					if (!name.equals("src") && !isClassFolder(provider, curr)) { //$NON-NLS-1$
-						ArrayList list = new ArrayList();
-						collectResources(provider, curr, false, list);
-						collected.addAll(list);
+						// Do not import source folders and class folders
+						collectRequiredBundleFiles(provider, curr, collected);
 					}
-				} else if (!name.endsWith(".class")) { //$NON-NLS-1$
-					// Ignore the bundle signing files
-					if (!(provider.getFullPath(curr).indexOf("META-INF/") != -1 && (name.endsWith(".RSA") || name.endsWith(".DSA") || name.endsWith(".SF")))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-						collected.add(curr);
-					}
+				} else if (!name.endsWith(".class") && !name.endsWith(".RSA") && !name.endsWith(".DSA") && !name.endsWith(".SF")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					// Do no import class files and signing files
+					collected.add(curr);
 				}
 
 			}
@@ -241,15 +238,13 @@ public class PluginImportHelper {
 		}
 	}
 
-	private static void collectResources(IImportStructureProvider provider, Object element, boolean excludeMeta, ArrayList collected) {
+	private static void collectResources(IImportStructureProvider provider, Object element, ArrayList collected) {
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr)) {
-					if (!excludeMeta || !provider.getLabel(curr).equals("META-INF")) { //$NON-NLS-1$
-						collectResources(provider, curr, excludeMeta, collected);
-					}
+					collectResources(provider, curr, collected);
 				} else if (!provider.getLabel(curr).endsWith(".class")) { //$NON-NLS-1$
 					collected.add(curr);
 				}
@@ -276,7 +271,7 @@ public class PluginImportHelper {
 						if (folderPath.segmentCount() > 1) {
 							collectResourcesFromFolder(provider, curr, folderPath.removeFirstSegments(1), collected);
 						} else {
-							collectResources(provider, curr, false, collected);
+							collectResources(provider, curr, collected);
 						}
 					}
 				}
