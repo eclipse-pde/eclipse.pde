@@ -45,11 +45,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (productFile == null)
 			return;
 
-		//we need at least a product id
-		if (productFile.getId() == null) {
-			return;
-		}
-
 		String location = null, fileList = null;
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config config = (Config) iter.next();
@@ -279,7 +274,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		String application = productFile.getApplication();
 		if (application != null)
 			buffer.append("eclipse.application=" + application + '\n'); //$NON-NLS-1$
-		buffer.append("eclipse.product=" + productFile.getId() + '\n'); //$NON-NLS-1$
+		String productId = productFile.getId();
+		if (productId != null)
+			buffer.append("eclipse.product=" + productId + '\n'); //$NON-NLS-1$
 
 		if ((configStyle & CONFIG_STYLE_SIMPLE) > 0) {
 			printSimpleBundles(buffer, config, configDir, configStyle);
@@ -320,6 +317,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			properties.put("name", productFile.getProductName()); //$NON-NLS-1$
 		if (productFile.getId() != null)
 			properties.put(ID, productFile.getId());
+
+		if (properties.size() == 0)
+			return;
 
 		BundleDescription bundle = getSite(false).getRegistry().getResolvedBundle(getBrandingPlugin());
 		if (bundle != null)

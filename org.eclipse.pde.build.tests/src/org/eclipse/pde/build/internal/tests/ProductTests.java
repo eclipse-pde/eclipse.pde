@@ -13,10 +13,12 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 
-import org.apache.tools.ant.*;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.build.internal.tests.ant.TestBrandTask;
 import org.eclipse.pde.build.tests.*;
@@ -155,7 +157,7 @@ public class ProductTests extends PDETestCase {
 
 		IFolder fooFolder = Utils.createFolder(buildFolder, "plugins/foo");
 		Utils.generateBundle(fooFolder, "foo");
-		Utils.generateProduct(buildFolder.getFile("plugins/foo/foo.product"), "foo.product", "1.0.0", new String[] {"org.eclipse.osgi"}, false);
+		Utils.generateProduct(buildFolder.getFile("plugins/foo/foo.product"), null, "1.0.0", null, new String[] {"org.eclipse.osgi"}, false);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "/foo/foo.product");
@@ -214,7 +216,7 @@ public class ProductTests extends PDETestCase {
 		IFolder buildFolder = newTest("249410");
 		IFile product = buildFolder.getFile("foo.product");
 		Utils.generateFeature(buildFolder, "f", null, new String[] {"a", "b", "c", "d"});
-		Utils.generateProduct(product, "foo.product", "1.0.0", new String[] {"f"}, true);
+		Utils.generateProduct(product, null, "1.0.0", null, new String[] {"f"}, true);
 
 		AssembleScriptGenerator.setConfigInfo("win32,win32,x86 & linux,gtk,x86");
 		Config win32 = new Config("win32,win32,x86");
@@ -252,21 +254,21 @@ public class ProductTests extends PDETestCase {
 		assertTrue(bundlesList.indexOf('b') > -1);
 		assertTrue(bundlesList.indexOf('c') > -1);
 	}
-	
+
 	public void testBug252246() throws Exception {
 		IFolder buildFolder = newTest("252246");
-		
+
 		IFile product = buildFolder.getFile("foo.product");
-		Utils.generateProduct(product, "foo.product", "1.0.0", new String[] {"A", "org.eclipse.equinox.simpleconfigurator"}, false);
-		
+		Utils.generateProduct(product, null, "1.0.0", null, new String[] {"A", "org.eclipse.equinox.simpleconfigurator"}, false);
+
 		IFolder A1 = Utils.createFolder(buildFolder, "plugins/A1");
 		IFolder A2 = Utils.createFolder(buildFolder, "plugins/A2");
 		IFolder simple = Utils.createFolder(buildFolder, "plugins/simple");
-		
+
 		Utils.generateBundleManifest(A1, "A", "1.0.0.v1", null);
 		Utils.generateBundleManifest(A2, "A", "1.0.0.v2", null);
 		Utils.generateBundleManifest(simple, "org.eclipse.equinox.simpleconfigurator", "1.0.0", null);
-		
+
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", product.getLocation().toOSString());
 		properties.put("includeLaunchers", "false");
@@ -275,12 +277,13 @@ public class ProductTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
-		
+
 		File file = buildFolder.getFolder("tmp/eclipse/plugins").getLocation().toFile();
-		String [] a = file.list(new FilenameFilter() {
+		String[] a = file.list(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.startsWith("A_1.0.0.v");
-			}});
+			}
+		});
 		assertTrue(a.length == 1);
 		String bundleString = a[0].substring(0, a[0].length() - 4); //trim .jar
 		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info"), bundleString);

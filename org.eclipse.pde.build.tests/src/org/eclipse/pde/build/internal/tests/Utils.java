@@ -107,7 +107,11 @@ public class Utils {
 	}
 
 	static public void storeBuildProperties(IFolder buildFolder, Properties buildProperties) throws FileNotFoundException, IOException {
-		File buildPropertiesFile = new File(buildFolder.getLocation().toFile(), "build.properties");
+		storeProperties(buildFolder.getFile("build.properties"), buildProperties);
+	}
+
+	static public void storeProperties(IFile propertiesFile, Properties buildProperties) throws FileNotFoundException, IOException {
+		File buildPropertiesFile = propertiesFile.getLocation().toFile();
 		OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(buildPropertiesFile));
 		buildProperties.store(outputStream, "");
 		outputStream.close();
@@ -116,7 +120,7 @@ public class Utils {
 	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList) throws CoreException {
 		generateFeature(workingDirectory, id, featureList, pluginList, null, false, false, null);
 	}
-	
+
 	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList, String version) throws CoreException {
 		generateFeature(workingDirectory, id, featureList, pluginList, null, false, false, version);
 	}
@@ -143,12 +147,25 @@ public class Utils {
 	}
 
 	static public void generateProduct(IFile productFile, String id, String version, String[] entryList, boolean features) throws CoreException, IOException {
+		generateProduct(productFile, id, version, null, entryList, features);
+	}
+
+	static public void generateProduct(IFile productFile, String id, String version, String application, String[] entryList, boolean features) throws CoreException, IOException {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("<product name=\"");
-		buffer.append(id);
-		buffer.append("\" id=\"");
-		buffer.append(id);
-		buffer.append("\" application=\"org.eclipse.ant.core.antRunner\" useFeatures=\"");
+		buffer.append("<product ");
+		if (id != null) {
+			buffer.append(" name=\"");
+			buffer.append(id);
+			buffer.append("\" id=\"");
+			buffer.append(id);
+			buffer.append("\"");
+		}
+		if (application != null) {
+			buffer.append(" application=\"");
+			buffer.append(application);
+			buffer.append("\"");
+		}
+		buffer.append(" useFeatures=\"");
 		buffer.append(new Boolean(features).toString());
 		buffer.append("\">\n");
 		buffer.append("  <configIni use=\"default\"/>\n");
@@ -158,7 +175,7 @@ public class Utils {
 			for (int i = 0; i < entryList.length; i++) {
 				buffer.append("    <feature id=\"");
 				buffer.append(entryList[i]);
-				buffer.append("\"/>\n");	
+				buffer.append("\"/>\n");
 			}
 			buffer.append("  </features>\n");
 		} else {
@@ -166,12 +183,12 @@ public class Utils {
 			for (int i = 0; i < entryList.length; i++) {
 				buffer.append("    <plugin id=\"");
 				buffer.append(entryList[i]);
-				buffer.append("\"/>\n");	
+				buffer.append("\"/>\n");
 			}
 			buffer.append("  </plugins>\n");
 		}
 		buffer.append("</product>\n");
-		
+
 		Utils.writeBuffer(productFile, buffer);
 		productFile.refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
@@ -241,7 +258,7 @@ public class Utils {
 	public static void transferStreams(InputStream source, OutputStream destination) throws IOException {
 		transferStreams(source, true, destination, true);
 	}
-	
+
 	public static void transferStreams(InputStream source, boolean closeIn, OutputStream destination, boolean closeOut) throws IOException {
 		source = new BufferedInputStream(source);
 		destination = new BufferedOutputStream(destination);
@@ -262,7 +279,7 @@ public class Utils {
 			}
 			try {
 				destination.flush();
-				if(closeOut)
+				if (closeOut)
 					destination.close();
 			} catch (IOException e) {
 				// ignore
@@ -319,7 +336,7 @@ public class Utils {
 				}
 		}
 	}
-	
+
 	public static void copy(File source, File target) throws IOException {
 		if (!source.exists())
 			return;
@@ -345,7 +362,7 @@ public class Utils {
 				output.write(buffer, 0, bytesRead);
 		} finally {
 			if (input != null) {
-				try{
+				try {
 					input.close();
 				} catch (IOException e) {
 					//ignore

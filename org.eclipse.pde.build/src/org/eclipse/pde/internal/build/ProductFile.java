@@ -16,6 +16,7 @@ import java.util.*;
 import javax.xml.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -91,9 +92,10 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private String platformConfigPath = null;
 	private String id = null;
 	private boolean useFeatures = false;
-	private List plugins = null;
-	private List fragments = null;
-	private List features = null;
+	//	private List plugins = null;
+	//	private List fragments = null;
+	//	private List features = null;
+	private List entries = null;
 	private String splashLocation = null;
 	private String productName = null;
 	private String application = null;
@@ -146,35 +148,57 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	}
 
 	public List getPlugins(boolean includeFragments) {
-		List p = plugins != null ? plugins : Collections.EMPTY_LIST;
-		if (!includeFragments)
-			return p;
-
-		List f = fragments != null ? fragments : Collections.EMPTY_LIST;
-		int size = p.size() + f.size();
-		if (size == 0)
+		if (entries == null)
 			return Collections.EMPTY_LIST;
 
-		List both = new ArrayList(size);
-		both.addAll(p);
-		both.addAll(f);
-		return both;
+		List plugins = new ArrayList();
+		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
+			FeatureEntry entry = (FeatureEntry) iterator.next();
+			if (entry.isPlugin() && (!entry.isFragment() || includeFragments))
+				plugins.add(entry.getId());
+		}
+		return plugins;
 	}
 
 	public List getFragments() {
-		if (fragments == null)
+		if (entries == null)
 			return Collections.EMPTY_LIST;
+
+		List fragments = new ArrayList();
+		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
+			FeatureEntry entry = (FeatureEntry) iterator.next();
+			if (entry.isPlugin() && entry.isFragment())
+				fragments.add(entry.getId());
+		}
 		return fragments;
 	}
 
 	public List getFeatures() {
-		if (features == null)
+		if (entries == null)
 			return Collections.EMPTY_LIST;
+
+		List features = new ArrayList();
+		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
+			FeatureEntry entry = (FeatureEntry) iterator.next();
+			if (!entry.isPlugin())
+				features.add(entry.getId());
+		}
 		return features;
 	}
 
+	public List getProductEntries() {
+		List results = new ArrayList();
+		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
+			FeatureEntry entry = (FeatureEntry) iterator.next();
+			if (useFeatures() == !entry.isPlugin())
+				results.add(entry);
+		}
+		return results;
+	}
+
 	public boolean containsPlugin(String plugin) {
-		return (plugins != null && plugins.contains(plugin)) || (fragments != null && fragments.contains(plugin));
+		List plugins = getPlugins();
+		return (plugins != null && plugins.contains(plugin));
 	}
 
 	/**
@@ -452,22 +476,24 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	}
 
 	private void processPlugin(Attributes attributes) {
+		if (entries == null)
+			entries = new ArrayList();
+
 		String fragment = attributes.getValue(FRAGMENT);
-		if (fragment != null && new Boolean(fragment).booleanValue()) {
-			if (fragments == null)
-				fragments = new ArrayList();
-			fragments.add(attributes.getValue(ID));
-		} else {
-			if (plugins == null)
-				plugins = new ArrayList();
-			plugins.add(attributes.getValue(ID));
-		}
+		String pluginId = attributes.getValue(ID);
+		String pluginVersion = attributes.getValue(VERSION);
+
+		FeatureEntry entry = new FeatureEntry(pluginId, pluginVersion != null ? "0.0.0" : pluginVersion, true); //$NON-NLS-1$
+		entry.setFragment(Boolean.valueOf(fragment).booleanValue());
+		entries.add(entry);
 	}
 
 	private void processFeature(Attributes attributes) {
-		if (features == null)
-			features = new ArrayList();
-		features.add(attributes.getValue(ID));
+		if (entries == null)
+			entries = new ArrayList();
+		String featureId = attributes.getValue(ID);
+		String featureVersion = attributes.getValue(VERSION);
+		entries.add(new FeatureEntry(featureId, featureVersion != null ? featureVersion : "0.0.0", false)); //$NON-NLS-1$
 	}
 
 	private void processProduct(Attributes attributes) {
