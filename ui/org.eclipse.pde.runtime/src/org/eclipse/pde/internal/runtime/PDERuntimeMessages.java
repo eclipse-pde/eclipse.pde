@@ -73,15 +73,30 @@ public class PDERuntimeMessages extends NLS {
 	public static String SpyFormToolkit_saveImageAs_title;
 	public static String SpyFormToolkit_copyQualifiedName;
 
+	public static String RegistryBrowser_Bundle;
+
 	public static String RegistryBrowser_copy_label;
 
+	public static String RegistryBrowser_ExtensionPoint;
+
+	public static String RegistryBrowser_GroupBy;
+
 	public static String RegistryBrowser_InitializingView;
-	public static String RegistryBrowser_showExtOnlyLabel;
 	public static String RegistryBrowser_plugins;
 
+	public static String RegistryBrowser_Service;
+
+	public static String RegistryBrowser_Services;
+
 	public static String RegistryBrowserLabelProvider_contributedBy;
+
+	public static String RegistryBrowserLabelProvider_Properties;
+
+	public static String RegistryBrowserLabelProvider_RegisteredBy;
 	public static String RegistryBrowserLabelProvider_usedServices;
 	public static String RegistryBrowserLabelProvider_registeredServices;
+
+	public static String RegistryBrowserLabelProvider_UsingBundles;
 
 	static {
 		// load message values from bundle file
