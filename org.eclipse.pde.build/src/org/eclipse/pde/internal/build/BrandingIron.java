@@ -91,7 +91,7 @@ public class BrandingIron implements IXMLConstants {
 	private void brandLinux() throws Exception {
 		renameLauncher();
 		if (brandIcons)
-			copy(new File(icons[0]), new File(root, "icon.xpm")); //$NON-NLS-1$
+			Utils.copy(new File(icons[0]), new File(root, "icon.xpm")); //$NON-NLS-1$
 	}
 
 	private void brandSolaris() throws Exception {
@@ -102,13 +102,13 @@ public class BrandingIron implements IXMLConstants {
 		for (int i = 0; i < icons.length; i++) {
 			String icon = icons[i];
 			if (icon.endsWith(".l.pm")) //$NON-NLS-1$
-				copy(new File(icon), new File(root, name + ".l.pm")); //$NON-NLS-1$
+				Utils.copy(new File(icon), new File(root, name + ".l.pm")); //$NON-NLS-1$
 			if (icon.endsWith(".m.pm")) //$NON-NLS-1$
-				copy(new File(icon), new File(root, name + ".m.pm")); //$NON-NLS-1$
+				Utils.copy(new File(icon), new File(root, name + ".m.pm")); //$NON-NLS-1$
 			if (icon.endsWith(".s.pm")) //$NON-NLS-1$
-				copy(new File(icon), new File(root, name + ".s.pm")); //$NON-NLS-1$
+				Utils.copy(new File(icon), new File(root, name + ".s.pm")); //$NON-NLS-1$
 			if (icon.endsWith(".t.pm")) //$NON-NLS-1$
-				copy(new File(icon), new File(root, name + ".t.pm")); //$NON-NLS-1$
+				Utils.copy(new File(icon), new File(root, name + ".t.pm")); //$NON-NLS-1$
 		}
 	}
 
@@ -132,7 +132,7 @@ public class BrandingIron implements IXMLConstants {
 		if (brandIcons) {
 			File icon = new File(icons[0]);
 			iconName = icon.getName();
-			copy(icon, new File(target + "/Resources/" + icon.getName())); //$NON-NLS-1$
+			Utils.copy(icon, new File(target + "/Resources/" + icon.getName())); //$NON-NLS-1$
 			new File(initialRoot + "/Resources/Eclipse.icns").delete(); //$NON-NLS-1$
 			if (!splashApp.exists())
 				new File(initialRoot + "/Resources/").delete(); //$NON-NLS-1$
@@ -186,7 +186,7 @@ public class BrandingIron implements IXMLConstants {
 			splashMacOSDir.mkdirs();
 			try {
 				File targetFile = new File(splashMacOSDir, name);
-				copy(new File(macOSDir, name), targetFile);
+				Utils.copy(new File(macOSDir, name), targetFile);
 				try {
 					Runtime.getRuntime().exec(new String[] {"chmod", "755", targetFile.getAbsolutePath()}); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (IOException e) {
@@ -266,7 +266,7 @@ public class BrandingIron implements IXMLConstants {
 				}
 				return;
 			}
-			copy(launcher, targetFile);
+			Utils.copy(launcher, targetFile);
 		} catch (IOException e) {
 			System.out.println("Could not copy macosx launcher"); //$NON-NLS-1$
 			return;
@@ -289,7 +289,7 @@ public class BrandingIron implements IXMLConstants {
 		File targetFile = new File(target, "/MacOS/" + name + ".ini"); //$NON-NLS-1$//$NON-NLS-2$
 		File brandedIni = new File(initialRoot, "/MacOS/" + name + ".ini"); //$NON-NLS-1$ //$NON-NLS-2$
 		File ini = new File(initialRoot, "/MacOS/eclipse.ini"); //$NON-NLS-1$
-		
+
 		if (targetFile.exists()) {
 			//an ini already exists at the target, use that
 			if (brandedIni.exists() && !brandedIni.equals(targetFile))
@@ -299,7 +299,7 @@ public class BrandingIron implements IXMLConstants {
 			ini = targetFile;
 		} else if (brandedIni.exists()) {
 			//take the one that is already branded
-			if( ini.exists() && !ini.equals(brandedIni))
+			if (ini.exists() && !ini.equals(brandedIni))
 				ini.delete();
 			ini = brandedIni;
 		} else if (!ini.exists()) {
@@ -403,36 +403,6 @@ public class BrandingIron implements IXMLConstants {
 				infoPList.delete();
 		} catch (IOException e) {
 			//ignore
-		}
-	}
-
-	/**
-	 * Transfers all available bytes from the given input stream to the given output stream. 
-	 * Regardless of failure, this method closes both streams.
-	 * @throws IOException 
-	 */
-	public void copy(File source, File destination) throws IOException {
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			in = new BufferedInputStream(new FileInputStream(source));
-			out = new BufferedOutputStream(new FileOutputStream(destination));
-			final byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = -1;
-				bytesRead = in.read(buffer);
-				if (bytesRead == -1)
-					break;
-				out.write(buffer, 0, bytesRead);
-			}
-		} finally {
-			try {
-				if (in != null)
-					in.close();
-			} finally {
-				if (out != null)
-					out.close();
-			}
 		}
 	}
 
