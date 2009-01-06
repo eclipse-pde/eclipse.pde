@@ -168,13 +168,13 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 		// service register
 		ModelChangeDelta delta = deltas[0];
 		assertTrue(delta.getModelObject() instanceof ServiceRegistration);
-		assertEquals(getClass().getName(), ((ServiceRegistration)delta.getModelObject()).getClasses()[0]);
+		assertEquals(getClass().getName(), ((ServiceRegistration)delta.getModelObject()).getName().getClasses()[0]);
 		assertEquals(ModelChangeDelta.ADDED, delta.getFlag());
 		
 		// service unregister
 		delta = deltas[1];
 		assertTrue(delta.getModelObject() instanceof ServiceRegistration);
-		assertEquals(getClass().getName(), ((ServiceRegistration)delta.getModelObject()).getClasses()[0]);
+		assertEquals(getClass().getName(), ((ServiceRegistration)delta.getModelObject()).getName().getClasses()[0]);
 		assertEquals(ModelChangeDelta.REMOVED, delta.getFlag());
 		
 		assertEquals(2, deltas.length);
