@@ -46,21 +46,47 @@ public class RegistryModel {
 		}
 
 		public void addService(ServiceRegistration adapter) {
+			ModelChangeDelta serviceNameDelta = null;
+			if (!serviceNames.contains(adapter.getName())) {
+				ServiceName name = adapter.getName();
+				name.setModel(RegistryModel.this);
+
+				serviceNames.add(name);
+
+				serviceNameDelta = new ModelChangeDelta(name, ModelChangeDelta.ADDED);
+			}
+
 			adapter.setModel(RegistryModel.this);
 			services.put(new Long(adapter.getId()), adapter);
 
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.ADDED);
 
-			fireModelChangeEvent(new ModelChangeDelta[] {delta});
+			if (serviceNameDelta != null) {
+				fireModelChangeEvent(new ModelChangeDelta[] {serviceNameDelta, delta});
+			} else {
+				fireModelChangeEvent(new ModelChangeDelta[] {delta});
+			}
 		}
 
 		public void removeService(ServiceRegistration adapter) {
+			ModelChangeDelta serviceNameDelta = null;
+			if (getServices(adapter.getName().getClasses()).length == 0) {
+				serviceNames.remove(adapter.getName());
+				serviceNameDelta = new ModelChangeDelta(adapter.getName(), ModelChangeDelta.REMOVED);
+			}
+
 			services.remove(new Long(adapter.getId()));
 
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.REMOVED);
 
-			fireModelChangeEvent(new ModelChangeDelta[] {delta});
-			adapter.setModel(null);
+			if (serviceNameDelta != null) {
+				fireModelChangeEvent(new ModelChangeDelta[] {serviceNameDelta, delta});
+				adapter.getName().setModel(null);
+				adapter.setModel(null);
+			} else {
+				fireModelChangeEvent(new ModelChangeDelta[] {delta});
+				adapter.setModel(null);
+			}
 		}
 
 		public void updateService(ServiceRegistration adapter) {
@@ -139,12 +165,15 @@ public class RegistryModel {
 	private Map bundles;
 	private Map services;
 	private Map extensionPoints;
+	private Set serviceNames;
+
 	protected RegistryBackend backend;
 
 	public RegistryModel(RegistryBackend backend) {
 		bundles = Collections.synchronizedMap(new HashMap());
 		services = Collections.synchronizedMap(new HashMap());
 		extensionPoints = Collections.synchronizedMap(new HashMap());
+		serviceNames = Collections.synchronizedSet(new HashSet());
 
 		this.backend = backend;
 		backend.setRegistryListener(backendListener);
@@ -172,6 +201,22 @@ public class RegistryModel {
 
 	public ServiceRegistration[] getServices() {
 		return (ServiceRegistration[]) services.values().toArray(new ServiceRegistration[services.values().size()]);
+	}
+
+	public ServiceName[] getServiceNames() {
+		return (ServiceName[]) serviceNames.toArray(new ServiceName[serviceNames.size()]);
+	}
+
+	public ServiceRegistration[] getServices(String[] classes) {
+		List result = new ArrayList();
+
+		for (Iterator i = services.values().iterator(); i.hasNext();) {
+			ServiceRegistration sr = (ServiceRegistration) i.next();
+			if (Arrays.equals(classes, sr.getName().getClasses()))
+				result.add(sr);
+		}
+
+		return (ServiceRegistration[]) result.toArray(new ServiceRegistration[result.size()]);
 	}
 
 	public void addModelChangeListener(ModelChangeListener listener) {

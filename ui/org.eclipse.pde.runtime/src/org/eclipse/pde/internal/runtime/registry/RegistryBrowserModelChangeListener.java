@@ -29,11 +29,26 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 	}
 
 	private boolean topLevelElement(Object object) {
-		return fRegistryBrowser.showExtensionsOnly() ? object instanceof ExtensionPoint : object instanceof Bundle;
+		switch (fRegistryBrowser.getGroupBy()) {
+			case (RegistryBrowser.BUNDLES) :
+				return object instanceof Bundle;
+			case (RegistryBrowser.EXTENSION_REGISTRY) :
+				return object instanceof ExtensionPoint;
+			case (RegistryBrowser.SERVICES) :
+				return object instanceof ServiceName;
+		}
+
+		return false;
 	}
 
+	/**
+	 * TODO FIXME this should be moved to content provider getParent
+	 * 
+	 * @param object
+	 * @return if returns array, then appears under all top level elements of that array
+	 */
 	private Object getTopLevelElement(Object object) {
-		if (!fRegistryBrowser.showExtensionsOnly()) { // show bundles
+		if (fRegistryBrowser.getGroupBy() == RegistryBrowser.BUNDLES) {
 			if (object instanceof Bundle) {
 				return object;
 			} else if (object instanceof ExtensionPoint) {
@@ -43,42 +58,77 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 				Extension ext = (Extension) object;
 				return ext.getContributor();
 			} else if (object instanceof ServiceRegistration) {
-				//ServiceRegistration reg = (ServiceRegistration) object;
-				//return reg.getBundle(); // TODO FIXME
+				ServiceRegistration reg = (ServiceRegistration) object;
+
+				Bundle[] bundles = reg.getUsingBundles();
+				if (bundles.length == 0) {
+					return reg.getBundle();
+				}
+
+				Object[] result = new Object[bundles.length + 1];
+				result[0] = reg.getBundle();
+				System.arraycopy(bundles, 0, result, 1, bundles.length);
+
+				return result;
 			}
-		} else { // show only extensions
+		} else if (fRegistryBrowser.getGroupBy() == RegistryBrowser.EXTENSION_REGISTRY) {
 			if (object instanceof ExtensionPoint) {
 				return object;
 			} else if (object instanceof Extension) {
 				Extension ext = (Extension) object;
 				return ext.getExtensionPoint();
 			}
+		} else if (fRegistryBrowser.getGroupBy() == RegistryBrowser.SERVICES) {
+			if (object instanceof ServiceRegistration) {
+				ServiceRegistration service = (ServiceRegistration) object;
+				return service.getName();
+			} else if (object instanceof Bundle) {
+				Object[] services = ((Bundle) object).getServicesInUse();
+				for (int i = 0; i < services.length; i++) {
+					ServiceRegistration service = ((ServiceRegistration) services[i]);
+					services[i] = service.getName();
+				}
+				return services;
+			}
 		}
 
 		return null;
 	}
 
+	private void refreshTopLevelElements(Object object) {
+		Object topLevelElement = getTopLevelElement(object);
+
+		if (topLevelElement == null)
+			return;
+
+		if (topLevelElement.getClass().isArray()) {
+			Object[] array = (Object[]) topLevelElement;
+
+			for (int i = 0; i < array.length; i++)
+				fRegistryBrowser.refresh(array[i]);
+		} else {
+			fRegistryBrowser.refresh(object);
+		}
+	}
+
 	protected void update(ModelChangeDelta[] deltas) {
 		for (int i = 0; i < deltas.length; i++) {
 			ModelObject object = deltas[i].getModelObject();
+			int flag = deltas[i].getFlag();
 
-			switch (deltas[i].getFlag()) {
+			switch (flag) {
 				case ModelChangeDelta.ADDED :
 					if (topLevelElement(object)) {
 						fRegistryBrowser.add(object);
 					} else {
-						Object topLevelElement = getTopLevelElement(object);
-						if (topLevelElement != null)
-							fRegistryBrowser.refresh(topLevelElement);
+						refreshTopLevelElements(object);
 					}
 					break;
 				case ModelChangeDelta.REMOVED :
 					if (topLevelElement(object)) {
 						fRegistryBrowser.remove(object);
 					} else {
-						Object topLevelElement = getTopLevelElement(object);
-						if (topLevelElement != null)
-							fRegistryBrowser.refresh(topLevelElement);
+						refreshTopLevelElements(object);
 					}
 					break;
 				case ModelChangeDelta.STARTED :
@@ -89,13 +139,10 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 					if (topLevelElement(object)) {
 						fRegistryBrowser.refresh(object);
 					} else {
-						Object topLevelElement = getTopLevelElement(object);
-						if (topLevelElement != null)
-							fRegistryBrowser.refresh(topLevelElement);
+						refreshTopLevelElements(object);
 					}
 					break;
 			}
 		}
 	}
-
 }

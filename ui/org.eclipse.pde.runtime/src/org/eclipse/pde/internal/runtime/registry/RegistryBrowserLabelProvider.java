@@ -42,9 +42,11 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image fServiceImage;
 	private Image fPropertyImage;
 	private TreeViewer fViewer;
+	private RegistryBrowser fRegistryBrowser;
 
-	public RegistryBrowserLabelProvider(TreeViewer viewer) {
+	public RegistryBrowserLabelProvider(TreeViewer viewer, RegistryBrowser browser) {
 		fViewer = viewer;
+		fRegistryBrowser = browser;
 		fPluginImage = PDERuntimePluginImages.DESC_PLUGIN_OBJ.createImage();
 		fReqPluginImage = PDERuntimePluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
 		fExtensionPointImage = PDERuntimePluginImages.DESC_EXT_POINT_OBJ.createImage();
@@ -119,8 +121,12 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			}
 		}
 
-		if (element instanceof ServiceRegistration) {
+		if (element instanceof ServiceName) {
 			return fServiceImage;
+		}
+
+		if (element instanceof ServiceRegistration) {
+			return fPluginImage;
 		}
 
 		if (element instanceof Property) {
@@ -142,9 +148,14 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 					return fExporterImage;
 				case Folder.F_SERVICES_IN_USE :
 					return fImporterImage;
+				case Folder.F_PROPERTIES :
+					return fPropertyImage;
+				case Folder.F_USING_BUNDLES :
+					return fPluginImage;
 			}
 			return null;
 		}
+
 		if (element instanceof Extension)
 			return fExtensionImage;
 
@@ -179,12 +190,23 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 				return id;
 			return id + " (" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
+
 		if (element instanceof ServiceRegistration) {
 			ServiceRegistration ref = (ServiceRegistration) element;
-			String[] classes = ref.getClasses();
 			String identifier = " (id=" + ref.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-			return Arrays.asList(classes).toString().concat(identifier);
+
+			if (fRegistryBrowser.getGroupBy() == RegistryBrowser.BUNDLES) {
+				String[] classes = ref.getName().getClasses();
+				return Arrays.asList(classes).toString().concat(identifier);
+			}
+
+			return PDERuntimeMessages.RegistryBrowserLabelProvider_RegisteredBy + ref.getBundle().concat(identifier);
 		}
+
+		if (element instanceof ServiceName) {
+			return Arrays.asList(((ServiceName) element).getClasses()).toString();
+		}
+
 		if (element instanceof Folder) {
 			switch (((Folder) element).getId()) {
 				case Folder.F_IMPORTS :
@@ -199,6 +221,10 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 					return PDERuntimeMessages.RegistryBrowserLabelProvider_registeredServices;
 				case Folder.F_SERVICES_IN_USE :
 					return PDERuntimeMessages.RegistryBrowserLabelProvider_usedServices;
+				case Folder.F_PROPERTIES :
+					return PDERuntimeMessages.RegistryBrowserLabelProvider_Properties;
+				case Folder.F_USING_BUNDLES :
+					return PDERuntimeMessages.RegistryBrowserLabelProvider_UsingBundles;
 			}
 		}
 		if (element instanceof Extension) {

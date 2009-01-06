@@ -12,12 +12,15 @@
 package org.eclipse.pde.internal.runtime.registry;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.internal.runtime.registry.model.*;
 
 public class RegistryBrowserContentProvider implements ITreeContentProvider {
+
 	public boolean isInExtensionSet;
+	private boolean isInUsingBundles;
 
 	private RegistryBrowser fRegistryBrowser;
 
@@ -33,14 +36,22 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	}
 
 	public Object[] getChildren(Object element) {
+		if (isInUsingBundles && (!(element instanceof Bundle)))
+			isInUsingBundles = false;
+
 		if (element instanceof RegistryModel) {
 			RegistryModel model = (RegistryModel) element;
 
-			if (fRegistryBrowser.showExtensionsOnly()) {
-				return model.getExtensionPoints();
+			switch (fRegistryBrowser.getGroupBy()) {
+				case (RegistryBrowser.BUNDLES) :
+					return model.getBundles();
+				case (RegistryBrowser.EXTENSION_REGISTRY) :
+					return model.getExtensionPoints();
+				case (RegistryBrowser.SERVICES) :
+					return model.getServiceNames();
 			}
 
-			return model.getBundles();
+			return null;
 		}
 
 		if (element instanceof Extension)
@@ -54,31 +65,40 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			return ((ConfigurationElement) element).getElements();
 
 		if (element instanceof Bundle) {
+			if (fRegistryBrowser.getGroupBy() != RegistryBrowser.BUNDLES) // expands only in Bundles mode
+				return null;
+
+			if (isInUsingBundles) // avoid infinite nesting: Bundle->Services->UsingBundles->Bundle->Services...
+				return null;
+
 			Bundle bundle = (Bundle) element;
 
-			Folder[] folders = new Folder[6];
-			folders[0] = new Folder(Folder.F_IMPORTS, bundle);
-			folders[1] = new Folder(Folder.F_LIBRARIES, bundle);
-			folders[2] = new Folder(Folder.F_EXTENSION_POINTS, bundle);
-			folders[3] = new Folder(Folder.F_EXTENSIONS, bundle);
-			folders[4] = new Folder(Folder.F_REGISTERED_SERVICES, bundle);
-			folders[5] = new Folder(Folder.F_SERVICES_IN_USE, bundle);
+			List folders = new ArrayList(7);
 
-			// filter out empty folders
-			ArrayList folderList = new ArrayList();
-			folderList.add(new Attribute(Attribute.F_LOCATION, bundle.getLocation()));
+			folders.add(new Attribute(Attribute.F_LOCATION, bundle.getLocation()));
+			if (bundle.getImports().length > 0)
+				folders.add(new Folder(Folder.F_IMPORTS, bundle));
+			if (bundle.getLibraries().length > 0)
+				folders.add(new Folder(Folder.F_LIBRARIES, bundle));
+			if (bundle.getExtensionPoints().length > 0)
+				folders.add(new Folder(Folder.F_EXTENSION_POINTS, bundle));
+			if (bundle.getExtensions().length > 0)
+				folders.add(new Folder(Folder.F_EXTENSIONS, bundle));
+			if (bundle.getRegisteredServices().length > 0)
+				folders.add(new Folder(Folder.F_REGISTERED_SERVICES, bundle));
+			if (bundle.getServicesInUse().length > 0)
+				folders.add(new Folder(Folder.F_SERVICES_IN_USE, bundle));
 
-			for (int i = 0; i < folders.length; i++) {
-				if ((folders[i].getChildren() != null) && (folders[i].getChildren().length > 0))
-					folderList.add(folders[i]);
-			}
-			return folderList.toArray();
+			return folders.toArray();
 		}
+
+		isInExtensionSet = false;
 
 		if (element instanceof Folder) {
 			Folder folder = (Folder) element;
 			isInExtensionSet = folder.getId() == Folder.F_EXTENSIONS;
 			Object[] objs = ((Folder) element).getChildren();
+			isInUsingBundles = folder.getId() == Folder.F_USING_BUNDLES;
 			return objs;
 		}
 		if (element instanceof ConfigurationElement) {
@@ -91,9 +111,21 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			return objs;
 		}
 
+		if (element instanceof ServiceName) {
+			return ((ServiceName) element).getChildren();
+		}
+
 		if (element instanceof ServiceRegistration) {
-			ServiceRegistration serviceRegistration = (ServiceRegistration) element;
-			return serviceRegistration.getProperties();
+			ServiceRegistration service = (ServiceRegistration) element;
+
+			List folders = new ArrayList();
+
+			if (service.getProperties().length > 0)
+				folders.add(new Folder(Folder.F_PROPERTIES, service));
+			if (service.getUsingBundleIds().length > 0)
+				folders.add(new Folder(Folder.F_USING_BUNDLES, service));
+
+			return folders.toArray();
 		}
 
 		if (element instanceof Object[]) {

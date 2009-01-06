@@ -11,12 +11,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry.model;
 
+import java.util.*;
+
 public class ServiceRegistration extends ModelObject {
 
 	private long id;
 	private String bundle;
 	private long[] usingBundles = new long[0];
-	private String[] classes = new String[0];
+	private ServiceName name;
 	private Property[] properties = new Property[0];
 
 	public void setId(long id) {
@@ -34,11 +36,11 @@ public class ServiceRegistration extends ModelObject {
 		this.usingBundles = usingBundles;
 	}
 
-	public void setClasses(String[] classes) {
-		if (usingBundles == null)
+	public void setName(ServiceName name) {
+		if (name == null)
 			throw new IllegalArgumentException();
 
-		this.classes = classes;
+		this.name = name;
 	}
 
 	public void setProperties(Property[] properties) {
@@ -52,16 +54,29 @@ public class ServiceRegistration extends ModelObject {
 		return id;
 	}
 
-	public String[] getClasses() {
-		return classes;
+	public ServiceName getName() {
+		return name;
 	}
 
 	public String getBundle() {
 		return bundle;
 	}
 
-	public long[] getUsingBundles() {
+	public long[] getUsingBundleIds() {
 		return usingBundles;
+	}
+
+	public Bundle[] getUsingBundles() {
+		if (usingBundles.length == 0)
+			return new Bundle[0];
+
+		Set bundles = new HashSet();
+		for (int i = 0; i < usingBundles.length; i++) {
+			Bundle bundle = model.getBundle(new Long(usingBundles[i]));
+			if (bundle != null)
+				bundles.add(bundle);
+		}
+		return (Bundle[]) bundles.toArray(new Bundle[bundles.size()]);
 	}
 
 	public Property[] getProperties() {

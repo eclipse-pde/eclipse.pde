@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,13 @@ public class Folder {
 	public static final int F_LIBRARIES = 4;
 	public static final int F_REGISTERED_SERVICES = 5;
 	public static final int F_SERVICES_IN_USE = 6;
+	public static final int F_PROPERTIES = 7;
+	public static final int F_USING_BUNDLES = 8;
 
 	private int id;
-	private Bundle parent;
+	private Object parent;
 
-	public Folder(int id, Bundle parent) {
+	public Folder(int id, Object parent) {
 		this.id = id;
 		this.parent = parent;
 	}
@@ -31,24 +33,28 @@ public class Folder {
 		return id;
 	}
 
-	public ModelObject getParent() {
+	public Object getParent() {
 		return parent;
 	}
 
 	public ModelObject[] getChildren() {
 		switch (id) {
 			case F_EXTENSION_POINTS :
-				return parent.getExtensionPoints();
+				return ((Bundle) parent).getExtensionPoints();
 			case F_EXTENSIONS :
-				return parent.getExtensions();
+				return ((Bundle) parent).getExtensions();
 			case F_IMPORTS :
-				return parent.getImports();
+				return ((Bundle) parent).getImports();
 			case F_LIBRARIES :
-				return parent.getLibraries();
+				return ((Bundle) parent).getLibraries();
 			case F_REGISTERED_SERVICES :
-				return parent.getRegisteredServices();
+				return ((Bundle) parent).getRegisteredServices();
 			case F_SERVICES_IN_USE :
-				return parent.getServicesInUse();
+				return ((Bundle) parent).getServicesInUse();
+			case F_PROPERTIES :
+				return ((ServiceRegistration) parent).getProperties();
+			case F_USING_BUNDLES :
+				return ((ServiceRegistration) parent).getUsingBundles();
 		}
 
 		return null;

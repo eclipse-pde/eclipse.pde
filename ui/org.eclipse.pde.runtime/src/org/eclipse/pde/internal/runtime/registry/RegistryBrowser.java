@@ -40,10 +40,30 @@ import org.osgi.framework.BundleException;
 
 public class RegistryBrowser extends ViewPart {
 
+	private class GroupByAction extends Action {
+		private int actionGroupBy;
+
+		public GroupByAction(String name, int groupBy) {
+			super(name, AS_RADIO_BUTTON);
+			this.actionGroupBy = groupBy;
+		}
+
+		public void run() {
+			fMemento.putInteger(GROUP_BY, actionGroupBy);
+			// refreshAction takes into account checked state of fShowExtensionsOnlyAction
+			// (via updateItems(true)
+			fRefreshAction.run();
+		}
+	}
+
 	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label"; //$NON-NLS-1$
 	public static final String SHOW_ADVANCED_MODE = "RegistryView.showAdvancedMode.label"; //$NON-NLS-1$
-	public static final String SHOW_EXTENSIONS_ONLY = "RegistryView.showExtensions.label"; //$NON-NLS-1$ 
+	public static final String GROUP_BY = "RegistryView.groupBy"; //$NON-NLS-1$ 
 	public static final String SHOW_DISABLED_MODE = "RegistryView.showDisabledMode.label"; //$NON-NLS-1$
+
+	public static final int BUNDLES = 0;
+	public static final int EXTENSION_REGISTRY = 1;
+	public static final int SERVICES = 2;
 
 	private FilteredTree fFilteredTree;
 	private TreeViewer fTreeViewer;
@@ -59,7 +79,9 @@ public class RegistryBrowser extends ViewPart {
 	private Action fShowPluginsAction;
 	private Action fCollapseAllAction;
 	private Action fShowAdvancedOperationsAction;
-	private Action fShowExtensionsOnlyAction;
+	private Action fGroupByBundlesAction;
+	private Action fGroupByExtensionPointsAction;
+	private Action fGroupByServicesAction;
 	private Action fShowDisabledAction;
 	private Action fCopyAction;
 
@@ -156,8 +178,8 @@ public class RegistryBrowser extends ViewPart {
 		// show all bundles by default (i.e. not just activated ones)
 		if (fMemento.getString(SHOW_RUNNING_PLUGINS) == null)
 			fMemento.putString(SHOW_RUNNING_PLUGINS, "false"); //$NON-NLS-1$
-		if (fMemento.getString(SHOW_EXTENSIONS_ONLY) == null)
-			fMemento.putString(SHOW_EXTENSIONS_ONLY, "false"); //$NON-NLS-1$
+		if (fMemento.getInteger(GROUP_BY) == null)
+			fMemento.putInteger(GROUP_BY, BUNDLES);
 		if (fMemento.getString(SHOW_DISABLED_MODE) == null)
 			fMemento.putString(SHOW_DISABLED_MODE, "false"); //$NON-NLS-1$
 
@@ -204,7 +226,7 @@ public class RegistryBrowser extends ViewPart {
 		fTreeViewer = fFilteredTree.getViewer();
 		fContentProvider = new RegistryBrowserContentProvider(this);
 		fTreeViewer.setContentProvider(fContentProvider);
-		fTreeViewer.setLabelProvider(new RegistryBrowserLabelProvider(fTreeViewer));
+		fTreeViewer.setLabelProvider(new RegistryBrowserLabelProvider(fTreeViewer, this));
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -251,11 +273,14 @@ public class RegistryBrowser extends ViewPart {
 		mng.add(new Separator());
 		mng.add(fCollapseAllAction);
 		IMenuManager mgr = bars.getMenuManager();
+		IMenuManager manager = new MenuManager(PDERuntimeMessages.RegistryBrowser_GroupBy);
+		manager.add(fGroupByBundlesAction);
+		manager.add(fGroupByExtensionPointsAction);
+		manager.add(fGroupByServicesAction);
+		mgr.add(manager);
 		mgr.add(new Separator());
 		mgr.add(fShowPluginsAction);
 		mgr.add(fShowDisabledAction);
-		mgr.add(new Separator());
-		mgr.add(fShowExtensionsOnlyAction);
 		mgr.add(new Separator());
 		mgr.add(fShowAdvancedOperationsAction);
 
@@ -290,8 +315,6 @@ public class RegistryBrowser extends ViewPart {
 		manager.add(fShowPluginsAction);
 		manager.add(fShowDisabledAction);
 		manager.add(new Separator());
-		manager.add(fShowExtensionsOnlyAction);
-		manager.add(new Separator());
 		manager.add(fShowAdvancedOperationsAction);
 	}
 
@@ -300,7 +323,6 @@ public class RegistryBrowser extends ViewPart {
 			return;
 		fMemento.putString(SHOW_RUNNING_PLUGINS, Boolean.toString(fShowPluginsAction.isChecked()));
 		fMemento.putString(SHOW_DISABLED_MODE, Boolean.toString(fShowDisabledAction.isChecked()));
-		fMemento.putString(SHOW_EXTENSIONS_ONLY, Boolean.toString(fShowExtensionsOnlyAction.isChecked()));
 		fMemento.putBoolean(SHOW_ADVANCED_MODE, fShowAdvancedOperationsAction.isChecked());
 		memento.putMemento(fMemento);
 	}
@@ -370,14 +392,13 @@ public class RegistryBrowser extends ViewPart {
 		};
 		fCopyAction.setImageDescriptor(PDERuntimePluginImages.COPY_QNAME);
 
-		fShowExtensionsOnlyAction = new Action(PDERuntimeMessages.RegistryBrowser_showExtOnlyLabel) {
-			public void run() {
-				// refreshAction takes into account checked state of fShowExtensionsOnlyAction
-				// showExtensionsOnly()
-				fRefreshAction.run();
-			}
-		};
-		fShowExtensionsOnlyAction.setChecked(fMemento.getString(SHOW_EXTENSIONS_ONLY).equals("true")); //$NON-NLS-1$
+		fGroupByBundlesAction = new GroupByAction(PDERuntimeMessages.RegistryBrowser_Bundle, BUNDLES);
+		int groupBy = getGroupBy();
+		fGroupByBundlesAction.setChecked(groupBy == BUNDLES);
+		fGroupByExtensionPointsAction = new GroupByAction(PDERuntimeMessages.RegistryBrowser_ExtensionPoint, EXTENSION_REGISTRY);
+		fGroupByExtensionPointsAction.setChecked(groupBy == EXTENSION_REGISTRY);
+		fGroupByServicesAction = new GroupByAction(PDERuntimeMessages.RegistryBrowser_Service, SERVICES);
+		fGroupByServicesAction.setChecked(groupBy == SERVICES);
 
 		fShowAdvancedOperationsAction = new Action(PDERuntimeMessages.RegistryView_showAdvanced_label) {
 			public void run() { // do nothing
@@ -462,8 +483,8 @@ public class RegistryBrowser extends ViewPart {
 		fCollapseAllAction.setToolTipText(PDERuntimeMessages.RegistryView_collapseAll_tooltip);
 	}
 
-	public boolean showExtensionsOnly() {
-		return fShowExtensionsOnlyAction.isChecked();
+	public int getGroupBy() {
+		return fMemento.getInteger(GROUP_BY).intValue();
 	}
 
 	public void updateTitle() {
@@ -478,14 +499,27 @@ public class RegistryBrowser extends ViewPart {
 
 	public String getTitleSummary() {
 		Tree tree = getUndisposedTree();
-		String type = fShowExtensionsOnlyAction.isChecked() ? PDERuntimeMessages.RegistryView_folders_extensionPoints : PDERuntimeMessages.RegistryBrowser_plugins;
+		String type;
+		int total = 0;
+		switch (getGroupBy()) {
+			default :
+			case BUNDLES :
+				type = PDERuntimeMessages.RegistryBrowser_plugins;
+				total = model.getBundles().length;
+				break;
+			case EXTENSION_REGISTRY :
+				type = PDERuntimeMessages.RegistryView_folders_extensionPoints;
+				total = model.getExtensionPoints().length;
+				break;
+			case SERVICES :
+				type = PDERuntimeMessages.RegistryBrowser_Services;
+				total = model.getServiceNames().length;
+				break;
+		}
+
 		if (tree == null)
 			return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {"0", "0", type})); //$NON-NLS-1$ //$NON-NLS-2$
-		return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {Integer.toString(tree.getItemCount()), Integer.toString(getTotalCount()), type}));
-	}
-
-	private int getTotalCount() {
-		return showExtensionsOnly() ? model.getExtensionPoints().length : model.getBundles().length;
+		return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {Integer.toString(tree.getItemCount()), Integer.toString(total), type}));
 	}
 
 	private boolean isBundleSelected() {
