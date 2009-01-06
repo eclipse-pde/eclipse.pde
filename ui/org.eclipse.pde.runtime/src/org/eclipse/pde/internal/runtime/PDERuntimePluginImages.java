@@ -76,6 +76,7 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_EXP_OBJ = create(PATH_OBJ, "bundle-exporter.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SERVICE_OBJ = create(PATH_OBJ, "int_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PROPERTY_OBJ = create(PATH_OBJ, "property_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PLUGINS_OBJ = create(PATH_OBJ, "plugins_obj.gif"); //$NON-NLS-1$
 
 	/*
 	 * Overlays
@@ -83,6 +84,7 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_RUN_CO = create(PATH_OVR, "run_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXPORT_CO = create(PATH_OVR, "export_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ERROR_CO = create(PATH_OVR, "error_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DEFAULT_CO = create(PATH_OVR, "default_co.gif"); //$NON-NLS-1$
 
 	private static final void initialize() {
 		PLUGIN_REGISTRY = PDERuntimePlugin.getDefault().getImageRegistry();

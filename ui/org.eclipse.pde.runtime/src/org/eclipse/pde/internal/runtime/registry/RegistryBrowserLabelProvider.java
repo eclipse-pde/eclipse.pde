@@ -18,6 +18,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.pde.internal.runtime.registry.model.*;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Constants;
 
 public class RegistryBrowserLabelProvider extends LabelProvider {
 
@@ -35,12 +36,14 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image fRequiresImage;
 	private Image fExpReqPluginImage;
 	private Image fReqPluginImage;
+	private Image fPluginsImage;
 	private Image fLocationImage;
 	private Image fDisabledImage;
 	private Image fExporterImage;
 	private Image fImporterImage;
 	private Image fServiceImage;
 	private Image fPropertyImage;
+	private Image fServicePropertyImage;
 	private TreeViewer fViewer;
 	private RegistryBrowser fRegistryBrowser;
 
@@ -63,6 +66,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		fImporterImage = PDERuntimePluginImages.DESC_IMP_OBJ.createImage();
 		fServiceImage = PDERuntimePluginImages.DESC_SERVICE_OBJ.createImage();
 		fPropertyImage = PDERuntimePluginImages.DESC_PROPERTY_OBJ.createImage();
+		fPluginsImage = PDERuntimePluginImages.DESC_PLUGINS_OBJ.createImage();
 
 		ImageDescriptor activePluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_RUN_CO}});
 		fActivePluginImage = activePluginDesc.createImage();
@@ -75,6 +79,9 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 
 		ImageDescriptor exportedRequiresDesc = new OverlayIcon(PDERuntimePluginImages.DESC_REQ_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_EXPORT_CO}});
 		fExpReqPluginImage = exportedRequiresDesc.createImage();
+
+		ImageDescriptor servicePropertyDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PROPERTY_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_DEFAULT_CO}});
+		fServicePropertyImage = servicePropertyDesc.createImage();
 
 	}
 
@@ -99,6 +106,8 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		fExporterImage.dispose();
 		fServiceImage.dispose();
 		fPropertyImage.dispose();
+		fServicePropertyImage.dispose();
+		fPluginsImage.dispose();
 	}
 
 	public Image getImage(Object element) {
@@ -130,6 +139,15 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		}
 
 		if (element instanceof Property) {
+			Property property = (Property) element;
+			// special handling for property objectClass
+			if (property.getName().equals(Constants.OBJECTCLASS)) {
+				return PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_CLASS_OBJ);
+			}
+			// special handling for builtin service properties
+			if (property.getName().startsWith("service.") || property.getName().startsWith("component.")) { //$NON-NLS-1$ //$NON-NLS-2$
+				return fServicePropertyImage;
+			}
 			return fPropertyImage;
 		}
 
@@ -151,7 +169,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 				case Folder.F_PROPERTIES :
 					return fPropertyImage;
 				case Folder.F_USING_BUNDLES :
-					return fPluginImage;
+					return fPluginsImage;
 			}
 			return null;
 		}
