@@ -5,7 +5,8 @@
    <extension
          id="uitestapplication"
          point="org.eclipse.core.runtime.applications">
-      <application>
+      <application
+            visible="false">
          <run
                class="org.eclipse.pde.internal.junit.runtime.UITestApplication">
          </run>
@@ -14,7 +15,8 @@
    <extension
          id="legacytestapplication"
          point="org.eclipse.core.runtime.applications">
-      <application>
+      <application
+            visible="false">
          <run
                class="org.eclipse.pde.internal.junit.runtime.LegacyUITestApplication">
          </run>
@@ -23,7 +25,8 @@
    <extension
          id="coretestapplication"
          point="org.eclipse.core.runtime.applications">
-      <application>
+      <application
+            visible="false">
          <run
                class="org.eclipse.pde.internal.junit.runtime.CoreTestApplication">
          </run>
@@ -34,7 +37,8 @@
          point="org.eclipse.core.runtime.applications">
       <application
             cardinality="1"
-            thread="any">
+            thread="any"
+            visible="false">
          <run
                class="org.eclipse.pde.internal.junit.runtime.CoreTestApplication">
          </run>

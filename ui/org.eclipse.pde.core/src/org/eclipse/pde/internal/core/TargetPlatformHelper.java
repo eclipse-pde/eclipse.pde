@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,7 +198,12 @@ public class TargetPlatformHelper {
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			String id = extensions[i].getUniqueIdentifier();
-			if (id != null && !id.startsWith("org.eclipse.pde.junit.runtime")) { //$NON-NLS-1$
+			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+			if (elements.length != 1)
+				continue;
+			String visiblity = elements[0].getAttribute("visible"); //$NON-NLS-1$
+			boolean visible = visiblity == null ? true : Boolean.valueOf(visiblity).booleanValue();
+			if (id != null && visible) {
 				result.add(id);
 			}
 		}
