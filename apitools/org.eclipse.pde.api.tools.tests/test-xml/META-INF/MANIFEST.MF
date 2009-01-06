@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-Name: test
-Bundle-SymbolicName: test
-Bundle-Version: test
-Export-Package: .,
- a.b.c,
- a.b.c.spi,
- a.b.c.internal;x-friends:="a.friend"
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
