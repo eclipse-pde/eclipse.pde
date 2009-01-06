@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,30 +13,27 @@ package org.eclipse.pde.internal.ui.wizards;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPluginContribution;
 import org.osgi.framework.Bundle;
 
+/**
+ * Handle to a configuration element representing a wizard class.
+ */
 public class WizardElement extends NamedElement implements IPluginContribution {
+
 	public static final String ATT_NAME = "name"; //$NON-NLS-1$
-
 	public static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
-
 	public static final String ATT_ICON = "icon"; //$NON-NLS-1$
-
 	public static final String ATT_ID = "id"; //$NON-NLS-1$
-
 	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
-
 	public static final String ATT_TEMPLATE = "template"; //$NON-NLS-1$
-
 	public static final String ATT_POINT = "point"; //$NON-NLS-1$
 
 	private String description;
-
-	private IConfigurationElement configurationElement;
-
+	protected IConfigurationElement configurationElement;
 	private IConfigurationElement template;
 
 	public WizardElement(IConfigurationElement config) {
@@ -64,7 +61,7 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 
 	/**
 	 * We allow replacement variables in description values as well. This is to
-	 * allow extension template descriptin reuse in project template wizards.
+	 * allow extension template description reuse in project template wizards.
 	 * Tokens in form '%token%' will be evaluated against the contributing
 	 * plug-in's resource bundle. As before, to have '%' in the description, one
 	 * need to add '%%'.
@@ -168,4 +165,21 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 	public String getPluginId() {
 		return null;
 	}
+
+	public static WizardElement create(IConfigurationElement config) {
+		String name = config.getAttribute(ATT_NAME);
+		String id = config.getAttribute(ATT_ID);
+		String className = config.getAttribute(ATT_CLASS);
+		if (name == null || id == null || className == null)
+			return null;
+		WizardElement element = new WizardElement(config);
+		String imageName = config.getAttribute(ATT_ICON);
+		if (imageName != null) {
+			String pluginID = config.getNamespaceIdentifier();
+			Image image = PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
+			element.setImage(image);
+		}
+		return element;
+	}
+
 }

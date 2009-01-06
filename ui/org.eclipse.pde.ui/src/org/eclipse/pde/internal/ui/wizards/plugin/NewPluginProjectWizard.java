@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,17 +32,15 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	private IConfigurationElement fConfig;
 	private PluginFieldData fPluginData;
 	private IProjectProvider fProjectProvider;
-	private NewProjectCreationPage fMainPage;
-	private PluginContentPage fContentPage;
+	protected NewProjectCreationPage fMainPage;
+	protected PluginContentPage fContentPage;
 	private TemplateListSelectionPage fWizardListPage;
-	private boolean fPureOSGi;
 
 	public NewPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setWindowTitle(PDEUIMessages.NewProjectWizard_title);
 		setNeedsProgressMonitor(true);
-		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fPluginData = new PluginFieldData();
 	}
 
@@ -55,7 +53,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new NewProjectCreationPage("main", fPluginData, fPureOSGi, getSelection()); //$NON-NLS-1$
+		fMainPage = new NewProjectCreationPage("main", fPluginData, false, getSelection()); //$NON-NLS-1$
 		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_title);
 		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_desc);
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
@@ -124,14 +122,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		} catch (InterruptedException e) {
 		}
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
 	/* (non-Javadoc)

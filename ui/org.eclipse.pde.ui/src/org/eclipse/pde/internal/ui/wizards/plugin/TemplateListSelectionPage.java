@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -27,9 +28,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 public class TemplateListSelectionPage extends WizardListSelectionPage implements ISelectionChangedListener, IExecutableExtension {
 	private ContentPage fContentPage;
@@ -45,13 +44,12 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 			boolean rcp = data.isRCPApplicationPlugin();
 			boolean osgi = data.getOSGiFramework() != null;
 			WizardElement welement = (WizardElement) element;
-			IConfigurationElement config = welement.getConfigurationElement();
-			boolean active = isActive(config);
-			boolean uiFlag = getFlag(config, "ui-content", true); //$NON-NLS-1$
-			boolean javaFlag = getFlag(config, "java", true); //$NON-NLS-1$
-			boolean rcpFlag = getFlag(config, "rcp", false); //$NON-NLS-1$
-			boolean osgiFlag = getFlag(config, "pureOSGi", false); //$NON-NLS-1$
-			boolean activatorFlag = getFlag(config, "requiresActivator", false); //$NON-NLS-1$
+			boolean active = TemplateWizardHelper.isActive(welement);
+			boolean uiFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_UI, true);
+			boolean javaFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_JAVA, true);
+			boolean rcpFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_RCP, false);
+			boolean osgiFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_OSGI, false);
+			boolean activatorFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_ACTIVATOR, false);
 
 			//filter out wizards from disabled activities
 			if (!active)
@@ -75,29 +73,14 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 			return (osgi == osgiFlag && ((!osgiFlag && !rcpFlag) || ui == uiFlag));
 		}
 
-		private boolean getFlag(IConfigurationElement config, String name, boolean defaultValue) {
-			String value = config.getAttribute(name);
-			if (value == null)
-				return defaultValue;
-			return value.equalsIgnoreCase("true"); //$NON-NLS-1$
-		}
-
-		private boolean isActive(IConfigurationElement config) {
-			final String pluginId = config.getNamespaceIdentifier();
-			final String contributionId = config.getAttribute("id"); //$NON-NLS-1$
-			IPluginContribution contribution = new IPluginContribution() {
-				public String getLocalId() {
-					return contributionId;
-				}
-
-				public String getPluginId() {
-					return pluginId;
-				}
-			};
-			return !WorkbenchActivityHelper.filterItem(contribution);
-		}
 	}
 
+	/**
+	 * Constructor
+	 * @param wizardElements a list of TemplateElementWizard objects
+	 * @param page content wizard page
+	 * @param message message to provide to the user
+	 */
 	public TemplateListSelectionPage(ElementList wizardElements, ContentPage page, String message) {
 		super(wizardElements, message);
 		fContentPage = page;

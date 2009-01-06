@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsum
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.IDefaultValueConsumer#getDefaultValue(java.lang.String)
 	 */
-	public String getDefaultValue(String key) {
+	public final String getDefaultValue(String key) {
 		if (defaultValues == null)
 			return null;
 		return (String) defaultValues.get(key);
@@ -60,7 +60,7 @@ public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsum
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.IDefaultValueConsumer#init(java.util.Dictionary)
 	 */
-	public void init(Dictionary defaultValues) {
+	public final void init(Dictionary defaultValues) {
 		this.defaultValues = defaultValues;
 	}
 }

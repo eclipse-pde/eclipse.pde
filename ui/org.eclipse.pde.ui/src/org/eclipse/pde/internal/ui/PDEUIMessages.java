@@ -998,6 +998,10 @@ public class PDEUIMessages extends NLS {
 
 	// Wizards #######################################
 	public static String NewFragmentProjectWizard_title;
+	public static String NewPluginProjectFromTemplateWizard_0;
+
+	public static String NewPluginProjectFromTemplateWizard_1;
+
 	public static String NewProjectWizard_MainPage_ftitle;
 	public static String NewProductFileWizard_windowTitle;
 	public static String NewProjectWizard_MainPage_fdesc;

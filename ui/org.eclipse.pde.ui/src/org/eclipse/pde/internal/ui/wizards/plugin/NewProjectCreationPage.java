@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,16 +31,16 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	protected Button fJavaButton;
-	protected boolean fFragment;
-	private Label fSourceLabel;
-	private Text fSourceText;
-	private Label fOutputlabel;
-	private Text fOutputText;
+	private boolean fFragment;
+	protected Label fSourceLabel;
+	protected Text fSourceText;
+	protected Label fOutputlabel;
+	protected Text fOutputText;
 	private AbstractFieldData fData;
-	private Button fEclipseButton;
-	private Combo fTargetCombo;
-	private Combo fOSGiCombo;
-	private Button fOSGIButton;
+	protected Button fEclipseButton;
+	protected Combo fEclipseCombo;
+	protected Combo fOSGiCombo;
+	protected Button fOSGIButton;
 	private IStructuredSelection fSelection;
 
 	private static final String S_OSGI_PROJECT = "osgiProject"; //$NON-NLS-1$
@@ -71,7 +71,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		setControl(control);
 	}
 
-	private void createProjectTypeGroup(Composite container) {
+	protected void createProjectTypeGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
 		group.setText(PDEUIMessages.ProjectStructurePage_settings);
 		GridLayout layout = new GridLayout();
@@ -103,7 +103,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fOutputText.setText(store.getString(PreferenceConstants.SRCBIN_BINNAME));
 	}
 
-	private void createFormatGroup(Composite container) {
+	protected void createFormatGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
 		group.setText(PDEUIMessages.NewProjectCreationPage_target);
 		group.setLayout(new GridLayout(2, false));
@@ -130,20 +130,20 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 			}
 		});
 
-		fTargetCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET35, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});
+		fEclipseCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
+		fEclipseCombo.setItems(new String[] {ICoreConstants.TARGET35, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});
 		boolean comboInitialized = false;
 		if (settings != null && !osgiProject) {
 			String text = settings.get(S_TARGET_NAME);
-			comboInitialized = (text != null && fTargetCombo.indexOf(text) >= 0);
+			comboInitialized = (text != null && fEclipseCombo.indexOf(text) >= 0);
 			if (comboInitialized)
-				fTargetCombo.setText(text);
+				fEclipseCombo.setText(text);
 		}
 		if (!comboInitialized) {
 			if (PDECore.getDefault().areModelsInitialized())
-				fTargetCombo.setText(TargetPlatformHelper.getTargetVersionString());
+				fEclipseCombo.setText(TargetPlatformHelper.getTargetVersionString());
 			else
-				fTargetCombo.setText(ICoreConstants.TARGET35);
+				fEclipseCombo.setText(ICoreConstants.TARGET35);
 		}
 
 		fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
@@ -166,7 +166,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 
 	private void updateRuntimeDependency() {
 		boolean depends = fEclipseButton.getSelection();
-		fTargetCombo.setEnabled(depends);
+		fEclipseCombo.setEnabled(depends);
 		fOSGiCombo.setEnabled(!depends);
 	}
 
@@ -206,8 +206,8 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setSourceFolderName(fSourceText.getText().trim());
 		fData.setOutputFolderName(fOutputText.getText().trim());
 		fData.setLegacy(false);
-		fData.setTargetVersion(fTargetCombo.getText());
-		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fTargetCombo.getText()) >= 3.1);
+		fData.setTargetVersion(fEclipseCombo.getText());
+		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fEclipseCombo.getText()) >= 3.1);
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
 		fData.setWorkingSets(getSelectedWorkingSets());
 	}
@@ -252,9 +252,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		return true;
 	}
 
-	protected void saveSettings(IDialogSettings settings) {
+	public void saveSettings(IDialogSettings settings) {
 		boolean eclipseSelected = fEclipseButton.getSelection();
-		String targetName = eclipseSelected ? fTargetCombo.getText() : fOSGiCombo.getText();
+		String targetName = eclipseSelected ? fEclipseCombo.getText() : fOSGiCombo.getText();
 		settings.put(S_TARGET_NAME, (eclipseSelected && TargetPlatformHelper.getTargetVersionString().equals(targetName)) ? null : targetName);
 		settings.put(S_OSGI_PROJECT, !eclipseSelected);
 	}

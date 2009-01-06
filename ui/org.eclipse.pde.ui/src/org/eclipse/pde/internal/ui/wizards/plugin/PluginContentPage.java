@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,16 +38,15 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 public class PluginContentPage extends ContentPage {
 
 	private Text fClassText;
-	private Button fGenerateClass;
-	private Button fUIPlugin;
+	protected Button fGenerateActivator;
+	protected Button fUIPlugin;
 	private Label fClassLabel;
 	private Label fEELabel;
 	private Button fExeEnvButton;
 	private Combo fEEChoice;
 	private Group fRCPGroup;
-	private Label fLabel;
-	private Button fYesButton;
-	private Button fNoButton;
+	protected Button fYesButton;
+	protected Button fNoButton;
 
 	/**
 	 * Button to enable API analysis for the project during project creation
@@ -188,16 +187,16 @@ public class PluginContentPage extends ContentPage {
 	 * Creates all of the plugin options widgets
 	 * @param container
 	 */
-	private void createPluginClassGroup(Composite container) {
+	protected void createPluginClassGroup(Composite container) {
 		Group classGroup = SWTFactory.createGroup(container, PDEUIMessages.ContentPage_pClassGroup, 2, 1, GridData.FILL_HORIZONTAL);
 
 		IDialogSettings settings = getDialogSettings();
 
-		fGenerateClass = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null, (settings != null) ? !settings.getBoolean(S_GENERATE_ACTIVATOR) : true, 2);
-		fGenerateClass.addSelectionListener(new SelectionAdapter() {
+		fGenerateActivator = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null, (settings != null) ? !settings.getBoolean(S_GENERATE_ACTIVATOR) : true, 2);
+		fGenerateActivator.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fClassLabel.setEnabled(fGenerateClass.getSelection());
-				fClassText.setEnabled(fGenerateClass.getSelection());
+				fClassLabel.setEnabled(fGenerateActivator.getSelection());
+				fClassText.setEnabled(fGenerateActivator.getSelection());
 				updateData();
 				validatePage();
 			}
@@ -236,7 +235,7 @@ public class PluginContentPage extends ContentPage {
 		PluginFieldData data = (PluginFieldData) fData;
 		data.setClassname(fClassText.getText().trim());
 		data.setUIPlugin(fUIPlugin.getSelection());
-		data.setDoGenerateClass(fGenerateClass.isEnabled() && fGenerateClass.getSelection());
+		data.setDoGenerateClass(fGenerateActivator.getSelection());
 		data.setRCPApplicationPlugin(!fData.isSimple() && !isPureOSGi() && fYesButton.getSelection());
 		data.setEnableAPITooling(fApiAnalysisButton.getSelection());
 		if (fEEChoice.isEnabled() && !fEEChoice.getText().equals(NO_EXECUTION_ENVIRONMENT)) {
@@ -251,7 +250,7 @@ public class PluginContentPage extends ContentPage {
 	 * @param parent
 	 * @param horizontalSpan
 	 */
-	private void createRCPQuestion(Composite parent, int horizontalSpan) {
+	protected void createRCPQuestion(Composite parent, int horizontalSpan) {
 		fRCPGroup = SWTFactory.createGroup(parent, PDEUIMessages.PluginContentPage_rcpGroup, 2, 1, GridData.FILL_HORIZONTAL);
 		Composite comp = new Composite(fRCPGroup, SWT.NONE);
 		GridLayout layout = new GridLayout(3, false);
@@ -261,9 +260,9 @@ public class PluginContentPage extends ContentPage {
 		gd.horizontalSpan = horizontalSpan;
 		comp.setLayoutData(gd);
 
-		fLabel = new Label(comp, SWT.NONE);
-		fLabel.setText(PDEUIMessages.PluginContentPage_appQuestion);
-		fLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Label label = new Label(comp, SWT.NONE);
+		label.setText(PDEUIMessages.PluginContentPage_appQuestion);
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		IDialogSettings settings = getDialogSettings();
 		boolean rcpApp = (settings != null) ? settings.getBoolean(S_RCP_PLUGIN) : false;
@@ -295,9 +294,10 @@ public class PluginContentPage extends ContentPage {
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fMainPage.updateData();
-			fGenerateClass.setEnabled(!fData.isSimple());
-			fClassLabel.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
-			fClassText.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
+			fGenerateActivator.setSelection(!fData.isSimple());
+			fGenerateActivator.setEnabled(!fData.isSimple());
+			fClassLabel.setEnabled(!fData.isSimple() && fGenerateActivator.getSelection());
+			fClassText.setEnabled(!fData.isSimple() && fGenerateActivator.getSelection());
 			boolean wasUIPluginEnabled = fUIPlugin.isEnabled();
 			fUIPlugin.setEnabled(!fData.isSimple() && !isPureOSGi());
 			// if fUIPlugin is disabled, set selection to false
@@ -338,7 +338,7 @@ public class PluginContentPage extends ContentPage {
 	 */
 	protected void validatePage() {
 		String errorMessage = validateProperties();
-		if (errorMessage == null && fGenerateClass.isEnabled() && fGenerateClass.getSelection()) {
+		if (errorMessage == null && fGenerateActivator.getSelection()) {
 			IStatus status = JavaConventions.validateJavaTypeName(fClassText.getText().trim(), PDEJavaHelper.getJavaSourceLevel(null), PDEJavaHelper.getJavaComplianceLevel(null));
 			if (status.getSeverity() == IStatus.ERROR) {
 				errorMessage = status.getMessage();
@@ -370,8 +370,8 @@ public class PluginContentPage extends ContentPage {
 	 * Saves the current state of widgets of interest in the dialog settings for the wizard
 	 * @param settings
 	 */
-	protected void saveSettings(IDialogSettings settings) {
-		settings.put(S_GENERATE_ACTIVATOR, !fGenerateClass.getSelection());
+	public void saveSettings(IDialogSettings settings) {
+		settings.put(S_GENERATE_ACTIVATOR, !fGenerateActivator.getSelection());
 		if (fUIPlugin.isEnabled()) {
 			settings.put(S_UI_PLUGIN, !fUIPlugin.getSelection());
 		}
@@ -383,7 +383,10 @@ public class PluginContentPage extends ContentPage {
 	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
 	 */
 	public boolean canFlipToNextPage() {
-		TemplateListSelectionPage templatePage = (TemplateListSelectionPage) getNextPage();
-		return super.canFlipToNextPage() && templatePage.isAnyTemplateAvailable();
+		if (getNextPage() instanceof TemplateListSelectionPage) {
+			TemplateListSelectionPage templatePage = (TemplateListSelectionPage) getNextPage();
+			return super.canFlipToNextPage() && templatePage.isAnyTemplateAvailable();
+		}
+		return super.canFlipToNextPage();
 	}
 }
