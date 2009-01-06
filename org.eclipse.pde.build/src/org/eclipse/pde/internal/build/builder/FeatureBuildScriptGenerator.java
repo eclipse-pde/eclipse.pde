@@ -24,7 +24,6 @@ import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
-import org.osgi.framework.Version;
 
 public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
@@ -380,7 +379,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			}
 			//VersionedIdentifier includedFeatureVersionId = includedFeature.getVersionedIdentifier();
 			if (needsReplacement(versionRequested))
-				featureVersionInfo += (includedFeature.getId() + ':' + extract3Segments(versionRequested) + ',' + includedFeature.getVersion() + ',');
+				featureVersionInfo += (includedFeature.getId() + ':' + Utils.extract3Segments(versionRequested) + ',' + includedFeature.getVersion() + ',');
 		}
 		String pluginVersionInfo = ""; //$NON-NLS-1$
 		// Here we get all the included plugins (independently of the config being built so the version numbers in the feature can be replaced)
@@ -393,7 +392,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			model = getSite(false).getRegistry().getResolvedBundle(entryIdentifier, versionRequested);
 			if (model != null) {
 				if (needsReplacement(versionRequested))
-					pluginVersionInfo += (entryIdentifier + ':' + extract3Segments(versionRequested) + ',' + model.getVersion() + ',');
+					pluginVersionInfo += (entryIdentifier + ':' + Utils.extract3Segments(versionRequested) + ',' + model.getVersion() + ',');
 			}
 		}
 
@@ -404,11 +403,6 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		if (s.equalsIgnoreCase(GENERIC_VERSION_NUMBER) || s.endsWith(PROPERTY_QUALIFIER))
 			return true;
 		return false;
-	}
-
-	private Version extract3Segments(String s) {
-		Version tmp = new Version(s);
-		return new Version(tmp.getMajor(), tmp.getMinor(), tmp.getMicro());
 	}
 
 	/**
