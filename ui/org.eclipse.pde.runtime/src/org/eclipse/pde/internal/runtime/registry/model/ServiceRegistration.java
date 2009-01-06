@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Wolfgang Schell <ws@jetztgrad.net> - bug 259348
+ *     Wolfgang Schell <ws@jetztgrad.net> - bug 259348, 260055
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry.model;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
-public class ServiceRegistration extends ModelObject {
+public class ServiceRegistration extends ModelObject implements Comparable {
 
 	private long id;
 	private String bundle;
@@ -133,5 +134,13 @@ public class ServiceRegistration extends ModelObject {
 
 	public int hashCode() {
 		return (int) id;
+	}
+
+	public int compareTo(Object obj) {
+		if (obj instanceof ServiceRegistration) {
+			ServiceRegistration other = (ServiceRegistration) obj;
+			return name.compareTo(other.getName());
+		}
+		return 0;
 	}
 }

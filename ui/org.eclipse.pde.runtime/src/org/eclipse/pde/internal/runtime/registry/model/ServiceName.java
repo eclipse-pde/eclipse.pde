@@ -7,12 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wolfgang Schell <ws@jetztgrad.net> - bug 260055
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry.model;
 
 import java.util.Arrays;
 
-public class ServiceName extends ModelObject {
+public class ServiceName extends ModelObject implements Comparable {
 
 	private String[] classes;
 
@@ -51,5 +52,18 @@ public class ServiceName extends ModelObject {
 			return false;
 		ServiceName other = (ServiceName) obj;
 		return Arrays.equals(classes, other.classes);
+	}
+
+	public int compareTo(Object obj) {
+		if (obj instanceof ServiceName) {
+			// compare first class
+			ServiceName other = (ServiceName) obj;
+			String myClass = classes[0];
+			String otherClass = other.getClasses()[0];
+
+			return myClass.compareTo(otherClass);
+		}
+		return 0;
+
 	}
 }

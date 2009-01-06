@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
-
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -230,6 +228,14 @@ public class RegistryBrowser extends ViewPart {
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
+				// let Comparables compare themselves
+				if (e1 instanceof Comparable && e2 instanceof Comparable && e1.getClass().equals(e2.getClass())) {
+					Comparable c1 = (Comparable) e1;
+					Comparable c2 = (Comparable) e2;
+
+					return c1.compareTo(c2);
+				}
+
 				if (e1 instanceof Folder && e2 instanceof Folder)
 					return ((Folder) e1).getId() - ((Folder) e2).getId();
 				if (e1 instanceof Bundle && e2 instanceof Bundle) {
