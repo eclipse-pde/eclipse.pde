@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,21 +59,8 @@ public class JRESection extends PDESection {
 		}
 	}
 
-	private final class JRELabelProvider extends LabelProvider {
-		public String getText(Object element) {
-			if (!(element instanceof IVMInstall))
-				return ""; //$NON-NLS-1$
-			IVMInstall vm = (IVMInstall) element;
-			return vm.getName();
-		}
-	}
-
-	private Button fNoneRadioButton;
-	private Button fJRERadioButton;
-	private Button fEERadioButton;
-	private Button fInstalledJREsButton;
+	private Button fEEButton;
 	private Button fExecutionEnvironmentsButton;
-	private ComboViewerPart fJREsCombo;
 	private ComboViewerPart fEEsCombo;
 	private boolean fBlockChanges;
 
@@ -120,56 +107,11 @@ public class JRESection extends PDESection {
 		});
 		fTabFolder.setUnselectedImageVisible(false);
 
-		fNoneRadioButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_none, SWT.RADIO);
-		fNoneRadioButton.addSelectionListener(new SelectionAdapter() {
+		fEEButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_eeName, SWT.CHECK);
+		fEEButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (fNoneRadioButton.getSelection()) {
-					updateWidgets();
-					setJRE(null);
-				}
-			}
-		});
-		GridDataFactory.fillDefaults().span(3, 1).applyTo(fNoneRadioButton);
-
-		fJRERadioButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_jreName, SWT.RADIO);
-		fJRERadioButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (fJRERadioButton.getSelection()) {
-					updateWidgets();
-					if (fJREsCombo.getSelection() == null)
-						fJREsCombo.select(0);
-					else
-						setJRE((IVMInstall) fJREsCombo.getSelection());
-				}
-			}
-		});
-
-		fJREsCombo = new ComboViewerPart();
-		fJREsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
-		fJREsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fJREsCombo.setItems(VMUtil.getAllVMInstances());
-		fJREsCombo.setLabelProvider(new JRELabelProvider());
-		fJREsCombo.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (!fBlockChanges) {
-					setJRE(fJREsCombo.getSelection() == ComboViewerPart.NULL_OBJECT ? null : (IVMInstall) fJREsCombo.getSelection());
-				}
-			}
-		});
-
-		fInstalledJREsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseJREs, SWT.PUSH);
-		GridDataFactory.fillDefaults().applyTo(fInstalledJREsButton);
-		fInstalledJREsButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				PreferencesUtil.createPreferenceDialogOn(getSection().getShell(), "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", //$NON-NLS-1$
-						new String[] {"org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"}, null).open(); //$NON-NLS-1$ 
-			}
-		});
-
-		fEERadioButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_eeName, SWT.RADIO);
-		fEERadioButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (fEERadioButton.getSelection()) {
+				fEEsCombo.setEnabled(fEEButton.getSelection());
+				if (fEEButton.getSelection()) {
 					updateWidgets();
 					if (fEEsCombo.getSelection() == null)
 						fEEsCombo.select(0);
@@ -215,13 +157,6 @@ public class JRESection extends PDESection {
 			eePath = JavaRuntime.newJREContainerPath(ee);
 		getJVMLocations().setJREContainerPath(getOS(fLastTab), eePath);
 
-	}
-
-	private void setJRE(IVMInstall install) {
-		IPath jrePath = null;
-		if (install != null)
-			jrePath = JavaRuntime.newJREContainerPath(install);
-		getJVMLocations().setJREContainerPath(getOS(fLastTab), jrePath);
 	}
 
 	private IProductModel getProductModel() {
@@ -270,27 +205,16 @@ public class JRESection extends PDESection {
 				if (!fEEsCombo.getItems().contains(env))
 					fEEsCombo.addItem(env);
 				fEEsCombo.select(env);
-				fNoneRadioButton.setSelection(false);
-				fEERadioButton.setSelection(true);
-				fJRERadioButton.setSelection(false);
-				fJREsCombo.select(null);
+				fEEButton.setSelection(true);
 			} else {
 				IVMInstall install = JavaRuntime.getVMInstall(jrePath);
 				if (install != null) {
-					if (!fJREsCombo.getItems().contains(install))
-						fJREsCombo.addItem(install);
-					fJREsCombo.select(install);
-					fNoneRadioButton.setSelection(false);
-					fJRERadioButton.setSelection(true);
-					fEERadioButton.setSelection(false);
+					fEEButton.setSelection(false);
 					fEEsCombo.select(null);
 				}
 			}
 		} else {
-			fNoneRadioButton.setSelection(true);
-			fJRERadioButton.setSelection(false);
-			fJREsCombo.select(null);
-			fEERadioButton.setSelection(false);
+			fEEButton.setSelection(false);
 			fEEsCombo.select(null);
 		}
 		updateWidgets();
@@ -328,8 +252,7 @@ public class JRESection extends PDESection {
 	}
 
 	protected void updateWidgets() {
-		fJREsCombo.setEnabled(fJRERadioButton.getSelection());
-		fEEsCombo.setEnabled(fEERadioButton.getSelection());
+		fEEsCombo.setEnabled(fEEButton.getSelection());
 	}
 
 	/* (non-Javadoc)
@@ -352,6 +275,6 @@ public class JRESection extends PDESection {
 		// the page, an event will be fired when entering the page again.
 		// An event is not fired if the radio button does not have focus.
 		// The solution is to redirect focus to a stable widget.
-		getPage().setLastFocusControl(fJREsCombo.getControl());
+		getPage().setLastFocusControl(fEEsCombo.getControl());
 	}
 }
