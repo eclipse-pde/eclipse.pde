@@ -2920,6 +2920,8 @@ public class PDEUIMessages extends NLS {
 	public static String PDECompilersConfigurationBlock_warning;
 	public static String PDECompilersConfigurationBlock_ignore;
 
+	public static String PDEJUnitLaunchConfigurationTab_Run_Tests_In_UI_Thread;
+
 	public static String VersionDialog_text;
 
 }

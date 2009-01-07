@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.ui.launcher;
 
 import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
-import org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab;
 
 /**
  * Creates and initializes the tabs for the Plug-in JUnit test launch configuration.
@@ -29,7 +28,7 @@ public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = null;
-		tabs = new ILaunchConfigurationTab[] {new JUnitLaunchConfigurationTab(), new PluginJUnitMainTab(), new JavaArgumentsTab(), new PluginsTab(false), new ConfigurationTab(true), new TracingTab(), new EnvironmentTab(), new CommonTab()};
+		tabs = new ILaunchConfigurationTab[] {new TestTab(), new PluginJUnitMainTab(), new JavaArgumentsTab(), new PluginsTab(false), new ConfigurationTab(true), new TracingTab(), new EnvironmentTab(), new CommonTab()};
 		setTabs(tabs);
 	}
 

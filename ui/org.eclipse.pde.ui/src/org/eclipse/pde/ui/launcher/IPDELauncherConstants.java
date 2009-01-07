@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -371,10 +371,28 @@ public interface IPDELauncherConstants {
 	String TAB_TRACING_ID = "org.eclipse.pde.ui.launch.tab.tracing"; //$NON-NLS-1$
 
 	/**
+	 * The unique tab identifier for the tracing tab
+	 * 
+	 * @since 3.5
+	 * @see TestTab
+	 */
+	String TAB_TEST_ID = "org.eclipse.pde.ui.launch.tab.test"; //$NON-NLS-1$
+
+	/**
 	 * The launch configuration type id for OSGi launches.
 	 * 
 	 * @since 3.5
 	 * @see OSGiLaunchShortcut
 	 */
 	String OSGI_CONFIGURATION_TYPE = "org.eclipse.pde.ui.EquinoxLauncher"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a boolean specifying 
+	 * whether the tests should run on the UI thread.
+	 * 
+	 * The default value is <code>true</code>
+	 * 
+	 * @since 3.5
+	 */
+	String RUN_IN_UI_THREAD = "run_in_ui_thread"; //$NON-NLS-1$
 }

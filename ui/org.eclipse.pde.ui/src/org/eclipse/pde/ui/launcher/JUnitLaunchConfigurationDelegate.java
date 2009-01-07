@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,6 +187,17 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 */
 	protected String getApplication(ILaunchConfiguration configuration) {
 		String application = null;
+
+		boolean shouldRunInUIThread = true;
+		try {
+			shouldRunInUIThread = configuration.getAttribute(IPDELauncherConstants.RUN_IN_UI_THREAD, true);
+		} catch (CoreException e) {
+		}
+
+		if (!shouldRunInUIThread) {
+			return IPDEUIConstants.NON_UI_THREAD_APPLICATION;
+		}
+
 		try {
 			// if application is set, it must be a headless app.
 			application = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
