@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.core.resources.*;
@@ -123,6 +123,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		IBuildEntry bundleList = null;
 		ArrayList sourceEntries = new ArrayList();
 		ArrayList sourceEntryKeys = new ArrayList();
+		Map encodingEntries = new HashMap();
 		IBuildEntry[] entries = build.getBuildEntries();
 		for (int i = 0; i < entries.length; i++) {
 			String name = entries[i].getName();
@@ -138,6 +139,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				srcExcludes = entries[i];
 			else if (name.startsWith(PROPERTY_SOURCE_PREFIX))
 				sourceEntries.add(entries[i]);
+			else if (name.startsWith(PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX))
+				encodingEntries.put(entries[i].getName(), entries[i].getTokens()[0]);
 			else if (name.equals(PROPERTY_JAR_EXTRA_CLASSPATH))
 				jarsExtra = entries[i];
 			else if (name.equals(IBuildEntry.SECONDARY_DEPENDENCIES))
@@ -185,6 +188,25 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		validateSourceEntries(sourceEntries);
 		validateMissingSourceInBinIncludes(binIncludes, sourceEntryKeys, build);
 		validateBinIncludes(binIncludes);
+		validateDefaultEncoding(sourceEntries, encodingEntries);
+	}
+
+	private void validateDefaultEncoding(ArrayList sourceEntries, Map encodingEntries) {
+		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+		for (int i = 0; i < sourceEntries.size(); i++) {
+			try {
+				String name = ((IBuildEntry) sourceEntries.get(i)).getName();
+				String library = name.substring(name.indexOf('.') + 1, name.length());
+				String encoding = fProject.getDefaultCharset();
+				String encodingId = PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX + library;
+				String libraryEncoding = (String) encodingEntries.get(encodingId);
+				if (!defaultEncoding.equalsIgnoreCase(encoding) && libraryEncoding == null) {
+					prepareError(encodingId, encoding, NLS.bind(PDECoreMessages.BuildErrorReporter_defaultEncodingMissing, new Object[] {defaultEncoding, encoding}), PDEMarkerFactory.B_ADDDITION, PDEMarkerFactory.CAT_OTHER);
+				}
+			} catch (CoreException e) {
+				PDECore.logException(e);
+			}
+		}
 	}
 
 	private void validateBinIncludes(IBuildEntry binIncludes) {
