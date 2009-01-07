@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -32,7 +30,6 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -48,8 +45,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @since 1.1
@@ -288,31 +283,23 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	}	
 	
 	/**
-	 * Throws a new exception to report that we could not locate a source position for the 
-	 * given reference in the given type
+	 * Default strategy for when no source position can be computed: creates
+	 * a {@link Position} for the name of the given {@link IType}. Returns <code>null</code> in the event
+	 * the given {@link IType} is <code>null</code> or the name range cannot be computed for the type.
+	 * 
 	 * @param type the type
 	 * @param reference the reference
 	 * @throws CoreException
+	 * @return returns a default {@link Position} for the name range of the given {@link IType}
 	 */
-	protected void noSourcePosition(IType type, IReference reference) throws CoreException {
-		IApiMember member = reference.getMember();
-		String name = reference.getReferencedMemberName();
-		if(name == null) {
-			name = reference.getReferencedTypeName();
-		}
-		if(member.getType() == IApiElement.TYPE) {
-			IApiType atype = (IApiType) member;
-			if(atype.isAnonymous()) {
-				name = BuilderMessages.IllegalExtendsProblemDetector_an_anonymous_declaration;
-			}
-			else if(atype.isLocal()) {
-				name = NLS.bind(BuilderMessages.AbstractProblemDetector_local_type_T, atype.getName());
+	protected Position defaultSourcePosition(IType type, IReference reference) throws CoreException {
+		if(type != null) {
+			ISourceRange range = type.getNameRange();
+			if(range != null) {
+				return new Position(range.getOffset(), range.getLength());
 			}
 		}
-		IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
-				MessageFormat.format(BuilderMessages.AbstractProblemDetector_could_not_locate_src_pos, 
-						new String[] {name, type.getElementName()}));
-		throw new CoreException(status);
+		return null;
 	}
 	
 	/**
@@ -446,7 +433,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			}
 		}
 		if(pos == null) {
-			noSourcePosition(type, reference);
+			return defaultSourcePosition(type, reference);
 		}
 		return pos;
 	}
@@ -470,7 +457,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			}
 		}
 		if(pos == null) {
-			noSourcePosition(type, reference);
+			return defaultSourcePosition(type, reference);
 		}
 		return pos;
 	}

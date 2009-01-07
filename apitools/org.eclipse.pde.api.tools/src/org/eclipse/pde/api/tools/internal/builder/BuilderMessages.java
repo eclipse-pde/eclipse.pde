@@ -19,8 +19,6 @@ public class BuilderMessages extends NLS {
 	public static String building_workspace_profile;
 	public static String checking_api_usage;
 
-	public static String AbstractProblemDetector_could_not_locate_src_pos;
-	public static String AbstractProblemDetector_local_type_T;
 	public static String AbstractTypeLeakDetector_vis_type_has_no_api_description;
 	public static String ApiAnalysisBuilder_finding_affected_source_files;
 	public static String ApiAnalysisBuilder_initializing_analyzer;

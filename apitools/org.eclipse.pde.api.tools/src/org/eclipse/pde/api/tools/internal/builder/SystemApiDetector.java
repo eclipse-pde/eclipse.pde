@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -302,7 +302,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 						pos = new Position(range.getOffset(), range.getLength());
 					}
 					if(pos == null) {
-						noSourcePosition(type, reference);
+						return defaultSourcePosition(type, reference);
 					}
 					return pos;
 				}
@@ -321,7 +321,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					IApiMethod method = (IApiMethod) resolvedReference;
 					Position pos = getMethodNameRange(Signatures.getMethodName(method), document, reference);
 					if(pos == null) {
-						noSourcePosition(type, reference);
+						return defaultSourcePosition(type, reference);
 					}
 					return pos;
 				}

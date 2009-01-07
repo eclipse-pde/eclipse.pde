@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,12 +125,12 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 		ApiType ltype = (ApiType) reference.getMember();
 		if(ltype.isAnonymous()) {
 			if(reference.getLineNumber() < 0) {
-				noSourcePosition(type, reference);
+				return defaultSourcePosition(type, reference);
 			}
 			String name = getSimpleTypeName(reference.getResolvedReference());
 			Position pos = getMethodNameRange(name, doc, reference);
 			if(pos == null) {
-				noSourcePosition(type, reference);
+				return defaultSourcePosition(type, reference);
 			}
 			return pos;
 		}
@@ -149,7 +149,7 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 				ISourceRange range = localtype.getNameRange();
 				return new Position(range.getOffset(), range.getLength());
 			}
-			noSourcePosition(type, reference);
+			return defaultSourcePosition(type, reference);
 		}
 		return super.getSourceRange(type, doc, reference);
 	}
