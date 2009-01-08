@@ -54,6 +54,44 @@ public class P2Utils {
 	 * 	to locate a bundles.info
 	 */
 	public static URL[] readBundlesTxt(String platformHome, URL configurationArea) {
+		if (configurationArea == null) {
+			return null;
+		}
+		try {
+			BundleInfo[] bundles = readBundles(platformHome, configurationArea);
+			if (bundles == null) {
+				return null;
+			}
+			int length = bundles.length;
+			BundleInfo[] srcBundles = readSourceBundles(platformHome, configurationArea);
+			if (srcBundles != null) {
+				length += srcBundles.length;
+			}
+			URL[] urls = new URL[length];
+			copyURLs(urls, 0, bundles);
+			if (srcBundles != null && srcBundles.length > 0) {
+				copyURLs(urls, bundles.length, srcBundles);
+			}
+			return urls;
+		} catch (MalformedURLException e) {
+			PDECore.log(e);
+			return null;
+		}
+	}
+
+	/**
+	 * Returns bundles defined by the 'bundles.info' relative to the given
+	 * home and configuration area, or <code>null</code> if none.
+	 * The "bundles.info" file is assumed to be at a fixed location relative to the
+	 * configuration area URL.
+	 * 
+	 * @param platformHome absolute path in the local file system to an installation
+	 * @param configurationArea url location of the configuration directory to search
+	 *  for bundles.info
+	 * @return all bundles in the installation or <code>null</code> if not able
+	 * 	to locate a bundles.info
+	 */
+	public static BundleInfo[] readBundles(String platformHome, URL configurationArea) {
 		IPath basePath = new Path(platformHome);
 		if (configurationArea == null) {
 			return null;
@@ -65,21 +103,39 @@ public class P2Utils {
 			if (bundles == null || bundles.length == 0) {
 				return null;
 			}
-			int length = bundles.length;
+			return bundles;
+		} catch (MalformedURLException e) {
+			PDECore.log(e);
+			return null;
+		} catch (IOException e) {
+			PDECore.log(e);
+			return null;
+		}
+	}
+
+	/**
+	 * Returns source bundles defined by the 'source.info' file in the
+	 * specified location, or <code>null</code> if none. The "source.info" file
+	 * is assumed to be at a fixed location relative to the configuration area URL.
+	 * 
+	 * @param platformHome absolute path in the local file system to an installation
+	 * @param configurationArea url location of the configuration directory to search for bundles.info and source.info
+	 * @return all source bundles in the installation or <code>null</code> if not able
+	 * 	to locate a source.info
+	 */
+	public static BundleInfo[] readSourceBundles(String platformHome, URL configurationArea) {
+		IPath basePath = new Path(platformHome);
+		if (configurationArea == null) {
+			return null;
+		}
+		try {
+			File home = basePath.toFile();
 			URL srcBundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(SRC_INFO_PATH));
 			BundleInfo srcBundles[] = getBundlesFromFile(srcBundlesTxt, home);
-
-			if (srcBundles != null) {
-				length += srcBundles.length;
+			if (srcBundles == null || srcBundles.length == 0) {
+				return null;
 			}
-
-			URL[] urls = new URL[length];
-			copyURLs(urls, 0, bundles);
-			if (srcBundles != null && srcBundles.length > 0) {
-				copyURLs(urls, bundles.length, srcBundles);
-			}
-			return urls;
-
+			return srcBundles;
 		} catch (MalformedURLException e) {
 			PDECore.log(e);
 			return null;

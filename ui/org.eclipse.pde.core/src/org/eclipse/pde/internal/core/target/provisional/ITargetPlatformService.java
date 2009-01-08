@@ -1,0 +1,110 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.internal.core.target.provisional;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+
+/**
+ * A service to manage target platform definitions available to the workspace.
+ * 
+ * @since 3.5
+ */
+public interface ITargetPlatformService {
+
+	/**
+	 * Returns handles to all target definitions known in the workspace.
+	 * 
+	 * @return handles to all target definitions known in the workspace
+	 */
+	public ITargetHandle[] getTargets(IProgressMonitor monitor);
+
+	/**
+	 * Returns a handle to a target definition backed by the underlying file.
+	 * The target definition may or may not exist. If the file does not exist
+	 * then this is a new target definition which becomes one of the known
+	 * workspace target definitions when it is saved.
+	 * 
+	 * @param file target definition file that may or may not exist 
+	 * @return target handle
+	 */
+	public ITargetHandle getTarget(IFile file);
+
+	/**
+	 * Returns a new target definition to be stored with local metadata. The target
+	 * becomes one of the known workspace target definitions when it is saved.
+	 * 
+	 * @return new empty target definition
+	 */
+	public ITargetDefinition newTarget();
+
+	/**
+	 * Persists the given target definition. The target becomes one of known
+	 * workspace target definitions when it is saved.
+	 * <p>
+	 * The target is persisted in a location determined by its handle. A handle
+	 * may refer to an {@link IFile} or a workspace metadata location. Any existing
+	 * target definition at the same location is overwritten.
+	 * </p>
+	 * @param definition definition to persist
+	 * @throws CoreException if unable to persist the definition
+	 */
+	public void saveTargetDefinition(ITargetDefinition definition) throws CoreException;
+
+	/**
+	 * Deletes the target definition associated with the given handle.
+	 * 
+	 * @param handle target handle
+	 * @throws CoreException if the associated target does not exist or deletion fails
+	 */
+	public void deleteTarget(ITargetHandle handle) throws CoreException;
+
+	/**
+	 * Creates and returns a target handle from the given memento. The memento must
+	 * have been generated from {@link ITargetHandle#getMemento()}.
+	 * 
+	 * @param memento a target handle memento
+	 * @return target handle
+	 * @throws CoreException if the target handle format is invalid
+	 */
+	public ITargetHandle getTarget(String memento) throws CoreException;
+
+	/**
+	 * Creates and returns a bundle container that contains all bundles in the
+	 * specified directory.
+	 * 
+	 * @param path absolute path in the local file system, may contain string variables
+	 * @return bundle container
+	 */
+	public IBundleContainer newDirectoryContainer(String path);
+
+	/**
+	 * Creates and returns a bundle container that contains all bundles installed in
+	 * a profile at the specified location with a default configuration area.
+	 * 
+	 * @param home absolute path in the local file system to the root of an installed profile
+	 * @return bundle container
+	 */
+	public IBundleContainer newProfileContainer(String home);
+
+	/**
+	 * Creates and returns a bundle container that contains all bundles installed in
+	 * a profile at the specified location with the specified configuration area.
+	 * 
+	 * @param home absolute path in the local file system to the root of an installed profile
+	 * @param configurationLocation absolute path in the local file system to the
+	 *  configuration area for the specified installation
+	 * @return bundle container
+	 */
+	public IBundleContainer newProfileContainer(String home, String configurationLocation);
+
+}

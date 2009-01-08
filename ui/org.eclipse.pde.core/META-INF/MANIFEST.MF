@@ -32,6 +32,8 @@ Export-Package:
  org.eclipse.pde.internal.core.search;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.site;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.target;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.core.target.impl;x-internal:=true,
+ org.eclipse.pde.internal.core.target.provisional;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.text;
   x-friends:="org.eclipse.pde.ui,
    org.eclipse.pde.ds.core,

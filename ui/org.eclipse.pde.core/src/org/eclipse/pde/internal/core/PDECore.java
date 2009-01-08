@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.Hashtable;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -21,9 +22,10 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
 import org.eclipse.pde.internal.core.builders.PluginRebuilder;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
+import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.update.configurator.ConfiguratorUtils;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.*;
 
 public class PDECore extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
@@ -116,6 +118,11 @@ public class PDECore extends Plugin {
 	private FeatureRebuilder fFeatureRebuilder;
 
 	private PluginRebuilder fPluginRebuilder;
+
+	/**
+	 * Target platform service.
+	 */
+	private ServiceRegistration fTargetPlatformService;
 
 	public PDECore() {
 		inst = this;
@@ -225,6 +232,8 @@ public class PDECore extends Plugin {
 		fPluginRebuilder.start();
 		fFeatureRebuilder = new FeatureRebuilder();
 		fFeatureRebuilder.start();
+
+		fTargetPlatformService = context.registerService(ITargetPlatformService.class.getName(), TargetPlatformService.getDefault(), new Hashtable());
 	}
 
 	public BundleContext getBundleContext() {
@@ -263,6 +272,10 @@ public class PDECore extends Plugin {
 		if (fModelManager != null) {
 			fModelManager.shutdown();
 			fModelManager = null;
+		}
+		if (fTargetPlatformService != null) {
+			fTargetPlatformService.unregister();
+			fTargetPlatformService = null;
 		}
 	}
 

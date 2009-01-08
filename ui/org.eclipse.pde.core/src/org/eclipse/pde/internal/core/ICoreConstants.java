@@ -145,4 +145,7 @@ public interface ICoreConstants {
 	public static IPath BUILD_PROPERTIES_PATH = new Path(BUILD_FILENAME_DESCRIPTOR);
 	public static IPath OSGI_INF_PATH = new Path(OSGI_INF_FOLDER_NAME);
 
+	// Extension point identifiers
+	public static final String EXTENSION_POINT_SOURCE = PDECore.PLUGIN_ID + ".source"; //$NON-NLS-1$
+
 }
