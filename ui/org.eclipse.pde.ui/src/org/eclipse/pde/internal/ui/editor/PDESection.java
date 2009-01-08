@@ -88,6 +88,10 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 		return false;
 	}
 
+	/**
+	 * @param clipboard
+	 * @return
+	 */
 	public boolean canPaste(Clipboard clipboard) {
 		return false;
 	}

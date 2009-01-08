@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements IModelChanged
 	public static final String PAGE_ID = "simpleCSPage"; //$NON-NLS-1$
 
 	private SimpleCSBlock fBlock;
+	private boolean fStale;
 
 	/**
 	 * @param editor
@@ -138,18 +139,10 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements IModelChanged
 				}
 			}
 		} else if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			handleModelEventWorldChanged(event);
+			fStale=true;
 		}
 		// Inform the block
 		fBlock.modelChanged(event);
-	}
-
-	/**
-	 * @param event
-	 */
-	private void handleModelEventWorldChanged(IModelChangedEvent event) {
-		// Page will be updated on refresh
-		markStale();
 	}
 
 	/**
@@ -164,21 +157,6 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements IModelChanged
 	 */
 	public PDEMasterDetailsBlock getBlock() {
 		return fBlock;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#refresh()
-	 */
-	protected void refresh() {
-		super.refresh();
-		ScrolledForm form = getManagedForm().getForm();
-		ISimpleCSModel model = (ISimpleCSModel) getModel();
-		String oldTitle = form.getText();
-		String newTitle = model.getSimpleCS().getTitle();
-		if (newTitle.equals(oldTitle) == false) {
-			// Update form page title
-			form.setText(PDETextHelper.translateReadText(newTitle));
-		}
 	}
 
 	/* (non-Javadoc)
@@ -227,6 +205,18 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements IModelChanged
 		}
 		// Select the node in the master tree viewer if defined
 		fBlock.getMastersSection().setFormInput(range);
+		
+		if (fStale){
+			// If we get a global model change the model's title may have changed
+			ScrolledForm form = getManagedForm().getForm();
+			ISimpleCSModel model = (ISimpleCSModel) getModel();
+			String oldTitle = form.getText();
+			String newTitle = model.getSimpleCS().getTitle();
+			if (!newTitle.equals(oldTitle)) {
+				// Update form page title
+				form.setText(PDETextHelper.translateReadText(newTitle));
+			}
+		}
 	}
 
 }

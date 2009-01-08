@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,51 +39,11 @@ import org.eclipse.ui.forms.widgets.*;
 
 public abstract class PDEFormPage extends FormPage {
 
-	private boolean fNewStyleHeader = true;
 	private Control fLastFocusControl;
-
-	private boolean fStale;
 
 	public PDEFormPage(FormEditor editor, String id, String title) {
 		super(editor, id, title);
 		fLastFocusControl = null;
-		fStale = false;
-	}
-
-	public PDEFormPage(FormEditor editor, String id, String title, boolean newStyleHeader) {
-		this(editor, id, title);
-		fNewStyleHeader = newStyleHeader;
-	}
-
-	/**
-	 * 
-	 */
-	protected void markStale() {
-		fStale = true;
-	}
-
-	/**
-	 * @return
-	 */
-	protected boolean isStale() {
-		return fStale;
-	}
-
-	/**
-	 * 
-	 */
-	protected void refresh() {
-		fStale = false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormPage#setActive(boolean)
-	 */
-	public void setActive(boolean active) {
-		super.setActive(active);
-		if (active && isStale()) {
-			refresh();
-		}
 	}
 
 	public void dispose() {
@@ -113,12 +73,7 @@ public abstract class PDEFormPage extends FormPage {
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		//FormColors colors = toolkit.getColors();
-		//form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
-		if (fNewStyleHeader) {
-			//createNewStyleHeader(form, colors);
-			toolkit.decorateFormHeading(form.getForm());
-		}
+		toolkit.decorateFormHeading(form.getForm());
 
 		IToolBarManager manager = form.getToolBarManager();
 
@@ -214,10 +169,6 @@ public abstract class PDEFormPage extends FormPage {
 		return false;
 	}
 
-	/**
-	 * @param selection
-	 * @return
-	 */
 	public boolean canCopy(ISelection selection) {
 		AbstractFormPart focusPart = getFocusSection();
 		if (focusPart != null) {
@@ -231,10 +182,6 @@ public abstract class PDEFormPage extends FormPage {
 		return false;
 	}
 
-	/**
-	 * @param selection
-	 * @return
-	 */
 	public boolean canCut(ISelection selection) {
 		AbstractFormPart focusPart = getFocusSection();
 		if (focusPart != null) {
@@ -395,9 +342,6 @@ public abstract class PDEFormPage extends FormPage {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public Control getLastFocusControl() {
 		return fLastFocusControl;
 	}
@@ -409,31 +353,11 @@ public abstract class PDEFormPage extends FormPage {
 		fLastFocusControl = control;
 	}
 
-	/**
-	 * @param managedForm
-	 * @param errorTitle
-	 * @param errorMessage
-	 */
-	protected void createFormErrorContent(IManagedForm managedForm, String errorTitle, String errorMessage) {
-		createFormErrorContent(managedForm, errorTitle, errorMessage, null);
-	}
-
-	/**
-	 * @param managedForm
-	 * @param errorTitle
-	 * @param errorMessage
-	 * @param e
-	 */
 	protected void createFormErrorContent(IManagedForm managedForm, String errorTitle, String errorMessage, Exception e) {
 
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		//FormColors colors = toolkit.getColors();
-		//form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
-		if (fNewStyleHeader) {
-			//createNewStyleHeader(form, colors);
-			toolkit.decorateFormHeading(form.getForm());
-		}
+		toolkit.decorateFormHeading(form.getForm());
 
 		Composite parent = form.getBody();
 		GridLayout layout = new GridLayout();
@@ -474,13 +398,6 @@ public abstract class PDEFormPage extends FormPage {
 		// not entirely shown
 	}
 
-	/**
-	 * @param parent
-	 * @param text
-	 * @param description
-	 * @param style
-	 * @return
-	 */
 	public Section createUISection(Composite parent, String text, String description, int style) {
 		Section section = getManagedForm().getToolkit().createSection(parent, style);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
@@ -492,22 +409,13 @@ public abstract class PDEFormPage extends FormPage {
 		return section;
 	}
 
-	/**
-	 * @param parent
-	 * @param columns
-	 * @return
-	 */
 	public Composite createUISectionContainer(Composite parent, int columns) {
 		Composite container = getManagedForm().getToolkit().createComposite(parent);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, columns));
 		return container;
 	}
 
-	/**
-	 * @param throwable
-	 * @return
-	 */
-	public String getStackTrace(Throwable throwable) {
+	private String getStackTrace(Throwable throwable) {
 		StringWriter swriter = new StringWriter();
 		PrintWriter pwriter = new PrintWriter(swriter);
 		throwable.printStackTrace(pwriter);
@@ -528,17 +436,4 @@ public abstract class PDEFormPage extends FormPage {
 		detailsSection.descriptionVerticalSpacing += masterSection.getTextClientHeightDifference();
 	}
 
-	/**
-	 * @param form
-	 * @param colors
-	 */
-	/*
-	private void createNewStyleHeader(final ScrolledForm form, FormColors colors) {
-		colors.initializeSectionToolBarColors();
-		Color gbg = colors.getColor(IFormColors.TB_BG);
-		Color bg = colors.getBackground();
-		form.getForm().setTextBackground(new Color[]{bg, gbg}, new int [] {100}, true);
-		form.getForm().setSeparatorVisible(true);
-	}
-	*/
 }
