@@ -44,4 +44,14 @@
          </run>
       </application>
    </extension>
+   <extension
+         id="nonuithreadtestapplication"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            visible="false">
+         <run
+               class="org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication">
+         </run>
+      </application>
+   </extension>
 </plugin>
