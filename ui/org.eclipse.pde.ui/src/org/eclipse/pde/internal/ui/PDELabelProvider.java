@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-techc.com> - bug 218618
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218618
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -303,8 +303,14 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(IProductFeature obj) {
-		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId());
-		return (model != null) ? getObjectText(model, false) : preventNull(obj.getId());
+		String name = obj.getId();
+		String version = obj.getVersion().length() > 0 ? obj.getVersion() : "0.0.0"; //$NON-NLS-1$
+		String text;
+		if (version != null && version.length() > 0)
+			text = name + ' ' + formatVersion(obj.getVersion());
+		else
+			text = name;
+		return preventNull(text);
 	}
 
 	public String getObjectText(ISiteFeature obj) {
@@ -600,7 +606,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private Image getObjectImage(IProductPlugin obj) {
-		BundleDescription desc = TargetPlatformHelper.getState().getBundle(obj.getId(), null);
+		Version version = (obj.getVersion().length() > 0 && !obj.getVersion().equals("0.0.0")) ? Version.parseVersion(obj.getVersion()) : null; //$NON-NLS-1$
+		BundleDescription desc = TargetPlatformHelper.getState().getBundle(obj.getId(), version);
 		if (desc != null) {
 			return desc.getHost() == null ? get(PDEPluginImages.DESC_PLUGIN_OBJ) : get(PDEPluginImages.DESC_FRAGMENT_OBJ);
 		}
@@ -691,7 +698,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private Image getObjectImage(IProductFeature feature) {
-		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
+		int flags = 0;
+		String version = feature.getVersion().length() > 0 ? feature.getVersion() : "0.0.0"; //$NON-NLS-1$
+		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(feature.getId(), version);
+		if (model == null)
+			flags = F_ERROR;
+		return get(PDEPluginImages.DESC_FEATURE_OBJ, flags);
 	}
 
 	private Image getObjectImage(IFeatureData data) {

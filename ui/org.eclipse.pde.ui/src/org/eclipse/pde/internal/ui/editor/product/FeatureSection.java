@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -445,10 +445,12 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		if (updateRemoveAll)
 			tablePart.setButtonEnabled(2, isEditable() && fFeatureTable.getTable().getItemCount() > 0);
 
+		tablePart.setButtonEnabled(3, isEditable() && hasSelection);
+
 		// up/down buttons
 		boolean canMove = table.getItemCount() > 1 && tableSelection.length == 1 && !fSortAction.isChecked();
-		tablePart.setButtonEnabled(3, canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
-		tablePart.setButtonEnabled(4, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
+		tablePart.setButtonEnabled(4, canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
+		tablePart.setButtonEnabled(5, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
 	}
 
 	protected boolean createCount() {
