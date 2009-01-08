@@ -465,13 +465,21 @@ public class LogView extends ViewPart implements ILogListener {
 	private void showFilterText(boolean visible) {
 		fMemento.putBoolean(P_SHOW_FILTER_TEXT, visible);
 
-		Composite filterComposite = fFilteredTree.getFilterControl().getParent(); // FilteredTree new look lays filter Text on additional composite
+		Text filterControl = fFilteredTree.getFilterControl();
+		Composite filterComposite = filterControl.getParent(); // FilteredTree new look lays filter Text on additional composite
 
 		GridData gd = (GridData) filterComposite.getLayoutData();
 		gd.exclude = !visible;
 		filterComposite.setVisible(visible);
-		if (!visible) // reset control if we aren't visible
-			fFilteredTree.getFilterControl().setText(Messages.LogView_show_filter_initialText);
+
+		// reset control if we aren't visible and if we get visible again
+		filterControl.setText(Messages.LogView_show_filter_initialText);
+
+		if (visible) {
+			filterControl.selectAll();
+			fFilteredTree.setFocus();
+		}
+
 		fFilteredTree.layout(false);
 	}
 
