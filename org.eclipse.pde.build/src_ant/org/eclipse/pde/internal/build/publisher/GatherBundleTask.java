@@ -25,6 +25,8 @@ import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator.CompiledEntry;
 
 public class GatherBundleTask extends AbstractPublisherTask {
+	static final private String API_DESCRIPTION = ".api_description"; //$NON-NLS-1$
+
 	private String buildResultFolder = null;
 	private String unpack = null;
 
@@ -115,6 +117,10 @@ public class GatherBundleTask extends AbstractPublisherTask {
 				set.remove(Constants.FRAGMENT_FILENAME_DESCRIPTOR);
 				computer.addFile(buildResultFolder, Constants.FRAGMENT_FILENAME_DESCRIPTOR);
 			}
+
+			if (new File(buildResultFolder, API_DESCRIPTION).exists())
+				computer.addFile(buildResultFolder, API_DESCRIPTION);
+
 			//everything else
 			computer.addFiles(baseDirectory, (String[]) set.toArray(new String[set.size()]));
 		}

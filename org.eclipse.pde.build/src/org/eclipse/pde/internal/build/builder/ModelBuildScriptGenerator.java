@@ -584,12 +584,17 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, null, null, null);
 
+		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
 
 		String files = JarFile.MANIFEST_NAME + "," + Constants.PLUGIN_FILENAME_DESCRIPTOR + "," + Constants.FRAGMENT_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$
 		FileSet metadata = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, files, null, exclude, null, null);
 		script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), new FileSet[] {metadata}, true, true);
+
+		String[] splitIncludes = Utils.getArrayFromString(include);
+
 		genarateIdReplacementCall(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+		generateAPIToolsCall(getCompiledLocations(), Utils.isStringIn(splitIncludes, EXPANDED_DOT + '/') != -1, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
 
 		script.println("<eclipse.gatherBundle "); //$NON-NLS-1$
 		script.println("   metadataRepository=\"file:${buildDirectory}/buildRepo\""); //$NON-NLS-1$
@@ -600,6 +605,20 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.println("  unpack=\"" + String.valueOf(associatedEntry.isUnpack()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("/>"); //$NON-NLS-1$
 		script.printTargetEnd();
+	}
+
+	private String[] getCompiledLocations() {
+		int count = 0;
+		String[] fileSetValues = new String[compiledJarNames.size()];
+		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
+			CompiledEntry entry = (CompiledEntry) iter.next();
+			String formatedName = entry.getName(false) + (entry.getType() == CompiledEntry.FOLDER ? "/" : ""); //$NON-NLS-1$//$NON-NLS-2$
+			if (dotOnTheClasspath && formatedName.startsWith(EXPANDED_DOT)) {
+				continue;
+			}
+			fileSetValues[count++] = formatedName;
+		}
+		return fileSetValues;
 	}
 
 	/**
@@ -630,8 +649,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		//Copy only the jars that has been compiled and are listed in the includes
 		String[] splitIncludes = Utils.getArrayFromString(include);
-		String[] fileSetValues = new String[compiledJarNames.size()];
-		int count = 0;
+		String[] fileSetValues = getCompiledLocations();
 
 		boolean dotIncluded = false; //This flag indicates if . should be gathered
 		int pos = Utils.isStringIn(splitIncludes, EXPANDED_DOT + '/');
@@ -640,18 +658,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			dotIncluded = true;
 		}
 
-		//Iterate over the classpath
-		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
-			CompiledEntry entry = (CompiledEntry) iter.next();
-			String formatedName = entry.getName(false) + (entry.getType() == CompiledEntry.FOLDER ? "/" : ""); //$NON-NLS-1$//$NON-NLS-2$
-			if (dotOnTheClasspath && formatedName.startsWith(EXPANDED_DOT)) {
-				dotIncluded = dotIncluded & true;
-				continue;
-			}
-			fileSetValues[count++] = formatedName;
-			continue;
-		}
-		if (count != 0) {
+		if (fileSetValues.length > 0 && fileSetValues[0] != null) {
 			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromArray(fileSetValues, ","), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
 		}

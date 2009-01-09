@@ -145,4 +145,53 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getVersion().toString(), version);
 		assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:libcairo-swt.so, permissions:755);");
 	}
+
+	public void testPublishBundle_APITooling() throws Exception {
+		IFolder buildFolder = newTest("PublishBundle_APITooling");
+
+		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
+		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); public void Bar(){}}"));
+		Utils.writeBuffer(bundle.getFile("src/b/B.java"), new StringBuffer("package b; public class B { int i = 0; public void Foo(){}}"));
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?> 						\n");
+		buffer.append("<projectDescription> 											\n");
+		buffer.append("  <name>org.eclipse.pde.build</name> 							\n");
+		buffer.append("  <natures> 														\n");
+		buffer.append("    <nature>org.eclipse.jdt.core.javanature</nature> 			\n");
+		buffer.append("    <nature>org.eclipse.pde.PluginNature</nature> 				\n");
+		buffer.append("    <nature>org.eclipse.pde.api.tools.apiAnalysisNature</nature> \n");
+		buffer.append("  </natures> 													\n");
+		buffer.append("</projectDescription> 											\n");
+		Utils.writeBuffer(bundle.getFile(".project"), buffer);
+
+		Properties properties = new Properties();
+		properties.put("bin.includes", "META-INF/, .");
+		Attributes manifestAdditions = new Attributes();
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.osgi");
+		manifestAdditions.put(new Attributes.Name("Export-Package"), "b");
+		Utils.generateBundleManifest(bundle, "bundle", "1.0.0.qualifier", manifestAdditions);
+		Utils.generatePluginBuildProperties(bundle, properties);
+
+		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle");
+		properties.put("forceContextQualifier", "v1234");
+		properties.put("generateAPIDescription", "true");
+
+		try {
+			ModelBuildScriptGenerator.p2Gathering = true;
+			generateScripts(buildFolder, properties);
+		} finally {
+			ModelBuildScriptGenerator.p2Gathering = false;
+		}
+
+		String buildXMLPath = bundle.getFile("build.xml").getLocation().toOSString();
+		runAntScript(buildXMLPath, new String[] {"build.jars", "gather.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
+
+		assertResourceFile(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar");
+		HashSet contents = new HashSet();
+		contents.add("A.class");
+		contents.add("b/B.class");
+		contents.add(".api_description");
+		assertZipContents(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar", contents);
+	}
 }
