@@ -366,8 +366,8 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			}
 		}
 		return problems;
-	}	
-	
+	}
+
 	/**
 	 * Returns whether the resolved reference is a real problem.
 	 * 
@@ -480,6 +480,9 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @throws CoreException
 	 */
 	protected Position getFieldNameRange(IApiField field, IDocument document, IReference reference) throws BadLocationException, CoreException {
+		return getFieldNameRange(field.getEnclosingType().getName(), field.getName(), document, reference);
+	}
+	protected Position getFieldNameRange(String typeName, String fieldName, IDocument document, IReference reference) throws BadLocationException, CoreException {
 		int linenumber = reference.getLineNumber();
 		if (linenumber > 0) {
 			linenumber--;
@@ -487,29 +490,27 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		if (linenumber > 0) {
 			int offset = document.getLineOffset(linenumber);
 			String line = document.get(offset, document.getLineLength(linenumber));
-			String name = field.getName();
-			IApiType parent = field.getEnclosingType();
-			String qname = parent.getName()+"."+name; //$NON-NLS-1$
+			String qname = typeName +"."+fieldName; //$NON-NLS-1$
 			int first = line.indexOf(qname);
 			if(first < 0) {
-				qname = "super."+name; //$NON-NLS-1$
+				qname = "super."+fieldName; //$NON-NLS-1$
 				first = line.indexOf(qname);
 			}
 			if(first < 0) {
-				qname = "this."+name; //$NON-NLS-1$
+				qname = "this."+fieldName; //$NON-NLS-1$
 				first = line.indexOf(qname);
 			}
 			if(first < 0) {
 				//try a pattern [.*fieldname] 
 				//the field might be ref'd via a constant, e.g. enum constant
-				int idx = line.indexOf(name);
+				int idx = line.indexOf(fieldName);
 				while(idx > -1) {
 					if(line.charAt(idx-1) == '.') {
 						first = idx;
-						qname = name;
+						qname = fieldName;
 						break;
 					}
-					idx = line.indexOf(name, idx+1);
+					idx = line.indexOf(fieldName, idx+1);
 				}
 			}
 			Position pos = null;

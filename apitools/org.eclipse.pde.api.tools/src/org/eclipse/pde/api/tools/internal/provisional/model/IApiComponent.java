@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,17 +43,6 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * @throws CoreException if its baseline is disposed
 	 */
 	public IApiDescription getApiDescription() throws CoreException;
-	
-	/**
-	 * Returns the system API description that corresponds to the given execution environment id.
-	 * 
-	 * @param eeID the given execution environment id
-	 * @return API manifest
-	 * @throws CoreException if there was a problem creating the system API description for this component
-	 * @see ProfileModifiers for execution environment ids 
-	 * @throws CoreException if its baseline is disposed
-	 */
-	public IApiDescription getSystemApiDescription(int eeID) throws CoreException;
 	/**
 	 * Returns whether this component has an underlying API description. Even if a component
 	 * has no underlying description it will return one from {@link #getApiDescription()},

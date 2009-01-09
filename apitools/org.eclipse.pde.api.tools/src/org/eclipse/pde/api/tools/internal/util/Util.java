@@ -33,6 +33,7 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -88,6 +89,7 @@ import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.internal.compiler.codegen.ConstantPool;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
@@ -2555,5 +2557,15 @@ public final class Util {
 			default:
 				return "UNKNOWN"; //$NON-NLS-1$
 		}
+	}
+
+	public static boolean isConstructor(String referenceMemberName) {
+		return Arrays.equals(ConstantPool.Init, referenceMemberName.toCharArray());
+	}
+
+	public static String getSimpleTypeName(String referencedTypeName) {
+		int index = referencedTypeName.lastIndexOf('.');
+		if (index == -1) return referencedTypeName;
+		return referencedTypeName.substring(index + 1);
 	}
 }

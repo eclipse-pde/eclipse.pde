@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.BaseApiAnalyzer;
+import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -678,6 +679,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			}
 			referenceBaseline.dispose();
 			currentBaseline.dispose();
+			StubApiComponent.disposeAllCaches();
 			deleteBaseline(this.referenceBaselineLocation, referenceInstallDir);
 			deleteBaseline(this.currentBaselineLocation, baselineInstallDir);
 			if (this.debug) {

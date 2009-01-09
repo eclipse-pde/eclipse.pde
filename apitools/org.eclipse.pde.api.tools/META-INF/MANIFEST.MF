@@ -35,7 +35,7 @@ Export-Package: org.eclipse.pde.api.tools.internal;x-friends:="org.eclipse.pde.a
  org.eclipse.pde.api.tools.internal.tasks;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.api.tools.internal.util;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.api.tools.internal.util.profiles;x-internal:=true,
- org.eclipse.pde.api.tools.internal.util.profiles.api_descriptions;x-internal:=true
+ org.eclipse.pde.api.tools.internal.util.profiles.api_stubs;x-internal:=true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Import-Package: com.ibm.icu.text
 Bundle-Activator: org.eclipse.pde.api.tools.internal.provisional.ApiPlugin

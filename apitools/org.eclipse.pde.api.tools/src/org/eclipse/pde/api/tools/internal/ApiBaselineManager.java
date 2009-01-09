@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
+import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -599,6 +600,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			if(hasinfos != null) {
 				hasinfos.clear();
 			}
+			StubApiComponent.disposeAllCaches();
 		}
 		finally {
 			if(ApiPlugin.isRunningInFramework()) {
@@ -665,6 +667,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	private synchronized void disposeWorkspaceBaseline() {
 		if (workspacebaseline != null) {
 			workspacebaseline.dispose();
+			StubApiComponent.disposeAllCaches();
 			workspacebaseline = null;
 		}
 	}

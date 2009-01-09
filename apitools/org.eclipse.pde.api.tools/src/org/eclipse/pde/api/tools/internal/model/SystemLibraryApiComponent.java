@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,28 +36,36 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	/**
 	 * Execution environment profile symbolic name.
 	 */
-	private String[] fExecEnv;
+	protected String[] fExecEnv;
 	
 	/**
 	 * Associated library locations.
 	 */
-	private LibraryLocation[] fLibraries;
+	protected LibraryLocation[] fLibraries;
 	
 	/**
 	 * Home directory
 	 */
-	private String fLocation;
+	protected String fLocation;
 	
 	/**
 	 * List of exported system packages
 	 */
-	private String[] fSystemPackages;
+	protected String[] fSystemPackages;
 	
 	/**
 	 * Language level - i.e. 1.4, 1.5, etc.
 	 */
-	private String fVersion;
+	protected String fVersion;
 	
+	/**
+	 * Constructs a system library.
+	 * 
+	 * @param profile owning profile
+	 */
+	protected SystemLibraryApiComponent(IApiBaseline profile){
+		super(profile);
+	}
 	/**
 	 * Constructs a system library from the given execution environment description file.
 	 * 

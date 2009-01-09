@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.model.tests.ApiTypeContainerTests;
 import org.eclipse.pde.api.tools.model.tests.ClassFileScannerTests;
 import org.eclipse.pde.api.tools.model.tests.ComponentManifestTests;
 import org.eclipse.pde.api.tools.model.tests.ElementDescriptorTests;
-import org.eclipse.pde.api.tools.model.tests.SystemApiDescriptionTests;
+import org.eclipse.pde.api.tools.model.tests.SystemApiDetectorTests;
 import org.eclipse.pde.api.tools.model.tests.TagScannerTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemFactoryTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;
@@ -52,7 +52,7 @@ public class ApiToolsTestSuite extends TestSuite {
 	 */
 	public ApiToolsTestSuite() {
 		addTest(new TestSuite(ApiDescriptionTests.class));
-		addTest(new TestSuite(SystemApiDescriptionTests.class));
+		addTest(new TestSuite(SystemApiDetectorTests.class));
 		addTest(new TestSuite(HeadlessApiProfileManagerTests.class));
 		addTest(new TestSuite(TagScannerTests.class));
 		addTest(new TestSuite(ComponentManifestTests.class));
