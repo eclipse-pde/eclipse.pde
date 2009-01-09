@@ -9,7 +9,6 @@
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -179,7 +178,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		else
 			plugins = getBundlesFromProductFile(config);
 
-		URL bundlesTxt = P2Utils.writeBundlesTxt(plugins, configDir, (style & CONFIG_STYLE_REFACTORED) > 0);
+		File bundlesTxt = P2Utils.writeBundlesTxt(plugins, configDir, (style & CONFIG_STYLE_REFACTORED) > 0);
 		if (bundlesTxt != null) {
 			buffer.append(SIMPLE_CONFIGURATOR_CONFIG_URL);
 			buffer.append("=file:"); //$NON-NLS-1$

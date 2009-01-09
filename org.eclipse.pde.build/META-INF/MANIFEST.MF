@@ -27,10 +27,12 @@ Export-Package:
  org.eclipse.pde.internal.swt.tools;x-internal:=true
 Import-Package: com.ibm.icu.util,
  org.eclipse.equinox.internal.p2.core.helpers,
+ org.eclipse.equinox.internal.provisional.frameworkadmin,
  org.eclipse.equinox.internal.provisional.p2.artifact.repository,
  org.eclipse.equinox.internal.provisional.p2.core,
  org.eclipse.equinox.internal.provisional.p2.metadata,
- org.eclipse.equinox.internal.provisional.p2.metadata.repository
+ org.eclipse.equinox.internal.provisional.p2.metadata.repository,
+ org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
