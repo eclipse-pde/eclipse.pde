@@ -8,8 +8,12 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
+import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.build.ant.AntScript;
+import org.eclipse.pde.internal.build.site.BuildTimeSite;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected String directory; // representing the directory where to generate the file
@@ -71,8 +75,8 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		script.printConditionIsSet("customOrDefault.@{config}", "assemble.@{element}@{dot}@{config}", "assemble.@{element}@{dot}@{config}", "${defaultAssemble.@{config}}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		Properties properties = new Properties();
 		properties.put("assembleScriptName", "@{scriptPrefix}.@{element}@{dot}@{config}.xml"); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.put("element", "@{element}");  //$NON-NLS-1$//$NON-NLS-2$
-		properties.put("config", "@{config}");  //$NON-NLS-1$//$NON-NLS-2$
+		properties.put("element", "@{element}"); //$NON-NLS-1$//$NON-NLS-2$
+		properties.put("config", "@{config}"); //$NON-NLS-1$//$NON-NLS-2$
 		script.printAntTask(Utils.getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, "${customOrDefault.@{config}}", null, null, properties); //$NON-NLS-1$
 		script.printEndMacroDef();
 	}
@@ -129,10 +133,23 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected void generateMetadataTarget() {
 		if (configScriptGenerator.haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, PROPERTY_RUN_PACKAGER, null);
+
+			ProductFile product = configScriptGenerator.getProductFile();
+			String productPath = product != null ? product.getLocation() : null;
+			if (product != null) {
+				String productDir = getWorkingDirectory() + '/' + DEFAULT_FEATURE_LOCATION + '/' + CONTAINER_FEATURE + "/product"; //$NON-NLS-1$
+				File productFile = new File(productPath);
+				String newProduct = new File(productDir, productFile.getName()).getAbsolutePath();
+				script.printCopyFileTask(productPath, newProduct, true);
+				generateProductReplaceTask(product, newProduct);
+				productPath = newProduct;
+			}
+
 			script.printConditionIsSet("mode", "incremental", PROPERTY_RUN_PACKAGER, "final"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
 			script.printProperty(PROPERTY_P2_METADATA_REPO_NAME, ""); //$NON-NLS-1$
 			script.printProperty(PROPERTY_P2_ARTIFACT_REPO_NAME, ""); //$NON-NLS-1$
+			script.printTab();
 			script.print("<p2.generator "); //$NON-NLS-1$
 			script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
 			script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
@@ -143,9 +160,8 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$ 
 			script.printAttribute("mode", "${mode}", true); //$NON-NLS-1$ //$NON-NLS-2$
 
-			ProductFile product = configScriptGenerator.getProductFile();
 			if (product != null) {
-				script.printAttribute("productFile", product.getLocation(), true); //$NON-NLS-1$
+				script.printAttribute("productFile", productPath, true); //$NON-NLS-1$
 				if (versionsList) {
 					if (product.useFeatures())
 						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
@@ -160,6 +176,29 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			script.println("/>"); //$NON-NLS-1$
 			script.printTargetEnd();
 		}
+	}
+
+	protected void generateProductReplaceTask(ProductFile product, String productDirectory) {
+		if (product == null)
+			return;
+
+		BuildTimeSite site = null;
+		try {
+			site = getSite(false);
+		} catch (CoreException e1) {
+			return;
+		}
+
+		List productEntries = product.getProductEntries();
+		String mappings = Utils.getEntryVersionMappings((FeatureEntry[]) productEntries.toArray(new FeatureEntry[productEntries.size()]), site);
+		script.println("<eclipse.idReplacer productFilePath=\"" + AntScript.getEscaped(productDirectory) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("                    selfVersion=\"" + product.getVersion() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		if (product.useFeatures())
+			script.println("                    featureIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		else
+			script.println("                    pluginIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
+
+		return;
 	}
 
 	public void setSignJars(boolean value) {

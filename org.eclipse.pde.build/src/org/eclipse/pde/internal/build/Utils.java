@@ -19,6 +19,7 @@ import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.BuildTimeSite;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
@@ -976,4 +977,49 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return new Version(tmp.getMajor(), tmp.getMinor(), tmp.getMicro());
 	}
 
+	private static boolean needsReplacement(String s) {
+		if (s.equalsIgnoreCase(GENERIC_VERSION_NUMBER) || s.endsWith(PROPERTY_QUALIFIER))
+			return true;
+		return false;
+	}
+
+	public static String getEntryVersionMappings(FeatureEntry[] entries, BuildTimeSite site) {
+		if (entries == null || site == null)
+			return null;
+
+		StringBuffer result = new StringBuffer();
+		for (int i = 0; i < entries.length; i++) {
+			String versionRequested = entries[i].getVersion();
+			if (versionRequested == null)
+				versionRequested = GENERIC_VERSION_NUMBER;
+			String id = entries[i].getId();
+			String newVersion = null;
+
+			if (!needsReplacement(versionRequested))
+				continue;
+
+			try {
+				if (entries[i].isPlugin()) {
+					BundleDescription model = site.getRegistry().getResolvedBundle(id, versionRequested);
+					if (model != null)
+						newVersion = model.getVersion().toString();
+				} else {
+					BuildTimeFeature feature = site.findFeature(id, versionRequested, false);
+					if (feature != null)
+						newVersion = feature.getVersion();
+				}
+			} catch (CoreException e) {
+				continue;
+			}
+			if (newVersion != null) {
+				result.append(id);
+				result.append(':');
+				result.append(extract3Segments(versionRequested));
+				result.append(',');
+				result.append(newVersion);
+				result.append(',');
+			}
+		}
+		return result.toString();
+	}
 }

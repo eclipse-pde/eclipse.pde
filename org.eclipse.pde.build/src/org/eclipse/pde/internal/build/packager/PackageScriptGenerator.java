@@ -8,8 +8,6 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.build.packager;
 
-import org.eclipse.pde.internal.build.Utils;
-
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
@@ -69,12 +67,6 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		backwardCompatibleName = value;
 	}
 
-//	private String computeBackwardCompatibleName(Config configInfo) {
-//		if (backwardCompatibleName)
-//			return DEFAULT_ASSEMBLE_NAME + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING)) + (backwardCompatibleName ? ".xml" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
-//		return DEFAULT_ASSEMBLE_NAME + (featureId.equals("") ? "" : ('.' + featureId)) + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING)) + (backwardCompatibleName ? ".xml" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-//	}
-
 	protected void printDefaultAssembleCondition() {
 		if (backwardCompatibleName)
 			script.printConditionIsSet("defaultAssemble.@{config}", "defaultAssemble", "defaultAssemblyEnabled", "assemble@{dot}@{config}.xml"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -85,11 +77,23 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	protected void generateMetadataTarget() {
 		if (configScriptGenerator.haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);
+
+			ProductFile product = configScriptGenerator.getProductFile();
+			String productPath = product != null ? product.getLocation() : null;
+			if (product != null) {
+				String productDir = getWorkingDirectory() + '/' + DEFAULT_FEATURE_LOCATION + '/' + CONTAINER_FEATURE + "/product"; //$NON-NLS-1$
+				File productFile = new File(productPath);
+				String newProduct = new File(productDir, productFile.getName()).getAbsolutePath();
+				script.printCopyFileTask(productPath, newProduct, true);
+				generateProductReplaceTask(product, newProduct);
+				productPath = newProduct;
+			}
+
 			script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
 			script.printProperty(PROPERTY_P2_COMPRESS, "false"); //$NON-NLS-1$
 			script.printProperty(PROPERTY_P2_METADATA_REPO_NAME, ""); //$NON-NLS-1$
 			script.printProperty(PROPERTY_P2_ARTIFACT_REPO_NAME, ""); //$NON-NLS-1$
-			ProductFile product = configScriptGenerator.getProductFile();
+
 			String versionAdvice = null;
 			if (versionsList && product != null) {
 				if (product.useFeatures())
@@ -97,7 +101,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 				else
 					versionAdvice = getWorkingDirectory() + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
 			}
-			generateP2FinalCall(script, product != null ? product.getLocation() : null, versionAdvice);
+			generateP2FinalCall(script, productPath, versionAdvice);
 			script.printTargetEnd();
 		}
 	}

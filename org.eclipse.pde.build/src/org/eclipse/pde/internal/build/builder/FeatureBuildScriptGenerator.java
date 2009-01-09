@@ -131,11 +131,6 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	private void absorbExceptionIfOptionalFeature(FeatureEntry entry, CoreException toAbsorb) throws CoreException {
-		if (toAbsorb.getStatus().getCode() != EXCEPTION_FEATURE_MISSING || (toAbsorb.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && !entry.isOptional()))
-			throw toAbsorb;
-	}
-
 	/**
 	 * Main call for generating the script.
 	 * 
@@ -365,44 +360,10 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateIdReplacerCall(String root) throws CoreException {
-		String featureVersionInfo = ""; //$NON-NLS-1$
-		// Here we get all the included features (independently of the config being built so the version numbers in the feature can be replaced)
-		FeatureEntry[] includedFeatures = feature.getRawIncludedFeatureReferences();
-		for (int i = 0; i < includedFeatures.length; i++) {
-			String versionRequested = includedFeatures[i].getVersion();
-			BuildTimeFeature includedFeature = null;
-			try {
-				includedFeature = getSite(false).findFeature(includedFeatures[i].getId(), versionRequested, true);
-			} catch (CoreException e) {
-				absorbExceptionIfOptionalFeature(includedFeatures[i], e);
-				continue;
-			}
-			//VersionedIdentifier includedFeatureVersionId = includedFeature.getVersionedIdentifier();
-			if (needsReplacement(versionRequested))
-				featureVersionInfo += (includedFeature.getId() + ':' + Utils.extract3Segments(versionRequested) + ',' + includedFeature.getVersion() + ',');
-		}
-		String pluginVersionInfo = ""; //$NON-NLS-1$
-		// Here we get all the included plugins (independently of the config being built so the version numbers in the feature can be replaced)
-		FeatureEntry[] pluginsIncluded = feature.getRawPluginEntries();
-		for (int i = 0; i < pluginsIncluded.length; i++) {
-			BundleDescription model;
-			// If we ask for 0.0.0, the call to the registry must have null as a parameter
-			String versionRequested = pluginsIncluded[i].getVersion();
-			String entryIdentifier = pluginsIncluded[i].getId();
-			model = getSite(false).getRegistry().getResolvedBundle(entryIdentifier, versionRequested);
-			if (model != null) {
-				if (needsReplacement(versionRequested))
-					pluginVersionInfo += (entryIdentifier + ':' + Utils.extract3Segments(versionRequested) + ',' + model.getVersion() + ',');
-			}
-		}
+		String featureVersionInfo = Utils.getEntryVersionMappings(feature.getRawIncludedFeatureReferences(), getSite(false));
+		String pluginVersionInfo = Utils.getEntryVersionMappings(feature.getRawPluginEntries(), getSite(false));
 
 		script.println("<eclipse.idReplacer featureFilePath=\"" + AntScript.getEscaped(root) + '/' + Constants.FEATURE_FILENAME_DESCRIPTOR + "\"  selfVersion=\"" + feature.getVersion() + "\" featureIds=\"" + featureVersionInfo + "\" pluginIds=\"" + pluginVersionInfo + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-	}
-
-	private boolean needsReplacement(String s) {
-		if (s.equalsIgnoreCase(GENERIC_VERSION_NUMBER) || s.endsWith(PROPERTY_QUALIFIER))
-			return true;
-		return false;
 	}
 
 	/**

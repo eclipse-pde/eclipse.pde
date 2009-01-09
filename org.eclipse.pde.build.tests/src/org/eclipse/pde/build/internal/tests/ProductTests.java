@@ -24,6 +24,7 @@ import org.eclipse.pde.build.internal.tests.ant.TestBrandTask;
 import org.eclipse.pde.build.tests.*;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.eclipse.pde.internal.swt.tools.IconExe;
 import org.osgi.framework.Version;
 
@@ -287,5 +288,34 @@ public class ProductTests extends PDETestCase {
 		assertTrue(a.length == 1);
 		String bundleString = a[0].substring(0, a[0].length() - 4); //trim .jar
 		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info"), bundleString);
+	}
+
+	public void testBug246060() throws Exception {
+		IFolder buildFolder = newTest("246060");
+
+		IFile product = buildFolder.getFile("foo.product");
+		Utils.generateProduct(product, "foo", null, new String[] {"A", "id", "version"}, false);
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<project name=\"project\" default=\"default\"> \n");
+		buffer.append("   <target name=\"default\" >                  \n");
+		buffer.append("      <eclipse.idReplacer productFilePath=\"" + product.getLocation().toOSString() + "\"\n");
+		buffer.append("            selfVersion=\"1.2.3.va\"           \n");
+		buffer.append("            pluginIds=\"A:0.0.0,1.2.3,id:0.0.0,2.3.4,version:0.0.0,1.2.1\" /> \n");
+		buffer.append("	  </target>                                   \n");
+		buffer.append("</project>                                     \n");
+
+		IFile buildXML = buildFolder.getFile("build.xml");
+		Utils.writeBuffer(buildXML, buffer);
+
+		runAntScript(buildXML.getLocation().toOSString(), new String[] {"default"}, buildFolder.getLocation().toOSString(), null);
+
+		ProductFile productFile = new ProductFile(product.getLocation().toOSString(), null);
+		assertEquals(productFile.getVersion(), "1.2.3.va");
+
+		Iterator i = productFile.getProductEntries().iterator();
+		assertEquals(((FeatureEntry) i.next()).getVersion(), "1.2.3");
+		assertEquals(((FeatureEntry) i.next()).getVersion(), "2.3.4");
+		assertEquals(((FeatureEntry) i.next()).getVersion(), "1.2.1");
 	}
 }

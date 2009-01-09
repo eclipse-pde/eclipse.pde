@@ -22,19 +22,23 @@ import org.apache.tools.ant.Task;
  */
 public class IdReplaceTask extends Task {
 	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
-	private static final String FEATURE_START_TAG = "<feature";//$NON-NLS-1$
+	private static final String FEATURE_START_TAG = "<feature ";//$NON-NLS-1$
+	private static final String PRODUCT_START_TAG = "<product "; //$NON-NLS-1$
 	private static final String ID = "id";//$NON-NLS-1$
 	private static final String VERSION = "version";//$NON-NLS-1$
 	private static final String COMMA = ","; //$NON-NLS-1$
 	private static final String BACKSLASH = "\""; //$NON-NLS-1$
 	private static final String EMPTY = ""; //$NON-NLS-1$
-	private static final String PLUGIN_START_TAG = "<plugin"; //$NON-NLS-1$
-	private static final String INCLUDES_START_TAG = "<includes"; //$NON-NLS-1$
+	private static final String PLUGIN_START_TAG = "<plugin "; //$NON-NLS-1$
+	private static final String INCLUDES_START_TAG = "<includes "; //$NON-NLS-1$
 	private static final String COMMENT_START_TAG = "<!--"; //$NON-NLS-1$
 	private static final String COMMENT_END_TAG = "-->"; //$NON-NLS-1$
+	private static final String INSERT_VERSION = " version=\"0.0.0\" "; //$NON-NLS-1$
 
 	//Path of the file where we are replacing the values
-	private String featureFilePath;
+	private String filePath;
+	private boolean isProduct = false;
+
 	//Map of the plugin ids and version (key) and their version number (value)
 	//  the key is id:version  and the value is the actual version of the element
 	// the keys are such that a regular lookup will always return the appropriate value if available
@@ -56,7 +60,12 @@ public class IdReplaceTask extends Task {
 	 * @param path
 	 */
 	public void setFeatureFilePath(String path) {
-		featureFilePath = path;
+		filePath = path;
+	}
+
+	public void setProductFilePath(String path) {
+		filePath = path;
+		isProduct = true;
 	}
 
 	/** 
@@ -115,18 +124,20 @@ public class IdReplaceTask extends Task {
 	public void execute() {
 		StringBuffer buffer = null;
 		try {
-			buffer = readFile(new File(featureFilePath));
+			buffer = readFile(new File(filePath));
 		} catch (IOException e) {
 			throw new BuildException(e);
 		}
 
+		String mainStartTag = isProduct ? PRODUCT_START_TAG : FEATURE_START_TAG;
+
 		//Skip feature declaration because it contains the word "plugin"
 		int startComment = scan(buffer, 0, COMMENT_START_TAG);
 		int endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
-		int startFeature = scan(buffer, 0, FEATURE_START_TAG);
+		int startFeature = scan(buffer, 0, mainStartTag);
 
 		while (startComment != -1 && startFeature > startComment && startFeature < endComment) {
-			startFeature = scan(buffer, endComment, FEATURE_START_TAG);
+			startFeature = scan(buffer, endComment, mainStartTag);
 			startComment = scan(buffer, endComment, COMMENT_START_TAG);
 			endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
 		}
@@ -140,8 +151,17 @@ public class IdReplaceTask extends Task {
 			boolean versionFound = false;
 			while (!versionFound) {
 				int startVersionWord = scan(buffer, startFeature, VERSION);
-				if (startVersionWord == -1 || startVersionWord > endFeature)
-					return;
+				if (startVersionWord == -1 || startVersionWord > endFeature) {
+					if (!isProduct)
+						return;
+
+					if (selfVersion == null || selfVersion.equals(GENERIC_VERSION_NUMBER))
+						break;
+
+					buffer.insert(endFeature, INSERT_VERSION);
+					startVersionWord = endFeature + 1;
+					endFeature += INSERT_VERSION.length();
+				}
 				if (!Character.isWhitespace(buffer.charAt(startVersionWord - 1))) {
 					startFeature = startVersionWord + VERSION.length();
 					continue;
@@ -152,7 +172,7 @@ public class IdReplaceTask extends Task {
 					endVersionWord++;
 				}
 				if (endVersionWord > endFeature) { //version has not been found
-					System.err.println("Could not find the tag 'version' in the feature header, file: " + featureFilePath); //$NON-NLS-1$
+					System.err.println("Could not find the tag 'version' in the feature header, file: " + filePath); //$NON-NLS-1$
 					return;
 				}
 
@@ -174,7 +194,7 @@ public class IdReplaceTask extends Task {
 		int startId = 0;
 		while (true) {
 			int startPlugin = scan(buffer, startElement + 1, PLUGIN_START_TAG);
-			int startInclude = scan(buffer, startElement + 1, INCLUDES_START_TAG);
+			int startInclude = scan(buffer, startElement + 1, isProduct ? FEATURE_START_TAG : INCLUDES_START_TAG);
 
 			if (startPlugin == -1 && startInclude == -1)
 				break;
@@ -204,21 +224,25 @@ public class IdReplaceTask extends Task {
 				continue;
 			}
 
-			int startElementId, endElementId;
-			int startVersionWord, startVersionId, endVersionId;
+			int endElement, startElementId = -1, endElementId = -1;
+			int startVersionWord = -1, startVersionId = -1, endVersionId = -1;
 
+			endElement = scan(buffer, foundElement, ">"); //$NON-NLS-1$
 			startId = scan(buffer, foundElement, ID);
 			startVersionWord = scan(buffer, foundElement, VERSION);
+
 			// Which comes first, version or id.
-			if (startId < startVersionWord) {
+			if (startId < startVersionWord || startVersionWord == -1) {
 				startElementId = scan(buffer, startId + 1, BACKSLASH);
 				endElementId = scan(buffer, startElementId + 1, BACKSLASH);
 
 				// search for version again since the id could have "version" in it.
 				startVersionWord = scan(buffer, endElementId + 1, VERSION);
-				startVersionId = scan(buffer, startVersionWord + 1, BACKSLASH);
-				endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
-			} else {
+				if (startVersionWord > 0) {
+					startVersionId = scan(buffer, startVersionWord + 1, BACKSLASH);
+					endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
+				}
+			} else if (startVersionWord > 0) {
 				startVersionId = scan(buffer, startVersionWord + 1, BACKSLASH);
 				endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
 
@@ -228,24 +252,33 @@ public class IdReplaceTask extends Task {
 				endElementId = scan(buffer, startElementId + 1, BACKSLASH);
 			}
 
-			if (startId == -1 || startVersionWord == -1)
+			if (startVersionId > endElement)
+				startVersionId = -1;
+
+			if (startId == -1 || (!isProduct && startVersionId == -1))
 				break;
 
-			char[] elementId = new char[endElementId - startElementId - 1];
-			buffer.getChars(startElementId + 1, endElementId, elementId, 0);
+			String version = null;
+			if (startVersionId == -1) {
+				buffer.insert(endElement - 1, INSERT_VERSION);
+				startVersionId = endElement + 8;
+				endVersionId = startVersionId + 6;
+				endElement += 13;
+				version = GENERIC_VERSION_NUMBER;
+			} else {
+				version = buffer.substring(startVersionId + 1, endVersionId);
+			}
+			String elementId = buffer.substring(startElementId + 1, endElementId);
 
-			char[] versionId = new char[endVersionId - startVersionId - 1];
-			buffer.getChars(startVersionId + 1, endVersionId, versionId, 0);
-			
-			if (!new String(versionId).equals(GENERIC_VERSION_NUMBER) && !new String(versionId).endsWith(QUALIFIER)) {
-				startElement = startVersionId;
+			if (!version.equals(GENERIC_VERSION_NUMBER) && !version.endsWith(QUALIFIER)) {
+				startElement = endElement;
 				continue;
 			}
 
 			startVersionId++;
 			String replacementVersion = null;
-			Version v = new Version(new String(versionId));
-			String lookupKey = new String(elementId) + ':' + v.getMajor() + '.' + v.getMinor() + '.' + v.getMicro();
+			Version v = new Version(version);
+			String lookupKey = elementId + ':' + v.getMajor() + '.' + v.getMinor() + '.' + v.getMicro();
 			if (isPlugin) {
 				replacementVersion = (String) pluginIds.get(lookupKey);
 			} else {
@@ -253,20 +286,20 @@ public class IdReplaceTask extends Task {
 			}
 			int change = 0;
 			if (replacementVersion == null) {
-				System.err.println("Could not find " + new String(elementId)); //$NON-NLS-1$
+				System.err.println("Could not find " + elementId); //$NON-NLS-1$
 			} else {
 				buffer.replace(startVersionId, endVersionId, replacementVersion);
 				contentChanged = true;
 				change = endVersionId - startVersionId - replacementVersion.length();
 			}
-			startElement = (endElementId > endVersionId) ? endElementId - change: endVersionId - change;
+			startElement = (endElementId > endVersionId) ? endElementId - change : endVersionId - change;
 		}
 
 		if (!contentChanged)
 			return;
 
 		try {
-			OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(featureFilePath)), UTF_8);
+			OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(filePath)), UTF_8);
 			w.write(buffer.toString());
 			w.close();
 		} catch (FileNotFoundException e) {

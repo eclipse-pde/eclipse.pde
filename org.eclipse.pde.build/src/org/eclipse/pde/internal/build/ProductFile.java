@@ -187,6 +187,8 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	}
 
 	public List getProductEntries() {
+		if (entries == null)
+			return Collections.EMPTY_LIST;
 		List results = new ArrayList();
 		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
 			FeatureEntry entry = (FeatureEntry) iterator.next();
@@ -483,7 +485,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 		String pluginId = attributes.getValue(ID);
 		String pluginVersion = attributes.getValue(VERSION);
 
-		FeatureEntry entry = new FeatureEntry(pluginId, pluginVersion != null ? "0.0.0" : pluginVersion, true); //$NON-NLS-1$
+		FeatureEntry entry = new FeatureEntry(pluginId, pluginVersion != null ? pluginVersion : GENERIC_VERSION_NUMBER, true);
 		entry.setFragment(Boolean.valueOf(fragment).booleanValue());
 		entries.add(entry);
 	}
@@ -493,7 +495,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 			entries = new ArrayList();
 		String featureId = attributes.getValue(ID);
 		String featureVersion = attributes.getValue(VERSION);
-		entries.add(new FeatureEntry(featureId, featureVersion != null ? featureVersion : "0.0.0", false)); //$NON-NLS-1$
+		entries.add(new FeatureEntry(featureId, featureVersion != null ? featureVersion : GENERIC_VERSION_NUMBER, false));
 	}
 
 	private void processProduct(Attributes attributes) {
