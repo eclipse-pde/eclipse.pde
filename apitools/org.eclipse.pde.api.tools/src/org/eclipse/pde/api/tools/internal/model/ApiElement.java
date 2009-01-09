@@ -42,7 +42,7 @@ public abstract class ApiElement implements IApiElement {
 		fName = name;
 	}
 	
-   /**
+	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getAncestor(int)
 	 */
 	public IApiElement getAncestor(int ancestorType) {
