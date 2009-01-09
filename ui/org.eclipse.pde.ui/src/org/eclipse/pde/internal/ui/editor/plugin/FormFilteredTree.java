@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
@@ -39,30 +38,8 @@ public class FormFilteredTree extends FilteredTree {
 		GridLayout layout = FormLayoutFactory.createClearGridLayout(false, 1);
 		// Space between filter text field and tree viewer
 		layout.verticalSpacing = 3;
+		super.createControl(parent, treeStyle);
 		setLayout(layout);
-		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		if (showFilterControls) {
-			filterComposite = new Composite(this, SWT.BORDER);
-			GridLayout filterLayout = new GridLayout(2, false);
-			filterLayout.marginHeight = 0;
-			filterLayout.marginWidth = 0;
-			filterLayout.horizontalSpacing = 5;
-			filterComposite.setLayout(filterLayout);
-			filterComposite.setFont(parent.getFont());
-			createFilterControls(filterComposite);
-			filterComposite.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-
-		}
-
-		treeComposite = new Composite(this, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		treeComposite.setLayout(layout);
-		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		treeComposite.setLayoutData(data);
-		createTreeControl(treeComposite, treeStyle);
 	}
 
 	/* (non-Javadoc)
@@ -80,7 +57,12 @@ public class FormFilteredTree extends FilteredTree {
 		int borderStyle = toolkit.getBorderStyle();
 
 		toolkit.setBorderStyle(SWT.NONE); // we don't want Forms border around tree filter
-		fEntryFilter = new FormEntry(parent, toolkit, null, SWT.SINGLE);
+
+		Text temp = super.doCreateFilterText(parent);
+		int style = temp.getStyle();
+		temp.dispose();
+
+		fEntryFilter = new FormEntry(parent, toolkit, null, style);
 		toolkit.setBorderStyle(borderStyle); // restore Forms border settings
 
 		setBackground(toolkit.getColors().getBackground());
