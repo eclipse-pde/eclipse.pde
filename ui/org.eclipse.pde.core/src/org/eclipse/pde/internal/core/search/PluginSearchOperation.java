@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,34 +12,23 @@ package org.eclipse.pde.internal.core.search;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
-
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 
 public class PluginSearchOperation {
 	protected PluginSearchInput fInput;
-	private IPluginSearchResultCollector fCollector;
+	private ISearchResultCollector fCollector;
 	private Pattern fPattern;
 
-	public PluginSearchOperation(PluginSearchInput input, IPluginSearchResultCollector collector) {
+	public PluginSearchOperation(PluginSearchInput input, ISearchResultCollector collector) {
 		this.fInput = input;
 		this.fCollector = collector;
-		collector.setOperation(this);
 		this.fPattern = PatternConstructor.createPattern(input.getSearchString(), input.isCaseSensitive());
 	}
 
 	public void execute(IProgressMonitor monitor) {
 		IPluginModelBase[] entries = fInput.getSearchScope().getMatchingModels();
-		fCollector.searchStarted();
-		fCollector.setProgressMonitor(monitor);
 		monitor.beginTask("", entries.length); //$NON-NLS-1$
 
 		try {
@@ -50,14 +39,13 @@ public class PluginSearchOperation {
 			}
 		} finally {
 			monitor.done();
-			fCollector.done();
 		}
 	}
 
 	private void visit(IPluginModelBase model) {
 		ArrayList matches = findMatch(model);
 		for (int i = 0; i < matches.size(); i++) {
-			fCollector.accept((IPluginObject) matches.get(i));
+			fCollector.accept(matches.get(i));
 		}
 	}
 
