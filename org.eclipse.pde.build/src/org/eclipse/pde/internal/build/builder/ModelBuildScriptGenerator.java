@@ -562,12 +562,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		for (Iterator iterator = classpathEntries.iterator(); iterator.hasNext();) {
 			String entry = (String) iterator.next();
-			if (binaryFolders.length() > 0)
-				binaryFolders.append(File.pathSeparator);
-			if (entry.equals(EXPANDED_DOT))
-				binaryFolders.append(target);
-			else
-				binaryFolders.append(target + '/' + entry);
+			if (entry.equals(EXPANDED_DOT) || new File(model.getLocation(), entry).exists()) {
+				if (binaryFolders.length() > 0)
+					binaryFolders.append(File.pathSeparator);
+				if (entry.equals(EXPANDED_DOT))
+					binaryFolders.append(model.getLocation());
+				else {
+					binaryFolders.append(model.getLocation() + '/' + entry);
+				}
+			}
 		}
 		Map params = new HashMap();
 		params.put(PROPERTY_PROJECT_NAME, Utils.getPropertyFormat(PROPERTY_BUNDLE_ID) + "_" + Utils.getPropertyFormat(PROPERTY_BUNDLE_VERSION)); //$NON-NLS-1$
