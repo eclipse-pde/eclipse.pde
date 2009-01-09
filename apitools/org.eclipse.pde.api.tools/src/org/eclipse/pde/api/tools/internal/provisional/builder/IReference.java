@@ -45,11 +45,11 @@ public interface IReference {
 	 * @return member where the reference exists
 	 */
 	public IApiMember getMember();
-	
+
 	/**
-	 * Returns the specific kind of reference that was made.
-	 * See {@link org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers}
-	 *  
+	 * Returns the specific kind of reference that was made. See
+	 * {@link ReferenceModifiers}
+	 * 
 	 * @return reference kind - one of the reference modifiers
 	 */
 	public int getReferenceKind();
@@ -94,5 +94,4 @@ public interface IReference {
 	 * @return resolved reference or <code>null</code>
 	 */
 	public IApiMember getResolvedReference();
-
 }
