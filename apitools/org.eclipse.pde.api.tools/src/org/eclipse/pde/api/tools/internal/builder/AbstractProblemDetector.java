@@ -103,6 +103,9 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			IDocument document = Util.getDocument(compilationUnit);
 			// retrieve line number, char start and char end
 			int lineNumber = reference.getLineNumber();
+			if (lineNumber > 0) {
+				lineNumber--;
+			}
 			int charStart = -1;
 			int charEnd = -1;
 			// get the source range for the problem
@@ -583,6 +586,9 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 */
 	protected IApiProblem createProblem(IReference reference) throws CoreException {
 		int lineNumber = reference.getLineNumber();
+		if (lineNumber > 0) {
+			lineNumber--;
+		}
 		String ltypename = getTypeName(reference.getMember());
 		return ApiProblemFactory.newApiUsageProblem(
 				null,

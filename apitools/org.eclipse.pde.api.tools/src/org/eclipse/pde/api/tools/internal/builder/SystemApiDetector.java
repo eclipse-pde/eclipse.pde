@@ -296,7 +296,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					return pos;
 				}
 			}
-			case IApiElement.FIELD : {
+			case Reference.T_FIELD_REFERENCE : {
 				int linenumber = reference.getLineNumber();
 				if (linenumber > 0) {
 					return getFieldNameRange(reference.getReferencedTypeName(), reference.getReferencedMemberName(), document, reference);
@@ -305,7 +305,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 				IApiField field = (IApiField) reference.getMember();
 				return getSourceRangeForField(type, reference, field);
 			}
-			case IApiElement.METHOD : {
+			case Reference.T_METHOD_REFERENCE : {
 				if (reference.getLineNumber() >= 0) {
 					String referenceMemberName = reference.getReferencedMemberName();
 					String methodName = null;
