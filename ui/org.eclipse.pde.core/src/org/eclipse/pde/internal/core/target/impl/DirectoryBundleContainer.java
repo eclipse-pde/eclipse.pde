@@ -17,8 +17,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.spi.RegistryContributor;
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.pluginconversion.PluginConverter;
@@ -26,7 +24,6 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
@@ -35,7 +32,7 @@ import org.osgi.framework.Constants;
  * 
  * @since 3.5
  */
-class DirectoryBundleContainer implements IBundleContainer {
+class DirectoryBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Path to this container's directory in the local file system.
@@ -44,17 +41,24 @@ class DirectoryBundleContainer implements IBundleContainer {
 	private String fPath;
 
 	/**
-	 * A registry can be build to identify old school source bundles.
+	 * A registry can be built to identify old school source bundles.
 	 */
 	private IExtensionRegistry fRegistry;
 
 	/**
 	 * Constructs a directory bundle container at the given location.
 	 * 
-	 * @param path directory location in the local file system
+	 * @param path directory location in the local file system, may contain string substitution variables
 	 */
 	public DirectoryBundleContainer(String path) {
 		fPath = path;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getHomeLocation()
+	 */
+	public String getHomeLocation() throws CoreException {
+		return getDirectory().toString();
 	}
 
 	/* (non-Javadoc)
@@ -130,7 +134,7 @@ class DirectoryBundleContainer implements IBundleContainer {
 				}
 			}
 		}
-		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_1, fPath)));
+		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
 	}
 
 	/**
@@ -196,9 +200,7 @@ class DirectoryBundleContainer implements IBundleContainer {
 	 * @return directory if unable to resolve variables in the path
 	 */
 	protected File getDirectory() throws CoreException {
-		String path = fPath;
-		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-		path = manager.performStringSubstitution(fPath);
+		String path = resolveVariables(fPath);
 		return new File(path);
 	}
 

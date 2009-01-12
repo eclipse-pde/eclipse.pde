@@ -10,23 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Preferences;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
@@ -37,11 +24,13 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 public class ExternalFeatureModelManager implements Preferences.IPropertyChangeListener {
 
 	/**
+	 * Creates a feature model for the feature based on the given feature XML
+	 * file.
 	 * 
-	 * @param manifest
+	 * @param manifest feature XML file in the local file system
 	 * @return ExternalFeatureModel or null
 	 */
-	private static IFeatureModel createModel(File manifest) {
+	public static IFeatureModel createModel(File manifest) {
 		ExternalFeatureModel model = new ExternalFeatureModel();
 		model.setInstallLocation(manifest.getParent());
 		InputStream stream = null;

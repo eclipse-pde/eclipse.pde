@@ -113,4 +113,11 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newFeatureContainer(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public IBundleContainer newFeatureContainer(String home, String id, String version) {
+		return new FeatureBundleContainer(home, id, version);
+	}
+
 }

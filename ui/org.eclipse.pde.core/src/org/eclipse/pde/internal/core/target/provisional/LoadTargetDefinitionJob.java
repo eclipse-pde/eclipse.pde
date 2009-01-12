@@ -1,0 +1,327 @@
+/*******************************************************************************
+ * Copyright (c) 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.internal.core.target.provisional;
+
+import org.eclipse.pde.internal.core.target.impl.Messages;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
+import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
+
+/**
+ * Sets the current target platform based on a target definition.
+ * 
+ * @since 3.5
+ */
+public class LoadTargetDefinitionJob extends WorkspaceJob {
+
+	/**
+	 * Target definition being loaded
+	 */
+	private ITargetDefinition fTarget;
+
+	/**
+	 * Constructs a new operation to load the specified target definition
+	 * as the current target platform.
+	 * 
+	 * @param target target definition
+	 */
+	public LoadTargetDefinitionJob(ITargetDefinition target) {
+		super(Messages.LoadTargetDefinitionJob_0);
+		fTarget = target;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+		try {
+			Preferences preferences = PDECore.getDefault().getPluginPreferences();
+			monitor.beginTask(Messages.LoadTargetOperation_mainTaskName, 100);
+			loadEnvironment(preferences, new SubProgressMonitor(monitor, 5));
+			loadArgs(preferences, new SubProgressMonitor(monitor, 5));
+			loadJRE(preferences, new SubProgressMonitor(monitor, 15));
+			loadImplicitPlugins(preferences, new SubProgressMonitor(monitor, 15));
+			loadPlugins(preferences, new SubProgressMonitor(monitor, 60));
+			loadAdditionalPreferences(preferences);
+			PDECore.getDefault().savePluginPreferences();
+		} finally {
+			monitor.done();
+		}
+		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Configures program and VM argument preferences based on the target
+	 * definition.
+	 * 
+	 * @param pref preference store
+	 * @param monitor progress monitor
+	 */
+	private void loadArgs(Preferences pref, IProgressMonitor monitor) {
+		monitor.beginTask(Messages.LoadTargetOperation_argsTaskName, 2);
+		String args = fTarget.getProgramArguments();
+		pref.setValue(ICoreConstants.PROGRAM_ARGS, (args != null) ? args : ""); //$NON-NLS-1$
+		monitor.worked(1);
+		args = fTarget.getVMArguments();
+		pref.setValue(ICoreConstants.VM_ARGS, (args != null) ? args : ""); //$NON-NLS-1$
+		monitor.done();
+	}
+
+	/**
+	 * Configures the environment preferences from the target definition.
+	 * 
+	 * @param pref preference store
+	 * @param monitor progress monitor
+	 */
+	private void loadEnvironment(Preferences pref, IProgressMonitor monitor) {
+		monitor.beginTask(Messages.LoadTargetOperation_envTaskName, 1);
+		setEnvironmentPref(pref, ICoreConstants.ARCH, fTarget.getArch());
+		setEnvironmentPref(pref, ICoreConstants.NL, fTarget.getNL());
+		setEnvironmentPref(pref, ICoreConstants.OS, fTarget.getOS());
+		setEnvironmentPref(pref, ICoreConstants.WS, fTarget.getWS());
+		monitor.done();
+	}
+
+	/**
+	 * Sets the given preference to default when <code>null</code> or the
+	 * specified value.
+	 * 
+	 * @param pref preference store
+	 * @param key preference key
+	 * @param value preference value or <code>null</code>
+	 */
+	private void setEnvironmentPref(Preferences pref, String key, String value) {
+		if (value == null) {
+			pref.setToDefault(key);
+		} else {
+			pref.setValue(key, value);
+		}
+	}
+
+	/**
+	 * Sets the workspace default JRE based on the target's execution environment.
+	 * <p>
+	 * This is a hold over from the old target definition files where a specific
+	 * JRE could be specified. It seems wrong to be changing the workspace default
+	 * JRE as a side effect of this operation, but we do it for backwards compatibility.
+	 * </p> 
+	 * @param pref
+	 * @param monitor
+	 */
+	private void loadJRE(Preferences pref, IProgressMonitor monitor) {
+		String id = fTarget.getExecutionEnvironment();
+		monitor.beginTask(Messages.LoadTargetOperation_jreTaskName, 1);
+		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+		IExecutionEnvironment environment = manager.getEnvironment(id);
+		if (environment != null) {
+			IVMInstall jre = environment.getDefaultVM();
+			if (jre != null) {
+				IVMInstall[] vms = environment.getCompatibleVMs();
+				for (int i = 0; i < vms.length; i++) {
+					IVMInstall vm = vms[i];
+					if (environment.isStrictlyCompatible(vm)) {
+						jre = vm;
+						break;
+					}
+				}
+				if (jre == null && vms.length > 0) {
+					jre = vms[0];
+				}
+			}
+			IVMInstall def = JavaRuntime.getDefaultVMInstall();
+			if (def != null && !jre.equals(def))
+				try {
+					JavaRuntime.setDefaultVMInstall(jre, null);
+				} catch (CoreException e) {
+				}
+		}
+		monitor.done();
+	}
+
+	/**
+	 * TODO: we don't currently have implicit plug-ins in the new model.
+	 * 
+	 * @param pref
+	 * @param monitor
+	 */
+	private void loadImplicitPlugins(Preferences pref, IProgressMonitor monitor) {
+		IImplicitDependenciesInfo info = null;
+		if (info != null) {
+			ITargetPlugin[] plugins = info.getPlugins();
+			monitor.beginTask(Messages.LoadTargetOperation_implicitPluginsTaskName, plugins.length + 1);
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < plugins.length; i++) {
+				buffer.append(plugins[i].getId()).append(',');
+				monitor.worked(1);
+			}
+			if (plugins.length > 0)
+				buffer.setLength(buffer.length() - 1);
+			pref.setValue(ICoreConstants.IMPLICIT_DEPENDENCIES, buffer.toString());
+		}
+		monitor.done();
+	}
+
+	/**
+	 * Resolves the bundles in the target platform and sets them in the corresponding
+	 * CHECKED_PLUGINS preference. Sets home and addition location preferences as well.
+	 * 
+	 * @param pref
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	private void loadPlugins(Preferences pref, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask(Messages.LoadTargetOperation_loadPluginsTaskName, 100);
+		String currentPath = pref.getString(ICoreConstants.PLATFORM_PATH);
+		IBundleContainer[] containers = fTarget.getBundleContainers();
+		// the first container is assumed to be the primary/home location
+		String path = null;
+		if (containers != null && containers.length > 0) {
+			path = containers[0].getHomeLocation();
+		}
+		if (path == null) {
+			path = TargetPlatform.getDefaultLocation();
+		} else {
+			try {
+				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+				path = manager.performStringSubstitution(path);
+			} catch (CoreException e) {
+				return;
+			}
+		}
+		monitor.worked(10);
+		List additional = getAdditionalLocs();
+		handleReload(path, additional, pref, new SubProgressMonitor(monitor, 85));
+
+		// update preferences (Note: some preferences updated in handleReload())
+		pref.setValue(ICoreConstants.PLATFORM_PATH, path);
+		String mode = new Path(path).equals(new Path(TargetPlatform.getDefaultLocation())) ? ICoreConstants.VALUE_USE_THIS : ICoreConstants.VALUE_USE_OTHER;
+		pref.setValue(ICoreConstants.TARGET_MODE, mode);
+
+		ListIterator li = additional.listIterator();
+		StringBuffer buffer = new StringBuffer();
+		while (li.hasNext())
+			buffer.append(li.next()).append(","); //$NON-NLS-1$
+		if (buffer.length() > 0)
+			buffer.setLength(buffer.length() - 1);
+		pref.setValue(ICoreConstants.ADDITIONAL_LOCATIONS, buffer.toString());
+
+		String newValue = currentPath;
+		for (int i = 0; i < 4; i++) {
+			String value = pref.getString(ICoreConstants.SAVED_PLATFORM + i);
+			pref.setValue(ICoreConstants.SAVED_PLATFORM + i, newValue);
+			if (!value.equals(currentPath))
+				newValue = value;
+			else
+				break;
+		}
+		monitor.done();
+	}
+
+	/**
+	 * Sets the TARGET_PROFILE preference which stores the ID of the target profile used 
+	 * (if based on an target extension) or the workspace location of the file that
+	 * was used.
+	 * <p>
+	 * For now we just clear it.
+	 * </p>
+	 * @param pref
+	 */
+	private void loadAdditionalPreferences(Preferences pref) {
+		pref.setValue(ICoreConstants.TARGET_PROFILE, ""); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns a list of additional locations of bundles.
+	 * 
+	 * @return additional bundle locations
+	 */
+	private List getAdditionalLocs() throws CoreException {
+		ArrayList additional = new ArrayList();
+		// secondary containers are considered additional
+		IBundleContainer[] containers = fTarget.getBundleContainers();
+		if (containers != null && containers.length > 1) {
+			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+			for (int i = 1; i < containers.length; i++) {
+				try {
+					additional.add(manager.performStringSubstitution(containers[i].getHomeLocation()));
+				} catch (CoreException e) {
+					additional.add(containers[i].getHomeLocation());
+				}
+			}
+		}
+		return additional;
+	}
+
+	private void handleReload(String targetLocation, List additionalLocations, Preferences pref, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask(Messages.LoadTargetOperation_reloadTaskName, 85);
+
+		List infos = new ArrayList();
+		BundleInfo[] code = fTarget.resolveBundles(null);
+		for (int i = 0; i < code.length; i++) {
+			infos.add(code[i]);
+		}
+		// to be consistent with previous implementation, add source bundles
+		BundleInfo[] sourceBundles = fTarget.resolveSourceBundles(null);
+		for (int i = 0; i < sourceBundles.length; i++) {
+			infos.add(sourceBundles[i]);
+		}
+		BundleInfo[] bundles = (BundleInfo[]) infos.toArray(new BundleInfo[infos.size()]);
+		// generate URLs and save CHECKED_PLUGINS
+		StringBuffer checked = new StringBuffer();
+
+		URL[] paths = new URL[bundles.length];
+		for (int i = 0; i < paths.length; i++) {
+			try {
+				paths[i] = new File(bundles[i].getLocation()).toURL();
+				if (i > 0) {
+					checked.append(" "); //$NON-NLS-1$
+				}
+				checked.append(bundles[i].getSymbolicName());
+			} catch (MalformedURLException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LoadTargetDefinitionJob_1, e));
+			}
+		}
+
+		PDEState state = new PDEState(paths, true, new SubProgressMonitor(monitor, 45));
+		// save CHECKED_PLUGINS
+		if (paths.length == 0) {
+			pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
+		} else {
+			pref.setValue(ICoreConstants.CHECKED_PLUGINS, checked.toString());
+		}
+
+		Job job = new TargetPlatformResetJob(state);
+		job.schedule();
+		try {
+			job.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+		}
+		monitor.done();
+	}
+
+}

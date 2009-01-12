@@ -80,7 +80,7 @@ public interface ITargetPlatformService {
 
 	/**
 	 * Creates and returns a bundle container that contains all bundles in the
-	 * specified directory.
+	 * specified directory which may contain string substitution variables.
 	 * 
 	 * @param path absolute path in the local file system, may contain string variables
 	 * @return bundle container
@@ -90,19 +90,38 @@ public interface ITargetPlatformService {
 	/**
 	 * Creates and returns a bundle container that contains all bundles installed in
 	 * a profile at the specified location with a default configuration area.
+	 * The specified home location may contain string substitution variables.
 	 * 
 	 * @param home absolute path in the local file system to the root of an installed profile
+	 * 	which may contain string substitution variables
 	 * @return bundle container
 	 */
 	public IBundleContainer newProfileContainer(String home);
 
 	/**
+	 * Creates and returns a bundle container that contains all bundles referenced by
+	 * the feature at the specified location. The location is the directory that defines
+	 * the feature.
+	 * 
+	 * @param home installation location containing a features directory which may contain
+	 *  string substitution variables
+	 * @param featureId feature symbolic name
+	 * @param version feature version identifier or <code>null</code> to use most recent available
+	 * @return bundle container
+	 */
+	public IBundleContainer newFeatureContainer(String home, String featureId, String version);
+
+	/**
 	 * Creates and returns a bundle container that contains all bundles installed in
 	 * a profile at the specified location with the specified configuration area.
+	 * The specified home location and configuration location may contain string substitution
+	 * variables.
 	 * 
 	 * @param home absolute path in the local file system to the root of an installed profile
+	 * 	which may contain string substitution variables
 	 * @param configurationLocation absolute path in the local file system to the
-	 *  configuration area for the specified installation
+	 *  configuration area for the specified installation which may contain string substitution
+	 *  variables
 	 * @return bundle container
 	 */
 	public IBundleContainer newProfileContainer(String home, String configurationLocation);

@@ -199,9 +199,11 @@ class TargetDefinition implements ITargetDefinition {
 	public BundleInfo[] resolveBundles(IProgressMonitor monitor) throws CoreException {
 		IBundleContainer[] containers = getBundleContainers();
 		List bundles = new ArrayList();
-		for (int i = 0; i < containers.length; i++) {
-			BundleInfo[] infos = containers[i].resolveBundles(monitor);
-			bundles.addAll(Arrays.asList(infos));
+		if (containers != null) {
+			for (int i = 0; i < containers.length; i++) {
+				BundleInfo[] infos = containers[i].resolveBundles(monitor);
+				bundles.addAll(Arrays.asList(infos));
+			}
 		}
 		return (BundleInfo[]) bundles.toArray(new BundleInfo[bundles.size()]);
 	}
@@ -212,9 +214,11 @@ class TargetDefinition implements ITargetDefinition {
 	public BundleInfo[] resolveSourceBundles(IProgressMonitor monitor) throws CoreException {
 		IBundleContainer[] containers = getBundleContainers();
 		List source = new ArrayList();
-		for (int i = 0; i < containers.length; i++) {
-			BundleInfo[] infos = containers[i].resolveSourceBundles(monitor);
-			source.addAll(Arrays.asList(infos));
+		if (containers != null) {
+			for (int i = 0; i < containers.length; i++) {
+				BundleInfo[] infos = containers[i].resolveSourceBundles(monitor);
+				source.addAll(Arrays.asList(infos));
+			}
 		}
 		return (BundleInfo[]) source.toArray(new BundleInfo[source.size()]);
 	}
