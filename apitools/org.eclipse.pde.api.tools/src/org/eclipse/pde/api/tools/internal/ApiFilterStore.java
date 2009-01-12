@@ -422,7 +422,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	}
 
 	/**
-	 * Initializes the backing filter map for this store from the .aip_filters file. Does nothing if the filter store has already been
+	 * Initializes the backing filter map for this store from the .api_filters file. Does nothing if the filter store has already been
 	 * initialized.
 	 */
 	private void initializeApiFilters() {
