@@ -672,7 +672,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String includeSet = replaceVariables(Utils.getStringFromArray(splitIncludes, ","), true); //$NON-NLS-1$
 			if (includeSet != null && includeSet.length() > 0) {
 				FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, includeSet, null, replaceVariables(exclude, true), null, null);
-				script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
+				script.printCopyTask(null, root, new FileSet[] {fileSet}, true, true);
 			}
 		}
 

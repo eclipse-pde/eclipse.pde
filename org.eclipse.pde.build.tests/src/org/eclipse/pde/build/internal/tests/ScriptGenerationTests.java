@@ -11,8 +11,7 @@ package org.eclipse.pde.build.internal.tests;
 
 import java.io.*;
 import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
+import java.util.jar.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -871,10 +870,10 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder f1 = Utils.createFolder(buildFolder, "features/F1");
 		Utils.generateFeature(buildFolder, "F1", new String[] {"F2"}, new String[] {"P1"});
 		Utils.generateFeature(buildFolder, "F2", null, new String[] {"P2"});
-		
+
 		Utils.generateBundle(p1, "P1");
 		Utils.writeBuffer(p1.getFile("src/a.java"), new StringBuffer("class A implements foo {}"));
-		
+
 		Utils.generateBundle(p2, "P2");
 		Utils.writeBuffer(p2.getFile("src/b.java"), new StringBuffer("class B implements foo {}"));
 
@@ -890,29 +889,29 @@ public class ScriptGenerationTests extends PDETestCase {
 		entries.add("plugins/P2_1.0.0/@dot.log");
 		assertZipContents(f1, "F1_1.0.0.log.zip", entries);
 	}
-	
+
 	public void testBug239843_1() throws Exception {
 		IFolder buildFolder = newTest("239843_1");
-		
+
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
 		Attributes additionalAttributes = new Attributes();
 		additionalAttributes = new Attributes();
 		additionalAttributes.put(new Attributes.Name("Import-Package"), "org.xml.sax");
 		Utils.generateBundleManifest(a, "a", "1.0.0", additionalAttributes);
-		
+
 		//1: without any particular profiles defined in build.properties, default to largest (1.6?) which does contain org.xml.sax
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
-		buildProperties.put("baseLocation", " " );
+		buildProperties.put("baseLocation", " ");
 		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.osgi")).getAbsolutePath());
 		generateScripts(buildFolder, buildProperties);
-		
+
 		//2: define CDC-1.1/Foundation-1.1, expect failure since that profile doesn't have org.xml.sax
 		buildProperties.put("CDC-1.1/Foundation-1.1", "somejar.jar");
 		try {
 			generateScripts(buildFolder, buildProperties);
 			fail("Script generation expected to fail.");
 		} catch (Exception e) {
-			assertTrue(e.getMessage().indexOf("Unable to find element: a") > -1 );
+			assertTrue(e.getMessage().indexOf("Unable to find element: a") > -1);
 		}
 
 		//3: add a bundle exporting xml.sax, expect success
@@ -921,10 +920,10 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateBundleManifest(xml, "org.xml", "1.0.0", additionalAttributes);
 		generateScripts(buildFolder, buildProperties);
 	}
-	
+
 	public void testBug239843_2() throws Exception {
 		IFolder buildFolder = newTest("239843_2");
-		
+
 		//custom profile contributed, without profile.list, in a folder
 		IFolder custom = Utils.createFolder(buildFolder, "plugins/custom");
 		Utils.generateBundle(custom, "custom");
@@ -933,35 +932,35 @@ public class ScriptGenerationTests extends PDETestCase {
 		buffer.append("org.osgi.framework.bootdelegation = org.my.package\n");
 		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.2\n");
 		Utils.writeBuffer(custom.getFile("my.profile"), buffer);
-		
+
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
 		Attributes additionalAttributes = new Attributes();
 		additionalAttributes = new Attributes();
 		additionalAttributes.put(new Attributes.Name("Import-Package"), "org.my.package");
 		Utils.generateBundleManifest(a, "a", "1.0.0", additionalAttributes);
-		
+
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
-		buildProperties.put("baseLocation", " " );
+		buildProperties.put("baseLocation", " ");
 		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.osgi")).getAbsolutePath());
 		buildProperties.put("customEESources", custom.getLocation().toOSString());
 		buildProperties.put("MyCustomProfile", "someLibrary.jar");
 		generateScripts(buildFolder, buildProperties);
 	}
-	
+
 	public void testBug239843_3() throws Exception {
 		IFolder buildFolder = newTest("239843_3");
-		
+
 		//custom profile contributed, with profile.list, in a jar
 		IFolder custom = Utils.createFolder(buildFolder, "plugins/custom");
 		Utils.generateBundle(custom, "custom");
-		
+
 		StringBuffer buffer = new StringBuffer("osgi.java.profile.name=MyCustomProfile\n");
 		buffer.append("org.osgi.framework.system.packages=org.my.package\n");
 		buffer.append("org.osgi.framework.bootdelegation = org.my.package\n");
 		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.2\n");
 		Utils.writeBuffer(custom.getFile("profiles/my.profile"), buffer);
 		Utils.writeBuffer(custom.getFile("profile.list"), new StringBuffer("java.profiles=profiles/my.profile\n"));
-		
+
 		ZipOutputStream jar = new ZipOutputStream(new FileOutputStream(new File(custom.getLocation().toOSString() + ".jar")));
 		jar.putNextEntry(new ZipEntry(JarFile.MANIFEST_NAME));
 		Utils.transferStreams(custom.getFile(JarFile.MANIFEST_NAME).getContents(), true, jar, false);
@@ -970,23 +969,23 @@ public class ScriptGenerationTests extends PDETestCase {
 		jar.putNextEntry(new ZipEntry("profiles/my.profile"));
 		Utils.transferStreams(custom.getFile("profiles/my.profile").getContents(), true, jar, false);
 		jar.close();
-		
+
 		custom.delete(true, null);
-		
+
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
 		Attributes additionalAttributes = new Attributes();
 		additionalAttributes = new Attributes();
 		additionalAttributes.put(new Attributes.Name("Import-Package"), "org.my.package");
 		Utils.generateBundleManifest(a, "a", "1.0.0", additionalAttributes);
-		
+
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
-		buildProperties.put("baseLocation", " " );
+		buildProperties.put("baseLocation", " ");
 		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.osgi")).getAbsolutePath());
 		buildProperties.put("customEESources", custom.getLocation().toOSString() + ".jar");
 		buildProperties.put("MyCustomProfile", "someLibrary.jar");
 		generateScripts(buildFolder, buildProperties);
 	}
-	
+
 	public void testRootFiles_1() throws Exception {
 		IFolder buildFolder = newTest("RootFiles_1");
 		IFolder f = Utils.createFolder(buildFolder, "features/F");
@@ -997,20 +996,20 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("root.win32.win32.x86", "file:3");
 		properties.put("root.win32.win32.x86.folder.other", "file:4, other");
 		Utils.storeBuildProperties(f, properties);
-		
+
 		Utils.writeBuffer(f.getFile("1"), new StringBuffer("1"));
 		Utils.writeBuffer(f.getFile("2"), new StringBuffer("2"));
 		Utils.writeBuffer(f.getFile("3"), new StringBuffer("3"));
 		Utils.writeBuffer(f.getFile("4"), new StringBuffer("4"));
 		Utils.writeBuffer(f.getFile("dir/5"), new StringBuffer("5"));
 		Utils.writeBuffer(f.getFile("other/6"), new StringBuffer("6"));
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "F");
 		properties.put("configs", "*,*,* & win32,win32,x86");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-		
+
 		Set zipEntries = new HashSet();
 		zipEntries.add("eclipse/1");
 		zipEntries.add("eclipse/sub/2");
@@ -1019,17 +1018,17 @@ public class ScriptGenerationTests extends PDETestCase {
 		zipEntries.add("eclipse/5");
 		zipEntries.add("eclipse/other/6");
 		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild-win32.win32.x86.zip", zipEntries);
-		
+
 		zipEntries.clear();
 		zipEntries.add("eclipse/1");
 		zipEntries.add("eclipse/sub/2");
 		zipEntries.add("eclipse/5");
 		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild.zip", zipEntries);
 	}
-	
+
 	public void testBug256787() throws Exception {
 		IFolder buildFolder = newTest("256787");
-		
+
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<project name=\"test\" basedir=\".\">   \n");
 		buffer.append("   <target name=\"main\">               \n");
@@ -1038,11 +1037,35 @@ public class ScriptGenerationTests extends PDETestCase {
 		buffer.append("\" version=\"3.5.0.v20081125\" />       \n");
 		buffer.append("   </target>                            \n");
 		buffer.append("</project>                              \n");
-		
+
 		IFile xml = buildFolder.getFile("build.xml");
 		Utils.writeBuffer(xml, buffer);
-		
+
 		runAntScript(xml.getLocation().toOSString(), new String[] {"main"}, buildFolder.getLocation().toOSString(), null);
 		assertLogContainsLine(buildFolder.getFile("META-INF/MANIFEST.MF"), "Bundle-RequiredExecutionEnvironment: J2SE-1.4");
+	}
+
+	public void testBug260634() throws Exception {
+		IFolder buildFolder = newTest("260634");
+
+		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
+		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("public class A { int i;}"));
+		Utils.generateBundleManifest(bundle, "bundle", "1.0.0", null);
+		Utils.generatePluginBuildProperties(bundle, null);
+		Utils.writeBuffer(bundle.getFile("src/META-INF/MANIFEST.MF"), new StringBuffer("Manifest-Version: 1.0\n"));
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle"));
+		String buildXMLPath = bundle.getFile("build.xml").getLocation().toOSString();
+		runAntScript(buildXMLPath, new String[] {"build.update.jar"}, buildFolder.getLocation().toOSString(), null);
+
+		assertResourceFile(bundle, "bundle_1.0.0.jar");
+		JarFile jar = null;
+		try {
+			jar = new JarFile(bundle.getFile("bundle_1.0.0.jar").getLocation().toFile());
+			Manifest manifest = jar.getManifest();
+			assertEquals(manifest.getMainAttributes().getValue("Bundle-SymbolicName"), "bundle");
+		} finally {
+			jar.close();
+		}
 	}
 }
