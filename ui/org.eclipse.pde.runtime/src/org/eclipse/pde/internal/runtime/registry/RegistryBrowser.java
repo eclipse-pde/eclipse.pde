@@ -514,7 +514,7 @@ public class RegistryBrowser extends ViewPart {
 				total = model.getBundles().length;
 				break;
 			case EXTENSION_REGISTRY :
-				type = PDERuntimeMessages.RegistryView_folders_extensionPoints;
+				type = PDERuntimeMessages.RegistryBrowser_extensionPoints;
 				total = model.getExtensionPoints().length;
 				break;
 			case SERVICES :

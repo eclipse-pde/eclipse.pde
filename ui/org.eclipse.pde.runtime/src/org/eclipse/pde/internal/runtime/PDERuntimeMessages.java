@@ -79,6 +79,8 @@ public class PDERuntimeMessages extends NLS {
 
 	public static String RegistryBrowser_ExtensionPoint;
 
+	public static String RegistryBrowser_extensionPoints;
+
 	public static String RegistryBrowser_GroupBy;
 
 	public static String RegistryBrowser_InitializingView;
