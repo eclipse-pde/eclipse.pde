@@ -12,8 +12,8 @@ package org.eclipse.pde.internal.runtime.registry;
 
 import java.util.Arrays;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.pde.internal.runtime.registry.model.*;
@@ -44,11 +44,9 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image fServiceImage;
 	private Image fPropertyImage;
 	private Image fServicePropertyImage;
-	private TreeViewer fViewer;
 	private RegistryBrowser fRegistryBrowser;
 
-	public RegistryBrowserLabelProvider(TreeViewer viewer, RegistryBrowser browser) {
-		fViewer = viewer;
+	public RegistryBrowserLabelProvider(RegistryBrowser browser) {
 		fRegistryBrowser = browser;
 		fPluginImage = PDERuntimePluginImages.DESC_PLUGIN_OBJ.createImage();
 		fReqPluginImage = PDERuntimePluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
@@ -194,6 +192,9 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			if (Attribute.F_LOCATION.equals(attr.getName())) {
 				return fLocationImage;
 			}
+			if (Attribute.F_BUNDLE.equals(attr.getName())) {
+				return fPluginImage;
+			}
 			return fGenericAttrImage;
 		}
 
@@ -246,7 +247,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			}
 		}
 		if (element instanceof Extension) {
-			if (((RegistryBrowserContentProvider) fViewer.getContentProvider()).isInExtensionSet) {
+			if (((RegistryBrowserContentProvider) fRegistryBrowser.getAdapter(IContentProvider.class)).isInExtensionSet) {
 				String name = ((Extension) element).getLabel();
 				String id = ((Extension) element).getExtensionPointUniqueIdentifier();
 				if (name != null && name.length() > 0)
@@ -285,6 +286,9 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		}
 		if (element instanceof Attribute) {
 			Attribute attribute = (Attribute) element;
+			if (Attribute.F_BUNDLE.equals(attribute.getName()))
+				return attribute.getValue();
+
 			return attribute.getName() + " = " + attribute.getValue(); //$NON-NLS-1$
 		}
 		if (element instanceof Property) {

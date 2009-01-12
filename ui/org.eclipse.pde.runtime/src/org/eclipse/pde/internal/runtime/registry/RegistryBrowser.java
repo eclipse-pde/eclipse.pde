@@ -71,6 +71,7 @@ public class RegistryBrowser extends ViewPart {
 	private ModelChangeListener listener;
 
 	private RegistryBrowserContentProvider fContentProvider;
+	private RegistryBrowserLabelProvider fLabelProvider;
 
 	// menus and action items
 	private Action fRefreshAction;
@@ -224,7 +225,8 @@ public class RegistryBrowser extends ViewPart {
 		fTreeViewer = fFilteredTree.getViewer();
 		fContentProvider = new RegistryBrowserContentProvider(this);
 		fTreeViewer.setContentProvider(fContentProvider);
-		fTreeViewer.setLabelProvider(new RegistryBrowserLabelProvider(fTreeViewer, this));
+		fLabelProvider = new RegistryBrowserLabelProvider(this);
+		fTreeViewer.setLabelProvider(fLabelProvider);
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -640,5 +642,17 @@ public class RegistryBrowser extends ViewPart {
 	void refresh(Object object) {
 		fTreeViewer.refresh(object);
 		updateTitle();
+	}
+
+	public Object getAdapter(Class clazz) {
+		if (ILabelProvider.class.equals(clazz)) {
+			return fLabelProvider;
+		}
+
+		if (IContentProvider.class.equals(clazz)) {
+			return fContentProvider;
+		}
+
+		return super.getAdapter(clazz);
 	}
 }

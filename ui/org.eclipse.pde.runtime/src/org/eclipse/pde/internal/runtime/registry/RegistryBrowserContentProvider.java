@@ -13,14 +13,12 @@ package org.eclipse.pde.internal.runtime.registry;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.runtime.registry.model.*;
 
 public class RegistryBrowserContentProvider implements ITreeContentProvider {
 
 	public boolean isInExtensionSet;
-	private boolean isInUsingBundles;
 
 	private RegistryBrowser fRegistryBrowser;
 
@@ -36,9 +34,6 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	}
 
 	public Object[] getChildren(Object element) {
-		if (isInUsingBundles && (!(element instanceof Bundle)))
-			isInUsingBundles = false;
-
 		if (element instanceof RegistryModel) {
 			RegistryModel model = (RegistryModel) element;
 
@@ -68,9 +63,6 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			if (fRegistryBrowser.getGroupBy() != RegistryBrowser.BUNDLES) // expands only in Bundles mode
 				return null;
 
-			if (isInUsingBundles) // avoid infinite nesting: Bundle->Services->UsingBundles->Bundle->Services...
-				return null;
-
 			Bundle bundle = (Bundle) element;
 
 			List folders = new ArrayList(7);
@@ -97,8 +89,17 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		if (element instanceof Folder) {
 			Folder folder = (Folder) element;
 			isInExtensionSet = folder.getId() == Folder.F_EXTENSIONS;
-			Object[] objs = ((Folder) element).getChildren();
-			isInUsingBundles = folder.getId() == Folder.F_USING_BUNDLES;
+			ModelObject[] objs = folder.getChildren();
+			if (folder.getId() == Folder.F_USING_BUNDLES) {
+				ModelObject[] result = new ModelObject[objs.length];
+				ILabelProvider labelProvider = (ILabelProvider) fRegistryBrowser.getAdapter(ILabelProvider.class);
+
+				for (int i = 0; i < objs.length; i++) {
+					result[i] = new Attribute(Attribute.F_BUNDLE, labelProvider.getText(objs[i]));
+				}
+
+				objs = result;
+			}
 			return objs;
 		}
 		if (element instanceof ConfigurationElement) {
