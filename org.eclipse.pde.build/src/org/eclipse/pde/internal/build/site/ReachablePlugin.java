@@ -11,8 +11,7 @@
 package org.eclipse.pde.internal.build.site;
 
 import org.eclipse.osgi.service.resolver.VersionRange;
-import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
@@ -21,13 +20,11 @@ import org.osgi.framework.Version;
  * With equal range width, R1 < R2 if R1.range.getMinimum() < R2.range.getMaximum()
  */
 public class ReachablePlugin implements Comparable {
-	private static final Version GENERIC_VERSION = new Version(IPDEBuildConstants.GENERIC_VERSION_NUMBER);
-	private static final Version MAX_VERSION = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
-	public static final VersionRange WIDEST_RANGE = new VersionRange(Version.emptyVersion, true, MAX_VERSION, true);
+	public static final VersionRange WIDEST_RANGE = VersionRange.emptyRange;
 	public static final VersionRange NARROWEST_RANGE = new VersionRange(Version.emptyVersion, true, Version.emptyVersion, false);
 
 	private final String id;
-	private VersionRange range;
+	private final VersionRange range;
 
 	public ReachablePlugin(String id, VersionRange range) {
 		this.id = id;
@@ -36,18 +33,7 @@ public class ReachablePlugin implements Comparable {
 
 	public ReachablePlugin(FeatureEntry entry) {
 		id = entry.getId();
-		Version version = new Version(entry.getVersion());
-		if (version.equals(GENERIC_VERSION)) {
-			range = WIDEST_RANGE;
-		} else if (version.getQualifier().endsWith(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) {
-			if (version.getMicro() == 0) {
-				range = new VersionRange(new Version(version.getMajor(), version.getMinor(), 0), true, new Version(version.getMajor(), version.getMinor() + 1, 0), false);
-			} else {
-				range = new VersionRange(new Version(version.getMajor(), version.getMinor(), version.getMicro()), true, new Version(version.getMajor(), version.getMinor(), version.getMicro() + 1), false);
-			}
-		} else {
-			range = new VersionRange(version, true, version, true);
-		}
+		range = Utils.createVersionRange(entry);
 	}
 
 	public String getId() {

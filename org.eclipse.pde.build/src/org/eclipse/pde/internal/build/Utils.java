@@ -104,6 +104,36 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return range;
 	}
 
+	public static VersionRange createVersionRange(FeatureEntry entry) {
+		String versionSpec = entry.getVersion();
+		if (versionSpec == null)
+			return VersionRange.emptyRange;
+
+		Version version = new Version(versionSpec);
+		if (version.equals(Version.emptyVersion))
+			return VersionRange.emptyRange;
+
+		String match = entry.getMatch();
+		if (!entry.isRequires() || match == null) {
+			return createVersionRange(versionSpec);
+		}
+
+		if (match.equals("perfect")) //$NON-NLS-1$
+			return new VersionRange(version, true, version, true);
+		if (match.equals("equivalent")) { //$NON-NLS-1$
+			Version upper = new Version(version.getMajor(), version.getMinor() + 1, 0);
+			return new VersionRange(version, true, upper, false);
+		}
+		if (match.equals("compatible")) { //$NON-NLS-1$
+			Version upper = new Version(version.getMajor() + 1, 0, 0);
+			return new VersionRange(version, true, upper, false);
+		}
+		if (match.equals("greaterOrEqual")) //$NON-NLS-1$
+			return new VersionRange(version, true, new VersionRange(null).getMaximum(), true);
+
+		return VersionRange.emptyRange;
+	}
+
 	private static String incrementQualifier(String qualifier) {
 		int idx = qualifier.length() - 1;
 

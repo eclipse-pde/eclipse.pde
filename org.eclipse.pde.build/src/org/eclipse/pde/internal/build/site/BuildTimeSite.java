@@ -377,43 +377,13 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 			FeatureEntry[] imports = toAnalyse.getImports();
 			for (int i = 0; i < imports.length; i++) {
 				if (!imports[i].isPlugin()) {
-					rootFeatures.add(findFeature(imports[i].getId(), getVersionRange(imports[i]), true));
+					rootFeatures.add(findFeature(imports[i].getId(), Utils.createVersionRange(imports[i]), true));
 				} else {
 					allPlugins.add(new ReachablePlugin(imports[i]));
 				}
 			}
 		}
 		return allPlugins;
-	}
-
-	private VersionRange getVersionRange(FeatureEntry entry) {
-		String versionSpec = entry.getVersion();
-		if (versionSpec == null)
-			return VersionRange.emptyRange;
-		Version version = new Version(versionSpec);
-		if (version.equals(Version.emptyVersion))
-			return VersionRange.emptyRange;
-		if (!entry.isRequires())
-			return new VersionRange(version, true, version, true);
-
-		String match = entry.getMatch();
-		if (match == null)
-			return VersionRange.emptyRange;
-
-		if (match.equals("perfect")) //$NON-NLS-1$
-			return new VersionRange(version, true, version, true);
-		if (match.equals("equivalent")) { //$NON-NLS-1$
-			Version upper = new Version(version.getMajor(), version.getMinor() + 1, 0);
-			return new VersionRange(version, true, upper, false);
-		}
-		if (match.equals("compatible")) { //$NON-NLS-1$
-			Version upper = new Version(version.getMajor() + 1, 0, 0);
-			return new VersionRange(version, true, upper, false);
-		}
-		if (match.equals("greaterOrEqual")) //$NON-NLS-1$
-			return new VersionRange(version, true, new VersionRange(null).getMaximum(), true);
-
-		return VersionRange.emptyRange;
 	}
 
 	public void setFilter(boolean filter) {
