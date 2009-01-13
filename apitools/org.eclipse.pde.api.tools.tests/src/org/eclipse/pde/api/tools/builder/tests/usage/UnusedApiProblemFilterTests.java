@@ -13,8 +13,12 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
@@ -37,6 +41,51 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		super(name);
 	}
 
+	/**
+	 * Asserts a stub {@link IApiBaseline} that contains all of the workspace projects
+	 * as API components
+	 * @param name the name for the baseline
+	 */
+	protected void assertStubBaseline(String name) {
+		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
+		IApiBaseline baseline = manager.getDefaultApiBaseline();
+		if (baseline == null) {
+			baseline = ApiModelFactory.newApiBaseline(name);
+			manager.addApiBaseline(baseline);
+			manager.setDefaultApiBaseline(baseline.getName());
+		}
+	}
+	
+	/**
+	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		assertStubBaseline(BASELINE);
+	}
+	
+	/**
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		removeBaseline(BASELINE);
+		super.tearDown();
+	}
+	
+	/**
+	 * Removes the baseline with the given name
+	 * @param name
+	 */
+	private void removeBaseline(String name) {
+		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
+		IApiBaseline baseline = manager.getDefaultApiBaseline();
+		if (baseline != null) {
+			manager.removeApiBaseline(name);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#setBuilderOptions()
 	 */
@@ -161,6 +210,33 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		);
 		setExpectedMessageArgs(new String[][] {{"testUF3.m2() has non-API return type internal"},
 				{"internal", "testUF3", "m1(internal[])"}});
+		deployReplacementTest(
+				getBeforePath(testname), 
+				getAfterPath(testname), 
+				getFilterFilePath(testname), 
+				sourcename, 
+				inc);
+	}
+	
+	public void testUnusedFilter4F() {
+		x4(false);
+	}
+	
+	public void testUnusedFilter4I() {
+		x4(true);
+	}
+	
+	/**
+	 * Tests that unused filters are not reported. This test adds the final modifier
+	 * to a class that has a protected method leaking and internal type, with a filter for the problem, 
+	 * but no API baseline set
+	 * @param inc
+	 */
+	private void x4(boolean inc) {
+		removeBaseline(BASELINE);
+		String testname = "test1";
+		String sourcename = "testUF1";
+		expectingNoProblems();
 		deployReplacementTest(
 				getBeforePath(testname), 
 				getAfterPath(testname), 

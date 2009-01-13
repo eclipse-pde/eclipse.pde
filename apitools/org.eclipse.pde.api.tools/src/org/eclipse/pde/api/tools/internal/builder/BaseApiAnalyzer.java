@@ -210,6 +210,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					return;
 				}
 			}
+			boolean checkfilters = false;
 			if(baseline != null) {
 				IApiComponent reference = baseline.getApiComponent(component.getId());
 				this.fBuildState = state;
@@ -236,6 +237,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				//version checks
 				checkApiComponentVersion(reference, component);
 				updateMonitor(localMonitor);
+				checkfilters = true;
 			}
 			else {
 				//check default baseline
@@ -248,9 +250,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			//tag validation
 			checkTagValidation(changedtypes, component, localMonitor.newChild(1));
 			updateMonitor(localMonitor);
-			//check for unused filters
-			checkUnusedProblemFilters(component, typenames, localMonitor.newChild(1));
-			updateMonitor(localMonitor);
+			if(checkfilters) {
+				//check for unused filters only if the scans have been done
+				checkUnusedProblemFilters(component, typenames, localMonitor.newChild(1));
+			}
+				updateMonitor(localMonitor);
 		} catch(CoreException e) {
 			ApiPlugin.log(e);
 		}
