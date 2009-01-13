@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -639,8 +639,27 @@ public class RegistryBrowser extends ViewPart {
 
 	public static int count = 0;
 
+	private boolean filtersEnabled() {
+		return fTreeViewer.getFilters().length > 0;
+	}
+
+	void refresh(Object[] objects) {
+		if (filtersEnabled()) {
+			fTreeViewer.refresh();
+		} else {
+			for (int i = 0; i < objects.length; i++) {
+				fTreeViewer.refresh(objects[i]);
+			}
+		}
+		updateTitle();
+	}
+
 	void refresh(Object object) {
-		fTreeViewer.refresh(object);
+		if (filtersEnabled()) {
+			fTreeViewer.refresh();
+		} else {
+			fTreeViewer.refresh(object);
+		}
 		updateTitle();
 	}
 
