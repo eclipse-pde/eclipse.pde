@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.impl;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.eclipse.core.resources.IFile;
+import java.util.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
 
@@ -24,7 +28,35 @@ import org.eclipse.pde.internal.core.target.provisional.*;
  */
 public class TargetPlatformService implements ITargetPlatformService {
 
+	/**
+	 * Service instance
+	 */
 	private static ITargetPlatformService fgDefault;
+
+	/**
+	 * Collects target files in the workspace
+	 */
+	class ResourceProxyVisitor implements IResourceProxyVisitor {
+
+		private List fList;
+
+		protected ResourceProxyVisitor(List list) {
+			fList = list;
+		}
+
+		/**
+		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
+		 */
+		public boolean visit(IResourceProxy proxy) {
+			if (proxy.getType() == IResource.FILE) {
+				if (ICoreConstants.TARGET_FILE_EXTENSION.equalsIgnoreCase(new Path(proxy.getName()).getFileExtension())) {
+					fList.add(proxy.requestResource());
+				}
+				return false;
+			}
+			return true;
+		}
+	}
 
 	private TargetPlatformService() {
 	}
@@ -40,8 +72,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#deleteTarget(org.eclipse.pde.internal.core.target.provisional.ITargetHandle)
 	 */
 	public void deleteTarget(ITargetHandle handle) throws CoreException {
-		// TODO Auto-generated method stub
-
+		((AbstractTargetHandle) handle).delete();
 	}
 
 	/* (non-Javadoc)
@@ -73,8 +104,60 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getTargets(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public ITargetHandle[] getTargets(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
+		List local = findLocalTargetDefinitions();
+		List ws = findWorkspaceTargetDefinitions();
+		local.addAll(ws);
+		return (ITargetHandle[]) local.toArray(new ITargetHandle[local.size()]);
+	}
+
+	/**
+	 * Finds and returns all local target definition handles
+	 *
+	 * @return all local target definition handles
+	 */
+	private List findLocalTargetDefinitions() {
+		IPath containerPath = LocalTargetHandle.LOCAL_TARGET_CONTAINER_PATH;
+		List handles = new ArrayList(10);
+		final File directory = containerPath.toFile();
+		if (directory.isDirectory()) {
+			FilenameFilter filter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return dir.equals(directory) && name.endsWith(ICoreConstants.TARGET_FILE_EXTENSION);
+				}
+			};
+			File[] files = directory.listFiles(filter);
+			for (int i = 0; i < files.length; i++) {
+				try {
+					handles.add(LocalTargetHandle.restoreHandle(files[i].toURI()));
+				} catch (CoreException e) {
+					PDECore.log(e);
+				}
+			}
+		}
+		return handles;
+	}
+
+	/**
+	 * Finds and returns all target definition handles defined by workspace files
+	 * 
+	 * @return all target definition handles in the workspace
+	 */
+	private List findWorkspaceTargetDefinitions() {
+		List files = new ArrayList(10);
+		ResourceProxyVisitor visitor = new ResourceProxyVisitor(files);
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().accept(visitor, IResource.NONE);
+		} catch (CoreException e) {
+			PDECore.log(e);
+			return new ArrayList(0);
+		}
+		Iterator iter = files.iterator();
+		List handles = new ArrayList(files.size());
+		while (iter.hasNext()) {
+			IFile file = (IFile) iter.next();
+			handles.add(new WorkspaceFileTargetHandle(file));
+		}
+		return handles;
 	}
 
 	/* (non-Javadoc)
@@ -109,8 +192,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#saveTargetDefinition(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
 	 */
 	public void saveTargetDefinition(ITargetDefinition definition) throws CoreException {
-		// TODO Auto-generated method stub
-
+		((AbstractTargetHandle) definition.getHandle()).save(definition);
 	}
 
 	/* (non-Javadoc)

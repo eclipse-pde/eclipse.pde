@@ -148,4 +148,10 @@ public interface ICoreConstants {
 	// Extension point identifiers
 	public static final String EXTENSION_POINT_SOURCE = PDECore.PLUGIN_ID + ".source"; //$NON-NLS-1$
 
+	// file extensions
+
+	/**
+	 * File extension for target definitions
+	 */
+	public static final String TARGET_FILE_EXTENSION = "target"; //$NON-NLS-1$
 }

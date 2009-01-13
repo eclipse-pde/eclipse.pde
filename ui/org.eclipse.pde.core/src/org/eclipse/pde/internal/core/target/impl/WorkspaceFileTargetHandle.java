@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.impl;
 
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 
 /**
@@ -99,4 +100,33 @@ class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 		return fFile.hashCode() + getClass().hashCode();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#delete()
+	 */
+	void delete() throws CoreException {
+		if (fFile.exists()) {
+			fFile.delete(false, null);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
+	 */
+	void save(ITargetDefinition definition) throws CoreException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		((TargetDefinition) definition).write(outputStream);
+		ByteArrayInputStream stream = new ByteArrayInputStream(outputStream.toByteArray());
+		if (!fFile.exists()) {
+			fFile.create(stream, false, null);
+		} else {
+			// validate edit
+			if (fFile.isReadOnly()) {
+				IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {fFile}, null);
+				if (!status.isOK()) {
+					throw new CoreException(status);
+				}
+			}
+			fFile.setContents(stream, true, false, null);
+		}
+	}
 }

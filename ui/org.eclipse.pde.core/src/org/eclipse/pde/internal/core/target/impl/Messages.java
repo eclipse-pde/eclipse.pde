@@ -39,6 +39,8 @@ public class Messages extends NLS {
 	public static String LocalTargetHandle_0;
 	public static String LocalTargetHandle_1;
 	public static String LocalTargetHandle_2;
+	public static String LocalTargetHandle_3;
+	public static String LocalTargetHandle_4;
 	public static String ProfileBundleContainer_0;
 	public static String ProfileBundleContainer_1;
 	public static String TargetPlatformService_0;

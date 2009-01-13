@@ -14,7 +14,9 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 
 /**
@@ -137,5 +139,42 @@ class LocalTargetHandle extends AbstractTargetHandle {
 	 */
 	public int hashCode() {
 		return (int) fTimeStamp;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#delete()
+	 */
+	void delete() throws CoreException {
+		File file = getFile();
+		if (file.exists()) {
+			file.delete();
+			if (file.exists()) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.LocalTargetHandle_3, file.getName())));
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#getOutputStream()
+	 */
+	protected OutputStream getOutputStream() throws CoreException {
+		try {
+			return new BufferedOutputStream(new FileOutputStream(getFile()));
+		} catch (FileNotFoundException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_1, e));
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
+	 */
+	void save(ITargetDefinition definition) throws CoreException {
+		OutputStream stream = getOutputStream();
+		((TargetDefinition) definition).write(stream);
+		try {
+			stream.close();
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.LocalTargetHandle_4, getFile().getName()), e));
+		}
 	}
 }

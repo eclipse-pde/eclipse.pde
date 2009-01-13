@@ -40,4 +40,20 @@ abstract class AbstractTargetHandle implements ITargetHandle {
 	 * @throws CoreException if an error occurs
 	 */
 	protected abstract InputStream getInputStream() throws CoreException;
+
+	/**
+	 * Deletes the underlying target definition.
+	 * 
+	 * @throws CoreException if unable to delete
+	 */
+	abstract void delete() throws CoreException;
+
+	/**
+	 * Saves the definition to underlying storage.
+	 * 
+	 * @param definition target to save
+	 * @throws CoreException on failure
+	 */
+	abstract void save(ITargetDefinition definition) throws CoreException;
+
 }
