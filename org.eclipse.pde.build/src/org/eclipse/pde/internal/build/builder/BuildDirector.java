@@ -53,6 +53,8 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	protected boolean generateJnlp = false;
 	protected boolean workspaceBinaries = false;
 
+	public static boolean p2Gathering = false;
+
 	public BuildDirector() {
 		super();
 	}

@@ -47,8 +47,6 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	private String customCallbacksFailOnError = null;
 	private String customCallbacksInheritAll = null;
 
-	public static boolean p2Gathering = false;
-
 	public FeatureBuildScriptGenerator(BuildTimeFeature feature) {
 		this.feature = feature;
 
@@ -149,7 +147,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		generateBuildZipsTarget();
 		generateBuildUpdateJarTarget();
 
-		if (p2Gathering)
+		if (BuildDirector.p2Gathering)
 			generatePublishBinPartsTarget();
 		else
 			generateGatherBinPartsTarget();

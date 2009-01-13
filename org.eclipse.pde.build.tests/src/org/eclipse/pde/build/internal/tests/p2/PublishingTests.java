@@ -22,8 +22,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadata
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
-import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
-import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
+import org.eclipse.pde.internal.build.builder.*;
 import org.osgi.framework.Constants;
 
 public class PublishingTests extends P2TestCase {
@@ -46,10 +45,10 @@ public class PublishingTests extends P2TestCase {
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle");
 		properties.put("forceContextQualifier", "v1234");
 		try {
-			ModelBuildScriptGenerator.p2Gathering = true;
+			BuildDirector.p2Gathering = true;
 			generateScripts(buildFolder, properties);
 		} finally {
-			ModelBuildScriptGenerator.p2Gathering = false;
+			BuildDirector.p2Gathering = false;
 		}
 
 		String buildXMLPath = bundle.getFile("build.xml").getLocation().toOSString();
@@ -110,10 +109,10 @@ public class PublishingTests extends P2TestCase {
 
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "org.eclipse.equinox.executable");
 		try {
-			FeatureBuildScriptGenerator.p2Gathering = true;
+			BuildDirector.p2Gathering = true;
 			generateScripts(buildFolder, properties);
 		} finally {
-			FeatureBuildScriptGenerator.p2Gathering = false;
+			BuildDirector.p2Gathering = false;
 		}
 
 		String buildXMLPath = executableFeature.getFile("build.xml").getLocation().toOSString();
@@ -178,10 +177,10 @@ public class PublishingTests extends P2TestCase {
 		properties.put("generateAPIDescription", "true");
 
 		try {
-			ModelBuildScriptGenerator.p2Gathering = true;
+			BuildDirector.p2Gathering = true;
 			generateScripts(buildFolder, properties);
 		} finally {
-			ModelBuildScriptGenerator.p2Gathering = false;
+			BuildDirector.p2Gathering = false;
 		}
 
 		String buildXMLPath = bundle.getFile("build.xml").getLocation().toOSString();

@@ -117,8 +117,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private boolean signJars = false;
 	private Map workspaceOutputFolders = null;
 
-	public static boolean p2Gathering = false;
-
 	/**
 	 * @see AbstractScriptGenerator#generate()
 	 */
@@ -280,7 +278,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generateEmptyBuildSourcesTarget();
 		}
 
-		if (p2Gathering)
+		if (BuildDirector.p2Gathering)
 			generatePublishGatherBinPartsTarget();
 		else
 			generateGatherBinPartsTarget();
