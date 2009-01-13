@@ -45,7 +45,8 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		return feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
 	}
 
-	protected void generateGatherBinPartsCalls() { //TODO Here we should try to use cp because otherwise we will loose the permissions
+	protected void generateGatherBinPartsTarget() { //TODO Here we should try to use cp because otherwise we will loose the permissions
+		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
 		String excludedFiles = null;
 		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER))
 			excludedFiles = "build.properties, .project, .classpath"; //$NON-NLS-1$
@@ -108,6 +109,8 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			rootFileProviders = new ArrayList(1);
 			rootFileProviders.add("elt"); //$NON-NLS-1$
 		}
+		script.printTargetEnd();
+		script.println();
 	}
 
 	public String getTargetName() {
@@ -141,8 +144,11 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		}
 	}
 
-	protected void generateGatherSourceCalls() {
+	protected void generateGatherSourceTarget() {
 		//In the packager, we do not gather source
+		script.printTargetDeclaration(TARGET_GATHER_SOURCES, null, null, null, null);
+		script.printTargetEnd();
+		script.println();
 	}
 
 	protected FileSet[] generatePermissions(boolean zip) {

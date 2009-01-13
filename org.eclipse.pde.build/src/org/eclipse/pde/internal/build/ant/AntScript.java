@@ -855,6 +855,7 @@ public class AntScript implements IAntScript {
 	}
 
 	public void printConditionIsSet(String property, String value, String testProperty, String elseValue) {
+		printTab();
 		print("<condition"); //$NON-NLS-1$
 		printAttribute("property", property, true); //$NON-NLS-1$
 		printAttribute("value", value, true); //$NON-NLS-1$

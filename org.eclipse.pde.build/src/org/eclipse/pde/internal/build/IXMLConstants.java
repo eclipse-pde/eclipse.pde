@@ -40,6 +40,8 @@ public interface IXMLConstants {
 	public static final String TARGET_GATHER_LOGS = "gather.logs"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_SOURCES = "gather.sources"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_INDIVIDUAL_SOURCES = "gather.individual.sources"; //$NON-NLS-1$
+	public static final String TARGET_JAR_PROCESSING = "jar.processing"; //$NON-NLS-1$
+	public static final String TARGET_ASSEMBLE_ARCHIVE = "assemble.archive"; //$NON-NLS-1$
 	public static final String TARGET_COPY_SRC_INCLUDES = "copy.src.includes"; //$NON-NLS-1$
 	public static final String TARGET_INIT = "init"; //$NON-NLS-1$
 	public static final String TARGET_MAIN = "main"; //$NON-NLS-1$
