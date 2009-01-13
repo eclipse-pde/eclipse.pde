@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -159,7 +159,7 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 		org.osgi.framework.ServiceRegistration registration = MacroPlugin.getBundleContext().registerService(getClass().getName(), this, null);
 		registration.unregister();
 		
-		listener.waitForNotifications(2);
+		listener.waitForNotifications(3);
 		
 		f.removeModelChangeListener(listener);
 		
@@ -171,13 +171,18 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 		assertEquals(getClass().getName(), ((ServiceName)delta.getModelObject()).getClasses()[0]);
 		assertEquals(ModelChangeDelta.ADDED, delta.getFlag());
 		
+		delta = deltas[1];
+		assertTrue(delta.getModelObject() instanceof ServiceRegistration);
+		assertEquals(getClass().getName(), ((ServiceRegistration)delta.getModelObject()).getName().getClasses()[0]);
+		assertEquals(ModelChangeDelta.ADDED, delta.getFlag());
+		
 		// service unregister
-//		delta = deltas[1];
-//		assertTrue(delta.getModelObject() instanceof ServiceRegistration);
-//		assertEquals(getClass().getName(), ((ServiceRegistration)delta.getModelObject()).getName().getClasses()[0]);
-//		assertEquals(ModelChangeDelta.REMOVED, delta.getFlag());
-//		
-//		assertEquals(2, deltas.length);
+		delta = deltas[2];
+		assertTrue(delta.getModelObject() instanceof ServiceRegistration);
+		assertEquals(getClass().getName(), ((ServiceRegistration)delta.getModelObject()).getName().getClasses()[0]);
+		assertEquals(ModelChangeDelta.REMOVED, delta.getFlag());
+		
+		assertEquals(3, deltas.length);
 	}
 
 }
