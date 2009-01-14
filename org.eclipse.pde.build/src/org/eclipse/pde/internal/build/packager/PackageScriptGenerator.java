@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.AntScript;
+import org.eclipse.pde.internal.build.builder.BuildDirector;
 
 public class PackageScriptGenerator extends AssembleScriptGenerator {
 	private String packagingPropertiesLocation;
@@ -49,7 +50,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		configScriptGenerator.initialize(directory, featureId, aConfig, binaryPlugins, binaryFeatures, allFeatures, rootFiles);
 		((PackageConfigScriptGenerator) configScriptGenerator).setPackagingPropertiesLocation(packagingPropertiesLocation);
 		configScriptGenerator.setArchiveFormat((String) archivesFormat.get(aConfig));
-		configScriptGenerator.setGroupConfigs(groupConfigs);
+		configScriptGenerator.setGroupConfigs(groupConfigs || BuildDirector.p2Gathering);
 		setForceUpdateJar(forceUpdateJarFormat);
 		configScriptGenerator.setBuildSiteFactory(siteFactory);
 		configScriptGenerator.generate();

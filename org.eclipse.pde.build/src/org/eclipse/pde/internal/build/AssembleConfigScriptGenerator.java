@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.ant.*;
+import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 
@@ -132,7 +133,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateArchivingCalls() {
-		script.printAntCallTask(TARGET_ASSEMBLE_ARCHIVE, true, null);
+		if (!BuildDirector.p2Gathering)
+			script.printAntCallTask(TARGET_ASSEMBLE_ARCHIVE, true, null);
 	}
 
 	private void generateMainEnd() {
@@ -523,25 +525,26 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				//during feature export we need to override the "mode"
 				printP2GenerationModeCondition();
 			}
-			script.printTab();
-			script.print("<p2.generator "); //$NON-NLS-1$
-			script.printAttribute("source", Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$
-			script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
-			script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
-			script.printAttribute("compress", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$ 
-			script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
-			script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
-			script.printAttribute("metadataRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
-			script.printAttribute("artifactRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
-			script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$
-			script.printAttribute("site", Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE), true); //$NON-NLS-1$
-			script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
-			if (!havePDEUIState() || rootFileProviders.size() > 0)
-				script.printAttribute("mode", "incremental", true); //$NON-NLS-1$ //$NON-NLS-2$
-			else
-				script.printAttribute("mode", Utils.getPropertyFormat(PROPERTY_P2_GENERATION_MODE), true); //$NON-NLS-1$
-			script.println("/>"); //$NON-NLS-1$
-
+			if (!BuildDirector.p2Gathering) {
+				script.printTab();
+				script.print("<p2.generator "); //$NON-NLS-1$
+				script.printAttribute("source", Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$
+				script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
+				script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
+				script.printAttribute("compress", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$ 
+				script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
+				script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
+				script.printAttribute("metadataRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
+				script.printAttribute("artifactRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
+				script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$
+				script.printAttribute("site", Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE), true); //$NON-NLS-1$
+				script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
+				if (!havePDEUIState() || rootFileProviders.size() > 0)
+					script.printAttribute("mode", "incremental", true); //$NON-NLS-1$ //$NON-NLS-2$
+				else
+					script.printAttribute("mode", Utils.getPropertyFormat(PROPERTY_P2_GENERATION_MODE), true); //$NON-NLS-1$
+				script.println("/>"); //$NON-NLS-1$
+			}
 			if (rootFileProviders.size() > 0) {
 				script.print("<p2.generator "); //$NON-NLS-1$
 				script.printAttribute("config", rootFolder, true); //$NON-NLS-1$

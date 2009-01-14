@@ -76,6 +76,11 @@
             library="lib/pdebuild-ant.jar"
             name="eclipse.jarProcessor">
       </antTask>
+      <antTask
+            class="org.eclipse.pde.internal.build.publisher.FeaturesAndBundlesTask"
+            library="lib/pdebuild-ant.jar"
+            name="eclipse.publish.featuresAndBundles">
+      </antTask>
       
    </extension>
 <!-- Extra Classpath -->

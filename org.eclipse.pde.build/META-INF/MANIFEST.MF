@@ -27,6 +27,7 @@ Export-Package:
  org.eclipse.pde.internal.swt.tools;x-internal:=true
 Import-Package: com.ibm.icu.util,
  org.eclipse.equinox.internal.p2.core.helpers,
+ org.eclipse.equinox.internal.p2.updatesite;resolution:=optional,
  org.eclipse.equinox.internal.provisional.frameworkadmin,
  org.eclipse.equinox.internal.provisional.p2.artifact.repository,
  org.eclipse.equinox.internal.provisional.p2.core,

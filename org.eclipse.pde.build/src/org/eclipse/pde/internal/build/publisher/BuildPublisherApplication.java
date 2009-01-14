@@ -27,4 +27,8 @@ public class BuildPublisherApplication extends AbstractPublisherApplication {
 		return (IPublisherAction[]) actions.toArray(new IPublisherAction[actions.size()]);
 	}
 
+	public void setAppend(boolean value) {
+		super.append = value;
+	}
+
 }

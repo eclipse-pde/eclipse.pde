@@ -83,6 +83,28 @@ public class AntScript implements IAntScript {
 		}
 	}
 
+	public void printP2PublishFeaturesAndBundles(String metadataRepository, String artifactRepository, FileSet[] bundles, FileSet[] features, String siteXML) {
+		printTab();
+		output.print("<eclipse.publish.featuresAndBundles"); //$NON-NLS-1$
+		if (metadataRepository.equals(artifactRepository)) {
+			printAttribute("repository", metadataRepository, true); //$NON-NLS-1$
+		} else {
+			printAttribute("metadataRepository", metadataRepository, true); //$NON-NLS-1$
+			printAttribute("artifactRepository", artifactRepository, true); //$NON-NLS-1$
+		}
+		printAttribute("site", siteXML, false); //$NON-NLS-1$
+		output.println(">"); //$NON-NLS-1$
+		indent++;
+		for (int i = 0; i < features.length; i++) {
+			features[i].printAs("features", this); //$NON-NLS-1$
+		}
+		for (int i = 0; i < bundles.length; i++) {
+			bundles[i].printAs("bundles", this); //$NON-NLS-1$
+		}
+		indent--;
+		output.println("</eclipse.publish.featuresAndBundles>"); //$NON-NLS-1$
+	}
+
 	public void printParallel(int threadCount, int threadsPerProcessor) {
 		printTab();
 		output.print("<parallel"); //$NON-NLS-1$

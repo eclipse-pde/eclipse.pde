@@ -12,6 +12,7 @@ import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.ant.AntScript;
+import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.site.BuildTimeSite;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
@@ -84,7 +85,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected void generateMainTarget() throws CoreException {
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
 
-		if (groupConfigs) {
+		if (groupConfigs || BuildDirector.p2Gathering) {
 			Collection allPlugins = new LinkedHashSet();
 			Collection allFeatures = new LinkedHashSet();
 			Collection features = new LinkedHashSet();
@@ -118,7 +119,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		configScriptGenerator.initialize(directory, featureId, aConfig, binaryPlugins, binaryFeatures, allFeatures, rootFiles);
 		configScriptGenerator.setArchiveFormat((String) archivesFormat.get(aConfig));
 		configScriptGenerator.setBuildSiteFactory(siteFactory);
-		configScriptGenerator.setGroupConfigs(groupConfigs);
+		configScriptGenerator.setGroupConfigs(groupConfigs || BuildDirector.p2Gathering);
 		configScriptGenerator.generate();
 
 		script.print("<assemble "); //$NON-NLS-1$

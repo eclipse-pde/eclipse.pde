@@ -15,7 +15,6 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
 import org.apache.tools.ant.types.selectors.FilenameSelector;
 import org.apache.tools.ant.types.selectors.SelectSelector;
-import org.eclipse.equinox.p2.publisher.IPublisherInfo;
 import org.eclipse.equinox.p2.publisher.PublisherInfo;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.Utils;
@@ -30,7 +29,8 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		GatherFeatureAction action = new GatherFeatureAction(new File(baseDirectory), new File(buildResultFolder));
 		action.setComputer(computer);
 
-		PublisherInfo info = createPublisherInfo();
+		PublisherInfo info = getPublisherInfo();
+		info.addAdvice(createRootAdvice());
 		BuildPublisherApplication application = createPublisherApplication();
 		application.addAction(action);
 		try {
@@ -39,13 +39,6 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	protected PublisherInfo createPublisherInfo() {
-		PublisherInfo info = new PublisherInfo();
-		info.setArtifactOptions(IPublisherInfo.A_PUBLISH);
-		info.addAdvice(createRootAdvice());
-		return info;
 	}
 
 	protected GatheringComputer createFeatureComputer() {

@@ -193,4 +193,60 @@ public class PublishingTests extends P2TestCase {
 		contents.add(".api_description");
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar", contents);
 	}
+	
+	public void testPublish_Packaging_1() throws Exception {
+		IFolder buildFolder = newTest("packaging_1");
+		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
+		Utils.generateFeature(buildFolder, "F", new String [] { "org.eclipse.cvs" }, new String [] { "a" } );
+		Utils.generateBundle(a, "a");
+		Utils.writeBuffer(a.getFile("src/A.java"), new StringBuffer("public class A { int i; }"));
+		
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "F");
+		Utils.storeBuildProperties(buildFolder, properties);
+		
+		try {
+			BuildDirector.p2Gathering = true;
+			runBuild(buildFolder);
+		} finally {
+			BuildDirector.p2Gathering = false;
+		}
+		
+		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+		
+		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
+		assertNotNull(repository);
+
+		IInstallableUnit iu = getIU(repository, "a");
+		assertEquals(iu.getVersion().toString(), "1.0.0");
+
+		iu = getIU(repository, "org.eclipse.team.cvs.ssh");
+		assertNotNull(iu);
+		IFile file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.ssh_" + iu.getVersion()+ ".jar");
+		assertTrue(file.exists());
+		assertJarVerifies(file.getLocation().toFile());
+	
+		iu = getIU(repository, "org.eclipse.team.cvs.core");
+		assertNotNull(iu);
+		file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.core_" + iu.getVersion()+ ".jar");
+		assertTrue(file.exists());
+		assertJarVerifies(file.getLocation().toFile());
+		
+		iu = getIU(repository, "org.eclipse.cvs");
+		assertNotNull(iu);
+		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.cvs_" + iu.getVersion()+ ".jar");
+		
+		iu = getIU(repository, "org.eclipse.team.cvs.ui");
+		assertNotNull(iu);
+		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.team.cvs.ui_" + iu.getVersion()+ ".jar");
+		
+		iu = getIU(repository, "org.eclipse.team.cvs.ssh2");
+		assertNotNull(iu);
+		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.team.cvs.ssh2_" + iu.getVersion()+ ".jar");
+		
+		iu = getIU(repository, "org.eclipse.cvs.feature.jar");
+		file = buildFolder.getFile("buildRepo/features/org.eclipse.cvs_" + iu.getVersion() + ".jar");
+		assertTrue(file.exists());
+		assertJarVerifies(file.getLocation().toFile());
+	}
 }

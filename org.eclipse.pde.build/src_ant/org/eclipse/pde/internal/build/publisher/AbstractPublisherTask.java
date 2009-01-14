@@ -15,6 +15,8 @@ import java.net.URISyntaxException;
 import java.util.Properties;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.publisher.IPublisherInfo;
+import org.eclipse.equinox.p2.publisher.PublisherInfo;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 
@@ -25,13 +27,9 @@ public abstract class AbstractPublisherTask extends Task {
 	protected String artifactRepoName;
 	protected String baseDirectory;
 	protected boolean compress = false;
-	protected boolean append = false;
+	protected boolean append = true;
 	protected boolean reusePackedFiles = false;
-
-	//	protected void initializeRepositories(PublisherInfo info) throws ProvisionException {
-	//		info.setArtifactRepository(Publisher.createArtifactRepository(artifactLocation, artifactRepoName, append, compress, reusePackedFiles));
-	//		info.setMetadataRepository(Publisher.createMetadataRepository(metadataLocation, metadataRepoName, append, compress));
-	//	}
+	protected PublisherInfo publisherInfo = null;
 
 	protected Properties getBuildProperties() {
 		Properties buildProperties = null;
@@ -47,6 +45,7 @@ public abstract class AbstractPublisherTask extends Task {
 		BuildPublisherApplication application = new BuildPublisherApplication();
 		application.setMetadataLocation(metadataLocation);
 		application.setArtifactLocation(artifactLocation);
+		application.setAppend(append);
 		return application;
 	}
 
@@ -74,6 +73,11 @@ public abstract class AbstractPublisherTask extends Task {
 		this.metadataRepoName = value;
 	}
 
+	public void setRepository(String value) {
+		setMetadataRepository(value);
+		setArtifactRepository(value);
+	}
+
 	public void setAppend(String value) {
 		this.append = Boolean.valueOf(value).booleanValue();
 	}
@@ -88,5 +92,13 @@ public abstract class AbstractPublisherTask extends Task {
 
 	public void setBaseDirectory(String baseDirectory) {
 		this.baseDirectory = baseDirectory;
+	}
+
+	protected PublisherInfo getPublisherInfo() {
+		if (publisherInfo == null) {
+			publisherInfo = new PublisherInfo();
+			publisherInfo.setArtifactOptions(IPublisherInfo.A_PUBLISH);
+		}
+		return publisherInfo;
 	}
 }

@@ -16,7 +16,6 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.equinox.p2.publisher.IPublisherInfo;
 import org.eclipse.equinox.p2.publisher.PublisherInfo;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
@@ -37,7 +36,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 		action.setComputer(computer);
 		action.setUnpack(unpack);
 
-		PublisherInfo info = createPublisherInfo();
+		PublisherInfo info = getPublisherInfo();
 		BuildPublisherApplication application = createPublisherApplication();
 		application.addAction(action);
 		try {
@@ -46,12 +45,6 @@ public class GatherBundleTask extends AbstractPublisherTask {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	protected PublisherInfo createPublisherInfo() {
-		PublisherInfo info = new PublisherInfo();
-		info.setArtifactOptions(IPublisherInfo.A_PUBLISH);
-		return info;
 	}
 
 	protected GatheringComputer createComputer() {

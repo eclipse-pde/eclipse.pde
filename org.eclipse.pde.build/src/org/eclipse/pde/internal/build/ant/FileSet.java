@@ -69,6 +69,19 @@ public class FileSet {
 		script.println("</fileset>"); //$NON-NLS-1$
 	}
 
+	protected void printAs(String name, AntScript script) {
+		script.printTab();
+		script.print("<" + name); //$NON-NLS-1$
+		script.printAttribute("dir", dir, true); //$NON-NLS-1$
+		script.printAttribute("defaultexcludes", defaultexcludes, false); //$NON-NLS-1$
+		script.printAttribute("includesfile", includesfile, false); //$NON-NLS-1$
+		script.printAttribute("excludesfile", excludesfile, false); //$NON-NLS-1$
+		script.printAttribute("casesensitive", casesensitive, false); //$NON-NLS-1$
+		script.printAttribute("includes", includes, false); //$NON-NLS-1$
+		script.printAttribute("excludes", excludes, false); //$NON-NLS-1$
+		script.println("/>"); //$NON-NLS-1$
+	}
+
 	private void printNames(AntScript script, String tag, String names) {
 		script.indent++;
 		for (StringTokenizer tokenizer = new StringTokenizer(names, ","); tokenizer.hasMoreTokens();) { //$NON-NLS-1$

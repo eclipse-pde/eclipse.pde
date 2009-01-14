@@ -16,6 +16,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.FileSet;
+import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 
@@ -58,6 +59,9 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		} catch (CoreException e) {
 			//nothing
 		}
+
+		ArrayList p2Features = BuildDirector.p2Gathering ? new ArrayList() : null;
+		ArrayList p2Bundles = BuildDirector.p2Gathering ? new ArrayList() : null;
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			String location = pluginLocation.toOSString();
@@ -68,7 +72,9 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 				IPath relative = pluginLocation.removeFirstSegments(baseLocation.segmentCount());
 				location = new Path(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
 			}
-			if (isFolder) {
+			if (BuildDirector.p2Gathering) {
+				p2Bundles.add(new FileSet(pluginLocation.removeLastSegments(1).toOSString(), null, pluginLocation.lastSegment(), null, null, null, null));
+			} else if (isFolder) {
 				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' + getFinalName(plugins[i], ShapeAdvisor.FOLDER), new FileSet[] {new FileSet(location, null, null, null, excludedFiles, null, null)}, false, false);
 			} else {
 				script.printCopyFileTask(location, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' + getFinalName(plugins[i], ShapeAdvisor.FILE), false);
@@ -83,7 +89,17 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 				IPath relative = featureLocation.removeFirstSegments(baseLocation.segmentCount());
 				location = new Path(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
 			}
-			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES) + '/' + getFinalName(features[i]), new FileSet[] {new FileSet(location, null, null, null, null, null, null)}, false, false);
+
+			if (BuildDirector.p2Gathering) {
+				p2Features.add(new FileSet(featureLocation.removeLastSegments(1).toOSString(), null, featureLocation.lastSegment(), null, null, null, null));
+			} else {
+				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES) + '/' + getFinalName(features[i]), new FileSet[] {new FileSet(location, null, null, null, null, null, null)}, false, false);
+			}
+		}
+
+		if (BuildDirector.p2Gathering) {
+			String repo = "file:" + getWorkingDirectory() + "/buildRepo"; //$NON-NLS-1$ //$NON-NLS-2$
+			script.printP2PublishFeaturesAndBundles(repo, repo, (FileSet[]) p2Bundles.toArray(new FileSet[p2Bundles.size()]), (FileSet[]) p2Features.toArray(new FileSet[p2Features.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE));
 		}
 
 		if (packagingProperties.size() != 0) {
