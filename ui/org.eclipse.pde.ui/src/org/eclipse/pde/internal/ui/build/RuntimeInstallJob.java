@@ -194,9 +194,9 @@ public class RuntimeInstallJob extends Job {
 
 		IRequiredCapability applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
 		IRequiredCapability newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(version, true, version, true), null, false, false);
-		iuPatchDescription.setRequirementChanges(new RequirementChange[] {new RequirementChange(applyTo, newValue)});
+		iuPatchDescription.setRequirementChanges(new IRequirementChange[] {MetadataFactory.createRequirementChange(applyTo, newValue)});
 
-		iuPatchDescription.setApplicabilityScope(new RequiredCapability[0][0]);
+		iuPatchDescription.setApplicabilityScope(new IRequiredCapability[0][0]);
 
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
 		Collector queryMatches = profile.query(new Query() {
