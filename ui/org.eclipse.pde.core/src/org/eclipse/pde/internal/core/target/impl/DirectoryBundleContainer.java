@@ -62,16 +62,16 @@ class DirectoryBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#resolveBundles(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveAllBundles(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public BundleInfo[] resolveBundles(IProgressMonitor monitor) throws CoreException {
+	protected BundleInfo[] resolveAllBundles(IProgressMonitor monitor) throws CoreException {
 		return resolveBundles(monitor, false);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#resolveSourceBundles(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveAllSourceBundles(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public BundleInfo[] resolveSourceBundles(IProgressMonitor monitor) throws CoreException {
+	protected BundleInfo[] resolveAllSourceBundles(IProgressMonitor monitor) throws CoreException {
 		return resolveBundles(monitor, true);
 	}
 

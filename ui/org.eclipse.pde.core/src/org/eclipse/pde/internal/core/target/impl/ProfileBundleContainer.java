@@ -56,9 +56,9 @@ class ProfileBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#resolveBundles(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveAllBundles(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public BundleInfo[] resolveBundles(IProgressMonitor monitor) throws CoreException {
+	protected BundleInfo[] resolveAllBundles(IProgressMonitor monitor) throws CoreException {
 		URL configUrl = getConfigurationArea();
 		IPath home = resolveHomeLocation();
 		BundleInfo[] infos = P2Utils.readBundles(home.toOSString(), configUrl);
@@ -69,9 +69,9 @@ class ProfileBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#resolveSourceBundles(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveAllSourceBundles(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public BundleInfo[] resolveSourceBundles(IProgressMonitor monitor) throws CoreException {
+	protected BundleInfo[] resolveAllSourceBundles(IProgressMonitor monitor) throws CoreException {
 		URL configUrl = getConfigurationArea();
 		BundleInfo[] source = P2Utils.readSourceBundles(resolveHomeLocation().toOSString(), configUrl);
 		if (source == null) {

@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import java.util.Iterator;
+
+import java.util.List;
+
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 
 import org.eclipse.pde.internal.core.target.provisional.LoadTargetDefinitionJob;
@@ -58,6 +62,42 @@ public class TargetDefinitionTests extends TestCase {
 			urls.add(new File(source[i].getLocation()).toURL());
 		}
 		return urls;
+	}
+	
+	/**
+	 * Retrieves all bundles (source and code) in the given target definition
+	 * returning them as a list of BundleInfos.
+	 * 
+	 * @param target target definition
+	 * @return all BundleInfos
+	 */
+	protected List getAllBundleInfos(ITargetDefinition target) throws Exception {
+		BundleInfo[] code = target.resolveBundles(null);
+		BundleInfo[] source = target.resolveSourceBundles(null);
+		List list = new ArrayList(code.length + source.length);
+		for (int i = 0; i < code.length; i++) {
+			list.add(code[i]);
+		}
+		for (int i = 0; i < source.length; i++) {
+			list.add(source[i]);
+		}
+		return list;
+	}	
+	
+	/**
+	 * Collects all bundle symbolic names into a set.
+	 * 
+	 * @param infos bundles
+	 * @return bundle symbolic names
+	 */
+	protected Set collectAllSymbolicNames(List infos) {
+		Set set = new HashSet(infos.size());
+		Iterator iterator = infos.iterator();
+		while (iterator.hasNext()) {
+			BundleInfo info = (BundleInfo) iterator.next();
+			set.add(info.getSymbolicName());
+		}
+		return set;
 	}
 	
 	/**
@@ -195,6 +235,99 @@ public class TargetDefinitionTests extends TestCase {
 		}
 		
 	}
+	
+	/**
+	 * Tests that a target definition based on the default target platform
+	 * restricted to a subset of bundles contains the right set.
+	 * 
+	 * @throws Exception
+	 */
+	public void testRestrictedDefaultTargetPlatform() throws Exception {
+		ITargetDefinition definition = getTargetService().newTarget();
+		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation());
+		BundleInfo[] restrictions = new BundleInfo[]{
+				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
+		};
+		container.setRestrictions(restrictions);
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		List infos = getAllBundleInfos(definition);
+		
+		assertEquals("Wrong number of bundles", 2, infos.size());
+		Set set = collectAllSymbolicNames(infos);
+		for (int i = 0; i < restrictions.length; i++) {
+			BundleInfo info = restrictions[i];
+			set.remove(info.getSymbolicName());
+		}
+		assertEquals("Wrong bundles", 0, set.size());
+		
+	}	
+	
+	/**
+	 * Tests that a target definition based on the default target platform
+	 * restricted to a subset of bundle versions contains the right set.
+	 * 
+	 * @throws Exception
+	 */
+	public void testVersionRestrictedDefaultTargetPlatform() throws Exception {
+		ITargetDefinition definition = getTargetService().newTarget();
+		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation());
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		List infos = getAllBundleInfos(definition);
+		// find right versions
+		String v1 = null;
+		String v2 = null;
+		Iterator iterator = infos.iterator();
+		while (iterator.hasNext() && (v2 == null || v1 == null)) {
+			BundleInfo info = (BundleInfo) iterator.next();
+			if (info.getSymbolicName().equals("org.eclipse.jdt.launching")) {
+				v1 = info.getVersion();
+			} else if (info.getSymbolicName().equals("org.eclipse.jdt.debug")) {
+				v2 = info.getVersion();
+			}
+		}
+		assertNotNull(v1);
+		assertNotNull(v2);
+		
+		BundleInfo[] restrictions = new BundleInfo[]{
+				new BundleInfo("org.eclipse.jdt.launching", v1, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.jdt.debug", v2, null, BundleInfo.NO_LEVEL, false)
+		};
+		container.setRestrictions(restrictions);
+		infos = getAllBundleInfos(definition);
+		
+		assertEquals("Wrong number of bundles", 2, infos.size());
+		iterator = infos.iterator();
+		while (iterator.hasNext()) {
+			BundleInfo info = (BundleInfo) iterator.next();
+			if (info.getSymbolicName().equals("org.eclipse.jdt.launching")) {
+				assertEquals(v1, info.getVersion());
+			} else if (info.getSymbolicName().equals("org.eclipse.jdt.debug")) {
+				assertEquals(v2, info.getVersion());
+			}
+		}
+	}	
+	
+	/**
+	 * Tests that a target definition based on the default target platform
+	 * restricted to a subset of bundles contains the right set. In this case
+	 * empty, since the versions specified are bogus.
+	 * 
+	 * @throws Exception
+	 */
+	public void testMissingVersionRestrictedDefaultTargetPlatform() throws Exception {
+		ITargetDefinition definition = getTargetService().newTarget();
+		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation());
+		BundleInfo[] restrictions = new BundleInfo[]{
+				new BundleInfo("org.eclipse.jdt.launching", "xyz", null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.jdt.debug", "abc", null, BundleInfo.NO_LEVEL, false)
+		};
+		container.setRestrictions(restrictions);
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		List infos = getAllBundleInfos(definition);
+		
+		assertEquals("Wrong number of bundles", 0, infos.size());		
+	}	
 	
 	/**
 	 * Tests that a target definition equivalent to the default target platform
@@ -549,6 +682,33 @@ public class TargetDefinitionTests extends TestCase {
 		bundles = container.resolveSourceBundles(null);
 		assertEquals("Wrong source bundle count", 0, bundles.length);
 	}
+	
+	/**
+	 * Tests that a target definition based on the JDT feature
+	 * restricted to a subset of bundles contains the right set.
+	 * 
+	 * @throws Exception
+	 */
+	public void testRestrictedFeatureBundleContainer() throws Exception {
+		ITargetDefinition definition = getTargetService().newTarget();
+		IBundleContainer container = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", null);
+		BundleInfo[] restrictions = new BundleInfo[]{
+				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
+		};
+		container.setRestrictions(restrictions);
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		List infos = getAllBundleInfos(definition);
+		
+		assertEquals("Wrong number of bundles", 2, infos.size());
+		Set set = collectAllSymbolicNames(infos);
+		for (int i = 0; i < restrictions.length; i++) {
+			BundleInfo info = restrictions[i];
+			set.remove(info.getSymbolicName());
+		}
+		assertEquals("Wrong bundles", 0, set.size());
+		
+	}	
 	
 	/**
 	 * Tests a JDT source feature bundle container contains the appropriate bundles
