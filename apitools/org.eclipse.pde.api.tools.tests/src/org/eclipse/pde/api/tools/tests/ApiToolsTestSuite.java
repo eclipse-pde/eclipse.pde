@@ -22,7 +22,6 @@ import org.eclipse.pde.api.tools.model.tests.ApiTypeContainerTests;
 import org.eclipse.pde.api.tools.model.tests.ClassFileScannerTests;
 import org.eclipse.pde.api.tools.model.tests.ComponentManifestTests;
 import org.eclipse.pde.api.tools.model.tests.ElementDescriptorTests;
-import org.eclipse.pde.api.tools.model.tests.SystemApiDetectorTests;
 import org.eclipse.pde.api.tools.model.tests.TagScannerTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemFactoryTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;
@@ -52,7 +51,6 @@ public class ApiToolsTestSuite extends TestSuite {
 	 */
 	public ApiToolsTestSuite() {
 		addTest(new TestSuite(ApiDescriptionTests.class));
-		addTest(new TestSuite(SystemApiDetectorTests.class));
 		addTest(new TestSuite(HeadlessApiProfileManagerTests.class));
 		addTest(new TestSuite(TagScannerTests.class));
 		addTest(new TestSuite(ComponentManifestTests.class));

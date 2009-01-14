@@ -241,7 +241,7 @@ public class Reference implements IReference {
 	}
 	public boolean resolve(int eeValue) throws CoreException {
 		IApiComponent sourceComponent = StubApiComponent.getStubApiComponent(eeValue);
-		if (sourceComponent == null) return false;
+		if (sourceComponent == null) return true;
 		IApiTypeRoot result = Util.getClassFile(
 				new IApiComponent[] { sourceComponent },
 				getReferencedTypeName());
@@ -257,7 +257,7 @@ public class Reference implements IReference {
 			}
 		}
 		return false;
-	}	
+	}
 	/**
 	 * Resolves a virtual method and returns whether the method lookup was successful.
 	 * We need to resolve the actual type that implements the method - i.e. do the virtual
