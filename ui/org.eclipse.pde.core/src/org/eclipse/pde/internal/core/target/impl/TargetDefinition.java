@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.impl;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.pde.internal.core.target.provisional.*;
+import org.xml.sax.SAXException;
 
 /**
  * Target definition implementation.
@@ -237,7 +239,18 @@ class TargetDefinition implements ITargetDefinition {
 	 * @throws CoreException if an error occurs
 	 */
 	void setContents(InputStream stream) throws CoreException {
-		// TODO: read stream
+		try {
+			TargetDefinitionPersistenceHelper.initFromXML(this, stream);
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -247,6 +260,17 @@ class TargetDefinition implements ITargetDefinition {
 	 * @throws CoreException if an error occurs
 	 */
 	void write(OutputStream stream) throws CoreException {
-		// TODO: persist content
+		try {
+			TargetDefinitionPersistenceHelper.persistXML(this, stream);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
