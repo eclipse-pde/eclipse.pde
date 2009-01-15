@@ -30,9 +30,9 @@ public class MethodDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		return new TestSuite(MethodDeltaTests.class);
 //		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
-//		suite.addTest(new MethodDeltaTests("test6"));
+//		suite.addTest(new MethodDeltaTests("test110"));
 //		return suite;
-		}
+	}
 
 	public MethodDeltaTests(String name) {
 		super(name);
@@ -2446,5 +2446,31 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
 		assertNotNull("No delta", delta);
 		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=261176
+	 */
+	public void test110() {
+		deployBundles("test110");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 }

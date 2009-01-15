@@ -2,9 +2,7 @@ package p;
 
 public class X {
 
-	/**
-	 * @noreference
-	 */
-	public void m1() {
+	protected String m1() {
+		return null;
 	}
 }

@@ -2031,17 +2031,22 @@ public class ClassFileComparator {
 							IDelta.REMOVED,
 							method.getDefaultValue() != null ? IDelta.METHOD_WITH_DEFAULT_VALUE : IDelta.METHOD_WITHOUT_DEFAULT_VALUE,
 							this.currentDescriptorRestrictions,
-							method.getModifiers(),
+							access,
 							this.type1,
 							this.type1.getName(),
 							new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 				} else {
+					int restrictions = this.currentDescriptorRestrictions;
+					if (RestrictionModifiers.isExtendRestriction(this.initialDescriptorRestrictions)
+							&& !RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions)) {
+						restrictions = this.initialDescriptorRestrictions;
+					}
 					this.addDelta(
 							getElementType(this.type1),
 							IDelta.REMOVED,
 							getTargetType(method),
-							Util.isAbstract(this.type2.getModifiers()) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions,
-							method.getModifiers(),
+							Util.isAbstract(this.type2.getModifiers()) ? restrictions | RestrictionModifiers.NO_INSTANTIATE : restrictions,
+							access,
 							this.type1,
 							this.type1.getName(),
 							new String[] {Util.getDescriptorName(this.type1), methodDisplayName});

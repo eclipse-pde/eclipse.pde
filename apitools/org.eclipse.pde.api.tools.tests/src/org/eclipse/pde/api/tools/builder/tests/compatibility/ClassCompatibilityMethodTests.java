@@ -220,7 +220,26 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	public void testRemoveProtectedAPIMethodNoExtendF() throws Exception {
 		xRemoveProtectedAPIMethodNoExtend(false);
 	}	
+
 	
+	/**
+	 * Tests the removal of a protected method from an API class annotated as noextend.
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=261176
+	 */
+	private void xRemoveProtectedAPIMethodNoExtend2(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoExtend2.java");
+		// no problems expected since the method is not accessible
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testRemoveProtectedAPIMethodNoExtend2I() throws Exception {
+		xRemoveProtectedAPIMethodNoExtend2(true);
+	}	
+	
+	public void testRemoveProtectedAPIMethodNoExtend2F() throws Exception {
+		xRemoveProtectedAPIMethodNoExtend2(false);
+	}
+
 	/**
 	 * Tests the removal of a public method from an API class annotated as noinstantiate - incremental.
 	 */
