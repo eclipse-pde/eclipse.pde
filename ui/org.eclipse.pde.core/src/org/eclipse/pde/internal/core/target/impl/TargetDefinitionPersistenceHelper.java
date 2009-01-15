@@ -131,7 +131,7 @@ public class TargetDefinitionPersistenceHelper {
 				for (int j = 0; j < restrictions.length; j++) {
 					Element restrictionElement = doc.createElement(RESTRICTION);
 					// TODO What do we want to store, URI? Symbolic Name?
-					restrictionElement.setTextContent(restrictions[j].getBaseLocation().toString());
+					setTextContent(restrictionElement, restrictions[j].getBaseLocation().toString());
 					containerElement.appendChild(restrictionElement);
 				}
 				containersElement.appendChild(containerElement);
@@ -143,22 +143,22 @@ public class TargetDefinitionPersistenceHelper {
 			Element envElement = doc.createElement(ENVIRONMENT);
 			if (definition.getOS() != null) {
 				Element element = doc.createElement(OS);
-				element.setTextContent(definition.getOS());
+				setTextContent(element, definition.getOS());
 				envElement.appendChild(element);
 			}
 			if (definition.getWS() != null) {
 				Element element = doc.createElement(WS);
-				element.setTextContent(definition.getWS());
+				setTextContent(element, definition.getWS());
 				envElement.appendChild(element);
 			}
 			if (definition.getArch() != null) {
 				Element element = doc.createElement(ARCH);
-				element.setTextContent(definition.getArch());
+				setTextContent(element, definition.getArch());
 				envElement.appendChild(element);
 			}
 			if (definition.getNL() != null) {
 				Element element = doc.createElement(NL);
-				element.setTextContent(definition.getNL());
+				setTextContent(element, definition.getNL());
 				envElement.appendChild(element);
 			}
 			rootElement.appendChild(envElement);
@@ -168,12 +168,12 @@ public class TargetDefinitionPersistenceHelper {
 			Element argElement = doc.createElement(ARGUMENTS);
 			if (definition.getVMArguments() != null) {
 				Element element = doc.createElement(VM_ARGS);
-				element.setTextContent(definition.getVMArguments());
+				setTextContent(element, definition.getVMArguments());
 				argElement.appendChild(element);
 			}
 			if (definition.getProgramArguments() != null) {
 				Element element = doc.createElement(PROGRAM_ARGS);
-				element.setTextContent(definition.getProgramArguments());
+				setTextContent(element, definition.getProgramArguments());
 				argElement.appendChild(element);
 			}
 			rootElement.appendChild(argElement);
@@ -268,13 +268,13 @@ public class TargetDefinitionPersistenceHelper {
 						if (entry.getNodeType() == Node.ELEMENT_NODE) {
 							Element currentElement = (Element) entry;
 							if (currentElement.getNodeName().equalsIgnoreCase(OS)) {
-								definition.setOS(currentElement.getTextContent());
+								definition.setOS(getTextContent(currentElement));
 							} else if (currentElement.getNodeName().equalsIgnoreCase(WS)) {
-								definition.setWS(currentElement.getTextContent());
+								definition.setWS(getTextContent(currentElement));
 							} else if (currentElement.getNodeName().equalsIgnoreCase(ARCH)) {
-								definition.setArch(currentElement.getTextContent());
+								definition.setArch(getTextContent(currentElement));
 							} else if (currentElement.getNodeName().equalsIgnoreCase(NL)) {
-								definition.setNL(currentElement.getTextContent());
+								definition.setNL(getTextContent(currentElement));
 							}
 						}
 					}
@@ -285,9 +285,9 @@ public class TargetDefinitionPersistenceHelper {
 						if (entry.getNodeType() == Node.ELEMENT_NODE) {
 							Element currentElement = (Element) entry;
 							if (currentElement.getNodeName().equalsIgnoreCase(PROGRAM_ARGS)) {
-								definition.setProgramArguments(currentElement.getTextContent());
+								definition.setProgramArguments(getTextContent(currentElement));
 							} else if (currentElement.getNodeName().equalsIgnoreCase(VM_ARGS)) {
-								definition.setVMArguments(currentElement.getTextContent());
+								definition.setVMArguments(getTextContent(currentElement));
 							}
 						}
 					}
@@ -298,9 +298,9 @@ public class TargetDefinitionPersistenceHelper {
 						if (entry.getNodeType() == Node.ELEMENT_NODE) {
 							Element currentElement = (Element) entry;
 							if (currentElement.getNodeName().equalsIgnoreCase(PROGRAM_ARGS)) {
-								definition.setProgramArguments(currentElement.getTextContent());
+								definition.setProgramArguments(getTextContent(currentElement));
 							} else if (currentElement.getNodeName().equalsIgnoreCase(VM_ARGS)) {
-								definition.setVMArguments(currentElement.getTextContent());
+								definition.setVMArguments(getTextContent(currentElement));
 							}
 						}
 					}
@@ -323,6 +323,41 @@ public class TargetDefinitionPersistenceHelper {
 			// TODO Requires knowledge of the container type to recreate it
 //			IBundleContainer container = .newProfileContainer(TargetPlatform.getDefaultLocation());
 			// TODO Handle restriction creation
+		}
+	}
+
+	/**
+	 * Returns the value of any text nodes stored as children of the given element
+	 * @param element the element to check for text content
+	 * @return string containing text content of element or empty string
+	 * @throws DOMException
+	 */
+	private static String getTextContent(Element element) throws DOMException {
+		NodeList children = element.getChildNodes();
+		StringBuffer result = new StringBuffer();
+		for (int i = 0; i < children.getLength(); ++i) {
+			Node currentNode = children.item(i);
+			if (currentNode.getNodeType() == Node.TEXT_NODE) {
+				result.append(currentNode.getNodeValue());
+			}
+		}
+		return result.toString();
+	}
+
+	/**
+	 * Removes any existing child content and inserts a text node with the given text
+	 * @param element element to add text content to
+	 * @param text text to add as value
+	 * @throws DOMException
+	 */
+	private static void setTextContent(Element element, String text) throws DOMException {
+		Node child;
+		while ((child = element.getFirstChild()) != null) {
+			element.removeChild(child);
+		}
+		if (text != null && text.length() > 0) {
+			Text textNode = element.getOwnerDocument().createTextNode(text);
+			element.appendChild(textNode);
 		}
 	}
 
