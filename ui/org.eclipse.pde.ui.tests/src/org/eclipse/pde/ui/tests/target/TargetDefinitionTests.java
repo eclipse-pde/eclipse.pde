@@ -10,16 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import java.util.Iterator;
-
-import java.util.List;
-
-import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
-
-import org.eclipse.pde.internal.core.target.provisional.LoadTargetDefinitionJob;
-
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -33,6 +23,7 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.impl.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.ServiceReference;
@@ -221,7 +212,7 @@ public class TargetDefinitionTests extends TestCase {
 	public void testDefaultTargetPlatform() throws Exception {
 		// the new way
 		ITargetDefinition definition = getTargetService().newTarget();
-		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation());
+		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
 		definition.setBundleContainers(new IBundleContainer[]{container});
 		Set urls = getAllBundleURLs(definition);
 		
@@ -244,7 +235,7 @@ public class TargetDefinitionTests extends TestCase {
 	 */
 	public void testRestrictedDefaultTargetPlatform() throws Exception {
 		ITargetDefinition definition = getTargetService().newTarget();
-		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation());
+		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
 		BundleInfo[] restrictions = new BundleInfo[]{
 				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
 				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
@@ -271,7 +262,7 @@ public class TargetDefinitionTests extends TestCase {
 	 */
 	public void testVersionRestrictedDefaultTargetPlatform() throws Exception {
 		ITargetDefinition definition = getTargetService().newTarget();
-		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation());
+		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
 		definition.setBundleContainers(new IBundleContainer[]{container});
 		List infos = getAllBundleInfos(definition);
 		// find right versions
@@ -317,7 +308,7 @@ public class TargetDefinitionTests extends TestCase {
 	 */
 	public void testMissingVersionRestrictedDefaultTargetPlatform() throws Exception {
 		ITargetDefinition definition = getTargetService().newTarget();
-		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation());
+		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
 		BundleInfo[] restrictions = new BundleInfo[]{
 				new BundleInfo("org.eclipse.jdt.launching", "xyz", null, BundleInfo.NO_LEVEL, false),
 				new BundleInfo("org.eclipse.jdt.debug", "abc", null, BundleInfo.NO_LEVEL, false)
@@ -340,7 +331,7 @@ public class TargetDefinitionTests extends TestCase {
 	public void testEclipseHomeTargetPlatform() throws Exception {
 		// the new way
 		ITargetDefinition definition = getTargetService().newTarget();
-		IBundleContainer container = getTargetService().newProfileContainer("${eclipse_home}");
+		IBundleContainer container = getTargetService().newProfileContainer("${eclipse_home}", null);
 		definition.setBundleContainers(new IBundleContainer[]{container});
 		Set urls = getAllBundleURLs(definition);
 		
@@ -838,4 +829,127 @@ public class TargetDefinitionTests extends TestCase {
 			resetTargetPlatform();
 		}		
 	}
+	
+	/**
+	 * Tests that a complex target definition can be serialized to xml, then deserialized without
+	 * any loss of data.
+	 * 
+	 * @throws Exception
+	 */
+	public void testPersistComplexDefinition() throws Exception {
+		ITargetDefinition definitionA = getTargetService().newTarget();
+		
+		definitionA.setName("name");
+		definitionA.setDescription("description");
+		definitionA.setOS("os");
+		definitionA.setWS("ws");
+		definitionA.setArch("arch");
+		definitionA.setNL("nl");
+		definitionA.setProgramArguments("program\nargs");
+		definitionA.setVMArguments("vm\nargs");
+		definitionA.setExecutionEnvironment("execution env");
+		
+		// Directory container
+		IBundleContainer dirContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
+		// Profile container with specific config area
+		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), new File(Platform.getConfigurationLocation().getURL().getFile()).getAbsolutePath());
+		// Feature container with specific version
+		// TODO Unexpected CoreException when running
+//		IPath location = getJdtFeatureLocation();
+//		String segment = location.lastSegment();
+//		int index = segment.indexOf('_');
+//		assertTrue("Missing version id", index > 0);
+//		String version = segment.substring(index + 1);
+//		IBundleContainer featureContainer = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", version);
+		// Profile container restricted to just two bundles
+		IBundleContainer restrictedProfileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		BundleInfo[] restrictions = new BundleInfo[]{
+				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
+		};
+		restrictedProfileContainer.setRestrictions(restrictions);
+		definitionA.setBundleContainers(new IBundleContainer[]{dirContainer, profileContainer, /*featureContainer,*/ restrictedProfileContainer});
+		
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		TargetDefinitionPersistenceHelper.persistXML(definitionA, outputStream);
+		ITargetDefinition definitionB = getTargetService().newTarget();
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+		TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
+		
+		assertTargetDefinitionsEqual(definitionA, definitionB);
+	}
+	
+	/**
+	 * Tests that an empty target definition can be serialized to xml, then deserialized without
+	 * any loss of data.
+	 * 
+	 * @throws Exception
+	 */
+	public void testPersistEmptyDefinition() throws Exception {
+		ITargetDefinition definitionA = getTargetService().newTarget();
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		TargetDefinitionPersistenceHelper.persistXML(definitionA, outputStream);
+		ITargetDefinition definitionB = getTargetService().newTarget();
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+		TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
+		assertTargetDefinitionsEqual(definitionA, definitionB);
+	}
+	
+	protected void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) throws CoreException{
+		assertEquals(targetA.getName(),targetB.getName());
+		assertEquals(targetA.getDescription(),targetB.getDescription());
+		assertEquals(targetA.getOS(),targetB.getOS());
+		assertEquals(targetA.getWS(),targetB.getWS());
+		assertEquals(targetA.getArch(),targetB.getArch());
+		assertEquals(targetA.getNL(),targetB.getNL());
+		assertEquals(targetA.getProgramArguments(),targetB.getProgramArguments());
+		assertEquals(targetA.getVMArguments(),targetB.getVMArguments());
+		// TODO Execution environment and Implicit dependencies not implemented yet
+//		assertEquals(targetA.getExecutionEnvironment(),targetB.getExecutionEnvironment());
+		
+		
+		IBundleContainer[] containersA = targetA.getBundleContainers();
+		IBundleContainer[] containersB = targetB.getBundleContainers();
+		if (containersA != null){
+			assertNotNull("Bundle containers are missing",containersB);
+			for (int aIndex = 0; aIndex < containersA.length; aIndex++) {
+				boolean foundMatch = false;
+				for (int bIndex = 0; bIndex < containersB.length; bIndex++) {
+					if (containersA[aIndex].getClass().getName().equals(containersB[bIndex].getClass().getName()) 
+							&& containersA[aIndex].getHomeLocation().equals(containersB[bIndex].getHomeLocation())
+							&& containersA[aIndex].resolveBundles(null).length == containersB[bIndex].resolveBundles(null).length){
+						
+						boolean matchingRestrictions = true;
+						if (containersA[aIndex].getRestrictions() != null){
+							List restrictionsA = Arrays.asList(containersA[aIndex].getRestrictions());
+							Set restrictionIDs = collectAllSymbolicNames(restrictionsA);
+							BundleInfo[] restrictionsB = containersB[bIndex].getRestrictions();
+							assertNotNull("Bundle container's restrictions are missing",restrictionsB);
+							for (int restrictB = 0; restrictB < restrictionsB.length; restrictB++) {
+								if (!restrictionIDs.contains(restrictionsB[restrictB].getSymbolicName())){
+									matchingRestrictions = false;
+								}
+							}
+						}
+						if (matchingRestrictions){
+							foundMatch = true;
+						}
+					}
+				}
+				assertTrue("The target definitions have non matching bundle containers",foundMatch);
+			}
+		}
+		
+	}
+	
+	/**
+	 * Tests that we can deserialize an old style target definition file (version 3.2) and retrieve the correct
+	 * contents.
+	 * 
+	 * @throws Exception
+	 */
+	public void testReadOldTargetFile() throws Exception {
+		// TODO Create an example old style target definition to test with
+	}
+	
 }
