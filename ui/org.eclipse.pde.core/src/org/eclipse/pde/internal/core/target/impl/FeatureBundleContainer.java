@@ -29,6 +29,11 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 public class FeatureBundleContainer extends AbstractBundleContainer {
 
 	/**
+	 * Constant describing the type of bundle container 
+	 */
+	public static final String TYPE = "Feature"; //$NON-NLS-1$
+
+	/**
 	 * Feature symbolic name 
 	 */
 	private String fId;
@@ -64,6 +69,32 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	 */
 	public String getHomeLocation() throws CoreException {
 		return resolveHomeLocation().toOSString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getType()
+	 */
+	public String getType() {
+		return TYPE;
+	}
+
+	/**
+	 * Returns the symbolic name of the feature this bundle container resolves from
+	 * 
+	 * @return string feature id (symbolic name)
+	 */
+	public String getFeatureId() {
+		return fId;
+	}
+
+	/**
+	 * Returns the version of the feature this bundle container resolves from if
+	 * a version was specified.
+	 * 
+	 * @return string feature version or <code>null</code>
+	 */
+	public String getFeatureVersion() {
+		return fVersion;
 	}
 
 	/**
@@ -136,7 +167,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 			}
 			model = ExternalFeatureModelManager.createModel(manifest);
 			if (model == null || !model.isLoaded()) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_3, fId)));
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_2, fId)));
 			}
 			// search bundles in plug-ins directory
 			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());

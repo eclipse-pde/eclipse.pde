@@ -11,23 +11,13 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 public class PluginElement extends PluginParent implements IPluginElement {
 	private static final long serialVersionUID = 1L;
@@ -72,7 +62,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			return false;
 		if (obj instanceof IPluginElement) {
 			IPluginElement target = (IPluginElement) obj;
-			if (target.getModel().equals(getModel()))
+			if (!target.getModel().equals(getModel()))
 				return false;
 			if (target.getAttributeCount() != getAttributeCount())
 				return false;

@@ -24,7 +24,6 @@ public class Messages extends NLS {
 	public static String FeatureBundleContainer_0;
 	public static String FeatureBundleContainer_1;
 	public static String FeatureBundleContainer_2;
-	public static String FeatureBundleContainer_3;
 	public static String FeatureBundleContainer_4;
 	public static String FeatureBundleContainer_5;
 	public static String LoadTargetDefinitionJob_0;

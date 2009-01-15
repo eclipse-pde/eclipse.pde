@@ -168,13 +168,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newProfileContainer(java.lang.String)
-	 */
-	public IBundleContainer newProfileContainer(String home) {
-		return newProfileContainer(home, null);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newProfileContainer(java.lang.String, java.lang.String)
 	 */
 	public IBundleContainer newProfileContainer(String home, String configurationLocation) {

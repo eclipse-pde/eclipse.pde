@@ -157,4 +157,14 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		}
 		return (BundleInfo[]) subset.toArray(new BundleInfo[subset.size()]);
 	}
+
+	/**
+	 * Returns a string that identifies the type of bundle container.  This type is persisted to xml
+	 * so that the correct bundle container is created when deserializing the xml.  This type is also
+	 * used to alter how the containers are presented to the user in the UI.
+	 * 
+	 * @return string identifier for the type of bundle container.
+	 */
+	public abstract String getType();
+
 }

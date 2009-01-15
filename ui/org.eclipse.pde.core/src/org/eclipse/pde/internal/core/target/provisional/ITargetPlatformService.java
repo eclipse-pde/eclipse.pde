@@ -89,14 +89,18 @@ public interface ITargetPlatformService {
 
 	/**
 	 * Creates and returns a bundle container that contains all bundles installed in
-	 * a profile at the specified location with a default configuration area.
-	 * The specified home location may contain string substitution variables.
+	 * a profile at the specified location with the specified configuration area. If
+	 * a configuration area is not specified the default location is used. The specified 
+	 * home location and configuration location may contain string substitution variables.
 	 * 
 	 * @param home absolute path in the local file system to the root of an installed profile
 	 * 	which may contain string substitution variables
+	 * @param configurationLocation absolute path in the local file system to the
+	 *  configuration area for the specified installation which may contain string substitution
+	 *  variables or <code>null</code> to use the default location
 	 * @return bundle container
 	 */
-	public IBundleContainer newProfileContainer(String home);
+	public IBundleContainer newProfileContainer(String home, String configurationLocation);
 
 	/**
 	 * Creates and returns a bundle container that contains all bundles referenced by
@@ -110,20 +114,5 @@ public interface ITargetPlatformService {
 	 * @return bundle container
 	 */
 	public IBundleContainer newFeatureContainer(String home, String featureId, String version);
-
-	/**
-	 * Creates and returns a bundle container that contains all bundles installed in
-	 * a profile at the specified location with the specified configuration area.
-	 * The specified home location and configuration location may contain string substitution
-	 * variables.
-	 * 
-	 * @param home absolute path in the local file system to the root of an installed profile
-	 * 	which may contain string substitution variables
-	 * @param configurationLocation absolute path in the local file system to the
-	 *  configuration area for the specified installation which may contain string substitution
-	 *  variables
-	 * @return bundle container
-	 */
-	public IBundleContainer newProfileContainer(String home, String configurationLocation);
 
 }

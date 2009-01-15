@@ -35,6 +35,11 @@ import org.osgi.framework.Constants;
 class DirectoryBundleContainer extends AbstractBundleContainer {
 
 	/**
+	 * Constant describing the type of bundle container 
+	 */
+	public static final String TYPE = "Directory"; //$NON-NLS-1$
+
+	/**
 	 * Path to this container's directory in the local file system.
 	 * The path may contain string substitution variables.
 	 */
@@ -59,6 +64,13 @@ class DirectoryBundleContainer extends AbstractBundleContainer {
 	 */
 	public String getHomeLocation() throws CoreException {
 		return getDirectory().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getType()
+	 */
+	public String getType() {
+		return TYPE;
 	}
 
 	/* (non-Javadoc)
@@ -288,4 +300,5 @@ class DirectoryBundleContainer extends AbstractBundleContainer {
 			PDECore.log(e);
 		}
 	}
+
 }

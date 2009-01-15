@@ -26,6 +26,11 @@ import org.eclipse.pde.internal.core.PDECore;
 class ProfileBundleContainer extends AbstractBundleContainer {
 
 	/**
+	 * Constant describing the type of bundle container 
+	 */
+	public static final String TYPE = "Profile"; //$NON-NLS-1$
+
+	/**
 	 * Path to home/root install location. May contain string variables.
 	 */
 	private String fHome;
@@ -53,6 +58,22 @@ class ProfileBundleContainer extends AbstractBundleContainer {
 	 */
 	public String getHomeLocation() throws CoreException {
 		return resolveHomeLocation().toOSString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getType()
+	 */
+	public String getType() {
+		return TYPE;
+	}
+
+	/**
+	 * Returns the configuration area for this container if one was specified during creation.
+	 * 
+	 * @return string path to configuration location or <code>null</code>
+	 */
+	public String getConfigurationLocation() {
+		return fConfiguration;
 	}
 
 	/* (non-Javadoc)

@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
@@ -18,8 +20,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.*;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -37,12 +38,12 @@ public class TargetDefinitionPersistenceHelper {
 	 */
 	private static final String ROOT = "target"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
+	private static final String ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
 	private static final String LOCATIONS = "locations"; //$NON-NLS-1$
 	private static final String LOCATION = "location"; //$NON-NLS-1$
 	private static final String ATTR_LOCATION_PATH = "path"; //$NON-NLS-1$
+	private static final String ATTR_LOCATION_TYPE = "type"; //$NON-NLS-1$
 	private static final String RESTRICTION = "restriction"; //$NON-NLS-1$
-	// TODO Add type support to the locations
-//	private static final String ATTR_LOCATION_TYPE = "type"; //$NON-NLS-1$
 	private static final String ENVIRONMENT = "environment"; //$NON-NLS-1$
 	private static final String OS = "os"; //$NON-NLS-1$
 	private static final String WS = "ws"; //$NON-NLS-1$
@@ -53,15 +54,17 @@ public class TargetDefinitionPersistenceHelper {
 	private static final String VM_ARGS = "vmArgs"; //$NON-NLS-1$
 //	private static final String IMPLICIT = "implicitDependencies"; //$NON-NLS-1$
 //	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
-//	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String PDE_INSTRUCTION = "pde"; //$NON-NLS-1$
-	private static final String ATTR_VERSION = "version="; //$NON-NLS-1$
+	private static final String ATTR_ID = "id"; //$NON-NLS-1$
+	private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
+	private static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
 	private static final String VERSION_3_5 = "3.5"; //$NON-NLS-1$
 //	private static final String VERSION_3_2 = "3.2"; //$NON-NLS-1$
 	private static final String CONTENT = "content"; //$NON-NLS-1$
 //	private static final String PLUGINS = "plugins"; //$NON-NLS-1$
 //	private static final String FEATURES = "features"; //$NON-NLS-1$
 //	private static final String EXTRA_LOCATIONS = "extraLocations"; //$NON-NLS-1$
+	private static ITargetPlatformService fTargetService;
 
 	/*
 	 * 
@@ -112,7 +115,7 @@ public class TargetDefinitionPersistenceHelper {
 		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
 		Document doc = docBuilder.newDocument();
 
-		ProcessingInstruction instruction = doc.createProcessingInstruction(PDE_INSTRUCTION, ATTR_VERSION + "\"" + VERSION_3_5 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		ProcessingInstruction instruction = doc.createProcessingInstruction(PDE_INSTRUCTION, ATTR_VERSION + "=\"" + VERSION_3_5 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		doc.appendChild(instruction);
 
 		Element rootElement = doc.createElement(ROOT);
@@ -121,19 +124,15 @@ public class TargetDefinitionPersistenceHelper {
 			rootElement.setAttribute(ATTR_NAME, definition.getName());
 		}
 
+		if (definition.getDescription() != null) {
+			rootElement.setAttribute(ATTR_DESCRIPTION, definition.getDescription());
+		}
+
 		IBundleContainer[] containers = definition.getBundleContainers();
 		if (containers != null && containers.length > 0) {
 			Element containersElement = doc.createElement(LOCATIONS);
 			for (int i = 0; i < containers.length; i++) {
-				Element containerElement = doc.createElement(LOCATION);
-				containerElement.setAttribute(ATTR_LOCATION_PATH, containers[i].getHomeLocation());
-				BundleInfo[] restrictions = containers[i].getRestrictions();
-				for (int j = 0; j < restrictions.length; j++) {
-					Element restrictionElement = doc.createElement(RESTRICTION);
-					// TODO What do we want to store, URI? Symbolic Name?
-					setTextContent(restrictionElement, restrictions[j].getBaseLocation().toString());
-					containerElement.appendChild(restrictionElement);
-				}
+				Element containerElement = serializeBundleContainer(doc, containers[i]);
 				containersElement.appendChild(containerElement);
 			}
 			rootElement.appendChild(containersElement);
@@ -204,14 +203,13 @@ public class TargetDefinitionPersistenceHelper {
 	 * @throws IOException 
 	 * @throws SAXException 
 	 */
-	protected static void initFromXML(ITargetDefinition definition, InputStream input) throws CoreException, ParserConfigurationException, SAXException, IOException {
+	public static void initFromXML(ITargetDefinition definition, InputStream input) throws CoreException, ParserConfigurationException, SAXException, IOException {
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
 		Document doc = parser.parse(new InputSource(input));
 
-		String version = null;
-
-//		TODO We may not need the version to process as there are no incompatable differences.
+		// TODO We may not need the version to process as there are no incompatable differences.
+//		String version = null;
 //		NodeList docNodes = doc.getChildNodes();
 //		for (int i = 0; i < docNodes.getLength(); ++i) {
 //			Node node = docNodes.item(i);
@@ -233,19 +231,22 @@ public class TargetDefinitionPersistenceHelper {
 		}
 
 		String name = root.getAttribute(ATTR_NAME);
-		if (name != null) {
+		if (name.length() > 0) {
 			definition.setName(name);
 		}
 
+		String description = root.getAttribute(ATTR_DESCRIPTION);
+		if (description.length() > 0) {
+			definition.setDescription(description);
+		}
+
+		List bundleContainers = new ArrayList();
 		NodeList list = root.getChildNodes();
-		Node node = null;
-		Element element = null;
-		String nodeName = null;
 		for (int i = 0; i < list.getLength(); ++i) {
-			node = list.item(i);
+			Node node = list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				element = (Element) node;
-				nodeName = element.getNodeName();
+				Element element = (Element) node;
+				String nodeName = element.getNodeName();
 				if (nodeName.equalsIgnoreCase(LOCATIONS)) {
 					NodeList locations = element.getChildNodes();
 					for (int j = 0; j < locations.getLength(); ++j) {
@@ -253,14 +254,16 @@ public class TargetDefinitionPersistenceHelper {
 						if (locationNode.getNodeType() == Node.ELEMENT_NODE) {
 							Element locationElement = (Element) locationNode;
 							if (locationElement.getNodeName().equalsIgnoreCase(LOCATION)) {
-								createBundleContainer(locationElement, definition);
+								bundleContainers.add(deserializeBundleContainer(locationElement));
 							}
 						}
 					}
 				} else if (nodeName.equalsIgnoreCase(LOCATION)) {
-					createBundleContainer(element, definition);
+					// This is the 'home' location in old style target platforms
+					bundleContainers.add(deserializeBundleContainer(element));
 				} else if (nodeName.equalsIgnoreCase(CONTENT)) {
-					handleOldStyleContent(element, definition);
+					// Additional locations and other bundle content settings were stored under this tag in old style target platforms
+					bundleContainers.addAll(deserializeBundleContainersFromOldStyleElement(element));
 				} else if (nodeName.equalsIgnoreCase(ENVIRONMENT)) {
 					NodeList envEntries = element.getChildNodes();
 					for (int j = 0; j < envEntries.getLength(); ++j) {
@@ -309,21 +312,76 @@ public class TargetDefinitionPersistenceHelper {
 					// TODO Implicit Dependencies
 				}
 			}
-
 		}
+		definition.setBundleContainers((IBundleContainer[]) bundleContainers.toArray(new IBundleContainer[bundleContainers.size()]));
 	}
 
-	private static void handleOldStyleContent(Element element, ITargetDefinition definition) {
-		// TODO Auto-generated method stub
+	private static Element serializeBundleContainer(Document doc, IBundleContainer container) throws CoreException {
+		Element containerElement = doc.createElement(LOCATION);
+		containerElement.setAttribute(ATTR_LOCATION_PATH, container.getHomeLocation());
+		containerElement.setAttribute(ATTR_LOCATION_TYPE, ((AbstractBundleContainer) container).getType());
+		if (container instanceof FeatureBundleContainer) {
+			containerElement.setAttribute(ATTR_ID, ((FeatureBundleContainer) container).getFeatureId());
+			String version = ((FeatureBundleContainer) container).getFeatureId();
+			if (version != null) {
+				containerElement.setAttribute(ATTR_VERSION, version);
+			}
+		} else if (container instanceof ProfileBundleContainer) {
+			String configurationArea = ((ProfileBundleContainer) container).getConfigurationLocation();
+			if (configurationArea != null) {
+				containerElement.setAttribute(ATTR_CONFIGURATION, configurationArea);
+			}
+		}
+		BundleInfo[] restrictions = container.getRestrictions();
+		if (restrictions != null) {
+			for (int j = 0; j < restrictions.length; j++) {
+				Element restrictionElement = doc.createElement(RESTRICTION);
+				restrictionElement.setAttribute(ATTR_ID, restrictions[j].getSymbolicName());
+				String version = restrictions[j].getVersion();
+				if (version != null) {
+					restrictionElement.setAttribute(ATTR_VERSION, version);
+				}
+				containerElement.appendChild(restrictionElement);
+			}
+		}
+		return containerElement;
 	}
 
-	private static void createBundleContainer(Element location, ITargetDefinition definition) {
+	private static IBundleContainer deserializeBundleContainer(Element location) throws CoreException {
 		String path = location.getAttribute(ATTR_LOCATION_PATH);
-		if (path != null) {
-			// TODO Requires knowledge of the container type to recreate it
-//			IBundleContainer container = .newProfileContainer(TargetPlatform.getDefaultLocation());
-			// TODO Handle restriction creation
+		String type = location.getAttribute(ATTR_LOCATION_TYPE);
+		IBundleContainer container = null;
+		if (type.length() == 0 || DirectoryBundleContainer.TYPE.equals(type)) {
+			container = getTargetPlatformService().newDirectoryContainer(path);
+		} else if (ProfileBundleContainer.TYPE.equals(type)) {
+			String configArea = location.getAttribute(ATTR_CONFIGURATION);
+			container = getTargetPlatformService().newProfileContainer(path, configArea.length() > 0 ? configArea : null);
+		} else if (FeatureBundleContainer.TYPE.equals(type)) {
+			String version = location.getAttribute(ATTR_VERSION);
+			container = getTargetPlatformService().newFeatureContainer(path, location.getAttribute(ATTR_ID), version.length() > 0 ? version : null);
 		}
+		NodeList list = location.getChildNodes();
+		List restrictions = new ArrayList(list.getLength());
+		for (int i = 0; i < list.getLength(); ++i) {
+			Node node = list.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element element = (Element) node;
+				if (element.getNodeName().equalsIgnoreCase(RESTRICTION)) {
+					String id = element.getAttribute(ATTR_ID);
+					String version = element.getAttribute(ATTR_VERSION);
+					restrictions.add(new BundleInfo(id, version.length() > 0 ? version : null, null, BundleInfo.NO_LEVEL, false));
+				}
+			}
+		}
+		if (restrictions.size() > 0) {
+			container.setRestrictions((BundleInfo[]) restrictions.toArray(new BundleInfo[restrictions.size()]));
+		}
+		return container;
+	}
+
+	private static List deserializeBundleContainersFromOldStyleElement(Element element) {
+		// TODO Auto-generated method stub
+		return new ArrayList(0);
 	}
 
 	/**
@@ -359,6 +417,16 @@ public class TargetDefinitionPersistenceHelper {
 			Text textNode = element.getOwnerDocument().createTextNode(text);
 			element.appendChild(textNode);
 		}
+	}
+
+	private static ITargetPlatformService getTargetPlatformService() throws CoreException {
+		if (fTargetService == null) {
+			fTargetService = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			if (fTargetService == null) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Could not acquire the target platform service to initialize the target definition."));
+			}
+		}
+		return fTargetService;
 	}
 
 }
