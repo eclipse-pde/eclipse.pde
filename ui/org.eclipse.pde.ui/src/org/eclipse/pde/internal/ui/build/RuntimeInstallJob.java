@@ -25,7 +25,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.Inst
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.equinox.internal.provisional.p2.query.Collector;
-import org.eclipse.equinox.internal.provisional.p2.query.Query;
+import org.eclipse.equinox.internal.provisional.p2.query.MatchQuery;
 import org.eclipse.equinox.internal.provisional.p2.ui.actions.InstallAction;
 import org.eclipse.equinox.internal.provisional.p2.ui.operations.ProvisioningUtil;
 import org.eclipse.osgi.util.NLS;
@@ -199,7 +199,7 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.setApplicabilityScope(new IRequiredCapability[0][0]);
 
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
-		Collector queryMatches = profile.query(new Query() {
+		Collector queryMatches = profile.query(new MatchQuery() {
 			public boolean isMatch(Object candidate) {
 				if (candidate instanceof IInstallableUnit) {
 					IRequiredCapability[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
