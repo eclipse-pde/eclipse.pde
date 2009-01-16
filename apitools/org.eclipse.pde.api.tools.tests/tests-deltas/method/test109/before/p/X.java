@@ -2,6 +2,6 @@ package p;
 
 public class X {
 
-	protected void m1() {
+	public void m1() {
 	}
 }
