@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -108,6 +108,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.storeBuildProperties(executableFeature, properties);
 
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "org.eclipse.equinox.executable");
+		properties.put("launcherName", "eclipse");
 		try {
 			BuildDirector.p2Gathering = true;
 			generateScripts(buildFolder, properties);
@@ -149,8 +150,8 @@ public class PublishingTests extends P2TestCase {
 		IFolder buildFolder = newTest("PublishBundle_APITooling");
 
 		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
-		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); public void Bar(){}}"));
-		Utils.writeBuffer(bundle.getFile("src/b/B.java"), new StringBuffer("package b; public class B { int i = 0; public void Foo(){}}"));
+		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); /** @nooverride */public void Bar(){}}"));
+		Utils.writeBuffer(bundle.getFile("src/b/B.java"), new StringBuffer("package b; /** @noextend */public class B { /** @noreference */public int i = 0; public void Foo(){}}"));
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?> 						\n");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.build.publisher;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.Properties;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.*;
@@ -30,14 +31,26 @@ public abstract class AbstractPublisherTask extends Task {
 	protected boolean append = true;
 	protected boolean reusePackedFiles = false;
 	protected PublisherInfo publisherInfo = null;
+	protected Properties buildProperties = null;
 
 	protected Properties getBuildProperties() {
-		Properties buildProperties = null;
+		if (buildProperties != null)
+			return buildProperties;
+
+		Properties properties = null;
 		try {
-			buildProperties = AbstractScriptGenerator.readProperties(baseDirectory, IPDEBuildConstants.PROPERTIES_FILE, IStatus.OK);
+			properties = AbstractScriptGenerator.readProperties(baseDirectory, IPDEBuildConstants.PROPERTIES_FILE, IStatus.OK);
 		} catch (CoreException e) {
-			//boo
+			return null;
 		}
+
+		buildProperties = new Properties();
+		for (Iterator iterator = properties.keySet().iterator(); iterator.hasNext();) {
+			String key = (String) iterator.next();
+			String value = properties.getProperty(key);
+			buildProperties.put(key, getProject().replaceProperties(value));
+		}
+
 		return buildProperties;
 	}
 
