@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.PDECore;
  * 
  * @since 3.5 
  */
-class ProfileBundleContainer extends AbstractBundleContainer {
+public class ProfileBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Constant describing the type of bundle container 

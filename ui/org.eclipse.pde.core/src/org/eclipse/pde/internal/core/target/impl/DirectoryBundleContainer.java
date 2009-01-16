@@ -32,7 +32,7 @@ import org.osgi.framework.Constants;
  * 
  * @since 3.5
  */
-class DirectoryBundleContainer extends AbstractBundleContainer {
+public class DirectoryBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Constant describing the type of bundle container 
