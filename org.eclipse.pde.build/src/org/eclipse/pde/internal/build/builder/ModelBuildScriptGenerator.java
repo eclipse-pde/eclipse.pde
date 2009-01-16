@@ -589,8 +589,20 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		FileSet metadata = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, files, null, exclude, null, null);
 		script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), new FileSet[] {metadata}, true, true);
 
-		String[] splitIncludes = Utils.getArrayFromString(include);
+		if (Utils.isSourceBundle(model)) {
+			Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
+			if (pluginsToGatherSourceFrom != null) {
+				for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
+					BundleDescription plugin = (BundleDescription) iter.next();
+					IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
+					HashMap taskParams = new HashMap(1);
+					taskParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources"); //$NON-NLS-1$
+					script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_INDIVIDUAL_SOURCES, null, null, taskParams);
+				}
+			}
+		}
 
+		String[] splitIncludes = Utils.getArrayFromString(include);
 		genarateIdReplacementCall(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
 		generateAPIToolsCall(getCompiledLocations(), Utils.isStringIn(splitIncludes, EXPANDED_DOT + '/') != -1, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
 
@@ -600,7 +612,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println("   buildResultFolder=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
 		if (associatedEntry != null && associatedEntry.unpackSet())
-			script.println("  unpack=\"" + String.valueOf(associatedEntry.isUnpack()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			script.println("   unpack=\"" + String.valueOf(associatedEntry.isUnpack()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (Utils.isSourceBundle(model)) {
+			script.println("   gatheredSource=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources\""); //$NON-NLS-1$//$NON-NLS-2$
+		}
 		script.println("/>"); //$NON-NLS-1$
 		script.printTargetEnd();
 	}

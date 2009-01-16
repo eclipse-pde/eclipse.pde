@@ -27,6 +27,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	static final private String API_DESCRIPTION = ".api_description"; //$NON-NLS-1$
 
 	private String buildResultFolder = null;
+	private String gatheredSource = null;
 	private String unpack = null;
 
 	public void execute() throws BuildException {
@@ -48,20 +49,20 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	}
 
 	protected GatheringComputer createComputer() {
-		Properties buildProperties = getBuildProperties();
+		Properties properties = getBuildProperties();
 		GatheringComputer computer = new GatheringComputer();
 
 		CompiledEntry[] entries = null;
 		try {
-			entries = ModelBuildScriptGenerator.extractEntriesToCompile(buildProperties, null);
+			entries = ModelBuildScriptGenerator.extractEntriesToCompile(properties, null);
 		} catch (CoreException e) {
 			//nothing being compiled?
 		}
 
 		int numIncludes = 0;
-		String include = (String) buildProperties.get(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+		String include = (String) properties.get(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		String[] splitIncludes = Utils.getArrayFromString(include);
-		String exclude = (String) buildProperties.get(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
+		String exclude = (String) properties.get(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 
 		FileSet fileSet = new FileSet();
 		fileSet.setProject(getProject());
@@ -155,6 +156,16 @@ public class GatherBundleTask extends AbstractPublisherTask {
 
 			computer.addFiles(buildResultFolder + '/' + ModelBuildScriptGenerator.EXPANDED_DOT, fileSet.getDirectoryScanner().getIncludedFiles());
 		}
+
+		if (gatheredSource != null) {
+			fileSet = new FileSet();
+			fileSet.setProject(getProject());
+			fileSet.setDir(new File(gatheredSource));
+			NameEntry fileInclude = fileSet.createInclude();
+			fileInclude.setName("**"); //$NON-NLS-1$
+			computer.addFiles(gatheredSource, fileSet.getDirectoryScanner().getIncludedFiles());
+		}
+
 		return computer;
 	}
 
@@ -165,5 +176,10 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	public void setUnpack(String unpack) {
 		if (unpack != null && unpack.length() > 0 && !unpack.startsWith("${")) //$NON-NLS-1$
 			this.unpack = unpack;
+	}
+
+	public void setGatheredSource(String gatheredSource) {
+		if (gatheredSource != null && gatheredSource.length() > 0 && !gatheredSource.startsWith("${")) //$NON-NLS-1$
+			this.gatheredSource = gatheredSource;
 	}
 }

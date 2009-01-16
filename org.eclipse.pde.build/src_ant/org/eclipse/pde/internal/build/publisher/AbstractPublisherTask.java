@@ -31,7 +31,7 @@ public abstract class AbstractPublisherTask extends Task {
 	protected boolean append = true;
 	protected boolean reusePackedFiles = false;
 	protected PublisherInfo publisherInfo = null;
-	protected Properties buildProperties = null;
+	private Properties buildProperties = null;
 
 	protected Properties getBuildProperties() {
 		if (buildProperties != null)

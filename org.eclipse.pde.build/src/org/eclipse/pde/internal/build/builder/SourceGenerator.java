@@ -676,7 +676,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	}
 
 	public void generateSourcePlugin(FeatureEntry sourceEntry, BundleDescription originalBundle) throws CoreException {
-		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(sourceEntry, true));
+		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + sourceEntry.getId() + '_' + originalBundle.getVersion());
 
 		Manifest manifest = new Manifest();
 		Attributes attributes = manifest.getMainAttributes();

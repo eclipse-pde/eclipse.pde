@@ -250,4 +250,35 @@ public class PublishingTests extends P2TestCase {
 		assertTrue(file.exists());
 		assertJarVerifies(file.getLocation().toFile());
 	}
+	
+	public void testPublish_Source_1() throws Exception {
+		IFolder buildFolder = newTest("source_1");
+		
+		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
+		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); public void Bar(){}}"));
+		Utils.writeBuffer(bundle.getFile("src/b/B.java"), new StringBuffer("package b; public class B { public int i = 0; public void Foo(){}}"));
+		Utils.generateBundle(bundle, "bundle");
+		
+		Utils.generateFeature(buildFolder, "F", null, new String [] { "bundle", "bundle.source" } );
+		Properties properties = new Properties();
+		properties.put("generate.plugin@bundle.source", "bundle");
+		properties.put("individualSourceBundles", "true");
+		Utils.storeBuildProperties(buildFolder.getFolder("features/F"), properties);
+		
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "F");
+		Utils.storeBuildProperties(buildFolder, properties);
+		try {
+			BuildDirector.p2Gathering = true;
+			runBuild(buildFolder);
+		} finally {
+			BuildDirector.p2Gathering = false;
+		}		
+		
+		assertResourceFile(buildFolder, "buildRepo/plugins/bundle.source_1.0.0.jar");
+		Set entries = new HashSet();
+		entries.add("A.java");
+		entries.add("b/B.java");
+		assertZipContents(buildFolder, "buildRepo/plugins/bundle.source_1.0.0.jar", entries);
+	}
 }
