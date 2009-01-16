@@ -185,43 +185,14 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 			} else {
 				bundles = container.resolveBundles(null);
 			}
-			Map bundleMap = new HashMap();
-			for (int i = 0; i < bundles.length; i++) {
-				BundleInfo info = bundles[i];
-				List list = (List) bundleMap.get(info.getSymbolicName());
-				if (list == null) {
-					list = new ArrayList();
-					bundleMap.put(info.getSymbolicName(), list);
-				}
-				list.add(info);
-			}
 			IFeature feature = model.getFeature();
 			IFeaturePlugin[] plugins = feature.getPlugins();
-			List results = new ArrayList();
+			BundleInfo[] matchInfos = new BundleInfo[plugins.length];
 			for (int i = 0; i < plugins.length; i++) {
 				IFeaturePlugin plugin = plugins[i];
-				List list = (List) bundleMap.get(plugin.getId());
-				if (list != null) {
-					Iterator iterator = list.iterator();
-					boolean added = false;
-					while (iterator.hasNext()) {
-						BundleInfo info = (BundleInfo) iterator.next();
-						if (info.getVersion().equals(plugin.getVersion())) {
-							results.add(info);
-							added = true;
-							break;
-						}
-					}
-					if (!added) {
-						// use first one
-						results.add(list.get(0));
-					}
-				} else {
-					// TODO: missing plug-in, we should probably include a status with resolution
-				}
-
+				matchInfos[i] = new BundleInfo(plugin.getId(), plugin.getVersion(), null, BundleInfo.NO_LEVEL, false);
 			}
-			return (BundleInfo[]) results.toArray(new BundleInfo[results.size()]);
+			return AbstractBundleContainer.getMatchingBundles(bundles, matchInfos);
 		} finally {
 			if (model != null) {
 				model.dispose();

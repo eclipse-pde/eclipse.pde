@@ -49,7 +49,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 */
 	public final BundleInfo[] resolveBundles(IProgressMonitor monitor) throws CoreException {
 		BundleInfo[] all = resolveAllBundles(monitor);
-		return getMatchingBundles(all);
+		return getMatchingBundles(all, getRestrictions());
 	}
 
 	/**
@@ -68,7 +68,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 */
 	public final BundleInfo[] resolveSourceBundles(IProgressMonitor monitor) throws CoreException {
 		BundleInfo[] all = resolveAllSourceBundles(monitor);
-		return getMatchingBundles(all);
+		return getMatchingBundles(all, getRestrictions());
 	}
 
 	/**
@@ -97,21 +97,22 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	}
 
 	/**
-	 * Returns bundles from the specified collection that match restrictions on this
-	 * container.
+	 * Returns bundles from the specified collection that match the symbolic names
+	 * and/or version in the specified criteria. When no version is specified
+	 * the newest version (if any) is selected.
 	 * 
-	 * @param all bundles to choose from
+	 * @param collection bundles to resolve against match criteria
+	 * @param criteria bundles to select or <code>null</code> if no restrictions
 	 * @return bundles that match this container's restrictions
 	 */
-	private BundleInfo[] getMatchingBundles(BundleInfo[] all) {
-		BundleInfo[] restrictions = getRestrictions();
-		if (restrictions == null) {
-			return all;
+	static BundleInfo[] getMatchingBundles(BundleInfo[] collection, BundleInfo[] criteria) {
+		if (criteria == null) {
+			return collection;
 		}
 		// map bundles names to available versions
-		Map bundleMap = new HashMap(all.length);
-		for (int i = 0; i < all.length; i++) {
-			BundleInfo info = all[i];
+		Map bundleMap = new HashMap(collection.length);
+		for (int i = 0; i < collection.length; i++) {
+			BundleInfo info = collection[i];
 			List list = (List) bundleMap.get(info.getSymbolicName());
 			if (list == null) {
 				list = new ArrayList(3);
@@ -119,9 +120,9 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			}
 			list.add(info);
 		}
-		List subset = new ArrayList(restrictions.length);
-		for (int i = 0; i < restrictions.length; i++) {
-			BundleInfo info = restrictions[i];
+		List subset = new ArrayList(criteria.length);
+		for (int i = 0; i < criteria.length; i++) {
+			BundleInfo info = criteria[i];
 			List list = (List) bundleMap.get(info.getSymbolicName());
 			if (list != null) {
 				String version = info.getVersion();

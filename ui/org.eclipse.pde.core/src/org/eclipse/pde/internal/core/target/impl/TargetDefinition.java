@@ -14,9 +14,9 @@ import java.io.*;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.xml.sax.SAXException;
 
@@ -47,6 +47,9 @@ class TargetDefinition implements ITargetDefinition {
 
 	// handle
 	private ITargetHandle fHandle;
+
+	// implicit dependencies
+	private BundleInfo[] fImplicit;
 
 	/**
 	 * Constructs a target definition based on the given handle. 
@@ -242,14 +245,11 @@ class TargetDefinition implements ITargetDefinition {
 		try {
 			TargetDefinitionPersistenceHelper.initFromXML(this, stream);
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			abort(Messages.TargetDefinition_0, e);
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			abort(Messages.TargetDefinition_0, e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			abort(Messages.TargetDefinition_0, e);
 		}
 	}
 
@@ -263,14 +263,51 @@ class TargetDefinition implements ITargetDefinition {
 		try {
 			TargetDefinitionPersistenceHelper.persistXML(this, stream);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			abort(Messages.TargetDefinition_3, e);
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			abort(Messages.TargetDefinition_3, e);
 		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			abort(Messages.TargetDefinition_3, e);
 		}
+	}
+
+	/**
+	 * Throws a core exception with the given message and underlying exception (possibly
+	 * <code>null</code>).
+	 * 
+	 * @param message message
+	 * @param e underlying cause of the exception or <code>null</code>
+	 * @throws CoreException
+	 */
+	private void abort(String message, Exception e) throws CoreException {
+		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, message, e));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getImplicitDependencies()
+	 */
+	public BundleInfo[] getImplicitDependencies() {
+		return fImplicit;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#resolveImplicitDependencies(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public BundleInfo[] resolveImplicitDependencies(IProgressMonitor monitor) throws CoreException {
+		int size = 0;
+		if (fImplicit != null) {
+			size = fImplicit.length;
+		}
+		if (size == 0) {
+			return new BundleInfo[0];
+		}
+		return AbstractBundleContainer.getMatchingBundles(resolveBundles(null), fImplicit);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setImplicitDependencies(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 */
+	public void setImplicitDependencies(BundleInfo[] bundles) {
+		fImplicit = bundles;
 	}
 }

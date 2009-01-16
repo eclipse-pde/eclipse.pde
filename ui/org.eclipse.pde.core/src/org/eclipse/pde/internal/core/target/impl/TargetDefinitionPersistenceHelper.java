@@ -52,8 +52,8 @@ public class TargetDefinitionPersistenceHelper {
 	private static final String ARGUMENTS = "launcherArgs"; //$NON-NLS-1$
 	private static final String PROGRAM_ARGS = "programArgs"; //$NON-NLS-1$
 	private static final String VM_ARGS = "vmArgs"; //$NON-NLS-1$
-//	private static final String IMPLICIT = "implicitDependencies"; //$NON-NLS-1$
-//	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
+	private static final String IMPLICIT = "implicitDependencies"; //$NON-NLS-1$
+	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String PDE_INSTRUCTION = "pde"; //$NON-NLS-1$
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
@@ -180,7 +180,19 @@ public class TargetDefinitionPersistenceHelper {
 
 		// TODO EE/JRE
 
-		// TODO Implicit Plug-ins
+		BundleInfo[] implicitDependencies = definition.getImplicitDependencies();
+		if (implicitDependencies != null && implicitDependencies.length > 0) {
+			Element implicit = doc.createElement(IMPLICIT);
+			for (int i = 0; i < implicitDependencies.length; i++) {
+				Element plugin = doc.createElement(PLUGIN);
+				plugin.setAttribute(ATTR_ID, implicitDependencies[i].getSymbolicName());
+				if (implicitDependencies[i].getVersion() != null) {
+					plugin.setAttribute(ATTR_VERSION, implicitDependencies[i].getVersion());
+				}
+				implicit.appendChild(plugin);
+			}
+			rootElement.appendChild(implicit);
+		}
 
 		doc.appendChild(rootElement);
 		DOMSource source = new DOMSource(doc);
@@ -307,10 +319,23 @@ public class TargetDefinitionPersistenceHelper {
 							}
 						}
 					}
-
-					// TODO EE/JRE (old and new versions)
-					// TODO Implicit Dependencies
+				} else if (nodeName.equalsIgnoreCase(IMPLICIT)) {
+					NodeList implicitEntries = element.getChildNodes();
+					List implicit = new ArrayList(implicitEntries.getLength());
+					for (int j = 0; j < implicitEntries.getLength(); ++j) {
+						Node entry = implicitEntries.item(j);
+						if (entry.getNodeType() == Node.ELEMENT_NODE) {
+							Element currentElement = (Element) entry;
+							if (currentElement.getNodeName().equalsIgnoreCase(PLUGIN)) {
+								String version = currentElement.getAttribute(ATTR_VERSION);
+								BundleInfo bundle = new BundleInfo(currentElement.getAttribute(ATTR_ID), version.length() > 0 ? version : null, null, BundleInfo.NO_LEVEL, false);
+								implicit.add(bundle);
+							}
+						}
+					}
+					definition.setImplicitDependencies((BundleInfo[]) implicit.toArray(new BundleInfo[implicit.size()]));
 				}
+				// TODO EE/JRE (old and new versions)
 			}
 		}
 		definition.setBundleContainers((IBundleContainer[]) bundleContainers.toArray(new IBundleContainer[bundleContainers.size()]));

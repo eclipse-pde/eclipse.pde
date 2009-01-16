@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
-import org.eclipse.pde.internal.core.target.impl.Messages;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,8 +26,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
-import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
+import org.eclipse.pde.internal.core.target.impl.Messages;
 
 /**
  * Sets the current target platform based on a target definition.
@@ -163,22 +160,21 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	}
 
 	/**
-	 * TODO: we don't currently have implicit plug-ins in the new model.
+	 * Sets implicit dependencies, if any
 	 * 
-	 * @param pref
-	 * @param monitor
+	 * @param pref preference store
+	 * @param monitor progress monitor
 	 */
 	private void loadImplicitPlugins(Preferences pref, IProgressMonitor monitor) {
-		IImplicitDependenciesInfo info = null;
-		if (info != null) {
-			ITargetPlugin[] plugins = info.getPlugins();
-			monitor.beginTask(Messages.LoadTargetOperation_implicitPluginsTaskName, plugins.length + 1);
+		BundleInfo[] infos = fTarget.getImplicitDependencies();
+		if (infos != null) {
+			monitor.beginTask(Messages.LoadTargetOperation_implicitPluginsTaskName, infos.length + 1);
 			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < plugins.length; i++) {
-				buffer.append(plugins[i].getId()).append(',');
+			for (int i = 0; i < infos.length; i++) {
+				buffer.append(infos[i].getSymbolicName()).append(',');
 				monitor.worked(1);
 			}
-			if (plugins.length > 0)
+			if (infos.length > 0)
 				buffer.setLength(buffer.length() - 1);
 			pref.setValue(ICoreConstants.IMPLICIT_DEPENDENCIES, buffer.toString());
 		}

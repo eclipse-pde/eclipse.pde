@@ -849,6 +849,12 @@ public class TargetDefinitionTests extends TestCase {
 		definitionA.setVMArguments("vm\nargs");
 		definitionA.setExecutionEnvironment("execution env");
 		
+		BundleInfo[] implicit = new BundleInfo[]{
+				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
+		};		
+		definitionA.setImplicitDependencies(implicit);
+		
 		// Directory container
 		IBundleContainer dirContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
 		// Profile container with specific config area
@@ -904,9 +910,18 @@ public class TargetDefinitionTests extends TestCase {
 		assertEquals(targetA.getNL(),targetB.getNL());
 		assertEquals(targetA.getProgramArguments(),targetB.getProgramArguments());
 		assertEquals(targetA.getVMArguments(),targetB.getVMArguments());
-		// TODO Execution environment and Implicit dependencies not implemented yet
+		// TODO Execution environment not implemented yet
 //		assertEquals(targetA.getExecutionEnvironment(),targetB.getExecutionEnvironment());
 		
+		if (targetA.getImplicitDependencies() != null){
+			List implicitAList = Arrays.asList(targetA.getImplicitDependencies());
+			Set implicitA = collectAllSymbolicNames(implicitAList);
+			BundleInfo[] implicitB = targetB.getImplicitDependencies();
+			assertNotNull("Bundle container's restrictions are missing",implicitB);
+			for (int i = 0; i < implicitB.length; i++) {
+				assertTrue("Missing implicit dependency", implicitA.contains(implicitB[i].getSymbolicName()));
+			}
+		}
 		
 		IBundleContainer[] containersA = targetA.getBundleContainers();
 		IBundleContainer[] containersB = targetB.getBundleContainers();
@@ -951,5 +966,34 @@ public class TargetDefinitionTests extends TestCase {
 	public void testReadOldTargetFile() throws Exception {
 		// TODO Create an example old style target definition to test with
 	}
+	
+	/**
+	 * Tests resolution of implicit dependencies in a default target platform
+	 * 
+	 * @throws Exception
+	 */
+	public void testImplicitDependencies() throws Exception {
+		ITargetDefinition definition = getTargetService().newTarget();
+		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		BundleInfo[] implicit = new BundleInfo[]{
+				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
+		};		
+		definition.setImplicitDependencies(implicit);
+		BundleInfo[] infos = definition.resolveImplicitDependencies(null);
+		
+		assertEquals("Wrong number of bundles", 2, infos.length);
+		Set set = new HashSet();
+		for (int i = 0; i < infos.length; i++) {
+			set.add(infos[i].getSymbolicName());
+		}
+		for (int i = 0; i < implicit.length; i++) {
+			BundleInfo info = implicit[i];
+			set.remove(info.getSymbolicName());
+		}
+		assertEquals("Wrong bundles", 0, set.size());
+		
+	}	
 	
 }

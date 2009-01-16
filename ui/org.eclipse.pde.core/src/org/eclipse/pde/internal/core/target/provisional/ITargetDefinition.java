@@ -209,4 +209,33 @@ public interface ITargetDefinition {
 	 * @return target handle
 	 */
 	public ITargetHandle getHandle();
+
+	/**
+	 * Sets implicit dependencies for this target. Bundles in this collection are always
+	 * considered by PDE when computing plug-in dependencies. Only symbolic names need to
+	 * be specified in the given bundle descriptions. 
+	 * 
+	 * @param bundles implicit dependencies or <code>null</code> if none
+	 */
+	public void setImplicitDependencies(BundleInfo[] bundles);
+
+	/**
+	 * Returns the implicit dependencies set on this target or <code>null</code> if none.
+	 * Note that this does not resolve the actual bundles used as implicit dependencies - see
+	 * {@link #resolveImplicitDependencies(IProgressMonitor)} for resolution.
+	 * 
+	 * @return implicit dependencies or <code>null</code>
+	 */
+	public BundleInfo[] getImplicitDependencies();
+
+	/**
+	 * Resolves and returns implicit dependencies against the actual bundles contained
+	 * in this target. Matches symbolic names and optional versions of implicit dependencies
+	 * against the actual bundles in this target.
+	 *  
+	 * @param monitor progress monitor or <code>null</code>
+	 * @return resolved implicit dependencies
+	 * @throws CoreException if unable to resolve
+	 */
+	public BundleInfo[] resolveImplicitDependencies(IProgressMonitor monitor) throws CoreException;
 }
