@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -291,8 +292,8 @@ public class LauncherUtils {
 	}
 
 	private static void handleSelectedPlugins(ILaunchConfiguration config, String timeStamp, ArrayList projects) throws CoreException {
-		Set selectedPlugins = LaunchPluginValidator.parsePlugins(config, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
-		Iterator it = selectedPlugins.iterator();
+		Map selectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
+		Iterator it = selectedPlugins.keySet().iterator();
 		while (it.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) it.next();
 			IResource res = model.getUnderlyingResource();
@@ -306,13 +307,13 @@ public class LauncherUtils {
 	}
 
 	private static void handleDeselectedPlugins(ILaunchConfiguration config, String launcherTimeStamp, ArrayList projects) throws CoreException {
-		Set deSelectedPlugins = LaunchPluginValidator.parsePlugins(config, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
+		Map deSelectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projs.length; i++) {
 			if (!WorkspaceModelManager.isPluginProject(projs[i]))
 				continue;
 			IPluginModelBase base = PluginRegistry.findModel(projs[i]);
-			if (base == null || base != null && deSelectedPlugins.contains(base))
+			if (base == null || base != null && deSelectedPlugins.containsKey(base))
 				continue;
 			String timestamp = getTimeStamp(projs[i]);
 			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(projs[i], launcherTimeStamp, timestamp))

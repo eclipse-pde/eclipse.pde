@@ -18,8 +18,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.PluginBlock;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -43,15 +42,22 @@ public class PluginsTab extends AbstractLauncherTab {
 	private boolean fShowFeatures = true;
 	private Combo fSelectionCombo;
 	private PluginBlock fPluginBlock;
+	private Combo fDefaultAutoStart;
+	private Spinner fDefaultStartLevel;
+	private Listener fListener;
 
 	private static final int DEFAULT_SELECTION = 0;
 	private static final int CUSTOM_SELECTION = 1;
 	private static final int FEATURE_SELECTION = 2;
 
-	class Listener extends SelectionAdapter {
+	class Listener extends SelectionAdapter implements ModifyListener {
 		public void widgetSelected(SelectionEvent e) {
 			int index = fSelectionCombo.getSelectionIndex();
 			fPluginBlock.enableViewer(index == CUSTOM_SELECTION);
+			updateLaunchConfigurationDialog();
+		}
+
+		public void modifyText(ModifyEvent e) {
 			updateLaunchConfigurationDialog();
 		}
 	}
@@ -76,6 +82,7 @@ public class PluginsTab extends AbstractLauncherTab {
 		fShowFeatures = showFeatures;
 		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
 		fPluginBlock = new PluginBlock(this);
+		fListener = new Listener();
 	}
 
 	/*
@@ -94,7 +101,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 */
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(7, false));
 
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(PDEUIMessages.PluginsTab_launchWith);
@@ -105,14 +112,35 @@ public class PluginsTab extends AbstractLauncherTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fSelectionCombo.setLayoutData(gd);
-		fSelectionCombo.addSelectionListener(new Listener());
+		fSelectionCombo.addSelectionListener(fListener);
+
+		label = new Label(composite, SWT.NONE);
+		gd = new GridData();
+		gd.horizontalIndent = 20;
+		label.setLayoutData(gd);
+		label.setText(PDEUIMessages.EquinoxPluginsTab_defaultStart);
+
+		fDefaultStartLevel = new Spinner(composite, SWT.BORDER);
+		fDefaultStartLevel.setMinimum(1);
+		fDefaultStartLevel.addModifyListener(fListener);
+
+		label = new Label(composite, SWT.NONE);
+		gd = new GridData();
+		gd.horizontalIndent = 20;
+		label.setLayoutData(gd);
+		label.setText(PDEUIMessages.EquinoxPluginsTab_defaultAuto);
+
+		fDefaultAutoStart = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
+		fDefaultAutoStart.setItems(new String[] {Boolean.toString(true), Boolean.toString(false)});
+		fDefaultAutoStart.select(0);
+		fDefaultAutoStart.addSelectionListener(fListener);
 
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
+		gd.horizontalSpan = 7;
 		label.setLayoutData(gd);
 
-		fPluginBlock.createControl(composite, 3, 10);
+		fPluginBlock.createControl(composite, 7, 10);
 
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
@@ -134,6 +162,10 @@ public class PluginsTab extends AbstractLauncherTab {
 			fSelectionCombo.setText(fSelectionCombo.getItem(index));
 			boolean custom = fSelectionCombo.getSelectionIndex() == CUSTOM_SELECTION;
 			fPluginBlock.initializeFrom(configuration, custom);
+			boolean auto = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, false);
+			fDefaultAutoStart.setText(Boolean.toString(auto));
+			int level = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
+			fDefaultStartLevel.setSelection(level);
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
@@ -160,6 +192,8 @@ public class PluginsTab extends AbstractLauncherTab {
 		if (fShowFeatures)
 			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, index == FEATURE_SELECTION);
 		fPluginBlock.performApply(configuration);
+		configuration.setAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, Boolean.toString(true).equals(fDefaultAutoStart.getText()));
+		configuration.setAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, fDefaultStartLevel.getSelection());
 	}
 
 	/*

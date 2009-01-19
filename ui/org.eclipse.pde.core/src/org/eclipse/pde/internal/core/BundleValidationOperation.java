@@ -10,17 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.*;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.osgi.service.resolver.StateObjectFactory;
+import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class BundleValidationOperation implements IWorkspaceRunnable {

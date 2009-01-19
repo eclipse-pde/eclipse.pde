@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -21,17 +22,17 @@ public class BundleLauncherHelper {
 	public static final char VERSION_SEPARATOR = '*';
 
 	public static Map getWorkspaceBundleMap(ILaunchConfiguration configuration) throws CoreException {
-		return getWorkspaceBundleMap(configuration, null);
+		return getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.WORKSPACE_BUNDLES);
 	}
 
 	public static Map getTargetBundleMap(ILaunchConfiguration configuration) throws CoreException {
-		return getTargetBundleMap(configuration, null);
+		return getTargetBundleMap(configuration, null, IPDELauncherConstants.TARGET_BUNDLES);
 	}
 
 	public static Map getMergedBundleMap(ILaunchConfiguration configuration) throws CoreException {
 		Set set = new HashSet();
-		Map map = getWorkspaceBundleMap(configuration, set);
-		map.putAll(getTargetBundleMap(configuration, set));
+		Map map = getWorkspaceBundleMap(configuration, set, IPDELauncherConstants.WORKSPACE_BUNDLES);
+		map.putAll(getTargetBundleMap(configuration, set, IPDELauncherConstants.TARGET_BUNDLES));
 		return map;
 	}
 
@@ -40,13 +41,17 @@ public class BundleLauncherHelper {
 		return (IPluginModelBase[]) map.keySet().toArray(new IPluginModelBase[map.size()]);
 	}
 
-	private static Map getWorkspaceBundleMap(ILaunchConfiguration configuration, Set set) throws CoreException {
-		String selected = configuration.getAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, ""); //$NON-NLS-1$
+	public static Map getWorkspaceBundleMap(ILaunchConfiguration configuration, Set set, String attribute) throws CoreException {
+		String selected = configuration.getAttribute(attribute, ""); //$NON-NLS-1$
 		Map map = new HashMap();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
 			int index = token.indexOf('@');
+			if (index < 0) { // if no start levels, assume default
+				token = token.concat("@default:default"); //$NON-NLS-1$
+				index = token.indexOf('@');
+			}
 			String idVersion = token.substring(0, index);
 			int versionIndex = idVersion.indexOf(VERSION_SEPARATOR);
 			String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
@@ -88,13 +93,17 @@ public class BundleLauncherHelper {
 		return map;
 	}
 
-	private static Map getTargetBundleMap(ILaunchConfiguration configuration, Set set) throws CoreException {
-		String selected = configuration.getAttribute(IPDELauncherConstants.TARGET_BUNDLES, ""); //$NON-NLS-1$
+	public static Map getTargetBundleMap(ILaunchConfiguration configuration, Set set, String attribute) throws CoreException {
+		String selected = configuration.getAttribute(attribute, ""); //$NON-NLS-1$
 		Map map = new HashMap();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
 			int index = token.indexOf('@');
+			if (index < 0) { // if no start levels, assume default
+				token = token.concat("@default:default"); //$NON-NLS-1$
+				index = token.indexOf('@');
+			}
 			String idVersion = token.substring(0, index);
 			int versionIndex = idVersion.indexOf(VERSION_SEPARATOR);
 			String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;

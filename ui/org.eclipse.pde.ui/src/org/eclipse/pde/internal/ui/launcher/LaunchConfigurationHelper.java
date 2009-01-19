@@ -114,9 +114,38 @@ public class LaunchConfigurationHelper {
 			directory.mkdirs();
 		}
 		String osgiBundles = properties.getProperty(PROP_OSGI_BUNDLES);
+		int start = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
+		properties.put("osgi.bundles.defaultStartLevel", Integer.toString(start)); //$NON-NLS-1$
+		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, true);
+
 		// if we are launching using P2, write out P2 files (bundles.txt) and add P2 property to config.ini
 		if (osgiBundles != null && osgiBundles.indexOf(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != -1 && map.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
-			URL bundlesTxt = P2Utils.writeBundlesTxt(map.values(), osgiBundles, directory);
+
+			// TODO we need to clean this up... our original list should have start level information
+			// this causes a performance impact
+			URL bundlesTxt = null;
+			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
+			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
+			if (usedefault || useFeatures) {
+				bundlesTxt = P2Utils.writeBundlesTxt(map.values(), osgiBundles, directory);
+			} else {
+				Map models = new HashMap();
+				Map modelsWithStartLevels = new HashMap();
+				modelsWithStartLevels.putAll(BundleLauncherHelper.getTargetBundleMap(configuration, Collections.EMPTY_SET, IPDELauncherConstants.SELECTED_TARGET_PLUGINS));
+				boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+				String attribute = automaticAdd ? IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
+				modelsWithStartLevels.putAll(BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, attribute));
+				IPluginModelBase[] plugins = (IPluginModelBase[]) map.values().toArray(new IPluginModelBase[map.size()]);
+				for (int i = 0; i < plugins.length; i++) {
+					IPluginModelBase model = plugins[i];
+					String startLevel = (String) modelsWithStartLevels.get(model);
+					if (startLevel != null) {
+						models.put(model, startLevel);
+					}
+				}
+				bundlesTxt = P2Utils.writeBundlesTxt(models, start, autostart, directory);
+			}
+
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
 

@@ -165,16 +165,17 @@ public class LaunchPluginValidator {
 		Collection result = null;
 		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true)) {
 			result = new ArrayList();
-			Set deselected = parsePlugins(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
+			Map deselected = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
 			if (deselected.size() == 0)
 				return models;
 			for (int i = 0; i < models.length; i++) {
 				String id = models[i].getPluginBase().getId();
-				if (id != null && !deselected.contains(models[i]))
+				if (id != null && !deselected.containsKey(models[i]))
 					result.add(models[i]);
 			}
 		} else {
-			result = parsePlugins(configuration, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
+			Map bundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
+			result = bundles.keySet();
 		}
 		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 	}
@@ -193,9 +194,15 @@ public class LaunchPluginValidator {
 			String[] entries = ids.split(","); //$NON-NLS-1$
 			Map unmatchedEntries = new HashMap();
 			for (int i = 0; i < entries.length; i++) {
-				int index = entries[i].indexOf(BundleLauncherHelper.VERSION_SEPARATOR);
-				String id = (index == -1) ? entries[i] : entries[i].substring(0, index);
-				String version = (index == -1) ? null : entries[i].substring(index + 1);
+				int index = entries[i].indexOf('@');
+				if (index < 0) { // if no start levels, assume default
+					entries[i] = entries[i].concat("@default:default"); //$NON-NLS-1$
+					index = entries[i].indexOf('@');
+				}
+				String idVersion = entries[i].substring(0, index);
+				int versionIndex = entries[i].indexOf(BundleLauncherHelper.VERSION_SEPARATOR);
+				String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
+				String version = (versionIndex > 0) ? idVersion.substring(versionIndex + 1) : null;
 				ModelEntry entry = PluginRegistry.findEntry(id);
 				if (entry != null) {
 					IPluginModelBase matchingModels[] = attribute.equals(IPDELauncherConstants.SELECTED_TARGET_PLUGINS) ? entry.getExternalModels() : entry.getWorkspaceModels();
@@ -244,8 +251,9 @@ public class LaunchPluginValidator {
 
 		addToMap(map, getSelectedWorkspacePlugins(config));
 
-		Set exModels = parsePlugins(config, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
-		Iterator it = exModels.iterator();
+		Map exModels = BundleLauncherHelper.getTargetBundleMap(config, null, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
+
+		Iterator it = exModels.keySet().iterator();
 		while (it.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) it.next();
 			String id = model.getPluginBase().getId();

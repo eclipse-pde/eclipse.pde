@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *     Ian Bull <irbull@cs.uvic.ca> - bug 204404
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
@@ -15,8 +16,6 @@ import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
@@ -62,97 +61,65 @@ public class PluginBlock extends AbstractPluginBlock {
 		fNumWorkspaceChecked = automaticAdd ? fWorkspaceModels.length : 0;
 
 		String attribute = automaticAdd ? IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
-		Set bundles = LaunchPluginValidator.parsePlugins(configuration, attribute);
-		Iterator it = bundles.iterator();
-		while (it.hasNext()) {
-			IPluginModelBase base = (IPluginModelBase) it.next();
-			fPluginTreeViewer.setChecked(base, !automaticAdd);
-			fNumWorkspaceChecked = automaticAdd ? fNumWorkspaceChecked - 1 : fNumWorkspaceChecked + 1;
+		Map map = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, attribute);
+		Iterator iter = map.keySet().iterator();
+		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, false);
+		while (iter.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase) iter.next();
+			if (fPluginTreeViewer.setChecked(model, true)) {
+				setText(model, map.get(model).toString());
+			}
 		}
+		fNumWorkspaceChecked = map.size();
+		resetGroup(fWorkspacePlugins);
 
 		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
 		fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < fWorkspaceModels.length);
 	}
 
-	protected void initExternalPluginsState(ILaunchConfiguration config) throws CoreException {
-		fNumExternalChecked = 0;
-
+	protected void initExternalPluginsState(ILaunchConfiguration configuration) throws CoreException {
+		Map map = BundleLauncherHelper.getTargetBundleMap(configuration, Collections.EMPTY_SET, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
+		Iterator iter = map.keySet().iterator();
 		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
-		Set selected = LaunchPluginValidator.parsePlugins(config, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
-		Iterator it = selected.iterator();
-		while (it.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) it.next();
-			fPluginTreeViewer.setChecked(model, true);
-			fNumExternalChecked += 1;
+		while (iter.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase) iter.next();
+			if (fPluginTreeViewer.setChecked(model, true)) {
+				setText(model, map.get(model).toString());
+			}
 		}
-
+		fNumExternalChecked = map.size();
+		resetGroup(fExternalPlugins);
 		fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
 		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < fExternalModels.length);
 	}
 
 	protected void savePluginState(ILaunchConfigurationWorkingCopy config) {
 		if (isEnabled()) {
-			// store deselected projects
-			StringBuffer wbuf = new StringBuffer();
-			for (int i = 0; i < fWorkspaceModels.length; i++) {
-				IPluginModelBase model = fWorkspaceModels[i];
-				// if "automatic add" option is selected, save "deselected" workspace plugins
-				// Otherwise, save "selected" workspace plugins
-				if (fPluginTreeViewer.getChecked(model) != fAddWorkspaceButton.getSelection()) {
-					appendBundle(wbuf, model);
-				}
-			}
-
-			String value = wbuf.length() > 0 ? wbuf.toString() : null;
-			if (fAddWorkspaceButton.getSelection()) {
-				config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, value);
-				config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, (String) null);
-			} else {
-				config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, value);
-			}
-			// Store selected external models
-			StringBuffer exbuf = new StringBuffer();
-			Object[] checked = fPluginTreeViewer.getCheckedElements();
-			// Sort the array so that the attribute stays consistent between restarts
-			Arrays.sort(checked, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					if (!(o1 instanceof IPluginModelBase)) {
-						return -1;
-					}
-					if (!(o2 instanceof IPluginModelBase)) {
-						return 1;
-					}
-					return ((IPluginModelBase) o1).getPluginBase().getId().compareTo(((IPluginModelBase) o2).getPluginBase().getId());
-				}
-			});
-			for (int i = 0; i < checked.length; i++) {
-				if (checked[i] instanceof IPluginModelBase) {
-					IPluginModelBase model = (IPluginModelBase) checked[i];
+			Object[] selected = fPluginTreeViewer.getCheckedElements();
+			StringBuffer wBuffer = new StringBuffer();
+			StringBuffer tBuffer = new StringBuffer();
+			for (int i = 0; i < selected.length; i++) {
+				if (selected[i] instanceof IPluginModelBase) {
+					IPluginModelBase model = (IPluginModelBase) selected[i];
 					if (model.getUnderlyingResource() == null) {
-						appendBundle(exbuf, model);
+						appendToBuffer(tBuffer, model);
+					} else {
+						appendToBuffer(wBuffer, model);
 					}
 				}
 			}
-			value = exbuf.length() > 0 ? exbuf.toString() : null;
-			config.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, value);
-		} else {
-			config.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, (String) null);
-			config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, (String) null);
-			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, (String) null);
-		}
-	}
+			config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wBuffer.length() == 0 ? (String) null : wBuffer.toString());
+			config.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, tBuffer.length() == 0 ? (String) null : tBuffer.toString());
 
-	private void appendBundle(StringBuffer buffer, IPluginModelBase model) {
-		if (buffer.length() > 0)
-			buffer.append(","); //$NON-NLS-1$
-
-		String id = model.getPluginBase().getId();
-		buffer.append(id);
-
-		ModelEntry entry = PluginRegistry.findEntry(id);
-		if (entry.getActiveModels().length > 1) {
-			buffer.append(BundleLauncherHelper.VERSION_SEPARATOR);
-			buffer.append(model.getPluginBase().getVersion());
+			StringBuffer buffer = new StringBuffer();
+			if (fAddWorkspaceButton.getSelection()) {
+				for (int i = 0; i < fWorkspaceModels.length; i++) {
+					if (!fPluginTreeViewer.getChecked(fWorkspaceModels[i])) {
+						appendToBuffer(buffer, fWorkspaceModels[i]);
+					}
+				}
+			}
+			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, buffer.length() > 0 ? buffer.toString() : (String) null);
 		}
 	}
 
@@ -227,7 +194,4 @@ public class PluginBlock extends AbstractPluginBlock {
 		return new EclipsePluginValidationOperation(fLaunchConfig);
 	}
 
-	protected void refreshTreeView(CheckboxTreeViewer treeView) {
-		treeView.setSelection(StructuredSelection.EMPTY);
-	}
 }
