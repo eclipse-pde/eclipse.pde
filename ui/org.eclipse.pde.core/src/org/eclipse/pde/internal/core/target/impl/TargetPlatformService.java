@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.impl;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -193,6 +192,28 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 */
 	public IBundleContainer newFeatureContainer(String home, String id, String version) {
 		return new FeatureBundleContainer(home, id, version);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getWorkspaceTargetDefinition()
+	 */
+	public ITargetHandle getWorkspaceTargetHandle() throws CoreException {
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String memento = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+		if (memento != null && memento.length() != 0) {
+			return getTarget(memento);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#copyTargetDefinition(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
+	 */
+	public void copyTargetDefinition(ITargetDefinition from, ITargetDefinition to) throws CoreException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		((TargetDefinition) from).write(outputStream);
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+		((TargetDefinition) to).setContents(inputStream);
 	}
 
 }

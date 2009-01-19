@@ -154,4 +154,9 @@ public interface ICoreConstants {
 	 * File extension for target definitions
 	 */
 	public static final String TARGET_FILE_EXTENSION = "target"; //$NON-NLS-1$
+
+	/**
+	 * Preference key for the active workspace target platform handle memento 
+	 */
+	public static final String WORKSPACE_TARGET_HANDLE = "workspace_target_handle"; //$NON-NLS-1$
 }

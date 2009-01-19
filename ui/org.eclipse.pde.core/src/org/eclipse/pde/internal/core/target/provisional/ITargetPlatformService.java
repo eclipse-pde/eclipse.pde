@@ -115,4 +115,22 @@ public interface ITargetPlatformService {
 	 */
 	public IBundleContainer newFeatureContainer(String home, String featureId, String version);
 
+	/**
+	 * Returns a handle to the target definition that corresponds to the active target platform
+	 * or <code>null</code> if none.
+	 * 
+	 * @return handle to workspace target platform or <code>null</code> if none
+	 * @exception CoreException if an error occurs generating the handle
+	 */
+	public ITargetHandle getWorkspaceTargetHandle() throws CoreException;
+
+	/**
+	 * Copies all attributes from one target definition to another.
+	 * 
+	 * @param from attributes are copied from this definition 
+	 * @param to attributes are copied to this definition
+	 * @throws CoreException in copy fails
+	 */
+	public void copyTargetDefinition(ITargetDefinition from, ITargetDefinition to) throws CoreException;
+
 }

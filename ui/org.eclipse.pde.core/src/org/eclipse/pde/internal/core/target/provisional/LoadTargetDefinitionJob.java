@@ -41,14 +41,25 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	private ITargetDefinition fTarget;
 
 	/**
+	 * Whether a target definition was specified
+	 */
+	private boolean fNone = false;
+
+	/**
 	 * Constructs a new operation to load the specified target definition
-	 * as the current target platform.
+	 * as the current target platform. When <code>null</code> is specified
+	 * the target platform is empty and all other settings are default.
 	 * 
-	 * @param target target definition
+	 * @param target target definition or <code>null</code> if none
 	 */
 	public LoadTargetDefinitionJob(ITargetDefinition target) {
 		super(Messages.LoadTargetDefinitionJob_0);
 		fTarget = target;
+		if (target == null) {
+			fNone = true;
+			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			fTarget = service.newTarget();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -240,14 +251,19 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	/**
 	 * Sets the TARGET_PROFILE preference which stores the ID of the target profile used 
 	 * (if based on an target extension) or the workspace location of the file that
-	 * was used.
+	 * was used. For now we just clear it.
 	 * <p>
-	 * For now we just clear it.
+	 * Sets the WORKSPACE_TARGET_HANDLE.
 	 * </p>
 	 * @param pref
 	 */
-	private void loadAdditionalPreferences(Preferences pref) {
+	private void loadAdditionalPreferences(Preferences pref) throws CoreException {
 		pref.setValue(ICoreConstants.TARGET_PROFILE, ""); //$NON-NLS-1$
+		String memento = fTarget.getHandle().getMemento();
+		if (fNone) {
+			memento = ""; //$NON-NLS-1$
+		}
+		pref.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
 	}
 
 	/**
