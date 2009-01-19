@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-technologies.com> - bug 261404
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
@@ -30,6 +31,7 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IEditingModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
@@ -134,6 +136,17 @@ public class ClassSearchParticipant implements IQueryParticipant {
 
 	private void inspectExtension(ISchema schema, IPluginParent parent, IFile file) {
 		IPluginObject[] children = parent.getChildren();
+
+		if (parent instanceof PluginElementNode && parent != null && parent.getParent() instanceof PluginElementNode) {
+			// check if this node corresponds to a Java type attribute which would have been defined has an element
+			PluginElementNode node = (PluginElementNode) parent;
+			PluginElementNode parentNode = (PluginElementNode) parent.getParent();
+			ISchemaElement schemaElement = schema.findElement(parentNode.getName());
+			ISchemaAttribute attInfo = schemaElement.getAttribute(node.getName());
+			if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA)
+				checkMatch(node.getAttribute("class"), file); //$NON-NLS-1$
+		}
+
 		for (int i = 0; i < children.length; i++) {
 			IPluginElement child = (IPluginElement) children[i];
 			ISchemaElement schemaElement = schema.findElement(child.getName());
