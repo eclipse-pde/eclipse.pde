@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,14 +54,17 @@ public class BuildInputContext extends InputContext {
 				IFile file = ((IFileEditorInput) input).getFile();
 				model.setUnderlyingResource(file);
 				model.setCharset(file.getCharset());
-			} else if (input instanceof IURIEditorInput) {
-				File file = (File) ((IURIEditorInput) input).getAdapter(File.class);
-				model.setInstallLocation(file.getParent());
-				model.setCharset(getDefaultCharset());
 			} else {
 				model.setCharset(getDefaultCharset());
 			}
 			model.load();
+		} else if (input instanceof IURIEditorInput) {
+			File file = new File(((IURIEditorInput) input).getURI());
+			boolean isReconciling = input instanceof IFileEditorInput;
+			IDocument document = getDocumentProvider().getDocument(input);
+			model = new BuildModel(document, isReconciling);
+			model.setInstallLocation(file.getParent());
+			model.setCharset(getDefaultCharset());
 		}
 		return model;
 	}
