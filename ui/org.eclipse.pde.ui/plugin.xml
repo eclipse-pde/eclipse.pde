@@ -752,7 +752,7 @@
          <action
             label="%new.convert.name"
             class="org.eclipse.pde.internal.ui.wizards.tools.ConvertProjectsAction"
-            menubarPath="org.eclipse.pde.ui.project.tools/group0"
+            menubarPath="org.eclipse.ui.projectConfigure/additions"
             enablesFor="+"
             id="org.eclipse.pde.ui.ConvertedProjectWizard">
       	</action>
@@ -773,7 +773,7 @@
                class="org.eclipse.pde.internal.ui.wizards.tools.ConvertJarsAction"
                id="org.eclipse.pde.ui.ConvertJars"
                label="%popupMenus.convertJars.label"
-               menubarPath="org.eclipse.pde.ui.jarfile.tools/group0">
+               menubarPath="org.eclipse.ui.projectConfigure/additions">
          </action>
       </objectContribution>
       <objectContribution
