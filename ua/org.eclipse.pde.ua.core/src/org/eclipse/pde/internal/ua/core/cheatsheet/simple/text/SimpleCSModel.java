@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.text.NodeDocumentHandler;
 import org.eclipse.pde.internal.core.text.XMLEditingModel;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.core.ctxhelp.text;
+
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 /**
  * Represents a description entry in context help. There may be one description
@@ -27,6 +29,10 @@ public class CtxHelpDescription extends CtxHelpObject {
 
 	public CtxHelpDescription(CtxHelpModel model) {
 		super(model, ELEMENT_DESCRIPTION);
+	}
+	
+	protected IDocumentTextNode createDocumentTextNode() {
+		return new CtxHelpDescriptionTextNode();
 	}
 
 	/*
@@ -107,5 +113,9 @@ public class CtxHelpDescription extends CtxHelpObject {
 	 */
 	protected String getTerminateIndent() {
 		return ""; //$NON-NLS-1$
+	}
+	
+	public boolean isContentCollapsed() {
+		return true;
 	}
 }
