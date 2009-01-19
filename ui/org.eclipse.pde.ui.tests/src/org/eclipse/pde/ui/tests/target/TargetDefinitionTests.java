@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
-
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -164,9 +160,8 @@ public class TargetDefinitionTests extends TestCase {
 	/**
 	 * Used to reset the target platform to original settings after a test that changes
 	 * the target platform.
-	 * @throws CoreException 
 	 */
-	protected void resetTargetPlatform() throws CoreException {
+	protected void resetTargetPlatform() {
 		ITargetDefinition definition = getDefaultTargetPlatorm();
 		setTargetPlatform(definition);
 	}
@@ -174,10 +169,9 @@ public class TargetDefinitionTests extends TestCase {
 	/**
 	 * Sets the target platform based on the given definition.
 	 * 
-	 * @param target target definition or <code>null</code>
-	 * @throws CoreException 
+	 * @param target target definition
 	 */
-	protected void setTargetPlatform(ITargetDefinition target) throws CoreException {
+	protected void setTargetPlatform(ITargetDefinition target) {
 		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
 		job.schedule();
 		try {
@@ -185,11 +179,6 @@ public class TargetDefinitionTests extends TestCase {
 		} catch (InterruptedException e) {
 			assertFalse("Target platform reset interrupted", true);
 		}
-		ITargetHandle handle = null;
-		if (target != null) {
-			handle = target.getHandle();
-		}
-		assertEquals("Wrong target platform handle preference setting", handle, getTargetService().getWorkspaceTargetHandle());		
 	}	
 	
 	/**
@@ -823,11 +812,13 @@ public class TargetDefinitionTests extends TestCase {
 	
 	/**
 	 * Tests setting the target platform to empty.
-	 * @throws CoreException 
 	 */
-	public void testSetEmptyTargetPlatform() throws CoreException {
+	public void testSetEmptyTargetPlatform() {
 		try {
-			setTargetPlatform(null);
+			ITargetPlatformService targetService = getTargetService();
+			ITargetDefinition target = targetService.newTarget();
+			
+			setTargetPlatform(target);
 						
 			// current platform
 			IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
