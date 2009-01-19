@@ -911,7 +911,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 							KEY_INVALID_JAVADOC_TAG,
 							KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
 						});
-				
 				client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);
 				initializeComboControls(client,
 					new String[] {
