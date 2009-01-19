@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,14 +13,23 @@ package org.eclipse.pde.api.tools.ui.internal;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiBaselineWizardPage.EEEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -29,6 +38,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE.SharedImages;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -60,30 +70,110 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	public Image getImage(Object element) {
 		if (element instanceof IApiComponent) {
 			IApiComponent comp = (IApiComponent) element;
-			if(comp.isSystemComponent()) {
-				return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
+			return getApiComponentImage(comp);
+		}
+		if(element instanceof IResource) {
+			IResource resource = (IResource) element;
+			switch(resource.getType()) {
+				case IResource.FILE: return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
+				case IResource.FOLDER: return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+				case IResource.PROJECT: return PlatformUI.getWorkbench().getSharedImages().getImage(SharedImages.IMG_OBJ_PROJECT);
 			}
-			try {
-				if (comp.isFragment()) {
-					return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_FRAGMENT);
-				}
-			} catch (CoreException e) {
-				ApiPlugin.log(e);
-			}
-			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE);
 		}
 		if (element instanceof File) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
 		if(element instanceof IApiBaseline) {
-			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE);
+			return getBaselineImage();
 		}
 		if(element instanceof EEEntry) {
 			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
 		}
+		if(element instanceof IApiProblemFilter) {
+			IApiProblemFilter filter = (IApiProblemFilter) element;
+			IApiProblem problem = filter.getUnderlyingProblem();
+			Image image = getApiProblemElementImage(problem);
+			int flags = (problem.getSeverity() == ApiPlugin.SEVERITY_ERROR ? CompositeApiImageDescriptor.ERROR : CompositeApiImageDescriptor.WARNING);
+			CompositeApiImageDescriptor desc = new CompositeApiImageDescriptor(image, flags);
+			return ApiUIPlugin.getImage(desc);
+		}
 		return null;
 	}
 
+	/**
+	 * Returns the image to use for the given {@link IApiProblem}
+	 * 
+	 * @param problem
+	 * @return the image to use for the given {@link IApiProblem
+	 */
+	private Image getApiProblemElementImage(IApiProblem problem) {
+		if(problem.getCategory() != IApiProblem.CATEGORY_USAGE) {
+			switch(problem.getElementKind()) {
+				case IDelta.ANNOTATION_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ANNOTATION);
+				case IDelta.ENUM_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ENUM);
+				case IDelta.CLASS_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
+				case IDelta.INTERFACE_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_INTERFACE);
+				case IDelta.FIELD_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PUBLIC);
+				case IDelta.METHOD_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
+				case IDelta.TYPE_PARAMETER_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CUNIT);
+				case IDelta.API_PROFILE_ELEMENT_TYPE: return getBaselineImage();
+				case IDelta.API_COMPONENT_ELEMENT_TYPE: {
+					IPath path = new Path(problem.getResourcePath());
+					//try to find the component via the resource handle
+					IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+					if(res != null) {
+						IApiComponent comp = ApiPlugin.getDefault().
+														getApiBaselineManager().
+														getWorkspaceBaseline().
+														getApiComponent(res.getProject().getName());
+						if(comp != null) {
+							return getApiComponentImage(comp);
+						}
+					}
+					return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE);
+				}
+			}
+		}
+		else {
+			switch(problem.getElementKind()) {
+				case IElementDescriptor.TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
+				case IElementDescriptor.METHOD: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
+				case IElementDescriptor.FIELD: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PUBLIC);
+				default: {
+					System.out.println();
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * @return the image to use for an {@link IApiBaseline}
+	 */
+	private Image getBaselineImage() {
+		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE);
+	}
+	
+	/**
+	 * Returns the image to use for the given {@link IApiComponent}
+	 * 
+	 * @param component
+	 * @return the image to use for the given {@link IApiComponent}
+	 */
+	private Image getApiComponentImage(IApiComponent component) {
+		if(component.isSystemComponent()) {
+			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
+		}
+		try {
+			if (component.isFragment()) {
+				return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_FRAGMENT);
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
@@ -106,6 +196,20 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 			}
 			if(element instanceof EEEntry) {
 				return ((EEEntry)element).toString();
+			}
+			if(element instanceof IApiProblemFilter) {
+				IApiProblemFilter filter = (IApiProblemFilter) element;
+				return filter.getUnderlyingProblem().getMessage();
+			}
+			if(element instanceof IResource) {
+				IResource resource = (IResource) element;
+				IPath path = resource.getProjectRelativePath();
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(path.removeFileExtension().lastSegment());
+				buffer.append(" ("); //$NON-NLS-1$
+				buffer.append(path.removeLastSegments(1));
+				buffer.append(")"); //$NON-NLS-1$
+				return buffer.toString();
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);

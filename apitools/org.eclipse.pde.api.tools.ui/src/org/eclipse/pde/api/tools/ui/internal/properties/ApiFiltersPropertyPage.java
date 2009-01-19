@@ -15,21 +15,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -37,13 +34,13 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.ui.internal.ApiToolsLabelProvider;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
@@ -52,18 +49,15 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 import com.ibm.icu.text.MessageFormat;
@@ -87,72 +81,6 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 				return (int)((IApiProblemFilter) element).getUnderlyingProblem().getCategory();
 			}
 			return -1;
-		}
-	}
-	
-	/**
-	 * Label provider for the viewer
-	 */
-	class FilterStoreLabelProvider extends LabelProvider {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-		 */
-		public Image getImage(Object element) {
-			if(element instanceof IApiProblemFilter) {
-				IApiProblemFilter filter = (IApiProblemFilter) element;
-				IApiProblem problem = filter.getUnderlyingProblem();
-				String sid = ApiProblemFactory.getProblemSeverityId(problem);
-				if(sid == null) {
-					return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK);
-				}
-				int severity = ApiPlugin.getDefault().getSeverityLevel(sid, fProject);
-				switch(severity) {
-					case IMarker.SEVERITY_ERROR: {
-						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
-					}
-					case IMarker.SEVERITY_WARNING: {
-						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
-					}
-					default: {
-						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK);
-					}
-				}
-			}
-			if(element instanceof IResource) {
-				IResource resource = (IResource) element;
-				switch(resource.getType()) {
-					case IResource.FILE: {
-						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
-					}
-					case IResource.FOLDER: {
-						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-					}
-					case IResource.PROJECT: {
-						return PlatformUI.getWorkbench().getSharedImages().getImage(SharedImages.IMG_OBJ_PROJECT);
-					}
-				}
-			}
-			return super.getImage(element);
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-		 */
-		public String getText(Object element) {
-			if(element instanceof IApiProblemFilter) {
-				IApiProblemFilter filter = (IApiProblemFilter) element;
-				return filter.getUnderlyingProblem().getMessage();
-			}
-			if(element instanceof IResource) {
-				IResource resource = (IResource) element;
-				IPath path = resource.getProjectRelativePath();
-				StringBuffer buffer = new StringBuffer();
-				buffer.append(path.removeFileExtension().lastSegment());
-				buffer.append(" ("); //$NON-NLS-1$
-				buffer.append(path.removeLastSegments(1));
-				buffer.append(")"); //$NON-NLS-1$
-				return buffer.toString();
-			}
-			return super.getText(element);
 		}
 	}
 	
@@ -233,7 +161,7 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		fViewer = new TreeViewer(tree);
 		fViewer.setAutoExpandLevel(2);
 		fViewer.setContentProvider(new TreeContentProvider());
-		fViewer.setLabelProvider(new FilterStoreLabelProvider());
+		fViewer.setLabelProvider(new ApiToolsLabelProvider());
 		fViewer.setComparator(new ApiFilterComparator());
 		fViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {

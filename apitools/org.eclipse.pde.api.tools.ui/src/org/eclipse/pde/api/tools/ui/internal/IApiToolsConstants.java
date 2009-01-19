@@ -63,6 +63,11 @@ public interface IApiToolsConstants {
 	public static final String IMG_OVR_ERROR = "IMG_OVR_ERROR"; //$NON-NLS-1$
 	
 	/**
+	 * Warning overlay
+	 */
+	public static final String IMG_OVR_WARNING = "IMG_OVR_WARNING"; //$NON-NLS-1$
+	
+	/**
 	 * Success overlay
 	 */
 	public static final String IMG_OVR_SUCCESS = "IMG_OVR_SUCCESS"; //$NON-NLS-1$
