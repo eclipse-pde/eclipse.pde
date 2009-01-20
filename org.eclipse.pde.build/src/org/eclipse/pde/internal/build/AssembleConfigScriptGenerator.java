@@ -546,6 +546,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.println("/>"); //$NON-NLS-1$
 			}
 			if (rootFileProviders.size() > 0) {
+				script.printTab();
 				script.print("<p2.generator "); //$NON-NLS-1$
 				script.printAttribute("config", rootFolder, true); //$NON-NLS-1$
 				script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$ 

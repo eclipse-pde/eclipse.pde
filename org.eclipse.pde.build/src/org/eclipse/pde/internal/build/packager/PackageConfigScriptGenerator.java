@@ -120,10 +120,6 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			script.printCopyTask(null, target, new FileSet[] {rootFiles}, false, false);
 
 			Utils.generatePermissions(packagingProperties, configInfo, PROPERTY_ECLIPSE_BASE, script);
-
-			//This is need so that the call in assemble config script generator gather the root files 
-			rootFileProviders = new ArrayList(1);
-			rootFileProviders.add("elt"); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
 		script.println();
@@ -157,6 +153,13 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_readingFile, packagingPropertiesLocation);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
+		}
+
+		if (packagingProperties.size() > 0) {
+			//This is need so that the call in assemble config script generator gather the root files 
+			if (rootFileProviders == null)
+				rootFileProviders = new ArrayList(1);
+			rootFileProviders.add("elt"); //$NON-NLS-1$
 		}
 	}
 
