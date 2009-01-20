@@ -188,26 +188,26 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		validateSourceEntries(sourceEntries);
 		validateMissingSourceInBinIncludes(binIncludes, sourceEntryKeys, build);
 		validateBinIncludes(binIncludes);
-		//validateDefaultEncoding(sourceEntries, encodingEntries);
+		validateDefaultEncoding(sourceEntries, encodingEntries);
 	}
 
-//	private void validateDefaultEncoding(ArrayList sourceEntries, Map encodingEntries) {
-//		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-//		for (int i = 0; i < sourceEntries.size(); i++) {
-//			try {
-//				String name = ((IBuildEntry) sourceEntries.get(i)).getName();
-//				String library = name.substring(name.indexOf('.') + 1, name.length());
-//				String encoding = fProject.getDefaultCharset();
-//				String encodingId = PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX + library;
-//				String libraryEncoding = (String) encodingEntries.get(encodingId);
-//				if (!defaultEncoding.equalsIgnoreCase(encoding) && libraryEncoding == null) {
-//					prepareError(encodingId, encoding, NLS.bind(PDECoreMessages.BuildErrorReporter_defaultEncodingMissing, new Object[] {defaultEncoding, encoding}), PDEMarkerFactory.B_ADDDITION, PDEMarkerFactory.CAT_OTHER);
-//				}
-//			} catch (CoreException e) {
-//				PDECore.logException(e);
-//			}
-//		}
-//	}
+	private void validateDefaultEncoding(ArrayList sourceEntries, Map encodingEntries) {
+		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+		for (int i = 0; i < sourceEntries.size(); i++) {
+			try {
+				String name = ((IBuildEntry) sourceEntries.get(i)).getName();
+				String library = name.substring(name.indexOf('.') + 1, name.length());
+				String encoding = fProject.getDefaultCharset(false);
+				String encodingId = PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX + library;
+				String libraryEncoding = (String) encodingEntries.get(encodingId);
+				if (encoding != null && !defaultEncoding.equalsIgnoreCase(encoding) && libraryEncoding == null) {
+					prepareError(encodingId, encoding, NLS.bind(PDECoreMessages.BuildErrorReporter_defaultEncodingMissing, new Object[] {defaultEncoding, encoding}), PDEMarkerFactory.B_ADDDITION, PDEMarkerFactory.CAT_OTHER);
+				}
+			} catch (CoreException e) {
+				PDECore.logException(e);
+			}
+		}
+	}
 
 	private void validateBinIncludes(IBuildEntry binIncludes) {
 		// make sure we have a manifest entry
