@@ -44,6 +44,8 @@ public class Messages extends NLS {
 	public static String ProfileBundleContainer_1;
 	public static String TargetDefinition_0;
 	public static String TargetDefinition_3;
+	public static String TargetDefinitionPersistenceHelper_0;
+	public static String TargetDefinitionPersistenceHelper_1;
 	public static String TargetPlatformService_0;
 	public static String TargetPlatformService_1;
 	public static String WorkspaceFileTargetHandle_0;

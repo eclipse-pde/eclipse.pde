@@ -22,11 +22,11 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.impl.Messages;
+import org.eclipse.pde.internal.core.target.impl.ProfileBundleContainer;
 
 /**
  * Sets the current target platform based on a target definition.
@@ -131,41 +131,25 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	}
 
 	/**
-	 * Sets the workspace default JRE based on the target's execution environment.
-	 * <p>
-	 * This is a hold over from the old target definition files where a specific
-	 * JRE could be specified. It seems wrong to be changing the workspace default
-	 * JRE as a side effect of this operation, but we do it for backwards compatibility.
-	 * </p> 
+	 * Sets the workspace default JRE based on the target's JRE container.
+	 *
 	 * @param pref
 	 * @param monitor
 	 */
 	private void loadJRE(Preferences pref, IProgressMonitor monitor) {
-		String id = fTarget.getExecutionEnvironment();
+		IPath container = fTarget.getJREContainer();
 		monitor.beginTask(Messages.LoadTargetOperation_jreTaskName, 1);
-		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-		IExecutionEnvironment environment = manager.getEnvironment(id);
-		if (environment != null) {
-			IVMInstall jre = environment.getDefaultVM();
+		if (container != null) {
+			IVMInstall jre = JavaRuntime.getVMInstall(container);
 			if (jre != null) {
-				IVMInstall[] vms = environment.getCompatibleVMs();
-				for (int i = 0; i < vms.length; i++) {
-					IVMInstall vm = vms[i];
-					if (environment.isStrictlyCompatible(vm)) {
-						jre = vm;
-						break;
+				IVMInstall def = JavaRuntime.getDefaultVMInstall();
+				if (!jre.equals(def)) {
+					try {
+						JavaRuntime.setDefaultVMInstall(jre, null);
+					} catch (CoreException e) {
 					}
 				}
-				if (jre == null && vms.length > 0) {
-					jre = vms[0];
-				}
 			}
-			IVMInstall def = JavaRuntime.getDefaultVMInstall();
-			if (def != null && !jre.equals(def))
-				try {
-					JavaRuntime.setDefaultVMInstall(jre, null);
-				} catch (CoreException e) {
-				}
 		}
 		monitor.done();
 	}
@@ -264,6 +248,12 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			memento = ""; //$NON-NLS-1$
 		}
 		pref.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
+		IBundleContainer[] containers = fTarget.getBundleContainers();
+		boolean profile = false;
+		if (containers.length > 0) {
+			profile = containers[0] instanceof ProfileBundleContainer;
+		}
+		pref.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, profile);
 	}
 
 	/**
@@ -319,6 +309,10 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		}
 
 		PDEState state = new PDEState(paths, true, new SubProgressMonitor(monitor, 45));
+		IPluginModelBase[] models = state.getTargetModels();
+		for (int i = 0; i < models.length; i++) {
+			models[i].setEnabled(true);
+		}
 		// save CHECKED_PLUGINS
 		if (paths.length == 0) {
 			pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);

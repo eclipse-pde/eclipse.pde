@@ -36,7 +36,7 @@ class TargetDefinition implements ITargetDefinition {
 	private String fVMArgs;
 
 	// environment settings
-	private String fEE;
+	private IPath fJREContainer;
 	private String fArch;
 	private String fOS;
 	private String fWS;
@@ -77,13 +77,6 @@ class TargetDefinition implements ITargetDefinition {
 	 */
 	public String getDescription() {
 		return fDescription;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getExecutionEnvironment()
-	 */
-	public String getExecutionEnvironment() {
-		return fEE;
 	}
 
 	/* (non-Javadoc)
@@ -140,13 +133,6 @@ class TargetDefinition implements ITargetDefinition {
 	 */
 	public void setDescription(String description) {
 		fDescription = description;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setExecutionEnvironment(java.lang.String)
-	 */
-	public void setExecutionEnvironment(String environment) {
-		fEE = environment;
 	}
 
 	/* (non-Javadoc)
@@ -309,5 +295,19 @@ class TargetDefinition implements ITargetDefinition {
 	 */
 	public void setImplicitDependencies(BundleInfo[] bundles) {
 		fImplicit = bundles;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getJREContainer()
+	 */
+	public IPath getJREContainer() {
+		return fJREContainer;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setJREContainer(org.eclipse.core.runtime.IPath)
+	 */
+	public void setJREContainer(IPath containerPath) {
+		fJREContainer = containerPath;
 	}
 }

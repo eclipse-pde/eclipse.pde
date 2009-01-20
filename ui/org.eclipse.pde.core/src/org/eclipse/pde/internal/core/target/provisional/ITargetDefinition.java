@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.environment.Constants;
 
 /**
@@ -52,20 +52,24 @@ public interface ITargetDefinition {
 	public void setDescription(String description);
 
 	/**
-	 * Sets the execution environment this target requires to run. An execution 
-	 * environment is specified by its associated OSGi profile identifier - for
-	 * example, <code>J2SE-1.4</code>.
+	 * Sets the JRE that this target definition should be built against, or <code>null</code>
+	 * to use the workspace default JRE. JavaRuntime should be used to generate and parse
+	 * JRE container paths.
 	 * 
-	 * @param environment execution environment identifier
+	 * @param containerPath JRE container path
+	 * @see JavaRuntime
 	 */
-	public void setExecutionEnvironment(String environment);
+	public void setJREContainer(IPath containerPath);
 
 	/**
-	 * Returns the identifier of the execution environment this target requires to run.
+	 * Returns JRE container path that this target definition should be built against,
+	 * or <code>null</code> if the workspace default JRE should be used. JavaRuntime can be used
+	 * to resolve JRE's and execution environments from a container path.
 	 * 
-	 * @return execution environment identifier
+	 * @return JRE container path or <code>null</code>
+	 * @see JavaRuntime
 	 */
-	public String getExecutionEnvironment();
+	public IPath getJREContainer();
 
 	/**
 	 * Returns the identifier of the operating system this target is configured for,
