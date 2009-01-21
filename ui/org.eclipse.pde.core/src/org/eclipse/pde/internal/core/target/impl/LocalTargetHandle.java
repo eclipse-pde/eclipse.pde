@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
@@ -24,7 +25,7 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
  * 
  * @since 3.5
  */
-class LocalTargetHandle extends AbstractTargetHandle {
+public class LocalTargetHandle extends AbstractTargetHandle {
 
 	/**
 	 * Time stamp when target was created.
@@ -57,8 +58,14 @@ class LocalTargetHandle extends AbstractTargetHandle {
 	static ITargetHandle restoreHandle(URI uri) throws CoreException {
 		String part = uri.getSchemeSpecificPart();
 		try {
-			long stamp = Long.parseLong(part);
-			return new LocalTargetHandle(stamp);
+			Path path = new Path(part);
+			String name = path.lastSegment();
+			if (name.endsWith(ICoreConstants.TARGET_FILE_EXTENSION)) {
+				String lng = name.substring(0, name.length() - ICoreConstants.TARGET_FILE_EXTENSION.length() - 1);
+				long stamp = Long.parseLong(lng);
+				return new LocalTargetHandle(stamp);
+			}
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_0, null));
 		} catch (NumberFormatException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_0, e));
 		}
@@ -100,7 +107,7 @@ class LocalTargetHandle extends AbstractTargetHandle {
 	 */
 	public String getMemento() throws CoreException {
 		try {
-			URI uri = new URI(SCHEME, Long.toString(fTimeStamp), null);
+			URI uri = new URI(SCHEME, getFile().getName(), null);
 			return uri.toString();
 		} catch (URISyntaxException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_2, e));
@@ -120,7 +127,11 @@ class LocalTargetHandle extends AbstractTargetHandle {
 	 * @return target file
 	 */
 	private File getFile() {
-		return LOCAL_TARGET_CONTAINER_PATH.append(Long.toString(fTimeStamp)).toFile();
+		StringBuffer name = new StringBuffer();
+		name.append(Long.toString(fTimeStamp));
+		name.append('.');
+		name.append(ICoreConstants.TARGET_FILE_EXTENSION);
+		return LOCAL_TARGET_CONTAINER_PATH.append(name.toString()).toFile();
 	}
 
 	/* (non-Javadoc)
@@ -159,9 +170,16 @@ class LocalTargetHandle extends AbstractTargetHandle {
 	 */
 	protected OutputStream getOutputStream() throws CoreException {
 		try {
-			return new BufferedOutputStream(new FileOutputStream(getFile()));
+			File file = getFile();
+			if (!file.exists()) {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+			}
+			return new BufferedOutputStream(new FileOutputStream(file));
 		} catch (FileNotFoundException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_1, e));
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_5, e));
 		}
 	}
 

@@ -65,10 +65,13 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getHomeLocation()
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getLocation(boolean)
 	 */
-	public String getHomeLocation() throws CoreException {
-		return resolveHomeLocation().toOSString();
+	public String getLocation(boolean resolve) throws CoreException {
+		if (resolve) {
+			return resolveHomeLocation().toOSString();
+		}
+		return fHome;
 	}
 
 	/* (non-Javadoc)

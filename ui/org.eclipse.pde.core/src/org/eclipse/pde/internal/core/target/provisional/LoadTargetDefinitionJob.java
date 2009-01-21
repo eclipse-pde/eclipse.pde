@@ -25,8 +25,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.impl.Messages;
-import org.eclipse.pde.internal.core.target.impl.ProfileBundleContainer;
+import org.eclipse.pde.internal.core.target.impl.*;
 
 /**
  * Sets the current target platform based on a target definition.
@@ -191,7 +190,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		// the first container is assumed to be the primary/home location
 		String path = null;
 		if (containers != null && containers.length > 0) {
-			path = containers[0].getHomeLocation();
+			path = ((AbstractBundleContainer) containers[0]).getLocation(true);
 		}
 		if (path == null) {
 			path = TargetPlatform.getDefaultLocation();
@@ -266,13 +265,8 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		// secondary containers are considered additional
 		IBundleContainer[] containers = fTarget.getBundleContainers();
 		if (containers != null && containers.length > 1) {
-			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 			for (int i = 1; i < containers.length; i++) {
-				try {
-					additional.add(manager.performStringSubstitution(containers[i].getHomeLocation()));
-				} catch (CoreException e) {
-					additional.add(containers[i].getHomeLocation());
-				}
+				additional.add(((AbstractBundleContainer) containers[i]).getLocation(true));
 			}
 		}
 		return additional;

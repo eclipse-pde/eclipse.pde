@@ -168,4 +168,16 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 */
 	public abstract String getType();
 
+	/**
+	 * Returns a path in the local file system to the root of the bundle container.
+	 * <p>
+	 * TODO: Ideally we won't need this method. Currently the PDE target platform preferences are
+	 * based on a home location and additional locations, so we need the information.
+	 * </p>
+	 * @param resolve whether to resolve variables in the path
+	 * @return home location
+	 * @exception CoreException if unable to resolve the location
+	 */
+	public abstract String getLocation(boolean resolve) throws CoreException;
+
 }

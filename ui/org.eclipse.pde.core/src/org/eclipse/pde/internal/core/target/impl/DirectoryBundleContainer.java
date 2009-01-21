@@ -60,10 +60,13 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getHomeLocation()
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getLocation(boolean)
 	 */
-	public String getHomeLocation() throws CoreException {
-		return getDirectory().toString();
+	public String getLocation(boolean resolve) throws CoreException {
+		if (resolve) {
+			return getDirectory().toString();
+		}
+		return fPath;
 	}
 
 	/* (non-Javadoc)

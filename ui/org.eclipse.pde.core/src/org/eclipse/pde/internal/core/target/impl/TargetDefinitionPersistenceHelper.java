@@ -139,7 +139,7 @@ public class TargetDefinitionPersistenceHelper {
 		if (containers != null && containers.length > 0) {
 			Element containersElement = doc.createElement(LOCATIONS);
 			for (int i = 0; i < containers.length; i++) {
-				Element containerElement = serializeBundleContainer(doc, containers[i]);
+				Element containerElement = serializeBundleContainer(doc, (AbstractBundleContainer) containers[i]);
 				containersElement.appendChild(containerElement);
 			}
 			rootElement.appendChild(containersElement);
@@ -289,9 +289,9 @@ public class TargetDefinitionPersistenceHelper {
 					bundleContainers.add(deserializeBundleContainer(element));
 				} else if (nodeName.equalsIgnoreCase(CONTENT)) {
 					// Additional locations and other bundle content settings were stored under this tag in old style target platforms
-					IBundleContainer primaryContainer = null;
+					AbstractBundleContainer primaryContainer = null;
 					if (bundleContainers.size() > 0) {
-						primaryContainer = (IBundleContainer) bundleContainers.get(0);
+						primaryContainer = (AbstractBundleContainer) bundleContainers.get(0);
 					}
 					bundleContainers.addAll(deserializeBundleContainersFromOldStyleElement(element, primaryContainer));
 				} else if (nodeName.equalsIgnoreCase(ENVIRONMENT)) {
@@ -389,10 +389,10 @@ public class TargetDefinitionPersistenceHelper {
 		definition.setBundleContainers((IBundleContainer[]) bundleContainers.toArray(new IBundleContainer[bundleContainers.size()]));
 	}
 
-	private static Element serializeBundleContainer(Document doc, IBundleContainer container) throws CoreException {
+	private static Element serializeBundleContainer(Document doc, AbstractBundleContainer container) throws CoreException {
 		Element containerElement = doc.createElement(LOCATION);
-		containerElement.setAttribute(ATTR_LOCATION_PATH, container.getHomeLocation());
-		containerElement.setAttribute(ATTR_LOCATION_TYPE, ((AbstractBundleContainer) container).getType());
+		containerElement.setAttribute(ATTR_LOCATION_PATH, container.getLocation(false));
+		containerElement.setAttribute(ATTR_LOCATION_TYPE, container.getType());
 		if (container instanceof FeatureBundleContainer) {
 			containerElement.setAttribute(ATTR_ID, ((FeatureBundleContainer) container).getFeatureId());
 			String version = ((FeatureBundleContainer) container).getFeatureId();
@@ -477,7 +477,7 @@ public class TargetDefinitionPersistenceHelper {
 	 * @param primaryContainer definition being populated
 	 * @return bundle containers
 	 */
-	private static List deserializeBundleContainersFromOldStyleElement(Element content, IBundleContainer primaryContainer) throws CoreException {
+	private static List deserializeBundleContainersFromOldStyleElement(Element content, AbstractBundleContainer primaryContainer) throws CoreException {
 		List containers = new ArrayList();
 		NodeList list = content.getChildNodes();
 		List restrictions = new ArrayList(list.getLength());
@@ -518,7 +518,7 @@ public class TargetDefinitionPersistenceHelper {
 							String id = feature.getAttribute(ATTR_ID);
 							if (id.length() > 0) {
 								if (primaryContainer != null) {
-									containers.add(getTargetPlatformService().newFeatureContainer(primaryContainer.getHomeLocation(), id, null));
+									containers.add(getTargetPlatformService().newFeatureContainer(primaryContainer.getLocation(false), id, null));
 								}
 							}
 						}
