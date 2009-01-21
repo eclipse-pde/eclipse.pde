@@ -101,6 +101,7 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ApiErrorsWarningsConfigurationBlock {
 	
+	private static final String API_TOOLS_UPDATE_SITE = "http://www.eclipse.org/pde/pde-api-tools/updates/"; //$NON-NLS-1$
 	/**
 	 * Provides data information for created controls
 	 */
@@ -1337,14 +1338,14 @@ public class ApiErrorsWarningsConfigurationBlock {
 		InstallableUnitQuery query = new InstallableUnitQuery(installableUnitName, (VersionRange) null);
 		URI[] metadataRepositoryLocations = new URI[1];
 		try {
-			metadataRepositoryLocations[0] = URIUtil.fromString("http://www.eclipse.org/pde/pde-api-tools/updates/"); //$NON-NLS-1$
+			metadataRepositoryLocations[0] = URIUtil.fromString(API_TOOLS_UPDATE_SITE);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			return;
 		}
 		URI[] artifactRepositoryLocations = new URI[1];
 		try {
-			artifactRepositoryLocations[0] =  URIUtil.fromString("http://www.eclipse.org/pde/pde-api-tools/updates/"); //$NON-NLS-1$
+			artifactRepositoryLocations[0] =  URIUtil.fromString(API_TOOLS_UPDATE_SITE);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			return;
