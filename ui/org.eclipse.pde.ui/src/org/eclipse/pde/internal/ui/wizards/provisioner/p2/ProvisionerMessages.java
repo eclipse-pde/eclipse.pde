@@ -24,8 +24,6 @@ public class ProvisionerMessages extends NLS {
 	public static String P2TargetProvisionerWizardPage_1;
 	public static String P2TargetProvisionerWizardPage_10;
 	public static String P2TargetProvisionerWizardPage_11;
-	public static String P2TargetProvisionerWizardPage_12;
-	public static String P2TargetProvisionerWizardPage_13;
 	public static String P2TargetProvisionerWizardPage_14;
 	public static String P2TargetProvisionerWizardPage_16;
 	public static String P2TargetProvisionerWizardPage_17;

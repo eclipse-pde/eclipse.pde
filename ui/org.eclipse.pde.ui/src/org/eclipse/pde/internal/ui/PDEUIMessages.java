@@ -40,7 +40,15 @@ public class PDEUIMessages extends NLS {
 
 	public static String CalculateUsesOperation_calculatingDirective;
 
+	public static String ContentSection_0;
+
+	public static String ContentSection_1;
+
 	public static String ContentSection_includeOptional;
+
+	public static String DefinitionPage_0;
+
+	public static String DefinitionPage_1;
 
 	public static String DependenciesView_showStateAction_description;
 
@@ -347,14 +355,6 @@ public class PDEUIMessages extends NLS {
 	public static String UpdateActivationResolution_bundleActivationPolicy_desc;
 	public static String UpdateActivationResolution_bundleActivationPolicy_label;
 
-	public static String UpdateSiteProvisionerWizard_title;
-	public static String UpdateSiteWizardPage_title;
-	public static String UpdateSiteWizardPage_description;
-	public static String UpdateSiteWizardPage_label;
-	public static String UpdateSiteWizardPage_add;
-	public static String UpdateSiteWizardPage_edit;
-	public static String UpdateSiteWizardPage_remove;
-
 	public static String ExportOptionsTab_antReservedMessage;
 	public static String ExportOptionsTab_allowBinaryCycles;
 
@@ -374,7 +374,11 @@ public class PDEUIMessages extends NLS {
 
 	public static String ImportActionGroup_importContributingPlugin;
 
-	public static String InfoControlTextPresenter_ContinuationChars;
+	public static String InformationSection_0;
+
+	public static String InformationSection_1;
+
+	public static String InformationSection_2;
 
 	public static String InputContext_errorMessageFileDoesNotExist;
 
@@ -397,10 +401,6 @@ public class PDEUIMessages extends NLS {
 	public static String MissingResourcePage_unableToOpen;
 
 	public static String MissingResourcePage_unableToOpenFull;
-
-	public static String NewCategoryNameDialog_instructionLabel;
-
-	public static String NewCategoryNameDialog_name;
 
 	public static String NewLibraryPluginCreationPage_pdependencies;
 
@@ -1297,13 +1297,11 @@ public class PDEUIMessages extends NLS {
 	public static String PluginSelectionDialog_message;
 	public static String PluginImportOperation_could_not_delete_project;
 
-	public static String PluginImportOperation_linking;
 	public static String PluginContentPage_appQuestion;
 
 	public static String PluginContentPage_enable_api_analysis;
 
 	public static String ImportWizard_title;
-	public static String ImportWizard_noToAll;
 	public static String ImportWizard_messages_title;
 	public static String ImportWizard_messages_exists;
 	public static String ImportWizard_FirstPage_title;
@@ -1892,6 +1890,10 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherSection_dialogTitle;
 	public static String LauncherSection_dialogMessage;
 	public static String ProductDefinitonWizardPage_applicationDefinition;
+	public static String ArgumentsSection_0;
+
+	public static String ArgumentsSection_1;
+
 	public static String ArgumentsSection_title;
 	public static String ArgumentsSection_desc;
 	public static String ArgumentsSection_program;
@@ -2219,7 +2221,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String InternationalizeWizard_NLSFragmentGenerator_overwriteMessage;
 	public static String InternationalizeWizard_NLSFragmentGenerator_errorMessage;
-	public static String InternationalizeWizard_NLSFragmentGenerator_errorTitle;
 
 	public static String NewProjectCreationPage_target;
 
@@ -2300,8 +2301,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginImportOperation_executionEnvironment;
 
 	public static String PluginImportOperation_Importing_plugin;
-
-	public static String PluginImportOperation_No_source_found_query;
 
 	public static String PluginImportOperation_Set_up_classpaths;
 
@@ -2886,15 +2885,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginVersionPart_groupTitle;
 	public static String PluginVersionPart_buttonTitle;
-
-	// target provisioning stuff
-	public static String UpdateSiteDownloader_message;
-	public static String UpdateSiteProvisionerDialog_addTitle;
-	public static String UpdateSiteProvisionerDialog_editTitle;
-	public static String UpdateSiteProvisionerDialog_installLocation;
-	public static String UpdateSiteProvisionerDialog_fileSystem;
-	public static String UpdateSiteProvisionerDialog_siteLocation;
-	public static String UpdateSiteProvisionerDialog_missBothErrorMessage;
 
 	public static String FilteredPluginArtifactsSelectionDialog_title;
 	public static String FilteredPluginArtifactsSelectionDialog_message;

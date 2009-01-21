@@ -98,7 +98,8 @@ Require-Bundle:
  org.eclipse.equinox.p2.core;bundle-version="[1.0.0,2.0.0)",
  org.eclipse.equinox.p2.director;bundle-version="[1.0.100,2.0.0)",
  org.eclipse.equinox.p2.artifact.repository;bundle-version="[1.0.100,2.0.0)",
- org.eclipse.equinox.p2.metadata.repository;bundle-version="[1.0.100,2.0.0)"
+ org.eclipse.equinox.p2.metadata.repository;bundle-version="[1.0.100,2.0.0)",
+ org.eclipse.equinox.frameworkadmin;bundle-version="[1.0.100,2.0.0)"
 Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text,
  org.eclipse.jdt.debug.core
