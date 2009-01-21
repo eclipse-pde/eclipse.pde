@@ -1337,14 +1337,14 @@ public class ApiErrorsWarningsConfigurationBlock {
 		InstallableUnitQuery query = new InstallableUnitQuery(installableUnitName, (VersionRange) null);
 		URI[] metadataRepositoryLocations = new URI[1];
 		try {
-			metadataRepositoryLocations[0] = URIUtil.fromString("http://www.eclipse.org/pde/pde-api-tools/updates/site.xml"); //$NON-NLS-1$
+			metadataRepositoryLocations[0] = URIUtil.fromString("http://www.eclipse.org/pde/pde-api-tools/updates/"); //$NON-NLS-1$
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			return;
 		}
 		URI[] artifactRepositoryLocations = new URI[1];
 		try {
-			artifactRepositoryLocations[0] =  URIUtil.fromString("http://www.eclipse.org/pde/pde-api-tools/updates/site.xml"); //$NON-NLS-1$
+			artifactRepositoryLocations[0] =  URIUtil.fromString("http://www.eclipse.org/pde/pde-api-tools/updates/"); //$NON-NLS-1$
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			return;
@@ -1389,31 +1389,43 @@ public class ApiErrorsWarningsConfigurationBlock {
 		System.out.println(operationStatus);
 	}
 	private String getInstallableUnitName(String name) {
+		StringBuffer buffer = new StringBuffer();
 		switch(ProfileModifiers.getValue(name)) {
 			case ProfileModifiers.CDC_1_0_FOUNDATION_1_0 :
-				return "org.eclipse.pde.api.tools.ee.cdcfoundation10-feature"; //$NON-NLS-1$
+				buffer.append("org.eclipse.pde.api.tools.ee.cdcfoundation10_feature"); //$NON-NLS-1$
+				break;
 			case ProfileModifiers.CDC_1_1_FOUNDATION_1_1 :
-				return "org.eclipse.pde.api.tools.ee.cdcfoundation11-feature"; //$NON-NLS-1$
+				buffer.append("org.eclipse.pde.api.tools.ee.cdcfoundation11_feature"); //$NON-NLS-1$
+				break;
 			case ProfileModifiers.J2SE_1_2 :
-				return "org.eclipse.pde.api.tools.ee.j2se12-feature"; //$NON-NLS-1$
+				buffer.append("org.eclipse.pde.api.tools.ee.j2se12_feature"); //$NON-NLS-1$
+				break;
 			case ProfileModifiers.J2SE_1_3 :
-				return "org.eclipse.pde.api.tools.ee.j2se13-feature"; //$NON-NLS-1$
+				buffer.append("org.eclipse.pde.api.tools.ee.j2se13_feature"); //$NON-NLS-1$
+				break;
 			case ProfileModifiers.J2SE_1_4 :
-				return "org.eclipse.pde.api.tools.ee.j2se14-feature"; //$NON-NLS-1$
+				buffer.append("org.eclipse.pde.api.tools.ee.j2se14_feature"); //$NON-NLS-1$
+				break;
 			case ProfileModifiers.J2SE_1_5 :
-				return "org.eclipse.pde.api.tools.ee.j2se15-feature"; //$NON-NLS-1$
+				buffer.append("org.eclipse.pde.api.tools.ee.j2se15_feature"); //$NON-NLS-1$
+				break;
 			case ProfileModifiers.JAVASE_1_6 :
-				return "org.eclipse.pde.api.tools.ee.javase16-feature"; //$NON-NLS-1$
+				buffer.append("org.eclipse.pde.api.tools.ee.javase16_feature"); //$NON-NLS-1$
+				break;
 			case ProfileModifiers.JRE_1_1 :
-				return "org.eclipse.pde.api.tools.ee.jre11-feature"; //$NON-NLS-1$
+				buffer.append("org.eclipse.pde.api.tools.ee.jre11_feature"); //$NON-NLS-1$
+				break;
 			case ProfileModifiers.OSGI_MINIMUM_1_0 :
-				return "org.eclipse.pde.api.tools.ee.osgiminimum10-feature"; //$NON-NLS-1$
+				buffer.append("org.eclipse.pde.api.tools.ee.osgiminimum10_feature"); //$NON-NLS-1$
+				break;
 			case ProfileModifiers.OSGI_MINIMUM_1_1 :
-				return "org.eclipse.pde.api.tools.ee.osgiminimum11-feature"; //$NON-NLS-1$
+				buffer.append("org.eclipse.pde.api.tools.ee.osgiminimum11_feature"); //$NON-NLS-1$
+				break;
 			case ProfileModifiers.OSGI_MINIMUM_1_2 :
-				return "org.eclipse.pde.api.tools.ee.osgiminimum12-feature"; //$NON-NLS-1$
+				buffer.append("org.eclipse.pde.api.tools.ee.osgiminimum12_feature"); //$NON-NLS-1$
 		}
-		return name;
+		buffer.append(".feature.group"); //$NON-NLS-1$
+		return String.valueOf(buffer);
 	}
 	void setAllTo(String newValue, Key[] keys) {
 		for(int i = 0, max = keys.length; i < max; i++) {
