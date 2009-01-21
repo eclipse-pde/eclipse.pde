@@ -357,7 +357,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		final IFolder buildFolder = newTest("198536");
 
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("<feature id=\"foo\" version=\"1.0.0.qualifier\">       \n");
+		buffer.append("<feature\r\nid=\"foo\" version=\"1.0.0.qualifier\">       \n");
 		buffer.append("  <plugin version=\"0.0.0\" id=\"foo\" />              \n");
 		buffer.append("  <plugin version=\"1.0.0.id_qualifier\" id=\"bar\" /> \n");
 		buffer.append("  <plugin id=\"foo.version\" version=\"0.0.0\"  />     \n");

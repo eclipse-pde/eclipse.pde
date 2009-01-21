@@ -22,15 +22,15 @@ import org.apache.tools.ant.Task;
  */
 public class IdReplaceTask extends Task {
 	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
-	private static final String FEATURE_START_TAG = "<feature ";//$NON-NLS-1$
-	private static final String PRODUCT_START_TAG = "<product "; //$NON-NLS-1$
+	private static final String FEATURE_START_TAG = "<feature";//$NON-NLS-1$
+	private static final String PRODUCT_START_TAG = "<product"; //$NON-NLS-1$
 	private static final String ID = "id";//$NON-NLS-1$
 	private static final String VERSION = "version";//$NON-NLS-1$
 	private static final String COMMA = ","; //$NON-NLS-1$
 	private static final String BACKSLASH = "\""; //$NON-NLS-1$
 	private static final String EMPTY = ""; //$NON-NLS-1$
-	private static final String PLUGIN_START_TAG = "<plugin "; //$NON-NLS-1$
-	private static final String INCLUDES_START_TAG = "<includes "; //$NON-NLS-1$
+	private static final String PLUGIN_START_TAG = "<plugin"; //$NON-NLS-1$
+	private static final String INCLUDES_START_TAG = "<includes"; //$NON-NLS-1$
 	private static final String COMMENT_START_TAG = "<!--"; //$NON-NLS-1$
 	private static final String COMMENT_END_TAG = "-->"; //$NON-NLS-1$
 	private static final String INSERT_VERSION = " version=\"0.0.0\" "; //$NON-NLS-1$
@@ -134,10 +134,10 @@ public class IdReplaceTask extends Task {
 		//Skip feature declaration because it contains the word "plugin"
 		int startComment = scan(buffer, 0, COMMENT_START_TAG);
 		int endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
-		int startFeature = scan(buffer, 0, mainStartTag);
+		int startFeature = scan(buffer, 0, mainStartTag, true);
 
 		while (startComment != -1 && startFeature > startComment && startFeature < endComment) {
-			startFeature = scan(buffer, endComment, mainStartTag);
+			startFeature = scan(buffer, endComment, mainStartTag, true);
 			startComment = scan(buffer, endComment, COMMENT_START_TAG);
 			endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
 		}
@@ -193,8 +193,8 @@ public class IdReplaceTask extends Task {
 		int startElement = endFeature;
 		int startId = 0;
 		while (true) {
-			int startPlugin = scan(buffer, startElement + 1, PLUGIN_START_TAG);
-			int startInclude = scan(buffer, startElement + 1, isProduct ? FEATURE_START_TAG : INCLUDES_START_TAG);
+			int startPlugin = scan(buffer, startElement + 1, PLUGIN_START_TAG, true);
+			int startInclude = scan(buffer, startElement + 1, isProduct ? FEATURE_START_TAG : INCLUDES_START_TAG, true);
 
 			if (startPlugin == -1 && startInclude == -1)
 				break;
@@ -310,16 +310,23 @@ public class IdReplaceTask extends Task {
 	}
 
 	private int scan(StringBuffer buf, int start, String targetName) {
-		return scan(buf, start, new String[] {targetName});
+		return scan(buf, start, new String[] {targetName}, false);
 	}
 
-	private int scan(StringBuffer buf, int start, String[] targets) {
+	private int scan(StringBuffer buf, int start, String targetName, boolean wholeWord) {
+		return scan(buf, start, new String[] {targetName}, wholeWord);
+	}
+
+	private int scan(StringBuffer buf, int start, String[] targets, boolean wholeWord) {
 		for (int i = start; i < buf.length(); i++) {
 			for (int j = 0; j < targets.length; j++) {
 				if (i < buf.length() - targets[j].length()) {
-					String match = buf.substring(i, i + targets[j].length());
-					if (targets[j].equalsIgnoreCase(match))
-						return i;
+					String candidate = targets[j];
+					String match = buf.substring(i, i + candidate.length());
+					if (candidate.equalsIgnoreCase(match)) {
+						if (!wholeWord || Character.isWhitespace(buf.charAt(i + candidate.length())))
+							return i;
+					}
 				}
 			}
 		}
