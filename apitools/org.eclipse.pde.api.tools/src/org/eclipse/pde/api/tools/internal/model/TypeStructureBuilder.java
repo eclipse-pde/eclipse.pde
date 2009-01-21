@@ -11,9 +11,15 @@
 
 package org.eclipse.pde.api.tools.internal.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.pde.api.tools.internal.model.StubArchiveApiTypeContainer.ArchiveApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -178,5 +184,63 @@ public class TypeStructureBuilder extends ClassAdapter {
 		buffer.append("Type structure builder for: ").append(fType.getName()); //$NON-NLS-1$
 		buffer.append("\nBacked by file: ").append(fFile.getName()); //$NON-NLS-1$
 		return buffer.toString();
+	}
+
+	public static IApiType buildStubTypeStructure(byte[] contents,
+			IApiComponent apiComponent, ArchiveApiTypeRoot archiveApiTypeRoot) {
+		// decode the byte[]
+		DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(contents));
+		ApiType type = null;
+		try {
+			Map pool = new HashMap();
+			inputStream.readShort(); // read file version (for now there is only one version)
+			short poolSize = inputStream.readShort();
+			for (int i = 0; i < poolSize; i++) {
+				String readUtf = inputStream.readUTF();
+				int index = inputStream.readShort();
+				pool.put(new Integer(index), readUtf);
+			}
+			int classIndex = inputStream.readShort();
+			String name = (String) pool.get(new Integer(classIndex));
+			StringBuffer simpleSig = new StringBuffer();
+			simpleSig.append('L');
+			simpleSig.append(name);
+			simpleSig.append(';');
+			type = new ApiType(apiComponent, name.replace('/', '.'), simpleSig.toString(), null, 0, null, archiveApiTypeRoot);
+			int superclassNameIndex = inputStream.readShort();
+			if (superclassNameIndex != -1) {
+				String superclassName = (String) pool.get(new Integer(superclassNameIndex));
+				type.setSuperclassName(superclassName.replace('/', '.'));
+			}
+			int interfacesLength = inputStream.readShort();
+			if (interfacesLength != 0) {
+				String[] names = new String[interfacesLength];
+				for (int i = 0; i < names.length; i++) {
+					String interfaceName = (String) pool.get(new Integer(inputStream.readShort()));
+					names[i] = interfaceName.replace('/', '.');
+				}
+				type.setSuperInterfaceNames(names);
+			}
+			int fieldsLength = inputStream.readShort();
+			for (int i = 0; i < fieldsLength; i++) {
+				String fieldName = (String) pool.get(new Integer(inputStream.readShort()));
+				type.addField(fieldName, null, null, 0, null);
+			}
+			int methodsLength = inputStream.readShort();
+			for (int i = 0; i < methodsLength; i++) {
+				String methodSelector = (String) pool.get(new Integer(inputStream.readShort()));
+				String methodSignature = (String) pool.get(new Integer(inputStream.readShort()));
+				type.addMethod(methodSelector, methodSignature, null, 0, null);
+			}
+		} catch (IOException e) {
+			ApiPlugin.log(e);
+		} finally {
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
+		return type;
 	}
 }

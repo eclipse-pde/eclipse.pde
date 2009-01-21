@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -198,6 +199,26 @@ public class SWTFactory {
 		l.setLayoutData(gd);
 		return l;
 	}
+	
+	/**
+	 * Creates a new link widget
+	 * 
+	 * @param parent the parent composite to add this label widget to
+	 * @param text the text for the label
+	 * @param font the font for the label
+	 * @param hspan the horizontal span to take up in the parent composite
+	 * @return the new label
+	 */
+	public static Link createLink(Composite parent, String text, Font font, int hspan) {
+		Link l = new Link(parent, SWT.UNDERLINE_LINK);
+		l.setFont(font);
+		l.setText(text);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		l.setLayoutData(gd);
+		return l;
+	}
+
 	
 	/**
 	 * Creates a wrapping label

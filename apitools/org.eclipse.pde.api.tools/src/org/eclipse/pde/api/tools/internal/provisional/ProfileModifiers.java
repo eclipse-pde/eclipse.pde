@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -321,4 +321,21 @@ public final class ProfileModifiers {
 	public static boolean isCDC_Foundation(int value) {
 		return (value & CDC_FOUNDATION_MAX) != 0;
 	}
+	
+	public static int[] getAllIds() {
+		return new int[] {
+			CDC_1_0_FOUNDATION_1_0,
+			CDC_1_1_FOUNDATION_1_1,
+			JRE_1_1,
+			J2SE_1_2,
+			J2SE_1_3,
+			J2SE_1_4,
+			J2SE_1_5,
+			JAVASE_1_6,
+			OSGI_MINIMUM_1_0,
+			OSGI_MINIMUM_1_1,
+			OSGI_MINIMUM_1_2,
+		};
+	}
 }
+

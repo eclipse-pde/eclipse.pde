@@ -164,6 +164,11 @@ public class PreferenceMessages extends NLS {
 	public static String VersionManagementReportInvalidApiComponentVersionIncludeMinorWithoutApiChange;
 	public static String VersionManagementReportInvalidApiComponentVersionIncludeMajorWithoutBreakingChange;
 
+	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees;
+	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_dialog_title;
+	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_dialog_description;
+	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, PreferenceMessages.class);

@@ -10,31 +10,60 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.preferences;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.equinox.internal.p2.console.ProvisioningHelper;
+import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
+import org.eclipse.equinox.internal.p2.director.app.Activator;
+import org.eclipse.equinox.internal.p2.director.app.LatestIUVersionCollector;
+import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepositoryManager;
+import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
+import org.eclipse.equinox.internal.provisional.p2.core.VersionRange;
+import org.eclipse.equinox.internal.provisional.p2.director.IPlanner;
+import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
+import org.eclipse.equinox.internal.provisional.p2.director.ProvisioningPlan;
+import org.eclipse.equinox.internal.provisional.p2.engine.DefaultPhaseSet;
+import org.eclipse.equinox.internal.provisional.p2.engine.IEngine;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.internal.provisional.p2.engine.ProvisioningContext;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.internal.provisional.p2.query.Collector;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -44,9 +73,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -642,7 +673,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 	public void validateSettings(Key changedKey, String oldValue, String newValue) {
 		// we need to disable the two checkboxes if the key is for the bundle version
 		if (changedKey != null) {
-			if (KEY_INCOMPATIBLE_API_COMPONENT_VERSION.equals(changedKey)) {
+			if (KEY_INCOMPATIBLE_API_COMPONENT_VERSION.equals(changedKey)
+					|| KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES.equals(changedKey)) {
 				updateEnableStates();
 			}
 		} else {
@@ -672,6 +704,14 @@ public class ApiErrorsWarningsConfigurationBlock {
 		boolean enableUnusedParams= !checkValue(KEY_INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_IGNORE);
 		getCheckBox(KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE).setEnabled(enableUnusedParams);
 		getCheckBox(KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE).setEnabled(enableUnusedParams);
+		
+		boolean enableSystemLibraryCheck = !checkValue(KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, ApiPlugin.VALUE_IGNORE);
+		if (this.fSystemLibraryControls != null) {
+			for (Iterator iterator = fSystemLibraryControls.iterator(); iterator.hasNext();) {
+				Control control = (Control) iterator.next();
+				control.setEnabled(enableSystemLibraryCheck);
+			}
+		}
 	}
 
 	class SetAllSelectionAdapter extends SelectionAdapter {
@@ -715,6 +755,12 @@ public class ApiErrorsWarningsConfigurationBlock {
 	 * Listing of all of the {@link Checkbox}es added to the block
 	 */
 	private ArrayList fCheckBoxes = new ArrayList();
+	
+	/**
+	 * Control used inside the system library ee group
+	 */
+	private List fSystemLibraryControls = null;
+
 	/**
 	 * The context of settings locations to search for values in
 	 */
@@ -891,7 +937,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				ScrolledComposite scomp = new ScrolledComposite(page, SWT.H_SCROLL | SWT.V_SCROLL);
 				scomp.setExpandHorizontal(true);
 				scomp.setExpandVertical(true);
-				scomp.setLayout(new GridLayout(1, false));
+				scomp.setLayout(new GridLayout(2, false));
 				scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 				scomp.addListener(SWT.Resize, new Listener() {
 					public void handleEvent(Event event) {
@@ -911,6 +957,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 							KEY_INVALID_JAVADOC_TAG,
 							KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
 						});
+				initializeInstalledMetatadata(client);
 				client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);
 				initializeComboControls(client,
 					new String[] {
@@ -1236,6 +1283,138 @@ public class ApiErrorsWarningsConfigurationBlock {
 		return page;
 	}
 
+	private void initializeInstalledMetatadata(Composite parent) {
+		Group group = SWTFactory.createGroup(parent, PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees, 3, 3, GridData.FILL_BOTH);
+		int[] allIds = ProfileModifiers.getAllIds();
+		this.fSystemLibraryControls = new ArrayList(allIds.length + 1);
+		this.fSystemLibraryControls.add(group);
+		Display display = parent.getDisplay();
+		for (int i = 0, max = allIds.length; i < max; i++) {
+			int eeValue = allIds[i];
+			final String name = ProfileModifiers.getName(eeValue);
+			Font labelFont = JFaceResources.getDialogFont();
+			FontData[] fontDatas = labelFont.getFontData();
+			boolean installed = StubApiComponent.isInstalled(eeValue);
+			if (installed) {
+				for (int j = 0; j < fontDatas.length; j++) {
+					FontData data = fontDatas[j];
+					data.setStyle(SWT.BOLD);
+					data.setHeight(8);
+				}
+				Label createLabel = SWTFactory.createLabel(group, name, new Font(display, fontDatas), 1);
+				this.fSystemLibraryControls.add(createLabel);
+			} else {
+				for (int j = 0; j < fontDatas.length; j++) {
+					FontData data = fontDatas[j];
+					data.setStyle(SWT.NORMAL);
+					data.setHeight(8);
+				}
+				String linkedName = "<a>" + name + "</a>"; //$NON-NLS-1$ //$NON-NLS-2$
+				Link link = SWTFactory.createLink(group, linkedName, new Font(display, fontDatas), 1);
+				this.fSystemLibraryControls.add(link);
+				link.setToolTipText(PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip);
+				link.addMouseListener(new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						boolean isOK = MessageDialog.openConfirm(
+								null,
+								PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_dialog_title,
+								PreferenceMessages.bind(
+										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_dialog_description,
+										name));
+						if (isOK) {
+							install(name);
+						}
+					}
+				});
+			}
+		}
+	}
+
+	protected void install(String name) {
+		// -metadataRepository file:d:/tmp/cdt/site.xml -artifactRepository file:d:/tmp/cdt/site.xml -installIU org.eclipse.cdt.feature.group
+		IProfile profile = ProvisioningHelper.getProfile(IProfileRegistry.SELF);
+		String installableUnitName = getInstallableUnitName(name);
+		InstallableUnitQuery query = new InstallableUnitQuery(installableUnitName, (VersionRange) null);
+		URI[] metadataRepositoryLocations = new URI[1];
+		try {
+			metadataRepositoryLocations[0] = URIUtil.fromString("http://www.eclipse.org/pde/pde-api-tools/updates/site.xml"); //$NON-NLS-1$
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return;
+		}
+		URI[] artifactRepositoryLocations = new URI[1];
+		try {
+			artifactRepositoryLocations[0] =  URIUtil.fromString("http://www.eclipse.org/pde/pde-api-tools/updates/site.xml"); //$NON-NLS-1$
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return;
+		}
+		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) ServiceHelper.getService(Activator.getContext(), IArtifactRepositoryManager.class.getName());
+		if (!artifactManager.contains(artifactRepositoryLocations[0])) {
+			try {
+				artifactManager.loadRepository(artifactRepositoryLocations[0], null);
+			} catch (ProvisionException e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		Collector collector = new LatestIUVersionCollector();
+		collector = ProvisioningHelper.getInstallableUnits(metadataRepositoryLocations[0], query, collector, new NullProgressMonitor());
+		IInstallableUnit[] array = (IInstallableUnit[]) collector.toArray(IInstallableUnit.class);
+		if (array.length == 0) {
+			return;
+		}
+		ProvisioningContext context = new ProvisioningContext(metadataRepositoryLocations);
+		context.setArtifactRepositories(artifactRepositoryLocations);
+		ProfileChangeRequest request = new ProfileChangeRequest(profile);
+		for (Iterator iterator = collector.iterator(); iterator.hasNext();) {
+			request.setInstallableUnitProfileProperty((IInstallableUnit) iterator.next(), IInstallableUnit.PROP_PROFILE_ROOT_IU, Boolean.TRUE.toString());
+		}
+		request.addInstallableUnits(array);
+		IStatus operationStatus;
+		IPlanner planner = (IPlanner) ServiceHelper.getService(Activator.getContext(), IPlanner.class.getName());
+		ProvisioningPlan plan = planner.getProvisioningPlan(request, context, new NullProgressMonitor());
+		if (planner == null) {
+			return;
+		}
+		IEngine engine = (IEngine) ServiceHelper.getService(Activator.getContext(), IEngine.SERVICE_NAME);
+		if (engine == null) {
+			return;
+		}
+		if (!plan.getStatus().isOK())
+			operationStatus = plan.getStatus();
+		else {
+			operationStatus = engine.perform(profile, new DefaultPhaseSet(), plan.getOperands(), context, new NullProgressMonitor());
+		}
+		System.out.println(operationStatus);
+	}
+	private String getInstallableUnitName(String name) {
+		switch(ProfileModifiers.getValue(name)) {
+			case ProfileModifiers.CDC_1_0_FOUNDATION_1_0 :
+				return "org.eclipse.pde.api.tools.ee.cdcfoundation10-feature"; //$NON-NLS-1$
+			case ProfileModifiers.CDC_1_1_FOUNDATION_1_1 :
+				return "org.eclipse.pde.api.tools.ee.cdcfoundation11-feature"; //$NON-NLS-1$
+			case ProfileModifiers.J2SE_1_2 :
+				return "org.eclipse.pde.api.tools.ee.j2se12-feature"; //$NON-NLS-1$
+			case ProfileModifiers.J2SE_1_3 :
+				return "org.eclipse.pde.api.tools.ee.j2se13-feature"; //$NON-NLS-1$
+			case ProfileModifiers.J2SE_1_4 :
+				return "org.eclipse.pde.api.tools.ee.j2se14-feature"; //$NON-NLS-1$
+			case ProfileModifiers.J2SE_1_5 :
+				return "org.eclipse.pde.api.tools.ee.j2se15-feature"; //$NON-NLS-1$
+			case ProfileModifiers.JAVASE_1_6 :
+				return "org.eclipse.pde.api.tools.ee.javase16-feature"; //$NON-NLS-1$
+			case ProfileModifiers.JRE_1_1 :
+				return "org.eclipse.pde.api.tools.ee.jre11-feature"; //$NON-NLS-1$
+			case ProfileModifiers.OSGI_MINIMUM_1_0 :
+				return "org.eclipse.pde.api.tools.ee.osgiminimum10-feature"; //$NON-NLS-1$
+			case ProfileModifiers.OSGI_MINIMUM_1_1 :
+				return "org.eclipse.pde.api.tools.ee.osgiminimum11-feature"; //$NON-NLS-1$
+			case ProfileModifiers.OSGI_MINIMUM_1_2 :
+				return "org.eclipse.pde.api.tools.ee.osgiminimum12-feature"; //$NON-NLS-1$
+		}
+		return name;
+	}
 	void setAllTo(String newValue, Key[] keys) {
 		for(int i = 0, max = keys.length; i < max; i++) {
 			keys[i].setStoredValue(fLookupOrder[0], newValue, fManager);
