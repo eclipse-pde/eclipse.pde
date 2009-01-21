@@ -363,7 +363,7 @@ public class FeatureImportWizardPage extends WizardPage {
 	}
 
 	private File createPath(IPath dropLocation) {
-		File featuresDir = new File(dropLocation.toFile(), "features"); //$NON-NLS-1$
+		File featuresDir = new File(dropLocation.toFile(), ICoreConstants.FEATURE_FOLDER_NAME);
 		if (featuresDir.exists())
 			return featuresDir;
 		return null;

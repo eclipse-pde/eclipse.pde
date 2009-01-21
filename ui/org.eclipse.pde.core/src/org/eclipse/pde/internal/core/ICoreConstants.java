@@ -136,6 +136,7 @@ public interface ICoreConstants {
 	// Common folder names
 	public static String MANIFEST_FOLDER_NAME = "META-INF/"; //$NON-NLS-1$
 	public static String OSGI_INF_FOLDER_NAME = "OSGI-INF/"; //$NON-NLS-1$
+	public static String FEATURE_FOLDER_NAME = "features"; //$NON-NLS-1$
 
 	// Common paths
 	public static IPath MANIFEST_PATH = new Path(BUNDLE_FILENAME_DESCRIPTOR);

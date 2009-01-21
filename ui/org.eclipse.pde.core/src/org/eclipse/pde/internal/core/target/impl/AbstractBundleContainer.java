@@ -132,7 +132,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 						// sort the list
 						Collections.sort(list, new Comparator() {
 							public int compare(Object o1, Object o2) {
-								return ((BundleInfo) o1).getVersion().compareTo(o2);
+								return ((BundleInfo) o1).getVersion().compareTo(((BundleInfo) o2).getVersion());
 							}
 						});
 					}
