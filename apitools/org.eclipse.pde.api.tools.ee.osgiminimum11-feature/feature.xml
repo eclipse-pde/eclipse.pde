@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature
+<feature 
       id="org.eclipse.pde.api.tools.ee.osgiminimum11_feature"
       label="%featureName"
       version="1.0.0.qualifier"
