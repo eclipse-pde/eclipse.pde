@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer;
+
 import org.eclipse.pde.internal.core.target.impl.ProfileBundleContainer;
 
 import org.eclipse.pde.internal.core.target.impl.FeatureBundleContainer;
@@ -96,6 +100,17 @@ public class TargetDefinitionTests extends TestCase {
 			set.add(info.getSymbolicName());
 		}
 		return set;
+	}
+	
+	/**
+	 * Returns the resolved location of the specified bundle container.
+	 * 
+	 * @param container bundle container
+	 * @return resolved location
+	 * @throws CoreException 
+	 */
+	protected String getResolvedLocation(IBundleContainer container) throws CoreException {
+		return ((AbstractBundleContainer)container).getLocation(true);
 	}
 	
 	/**
@@ -943,7 +958,7 @@ public class TargetDefinitionTests extends TestCase {
 				boolean foundMatch = false;
 				for (int bIndex = 0; bIndex < containersB.length; bIndex++) {
 					if (containersA[aIndex].getClass().getName().equals(containersB[bIndex].getClass().getName()) 
-							&& containersA[aIndex].getHomeLocation().equals(containersB[bIndex].getHomeLocation())
+							&& getResolvedLocation(containersA[aIndex]).equals(getResolvedLocation(containersB[bIndex]))
 							&& containersA[aIndex].resolveBundles(null).length == containersB[bIndex].resolveBundles(null).length){
 						
 						boolean matchingRestrictions = true;
@@ -1010,7 +1025,8 @@ public class TargetDefinitionTests extends TestCase {
 		IBundleContainer[] containers = target.getBundleContainers();
 		assertEquals("Wrong number of bundles", 1, containers.length);
 		assertTrue("Container should be a profile container", containers[0] instanceof ProfileBundleContainer);
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()), new Path(containers[0].getHomeLocation()));
+		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
+				new Path(getResolvedLocation(containers[0])));
 	}
 	
 	/**
@@ -1036,7 +1052,8 @@ public class TargetDefinitionTests extends TestCase {
 		IBundleContainer[] containers = target.getBundleContainers();
 		assertEquals("Wrong number of bundles", 1, containers.length);
 		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"), new Path(containers[0].getHomeLocation()));
+		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"),
+				new Path(getResolvedLocation(containers[0])));
 	}	
 	
 	/**
@@ -1071,7 +1088,8 @@ public class TargetDefinitionTests extends TestCase {
 		IBundleContainer[] containers = target.getBundleContainers();
 		assertEquals("Wrong number of bundles", 1, containers.length);
 		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"), new Path(containers[0].getHomeLocation()));
+		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"),
+				new Path(getResolvedLocation(containers[0])));
 	}	
 	
 	/**
@@ -1100,12 +1118,15 @@ public class TargetDefinitionTests extends TestCase {
 		assertTrue(containers[1] instanceof DirectoryBundleContainer);
 		assertTrue(containers[2] instanceof DirectoryBundleContainer);
 		
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()), new Path(containers[0].getHomeLocation()));
+		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
+				new Path(getResolvedLocation(containers[0])));
 		
 		String string = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution("${workspace_loc}");
-		assertEquals("Wrong 1st additional location", new Path(string).append("stuff"), new Path(containers[1].getHomeLocation()));
+		assertEquals("Wrong 1st additional location", new Path(string).append("stuff"),
+				new Path(getResolvedLocation(containers[1])));
 		
-		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"), new Path(containers[2].getHomeLocation()));
+		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"),
+				new Path(getResolvedLocation(containers[2])));
 	}		
 	
 	/**
@@ -1134,7 +1155,8 @@ public class TargetDefinitionTests extends TestCase {
 		assertTrue(containers[1] instanceof FeatureBundleContainer);
 		assertTrue(containers[2] instanceof FeatureBundleContainer);
 
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()), new Path(containers[0].getHomeLocation()));
+		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
+				new Path(getResolvedLocation(containers[0])));
 		
 		assertEquals("Wrong 1st additional location", "org.eclipse.jdt", ((FeatureBundleContainer)containers[1]).getFeatureId());
 		assertEquals("Wrong 1st additional location", "org.eclipse.platform", ((FeatureBundleContainer)containers[2]).getFeatureId());
@@ -1174,9 +1196,10 @@ public class TargetDefinitionTests extends TestCase {
 		assertTrue(containers[1] instanceof FeatureBundleContainer);
 		assertTrue(containers[2] instanceof DirectoryBundleContainer);
 		
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()), new Path(containers[0].getHomeLocation()));
-		assertEquals("Wrong 1st additional location", "org.eclipse.jdt", ((FeatureBundleContainer)containers[1]).getFeatureId());
-		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"), new Path(containers[2].getHomeLocation()));
+		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()), new Path(getResolvedLocation(containers[0])));
+		assertEquals("Wrong 1st additional location", "org.eclipse.jdt",((FeatureBundleContainer)containers[1]).getFeatureId());
+		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"),
+				new Path(getResolvedLocation(containers[2])));
 		
 		for (int i = 0; i < containers.length; i++) {
 			IBundleContainer container = containers[i];
