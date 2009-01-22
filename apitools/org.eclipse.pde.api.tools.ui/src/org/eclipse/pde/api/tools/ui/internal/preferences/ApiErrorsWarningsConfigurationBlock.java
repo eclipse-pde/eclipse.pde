@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.equinox.internal.p2.console.ProvisioningHelper;
 import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
 import org.eclipse.equinox.internal.p2.director.app.Activator;
-import org.eclipse.equinox.internal.p2.director.app.LatestIUVersionCollector;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepositoryManager;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
 import org.eclipse.equinox.internal.provisional.p2.core.VersionRange;
@@ -43,7 +42,10 @@ import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.internal.provisional.p2.engine.ProvisioningContext;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.LatestIUVersionQuery;
 import org.eclipse.equinox.internal.provisional.p2.query.Collector;
+import org.eclipse.equinox.internal.provisional.p2.query.CompositeQuery;
+import org.eclipse.equinox.internal.provisional.p2.query.Query;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -1335,7 +1337,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		// -metadataRepository file:d:/tmp/cdt/site.xml -artifactRepository file:d:/tmp/cdt/site.xml -installIU org.eclipse.cdt.feature.group
 		IProfile profile = ProvisioningHelper.getProfile(IProfileRegistry.SELF);
 		String installableUnitName = getInstallableUnitName(name);
-		InstallableUnitQuery query = new InstallableUnitQuery(installableUnitName, (VersionRange) null);
+		Query query = new InstallableUnitQuery(installableUnitName, (VersionRange) null);
 		URI[] metadataRepositoryLocations = new URI[1];
 		try {
 			metadataRepositoryLocations[0] = URIUtil.fromString(API_TOOLS_UPDATE_SITE);
@@ -1359,7 +1361,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 				return;
 			}
 		}
-		Collector collector = new LatestIUVersionCollector();
+		Collector collector = new Collector();
+		query = new CompositeQuery(new Query[] { query, new LatestIUVersionQuery()});
 		collector = ProvisioningHelper.getInstallableUnits(metadataRepositoryLocations[0], query, collector, new NullProgressMonitor());
 		IInstallableUnit[] array = (IInstallableUnit[]) collector.toArray(IInstallableUnit.class);
 		if (array.length == 0) {
