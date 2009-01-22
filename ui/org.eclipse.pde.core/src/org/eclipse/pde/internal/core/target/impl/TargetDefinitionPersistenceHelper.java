@@ -66,20 +66,34 @@ public class TargetDefinitionPersistenceHelper {
 	private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	private static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
 	private static final String VERSION_3_5 = "3.5"; //$NON-NLS-1$
-//	private static final String VERSION_3_2 = "3.2"; //$NON-NLS-1$
 	private static final String CONTENT = "content"; //$NON-NLS-1$
+	private static final String ATTR_USE_ALL = "useAllPlugins"; //$NON-NLS-1$
 	private static final String PLUGINS = "plugins"; //$NON-NLS-1$
 	private static final String FEATURES = "features"; //$NON-NLS-1$
 	private static final String EXTRA_LOCATIONS = "extraLocations"; //$NON-NLS-1$
 	private static ITargetPlatformService fTargetService;
 
-	/*
-	 * 
-	 * Example old style xml
-	  
+	/* Example Old Style Xml
+	<?xml version="1.0" encoding="UTF-8"?>
+	<?pde version="3.2"?>
+
+	<target>
+
 	<targetJRE>
 	  <execEnv>CDC-1.0/Foundation-1.0</execEnv>
 	</targetJRE>
+
+	<environment>
+		<os>hpux</os>
+		<ws>gtk</ws>
+		<arch>ia64</arch>
+		<nl>ar</nl>
+	</environment>
+
+	<launcherArgs>
+		<vmArgs>vm</vmArgs>
+		<programArgs>program</programArgs>
+	</launcherArgs>
 
 	<location path="d:\targets\provisioning-base"/>
 
@@ -105,7 +119,52 @@ public class TargetDefinitionPersistenceHelper {
 	  <plugin id="javax.servlet.jsp"/>
 	  <plugin id="ie.wombat.jbdiff.test"/>
 	</implicitDependencies>
+	
+	</target>
 
+	 */
+
+	/* Example New Style XML
+
+	<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+	<?pde version="3.5"?>
+
+	<target description="A description" name="A name">
+	<locations>
+	<location path="d:\targets\provisioning-base" type="Profile">
+	<restriction id="org.eclipse.core.jobs"/>
+	<restriction id="org.eclipse.equinox.app"/>
+	<restriction id="org.eclipse.osgi"/>
+	<restriction id="org.eclipse.osgi.services"/>
+	<restriction id="org.junit"/>
+	</location>
+	<location path="D:\targets\equinox\eclipse" type="Directory">
+	<restriction id="org.eclipse.core.jobs"/>
+	<restriction id="org.eclipse.equinox.app"/>
+	<restriction id="org.eclipse.osgi"/>
+	<restriction id="org.eclipse.osgi.services"/>
+	<restriction id="org.junit"/>
+	</location>
+	</locations>
+	<environment>
+	<os>hpux</os>
+	<ws>gtk</ws>
+	<arch>ia64</arch>
+	<nl>ar</nl>
+	</environment>
+	<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/CDC-1.0%Foundation-1.0"/>
+	<launcherArgs>
+	<vmArgs>vm</vmArgs>
+	<programArgs>program</programArgs>
+	</launcherArgs>
+	<implicitDependencies>
+	<plugin id="javax.servlet"/>
+	<plugin id="com.jcraft.jsch"/>
+	<plugin id="ie.wombat.jbdiff"/>
+	<plugin id="javax.servlet.jsp"/>
+	<plugin id="ie.wombat.jbdiff.test"/>
+	</implicitDependencies>
+	</target>
 	 */
 
 	/**
@@ -192,8 +251,6 @@ public class TargetDefinitionPersistenceHelper {
 			rootElement.appendChild(argElement);
 		}
 
-		// TODO EE/JRE
-
 		BundleInfo[] implicitDependencies = definition.getImplicitDependencies();
 		if (implicitDependencies != null && implicitDependencies.length > 0) {
 			Element implicit = doc.createElement(IMPLICIT);
@@ -234,25 +291,8 @@ public class TargetDefinitionPersistenceHelper {
 		parser.setErrorHandler(new DefaultHandler());
 		Document doc = parser.parse(new InputSource(input));
 
-		// TODO We may not need the version to process as there are no incompatable differences.
-//		String version = null;
-//		NodeList docNodes = doc.getChildNodes();
-//		for (int i = 0; i < docNodes.getLength(); ++i) {
-//			Node node = docNodes.item(i);
-//			if (node.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE) {
-//				ProcessingInstruction instruction = (ProcessingInstruction) node;
-//				if (PDE_INSTRUCTION.equalsIgnoreCase(instruction.getTarget())) {
-//					String data = instruction.getData();
-//					if (data.)
-//					oldVersion = version.equalsIgnoreCase(ATTR_VERSION.concat(VERSION_3_2));
-//					break;
-//				}
-//			}
-//		}
-
 		Element root = doc.getDocumentElement();
 		if (!root.getNodeName().equalsIgnoreCase(ROOT)) {
-			// TODO Throw a proper core exception;
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetDefinitionPersistenceHelper_0));
 		}
 
@@ -266,6 +306,7 @@ public class TargetDefinitionPersistenceHelper {
 			definition.setDescription(description);
 		}
 
+		AbstractBundleContainer oldStylePrimaryContainer = null;
 		List bundleContainers = new ArrayList();
 		NodeList list = root.getChildNodes();
 		for (int i = 0; i < list.getLength(); ++i) {
@@ -286,14 +327,14 @@ public class TargetDefinitionPersistenceHelper {
 					}
 				} else if (nodeName.equalsIgnoreCase(LOCATION)) {
 					// This is the 'home' location in old style target platforms
-					bundleContainers.add(deserializeBundleContainer(element));
+					oldStylePrimaryContainer = (AbstractBundleContainer) deserializeBundleContainer(element);
 				} else if (nodeName.equalsIgnoreCase(CONTENT)) {
 					// Additional locations and other bundle content settings were stored under this tag in old style target platforms
-					AbstractBundleContainer primaryContainer = null;
-					if (bundleContainers.size() > 0) {
-						primaryContainer = (AbstractBundleContainer) bundleContainers.get(0);
+					// Only included if the content has useAllPlugins='true' otherwise we create bundle containers for the restrictions
+					if (Boolean.TRUE.toString().equalsIgnoreCase(element.getAttribute(ATTR_USE_ALL))) {
+						bundleContainers.add(oldStylePrimaryContainer);
 					}
-					bundleContainers.addAll(deserializeBundleContainersFromOldStyleElement(element, primaryContainer));
+					bundleContainers.addAll(deserializeBundleContainersFromOldStyleElement(element, oldStylePrimaryContainer));
 				} else if (nodeName.equalsIgnoreCase(ENVIRONMENT)) {
 					NodeList envEntries = element.getChildNodes();
 					for (int j = 0; j < envEntries.getLength(); ++j) {
@@ -383,7 +424,6 @@ public class TargetDefinitionPersistenceHelper {
 					}
 					definition.setImplicitDependencies((BundleInfo[]) implicit.toArray(new BundleInfo[implicit.size()]));
 				}
-				// TODO EE/JRE (old and new versions)
 			}
 		}
 		definition.setBundleContainers((IBundleContainer[]) bundleContainers.toArray(new IBundleContainer[bundleContainers.size()]));
@@ -473,9 +513,9 @@ public class TargetDefinitionPersistenceHelper {
 	/**
 	 * Parses old content section.
 	 * 
-	 * @param content
-	 * @param primaryContainer definition being populated
-	 * @return bundle containers
+	 * @param content element containing the content section
+	 * @param primaryContainer the primary location defined in the xml file, restrictions are based off this container
+	 * @return list of bundle containers
 	 */
 	private static List deserializeBundleContainersFromOldStyleElement(Element content, AbstractBundleContainer primaryContainer) throws CoreException {
 		List containers = new ArrayList();

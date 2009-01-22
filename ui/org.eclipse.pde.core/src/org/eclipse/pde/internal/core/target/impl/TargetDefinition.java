@@ -229,6 +229,17 @@ class TargetDefinition implements ITargetDefinition {
 	 */
 	void setContents(InputStream stream) throws CoreException {
 		try {
+			fArch = null;
+			fContainers = null;
+			fDescription = null;
+			fImplicit = null;
+			fJREContainer = null;
+			fName = null;
+			fNL = null;
+			fOS = null;
+			fProgramArgs = null;
+			fVMArgs = null;
+			fWS = null;
 			TargetDefinitionPersistenceHelper.initFromXML(this, stream);
 		} catch (ParserConfigurationException e) {
 			abort(Messages.TargetDefinition_0, e);

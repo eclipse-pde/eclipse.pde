@@ -20,7 +20,6 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.itarget.*;
 import org.eclipse.pde.internal.core.target.WorkspaceTargetModel;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
@@ -61,7 +60,7 @@ public class BaseTargetDefinitionOperation extends WorkspaceModifyOperation {
 					((ISetSelectionTarget) focusPart).selectReveal(selection);
 				}
 				try {
-					IDE.openEditor(page, fFile, IPDEUIConstants.TARGET_EDITOR_ID);
+					IDE.openEditor(page, fFile);
 				} catch (PartInitException e) {
 				}
 			}

@@ -52,24 +52,47 @@ public class BundleContainerTable {
 	private Button fRemoveButton;
 	private Button fRemoveAllButton;
 	private ITargetDefinition fTarget;
-	private AbstractFormPart fTempPart; // TODO Remove when proper model/editor listening is done
+	private AbstractFormPart fFormPart; // TODO Remove when proper model/editor listening is done
 
+	/**
+	 * Creates this part using the form toolkit and adds it to the given composite.
+	 * 
+	 * @param parent parent composite
+	 * @param toolkit toolkit to create the widgets with
+	 * @param tempPart form part used to mark the editor dirty or <code>null</code>
+	 * @return generated instance of the table part
+	 */
 	public static BundleContainerTable createTableInForm(Composite parent, FormToolkit toolkit, AbstractFormPart tempPart) {
 		BundleContainerTable contentTable = new BundleContainerTable(tempPart);
 		contentTable.createFormContents(parent, toolkit);
 		return contentTable;
 	}
 
+	/**
+	 * Creates this part using standard dialog widgets and adds it to the given composite.
+	 * 
+	 * @param parent parent composite
+	 * @return generated instance of the table part
+	 */
 	public static BundleContainerTable createTableInDialog(Composite parent) {
 		BundleContainerTable contentTable = new BundleContainerTable(null);
 		contentTable.createDialogContents(parent);
 		return contentTable;
 	}
 
+	/**
+	 * Constructor
+	 * @param tempPart form part used to mark an editor dirty or <code>null</code>
+	 */
 	private BundleContainerTable(AbstractFormPart tempPart) {
-		fTempPart = tempPart;
+		fFormPart = tempPart;
 	}
 
+	/**
+	 * Creates the part contents from a toolkit
+	 * @param parent parent composite
+	 * @param toolkit form toolkit to create widgets
+	 */
 	private void createFormContents(Composite parent, FormToolkit toolkit) {
 		Composite comp = toolkit.createComposite(parent);
 		comp.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
@@ -79,6 +102,7 @@ public class BundleContainerTable {
 		atree.setLayout(new GridLayout());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		atree.setLayoutData(gd);
+
 		initializeTreeViewer(atree);
 
 		Composite buttonComp = toolkit.createComposite(comp);
@@ -88,54 +112,49 @@ public class BundleContainerTable {
 		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
 		fAddButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_0, SWT.PUSH);
-		fAddButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleAdd();
-			}
-		});
-		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-		SWTFactory.setButtonDimensionHint(fAddButton);
-
 		fEditButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_1, SWT.PUSH);
-		fEditButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleEdit();
-			}
-		});
-		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-		SWTFactory.setButtonDimensionHint(fEditButton);
-
 		fRemoveButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_2, SWT.PUSH);
-		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleRemove();
-			}
-		});
-		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-		SWTFactory.setButtonDimensionHint(fRemoveButton);
-
 		fRemoveAllButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_3, SWT.PUSH);
-		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleRemoveAll();
-			}
-		});
-		fRemoveAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-		SWTFactory.setButtonDimensionHint(fRemoveAllButton);
+
+		initializeButtons();
 
 		toolkit.paintBordersFor(comp);
-
 	}
 
 	/**
-	 * @param parent
+	 * Creates the part contents using SWTFactory
+	 * @param parent parent composite
 	 */
 	private void createDialogContents(Composite parent) {
-		// TODO Auto-generated method stub
+		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+
+		Tree atree = new Tree(comp, SWT.V_SCROLL | SWT.H_SCROLL);
+		atree.setLayout(new GridLayout());
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		atree.setLayoutData(gd);
+
+		initializeTreeViewer(atree);
+
+		Composite buttonComp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		buttonComp.setLayout(layout);
+		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+		fAddButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_0, null);
+		fEditButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_1, null);
+		fRemoveButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_2, null);
+		fRemoveAllButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_3, null);
+
+		initializeButtons();
 	}
 
-	private void initializeTreeViewer(Tree aTree) {
-		fTreeViewer = new TreeViewer(aTree);
+	/**
+	 * Sets up the tree viewer using the given tree
+	 * @param tree
+	 */
+	private void initializeTreeViewer(Tree tree) {
+		fTreeViewer = new TreeViewer(tree);
 		fTreeViewer.setContentProvider(new TargetContentProvider());
 		fTreeViewer.setLabelProvider(new TargetLabelProvider());
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -145,6 +164,48 @@ public class BundleContainerTable {
 		});
 	}
 
+	/**
+	 * Sets up the buttons, the button fields must already be created before calling this method
+	 */
+	private void initializeButtons() {
+		fAddButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleAdd();
+			}
+		});
+		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		SWTFactory.setButtonDimensionHint(fAddButton);
+
+		fEditButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleEdit();
+			}
+		});
+		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		SWTFactory.setButtonDimensionHint(fEditButton);
+
+		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleRemove();
+			}
+		});
+		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		SWTFactory.setButtonDimensionHint(fRemoveButton);
+
+		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleRemoveAll();
+			}
+		});
+		fRemoveAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		SWTFactory.setButtonDimensionHint(fRemoveAllButton);
+	}
+
+	/**
+	 * Sets the target definition model to use as input for the tree, can be called with different
+	 * models to change the tree's input
+	 * @param target target model
+	 */
 	public void setInput(ITargetDefinition target) {
 		fTarget = target;
 		refresh();
@@ -162,8 +223,7 @@ public class BundleContainerTable {
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		if (dialog.open() != Window.CANCEL) {
 			refresh();
-			// TODO Mark editor dirty
-			fTempPart.markDirty();
+			markDirty();
 		}
 	}
 
@@ -204,8 +264,7 @@ public class BundleContainerTable {
 								newRestrictions[i] = new BundleInfo(selectedRestrictions[i].getSymbolicName(), dialog.isUseVersion() ? selectedRestrictions[i].getVersion() : null, null, BundleInfo.NO_LEVEL, false);
 							}
 							container.setRestrictions(newRestrictions);
-							// TODO Mark the editor dirty
-							fTempPart.markDirty();
+							markDirty();
 							refresh();
 						}
 					}
@@ -232,27 +291,35 @@ public class BundleContainerTable {
 				}
 			}
 			fTarget.setBundleContainers((IBundleContainer[]) newBundleContainers.toArray(new IBundleContainer[newBundleContainers.size()]));
-			fTempPart.markDirty();
+			markDirty();
 			refresh();
 		}
 	}
 
 	private void handleRemoveAll() {
 		fTarget.setBundleContainers(null);
-		fTempPart.markDirty();
+		markDirty();
 		refresh();
 	}
 
 	private void updateButtons() {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-		fEditButton.setEnabled(!selection.isEmpty());
+		fEditButton.setEnabled(!selection.isEmpty() && selection.getFirstElement() instanceof IBundleContainer);
 		fRemoveButton.setEnabled(!selection.isEmpty());
 	}
 
+	private void markDirty() {
+		if (fFormPart != null) {
+			fFormPart.markDirty();
+		}
+	}
+
+	/**
+	 * Content provider for the tree, primary input is a ITargetDefinition, children are IBundleContainers
+	 */
 	class TargetContentProvider implements ITreeContentProvider {
 
 		public Object[] getChildren(Object parentElement) {
-			// TODO If returning null is valid we can simplify this code
 			if (parentElement instanceof ITargetDefinition) {
 				IBundleContainer[] containers = ((ITargetDefinition) parentElement).getBundleContainers();
 				return containers != null ? containers : new Object[0];
@@ -299,9 +366,12 @@ public class BundleContainerTable {
 
 	}
 
-	// TODO The label provider should be NLS'd
+	/**
+	 * Label provider for the tree
+	 */
 	class TargetLabelProvider extends BundleInfoLabelProvider {
 		public String getText(Object element) {
+			// TODO The label provider should be NLS'd
 			if (element instanceof FeatureBundleContainer) {
 				StringBuffer buf = new StringBuffer();
 				buf.append("Feature ").append("Name: ").append(((FeatureBundleContainer) element).getFeatureId());

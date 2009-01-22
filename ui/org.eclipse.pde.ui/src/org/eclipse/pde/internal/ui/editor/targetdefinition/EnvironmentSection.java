@@ -98,7 +98,7 @@ public class EnvironmentSection extends SectionPart {
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
 		fOSCombo = new ComboPart();
-		fOSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		fOSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER);
 		fOSCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fOSCombo.setItems((String[]) fOSChoices.toArray(new String[fOSChoices.size()]));
 
@@ -106,7 +106,7 @@ public class EnvironmentSection extends SectionPart {
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
 		fWSCombo = new ComboPart();
-		fWSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		fWSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER);
 		fWSCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fWSCombo.setItems((String[]) fWSChoices.toArray(new String[fWSChoices.size()]));
 
@@ -120,7 +120,7 @@ public class EnvironmentSection extends SectionPart {
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
 		fArchCombo = new ComboPart();
-		fArchCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		fArchCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER);
 		fArchCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fArchCombo.setItems((String[]) fArchChoices.toArray(new String[fArchChoices.size()]));
 
@@ -128,7 +128,7 @@ public class EnvironmentSection extends SectionPart {
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
 		fNLCombo = new ComboPart();
-		fNLCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.READ_ONLY);
+		fNLCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
 		fNLCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fNLCombo.setItems((String[]) fNLChoices.toArray(new String[fNLChoices.size()]));
 
