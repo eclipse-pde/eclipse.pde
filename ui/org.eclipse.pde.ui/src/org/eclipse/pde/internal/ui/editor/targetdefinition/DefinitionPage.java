@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -55,6 +53,8 @@ public class DefinitionPage extends FormPage {
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION));
 		toolkit.decorateFormHeading(form.getForm());
 		fillBody(managedForm, toolkit);
+		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm());
+		form.updateToolBar();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.TARGET_OVERVIEW_PAGE);
 	}
 

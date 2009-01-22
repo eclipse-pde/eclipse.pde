@@ -537,6 +537,10 @@ public class TargetDefinitionPersistenceHelper {
 							}
 						}
 					}
+					// Primary container is only added by default if useAllPlugins='true'
+					if (restrictions.size() > 0) {
+						containers.add(primaryContainer);
+					}
 				} else if (element.getNodeName().equalsIgnoreCase(EXTRA_LOCATIONS)) {
 					NodeList locations = element.getChildNodes();
 					for (int j = 0; j < locations.getLength(); j++) {
@@ -569,7 +573,6 @@ public class TargetDefinitionPersistenceHelper {
 		}
 		// in the old world, the restrictions were global to all containers
 		if (restrictions.size() > 0) {
-			primaryContainer.setRestrictions((BundleInfo[]) restrictions.toArray(new BundleInfo[restrictions.size()]));
 			Iterator iterator = containers.iterator();
 			while (iterator.hasNext()) {
 				IBundleContainer container = (IBundleContainer) iterator.next();

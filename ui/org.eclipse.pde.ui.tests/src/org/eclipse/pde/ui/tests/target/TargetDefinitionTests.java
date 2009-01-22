@@ -1150,16 +1150,12 @@ public class TargetDefinitionTests extends TestCase {
 		assertNull(target.getImplicitDependencies());
 		
 		IBundleContainer[] containers = target.getBundleContainers();
-		assertEquals("Wrong number of bundles", 3, containers.length);
-		assertTrue(containers[0] instanceof ProfileBundleContainer);
+		assertEquals("Wrong number of bundles", 2, containers.length);
+		assertTrue(containers[0] instanceof FeatureBundleContainer);
 		assertTrue(containers[1] instanceof FeatureBundleContainer);
-		assertTrue(containers[2] instanceof FeatureBundleContainer);
 
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
-				new Path(getResolvedLocation(containers[0])));
-		
-		assertEquals("Wrong 1st additional location", "org.eclipse.jdt", ((FeatureBundleContainer)containers[1]).getFeatureId());
-		assertEquals("Wrong 1st additional location", "org.eclipse.platform", ((FeatureBundleContainer)containers[2]).getFeatureId());
+		assertEquals("Wrong feature location", "org.eclipse.jdt", ((FeatureBundleContainer)containers[0]).getFeatureId());
+		assertEquals("Wrong feature location", "org.eclipse.platform", ((FeatureBundleContainer)containers[1]).getFeatureId());
 	}
 	
 	/**

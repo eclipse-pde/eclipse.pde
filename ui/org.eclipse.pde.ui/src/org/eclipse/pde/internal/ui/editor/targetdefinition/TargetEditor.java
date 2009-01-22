@@ -12,13 +12,19 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.*;
 
 /**
  * Editor for target definition (*.target) files.  Interacts with the ITargetDefinition model
@@ -123,6 +129,49 @@ public class TargetEditor extends FormEditor {
 		} catch (PartInitException e) {
 			PDEPlugin.log(e);
 		}
+	}
+
+	public void contributeToToolbar(final ScrolledForm form) {
+		ControlContribution save = new ControlContribution("Set") { //$NON-NLS-1$
+			protected Control createControl(Composite parent) {
+				final ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE);
+				hyperlink.setText(PDEUIMessages.AbstractTargetPage_setTarget);
+				hyperlink.setUnderlined(true);
+				hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
+				hyperlink.addHyperlinkListener(new IHyperlinkListener() {
+					public void linkActivated(HyperlinkEvent e) {
+						LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(getTarget());
+						job.schedule();
+					}
+
+					public void linkEntered(HyperlinkEvent e) {
+						hyperlink.setForeground(getToolkit().getHyperlinkGroup().getActiveForeground());
+					}
+
+					public void linkExited(HyperlinkEvent e) {
+						hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
+					}
+				});
+				return hyperlink;
+			}
+		};
+		// TODO Finish help action
+		final String href = ""; //$NON-NLS-1$
+		Action help = new Action("help") { //$NON-NLS-1$
+			public void run() {
+				BusyIndicator.showWhile(form.getForm().getDisplay(), new Runnable() {
+					public void run() {
+						PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
+					}
+				});
+			}
+		};
+		help.setToolTipText(PDEUIMessages.PDEFormPage_help);
+		help.setImageDescriptor(PDEPluginImages.DESC_HELP);
+
+		form.getToolBarManager().add(save);
+		form.getToolBarManager().add(help);
+		form.updateToolBar();
 	}
 
 }
