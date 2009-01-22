@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -28,6 +28,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	private static final byte CONFIG_STYLE_REFACTORED = 2;
 	private static final byte CONFIG_STYLE_SIMPLE = 4;
 	private static final byte CONFIG_STYLE_UPDATE = 8;
+	private static final byte CONFIG_INCLUDES_DS = 16;
 
 	private String product = null;
 	private ProductFile productFile = null;
@@ -137,6 +138,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				result |= CONFIG_STYLE_UPDATE;
 		}
 
+		bundle = state.getResolvedBundle(BUNDLE_DS);
+		if (bundle != null && bundles.contains(bundle))
+			result |= CONFIG_INCLUDES_DS;
+
 		bundle = state.getResolvedBundle(BUNDLE_EQUINOX_COMMON);
 		if (bundle != null && bundles.contains(bundle)) {
 			return (byte) (result | CONFIG_STYLE_REFACTORED);
@@ -199,6 +204,12 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
 			buffer.append(START_LEVEL_3);
 			buffer.append(',');
+			if ((style & CONFIG_INCLUDES_DS) > 0) {
+				//org.eclipse.equinox.ds@1:start
+				buffer.append(BUNDLE_DS);
+				buffer.append(START_LEVEL_1);
+				buffer.append(',');
+			}
 			//org.eclipse.core.runtime
 			buffer.append(BUNDLE_CORE_RUNTIME);
 			buffer.append(START);
@@ -244,6 +255,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				buffer.append(bundle.getSymbolicName());
 				if (BUNDLE_EQUINOX_COMMON.equals(id)) {
 					buffer.append(START_LEVEL_2);
+				} else if (BUNDLE_DS.equals(id)) {
+					buffer.append(START_LEVEL_1);
 				} else if (BUNDLE_CORE_RUNTIME.equals(id)) {
 					if ((style & CONFIG_STYLE_REFACTORED) > 0) {
 						buffer.append(START);
