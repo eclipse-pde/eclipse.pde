@@ -65,6 +65,18 @@
             id="org.eclipse.pde.ui.OSGiFrameworksPreferencePage">
             <keywordReference id="org.eclipse.pde.ui.pde"/>
       </page>
+      <page
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage2"
+            id="org.eclipse.pde.ui.TargetPlatformPreferencePage2"
+            name="%preferences.target.name2">
+         <keywordReference
+               id="org.eclipse.pde.ui.pde">
+         </keywordReference>
+         <keywordReference
+               id="org.eclipse.pde.ui.TargetPlatformPreferencePage">
+         </keywordReference>
+      </page>
    </extension>
    <extension
    		point="org.eclipse.ui.keywords">
@@ -344,8 +356,8 @@
             default="true"
             name="%editor.profile.name"
             icon="$nl$/icons/obj16/target_profile_xml_obj.gif"
-            class="org.eclipse.pde.internal.ui.editor.target.TargetEditor"
-            contributorClass="org.eclipse.pde.internal.ui.editor.target.TargetEditorContributor"
+            class="org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditorContributor"
             id="org.eclipse.pde.ui.targetEditor">
             <contentTypeBinding contentTypeId="org.eclipse.pde.targetFile"/>
       </editor>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -351,6 +351,24 @@ public class PDEUIMessages extends NLS {
 	public static String StateViewPage_title;
 
 	public static String TargetContentPage_title;
+
+	public static String TargetCreationPage_0;
+
+	public static String TargetCreationPage_1;
+
+	public static String TargetCreationPage_2;
+
+	public static String TargetCreationPage_3;
+
+	public static String TargetCreationPage_4;
+
+	public static String TargetCreationPage_5;
+
+	public static String TargetCreationPage_6;
+
+	public static String TargetCreationPage_7;
+
+	public static String TargetCreationPage_8;
 
 	public static String UpdateActivationResolution_bundleActivationPolicy_desc;
 	public static String UpdateActivationResolution_bundleActivationPolicy_label;
@@ -2474,6 +2492,28 @@ public class PDEUIMessages extends NLS {
 
 	public static String ArgumentsSection_variableButtonTitle;
 
+	public static String TargetDefinitionContentPage_1;
+
+	public static String TargetDefinitionContentPage_2;
+
+	public static String TargetDefinitionContentPage_3;
+
+	public static String TargetDefinitionContentPage_4;
+
+	public static String TargetDefinitionContentPage_5;
+
+	public static String TargetDefinitionContentPage_6;
+
+	public static String TargetDefinitionEnvironmentPage_1;
+
+	public static String TargetDefinitionEnvironmentPage_2;
+
+	public static String TargetDefinitionEnvironmentPage_3;
+
+	public static String TargetDefinitionEnvironmentPage_4;
+
+	public static String TargetDefinitionEnvironmentPage_5;
+
 	public static String TargetDefinitionSection_title;
 
 	public static String TargetDefinitionSection_name;
@@ -2733,6 +2773,28 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPlatformPreferencePage_invalidDescription;
 
+	public static String TargetPlatformPreferencePage2_0;
+
+	public static String TargetPlatformPreferencePage2_1;
+
+	public static String TargetPlatformPreferencePage2_11;
+
+	public static String TargetPlatformPreferencePage2_2;
+
+	public static String TargetPlatformPreferencePage2_3;
+
+	public static String TargetPlatformPreferencePage2_4;
+
+	public static String TargetPlatformPreferencePage2_5;
+
+	public static String TargetPlatformPreferencePage2_6;
+
+	public static String TargetPlatformPreferencePage2_7;
+
+	public static String TargetPlatformPreferencePage2_8;
+
+	public static String TargetPlatformPreferencePage2_9;
+
 	public static String TargetPluginsTab_features;
 
 	public static String TargetPluginsTab_plugins;
@@ -2831,6 +2893,8 @@ public class PDEUIMessages extends NLS {
 	public static String ImportPackageSection_dialogButtonLabel;
 
 	public static String EditorPreferencePage_folding;
+
+	public static String EditTargetNode_0;
 
 	public static String ExternalizeStringsWizardPage_subKey;
 
