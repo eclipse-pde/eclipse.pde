@@ -890,13 +890,12 @@ public class TargetDefinitionTests extends TestCase {
 		// Profile container with specific config area
 		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), new File(Platform.getConfigurationLocation().getURL().getFile()).getAbsolutePath());
 		// Feature container with specific version
-		// TODO Unexpected CoreException when running
-//		IPath location = getJdtFeatureLocation();
-//		String segment = location.lastSegment();
-//		int index = segment.indexOf('_');
-//		assertTrue("Missing version id", index > 0);
-//		String version = segment.substring(index + 1);
-//		IBundleContainer featureContainer = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", version);
+		IPath location = getJdtFeatureLocation();
+		String segment = location.lastSegment();
+		int index = segment.indexOf('_');
+		assertTrue("Missing version id", index > 0);
+		String version = segment.substring(index + 1);
+		IBundleContainer featureContainer = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", version);
 		// Profile container restricted to just two bundles
 		IBundleContainer restrictedProfileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
 		BundleInfo[] restrictions = new BundleInfo[]{
@@ -904,7 +903,7 @@ public class TargetDefinitionTests extends TestCase {
 				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
 		};
 		restrictedProfileContainer.setRestrictions(restrictions);
-		definitionA.setBundleContainers(new IBundleContainer[]{dirContainer, profileContainer, /*featureContainer,*/ restrictedProfileContainer});
+		definitionA.setBundleContainers(new IBundleContainer[]{dirContainer, profileContainer, featureContainer, restrictedProfileContainer});
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		TargetDefinitionPersistenceHelper.persistXML(definitionA, outputStream);
