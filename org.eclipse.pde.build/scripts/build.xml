@@ -18,8 +18,9 @@
 <!-- ===================================================================== -->
 
 <!-- ******* add in the descriptions for each of the top level targets to teh target decl -->
-<target name="main" description="the main build target">	
-  	<antcall target="preBuild" /> 
+<target name="main" description="the main build target">
+  	<antcall target="preBuild" />
+	<antcall target="processRepos"/>
  	<antcall target="fetch" />
 	<antcall target="generate" /> 
 	<antcall target="process" /> 
@@ -40,6 +41,18 @@
 		<fileset dir="${buildDirectory}" includes="maps/**/*.map"/>
 	</concat>
 	<ant antfile="${customTargets}" target="postSetup" />
+</target>
+
+<!-- ===================================================================== -->
+<!-- This will transform the content of the repositories listed such that they   -->
+<!-- are in a format against which PDE Build can succesfully build   -->
+<!-- ===================================================================== -->
+<target name="processRepos" if="repoBaseLocation">
+	<subant antfile="${customTargets}" target="preProcessRepos" failonerror="false" inheritAll="true" buildpath="."/>
+	<ant antfile="${customTargets}" target="allElements">
+		<property name="target" value="transformRepos" />
+	</ant>
+	<subant antfile="${customTargets}" target="postProcessRepos" failonerror="false" inheritAll="true" buildpath="."/>
 </target>
 
 <!-- ===================================================================== -->

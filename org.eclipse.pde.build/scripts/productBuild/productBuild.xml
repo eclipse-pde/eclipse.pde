@@ -17,7 +17,8 @@
 <!-- the customTargets.xml to modify the build behaviour. -->
 <!-- ===================================================================== -->
 <target name="main" description="the main build target">	
-  	<antcall target="preBuild" /> 
+  	<antcall target="preBuild" />
+	<antcall target="processRepos"/>
 	<antcall target="generateFeature"> <!-- Generate the feature to drive the fetch -->
 		<param name="verify" value="false"/>
 	</antcall>

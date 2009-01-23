@@ -18,6 +18,7 @@
 <property name="configs" value="*,*,*"/>
 <property name="fetchTag" value=""/>
 <property name="customEESources" value="" />
+<property name="transformedRepoLocation" value="" />
 <property name="buildingOSGi" value="true"/>
 <property name="generateJnlp" value="false"/>
 <property name="signJars" value="false"/>
@@ -41,9 +42,9 @@
 		fetchTag="${fetchTag}"
 		configInfo="${configs}"
 		baseLocation="${baseLocation}"
-		pluginPath="${pluginPath}"
+		pluginPath="${transformedRepoLocation}${path.separator}${pluginPath}"
 	/>
-	
+
 	<!-- Run generated fetch script -->
 	<ant antfile="${buildDirectory}/fetch_${id}.xml">
 		<!-- ************  should not have to spec these  *************** -->
@@ -65,8 +66,8 @@
 <!-- Generate a build.xml file for an element -->
 <!-- ===================================================================== -->
 <target name="generateScript" description="Generating build scripts..." depends="init">
-	<eclipse.buildScript 
-		elements="${type}@${id}" 
+	<eclipse.buildScript
+		elements="${type}@${id}"
 		buildDirectory="${buildDirectory}"
 		configInfo="${configs}"
 		baseLocation="${baseLocation}"
@@ -82,7 +83,7 @@
 		generatedVersionLength="${generatedVersionLength}"
 		generateVersionsLists="${generateVersionsLists}"
 		groupConfiguration="${groupConfigurations}"
-		pluginPath="${pluginPath}"
+		pluginPath="${transformedRepoLocation}${path.separator}${pluginPath}"
 		filteredDependencyCheck="${filteredDependencyCheck}"
 		platformProperties="${platformProperties}"
 		filterP2Base="${filterP2Base}"
@@ -107,19 +108,19 @@
 		<property name="target" value="build.jars"/>
 	</ant>
 </target>
-	
+
 <target name="processFlat" if="flattenDependencies" description="Compile in flattened dependency order">
 	<ant antfile="compile.${id}.xml" dir="${buildDirectory}"/>
 </target>
-	
+
 <!-- **********************
 1) the gather targets do more than just gather.  These are packaging targets.
-We need to continue ot separate the two concepts (gather and package) as 
+We need to continue ot separate the two concepts (gather and package) as
 the packaging is different if we wanted to create an update site packaging
 (for example).  The gathers are commented out for now as the new generated
 scripts do not seem to have them.
 
-2) do we really need the ws and os properties?  In all cases?  Do they have to be 
+2) do we really need the ws and os properties?  In all cases?  Do they have to be
 set here?
 -->
 
@@ -130,7 +131,7 @@ set here?
 	<!-- ant antfile="build.xml" dir="${elementPath}" target="gather.bin.parts"/ -->
 	<ant antfile="build.xml" dir="${elementPath}" target="zip.distribution">
 		<property name="os" value="${os}" />
-		<property name="ws" value="${ws}" />	
+		<property name="ws" value="${ws}" />
 	</ant>
 </target>
 
@@ -141,11 +142,11 @@ set here?
 	<!--suspect:  this call is required to create the *.src.zip inside each plugin-->
 	<ant antfile="build.xml" dir="${elementPath}" target="build.sources">
 		<property name="os" value="${os}" />
-		<property name="ws" value="${ws}" />	
+		<property name="ws" value="${ws}" />
 	</ant>
 	<ant antfile="build.xml" dir="${elementPath}" target="zip.sources">
 		<property name="os" value="${os}" />
-		<property name="ws" value="${ws}" />	
+		<property name="ws" value="${ws}" />
 	</ant>
 </target>
 
@@ -179,7 +180,7 @@ set here?
 <target name="packageElement" description="Packaging the build..." depends="init">
 	<ant antfile="package.${id}.all.xml" dir="${buildDirectory}"/>
 </target>
-	
+
 <!-- ===================================================================== -->
 <!-- Miscellaneous helper targets -->
 <!-- ===================================================================== -->
@@ -188,6 +189,15 @@ set here?
 		<equals arg1="${type}" arg2="fragment" />
 	</condition>
 	<property name="elementPath" value="${buildDirectory}/${type}s/${id}" />
+</target>
+
+<!-- ===================================================================== -->
+<!-- Invokes the p2 transformer to process all the repositories found in repoBaseLocation -->
+<!-- ===================================================================== -->
+<target name="transformRepos">
+	<p2.repo2runnable destination="${transformedRepoLocation}">
+		<source dir="${repoBaseLocation}/" includes="*"/>
+	</p2.repo2runnable>
 </target>
 
 </project>
