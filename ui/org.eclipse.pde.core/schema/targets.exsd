@@ -1,16 +1,23 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.pde.core">
+<schema targetNamespace="org.eclipse.pde.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.pde.core" id="targets" name="Targets"/>
       </appInfo>
       <documentation>
-         An extension point to define and register target definitions.  PDE gives the user the ability to choose and switch between targets.  The main content of a target resides in a .target file.  Among other things, this file contains a list of plug-ins and/or features, the target environment, execution environment and launching arguments.
+         An extension point to define and register target definitions.  PDE gives the user the ability to choose and switch between targets.  PDE also provides the ability to edit and extend the target.  The main content of a target resides in a .target file.  Among other things, the target definition file contains a description of plug-in/feature contents, the target environment, execution environment and launching arguments.&lt;br&gt;
+&lt;br&gt;
+Target definition files should be edited using the target definition editor provided by PDE.  The file format is not API and subject to change between releases.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="target" minOccurs="1" maxOccurs="unbounded"/>
@@ -112,9 +119,9 @@
   &lt;/extension&gt;
 &lt;/pre&gt;
 
-In the example above, the name and id of the target are declared in the plugin.xml, but its content is store in a &lt;code&gt;targets/rcp.target&lt;/code&gt; located in the contributing plug-in.
+In the example above, the name and id of the target are declared in the plugin.xml, but its content is stored in a &lt;code&gt;targets/rcp.target&lt;/code&gt; located in the contributing plug-in.
 &lt;br&gt;
-The .target file must be created via &lt;b&gt;File &gt; New &gt; Other... &gt; Plug-in Development &gt; Target Definition&lt;/b&gt; and must comply with the grammar of that file.
+The .target file must be created via &lt;b&gt;File &gt; New &gt; Other... &gt; Plug-in Development &gt; Target Definition&lt;/b&gt; and should be edited using the PDE target definition editor.  The file format is not API and subject to change between releases.
       </documentation>
    </annotation>
 
