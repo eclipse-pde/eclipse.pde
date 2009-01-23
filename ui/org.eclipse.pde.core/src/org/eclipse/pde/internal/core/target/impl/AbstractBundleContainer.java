@@ -49,7 +49,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 */
 	public final BundleInfo[] resolveBundles(IProgressMonitor monitor) throws CoreException {
 		BundleInfo[] all = resolveAllBundles(monitor);
-		return getMatchingBundles(all, getRestrictions());
+		return getMatchingBundles(all, getIncludedBundles());
 	}
 
 	/**
@@ -86,14 +86,14 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getRestrictions()
 	 */
-	public BundleInfo[] getRestrictions() {
+	public BundleInfo[] getIncludedBundles() {
 		return fRestrictions;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#setRestrictions(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
 	 */
-	public void setRestrictions(BundleInfo[] bundles) {
+	public void setIncludedBundles(BundleInfo[] bundles) {
 		fRestrictions = bundles;
 	}
 

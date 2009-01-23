@@ -41,7 +41,7 @@ public interface IBundleContainer {
 	public BundleInfo[] resolveSourceBundles(IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Restricts the bundles in this container to the subset of bundles specified or to
+	 * Restricts the bundles in this container to the explicit set of bundles specified or
 	 * all bundles in this container when <code>null</code>. When this container resolves
 	 * bundles and source bundles the result will be limited to those bundles matching the
 	 * bundles specified.
@@ -52,14 +52,17 @@ public interface IBundleContainer {
 	 * </p>
 	 * @param bundles bundle restriction or <code>null</code> for all bundles
 	 */
-	public void setRestrictions(BundleInfo[] bundles);
+	public void setIncludedBundles(BundleInfo[] bundles);
 
 	/**
-	 * Returns any bundle restrictions that have been set on this container or <code>null</code>
-	 * if none.
+	 * Returns the explicit list of bundles to be included in the bundle container.  Any 
+	 * bundles in the container that are not included in this list will not be included 
+	 * in the result of {@link #resolveBundles(IProgressMonitor)}. This method will return 
+	 * <code>null</code> if an explicit list has not been set, all bundles will be included
+	 * in the container.
 	 * 
-	 * @return bundle restrictions set on this container or <code>null</code> if none
+	 * @return list of included bundles set or <code>null</code> if all bundles included
 	 */
-	public BundleInfo[] getRestrictions();
+	public BundleInfo[] getIncludedBundles();
 
 }

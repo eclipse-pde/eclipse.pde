@@ -239,8 +239,8 @@ public class BundleContainerTable {
 			}
 			if (container != null) {
 				// We need to get a list of all possible bundles, remove restrictions while resolving
-				BundleInfo[] oldRestrictions = container.getRestrictions();
-				container.setRestrictions(null);
+				BundleInfo[] oldRestrictions = container.getIncludedBundles();
+				container.setIncludedBundles(null);
 				BundleInfo[] resolvedBundles = null;
 				try {
 					resolvedBundles = container.resolveBundles(null);
@@ -248,14 +248,14 @@ public class BundleContainerTable {
 					resolvedBundles = new BundleInfo[0];
 					PDEPlugin.log(e);
 				}
-				container.setRestrictions(oldRestrictions);
+				container.setIncludedBundles(oldRestrictions);
 
 				RestrictionsListSelectionDialog dialog = new RestrictionsListSelectionDialog(fTreeViewer.getTree().getShell(), resolvedBundles, oldRestrictions);
 				if (dialog.open() == Window.OK) {
 					Object[] result = dialog.getResult();
 					if (result != null) {
 						if (result.length == resolvedBundles.length) {
-							container.setRestrictions(null);
+							container.setIncludedBundles(null);
 							if (oldRestrictions != null) {
 								markDirty();
 								refresh();
@@ -267,7 +267,7 @@ public class BundleContainerTable {
 							for (int i = 0; i < selectedRestrictions.length; i++) {
 								newRestrictions[i] = new BundleInfo(selectedRestrictions[i].getSymbolicName(), dialog.isUseVersion() ? selectedRestrictions[i].getVersion() : null, null, BundleInfo.NO_LEVEL, false);
 							}
-							container.setRestrictions(newRestrictions);
+							container.setIncludedBundles(newRestrictions);
 							markDirty();
 							refresh();
 						}
@@ -432,7 +432,7 @@ public class BundleContainerTable {
 		}
 
 		private void getRestrictionLabel(IBundleContainer container, StringBuffer buf) {
-			BundleInfo[] restrictions = container.getRestrictions();
+			BundleInfo[] restrictions = container.getIncludedBundles();
 			buf.append(" <");
 			if (restrictions != null) {
 				buf.append(restrictions.length);

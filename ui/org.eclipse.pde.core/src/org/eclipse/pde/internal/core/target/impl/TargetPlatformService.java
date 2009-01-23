@@ -390,7 +390,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 				}
 			}
 			if (list.size() > 0) {
-				primary.setRestrictions((BundleInfo[]) list.toArray(new BundleInfo[list.size()]));
+				primary.setIncludedBundles((BundleInfo[]) list.toArray(new BundleInfo[list.size()]));
 			}
 		}
 

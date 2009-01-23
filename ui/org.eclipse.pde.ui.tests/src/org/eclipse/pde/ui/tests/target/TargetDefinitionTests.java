@@ -10,22 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.pde.internal.core.target.impl.TargetDefinition;
-
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer;
-
-import org.eclipse.pde.internal.core.target.impl.ProfileBundleContainer;
-
-import org.eclipse.pde.internal.core.target.impl.FeatureBundleContainer;
-
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import junit.framework.TestCase;
+import junit.framework.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -35,8 +25,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.impl.DirectoryBundleContainer;
-import org.eclipse.pde.internal.core.target.impl.TargetDefinitionPersistenceHelper;
+import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.ServiceReference;
@@ -47,6 +36,10 @@ import org.osgi.framework.ServiceReference;
  * @since 3.5 
  */
 public class TargetDefinitionTests extends TestCase {
+	
+	public static Test suite() {
+		return new TestSuite(TargetDefinitionTests.class);
+	}
 	
 	/**
 	 * Retrieves all bundles (source and code) in the given target definition
@@ -84,6 +77,22 @@ public class TargetDefinitionTests extends TestCase {
 		}
 		for (int i = 0; i < source.length; i++) {
 			list.add(source[i]);
+		}
+		return list;
+	}	
+	
+	/**
+	 * Retrieves all *code* bundles in the given target definition
+	 * returning them as a list of BundleInfos.
+	 * 
+	 * @param target target definition
+	 * @return all BundleInfos
+	 */
+	protected List getAllCodeBundleInfos(ITargetDefinition target) throws Exception {
+		BundleInfo[] code = target.resolveBundles(null);
+		List list = new ArrayList(code.length);
+		for (int i = 0; i < code.length; i++) {
+			list.add(code[i]);
 		}
 		return list;
 	}	
@@ -271,9 +280,9 @@ public class TargetDefinitionTests extends TestCase {
 				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
 				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
 		};
-		container.setRestrictions(restrictions);
+		container.setIncludedBundles(restrictions);
 		definition.setBundleContainers(new IBundleContainer[]{container});
-		List infos = getAllBundleInfos(definition);
+		List infos = getAllCodeBundleInfos(definition);
 		
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		Set set = collectAllSymbolicNames(infos);
@@ -295,7 +304,7 @@ public class TargetDefinitionTests extends TestCase {
 		ITargetDefinition definition = getTargetService().newTarget();
 		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
 		definition.setBundleContainers(new IBundleContainer[]{container});
-		List infos = getAllBundleInfos(definition);
+		List infos = getAllCodeBundleInfos(definition);
 		// find right versions
 		String v1 = null;
 		String v2 = null;
@@ -315,8 +324,8 @@ public class TargetDefinitionTests extends TestCase {
 				new BundleInfo("org.eclipse.jdt.launching", v1, null, BundleInfo.NO_LEVEL, false),
 				new BundleInfo("org.eclipse.jdt.debug", v2, null, BundleInfo.NO_LEVEL, false)
 		};
-		container.setRestrictions(restrictions);
-		infos = getAllBundleInfos(definition);
+		container.setIncludedBundles(restrictions);
+		infos = getAllCodeBundleInfos(definition);
 		
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		iterator = infos.iterator();
@@ -344,9 +353,9 @@ public class TargetDefinitionTests extends TestCase {
 				new BundleInfo("org.eclipse.jdt.launching", "xyz", null, BundleInfo.NO_LEVEL, false),
 				new BundleInfo("org.eclipse.jdt.debug", "abc", null, BundleInfo.NO_LEVEL, false)
 		};
-		container.setRestrictions(restrictions);
+		container.setIncludedBundles(restrictions);
 		definition.setBundleContainers(new IBundleContainer[]{container});
-		List infos = getAllBundleInfos(definition);
+		List infos = getAllCodeBundleInfos(definition);
 		
 		assertEquals("Wrong number of bundles", 0, infos.size());		
 	}	
@@ -718,7 +727,7 @@ public class TargetDefinitionTests extends TestCase {
 				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
 				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
 		};
-		container.setRestrictions(restrictions);
+		container.setIncludedBundles(restrictions);
 		definition.setBundleContainers(new IBundleContainer[]{container});
 		List infos = getAllBundleInfos(definition);
 		
@@ -902,7 +911,7 @@ public class TargetDefinitionTests extends TestCase {
 				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
 				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
 		};
-		restrictedProfileContainer.setRestrictions(restrictions);
+		restrictedProfileContainer.setIncludedBundles(restrictions);
 		definitionA.setBundleContainers(new IBundleContainer[]{dirContainer, profileContainer, featureContainer, restrictedProfileContainer});
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -1150,7 +1159,7 @@ public class TargetDefinitionTests extends TestCase {
 		
 		for (int i = 0; i < containers.length; i++) {
 			IBundleContainer container = containers[i];
-			BundleInfo[] actual = container.getRestrictions();
+			BundleInfo[] actual = container.getIncludedBundles();
 			assertNotNull(actual);
 			assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
 			for (int j = 0; j < actual.length; j++) {

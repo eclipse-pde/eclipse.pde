@@ -295,10 +295,10 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		if (containers != null) {
 			for (int i = 0; i < containers.length; i++) {
 				IBundleContainer container = containers[i];
-				BundleInfo[] restrictions = container.getRestrictions();
+				BundleInfo[] restrictions = container.getIncludedBundles();
 				if (restrictions != null) {
 					try {
-						container.setRestrictions(null);
+						container.setIncludedBundles(null);
 						BundleInfo[] all = container.resolveBundles(null);
 						for (int j = 0; j < all.length; j++) {
 							BundleInfo bi = all[j];
@@ -314,7 +314,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 							}
 						}
 					} finally {
-						container.setRestrictions(restrictions);
+						container.setIncludedBundles(restrictions);
 					}
 				}
 			}

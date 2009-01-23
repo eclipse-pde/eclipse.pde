@@ -47,7 +47,7 @@ public class TargetDefinitionPersistenceHelper {
 	private static final String ATTR_LOCATION_PATH = "path"; //$NON-NLS-1$
 	private static final String ATTR_LOCATION_TYPE = "type"; //$NON-NLS-1$
 	private static final String ATTR_USE_DEFAULT = "useDefault"; //$NON-NLS-1$
-	private static final String RESTRICTION = "restriction"; //$NON-NLS-1$
+	private static final String INCLUDE_BUNDLES = "includeBundles"; //$NON-NLS-1$
 	private static final String ENVIRONMENT = "environment"; //$NON-NLS-1$
 	private static final String OS = "os"; //$NON-NLS-1$
 	private static final String WS = "ws"; //$NON-NLS-1$
@@ -132,18 +132,23 @@ public class TargetDefinitionPersistenceHelper {
 	<target description="A description" name="A name">
 	<locations>
 	<location path="d:\targets\provisioning-base" type="Profile">
-	<restriction id="org.eclipse.core.jobs"/>
-	<restriction id="org.eclipse.equinox.app"/>
-	<restriction id="org.eclipse.osgi"/>
-	<restriction id="org.eclipse.osgi.services"/>
-	<restriction id="org.junit"/>
+	<includeBundles>
+	<plugin id="org.eclipse.core.jobs"/>
+	<plugin id="org.eclipse.equinox.app"/>
+	<plugin id="org.eclipse.osgi"/>
+	<plugin id="org.eclipse.osgi.services"/>
+	<plugin id="org.junit"/>
+	</includeBundles>
+	
 	</location>
 	<location path="D:\targets\equinox\eclipse" type="Directory">
-	<restriction id="org.eclipse.core.jobs"/>
-	<restriction id="org.eclipse.equinox.app"/>
-	<restriction id="org.eclipse.osgi"/>
-	<restriction id="org.eclipse.osgi.services"/>
-	<restriction id="org.junit"/>
+	<includeBundles>
+	<plugin id="org.eclipse.core.jobs"/>
+	<plugin id="org.eclipse.equinox.app"/>
+	<plugin id="org.eclipse.osgi"/>
+	<plugin id="org.eclipse.osgi.services"/>
+	<plugin id="org.junit"/>
+	</includeBundles>
 	</location>
 	</locations>
 	<environment>
@@ -445,17 +450,19 @@ public class TargetDefinitionPersistenceHelper {
 				containerElement.setAttribute(ATTR_CONFIGURATION, configurationArea);
 			}
 		}
-		BundleInfo[] restrictions = container.getRestrictions();
-		if (restrictions != null) {
-			for (int j = 0; j < restrictions.length; j++) {
-				Element restrictionElement = doc.createElement(RESTRICTION);
-				restrictionElement.setAttribute(ATTR_ID, restrictions[j].getSymbolicName());
-				String version = restrictions[j].getVersion();
+		BundleInfo[] includedBundles = container.getIncludedBundles();
+		if (includedBundles != null) {
+			Element includeElement = doc.createElement(INCLUDE_BUNDLES);
+			for (int j = 0; j < includedBundles.length; j++) {
+				Element includedBundle = doc.createElement(PLUGIN);
+				includedBundle.setAttribute(ATTR_ID, includedBundles[j].getSymbolicName());
+				String version = includedBundles[j].getVersion();
 				if (version != null) {
-					restrictionElement.setAttribute(ATTR_VERSION, version);
+					includedBundle.setAttribute(ATTR_VERSION, version);
 				}
-				containerElement.appendChild(restrictionElement);
+				containerElement.appendChild(includedBundle);
 			}
+			containerElement.appendChild(includeElement);
 		}
 		return containerElement;
 	}
@@ -491,22 +498,31 @@ public class TargetDefinitionPersistenceHelper {
 			String version = location.getAttribute(ATTR_VERSION);
 			container = getTargetPlatformService().newFeatureContainer(path, location.getAttribute(ATTR_ID), version.length() > 0 ? version : null);
 		}
+
 		NodeList list = location.getChildNodes();
-		List restrictions = new ArrayList(list.getLength());
 		for (int i = 0; i < list.getLength(); ++i) {
 			Node node = list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element) node;
-				if (element.getNodeName().equalsIgnoreCase(RESTRICTION)) {
-					String id = element.getAttribute(ATTR_ID);
-					String version = element.getAttribute(ATTR_VERSION);
-					restrictions.add(new BundleInfo(id, version.length() > 0 ? version : null, null, BundleInfo.NO_LEVEL, false));
+				if (element.getNodeName().equalsIgnoreCase(INCLUDE_BUNDLES)) {
+					NodeList includedList = location.getChildNodes();
+					List includedBundles = new ArrayList(includedList.getLength());
+					for (int j = 0; j < includedList.getLength(); ++j) {
+						Node include = includedList.item(i);
+						if (include.getNodeType() == Node.ELEMENT_NODE) {
+							Element includeElement = (Element) include;
+							if (includeElement.getNodeName().equalsIgnoreCase(PLUGIN)) {
+								String id = includeElement.getAttribute(ATTR_ID);
+								String version = includeElement.getAttribute(ATTR_VERSION);
+								includedBundles.add(new BundleInfo(id, version.length() > 0 ? version : null, null, BundleInfo.NO_LEVEL, false));
+							}
+						}
+					}
+					container.setIncludedBundles((BundleInfo[]) includedBundles.toArray(new BundleInfo[includedBundles.size()]));
 				}
 			}
 		}
-		if (restrictions.size() > 0) {
-			container.setRestrictions((BundleInfo[]) restrictions.toArray(new BundleInfo[restrictions.size()]));
-		}
+
 		return container;
 	}
 
@@ -576,7 +592,7 @@ public class TargetDefinitionPersistenceHelper {
 			Iterator iterator = containers.iterator();
 			while (iterator.hasNext()) {
 				IBundleContainer container = (IBundleContainer) iterator.next();
-				container.setRestrictions((BundleInfo[]) restrictions.toArray(new BundleInfo[restrictions.size()]));
+				container.setIncludedBundles((BundleInfo[]) restrictions.toArray(new BundleInfo[restrictions.size()]));
 			}
 		}
 		return containers;
