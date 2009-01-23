@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Code 9 Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028, 249263
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 254971
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.sections;
 
@@ -16,9 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
@@ -36,6 +35,7 @@ import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -43,8 +43,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -198,7 +196,6 @@ public class DSComponentSection extends PDESection {
 
 					public void browseButtonSelected(FormEntry entry) {
 						doOpenSelectionDialog(
-								IJavaElementSearchConstants.CONSIDER_CLASSES,
 								fClassEntry);
 					}
 
@@ -233,21 +230,18 @@ public class DSComponentSection extends PDESection {
 		return null;
 	}
 
-	private void doOpenSelectionDialog(int scopeType, FormEntry entry) {
-		try {
-			String filter = entry.getValue();
+	private void doOpenSelectionDialog(FormEntry entry) {
+		String filter = entry.getValue();
+		if (filter.length() == 0)
+			filter = "**"; //$NON-NLS-1$
+		else
 			filter = filter.substring(filter.lastIndexOf(".") + 1); //$NON-NLS-1$
-			SelectionDialog dialog = JavaUI.createTypeDialog(Activator
-					.getActiveWorkbenchShell(), PlatformUI.getWorkbench()
-					.getProgressService(), SearchEngine.createWorkspaceScope(),
-					scopeType, false, filter);
-			dialog.setTitle(Messages.DSImplementationDetails_selectType);
-			if (dialog.open() == Window.OK) {
-				IType type = (IType) dialog.getResult()[0];
-				entry.setValue(type.getFullyQualifiedName('$'));
-				entry.commit();
-			}
-		} catch (CoreException e) {
+		String type = PDEJavaHelperUI.selectType(
+				fModel.getUnderlyingResource(),
+				IJavaElementSearchConstants.CONSIDER_CLASSES, filter, null);
+		if (type != null) {
+			entry.setValue(type);
+			entry.commit();
 		}
 	}
 
