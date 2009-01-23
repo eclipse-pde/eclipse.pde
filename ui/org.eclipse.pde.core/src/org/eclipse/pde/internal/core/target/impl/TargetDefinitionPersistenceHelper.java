@@ -435,7 +435,7 @@ public class TargetDefinitionPersistenceHelper {
 		containerElement.setAttribute(ATTR_LOCATION_TYPE, container.getType());
 		if (container instanceof FeatureBundleContainer) {
 			containerElement.setAttribute(ATTR_ID, ((FeatureBundleContainer) container).getFeatureId());
-			String version = ((FeatureBundleContainer) container).getFeatureId();
+			String version = ((FeatureBundleContainer) container).getFeatureVersion();
 			if (version != null) {
 				containerElement.setAttribute(ATTR_VERSION, version);
 			}
