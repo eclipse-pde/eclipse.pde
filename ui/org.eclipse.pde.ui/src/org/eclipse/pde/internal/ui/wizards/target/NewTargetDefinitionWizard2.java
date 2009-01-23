@@ -37,6 +37,13 @@ public class NewTargetDefinitionWizard2 extends Wizard {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
+	 */
+	public boolean canFinish() {
+		return false;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	public boolean performFinish() {

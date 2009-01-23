@@ -368,8 +368,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetCreationPage_7;
 
-	public static String TargetCreationPage_8;
-
 	public static String UpdateActivationResolution_bundleActivationPolicy_desc;
 	public static String UpdateActivationResolution_bundleActivationPolicy_label;
 

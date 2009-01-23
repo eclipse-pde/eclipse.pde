@@ -129,4 +129,11 @@ class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 			fFile.setContents(stream, true, false, null);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return fFile.getName();
+	}
 }

@@ -34,6 +34,10 @@ import org.eclipse.ui.PlatformUI;
  */
 public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 
+	/**
+	 * Extension point that provides target provisioner wizard
+	 */
+//	private static final String PROVISIONER_POINT = "targetProvisioners"; //$NON-NLS-1$
 	private Text fDescription;
 	private ITargetDefinition fTarget;
 
@@ -193,6 +197,46 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		wizardSelectionViewer.setInput(new AbstractBundleContainerNode[] {directoryNode, installationNode, featureNode});
 
 	}
+
+//	private IWizardNode createExtensionWizardNode(WizardElement element) {
+//		return new WizardNode(this, element) {
+//			public IBasePluginWizard createWizard() throws CoreException {
+//				return (IBasePluginWizard) wizardElement.createExecutableExtension();
+//			}
+//		};
+//	}
+//
+//	private List getAvailableProvisioners() {
+//		List list = new ArrayList();
+//		IExtensionRegistry registry = Platform.getExtensionRegistry();
+//		IExtensionPoint point = registry.getExtensionPoint(PDEPlugin.getPluginId(), PROVISIONER_POINT);
+//		if (point == null)
+//			return list;
+//		IExtension[] extensions = point.getExtensions();
+//		for (int i = 0; i < extensions.length; i++) {
+//			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+//			for (int j = 0; j < elements.length; j++) {
+//				WizardElement element = createWizardElement(elements[j]);
+//				if (element != null) {
+//					final String pluginId = element.getPluginId();
+//					final String contributionId = element.getID();
+//					IPluginContribution pc = new IPluginContribution() {
+//						public String getLocalId() {
+//							return contributionId;
+//						}
+//
+//						public String getPluginId() {
+//							return pluginId;
+//						}
+//					};
+//					if (!WorkbenchActivityHelper.filterItem(pc)) {
+//						list.add(element);
+//					}
+//				}
+//			}
+//		}
+//		return list;
+//	}
 
 	/**
 	 * Abstract implementation of the IWizardNode interface providing a consistent look and feel

@@ -68,7 +68,8 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 */
 	public final BundleInfo[] resolveSourceBundles(IProgressMonitor monitor) throws CoreException {
 		BundleInfo[] all = resolveAllSourceBundles(monitor);
-		return getMatchingBundles(all, getRestrictions());
+		// for now, don't restrict source bundles
+		return all;
 	}
 
 	/**

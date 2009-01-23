@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.io.*;
 import java.net.URL;
-import javax.xml.parsers.ParserConfigurationException;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardSelectionPage;
@@ -23,16 +21,16 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetDefinitionManager;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.target.TargetModel;
-import org.eclipse.pde.internal.core.target.impl.TargetDefinitionPersistenceHelper;
+import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.target.OpenTargetProfileAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.xml.sax.SAXException;
 
 /**
  * First wizard page used to create a target definition. Defines the location where
@@ -175,7 +173,12 @@ public class TargetCreationPage extends WizardSelectionPage {
 					populateBasicTarget(definition);
 					break;
 				case USE_CURRENT_TP :
-					populateFromCurrentTargetPlatform(definition);
+					try {
+						populateFromCurrentTargetPlatform(definition);
+					} catch (CoreException e) {
+						setErrorMessage(e.getMessage());
+						return null;
+					}
 					break;
 				case USE_EXISTING_TARGET :
 					try {
@@ -208,9 +211,14 @@ public class TargetCreationPage extends WizardSelectionPage {
 	 * Populates the given definition from current target platform settings.
 	 * 
 	 * @param definition
+	 * @throws CoreException 
 	 */
-	private void populateFromCurrentTargetPlatform(ITargetDefinition definition) {
-		// TODO:
+	private void populateFromCurrentTargetPlatform(ITargetDefinition definition) throws CoreException {
+		ITargetPlatformService service = getTargetService();
+		if (service instanceof TargetPlatformService) {
+			TargetPlatformService ts = (TargetPlatformService) service;
+			ts.loadTargetDefinitionFromPreferences(definition);
+		}
 	}
 
 	/**
@@ -221,20 +229,9 @@ public class TargetCreationPage extends WizardSelectionPage {
 	 * @exception CoreException if unable to complete
 	 */
 	private void populateFromTemplate(ITargetDefinition definition, String id) throws CoreException {
-		IConfigurationElement elem = PDECore.getDefault().getTargetProfileManager().getTarget(id);
-		String path = elem.getAttribute("definition"); //$NON-NLS-1$
-		String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
-		URL url = TargetDefinitionManager.getResourceURL(symbolicName, path);
-		if (url != null) {
-			try {
-				TargetDefinitionPersistenceHelper.initFromXML(definition, new BufferedInputStream(url.openStream()));
-			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.TargetCreationPage_8, e));
-			} catch (ParserConfigurationException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.TargetCreationPage_8, e));
-			} catch (SAXException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.TargetCreationPage_8, e));
-			}
+		ITargetPlatformService service = getTargetService();
+		if (service != null) {
+			service.loadTargetDefinition(definition, id);
 		}
 	}
 
@@ -244,6 +241,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 	public IWizardPage getNextPage() {
 		ITargetDefinition target = createTarget();
 		if (target != null) {
+			((NewTargetDefinitionWizard2) getWizard()).setTargetDefinition(target);
 			((EditTargetNode) getSelectedNode()).setTargetDefinition(target);
 			return super.getNextPage();
 		}

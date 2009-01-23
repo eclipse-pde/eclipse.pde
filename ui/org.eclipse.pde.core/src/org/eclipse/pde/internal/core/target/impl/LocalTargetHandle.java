@@ -195,4 +195,11 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.LocalTargetHandle_4, getFile().getName()), e));
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getFile().getName();
+	}
 }

@@ -11,13 +11,16 @@
 package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.*;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 
 /**
@@ -216,4 +219,222 @@ public class TargetPlatformService implements ITargetPlatformService {
 		((TargetDefinition) to).setContents(inputStream);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#loadTargetDefinition(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, java.lang.String)
+	 */
+	public void loadTargetDefinition(ITargetDefinition definition, String targetExtensionId) throws CoreException {
+		IConfigurationElement elem = PDECore.getDefault().getTargetProfileManager().getTarget(targetExtensionId);
+		if (elem == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind("Target extension does not exist: {0}", targetExtensionId)));
+		}
+		String path = elem.getAttribute("definition"); //$NON-NLS-1$
+		String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
+		URL url = TargetDefinitionManager.getResourceURL(symbolicName, path);
+		if (url != null) {
+			try {
+				((TargetDefinition) definition).setContents(new BufferedInputStream(url.openStream()));
+			} catch (IOException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind("Error reading target extension file: {0}", path), e));
+			}
+		} else {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind("Target extension file does not exist: {0}", path)));
+		}
+	}
+
+	/**
+	 * This is a utility method to initialize a target definition based on current workspace
+	 * preference settings (target platform settings). It is not part of the service API since
+	 * the preference settings should eventually be removed.
+	 * 
+	 * @param definition target definition
+	 * @throws CoreException
+	 */
+	public void loadTargetDefinitionFromPreferences(ITargetDefinition target) throws CoreException {
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		initializeArgumentsInfo(preferences, target);
+		initializeEnvironmentInfo(preferences, target);
+		initializeImplicitInfo(preferences, target);
+		initializeLocationInfo(preferences, target);
+		initializeAdditionalLocsInfo(preferences, target);
+		initializeJREInfo(target);
+		initializePluginContent(preferences, target);
+	}
+
+	/**
+	 * Returns the given string or <code>null</code> if the empty string.
+	 * 
+	 * @param value
+	 * @return value or <code>null</code>
+	 */
+	private String getValueOrNull(String value) {
+		if (value == null) {
+			return null;
+		}
+		if (value.length() == 0) {
+			return null;
+		}
+		return value;
+	}
+
+	private void initializeArgumentsInfo(Preferences preferences, ITargetDefinition target) {
+		target.setProgramArguments(getValueOrNull(preferences.getString(ICoreConstants.PROGRAM_ARGS)));
+		target.setVMArguments(getValueOrNull(preferences.getString(ICoreConstants.VM_ARGS)));
+	}
+
+	private void initializeEnvironmentInfo(Preferences preferences, ITargetDefinition target) {
+		target.setOS(getValueOrNull(preferences.getString(ICoreConstants.OS)));
+		target.setWS(getValueOrNull(preferences.getString(ICoreConstants.WS)));
+		target.setNL(getValueOrNull(preferences.getString(ICoreConstants.NL)));
+		target.setArch(getValueOrNull(preferences.getString(ICoreConstants.ARCH)));
+	}
+
+	private void initializeImplicitInfo(Preferences preferences, ITargetDefinition target) {
+		String value = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
+		if (value.length() > 0) {
+			StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
+			BundleInfo[] plugins = new BundleInfo[tokenizer.countTokens()];
+			int i = 0;
+			while (tokenizer.hasMoreTokens()) {
+				String id = tokenizer.nextToken();
+				plugins[i++] = new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false);
+			}
+			target.setImplicitDependencies(plugins);
+		}
+	}
+
+	private void initializeLocationInfo(Preferences preferences, ITargetDefinition target) {
+		boolean useThis = preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS);
+		boolean profile = preferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION);
+		String home = null;
+		// Target weaving
+		Location configArea = Platform.getConfigurationLocation();
+		String configLocation = null;
+		if (configArea != null) {
+			configLocation = configArea.getURL().getFile();
+		}
+		if (configLocation != null) {
+			Location location = Platform.getInstallLocation();
+			if (location != null) {
+				URL url = location.getURL();
+				if (url != null) {
+					IPath installPath = new Path(url.getFile());
+					IPath configPath = new Path(configLocation);
+					if (installPath.isPrefixOf(configPath)) {
+						// if it is the default configuration area, do not specify explicitly
+						configPath = configPath.removeFirstSegments(installPath.segmentCount());
+						configPath = configPath.setDevice(null);
+						if (configPath.segmentCount() == 1 && configPath.lastSegment().equals("configuration")) { //$NON-NLS-1$
+							configLocation = null;
+						}
+					}
+				}
+			}
+		}
+		if (useThis) {
+			home = "${eclipse_home}"; //$NON-NLS-1$
+		} else {
+			home = preferences.getString(ICoreConstants.PLATFORM_PATH);
+		}
+		IBundleContainer primary = null;
+		if (profile) {
+			primary = newProfileContainer(home, configLocation);
+		} else {
+			primary = newDirectoryContainer(home);
+		}
+		try {
+			String location = ((AbstractBundleContainer) primary).getLocation(true);
+			target.setName(location);
+		} catch (CoreException e) {
+			target.setName("Restored Target Platform");
+		}
+		target.setBundleContainers(new IBundleContainer[] {primary});
+	}
+
+	private void initializeAdditionalLocsInfo(Preferences preferences, ITargetDefinition target) {
+		String additional = preferences.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
+		StringTokenizer tokenizer = new StringTokenizer(additional, ","); //$NON-NLS-1$
+		int size = tokenizer.countTokens();
+		if (size > 0) {
+			IBundleContainer[] locations = new IBundleContainer[size + 1];
+			locations[0] = target.getBundleContainers()[0];
+			int i = 1;
+			while (tokenizer.hasMoreTokens()) {
+				locations[i++] = newDirectoryContainer(tokenizer.nextToken().trim());
+			}
+			target.setBundleContainers(locations);
+		}
+	}
+
+	private void initializeJREInfo(ITargetDefinition target) {
+		target.setJREContainer(null);
+	}
+
+	private void initializePluginContent(Preferences preferences, ITargetDefinition target) {
+		String value = preferences.getString(ICoreConstants.CHECKED_PLUGINS);
+		IBundleContainer primary = target.getBundleContainers()[0];
+		if (value.length() == 0 || value.equals(ICoreConstants.VALUE_SAVED_NONE)) {
+			// no bundles
+			target.setBundleContainers(null);
+			return;
+		}
+		if (!value.equals(ICoreConstants.VALUE_SAVED_ALL)) {
+			// restrictions on container
+			IPluginModelBase[] models = PluginRegistry.getExternalModels();
+			ArrayList list = new ArrayList(models.length);
+			for (int i = 0; i < models.length; i++) {
+				if (models[i].isEnabled()) {
+					String id = models[i].getPluginBase().getId();
+					if (id != null) {
+						list.add(new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false));
+					}
+				}
+			}
+			if (list.size() > 0) {
+				primary.setRestrictions((BundleInfo[]) list.toArray(new BundleInfo[list.size()]));
+			}
+		}
+
+	}
+
+	/**
+	 * Creates a target definition with default settings - i.e. the running host.
+	 * Uses an explicit configuration area if not equal to the default location.
+	 * 
+	 * @return target definition
+	 */
+	public ITargetDefinition newDefaultTargetDefinition() {
+		ITargetDefinition target = newTarget();
+		Location configArea = Platform.getConfigurationLocation();
+		String configLocation = null;
+		if (configArea != null) {
+			configLocation = configArea.getURL().getFile();
+		}
+		if (configLocation != null) {
+			Location location = Platform.getInstallLocation();
+			if (location != null) {
+				URL url = location.getURL();
+				if (url != null) {
+					IPath installPath = new Path(url.getFile());
+					IPath configPath = new Path(configLocation);
+					if (installPath.isPrefixOf(configPath)) {
+						// if it is the default configuration area, do not specify explicitly
+						configPath = configPath.removeFirstSegments(installPath.segmentCount());
+						configPath = configPath.setDevice(null);
+						if (configPath.segmentCount() == 1 && configPath.lastSegment().equals("configuration")) { //$NON-NLS-1$
+							configLocation = null;
+						}
+					}
+				}
+			}
+		}
+		IBundleContainer container = newProfileContainer("${eclipse_home}", configLocation); //$NON-NLS-1$
+		target.setBundleContainers(new IBundleContainer[] {container});
+		try {
+			String location = ((AbstractBundleContainer) container).getLocation(true);
+			target.setName(NLS.bind("Running Platform ({0})", location));
+		} catch (CoreException e) {
+			target.setName("Running Platform (Default)");
+		}
+		return target;
+	}
 }

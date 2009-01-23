@@ -46,6 +46,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 		public String getText(Object element) {
 			String name = ((ITargetDefinition) element).getName();
+			if (name == null || name.length()==0){
+				return ((ITargetDefinition) element).getHandle().toString();
+			}
 			return name;
 		}
 	}

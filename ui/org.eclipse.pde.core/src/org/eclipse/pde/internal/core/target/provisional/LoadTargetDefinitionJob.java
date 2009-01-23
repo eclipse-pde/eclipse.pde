@@ -249,7 +249,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		pref.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
 		IBundleContainer[] containers = fTarget.getBundleContainers();
 		boolean profile = false;
-		if (containers.length > 0) {
+		if (containers != null && containers.length > 0) {
 			profile = containers[0] instanceof ProfileBundleContainer;
 		}
 		pref.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, profile);
@@ -275,41 +275,93 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	private void handleReload(String targetLocation, List additionalLocations, Preferences pref, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(Messages.LoadTargetOperation_reloadTaskName, 85);
 
+		Set included = new HashSet();
 		List infos = new ArrayList();
 		BundleInfo[] code = fTarget.resolveBundles(null);
 		for (int i = 0; i < code.length; i++) {
 			infos.add(code[i]);
+			included.add(code[i]);
 		}
 		// to be consistent with previous implementation, add source bundles
 		BundleInfo[] sourceBundles = fTarget.resolveSourceBundles(null);
 		for (int i = 0; i < sourceBundles.length; i++) {
 			infos.add(sourceBundles[i]);
+			included.add(sourceBundles[i]);
 		}
-		BundleInfo[] bundles = (BundleInfo[]) infos.toArray(new BundleInfo[infos.size()]);
-		// generate URLs and save CHECKED_PLUGINS
-		StringBuffer checked = new StringBuffer();
 
-		URL[] paths = new URL[bundles.length];
-		for (int i = 0; i < paths.length; i++) {
-			try {
-				paths[i] = new File(bundles[i].getLocation()).toURL();
-				if (i > 0) {
-					checked.append(" "); //$NON-NLS-1$
+		// Compute missing bundles
+		List missing = new ArrayList();
+		IBundleContainer[] containers = fTarget.getBundleContainers();
+		if (containers != null) {
+			for (int i = 0; i < containers.length; i++) {
+				IBundleContainer container = containers[i];
+				BundleInfo[] restrictions = container.getRestrictions();
+				if (restrictions != null) {
+					try {
+						container.setRestrictions(null);
+						BundleInfo[] all = container.resolveBundles(null);
+						for (int j = 0; j < all.length; j++) {
+							BundleInfo bi = all[j];
+							if (!included.contains(bi)) {
+								missing.add(bi);
+							}
+						}
+						all = container.resolveSourceBundles(null);
+						for (int j = 0; j < all.length; j++) {
+							BundleInfo bi = all[j];
+							if (!included.contains(bi)) {
+								missing.add(bi);
+							}
+						}
+					} finally {
+						container.setRestrictions(restrictions);
+					}
 				}
-				checked.append(bundles[i].getSymbolicName());
+			}
+		}
+
+		List paths = new ArrayList(infos.size() + missing.size());
+		Iterator iterator = infos.iterator();
+		while (iterator.hasNext()) {
+			BundleInfo info = (BundleInfo) iterator.next();
+			try {
+				paths.add(new File(info.getLocation()).toURL());
 			} catch (MalformedURLException e) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LoadTargetDefinitionJob_1, e));
 			}
 		}
 
-		PDEState state = new PDEState(paths, true, new SubProgressMonitor(monitor, 45));
+		// generate URLs and save CHECKED_PLUGINS (which are missing), and add to master list of paths
+		StringBuffer checked = new StringBuffer();
+		int i = 0;
+		iterator = missing.iterator();
+		Set missingIds = new HashSet(missing.size());
+		while (iterator.hasNext()) {
+			BundleInfo bi = (BundleInfo) iterator.next();
+			missingIds.add(bi.getSymbolicName());
+			try {
+				paths.add(new File(bi.getLocation()).toURL());
+			} catch (MalformedURLException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LoadTargetDefinitionJob_1, e));
+			}
+			if (i > 0) {
+				checked.append(" "); //$NON-NLS-1$
+			}
+			checked.append(bi.getSymbolicName());
+			i++;
+		}
+
+		URL[] urls = (URL[]) paths.toArray(new URL[paths.size()]);
+		PDEState state = new PDEState(urls, true, new SubProgressMonitor(monitor, 45));
 		IPluginModelBase[] models = state.getTargetModels();
-		for (int i = 0; i < models.length; i++) {
-			models[i].setEnabled(true);
+		for (i = 0; i < models.length; i++) {
+			models[i].setEnabled(!missingIds.contains(models[i].getPluginBase().getId()));
 		}
 		// save CHECKED_PLUGINS
-		if (paths.length == 0) {
+		if (urls.length == 0) {
 			pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
+		} else if (missing.size() == 0) {
+			pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
 		} else {
 			pref.setValue(ICoreConstants.CHECKED_PLUGINS, checked.toString());
 		}

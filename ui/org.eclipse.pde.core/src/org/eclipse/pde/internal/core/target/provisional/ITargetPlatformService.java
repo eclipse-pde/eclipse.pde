@@ -133,4 +133,15 @@ public interface ITargetPlatformService {
 	 */
 	public void copyTargetDefinition(ITargetDefinition from, ITargetDefinition to) throws CoreException;
 
+	/**
+	 * Sets the content of the given target definition based on the target file supplied 
+	 * by an <code>org.eclipse.pde.core.targets</code> extension with the specified identifier.
+	 *  
+	 * @param definition target definition to load
+	 * @param targetExtensionId identifier of a targets extension
+	 * @throws CoreException if the extension is not found or an error occurs reading the target
+	 * 	file or loading the target definition
+	 */
+	public void loadTargetDefinition(ITargetDefinition definition, String targetExtensionId) throws CoreException;
+
 }

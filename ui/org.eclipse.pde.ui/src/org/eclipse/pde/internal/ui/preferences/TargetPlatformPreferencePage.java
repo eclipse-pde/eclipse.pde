@@ -565,6 +565,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fArgumentsTab.performOk();
 		fImplicitDependenciesTab.performOk();
 		saveTarget();
+		// the old page has been use - wipe out current target setting for new pref page
+		fPreferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
 		return super.performOk();
 	}
 

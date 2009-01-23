@@ -382,47 +382,39 @@ public class BundleContainerTable {
 			// TODO The label provider should be NLS'd
 			if (element instanceof FeatureBundleContainer) {
 				StringBuffer buf = new StringBuffer();
-				buf.append("Feature ").append("Name: ").append(((FeatureBundleContainer) element).getFeatureId());
+				buf.append(((FeatureBundleContainer) element).getFeatureId());
 				String version = ((FeatureBundleContainer) element).getFeatureVersion();
 				if (version != null) {
-					buf.append(" Version: ").append(version);
+					buf.append(" (").append(version).append(") ");
 				}
 				try {
-					buf.append(" Location: ").append(((FeatureBundleContainer) element).getLocation(false));
+					buf.append(((FeatureBundleContainer) element).getLocation(false));
 				} catch (CoreException e) {
 					buf.append(e.getMessage());
 				}
-				if (((FeatureBundleContainer) element).getRestrictions() != null) {
-					buf.append(" <Restricted>");
-				}
+				getRestrictionLabel((FeatureBundleContainer) element, buf);
 				return buf.toString();
 			} else if (element instanceof DirectoryBundleContainer) {
 				StringBuffer buf = new StringBuffer();
-				buf.append("Directory ");
 				try {
-					buf.append("Location: ").append(((DirectoryBundleContainer) element).getLocation(false));
+					buf.append(((DirectoryBundleContainer) element).getLocation(false));
 				} catch (CoreException e) {
 					buf.append(e.getMessage());
 				}
-				if (((DirectoryBundleContainer) element).getRestrictions() != null) {
-					buf.append(" <Restricted>");
-				}
+				getRestrictionLabel((DirectoryBundleContainer) element, buf);
 				return buf.toString();
 			} else if (element instanceof ProfileBundleContainer) {
 				StringBuffer buf = new StringBuffer();
-				buf.append("Installation ");
 				try {
-					buf.append("Location: ").append(((ProfileBundleContainer) element).getLocation(false));
+					buf.append(((ProfileBundleContainer) element).getLocation(false));
 				} catch (CoreException e) {
 					buf.append(e.getMessage());
 				}
 				String configArea = ((ProfileBundleContainer) element).getConfigurationLocation();
 				if (configArea != null) {
-					buf.append(" Configuration:").append(configArea);
+					buf.append(" (Configuration:").append(configArea).append(")");
 				}
-				if (((ProfileBundleContainer) element).getRestrictions() != null) {
-					buf.append(" <Restricted>");
-				}
+				getRestrictionLabel((ProfileBundleContainer) element, buf);
 				return buf.toString();
 			}
 			return super.getText(element);
@@ -437,6 +429,17 @@ public class BundleContainerTable {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION);
 			}
 			return super.getImage(element);
+		}
+
+		private void getRestrictionLabel(IBundleContainer container, StringBuffer buf) {
+			BundleInfo[] restrictions = container.getRestrictions();
+			buf.append(" <");
+			if (restrictions != null) {
+				buf.append(restrictions.length);
+			} else {
+				buf.append("all");
+			}
+			buf.append(" plug-in(s) selected>");
 		}
 	}
 
