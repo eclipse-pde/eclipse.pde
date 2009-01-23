@@ -135,4 +135,24 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#isContentEqual(org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer)
+	 */
+	public boolean isContentEqual(AbstractBundleContainer container) {
+		if (container instanceof ProfileBundleContainer) {
+			ProfileBundleContainer pbc = (ProfileBundleContainer) container;
+			return fHome.equals(pbc.fHome) && isNullOrEqual(fConfiguration, fConfiguration) && super.isContentEqual(container);
+		}
+		return false;
+	}
+
+	private boolean isNullOrEqual(Object o1, Object o2) {
+		if (o1 == null) {
+			return o2 == null;
+		}
+		if (o2 == null) {
+			return false;
+		}
+		return o1.equals(o2);
+	}
 }

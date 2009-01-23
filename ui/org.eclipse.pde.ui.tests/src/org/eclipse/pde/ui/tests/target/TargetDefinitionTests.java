@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.internal.core.target.impl.TargetDefinition;
+
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer;
@@ -930,59 +932,9 @@ public class TargetDefinitionTests extends TestCase {
 	}
 	
 	protected void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) throws CoreException{
-		assertEquals(targetA.getName(),targetB.getName());
-		assertEquals(targetA.getDescription(),targetB.getDescription());
-		assertEquals(targetA.getOS(),targetB.getOS());
-		assertEquals(targetA.getWS(),targetB.getWS());
-		assertEquals(targetA.getArch(),targetB.getArch());
-		assertEquals(targetA.getNL(),targetB.getNL());
-		assertEquals(targetA.getProgramArguments(),targetB.getProgramArguments());
-		assertEquals(targetA.getVMArguments(),targetB.getVMArguments());
-		assertEquals(targetA.getJREContainer(),targetB.getJREContainer());
-		
-		if (targetA.getImplicitDependencies() != null){
-			List implicitAList = Arrays.asList(targetA.getImplicitDependencies());
-			Set implicitA = collectAllSymbolicNames(implicitAList);
-			BundleInfo[] implicitB = targetB.getImplicitDependencies();
-			assertNotNull("Bundle container's restrictions are missing",implicitB);
-			for (int i = 0; i < implicitB.length; i++) {
-				assertTrue("Missing implicit dependency", implicitA.contains(implicitB[i].getSymbolicName()));
-			}
-		}
-		
-		IBundleContainer[] containersA = targetA.getBundleContainers();
-		IBundleContainer[] containersB = targetB.getBundleContainers();
-		if (containersA != null){
-			assertNotNull("Bundle containers are missing",containersB);
-			for (int aIndex = 0; aIndex < containersA.length; aIndex++) {
-				boolean foundMatch = false;
-				for (int bIndex = 0; bIndex < containersB.length; bIndex++) {
-					if (containersA[aIndex].getClass().getName().equals(containersB[bIndex].getClass().getName()) 
-							&& getResolvedLocation(containersA[aIndex]).equals(getResolvedLocation(containersB[bIndex]))
-							&& containersA[aIndex].resolveBundles(null).length == containersB[bIndex].resolveBundles(null).length){
-						
-						boolean matchingRestrictions = true;
-						if (containersA[aIndex].getRestrictions() != null){
-							List restrictionsA = Arrays.asList(containersA[aIndex].getRestrictions());
-							Set restrictionIDs = collectAllSymbolicNames(restrictionsA);
-							BundleInfo[] restrictionsB = containersB[bIndex].getRestrictions();
-							assertNotNull("Bundle container's restrictions are missing",restrictionsB);
-							for (int restrictB = 0; restrictB < restrictionsB.length; restrictB++) {
-								if (!restrictionIDs.contains(restrictionsB[restrictB].getSymbolicName())){
-									matchingRestrictions = false;
-								}
-							}
-						}
-						if (matchingRestrictions){
-							foundMatch = true;
-						}
-					}
-				}
-				assertTrue("The target definitions have non matching bundle containers",foundMatch);
-			}
-		}
-		
+		assertTrue("Target content not equal",((TargetDefinition)targetA).isContentEqual(targetB));
 	}
+	
 	
 	/**
 	 * Reads a target definition file from the tests/targets/target-files location

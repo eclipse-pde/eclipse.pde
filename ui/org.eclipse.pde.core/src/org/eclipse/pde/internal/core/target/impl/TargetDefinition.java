@@ -25,7 +25,7 @@ import org.xml.sax.SAXException;
  * 
  * @since 3.5
  */
-class TargetDefinition implements ITargetDefinition {
+public class TargetDefinition implements ITargetDefinition {
 
 	// name and description
 	private String fName;
@@ -181,6 +181,9 @@ class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setBundleContainers(org.eclipse.pde.internal.core.target.provisional.IBundleContainer[])
 	 */
 	public void setBundleContainers(IBundleContainer[] containers) {
+		if (containers != null && containers.length == 0) {
+			containers = null;
+		}
 		fContainers = containers;
 	}
 
@@ -305,6 +308,9 @@ class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setImplicitDependencies(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
 	 */
 	public void setImplicitDependencies(BundleInfo[] bundles) {
+		if (bundles != null && bundles.length == 0) {
+			bundles = null;
+		}
 		fImplicit = bundles;
 	}
 
@@ -320,5 +326,71 @@ class TargetDefinition implements ITargetDefinition {
 	 */
 	public void setJREContainer(IPath containerPath) {
 		fJREContainer = containerPath;
+	}
+
+	/**
+	 * Returns whether the content of this definition is equal to the content of the specified definition.
+	 * 
+	 * @param definition
+	 * @return whether the content of this definition is equal to the content of the specified definition
+	 */
+	public boolean isContentEqual(ITargetDefinition definition) {
+		if (isNullOrEqual(getName(), definition.getName()) && isNullOrEqual(getDescription(), definition.getDescription()) && isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isNullOrEqual(getVMArguments(), definition.getVMArguments())) {
+			// check containers and implicit dependencies
+			IBundleContainer[] c1 = getBundleContainers();
+			IBundleContainer[] c2 = definition.getBundleContainers();
+			if (areContainersEqual(c1, c2)) {
+				return areEqual(getImplicitDependencies(), definition.getImplicitDependencies());
+			}
+		}
+		return false;
+	}
+
+	private boolean areEqual(BundleInfo[] c1, BundleInfo[] c2) {
+		if (c1 == null) {
+			return c2 == null;
+		}
+		if (c2 == null) {
+			return false;
+		}
+		if (c1.length == c2.length) {
+			for (int i = 0; i < c2.length; i++) {
+				if (!c1[i].equals(c2[i])) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isNullOrEqual(Object o1, Object o2) {
+		if (o1 == null) {
+			return o2 == null;
+		}
+		if (o2 == null) {
+			return false;
+		}
+		return o1.equals(o2);
+	}
+
+	private boolean areContainersEqual(IBundleContainer[] c1, IBundleContainer[] c2) {
+		if (c1 == null) {
+			return c2 == null;
+		}
+		if (c2 == null) {
+			return false;
+		}
+		if (c1.length == c2.length) {
+			for (int i = 0; i < c2.length; i++) {
+				AbstractBundleContainer ac1 = (AbstractBundleContainer) c1[i];
+				AbstractBundleContainer ac2 = (AbstractBundleContainer) c2[i];
+				if (!ac1.isContentEqual(ac2)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 }

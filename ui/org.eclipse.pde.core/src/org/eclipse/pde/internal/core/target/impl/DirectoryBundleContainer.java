@@ -304,4 +304,14 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#isContentEqual(org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer)
+	 */
+	public boolean isContentEqual(AbstractBundleContainer container) {
+		if (container instanceof DirectoryBundleContainer) {
+			DirectoryBundleContainer dbc = (DirectoryBundleContainer) container;
+			return fPath.equals(dbc.fPath) && super.isContentEqual(container);
+		}
+		return false;
+	}
 }

@@ -180,4 +180,28 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 */
 	public abstract String getLocation(boolean resolve) throws CoreException;
 
+	/**
+	 * Returns whether restrictions are equivalent. Subclasses should override for other data.
+	 * 
+	 * @param container bundle container
+	 * @return whether content is equivalent
+	 */
+	public boolean isContentEqual(AbstractBundleContainer container) {
+		if (fRestrictions == null) {
+			return container.fRestrictions == null;
+		}
+		if (container.fRestrictions == null) {
+			return false;
+		}
+		if (fRestrictions.length == container.fRestrictions.length) {
+			for (int i = 0; i < fRestrictions.length; i++) {
+				if (!fRestrictions[i].equals(container.fRestrictions[i])) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 }
