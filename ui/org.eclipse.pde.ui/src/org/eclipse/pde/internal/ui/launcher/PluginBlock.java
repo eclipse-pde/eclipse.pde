@@ -56,12 +56,7 @@ public class PluginBlock extends AbstractPluginBlock {
 	 * then we check the plugins that had been selected and saved in the config.
 	 */
 	protected void initWorkspacePluginsState(ILaunchConfiguration configuration) throws CoreException {
-		boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
-		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, automaticAdd);
-		fNumWorkspaceChecked = automaticAdd ? fWorkspaceModels.length : 0;
-
-		String attribute = automaticAdd ? IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
-		Map map = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, attribute);
+		Map map = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
 		Iterator iter = map.keySet().iterator();
 		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, false);
 		while (iter.hasNext()) {
