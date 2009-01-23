@@ -69,7 +69,8 @@ public class InformationSection extends SectionPart {
 		fNameEntry.setValue(getTarget().getName());
 		fNameEntry.setFormEntryListener(new SimpleFormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
-				getTarget().setName(entry.getValue());
+				String value = entry.getValue();
+				getTarget().setName(value.length() > 0 ? value : null);
 			}
 		});
 
@@ -77,7 +78,8 @@ public class InformationSection extends SectionPart {
 		fDescEntry.setValue(getTarget().getName());
 		fDescEntry.setFormEntryListener(new SimpleFormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
-				getTarget().setDescription(entry.getValue());
+				String value = entry.getValue();
+				getTarget().setDescription(value.length() > 0 ? value : null);
 			}
 		});
 

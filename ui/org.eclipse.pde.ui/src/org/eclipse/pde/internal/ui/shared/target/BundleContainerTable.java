@@ -128,7 +128,7 @@ public class BundleContainerTable {
 	private void createDialogContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 
-		Tree atree = new Tree(comp, SWT.V_SCROLL | SWT.H_SCROLL);
+		Tree atree = new Tree(comp, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		atree.setLayout(new GridLayout());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		atree.setLayoutData(gd);
@@ -256,6 +256,10 @@ public class BundleContainerTable {
 					if (result != null) {
 						if (result.length == resolvedBundles.length) {
 							container.setRestrictions(null);
+							if (oldRestrictions != null) {
+								markDirty();
+								refresh();
+							}
 						} else {
 							BundleInfo[] selectedRestrictions = new BundleInfo[result.length];
 							System.arraycopy(result, 0, selectedRestrictions, 0, result.length);
@@ -306,6 +310,7 @@ public class BundleContainerTable {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		fEditButton.setEnabled(!selection.isEmpty() && selection.getFirstElement() instanceof IBundleContainer);
 		fRemoveButton.setEnabled(!selection.isEmpty());
+		fRemoveAllButton.setEnabled(fTarget.getBundleContainers() != null && fTarget.getBundleContainers().length > 0);
 	}
 
 	private void markDirty() {
@@ -353,7 +358,10 @@ public class BundleContainerTable {
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
-				return ((ITargetDefinition) inputElement).getBundleContainers();
+				IBundleContainer[] containers = ((ITargetDefinition) inputElement).getBundleContainers();
+				if (containers != null) {
+					return containers;
+				}
 			}
 			return new Object[0];
 		}

@@ -92,7 +92,7 @@ public class JRESection extends SectionPart {
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
 				if (!fBlockChanges) {
-					getTarget().setJREContainer(JavaRuntime.newDefaultJREContainerPath());
+					getTarget().setJREContainer(null);
 					markDirty();
 				}
 			}

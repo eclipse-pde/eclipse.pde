@@ -183,10 +183,14 @@ public class EnvironmentSection extends SectionPart {
 					fNLCombo.addModifyListener(new ModifyListener() {
 						public void modifyText(ModifyEvent e) {
 							String value = getText(fNLCombo);
-							int index = value.indexOf("-"); //$NON-NLS-1$
-							if (index > 0)
-								value = value.substring(0, index);
-							getTarget().setNL(value.trim());
+							if (value == null) {
+								getTarget().setNL(null);
+							} else {
+								int index = value.indexOf("-"); //$NON-NLS-1$
+								if (index > 0)
+									value = value.substring(0, index);
+								getTarget().setNL(value.trim());
+							}
 							markDirty();
 						}
 					});
@@ -242,11 +246,22 @@ public class EnvironmentSection extends SectionPart {
 		LOCALES_INITIALIZED = true;
 	}
 
+	/**
+	 * Returns the text of the widget or null if it is empty
+	 * @param combo
+	 * @return text of the widget or <code>null</code>
+	 */
 	private String getText(ComboPart combo) {
+		String text;
 		Control control = combo.getControl();
 		if (control instanceof Combo)
-			return ((Combo) control).getText();
-		return ((CCombo) control).getText();
+			text = ((Combo) control).getText();
+		text = ((CCombo) control).getText();
+		text = text.trim();
+		if (text.length() == 0) {
+			return null;
+		}
+		return text;
 	}
 
 	public void refresh() {

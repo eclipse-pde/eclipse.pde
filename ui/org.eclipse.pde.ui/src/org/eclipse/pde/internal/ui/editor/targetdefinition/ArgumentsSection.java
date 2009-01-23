@@ -93,7 +93,8 @@ public class ArgumentsSection extends SectionPart {
 		fProgramArguments.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fProgramArguments.setFormEntryListener(new SimpleFormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
-				getTarget().setProgramArguments(entry.getValue());
+				String value = entry.getValue().trim();
+				getTarget().setProgramArguments(value.length() > 0 ? value : null);
 			}
 		});
 		Button variables = toolkit.createButton(programComp, PDEUIMessages.ArgumentsSection_variableButtonTitle, SWT.NONE);
@@ -114,7 +115,6 @@ public class ArgumentsSection extends SectionPart {
 		programTab.setControl(programComp);
 		toolkit.paintBordersFor(programComp);
 
-		// TODO Could be done neatly in a method
 		Composite vmComp = toolkit.createComposite(fTabFolder);
 		vmComp.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		vmComp.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -122,7 +122,8 @@ public class ArgumentsSection extends SectionPart {
 		fVMArguments.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fVMArguments.setFormEntryListener(new SimpleFormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
-				getTarget().setVMArguments(entry.getValue());
+				String value = entry.getValue().trim();
+				getTarget().setVMArguments(value.length() > 0 ? value : null);
 			}
 		});
 		variables = toolkit.createButton(vmComp, PDEUIMessages.ArgumentsSection_variableButtonTitle, SWT.NONE);
