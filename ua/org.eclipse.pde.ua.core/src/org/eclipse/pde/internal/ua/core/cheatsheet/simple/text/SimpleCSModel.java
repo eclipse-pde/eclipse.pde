@@ -15,7 +15,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.NLResourceHelper;
-import org.eclipse.pde.internal.core.text.NodeDocumentHandler;
 import org.eclipse.pde.internal.core.text.XMLEditingModel;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;

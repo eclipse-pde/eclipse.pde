@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,6 @@ import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ua.core.ctxhelp.ICtxHelpConstants;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ua.ui.editor.ctxhelp.CtxHelpEditor;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.widgets.Shell;
@@ -50,8 +49,9 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.osgi.framework.Constants;
 
 /**
- * Register Context Help Operation, registers a context help xml file in the plugin.xml.
- * Must be run in the UI thread.
+ * Register Context Help Operation, registers a context help xml file in the
+ * plugin.xml. Must be run in the UI thread.
+ * 
  * @since 3.4
  * @see RegisterCtxHelpOperation
  * @see CtxHelpEditor
@@ -72,17 +72,26 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 	public RegisterCtxHelpOperation(Shell shell, IModel model, String pluginText) {
 		fPluginText = pluginText;
 		fProject = model.getUnderlyingResource().getProject();
-		fResourceString = model.getUnderlyingResource().getProjectRelativePath().toPortableString();
+		fResourceString = model.getUnderlyingResource()
+				.getProjectRelativePath().toPortableString();
 		fShell = shell;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core
+	 * .runtime.IProgressMonitor)
 	 */
-	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
+	protected void execute(IProgressMonitor monitor) throws CoreException,
+			InvocationTargetException, InterruptedException {
 		try {
-			boolean fragment = PluginRegistry.findModel(fProject).isFragmentModel();
-			IFile file = fProject.getFile(fragment ? ICoreConstants.FRAGMENT_PATH : ICoreConstants.PLUGIN_PATH);
+			boolean fragment = PluginRegistry.findModel(fProject)
+					.isFragmentModel();
+			IFile file = fProject
+					.getFile(fragment ? ICoreConstants.FRAGMENT_PATH
+							: ICoreConstants.PLUGIN_PATH);
 			// If the plug-in exists modify it accordingly; otherwise, create
 			// a new plug-in file
 			if (file.exists()) {
@@ -95,14 +104,20 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	private void modifyExistingPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
-		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
+	private void modifyExistingPluginFile(IFile file, IProgressMonitor monitor)
+			throws CoreException {
+		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(
+				new IFile[] { file }, fShell);
 		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR, CtxWizardMessages.RegisterCtxHelpOperation_errorMessage1, null));
+			throw new CoreException(new Status(IStatus.ERROR,
+					PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR,
+					CtxWizardMessages.RegisterCtxHelpOperation_errorMessage1,
+					null));
 		}
 		// Perform the modification of the plugin manifest file
 		ModelModification mod = new ModelModification(fProject) {
-			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+			protected void modifyModel(IBaseModel model,
+					IProgressMonitor monitor) throws CoreException {
 				doModifyPluginModel(model, monitor);
 				doModifyManifestModel(model);
 			}
@@ -110,13 +125,15 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		PDEModelUtility.modifyModel(mod, monitor);
 	}
 
-	private void doModifyPluginModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+	private void doModifyPluginModel(IBaseModel model, IProgressMonitor monitor)
+			throws CoreException {
 		if ((model instanceof IPluginModelBase) == false) {
 			return;
 		}
 
 		IPluginModelBase modelBase = (IPluginModelBase) model;
-		IPluginExtension[] extensions = modelBase.getExtensions().getExtensions();
+		IPluginExtension[] extensions = modelBase.getExtensions()
+				.getExtensions();
 		IPluginExtension existingExtension = null;
 		for (int i = 0; i < extensions.length; i++) {
 			String point = extensions[i].getPoint();
@@ -145,8 +162,9 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		}
 		IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 		IBundle bundle = modelBase.getBundleModel().getBundle();
-		// Get the heading specifying the singleton declaration 
-		IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
+		// Get the heading specifying the singleton declaration
+		IManifestHeader header = bundle
+				.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 		if (header instanceof BundleSymbolicNameHeader) {
 			BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader) header;
 			// If the singleton declaration is false, change it to true
@@ -166,7 +184,8 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	private void createNewPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
+	private void createNewPluginFile(IFile file, IProgressMonitor monitor)
+			throws CoreException {
 		monitor.beginTask(CtxWizardMessages.RegisterCtxHelpOperation_task, 4);
 
 		WorkspacePluginModelBase model;
@@ -196,15 +215,21 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 	 */
 	private void modifyExistingManifestFile(IFile file) throws CoreException {
 		// Validate the operation
-		// Note: This is not accurate, we are validating the plugin.xml file rather
+		// Note: This is not accurate, we are validating the plugin.xml file
+		// rather
 		// than the manifest file
-		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
+		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(
+				new IFile[] { file }, fShell);
 		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR, CtxWizardMessages.RegisterCtxHelpOperation_errorMessage2, null));
+			throw new CoreException(new Status(IStatus.ERROR,
+					PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR,
+					CtxWizardMessages.RegisterCtxHelpOperation_errorMessage2,
+					null));
 		}
 		// Perform the modification of the manifest file
 		ModelModification mod = new ModelModification(fProject) {
-			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+			protected void modifyModel(IBaseModel model,
+					IProgressMonitor monitor) throws CoreException {
 				doModifyManifestModel(model);
 				doModifyBuildModel(model);
 			}
@@ -235,7 +260,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		if (entry.contains(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) == false) {
 			entry.addToken(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 		}
-		// There does not seem to be any support in PDEModelUtility or the 
+		// There does not seem to be any support in PDEModelUtility or the
 		// ModelModification framework to save build.properties modifications
 		// As a result, explicitly do that here
 		if (build instanceof BuildObject) {
@@ -252,14 +277,22 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 			if (pluginObjects[j] instanceof IPluginElement) {
 				IPluginElement element = (IPluginElement) pluginObjects[j];
 				if (element.getName().equals(ICtxHelpConstants.ELEMENT_ROOT)) {
-					IPluginAttribute fileAttribute = element.getAttribute(CTX_HELP_ATTR_FILE);
-					if ((fileAttribute != null) && PDETextHelper.isDefined(fileAttribute.getValue()) && fResourceString.equals(fileAttribute.getValue())) {
-						IPluginAttribute pluginAttribute = element.getAttribute(CTX_HELP_ATTR_PLUGIN);
-						if (pluginAttribute == null || !PDETextHelper.isDefined(pluginAttribute.getValue())) {
+					IPluginAttribute fileAttribute = element
+							.getAttribute(CTX_HELP_ATTR_FILE);
+					if ((fileAttribute != null)
+							&& PDETextHelper
+									.isDefined(fileAttribute.getValue())
+							&& fResourceString.equals(fileAttribute.getValue())) {
+						IPluginAttribute pluginAttribute = element
+								.getAttribute(CTX_HELP_ATTR_PLUGIN);
+						if (pluginAttribute == null
+								|| !PDETextHelper.isDefined(pluginAttribute
+										.getValue())) {
 							if (fPluginText.length() == 0) {
 								return true;
 							}
-						} else if (fPluginText.equals(pluginAttribute.getValue())) {
+						} else if (fPluginText.equals(pluginAttribute
+								.getValue())) {
 							return true;
 						}
 					}
@@ -269,15 +302,18 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		return false;
 	}
 
-	private void addExtensionToModel(IPluginModelBase model) throws CoreException {
+	private void addExtensionToModel(IPluginModelBase model)
+			throws CoreException {
 		IPluginExtension extension = model.getFactory().createExtension();
 		extension.setPoint(CTX_HELP_EXTENSION_POINT_ID);
 		addElementToExtension(extension);
 		model.getPluginBase().add(extension);
 	}
 
-	private void addElementToExtension(IPluginExtension extension) throws CoreException {
-		IPluginElement element = extension.getModel().getFactory().createElement(extension);
+	private void addElementToExtension(IPluginExtension extension)
+			throws CoreException {
+		IPluginElement element = extension.getModel().getFactory()
+				.createElement(extension);
 		element.setName(ICtxHelpConstants.ELEMENT_ROOT);
 		element.setAttribute(CTX_HELP_ATTR_FILE, fResourceString);
 		if (fPluginText.length() > 0) {

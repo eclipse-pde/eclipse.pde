@@ -14,7 +14,6 @@ package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.NodeDocumentHandler;
-import org.xml.sax.Attributes;
 
 public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 
