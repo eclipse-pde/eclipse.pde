@@ -1286,17 +1286,17 @@ public class ApiErrorsWarningsConfigurationBlock {
 		return page;
 	}
 
-	private void initializeInstalledMetatadata(Composite parent) {
-		Group group = SWTFactory.createGroup(parent, PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees, 3, 3, GridData.FILL_BOTH);
+	private void initializeInstalledMetatadata(final Composite parent) {
+		final Group group = SWTFactory.createGroup(parent, PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees, 3, 3, GridData.FILL_BOTH);
 		int[] allIds = ProfileModifiers.getAllIds();
 		this.fSystemLibraryControls = new ArrayList(allIds.length + 1);
 		this.fSystemLibraryControls.add(group);
-		Display display = parent.getDisplay();
+		final Display display = parent.getDisplay();
 		for (int i = 0, max = allIds.length; i < max; i++) {
 			int eeValue = allIds[i];
 			final String name = ProfileModifiers.getName(eeValue);
-			Font labelFont = JFaceResources.getDialogFont();
-			FontData[] fontDatas = labelFont.getFontData();
+			final Font labelFont = JFaceResources.getDialogFont();
+			final FontData[] fontDatas = labelFont.getFontData();
 			boolean installed = StubApiComponent.isInstalled(eeValue);
 			if (installed) {
 				for (int j = 0; j < fontDatas.length; j++) {
@@ -1325,7 +1325,45 @@ public class ApiErrorsWarningsConfigurationBlock {
 										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_dialog_description,
 										name));
 						if (isOK) {
-							install(name);
+							Widget selectedWidget = e.widget;
+							if (install(name)) {
+								// update widget only if the install is successfull
+								loop: for (int j = 0, max = ApiErrorsWarningsConfigurationBlock.this.fSystemLibraryControls.size(); j < max; j++) {
+									Control control = (Control) ApiErrorsWarningsConfigurationBlock.this.fSystemLibraryControls.get(j);
+									if (control.equals(selectedWidget)) {
+										for (int i = 0; i < fontDatas.length; i++) {
+											FontData data = fontDatas[i];
+											data.setStyle(SWT.BOLD);
+											data.setHeight(8);
+										}
+										Label createLabel = SWTFactory.createLabel(group, name, new Font(display, fontDatas), 1);
+										control.dispose();
+										// get the next sibling or the previous if this is the last one
+										Control sibling = null;
+										ApiErrorsWarningsConfigurationBlock.this.fSystemLibraryControls.add(j, createLabel);
+										ApiErrorsWarningsConfigurationBlock.this.fSystemLibraryControls.remove(control);
+										if (j < (max - 1)) {
+											sibling = (Control) ApiErrorsWarningsConfigurationBlock.this.fSystemLibraryControls.get(j + 1);
+											createLabel.moveAbove(sibling);
+										} else {
+											sibling = (Control) ApiErrorsWarningsConfigurationBlock.this.fSystemLibraryControls.get(j - 1);
+											createLabel.moveBelow(sibling);
+										}
+										group.layout();
+										break loop;
+									}
+								}
+							} else {
+								// report that the install failed and disable the widget
+								MessageDialog.openError(
+										parent.getShell(),
+										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_install_failed_dialog_title,
+										PreferenceMessages.bind(
+												PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_install_failed_dialog_description,
+												name,
+												API_TOOLS_UPDATE_SITE));
+								((Control) selectedWidget).setEnabled(false);
+							}
 						}
 					}
 				});
@@ -1333,7 +1371,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		}
 	}
 
-	protected void install(String name) {
+	protected boolean install(String name) {
 		// -metadataRepository file:d:/tmp/cdt/site.xml -artifactRepository file:d:/tmp/cdt/site.xml -installIU org.eclipse.cdt.feature.group
 		IProfile profile = ProvisioningHelper.getProfile(IProfileRegistry.SELF);
 		String installableUnitName = getInstallableUnitName(name);
@@ -1343,14 +1381,14 @@ public class ApiErrorsWarningsConfigurationBlock {
 			metadataRepositoryLocations[0] = URIUtil.fromString(API_TOOLS_UPDATE_SITE);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
-			return;
+			return false;
 		}
 		URI[] artifactRepositoryLocations = new URI[1];
 		try {
 			artifactRepositoryLocations[0] =  URIUtil.fromString(API_TOOLS_UPDATE_SITE);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
-			return;
+			return false;
 		}
 		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) ServiceHelper.getService(Activator.getContext(), IArtifactRepositoryManager.class.getName());
 		if (!artifactManager.contains(artifactRepositoryLocations[0])) {
@@ -1358,7 +1396,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				artifactManager.loadRepository(artifactRepositoryLocations[0], null);
 			} catch (ProvisionException e) {
 				e.printStackTrace();
-				return;
+				return false;
 			}
 		}
 		Collector collector = new Collector();
@@ -1366,7 +1404,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		collector = ProvisioningHelper.getInstallableUnits(metadataRepositoryLocations[0], query, collector, new NullProgressMonitor());
 		IInstallableUnit[] array = (IInstallableUnit[]) collector.toArray(IInstallableUnit.class);
 		if (array.length == 0) {
-			return;
+			return false;
 		}
 		ProvisioningContext context = new ProvisioningContext(metadataRepositoryLocations);
 		context.setArtifactRepositories(artifactRepositoryLocations);
@@ -1379,18 +1417,19 @@ public class ApiErrorsWarningsConfigurationBlock {
 		IPlanner planner = (IPlanner) ServiceHelper.getService(Activator.getContext(), IPlanner.class.getName());
 		ProvisioningPlan plan = planner.getProvisioningPlan(request, context, new NullProgressMonitor());
 		if (planner == null) {
-			return;
+			return false;
 		}
 		IEngine engine = (IEngine) ServiceHelper.getService(Activator.getContext(), IEngine.SERVICE_NAME);
 		if (engine == null) {
-			return;
+			return false;
 		}
-		if (!plan.getStatus().isOK())
-			operationStatus = plan.getStatus();
+		IStatus status = plan.getStatus();
+		if (!status.isOK())
+			operationStatus = status;
 		else {
 			operationStatus = engine.perform(profile, new DefaultPhaseSet(), plan.getOperands(), context, new NullProgressMonitor());
 		}
-		System.out.println(operationStatus);
+		return operationStatus.isOK();
 	}
 	private String getInstallableUnitName(String name) {
 		StringBuffer buffer = new StringBuffer();
