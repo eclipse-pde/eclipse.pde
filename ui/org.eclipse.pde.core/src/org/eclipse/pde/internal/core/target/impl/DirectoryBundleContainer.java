@@ -314,4 +314,11 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 		}
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return new StringBuffer().append("Directory ").append(fPath).append(' ').append(getIncludedBundles() == null ? "All" : Integer.toString(getIncludedBundles().length)).append(" included").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 }

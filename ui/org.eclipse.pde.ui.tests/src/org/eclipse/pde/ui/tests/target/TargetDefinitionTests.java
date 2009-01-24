@@ -912,7 +912,12 @@ public class TargetDefinitionTests extends TestCase {
 				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
 		};
 		restrictedProfileContainer.setIncludedBundles(restrictions);
-		definitionA.setBundleContainers(new IBundleContainer[]{dirContainer, profileContainer, featureContainer, restrictedProfileContainer});
+		// Profile container restrict to zero bundles
+		IBundleContainer emptyProfileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		BundleInfo[] completeRestrictions = new BundleInfo[0];
+		emptyProfileContainer.setIncludedBundles(completeRestrictions);
+		
+		definitionA.setBundleContainers(new IBundleContainer[]{dirContainer, profileContainer, featureContainer, restrictedProfileContainer, emptyProfileContainer});
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		TargetDefinitionPersistenceHelper.persistXML(definitionA, outputStream);

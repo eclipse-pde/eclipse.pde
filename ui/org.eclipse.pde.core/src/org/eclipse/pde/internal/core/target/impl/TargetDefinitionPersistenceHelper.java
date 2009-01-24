@@ -460,7 +460,7 @@ public class TargetDefinitionPersistenceHelper {
 				if (version != null) {
 					includedBundle.setAttribute(ATTR_VERSION, version);
 				}
-				containerElement.appendChild(includedBundle);
+				includeElement.appendChild(includedBundle);
 			}
 			containerElement.appendChild(includeElement);
 		}
@@ -505,10 +505,10 @@ public class TargetDefinitionPersistenceHelper {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element) node;
 				if (element.getNodeName().equalsIgnoreCase(INCLUDE_BUNDLES)) {
-					NodeList includedList = location.getChildNodes();
+					NodeList includedList = element.getChildNodes();
 					List includedBundles = new ArrayList(includedList.getLength());
 					for (int j = 0; j < includedList.getLength(); ++j) {
-						Node include = includedList.item(i);
+						Node include = includedList.item(j);
 						if (include.getNodeType() == Node.ELEMENT_NODE) {
 							Element includeElement = (Element) include;
 							if (includeElement.getNodeName().equalsIgnoreCase(PLUGIN)) {

@@ -393,4 +393,25 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append(fName != null ? fName : "No Name"); //$NON-NLS-1$
+		if (fContainers == null) {
+			buf.append("\n\tNo containers"); //$NON-NLS-1$
+		} else {
+			for (int i = 0; i < fContainers.length; i++) {
+				buf.append("\n\t").append(fContainers.toString()); //$NON-NLS-1$
+			}
+		}
+		buf.append("\nEnv: ").append(fOS).append("/").append(fWS).append("/").append(fArch).append("/").append(fNL); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		buf.append("\nJRE: ").append(fJREContainer); //$NON-NLS-1$
+		buf.append("\nArgs: ").append(fProgramArgs).append("/").append(fVMArgs); //$NON-NLS-1$ //$NON-NLS-2$
+		buf.append("\nImplicit: ").append(fImplicit == null ? "null" : Integer.toString(fImplicit.length)); //$NON-NLS-1$ //$NON-NLS-2$
+		buf.append("\nHandle: ").append(fHandle.toString()); //$NON-NLS-1$
+		return buf.toString();
+	}
 }
