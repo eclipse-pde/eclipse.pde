@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.core.runtime.CoreException;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.wizards.WizardElement;
+import org.eclipse.pde.ui.IProvisionerWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
@@ -23,8 +30,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Wizard page for selecting the type of bundle container to be added to a target
@@ -37,7 +44,10 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	/**
 	 * Extension point that provides target provisioner wizard
 	 */
-//	private static final String PROVISIONER_POINT = "targetProvisioners"; //$NON-NLS-1$
+	private static final String PROVISIONER_POINT = "targetProvisioners"; //$NON-NLS-1$
+
+	private static ITargetPlatformService fTargetService;
+
 	private Text fDescription;
 	private ITargetDefinition fTarget;
 
@@ -46,6 +56,21 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		setTitle(Messages.AddBundleContainerSelectionPage_1);
 		setMessage(Messages.AddBundleContainerSelectionPage_2);
 		fTarget = target;
+	}
+
+	/**
+	 * Gets the target platform service provided by PDE Core
+	 * @return the target platform service
+	 * @throws CoreException if unable to acquire the service
+	 */
+	private static ITargetPlatformService getTargetPlatformService() throws CoreException {
+		if (fTargetService == null) {
+			fTargetService = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			if (fTargetService == null) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AddDirectoryContainerPage_9));
+			}
+		}
+		return fTargetService;
 	}
 
 	/* (non-Javadoc)
@@ -104,8 +129,24 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		setControl(comp);
 	}
 
+	/**
+	 * Creates the IWizardNode instances that provide choices for the user to select
+	 * @param wizardSelectionViewer
+	 */
 	private void initViewerContents(TableViewer wizardSelectionViewer) {
-		AbstractBundleContainerNode directoryNode = new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_3, Messages.AddBundleContainerSelectionPage_4, PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER)) {
+		List choices = new ArrayList();
+		choices.addAll(getStandardChoices());
+		choices.addAll(getProvisionerExtensionChoices());
+		wizardSelectionViewer.setInput((IWizardNode[]) choices.toArray(new IWizardNode[choices.size()]));
+	}
+
+	/**
+	 * Returns the standard choices of bundle containers to create
+	 * @return list of wizard nodes
+	 */
+	private List getStandardChoices() {
+		List standardChoices = new ArrayList(3);
+		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_3, Messages.AddBundleContainerSelectionPage_4, PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER)) {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					public void addPages() {
@@ -128,12 +169,11 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						return true;
 					}
 				};
-				// TODO Use same constant for all sub-wizards and this wizard
 				wizard.setWindowTitle(Messages.AddBundleContainerSelectionPage_1);
 				return wizard;
 			}
-		};
-		AbstractBundleContainerNode installationNode = new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_6, Messages.AddBundleContainerSelectionPage_7, PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION)) {
+		});
+		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_6, Messages.AddBundleContainerSelectionPage_7, PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION)) {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					public void addPages() {
@@ -156,12 +196,11 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						return true;
 					}
 				};
-				// TODO Use same constant for all sub-wizards and this wizard
 				wizard.setWindowTitle(Messages.AddBundleContainerSelectionPage_1);
 				return wizard;
 			}
-		};
-		AbstractBundleContainerNode featureNode = new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_9, Messages.AddBundleContainerSelectionPage_10, PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ)) {
+		});
+		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_9, Messages.AddBundleContainerSelectionPage_10, PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ)) {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					public void addPages() {
@@ -189,54 +228,145 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						}
 					}
 				};
-				// TODO Use same constant for all sub-wizards and this wizard
+				wizard.setWindowTitle(Messages.AddBundleContainerSelectionPage_1);
+				return wizard;
+			}
+		});
+		return standardChoices;
+	}
+
+	/**
+	 * Returns a list of choices created from the ITargetProvisioner extension
+	 * @return list of wizard nodes
+	 */
+	private List getProvisionerExtensionChoices() {
+		List list = new ArrayList();
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IExtensionPoint point = registry.getExtensionPoint(PDEPlugin.getPluginId(), PROVISIONER_POINT);
+		if (point == null)
+			return list;
+		IExtension[] extensions = point.getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+			for (int j = 0; j < elements.length; j++) {
+				WizardElement element = createWizardElement(elements[j]);
+				if (element != null) {
+					final String pluginId = element.getPluginId();
+					final String contributionId = element.getID();
+					// TODO Ignore the directory provisioner until it can be deleted
+					if (!contributionId.equals("org.eclipse.pde.ui.directory")) { //$NON-NLS-1$
+						IPluginContribution pc = new IPluginContribution() {
+							public String getLocalId() {
+								return contributionId;
+							}
+
+							public String getPluginId() {
+								return pluginId;
+							}
+						};
+						if (!WorkbenchActivityHelper.filterItem(pc)) {
+							list.add(createExtensionNode(element));
+						}
+					}
+				}
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * Returns a Wizard element representing an extension contributed wizard
+	 * @param config config for the extensino
+	 * @return new wizard element
+	 */
+	protected WizardElement createWizardElement(IConfigurationElement config) {
+		String name = config.getAttribute(WizardElement.ATT_NAME);
+		String id = config.getAttribute(WizardElement.ATT_ID);
+		if (name == null || id == null)
+			return null;
+		WizardElement element = new WizardElement(config);
+
+		String imageName = config.getAttribute(WizardElement.ATT_ICON);
+		Image image = null;
+		if (imageName != null) {
+			String pluginID = config.getNamespaceIdentifier();
+			image = PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
+		}
+		element.setImage(image);
+		return element;
+	}
+
+	/**
+	 * Creates a wizard node that will get the pages from the contributed wizard and create a directory bundle container from the result
+	 * @param element wizard element representing the extension
+	 * @return wizard node
+	 */
+	private AbstractBundleContainerNode createExtensionNode(final WizardElement element) {
+		return new AbstractBundleContainerNode(element.getLabel(), element.getDescription(), element.getImage()) {
+			public IWizard createWizard() {
+				Wizard wizard = new Wizard() {
+					private IProvisionerWizard fWizard;
+
+					public void addPages() {
+						try {
+							fWizard = (IProvisionerWizard) element.createExecutableExtension();
+						} catch (CoreException e) {
+							PDEPlugin.log(e);
+							MessageDialog.openError(getContainer().getShell(), PDEUIMessages.Errors_CreationError, PDEUIMessages.Errors_CreationError_NoWizard);
+						}
+						fWizard.setContainer(getContainer());
+						fWizard.addPages();
+						IWizardPage[] pages = fWizard.getPages();
+						for (int i = 0; i < pages.length; i++)
+							addPage(pages[i]);
+					}
+
+					public boolean performFinish() {
+						if (fWizard != null) {
+							if (!fWizard.performFinish()) {
+								return false;
+							}
+							File[] dirs = fWizard.getLocations();
+							for (int i = 0; i < dirs.length; i++) {
+								if (dirs[i] == null || !dirs[i].isDirectory()) {
+									setErrorMessage(Messages.AddDirectoryContainerPage_6);
+									return false;
+								}
+								try {
+									// First try the specified dir, then try the plugins dir
+									IBundleContainer container = getTargetPlatformService().newDirectoryContainer(dirs[i].getPath());
+									BundleInfo[] resolved = container.resolveBundles(null);
+									if (resolved.length == 0) {
+										IBundleContainer pluginContainer = getTargetPlatformService().newDirectoryContainer(new File(dirs[i], "plugins").getPath()); //$NON-NLS-1$
+										resolved = container.resolveBundles(null);
+										if (resolved.length > 0) {
+											container = pluginContainer;
+										}
+									}
+									IBundleContainer[] oldContainers = fTarget.getBundleContainers();
+									if (oldContainers == null) {
+										fTarget.setBundleContainers(new IBundleContainer[] {container});
+									} else {
+										IBundleContainer[] newContainers = new IBundleContainer[oldContainers.length + 1];
+										System.arraycopy(oldContainers, 0, newContainers, 0, oldContainers.length);
+										newContainers[oldContainers.length] = container;
+										fTarget.setBundleContainers(newContainers);
+									}
+								} catch (CoreException ex) {
+									setErrorMessage(ex.getMessage());
+									return false;
+								}
+							}
+						}
+						return true;
+					}
+				};
+				wizard.setContainer(getContainer());
 				wizard.setWindowTitle(Messages.AddBundleContainerSelectionPage_1);
 				return wizard;
 			}
 		};
-		wizardSelectionViewer.setInput(new AbstractBundleContainerNode[] {directoryNode, installationNode, featureNode});
-
 	}
-
-//	private IWizardNode createExtensionWizardNode(WizardElement element) {
-//		return new WizardNode(this, element) {
-//			public IBasePluginWizard createWizard() throws CoreException {
-//				return (IBasePluginWizard) wizardElement.createExecutableExtension();
-//			}
-//		};
-//	}
-//
-//	private List getAvailableProvisioners() {
-//		List list = new ArrayList();
-//		IExtensionRegistry registry = Platform.getExtensionRegistry();
-//		IExtensionPoint point = registry.getExtensionPoint(PDEPlugin.getPluginId(), PROVISIONER_POINT);
-//		if (point == null)
-//			return list;
-//		IExtension[] extensions = point.getExtensions();
-//		for (int i = 0; i < extensions.length; i++) {
-//			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-//			for (int j = 0; j < elements.length; j++) {
-//				WizardElement element = createWizardElement(elements[j]);
-//				if (element != null) {
-//					final String pluginId = element.getPluginId();
-//					final String contributionId = element.getID();
-//					IPluginContribution pc = new IPluginContribution() {
-//						public String getLocalId() {
-//							return contributionId;
-//						}
-//
-//						public String getPluginId() {
-//							return pluginId;
-//						}
-//					};
-//					if (!WorkbenchActivityHelper.filterItem(pc)) {
-//						list.add(element);
-//					}
-//				}
-//			}
-//		}
-//		return list;
-//	}
 
 	/**
 	 * Abstract implementation of the IWizardNode interface providing a consistent look and feel

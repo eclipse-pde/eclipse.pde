@@ -35,7 +35,6 @@ public class AddBundleContainerWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-
 		addPage(new AddBundleContainerSelectionPage(fTarget));
 	}
 

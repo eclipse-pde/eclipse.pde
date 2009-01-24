@@ -112,6 +112,9 @@ public class P2TargetProvisionerWizard extends Wizard implements IProvisionerWiz
 	 * @see org.eclipse.pde.ui.IProvisionerWizard#getLocations()
 	 */
 	public File[] getLocations() {
+		if (fLocations == null) {
+			return new File[0];
+		}
 		return fLocations;
 	}
 
