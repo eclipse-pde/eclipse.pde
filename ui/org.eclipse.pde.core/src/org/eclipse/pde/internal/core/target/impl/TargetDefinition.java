@@ -160,6 +160,9 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setProgramArguments(java.lang.String)
 	 */
 	public void setProgramArguments(String args) {
+		if (args != null && args.length() == 0) {
+			args = null;
+		}
 		fProgramArgs = args;
 	}
 
@@ -167,6 +170,9 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setVMArguments(java.lang.String)
 	 */
 	public void setVMArguments(String args) {
+		if (args != null && args.length() == 0) {
+			args = null;
+		}
 		fVMArgs = args;
 	}
 
@@ -336,6 +342,26 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public boolean isContentEqual(ITargetDefinition definition) {
 		if (isNullOrEqual(getName(), definition.getName()) && isNullOrEqual(getDescription(), definition.getDescription()) && isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isNullOrEqual(getVMArguments(), definition.getVMArguments())) {
+			// check containers and implicit dependencies
+			IBundleContainer[] c1 = getBundleContainers();
+			IBundleContainer[] c2 = definition.getBundleContainers();
+			if (areContainersEqual(c1, c2)) {
+				return areEqual(getImplicitDependencies(), definition.getImplicitDependencies());
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns whether the content of this definition is equivalent to the content of the
+	 * specified definition (excluding name/description).
+	 * 
+	 * @param definition
+	 * @return whether the content of this definition is equivalent to the content of the
+	 * specified definition
+	 */
+	public boolean isContentEquivalent(ITargetDefinition definition) {
+		if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isNullOrEqual(getVMArguments(), definition.getVMArguments())) {
 			// check containers and implicit dependencies
 			IBundleContainer[] c1 = getBundleContainers();
 			IBundleContainer[] c2 = definition.getBundleContainers();

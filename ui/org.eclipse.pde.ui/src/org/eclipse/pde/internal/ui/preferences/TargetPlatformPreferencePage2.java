@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
@@ -23,7 +21,9 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.target.impl.TargetDefinition;
+import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.target.EditTargetDefinitionWizard;
@@ -46,7 +46,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 		public String getText(Object element) {
 			String name = ((ITargetDefinition) element).getName();
-			if (name == null || name.length()==0){
+			if (name == null || name.length() == 0) {
 				return ((ITargetDefinition) element).getHandle().toString();
 			}
 			return name;
@@ -245,13 +245,37 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
+		// ensures default targets are created when page is opened (if not created yet)
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		manager.getExternalModelManager();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	public void performDefaults() {
-		// TODO
+		// add a default target platform and select it (or just select it if present)
+		ITargetPlatformService service = getTargetService();
+		if (service instanceof TargetPlatformService) {
+			TargetPlatformService ts = (TargetPlatformService) service;
+			ITargetDefinition deflt = ts.newDefaultTargetDefinition();
+			Iterator iterator = fTargets.iterator();
+			ITargetDefinition reuse = null;
+			while (iterator.hasNext()) {
+				TargetDefinition existing = (TargetDefinition) iterator.next();
+				if (existing.isContentEquivalent(deflt)) {
+					reuse = existing;
+					break;
+				}
+			}
+			if (reuse != null) {
+				deflt = reuse;
+			} else {
+				fTargets.add(deflt);
+			}
+			fTableViewer.refresh();
+			fTableViewer.setCheckedElements(new Object[] {deflt});
+		}
 		super.performDefaults();
 	}
 
@@ -291,7 +315,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 				} else {
 					ITargetDefinition original = prev.getTargetDefinition();
 					// TODO: should just check for structural changes
-					if (((TargetDefinition) original).isContentEqual(currD)) {
+					if (((TargetDefinition) original).isContentEquivalent(currD)) {
 						load = false;
 					} else {
 						load = true;

@@ -82,22 +82,6 @@ public class TargetDefinitionTests extends TestCase {
 	}	
 	
 	/**
-	 * Retrieves all *code* bundles in the given target definition
-	 * returning them as a list of BundleInfos.
-	 * 
-	 * @param target target definition
-	 * @return all BundleInfos
-	 */
-	protected List getAllCodeBundleInfos(ITargetDefinition target) throws Exception {
-		BundleInfo[] code = target.resolveBundles(null);
-		List list = new ArrayList(code.length);
-		for (int i = 0; i < code.length; i++) {
-			list.add(code[i]);
-		}
-		return list;
-	}	
-	
-	/**
 	 * Collects all bundle symbolic names into a set.
 	 * 
 	 * @param infos bundles
@@ -282,7 +266,7 @@ public class TargetDefinitionTests extends TestCase {
 		};
 		container.setIncludedBundles(restrictions);
 		definition.setBundleContainers(new IBundleContainer[]{container});
-		List infos = getAllCodeBundleInfos(definition);
+		List infos = getAllBundleInfos(definition);
 		
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		Set set = collectAllSymbolicNames(infos);
@@ -304,7 +288,7 @@ public class TargetDefinitionTests extends TestCase {
 		ITargetDefinition definition = getTargetService().newTarget();
 		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
 		definition.setBundleContainers(new IBundleContainer[]{container});
-		List infos = getAllCodeBundleInfos(definition);
+		List infos = getAllBundleInfos(definition);
 		// find right versions
 		String v1 = null;
 		String v2 = null;
@@ -325,7 +309,7 @@ public class TargetDefinitionTests extends TestCase {
 				new BundleInfo("org.eclipse.jdt.debug", v2, null, BundleInfo.NO_LEVEL, false)
 		};
 		container.setIncludedBundles(restrictions);
-		infos = getAllCodeBundleInfos(definition);
+		infos = getAllBundleInfos(definition);
 		
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		iterator = infos.iterator();
@@ -355,7 +339,7 @@ public class TargetDefinitionTests extends TestCase {
 		};
 		container.setIncludedBundles(restrictions);
 		definition.setBundleContainers(new IBundleContainer[]{container});
-		List infos = getAllCodeBundleInfos(definition);
+		List infos = getAllBundleInfos(definition);
 		
 		assertEquals("Wrong number of bundles", 0, infos.size());		
 	}	

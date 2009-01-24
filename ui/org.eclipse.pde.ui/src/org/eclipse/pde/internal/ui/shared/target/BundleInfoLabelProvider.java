@@ -30,7 +30,10 @@ public class BundleInfoLabelProvider extends LabelProvider {
 			buf.append(((BundleInfo) element).getSymbolicName());
 			String version = ((BundleInfo) element).getVersion();
 			if (version != null) {
-				buf.append(' ').append(version);
+				buf.append(' ');
+				buf.append('(');
+				buf.append(version);
+				buf.append(')');
 			}
 			return buf.toString();
 		}

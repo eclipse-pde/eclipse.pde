@@ -338,7 +338,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 									BundleInfo[] resolved = container.resolveBundles(null);
 									if (resolved.length == 0) {
 										IBundleContainer pluginContainer = getTargetPlatformService().newDirectoryContainer(new File(dirs[i], "plugins").getPath()); //$NON-NLS-1$
-										resolved = container.resolveBundles(null);
+										resolved = pluginContainer.resolveBundles(null);
 										if (resolved.length > 0) {
 											container = pluginContainer;
 										}

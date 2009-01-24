@@ -435,6 +435,18 @@ public class TargetPlatformService implements ITargetPlatformService {
 		} catch (CoreException e) {
 			target.setName("Running Platform (Default)");
 		}
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+
+		// initialize environment with default settings
+		String value = getValueOrNull(preferences.getDefaultString(ICoreConstants.ARCH));
+		target.setArch(value);
+		value = getValueOrNull(preferences.getDefaultString(ICoreConstants.OS));
+		target.setOS(value);
+		value = getValueOrNull(preferences.getDefaultString(ICoreConstants.WS));
+		target.setWS(value);
+		value = getValueOrNull(preferences.getDefaultString(ICoreConstants.NL));
+		target.setNL(value);
+
 		return target;
 	}
 }

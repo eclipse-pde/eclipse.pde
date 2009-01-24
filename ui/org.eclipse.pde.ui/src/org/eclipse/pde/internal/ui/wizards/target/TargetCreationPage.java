@@ -22,7 +22,8 @@ import org.eclipse.pde.internal.core.TargetDefinitionManager;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.target.TargetModel;
 import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
-import org.eclipse.pde.internal.core.target.provisional.*;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.target.OpenTargetProfileAction;
@@ -170,7 +171,12 @@ public class TargetCreationPage extends WizardSelectionPage {
 					definition.setName(PDEUIMessages.TargetCreationPage_6);
 					break;
 				case USE_DEFAULT :
-					populateBasicTarget(definition);
+					try {
+						populateBasicTarget(definition);
+					} catch (CoreException e) {
+						setErrorMessage(e.getMessage());
+						return null;
+					}
 					break;
 				case USE_CURRENT_TP :
 					try {
@@ -198,12 +204,14 @@ public class TargetCreationPage extends WizardSelectionPage {
 	 * Applies basic target settings to the given target definition.
 	 * 
 	 * @param definition
+	 * @throws CoreException 
 	 */
-	private void populateBasicTarget(ITargetDefinition definition) {
+	private void populateBasicTarget(ITargetDefinition definition) throws CoreException {
 		ITargetPlatformService service = getTargetService();
-		if (service != null) {
-			definition.setName(PDEUIMessages.TargetCreationPage_7);
-			definition.setBundleContainers(new IBundleContainer[] {service.newProfileContainer("${eclipse_home}", null)}); //$NON-NLS-1$
+		if (service instanceof TargetPlatformService) {
+			TargetPlatformService ts = (TargetPlatformService) service;
+			ITargetDefinition def = ts.newDefaultTargetDefinition();
+			ts.copyTargetDefinition(def, definition);
 		}
 	}
 

@@ -157,6 +157,7 @@ public class BundleContainerTable {
 		fTreeViewer = new TreeViewer(tree);
 		fTreeViewer.setContentProvider(new TargetContentProvider());
 		fTreeViewer.setLabelProvider(new TargetLabelProvider());
+		fTreeViewer.setComparator(new ViewerComparator());
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
@@ -240,15 +241,20 @@ public class BundleContainerTable {
 			if (container != null) {
 				// We need to get a list of all possible bundles, remove restrictions while resolving
 				BundleInfo[] oldRestrictions = container.getIncludedBundles();
-				container.setIncludedBundles(null);
 				BundleInfo[] resolvedBundles = null;
 				try {
-					resolvedBundles = container.resolveBundles(null);
+					container.setIncludedBundles(null);
+					BundleInfo[] bundles = container.resolveBundles(new NullProgressMonitor());
+					BundleInfo[] source = container.resolveSourceBundles(new NullProgressMonitor());
+					resolvedBundles = new BundleInfo[bundles.length + source.length];
+					System.arraycopy(bundles, 0, resolvedBundles, 0, bundles.length);
+					System.arraycopy(source, 0, resolvedBundles, bundles.length, source.length);
 				} catch (CoreException e) {
 					resolvedBundles = new BundleInfo[0];
 					PDEPlugin.log(e);
+				} finally {
+					container.setIncludedBundles(oldRestrictions);
 				}
-				container.setIncludedBundles(oldRestrictions);
 
 				RestrictionsListSelectionDialog dialog = new RestrictionsListSelectionDialog(fTreeViewer.getTree().getShell(), resolvedBundles, oldRestrictions);
 				if (dialog.open() == Window.OK) {
@@ -330,7 +336,13 @@ public class BundleContainerTable {
 				return containers != null ? containers : new Object[0];
 			} else if (parentElement instanceof IBundleContainer) {
 				try {
-					return ((IBundleContainer) parentElement).resolveBundles(new NullProgressMonitor());
+					IBundleContainer container = (IBundleContainer) parentElement;
+					BundleInfo[] bundles = container.resolveBundles(new NullProgressMonitor());
+					BundleInfo[] source = container.resolveSourceBundles(new NullProgressMonitor());
+					BundleInfo[] all = new BundleInfo[bundles.length + source.length];
+					System.arraycopy(bundles, 0, all, 0, bundles.length);
+					System.arraycopy(source, 0, all, bundles.length, source.length);
+					return all;
 				} catch (CoreException e) {
 					// TODO Handle proper status
 					return new String[] {"Error getting bundle list: " + e.getMessage()};

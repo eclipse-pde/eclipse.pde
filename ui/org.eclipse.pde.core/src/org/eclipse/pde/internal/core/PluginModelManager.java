@@ -14,14 +14,15 @@ package org.eclipse.pde.internal.core;
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.target.impl.*;
+import org.eclipse.pde.internal.core.target.provisional.*;
 
 public class PluginModelManager implements IModelProviderListener {
 
@@ -420,6 +421,64 @@ public class PluginModelManager implements IModelProviderListener {
 		}
 
 		fEntries = entries;
+
+		// Create default target platform definition if required
+		initDefaultTargetPlatformDefinition();
+	}
+
+	/**
+	 * Creates initial target platform definition in local metadata if not already created.
+	 */
+	private synchronized void initDefaultTargetPlatformDefinition() {
+		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		if (service != null) {
+			String memento = PDECore.getDefault().getPluginPreferences().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+			if (memento.equals("")) { //$NON-NLS-1$
+				// no workspace target handle set, check for local targets
+				ITargetHandle[] targets = service.getTargets(null);
+				boolean local = false;
+				for (int i = 0; i < targets.length; i++) {
+					if (targets[i] instanceof LocalTargetHandle) {
+						local = true;
+						break;
+					}
+				}
+				if (!local) {
+					// no local targets, no workspace preference > create default target platform
+					ITargetDefinition def = null;
+					TargetPlatformService ts = (TargetPlatformService) service;
+					ITargetDefinition host = ts.newDefaultTargetDefinition();
+					try {
+						service.saveTargetDefinition(host);
+					} catch (CoreException e) {
+						PDECore.log(e);
+					}
+					// create target platform from current workspace settings
+					TargetDefinition curr = (TargetDefinition) ts.newTarget();
+					try {
+						ts.loadTargetDefinitionFromPreferences(curr);
+						if (curr.isContentEquivalent(host)) {
+							// current settings are the same as the default target platform
+							def = host;
+						} else {
+							// current settings are different than default
+							service.saveTargetDefinition(curr);
+							def = curr;
+						}
+					} catch (CoreException e) {
+						PDECore.log(e);
+					}
+					if (def != null) {
+						Preferences preferences = PDECore.getDefault().getPluginPreferences();
+						try {
+							preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, def.getHandle().getMemento());
+						} catch (CoreException e) {
+							PDECore.log(e);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
