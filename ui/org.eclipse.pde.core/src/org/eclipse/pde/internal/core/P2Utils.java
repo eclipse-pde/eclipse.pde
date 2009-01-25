@@ -313,6 +313,8 @@ public class P2Utils {
 				String modelName = desc.getSymbolicName();
 				if (modelName != null && osgiStartLevels.containsKey(modelName)) {
 					bundleMap.put(currentModel, osgiStartLevels.get(modelName));
+				} else if ("org.eclipse.equinox.ds".equals(modelName)) { //$NON-NLS-1$
+					bundleMap.put(currentModel, "1:true"); //$NON-NLS-1$ 
 				} else if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
 					bundleMap.put(currentModel, "1:true"); //$NON-NLS-1$
 				} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
