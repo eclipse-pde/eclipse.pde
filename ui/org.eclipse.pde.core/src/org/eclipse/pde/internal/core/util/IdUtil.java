@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,7 +90,8 @@ public class IdUtil {
 	public static String getFullId(IPluginExtension extension) {
 		String id = extension.getId();
 		IPluginBase plugin = extension.getPluginBase();
-		if (Double.parseDouble(plugin.getSchemaVersion()) >= 3.2) {
+		String schemaVersion = plugin.getSchemaVersion();
+		if (schemaVersion != null && Double.parseDouble(schemaVersion) >= 3.2) {
 			if (id.indexOf('.') > 0)
 				return id;
 		}
@@ -103,7 +104,6 @@ public class IdUtil {
 	/**
 	 * @param point
 	 * @param fModel
-	 * @return
 	 */
 	public static String getFullId(IPluginExtensionPoint point, IPluginModelBase model) {
 
