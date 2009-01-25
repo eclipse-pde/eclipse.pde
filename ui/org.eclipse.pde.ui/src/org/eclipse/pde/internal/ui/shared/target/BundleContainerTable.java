@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -314,8 +315,9 @@ public class BundleContainerTable {
 
 	private void updateButtons() {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		// TODO Support editing and removing of bundles directly
 		fEditButton.setEnabled(!selection.isEmpty() && selection.getFirstElement() instanceof IBundleContainer);
-		fRemoveButton.setEnabled(!selection.isEmpty());
+		fRemoveButton.setEnabled(!selection.isEmpty() && selection.getFirstElement() instanceof IBundleContainer);
 		fRemoveAllButton.setEnabled(fTarget.getBundleContainers() != null && fTarget.getBundleContainers().length > 0);
 	}
 
@@ -344,8 +346,7 @@ public class BundleContainerTable {
 					System.arraycopy(source, 0, all, bundles.length, source.length);
 					return all;
 				} catch (CoreException e) {
-					// TODO Handle proper status
-					return new String[] {"Error getting bundle list: " + e.getMessage()};
+					return new String[] {MessageFormat.format(Messages.BundleContainerTable_9, new String[] {e.getMessage()})};
 				}
 			}
 			return new Object[0];
@@ -391,43 +392,29 @@ public class BundleContainerTable {
 	 */
 	class TargetLabelProvider extends BundleInfoLabelProvider {
 		public String getText(Object element) {
-			// TODO The label provider should be NLS'd
-			if (element instanceof FeatureBundleContainer) {
-				StringBuffer buf = new StringBuffer();
-				buf.append(((FeatureBundleContainer) element).getFeatureId());
-				String version = ((FeatureBundleContainer) element).getFeatureVersion();
-				if (version != null) {
-					buf.append(" (").append(version).append(") ");
+			try {
+				if (element instanceof FeatureBundleContainer) {
+					FeatureBundleContainer container = (FeatureBundleContainer) element;
+					String version = container.getFeatureVersion();
+					if (version != null) {
+						return MessageFormat.format(Messages.BundleContainerTable_5, new String[] {container.getFeatureId(), version, container.getLocation(false), getRestrictionLabel(container)});
+					} else {
+						return MessageFormat.format(Messages.BundleContainerTable_6, new String[] {container.getFeatureId(), container.getLocation(false), getRestrictionLabel(container)});
+					}
+				} else if (element instanceof DirectoryBundleContainer) {
+					DirectoryBundleContainer container = (DirectoryBundleContainer) element;
+					return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getRestrictionLabel(container)});
+				} else if (element instanceof ProfileBundleContainer) {
+					ProfileBundleContainer container = (ProfileBundleContainer) element;
+					String config = container.getConfigurationLocation();
+					if (config != null) {
+						return MessageFormat.format(Messages.BundleContainerTable_8, new String[] {container.getLocation(false), config, getRestrictionLabel(container)});
+					} else {
+						return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getRestrictionLabel(container)});
+					}
 				}
-				try {
-					buf.append(((FeatureBundleContainer) element).getLocation(false));
-				} catch (CoreException e) {
-					buf.append(e.getMessage());
-				}
-				getRestrictionLabel((FeatureBundleContainer) element, buf);
-				return buf.toString();
-			} else if (element instanceof DirectoryBundleContainer) {
-				StringBuffer buf = new StringBuffer();
-				try {
-					buf.append(((DirectoryBundleContainer) element).getLocation(false));
-				} catch (CoreException e) {
-					buf.append(e.getMessage());
-				}
-				getRestrictionLabel((DirectoryBundleContainer) element, buf);
-				return buf.toString();
-			} else if (element instanceof ProfileBundleContainer) {
-				StringBuffer buf = new StringBuffer();
-				try {
-					buf.append(((ProfileBundleContainer) element).getLocation(false));
-				} catch (CoreException e) {
-					buf.append(e.getMessage());
-				}
-				String configArea = ((ProfileBundleContainer) element).getConfigurationLocation();
-				if (configArea != null) {
-					buf.append(" (Configuration:").append(configArea).append(")");
-				}
-				getRestrictionLabel((ProfileBundleContainer) element, buf);
-				return buf.toString();
+			} catch (CoreException e) {
+				return MessageFormat.format(Messages.BundleContainerTable_4, new String[] {e.getMessage()});
 			}
 			return super.getText(element);
 		}
@@ -443,15 +430,13 @@ public class BundleContainerTable {
 			return super.getImage(element);
 		}
 
-		private void getRestrictionLabel(IBundleContainer container, StringBuffer buf) {
+		private String getRestrictionLabel(IBundleContainer container) {
 			BundleInfo[] restrictions = container.getIncludedBundles();
-			buf.append(" <");
 			if (restrictions != null) {
-				buf.append(restrictions.length);
+				return MessageFormat.format(Messages.BundleContainerTable_10, new String[] {Integer.toString(restrictions.length)});
 			} else {
-				buf.append("all");
+				return Messages.BundleContainerTable_11;
 			}
-			buf.append(" plug-in(s) selected>");
 		}
 	}
 
