@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.preferences;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -23,20 +21,10 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.URIUtil;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
-import org.eclipse.equinox.internal.p2.director.app.Activator;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepositoryManager;
-import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -1317,14 +1305,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 			link.setToolTipText(PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip);
 			link.addMouseListener(new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
-					Job install = new Job(PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_install_job) {
-						public IStatus run(IProgressMonitor monitor) {
-							installUpdateSite(monitor);
-							// open the install new software dialog
-							return Status.OK_STATUS;
-						}
-					};
-					install.schedule();
 					IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 					try {
 						handlerService.executeCommand(P2_INSTALL_COMMAND_HANDLER, null);
@@ -1340,44 +1320,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 				}
 			});
 			this.fSystemLibraryControls.add(link);
-		}
-	}
-
-	void installUpdateSite(IProgressMonitor monitor) {
-		// add the api tool update site
-		URI[] metadataRepositoryLocations = null;
-		try {
-			metadataRepositoryLocations = new URI[1];
-			metadataRepositoryLocations[0] =  URIUtil.fromString(API_TOOLS_UPDATE_SITE);
-		} catch (URISyntaxException ex) {
-			ex.printStackTrace();
-		}
-		if (metadataRepositoryLocations != null) {
-			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) ServiceHelper.getService(Activator.getContext(), IMetadataRepositoryManager.class.getName());
-			if (!metadataManager.contains(metadataRepositoryLocations[0])) {
-				try {
-					metadataManager.loadRepository(metadataRepositoryLocations[0], monitor);
-				} catch (ProvisionException ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
-		URI[] artifactRepositoryLocations = null;
-		try {
-			artifactRepositoryLocations = new URI[1];
-			artifactRepositoryLocations[0] =  URIUtil.fromString(API_TOOLS_UPDATE_SITE);
-		} catch (URISyntaxException ex) {
-			ex.printStackTrace();
-		}
-		if (artifactRepositoryLocations != null) {
-			IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) ServiceHelper.getService(Activator.getContext(), IArtifactRepositoryManager.class.getName());
-			if (!artifactManager.contains(artifactRepositoryLocations[0])) {
-				try {
-					artifactManager.loadRepository(artifactRepositoryLocations[0], monitor);
-				} catch (ProvisionException ex) {
-					ex.printStackTrace();
-				}
-			}
 		}
 	}
 
