@@ -64,7 +64,6 @@ public class EditTargetDefinitionWizard extends Wizard {
 	 */
 	public void addPages() {
 		addPage(new TargetDefinitionContentPage(fDefinition));
-		addPage(new TargetDefinitionEnvironmentPage(fDefinition));
 	}
 
 	/**

@@ -132,13 +132,15 @@ public class BundleContainerTable {
 		Tree atree = new Tree(comp, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		atree.setLayout(new GridLayout());
 		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 200;
 		atree.setLayoutData(gd);
 
 		initializeTreeViewer(atree);
 
-		Composite buttonComp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+		Composite buttonComp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		buttonComp.setLayout(layout);
 		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
