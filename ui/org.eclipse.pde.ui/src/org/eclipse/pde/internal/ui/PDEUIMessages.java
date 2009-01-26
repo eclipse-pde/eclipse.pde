@@ -2606,6 +2606,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPlatformPreferencePage_FileSelectionMessage;
 
+	public static String ImplicitDependenciesSection_0;
+
 	public static String ImplicitDependenicesSection_Add;
 
 	public static String ImplicitDependenicesSection_Remove;

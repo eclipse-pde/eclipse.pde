@@ -10,19 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+
 import java.util.*;
+import java.util.List;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
+import org.eclipse.pde.internal.ui.shared.target.BundleInfoLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -195,18 +197,22 @@ public class ImplicitDependenciesSection extends SectionPart {
 	}
 
 	protected void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
-
-		dialog.setElements(getValidBundles());
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new BundleInfoLabelProvider());
 		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title);
 		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
 		dialog.setMultipleSelection(true);
+		try {
+			dialog.setElements(getValidBundles());
+		} catch (CoreException e) {
+			dialog.setMessage(e.getMessage());
+		}
+
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
 			ArrayList pluginsToAdd = new ArrayList();
 			for (int i = 0; i < models.length; i++) {
-				BundleDescription desc = ((BundleDescription) models[i]);
-				pluginsToAdd.add(new BundleInfo(desc.getSymbolicName(), null, null, BundleInfo.NO_LEVEL, false));
+				BundleInfo selected = ((BundleInfo) models[i]);
+				pluginsToAdd.add(new BundleInfo(selected.getSymbolicName(), null, null, BundleInfo.NO_LEVEL, false));
 			}
 			Set allDependencies = new HashSet();
 			allDependencies.addAll(pluginsToAdd);
@@ -224,7 +230,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 	 * Gets a list of all the bundles that can be added as implicit dependencies
 	 * @return list of possible dependencies
 	 */
-	protected BundleDescription[] getValidBundles() {
+	protected BundleInfo[] getValidBundles() throws CoreException {
 		BundleInfo[] current = getTarget().getImplicitDependencies();
 		Set currentBundles = new HashSet();
 		if (current != null) {
@@ -233,18 +239,18 @@ public class ImplicitDependenciesSection extends SectionPart {
 			}
 		}
 
-		// TODO Do we want to get the possible models from the plugin registry?  Would be better to get the bundles from the editor's target definition?
-		IPluginModelBase[] models = PluginRegistry.getActiveModels(false);
-		Set result = new HashSet();
-		for (int i = 0; i < models.length; i++) {
-			BundleDescription desc = models[i].getBundleDescription();
-			if (desc != null) {
-				if (!currentBundles.contains(desc.getSymbolicName()))
-					result.add(desc);
+		List targetBundles = new ArrayList();
+		BundleInfo[] allTargetBundles = getTarget().resolveBundles(null);
+		if (allTargetBundles.length == 0) {
+			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
+		}
+		for (int i = 0; i < allTargetBundles.length; i++) {
+			if (!currentBundles.contains(allTargetBundles[i].getSymbolicName())) {
+				targetBundles.add(allTargetBundles[i]);
 			}
 		}
 
-		return (BundleDescription[]) result.toArray((new BundleDescription[result.size()]));
+		return (BundleInfo[]) targetBundles.toArray(new BundleInfo[targetBundles.size()]);
 	}
 
 	private void handleRemove() {
