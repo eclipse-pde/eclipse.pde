@@ -374,6 +374,8 @@ public class PDEUIMessages extends NLS {
 	public static String ExportOptionsTab_antReservedMessage;
 	public static String ExportOptionsTab_allowBinaryCycles;
 
+	public static String ExportOptionsTab_use_workspace_classfiles;
+
 	public static String ExtensionsPage_sortAlpha;
 
 	public static String FileRenameParticipant_renameFiles;

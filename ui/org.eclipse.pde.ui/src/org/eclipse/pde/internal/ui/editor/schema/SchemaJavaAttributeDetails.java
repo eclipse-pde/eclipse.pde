@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,7 +172,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 		try {
 			String filter = entry.getValue();
 			filter = filter.substring(filter.lastIndexOf(".") + 1); //$NON-NLS-1$
-			SelectionDialog dialog = JavaUI.createTypeDialog(PDEPlugin.getActiveWorkbenchShell(), PlatformUI.getWorkbench().getProgressService(), SearchEngine.createWorkspaceScope(), scopeType, false, filter); //$NON-NLS-1$
+			SelectionDialog dialog = JavaUI.createTypeDialog(PDEPlugin.getActiveWorkbenchShell(), PlatformUI.getWorkbench().getProgressService(), SearchEngine.createWorkspaceScope(), scopeType, false, filter); 
 			dialog.setTitle(PDEUIMessages.GeneralInfoSection_selectionTitle);
 			if (dialog.open() == Window.OK) {
 				IType type = (IType) dialog.getResult()[0];

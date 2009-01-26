@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -192,7 +192,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 				if (del == 0) {
 					initialValues.superClassName = "java.lang.Object"; //$NON-NLS-1$
 				} else {
-					initialValues.superClassName = schemaBasedOn.substring(0, del); //$NON-NLS-1$
+					initialValues.superClassName = schemaBasedOn.substring(0, del);
 				}
 				initialValues.superClassType = findTypeForName(initialValues.superClassName);
 				if (del < schemaBasedOn.length() - 1) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,7 +145,7 @@ public class PluginClassCodeGenerator {
 			writer.println("\t * @return the image descriptor"); //$NON-NLS-1$
 			writer.println("\t */"); //$NON-NLS-1$
 			writer.println("\tpublic static ImageDescriptor getImageDescriptor(String path) {"); //$NON-NLS-1$
-			writer.println("\t\treturn imageDescriptorFromPlugin(PLUGIN_ID, path);"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.println("\t\treturn imageDescriptorFromPlugin(PLUGIN_ID, path);"); //$NON-NLS-1$ 
 			writer.println("\t}"); //$NON-NLS-1$
 		}
 		writer.println("}"); //$NON-NLS-1$

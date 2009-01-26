@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -261,7 +261,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append(attName);
 		documentInsertBuffer.append("=\""); //$NON-NLS-1$
 		fSelOffset = fOffset + documentInsertBuffer.length();
-		String value = attName; //$NON-NLS-1$
+		String value = attName; 
 		if (fSchemaObject instanceof ISchemaAttribute) {
 			value = XMLInsertionComputer.generateAttributeValue((ISchemaAttribute) fSchemaObject, fProcessor.getModel(), attName);
 		}

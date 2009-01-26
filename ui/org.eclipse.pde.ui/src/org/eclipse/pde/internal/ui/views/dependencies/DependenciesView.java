@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -695,7 +695,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		IContributionItem[] items = getViewSite().getActionBars().getToolBarManager().getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (!(SHOW_STATE_ACTION_ID.equals(items[i].getId()) || "state".equals(items[i].getId())) //$NON-NLS-1$
-					&& !(items[i] instanceof SubContributionItem)) //$NON-NLS-1$
+					&& !(items[i] instanceof SubContributionItem))
 				items[i].setVisible(enabled);
 		}
 	}

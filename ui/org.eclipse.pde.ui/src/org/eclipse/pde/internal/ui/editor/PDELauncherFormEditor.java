@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		for (int i = 0; i < elements.length; i++) {
 			String label = elements[i].getAttribute("label"); //$NON-NLS-1$
 			final String thisLaunchShortcut = getLaunchString(elements[i]);
-			Action thisAction = new Action(label) { //$NON-NLS-1$
+			Action thisAction = new Action(label) { 
 				public void run() {
 					doSave(null);
 					launch(thisLaunchShortcut, getPreLaunchRunnable(), getLauncherHelper().getLaunchObject());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,7 +113,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 			return;
 		fAttribute = (SchemaAttribute) object;
 		setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
-		fName.setValue(fAttribute.getName(), true); //$NON-NLS-1$
+		fName.setValue(fAttribute.getName(), true); 
 		fDepTrue.setSelection(fAttribute.isDeprecated());
 		fDepFalse.setSelection(!fAttribute.isDeprecated());
 

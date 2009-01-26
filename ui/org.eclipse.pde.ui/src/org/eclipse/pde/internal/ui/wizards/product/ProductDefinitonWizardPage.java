@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 
-		if (!productNameDefined()) { //$NON-NLS-1$
+		if (!productNameDefined()) { 
 			label = new Label(group, SWT.NONE);
 			label.setText(PDEUIMessages.ProductDefinitonWizardPage_productName);
 

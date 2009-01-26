@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -251,7 +251,7 @@ public class LaunchArgumentsHelper {
 					if (kind == IClasspathEntry.CPE_SOURCE || kind == IClasspathEntry.CPE_LIBRARY) {
 						IPackageFragmentRoot[] roots = jProject.findPackageFragmentRoots(entries[i]);
 						for (int j = 0; j < roots.length; j++) {
-							if (roots[j].getPackageFragment(packageName).exists()) { //$NON-NLS-1$
+							if (roots[j].getPackageFragment(packageName).exists()) { 
 								// if source folder, find the output folder
 								if (kind == IClasspathEntry.CPE_SOURCE) {
 									IPath path = entries[i].getOutputLocation();
