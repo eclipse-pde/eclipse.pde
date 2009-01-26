@@ -300,4 +300,34 @@ public class P2Tests extends P2TestCase {
 			assertEquals(e.getMessage(), "Action not found:addProgramArg(programArg:-vmargs);");
 		}
 	}
+	
+	public void testBug262421() throws Exception {
+		IFolder buildFolder = newTest("262421");
+		
+		IFile productFile = buildFolder.getFile("rcp.product");
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String [] {"org.eclipse.osgi"}, false);
+		
+		IFile p2Inf = buildFolder.getFile("p2.inf");
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("instructions.configure=addRepository(type:0,location:http${#58}//download.eclipse.org/eclipse/updates/3.4);");
+		Utils.writeBuffer(p2Inf, buffer);
+		
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("includeLaunchers", "false");
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.flavor", "tooling");
+		properties.put("p2.publish.artifacts", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+		
+		IMetadataRepository repository = loadMetadataRepository(repoLocation);
+		IInstallableUnit iu = getIU(repository, "rcp.product");
+		assertTouchpoint(iu, "configure", "addRepository");
+	}
 }

@@ -86,6 +86,12 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 				File productFile = new File(productPath);
 				String newProduct = new File(productDir, productFile.getName()).getAbsolutePath();
 				script.printCopyFileTask(productPath, newProduct, true);
+
+				File parent = new File(productPath).getParentFile();
+				File p2Inf = new File(parent, "p2.inf"); //$NON-NLS-1$
+				if (p2Inf.exists())
+					script.printCopyTask(p2Inf.getAbsolutePath(), productDir, null, false, true);
+
 				generateProductReplaceTask(product, newProduct);
 				productPath = newProduct;
 			}
