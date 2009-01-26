@@ -273,6 +273,9 @@ public class EnvironmentSection extends PDESection {
 		return (ITargetModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
+	 */
 	public void refresh() {
 		IEnvironmentInfo orgEnv = getEnvironment();
 		String presetValue = (orgEnv.getOS() == null) ? "" : orgEnv.getOS(); //$NON-NLS-1$

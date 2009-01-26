@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.shared.target.BundleContainerTable;
 import org.eclipse.swt.layout.GridData;
@@ -56,17 +55,12 @@ public class ContentSection extends SectionPart {
 		sectionData.horizontalSpan = 2;
 		section.setLayoutData(sectionData);
 		section.setText(PDEUIMessages.ContentSection_0);
-		// TODO Delete NL'd messages that are no longer relevent, such as the content/environment description
-//		section.setDescription(PDEUIMessages.OverviewPage_contentDescription);
 
 		section.setDescription(PDEUIMessages.ContentSection_1);
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		client.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));
 
-//		Composite tableContainer = toolkit.createComposite(client);
-//		tableContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//		tableContainer.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		fTable = BundleContainerTable.createTableInForm(client, toolkit, this);
 		fTable.setInput(getTarget());
 
@@ -75,19 +69,11 @@ public class ContentSection extends SectionPart {
 		section.setClient(client);
 	}
 
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-//	 */
-//	public void commit(boolean onSave) {
-//		// TODO Commit the table? May not be necessary
-//		fTable.commit(onSave);
-//	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
 	public void refresh() {
-		fTable.refresh();
+		fTable.setInput(getTarget());
 		super.refresh();
 	}
 

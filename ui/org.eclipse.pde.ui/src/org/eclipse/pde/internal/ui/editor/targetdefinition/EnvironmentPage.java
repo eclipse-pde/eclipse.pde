@@ -49,6 +49,7 @@ public class EnvironmentPage extends FormPage {
 		fillBody(managedForm, toolkit);
 		toolkit.decorateFormHeading(form.getForm());
 		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm());
+		((TargetEditor) getEditor()).addForm(managedForm);
 		form.updateToolBar();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.ENVIRONMENT_PAGE);
 	}

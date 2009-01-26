@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
+import java.util.*;
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.ControlContribution;
@@ -20,6 +22,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -36,6 +39,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class TargetEditor extends FormEditor {
 
 	private ITargetDefinition fTarget;
+	private List fManagedFormPages = new ArrayList(2);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
@@ -123,15 +127,21 @@ public class TargetEditor extends FormEditor {
 	 * Handles the revert action
 	 */
 	public void doRevert() {
-		try {
-			init(getEditorSite(), getEditorInput());
-		} catch (PartInitException e) {
-			PDEPlugin.log(e);
+		fTarget = null;
+		for (Iterator iterator = fManagedFormPages.iterator(); iterator.hasNext();) {
+			IFormPart[] parts = ((IManagedForm) iterator.next()).getParts();
+			for (int i = 0; i < parts.length; i++) {
+				if (parts[i] instanceof AbstractFormPart) {
+					((AbstractFormPart) parts[i]).markStale();
+				}
+			}
 		}
+		setActivePage(getActivePage());
+		editorDirtyStateChanged();
 	}
 
 	public void contributeToToolbar(final ScrolledForm form) {
-		ControlContribution save = new ControlContribution("Set") { //$NON-NLS-1$
+		ControlContribution setAsTarget = new ControlContribution("Set") { //$NON-NLS-1$
 			protected Control createControl(Composite parent) {
 				final ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE);
 				hyperlink.setText(PDEUIMessages.AbstractTargetPage_setTarget);
@@ -168,9 +178,17 @@ public class TargetEditor extends FormEditor {
 //		help.setToolTipText(PDEUIMessages.PDEFormPage_help);
 //		help.setImageDescriptor(PDEPluginImages.DESC_HELP);
 //
-		form.getToolBarManager().add(save);
+		form.getToolBarManager().add(setAsTarget);
 //		form.getToolBarManager().add(help);
 		form.updateToolBar();
+	}
+
+	/**
+	 * Adds the given form to the list of forms to be refreshed when reverting
+	 * @param managedForm
+	 */
+	public void addForm(IManagedForm managedForm) {
+		fManagedFormPages.add(managedForm);
 	}
 
 }

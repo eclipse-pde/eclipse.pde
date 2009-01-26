@@ -193,15 +193,21 @@ public class JRESection extends SectionPart {
 		IPath jrePath = getTarget().getJREContainer();
 		if (jrePath == null || jrePath.equals(JavaRuntime.newDefaultJREContainerPath())) {
 			fDefaultJREButton.setSelection(true);
+			fExecEnvButton.setSelection(false);
+			fNamedJREButton.setSelection(false);
 		} else {
 			String ee = JavaRuntime.getExecutionEnvironmentId(jrePath);
 			if (ee != null) {
 				fExecEnvButton.setSelection(true);
+				fDefaultJREButton.setSelection(false);
+				fNamedJREButton.setSelection(false);
 				fExecEnvsCombo.select(fExecEnvsCombo.indexOf(ee));
 			} else {
 				String vm = JavaRuntime.getVMInstallName(jrePath);
 				if (vm != null) {
 					fNamedJREButton.setSelection(true);
+					fDefaultJREButton.setSelection(false);
+					fExecEnvButton.setSelection(false);
 					fNamedJREsCombo.select(fNamedJREsCombo.indexOf(vm));
 				}
 			}
