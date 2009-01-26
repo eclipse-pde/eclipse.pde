@@ -80,7 +80,7 @@ public class GatherFeatureAction extends FeaturesAction {
 		if (artifacts.length > 1) {
 			//boo!
 		}
-		File file = new File(feature.getLocation());
+
 		IArtifactDescriptor ad = PublisherHelper.createArtifactDescriptor(artifacts[0], null);
 		addProperties((ArtifactDescriptor) ad, feature, info);
 		((ArtifactDescriptor) ad).setProperty(IArtifactDescriptor.DOWNLOAD_CONTENTTYPE, IArtifactDescriptor.TYPE_ZIP);
