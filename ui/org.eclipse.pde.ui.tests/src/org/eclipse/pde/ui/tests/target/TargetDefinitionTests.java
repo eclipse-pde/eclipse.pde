@@ -678,7 +678,7 @@ public class TargetDefinitionTests extends TestCase {
 		expected.add("org.junit");
 		expected.add("org.junit4");
 		expected.add("org.eclipse.jdt.doc.user");
-		if (Platform.getOS() == Platform.OS_MACOSX) {
+		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			expected.add("org.eclipse.jdt.launching.macosx");
 		}
 		assertEquals("Wrong number of bundles in JDT feature", expected.size(), bundles.length);
@@ -752,7 +752,7 @@ public class TargetDefinitionTests extends TestCase {
 		expected.add("org.eclipse.jdt.ui.source");
 		expected.add("org.junit.source");
 		expected.add("org.junit4.source");
-		if (Platform.getOS() == Platform.OS_MACOSX) {
+		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			expected.add("org.eclipse.jdt.launching.macosx.source");
 		}
 		for (int i = 0; i < bundles.length; i++) {
@@ -812,7 +812,7 @@ public class TargetDefinitionTests extends TestCase {
 			expected.add("org.junit");
 			expected.add("org.junit4");
 			expected.add("org.eclipse.jdt.doc.user");
-			if (Platform.getOS() == Platform.OS_MACOSX) {
+			if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 				expected.add("org.eclipse.jdt.launching.macosx");
 			}
 			
