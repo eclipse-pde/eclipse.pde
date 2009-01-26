@@ -359,13 +359,6 @@ public class PluginContentPage extends ContentPage {
 		setPageComplete(errorMessage == null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#getNameFieldQualifier()
-	 */
-	protected String getNameFieldQualifier() {
-		return PDEUIMessages.ContentPage_plugin;
-	}
-
 	/**
 	 * Saves the current state of widgets of interest in the dialog settings for the wizard
 	 * @param settings

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -264,10 +264,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		return text;
 	}
 
-	protected String getNameFieldQualifier() {
-		return PDEUIMessages.NewLibraryPluginCreationPage_plugin;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -332,7 +328,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		if (!fPropertiesListener.isChanged() && fIdText != null) {
 			fPropertiesListener.setBlocked(true);
 			fIdText.setText(id);
-			fNameText.setText(IdUtil.getValidName(id, getNameFieldQualifier()));
+			fNameText.setText(IdUtil.getValidName(id));
 			fPropertiesListener.setBlocked(false);
 		}
 

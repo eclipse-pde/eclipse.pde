@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
-
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 
 import java.util.TreeSet;
 import org.eclipse.core.runtime.IStatus;
@@ -26,6 +24,7 @@ import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.parts.PluginVersionPart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -326,13 +325,6 @@ public class FragmentContentPage extends ContentPage {
 		if (fInitialized)
 			setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#getNameFieldQualifier()
-	 */
-	protected String getNameFieldQualifier() {
-		return PDEUIMessages.ContentPage_fragment;
 	}
 
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
-
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -22,6 +20,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -212,7 +211,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		fSelfModification = true;
 		String id = IdUtil.getValidId(getProjectName());
 		fPatchIdText.setText(id);
-		fPatchNameText.setText(IdUtil.getValidName(id, PDEUIMessages.PatchSpecPage_feature));
+		fPatchNameText.setText(IdUtil.getValidName(id));
 		fPatchProviderText.setText(IdUtil.getValidProvider(id));
 		fSelfModification = false;
 	}

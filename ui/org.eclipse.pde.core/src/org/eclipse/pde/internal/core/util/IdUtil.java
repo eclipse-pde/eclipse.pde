@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.util.StringTokenizer;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 
@@ -67,13 +66,13 @@ public class IdUtil {
 	 * nameFieldQualifier must contain a placeholder variable
 	 * ie. {0} Plug-in
 	 */
-	public static String getValidName(String id, String nameFieldQualifier) {
+	public static String getValidName(String id) {
 		StringTokenizer tok = new StringTokenizer(id, "."); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
 			if (!tok.hasMoreTokens()) {
 				String name = Character.toUpperCase(token.charAt(0)) + ((token.length() > 1) ? token.substring(1) : ""); //$NON-NLS-1$
-				return NLS.bind(nameFieldQualifier, name);
+				return name;
 			}
 		}
 		return ""; //$NON-NLS-1$

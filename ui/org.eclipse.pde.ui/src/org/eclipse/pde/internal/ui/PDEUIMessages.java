@@ -2799,10 +2799,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestEditorContributor_externStringsActionName;
 
-	public static String PatchSpecPage_feature;
-
-	public static String FeatureSpecPage_feature;
-
 	public static String SplashSection_progressBar;
 	public static String SplashSection_progressX;
 	public static String SplashSection_progressWidth;

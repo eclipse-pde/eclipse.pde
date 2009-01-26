@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,6 @@ public abstract class ContentPage extends WizardPage {
 
 	/**
 	 * @param text
-	 * @return
 	 */
 	protected String validateVersion(Text text) {
 		if (text.getText().trim().length() == 0) {
@@ -126,7 +125,6 @@ public abstract class ContentPage extends WizardPage {
 	}
 
 	/**
-	 * @return
 	 */
 	private String validateName() {
 		if (fNameText.getText().trim().length() == 0) {
@@ -168,7 +166,7 @@ public abstract class ContentPage extends WizardPage {
 				int oldfChanged = fChangedGroups;
 				fIdText.setText(id);
 				fVersionText.setText("1.0.0"); //$NON-NLS-1$
-				fNameText.setText(IdUtil.getValidName(id, getNameFieldQualifier()));
+				fNameText.setText(IdUtil.getValidName(id));
 				fProviderText.setText(IdUtil.getValidProvider(id));
 				fChangedGroups = oldfChanged;
 			}
@@ -183,8 +181,6 @@ public abstract class ContentPage extends WizardPage {
 	protected String computeId() {
 		return IdUtil.getValidId(fProjectProvider.getProjectName());
 	}
-
-	protected abstract String getNameFieldQualifier();
 
 	public void updateData() {
 		fData.setId(fIdText.getText().trim());
