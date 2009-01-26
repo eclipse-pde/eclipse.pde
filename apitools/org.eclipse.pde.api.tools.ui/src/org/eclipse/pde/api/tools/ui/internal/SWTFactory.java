@@ -213,8 +213,7 @@ public class SWTFactory {
 		Link l = new Link(parent, SWT.UNDERLINE_LINK);
 		l.setFont(font);
 		l.setText(text);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = hspan;
+		GridData gd = new GridData(GridData.BEGINNING, GridData.VERTICAL_ALIGN_CENTER, true, false, hspan, 1);
 		l.setLayoutData(gd);
 		return l;
 	}
