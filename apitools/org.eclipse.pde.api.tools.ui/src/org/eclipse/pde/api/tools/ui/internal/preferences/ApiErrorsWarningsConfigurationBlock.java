@@ -85,7 +85,6 @@ import com.ibm.icu.text.MessageFormat;
 public class ApiErrorsWarningsConfigurationBlock {
 	
 	private static final String P2_INSTALL_COMMAND_HANDLER = "org.eclipse.equinox.p2.ui.sdk.install"; //$NON-NLS-1$
-	private static final String API_TOOLS_UPDATE_SITE = "http://www.eclipse.org/pde/pde-api-tools/updates/"; //$NON-NLS-1$
 	/**
 	 * Provides data information for created controls
 	 */
