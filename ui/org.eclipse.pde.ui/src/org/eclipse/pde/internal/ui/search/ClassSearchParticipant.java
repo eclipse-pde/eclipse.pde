@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-technologies.com> - bug 261404
+ *     Benjamin Cabe <benjamin.cabe@anyware-technologies.com> - bug 261404, 262353
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
@@ -142,9 +142,11 @@ public class ClassSearchParticipant implements IQueryParticipant {
 			PluginElementNode node = (PluginElementNode) parent;
 			PluginElementNode parentNode = (PluginElementNode) parent.getParent();
 			ISchemaElement schemaElement = schema.findElement(parentNode.getName());
-			ISchemaAttribute attInfo = schemaElement.getAttribute(node.getName());
-			if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA)
-				checkMatch(node.getAttribute("class"), file); //$NON-NLS-1$
+			if (schemaElement != null) {
+				ISchemaAttribute attInfo = schemaElement.getAttribute(node.getName());
+				if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA)
+					checkMatch(node.getAttribute("class"), file); //$NON-NLS-1$
+			}
 		}
 
 		for (int i = 0; i < children.length; i++) {
