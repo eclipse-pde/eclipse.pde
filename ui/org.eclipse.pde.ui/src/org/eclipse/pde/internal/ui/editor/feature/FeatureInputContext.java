@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 262564     
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.io.*;
 import java.util.ArrayList;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
@@ -53,10 +55,14 @@ public class FeatureInputContext extends XMLInputContext {
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
+		Object o = getDocumentProvider().getDocument(input);
 		if (input instanceof IFileEditorInput)
 			return createResourceModel((IFileEditorInput) input);
 		if (input instanceof IStorageEditorInput)
 			return createStorageModel((IStorageEditorInput) input);
+		if (input instanceof IURIEditorInput) {
+			return createSystemFileModel((IURIEditorInput) input);
+		}
 		return null;
 	}
 
@@ -90,6 +96,14 @@ public class FeatureInputContext extends XMLInputContext {
 			} catch (IOException e) {
 			}
 		}
+		return model;
+	}
+
+	private IBaseModel createSystemFileModel(IURIEditorInput input) throws CoreException {
+		IFileStore store = EFS.getStore(input.getURI());
+		ExternalFeatureModel model = new ExternalFeatureModel();
+		model.setInstallLocation(store.getParent().toString());
+		model.load(store.openInputStream(EFS.CACHE, new NullProgressMonitor()), true);
 		return model;
 	}
 
