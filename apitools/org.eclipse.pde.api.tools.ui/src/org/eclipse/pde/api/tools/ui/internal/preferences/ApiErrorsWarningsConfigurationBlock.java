@@ -15,10 +15,6 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
@@ -44,7 +40,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -54,7 +49,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -1266,55 +1260,40 @@ public class ApiErrorsWarningsConfigurationBlock {
 		button.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore));
 		return page;
 	}
-
+	
+	/**
+	 * Initializes the group of EE meta-data that is installed
+	 * @param parent
+	 */
 	private void initializeInstalledMetatadata(final Composite parent) {
 		final Group group = SWTFactory.createGroup(parent, PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees, 3, 3, GridData.FILL_BOTH);
-		int[] allIds = ProfileModifiers.getAllIds();
-		this.fSystemLibraryControls = new ArrayList(allIds.length + 1);
+		String[] stubs = StubApiComponent.getInstalledMetadata();
+		this.fSystemLibraryControls = new ArrayList(stubs.length + 1);
 		this.fSystemLibraryControls.add(group);
-		final Display display = parent.getDisplay();
-		boolean installMore = false;
-		for (int i = 0, max = allIds.length; i < max; i++) {
-			int eeValue = allIds[i];
-			final String name = ProfileModifiers.getName(eeValue);
-			final Font labelFont = JFaceResources.getDialogFont();
-			final FontData[] fontDatas = labelFont.getFontData();
-			boolean installed = StubApiComponent.isInstalled(eeValue);
-			if (installed) {
-				for (int j = 0; j < fontDatas.length; j++) {
-					FontData data = fontDatas[j];
-					data.setStyle(SWT.BOLD);
-					data.setHeight(8);
-				}
-			} else {
-				installMore= true;
-				for (int j = 0; j < fontDatas.length; j++) {
-					FontData data = fontDatas[j];
-					data.setStyle(SWT.NORMAL);
-					data.setHeight(8);
-				}
+		boolean installMore = (stubs.length < ProfileModifiers.getAllIds().length);
+		if(stubs.length == 0) {
+			SWTFactory.createVerticalSpacer(group, 1);
+			SWTFactory.createLabel(group, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_no_ees_installed, JFaceResources.getDialogFont(), 1);
+		}
+		else {
+			for (int i = 0; i < stubs.length; i++) {
+				this.fSystemLibraryControls.add(SWTFactory.createLabel(group, stubs[i], JFaceResources.getDialogFont(), 1));
 			}
-			Label createLabel = SWTFactory.createLabel(group, name, new Font(display, fontDatas), 1);
-			this.fSystemLibraryControls.add(createLabel);
 		}
 		if (installMore) {
 			String linkedName = PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_link_label;
-			Font dialogFont = JFaceResources.getDialogFont();
-			Link link = SWTFactory.createLink(group, linkedName, new Font(display, dialogFont.getFontData()), 3);
+			SWTFactory.createVerticalSpacer(group, 1);
+			Link link = SWTFactory.createLink(group, linkedName, JFaceResources.getDialogFont(), 3);
 			link.setToolTipText(PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip);
 			link.addMouseListener(new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
 					IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-					try {
-						handlerService.executeCommand(P2_INSTALL_COMMAND_HANDLER, null);
-					} catch (ExecutionException ex) {
-						ex.printStackTrace();
-					} catch (NotDefinedException ex) {
-						ex.printStackTrace();
-					} catch (NotEnabledException ex) {
-						ex.printStackTrace();
-					} catch (NotHandledException ex) {
-						ex.printStackTrace();
+					if(handlerService != null) {
+						try {
+							handlerService.executeCommand(P2_INSTALL_COMMAND_HANDLER, null);
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
 					}
 				}
 			});
@@ -1322,6 +1301,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 		}
 	}
 
+	/**
+	 * Sets all values of the given set of keys to the given new value
+	 * @param newValue
+	 * @param keys
+	 */
 	void setAllTo(String newValue, Key[] keys) {
 		for(int i = 0, max = keys.length; i < max; i++) {
 			keys[i].setStoredValue(fLookupOrder[0], newValue, fManager);

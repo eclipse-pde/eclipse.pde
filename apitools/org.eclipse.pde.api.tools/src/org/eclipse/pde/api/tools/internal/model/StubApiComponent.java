@@ -95,12 +95,19 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 		}
 	}
 	
-	public static String[] getInstalledMetadatas() {
-		List allEEs = null;
+	/**
+	 * Returns a listing of all of the installed meta-data or an empty array, never <code>null</code>
+	 * @return list of installed meta-data or an empty list, never <code>null</code>
+	 */
+	public static String[] getInstalledMetadata() {
+		List allEEs = new ArrayList();
 		int[] allEEsValues = ProfileModifiers.getAllIds();
-		for (int i = 0, max= allEEsValues.length; i < max; i++) {
-			int eeValue = allEEsValues[i];
-			String name = ProfileModifiers.getName(eeValue);
+		String name = null;
+		File stubFile = null;
+		int eeValue = -1;
+		for (int i = 0; i < allEEsValues.length; i++) {
+			eeValue = allEEsValues[i];
+			name = ProfileModifiers.getName(eeValue);
 			switch(eeValue) {
 				case ProfileModifiers.CDC_1_0_FOUNDATION_1_0 :
 				case ProfileModifiers.CDC_1_1_FOUNDATION_1_1 :
@@ -109,16 +116,12 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 				case ProfileModifiers.OSGI_MINIMUM_1_2 :
 					name = name.replace('/', '_');
 			}
-			File stubFile = getFileFor(eeValue, name);
+			stubFile = getFileFor(eeValue, name);
 			if (stubFile == null) {
 				continue;
 			}
-			if (allEEs == null) {
-				allEEs = new ArrayList(max);
-			}
 			allEEs.add(ProfileModifiers.getName(eeValue));
 		}
-		if (allEEs == null) return null;
 		String[] result = new String[allEEs.size()];
 		allEEs.toArray(result);
 		Arrays.sort(result);
