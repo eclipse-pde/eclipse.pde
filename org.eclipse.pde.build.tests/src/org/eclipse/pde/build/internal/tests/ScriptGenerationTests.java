@@ -1091,4 +1091,34 @@ public class ScriptGenerationTests extends PDETestCase {
 			jar.close();
 		}
 	}
+	
+	public void testBug217005() throws Exception {
+		IFolder buildFolder = newTest("217005");
+		IFolder f = Utils.createFolder(buildFolder, "features/f");
+		IFolder shape = Utils.createFolder(buildFolder, "plugins/shape");
+		
+		Attributes additionalAttributes = new Attributes();
+		additionalAttributes.put(new Attributes.Name("Eclipse-BundleShape"), "jar");
+		Utils.generateBundleManifest(shape, "shape", "1.0.0", additionalAttributes);
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<feature id=\"f\" version=\"1.0.0\">             \n");
+		buffer.append("  <plugin version=\"0.0.0\" id=\"shape\" />      \n");
+		buffer.append("</feature>                                       \n");
+
+		IFile featureXML = f.getFile("feature.xml");
+		Utils.writeBuffer(featureXML, buffer);
+		Properties properties = new Properties();
+		properties.put("bin.includes", "feature.xml");
+		Utils.storeBuildProperties(f, properties);
+		
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("configs", "*,*,*");
+		properties.put("archivesFormat", "*,*,*-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+		
+		assertResourceFile(buildFolder, "tmp/eclipse/plugins/shape_1.0.0.jar");
+	}
 }

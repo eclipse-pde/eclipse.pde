@@ -9,8 +9,7 @@
 
 package org.eclipse.pde.internal.build;
 
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -81,9 +80,31 @@ public class ShapeAdvisor implements IPDEBuildConstants {
 	private boolean getUnpackClause(BundleDescription bundle) {
 		Properties properties = (Properties) bundle.getUserObject();
 		if (properties != null) {
-			Set entries = (Set) ((Properties) bundle.getUserObject()).get(PLUGIN_ENTRY);
-			return ((FeatureEntry) entries.iterator().next()).isUnpack();
+			Set entries = (Set) properties.get(PLUGIN_ENTRY);
+			if (entries != null && entries.size() > 0) {
+				Boolean result = null;
+				boolean contradiction = false;
+				for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
+					FeatureEntry entry = (FeatureEntry) iterator.next();
+					if (entry.unpackSet()) {
+						if (result == null)
+							result = Boolean.valueOf(entry.isUnpack());
+						else if (result.booleanValue() != entry.isUnpack()) {
+							contradiction = true;
+							break;
+						}
+					}
+				}
+				if (result != null && !contradiction)
+					return result.booleanValue();
+			}
+
+			String shape = properties.getProperty(ECLIPSE_BUNDLE_SHAPE);
+			if (shape != null) {
+				return shape.equalsIgnoreCase("dir"); //$NON-NLS-1$
+			}
 		}
+
 		return true; //don't know, return the default
 	}
 }
