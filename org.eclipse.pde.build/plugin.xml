@@ -123,6 +123,9 @@
 		<factory
 			class="org.eclipse.pde.internal.build.fetch.GETFetchFactory"
 			id="GET"/>
+		<factory
+			class="org.eclipse.pde.internal.build.fetch.P2IUFetchFactory"
+			id="p2IU"/>
    </extension>
    
     <extension
