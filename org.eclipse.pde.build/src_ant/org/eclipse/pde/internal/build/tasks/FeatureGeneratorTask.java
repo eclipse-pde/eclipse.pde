@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
+import org.eclipse.pde.internal.build.site.ProfileManager;
 
 /**
  * Generate a container feature based on a .product file and/or provided feature, plugin lists
@@ -29,15 +30,23 @@ public class FeatureGeneratorTask extends Task {
 	public void execute() throws BuildException {
 		try {
 			BundleHelper.getDefault().setLog(this);
-			String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
-			if (Boolean.valueOf(value).booleanValue())
-				antProperties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
+			initializeAntProperties(antProperties);
 			generator.setImmutableAntProperties(antProperties);
 			run();
-			BundleHelper.getDefault().setLog(null);
 		} catch (CoreException e) {
 			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
+		} finally {
+			BundleHelper.getDefault().setLog(null);
 		}
+	}
+
+	private void initializeAntProperties(Properties properties) {
+		String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
+		if (Boolean.valueOf(value).booleanValue())
+			antProperties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
+
+		ProfileManager manager = new ProfileManager(null, true);
+		manager.copyEEProfileProperties(getProject().getProperties(), antProperties);
 	}
 
 	public void run() throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -47,6 +47,16 @@ public class ProfileManager {
 
 	public Properties getProfileProperties(String profileName) {
 		return (Properties) profileMap.get(profileName);
+	}
+
+	public void copyEEProfileProperties(Dictionary source, Properties target) {
+		String[] profiles = getJavaProfiles();
+		for (int i = 0; i < profiles.length; i++) {
+			Object value = source.get(profiles[i]);
+			if (value != null && value instanceof String) {
+				target.put(profiles[i], value);
+			}
+		}
 	}
 
 	/**

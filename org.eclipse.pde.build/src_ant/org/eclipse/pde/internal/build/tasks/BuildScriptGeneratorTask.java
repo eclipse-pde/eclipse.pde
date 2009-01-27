@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -111,13 +111,7 @@ public class BuildScriptGeneratorTask extends Task {
 
 	private void setEEProfileProperties(Properties antProperties) {
 		ProfileManager manager = new ProfileManager(generator.getEESources(), true);
-		String[] profiles = manager.getJavaProfiles();
-		for (int i = 0; i < profiles.length; i++) {
-			String value = getProject().getProperty(profiles[i]);
-			if (value != null) {
-				antProperties.put(profiles[i], value);
-			}
-		}
+		manager.copyEEProfileProperties(getProject().getProperties(), antProperties);
 	}
 
 	/** 

@@ -10,6 +10,7 @@
 package org.eclipse.pde.build.internal.tests;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.util.jar.*;
 import java.util.zip.ZipEntry;
@@ -986,6 +987,28 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateScripts(buildFolder, buildProperties);
 	}
 
+	public void testBug262294() throws Exception {
+		IFolder buildFolder = newTest("262294");
+		
+		IFolder cdc = Utils.createFolder(buildFolder, "plugins/cdc");
+		Attributes additionalAttributes = new Attributes();
+		additionalAttributes.put(new Attributes.Name("Bundle-RequiredExecutionEnvironment"), "CDC-1.1/Foundation-1.1");
+		Utils.generateBundleManifest(cdc, "cdc", "1.0.0", additionalAttributes);
+		
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new org.eclipse.core.runtime.Path("/scripts/productBuild/productBuild.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+
+		Properties generateProperties = new Properties();
+		generateProperties.put("buildDirectory", buildFolder.getLocation().toOSString());
+		generateProperties.put("baseLocation", " ");
+		generateProperties.put("verify", "true");
+		generateProperties.put("includeLaunchers", "false");
+		generateProperties.put("configs", "*,*,*");
+		generateProperties.put("CDC-1.1/Foundation-1.1", "here");
+		generateProperties.put("pluginList", "cdc");
+		runAntScript(buildXMLPath, new String[] {"generateFeature"}, buildFolder.getLocation().toOSString(), generateProperties);
+	}
+	
 	public void testRootFiles_1() throws Exception {
 		IFolder buildFolder = newTest("RootFiles_1");
 		IFolder f = Utils.createFolder(buildFolder, "features/F");
