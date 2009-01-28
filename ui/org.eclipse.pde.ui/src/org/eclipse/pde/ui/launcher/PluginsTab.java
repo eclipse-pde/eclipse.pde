@@ -111,6 +111,7 @@ public class PluginsTab extends AbstractLauncherTab {
 		fSelectionCombo.setText(fSelectionCombo.getItem(0));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
+		gd.minimumWidth = 200;
 		fSelectionCombo.setLayoutData(gd);
 		fSelectionCombo.addSelectionListener(fListener);
 
