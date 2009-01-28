@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -163,20 +163,8 @@ public class LaunchPluginValidator {
 			return models;
 
 		Collection result = null;
-		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true)) {
-			result = new ArrayList();
-			Map deselected = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
-			if (deselected.size() == 0)
-				return models;
-			for (int i = 0; i < models.length; i++) {
-				String id = models[i].getPluginBase().getId();
-				if (id != null && !deselected.containsKey(models[i]))
-					result.add(models[i]);
-			}
-		} else {
-			Map bundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
-			result = bundles.keySet();
-		}
+		Map bundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
+		result = bundles.keySet();
 		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 	}
 
