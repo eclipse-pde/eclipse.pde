@@ -68,6 +68,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	// Removed definitions (to be removed on apply)
 	private List fRemoved = new ArrayList();
 
+	// Handle that was previous selected on this page or null
+	private ITargetHandle fPrevious;
+
 	public TargetPlatformPreferencePage2() {
 		// nothing
 	}
@@ -205,11 +208,11 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 		if (service != null) {
 			try {
-				ITargetHandle handle = service.getWorkspaceTargetHandle();
+				fPrevious = service.getWorkspaceTargetHandle();
 				Iterator iterator = fTargets.iterator();
 				while (iterator.hasNext()) {
 					ITargetDefinition target = (ITargetDefinition) iterator.next();
-					if (target.getHandle().equals(handle)) {
+					if (target.getHandle().equals(fPrevious)) {
 						fTableViewer.setCheckedElements(new Object[] {target});
 						break;
 					}
@@ -292,7 +295,6 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		ITargetDefinition toLoad = null;
 		boolean load = false;
 		try {
-			ITargetHandle prev = service.getWorkspaceTargetHandle();
 			ITargetHandle currH = null;
 			ITargetDefinition currD = null;
 			Object[] elements = fTableViewer.getCheckedElements();
@@ -300,7 +302,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 				currD = (ITargetDefinition) elements[0];
 				currH = currD.getHandle();
 			}
-			if (prev == null) {
+			if (fPrevious == null) {
 				if (currH != null) {
 					toLoad = currD;
 					load = true;
@@ -309,11 +311,11 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 				if (currH == null) {
 					// load empty
 					load = true;
-				} else if (!prev.equals(currH)) {
+				} else if (!fPrevious.equals(currH)) {
 					toLoad = currD;
 					load = true;
 				} else {
-					ITargetDefinition original = prev.getTargetDefinition();
+					ITargetDefinition original = fPrevious.getTargetDefinition();
 					// TODO: should just check for structural changes
 					if (((TargetDefinition) original).isContentEquivalent(currD)) {
 						load = false;
