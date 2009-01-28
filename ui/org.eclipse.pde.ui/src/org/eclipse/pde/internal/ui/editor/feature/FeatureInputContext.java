@@ -55,7 +55,6 @@ public class FeatureInputContext extends XMLInputContext {
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
-		Object o = getDocumentProvider().getDocument(input);
 		if (input instanceof IFileEditorInput)
 			return createResourceModel((IFileEditorInput) input);
 		if (input instanceof IStorageEditorInput)
