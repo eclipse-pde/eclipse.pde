@@ -112,8 +112,13 @@ public class P2TargetProvisionerWizard extends Wizard implements IProvisionerWiz
 	 * @see org.eclipse.pde.ui.IProvisionerWizard#getLocations()
 	 */
 	public File[] getLocations() {
-		if (fLocations == null) {
+		if (fLocations == null || fLocations.length == 0) {
 			return new File[0];
+		}
+		// The operation will output in a repo format where the bundles are in a directory called plugins
+		File pluginsDir = new File(fLocations[0], "plugins"); //$NON-NLS-1$
+		if (pluginsDir.isDirectory()) {
+			return new File[] {pluginsDir};
 		}
 		return fLocations;
 	}
