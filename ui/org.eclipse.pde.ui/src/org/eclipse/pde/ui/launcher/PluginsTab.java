@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
@@ -100,48 +99,39 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(7, false));
+		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(PDEUIMessages.PluginsTab_launchWith);
+		Composite buttonComp = SWTFactory.createComposite(composite, 6, 1, GridData.FILL_HORIZONTAL, 0, 0);
 
-		fSelectionCombo = new Combo(composite, SWT.READ_ONLY | SWT.BORDER);
-		fSelectionCombo.setItems(new String[] {PDEUIMessages.PluginsTab_allPlugins, PDEUIMessages.PluginsTab_selectedPlugins, PDEUIMessages.PluginsTab_featureMode});
-		fSelectionCombo.setText(fSelectionCombo.getItem(0));
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		gd.minimumWidth = 200;
-		fSelectionCombo.setLayoutData(gd);
+		SWTFactory.createLabel(buttonComp, PDEUIMessages.PluginsTab_launchWith, 1);
+
+		fSelectionCombo = SWTFactory.createCombo(buttonComp, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.PluginsTab_allPlugins, PDEUIMessages.PluginsTab_selectedPlugins, PDEUIMessages.PluginsTab_featureMode});
+		fSelectionCombo.select(0);
 		fSelectionCombo.addSelectionListener(fListener);
 
-		label = new Label(composite, SWT.NONE);
-		gd = new GridData();
+		Label label = SWTFactory.createLabel(buttonComp, PDEUIMessages.EquinoxPluginsTab_defaultStart, 1);
+		GridData gd = new GridData();
 		gd.horizontalIndent = 20;
 		label.setLayoutData(gd);
-		label.setText(PDEUIMessages.EquinoxPluginsTab_defaultStart);
 
-		fDefaultStartLevel = new Spinner(composite, SWT.BORDER);
+		fDefaultStartLevel = new Spinner(buttonComp, SWT.BORDER);
 		fDefaultStartLevel.setMinimum(1);
 		fDefaultStartLevel.addModifyListener(fListener);
 
-		label = new Label(composite, SWT.NONE);
+		label = SWTFactory.createLabel(buttonComp, PDEUIMessages.EquinoxPluginsTab_defaultAuto, 1);
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		label.setLayoutData(gd);
-		label.setText(PDEUIMessages.EquinoxPluginsTab_defaultAuto);
 
-		fDefaultAutoStart = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-		fDefaultAutoStart.setItems(new String[] {Boolean.toString(true), Boolean.toString(false)});
+		fDefaultAutoStart = SWTFactory.createCombo(buttonComp, SWT.BORDER | SWT.READ_ONLY, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {Boolean.toString(true), Boolean.toString(false)});
 		fDefaultAutoStart.select(0);
 		fDefaultAutoStart.addSelectionListener(fListener);
 
-		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 7;
-		label.setLayoutData(gd);
+		Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		fPluginBlock.createControl(composite, 7, 10);
+		Composite blockComposite = SWTFactory.createComposite(composite, 7, 1, GridData.FILL_BOTH, 0, 0);
+		fPluginBlock.createControl(blockComposite, 7, 10);
 
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
