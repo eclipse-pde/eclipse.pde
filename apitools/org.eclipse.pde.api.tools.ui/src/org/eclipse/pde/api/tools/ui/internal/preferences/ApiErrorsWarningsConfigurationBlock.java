@@ -1025,12 +1025,6 @@ public class ApiErrorsWarningsConfigurationBlock {
 					KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
 					new String[] { ApiPlugin.VALUE_ENABLED, ApiPlugin.VALUE_DISABLED },
 					2);
-//				addCheckBox(
-//					vcomp,
-//					PreferenceMessages.CompatibilityReportApiChangeWhenMinorVersionIncremented,
-//					KEY_REPORT_API_CHANGE_WHEN_MINOR_VERSION_INCREMENTED,
-//					new String[] { ApiPlugin.VALUE_ENABLED, ApiPlugin.VALUE_DISABLED },
-//					2);
 				ScrolledComposite scomp = new ScrolledComposite(page, SWT.H_SCROLL | SWT.V_SCROLL);
 				scomp.setExpandHorizontal(true);
 				scomp.setExpandVertical(true);
@@ -1266,14 +1260,15 @@ public class ApiErrorsWarningsConfigurationBlock {
 	 * @param parent
 	 */
 	private void initializeInstalledMetatadata(final Composite parent) {
-		final Group group = SWTFactory.createGroup(parent, PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees, 3, 3, GridData.FILL_BOTH);
+		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL, 15, 5);
+		Group group = SWTFactory.createGroup(comp, PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees, 3, 3, GridData.FILL_BOTH);
 		String[] stubs = StubApiComponent.getInstalledMetadata();
 		this.fSystemLibraryControls = new ArrayList(stubs.length + 1);
 		this.fSystemLibraryControls.add(group);
 		boolean installMore = (stubs.length < ProfileModifiers.getAllIds().length);
 		if(stubs.length == 0) {
 			SWTFactory.createVerticalSpacer(group, 1);
-			SWTFactory.createLabel(group, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_no_ees_installed, JFaceResources.getDialogFont(), 1);
+			this.fSystemLibraryControls.add(SWTFactory.createLabel(group, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_no_ees_installed, JFaceResources.getDialogFont(), 1));
 		}
 		else {
 			for (int i = 0; i < stubs.length; i++) {
