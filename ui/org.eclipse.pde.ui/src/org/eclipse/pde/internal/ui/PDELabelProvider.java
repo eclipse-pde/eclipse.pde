@@ -606,7 +606,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private Image getObjectImage(IProductPlugin obj) {
-		Version version = (obj.getVersion().length() > 0 && !obj.getVersion().equals("0.0.0")) ? Version.parseVersion(obj.getVersion()) : null; //$NON-NLS-1$
+		Version version = (obj.getVersion() != null && obj.getVersion().length() > 0 && !obj.getVersion().equals("0.0.0")) ? Version.parseVersion(obj.getVersion()) : null; //$NON-NLS-1$
 		BundleDescription desc = TargetPlatformHelper.getState().getBundle(obj.getId(), version);
 		if (desc != null) {
 			return desc.getHost() == null ? get(PDEPluginImages.DESC_PLUGIN_OBJ) : get(PDEPluginImages.DESC_FRAGMENT_OBJ);
