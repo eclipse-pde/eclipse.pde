@@ -183,8 +183,22 @@ public class PluginsTab extends AbstractLauncherTab {
 		if (fShowFeatures)
 			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, index == FEATURE_SELECTION);
 		fPluginBlock.performApply(configuration);
-		configuration.setAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, Boolean.toString(true).equals(fDefaultAutoStart.getText()));
-		configuration.setAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, fDefaultStartLevel.getSelection());
+		// clear default values for auto-start and start-level if default
+		String autoText = fDefaultAutoStart.getText();
+		if (Boolean.toString(false).equals(autoText)) {
+			// clear, this is the default value
+			configuration.setAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, (String) null);
+		} else {
+			// persist non-default setting
+			configuration.setAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, true);
+		}
+		int startLevel = fDefaultStartLevel.getSelection();
+		if (4 == startLevel) {
+			// clear, this is the default value
+			configuration.setAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, (String) null);
+		} else {
+			configuration.setAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, startLevel);
+		}
 	}
 
 	/*
