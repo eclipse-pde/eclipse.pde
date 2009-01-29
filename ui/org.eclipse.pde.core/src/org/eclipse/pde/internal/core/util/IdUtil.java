@@ -108,8 +108,10 @@ public class IdUtil {
 
 		if ((point instanceof PluginExtensionPointNode) && (model != null)) {
 			String pointId = point.getId();
-			if (Double.parseDouble(model.getPluginBase().getSchemaVersion()) >= 3.2 && pointId.indexOf('.') > 0)
+			String schemaVersion = model.getPluginBase().getSchemaVersion();
+			if (schemaVersion != null && Double.parseDouble(schemaVersion) >= 3.2 && pointId.indexOf('.') > 0) {
 				return pointId;
+			}
 			String id = null;
 			if (model instanceof IFragmentModel) {
 				IFragment fragment = ((IFragmentModel) model).getFragment();
