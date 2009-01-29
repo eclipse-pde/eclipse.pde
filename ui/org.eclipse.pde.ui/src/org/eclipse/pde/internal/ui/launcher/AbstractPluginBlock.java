@@ -571,14 +571,17 @@ public abstract class AbstractPluginBlock {
 	}
 
 	protected void resetText(IPluginModelBase model) {
-		String levelText = null;
-		String autoText = null;
+		String levelText = ""; //$NON-NLS-1$
+		String autoText = ""; //$NON-NLS-1$
+		String systemBundleId = PDECore.getDefault().getModelManager().getSystemBundleId();
+		boolean isSystemBundle = systemBundleId.equals(model.getPluginBase().getId());
+		if (model.isFragmentModel()) {
+			autoText = "false"; //$NON-NLS-1$
+		} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(model.getPluginBase().getId()) || "org.eclipse.equinox.ds".equals(model.getPluginBase().getId())) { //$NON-NLS-1$
+			autoText = "true"; //$NON-NLS-1$
+		}
 		Widget widget = fPluginTreeViewer.testFindItem(model);
 		if (fPluginTreeViewer.getChecked(model)) {
-			String systemBundleId = PDECore.getDefault().getModelManager().getSystemBundleId();
-			boolean isSystemBundle = systemBundleId.equals(model.getPluginBase().getId());
-			levelText = isSystemBundle ? "" : "default"; //$NON-NLS-1$ //$NON-NLS-2$
-			autoText = isSystemBundle ? "" : "default"; //$NON-NLS-1$ //$NON-NLS-2$
 			if (levelColumnCache.containsKey(model) && !isSystemBundle) {
 				levelText = (String) levelColumnCache.get(model);
 				levelText = levelText.length() > 0 ? levelText : "default"; //$NON-NLS-1$
@@ -587,13 +590,6 @@ public abstract class AbstractPluginBlock {
 				autoText = (String) autoColumnCache.get(model);
 				autoText = autoText.length() > 0 ? autoText : "default"; //$NON-NLS-1$
 			}
-
-			if (model.isFragmentModel()) {
-				autoText = "false"; //$NON-NLS-1$
-			}
-		} else {
-			levelText = ""; //$NON-NLS-1$
-			autoText = ""; //$NON-NLS-1$
 		}
 		if (levelText != null) {
 			levelColumnCache.put(model, levelText);
