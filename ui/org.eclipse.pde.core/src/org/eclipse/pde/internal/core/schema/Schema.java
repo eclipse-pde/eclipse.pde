@@ -1036,7 +1036,9 @@ public class Schema extends PlatformObject implements ISchema {
 			if (model != null) {
 				IPluginBase base = model.getPluginBase();
 				if (base != null) {
-					fTargetVersion = Double.parseDouble(base.getSchemaVersion());
+					if (base.getSchemaVersion() != null) {
+						fTargetVersion = Double.parseDouble(base.getSchemaVersion());
+					}
 				}
 			}
 			if (fTargetVersion == 0) {

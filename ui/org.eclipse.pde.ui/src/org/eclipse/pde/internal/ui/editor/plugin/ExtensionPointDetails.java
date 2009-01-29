@@ -222,7 +222,8 @@ public class ExtensionPointDetails extends PDEDetails {
 				String pointID = null;
 				IPluginBase base = ((IPluginModelBase) model).getPluginBase();
 				String pluginID = base.getId();
-				if (Double.parseDouble(base.getSchemaVersion()) >= 3.2) {
+				String schemaVersion = base.getSchemaVersion();
+				if (schemaVersion != null && Double.parseDouble(schemaVersion) >= 3.2) {
 					if (fInput.getId().indexOf('.') != -1)
 						pointID = fInput.getId();
 				}

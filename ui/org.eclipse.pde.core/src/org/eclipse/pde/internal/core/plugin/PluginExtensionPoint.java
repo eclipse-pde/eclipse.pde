@@ -41,7 +41,8 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 		String pointId = getId();
 		IPluginModelBase modelBase = getPluginModel();
 		IPluginBase pluginBase = modelBase.getPluginBase();
-		if (Double.parseDouble(pluginBase.getSchemaVersion()) >= 3.2) {
+		String schemaVersion = pluginBase.getSchemaVersion();
+		if (schemaVersion != null && Double.parseDouble(schemaVersion) >= 3.2) {
 			if (pointId.indexOf('.') > 0)
 				return pointId;
 		}

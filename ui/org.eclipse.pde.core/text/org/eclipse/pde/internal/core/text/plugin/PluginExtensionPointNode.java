@@ -27,7 +27,7 @@ public class PluginExtensionPointNode extends PluginObjectNode implements IPlugi
 	public String getFullId() {
 		String id = getId();
 		String version = getPluginBase().getSchemaVersion();
-		if (Double.parseDouble(version) >= 3.2 && id != null && id.indexOf('.') != -1)
+		if (version != null && Double.parseDouble(version) >= 3.2 && id != null && id.indexOf('.') != -1)
 			return id;
 		String pluginID = getPluginBase().getId();
 		return (pluginID != null) ? pluginID + "." + id : id; //$NON-NLS-1$
