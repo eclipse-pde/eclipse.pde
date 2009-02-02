@@ -1260,7 +1260,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 	 * @param parent
 	 */
 	private void initializeInstalledMetatadata(final Composite parent) {
-		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL, 15, 5);
+		Composite comp = SWTFactory.createComposite(parent, 1, 2, GridData.FILL_HORIZONTAL, 0, 0);
+		GridData gd = (GridData) comp.getLayoutData();
+		gd.horizontalIndent = 15;
 		Group group = SWTFactory.createGroup(comp, PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees, 3, 3, GridData.FILL_BOTH);
 		String[] stubs = StubApiComponent.getInstalledMetadata();
 		this.fSystemLibraryControls = new ArrayList(stubs.length + 1);
