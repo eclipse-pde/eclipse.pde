@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2008,2009 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,7 +15,7 @@ import java.util.jar.JarFile;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.publisher.PublisherInfo;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
@@ -26,9 +26,30 @@ import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator.Compiled
 public class GatherBundleTask extends AbstractPublisherTask {
 	static final private String API_DESCRIPTION = ".api_description"; //$NON-NLS-1$
 
+	static public class OutputFileSet extends FileSet {
+		private String library;
+
+		public OutputFileSet() {
+			super();
+		}
+
+		public String getLibrary() {
+			return this.library;
+		}
+
+		public void setLibrary(String value) {
+			this.library = value;
+		}
+
+		public synchronized void setIncludes(String includes) {
+			super.setIncludes(includes);
+		}
+	}
+
 	private String buildResultFolder = null;
 	private String gatheredSource = null;
 	private String unpack = null;
+	private final Map sourceMap = new HashMap();
 
 	public void execute() throws BuildException {
 		GatheringComputer computer = createComputer();
@@ -122,39 +143,55 @@ public class GatherBundleTask extends AbstractPublisherTask {
 		boolean dotIncluded = false;
 		if (entries != null) {
 			//add all the compiled libraries
+			boolean haveEntries = false;
 			fileSet = new FileSet();
 			fileSet.setProject(getProject());
 			fileSet.setDir(new File(buildResultFolder));
 			for (int i = 0; i < entries.length; i++) {
-				String formatedName = entries[i].getName(false) + (entries[i].getType() == CompiledEntry.FOLDER ? "/" : ""); //$NON-NLS-1$//$NON-NLS-2$
-				if (formatedName.startsWith(ModelBuildScriptGenerator.DOT)) {
-					dotIncluded = true;
-					continue;
+				//folders only, jars should have been collected above
+				if (entries[i].getType() == CompiledEntry.FOLDER) {
+					String name = entries[i].getName(false);
+					if (name.equals(ModelBuildScriptGenerator.DOT)) {
+						dotIncluded = true;
+						continue;
+					}
+
+					if (sourceMap.containsKey(name)) {
+						Set folders = (Set) sourceMap.get(name);
+						processOutputFolders(folders, name, computer);
+					} else {
+						NameEntry fileInclude = fileSet.createInclude();
+						fileInclude.setName(name + "/"); //$NON-NLS-1$
+						haveEntries = true;
+					}
 				}
-				NameEntry fileInclude = fileSet.createInclude();
-				fileInclude.setName(formatedName);
 			}
-			if (entries.length > (dotIncluded ? 1 : 0)) {
+			if (haveEntries) {
 				computer.addFiles(buildResultFolder, fileSet.getDirectoryScanner().getIncludedFiles());
 			}
 		}
 
 		if (dotIncluded) {
 			//special handling for '.'
-			fileSet = new FileSet();
-			fileSet.setProject(getProject());
-			fileSet.setDir(new File(buildResultFolder, ModelBuildScriptGenerator.EXPANDED_DOT));
-			NameEntry fileInclude = fileSet.createInclude();
-			fileInclude.setName("**"); //$NON-NLS-1$
-			if (exclude != null) {
-				String[] splitExcludes = Utils.getArrayFromString(exclude);
-				for (int i = 0; i < splitExcludes.length; i++) {
-					NameEntry fileExclude = fileSet.createExclude();
-					fileExclude.setName(splitExcludes[i]);
+			if (sourceMap.containsKey(ModelBuildScriptGenerator.DOT)) {
+				Set folders = (Set) sourceMap.get(ModelBuildScriptGenerator.DOT);
+				processOutputFolders(folders, ModelBuildScriptGenerator.DOT, computer);
+			} else {
+				fileSet = new FileSet();
+				fileSet.setProject(getProject());
+				fileSet.setDir(new File(buildResultFolder, ModelBuildScriptGenerator.EXPANDED_DOT));
+				NameEntry fileInclude = fileSet.createInclude();
+				fileInclude.setName("**"); //$NON-NLS-1$
+				if (exclude != null) {
+					String[] splitExcludes = Utils.getArrayFromString(exclude);
+					for (int i = 0; i < splitExcludes.length; i++) {
+						NameEntry fileExclude = fileSet.createExclude();
+						fileExclude.setName(splitExcludes[i]);
+					}
 				}
-			}
 
-			computer.addFiles(buildResultFolder + '/' + ModelBuildScriptGenerator.EXPANDED_DOT, fileSet.getDirectoryScanner().getIncludedFiles());
+				computer.addFiles(buildResultFolder + '/' + ModelBuildScriptGenerator.EXPANDED_DOT, fileSet.getDirectoryScanner().getIncludedFiles());
+			}
 		}
 
 		if (gatheredSource != null) {
@@ -169,6 +206,27 @@ public class GatherBundleTask extends AbstractPublisherTask {
 		return computer;
 	}
 
+	private void processOutputFolders(Set folders, String key, GatheringComputer computer) {
+		boolean dot = key.equals(ModelBuildScriptGenerator.DOT);
+		for (Iterator iterator = folders.iterator(); iterator.hasNext();) {
+			OutputFileSet outputFiles = (OutputFileSet) iterator.next();
+			File baseDir = outputFiles.getDir();
+			String[] includes = outputFiles.mergeIncludes(getProject());
+			//handling more than one include here would involve correlating the includes files
+			//with the pattern that included them.
+			if (includes.length == 1) {
+				IPath prefix = new Path(includes[0]).removeLastSegments(1);
+				int count = prefix.segmentCount();
+				String[] files = outputFiles.getDirectoryScanner().getIncludedFiles();
+				for (int i = 0; i < files.length; i++) {
+					IPath suffix = new Path(files[i]).removeFirstSegments(count);
+					String computerPath = dot ? suffix.toString() : key + '/' + suffix.toString();
+					computer.addFile(computerPath, new File(baseDir, files[i]));
+				}
+			}
+		}
+	}
+
 	public void setBuildResultFolder(String buildResultFolder) {
 		this.buildResultFolder = buildResultFolder;
 	}
@@ -181,5 +239,17 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	public void setGatheredSource(String gatheredSource) {
 		if (gatheredSource != null && gatheredSource.length() > 0 && !gatheredSource.startsWith("${")) //$NON-NLS-1$
 			this.gatheredSource = gatheredSource;
+	}
+
+	public void addConfiguredOutputFolder(OutputFileSet output) {
+		String key = output.getLibrary();
+		if (sourceMap.containsKey(key)) {
+			Set set = (Set) sourceMap.get(key);
+			set.add(output);
+		} else {
+			Set set = new HashSet();
+			set.add(output);
+			sourceMap.put(key, set);
+		}
 	}
 }

@@ -616,7 +616,29 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (Utils.isSourceBundle(model)) {
 			script.println("   gatheredSource=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources\""); //$NON-NLS-1$//$NON-NLS-2$
 		}
-		script.println("/>"); //$NON-NLS-1$
+
+		if (workspaceOutputFolders == null || workspaceOutputFolders.size() == 0) {
+			script.println("/>"); //$NON-NLS-1$
+		} else {
+			//reuse workspace compiled classes
+			script.println(">"); //$NON-NLS-1$
+
+			for (Iterator iterator = workspaceOutputFolders.keySet().iterator(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				Set paths = (Set) workspaceOutputFolders.get(key);
+
+				for (Iterator pathIterator = paths.iterator(); pathIterator.hasNext();) {
+					IPath path = (IPath) pathIterator.next();
+					script.printTabs();
+					script.print("   <outputFolder "); //$NON-NLS-1$ 
+					script.printAttribute("library", key, true); //$NON-NLS-1$
+					script.printAttribute("dir", Utils.getPropertyFormat(PROPERTY_BASEDIR), true); //$NON-NLS-1$
+					script.printAttribute("includes", path.toString() + "/**", true); //$NON-NLS-1$ //$NON-NLS-2$
+					script.println("/>"); //$NON-NLS-1$
+				}
+			}
+			script.printEndTag("eclipse.gatherBundle"); //$NON-NLS-1$
+		}
 		script.printTargetEnd();
 	}
 
@@ -1229,18 +1251,21 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		FileSet[] workspaceFiles = null;
 		String outputKey = name.equals(EXPANDED_DOT) ? DOT : name;
 		if (workspaceOutputFolders != null && workspaceOutputFolders.containsKey(outputKey)) {
-			Set paths = (Set) workspaceOutputFolders.get(outputKey);
-			workspaceFiles = new FileSet[paths.size()];
+			// this is a no-op when using p2Gathering, GatherBundleTask will collect the class files from where they are.
+			if (!BuildDirector.p2Gathering) {
+				Set paths = (Set) workspaceOutputFolders.get(outputKey);
+				workspaceFiles = new FileSet[paths.size()];
 
-			int i = 0;
-			for (Iterator iterator = paths.iterator(); iterator.hasNext();) {
-				IPath path = (IPath) iterator.next();
-				workspaceFiles[i++] = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/" + path.toOSString(), null, null, null, "**/package.htm*", null, null); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+				int i = 0;
+				for (Iterator iterator = paths.iterator(); iterator.hasNext();) {
+					IPath path = (IPath) iterator.next();
+					workspaceFiles[i++] = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/" + path.toOSString(), null, null, null, "**/package.htm*", null, null); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 
-			//if entry is a folder, copy over the class files, otherwise they will be jarred from where they are.
-			if (entry.getType() == CompiledEntry.FOLDER) {
-				script.printCopyTask(null, destdir, workspaceFiles, true, false);
+				//if entry is a folder, copy over the class files, otherwise they will be jarred from where they are.
+				if (entry.getType() == CompiledEntry.FOLDER) {
+					script.printCopyTask(null, destdir, workspaceFiles, true, false);
+				}
 			}
 		} else {
 			script.printComment("compile the source code"); //$NON-NLS-1$
@@ -1548,5 +1573,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	public void setAssociatedEntry(FeatureEntry associatedEntry) {
 		this.associatedEntry = associatedEntry;
+	}
+
+	protected void setWorkspaceOutputFolders(Map folders) {
+		this.workspaceOutputFolders = folders;
 	}
 }
