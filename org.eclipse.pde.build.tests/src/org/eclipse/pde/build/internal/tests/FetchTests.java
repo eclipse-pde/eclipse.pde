@@ -10,7 +10,7 @@
 package org.eclipse.pde.build.internal.tests;
 
 import java.net.URL;
-import java.util.Properties;
+import java.util.*;
 import java.util.jar.Attributes;
 
 import org.eclipse.core.resources.IFile;
@@ -90,5 +90,32 @@ public class FetchTests extends PDETestCase {
 
 		assertResourceFile(buildFolder, "plugins/com.ibm.icu.base_3.6.1.v20070417.jar");
 		assertResourceFile(buildFolder, "plugins/com.ibm.icu.base_3.6.0.20061215.jar");
+	}
+	
+	public void testP2Get() throws Exception {
+		IFolder buildFolder = newTest("p2.get");
+		Utils.createFolder(buildFolder, "plugins");
+
+		// copy over the directory.txt file and make sure that it has the right location for the repository
+		URL mapFile = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new Path("/resources/p2.get/directory.txt.template"), null);
+		URL repoLocation = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new Path("/resources/repos/1"), null);
+		repoLocation = FileLocator.resolve(repoLocation);
+		Map replacements = new HashMap();
+		replacements.put("repoLocation", repoLocation.toExternalForm());
+		Utils.transferAndReplace(mapFile, buildFolder.getFile("directory.txt"), replacements);
+		
+		//org.eclipse.pde.build.container.feature is special in that the fetch won't try
+		//to fetch it, and will just fetch everything it includes.
+		Properties fetchProperties = new Properties();
+		fetchProperties.put("buildDirectory", buildFolder.getLocation().toOSString());
+		fetchProperties.put("transformedRepoLocation", buildFolder.getLocation().toOSString());
+		fetchProperties.put("type", "feature");
+		fetchProperties.put("id", "org.eclipse.pde.build.container.feature");
+
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"fetchElement"}, buildFolder.getLocation().toOSString(), fetchProperties);
+
+		assertResourceFile(buildFolder, "plugins/aBundle_1.0.0.jar");
 	}
 }
