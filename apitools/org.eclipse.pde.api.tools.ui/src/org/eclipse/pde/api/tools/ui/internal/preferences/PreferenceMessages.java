@@ -168,7 +168,6 @@ public class PreferenceMessages extends NLS {
 	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees;
 	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip;
 	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_link_label;
-	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_install_job;
 
 	static {
 		// initialize resource bundle
