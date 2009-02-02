@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,7 +116,7 @@ public class LaunchConfigurationHelper {
 		String osgiBundles = properties.getProperty(PROP_OSGI_BUNDLES);
 		int start = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
 		properties.put("osgi.bundles.defaultStartLevel", Integer.toString(start)); //$NON-NLS-1$
-		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, true);
+		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, false);
 
 		// if we are launching using P2, write out P2 files (bundles.txt) and add P2 property to config.ini
 		if (osgiBundles != null && osgiBundles.indexOf(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != -1 && map.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
