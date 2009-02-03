@@ -26,6 +26,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 	protected static final String S_JAR_FORMAT = "exportUpdate"; //$NON-NLS-1$
 	private static final String S_EXPORT_SOURCE = "exportSource"; //$NON-NLS-1$
+	private static final String S_EXPORT_SOURCE_FORMAT = "exportSourceFormat"; //$NON-NLS-1$
 	private static final String S_SAVE_AS_ANT = "saveAsAnt"; //$NON-NLS-1$
 	private static final String S_ANT_FILENAME = "antFileName"; //$NON-NLS-1$
 	private static final String S_QUALIFIER = "qualifier"; //$NON-NLS-1$
@@ -33,7 +34,8 @@ public class ExportOptionsTab extends AbstractExportTab {
 	private static final String S_ALLOW_BINARY_CYCLES = "allowBinaryCycles"; //$NON-NLS-1$
 	private static final String S_USE_WORKSPACE_COMPILED_CLASSES = "useWorkspaceCompiledClasses"; //$NON-NLS-1$
 
-	private Button fIncludeSource;
+	private Button fIncludeSourceButton;
+	private Combo fIncludeSourceCombo;
 	protected Button fJarButton;
 	private Button fSaveAsAntButton;
 	private Combo fAntCombo;
@@ -63,9 +65,21 @@ public class ExportOptionsTab extends AbstractExportTab {
 		return container;
 	}
 
-	protected void addSourceOption(Composite comp) {
-		fIncludeSource = new Button(comp, SWT.CHECK);
-		fIncludeSource.setText(PDEUIMessages.ExportWizard_includeSource);
+	protected void addSourceOption(Composite container) {
+		Composite composite = new Composite(container, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		fIncludeSourceButton = new Button(composite, SWT.CHECK);
+		fIncludeSourceButton.setText(PDEUIMessages.ExportWizard_includeSource);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 1;
+		fIncludeSourceButton.setLayoutData(gd);
+
+		fIncludeSourceCombo = new Combo(composite, SWT.READ_ONLY | SWT.BORDER);
+		fIncludeSourceCombo.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 	}
 
 	protected void addJAROption(Composite comp) {
@@ -141,7 +155,11 @@ public class ExportOptionsTab extends AbstractExportTab {
 	}
 
 	protected void initialize(IDialogSettings settings) {
-		fIncludeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
+		fIncludeSourceButton.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
+		fIncludeSourceCombo.setItems(new String[] {PDEUIMessages.ExportWizard_generateAssociatedSourceBundles, PDEUIMessages.ExportWizard_includeSourceInBinaryBundles});
+		String sourceComboValue = settings.get(S_EXPORT_SOURCE_FORMAT) != null ? settings.get(S_EXPORT_SOURCE_FORMAT) : PDEUIMessages.ExportWizard_generateAssociatedSourceBundles;
+		fIncludeSourceCombo.setText(sourceComboValue);
+		fIncludeSourceCombo.setEnabled(fIncludeSourceButton.getSelection());
 		fJarButton.setSelection(getInitialJarButtonSelection(settings));
 		fSaveAsAntButton.setSelection(settings.getBoolean(S_SAVE_AS_ANT));
 		initializeCombo(settings, S_ANT_FILENAME, fAntCombo);
@@ -157,7 +175,8 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 	protected void saveSettings(IDialogSettings settings) {
 		settings.put(S_JAR_FORMAT, fJarButton.getSelection());
-		settings.put(S_EXPORT_SOURCE, fIncludeSource.getSelection());
+		settings.put(S_EXPORT_SOURCE, fIncludeSourceButton.getSelection());
+		settings.put(S_EXPORT_SOURCE_FORMAT, fIncludeSourceCombo.getItem(fIncludeSourceCombo.getSelectionIndex()));
 		settings.put(S_SAVE_AS_ANT, fSaveAsAntButton.getSelection());
 		settings.put(S_QUALIFIER, fQualifierButton.getSelection());
 		settings.put(S_QUALIFIER_NAME, fQualifierText.getText());
@@ -189,6 +208,12 @@ public class ExportOptionsTab extends AbstractExportTab {
 	}
 
 	protected void hookListeners() {
+		fIncludeSourceButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fIncludeSourceCombo.setEnabled(fIncludeSourceButton.getSelection());
+			}
+		});
+
 		fJarButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				((BaseExportWizardPage) fPage).adjustAdvancedTabsVisibility();
@@ -241,7 +266,11 @@ public class ExportOptionsTab extends AbstractExportTab {
 	}
 
 	protected boolean doExportSource() {
-		return fIncludeSource.getSelection();
+		return fIncludeSourceButton.getSelection();
+	}
+
+	protected boolean doExportSourceBundles() {
+		return PDEUIMessages.ExportWizard_generateAssociatedSourceBundles.equals(fIncludeSourceCombo.getText());
 	}
 
 	protected boolean doBinaryCycles() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 	private static final String S_SYNC_PRODUCT = "syncProduct"; //$NON-NLS-1$
 	private static final String S_EXPORT_SOURCE = "exportSource"; //$NON-NLS-1$
+	private static final String S_EXPORT_SOURCE_FORMAT = "exportSourceFormat"; //$NON-NLS-1$	
 	private static final String S_ALLOW_BINARY_CYCLES = "allowBinaryCycles"; //$NON-NLS-1$
 	private static final String S_MULTI_PLATFORM = "multiplatform"; //$NON-NLS-1$
 	private static final String S_EXPORT_METADATA = "p2metadata"; //$NON-NLS-1$
@@ -37,7 +38,8 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	private IStructuredSelection fSelection;
 	private ProductDestinationGroup fExportGroup;
 	private ProductConfigurationSection fConfigurationGroup;
-	private Button fExportSource;
+	private Button fExportSourceButton;
+	private Combo fExportSourceCombo;
 	private Button fMultiPlatform;
 	private Button fExportMetadata;
 	private Button fAllowBinaryCycles;
@@ -110,8 +112,17 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		fExportSource = new Button(group, SWT.CHECK);
-		fExportSource.setText(PDEUIMessages.ExportWizard_includeSource);
+		Composite composite = new Composite(group, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		fExportSourceButton = new Button(composite, SWT.CHECK);
+		fExportSourceButton.setText(PDEUIMessages.ExportWizard_includeSource);
+
+		fExportSourceCombo = new Combo(composite, SWT.READ_ONLY | SWT.BORDER);
+		fExportSourceCombo.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
 		fExportMetadata = new Button(group, SWT.CHECK);
 		fExportMetadata.setText(PDEUIMessages.ExportWizard_includesMetadata);
@@ -139,7 +150,12 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 		fExportGroup.initialize(settings, fConfigurationGroup.getProductFile());
 
-		fExportSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
+		fExportSourceButton.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
+		fExportSourceCombo.setItems(new String[] {PDEUIMessages.ExportWizard_generateAssociatedSourceBundles, PDEUIMessages.ExportWizard_includeSourceInBinaryBundles});
+		String sourceComboValue = settings.get(S_EXPORT_SOURCE_FORMAT) != null ? settings.get(S_EXPORT_SOURCE_FORMAT) : PDEUIMessages.ExportWizard_generateAssociatedSourceBundles;
+		fExportSourceCombo.setText(sourceComboValue);
+		fExportSourceCombo.setEnabled(fExportSourceButton.getSelection());
+
 		fExportMetadata.setSelection(settings.getBoolean(S_EXPORT_METADATA));
 
 		String selected = settings.get(S_ALLOW_BINARY_CYCLES);
@@ -147,6 +163,16 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 		if (fMultiPlatform != null)
 			fMultiPlatform.setSelection(settings.getBoolean(S_MULTI_PLATFORM));
+
+		hookListeners();
+	}
+
+	protected void hookListeners() {
+		fExportSourceButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fExportSourceCombo.setEnabled(fExportSourceButton.getSelection());
+			}
+		});
 	}
 
 	protected void updateProductFields() {
@@ -174,6 +200,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		settings.put(S_SYNC_PRODUCT, fSyncButton.getSelection());
 		fExportGroup.saveSettings(settings);
 		settings.put(S_EXPORT_SOURCE, doExportSource());
+		settings.put(S_EXPORT_SOURCE_FORMAT, fExportSourceCombo.getItem(fExportSourceCombo.getSelectionIndex()));
 		settings.put(S_EXPORT_METADATA, doExportMetadata());
 		settings.put(S_ALLOW_BINARY_CYCLES, doBinaryCycles());
 
@@ -190,7 +217,11 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	}
 
 	protected boolean doExportSource() {
-		return fExportSource.getSelection();
+		return fExportSourceButton.getSelection();
+	}
+
+	protected boolean doExportSourceBundles() {
+		return PDEUIMessages.ExportWizard_generateAssociatedSourceBundles.equals(fExportSourceCombo.getText());
 	}
 
 	protected boolean doBinaryCycles() {

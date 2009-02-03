@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,10 +22,12 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -178,6 +180,36 @@ public class ProductExportOperation extends FeatureExportOperation {
 			}
 		}
 
+		if (fInfo.exportSource && fInfo.exportSourceBundle) {
+			properties.put("individualSourceBundles", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			Dictionary environment = new Hashtable(4);
+			environment.put("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
+			environment.put("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
+			environment.put("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
+			environment.put("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
+			List workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
+			for (int i = 0; i < fInfo.items.length; i++) {
+				if (fInfo.items[i] instanceof IFeatureModel) {
+					IFeature feature = ((IFeatureModel) fInfo.items[i]).getFeature();
+					properties.put("generate.feature@" + feature.getId() + ".source", feature.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					BundleDescription bundle = null;
+					if (fInfo.items[i] instanceof IPluginModelBase) {
+						bundle = ((IPluginModelBase) fInfo.items[i]).getBundleDescription();
+					}
+					if (bundle == null) {
+						if (fInfo.items[i] instanceof BundleDescription)
+							bundle = (BundleDescription) fInfo.items[i];
+					}
+					if (bundle == null)
+						continue;
+
+					if (shouldAddPlugin(bundle, environment) && workspacePlugins.contains(PluginRegistry.findModel(bundle))) {
+						properties.put("generate.plugin@" + bundle.getSymbolicName() + ".source", bundle.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				}
+			}
+		}
 		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -333,17 +365,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 			return fullPath == null ? null : fullPath.toOSString();
 		}
 		return null;
-	}
-
-	private void save(File file, Properties properties, String header) {
-		try {
-			FileOutputStream stream = new FileOutputStream(file);
-			properties.store(stream, header);
-			stream.flush();
-			stream.close();
-		} catch (IOException e) {
-			PDECore.logException(e);
-		}
 	}
 
 	protected void setupGenerator(BuildScriptGenerator generator, String featureID, String versionId, String os, String ws, String arch, String featureLocation) throws CoreException {

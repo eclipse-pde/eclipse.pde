@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -80,20 +81,39 @@ public class FeatureExportOperation extends Job {
 
 			monitor.beginTask("Exporting...", (configurations.length * fInfo.items.length * 23) + (configurations.length * 5) + 10); //$NON-NLS-1$
 			IStatus status = testBuildWorkspaceBeforeExport(new SubProgressMonitor(monitor, 10));
-			for (int i = 0; i < configurations.length; i++) {
-				for (int j = 0; j < fInfo.items.length; j++) {
-					if (monitor.isCanceled())
-						return Status.CANCEL_STATUS;
-					try {
-						doExport((IFeatureModel) fInfo.items[j], configurations[i], new SubProgressMonitor(monitor, 20));
-					} catch (CoreException e) {
-						return e.getStatus();
-					} finally {
-						cleanup(configurations[i], new SubProgressMonitor(monitor, 3));
-					}
+
+			if (fInfo.exportSource && fInfo.exportSourceBundle) {
+				// create a feature to contain all plug-ins and features depth first
+				String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
+				String fFeatureLocation = fBuildTempLocation + File.separator + featureID;
+				createFeature(featureID, fFeatureLocation, fInfo.items, null, null, null);
+				ExternalFeatureModel model = new ExternalFeatureModel();
+				model.setInstallLocation(fFeatureLocation);
+				InputStream stream = null;
+
+				stream = new BufferedInputStream(new FileInputStream(new File(fFeatureLocation + File.separator + "feature.xml"))); //$NON-NLS-1$
+				model.load(stream, true);
+				if (stream != null) {
+					stream.close();
 				}
-				if (fInfo.exportMetadata && !fInfo.toDirectory) {
-					appendMetadataToArchive(configurations[i], new SubProgressMonitor(monitor, 5));
+				doExport(model, null, new SubProgressMonitor(monitor, 20));
+
+			} else {
+				for (int i = 0; i < configurations.length; i++) {
+					for (int j = 0; j < fInfo.items.length; j++) {
+						if (monitor.isCanceled())
+							return Status.CANCEL_STATUS;
+						try {
+							doExport((IFeatureModel) fInfo.items[j], configurations[i], new SubProgressMonitor(monitor, 20));
+						} catch (CoreException e) {
+							return e.getStatus();
+						} finally {
+							cleanup(configurations[i], new SubProgressMonitor(monitor, 3));
+						}
+					}
+					if (fInfo.exportMetadata && !fInfo.toDirectory) {
+						appendMetadataToArchive(configurations[i], new SubProgressMonitor(monitor, 5));
+					}
 				}
 			}
 			return status;
@@ -101,8 +121,21 @@ public class FeatureExportOperation extends Job {
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getCause() != null ? e.getCause() : e);
 		} catch (CoreException e) {
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getCause() != null ? e.getCause() : e);
+		} catch (IOException e) {
+			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e);
 		} finally {
 			monitor.done();
+		}
+	}
+
+	protected void save(File file, Properties properties, String header) {
+		try {
+			FileOutputStream stream = new FileOutputStream(file);
+			properties.store(stream, header);
+			stream.flush();
+			stream.close();
+		} catch (IOException e) {
+			PDECore.logException(e);
 		}
 	}
 
@@ -298,7 +331,7 @@ public class FeatureExportOperation extends Job {
 	}
 
 	private String[] getBuildExecutionTargets() {
-		if (fInfo.exportSource)
+		if (fInfo.exportSource && !fInfo.exportSourceBundle)
 			return new String[] {"build.jars", "build.sources"}; //$NON-NLS-1$ //$NON-NLS-2$ 
 		return new String[] {"build.jars"}; //$NON-NLS-1$ 
 	}
@@ -524,7 +557,7 @@ public class FeatureExportOperation extends Job {
 		}
 
 		AbstractScriptGenerator.setForceUpdateJar(false);
-		AbstractScriptGenerator.setEmbeddedSource(fInfo.exportSource);
+		AbstractScriptGenerator.setEmbeddedSource(fInfo.exportSource && !fInfo.exportSourceBundle);
 
 		// allow for binary cycles
 		Properties properties = new Properties();
@@ -667,6 +700,84 @@ public class FeatureExportOperation extends Job {
 		return "/logs." + config[0] + '.' + config[1] + '.' + config[2] + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	/**
+	 * This method recurses on the feature list and creates feature.xml and build.properties.
+	 * 
+	 * @param featureID
+	 * @param featureLocation
+	 * @param featuresExported
+	 * @param doc
+	 * @param root
+	 * @param prop
+	 * @throws IOException
+	 */
+	private void createFeature(String featureID, String featureLocation, Object[] featuresExported, Document doc, Element root, Properties prop) throws IOException {
+		try {
+			if (doc == null) {
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				doc = factory.newDocumentBuilder().newDocument();
+				root = doc.createElement("feature"); //$NON-NLS-1$
+				root.setAttribute("id", featureID); //$NON-NLS-1$
+				root.setAttribute("version", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
+				doc.appendChild(root);
+
+				prop = new Properties();
+				prop.put("pde", "marker"); //$NON-NLS-1$ //$NON-NLS-2$
+				prop.put("individualSourceBundles", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			boolean returnAfterLoop = false;
+			for (int i = 0; i < featuresExported.length; i++) {
+				if (featuresExported[i] instanceof IFeatureModel) {
+					IFeature feature = ((IFeatureModel) featuresExported[i]).getFeature();
+
+					if (feature.getIncludedFeatures().length > 0) {
+						createFeature(featureID, featureLocation, feature.getIncludedFeatures(), doc, root, prop);
+					}
+
+					Element includes = doc.createElement("includes"); //$NON-NLS-1$
+					includes.setAttribute("id", feature.getId() + ".source"); //$NON-NLS-1$ //$NON-NLS-2$
+					includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
+					root.appendChild(includes);
+
+					prop.put("generate.feature@" + feature.getId() + ".source", feature.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+
+					includes = doc.createElement("includes"); //$NON-NLS-1$
+					includes.setAttribute("id", feature.getId()); //$NON-NLS-1$
+					includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
+					root.appendChild(includes);
+				} else if (featuresExported[i] instanceof IFeatureChild) {
+					returnAfterLoop = true;
+					IFeature feature = ((FeatureChild) featuresExported[i]).getReferencedFeature();
+					if (feature != null) {
+						if (feature.getIncludedFeatures().length > 0) {
+							createFeature(featureID, featureLocation, feature.getIncludedFeatures(), doc, root, prop);
+						}
+
+						Element includes = doc.createElement("includes"); //$NON-NLS-1$
+						includes.setAttribute("id", feature.getId() + ".source"); //$NON-NLS-1$ //$NON-NLS-2$
+						includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
+						root.appendChild(includes);
+
+						prop.put("generate.feature@" + feature.getId() + ".source", feature.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				}
+			}
+			if (returnAfterLoop)
+				return;
+
+			File file = new File(featureLocation);
+			if (!file.exists() || !file.isDirectory())
+				file.mkdirs();
+
+			save(new File(file, "build.properties"), prop, "Marker File"); //$NON-NLS-1$ //$NON-NLS-2$
+			XMLPrintHandler.writeFile(doc, new File(file, "feature.xml")); //$NON-NLS-1$
+		} catch (DOMException e1) {
+		} catch (FactoryConfigurationError e1) {
+		} catch (ParserConfigurationException e1) {
+		}
+	}
+
 	protected void createFeature(String featureID, String featureLocation, String[] config, boolean includeLauncher) throws IOException {
 		File file = new File(featureLocation);
 		if (!file.exists() || !file.isDirectory())
@@ -695,6 +806,7 @@ public class FeatureExportOperation extends Job {
 			environment.put("osgi.ws", config[1]); //$NON-NLS-1$
 			environment.put("osgi.arch", config[2]); //$NON-NLS-1$
 			environment.put("osgi.nl", config[3]); //$NON-NLS-1$
+			List workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
 
 			for (int i = 0; i < fInfo.items.length; i++) {
 				if (fInfo.items[i] instanceof IFeatureModel) {
@@ -703,6 +815,13 @@ public class FeatureExportOperation extends Job {
 					includes.setAttribute("id", feature.getId()); //$NON-NLS-1$
 					includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
 					root.appendChild(includes);
+
+					if (fInfo.exportSource && fInfo.exportSourceBundle) {
+						includes = doc.createElement("includes"); //$NON-NLS-1$
+						includes.setAttribute("id", feature.getId() + " .source"); //$NON-NLS-1$ //$NON-NLS-2$
+						includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
+						root.appendChild(includes);
+					}
 				} else {
 					BundleDescription bundle = null;
 					if (fInfo.items[i] instanceof IPluginModelBase) {
@@ -720,6 +839,27 @@ public class FeatureExportOperation extends Job {
 						plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
 						setAdditionalAttributes(plugin, bundle);
 						root.appendChild(plugin);
+
+						if (fInfo.exportSource && fInfo.exportSourceBundle) {
+							if (workspacePlugins.contains(PluginRegistry.findModel(bundle))) { // Is it a workspace plugin?
+								plugin = doc.createElement("plugin"); //$NON-NLS-1$
+								plugin.setAttribute("id", bundle.getSymbolicName() + ".source"); //$NON-NLS-1$ //$NON-NLS-2$
+								plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
+								setAdditionalAttributes(plugin, bundle);
+								root.appendChild(plugin);
+							} else // include the .source plugin, if available
+							{
+								IPluginModelBase model = PluginRegistry.findModel(bundle.getSymbolicName() + ".source"); //$NON-NLS-1$
+								if (model != null) {
+									bundle = model.getBundleDescription();
+									plugin = doc.createElement("plugin"); //$NON-NLS-1$
+									plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
+									plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
+									setAdditionalAttributes(plugin, bundle);
+									root.appendChild(plugin);
+								}
+							}
+						}
 					}
 				}
 			}
