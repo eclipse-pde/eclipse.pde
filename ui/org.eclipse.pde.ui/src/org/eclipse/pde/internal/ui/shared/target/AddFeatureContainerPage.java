@@ -48,6 +48,8 @@ public class AddFeatureContainerPage extends AddDirectoryContainerPage {
 	 */
 	protected void createTableArea(Composite parent) {
 		fTable = CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
+		// Connect the label provider
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fTable.setContentProvider(new ArrayContentProvider());
 		fTable.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -66,6 +68,15 @@ public class AddFeatureContainerPage extends AddDirectoryContainerPage {
 		updateTable();
 
 		fIncludeVersionButton = SWTFactory.createCheckButton(parent, Messages.AddFeatureContainerPage_3, null, false, 1);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
+	 */
+	public void dispose() {
+		// Disconnect the label provider so it can be disposed
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		super.dispose();
 	}
 
 	/* (non-Javadoc)
