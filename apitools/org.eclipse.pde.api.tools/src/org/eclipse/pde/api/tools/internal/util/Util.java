@@ -99,8 +99,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
-import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
-import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
@@ -2519,23 +2517,6 @@ public final class Util {
 				}
 		}
 		return EMPTY_STRING;
-	}
-	
-	public static boolean isAPI(
-			int eeValue,
-			IElementDescriptor elementDescriptor,
-			IApiDescription systemApiDescription) {
-		if (systemApiDescription == null) return true;
-		IApiAnnotations annotations = systemApiDescription.resolveAnnotations(elementDescriptor);
-		if (annotations == null) {
-			return false;
-		}
-		int addedProfile = annotations.getAddedProfile();
-		int removedProfile = annotations.getRemovedProfile();
-		if (removedProfile != 0) {
-			return (eeValue >= addedProfile) && (eeValue < removedProfile); 
-		}
-		return eeValue >= addedProfile;
 	}
 	
 	public static String getApiElementType(int type) {

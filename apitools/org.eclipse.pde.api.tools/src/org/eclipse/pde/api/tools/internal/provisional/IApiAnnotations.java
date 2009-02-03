@@ -33,17 +33,4 @@ public interface IApiAnnotations {
 	 */
 	public int getRestrictions();
 	
-	/**
-	 * Returns the value corresponding to the profile in which this element was added
-	 * 
-	 * @return profile constant defined by {@link ProfileModifiers}
-	 */
-	public int getAddedProfile();
-
-	/**
-	 * Returns the value corresponding to the profiles in which this element was removed
-	 * 
-	 * @return profile constant defined by {@link ProfileModifiers}
-	 */
-	public int getRemovedProfile();
 }
