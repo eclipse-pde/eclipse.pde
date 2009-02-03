@@ -21,6 +21,7 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.core.util.VMUtil;
@@ -28,7 +29,7 @@ import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
+ 
 /**
  * Provides static methods that will serialize and deserialize xml representing a target definition
  * 
@@ -65,7 +66,6 @@ public class TargetDefinitionPersistenceHelper {
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	private static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
-	private static final String VERSION_3_5 = "3.5"; //$NON-NLS-1$
 	private static final String CONTENT = "content"; //$NON-NLS-1$
 	private static final String ATTR_USE_ALL = "useAllPlugins"; //$NON-NLS-1$
 	private static final String PLUGINS = "plugins"; //$NON-NLS-1$
@@ -186,7 +186,7 @@ public class TargetDefinitionPersistenceHelper {
 		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
 		Document doc = docBuilder.newDocument();
 
-		ProcessingInstruction instruction = doc.createProcessingInstruction(PDE_INSTRUCTION, ATTR_VERSION + "=\"" + VERSION_3_5 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		ProcessingInstruction instruction = doc.createProcessingInstruction(PDE_INSTRUCTION, ATTR_VERSION + "=\"" + ICoreConstants.TARGET35 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		doc.appendChild(instruction);
 
 		Element rootElement = doc.createElement(ROOT);
