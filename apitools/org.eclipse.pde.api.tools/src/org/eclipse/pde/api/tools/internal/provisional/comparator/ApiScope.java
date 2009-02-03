@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.api.tools.internal.model.Messages;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -33,6 +29,19 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class ApiScope implements IApiScope {
 	private static final IApiElement[] NO_ELEMENTS = new IApiElement[0];
 
+	/**
+	 * Constant used for controlling tracing in an API scope
+	 */
+	private static boolean DEBUG = Util.DEBUG;
+	
+	/**
+	 * Sets the debug status for an API type
+	 * @param debug
+	 */
+	public static void setDebug(boolean debug) {
+		DEBUG = debug | Util.DEBUG;
+	}
+	
 	/**
 	 * Contains all API elements of this scope
 	 */
@@ -71,18 +80,19 @@ public class ApiScope implements IApiScope {
 					visitor.endVisit(component);
 					break;
 				}
-				default:
-					throw new CoreException(
-							new Status(
-									IStatus.ERROR,
-									ApiPlugin.PLUGIN_ID,
-									Messages.bind(
-											Messages.ApiScope_0,
-											Util.getApiElementType(type))));
+				default: {
+					if(DEBUG) {
+						System.out.println("Unable to visit this element type: "+Util.getApiElementType(type)); //$NON-NLS-1$
+					}
+				}
 			}
 		}
 	}
 
+	/**
+	 * Adds a new {@link IApiElement} to the current listing
+	 * @param apiElement
+	 */
 	public void add(IApiElement apiElement) {
 		if (this.apiElements == null) {
 			this.apiElements = new HashSet();
