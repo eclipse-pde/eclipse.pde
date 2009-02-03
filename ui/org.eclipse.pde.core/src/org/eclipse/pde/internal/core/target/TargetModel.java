@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,23 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.xml.parsers.SAXParser;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.core.AbstractModel;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.XMLDefaultHandler;
-import org.eclipse.pde.internal.core.itarget.ITarget;
-import org.eclipse.pde.internal.core.itarget.ITargetModel;
-import org.eclipse.pde.internal.core.itarget.ITargetModelFactory;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.itarget.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -76,6 +71,7 @@ public class TargetModel extends AbstractModel implements ITargetModel {
 				if (stream != null)
 					stream.close();
 			} catch (IOException e) {
+				PDECore.logException(e);
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -14,10 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.MissingResourceException;
-import java.util.PropertyResourceBundle;
-import java.util.StringTokenizer;
-
+import java.util.*;
 import org.eclipse.core.runtime.Platform;
 
 public class NLResourceHelper {
@@ -26,13 +24,22 @@ public class NLResourceHelper {
 	private PropertyResourceBundle bundle = null;
 
 	public NLResourceHelper(String name, URL[] locations) {
+		InputStream stream = null;
 		try {
-			InputStream stream = getResourceStream(name, locations);
+			stream = getResourceStream(name, locations);
 			if (stream != null) {
 				bundle = new PropertyResourceBundle(stream);
 				stream.close();
 			}
 		} catch (IOException e) {
+			PDECore.logException(e);
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+				PDECore.logException(e);
+			}
 		}
 	}
 

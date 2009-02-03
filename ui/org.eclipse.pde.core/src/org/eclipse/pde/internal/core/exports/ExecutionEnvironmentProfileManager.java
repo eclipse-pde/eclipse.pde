@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
@@ -88,13 +89,20 @@ public class ExecutionEnvironmentProfileManager {
 					Properties properties = env.getProfileProperties();
 					if (properties != null) {
 						File profile = new File(dir, path);
+						OutputStream stream = null;
 						try {
 							fgCustomCount++;
-							OutputStream stream = new BufferedOutputStream(new FileOutputStream(profile));
+							stream = new BufferedOutputStream(new FileOutputStream(profile));
 							properties.store(stream, null);
-							stream.close();
 						} catch (IOException e) {
 							PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.ExecutionEnvironmentProfileManager_0, env.getId()), e));
+						} finally {
+							try {
+								if (stream != null)
+									stream.close();
+							} catch (IOException e) {
+								PDECore.logException(e);
+							}
 						}
 					}
 				}

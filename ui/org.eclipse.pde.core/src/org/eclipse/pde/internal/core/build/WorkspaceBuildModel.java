@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
+import java.io.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -47,6 +43,7 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 			swriter.close();
 			writer.close();
 		} catch (IOException e) {
+			PDECore.logException(e);
 		}
 		return swriter.toString();
 	}
@@ -65,12 +62,19 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 
 	public void load() {
 		if (fUnderlyingResource.exists()) {
+			InputStream stream = null;
 			try {
-				InputStream stream = fUnderlyingResource.getContents(true);
+				stream = fUnderlyingResource.getContents(true);
 				load(stream, false);
-				stream.close();
 			} catch (Exception e) {
 				PDECore.logException(e);
+			} finally {
+				try {
+					if (stream != null)
+						stream.close();
+				} catch (IOException e) {
+					PDECore.logException(e);
+				}
 			}
 		} else {
 			fBuild = new Build();
@@ -90,9 +94,10 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 	public void save() {
 		if (fUnderlyingResource == null)
 			return;
+		ByteArrayInputStream stream = null;
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("8859_1")); //$NON-NLS-1$
+			stream = new ByteArrayInputStream(contents.getBytes("8859_1")); //$NON-NLS-1$
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
@@ -102,6 +107,14 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		} catch (IOException e) {
+			PDECore.logException(e);
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+				PDECore.logException(e);
+			}
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Code 9 Corporation - ongoing enhancements
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -49,11 +49,19 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 					else {
 						// if we have an empty file, then mark as loaded so users changes will be saved
 						setLoaded(true);
-						stream.close();
 					}
 				} catch (IOException e) {
+					PDECore.logException(e);
+				} finally {
+					try {
+						if (stream != null)
+							stream.close();
+					} catch (IOException e) {
+						PDECore.logException(e);
+					}
 				}
 			} catch (CoreException e) {
+				PDECore.logException(e);
 			}
 		}
 	}
@@ -84,9 +92,10 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	 * @see org.eclipse.pde.core.IEditableModel#save()
 	 */
 	public void save() {
+		ByteArrayInputStream stream = null;
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
+			stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (fFile.exists()) {
 				fFile.setContents(stream, false, false, null);
 			} else {
@@ -96,6 +105,14 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		} catch (IOException e) {
+			PDECore.logException(e);
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+				PDECore.logException(e);
+			}
 		}
 	}
 
@@ -108,6 +125,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		try {
 			swriter.close();
 		} catch (IOException e) {
+			PDECore.logException(e);
 		}
 		return swriter.toString();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
@@ -61,6 +62,7 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 		try {
 			swriter.close();
 		} catch (IOException e) {
+			PDECore.logException(e);
 		}
 		return swriter.toString();
 	}
@@ -103,18 +105,26 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 	public void save() {
 		if (fUnderlyingResource == null)
 			return;
+		ByteArrayInputStream stream = null;
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
+			stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
 				fUnderlyingResource.create(stream, false, null);
 			}
-			stream.close();
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		} catch (IOException e) {
+			PDECore.logException(e);
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+				PDECore.logException(e);
+			}
 		}
 	}
 

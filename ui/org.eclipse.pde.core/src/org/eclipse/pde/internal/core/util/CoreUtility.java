@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,35 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import javax.xml.parsers.FactoryConfigurationError;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 
 public class CoreUtility {
@@ -48,37 +32,22 @@ public class CoreUtility {
 	 * @exception IOException
 	 */
 	public static void readFile(InputStream in, File file) throws IOException {
-		FileOutputStream fos = null;
+		FileOutputStream fos = new FileOutputStream(file);
 		try {
-			fos = new FileOutputStream(file);
-
 			byte buffer[] = new byte[1024];
 			int count;
-			while ((count = in.read(buffer, 0, buffer.length)) > 0) {
-				fos.write(buffer, 0, count);
+			try {
+				while ((count = in.read(buffer, 0, buffer.length)) > 0) {
+					fos.write(buffer, 0, count);
+				}
+			} finally {
+				fos.close();
+				fos = null;
+				in.close();
+				in = null;
 			}
-
-			fos.close();
-			fos = null;
-
-			in.close();
-			in = null;
 		} catch (IOException e) {
-			// close open streams
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException ee) {
-				}
-			}
-
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException ee) {
-				}
-			}
-
+			PDECore.logException(e);
 			throw e;
 		}
 	}
@@ -151,6 +120,7 @@ public class CoreUtility {
 				if (!((IProject) container).hasNature(JavaCore.NATURE_ID))
 					return true;
 			} catch (CoreException e) {
+				PDECore.logException(e);
 			}
 		}
 
@@ -177,12 +147,15 @@ public class CoreUtility {
 			if (resourceEntry != null)
 				return directory ? resourceEntry.isDirectory() : true;
 		} catch (IOException e) {
+			PDECore.logException(e);
 		} catch (FactoryConfigurationError e) {
+			PDECore.logException(e);
 		} finally {
 			try {
 				if (jarFile != null)
 					jarFile.close();
 			} catch (IOException e2) {
+				PDECore.logException(e2);
 			}
 		}
 		return false;
@@ -206,6 +179,7 @@ public class CoreUtility {
 				len = is.read(buf);
 			}
 		} catch (IOException e) {
+			PDECore.logException(e);
 		} finally {
 			try {
 				if (is != null)
@@ -213,6 +187,7 @@ public class CoreUtility {
 				if (os != null)
 					os.close();
 			} catch (IOException e) {
+				PDECore.logException(e);
 			}
 		}
 	}
@@ -235,11 +210,15 @@ public class CoreUtility {
 			}
 			return getTextDocument(stream);
 		} catch (IOException e) {
+			PDECore.logException(e);
 		} finally {
 			try {
 				if (jarFile != null)
 					jarFile.close();
+				if (stream != null)
+					stream.close();
 			} catch (IOException e) {
+				PDECore.logException(e);
 			}
 		}
 		return null;
@@ -268,6 +247,7 @@ public class CoreUtility {
 				try {
 					output.close();
 				} catch (IOException ee) {
+					PDECore.logException(ee);
 				}
 			}
 
@@ -275,6 +255,7 @@ public class CoreUtility {
 				try {
 					in.close();
 				} catch (IOException ee) {
+					PDECore.logException(ee);
 				}
 			}
 		}

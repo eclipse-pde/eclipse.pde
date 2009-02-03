@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gmail.com> - Bug 214457
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -40,12 +41,21 @@ public class TargetPlatformHelper {
 		if (!iniFile.exists())
 			return null;
 		Properties pini = new Properties();
+		FileInputStream fis = null;
 		try {
-			FileInputStream fis = new FileInputStream(iniFile);
+			fis = new FileInputStream(iniFile);
 			pini.load(fis);
 			fis.close();
 			return pini;
 		} catch (IOException e) {
+			PDECore.logException(e);
+		} finally {
+			try {
+				if (fis != null)
+					fis.close();
+			} catch (IOException e) {
+				PDECore.logException(e);
+			}
 		}
 		return null;
 	}

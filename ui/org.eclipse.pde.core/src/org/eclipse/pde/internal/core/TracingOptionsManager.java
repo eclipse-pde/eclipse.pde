@@ -10,21 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -134,13 +123,20 @@ public class TracingOptionsManager {
 	}
 
 	private void save(String fileName, Properties properties) {
+		FileOutputStream stream = null;
 		try {
-			FileOutputStream stream = new FileOutputStream(fileName);
+			stream = new FileOutputStream(fileName);
 			properties.store(stream, "Master Tracing Options"); //$NON-NLS-1$
 			stream.flush();
-			stream.close();
 		} catch (IOException e) {
 			PDECore.logException(e);
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+				PDECore.logException(e);
+			}
 		}
 	}
 
@@ -186,7 +182,9 @@ public class TracingOptionsManager {
 				return modelOptions;
 			}
 		} catch (FileNotFoundException e) {
+			PDECore.logException(e);
 		} catch (IOException e) {
+			PDECore.logException(e);
 		} finally {
 			try {
 				if (stream != null)
@@ -194,9 +192,9 @@ public class TracingOptionsManager {
 				if (jarFile != null)
 					jarFile.close();
 			} catch (IOException e) {
+				PDECore.logException(e);
 			}
 		}
 		return null;
 	}
-
 }

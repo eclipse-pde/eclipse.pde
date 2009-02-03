@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
-
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.internal.core.PDECore;
 
 public class ExternalBuildModel extends BuildModel {
 
@@ -35,6 +34,7 @@ public class ExternalBuildModel extends BuildModel {
 	}
 
 	public void load() {
+		InputStream stream = null;
 		try {
 			URL url = null;
 			File file = new File(getInstallLocation());
@@ -43,13 +43,19 @@ public class ExternalBuildModel extends BuildModel {
 			} else {
 				url = new URL("file:" + file.getAbsolutePath() + IPath.SEPARATOR + "build.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			InputStream stream = url.openStream();
+			stream = url.openStream();
 			load(stream, false);
-			stream.close();
 		} catch (IOException e) {
 			fBuild = new Build();
 			fBuild.setModel(this);
 			setLoaded(true);
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+				PDECore.logException(e);
+			}
 		}
 	}
 
