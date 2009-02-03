@@ -18,7 +18,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.target.provisional.*;
+import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 
 /**
  * A container of the bundles contained in a feature.
@@ -146,9 +147,20 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveAllBundles(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	protected BundleInfo[] resolveAllBundles(IProgressMonitor monitor) throws CoreException {
+		return resolveBundles0(monitor, false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveAllSourceBundles(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected BundleInfo[] resolveAllSourceBundles(IProgressMonitor monitor) throws CoreException {
+		return resolveBundles0(monitor, true);
+	}
+
+	private BundleInfo[] resolveBundles0(IProgressMonitor monitor, boolean source) throws CoreException {
 		IFeatureModel model = null;
 		try {
 			File location = resolveFeatureLocation();
@@ -170,43 +182,25 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_5, fId)));
 			}
 			IBundleContainer container = service.newDirectoryContainer(dir.getAbsolutePath());
-			container.resolve(definition, monitor);
-			IResolvedBundle[] bundles = container.getBundles();
+			BundleInfo[] bundles = null;
+			if (source) {
+				bundles = container.resolveSourceBundles(null);
+			} else {
+				bundles = container.resolveBundles(null);
+			}
 			IFeature feature = model.getFeature();
 			IFeaturePlugin[] plugins = feature.getPlugins();
-			List matchInfos = new ArrayList(plugins.length);
+			BundleInfo[] matchInfos = new BundleInfo[plugins.length];
 			for (int i = 0; i < plugins.length; i++) {
 				IFeaturePlugin plugin = plugins[i];
-				// only include if plug-in matches environment
-				if (isMatch(definition.getArch(), plugin.getArch(), Platform.getOSArch()) && isMatch(definition.getNL(), plugin.getNL(), Platform.getNL()) && isMatch(definition.getOS(), plugin.getOS(), Platform.getOS()) && isMatch(definition.getWS(), plugin.getWS(), Platform.getWS())) {
-					matchInfos.add(new BundleInfo(plugin.getId(), plugin.getVersion(), null, BundleInfo.NO_LEVEL, false));
-				}
+				matchInfos[i] = new BundleInfo(plugin.getId(), plugin.getVersion(), null, BundleInfo.NO_LEVEL, false);
 			}
-			return AbstractBundleContainer.getMatchingBundles(bundles, (BundleInfo[]) matchInfos.toArray(new BundleInfo[matchInfos.size()]), null);
+			return AbstractBundleContainer.getMatchingBundles(bundles, matchInfos);
 		} finally {
 			if (model != null) {
 				model.dispose();
 			}
 		}
-	}
-
-	/**
-	 * Returns whether the given target environment setting matches that of a fragments.
-	 * 
-	 * @param targetValue value in target definition
-	 * @param fragmentValue value in fragment
-	 * @param runningValue value of current running platform
-	 * @return whether the fragment should be considered
-	 */
-	private boolean isMatch(String targetValue, String fragmentValue, String runningValue) {
-		if (fragmentValue == null) {
-			// unspecified, so it is a match
-			return true;
-		}
-		if (targetValue == null) {
-			return runningValue.equals(fragmentValue);
-		}
-		return targetValue.equals(fragmentValue);
 	}
 
 	/* (non-Javadoc)

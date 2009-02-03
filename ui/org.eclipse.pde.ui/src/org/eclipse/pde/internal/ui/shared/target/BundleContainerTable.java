@@ -13,12 +13,14 @@ package org.eclipse.pde.internal.ui.shared.target;
 import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.target.impl.*;
-import org.eclipse.pde.internal.core.target.provisional.*;
+import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
@@ -242,10 +244,17 @@ public class BundleContainerTable {
 			if (container != null) {
 				// We need to get a list of all possible bundles, remove restrictions while resolving
 				BundleInfo[] oldRestrictions = container.getIncludedBundles();
-				IResolvedBundle[] resolvedBundles = null;
+				BundleInfo[] resolvedBundles = null;
 				try {
 					container.setIncludedBundles(null);
-					resolvedBundles = container.getBundles();
+					BundleInfo[] bundles = container.resolveBundles(new NullProgressMonitor());
+					BundleInfo[] source = container.resolveSourceBundles(new NullProgressMonitor());
+					resolvedBundles = new BundleInfo[bundles.length + source.length];
+					System.arraycopy(bundles, 0, resolvedBundles, 0, bundles.length);
+					System.arraycopy(source, 0, resolvedBundles, bundles.length, source.length);
+				} catch (CoreException e) {
+					resolvedBundles = new BundleInfo[0];
+					PDEPlugin.log(e);
 				} finally {
 					container.setIncludedBundles(oldRestrictions);
 				}
@@ -262,10 +271,7 @@ public class BundleContainerTable {
 							}
 						} else {
 							BundleInfo[] selectedRestrictions = new BundleInfo[result.length];
-							for (int i = 0; i < result.length; i++) {
-								IResolvedBundle rb = (IResolvedBundle) result[i];
-								selectedRestrictions[i] = rb.getBundleInfo();
-							}
+							System.arraycopy(result, 0, selectedRestrictions, 0, result.length);
 							BundleInfo[] newRestrictions = new BundleInfo[selectedRestrictions.length];
 							for (int i = 0; i < selectedRestrictions.length; i++) {
 								newRestrictions[i] = new BundleInfo(selectedRestrictions[i].getSymbolicName(), dialog.isUseVersion() ? selectedRestrictions[i].getVersion() : null, null, BundleInfo.NO_LEVEL, false);
@@ -333,8 +339,17 @@ public class BundleContainerTable {
 				IBundleContainer[] containers = ((ITargetDefinition) parentElement).getBundleContainers();
 				return containers != null ? containers : new Object[0];
 			} else if (parentElement instanceof IBundleContainer) {
-				IBundleContainer container = (IBundleContainer) parentElement;
-				return container.getBundles();
+				try {
+					IBundleContainer container = (IBundleContainer) parentElement;
+					BundleInfo[] bundles = container.resolveBundles(new NullProgressMonitor());
+					BundleInfo[] source = container.resolveSourceBundles(new NullProgressMonitor());
+					BundleInfo[] all = new BundleInfo[bundles.length + source.length];
+					System.arraycopy(bundles, 0, all, 0, bundles.length);
+					System.arraycopy(source, 0, all, bundles.length, source.length);
+					return all;
+				} catch (CoreException e) {
+					return new String[] {MessageFormat.format(Messages.BundleContainerTable_9, new String[] {e.getMessage()})};
+				}
 			}
 			return new Object[0];
 		}
