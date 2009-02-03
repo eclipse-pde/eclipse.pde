@@ -759,8 +759,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			updateMonitor(localMonitor);
 		} 
-		catch (CoreException e) {
-			ApiPlugin.log(e.getStatus());
+		catch (CoreException ce) {
+			if(DEBUG) {
+				ApiPlugin.log(ce);
+			}
 		}
 		finally {
 			if(monitor != null) {

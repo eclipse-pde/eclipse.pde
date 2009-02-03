@@ -52,6 +52,18 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
 	/**
+	 * Constant used for controlling tracing in the problem detectors
+	 */
+	protected static boolean DEBUG = Util.DEBUG;
+	
+	/**
+	 * Method used for initializing tracing in the problem detectors
+	 */
+	public static void setDebug(boolean debugValue) {
+		DEBUG = debugValue || Util.DEBUG;
+	}
+	
+	/**
 	 * List of potential {@link IReference} problems
 	 */
 	private List fPotentialProblems = new LinkedList();

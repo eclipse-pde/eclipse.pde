@@ -34,14 +34,13 @@ import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
+import org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector;
 import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.builder.ReferenceExtractor;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
-import org.eclipse.pde.api.tools.internal.model.ApiType;
 import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
-import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.osgi.framework.BundleContext;
@@ -148,7 +147,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	private static final String API_PROFILE_MANAGER_DEBUG = PLUGIN_ID + "/debug/profilemanager"; //$NON-NLS-1$
 	private static final String API_FILTER_STORE_DEBUG = PLUGIN_ID + "/debug/apifilterstore"; //$NON-NLS-1$
 	private static final String API_ANALYZER_DEBUG = PLUGIN_ID + "/debug/apianalyzer"; //$NON-NLS-1$
-	private static final String API_MODEL_DEBUG = PLUGIN_ID + "debug/apimodel"; //$NON-NLS-1$
+	private static final String PROBLEM_DETECTOR_DEBUG = PLUGIN_ID + "/debug/problemdetector"; //$NON-NLS-1$
 
 	public final static String TRUE = "true"; //$NON-NLS-1$
 
@@ -489,28 +488,34 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 				boolean debugValue = option.equalsIgnoreCase(TRUE);
 				ApiAnalysisBuilder.setDebug(debugValue);
 			}
+			
 			option = Platform.getDebugOption(DELTA_DEBUG);
 			if(option != null) {
 				boolean debugValue = option.equalsIgnoreCase(TRUE);
 				ClassFileComparator.setDebug(debugValue);
 				ApiComparator.setDebug(debugValue);
 			}
+
 			option = Platform.getDebugOption(CLASSFILE_VISITOR_DEBUG);
 			if(option != null) {
 				ReferenceExtractor.setDebug(option.equalsIgnoreCase(TRUE));
 			}
+
 			option = Platform.getDebugOption(DESCRIPTOR_FRAMEWORK_DEBUG);
 			if(option != null) {
 				ElementDescriptorImpl.setDebug(option.equalsIgnoreCase(TRUE));
 			}
+
 			option = Platform.getDebugOption(TAG_SCANNER_DEBUG);
 			if(option != null) {
 				TagScanner.setDebug(option.equalsIgnoreCase(TRUE));
 			}
+
 			option = Platform.getDebugOption(PLUGIN_WORKSPACE_COMPONENT_DEBUG);
 			if(option != null) {
 				PluginProjectApiComponent.setDebug(option.equalsIgnoreCase(TRUE));
 			}
+			
 			option = Platform.getDebugOption(API_PROFILE_MANAGER_DEBUG);
 			if(option != null) {
 				ApiBaselineManager.setDebug(option.equalsIgnoreCase(TRUE));
@@ -523,11 +528,9 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			if(option != null) {
 				ApiFilterStore.setDebug(option.equalsIgnoreCase(TRUE));
 			}
-			option = Platform.getDebugOption(API_MODEL_DEBUG);
+			option = Platform.getDebugOption(PROBLEM_DETECTOR_DEBUG);
 			if(option != null) {
-				boolean debug = option.equals(TRUE);
-				ApiType.setDebug(debug);
-				ApiScope.setDebug(debug);				
+				AbstractProblemDetector.setDebug(option.equals(TRUE));
 			}
 		}
 	}

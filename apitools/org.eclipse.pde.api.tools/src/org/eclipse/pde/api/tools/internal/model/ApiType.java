@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,10 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.builder.ReferenceExtractor;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -33,6 +36,8 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Base implementation of {@link IApiType}
@@ -50,19 +55,6 @@ public class ApiType extends ApiMember implements IApiType {
 	private static final IApiMethod[] EMPTY_METHODS = new IApiMethod[0];
 	private static final IApiField[] EMPTY_FIELDS = new IApiField[0];
 	private static final IApiType[] EMPTY_TYPES = new IApiType[0];
-
-	/**
-	 * Constant used for controlling tracing in an API type
-	 */
-	private static boolean DEBUG = Util.DEBUG;
-	
-	/**
-	 * Sets the debug status for an API type
-	 * @param debug
-	 */
-	public static void setDebug(boolean debug) {
-		DEBUG = debug | Util.DEBUG;
-	}
 	
 	/**
 	 * Maps field name to field element.
@@ -257,8 +249,9 @@ public class ApiType extends ApiMember implements IApiType {
 			IApiType[] interfaces = new IApiType[names.length];
 			for (int i = 0; i < interfaces.length; i++) {
 				interfaces[i] = resolveType(names[i]);
-				if (interfaces[i] == null && DEBUG) {
-					System.out.println("Unable to resolve superinterface '"+names[i]+"' for '"+getName()+"'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (interfaces[i] == null) {
+					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
+							MessageFormat.format(Messages.ApiType_0, new String[]{names[i], getName()})));
 				}
 			}
 			fSuperInterfaces = interfaces;
@@ -276,8 +269,9 @@ public class ApiType extends ApiMember implements IApiType {
 		}
 		if (fSuperclass == null) {
 			fSuperclass = resolveType(name);
-			if (fSuperclass == null && DEBUG) {
-				System.out.println("Unable to resolve superclass '"+name+"' for '"+getName()+"'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (fSuperclass == null) {
+				throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
+					MessageFormat.format(Messages.ApiType_1, new String[]{name, getName()})));
 			}
 		}
 		return fSuperclass;
@@ -293,10 +287,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	private IApiType resolveType(String qName) throws CoreException {
 		if (getApiComponent() == null) {
-			if(DEBUG) {
-				System.out.println("API component required for resolving types in '"+getName()+"'"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			return null;
+			requiresApiComponent();
 		}
 		String packageName = Signatures.getPackageName(qName);
 		IApiComponent[] components = getApiComponent().getBaseline().
@@ -306,6 +297,16 @@ public class ApiType extends ApiMember implements IApiType {
 			return result.getStructure();
 		}
 		return null;
+	}
+	
+	/**
+	 * Throws an exception due to the fact an API component was not provided when this type
+	 * was created and is now required to perform navigation or resolution.
+	 * 
+	 * @throws CoreException
+	 */
+	private void requiresApiComponent() throws CoreException {
+		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Messages.ApiType_2));
 	}
 
 	/* (non-Javadoc)
@@ -475,10 +476,7 @@ public class ApiType extends ApiMember implements IApiType {
 			return null;
 		}
 		if (getApiComponent() == null) {
-			if(DEBUG) {
-				System.out.println("API component required for resolving member types in '"+getName()+"'"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			return null;
+			requiresApiComponent();
 		}
 		if (fMemberTypes.containsKey(simpleName)) {
 			IApiTypeRoot file =  (IApiTypeRoot) fMemberTypes.get(simpleName);
@@ -489,8 +487,10 @@ public class ApiType extends ApiMember implements IApiType {
 				qName.append('$');
 				qName.append(simpleName);
 				file = getApiComponent().findTypeRoot(qName.toString());
-				if (file == null && DEBUG) {
-					System.out.println("Unable to resolve member type '"+simpleName+"' for '"+getName()+"'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (file == null) {
+					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
+							MessageFormat.format(Messages.ApiType_3,
+							new String[]{simpleName, getName()})));
 				}
 				fMemberTypes.put(simpleName, file);
 			}
