@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.ui.internal.wizards;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -40,6 +42,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.model.SystemLibraryApiComponent;
@@ -438,7 +441,20 @@ public class ApiBaselineWizardPage extends WizardPage {
 				locationcombo.setItems((String[]) locations.toArray(new String[locations.size()]));
 				locationcombo.select(0);
 			}
-		}		
+		}
+		else {
+			//try to set the default location to be the current install directory
+			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=258969
+			Location location = Platform.getInstallLocation();
+			if(location != null) {
+				URL url = location.getURL();
+				IPath path = new Path(url.getFile()).removeTrailingSeparator();
+				if(path.toFile().exists()) {
+					locationcombo.add(path.toOSString());
+					locationcombo.select(0);
+				}
+			}
+		}
 	}
 	
 	/**
