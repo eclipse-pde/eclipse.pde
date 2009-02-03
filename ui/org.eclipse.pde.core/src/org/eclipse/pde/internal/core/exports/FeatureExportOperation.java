@@ -475,13 +475,16 @@ public class FeatureExportOperation extends Job {
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FINAL_MODE_OVERRIDE, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_COMPRESS, IBuildPropertiesConstants.TRUE);
 			try {
+				String destination = ""; //$NON-NLS-1$
 				if (fInfo.toDirectory) {
-					map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fInfo.destinationDirectory).toURL().toString());
-					map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fInfo.destinationDirectory).toURL().toString());
+					destination = new File(fInfo.destinationDirectory).toURL().toString();
 				} else {
-					map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fBuildTempMetadataLocation).toURL().toString());
-					map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fBuildTempMetadataLocation).toURL().toString());
+					destination = new File(fBuildTempMetadataLocation).toURL().toString();
 				}
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, destination);
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, destination);
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO_NAME, PDECoreMessages.FeatureExportOperation_0);
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO_NAME, PDECoreMessages.FeatureExportOperation_0);
 			} catch (MalformedURLException e) {
 				PDECore.log(e);
 			}

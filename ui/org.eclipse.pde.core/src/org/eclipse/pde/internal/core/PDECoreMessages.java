@@ -54,6 +54,8 @@ public class PDECoreMessages extends NLS {
 	// Status text #####################################
 	public static String BinaryRepositoryProvider_veto;
 
+	public static String ProductExportOperation_0;
+
 	public static String PropertiesTextChangeListener_editNames_delete;
 
 	public static String PropertiesTextChangeListener_editNames_insert;
@@ -248,6 +250,8 @@ public class PDECoreMessages extends NLS {
 	public static String ExportWizard_badDirectory;
 
 	public static String FeatureExportJob_taskName;
+
+	public static String FeatureExportOperation_0;
 
 	public static String FeatureExportOperation_CompilationErrors;
 

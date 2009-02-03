@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
+import org.eclipse.pde.internal.core.PDECoreMessages;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -304,6 +306,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 			try {
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO_NAME, NLS.bind(PDECoreMessages.ProductExportOperation_0, fProduct.getId()));
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO_NAME, NLS.bind(PDECoreMessages.ProductExportOperation_0, fProduct.getId()));
 			} catch (MalformedURLException e) {
 				PDECore.log(e);
 			}
