@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,16 +105,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 */
 	private void xAddFieldNoImplement(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFieldNoImplement.java");
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_COMPATIBILITY,
-						IDelta.INTERFACE_ELEMENT_TYPE,
-						IDelta.ADDED,
-						IDelta.FIELD)
-		};
-		setExpectedProblemIds(ids);
-		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddField", "ADDED_FIELD"};
+		expectingNoProblems();
 		performCompatibilityTest(filePath, incremental);
 	}
 	

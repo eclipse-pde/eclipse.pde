@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -875,7 +875,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertTrue("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Should not be compatible", !DeltaProcessor.isCompatible(child));
+		assertTrue("Should be compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertTrue("Is visible", Util.isVisible(child));
