@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 262977
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
 import java.io.*;
 import java.util.ArrayList;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
@@ -39,21 +43,23 @@ public class SiteInputContext extends XMLInputContext {
 
 	protected IBaseModel createModel(IEditorInput input) {
 		IBaseModel model = null;
-		if (input instanceof IStorageEditorInput) {
-			InputStream is = null;
-			try {
-				if (input instanceof IFileEditorInput) {
-					IFile file = ((IFileEditorInput) input).getFile();
-					is = new BufferedInputStream(file.getContents());
-					model = createWorkspaceModel(file, is, true);
-				} else if (input instanceof IStorageEditorInput) {
-					is = new BufferedInputStream(((IStorageEditorInput) input).getStorage().getContents());
-					model = createStorageModel(is);
-				}
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-				return null;
+		InputStream is = null;
+		try {
+			if (input instanceof IFileEditorInput) {
+				IFile file = ((IFileEditorInput) input).getFile();
+				is = new BufferedInputStream(file.getContents());
+				model = createWorkspaceModel(file, is, true);
+			} else if (input instanceof IStorageEditorInput) {
+				is = new BufferedInputStream(((IStorageEditorInput) input).getStorage().getContents());
+				model = createStorageModel(is);
+			} else if (input instanceof IURIEditorInput) {
+				IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
+				is = store.openInputStream(EFS.CACHE, new NullProgressMonitor());
+				model = createStorageModel(is);
 			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+			return null;
 		}
 		return model;
 	}
