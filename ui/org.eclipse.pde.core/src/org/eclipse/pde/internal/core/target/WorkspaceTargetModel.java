@@ -118,7 +118,6 @@ public class WorkspaceTargetModel extends TargetModel implements IWorkspaceModel
 				writer.flush();
 			} finally {
 				swriter.close();
-				swriter = null;
 			}
 		} catch (IOException e) {
 			PDECore.logException(e);
