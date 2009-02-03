@@ -53,7 +53,8 @@ public class DefinitionPage extends FormPage {
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION));
 		toolkit.decorateFormHeading(form.getForm());
 		fillBody(managedForm, toolkit);
-		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm());
+		// TODO Finish help
+		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm(), "");
 		((TargetEditor) getEditor()).addForm(managedForm);
 		form.updateToolBar();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.TARGET_OVERVIEW_PAGE);

@@ -48,7 +48,8 @@ public class EnvironmentPage extends FormPage {
 		FormToolkit toolkit = managedForm.getToolkit();
 		fillBody(managedForm, toolkit);
 		toolkit.decorateFormHeading(form.getForm());
-		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm());
+		// TODO Fix help URL
+		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm(), "");
 		((TargetEditor) getEditor()).addForm(managedForm);
 		form.updateToolBar();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.ENVIRONMENT_PAGE);

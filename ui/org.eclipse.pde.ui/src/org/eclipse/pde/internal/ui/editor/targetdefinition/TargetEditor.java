@@ -14,12 +14,13 @@ import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;
@@ -140,7 +141,7 @@ public class TargetEditor extends FormEditor {
 		editorDirtyStateChanged();
 	}
 
-	public void contributeToToolbar(final ScrolledForm form) {
+	public void contributeToToolbar(final ScrolledForm form, String helpURL) {
 		ControlContribution setAsTarget = new ControlContribution("Set") { //$NON-NLS-1$
 			protected Control createControl(Composite parent) {
 				final ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE);
@@ -164,22 +165,20 @@ public class TargetEditor extends FormEditor {
 				return hyperlink;
 			}
 		};
-//		// TODO Finish help action
-//		final String href = ""; //$NON-NLS-1$
-//		Action help = new Action("help") { //$NON-NLS-1$
-//			public void run() {
-//				BusyIndicator.showWhile(form.getForm().getDisplay(), new Runnable() {
-//					public void run() {
-//						PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
-//					}
-//				});
-//			}
-//		};
-//		help.setToolTipText(PDEUIMessages.PDEFormPage_help);
-//		help.setImageDescriptor(PDEPluginImages.DESC_HELP);
-//
+		final String href = ""; //$NON-NLS-1$
+		Action help = new Action("help") { //$NON-NLS-1$
+			public void run() {
+				BusyIndicator.showWhile(form.getForm().getDisplay(), new Runnable() {
+					public void run() {
+						PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
+					}
+				});
+			}
+		};
+		help.setToolTipText(PDEUIMessages.PDEFormPage_help);
+		help.setImageDescriptor(PDEPluginImages.DESC_HELP);
 		form.getToolBarManager().add(setAsTarget);
-//		form.getToolBarManager().add(help);
+		form.getToolBarManager().add(help);
 		form.updateToolBar();
 	}
 
