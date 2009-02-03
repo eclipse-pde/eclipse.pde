@@ -290,6 +290,16 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generatePublishBinPartsTarget() throws CoreException {
+		Properties properties = getBuildProperties();
+		Map root = Utils.processRootProperties(properties, true);
+		Map common = (Map) root.get(Utils.ROOT_COMMON);
+		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
+			Config aConfig = (Config) iter.next();
+			String configKey = aConfig.toString("."); //$NON-NLS-1$
+			if (root.containsKey(configKey) || common.size() > 0)
+				director.getAssemblyData().addRootFileProvider(aConfig, feature);
+		}
+
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, null, null, null);
 
