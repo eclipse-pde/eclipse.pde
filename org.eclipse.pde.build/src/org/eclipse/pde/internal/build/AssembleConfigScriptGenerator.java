@@ -105,7 +105,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			//ignore
 		}
 		generatePrologue();
-		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
+
+		generateMainBegin();
 		generateInitializationSteps();
 		generateGatherCalls();
 		generateProcessingCalls();
@@ -117,7 +118,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		generateEpilogue();
 	}
 
-	private void generateGatherCalls() {
+	protected void generateGatherCalls() {
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, true, null);
 
 		if (embeddedSource)
@@ -137,7 +138,11 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printAntCallTask(TARGET_ASSEMBLE_ARCHIVE, true, null);
 	}
 
-	private void generateMainEnd() {
+	protected void generateMainBegin() {
+		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
+	}
+
+	protected void generateMainEnd() {
 		if (!FORMAT_FOLDER.equalsIgnoreCase(archiveFormat))
 			script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
 		script.printTargetEnd();
@@ -146,7 +151,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	/**
 	 * 
 	 */
-	private void generateBrandingCalls() {
+	protected void generateBrandingCalls() {
 		script.printBrandTask(rootFolder, computeIconsList(), Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), Utils.getPropertyFormat(PROPERTY_OS));
 	}
 
@@ -328,7 +333,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		generatePackagingTargets();
 	}
 
-	private void generateCustomGatherMacro() {
+	protected void generateCustomGatherMacro() {
 		List attributes = new ArrayList(5);
 		attributes.add("dir"); //$NON-NLS-1$
 		attributes.add("propertyName"); //$NON-NLS-1$
