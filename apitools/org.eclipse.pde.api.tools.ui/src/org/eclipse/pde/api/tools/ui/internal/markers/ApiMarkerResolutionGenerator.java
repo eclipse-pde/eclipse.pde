@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -18,6 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -114,7 +118,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	private IApiProblemFilter resolveFilter(IMarker marker) {
 		try {
 			String filterhandle = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID, null);
-			String[] values = filterhandle.split("%]"); //$NON-NLS-1$
+			String[] values = filterhandle.split(ApiProblemFilter.HANDLE_DELIMITER);
 			IProject project = marker.getResource().getProject();
 			IApiComponent component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(project.getName());
 			if(component != null) {
@@ -146,7 +150,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 		if(filterhandle == null) {
 			return -1;
 		}
-		String[] args = filterhandle.split("%]"); //$NON-NLS-1$
+		String[] args = filterhandle.split(ApiProblemFilter.HANDLE_DELIMITER);
 		int hashcode = 0;
 		try {
 			//the problem id
@@ -156,13 +160,65 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			//the type name
 			hashcode += args[2].hashCode();
 			//the message arguments
-			String[] margs = args[3].split(","); //$NON-NLS-1$
+			String[] margs = splitHandle(args[3], ApiProblemFilter.HANDLE_ARGUMENTS_DELIMITER);
 			hashcode += argumentsHashcode(margs);
 		}
 		catch(Exception e) {}
 		return hashcode;
 	}
 	
+	private String[] splitHandle(String messageArguments, String delimiter) {
+		List matches = null;
+		char[] argumentsChars = messageArguments.toCharArray();
+		char[] delimiterChars = delimiter.toCharArray();
+		int delimiterLength = delimiterChars.length;
+		int start = 0;
+		int argumentsCharsLength = argumentsChars.length;
+		int balance = 0;
+		for (int i = 0; i < argumentsCharsLength;) {
+			char c = argumentsChars[i];
+			switch(c) {
+			case '(' :
+				balance++;
+				break;
+			case ')' :
+				balance--;
+			}
+			if (c == delimiterChars[0] && balance == 0) {
+				// see if this is a matching delimiter start only if not within parenthesis (balance == 0)
+				if (i + delimiterLength < argumentsCharsLength) {
+					boolean match = true;
+					loop: for (int j = 1; j < delimiterLength; j++) {
+						if (argumentsChars[i + j] != delimiterChars[j]) {
+							match = false;
+							break loop;
+						}
+					}
+					if (match) {
+						// record the matching substring and proceed
+						if (matches == null) {
+							matches = new ArrayList();
+						}
+						matches.add(messageArguments.substring(start, i));
+						start = i + delimiterLength;
+						i += delimiterLength;
+					} else {
+						i++;
+					}
+				} else {
+					i++;
+				}
+			} else {
+				i++;
+			}
+		}
+		if (matches == null) {
+			return new String[] { messageArguments };
+		} else {
+			matches.add(messageArguments.substring(start, argumentsCharsLength));
+		}
+		return (String[]) matches.toArray(new String[matches.size()]);
+	}
 	/**
 	 * Returns the deep hash code of the complete listing of message arguments
 	 * @param arguments

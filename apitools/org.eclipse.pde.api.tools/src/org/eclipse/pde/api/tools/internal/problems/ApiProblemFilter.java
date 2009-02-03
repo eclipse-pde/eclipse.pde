@@ -21,6 +21,9 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
  */
 public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 
+	public static final String HANDLE_ARGUMENTS_DELIMITER = ","; //$NON-NLS-1$
+	public static final String HANDLE_DELIMITER = "%]"; //$NON-NLS-1$
+
 	private String fComponentId = null;
 	private IApiProblem fProblem = null;
 	
@@ -110,16 +113,16 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 	public String getHandle() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(fProblem.getId());
-		buffer.append("%]"); //$NON-NLS-1$
+		buffer.append(HANDLE_DELIMITER);
 		buffer.append(fProblem.getResourcePath());
-		buffer.append("%]"); //$NON-NLS-1$
+		buffer.append(HANDLE_DELIMITER);
 		buffer.append(fProblem.getTypeName());
-		buffer.append("%]"); //$NON-NLS-1$
+		buffer.append(HANDLE_DELIMITER);
 		String[] margs = fProblem.getMessageArguments();
 		for(int i = 0; i < margs.length; i++) {
 			buffer.append(margs[i]);
 			if(i < margs.length-1) {
-				buffer.append(',');
+				buffer.append(HANDLE_ARGUMENTS_DELIMITER);
 			}
 		}
 		return buffer.toString();
