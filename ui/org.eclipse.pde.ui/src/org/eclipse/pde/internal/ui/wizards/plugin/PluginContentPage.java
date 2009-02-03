@@ -320,6 +320,13 @@ public class PluginContentPage extends ContentPage {
 			fEELabel.setEnabled(allowEESelection);
 			fEEChoice.setEnabled(allowEESelection);
 			fExeEnvButton.setEnabled(allowEESelection);
+			// API tooling only works for osgi bundles with java natures
+			fApiAnalysisButton.setEnabled(allowEESelection);
+			if (allowEESelection && getDialogSettings() != null) {
+				fApiAnalysisButton.setSelection(getDialogSettings().getBoolean(S_API_ANALYSIS));
+			} else {
+				fApiAnalysisButton.setSelection(false);
+			}
 
 			fRCPGroup.setVisible(!fData.isSimple() && !isPureOSGi());
 		}
@@ -368,7 +375,9 @@ public class PluginContentPage extends ContentPage {
 		if (fUIPlugin.isEnabled()) {
 			settings.put(S_UI_PLUGIN, !fUIPlugin.getSelection());
 		}
-		settings.put(S_API_ANALYSIS, fApiAnalysisButton.getSelection());
+		if (fApiAnalysisButton.isEnabled()) {
+			settings.put(S_API_ANALYSIS, fApiAnalysisButton.getSelection());
+		}
 		settings.put(S_RCP_PLUGIN, fYesButton.getSelection());
 	}
 
