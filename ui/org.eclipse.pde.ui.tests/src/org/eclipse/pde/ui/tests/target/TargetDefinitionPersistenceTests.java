@@ -167,14 +167,9 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 			IFile target = project.getFile(new Long(System.currentTimeMillis()).toString() + "A.target");
 			ITargetDefinition definitionA = getTargetService().getTarget(target).getTargetDefinition();
 			initComplexDefiniton(definitionA);
-			
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			TargetDefinitionPersistenceHelper.persistXML(definitionA, outputStream);
-			IFile targetB = project.getFile(new Long(System.currentTimeMillis()).toString() + "B.target");
-			ITargetDefinition definitionB = getTargetService().getTarget(targetB).getTargetDefinition();
-			ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-			TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
-				
+			getTargetService().saveTargetDefinition(definitionA);
+			ITargetDefinition definitionB = getTargetService().getTarget(target).getTargetDefinition();
+							
 			assertTargetDefinitionsEqual(definitionA, definitionB);
 		} finally {
 			if (project.exists()){
