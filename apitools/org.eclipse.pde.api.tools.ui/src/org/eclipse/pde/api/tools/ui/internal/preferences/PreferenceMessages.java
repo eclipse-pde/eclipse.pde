@@ -168,6 +168,8 @@ public class PreferenceMessages extends NLS {
 	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees;
 	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip;
 	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_link_label;
+	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title;
+	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description;
 
 	static {
 		// initialize resource bundle

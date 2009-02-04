@@ -15,6 +15,11 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
@@ -58,6 +63,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -1278,23 +1284,45 @@ public class ApiErrorsWarningsConfigurationBlock {
 			}
 		}
 		if (installMore) {
-			String linkedName = PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_link_label;
-			SWTFactory.createVerticalSpacer(group, 1);
-			Link link = SWTFactory.createLink(group, linkedName, JFaceResources.getDialogFont(), 3);
-			link.setToolTipText(PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip);
-			link.addMouseListener(new MouseAdapter() {
-				public void mouseDown(MouseEvent e) {
-					IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-					if(handlerService != null) {
-						try {
-							handlerService.executeCommand(P2_INSTALL_COMMAND_HANDLER, null);
-						} catch (Exception ex) {
-							ex.printStackTrace();
+			ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+			final Command command = commandService.getCommand(P2_INSTALL_COMMAND_HANDLER);
+			if (command.isHandled()) {
+				String linkedName = PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_link_label;
+				SWTFactory.createVerticalSpacer(group, 1);
+				Link link = SWTFactory.createLink(group, linkedName, JFaceResources.getDialogFont(), 3);
+				link.setToolTipText(PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip);
+				link.addMouseListener(new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+						if(handlerService != null) {
+							try {
+								command.executeWithChecks(handlerService.createExecutionEvent(command, null));
+							} catch (ExecutionException ex) {
+								MessageDialog.openError(
+										ApiUIPlugin.getShell(),
+										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title,
+										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description);
+							} catch (NotDefinedException ex) {
+								MessageDialog.openError(
+										ApiUIPlugin.getShell(),
+										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title,
+										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description);
+							} catch (NotEnabledException ex) {
+								MessageDialog.openError(
+										ApiUIPlugin.getShell(),
+										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title,
+										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description);
+							} catch (NotHandledException ex) {
+								MessageDialog.openError(
+										ApiUIPlugin.getShell(),
+										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title,
+										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description);
+							}
 						}
 					}
-				}
-			});
-			this.fSystemLibraryControls.add(link);
+				});
+				this.fSystemLibraryControls.add(link);
+			}
 		}
 	}
 
