@@ -20,6 +20,8 @@ public class AllTargetTests {
 		suite.addTest(TargetEnvironmentTestCase.suite());
 		suite.addTest(TargetPlatformHelperTests.suite());
 		suite.addTest(TargetDefinitionTests.suite());
+		suite.addTest(WorkspaceTargetDefinitionTests.suite());
+		suite.addTest(TargetDefinitionPersistenceTests.suite());
 		return suite;
 	}
 
