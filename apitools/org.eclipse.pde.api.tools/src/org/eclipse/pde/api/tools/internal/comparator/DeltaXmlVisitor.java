@@ -62,17 +62,17 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 
 	protected void processLeafDelta(IDelta delta) {
 		Element deltaElement = fDoc.createElement(IApiXmlConstants.DELTA_ELEMENT_NAME);
-		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_FLAGS, Integer.toString(delta.getFlags()));
-		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_KIND, Util.getDeltaKindName(delta));
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_FLAGS, Integer.toString(delta.getFlags()));
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_KIND, Util.getDeltaKindName(delta));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE, Util.getDeltaElementType(delta));
-		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_KEY, delta.getKey());
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_KEY, delta.getKey());
 		String typeName = delta.getTypeName();
 		if (typeName != null) {
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_TYPE_NAME, typeName);
 		}
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_COMPATIBLE, Boolean.toString(DeltaProcessor.isCompatible(delta)));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_MODIFIERS, Integer.toString(delta.getModifiers()));
-		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_RESTRICTIONS, Integer.toString(delta.getRestrictions()));
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_RESTRICTIONS, Integer.toString(delta.getRestrictions()));
 		String apiComponentID = delta.getComponentVersionId();
 		if (apiComponentID != null) {
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_COMPONENT_ID, apiComponentID);

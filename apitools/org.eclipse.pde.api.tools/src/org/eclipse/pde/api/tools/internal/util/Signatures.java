@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 
@@ -113,6 +114,31 @@ public final class Signatures {
 			}
 		}
 		return mname;
+	}
+	
+	/**
+	 * Returns the unqualified signature of the given {@link IApiField}
+	 * 
+	 * @param field
+	 * @return the unqualified signature of the given {@link IApiField}
+	 */
+	public static String getFieldSignature(IApiField field) {
+		return field.getName();
+	}
+	
+	/**
+	 * Returns the type-qualified field signature
+	 * @param field
+	 * @return the type-qualified field signature
+	 */
+	public static String getQualifiedFieldSignature(IApiField field) throws CoreException {
+		StringBuffer buffer = new StringBuffer();
+		IApiType type = field.getEnclosingType();
+		if(type != null) {
+			buffer.append(getQualifiedTypeSignature(type)).append('.');
+		}
+		buffer.append(field.getName());
+		return buffer.toString();
 	}
 	
 	/**

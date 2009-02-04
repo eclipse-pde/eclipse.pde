@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public class AnalysisReportConversionTask extends Task {
 					System.out.println("component id : " + componentID); //$NON-NLS-1$
 				}
 				this.report = new Report(componentID);
-			} else if (IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY.equals(name)) {
+			} else if (IApiXmlConstants.ATTR_CATEGORY.equals(name)) {
 				this.category = attributes.getValue(IApiXmlConstants.ATTR_VALUE);
 				if (debug) {
 					System.out.println("category : " + this.category); //$NON-NLS-1$
@@ -199,7 +199,7 @@ public class AnalysisReportConversionTask extends Task {
 	private String xmlReportsLocation;
 
 	private void dumpFooter(PrintWriter writer) {
-		writer.println(Messages.fullReportTask_apiproblemfooter);
+		writer.println(Messages.W3C_page_footer);
 	}
 	private void dumpHeader(PrintWriter writer, Report report) {
 		writer.println(
@@ -282,7 +282,7 @@ public class AnalysisReportConversionTask extends Task {
 			writer.println(Messages.fullReportTask_indexfooter);
 			writer.flush();
 		} catch (IOException e) {
-			throw new BuildException(Messages.bind(Messages.fullReportTask_ioexceptionDumpingHtmlFile, htmlFile.getAbsolutePath()));
+			throw new BuildException(Messages.bind(Messages.ioexception_writing_html_file, htmlFile.getAbsolutePath()));
 		} finally {
 			if (writer != null) {
 				writer.close();
@@ -346,7 +346,7 @@ public class AnalysisReportConversionTask extends Task {
 		File parent = htmlFile.getParentFile();
 		if (!parent.exists()) {
 			if (!parent.mkdirs()) {
-				throw new BuildException(Messages.bind(Messages.fullReportTask_couldNotCreateFile, htmlName));
+				throw new BuildException(Messages.bind(Messages.could_not_create_file, htmlName));
 			}
 		}
 		PrintWriter writer = null;
@@ -367,7 +367,7 @@ public class AnalysisReportConversionTask extends Task {
 			}
 			writer.flush();
 		} catch (IOException e) {
-			throw new BuildException(Messages.bind(Messages.fullReportTask_ioexceptionDumpingHtmlFile, htmlName));
+			throw new BuildException(Messages.bind(Messages.ioexception_writing_html_file, htmlName));
 		} finally {
 			if (writer != null) {
 				writer.close();
@@ -383,13 +383,13 @@ public class AnalysisReportConversionTask extends Task {
 			System.out.println("htmlReportsLocation : " + this.htmlReportsLocation); //$NON-NLS-1$
 		}
 		if (this.xmlReportsLocation == null) {
-			throw new BuildException(Messages.fullReportTask_missingXmlFilesLocation);
+			throw new BuildException(Messages.missing_xml_files_location);
 		}
 		this.reportsRoot = new File(this.xmlReportsLocation);
 		if (!this.reportsRoot.exists() || !this.reportsRoot.isDirectory()) {
 			throw new BuildException(
 				Messages.bind(
-					Messages.fullReportTask_invalidDirectoryName,
+					Messages.invalid_directory_name,
 					this.xmlReportsLocation));
 		}
 		SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -402,7 +402,7 @@ public class AnalysisReportConversionTask extends Task {
 			e.printStackTrace();
 		}
 		if (parser == null) {
-			throw new BuildException(Messages.fullReportTask_couldNotCreateSAXParser);
+			throw new BuildException(Messages.could_not_create_sax_parser);
 		}
 
 		if (this.htmlReportsLocation == null) {
@@ -413,7 +413,7 @@ public class AnalysisReportConversionTask extends Task {
 			if (!this.htmlRoot.mkdirs()) {
 				throw new BuildException(
 					Messages.bind(
-						Messages.fullReportTask_couldNotCreateFile,
+						Messages.could_not_create_file,
 						this.htmlReportsLocation));
 			}
 		}

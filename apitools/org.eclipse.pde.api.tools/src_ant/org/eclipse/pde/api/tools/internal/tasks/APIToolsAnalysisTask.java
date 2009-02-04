@@ -11,10 +11,8 @@
 package org.eclipse.pde.api.tools.internal.tasks;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -29,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.resources.IResource;
@@ -416,7 +412,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	public static final String USAGE = "usage"; //$NON-NLS-1$
 
 	private Set excludedElement;
-	private String excludeListLocation;
 	private String filters;
 	private Properties properties;
 
@@ -464,19 +459,19 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				report.setAttribute(IApiXmlConstants.ATTR_COMPONENT_ID, componentID);
 				document.appendChild(report);
 				
-				Element category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
+				Element category = document.createElement(IApiXmlConstants.ATTR_CATEGORY);
 				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_COMPATIBILITY));
 				category.setAttribute(IApiXmlConstants.ATTR_VALUE, COMPATIBILITY);
 				insertAPIProblems(category, document, summary.apiCompatibilityProblems);
 				report.appendChild(category);
 
-				category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
+				category = document.createElement(IApiXmlConstants.ATTR_CATEGORY);
 				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_USAGE));
 				category.setAttribute(IApiXmlConstants.ATTR_VALUE, USAGE);
 				insertAPIProblems(category, document, summary.apiUsageProblems);
 				report.appendChild(category);
 				
-				category = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM_CATEGORY);
+				category = document.createElement(IApiXmlConstants.ATTR_CATEGORY);
 				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_VERSION));
 				category.setAttribute(IApiXmlConstants.ATTR_VALUE, BUNDLE_VERSION);
 				insertAPIProblems(category, document, summary.apiBundleVersionProblems);
@@ -489,7 +484,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				throw new BuildException(e);
 			}
 			if (contents != null) {
-				saveReport(componentID, contents);
+				saveReport(componentID, contents, "report.xml"); //$NON-NLS-1$
 			}
 		}
 		if (bundlesNames != null && bundlesNames.size() != 0) {
@@ -515,7 +510,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				throw new BuildException(e);
 			}
 			if (contents != null) {
-				saveReport("allNonApiBundles", contents); //$NON-NLS-1$
+				saveReport("allNonApiBundles", contents, "report.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -602,7 +597,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				String name = apiComponent.getId();
 				visitedApiComponentNames.add(name);
 				if (apiComponent.isSystemComponent()) continue;
-				if (!isApiToolsComponent(apiComponent)) {
+				if (!Util.isApiToolsComponent(apiComponent)) {
 					allNonApiBundles.add(name);
 					continue;
 				}
@@ -740,7 +735,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			IApiProblem problem = (IApiProblem) iterator.next();
 			element = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM);
 			element.setAttribute(IApiXmlConstants.ATTR_TYPE_NAME, String.valueOf(problem.getTypeName()));
-			element.setAttribute(IApiXmlConstants.ATTR_PROBLEM_ID, Integer.toString(problem.getId()));
+			element.setAttribute(IApiXmlConstants.ATTR_ID, Integer.toString(problem.getId()));
 			element.setAttribute(IApiXmlConstants.ATTR_LINE_NUMBER, Integer.toString(problem.getLineNumber()));
 			element.setAttribute(IApiXmlConstants.ATTR_CHAR_START, Integer.toString(problem.getCharStart()));
 			element.setAttribute(IApiXmlConstants.ATTR_CHAR_END, Integer.toString(problem.getCharEnd()));
@@ -795,63 +790,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		}
 		return ApiPlugin.SEVERITY_WARNING;
 	}
-	private boolean isApiToolsComponent(IApiComponent apiComponent) {
-		File file = new File(apiComponent.getLocation());
-		if (file.exists()) {
-			if (file.isDirectory()) {
-				// directory binary bundle
-				File apiDescription = new File(file, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
-				return apiDescription.exists();
-			}
-			ZipFile zipFile = null;
-			try {
-				zipFile = new ZipFile(file);
-				return zipFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME) != null;
-			} catch (ZipException e) {
-				// ignore
-			} catch (IOException e) {
-				// ignore
-			} finally {
-				try {
-					if (zipFile != null) zipFile.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-		return false;
-	}
-	private void saveReport(String componentID, String contents) {
-		File dir = new File(this.reportLocation);
-		if (!dir.exists()) {
-			if (!dir.mkdirs()) {
-				throw new BuildException(Messages.bind(Messages.errorCreatingReportDirectory, this.reportLocation));
-			}
-		}
-		File reportComponentIDDir = new File(dir, componentID);
-		if (!reportComponentIDDir.exists()) {
-			if (!reportComponentIDDir.mkdirs()) {
-				throw new BuildException(Messages.bind(Messages.errorCreatingReportDirectory, reportComponentIDDir));
-			}
-		}
-		File reportFile = new File(reportComponentIDDir, "report.xml"); //$NON-NLS-1$
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter(reportFile));
-			writer.write(contents);
-			writer.flush();
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-	}
+	
 	/**
 	 * Set the debug value.
 	 * <p>The possible values are: <code>true</code>, <code>false</code></p>

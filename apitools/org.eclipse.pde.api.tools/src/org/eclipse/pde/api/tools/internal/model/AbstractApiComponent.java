@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,10 @@ package org.eclipse.pde.api.tools.internal.model;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -77,6 +79,13 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 		fApiDescription = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.ApiElement#getApiComponent()
+	 */
+	public IApiComponent getApiComponent() {
+		return this;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getApiDescription()
 	 */
@@ -146,6 +155,13 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 	public IApiProblemFilter newProblemFilter(IApiProblem problem) throws CoreException {
 		//TODO either expose a way to make problems or change the method to accept the parts of a problem
 		return new ApiProblemFilter(getId(), problem);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getHandle()
+	 */
+	public IElementDescriptor getHandle() throws CoreException {
+		return Factory.componentDescriptor(this.getId());
 	}
 	
 	/**

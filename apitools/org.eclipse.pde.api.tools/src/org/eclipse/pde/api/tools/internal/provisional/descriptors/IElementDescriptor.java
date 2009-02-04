@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,11 @@ public interface IElementDescriptor {
 	 * Constant representing an {@link IResource} descriptor
 	 */
 	public static final int RESOURCE = 7;
+	
+	/**
+	 * Constant representing an {@link IApiComponent}
+	 */
+	public static final int COMPONENT = 8;
 	
 	/**
 	 * Returns the parent of this element or <code>null</code> if none.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 
 /**
  * A host API description combines descriptions of a host and all its
@@ -118,5 +120,25 @@ public class CompositeApiDescription implements IApiDescription {
 				}
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#setAccessLevel(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor, int)
+	 */
+	public void setAccessLevel(IElementDescriptor element, IPackageDescriptor pelement, int access) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#resolveAccessLevel(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor)
+	 */
+	public IApiAccess resolveAccessLevel(IElementDescriptor element, IPackageDescriptor pelement) {
+		IApiAccess access = null;
+		for(int i = 0; i < fDescriptions.length; i++) {
+			access = fDescriptions[i].resolveAccessLevel(element, pelement);
+			if(access != null) {
+				return access;
+			}
+		}
+		return null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,14 @@
 package org.eclipse.pde.api.tools.internal.provisional.model;
 
 
+
 /**
  * Describes an element that can appear in the API tooling model.
  * 
  * @since 1.0.0
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IApiElement {
 
@@ -86,4 +89,12 @@ public interface IApiElement {
 	 * or <code>null</code> if no such an ancestor can be found
 	 */
 	public IApiElement getAncestor(int ancestorType);	
+	
+	/**
+	 * Returns the API component this type originated from or <code>null</code>
+	 * if unknown.
+	 * 
+	 * @return API component this type originated from or <code>null</code>
+	 */
+	public IApiComponent getApiComponent();
 }

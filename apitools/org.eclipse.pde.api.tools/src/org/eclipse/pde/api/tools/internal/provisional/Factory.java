@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.builder.TypeScope;
+import org.eclipse.pde.api.tools.internal.descriptors.ComponentDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.model.CompositeApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
@@ -33,6 +35,18 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  */
 public class Factory {
 
+	/**
+	 * Returns a component descriptor for the {@link IApiComponent} with the given id.
+	 * The given id does not have to be the id of a component that actually exists: no
+	 * resolution or lookup of any kind is done with the descriptor.
+	 * 
+	 * @param componentid
+	 * @return a new component descriptor
+	 */
+	public static IComponentDescriptor componentDescriptor(String componentid) {
+		return new ComponentDescriptorImpl(componentid);
+	}
+	
 	/**
 	 * Returns a package descriptor for the package with the given name.
 	 * An empty string indicates the default package. Package names are

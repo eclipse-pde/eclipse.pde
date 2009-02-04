@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,12 +24,10 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
@@ -77,23 +72,13 @@ public class ReferenceAnalyzer {
 		public Visitor(IProgressMonitor monitor) {
 			fMonitor = monitor;
 		}
-
-		public void end(IApiComponent component) {
-		}
-
-		public boolean visit(IApiComponent component) {
-			return true;
-		}
-		
 		public boolean visitPackage(String packageName) {
 			fMonitor.subTask(MessageFormat.format(BuilderMessages.ReferenceAnalyzer_checking_api_used_by, new String[]{packageName}));
 			return true;
 		}
-
 		public void endVisitPackage(String packageName) {
 			fMonitor.worked(1);
 		}
-
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor#visit(java.lang.String, org.eclipse.pde.api.tools.model.component.IClassFile)
 		 */
@@ -156,6 +141,13 @@ public class ReferenceAnalyzer {
 	private IApiProblemDetector[][] fIndexedDetectors;
 
 	/**
+	 * Method used for initializing tracing
+	 */
+	public static void setDebug(boolean debugValue) {
+		DEBUG = debugValue || Util.DEBUG;
+	}
+	
+	/**
 	 * Performs the actual reference extraction and analysis.
 	 * 
 	 * @param scope the scope to extract and analyze references from
@@ -178,7 +170,7 @@ public class ReferenceAnalyzer {
 			}
 			// 3. resolve problematic references
 			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
-			resolveReferences(fReferences, localMonitor);
+			ReferenceResolver.resolveReferences(fReferences, localMonitor);
 			localMonitor.worked(1);
 			if (localMonitor.isCanceled()) {
 				return EMPTY_RESULT;
@@ -278,123 +270,6 @@ public class ReferenceAnalyzer {
 		}
 	}	
 
-	/**
-	 * Resolves retained references.
-	 * 
-	 * @param references list of {@link IReference} to resolve
-	 * @param progress monitor
-	 * @throws CoreException if something goes wrong
-	 */
-	private void resolveReferences(List references, IProgressMonitor monitor) throws CoreException {
-		// sort references by target type for 'shared' resolution
-		Map sigtoref = new HashMap(50);
-		
-		List refs = null;
-		IReference ref = null;
-		String key = null;
-		List methodDecls = new ArrayList(1000);
-		long start = System.currentTimeMillis();
-		Iterator iterator = references.iterator();
-		while (iterator.hasNext()) {
-			ref = (IReference) iterator.next();
-			if (ref.getReferenceKind() == ReferenceModifiers.REF_OVERRIDE) {
-				methodDecls.add(ref);
-			} else {
-				key = createSignatureKey(ref);
-				refs = (List) sigtoref.get(key);
-				if(refs == null) {
-					refs = new ArrayList(20);
-					sigtoref.put(key, refs);
-				}
-				refs.add(ref);
-			}
-		}
-		if (monitor.isCanceled()) {
-			return;
-		}
-		long end = System.currentTimeMillis();
-		if (DEBUG) {
-			System.out.println("Reference Analyzer: split into " + methodDecls.size() + " method overrides and " + sigtoref.size() + " unique references (" + (end - start) + "ms)");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
-		}
-		// resolve references
-		start = System.currentTimeMillis();
-		resolveReferenceSets(sigtoref, monitor);
-		end = System.currentTimeMillis();
-		if (DEBUG) {
-			System.out.println("Reference Analyzer: resolved unique references in " + (end - start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
-		}
-		// resolve method overrides
-		start = System.currentTimeMillis();
-		iterator = methodDecls.iterator();
-		while (iterator.hasNext()) {
-			Reference reference = (Reference) iterator.next();
-			reference.resolve();
-		}
-		end = System.currentTimeMillis();
-		if (DEBUG) {
-			System.out.println("Reference Analyzer: resolved method overrides in " + (end - start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
-		}
-	}
-	
-	/**
-	 * Creates a unique string key for a given reference.
-	 * The key is of the form "component X references type/member"
-	 * <pre>
-	 * [component_id]#[type_name](#[member_name]#[member_signature])
-	 * </pre>
-	 * @param reference reference
-	 * @return a string key for the given reference.
-	 */
-	private String createSignatureKey(IReference reference) throws CoreException {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(reference.getMember().getApiComponent().getId());
-		buffer.append("#"); //$NON-NLS-1$
-		buffer.append(reference.getReferencedTypeName());
-		switch (reference.getReferenceType()) {
-		case IReference.T_FIELD_REFERENCE:
-			buffer.append("#"); //$NON-NLS-1$
-			buffer.append(reference.getReferencedMemberName());
-			break;
-		case IReference.T_METHOD_REFERENCE:
-			buffer.append("#"); //$NON-NLS-1$
-			buffer.append(reference.getReferencedMemberName());
-			buffer.append("#"); //$NON-NLS-1$
-			buffer.append(reference.getReferencedSignature());
-			break;
-		}
-		return buffer.toString();
-	}	
-
-	/**
-	 * Resolves the collect sets of references.
-	 * @param map the mapping of keys to sets of {@link IReference}s
-	 * @throws CoreException if something bad happens
-	 */
-	private void resolveReferenceSets(Map map, IProgressMonitor monitor) throws CoreException {
-		Iterator types = map.keySet().iterator();
-		String key = null;
-		List refs = null;
-		IReference ref= null;
-		while (types.hasNext()) {
-			if (monitor.isCanceled()) {
-				return;
-			}
-			key = (String) types.next();
-			refs = (List) map.get(key);
-			ref = (IReference) refs.get(0);
-			((org.eclipse.pde.api.tools.internal.builder.Reference)ref).resolve();
-			IApiMember resolved = ref.getResolvedReference();
-			if (resolved != null) {
-				Iterator iterator = refs.iterator();
-				while (iterator.hasNext()) {
-					Reference ref2 = (Reference) iterator.next();
-					ref2.setResolution(resolved);
-				}
-			}
-		}
-	}
-
-	
 	/**
 	 * Analyzes the given {@link IApiComponent} within the given {@link IApiTypeContainer} (scope) and returns 
 	 * a collection of detected {@link IApiProblem}s or an empty collection, never <code>null</code>

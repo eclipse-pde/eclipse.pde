@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 
 
 /**
@@ -125,6 +126,27 @@ public interface IApiDescription {
 	 */
 	public IApiAnnotations resolveAnnotations(IElementDescriptor element);
 
+	/**
+	 * Returns the access level the given element has for the given package. If there is no 
+	 * special access for the given element <code>null</code> is returned.
+	 * 
+	 * @param element the element to resolve access for
+	 * @param pelement the package being accessed by the given element
+	 * 
+	 * @return API access the given element has to the given package or <code>null</code> if no special access
+	 * has been defined
+	 */
+	public IApiAccess resolveAccessLevel(IElementDescriptor element, IPackageDescriptor pelement);
+	
+	/**
+	 * Sets the access level that the given element has to the given package
+	 * 
+	 * @param element the element that has access to the given package
+	 * @param pelement the package that the given element will have the given access to
+	 * @param access the desired access level to the given package from the given element
+	 */
+	public void setAccessLevel(IElementDescriptor element, IPackageDescriptor pelement, int access);
+	
 	/**
 	 * Traverses this description with the given visitor.
 	 * 

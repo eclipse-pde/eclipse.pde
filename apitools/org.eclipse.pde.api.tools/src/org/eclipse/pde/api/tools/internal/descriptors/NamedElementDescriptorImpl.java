@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ public abstract class NamedElementDescriptorImpl extends ElementDescriptorImpl {
 	 * Constructs an element descriptor with the given name and parent.
 	 * 
 	 * @param name element name
-	 * @param parent parent element or <code>null</code>
 	 */
 	NamedElementDescriptorImpl(String name) {
 		fName = name;
@@ -49,6 +48,4 @@ public abstract class NamedElementDescriptorImpl extends ElementDescriptorImpl {
 	protected Comparable getComparable() {
 		return getName();
 	}
-
-	
 }

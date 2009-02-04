@@ -214,7 +214,9 @@ public class Reference implements IReference {
 	 * @throws CoreException
 	 */
 	public void resolve() throws CoreException {
-		if (!this.fStatus) return;
+		if (!this.fStatus) {
+			return;
+		}
 		if (fResolved == null) {
 			IApiComponent sourceComponent = getMember().getApiComponent();
 			if(sourceComponent != null) {

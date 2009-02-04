@@ -42,6 +42,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -101,6 +103,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -525,7 +528,9 @@ public final class Util {
 	 * @return class file or <code>null</code> if none found
 	 */
 	public static IApiTypeRoot getClassFile(IApiComponent[] components, String typeName) {
-		if (components == null) return null;
+		if (components == null) {
+			return null;
+		}
 		for (int i = 0, max = components.length; i < max; i++) {
 			IApiComponent apiComponent = components[i];
 			if (apiComponent != null) {
@@ -551,6 +556,20 @@ public final class Util {
 		return getDeltaElementType(delta.getElementType());
 	}
 
+	/**
+	 * Returns the string representation for the given reference type
+	 * @param type
+	 * @return the string representation for the given reference type
+	 */
+	public static String getReferenceType(int type) {
+		switch(type) {
+			case IReference.T_FIELD_REFERENCE: return "FIELD"; //$NON-NLS-1$
+			case IReference.T_METHOD_REFERENCE: return "METHOD"; //$NON-NLS-1$
+			case IReference.T_TYPE_REFERENCE: return "TYPE"; //$NON-NLS-1$
+		}
+		return UNKNOWN_KIND;
+	}
+	
 	/**
 	 * Returns a text representation of a marker severity level
 	 * @param severity
@@ -1794,6 +1813,38 @@ public final class Util {
 	 */
 	public static boolean isApiProject(IJavaProject project) {
 		return isApiProject(project.getProject());
+	}
+	
+	/**
+	 * Returns if the given {@link IApiComponent} is a valid {@link IApiComponent}
+	 * @param apiComponent
+	 * @return true if the given {@link IApiComponent} is valid, false otherwise
+	 */
+	public static boolean isApiToolsComponent(IApiComponent apiComponent) {
+		File file = new File(apiComponent.getLocation());
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				// directory binary bundle
+				File apiDescription = new File(file, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
+				return apiDescription.exists();
+			}
+			ZipFile zipFile = null;
+			try {
+				zipFile = new ZipFile(file);
+				return zipFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME) != null;
+			} catch (ZipException e) {
+				// ignore
+			} catch (IOException e) {
+				// ignore
+			} finally {
+				try {
+					if (zipFile != null) zipFile.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+		return false;
 	}
 	
 	/**

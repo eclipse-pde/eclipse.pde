@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -452,7 +452,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		IApiComponent[] cachedComponents = null;
 		if (componentsForPackage != null) {
 			cachedComponents = (IApiComponent[]) componentsForPackage.get(sourceComponent);
-			if (cachedComponents != null) {
+			if (cachedComponents != null && cachedComponents.length > 0) {
 				return cachedComponents;
 			}
 		} else {
@@ -478,6 +478,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 		if (cachedComponents == null) {
 			cachedComponents = EMPTY_COMPONENTS;
+		}
+		if(cachedComponents.length == 0) {
+			return EMPTY_COMPONENTS;
 		}
 		componentsForPackage.put(sourceComponent, cachedComponents);
 		return cachedComponents;
@@ -527,6 +530,29 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Returns all of the visible dependent components from the current state
+	 * 
+	 * @param components
+	 * @return the listing of visible dependent components to the given ones
+	 * @throws CoreException
+	 */
+	public IApiComponent[] getVisibleDependentComponents(IApiComponent[] components) throws CoreException {
+		ArrayList bundles = getBundleDescriptions(components);
+		BundleDescription[] descs = getState().getStateHelper().getDependentBundles((BundleDescription[]) bundles.toArray(new BundleDescription[bundles.size()]));
+		HashSet visible = new HashSet();
+		ExportPackageDescription[] packages = null;
+		for (int i = 0; i < descs.length; i++) {
+			packages = getState().getStateHelper().getVisiblePackages(descs[i]);
+			for (int j = 0; j < packages.length; j++) {
+				if(bundles.contains(packages[j].getSupplier())) {
+					visible.add(descs[i]);
+				}
+			}
+		}
+		return getApiComponents((BundleDescription[]) visible.toArray(new BundleDescription[visible.size()]));
 	}
 	
 	/**

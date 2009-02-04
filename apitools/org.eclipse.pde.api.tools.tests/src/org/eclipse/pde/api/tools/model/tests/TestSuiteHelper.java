@@ -44,6 +44,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -199,6 +200,12 @@ public class TestSuiteHelper {
 				return null;
 			}
 			public ResolverError[] getErrors() throws CoreException {
+				return null;
+			}
+			public IApiComponent getApiComponent() {
+				return this;
+			}
+			public IElementDescriptor getHandle() throws CoreException {
 				return null;
 			}
 		};

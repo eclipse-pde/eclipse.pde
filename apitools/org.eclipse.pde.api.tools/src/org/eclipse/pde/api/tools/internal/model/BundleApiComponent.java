@@ -57,6 +57,7 @@ import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.RequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
+import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
@@ -371,6 +372,13 @@ public class BundleApiComponent extends AbstractApiComponent {
 			}
 			if (friends != null) {
 				apiDesc.setVisibility(pkgDesc, VisibilityModifiers.PRIVATE);
+				for(int j = 0; j < friends.length; j++) {
+					//annotate the api description for x-friends access levels
+					apiDesc.setAccessLevel(
+							Factory.componentDescriptor(friends[j]), 
+							Factory.packageDescriptor(pkgName), 
+							IApiAccess.FRIEND);
+				}
 			}
 			if (!internal && friends == null) {
 				//there could have been directives that have nothing to do with
@@ -1005,8 +1013,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 		}
 		return fHasApiDescription;
 	}
-	/**
-	 * @see IApiComponent#getLowestEEs()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getLowestEEs()
 	 */
 	public String[] getLowestEEs() throws CoreException {
 		if (this.lowestEEs != null) return this.lowestEEs;
@@ -1087,6 +1096,10 @@ public class BundleApiComponent extends AbstractApiComponent {
 		this.lowestEEs = temp;
 		return temp;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getErrors()
+	 */
 	public ResolverError[] getErrors() throws CoreException {
 		if (this.fBundleDescription == null) {
 			throw new CoreException(

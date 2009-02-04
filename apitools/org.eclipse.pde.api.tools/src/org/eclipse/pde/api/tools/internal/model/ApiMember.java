@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,6 +82,20 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 	 */ 
 	public IApiComponent getApiComponent() {
 		return (IApiComponent) getAncestor(IApiElement.COMPONENT);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getPackageName()
+	 */
+	public String getPackageName() {
+		try {
+			IApiType type = getEnclosingType();
+			if(type != null) {
+				return type.getPackageName();
+			}
+		}
+		catch(CoreException ce) {}
+		return ""; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,6 +168,13 @@ public class ApiType extends ApiMember implements IApiType {
 			return (IApiField[]) fFields.values().toArray(new IApiField[fFields.size()]);
 		}
 		return EMPTY_FIELDS;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getPackageName()
+	 */
+	public String getPackageName() {
+		return getName().substring(0, getName().lastIndexOf('.'));
 	}
 	
 	/**
@@ -577,7 +584,6 @@ public class ApiType extends ApiMember implements IApiType {
 		if (index != -1) {
 			return name.substring(index + 1);
 		}
-		
 		return name;
 	}
 	

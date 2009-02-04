@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_HANDLE = "handle"; //$NON-NLS-1$
 	/**
-	 * Constant representing the id attribute for plug-in xml node or an extra argument node.
+	 * Constant representing the id attribute
 	 * Value is: <code>id</code>
 	 */
 	public static final String ATTR_ID = "id"; //$NON-NLS-1$
@@ -135,30 +135,10 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_CHAR_END = "charend"; //$NON-NLS-1$
 	/**
-	 * Constant representing the flags attribute of a delta in xml report.
-	 * Value is: <code>flags</code>
-	 */
-	public static final String ATTR_NAME_FLAGS = "flags"; //$NON-NLS-1$
-	/**
-	 * Constant representing the key attribute of a delta in xml report.
-	 * Value is: <code>key</code>
-	 */
-	public static final String ATTR_NAME_KEY = "key"; //$NON-NLS-1$
-	/**
-	 * Constant representing the kind attribute of a delta in xml report.
-	 * Value is: <code>kind</code>
-	 */
-	public static final String ATTR_NAME_KIND = "kind"; //$NON-NLS-1$
-	/**
 	 * Constant representing the modifiers attribute of a delta in xml report.
 	 * Value is: <code>modifiers</code>
 	 */
 	public static final String ATTR_NAME_MODIFIERS = "modifiers"; //$NON-NLS-1$
-	/**
-	 * Constant representing the restrictions attribute of a delta in xml report.
-	 * Value is: <code>restrictions</code>
-	 */
-	public static final String ATTR_NAME_RESTRICTIONS = "restrictions"; //$NON-NLS-1$
 	/**
 	 * Constant representing the type name attribute of a delta in xml report.
 	 * Value is: <code>type_name</code>
@@ -276,6 +256,12 @@ public interface IApiXmlConstants {
 	public static final String ELEMENT_COMPONENT = "component"; //$NON-NLS-1$
 
 	/**
+	 * Constant representing a components element node in xml.
+	 * Value is: <code>components</code> 
+	 */
+	public static final String ELEMENT_COMPONENTS = "components"; //$NON-NLS-1$
+	
+	/**
 	 * Constant representing a field element node in xml.
 	 * Value is: <code>field</code>
 	 */
@@ -366,20 +352,10 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ELEMENT_API_TOOL_REPORT = "report"; //$NON-NLS-1$<
 	/**
-	 * Constant representing a category element node for a report element in xml.
-	 * Value is: <code>category</code>
-	 */
-	public static final String ELEMENT_API_PROBLEM_CATEGORY = "category"; //$NON-NLS-1$<
-	/**
 	 * Constant representing the key attribute for category node.
 	 * Value is: <code>key</code>
 	 */
 	public static final String ATTR_KEY = "key"; //$NON-NLS-1$
-	/**
-	 * Constant representing the problem id attribute for api problem node.
-	 * Value is: <code>id</code>
-	 */
-	public static final String ATTR_PROBLEM_ID = "id"; //$NON-NLS-1$
 	/**
 	 * Constant representing the type attribute for resource node inside api filters.
 	 * Value is: <code>type</code>
@@ -405,4 +381,11 @@ public interface IApiXmlConstants {
 	 * Value is: <code>message_argument</code>
 	 */
 	public static final String ELEMENT_DELTA_MESSAGE_ARGUMENT = "message_argument"; //$NON-NLS-1$
+	public static final String REFERENCES = "references"; //$NON-NLS-1$
+	public static final String REFERENCE_KIND = "reference_kind"; //$NON-NLS-1$
+	public static final String ATTR_REFERENCE_KIND_NAME = "reference_kind_name"; //$NON-NLS-1$
+	public static final String ATTR_ORIGIN = "origin"; //$NON-NLS-1$
+	public static final String ATTR_REFEREE = "referee"; //$NON-NLS-1$
+	public static final String ATTR_REFERENCE_COUNT = "reference_count"; //$NON-NLS-1$
+	public static final String ATTR_REFERENCE_VISIBILITY = "reference_visibility"; //$NON-NLS-1$
 }

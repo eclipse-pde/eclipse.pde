@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,32 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.internal.provisional.model;
+package org.eclipse.pde.api.tools.internal.provisional.descriptors;
 
 /**
- * A field type member.
+ * Describes an {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent}
+ * <br><br>
+ * Component descriptors do not have parent components and do not have a path, therefore both the 
+ * {@link #getParent()} and {@link #getPath()} method always yield <code>null</code>
  * 
- * @see IApiType
- * @see IApiMethod
- * 
- * @since 1.1
- * 
+ * @since 1.0.1
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface IApiField extends IApiMember {
+public interface IComponentDescriptor extends IElementDescriptor {
 
 	/**
-	 * Returns whether this field represents a constant in an enum type.
+	 * Returns the component id from the descriptor
 	 * 
-	 * @return whether this field represents a constant in an enum type
+	 * @return the component id
 	 */
-	public boolean isEnumConstant();
+	public String getId();
 	
-	/**
-	 * Returns the constant value for this field or <code>null</code> if none.
-	 * 
-	 * @return constant value or <code>null</code>
-	 */
-	public Object getConstantValue();
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,19 +113,19 @@ public class APIFreezeReportConversionTask extends Task {
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_COMPATIBLE);
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE);
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_FLAGS);
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_KEY);
+					printAttribute(attributes, IApiXmlConstants.ATTR_FLAGS);
+					printAttribute(attributes, IApiXmlConstants.ATTR_KEY);
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_MODIFIERS);
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_RESTRICTIONS);
+					printAttribute(attributes, IApiXmlConstants.ATTR_RESTRICTIONS);
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 				}
 				componentID = attributes.getValue(IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
 				
 				elementType = attributes.getValue(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE);
-				flags = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_NAME_FLAGS));
-				kind = attributes.getValue(IApiXmlConstants.ATTR_NAME_KIND);
+				flags = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_FLAGS));
+				kind = attributes.getValue(IApiXmlConstants.ATTR_KIND);
 				typename = attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
-				key = attributes.getValue(IApiXmlConstants.ATTR_NAME_KEY);
+				key = attributes.getValue(IApiXmlConstants.ATTR_KEY);
 			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
 				if (this.argumentsList == null) {
 					this.argumentsList = new ArrayList();

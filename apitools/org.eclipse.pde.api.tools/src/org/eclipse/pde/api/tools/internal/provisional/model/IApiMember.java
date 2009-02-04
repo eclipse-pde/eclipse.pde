@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,19 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescrip
 
 
 /**
- * Features common to type members.
+ * Describes an {@link IApiElement} that can be parented: i.e. an element that can appear as
+ * a member of another {@link IApiElement}.
+ * <br><br>
+ * For example a type, field or method.
+ * 
+ * @see IApiType
+ * @see IApiMethod
+ * @see IApiField
  * 
  * @since 1.1
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IApiMember extends IApiElement {
 	
@@ -56,12 +66,11 @@ public interface IApiMember extends IApiElement {
 	public String getGenericSignature();
 	
 	/**
-	 * Returns the API component this type originated from or <code>null</code>
-	 * if unknown.
+	 * Returns the name of the package that this member is located in
 	 * 
-	 * @return API component this type originated from or <code>null</code>
+	 * @return the name of the enclosing package for this member
 	 */
-	public IApiComponent getApiComponent();
+	public String getPackageName();
 	
 	/**
 	 * Returns the associated element descriptor for this member.

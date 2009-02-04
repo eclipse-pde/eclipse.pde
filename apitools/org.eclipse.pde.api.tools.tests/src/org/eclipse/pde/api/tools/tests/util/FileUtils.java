@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
@@ -162,7 +163,7 @@ public class FileUtils {
 	 * @return true iff the file was really delete, false otherwise
 	 */
 	public static boolean delete(String path) {
-	    return org.eclipse.pde.api.tools.internal.util.Util.delete(new File(path));
+	    return Util.delete(new File(path));
 	}
 
 	/**
@@ -173,7 +174,7 @@ public class FileUtils {
 	    File[] files = dir.listFiles();
 	    if (files == null) return;
 	    for (int i = 0, max = files.length; i < max; i++) {
-	    	org.eclipse.pde.api.tools.internal.util.Util.delete(files[i]);
+	    	Util.delete(files[i]);
 	    }
 	}
 	
@@ -205,13 +206,13 @@ public class FileUtils {
 	            if (resource.isAccessible()) {
 	                try {
 	                    resource.delete(true, null);
-	                    if (isResourceDeleted(resource) && org.eclipse.pde.api.tools.internal.util.Util.isFileDeleted(file)) {
+	                    if (isResourceDeleted(resource) && Util.isFileDeleted(file)) {
 	                        return true;
 	                    }
 	                }
 	                catch (CoreException e) {}
 	            }
-	            if (isResourceDeleted(resource) && org.eclipse.pde.api.tools.internal.util.Util.isFileDeleted(file)) {
+	            if (isResourceDeleted(resource) && Util.isFileDeleted(file)) {
 	                return true;
 	            }
 	            // Increment waiting delay exponentially
@@ -314,7 +315,7 @@ public class FileUtils {
 	    try {
 	        File zipFile = new File(zipPath);
 	        if (zipFile.exists()) {
-	        	org.eclipse.pde.api.tools.internal.util.Util.delete(zipFile);
+	        	Util.delete(zipFile);
 	        }
 	        zip = new ZipOutputStream(new FileOutputStream(zipFile));
 	        zip(rootDir, zip, rootDir.getPath().length()+1); // 1 for last slash
@@ -385,8 +386,8 @@ public class FileUtils {
 	 * Copy the given source (a file or a directory that must exists) to the given destination (a directory that must exists).
 	 */
 	public static void copyFile(String sourcePath, String destPath) {
-	    sourcePath = org.eclipse.pde.api.tools.internal.util.Util.toNativePath(sourcePath);
-	    destPath = org.eclipse.pde.api.tools.internal.util.Util.toNativePath(destPath);
+	    sourcePath = Util.toNativePath(sourcePath);
+	    destPath = Util.toNativePath(destPath);
 	    File source = new File(sourcePath);
 	    if (!source.exists()) return;
 	    File dest = new File(destPath);
@@ -413,7 +414,7 @@ public class FileUtils {
 	            in = new FileInputStream(source);
 	            File destFile = new File(dest, source.getName());
 	            if (destFile.exists()) {
-	                if (!org.eclipse.pde.api.tools.internal.util.Util.delete(destFile)) {
+	                if (!Util.delete(destFile)) {
 	                    throw new IOException(destFile + " is in use");
 	                }
 	            }

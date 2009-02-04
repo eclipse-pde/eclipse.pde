@@ -15,6 +15,7 @@ import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
@@ -38,7 +39,7 @@ public interface IApiComponent extends IApiTypeContainer {
 	/**
 	 * Returns this component's API description.
 	 * 
-	 * @return API manifest
+	 * @return API description for this component
 	 * @throws CoreException if there was a problem creating the API description for this component
 	 * @throws CoreException if its baseline is disposed
 	 */
@@ -209,4 +210,12 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * @throws CoreException if its baseline is disposed
 	 */
 	public ResolverError[] getErrors() throws CoreException;
+	
+	/**
+	 * Returns the associated element descriptor for this member.
+	 * 
+	 * @return element descriptor
+	 * @throws CoreException if an error occurs fetching the component id to make a handle object
+	 */
+	public IElementDescriptor getHandle() throws CoreException;
 }

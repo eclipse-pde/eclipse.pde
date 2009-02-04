@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -219,6 +220,15 @@ public class ApiDescription implements IApiDescription {
 	 */
 	protected HashMap fPackageMap = new HashMap();
 
+	/**
+	 * This map holds the mapping of special access kinds for packages and has the 
+	 * form:
+	 * <pre>
+	 * HashMap<IPackageDescriptor(package), HashMap<IElementDescriptor(component), IApiAccess>>
+	 * </pre>
+	 */
+	protected HashMap fAccessMap = new HashMap();
+	
 	private float fEmbeddedVersion = 0.0f;
 	
 	/**
@@ -504,5 +514,35 @@ public class ApiDescription implements IApiDescription {
 	 */
 	protected synchronized boolean isModified() {
 		return fModified;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#resolveAccessLevel(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor)
+	 */
+	public IApiAccess resolveAccessLevel(IElementDescriptor element, IPackageDescriptor pelement) {
+		if(fAccessMap != null) {
+			HashMap map = (HashMap) fAccessMap.get(pelement);
+			if(map != null) {
+				return (IApiAccess) map.get(element);
+			}
+		} 
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#setAccessLevel(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor, int)
+	 */
+	public void setAccessLevel(IElementDescriptor element, IPackageDescriptor pelement, int access) {
+		if(element != null && pelement != null && access != IApiAccess.NORMAL) {
+			if(fAccessMap == null) {
+				fAccessMap = new HashMap();
+			}
+			HashMap map = (HashMap) fAccessMap.get(pelement);
+			if(map == null) {
+				map = new HashMap();
+				fAccessMap.put(pelement, map);
+			}
+			map.put(element, new ApiAccess(access));
+		}
 	}
 }

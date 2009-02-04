@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.util.tests;
 import junit.framework.TestCase;
 
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.pde.api.tools.internal.model.ApiField;
 import org.eclipse.pde.api.tools.internal.model.ApiMethod;
 import org.eclipse.pde.api.tools.internal.model.ApiType;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
@@ -255,5 +256,32 @@ public class SignaturesTests extends TestCase {
 		assertEquals("The package name should be 'a.b.c'", "a.b.c", pname);
 		pname = Signatures.getPackageName("Type");
 		assertEquals("the default package should be returned", "", pname);
+	}
+	
+	/**
+	 * Tests the {@link Signatures#getFieldSignature(org.eclipse.pde.api.tools.internal.provisional.model.IApiField)} method
+	 */
+	public void testGetFieldSignature() {
+		ApiType type = new ApiType(null, "Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null);
+		ApiField field = type.addField("f1", "f1", null, Flags.AccPublic, null);
+		assertEquals("Wrong field signature returned", Signatures.getFieldSignature(field), "f1");
+	}
+	
+	/**
+	 * Tests the {@link Signatures#getQualifiedFieldSignature(org.eclipse.pde.api.tools.internal.provisional.model.IApiField)} method
+	 */
+	public void testGetQualifiedFieldSignature() throws Exception {
+		ApiType type = new ApiType(null, "Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null);
+		ApiField field = type.addField("f1", "f1", null, Flags.AccPublic, null);
+		assertEquals("Wrong field signature returned", Signatures.getQualifiedFieldSignature(field), "x.y.z.Parent.f1");
+		type = new ApiType(null, "Parent2", "Lx.y.z.Parent2;", "<T:Ljava/lang/Object;>", Flags.AccPublic, null, null);
+		field = type.addField("f1", "f1", null, Flags.AccPublic, null);
+		assertEquals("Wrong field signature returned", Signatures.getQualifiedFieldSignature(field), "x.y.z.Parent2<T>.f1");
+		type = new ApiType(null, "Parent3", "Lx.y.z.Parent3;", "<T:Ljava/lang/Object;E::Ljava/util/List<Ljava/util/List<Ljava/lang/String;>;>;>", Flags.AccPublic, null, null);
+		field = type.addField("f1", "f1", null, Flags.AccPublic, null);
+		assertEquals("Wrong field signature returned", Signatures.getQualifiedFieldSignature(field), "x.y.z.Parent3<T, E>.f1");
+		type = new ApiType(null, "Parent4", "Lx.y.z.Parent4$inner;", "<T:Ljava/lang/Object;E::Ljava/util/List<Ljava/util/List<Ljava/lang/String;>;>;>", Flags.AccPublic, null, null);
+		field = type.addField("f1", "f1", null, Flags.AccPublic, null);
+		assertEquals("Wrong field signature returned", Signatures.getQualifiedFieldSignature(field), "x.y.z.Parent4.inner<T, E>.f1");
 	}
 }
