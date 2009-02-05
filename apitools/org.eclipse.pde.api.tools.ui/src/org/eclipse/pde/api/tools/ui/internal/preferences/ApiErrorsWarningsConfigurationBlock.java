@@ -935,7 +935,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				initializeComboControls(client, 
 						new String[] {
 							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_tag_use,
-							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_reference_in_system_libraries,
+							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_reference_to_system_libraries,
 						},
 						new Key[] {
 							KEY_INVALID_JAVADOC_TAG,
