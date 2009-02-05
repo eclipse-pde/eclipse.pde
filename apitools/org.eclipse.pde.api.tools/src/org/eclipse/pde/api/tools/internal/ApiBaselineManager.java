@@ -298,7 +298,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 	
 	/**
-	 * @return the default API baseline saved in the prefs, or <code>null</code> if tere isn't one
+	 * @return the default API baseline saved in the preferences, or <code>null</code> if there isn't one
 	 */
 	private String getDefaultProfilePref() {
 		IPreferencesService service = Platform.getPreferencesService();

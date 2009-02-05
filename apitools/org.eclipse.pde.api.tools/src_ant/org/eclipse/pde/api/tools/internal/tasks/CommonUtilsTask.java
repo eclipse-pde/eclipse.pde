@@ -33,6 +33,7 @@ import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.util.TarException;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -73,7 +74,7 @@ public abstract class CommonUtilsTask extends Task {
 				catch (CoreException ce) {}
 			}
 			if(o1 instanceof SkippedComponent && o2 instanceof SkippedComponent) {
-				return ((SkippedComponent)o1).componentid.compareTo(((SkippedComponent)o2).componentid);
+				return ((SkippedComponent)o1).getComponentId().compareTo(((SkippedComponent)o2).getComponentId());
 			}
 			return -1;
 		}
@@ -90,38 +91,6 @@ public abstract class CommonUtilsTask extends Task {
 			return 0;
 		}
 	};
-	
-	/**
-	 * Class that describes an {@link IApiComponent} that has not been searched
-	 */
-	public static class SkippedComponent {
-		protected boolean noapidescription = false;
-		protected boolean inexcludelist = false;
-		protected String componentid = null;
-		
-		public SkippedComponent(String componentid, boolean noapidescription, boolean inexcludeset) {
-			this.componentid = componentid;
-			this.noapidescription = noapidescription;
-			this.inexcludelist = inexcludeset;
-		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		public boolean equals(Object obj) {
-			if(obj instanceof SkippedComponent) {
-				return this.componentid.equals(((SkippedComponent)obj).componentid);
-			}
-			return false;
-		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
-		public int hashCode() {
-			return this.componentid.hashCode();
-		}
-	}
 	
 	/**
 	 * Creates a baseline with the given name and ee file location in the given directory

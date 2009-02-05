@@ -28,6 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.ApiUseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.DBUseReporter;
+import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**

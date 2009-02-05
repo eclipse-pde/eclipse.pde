@@ -18,7 +18,6 @@ import java.sql.Statement;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
-import org.eclipse.pde.api.tools.internal.tasks.CommonUtilsTask;
 
 /**
  * Reporter that reports results to a database
@@ -102,7 +101,7 @@ public class DBUseReporter implements IApiSearchReporter {
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
-	public void reportNotSearched(CommonUtilsTask.SkippedComponent[] components) {
+	public void reportNotSearched(SkippedComponent[] components) {
 		executeStatement(getNotSearchedInsertQuery(components));
 	}
 	
@@ -111,7 +110,7 @@ public class DBUseReporter implements IApiSearchReporter {
 	 * @param components
 	 * @return the query to execute or <code>null</code>
 	 */
-	protected String getNotSearchedInsertQuery(CommonUtilsTask.SkippedComponent[] components) {
+	protected String getNotSearchedInsertQuery(SkippedComponent[] components) {
 		if(components != null && components.length > 0) {
 			
 		}

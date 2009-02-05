@@ -18,6 +18,7 @@ import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.search.DBUseReporter;
+import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

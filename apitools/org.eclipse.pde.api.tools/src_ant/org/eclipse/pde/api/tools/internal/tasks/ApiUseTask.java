@@ -32,6 +32,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.ApiUseSearchRequestor;
+import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.search.XMLApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
@@ -341,9 +342,9 @@ public class ApiUseTask extends CommonUtilsTask {
 			for(Iterator iter = notsearched.iterator(); iter.hasNext();) {
 				component = (SkippedComponent) iter.next();
 				comp = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
-				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.componentid);
-				comp.setAttribute(NO_API_DESCRIPTION, Boolean.toString(component.noapidescription));
-				comp.setAttribute(EXCLUDED, Boolean.toString(component.inexcludelist));
+				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getComponentId());
+				comp.setAttribute(NO_API_DESCRIPTION, Boolean.toString(component.hasNoApiDescription()));
+				comp.setAttribute(EXCLUDED, Boolean.toString(component.wasExcluded()));
 				root.appendChild(comp);
 			}
 			writer = new BufferedWriter(new FileWriter(file));
