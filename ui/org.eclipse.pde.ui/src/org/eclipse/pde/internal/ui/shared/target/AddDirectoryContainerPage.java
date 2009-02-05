@@ -12,13 +12,11 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import java.io.File;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
+import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -38,9 +36,11 @@ public class AddDirectoryContainerPage extends WizardPage {
 	protected Text fInstallLocation;
 	protected TableViewer fTable;
 	protected IBundleContainer fContainer;
+	protected ITargetDefinition fTarget;
 
-	protected AddDirectoryContainerPage(String pageName) {
+	protected AddDirectoryContainerPage(String pageName, ITargetDefinition target) {
 		super(pageName);
+		fTarget = target;
 		setTitle(Messages.AddDirectoryContainerPage_0);
 		setMessage(Messages.AddDirectoryContainerPage_1);
 	}
@@ -132,7 +132,8 @@ public class AddDirectoryContainerPage extends WizardPage {
 			setPageComplete(false);
 		} else {
 			try {
-				BundleInfo[] bundles = fContainer.resolveBundles(null);
+				fContainer.resolve(fTarget, null);
+				IResolvedBundle[] bundles = fContainer.getBundles();
 				if (bundles == null || bundles.length == 0) {
 					fTable.setInput(new String[] {Messages.AddDirectoryContainerPage_7});
 					fTable.getControl().setEnabled(false);

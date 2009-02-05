@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.shared.target;
 import java.io.File;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -32,8 +33,8 @@ public class AddProfileContainerPage extends AddDirectoryContainerPage {
 	private Text fConfigLocation;
 	private Button fConfigBrowse;
 
-	public AddProfileContainerPage(String pageName) {
-		super(pageName);
+	public AddProfileContainerPage(String pageName, ITargetDefinition target) {
+		super(pageName, target);
 		setTitle(Messages.AddProfileContainerPage_0);
 		setMessage(Messages.AddProfileContainerPage_1);
 	}

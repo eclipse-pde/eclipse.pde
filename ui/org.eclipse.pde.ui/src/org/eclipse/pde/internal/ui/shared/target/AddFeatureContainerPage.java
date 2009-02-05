@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -37,8 +38,8 @@ public class AddFeatureContainerPage extends AddDirectoryContainerPage {
 
 	private Button fIncludeVersionButton;
 
-	protected AddFeatureContainerPage(String pageName) {
-		super(pageName);
+	protected AddFeatureContainerPage(String pageName, ITargetDefinition target) {
+		super(pageName, target);
 		setTitle(Messages.AddFeatureContainerPage_0);
 		setMessage(Messages.AddFeatureContainerPage_1);
 	}

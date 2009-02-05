@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,7 +33,7 @@ public class RestrictionsListSelectionDialog extends ListSelectionDialog {
 
 	private boolean fUseVersion;
 
-	public RestrictionsListSelectionDialog(Shell parentShell, BundleInfo[] allBundles, BundleInfo[] restrictions) {
+	public RestrictionsListSelectionDialog(Shell parentShell, IResolvedBundle[] allBundles, BundleInfo[] restrictions) {
 		super(parentShell, allBundles, new ArrayContentProvider(), new BundleInfoLabelProvider(), Messages.RestrictionsListSelectionDialog_0);
 		setTitle(Messages.RestrictionsListSelectionDialog_1);
 		if (restrictions == null) {
@@ -53,9 +54,9 @@ public class RestrictionsListSelectionDialog extends ListSelectionDialog {
 
 			List initialSelect = new ArrayList();
 			for (int i = 0; i < allBundles.length; i++) {
-				String restriction = allBundles[i].getSymbolicName();
+				String restriction = allBundles[i].getBundleInfo().getSymbolicName();
 				if (fUseVersion) {
-					restriction = restriction.concat(allBundles[i].getVersion());
+					restriction = restriction.concat(allBundles[i].getBundleInfo().getVersion());
 				}
 				if (restrictionSet.contains(restriction)) {
 					initialSelect.add(allBundles[i]);

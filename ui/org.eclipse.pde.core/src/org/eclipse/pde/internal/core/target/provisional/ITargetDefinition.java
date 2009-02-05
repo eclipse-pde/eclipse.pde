@@ -158,22 +158,32 @@ public interface ITargetDefinition {
 	public void setBundleContainers(IBundleContainer[] containers);
 
 	/**
-	 * Resolves and returns all executable bundles in this target definition, possibly empty.
+	 * Returns all resolved bundles in this target definition or <code>null</code>
+	 * if this container is not resolved.
 	 * 
-	 * @param monitor progress monitor or <code>null</code>
-	 * @return all executable bundles in this target definition
-	 * @throws CoreException if unable to resolve
+	 * @return resolved bundles or <code>null</code>
 	 */
-	public BundleInfo[] resolveBundles(IProgressMonitor monitor) throws CoreException;
+	public IResolvedBundle[] getBundles();
 
 	/**
-	 * Resolves and returns all source bundles in this target definition, possibly empty.
+	 * Resolves all bundles in this target definition by resolving
+	 * each bundle container in this target definition and returns a status describing
+	 * the result of the resolution.
 	 * 
 	 * @param monitor progress monitor or <code>null</code>
-	 * @return all source bundles in this target definition
+	 * @return resolution status
 	 * @throws CoreException if unable to resolve
 	 */
-	public BundleInfo[] resolveSourceBundles(IProgressMonitor monitor) throws CoreException;
+	public IStatus resolve(IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Returns whether this target's bundle containers are currently in
+	 * a resolved state.
+	 * 
+	 * @return whether this target's bundle containers are currently in
+	 * a resolved state
+	 */
+	public boolean isResolved();
 
 	/**
 	 * Returns any program arguments that should be used when launching this target
@@ -233,13 +243,11 @@ public interface ITargetDefinition {
 	public BundleInfo[] getImplicitDependencies();
 
 	/**
-	 * Resolves and returns implicit dependencies against the actual bundles contained
-	 * in this target. Matches symbolic names and optional versions of implicit dependencies
-	 * against the actual bundles in this target.
+	 * Returns implicit dependencies resolved against the actual bundles contained in this target
+	 * or <code>null</code> if this target has not been resolved. Matches symbolic names and optional
+	 * versions of implicit dependencies against the actual bundles in this target.
 	 *  
-	 * @param monitor progress monitor or <code>null</code>
-	 * @return resolved implicit dependencies
-	 * @throws CoreException if unable to resolve
+	 * @return resolved implicit dependencies or <code>null</code>
 	 */
-	public BundleInfo[] resolveImplicitDependencies(IProgressMonitor monitor) throws CoreException;
+	public IResolvedBundle[] getResolvedImplicitDependencies();
 }

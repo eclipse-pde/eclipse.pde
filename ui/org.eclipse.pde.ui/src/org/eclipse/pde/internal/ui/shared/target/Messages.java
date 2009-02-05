@@ -45,7 +45,6 @@ public class Messages extends NLS {
 	public static String BundleContainerTable_6;
 	public static String BundleContainerTable_7;
 	public static String BundleContainerTable_8;
-	public static String BundleContainerTable_9;
 	public static String FeatureImportWizard_DetailedPage_problemsLoading;
 	public static String FeatureImportWizardPage_importHasInvalid;
 	public static String RestrictionsListSelectionDialog_0;

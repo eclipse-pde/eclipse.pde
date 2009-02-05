@@ -12,18 +12,15 @@ package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.*;
 import java.util.*;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
-import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
@@ -77,28 +74,9 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveAllBundles(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected BundleInfo[] resolveAllBundles(IProgressMonitor monitor) throws CoreException {
-		return resolveBundles(monitor, false);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveAllSourceBundles(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected BundleInfo[] resolveAllSourceBundles(IProgressMonitor monitor) throws CoreException {
-		return resolveBundles(monitor, true);
-	}
-
-	/**
-	 * Resolves and returns source or code bundles based on the given flag.
-	 * 
-	 * @param monitor progress monitor or <code>null</code>
-	 * @param source whether to retrieve source bundles
-	 * @return bundles
-	 * @throws CoreException
-	 */
-	private BundleInfo[] resolveBundles(IProgressMonitor monitor, boolean source) throws CoreException {
+	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		File dir = getDirectory();
 		if (dir.exists() && dir.isDirectory()) {
 			try {
@@ -109,39 +87,43 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 					if (localMonitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
-					Map manifest = loadManifest(files[i]);
-					if (manifest != null) {
-						try {
-							String header = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
-							if (header != null) {
-								ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, header);
-								if (elements != null) {
-									String name = elements[0].getValue();
-									if (name != null) {
-										BundleInfo info = new BundleInfo();
-										info.setSymbolicName(name);
-										info.setLocation(files[i].toURI());
-										header = (String) manifest.get(Constants.BUNDLE_VERSION);
-										if (header != null) {
-											elements = ManifestElement.parseHeader(Constants.BUNDLE_VERSION, header);
-											if (elements != null) {
-												info.setVersion(elements[0].getValue());
+					try {
+						Map manifest = loadManifest(files[i]);
+						if (manifest != null) {
+							try {
+								String header = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
+								if (header != null) {
+									ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, header);
+									if (elements != null) {
+										String name = elements[0].getValue();
+										if (name != null) {
+											BundleInfo info = new BundleInfo();
+											info.setSymbolicName(name);
+											info.setLocation(files[i].toURI());
+											header = (String) manifest.get(Constants.BUNDLE_VERSION);
+											if (header != null) {
+												elements = ManifestElement.parseHeader(Constants.BUNDLE_VERSION, header);
+												if (elements != null) {
+													info.setVersion(elements[0].getValue());
+												}
 											}
-										}
-										if (source == isSourceBundle(files[i], name, manifest)) {
-											bundles.add(info);
+											boolean source = isSourceBundle(files[i], name, manifest);
+											boolean fragment = manifest.containsKey(Constants.FRAGMENT_HOST);
+											bundles.add(new ResolvedBundle(info, null, source, false, fragment));
 										}
 									}
 								}
+							} catch (BundleException e) {
+								// ignore invalid bundles
 							}
-						} catch (BundleException e) {
-							// ignore invalid bundles
 						}
+					} catch (CoreException e) {
+						// ignore invalid bundles
 					}
 					localMonitor.worked(1);
 				}
 				localMonitor.done();
-				return (BundleInfo[]) bundles.toArray(new BundleInfo[bundles.size()]);
+				return (IResolvedBundle[]) bundles.toArray(new IResolvedBundle[bundles.size()]);
 			} finally {
 				if (fRegistry != null) {
 					fRegistry.stop(this);
@@ -217,91 +199,6 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	protected File getDirectory() throws CoreException {
 		String path = resolveVariables(fPath);
 		return new File(path);
-	}
-
-	/**
-	 * Parses a bunlde's manifest into a dictionary. The bundle may be in a jar
-	 * or in a directory at the specified location.
-	 * 
-	 * @param bundleLocation root location of the bundle
-	 * @return bundle manifest dictionary or <code>null</code> if none
-	 * @throws CoreException if manifest has invalid syntax
-	 */
-	protected Map loadManifest(File bundleLocation) throws CoreException {
-		ZipFile jarFile = null;
-		InputStream manifestStream = null;
-		String extension = new Path(bundleLocation.getName()).getFileExtension();
-		try {
-			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
-				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
-				if (manifestEntry != null) {
-					manifestStream = jarFile.getInputStream(manifestEntry);
-				}
-			} else {
-				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
-				if (file.exists()) {
-					manifestStream = new FileInputStream(file);
-				} else {
-					File pxml = new File(bundleLocation, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-					File fxml = new File(bundleLocation, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
-					if (pxml.exists() || fxml.exists()) {
-						// support classic non-OSGi plug-in
-						PluginConverter converter = (PluginConverter) PDECore.getDefault().acquireService(PluginConverter.class.getName());
-						if (converter != null) {
-							try {
-								Dictionary convert = converter.convertManifest(bundleLocation, false, null, false, null);
-								if (convert != null) {
-									Map map = new HashMap(convert.size(), 1.0f);
-									Enumeration keys = convert.keys();
-									while (keys.hasMoreElements()) {
-										Object key = keys.nextElement();
-										map.put(key, convert.get(key));
-									}
-									return map;
-								}
-							} catch (PluginConversionException e) {
-								throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_2, bundleLocation.getAbsolutePath()), e));
-							}
-						}
-					}
-				}
-			}
-			if (manifestStream == null) {
-				return null;
-			}
-			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
-		} catch (BundleException e) {
-			PDECore.log(e);
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
-		} finally {
-			closeZipFileAndStream(manifestStream, jarFile);
-		}
-		return null;
-	}
-
-	/**
-	 * Closes the stream and jar file if not <code>null</code>.
-	 * 
-	 * @param stream stream to close or <code>null</code>
-	 * @param jarFile jar to close or <code>null</code>
-	 */
-	private void closeZipFileAndStream(InputStream stream, ZipFile jarFile) {
-		try {
-			if (stream != null) {
-				stream.close();
-			}
-		} catch (IOException e) {
-			PDECore.log(e);
-		}
-		try {
-			if (jarFile != null) {
-				jarFile.close();
-			}
-		} catch (IOException e) {
-			PDECore.log(e);
-		}
 	}
 
 	/* (non-Javadoc)

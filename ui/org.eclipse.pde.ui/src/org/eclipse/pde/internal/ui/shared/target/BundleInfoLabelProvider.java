@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.graphics.Image;
@@ -36,6 +37,8 @@ public class BundleInfoLabelProvider extends LabelProvider {
 				buf.append(')');
 			}
 			return buf.toString();
+		} else if (element instanceof IResolvedBundle) {
+			return getText(((IResolvedBundle) element).getBundleInfo());
 		}
 		return super.getText(element);
 	}
@@ -46,6 +49,8 @@ public class BundleInfoLabelProvider extends LabelProvider {
 	public Image getImage(Object element) {
 		if (element instanceof BundleInfo) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ);
+		} else if (element instanceof IResolvedBundle) {
+			return getImage(((IResolvedBundle) element).getBundleInfo());
 		}
 		return super.getImage(element);
 	}

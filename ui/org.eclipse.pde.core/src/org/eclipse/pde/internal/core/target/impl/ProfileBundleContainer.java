@@ -17,6 +17,8 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 
 /**
  * A bundle container representing an installed profile.
@@ -80,28 +82,31 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveAllBundles(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected BundleInfo[] resolveAllBundles(IProgressMonitor monitor) throws CoreException {
+	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		URL configUrl = getConfigurationArea();
-		IPath home = resolveHomeLocation();
-		BundleInfo[] infos = P2Utils.readBundles(home.toOSString(), configUrl);
+		String home = resolveHomeLocation().toOSString();
+		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
 		if (infos == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home.toOSString())));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
 		}
-		return infos;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveAllSourceBundles(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected BundleInfo[] resolveAllSourceBundles(IProgressMonitor monitor) throws CoreException {
-		URL configUrl = getConfigurationArea();
-		BundleInfo[] source = P2Utils.readSourceBundles(resolveHomeLocation().toOSString(), configUrl);
+		BundleInfo[] source = P2Utils.readSourceBundles(home, configUrl);
 		if (source == null) {
 			source = new BundleInfo[0];
 		}
-		return source;
+		IResolvedBundle[] all = new IResolvedBundle[infos.length + source.length];
+		for (int i = 0; i < infos.length; i++) {
+			BundleInfo info = infos[i];
+			all[i] = resolveBundle(info, false);
+		}
+		int index = 0;
+		for (int i = infos.length; i < all.length; i++) {
+			BundleInfo info = source[index];
+			all[i] = resolveBundle(info, true);
+			index++;
+		}
+		return all;
 	}
 
 	/**

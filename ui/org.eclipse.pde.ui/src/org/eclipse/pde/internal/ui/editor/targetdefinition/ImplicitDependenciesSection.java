@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -19,6 +17,7 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -230,7 +229,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 	 * Gets a list of all the bundles that can be added as implicit dependencies
 	 * @return list of possible dependencies
 	 */
-	protected BundleInfo[] getValidBundles() throws CoreException {
+	protected IResolvedBundle[] getValidBundles() throws CoreException {
 		BundleInfo[] current = getTarget().getImplicitDependencies();
 		Set currentBundles = new HashSet();
 		if (current != null) {
@@ -240,17 +239,18 @@ public class ImplicitDependenciesSection extends SectionPart {
 		}
 
 		List targetBundles = new ArrayList();
-		BundleInfo[] allTargetBundles = getTarget().resolveBundles(null);
+		getTarget().resolve(null);
+		IResolvedBundle[] allTargetBundles = getTarget().getBundles();
 		if (allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
 		}
 		for (int i = 0; i < allTargetBundles.length; i++) {
-			if (!currentBundles.contains(allTargetBundles[i].getSymbolicName())) {
+			if (!currentBundles.contains(allTargetBundles[i].getBundleInfo().getSymbolicName())) {
 				targetBundles.add(allTargetBundles[i]);
 			}
 		}
 
-		return (BundleInfo[]) targetBundles.toArray(new BundleInfo[targetBundles.size()]);
+		return (IResolvedBundle[]) targetBundles.toArray(new IResolvedBundle[targetBundles.size()]);
 	}
 
 	private void handleRemove() {

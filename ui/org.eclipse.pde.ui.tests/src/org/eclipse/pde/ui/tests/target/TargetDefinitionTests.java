@@ -21,6 +21,8 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.impl.TargetDefinition;
+import org.eclipse.pde.internal.core.target.impl.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.ServiceReference;
@@ -60,29 +62,6 @@ public class TargetDefinitionTests extends TestCase {
 	}
 	
 	/**
-	 * Returns the location of the JDT feature in the running host as
-	 * a path in the local file system.
-	 * 
-	 * @return path to JDT feature
-	 */
-	protected IPath getJdtFeatureLocation() {
-		IPath path = new Path(TargetPlatform.getDefaultLocation());
-		path = path.append("features");
-		File dir = path.toFile();
-		assertTrue("Missing features directory", dir.exists() && !dir.isFile());
-		String[] files = dir.list();
-		String location = null;
-		for (int i = 0; i < files.length; i++) {
-			if (files[i].startsWith("org.eclipse.jdt_")) {
-				location = path.append(files[i]).toOSString();
-				break;
-			}
-		}
-		assertNotNull("Missing JDT feature", location);
-		return new Path(location);
-	}
-	
-	/**
 	 * Retrieves all bundles (source and code) in the given target definition
 	 * returning them as a set of URLs.
 	 * 
@@ -90,14 +69,13 @@ public class TargetDefinitionTests extends TestCase {
 	 * @return all bundle URLs
 	 */
 	protected Set getAllBundleURLs(ITargetDefinition target) throws Exception {
-		BundleInfo[] code = target.resolveBundles(null);
-		BundleInfo[] source = target.resolveSourceBundles(null);
-		Set urls = new HashSet(code.length + source.length);
-		for (int i = 0; i < code.length; i++) {
-			urls.add(new File(code[i].getLocation()).toURL());
+		if (!target.isResolved()) {
+			target.resolve(null);
 		}
-		for (int i = 0; i < source.length; i++) {
-			urls.add(new File(source[i].getLocation()).toURL());
+		IResolvedBundle[] bundles = target.getBundles();
+		Set urls = new HashSet(bundles.length);
+		for (int i = 0; i < bundles.length; i++) {
+			urls.add(new File(bundles[i].getBundleInfo().getLocation()).toURL());
 		}
 		return urls;
 	}
@@ -110,14 +88,13 @@ public class TargetDefinitionTests extends TestCase {
 	 * @return all BundleInfos
 	 */
 	protected List getAllBundleInfos(ITargetDefinition target) throws Exception {
-		BundleInfo[] code = target.resolveBundles(null);
-		BundleInfo[] source = target.resolveSourceBundles(null);
-		List list = new ArrayList(code.length + source.length);
-		for (int i = 0; i < code.length; i++) {
-			list.add(code[i]);
+		if (!target.isResolved()) {
+			target.resolve(null);
 		}
-		for (int i = 0; i < source.length; i++) {
-			list.add(source[i]);
+		IResolvedBundle[] bundles = target.getBundles();
+		List list = new ArrayList(bundles.length);
+		for (int i = 0; i < bundles.length; i++) {
+			list.add(bundles[i].getBundleInfo());
 		}
 		return list;
 	}	
@@ -177,56 +154,6 @@ public class TargetDefinitionTests extends TestCase {
 	}
 	
 	/**
-	 * Returns the given input stream as a byte array
-	 * @param stream the stream to get as a byte array
-	 * @param length the length to read from the stream or -1 for unknown
-	 * @return the given input stream as a byte array
-	 * @throws IOException
-	 */
-	protected byte[] getInputStreamAsByteArray(InputStream stream, int length) throws IOException {
-		byte[] contents;
-		if (length == -1) {
-			contents = new byte[0];
-			int contentsLength = 0;
-			int amountRead = -1;
-			do {
-				// read at least 8K
-				int amountRequested = Math.max(stream.available(), 8192);
-				// resize contents if needed
-				if (contentsLength + amountRequested > contents.length) {
-					System.arraycopy(contents,
-							0,
-							contents = new byte[contentsLength + amountRequested],
-							0,
-							contentsLength);
-				}
-				// read as many bytes as possible
-				amountRead = stream.read(contents, contentsLength, amountRequested);
-				if (amountRead > 0) {
-					// remember length of contents
-					contentsLength += amountRead;
-				}
-			} while (amountRead != -1);
-			// resize contents if necessary
-			if (contentsLength < contents.length) {
-				System.arraycopy(contents, 0, contents = new byte[contentsLength], 0, contentsLength);
-			}
-		} else {
-			contents = new byte[length];
-			int len = 0;
-			int readSize = 0;
-			while ((readSize != -1) && (len != length)) {
-				// See PR 1FMS89U
-				// We record first the read size. In this case length is the actual
-				// read size.
-				len += readSize;
-				readSize = stream.read(contents, len, length - len);
-			}
-		}
-		return contents;
-	}	
-	
-	/**
 	 * Returns a default target platform that takes target weaving into account
 	 * if in a second instance of Eclipse. This allows the target platform to be 
 	 * reset after changing it in a test.
@@ -270,7 +197,7 @@ public class TargetDefinitionTests extends TestCase {
 			handle = target.getHandle();
 		}
 		assertEquals("Wrong target platform handle preference setting", handle, getTargetService().getWorkspaceTargetHandle());		
-	}
+	}	
 	
 	/**
 	 * Tests that resetting the target platform should work OK (i.e. is equivalent to the
@@ -281,6 +208,13 @@ public class TargetDefinitionTests extends TestCase {
 	public void testResetTargetPlatform() throws Exception {
 		ITargetDefinition definition = getDefaultTargetPlatorm();
 		Set urls = getAllBundleURLs(definition);
+		Set fragments = new HashSet();
+		IResolvedBundle[] bundles = definition.getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			if (bundles[i].isFragment()) {
+				fragments.add(bundles[i].getBundleInfo().getLocation().toURL());
+			}
+		}
 		
 		// current platform
 		IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
@@ -289,8 +223,13 @@ public class TargetDefinitionTests extends TestCase {
 		assertEquals("Should have same number of bundles", urls.size(), models.length);
 		for (int i = 0; i < models.length; i++) {
 			String location = models[i].getInstallLocation();
-			assertTrue("Missing plug-in " + location, urls.contains(new File(location).toURL()));
+			URL url = new File(location).toURL();
+			assertTrue("Missing plug-in " + location, urls.contains(url));
+			if (models[i].isFragmentModel()) {
+				assertTrue("Missing fragmnet", fragments.remove(url));
+			}
 		}
+		assertTrue("Different number of fragments", fragments.isEmpty());
 	}	
 
 	/**
@@ -406,9 +345,15 @@ public class TargetDefinitionTests extends TestCase {
 		};
 		container.setIncludedBundles(restrictions);
 		definition.setBundleContainers(new IBundleContainer[]{container});
-		List infos = getAllBundleInfos(definition);
+		definition.resolve(null);
+		IResolvedBundle[] bundles = definition.getBundles();
 		
-		assertEquals("Wrong number of bundles", 0, infos.size());		
+		assertEquals("Wrong number of bundles", 2, bundles.length);
+		for (int i = 0; i < bundles.length; i++) {
+			IResolvedBundle rb = bundles[i];
+			assertEquals("Should be a missing bundle version", IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, rb.getStatus().getCode());
+			assertEquals("Should be an error", IStatus.ERROR, rb.getStatus().getSeverity());
+		}
 	}	
 	
 	/**
@@ -596,11 +541,21 @@ public class TargetDefinitionTests extends TestCase {
 		ITargetDefinition definition = getNewTarget();
 		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
 		definition.setBundleContainers(new IBundleContainer[]{container});
-		BundleInfo[] bundles = definition.resolveSourceBundles(null);
-		assertEquals("Wrong number of source bundles", 3, bundles.length);
-		Set names = new HashSet();
+		
+		definition.resolve(null);
+		IResolvedBundle[] bundles = definition.getBundles();
+		List source = new ArrayList();
 		for (int i = 0; i < bundles.length; i++) {
-			names.add(bundles[i].getSymbolicName());
+			IResolvedBundle sb = bundles[i];
+			if (sb.isSourceBundle()) {
+				source.add(sb);
+			}
+		}
+		
+		assertEquals("Wrong number of source bundles", 3, source.size());
+		Set names = new HashSet();
+		for (int i = 0; i < source.size(); i++) {
+			names.add(((IResolvedBundle)source.get(i)).getBundleInfo().getSymbolicName());
 		}
 		String[] expected = new String[]{"org.eclipse.platform.source", "org.eclipse.jdt.source", "org.eclipse.pde.source"};
 		for (int i = 0; i < expected.length; i++) {
@@ -609,12 +564,87 @@ public class TargetDefinitionTests extends TestCase {
 	}
 
 	/**
+	 * Returns the given input stream as a byte array
+	 * @param stream the stream to get as a byte array
+	 * @param length the length to read from the stream or -1 for unknown
+	 * @return the given input stream as a byte array
+	 * @throws IOException
+	 */
+	public static byte[] getInputStreamAsByteArray(InputStream stream, int length) throws IOException {
+		byte[] contents;
+		if (length == -1) {
+			contents = new byte[0];
+			int contentsLength = 0;
+			int amountRead = -1;
+			do {
+				// read at least 8K
+				int amountRequested = Math.max(stream.available(), 8192);
+				// resize contents if needed
+				if (contentsLength + amountRequested > contents.length) {
+					System.arraycopy(contents,
+							0,
+							contents = new byte[contentsLength + amountRequested],
+							0,
+							contentsLength);
+				}
+				// read as many bytes as possible
+				amountRead = stream.read(contents, contentsLength, amountRequested);
+				if (amountRead > 0) {
+					// remember length of contents
+					contentsLength += amountRead;
+				}
+			} while (amountRead != -1);
+			// resize contents if necessary
+			if (contentsLength < contents.length) {
+				System.arraycopy(contents, 0, contents = new byte[contentsLength], 0, contentsLength);
+			}
+		} else {
+			contents = new byte[length];
+			int len = 0;
+			int readSize = 0;
+			while ((readSize != -1) && (len != length)) {
+				// See PR 1FMS89U
+				// We record first the read size. In this case length is the actual
+				// read size.
+				len += readSize;
+				readSize = stream.read(contents, len, length - len);
+			}
+		}
+		return contents;
+	}	
+	
+	/**
+	 * Returns the location of the JDT feature in the running host as
+	 * a path in the local file system.
+	 * 
+	 * @return path to JDT feature
+	 */
+	protected IPath getJdtFeatureLocation() {
+		IPath path = new Path(TargetPlatform.getDefaultLocation());
+		path = path.append("features");
+		File dir = path.toFile();
+		assertTrue("Missing features directory", dir.exists() && !dir.isFile());
+		String[] files = dir.list();
+		String location = null;
+		for (int i = 0; i < files.length; i++) {
+			if (files[i].startsWith("org.eclipse.jdt_")) {
+				location = path.append(files[i]).toOSString();
+				break;
+			}
+		}
+		assertNotNull("Missing JDT feature", location);
+		return new Path(location);
+	}
+	
+	/**
 	 * Tests a JDT feature bundle container contains the appropriate bundles
 	 * @throws Exception 
 	 */
 	public void testFeatureBundleContainer() throws Exception {
+		ITargetDefinition definition = getNewTarget();
 		IBundleContainer container = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", null);
-		BundleInfo[] bundles = container.resolveBundles(null);
+		container.resolve(definition, null);
+		IResolvedBundle[] bundles = container.getBundles();
 		
 		Set expected = new HashSet();
 		expected.add("org.eclipse.jdt");
@@ -641,7 +671,7 @@ public class TargetDefinitionTests extends TestCase {
 		}
 		assertEquals("Wrong number of bundles in JDT feature", expected.size(), bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
-			expected.remove(bundles[i].getSymbolicName());
+			expected.remove(bundles[i].getBundleInfo().getSymbolicName());
 		}
 		Iterator iterator = expected.iterator();
 		while (iterator.hasNext()) {
@@ -652,10 +682,74 @@ public class TargetDefinitionTests extends TestCase {
 		
 		
 		// should be no source bundles
-		bundles = container.resolveSourceBundles(null);
-		assertEquals("Wrong source bundle count", 0, bundles.length);
+		for (int i = 0; i < bundles.length; i++) {
+			IResolvedBundle bundle = bundles[i];
+			assertFalse("Should be no source bundles", bundle.isSourceBundle());
+		}
 	}
 	
+	/**
+	 * Tests a JDT feature bundle container contains the appropriate bundles for a specific OS.
+	 * 
+	 * @throws Exception 
+	 */
+	public void testMacOSFeatureBundleContainer() throws Exception {
+		ITargetDefinition definition = getNewTarget();
+		definition.setOS(Platform.OS_MACOSX);
+		IBundleContainer container = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", null);
+		container.resolve(definition, null);
+		IResolvedBundle[] bundles = container.getBundles();
+		
+		Set expected = new HashSet();
+		expected.add("org.eclipse.jdt");
+		expected.add("org.eclipse.ant.ui");
+		expected.add("org.eclipse.jdt.apt.core");
+		expected.add("org.eclipse.jdt.apt.ui");
+		expected.add("org.eclipse.jdt.apt.pluggable.core");
+		expected.add("org.eclipse.jdt.compiler.apt");
+		expected.add("org.eclipse.jdt.compiler.tool");
+		expected.add("org.eclipse.jdt.core");
+		expected.add("org.eclipse.jdt.core.manipulation");
+		expected.add("org.eclipse.jdt.debug.ui");
+		expected.add("org.eclipse.jdt.debug");
+		expected.add("org.eclipse.jdt.junit");
+		expected.add("org.eclipse.jdt.junit.runtime");
+		expected.add("org.eclipse.jdt.junit4.runtime");
+		expected.add("org.eclipse.jdt.launching");
+		expected.add("org.eclipse.jdt.ui");
+		expected.add("org.junit");
+		expected.add("org.junit4");
+		expected.add("org.eclipse.jdt.doc.user");
+		expected.add("org.eclipse.jdt.launching.macosx");
+		assertEquals("Wrong number of bundles in JDT feature", expected.size(), bundles.length);
+		for (int i = 0; i < bundles.length; i++) {
+			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
+			expected.remove(symbolicName);
+			if (symbolicName.equals("org.eclipse.jdt.launching.macosx")) {
+				// the bundle should be missing unless on Mac
+				IStatus status = bundles[i].getStatus();
+				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+					assertTrue("Mac bundle should be present", status.isOK());
+				} else {
+					assertFalse("Mac bundle should be missing", status.isOK());
+					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_DOES_NOT_EXIST, status.getCode());
+				}
+			}
+		}
+		Iterator iterator = expected.iterator();
+		while (iterator.hasNext()) {
+			String name = (String) iterator.next();
+			System.err.println("Missing: " + name);
+		}
+		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
+		
+		
+		// should be no source bundles
+		for (int i = 0; i < bundles.length; i++) {
+			IResolvedBundle bundle = bundles[i];
+			assertFalse("Should be no source bundles", bundle.isSourceBundle());
+		}
+	}	
 	/**
 	 * Tests that a target definition based on the JDT feature
 	 * restricted to a subset of bundles contains the right set.
@@ -688,8 +782,10 @@ public class TargetDefinitionTests extends TestCase {
 	 * @throws Exception 
 	 */
 	public void testSourceFeatureBundleContainer() throws Exception {
+		ITargetDefinition definition = getNewTarget();
 		IBundleContainer container = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt.source", null);
-		BundleInfo[] bundles = container.resolveSourceBundles(null);
+		container.resolve(definition, null);
+		IResolvedBundle[] bundles = container.getBundles();
 		
 		Set expected = new HashSet();
 		expected.add("org.eclipse.jdt.source");
@@ -713,21 +809,16 @@ public class TargetDefinitionTests extends TestCase {
 		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			expected.add("org.eclipse.jdt.launching.macosx.source");
 		}
+		assertEquals("Wrong number of bundles", expected.size() + 1, bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
-			expected.remove(bundles[i].getSymbolicName());
-		}
-		Iterator iterator = expected.iterator();
-		while (iterator.hasNext()) {
-			String name = (String) iterator.next();
-			System.err.println("Missing: " + name);
+			if (bundles[i].getBundleInfo().getSymbolicName().equals("org.eclipse.jdt.doc.isv")) {
+				assertFalse("Should not be a source bundle", bundles[i].isSourceBundle());
+			} else {
+				assertTrue(expected.remove(bundles[i].getBundleInfo().getSymbolicName()));
+				assertTrue("Should be a source bundle", bundles[i].isSourceBundle());
+			}
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
-		
-		
-		// should be one doc bundle
-		bundles = container.resolveBundles(null);
-		assertEquals("Wrong bundle count", 1, bundles.length);
-		assertEquals("Missing bundle", "org.eclipse.jdt.doc.isv", bundles[0].getSymbolicName());
 	}
 	
 	
@@ -743,8 +834,9 @@ public class TargetDefinitionTests extends TestCase {
 			int index = segment.indexOf('_');
 			assertTrue("Missing version id", index > 0);
 			String version = segment.substring(index + 1);
-			ITargetDefinition target = getNewTarget();
-			IBundleContainer container = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", version);
+			ITargetPlatformService targetService = getTargetService();
+			IBundleContainer container = targetService.newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", version);
+			ITargetDefinition target = targetService.newTarget();
 			target.setBundleContainers(new IBundleContainer[]{container});
 			
 			setTargetPlatform(target);
@@ -810,6 +902,29 @@ public class TargetDefinitionTests extends TestCase {
 		}		
 	}
 	
+	protected void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) {
+		assertTrue("Target content not equal",((TargetDefinition)targetA).isContentEqual(targetB));
+	}
+	
+	
+	/**
+	 * Reads a target definition file from the tests/targets/target-files location
+	 * with the given name. Note that ".target" will be appended.
+	 * 
+	 * @param name
+	 * @return target definition
+	 * @throws Exception
+	 */
+	protected ITargetDefinition readOldTarget(String name) throws Exception {
+		URL url = MacroPlugin.getBundleContext().getBundle().getEntry("/tests/targets/target-files/" + name + ".target");
+		File file = new File(FileLocator.toFileURL(url).getFile());
+		ITargetDefinition target = getNewTarget();
+		FileInputStream stream = new FileInputStream(file);
+		TargetDefinitionPersistenceHelper.initFromXML(target, stream);
+		stream.close();
+		return target;
+	}
+	
 	/**
 	 * Tests resolution of implicit dependencies in a default target platform
 	 * 
@@ -824,12 +939,13 @@ public class TargetDefinitionTests extends TestCase {
 				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
 		};		
 		definition.setImplicitDependencies(implicit);
-		BundleInfo[] infos = definition.resolveImplicitDependencies(null);
+		definition.resolve(null);
+		IResolvedBundle[] infos = definition.getResolvedImplicitDependencies();
 		
 		assertEquals("Wrong number of bundles", 2, infos.length);
 		Set set = new HashSet();
 		for (int i = 0; i < infos.length; i++) {
-			set.add(infos[i].getSymbolicName());
+			set.add(infos[i].getBundleInfo().getSymbolicName());
 		}
 		for (int i = 0; i < implicit.length; i++) {
 			BundleInfo info = implicit[i];

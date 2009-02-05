@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
@@ -150,7 +149,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					public void addPages() {
-						addPage(new AddDirectoryContainerPage("DirectoryPage")); //$NON-NLS-1$
+						addPage(new AddDirectoryContainerPage("DirectoryPage", fTarget)); //$NON-NLS-1$
 					}
 
 					public boolean performFinish() {
@@ -177,7 +176,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					public void addPages() {
-						addPage(new AddProfileContainerPage("ProfilePage")); //$NON-NLS-1$
+						addPage(new AddProfileContainerPage("ProfilePage", fTarget)); //$NON-NLS-1$
 					}
 
 					public boolean performFinish() {
@@ -204,7 +203,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					public void addPages() {
-						addPage(new AddFeatureContainerPage("FeaturePage")); //$NON-NLS-1$
+						addPage(new AddFeatureContainerPage("FeaturePage", fTarget)); //$NON-NLS-1$
 					}
 
 					public boolean performFinish() {
@@ -212,6 +211,11 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							IBundleContainer[] containers = ((AddFeatureContainerPage) getPages()[0]).getContainers();
 							if (containers != null) {
 								IBundleContainer[] oldContainers = fTarget.getBundleContainers();
+								// TODO: show progress as resolving
+								for (int i = 0; i < containers.length; i++) {
+									IBundleContainer newContainer = containers[i];
+									newContainer.resolve(fTarget, null);
+								}
 								if (oldContainers == null) {
 									fTarget.setBundleContainers(containers);
 								} else {
@@ -335,10 +339,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 								try {
 									// First try the specified dir, then try the plugins dir
 									IBundleContainer container = getTargetPlatformService().newDirectoryContainer(dirs[i].getPath());
-									BundleInfo[] resolved = container.resolveBundles(null);
+									container.resolve(fTarget, null);
+									IResolvedBundle[] resolved = container.getBundles();
 									if (resolved.length == 0) {
 										IBundleContainer pluginContainer = getTargetPlatformService().newDirectoryContainer(new File(dirs[i], "plugins").getPath()); //$NON-NLS-1$
-										resolved = pluginContainer.resolveBundles(null);
+										pluginContainer.resolve(fTarget, null);
+										resolved = pluginContainer.getBundles();
 										if (resolved.length > 0) {
 											container = pluginContainer;
 										}

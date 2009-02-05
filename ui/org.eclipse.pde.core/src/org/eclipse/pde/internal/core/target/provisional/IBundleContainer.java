@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 
 /**
@@ -23,22 +22,30 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 public interface IBundleContainer {
 
 	/**
-	 * Resolves and returns the executable bundles in this container, possibly empty.
+	 * Resolves all bundles in this container in the context of the specified
+	 * target and returns a status describing the resolution.
 	 * 
+	 * @param definition target being resolved for
 	 * @param monitor progress monitor or <code>null</code>
-	 * @return executable bundles
-	 * @exception CoreException if unable to resolve bundles
+	 * @return resolution status
+	 * @exception CoreException if unable to resolve this container
 	 */
-	public BundleInfo[] resolveBundles(IProgressMonitor monitor) throws CoreException;
+	public IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Resolves and returns the source bundles in this container, possibly empty.
+	 * Returns whether this container has resolved all of its contained bundles.
 	 * 
-	 * @param monitor progress monitor or <code>null</code>
-	 * @return source bundles
-	 * @exception CoreException if unable to resolve bundles
+	 * @return whether this container has resolved all of its contained bundles
 	 */
-	public BundleInfo[] resolveSourceBundles(IProgressMonitor monitor) throws CoreException;
+	public boolean isResolved();
+
+	/**
+	 * Returns all bundles in this container or <code>null</code> if this container is
+	 * not resolved.
+	 * 
+	 * @return resolved bundles or <code>null</code>
+	 */
+	public IResolvedBundle[] getBundles();
 
 	/**
 	 * Restricts the bundles in this container to the explicit set of bundles specified or
@@ -64,5 +71,20 @@ public interface IBundleContainer {
 	 * @return list of included bundles set or <code>null</code> if all bundles included
 	 */
 	public BundleInfo[] getIncludedBundles();
+
+	/**
+	 * Describes a set of bundles in this container that are optional. During resolution,
+	 * missing optional bundles are not considered as resolution errors.
+	 * 
+	 * @param bundles optional bundles or <code>null</code>
+	 */
+	public void setOptionalBundles(BundleInfo[] bundles);
+
+	/**
+	 * Returns bundles that are optionally part of this container or <code>null</code> if none.
+	 * 
+	 * @return optional bundles or <code>null</code>
+	 */
+	public BundleInfo[] getOptionalBundles();
 
 }

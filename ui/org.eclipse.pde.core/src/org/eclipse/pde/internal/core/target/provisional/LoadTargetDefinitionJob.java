@@ -277,19 +277,17 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 		Set included = new HashSet();
 		List infos = new ArrayList();
-		BundleInfo[] code = fTarget.resolveBundles(null);
-		for (int i = 0; i < code.length; i++) {
-			infos.add(code[i]);
-			included.add(code[i]);
-		}
-		// to be consistent with previous implementation, add source bundles
-		BundleInfo[] sourceBundles = fTarget.resolveSourceBundles(null);
-		for (int i = 0; i < sourceBundles.length; i++) {
-			infos.add(sourceBundles[i]);
-			included.add(sourceBundles[i]);
+		fTarget.resolve(null);
+		// TODO: report any errors in resolution status
+		IResolvedBundle[] resolved = fTarget.getBundles();
+		for (int i = 0; i < resolved.length; i++) {
+			if (resolved[i].getStatus().isOK()) {
+				infos.add(resolved[i].getBundleInfo());
+				included.add(resolved[i].getBundleInfo());
+			}
 		}
 
-		// Compute missing bundles
+		// Compute missing bundles (preference need to know disabled/missing bundles)
 		List missing = new ArrayList();
 		IBundleContainer[] containers = fTarget.getBundleContainers();
 		if (containers != null) {
@@ -299,18 +297,11 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				if (restrictions != null) {
 					try {
 						container.setIncludedBundles(null);
-						BundleInfo[] all = container.resolveBundles(null);
+						IResolvedBundle[] all = container.getBundles();
 						for (int j = 0; j < all.length; j++) {
-							BundleInfo bi = all[j];
-							if (!included.contains(bi)) {
-								missing.add(bi);
-							}
-						}
-						all = container.resolveSourceBundles(null);
-						for (int j = 0; j < all.length; j++) {
-							BundleInfo bi = all[j];
-							if (!included.contains(bi)) {
-								missing.add(bi);
+							IResolvedBundle bi = all[j];
+							if (!included.contains(bi.getBundleInfo())) {
+								missing.add(bi.getBundleInfo());
 							}
 						}
 					} finally {

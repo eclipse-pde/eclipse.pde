@@ -11,7 +11,8 @@
 package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
@@ -194,33 +195,59 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#resolveBundles(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#resolve(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public BundleInfo[] resolveBundles(IProgressMonitor monitor) throws CoreException {
+	public IStatus resolve(IProgressMonitor monitor) throws CoreException {
 		IBundleContainer[] containers = getBundleContainers();
-		List bundles = new ArrayList();
+		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, "Target Resolution", null);
 		if (containers != null) {
 			for (int i = 0; i < containers.length; i++) {
-				BundleInfo[] infos = containers[i].resolveBundles(monitor);
-				bundles.addAll(Arrays.asList(infos));
+				IStatus s = containers[i].resolve(this, monitor);
+				if (!s.isOK()) {
+					status.add(s);
+				}
 			}
 		}
-		return (BundleInfo[]) bundles.toArray(new BundleInfo[bundles.size()]);
+		return status;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#resolveSourceBundles(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#isResolved()
 	 */
-	public BundleInfo[] resolveSourceBundles(IProgressMonitor monitor) throws CoreException {
+	public boolean isResolved() {
 		IBundleContainer[] containers = getBundleContainers();
-		List source = new ArrayList();
 		if (containers != null) {
 			for (int i = 0; i < containers.length; i++) {
-				BundleInfo[] infos = containers[i].resolveSourceBundles(monitor);
-				source.addAll(Arrays.asList(infos));
+				IBundleContainer container = containers[i];
+				if (!container.isResolved()) {
+					return false;
+				}
 			}
 		}
-		return (BundleInfo[]) source.toArray(new BundleInfo[source.size()]);
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getBundles()
+	 */
+	public IResolvedBundle[] getBundles() {
+		if (isResolved()) {
+			IBundleContainer[] containers = getBundleContainers();
+			if (containers != null) {
+				List all = new ArrayList();
+				for (int i = 0; i < containers.length; i++) {
+					IBundleContainer container = containers[i];
+					IResolvedBundle[] bundles = container.getBundles();
+					for (int j = 0; j < bundles.length; j++) {
+						IResolvedBundle rb = bundles[j];
+						all.add(rb);
+					}
+				}
+				return (IResolvedBundle[]) all.toArray(new IResolvedBundle[all.size()]);
+			}
+			return new IResolvedBundle[0];
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -297,17 +324,17 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#resolveImplicitDependencies(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getResolvedImplicitDependencies()
 	 */
-	public BundleInfo[] resolveImplicitDependencies(IProgressMonitor monitor) throws CoreException {
+	public IResolvedBundle[] getResolvedImplicitDependencies() {
 		int size = 0;
 		if (fImplicit != null) {
 			size = fImplicit.length;
 		}
 		if (size == 0) {
-			return new BundleInfo[0];
+			return new IResolvedBundle[0];
 		}
-		return AbstractBundleContainer.getMatchingBundles(resolveBundles(null), fImplicit);
+		return AbstractBundleContainer.getMatchingBundles(getBundles(), fImplicit, null);
 	}
 
 	/* (non-Javadoc)
