@@ -235,15 +235,15 @@ public class ApiUseTask extends CommonUtilsTask {
 		}
 		
 		//initialize the exclude list
-		if (this.excludeListLocation != null) {
-			this.excludeset = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation);
-		}
+		this.excludeset = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation);
 		
 		notsearched = new TreeSet(componentsorter);
-		for(Iterator iter = this.excludeset.iterator(); iter.hasNext();) {
-			notsearched.add(new SkippedComponent((String) iter.next(), false, true));
+		if(this.excludeset != null) {
+			for(Iterator iter = this.excludeset.iterator(); iter.hasNext();) {
+				notsearched.add(new SkippedComponent((String) iter.next(), false, true));
+			}
 		}
-		
+
 		//extract the baseline to examine
 		
 		if (this.debug) {

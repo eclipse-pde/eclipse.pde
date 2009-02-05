@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,6 +62,8 @@ import com.ibm.icu.text.MessageFormat;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class ApiUseReportConversionTask extends CommonUtilsTask {
+
+	private static final String DEFAULT_XSLT = "/references.xsl"; //$NON-NLS-1$
 
 	/**
 	 * Default handler to collect a total reference count
@@ -274,7 +278,9 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	
 	/**
 	 * Sets the location of the XSLT file to use in the conversion of the XML
-	 * the HTML
+	 * the HTML.
+	 * 
+	 * <p>This is optional. If none is specified, then a default one is used.</p>
 	 * 
 	 * <p>The location is an absolute path.</p>
 	 * 
@@ -293,12 +299,13 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 			System.out.println("HTML report location: " + this.htmlReportsLocation); //$NON-NLS-1$
 			System.out.println("XSLT file location: " + this.xsltFileLocation); //$NON-NLS-1$}
 		}
-		if(this.xsltFileLocation == null) {
-			throw new BuildException(Messages.ApiUseReportConversionTask_no_xslt_found);
-		}
-		File xsltFile = new File(this.xsltFileLocation);
-		if(!xsltFile.exists() || !xsltFile.isFile()) {
-			throw new BuildException(Messages.ApiUseReportConversionTask_xslt_file_not_valid);
+		File xsltFile = null;
+		if(this.xsltFileLocation != null) {
+			// we will use the default xslt transform from the ant jar when this is null
+			xsltFile = new File(this.xsltFileLocation);
+			if(!xsltFile.exists() || !xsltFile.isFile()) {
+				throw new BuildException(Messages.ApiUseReportConversionTask_xslt_file_not_valid);
+			}
 		}
 		if (this.xmlReportsLocation == null) {
 			throw new BuildException(Messages.missing_xml_files_location);
@@ -804,9 +811,20 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	 * @param htmloutput
 	 * @throws TransformerException
 	 */
-	private void applyXSLT(File xsltfile, File xmlfile, File htmloutput) throws TransformerException {
+	private void applyXSLT(File xsltFile, File xmlfile, File htmloutput) throws TransformerException {
 		Source xml = new StreamSource(xmlfile);
-		Source xslt = new StreamSource(xsltfile);
+		Source xslt = null;
+		if (xsltFile != null) {
+			xslt = new StreamSource(xsltFile);
+		} else {
+			InputStream defaultXsltInputStream = CommonUtilsTask.class.getResourceAsStream(DEFAULT_XSLT);
+			if (defaultXsltInputStream != null) {
+				xslt = new StreamSource(new BufferedInputStream(defaultXsltInputStream));
+			}
+		}
+		if(xslt == null) {
+			throw new BuildException(Messages.ApiUseReportConversionTask_no_xslt_found);
+		}
 		Result html = new StreamResult(htmloutput);
 		TransformerFactory factory = TransformerFactory.newInstance();
 		Transformer former = factory.newTransformer(xslt);

@@ -94,7 +94,7 @@ public abstract class CommonUtilsTask extends Task {
 	/**
 	 * Class that describes an {@link IApiComponent} that has not been searched
 	 */
-	public class SkippedComponent {
+	public static class SkippedComponent {
 		protected boolean noapidescription = false;
 		protected boolean inexcludelist = false;
 		protected String componentid = null;
