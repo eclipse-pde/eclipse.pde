@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -395,7 +394,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 				}
 			}
 			if (manifestStream == null) {
-				return null;
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
 			}
 			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
 		} catch (BundleException e) {
@@ -428,14 +427,11 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		boolean fragment = false;
 		IStatus status = null;
 		try {
-			String path = info.getLocation().toURL().getFile();
-			File file = new File(path);
+			File file = URIUtil.toFile(info.getLocation());
 			Map manifest = loadManifest(file);
 			fragment = manifest.containsKey(Constants.FRAGMENT_HOST);
 		} catch (CoreException e) {
 			status = e.getStatus();
-		} catch (MalformedURLException e) {
-			status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_DOES_NOT_EXIST, NLS.bind(Messages.DirectoryBundleContainer_3, info.getLocation().toString()), e);
 		}
 		return new ResolvedBundle(info, status, source, false, fragment);
 	}

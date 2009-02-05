@@ -212,7 +212,7 @@ public class TargetDefinitionTests extends TestCase {
 		IResolvedBundle[] bundles = definition.getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			if (bundles[i].isFragment()) {
-				fragments.add(bundles[i].getBundleInfo().getLocation().toURL());
+				fragments.add(new File(bundles[i].getBundleInfo().getLocation()).toURL());
 			}
 		}
 		
@@ -244,7 +244,7 @@ public class TargetDefinitionTests extends TestCase {
 		ITargetDefinition definition = getNewTarget();
 		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
 		definition.setBundleContainers(new IBundleContainer[]{container});
-		Set urls = getAllBundleURLs(definition);
+		Set urls = getAllBundleURLs(definition);	
 		
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
