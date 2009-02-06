@@ -118,6 +118,7 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 		Integer kind = null;
 		Integer visibility = null;
 		String id = null;
+		String tname = null;
 		HashMap rmap = null;
 		HashMap mmap = null;
 		HashMap vmap = null;
@@ -164,16 +165,17 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 				mmap.put(visibility, vmap);
 			}
 			type = new Integer(references[i].getReferenceType());
-			kind = new Integer(references[i].getReferenceKind());
 			tmap = (HashMap) vmap.get(type);
 			if(tmap == null) {
 				tmap = new HashMap();
 				vmap.put(type, tmap);
 			}
-			reflist = (HashSet) tmap.get(kind);
+			//kind = new Integer(references[i].getReferenceKind());
+			tname = references[i].getReferencedMemberName() == null ? references[i].getReferencedTypeName() : references[i].getReferencedMemberName();
+			reflist = (HashSet) tmap.get(tname);
 			if(reflist == null) {
 				reflist = new HashSet();
-				tmap.put(kind, reflist);
+				tmap.put(tname, reflist);
 			}
 			reflist.add(references[i]);
 		}
@@ -293,23 +295,22 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 				if(doc == null) {
 					return;
 				}
-				Integer kind = null;
+				String tname = null;
 				HashSet refs = null;
-				Element kelement = null;
+				Element telement = null;
 				for(Iterator iter = map.keySet().iterator(); iter.hasNext();) {
-					kind = (Integer) iter.next();
-					kelement = findKindElement(root, kind);
-					if(kelement == null) {
-						kelement = doc.createElement(IApiXmlConstants.REFERENCE_KIND);
-						kelement.setAttribute(IApiXmlConstants.ATTR_REFERENCE_KIND_NAME, Util.getReferenceKind(kind.intValue()));
-						kelement.setAttribute(IApiXmlConstants.ATTR_KIND, kind.toString());
-						root.appendChild(kelement);
+					tname = (String) iter.next();
+					telement = findTypeElement(root, tname);
+					if(telement == null) {
+						telement = doc.createElement(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
+						telement.setAttribute(IApiXmlConstants.ATTR_NAME, tname);
+						root.appendChild(telement);
 					}
-					refs = (HashSet) map.get(kind);
+					refs = (HashSet) map.get(tname);
 					if(refs != null) {
 						for(Iterator iter2 = refs.iterator(); iter2.hasNext();) {
 							count++;
-							writeReference(doc, kelement, (IReference) iter2.next());
+							writeReference(doc, telement, (IReference) iter2.next());
 						}
 					}
 				}
@@ -324,6 +325,24 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * gets the root kind element
+	 * @param root
+	 * @param kind
+	 * @return
+	 */
+	private Element findTypeElement(Element root, String tname) {
+		Element kelement = null;
+		NodeList nodes = root.getElementsByTagName(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
+		for (int i = 0; i < nodes.getLength(); i++) {
+			kelement = (Element) nodes.item(i);
+			if(tname.equals(kelement.getAttribute(IApiXmlConstants.ATTR_NAME))) {
+				return kelement;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -353,6 +372,15 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 	 * @param reference
 	 */
 	private void writeReference(Document document, Element parent, IReference reference) throws CoreException {
+		Element kelement = null;
+		Integer kind = new Integer(reference.getReferenceKind());
+		kelement = findKindElement(parent, kind);
+		if(kelement == null) {
+			kelement = document.createElement(IApiXmlConstants.REFERENCE_KIND);
+			kelement.setAttribute(IApiXmlConstants.ATTR_REFERENCE_KIND_NAME, Util.getReferenceKind(kind.intValue()));
+			kelement.setAttribute(IApiXmlConstants.ATTR_KIND, kind.toString());
+			parent.appendChild(kelement);
+		}
 		Element relement = document.createElement(IApiXmlConstants.ATTR_REFERENCE);
 		IApiMember member = reference.getMember();
 		relement.setAttribute(IApiXmlConstants.ATTR_ORIGIN, getText(member));
@@ -364,7 +392,7 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 			if(sig != null) {
 				relement.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, sig);
 			}
-			parent.appendChild(relement);
+			kelement.appendChild(relement);
 		}
 	}
 	
