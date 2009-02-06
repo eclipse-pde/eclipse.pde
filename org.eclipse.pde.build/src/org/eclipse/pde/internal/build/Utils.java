@@ -969,6 +969,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 				((InputStream) obj).close();
 			else if (obj instanceof ZipFile)
 				((ZipFile) obj).close();
+			else if (obj instanceof OutputStream)
+				((OutputStream) obj).close();
 		} catch (IOException e) {
 			//boo
 		}

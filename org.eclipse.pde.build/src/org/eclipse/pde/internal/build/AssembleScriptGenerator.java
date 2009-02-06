@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -23,6 +23,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected HashMap archivesFormat;
 	protected boolean groupConfigs = false;
 	protected boolean versionsList = false;
+	protected String productLocation = null;
 
 	protected AssembleConfigScriptGenerator configScriptGenerator;
 
@@ -85,7 +86,11 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected void generateMainTarget() throws CoreException {
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
 
-		if (groupConfigs || BuildDirector.p2Gathering) {
+		if (BuildDirector.p2Gathering) {
+			generateP2ConfigFileTargetCall();
+		}
+
+		if (groupConfigs) {
 			Collection allPlugins = new LinkedHashSet();
 			Collection allFeatures = new LinkedHashSet();
 			Collection features = new LinkedHashSet();
@@ -114,12 +119,26 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		return new Collection[] {assemblageInformation.getCompiledPlugins(aConfig), assemblageInformation.getCompiledFeatures(aConfig), assemblageInformation.getFeatures(aConfig), assemblageInformation.getRootFileProviders(aConfig)};
 	}
 
+	protected void generateP2ConfigFileTargetCall() {
+		P2ConfigScriptGenerator p2ConfigGenerator = new P2ConfigScriptGenerator(assemblageInformation, true);
+		p2ConfigGenerator.setProduct(productLocation);
+		p2ConfigGenerator.initialize(directory, featureId);
+		p2ConfigGenerator.generate();
+
+		script.print("<assemble "); //$NON-NLS-1$
+		script.printAttribute("config", "p2", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printAttribute("element", p2ConfigGenerator.getTargetElement(), true); //$NON-NLS-1$
+		script.printAttribute("dot", ".", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printAttribute("scriptPrefix", "assemble", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("/>"); //$NON-NLS-1$
+	}
+
 	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
 		// generate the script for a configuration
 		configScriptGenerator.initialize(directory, featureId, aConfig, binaryPlugins, binaryFeatures, allFeatures, rootFiles);
 		configScriptGenerator.setArchiveFormat((String) archivesFormat.get(aConfig));
 		configScriptGenerator.setBuildSiteFactory(siteFactory);
-		configScriptGenerator.setGroupConfigs(groupConfigs || BuildDirector.p2Gathering);
+		configScriptGenerator.setGroupConfigs(groupConfigs);
 		configScriptGenerator.generate();
 
 		script.print("<assemble "); //$NON-NLS-1$
@@ -212,6 +231,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	public void setProduct(String value) {
+		productLocation = value;
 		configScriptGenerator.setProduct(value);
 	}
 

@@ -147,10 +147,14 @@ public class Utils {
 	}
 
 	static public void generateProduct(IFile productFile, String id, String version, String[] entryList, boolean features) throws CoreException, IOException {
-		generateProduct(productFile, id, version, null, entryList, features);
+		generateProduct(productFile, id, version, null, entryList, features, null);
 	}
 
 	static public void generateProduct(IFile productFile, String id, String version, String application, String[] entryList, boolean features) throws CoreException, IOException {
+		generateProduct(productFile, id, version, application, entryList, features, null);
+	}
+	
+	static public void generateProduct(IFile productFile, String id, String version, String application, String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<product ");
 		if (id != null) {
@@ -187,6 +191,10 @@ public class Utils {
 			}
 			buffer.append("  </plugins>\n");
 		}
+
+		if (extra != null)
+			buffer.append(extra);
+
 		buffer.append("</product>\n");
 
 		Utils.writeBuffer(productFile, buffer);

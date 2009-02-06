@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
+import java.io.File;
 import java.util.*;
 import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
@@ -78,13 +79,23 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		shapeAdvisor.setForceUpdateJars(forceUpdateJarFormat);
 	}
 
-	private String computeIconsList() {
+	protected String computeIconsList() {
+		return computeIconsList(configInfo.getOs());
+	}
+
+	protected String computeIconsList(String os) {
 		String result = Utils.getPropertyFormat(PROPERTY_LAUNCHER_ICONS);
-		if (productFile == null)
+		if (getProductFile() == null)
 			return result;
-		String[] icons = productFile.getIcons();
+		String[] icons = os != null ? productFile.getIcons(os) : productFile.getIcons();
 		for (int i = 0; i < icons.length; i++) {
 			String location = findFile(icons[i], true);
+			if (location == null) {
+				File productLocation = new File(productFile.getLocation());
+				File icon = new File(productLocation.getParentFile(), icons[i]);
+				if (icon.exists())
+					location = Utils.makeRelative(new Path(icon.getAbsolutePath()), new Path(workingDirectory)).toOSString();
+			}
 			if (location != null)
 				result += ", " + Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + location; //$NON-NLS-1$
 			else {
@@ -324,6 +335,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printProperty(PROPERTY_ECLIPSE_FEATURES, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION);
 		script.printProperty(PROPERTY_ARCHIVE_FULLPATH, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + Utils.getPropertyFormat(PROPERTY_BUILD_LABEL) + '/' + Utils.getPropertyFormat(PROPERTY_ARCHIVE_NAME));
 		script.printAvailableTask(PROPERTY_CUSTOM_ASSEMBLY, "${builder}/customAssembly.xml", "${builder}/customAssembly.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+
 		if (productFile != null && productFile.getLauncherName() != null)
 			script.printProperty(PROPERTY_LAUNCHER_NAME, productFile.getLauncherName());
 		script.printProperty(PROPERTY_TAR_ARGS, ""); //$NON-NLS-1$
@@ -512,10 +524,11 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printAntCallTask(TARGET_CUSTOM_ASSEMBLY, true, params);
 	}
 
-	private void generateCustomAssemblyTarget() {
+	protected void generateCustomAssemblyTarget() {
 		script.printTargetDeclaration(TARGET_CUSTOM_ASSEMBLY, null, PROPERTY_CUSTOM_ASSEMBLY, null, null);
 		script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_ASSEMBLY), null, Utils.getPropertyFormat(PROPERTY_CUSTOM_TARGET), null, TRUE, null);
 		script.printTargetEnd();
+		script.println();
 	}
 
 	private void generateMetadataTarget() {
@@ -808,7 +821,21 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		product = value;
 	}
 
+	public void setDirectory(String directory) {
+		this.directory = directory;
+	}
+
 	public ProductFile getProductFile() {
+		if (productFile == null && product != null) {
+			try {
+				// Note that we must pass the OS information in to load product
+				// so that any icon files can be calculated for the 
+				// generateBrandingCalls.
+				productFile = loadProduct(product, configInfo != null ? configInfo.getOs() : null);
+			} catch (CoreException e) {
+				//ignore
+			}
+		}
 		return productFile;
 	}
 

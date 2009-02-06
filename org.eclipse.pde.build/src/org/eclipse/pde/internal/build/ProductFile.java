@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,9 +83,8 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private SAXParser parser;
 	private String currentOS = null;
 	private boolean useIco = false;
-	private final ArrayList result = new ArrayList(6);
+	private final Map iconsMap = new HashMap(6);
 	private String launcherName = null;
-	private String icons[] = null;
 	private String configPath = null;
 	private final Map platformSpecificConfigPaths = new HashMap();
 	private String configPlatform = null;
@@ -207,18 +206,26 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	 * Parses the specified url and constructs a feature
 	 */
 	public String[] getIcons() {
-		if (icons != null)
-			return icons;
-		String[] temp = new String[result.size()];
+		return getIcons(currentOS);
+	}
+
+	public String[] getIcons(String os) {
+		if (iconsMap.containsKey(os))
+			return (String[]) iconsMap.get(os);
+		return new String[0];
+	}
+
+	private String[] toArrayRemoveNulls(List list) {
+		String[] temp = new String[list.size()];
 		int i = 0;
-		for (Iterator iter = result.iterator(); iter.hasNext();) {
+		for (Iterator iter = list.iterator(); iter.hasNext();) {
 			String element = (String) iter.next();
 			if (element != null)
 				temp[i++] = element;
 		}
-		icons = new String[i];
-		System.arraycopy(temp, 0, icons, 0, i);
-		return icons;
+		String[] result = new String[i];
+		System.arraycopy(temp, 0, result, 0, i);
+		return result;
 	}
 
 	public String getConfigIniPath() {
@@ -537,38 +544,31 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 		launcherName = attributes.getValue("name"); //$NON-NLS-1$
 	}
 
-	private boolean osMatch(String os) {
-		if (os == currentOS)
-			return true;
-		if (os == null)
-			return false;
-		return os.equals(currentOS);
-	}
-
 	private void processSolaris(Attributes attributes) {
-		if (!osMatch(Platform.OS_SOLARIS))
-			return;
+		List result = new ArrayList(4);
 		result.add(attributes.getValue(SOLARIS_LARGE));
 		result.add(attributes.getValue(SOLARIS_MEDIUM));
 		result.add(attributes.getValue(SOLARIS_SMALL));
 		result.add(attributes.getValue(SOLARIS_TINY));
+		iconsMap.put(Platform.OS_SOLARIS, toArrayRemoveNulls(result));
 	}
 
 	private void processWin(Attributes attributes) {
-		if (!osMatch(Platform.OS_WIN32))
-			return;
 		useIco = IBuildPropertiesConstants.TRUE.equalsIgnoreCase(attributes.getValue(P_USE_ICO));
 	}
 
 	private void processIco(Attributes attributes) {
-		if (!osMatch(Platform.OS_WIN32) || !useIco)
+		if (!useIco)
 			return;
-		result.add(attributes.getValue("path")); //$NON-NLS-1$
+		String value = attributes.getValue("path"); //$NON-NLS-1$
+		if (value != null)
+			iconsMap.put(Platform.OS_WIN32, new String[] {value});
 	}
 
 	private void processBmp(Attributes attributes) {
-		if (!osMatch(Platform.OS_WIN32) || useIco)
+		if (useIco)
 			return;
+		List result = new ArrayList(7);
 		result.add(attributes.getValue(WIN32_16_HIGH));
 		result.add(attributes.getValue(WIN32_16_LOW));
 		result.add(attributes.getValue(WIN32_24_LOW));
@@ -576,17 +576,18 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 		result.add(attributes.getValue(WIN32_32_LOW));
 		result.add(attributes.getValue(WIN32_48_HIGH));
 		result.add(attributes.getValue(WIN32_48_LOW));
+		iconsMap.put(Platform.OS_WIN32, toArrayRemoveNulls(result));
 	}
 
 	private void processLinux(Attributes attributes) {
-		if (!osMatch(Platform.OS_LINUX))
-			return;
-		result.add(attributes.getValue("icon")); //$NON-NLS-1$
+		String value = attributes.getValue("icon"); //$NON-NLS-1$
+		if (value != null)
+			iconsMap.put(Platform.OS_LINUX, new String[] {value});
 	}
 
 	private void processMac(Attributes attributes) {
-		if (!osMatch(Platform.OS_MACOSX))
-			return;
-		result.add(attributes.getValue("icon")); //$NON-NLS-1$
+		String value = attributes.getValue("icon"); //$NON-NLS-1$
+		if (value != null)
+			iconsMap.put(Platform.OS_MACOSX, new String[] {value});
 	}
 }

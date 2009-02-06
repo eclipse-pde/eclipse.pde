@@ -9,18 +9,20 @@
 
 package org.eclipse.pde.build.internal.tests.p2;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.build.internal.tests.Utils;
+import org.eclipse.pde.build.tests.Activator;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.internal.build.builder.*;
 import org.osgi.framework.Constants;
@@ -82,12 +84,7 @@ public class PublishingTests extends P2TestCase {
 		assertTouchpoint(iu, "install", "myRandomAction");
 	}
 
-	public void testPublishFeature_ExecutableFeature() throws Exception {
-		IFolder buildFolder = newTest("PublishBundle_Executable");
-		IFolder executableFeature = buildFolder.getFolder("features/org.eclipse.equinox.executable");
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
-
+	protected File copyExecutableFeature(File delta, IFolder executableFeature) throws Exception {
 		FilenameFilter filter = new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.startsWith("org.eclipse.equinox.executable");
@@ -97,14 +94,19 @@ public class PublishingTests extends P2TestCase {
 		File[] features = new File(delta, "features").listFiles(filter);
 		Utils.copy(features[0], executableFeature.getLocation().toFile());
 		executableFeature.refreshLocal(IResource.DEPTH_INFINITE, null);
-
+		return features[0];
+	}
+	
+	public void testPublishFeature_ExecutableFeature() throws Exception {
+		IFolder buildFolder = newTest("PublishBundle_Executable");
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		IFolder executableFeature = buildFolder.getFolder("features/org.eclipse.equinox.executable");
+		File originalExecutable = copyExecutableFeature(delta, executableFeature);
+		
 		Properties properties = Utils.loadProperties(executableFeature.getFile("build.properties"));
 		properties.remove("custom");
-		//temporary
-		properties.put("root.win32.win32.x86", "file:bin/win32/win32/x86/launcher.exe");
-		properties.put("root.win32.win32.x86_64", "file:bin/win32/win32/x86_64/launcher.exe");
-		properties.put("root.win32.win32.ia64", "file:contributed/win32/win32/ia64/launcher.exe");
-		properties.put("root.win32.wpf.x86", "file:bin/wpf/win32/x86/launcher.exe");
 		Utils.storeBuildProperties(executableFeature, properties);
 
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "org.eclipse.equinox.executable");
@@ -120,7 +122,7 @@ public class PublishingTests extends P2TestCase {
 		runAntScript(buildXMLPath, new String[] {"gather.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
 
 		String executable = "org.eclipse.equinox.executable";
-		String fileName = features[0].getName();
+		String fileName = originalExecutable.getName();
 		String version = fileName.substring(fileName.indexOf('_') + 1);
 		Set entries = new HashSet();
 		entries.add("launcher");
@@ -280,5 +282,71 @@ public class PublishingTests extends P2TestCase {
 		entries.add("A.java");
 		entries.add("b/B.java");
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle.source_1.0.0.jar", entries);
+	}
+	
+	public void testPublish_Brand_1() throws Exception {
+		IFolder buildFolder = newTest("brand_1");
+		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
+		
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		IFolder executableFeature = buildFolder.getFolder("features/org.eclipse.equinox.executable");
+		File originalExecutable = copyExecutableFeature(delta, executableFeature);
+		Properties properties = Utils.loadProperties(executableFeature.getFile("build.properties"));
+		properties.remove("custom");
+		Utils.storeBuildProperties(executableFeature, properties);
+		
+		IFile product = rcp.getFile("rcp.product");
+		StringBuffer branding = new StringBuffer();
+		branding.append("<launcher name=\"branded\">           \n");
+		branding.append("   <macosx icon=\"mail.icns\" />      \n");
+		branding.append("   <win useIco=\"true\">              \n");
+		branding.append("      <ico path=\"mail.ico\" />       \n");
+		branding.append("      <bmp/>                          \n");
+		branding.append("   </win>                             \n");
+		branding.append("</launcher>                           \n");
+		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String [] { "org.eclipse.osgi"}, false, branding);
+		
+		//steal the icons from test 237922
+		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/237922/rcp/icons/mail.ico"), null);
+		IFile icoFile = rcp.getFile("mail.ico");
+		icoFile.create(ico.openStream(), IResource.FORCE, null);
+		
+		//cheat and spoof a icns file for mac
+		Utils.copy(icoFile.getLocation().toFile(), new File(rcp.getLocation().toFile(), "mail.icns"));
+		
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath() + "/plugins");
+		properties.put("configs", "win32,win32,x86 & macosx, carbon, ppc");
+		Utils.storeBuildProperties(buildFolder, properties);
+		
+		try {
+			BuildDirector.p2Gathering = true;
+			runProductBuild(buildFolder);
+		} finally {
+			BuildDirector.p2Gathering = false;
+		}
+		
+		String branded = "org.example.rcp";
+		String fileName = originalExecutable.getName();
+		String version = fileName.substring(fileName.indexOf('_') + 1);
+		
+		Set entries = new HashSet();
+		entries.add("branded.app/Contents/Info.plist");
+		entries.add("branded.app/Contents/MacOS/branded.ini");
+		entries.add("branded.app/Contents/MacOS/branded");
+		entries.add("branded.app/Contents/Resources/mail.icns");
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), branded + "_root.macosx.carbon.ppc_" + version, entries);
+		
+		entries.clear();
+		entries.add("branded.exe");
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), branded + "_root.win32.win32.x86_" + version, entries);
+
+		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
+		assertNotNull(repository);
+
 	}
 }

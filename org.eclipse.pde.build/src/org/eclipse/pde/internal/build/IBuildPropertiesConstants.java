@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_COMPRESS = "p2.compress"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_METADATA_REPO_NAME = "p2.metadata.repo.name"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ARTIFACT_REPO_NAME = "p2.artifact.repo.name"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_BUILD_REPO = "p2.build.repo"; //$NON-NLS-1$
 	//Internal usage only
 	public static final String PROPERTY_P2_GENERATION_MODE = "p2.generation.mode"; //$NON-NLS-1$
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$

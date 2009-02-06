@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -91,6 +91,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_INCLUDE_CHILDREN = "include.children"; //$NON-NLS-1$
 	public static final String PROPERTY_LAUNCHER_ICONS = "launcherIcons"; //$NON-NLS-1$
 	public static final String PROPERTY_LAUNCHER_NAME = "launcherName"; //$NON-NLS-1$
+	public static final String PROPERTY_LAUNCHER_PROVIDER = "launcherProvider"; //$NON-NLS-1$
 	public static final String PROPERTY_PRODUCT = "product"; //$NON-NLS-1$
 	public static final String PROPERTY_BASE_LOCATION = "baseLocation"; //$NON-NLS-1$
 	public static final String PROPERTY_LOG_EXTENSION = "logExtension"; //$NON-NLS-1$

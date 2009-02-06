@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -69,9 +69,6 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			return id;
 		}
 	}
-
-	private static final String FEATURE_PLATFORM_LAUNCHERS = "org.eclipse.platform.launchers"; //$NON-NLS-1$
-	private static final String FEATURE_EXECUTABLE = "org.eclipse.equinox.executable"; //$NON-NLS-1$
 
 	private String featureId = null;
 	private String version = null;
@@ -229,14 +226,14 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			// and the launcher plug-in and fragments
 			BuildTimeFeature executableFeature = null;
 			try {
-				executableFeature = getSite(false).findFeature(FEATURE_EXECUTABLE, null, false);
+				executableFeature = getSite(false).findFeature(FEATURE_EQUINOX_EXECUTABLE, null, false);
 			} catch (CoreException e) {
 				// ignore
 			}
 			if (executableFeature != null) {
 				/* the executable feature includes the launcher and fragments already */
-				if (!features.contains(FEATURE_EXECUTABLE))
-					features.add(new Entry(FEATURE_EXECUTABLE));
+				if (!features.contains(FEATURE_EQUINOX_EXECUTABLE))
+					features.add(new Entry(FEATURE_EQUINOX_EXECUTABLE));
 			} else {
 				// We don't have the executable feature, at least try and get the launcher jar and fragments 
 				plugins.add(new Entry(BUNDLE_EQUINOX_LAUNCHER));

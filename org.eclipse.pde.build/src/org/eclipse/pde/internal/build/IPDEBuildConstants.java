@@ -127,6 +127,8 @@ public interface IPDEBuildConstants {
 	public static final String BUNDLE_UPDATE_CONFIGURATOR = "org.eclipse.update.configurator"; //$NON-NLS-1$
 	public static final String BUNDLE_SIMPLE_CONFIGURATOR = "org.eclipse.equinox.simpleconfigurator"; //$NON-NLS-1$
 	public static final String BUNDLE_DS = "org.eclipse.equinox.ds"; //$NON-NLS-1$
+	public static final String FEATURE_PLATFORM_LAUNCHERS = "org.eclipse.platform.launchers"; //$NON-NLS-1$
+	public static final String FEATURE_EQUINOX_EXECUTABLE = "org.eclipse.equinox.executable"; //$NON-NLS-1$
 
 	// fetch task extension point
 	public final static String EXT_FETCH_TASK_FACTORIES = "org.eclipse.pde.build.fetchFactories"; //$NON-NLS-1$

@@ -12,6 +12,11 @@
       </antTask>
       <antTask
       		library="lib/pdebuild-ant.jar"
+      		name="eclipse.brand.p2.artifacts"
+      		class="org.eclipse.pde.internal.build.publisher.BrandP2Task">
+      </antTask>
+      <antTask
+      		library="lib/pdebuild-ant.jar"
       		name="eclipse.gatherBundle"
       		class="org.eclipse.pde.internal.build.publisher.GatherBundleTask">
       </antTask>
