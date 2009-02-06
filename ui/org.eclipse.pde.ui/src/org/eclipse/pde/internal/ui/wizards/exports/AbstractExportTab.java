@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.io.File;
+import java.io.IOException;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
@@ -64,6 +66,23 @@ public abstract class AbstractExportTab {
 				combo.add(res, 0);
 			combo.setText(res);
 		}
+	}
+
+	/**
+	 * Returns whether the location text is a valid canonical path
+	 * @param location location path string
+	 * @return true if the location is valid, false otherwise
+	 */
+	protected boolean isValidLocation(String location) {
+		try {
+			String destinationPath = new File(location).getCanonicalPath();
+			if (destinationPath == null || destinationPath.length() == 0)
+				return false;
+		} catch (IOException e) {
+			return false;
+		}
+
+		return true;
 	}
 
 }

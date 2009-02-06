@@ -1684,6 +1684,7 @@ public class PDEUIMessages extends NLS {
 	public static String ExportWizard_dialog_message;
 	public static String ExportWizard_status_noselection;
 	public static String ExportWizard_status_nodirectory;
+	public static String ExportWizard_status_invaliddirectory;
 	public static String ExportWizard_status_nofile;
 	public static String ExportWizard_status_noantfile;
 	public static String ExtensionsPage_title;

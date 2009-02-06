@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,6 +94,12 @@ public class ProductDestinationGroup extends AbstractExportTab {
 			hookListeners();
 		} catch (CoreException e) {
 		}
+	}
+
+	protected void initializeCombo(IDialogSettings settings, String key, Combo combo) {
+		super.initializeCombo(settings, key, combo);
+		if (!isValidLocation(combo.getText().trim())) // If default value is invalid, make it blank
+			combo.setText(""); //$NON-NLS-1$
 	}
 
 	protected void updateDestination(IFile file) {
@@ -197,10 +203,18 @@ public class ProductDestinationGroup extends AbstractExportTab {
 	}
 
 	protected String validate() {
-		if (fArchiveFileButton.getSelection() && fArchiveCombo.getText().trim().length() == 0)
-			return PDEUIMessages.ExportWizard_status_nofile;
-		if (fDirectoryButton.getSelection() && fDirectoryCombo.getText().trim().length() == 0)
-			return PDEUIMessages.ExportWizard_status_nodirectory;
+		if (fArchiveFileButton.getSelection()) {
+			if (fArchiveCombo.getText().trim().length() == 0)
+				return PDEUIMessages.ExportWizard_status_nofile;
+			else if (!isValidLocation(fArchiveCombo.getText().trim()))
+				return PDEUIMessages.ExportWizard_status_invaliddirectory;
+		}
+		if (fDirectoryButton.getSelection()) {
+			if (fDirectoryCombo.getText().trim().length() == 0)
+				return PDEUIMessages.ExportWizard_status_nodirectory;
+			else if (!isValidLocation(fDirectoryCombo.getText().trim()))
+				return PDEUIMessages.ExportWizard_status_invaliddirectory;
+		}
 		return null;
 	}
 

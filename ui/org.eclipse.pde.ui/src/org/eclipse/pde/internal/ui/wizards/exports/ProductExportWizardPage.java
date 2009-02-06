@@ -180,6 +180,8 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	}
 
 	protected void pageChanged() {
+		if (getMessage() != null)
+			setMessage(null);
 		String error = fConfigurationGroup.validate();
 		if (error == null)
 			error = fExportGroup.validate();
