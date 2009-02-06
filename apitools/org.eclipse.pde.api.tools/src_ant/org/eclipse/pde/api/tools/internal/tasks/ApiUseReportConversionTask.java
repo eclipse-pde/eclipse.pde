@@ -297,7 +297,11 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 		if (this.debug) {
 			System.out.println("XML report location: " + this.xmlReportsLocation); //$NON-NLS-1$
 			System.out.println("HTML report location: " + this.htmlReportsLocation); //$NON-NLS-1$
-			System.out.println("XSLT file location: " + this.xsltFileLocation); //$NON-NLS-1$}
+			if (this.xsltFileLocation == null) {
+				System.out.println("No XSLT file location"); //$NON-NLS-1$}
+			} else {
+				System.out.println("XSLT file location: " + this.xsltFileLocation); //$NON-NLS-1$}
+			}
 		}
 		File xsltFile = null;
 		if(this.xsltFileLocation != null) {
