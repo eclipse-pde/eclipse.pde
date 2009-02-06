@@ -115,7 +115,6 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 			fReferenceMap = new HashMap();
 		}
 		Integer type = null;
-		Integer kind = null;
 		Integer visibility = null;
 		String id = null;
 		String tname = null;
