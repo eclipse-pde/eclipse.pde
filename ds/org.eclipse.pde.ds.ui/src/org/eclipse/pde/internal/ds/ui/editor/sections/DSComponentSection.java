@@ -10,6 +10,7 @@
  *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028, 249263
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 254971
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.sections;
 
@@ -53,6 +54,8 @@ public class DSComponentSection extends PDESection {
 	private IDSImplementation fImplementation;
 	private FormEntry fClassEntry;
 	private FormEntry fNameEntry;
+	private FormEntry fActivateEntry;
+	private FormEntry fDeactivateEntry;
 	private IDSModel fModel;
 
 	public DSComponentSection(PDEFormPage page, Composite parent) {
@@ -84,6 +87,18 @@ public class DSComponentSection extends PDESection {
 				Messages.DSImplementationDetails_classEntry,
 				Messages.DSImplementationDetails_browse, isEditable(), 0);
 
+		// Attribute: activate
+		fActivateEntry = new FormEntry(client, toolkit,
+				Messages.DSComponentDetails_activateEntry, SWT.NONE);
+		fActivateEntry.getLabel().setToolTipText(
+				Messages.DSComponentDetails_activateTooltip);
+
+		// Attribute: deactivate
+		fDeactivateEntry = new FormEntry(client, toolkit,
+				Messages.DSComponentDetails_deactivateEntry, SWT.NONE);
+		fDeactivateEntry.getLabel().setToolTipText(
+				Messages.DSComponentDetails_deactivateTooltip);
+
 		setListeners();
 		updateUIFields();
 
@@ -105,6 +120,8 @@ public class DSComponentSection extends PDESection {
 	public void commit(boolean onSave) {
 		fClassEntry.commit();
 		fNameEntry.commit();
+		fActivateEntry.commit();
+		fDeactivateEntry.commit();
 		super.commit(onSave);
 	}
 
@@ -137,8 +154,24 @@ public class DSComponentSection extends PDESection {
 				// Attribute: name
 				fNameEntry.setValue(fComponent.getAttributeName(), true);
 			}
-
 			fNameEntry.setEditable(isEditable());
+
+			if (fComponent.getActivateMethod() == null) {
+				fActivateEntry.setValue("", true); //$NON-NLS-1$
+			} else {
+				fActivateEntry.setValue(fComponent.getActivateMethod(), true);
+			}
+
+			fActivateEntry.setEditable(isEditable());
+
+			if (fComponent.getDeactivateMethod() == null) {
+				fDeactivateEntry.setValue("", true); //$NON-NLS-1$
+			} else {
+				fDeactivateEntry.setValue(fComponent.getDeactivateMethod(),
+						true);
+			}
+
+			fDeactivateEntry.setEditable(isEditable());
 		}
 
 		// Ensure data object is defined
@@ -166,6 +199,25 @@ public class DSComponentSection extends PDESection {
 				fComponent.setAttributeName(fNameEntry.getValue());
 			}
 		});
+		fActivateEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fComponent == null) {
+					return;
+				}
+				fComponent.setActivateMethod(fActivateEntry.getValue());
+			}
+		});
+		fDeactivateEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fComponent == null) {
+					return;
+				}
+				fComponent.setDeactivateMethod(fDeactivateEntry.getValue());
+			}
+		});
+
 		IActionBars actionBars = this.getPage().getEditor().getEditorSite()
 				.getActionBars();
 		// Attribute: class

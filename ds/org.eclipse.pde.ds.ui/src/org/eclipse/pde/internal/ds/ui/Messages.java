@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 223738
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui;
 
@@ -25,7 +26,12 @@ public class Messages extends NLS {
 	public static String DSComponentDetails_mainSectionTitle;
 	public static String DSComponentDetails_mainSectionDescription;
 	public static String DSComponentDetails_nameEntry;
+	public static String DSComponentDetails_activateEntry;
+	public static String DSComponentDetails_activateTooltip;
+	public static String DSComponentDetails_deactivateEntry;
+	public static String DSComponentDetails_deactivateTooltip;
 	public static String DSComponentDetails_factoryEntry;
+	public static String DSComponentDetails_configurationPolicy;
 	public static String DSComponentDetails_enabledLabel;
 	public static String DSComponentDetails_immediateLabel;
 	public static String DSComponentDetails_browse;

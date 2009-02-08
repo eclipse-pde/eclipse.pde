@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
@@ -25,6 +26,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	public static final String ATTRIBUTE_VALUE_TRUE = "true"; //$NON-NLS-1$
 
 	public static final String ATTRIBUTE_VALUE_FALSE = "false"; //$NON-NLS-1$	
+
+	public static final String EMPTY_VALUE = ""; //$NON-NLS-1$	
 
 	private transient IDocumentElementNode fParent;
 	private transient boolean fIsErrorNode;
@@ -81,8 +84,29 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		StringBuffer buffer = new StringBuffer();
 		// Print opening angle bracket
 		buffer.append("<"); //$NON-NLS-1$
+		// Print namespace
+		String prefix = getNamespacePrefix();
+		if (prefix != null && prefix.length() > 0) {
+			buffer.append(getNamespacePrefix());
+			buffer.append(":"); //$NON-NLS-1$
+		}
 		// Print element
 		buffer.append(getXMLTagName());
+
+		// Print xmlns if is root
+		// FIXME... this may be limiting...
+		if (isRoot()) {
+			String namespace = getNamespace();
+			if (namespace != null && namespace.length() > 0) {
+				buffer.append(" "); //$NON-NLS-1$
+				buffer.append("xmlns:"); //$NON-NLS-1$
+				buffer.append(getNamespacePrefix());
+				buffer.append("="); //$NON-NLS-1$
+				buffer.append("\""); //$NON-NLS-1$
+				buffer.append(namespace);
+				buffer.append("\""); //$NON-NLS-1$
+			}
+		}
 		// Print attributes
 		buffer.append(writeAttributes());
 		// Make self-enclosing element if specified
@@ -148,6 +172,11 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		if (terminate == false) {
 			buffer.append(getTerminateIndent());
 			buffer.append("</"); //$NON-NLS-1$
+			String prefix = getNamespacePrefix();
+			if (prefix != null && prefix.length() > 0) {
+				buffer.append(getNamespacePrefix());
+				buffer.append(":"); //$NON-NLS-1$
+			}
 			buffer.append(getXMLTagName());
 			buffer.append(">"); //$NON-NLS-1$
 		}
@@ -818,6 +847,14 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 
 	protected IDocumentTextNode createDocumentTextNode() {
 		return new DocumentTextNode();
+	}
+
+	public String getNamespace() {
+		return EMPTY_VALUE;
+	}
+
+	public String getNamespacePrefix() {
+		return EMPTY_VALUE;
 	}
 
 }

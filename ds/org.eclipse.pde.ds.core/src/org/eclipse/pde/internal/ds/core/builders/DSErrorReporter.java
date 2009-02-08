@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 230232, 249254
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.builders;
@@ -23,6 +24,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ds.core.Activator;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
@@ -99,8 +101,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		Hashtable referencedNames = new Hashtable();
 		for (int i = 0; i < references.length; i++) {
 			IDSReference reference = references[i];
-			Element element = (Element) getDocumentRoot().getElementsByTagName(
-					reference.getXMLTagName()).item(i);
+			Element element = (Element) getElements(reference).item(i);
 			// Validate Required Attributes
 			if (reference.getName() == null) {
 				reportMissingRequiredAttribute(element,
@@ -247,8 +248,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void validatePropertiesElements(IDSProperties[] propertiesElements) {
 		for (int i = 0; i < propertiesElements.length; i++) {
 			IDSProperties properties = propertiesElements[i];
-			Element element = (Element) getDocumentRoot().getElementsByTagName(
-					properties.getXMLTagName()).item(i);
+			Element element = (Element) getElements(properties).item(i);
 
 			// Validate Required Attributes
 			if (properties.getEntry() == null
@@ -256,7 +256,13 @@ public class DSErrorReporter extends XMLErrorReporter {
 				reportMissingRequiredAttribute(element,
 						IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY, ERROR);
 			} else {
-				validatePropertiesElement(properties.getEntry(), i);
+				if (!fProject.exists(new Path((properties.getEntry())))) {
+					report(NLS
+.bind(
+							Messages.DSErrorReporter_cannotFindProperties,
+							properties.getEntry()), getLine(element), WARNING,
+							DSMarkerFactory.CAT_OTHER);
+				}
 			}
 
 		}
@@ -266,8 +272,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void validatePropertyElements(IDSProperty[] propertyElements) {
 		for (int i = 0; i < propertyElements.length; i++) {
 			IDSProperty property = propertyElements[i];
-			Element element = (Element) getDocumentRoot().getElementsByTagName(
-					property.getXMLTagName()).item(i);
+			Element element = (Element) getElements(property).item(i);
 
 			// Validate Required Attributes
 			String name = property.getName();
@@ -447,8 +452,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void validateImplementationElement(IDSImplementation implementation) {
 		if (implementation != null) {
 			String className = implementation.getClassName();
-			Element element = (Element) getDocumentRoot().getElementsByTagName(
-					implementation.getXMLTagName()).item(0);
+			Element element = (Element) getElements(implementation).item(0);
 
 			if (className == null) {
 				// Validate Required Attributes
@@ -497,22 +501,6 @@ public class DSErrorReporter extends XMLErrorReporter {
 			}
 		} catch (CoreException e) {
 		}
-	}
-
-	private void validatePropertiesElement(String path, int index) {
-		if (!fProject.exists(new Path(path))) {
-			reportPropertiesFileNotFound(path, index);
-		}
-	}
-
-	private void reportPropertiesFileNotFound(String resource, int index) {
-		Element documentRoot = getDocumentRoot();
-		NodeList elementsByTagName = documentRoot
-				.getElementsByTagName(IDSConstants.ELEMENT_PROPERTIES);
-		Element element = (Element) elementsByTagName.item(index);
-		report(NLS
-				.bind(Messages.DSErrorReporter_cannotFindProperties, resource),
-				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
 	}
 
 	private void reportMissingRequiredAttribute(Element element,
@@ -669,7 +657,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				reportIllegalServiceFactory(element);
 			}
 		}
-		
+
 		if (isImmediate) {
 			if (service.getServiceFactory()) {
 				reportIllegalServiceFactory_Immediate(element);
@@ -728,6 +716,15 @@ public class DSErrorReporter extends XMLErrorReporter {
 		} else {
 			providedInterfaces.put(interface1, interface1);
 		}
+	}
+
+	private NodeList getElements(IDocumentElementNode node) {
+		String name = node.getXMLTagName();
+		String prefix = node.getNamespacePrefix();
+		if (prefix != null && prefix.length() > 0) {
+			name = prefix + ":" + name; //$NON-NLS-1$
+		}
+		return getDocumentRoot().getElementsByTagName(name);
 	}
 
 	// private void validateClassInstanceofProvidedInterface(Element element,

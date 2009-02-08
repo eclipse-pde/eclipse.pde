@@ -116,5 +116,9 @@ public abstract class DSObject extends DocumentObject implements IDSConstants,
 	 * @see org.eclipse.pde.internal.ds.core.text.IDSObject#getType()
 	 */
 	public abstract int getType();
+
+	public String getNamespacePrefix() {
+		return "scr"; //$NON-NLS-1$
+	}
 	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,21 +7,26 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
- *     Chris Aniszczyk <zx@code9.com>
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.sections;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ds.ui.editor.FormLayoutFactory;
+import org.eclipse.pde.internal.ds.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -29,6 +34,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -39,6 +46,7 @@ public class DSOptionsSection extends PDESection {
 	private IDSModel fModel;
 	private Button fImmediateButton;
 	private Button fEnabledButton;
+	private ComboPart fConfigurationPolicy;
 
 	public DSOptionsSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -63,6 +71,23 @@ public class DSOptionsSection extends PDESection {
 		// Attribute: factory
 		fFactoryEntry = new FormEntry(client, toolkit,
 				Messages.DSComponentDetails_factoryEntry, SWT.NONE);
+
+		// Attribute: configuration policy
+		Label label = toolkit.createLabel(client,
+				Messages.DSComponentDetails_configurationPolicy,
+				SWT.WRAP);
+		label.setForeground(toolkit.getColors().getColor(
+IFormColors.TITLE));
+		fConfigurationPolicy = new ComboPart();
+		fConfigurationPolicy.createControl(client, toolkit, SWT.READ_ONLY);
+
+		String[] items = new String[] {
+				IDSConstants.VALUE_CONFIGURATION_POLICY_OPTIONAL,
+				IDSConstants.VALUE_CONFIGURATION_POLICY_REQUIRE,
+				IDSConstants.VALUE_CONFIGURATION_POLICY_IGNORE };
+		fConfigurationPolicy.setItems(items);
+		GridDataFactory.fillDefaults().grab(true, false).indent(3, 0).applyTo(
+				fConfigurationPolicy.getControl());
 
 		createButtons(client, toolkit);
 
@@ -140,8 +165,12 @@ public class DSOptionsSection extends PDESection {
 			fEnabledButton.setSelection(fComponent.getEnabled());
 			fImmediateButton.setSelection(fComponent.getImmediate());
 			enableOrDisableImmediate();
+			
+			// Attribute: Policy
+			if (fComponent.getConfigurationPolicy() != null)
+				fConfigurationPolicy.setText(fComponent
+						.getConfigurationPolicy());
 		}
-
 	}
 
 	private void enableOrDisableImmediate() {
@@ -177,6 +206,18 @@ public class DSOptionsSection extends PDESection {
 			}
 		});
 
+		fConfigurationPolicy.addModifyListener(new ModifyListener(){
+		
+			public void modifyText(ModifyEvent e) {
+				// Ensure data object is defined
+				if (fComponent == null) {
+					return;
+				}
+				fComponent.setConfigurationPolicy(fConfigurationPolicy
+						.getSelection());
+			}
+		});
+		
 	}
 
 }

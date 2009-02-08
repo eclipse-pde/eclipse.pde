@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.text;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.TreeMap;
-
 import org.eclipse.pde.core.IModel;
 
 public interface IDocumentElementNode extends Serializable, IDocumentRange, IDocumentXMLNode {
@@ -84,6 +83,10 @@ public interface IDocumentElementNode extends Serializable, IDocumentRange, IDoc
 	void setLineIndent(int indent);
 
 	int getLineIndent();
+
+	String getNamespace();
+
+	String getNamespacePrefix();
 
 	// Not used by text edit operations
 	public String getIndent();

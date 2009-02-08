@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
@@ -47,6 +48,13 @@ public class DSDocumentFactory extends DocumentNodeFactory implements
 	 */
 	public IDocumentElementNode createDocumentNode(String name,
 			IDocumentElementNode parent) {
+
+		// TODO this logic needs to be pushed up somehow... we shouldn't care
+		// about the namespace prefix
+		int index = name.indexOf(":"); //$NON-NLS-1$
+		if (index != -1) {
+			name = name.substring(index + 1);
+		}
 
 		if (isRoot(name)) { // Root
 			return (IDocumentElementNode) createComponent();

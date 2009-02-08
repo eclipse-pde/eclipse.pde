@@ -166,6 +166,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	public void startDocument() throws SAXException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
+			// TODO we should be using a dom level 2 impl
 			fXMLDocument = factory.newDocumentBuilder().newDocument();
 		} catch (ParserConfigurationException e) {
 		}

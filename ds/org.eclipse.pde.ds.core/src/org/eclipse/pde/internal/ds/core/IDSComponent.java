@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Rafael Oliveira NÃ³brega <rafael.oliveira@gmail.com> - bug 223738
+ *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 223738
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
@@ -62,6 +63,51 @@ public interface IDSComponent extends IDSObject {
 	 * @return String value of the attribute factory
 	 */
 	public String getFactory();
+
+	/**
+	 * Sets the value of the configuration policy
+	 * 
+	 * @param policy
+	 *            String value of the configuration policy.
+	 */
+	public void setConfigurationPolicy(String policy);
+
+	/**
+	 * Returns the value of the configuration policy
+	 * 
+	 * @return String value of the configuration policy
+	 */
+	public String getConfigurationPolicy();
+
+	/**
+	 * Sets the value of the activate method signature name
+	 * 
+	 * @param name
+	 *            String value of the activate method signature name
+	 */
+	public void setActivateMethod(String name);
+
+	/**
+	 * Returns the value of the activate method signature name
+	 * 
+	 * @return String value of the activate method signature name
+	 */
+	public String getActivateMethod();
+
+	/**
+	 * Sets the value of the deactivate method signature name
+	 * 
+	 * @param name
+	 *            String value of the deactivate method signature name
+	 */
+	public void setDeactivateMethod(String name);
+
+	/**
+	 * Returns the value of the deactivate method signature name
+	 * 
+	 * @return String value of the deactivate method signature name
+	 */
+	public String getDeactivateMethod();
 
 	/**
 	 * Sets the value of the attribute immediate

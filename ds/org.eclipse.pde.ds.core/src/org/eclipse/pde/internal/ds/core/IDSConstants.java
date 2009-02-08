@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core;
 
@@ -32,6 +33,9 @@ public interface IDSConstants {
 	public static final String ATTRIBUTE_COMPONENT_ENABLED = "enabled"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMPONENT_FACTORY = "factory"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMPONENT_IMMEDIATE = "immediate"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY = "configuration-policy"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_COMPONENT_ACTIVATE = "activate"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_COMPONENT_DEACTIVATE = "deactivate"; //$NON-NLS-1$
 	
 	//Implementation Attributes
 	public static final String ATTRIBUTE_IMPLEMENTATION_CLASS = "class"; //$NON-NLS-1$
@@ -93,4 +97,8 @@ public interface IDSConstants {
 	
 	public static final String VALUE_DEFAULT_TARGET = "(name=value)"; //$NON-NLS-1$
 	
+	public static final String VALUE_CONFIGURATION_POLICY_IGNORE = "ignore"; //$NON-NLS-1$
+	public static final String VALUE_CONFIGURATION_POLICY_OPTIONAL = "optional"; //$NON-NLS-1$
+	public static final String VALUE_CONFIGURATION_POLICY_REQUIRE = "require"; //$NON-NLS-1$
+
 }

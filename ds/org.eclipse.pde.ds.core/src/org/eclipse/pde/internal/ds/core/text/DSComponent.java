@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Rafael Oliveira NÃ³brega <rafael.oliveira@gmail.com> - bug 223738
+ *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 223738
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
-
 import java.util.ArrayList;
 
 import org.eclipse.pde.internal.ds.core.IDSComponent;
@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.core.IDSService;
+
 
 /**
  * Represents the root "component" entry in a DS xml file. There may be only one
@@ -39,8 +40,8 @@ public class DSComponent extends DSObject implements IDSComponent {
 
 	public DSComponent(DSModel model) {
 		super(model, ELEMENT_COMPONENT);
-		this.setAttributeName(IDSConstants.ELEMENT_COMPONENT);
-		this.setImmediate(true);
+		setAttributeName(IDSConstants.ELEMENT_COMPONENT);
+		setImmediate(true);
 		setInTheModel(true);
 	}
 
@@ -329,7 +330,38 @@ public class DSComponent extends DSObject implements IDSComponent {
 		return new String[] { IDSConstants.ATTRIBUTE_COMPONENT_ENABLED,
 				IDSConstants.ATTRIBUTE_COMPONENT_FACTORY,
 				IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE,
-				IDSConstants.ATTRIBUTE_COMPONENT_NAME };
+				IDSConstants.ATTRIBUTE_COMPONENT_NAME,
+				IDSConstants.ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY,
+				IDSConstants.ATTRIBUTE_COMPONENT_ACTIVATE,
+				IDSConstants.ATTRIBUTE_COMPONENT_DEACTIVATE };
+	}
+
+	public String getConfigurationPolicy() {
+		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY);
+	}
+
+	public void setConfigurationPolicy(String policy) {
+		setXMLAttribute(ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY, policy);
+	}
+
+	public String getActivateMethod() {
+		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_ACTIVATE);
+	}
+
+	public String getDeactivateMethod() {
+		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_DEACTIVATE);
+	}
+
+	public void setActivateMethod(String name) {
+		setXMLAttribute(ATTRIBUTE_COMPONENT_ACTIVATE, name);
+	}
+
+	public void setDeactivateMethod(String name) {
+		setXMLAttribute(ATTRIBUTE_COMPONENT_DEACTIVATE, name);
+	}
+
+	public String getNamespace() {
+		return "http://www.osgi.org/xmlns/scr/v1.1.0"; //$NON-NLS-1$
 	}
 
 }
