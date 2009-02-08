@@ -233,9 +233,6 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public String getLineDelimiter() {
 		ISharedPluginModel model = getModel();
 		IDocument document = ((IEditingModel) model).getDocument();

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
@@ -105,7 +104,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		addContentFilter(node);
 	}
 
-	public void addContentFilter(PluginElementNode node) throws CoreException {
+	public void addContentFilter(PluginElementNode node) {
 		addChildNode(node);
 		if (isInTheModel()) {
 			node.setInTheModel(true);

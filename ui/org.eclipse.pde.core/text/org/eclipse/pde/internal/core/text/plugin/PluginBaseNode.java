@@ -11,16 +11,9 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public abstract class PluginBaseNode extends PluginObjectNode implements IPluginBase {
@@ -54,7 +47,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		}
 	}
 
-	public void add(IPluginImport[] pluginImports) throws CoreException {
+	public void add(IPluginImport[] pluginImports) {
 		IDocumentElementNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
 		for (int i = 0; i < pluginImports.length; i++) {
 			if (pluginImports[i] != null && pluginImports[i] instanceof PluginImportNode) {
@@ -77,7 +70,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		}
 	}
 
-	public void remove(IPluginImport[] pluginImports) throws CoreException {
+	public void remove(IPluginImport[] pluginImports) {
 		IDocumentElementNode parent = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (parent != null) {
 			for (int i = 0; i < pluginImports.length; i++) {
