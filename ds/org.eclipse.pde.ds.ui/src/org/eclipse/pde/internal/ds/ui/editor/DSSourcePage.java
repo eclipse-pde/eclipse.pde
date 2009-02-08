@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Code 9 Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 262622
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
 
@@ -24,16 +25,14 @@ import org.eclipse.pde.internal.ds.core.text.DSModel;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 
 public class DSSourcePage extends XMLSourcePage {
 
 
 	public DSSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
-		
-		super.setSourceViewerConfiguration(new DSSourceViewerConfiguration(
-				ColorManager.getDefault(), this));
 	}
 
 	public boolean isQuickOutlineEnabled() {
@@ -157,4 +156,8 @@ public class DSSourcePage extends XMLSourcePage {
 		}
 	}
 
+	protected ChangeAwareSourceViewerConfiguration createSourceViewerConfiguration(
+			IColorManager colorManager) {
+		return new DSSourceViewerConfiguration(colorManager, this);
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 262622
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
@@ -37,7 +38,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 	public PDEProjectionSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 		fColorManager = ColorManager.getDefault();
-		fConfiguration = SourceViewerConfigurationFactory.createSourceViewerConfiguration(this, fColorManager);
+		fConfiguration = createSourceViewerConfiguration(fColorManager);
 		if (fConfiguration != null)
 			setSourceViewerConfiguration(fConfiguration);
 	}
@@ -167,6 +168,10 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		}
 		// Insert the quick outline action after the "Show In" menu contributed
 		menu.add(quickOutlineAction);
+	}
+
+	protected ChangeAwareSourceViewerConfiguration createSourceViewerConfiguration(IColorManager colorManager) {
+		return null;
 	}
 
 }

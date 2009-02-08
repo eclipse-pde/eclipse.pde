@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 262622
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
+import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 
@@ -41,4 +44,9 @@ public abstract class XMLSourcePage extends PDEProjectionSourcePage {
 		return more;
 	}
 
+	protected ChangeAwareSourceViewerConfiguration createSourceViewerConfiguration(IColorManager colorManager) {
+		if (getEditor() instanceof ManifestEditor)
+			return new PluginXMLConfiguration(colorManager, this);
+		return new XMLConfiguration(colorManager, this);
+	}
 }
