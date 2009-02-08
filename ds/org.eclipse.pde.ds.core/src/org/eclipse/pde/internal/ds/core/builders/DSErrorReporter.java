@@ -683,8 +683,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		for (int i = 0; i < providedServices.length; i++) {
 			IDSProvide provide = providedServices[i];
 
-			Element element = (Element) getDocumentRoot().getElementsByTagName(
-					provide.getXMLTagName()).item(i);
+			Element element = (Element) getElements(provide).item(i);
 
 			// Validate Required Attributes
 			if (provide.getInterface() == null) {
