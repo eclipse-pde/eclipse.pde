@@ -834,9 +834,9 @@ public class TargetDefinitionTests extends TestCase {
 			int index = segment.indexOf('_');
 			assertTrue("Missing version id", index > 0);
 			String version = segment.substring(index + 1);
-			ITargetDefinition target = getNewTarget();
-			IBundleContainer container = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", version);
-			
+			ITargetPlatformService targetService = getTargetService();
+			IBundleContainer container = targetService.newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", version);
+			ITargetDefinition target = targetService.newTarget();
 			target.setBundleContainers(new IBundleContainer[]{container});
 			
 			setTargetPlatform(target);
