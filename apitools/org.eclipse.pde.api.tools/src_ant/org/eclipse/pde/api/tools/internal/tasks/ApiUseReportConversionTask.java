@@ -298,14 +298,14 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 			System.out.println("XML report location: " + this.xmlReportsLocation); //$NON-NLS-1$
 			System.out.println("HTML report location: " + this.htmlReportsLocation); //$NON-NLS-1$
 			if (this.xsltFileLocation == null) {
-				System.out.println("No XSLT file location"); //$NON-NLS-1$}
+				System.out.println("No XSLT file specified: using default"); //$NON-NLS-1$}
 			} else {
 				System.out.println("XSLT file location: " + this.xsltFileLocation); //$NON-NLS-1$}
 			}
 		}
 		File xsltFile = null;
 		if(this.xsltFileLocation != null) {
-			// we will use the default xslt transform from the ant jar when this is null
+			// we will use the default XSLT transform from the ant jar when this is null
 			xsltFile = new File(this.xsltFileLocation);
 			if(!xsltFile.exists() || !xsltFile.isFile()) {
 				throw new BuildException(Messages.ApiUseReportConversionTask_xslt_file_not_valid);

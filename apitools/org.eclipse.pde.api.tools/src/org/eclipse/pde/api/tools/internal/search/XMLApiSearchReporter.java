@@ -57,7 +57,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XMLApiSearchReporter implements IApiSearchReporter {
 
 	/**
-	 * file names for the outputted reference files
+	 * file names for the output reference files
 	 */
 	public static final String TYPE_REFERENCES = "type_references"; //$NON-NLS-1$
 	public static final String METHOD_REFERENCES = "method_references"; //$NON-NLS-1$
@@ -170,7 +170,7 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 				vmap.put(type, tmap);
 			}
 			//kind = new Integer(references[i].getReferenceKind());
-			tname = references[i].getReferencedMemberName() == null ? references[i].getReferencedTypeName() : references[i].getReferencedMemberName();
+			tname = getText(references[i].getResolvedReference());
 			reflist = (HashSet) tmap.get(tname);
 			if(reflist == null) {
 				reflist = new HashSet();
@@ -195,6 +195,25 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 			type = (IApiType) member;
 		}
 		return Factory.packageDescriptor(type.getPackageName());
+	}
+	
+	/**
+	 * Returns a formatted version of the references xml file name for use during conversion via the default
+	 * XSLT file
+	 * @param groupname
+	 * @return a formatted version of the references file name
+	 */
+	private String getFormattedTypeName(String groupname) {
+		if(TYPE_REFERENCES.equals(groupname)) {
+			return "Types"; //$NON-NLS-1$
+		}
+		if(METHOD_REFERENCES.equals(groupname)) {
+			return "Methods"; //$NON-NLS-1$
+		}
+		if(FIELD_REFERENCES.equals(groupname)) {
+			return "Fields"; //$NON-NLS-1$
+		}
+		return "unknown references"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -226,10 +245,12 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 		Integer type = null;
 		Integer vis = null;
 		String id = null;
+		String referee = null;
 		File root = null;
 		File location = null;
 		for(Iterator iter = fReferenceMap.keySet().iterator(); iter.hasNext();) {
 			id = (String) iter.next();
+			referee = id;
 			location = new File(parent, id);
 			if(!location.exists()) {
 				location.mkdir();
@@ -252,7 +273,7 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 					for(Iterator iter3 = vismap.keySet().iterator(); iter3.hasNext();) {
 						type = (Integer) iter3.next();
 						typemap = (HashMap) vismap.get(type);
-						writeGroup(location, getRefTypeName(type.intValue()), typemap, vis.intValue());
+						writeGroup(id, referee, location, getRefTypeName(type.intValue()), typemap, vis.intValue());
 					}
 				}
 			}
@@ -261,12 +282,14 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 	
 	/**
 	 * Writes out a group of references under the newly created element with the given name
+	 * @param origin the name of the bundle that has the references in it
+	 * @param referee the name of the bundle that is referenced
 	 * @param parent
 	 * @param name
 	 * @param map
 	 * @param visibility
 	 */
-	private void writeGroup(File parent, String name, HashMap map, int visibility) throws CoreException, FileNotFoundException, IOException {
+	private void writeGroup(String origin, String referee, File parent, String name, HashMap map, int visibility) throws CoreException, FileNotFoundException, IOException {
 		if(parent.exists()) {
 			BufferedWriter writer = null;
 			try {
@@ -290,6 +313,9 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 					root = doc.createElement(IApiXmlConstants.REFERENCES);
 					doc.appendChild(root);
 					root.setAttribute(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY, Integer.toString(visibility));
+					root.setAttribute(IApiXmlConstants.ATTR_ORIGIN, origin);
+					root.setAttribute(IApiXmlConstants.ATTR_REFEREE, referee);
+					root.setAttribute(IApiXmlConstants.ATTR_NAME, getFormattedTypeName(name));
 				}
 				if(doc == null) {
 					return;
