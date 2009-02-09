@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,28 +12,27 @@
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.comp;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.pde.internal.ua.ui.IConstants;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
-import org.eclipse.pde.internal.ui.util.XMLRootElementMatcher;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
-/**
- * CompCSFileValidator
- *
- */
 public class CompCSFileValidator implements ISelectionStatusValidator {
 
-	/**
-	 * 
-	 */
 	public CompCSFileValidator() {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.ISelectionStatusValidator#validate(java.lang.Object[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.dialogs.ISelectionStatusValidator#validate(java.lang.Object
+	 * [])
 	 */
 	public IStatus validate(Object[] selection) {
 
@@ -59,7 +58,15 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 	 * @param file
 	 */
 	private boolean isSimpleCSFile(IFile file) {
-		return XMLRootElementMatcher.fileMatchesElement(file, ISimpleCSConstants.ELEMENT_CHEATSHEET);
+		try {
+			IContentDescription description = file.getContentDescription();
+			IContentType type = description.getContentType();
+			return type.getId().equalsIgnoreCase(
+					IConstants.SIMPLE_CHEAT_SHEET_CONTENT_ID);
+		} catch (CoreException e) {
+			PDEUserAssistanceUIPlugin.logException(e);
+		}
+		return false;
 	}
 
 	/**
@@ -67,7 +74,8 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 	 * @return
 	 */
 	private IStatus errorStatus(String message) {
-		return new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR, message, null);
+		return new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID,
+				IStatus.ERROR, message, null);
 	}
 
 	/**
@@ -75,7 +83,8 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 	 * @return
 	 */
 	private IStatus okStatus(String message) {
-		return new Status(IStatus.OK, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.OK, message, null);
+		return new Status(IStatus.OK, PDEUserAssistanceUIPlugin.PLUGIN_ID,
+				IStatus.OK, message, null);
 	}
 
 }
