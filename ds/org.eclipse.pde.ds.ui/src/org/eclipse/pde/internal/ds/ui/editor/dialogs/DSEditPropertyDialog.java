@@ -147,7 +147,7 @@ public class DSEditPropertyDialog extends FormDialog {
 	}
 
 	private void handleOKPressed() {
-
+		fNameEntry.commit();
 		if (!fNameEntry.getValue().equals("")) { //$NON-NLS-1$
 			if (!fNameEntry.getValue().equals(fProperty.getPropertyName())) {
 				fProperty.setPropertyName(fNameEntry.getValue());
@@ -163,6 +163,7 @@ public class DSEditPropertyDialog extends FormDialog {
 			}
 		}
 
+		fValuesEntry.commit();
 		if (!fValuesEntry.getValue().equals("")) { //$NON-NLS-1$
 			StringTokenizer lines = new StringTokenizer(
 					fValuesEntry.getValue(), "\n"); //$NON-NLS-1$
