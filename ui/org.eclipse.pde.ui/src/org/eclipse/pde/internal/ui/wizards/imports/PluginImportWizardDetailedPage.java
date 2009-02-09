@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Joern Dinkla <devnull@dinkla.com> - bug 210264
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 114080
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
@@ -21,15 +22,16 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.util.SourcePluginFilter;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -66,10 +68,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private Button fRemoveAllButton;
 	private Button fAddRequiredButton;
 	private Button fFilterOldVersionButton;
-	private Button fFilterSourcePluginsButton;
 
 	private static final String SETTINGS_SHOW_LATEST = "showLatestPluginsOnly"; //$NON-NLS-1$
-	private static final String SETTINGS_SHOW_SOURCE = "showSourcePlugins"; //$NON-NLS-1$
 
 	private class AvailableFilter extends ViewerFilter {
 		private Pattern fPattern;
@@ -136,28 +136,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 	}
 
-	/**
-	 * This filter is used to remove source plug-ins from view
-	 * 
-	 */
-	private class SourcePluginFilter extends ViewerFilter {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof IPluginModelBase) {
-				PDEState state = fPage1.getState();
-				if (state != null) {
-					BundleDescription description = ((IPluginModelBase) element).getBundleDescription();
-					if (description != null) {
-						return state.getBundleSourceEntry(description.getBundleId()) == null;
-					}
-				}
-			}
-			return true;
-		}
-	}
-
 	public PluginImportWizardDetailedPage(String pageName, PluginImportWizardFirstPage firstPage) {
 		super(pageName, firstPage);
 		setTitle(PDEUIMessages.ImportWizard_DetailedPage_title);
@@ -187,9 +165,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		createFilterOptions(buttonContainer, 3);
 
 		addViewerListeners();
-		addFilters();
-
 		initialize();
+		addFilters();
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PLUGIN_IMPORT_SECOND_PAGE);
@@ -217,28 +194,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				} else {
 					fAvailableListViewer.removeFilter(fVersionFilter);
 				}
-			}
-		});
-
-		fFilterSourcePluginsButton = new Button(parent, SWT.CHECK);
-		fFilterSourcePluginsButton.setText(PDEUIMessages.PluginImportWizardDetailedPage_Show_source_plugins);
-		gData = new GridData(GridData.FILL_HORIZONTAL);
-		gData.horizontalSpan = span;
-		fFilterSourcePluginsButton.setLayoutData(gData);
-
-		if (getDialogSettings().get(SETTINGS_SHOW_SOURCE) != null) {
-			fFilterSourcePluginsButton.setSelection(getDialogSettings().getBoolean(SETTINGS_SHOW_SOURCE));
-		} else {
-			fFilterSourcePluginsButton.setSelection(false);
-		}
-
-		fFilterSourcePluginsButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (fFilterSourcePluginsButton.getSelection()) {
-					fAvailableListViewer.removeFilter(fSourceFilter);
-				} else {
-					fAvailableListViewer.addFilter(fSourceFilter);
-				}
+				updateCount();
 			}
 		});
 	}
@@ -246,13 +202,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void addFilters() {
 		fVersionFilter = new VersionFilter();
 		fVersionFilter.setModel(fModels);
+		fSourceFilter = new SourcePluginFilter(fPage1.getState());
 		fAvailableFilter = new AvailableFilter();
-		fSourceFilter = new SourcePluginFilter();
 		fAvailableListViewer.addFilter(fAvailableFilter);
 		fAvailableListViewer.addFilter(fVersionFilter);
-		if (!fFilterSourcePluginsButton.getSelection()) {
-			fAvailableListViewer.addFilter(fSourceFilter);
-		}
+		fAvailableListViewer.addFilter(fSourceFilter);
 
 		fFilterJob = new WorkbenchJob("FilterJob") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -462,9 +416,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	protected void refreshPage() {
+		fAvailableListViewer.addFilter(fSourceFilter);
 		fImportListViewer.getTable().removeAll();
 		fSelected.clear();
 		fAvailableFilter.setPattern("*"); //$NON-NLS-1$
+		fSourceFilter.setState(fPage1.getState());
 		fVersionFilter.setModel(fModels);
 		fAvailableListViewer.refresh();
 		pageChanged();
@@ -475,17 +431,17 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	protected void pageChanged(boolean doAddEnablement, boolean doRemoveEnablement) {
-		updateCount();
 		updateButtonEnablement(doAddEnablement, doRemoveEnablement);
 		setPageComplete(fImportListViewer.getTable().getItemCount() > 0);
 	}
 
 	private void updateCount() {
-		fCountLabel.setText(NLS.bind(PDEUIMessages.ImportWizard_DetailedPage_count, (new String[] {new Integer(fImportListViewer.getTable().getItemCount()).toString(), new Integer(fModels.length).toString()})));
+		fCountLabel.setText(NLS.bind(PDEUIMessages.ImportWizard_DetailedPage_count, (new String[] {new Integer(fImportListViewer.getTable().getItemCount()).toString(), new Integer(fAvailableListViewer.getTable().getItemCount()).toString()})));
 		fCountLabel.getParent().layout();
 	}
 
 	private void updateButtonEnablement(boolean doAddEnablement, boolean doRemoveEnablement) {
+		updateCount();
 		int availableCount = fAvailableListViewer.getTable().getItemCount();
 		int importCount = fImportListViewer.getTable().getItemCount();
 
@@ -678,7 +634,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(SETTINGS_SHOW_LATEST, fFilterOldVersionButton.getSelection());
-		settings.put(SETTINGS_SHOW_SOURCE, fFilterSourcePluginsButton.getSelection());
 		super.storeSettings();
 	}
 

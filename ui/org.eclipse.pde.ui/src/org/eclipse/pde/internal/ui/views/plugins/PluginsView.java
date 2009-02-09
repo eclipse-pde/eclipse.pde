@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gmail.com> - bug 191365
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
@@ -35,6 +36,7 @@ import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
 import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
+import org.eclipse.pde.internal.ui.util.SourcePluginFilter;
 import org.eclipse.pde.internal.ui.views.dependencies.OpenPluginDependenciesAction;
 import org.eclipse.pde.internal.ui.views.dependencies.OpenPluginReferencesAction;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -76,6 +78,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private DisabledFilter fHideExtEnabledFilter = new DisabledFilter(true);
 	private DisabledFilter fHideExtDisabledFilter = new DisabledFilter(false);
 	private WorkspaceFilter fHideWorkspaceFilter = new WorkspaceFilter();
+	private SourcePluginFilter fSourcePluginFilter = new SourcePluginFilter();
 	private JavaFilter fJavaFilter = new JavaFilter();
 	private CopyToClipboardAction fCopyAction;
 	private Clipboard fClipboard;
@@ -550,6 +553,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fHideWorkspaceFilterAction.setChecked(!hideWorkspace);
 		fHideExtEnabledFilterAction.setChecked(!hideEnabledExternal);
 		fHideExtDisabledFilterAction.setChecked(!hideDisabledExternal);
+		fTreeViewer.addFilter(fSourcePluginFilter);
 	}
 
 	private void hookContextMenu() {

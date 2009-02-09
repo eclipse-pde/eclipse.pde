@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
-
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -28,6 +27,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fUseName;
 	private Button fAutoManage;
 	private Button fOverwriteBuildFiles;
+	private Button fShowSourceBundles;
 
 	public MainPreferencePage() {
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
@@ -68,6 +68,12 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fOverwriteBuildFiles.setText(PDEUIMessages.MainPreferencePage_promptBeforeOverwrite);
 		fOverwriteBuildFiles.setSelection(!MessageDialogWithToggle.ALWAYS.equals(store.getString(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT)));
 
+		group = SWTFactory.createGroup(composite, PDEUIMessages.MainPreferencePage_sourceGroup, 1, 1, GridData.FILL_HORIZONTAL);
+
+		fShowSourceBundles = new Button(group, SWT.CHECK);
+		fShowSourceBundles.setText(PDEUIMessages.MainPreferencePage_showSourceBundles);
+		fShowSourceBundles.setSelection(store.getBoolean(IPreferenceConstants.PROP_SHOW_SOURCE_BUNDLES));
+
 		return composite;
 	}
 
@@ -86,6 +92,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		}
 		store.setValue(IPreferenceConstants.PROP_AUTO_MANAGE, fAutoManage.getSelection());
 		store.setValue(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT, fOverwriteBuildFiles.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS);
+		store.setValue(IPreferenceConstants.PROP_SHOW_SOURCE_BUNDLES, fShowSourceBundles.getSelection());
 		PDEPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
@@ -101,6 +108,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		}
 		fAutoManage.setSelection(false);
 		fOverwriteBuildFiles.setSelection(true);
+		fShowSourceBundles.setSelection(false);
 	}
 
 	/*

@@ -407,8 +407,10 @@ public class PDEUIMessages extends NLS {
 	public static String LibrarySection_addDialogButton;
 
 	public static String MainPreferencePage_exportingGroup;
+	public static String MainPreferencePage_sourceGroup;
 	public static String MainPreferencePage_group2;
 	public static String MainPreferencePage_promptBeforeOverwrite;
+	public static String MainPreferencePage_showSourceBundles;
 	public static String MainPreferencePage_updateStale;
 	public static String MainPreferencePage_targetPlatformRealization;
 

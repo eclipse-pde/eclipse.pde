@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -22,6 +23,7 @@ public interface IPreferenceConstants {
 	public static final String VALUE_USE_IDS = "useIds"; //$NON-NLS-1$
 	public static final String VALUE_USE_NAMES = "useNames"; //$NON-NLS-1$
 	public static final String PROP_AUTO_MANAGE = "Preferences.MainPage.automanageDependencies"; //$NON-NLS-1$
+	public static final String PROP_SHOW_SOURCE_BUNDLES = "Preferences.MainPage.showSourceBundles"; //$NON-NLS-1$
 	public static final String OVERWRITE_BUILD_FILES_ON_EXPORT = "Preferences.MainPage.overwriteBuildFilesOnExport"; //$NON-NLS-1$
 
 	// Editor Outline

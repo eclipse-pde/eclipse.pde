@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Ian Bull <irbull@cs.uvic.ca> - bug 204404 and bug 207064
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -31,8 +32,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.FilterableCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.PreRefreshNotifier;
-import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -369,6 +369,7 @@ public abstract class AbstractPluginBlock {
 		fExternalPlugins = new NamedElement(PDEUIMessages.PluginsTab_target, siteImage);
 
 		fPluginTreeViewer.addFilter(new Filter());
+		fPluginTreeViewer.addFilter(new SourcePluginFilter());
 
 		Tree tree = fPluginTreeViewer.getTree();
 
