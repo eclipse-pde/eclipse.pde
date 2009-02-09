@@ -603,7 +603,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 			}
 			FileWriter fileWriter = new FileWriter(originhtml);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			writer.println(MessageFormat.format(Messages.ApiUseReportConversionTask_origin_html_header, new String[] {origin.getName()}));
+			writer.println(MessageFormat.format(Messages.ApiUseReportConversionTask_origin_html_header, new String[] {origin.getName(), report.referee.getName()}));
 			writeOriginSummary(writer, report, origin, counts);
 			writeBackToBundleIndex(writer, "../"+report.referee.getName()); //$NON-NLS-1$
 			writeW3Footer(writer);
