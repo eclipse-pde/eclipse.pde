@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,26 +14,17 @@ package org.eclipse.pde.ui.tests.util.xml;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import junit.framework.*;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
-import org.eclipse.pde.internal.core.util.DOMParserWrapper;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
+import org.eclipse.pde.ui.tests.util.DOMParserWrapper;
 import org.osgi.framework.Bundle;
 import org.xml.sax.SAXException;
 
-/**
- * SAXParserWrapperTestCase
- *
- */
 public class ParserWrapperTestCase extends TestCase {
 
 	protected static final int FTHREADCOUNT = 5;
