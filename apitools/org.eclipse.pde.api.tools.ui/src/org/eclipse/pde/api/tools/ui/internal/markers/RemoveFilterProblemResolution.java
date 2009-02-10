@@ -86,9 +86,9 @@ public class RemoveFilterProblemResolution implements IMarkerResolution2 {
 					try {
 						IApiFilterStore store = component.getFilterStore();
 						store.removeFilters(new IApiProblemFilter[] {fFilter});
-						markerref.getResource().touch(monitor);
+						IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(fFilter.getComponentId());
+						Util.touchCorrespondingResource(project, markerref.getResource(), Util.getTypeNameFromMarker(markerref));
 						if(!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-							IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(fFilter.getComponentId());
 							if(project != null) {
 								Util.getBuildJob(new IProject[] {project}, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 							}

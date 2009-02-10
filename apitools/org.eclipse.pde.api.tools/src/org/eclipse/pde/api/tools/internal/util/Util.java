@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -73,6 +74,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -82,6 +84,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -98,9 +101,11 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
+import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
@@ -261,6 +266,7 @@ public final class Util {
 	 */
 	private static int DELETE_MAX_WAIT = 10000;
 
+	private static final IPath MANIFEST_PROJECT_RELATIVE_PATH = new Path(JarFile.MANIFEST_NAME);
 	static {
 		String property = System.getProperty("DEBUG"); //$NON-NLS-1$
 		DEBUG = property != null && property.equalsIgnoreCase("TRUE"); //$NON-NLS-1$
@@ -2599,5 +2605,45 @@ public final class Util {
 		int index = referencedTypeName.lastIndexOf('.');
 		if (index == -1) return referencedTypeName;
 		return referencedTypeName.substring(index + 1);
+	}
+	public static String getPackageName(String referencedTypeName) {
+		int index = referencedTypeName.lastIndexOf('.');
+		if (index <= 0) return referencedTypeName;
+		return referencedTypeName.substring(0, index);
+	}
+	public static boolean isManifest(IPath path) {
+		return MANIFEST_PROJECT_RELATIVE_PATH.equals(path);
+	}
+	public static void touchCorrespondingResource(IProject project, IResource resource, String typeName) {
+		if (typeName != null && typeName != ApiFilterStore.GLOBAL) {
+			if (Util.isManifest(resource.getProjectRelativePath())) {
+				try {
+					IJavaProject javaProject = JavaCore.create(project);
+					IType findType = javaProject.findType(typeName);
+					if (findType != null) {
+						ICompilationUnit compilationUnit = findType.getCompilationUnit();
+						if (compilationUnit != null) {
+							IResource UIResource = compilationUnit.getResource();
+							if (UIResource != null) {
+								UIResource.touch(null);
+							}
+						}
+					}
+				} catch (JavaModelException e) {
+					ApiPlugin.log(e);
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+				}
+			} else {
+				try {
+					resource.touch(null);
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+				}
+			}
+		}
+	}
+	public static String getTypeNameFromMarker(IMarker marker) {
+		return marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_TYPE_NAME, null);
 	}
 }

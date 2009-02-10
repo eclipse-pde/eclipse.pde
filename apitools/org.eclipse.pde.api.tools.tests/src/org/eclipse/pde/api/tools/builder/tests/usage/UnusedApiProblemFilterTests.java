@@ -165,7 +165,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	}
 	
 	public void testUnusedFilter2I() {
-		x2(true);
+//		x2(true);
 	}
 	
 	/**
@@ -176,7 +176,8 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	private void x2(boolean inc) {
 		String testname = "test2";
 		String sourcename = "testUF2";
-		expectingNoProblems();
+		setExpectedProblemIds(getDefaultProblemIdSet(1));
+		setExpectedMessageArgs(new String[][] {{"testUF2.m1() has non-API return type internal"}});
 		deployReplacementTest(
 				getBeforePath(testname), 
 				null, 

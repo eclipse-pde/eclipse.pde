@@ -327,35 +327,75 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				return;
 			}
 			IResource resource = null;
-			int charstart = -1, charend = -1, line = -1;
-			try {
-				IType type = fJavaProject.findType(problem.getTypeName().replace('$', '.'));
-				if(type != null) {
-					resource = type.getUnderlyingResource();
-					ISourceRange range = type.getNameRange();
-					if(range != null) {
-						charstart = range.getOffset();
-						charend = charstart + range.getLength();
-						IDocument doc = Util.getDocument(type.getCompilationUnit());
-						line = doc.getLineOfOffset(charstart);
+			IType type = null;
+			// retrieve line number, char start and char end
+			int lineNumber = 0;
+			int charStart = -1;
+			int charEnd = 1;
+			if (fJavaProject != null) {
+				try {
+					type = fJavaProject.findType(problem.getTypeName().replace('$', '.'));
+					IProject project = fJavaProject.getProject();
+					if (type == null) {
+						IResource manifestFile = Util.getManifestFile(project);
+						if (manifestFile == null) {
+							// Cannot retrieve the manifest.mf file
+							return;
+						}
+						resource = manifestFile;
+					} else {
+						ICompilationUnit unit = type.getCompilationUnit();
+						if (unit != null) {
+							resource = unit.getCorrespondingResource();
+							if (resource == null) {
+								return;
+							}
+							if (project.findMember(resource.getProjectRelativePath()) == null) {
+								resource = null;
+								IResource manifestFile = Util.getManifestFile(project);
+								if (manifestFile == null) {
+									// Cannot retrieve the manifest.mf file
+									return;
+								}
+								resource = manifestFile;
+							} else if (!type.isBinary()) {
+								ISourceRange range = type.getNameRange();
+								charStart = range.getOffset();
+								charEnd = charStart + range.getLength();
+								try {
+									IDocument document = Util.getDocument(type.getCompilationUnit());
+									lineNumber = document.getLineOfOffset(charStart);
+								} catch (BadLocationException e) {
+									// ignore
+								}
+							}
+						} else {
+							IResource manifestFile = Util.getManifestFile(project);
+							if (manifestFile == null) {
+								// Cannot retrieve the manifest.mf file
+								return;
+							}
+							resource = manifestFile;
+						}
 					}
-				}
-				else {
-					resource = fJavaProject.getProject().findMember(problem.getResourcePath());
+				} catch (JavaModelException e) {
+					ApiPlugin.log(e);
+				} catch(CoreException e) {
+					ApiPlugin.log(e);
 				}
 			}
-			catch(Exception jme) {}
-			if(resource == null) {
-				return;
+			String path = null;
+			if (resource != null) {
+				path = resource.getProjectRelativePath().toPortableString();
 			}
-			addProblem(ApiProblemFactory.newApiUsageProblem(resource.getProjectRelativePath().toPortableString(), 
+			addProblem(ApiProblemFactory.newApiUsageProblem(path, 
 					problem.getTypeName(), 
 					new String[] {filter.getUnderlyingProblem().getMessage()}, //message args
 					new String[] {IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
 					new Object[] {((ApiProblemFilter)filter).getHandle(), new Integer(IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID)}, 
-					line, 
-					charstart, 
-					charend, 
+					lineNumber, 
+					charStart, 
+					charEnd, 
 					problem.getElementKind(), 
 					IApiProblem.UNUSED_PROBLEM_FILTERS));
 		}
@@ -783,11 +823,38 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		IApiTypeRoot classFile = null;
 		try {
-			classFile = component.findTypeRoot(typeName);
+			if ("org.eclipse.swt".equals(component.getId())) { //$NON-NLS-1$
+				classFile = component.findTypeRoot(typeName);
+			} else {
+				classFile = component.findTypeRoot(typeName, component.getId());
+			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
 		IDelta delta = null;
+		IApiComponent provider = null;
+		if (classFile == null) {
+			String packageName = Util.getPackageName(typeName);
+			// check if the type is provided by a required component (it could have been moved/re-exported)
+			IApiComponent[] providers = component.getBaseline().resolvePackage(component, packageName);
+			int index = 0;
+			while (classFile == null && index < providers.length) {
+				IApiComponent p = providers[index];
+				if (!p.equals(component)) {
+					if ("org.eclipse.swt".equals(p.getId())) { //$NON-NLS-1$
+						classFile = p.findTypeRoot(typeName);
+					} else {
+						classFile = p.findTypeRoot(typeName, p.getId());
+					}
+					if (classFile != null) {
+						provider = p;
+					}
+				}
+				index++;
+			}
+		} else {
+			provider = component;
+		}
 		if (classFile == null) {
 			// this indicates a removed type
 			// we should try to get the class file from the reference
@@ -837,7 +904,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			fBuildState.cleanup(typeName);
 			long time = System.currentTimeMillis();
 			try {
-				delta = ApiComparator.compare(classFile, reference, component, reference.getBaseline(), component.getBaseline(), VisibilityModifiers.API);
+				delta = ApiComparator.compare(classFile, reference, provider, reference.getBaseline(), provider.getBaseline(), VisibilityModifiers.API);
 			} catch(Exception e) {
 				ApiPlugin.log(e);
 			} finally {
@@ -1120,7 +1187,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			IResource resource = null;
 			IType type = null;
 			// retrieve line number, char start and char end
-			int lineNumber = 1;
+			int lineNumber = 0;
 			int charStart = -1;
 			int charEnd = 1;
 			IMember member = null;
@@ -1153,6 +1220,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								return null;
 							}
 							resource = manifestFile;
+						} else {
+							member = Util.getIMember(delta, fJavaProject);
 						}
 					} else {
 						IResource manifestFile = Util.getManifestFile(project);
@@ -1163,7 +1232,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						resource = manifestFile;
 					}
 				}
-				member = Util.getIMember(delta, fJavaProject);
 				if (member != null && !member.isBinary()) {
 					ISourceRange range = member.getNameRange();
 					charStart = range.getOffset();

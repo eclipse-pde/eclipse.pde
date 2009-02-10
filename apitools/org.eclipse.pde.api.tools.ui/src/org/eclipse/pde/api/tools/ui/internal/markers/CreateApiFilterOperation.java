@@ -71,8 +71,9 @@ public class CreateApiFilterOperation extends UIJob {
 				return Status.CANCEL_STATUS;
 			}
 			IApiFilterStore store = component.getFilterStore();
+			String typeNameFromMarker = Util.getTypeNameFromMarker(fBackingMarker);
 			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
-					getTypeNameFromMarker(),
+					typeNameFromMarker,
 					getMessageArgumentsFromMarker(), 
 					null,
 					null,
@@ -81,7 +82,7 @@ public class CreateApiFilterOperation extends UIJob {
 					fBackingMarker.getAttribute(IMarker.CHAR_END, -1), 
 					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
 			store.addFilters(new IApiProblem[] {problem});
-			resource.touch(null);
+			Util.touchCorrespondingResource(project, resource, typeNameFromMarker);
 			if(!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 				Util.getBuildJob(new IProject[] {resource.getProject()}, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 			}
@@ -103,9 +104,5 @@ public class CreateApiFilterOperation extends UIJob {
 			return arguments.split("#"); //$NON-NLS-1$
 		}
 		return (String[]) args.toArray(new String[args.size()]);
-	}
-	
-	private String getTypeNameFromMarker() {
-		return fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_TYPE_NAME, null);
 	}
 }

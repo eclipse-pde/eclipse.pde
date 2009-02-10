@@ -56,7 +56,7 @@ import org.w3c.dom.NodeList;
  * @since 1.0.0
  */
 public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener {
-	private static final String GLOBAL = "!global!"; //$NON-NLS-1$
+	public static final String GLOBAL = "!global!"; //$NON-NLS-1$
 	public static final int CURRENT_STORE_VERSION = 2;
 	/**
 	 * Constant used for controlling tracing in the plug-in workspace component
@@ -441,11 +441,18 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		String xml = null;
 		InputStream contents = null;
 		try {
-			contents = ((IFile)file).getContents();
-			xml = new String(Util.getInputStreamAsCharArray(contents, -1, IApiCoreConstants.UTF_8));
+			IFile filterFile = (IFile)file;
+			if (filterFile.exists()) {
+				contents = filterFile.getContents();
+				xml = new String(Util.getInputStreamAsCharArray(contents, -1, IApiCoreConstants.UTF_8));
+			}
 		}
-		catch(CoreException ce) {}
-		catch(IOException ioe) {}
+		catch(CoreException e) {
+			ApiPlugin.log(e);
+		}
+		catch(IOException e) {
+			ApiPlugin.log(e);
+		}
 		finally {
 			if (contents != null) {
 				try {
@@ -583,7 +590,6 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			persistApiFilters();
 		}
 	}
-	
 	/**
 	 * Loads the specified integer attribute from the given xml element
 	 * @param element
@@ -672,7 +678,11 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					}
 				}
 			}
-			return (IApiProblemFilter[]) unused.toArray(new IApiProblemFilter[unused.size()]);
+			int size = unused.size();
+			if (size == 0) {
+				return NO_FILTERS;
+			}
+			return (IApiProblemFilter[]) unused.toArray(new IApiProblemFilter[size]);
 		}
 		return NO_FILTERS;
 	}

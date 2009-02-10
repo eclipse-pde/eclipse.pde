@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -366,7 +367,7 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 						if (resourcePath != null) {
 							IResource resource = fProject.findMember(resourcePath);
 							if (resource != null) {
-								resource.touch(null);
+								Util.touchCorrespondingResource(fProject, resource, apiProblem.getTypeName());
 							}
 						}
 					}
@@ -382,6 +383,8 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		}
 		catch(CoreException e) {
 			ApiUIPlugin.log(e);
+		} catch(OperationCanceledException e) {
+			// ignore
 		}
 		return super.performOk();
 	}

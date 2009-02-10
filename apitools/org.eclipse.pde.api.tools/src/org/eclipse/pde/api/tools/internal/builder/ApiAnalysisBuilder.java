@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
@@ -117,11 +118,15 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					String fileName = resource.getName();
 					if (Util.isClassFile(fileName)) {
 						findAffectedSourceFiles(delta);
-					} else if (Util.isJavaFileName(fileName) && fCurrentProject.equals(resource.getProject())) {
-						if (delta.getKind() == IResourceDelta.ADDED) {
-							fAddedRemovedDeltas.add(delta);
+					} else if (Util.isJavaFileName(fileName)) {
+						if (fCurrentProject.equals(resource.getProject())) {
+							if (delta.getKind() == IResourceDelta.ADDED) {
+								fAddedRemovedDeltas.add(delta);
+							}
+							fTypesToCheck.add(resource);
+						} else {
+							fTypesToCheckFromDependendProjects.add(resource);
 						}
-						fTypesToCheck.add(resource);
 					} else if (!fRequireFullBuild && IApiCoreConstants.API_FILTERS_XML_NAME.equals(fileName)) {
 						switch(delta.getKind()) {
 							case IResourceDelta.REMOVED :
@@ -190,6 +195,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * The type that we want to check for API problems
 	 */
 	private HashSet fTypesToCheck = new HashSet();
+	/**
+	 * The type that we want to check for API problems. These types come from dependent projects only.
+	 */
+	private HashSet fTypesToCheckFromDependendProjects = new HashSet();
 	/**
 	 * The set of added/removed deltas that come directly from the builder resource delta 
 	 */
@@ -355,6 +364,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			fTypes.clear();
 			fPackages.clear();
 			fTypesToCheck.clear();
+			fTypesToCheckFromDependendProjects.clear();
 			fAddedRemovedDeltas.clear();
 			fProjectToOutputLocations.clear();
 			updateMonitor(monitor, 0);
@@ -481,7 +491,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates an {@link IMarker} on the resource specified
 	 * in the problem (via its path) with the given problem
@@ -610,12 +620,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		IApiBaseline wsprofile = null;
 		try {
 			clearLastState(); // so if the build fails, a full build will be triggered
-			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 6);
+			int typesToCheckSize = fTypesToCheck.size();
+			int typesToCheckFromDependentsSize = fTypesToCheckFromDependendProjects.size();
+			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 2 + (typesToCheckSize != 0 ? 3 : 0) + (typesToCheckFromDependentsSize != 0 ? 3 : 0));
 			localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, fCurrentProject.getName()));
 			updateMonitor(localMonitor, 0);
-			collectAffectedSourceFiles(state);
+			collectAffectedSourceFiles(state, fTypesToCheck);
 			updateMonitor(localMonitor, 1);
-			if (fTypesToCheck.size() != 0) {
+			if (typesToCheckSize != 0) {
 				IPluginModelBase currentModel = getCurrentModel();
 				if (currentModel != null) {
 					wsprofile = getWorkspaceProfile();
@@ -630,9 +642,46 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					if(apiComponent == null) {
 						return;
 					}
-					List tnames = new ArrayList(fTypesToCheck.size()),
-						 cnames = new ArrayList(fTypesToCheck.size());
-					collectAllQualifiedNames(fTypesToCheck, tnames, cnames, localMonitor.newChild(1));
+					List tnames = new ArrayList(typesToCheckSize),
+						 cnames = new ArrayList(typesToCheckSize);
+					collectAllQualifiedNames(fTypesToCheck, tnames, cnames, false, localMonitor.newChild(1));
+					updateMonitor(localMonitor, 1);
+					IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
+					fAnalyzer.analyzeComponent(fBuildState, 
+							null, 
+							null, 
+							profile, 
+							apiComponent, 
+							(String[])tnames.toArray(new String[tnames.size()]), 
+							(String[])cnames.toArray(new String[cnames.size()]), 
+							localMonitor.newChild(1));
+					updateMonitor(localMonitor, 1);
+					createMarkers();
+					updateMonitor(localMonitor, 1);
+				}
+			}
+			collectAffectedSourceFiles(state, fTypesToCheckFromDependendProjects);
+			typesToCheckFromDependentsSize = fTypesToCheckFromDependendProjects.size();
+			if (typesToCheckFromDependentsSize != 0) {
+				fAnalyzer.dispose();
+				fAnalyzer = getAnalyzer();
+				IPluginModelBase currentModel = getCurrentModel();
+				if (currentModel != null) {
+					wsprofile = getWorkspaceProfile();
+					if (wsprofile == null) {
+						if (DEBUG) {
+							System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
+						}
+						return;
+					}
+					String id = currentModel.getBundleDescription().getSymbolicName();
+					IApiComponent apiComponent = wsprofile.getApiComponent(id);
+					if(apiComponent == null) {
+						return;
+					}
+					List tnames = new ArrayList(typesToCheckFromDependentsSize),
+						 cnames = new ArrayList(typesToCheckFromDependentsSize);
+					collectAllQualifiedNames(fTypesToCheckFromDependendProjects, tnames, cnames, true, localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
 					IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 					fAnalyzer.analyzeComponent(fBuildState, 
@@ -667,7 +716,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param cnames the list to collect the changed type names into
 	 * @param monitor
 	 */
-	private void collectAllQualifiedNames(final HashSet alltypes, List tnames, List cnames, final IProgressMonitor monitor) {
+	private void collectAllQualifiedNames(final HashSet alltypes, List tnames, List cnames, boolean cleanupManifestMarkers, final IProgressMonitor monitor) {
 		IType[] types = null;
 		IFile file = null;
 		for (Iterator iterator = alltypes.iterator(); iterator.hasNext(); ) {
@@ -778,6 +827,39 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 			}
 		}
+		if (cleanupManifestMarkers) {
+			IResource resource = fCurrentProject.findMember(MANIFEST_PATH);
+			if (resource != null) {
+				try {
+					IMarker[] markers = resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+					loop: for (int i = 0, max = markers.length; i < max; i++) {
+						IMarker marker = markers[i];
+						String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
+						for (Iterator iterator = tnames.iterator(); iterator.hasNext(); ) {
+							String typeName = (String) iterator.next();
+							if (typeName.equals(typeNameFromMarker)) {
+								marker.delete();
+								continue loop;
+							}
+						}
+					}
+					markers = resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+					loop: for (int i = 0, max = markers.length; i < max; i++) {
+						IMarker marker = markers[i];
+						String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
+						for (Iterator iterator = tnames.iterator(); iterator.hasNext(); ) {
+							String typeName = (String) iterator.next();
+							if (typeName.equals(typeNameFromMarker)) {
+								marker.delete();
+								continue loop;
+							}
+						}
+					}
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+				}
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -816,7 +898,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * 
 	 * @param state
 	 */
-	private void collectAffectedSourceFiles(State state) {
+	private void collectAffectedSourceFiles(State state, Set typesToCheck) {
 		// the qualifiedStrings are of the form 'p1/p2' & the simpleStrings are just 'X'
 		char[][][] internedQualifiedNames = ReferenceCollection.internQualifiedNames(fPackages);
 		// if a well known qualified name was found then we can skip over these
@@ -842,7 +924,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					if (DEBUG) {
 						System.out.println("  adding affected source file " + typeLocator); //$NON-NLS-1$
 					}
-					fTypesToCheck.add(file);
+					typesToCheck.add(file);
 				}
 			}
 		}
