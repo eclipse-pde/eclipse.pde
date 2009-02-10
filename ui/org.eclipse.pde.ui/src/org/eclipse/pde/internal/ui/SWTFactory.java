@@ -245,7 +245,7 @@ public class SWTFactory {
 		Label l = new Label(parent, SWT.NONE | SWT.WRAP);
 		l.setFont(parent.getFont());
 		l.setText(text);
-		GridData gd = new GridData(GridData.BEGINNING);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = hspan;
 		l.setLayoutData(gd);
 		return l;

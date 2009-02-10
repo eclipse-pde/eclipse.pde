@@ -131,31 +131,28 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		TabFolder tabs = new TabFolder(comp, SWT.NONE);
 		tabs.setLayoutData(new GridData(GridData.FILL_BOTH));
-		Composite container = new Composite(tabs, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 15;
-		container.setLayout(layout);
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		TabItem pluginsTab = new TabItem(tabs, SWT.NONE);
 		pluginsTab.setText(PDEUIMessages.TargetDefinitionContentPage_6);
-		Composite content = new Composite(tabs, SWT.NONE);
-		GridLayout lo = new GridLayout(2, false);
-		lo.marginWidth = 0;
-		lo.marginHeight = 0;
-		content.setLayout(lo);
-		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.widthHint = 200;
-		content.setLayoutData(gridData);
-		fTable = BundleContainerTable.createTableInDialog(content);
-		pluginsTab.setControl(content);
+		Composite pluginTabContainer = new Composite(tabs, SWT.NONE);
+		pluginTabContainer.setLayout(new GridLayout());
+		pluginTabContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		SWTFactory.createWrapLabel(pluginTabContainer, PDEUIMessages.ContentSection_1, 2);
+
+		fTable = BundleContainerTable.createTableInDialog(pluginTabContainer);
+		pluginsTab.setControl(pluginTabContainer);
 
 		TabItem envTab = new TabItem(tabs, SWT.NONE);
 		envTab.setText(PDEUIMessages.TargetDefinitionEnvironmentPage_3);
-
-		createTargetEnvironmentGroup(container);
-		createJREGroup(container);
-		envTab.setControl(container);
+		Composite envTabContainer = new Composite(tabs, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 15;
+		envTabContainer.setLayout(layout);
+		envTabContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		createTargetEnvironmentGroup(envTabContainer);
+		createJREGroup(envTabContainer);
+		envTab.setControl(envTabContainer);
 
 		TabItem argsTab = new TabItem(tabs, SWT.NONE);
 		argsTab.setText(PDEUIMessages.TargetDefinitionEnvironmentPage_4);
@@ -439,11 +436,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
 
-		Label description = new Label(container, SWT.WRAP);
-		description.setText(PDEUIMessages.JavaArgumentsTab_description);
-		GridData gd = new GridData();
-		gd.widthHint = 200;
-		description.setLayoutData(gd);
+		SWTFactory.createWrapLabel(container, PDEUIMessages.JavaArgumentsTab_description, 1);
 
 		Group programGroup = new Group(container, SWT.NONE);
 		programGroup.setLayout(new GridLayout());
@@ -451,7 +444,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		programGroup.setText(PDEUIMessages.JavaArgumentsTab_progamArgsGroup);
 
 		fProgramArgs = new Text(programGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
 		gd.heightHint = 60;
 		fProgramArgs.setLayoutData(gd);

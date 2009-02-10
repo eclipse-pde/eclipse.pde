@@ -125,7 +125,7 @@ public class BundleContainerTable {
 	 * @param parent parent composite
 	 */
 	private void createDialogContents(Composite parent) {
-		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
 
 		Tree atree = new Tree(comp, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		atree.setLayout(new GridLayout());
