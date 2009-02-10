@@ -24,7 +24,6 @@ Export-Package:
  org.eclipse.pde.internal.core.ischema;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.isite;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.itarget;x-friends:="org.eclipse.pde.ui",
- org.eclipse.pde.internal.core.itoc;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.natures;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.plugin;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.product;x-friends:="org.eclipse.pde.ui",
