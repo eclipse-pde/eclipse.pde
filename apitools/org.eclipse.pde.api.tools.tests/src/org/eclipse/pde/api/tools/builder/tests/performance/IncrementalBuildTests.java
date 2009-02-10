@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -263,7 +262,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 */
 	protected void updateWorkspaceFile(IProject project, IPath workspaceLocation, IPath replacementLocation) throws Exception {
 		updateWorkspaceFile(workspaceLocation, replacementLocation);
-		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, JavaCore.BUILDER_ID, null, null);
+		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 	}
 	
 	/**
@@ -287,24 +286,21 @@ public class IncrementalBuildTests extends PerformanceTest {
 		}
 		
 		//TEST
-		System.out.println("Testing incremental builds...");
+		System.out.println("Testing incremental build: ["+summary+"]...");
+		long start = System.currentTimeMillis();
 		IProject proj = getEnv().getWorkspace().getRoot().getProject(projectname);
 		IType type = JavaCore.create(proj).findType(typename);
 		IPath file = type.getPath();
-		for(int i = 0; i < 100; i++) {
-			expectingNoJDTProblemsFor(file);
-			expectingNoProblemsFor(file);
-			updateWorkspaceFile(proj, file, getUpdateFilePath(testname, file.lastSegment()));
+		for(int i = 0; i < 300; i++) {
 			startMeasuring();
-			getEnv().incrementalBuild(proj, ApiPlugin.BUILDER_ID);
+			updateWorkspaceFile(proj, file, getUpdateFilePath(testname, file.lastSegment()));
 			stopMeasuring();
-			expectingOnlySpecificProblemsFor(file, problemids);
+			//dispose the workspace baseline
+			proj.touch(null);
 			updateWorkspaceFile(proj, file, getRevertFilePath(testname, file.lastSegment()));
-			//after revert we have to build again to get the clean state
-			getEnv().cleanBuild(proj, ApiPlugin.BUILDER_ID);
-			getEnv().fullBuild(proj, ApiPlugin.BUILDER_ID);
 		}
 		commitMeasurements();
 		assertPerformance();
+		System.out.println("done in: "+((System.currentTimeMillis()-start)/1000)+" seconds");
 	}
 }
