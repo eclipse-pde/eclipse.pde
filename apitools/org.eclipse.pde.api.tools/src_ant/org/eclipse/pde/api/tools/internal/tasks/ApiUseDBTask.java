@@ -21,15 +21,15 @@ import java.util.TreeSet;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.ApiUseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.DBUseReporter;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
-import org.eclipse.pde.api.tools.internal.util.Util;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Api usage reporting task that reports to a database.
@@ -43,6 +43,19 @@ public class ApiUseDBTask extends DatabaseTask {
 	private boolean considerinternal;
 	private Set excludeset;
 	private TreeSet notsearched;
+	
+	/**
+	 * Set the flag to indicate if the usage scan should try to proceed when an error is encountered
+	 * or stop.
+	 * <p>
+	 * The default value is <code>false</code>.
+	 * </p>
+	 * @param proceed if the scan should try to continue in the face of errors. Valid values 
+	 * are <code>true</code> or <code>false</code>.
+	 */
+	public void setProceedOnError(String proceed) {
+		this.proceedonerror = Boolean.valueOf(proceed).booleanValue();
+	}
 	
 	/**
 	 * Set the debug value.
@@ -209,14 +222,14 @@ public class ApiUseDBTask extends DatabaseTask {
 	}
 	
 	/**
-	 * Returns the set of search flags to use for the {@link IApiSearchRequestor}
+	 * Sets a flag to indicate if projects that have not been set up for API tooling should be allowed 
+	 * in the search scope.
 	 * 
-	 * @return the set of flags to use
+	 * @param includenonapi if non- API enabled projects should be included in the search scope. Valid values 
+	 * are <code>true</code> or <code>false</code>.
 	 */
-	private int getSearchFlags() {
-		int flags = (this.considerapi ? IApiSearchRequestor.INCLUDE_API : 0);
-		flags |= (this.considerinternal ? IApiSearchRequestor.INCLUDE_INTERNAL : 0);
-		return flags;
+	public void setIncludeNonApiProjects(String includenonapi) {
+		this.includenonapi = Boolean.valueOf(includenonapi).booleanValue();
 	}
 	
 	/* (non-Javadoc)
@@ -239,6 +252,12 @@ public class ApiUseDBTask extends DatabaseTask {
 			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
 			System.out.println("search for API references : " + this.considerapi); //$NON-NLS-1$
 			System.out.println("search for internal references : " + this.considerinternal); //$NON-NLS-1$
+			if(this.scopeLocation == null) {
+				System.out.println("scope to search against : " + this.scopeLocation); //$NON-NLS-1$
+			}
+			else {
+				System.out.println("no scope specified : baseline will act as scope"); //$NON-NLS-1$
+			}
 			if (this.excludeListLocation != null) {
 				System.out.println("exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
 			} else {
@@ -277,6 +296,20 @@ public class ApiUseDBTask extends DatabaseTask {
 			time = System.currentTimeMillis();
 		}
 		
+		//extract the scope to examine
+		File scopeInstallDir = null;
+		if(this.scopeLocation != null) {
+			if (this.debug) {
+				time = System.currentTimeMillis();
+				System.out.println("Preparing scope..."); //$NON-NLS-1$
+			}
+			scopeInstallDir = extractSDK("scope", this.scopeLocation); //$NON-NLS-1$
+			if (this.debug) {
+				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				time = System.currentTimeMillis();
+			}
+		}
+		
 		//create the baseline to examine
 		if(this.debug) {
 			time = System.currentTimeMillis();
@@ -287,28 +320,44 @@ public class ApiUseDBTask extends DatabaseTask {
 			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
+		if(((ApiBaseline)baseline).getErrors() != null) {
+			if(!this.proceedonerror) {
+				throw new BuildException(MessageFormat.format(Messages.ApiUseTask_resolution_errors_aborting, new String[] {baseline.getName()}));
+			}
+			else if(this.debug){
+				System.out.println(MessageFormat.format(Messages.ApiUseTask_resolution_errors_continuing, new String[] {baseline.getName()}));
+			}
+		}
+		//create the scope baseline
+		IApiBaseline scopebaseline = null;
+		if(scopeInstallDir != null) {
+			if(this.debug) {
+				time = System.currentTimeMillis();
+				System.out.println("Creating scope baseline..."); //$NON-NLS-1$
+			}
+			scopebaseline = createBaseline("scope_baseline", getInstallDir(scopeInstallDir), this.eeFileLocation); //$NON-NLS-1$
+			if (this.debug) {
+				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				time = System.currentTimeMillis();
+			}
+			if(((ApiBaseline)scopebaseline).getErrors() != null) {
+				if(!this.proceedonerror) {
+					throw new BuildException(MessageFormat.format(Messages.ApiUseTask_resolution_errors_aborting, new String[] {scopebaseline.getName()}));
+				}
+				else if(this.debug) {
+					System.out.println(MessageFormat.format(Messages.ApiUseTask_resolution_errors_continuing, new String[] {scopebaseline.getName()}));
+				}
+			}
+		}
 		try {
 			Connection connection = doConnection();
 			if(connection == null) {
 				throw new BuildException(Messages.ApiUseDBTask_connection_could_not_be_established);
 			}
-			IApiComponent[] components = baseline.getApiComponents();
-			TreeSet scope = new TreeSet(CommonUtilsTask.componentsorter);
-			boolean isapibundle = false;
-			boolean excluded = false;
-			for(int i = 0; i < components.length; i++) {
-				isapibundle = Util.isApiToolsComponent(components[i]);
-				excluded = this.excludeset.contains(components[i].getId());
-				if(isapibundle && !excluded) {
-					scope.add(components[i]);
-				}
-				else {
-					notsearched.add(new SkippedComponent(components[i].getId(), !isapibundle, excluded));
-				}
-			}
 			ApiSearchEngine engine = new ApiSearchEngine();
 			IApiSearchRequestor requestor = new ApiUseSearchRequestor(
-					(IApiElement[]) scope.toArray(new IApiElement[scope.size()]), 
+					baseline.getApiComponents(),
+					getScope(scopebaseline == null ? baseline : scopebaseline), 
 					getSearchFlags(), 
 					(String[]) this.excludeset.toArray(new String[this.excludeset.size()]));
 			DBUseReporter reporter = new DBUseReporter(connection, this.debug);

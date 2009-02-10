@@ -23,7 +23,7 @@ import org.apache.tools.ant.BuildException;
  * @since 1.0.1
  * @noextend This class is not intended to be subclassed by clients.
  */
-public abstract class DatabaseTask extends CommonUtilsTask {
+public abstract class DatabaseTask extends UseTask {
 
 	protected static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver"; //$NON-NLS-1$
 	protected static final String MYSQL_DRIVER_NAME = "mysql"; //$NON-NLS-1$

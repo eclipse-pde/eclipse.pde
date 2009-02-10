@@ -430,25 +430,6 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	}
 	
 	/**
-	 * Cleans the report location if it exists
-	 * @param file
-	 */
-	private void scrubReportLocation(File file) {
-		if(file.exists() && file.isDirectory()) {
-			File[] files = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if(files[i].isDirectory()) {
-					scrubReportLocation(files[i]);
-				}
-				else {
-					files[i].delete();
-				}
-			}
-			file.delete();
-		}
-	}
-	
-	/**
 	 * Writes out the file of components that were not searched: either because they appeared in an exclude list
 	 * or they have no .api_description file
 	 * 

@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -43,9 +42,10 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class ApiUseSearchRequestor implements IApiSearchRequestor {
 
 	/**
-	 * The backing element to search against
+	 * The backing elements to search with
 	 */
 	private ArrayList fElements = null;
+
 	/**
 	 * The mask to use while searching
 	 */
@@ -64,7 +64,7 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * Default comparator that orders {@link IApiComponent} by their ID 
 	 */
-	private static final Comparator componentsorter = new Comparator(){
+	public static final Comparator componentsorter = new Comparator(){
 		public int compare(Object o1, Object o2) {
 			if(o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
 				try {
@@ -87,7 +87,7 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	 * </ol>
 	 * @param excludelist an array of component ids that should be excluded from the search
 	 */
-	public ApiUseSearchRequestor(IApiElement[] elements, int searchkinds, String[] excludelist) {
+	public ApiUseSearchRequestor(IApiElement[] elements, IApiElement[] scope, int searchkinds, String[] excludelist) {
 		fSearchMask = searchkinds;
 		fElements = new ArrayList(elements.length);
 		for(int i = 0; i < elements.length; i++) {
@@ -97,13 +97,14 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 		for (int i = 0; i < excludelist.length; i++) {
 			fExcludeList.add(excludelist[i]);
 		}
+		prepareScope((scope == null ? elements : scope));
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptComponent(org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent)
 	 */
 	public boolean acceptComponent(IApiComponent component) {
-		return true;
+		return true; //fElements.contains(component);
 	}
 	
 	/* (non-Javadoc)
@@ -111,7 +112,7 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	 */
 	public boolean acceptMember(IApiMember member) {
 		try {
-			return getScope().encloses(member);
+			return fScope != null && fScope.encloses(member);
 		}
 		catch(CoreException ce) {}
 		return false;
@@ -125,7 +126,7 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 			IApiMember member = reference.getResolvedReference();
 			if(member != null) {
 				IApiComponent component = member.getApiComponent();
-				if(component.isSystemComponent() || !fElements.contains(component)) {
+				if(!fElements.contains(component)) {
 					return false;
 				}
 				if(component.equals(reference.getMember().getApiComponent())) {
@@ -162,18 +163,28 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 		return kinds;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getScope()
+	/**
+	 * Prepares the search scope based on the available entries in the constructor
+	 * @param elements
 	 */
-	public IApiSearchScope getScope() {
-		if(fElements != null) {
-			if(fScope == null) {
-				try {
-					TreeSet comps = new TreeSet(componentsorter);
-					IApiComponent[] components = null;
-					IApiComponent component = null;
-					for(Iterator iter = fElements.iterator(); iter.hasNext();) {
-						component = ((IApiComponent)iter.next()).getApiComponent();
+	private void prepareScope(IApiElement[] elements) {
+		if(elements != null) {
+			try {
+				TreeSet comps = new TreeSet(componentsorter);
+				IApiComponent[] components = null;
+				IApiComponent component = null;
+				ApiBaseline baseline = null;
+				for(int i = 0; i < elements.length; i++) {
+					component = elements[i].getApiComponent();
+					if(component.isSystemComponent()) {
+						continue;
+					}
+					baseline = (ApiBaseline) component.getBaseline();
+					if(baseline.getErrors() != null) {
+						//we need to include the bundle and not ask for dependents
+						comps.add(component);
+					}
+					else {
 						components = ((ApiBaseline)component.getBaseline()).getVisibleDependentComponents(new IApiComponent[] {component});
 						for (int j = 0; j < components.length; j++) {
 							if(acceptComponent0(components[j])) {
@@ -181,23 +192,43 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 							}
 						}
 					}
-					components = (IApiComponent[]) comps.toArray(new IApiComponent[comps.size()]);
-					fScope = new ApiUseSearchScope(components);
 				}
-				catch(CoreException ce) {}
+				components = (IApiComponent[]) comps.toArray(new IApiComponent[comps.size()]);
+				fScope = new ApiUseSearchScope(components);
 			}
+			catch(CoreException ce) {}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getScope()
+	 */
+	public IApiSearchScope getScope() {
 		return fScope;
 	}
 
+	/**
+	 * Checks the given {@link IApiComponent} to see if we allow it to appear in the scope or not
+	 * @param component
+	 * @return true if the given component should be allowed in the scope false otherwise
+	 * @throws CoreException
+	 */
 	private boolean acceptComponent0(IApiComponent component) throws CoreException {
-		return component != null && 
-				!component.isSystemComponent() && 
+		return component != null &&  
 				!fExcludeList.contains(component.getId()) && 
 				isApiComponent(component);
 	}
 	
+	/**
+	 * Utility method to determine if the given {@link IApiComponent} represents a project that
+	 * is API tools enabled
+	 * @param component
+	 * @return true if the project represented by the given component is API tools enabled false otherwise
+	 */
 	private boolean isApiComponent(IApiComponent component) {
+		if(includesNonApiProjects()) {
+			return true;
+		}
 		if(component instanceof PluginProjectApiComponent) {
 			PluginProjectApiComponent comp = (PluginProjectApiComponent) component;
 			return comp.hasApiDescription();
@@ -219,5 +250,12 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	 */
 	public boolean includesInternal() {
 		return (fSearchMask & INCLUDE_INTERNAL) > 0;
+	}
+	
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesNonApiProjects()
+	 */
+	public boolean includesNonApiProjects() {
+		return (fSearchMask & INCLUDE_NON_API_ENABLED_PROJECTS) > 0;
 	}
 }

@@ -37,6 +37,14 @@ public interface IApiSearchRequestor {
 	public static final int INCLUDE_INTERNAL = 0x0002;
 	
 	/**
+	 * Search mask that determines if non-API enabled projects should be considered
+	 * in the search scope or not
+	 * 
+	 * @see includesNonApiProjects
+	 */
+	public static final int INCLUDE_NON_API_ENABLED_PROJECTS = 0x0004;
+	
+	/**
 	 * Returns the {@link IApiSearchScope} to be searched
 	 * 
 	 * @return the {@link IApiSearchScope} to be searched
@@ -97,4 +105,12 @@ public interface IApiSearchRequestor {
 	 * @return true if reference to internal elements should be considered, false otherwise
 	 */
 	public boolean includesInternal();
+	
+	/**
+	 * Returns true if projects that have not been API tools enabled should be considered in the 
+	 * search scope.
+	 * 
+	 * @return true if non-API projects should be considered in the scope false otherwise
+	 */
+	public boolean includesNonApiProjects();
 }

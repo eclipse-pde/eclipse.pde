@@ -19,15 +19,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
+import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
@@ -38,38 +36,31 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Ant task for performing the API use analysis of a given Eclipse SDK
  * 
  * @since 1.0.0
  */
-public class ApiUseTask extends CommonUtilsTask {
-	
-	protected static final String NO_API_DESCRIPTION = "no_description"; //$NON-NLS-1$
-	protected static final String EXCLUDED = "excluded"; //$NON-NLS-1$
-	
-	/**
-	 * The listing of component names to exclude from scanning
-	 */
-	private Set excludeset = null;
-	/**
-	 * If api references should be considered in the search
-	 */
-	private boolean considerapi = false;
-	/**
-	 * If internal references should be considered in the search
-	 */
-	private boolean considerinternal = false;
-	
-	/**
-	 * Set of project names that were not searched
-	 */
-	private TreeSet notsearched = null;
+public class ApiUseTask extends UseTask {
 	
 	/**
 	 * Constructor
 	 */
-	public ApiUseTask() {
+	public ApiUseTask() {}
+	
+	/**
+	 * Set the flag to indicate if the usage scan should try to proceed when an error is encountered
+	 * or stop.
+	 * <p>
+	 * The default value is <code>false</code>.
+	 * </p>
+	 * @param proceed if the scan should try to continue in the face of errors. Valid values 
+	 * are <code>true</code> or <code>false</code>.
+	 */
+	public void setProceedOnError(String proceed) {
+		this.proceedonerror = Boolean.valueOf(proceed).booleanValue();
 	}
 	
 	/**
@@ -84,6 +75,33 @@ public class ApiUseTask extends CommonUtilsTask {
 	 */
 	public void setBaseline(String baselineLocation) {
 		this.currentBaselineLocation = baselineLocation;
+	}
+	
+	/**
+	 * Sets the location of the scope to search against. If a scope is not provided, the baseline
+	 * will act a both a scope and a baseline: i.e. the baseline will be searched for a complete reference graph.
+	 * 
+	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to
+	 * a location of bundles
+	 * </p>
+	 * 
+	 * @param scopeLocation the given location for the scope to search against
+	 */
+	public void setScope(String scopeLocation) {
+		this.scopeLocation = scopeLocation;
+	}
+	
+	/**
+	 * Sets a flag to indicate if projects that have not been set up for API tooling should be allowed 
+	 * in the search scope.
+	 * <p>
+	 * The default value is <code>false</code>.
+	 * </p>
+	 * @param includenonapi if non- API enabled projects should be included in the search scope. Valid values 
+	 * are <code>true</code> or <code>false</code>.
+	 */
+	public void setIncludeNonApiProjects(String includenonapi) {
+		this.includenonapi = Boolean.valueOf(includenonapi).booleanValue();
 	}
 	
 	/**
@@ -175,17 +193,6 @@ public class ApiUseTask extends CommonUtilsTask {
 		this.considerinternal = Boolean.toString(true).equals(considerinternal);
 	}
 	
-	/**
-	 * Returns the set of search flags to use for the {@link IApiSearchRequestor}
-	 * 
-	 * @return the set of flags to use
-	 */
-	private int getSearchFlags() {
-		int flags = (this.considerapi ? IApiSearchRequestor.INCLUDE_API : 0);
-		flags |= (this.considerinternal ? IApiSearchRequestor.INCLUDE_INTERNAL : 0);
-		return flags;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
@@ -205,6 +212,12 @@ public class ApiUseTask extends CommonUtilsTask {
 			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
 			System.out.println("search for API references : " + this.considerapi); //$NON-NLS-1$
 			System.out.println("search for internal references : " + this.considerinternal); //$NON-NLS-1$
+			if(this.scopeLocation == null) {
+				System.out.println("no scope specified : baseline will act as scope"); //$NON-NLS-1$
+			}
+			else {
+				System.out.println("scope to search against : " + this.scopeLocation); //$NON-NLS-1$
+			}
 			if (this.excludeListLocation != null) {
 				System.out.println("exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
 			} else {
@@ -246,7 +259,6 @@ public class ApiUseTask extends CommonUtilsTask {
 		}
 
 		//extract the baseline to examine
-		
 		if (this.debug) {
 			time = System.currentTimeMillis();
 			System.out.println("Preparing baseline installation..."); //$NON-NLS-1$
@@ -255,6 +267,20 @@ public class ApiUseTask extends CommonUtilsTask {
 		if (this.debug) {
 			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
+		}
+		
+		//extract the scope to examine
+		File scopeInstallDir = null;
+		if(this.scopeLocation != null) {
+			if (this.debug) {
+				time = System.currentTimeMillis();
+				System.out.println("Preparing scope..."); //$NON-NLS-1$
+			}
+			scopeInstallDir = extractSDK(SCOPE, this.scopeLocation);
+			if (this.debug) {
+				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				time = System.currentTimeMillis();
+			}
 		}
 		
 		//create the baseline to examine
@@ -267,24 +293,40 @@ public class ApiUseTask extends CommonUtilsTask {
 			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
-		try {
-			IApiComponent[] components = baseline.getApiComponents();
-			TreeSet scope = new TreeSet(CommonUtilsTask.componentsorter);
-			boolean isapibundle = false;
-			boolean excluded = false;
-			for(int i = 0; i < components.length; i++) {
-				isapibundle = Util.isApiToolsComponent(components[i]);
-				excluded = this.excludeset.contains(components[i].getId());
-				if(isapibundle && !excluded) {
-					scope.add(components[i]);
+		if(((ApiBaseline)baseline).getErrors() != null) {
+			if(!this.proceedonerror) {
+				throw new BuildException(MessageFormat.format(Messages.ApiUseTask_resolution_errors_aborting, new String[] {baseline.getName()}));
+			}
+			else if(this.debug){
+				System.out.println(MessageFormat.format(Messages.ApiUseTask_resolution_errors_continuing, new String[] {baseline.getName()}));
+			}
+		}
+		//create the scope baseline
+		IApiBaseline scopebaseline = null;
+		if(scopeInstallDir != null) {
+			if(this.debug) {
+				time = System.currentTimeMillis();
+				System.out.println("Creating scope baseline..."); //$NON-NLS-1$
+			}
+			scopebaseline = createBaseline("scope_baseline", getInstallDir(scopeInstallDir), this.eeFileLocation); //$NON-NLS-1$
+			if (this.debug) {
+				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				time = System.currentTimeMillis();
+			}
+			if(((ApiBaseline)scopebaseline).getErrors() != null) {
+				if(!this.proceedonerror) {
+					throw new BuildException(MessageFormat.format(Messages.ApiUseTask_resolution_errors_aborting, new String[] {scopebaseline.getName()}));
 				}
-				else {
-					notsearched.add(new SkippedComponent(components[i].getId(), !isapibundle, excluded));
+				else if(this.debug) {
+					System.out.println(MessageFormat.format(Messages.ApiUseTask_resolution_errors_continuing, new String[] {scopebaseline.getName()}));
 				}
 			}
+		}
+		try {
 			ApiSearchEngine engine = new ApiSearchEngine();
 			IApiSearchRequestor requestor = new ApiUseSearchRequestor(
-					(IApiElement[]) scope.toArray(new IApiElement[scope.size()]), 
+					baseline.getApiComponents(),
+					getScope(scopebaseline == null ? baseline : scopebaseline), 
 					getSearchFlags(), 
 					(String[]) this.excludeset.toArray(new String[this.excludeset.size()]));
 			IApiSearchReporter reporter = new XMLApiSearchReporter(this.reportLocation);
@@ -299,26 +341,11 @@ public class ApiUseTask extends CommonUtilsTask {
 		catch(CoreException ce) {
 			throw new BuildException(Messages.ApiUseTask_search_engine_problem, ce);
 		}
-		writeNotSearched();
-	}
-	
-	/**
-	 * Cleans the report location if it exists
-	 * @param file
-	 */
-	private void scrubReportLocation(File file) {
-		if(file.exists() && file.isDirectory()) {
-			File[] files = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if(files[i].isDirectory()) {
-					scrubReportLocation(files[i]);
-				}
-				else {
-					files[i].delete();
-				}
-			}
-			file.delete();
+		finally {
+			baseline.dispose();
+			scopebaseline.dispose();
 		}
+		writeNotSearched();
 	}
 	
 	/**
@@ -330,7 +357,11 @@ public class ApiUseTask extends CommonUtilsTask {
 			if(this.debug) {
 				System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
 			}
-			File file = new File(this.reportLocation, "not_searched.xml"); //$NON-NLS-1$
+			File rootfile = new File(this.reportLocation);
+			if(!rootfile.exists()) {
+				rootfile.mkdirs();
+			}
+			File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
 			if(!file.exists()) {
 				file.createNewFile();
 			}
