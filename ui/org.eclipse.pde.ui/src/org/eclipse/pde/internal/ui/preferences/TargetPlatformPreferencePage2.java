@@ -33,7 +33,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
@@ -83,10 +82,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createContents(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 0;
-		container.setLayout(layout);
+		Composite container = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 
 		createTargetProfilesGroup(container);
 
@@ -97,7 +93,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 	private void createTargetProfilesGroup(Composite container) {
 		Composite comp = SWTFactory.createComposite(container, 1, 1, GridData.FILL_BOTH, 0, 0);
-		((GridData)comp.getLayoutData()).widthHint=400;
+		((GridData) comp.getLayoutData()).widthHint = 500;
 		SWTFactory.createWrapLabel(comp, PDEUIMessages.TargetPlatformPreferencePage2_0, 2);
 		SWTFactory.createWrapLabel(comp, PDEUIMessages.TargetPlatformPreferencePage2_1, 2);
 		SWTFactory.createVerticalSpacer(comp, 1);

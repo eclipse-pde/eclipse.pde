@@ -396,8 +396,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String InformationSection_1;
 
-	public static String InformationSection_2;
-
 	public static String InputContext_errorMessageFileDoesNotExist;
 
 	public static String InputContext_errorMessageLocationNotSet;
@@ -2504,8 +2502,6 @@ public class PDEUIMessages extends NLS {
 	public static String TargetDefinitionContentPage_3;
 
 	public static String TargetDefinitionContentPage_4;
-
-	public static String TargetDefinitionContentPage_5;
 
 	public static String TargetDefinitionContentPage_6;
 

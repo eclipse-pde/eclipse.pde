@@ -29,7 +29,6 @@ import org.eclipse.ui.forms.widgets.*;
 public class InformationSection extends SectionPart {
 
 	private FormEntry fNameEntry;
-	private FormEntry fDescEntry;
 	private TargetEditor fEditor;
 
 	public InformationSection(FormPage page, Composite parent) {
@@ -74,15 +73,6 @@ public class InformationSection extends SectionPart {
 			}
 		});
 
-		fDescEntry = new FormEntry(client, toolkit, PDEUIMessages.InformationSection_2, null, false);
-		fDescEntry.setValue(getTarget().getName());
-		fDescEntry.setFormEntryListener(new SimpleFormEntryAdapter(this) {
-			public void textValueChanged(FormEntry entry) {
-				String value = entry.getValue();
-				getTarget().setDescription(value.length() > 0 ? value : null);
-			}
-		});
-
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 	}
@@ -92,7 +82,6 @@ public class InformationSection extends SectionPart {
 	 */
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
-		fDescEntry.commit();
 		super.commit(onSave);
 	}
 
@@ -101,7 +90,6 @@ public class InformationSection extends SectionPart {
 	 */
 	public void refresh() {
 		fNameEntry.setValue(getTarget().getName(), true);
-		fDescEntry.setValue(getTarget().getDescription(), true);
 		super.refresh();
 	}
 

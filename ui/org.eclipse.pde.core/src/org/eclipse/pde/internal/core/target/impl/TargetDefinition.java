@@ -30,7 +30,6 @@ public class TargetDefinition implements ITargetDefinition {
 
 	// name and description
 	private String fName;
-	private String fDescription;
 
 	// arguments
 	private String fProgramArgs;
@@ -71,13 +70,6 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public IBundleContainer[] getBundleContainers() {
 		return fContainers;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getDescription()
-	 */
-	public String getDescription() {
-		return fDescription;
 	}
 
 	/* (non-Javadoc)
@@ -127,13 +119,6 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public void setArch(String arch) {
 		fArch = arch;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setDescription(java.lang.String)
-	 */
-	public void setDescription(String description) {
-		fDescription = description;
 	}
 
 	/* (non-Javadoc)
@@ -267,7 +252,6 @@ public class TargetDefinition implements ITargetDefinition {
 		try {
 			fArch = null;
 			fContainers = null;
-			fDescription = null;
 			fImplicit = null;
 			fJREContainer = null;
 			fName = null;
@@ -368,7 +352,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @return whether the content of this definition is equal to the content of the specified definition
 	 */
 	public boolean isContentEqual(ITargetDefinition definition) {
-		if (isNullOrEqual(getName(), definition.getName()) && isNullOrEqual(getDescription(), definition.getDescription()) && isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isNullOrEqual(getVMArguments(), definition.getVMArguments())) {
+		if (isNullOrEqual(getName(), definition.getName()) && isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isNullOrEqual(getVMArguments(), definition.getVMArguments())) {
 			// check containers and implicit dependencies
 			IBundleContainer[] c1 = getBundleContainers();
 			IBundleContainer[] c2 = definition.getBundleContainers();

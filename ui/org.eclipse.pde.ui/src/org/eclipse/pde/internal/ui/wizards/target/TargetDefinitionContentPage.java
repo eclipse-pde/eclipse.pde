@@ -39,12 +39,14 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
- *
+ * Wizard page for editing the content of a target platform using a tab layout
+ * 
+ * @see NewTargetDefinitionWizard2
+ * @see EditTargetDefinitionWizard
  */
 public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 	private Text fNameText;
-	private Text fDescriptionText;
 	private BundleContainerTable fTable;
 
 	// Environment pull-downs
@@ -92,40 +94,16 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout(1, true));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 
-		Group group = new Group(comp, SWT.NONE);
-		group.setText(PDEUIMessages.TargetDefinitionContentPage_3);
-		group.setLayout(new GridLayout(2, false));
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Composite nameComp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 
-		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.TargetDefinitionContentPage_4);
-		GridData gridData = new GridData(SWT.LEFT, SWT.TOP, false, false);
-		label.setLayoutData(gridData);
+		SWTFactory.createLabel(nameComp, PDEUIMessages.TargetDefinitionContentPage_4, 1);
 
-		fNameText = new Text(group, SWT.BORDER);
-		gridData = new GridData(SWT.FILL, SWT.TOP, true, false);
-		fNameText.setLayoutData(gridData);
+		fNameText = SWTFactory.createSingleText(nameComp, 1);
 		fNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setName(fNameText.getText().trim());
-			}
-		});
-
-		label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.TargetDefinitionContentPage_5);
-		gridData = new GridData(SWT.LEFT, SWT.TOP, false, false);
-		label.setLayoutData(gridData);
-
-		fDescriptionText = new Text(group, SWT.BORDER);
-		gridData = new GridData(SWT.FILL, SWT.TOP, true, false);
-		fDescriptionText.setLayoutData(gridData);
-		fDescriptionText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				getTargetDefinition().setDescription(fDescriptionText.getText().trim());
 			}
 		});
 
@@ -146,9 +124,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		TabItem envTab = new TabItem(tabs, SWT.NONE);
 		envTab.setText(PDEUIMessages.TargetDefinitionEnvironmentPage_3);
 		Composite envTabContainer = new Composite(tabs, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 15;
-		envTabContainer.setLayout(layout);
+		envTabContainer.setLayout(new GridLayout());
 		envTabContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createTargetEnvironmentGroup(envTabContainer);
 		createJREGroup(envTabContainer);
@@ -177,11 +153,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				name = ""; //$NON-NLS-1$
 			}
 			fNameText.setText(name);
-			String des = definition.getDescription();
-			if (des == null) {
-				des = ""; //$NON-NLS-1$
-			}
-			fDescriptionText.setText(des);
 			fTable.setInput(definition);
 
 			String presetValue = (definition.getOS() == null) ? "" : definition.getOS(); //$NON-NLS-1$

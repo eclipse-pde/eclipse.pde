@@ -77,7 +77,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 
 		SashForm sashForm = new SashForm(comp, SWT.VERTICAL);
 		GridData gd = new GridData(GridData.FILL_BOTH);

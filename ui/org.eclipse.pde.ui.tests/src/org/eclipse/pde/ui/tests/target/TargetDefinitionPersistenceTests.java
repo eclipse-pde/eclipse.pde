@@ -182,7 +182,6 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	
 	protected void initComplexDefiniton(ITargetDefinition definition){
 		definition.setName("name");
-		definition.setDescription("description");
 		definition.setOS("os");
 		definition.setWS("ws");
 		definition.setArch("arch");
@@ -268,7 +267,6 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetDefinition target = readOldTarget("basic");
 		
 		assertEquals("Wrong name", "Basic", target.getName());
-		assertNull(target.getDescription());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());
@@ -295,7 +293,6 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetDefinition target = readOldTarget("directory");
 		
 		assertEquals("Wrong name", "Directory", target.getName());
-		assertNull(target.getDescription());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());
@@ -322,7 +319,6 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetDefinition target = readOldTarget("specific");
 		
 		assertEquals("Wrong name", "Specific Settings", target.getName());
-		assertNull(target.getDescription());
 		assertEquals("x86", target.getArch());
 		assertEquals("linux", target.getOS());
 		assertEquals("en_US", target.getNL());
@@ -358,7 +354,6 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetDefinition target = readOldTarget("additionalLocations");
 		
 		assertEquals("Wrong name", "Additional Locations", target.getName());
-		assertNull(target.getDescription());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());
@@ -395,7 +390,6 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetDefinition target = readOldTarget("featureLocations");
 		
 		assertEquals("Wrong name", "Features", target.getName());
-		assertNull(target.getDescription());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());
@@ -424,7 +418,6 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetDefinition target = readOldTarget("restrictions");
 		
 		assertEquals("Wrong name", "Restrictions", target.getName());
-		assertNull(target.getDescription());
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());

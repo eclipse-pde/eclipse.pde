@@ -29,7 +29,7 @@ import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
- 
+
 /**
  * Provides static methods that will serialize and deserialize xml representing a target definition
  * 
@@ -42,7 +42,6 @@ public class TargetDefinitionPersistenceHelper {
 	 */
 	private static final String ROOT = "target"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
-	private static final String ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
 	private static final String LOCATIONS = "locations"; //$NON-NLS-1$
 	private static final String LOCATION = "location"; //$NON-NLS-1$
 	private static final String ATTR_LOCATION_PATH = "path"; //$NON-NLS-1$
@@ -195,10 +194,6 @@ public class TargetDefinitionPersistenceHelper {
 			rootElement.setAttribute(ATTR_NAME, definition.getName());
 		}
 
-		if (definition.getDescription() != null) {
-			rootElement.setAttribute(ATTR_DESCRIPTION, definition.getDescription());
-		}
-
 		IBundleContainer[] containers = definition.getBundleContainers();
 		if (containers != null && containers.length > 0) {
 			Element containersElement = doc.createElement(LOCATIONS);
@@ -304,11 +299,6 @@ public class TargetDefinitionPersistenceHelper {
 		String name = root.getAttribute(ATTR_NAME);
 		if (name.length() > 0) {
 			definition.setName(name);
-		}
-
-		String description = root.getAttribute(ATTR_DESCRIPTION);
-		if (description.length() > 0) {
-			definition.setDescription(description);
 		}
 
 		AbstractBundleContainer oldStylePrimaryContainer = null;

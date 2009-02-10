@@ -38,20 +38,6 @@ public interface ITargetDefinition {
 	public void setName(String name);
 
 	/**
-	 * Returns the description of this target or <code>null</code> if none.
-	 * 
-	 * @return target description
-	 */
-	public String getDescription();
-
-	/**
-	 * Sets the description of this target, possibly <code>null</code>.
-	 * 
-	 * @param description target description or <code>null</code>
-	 */
-	public void setDescription(String description);
-
-	/**
 	 * Sets the JRE that this target definition should be built against, or <code>null</code>
 	 * to use the workspace default JRE. JavaRuntime should be used to generate and parse
 	 * JRE container paths.
