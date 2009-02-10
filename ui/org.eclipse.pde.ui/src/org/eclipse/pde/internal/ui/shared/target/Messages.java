@@ -4,11 +4,13 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.shared.target.messages"; //$NON-NLS-1$
+	public static String AddBundleContainerSelectionPage_0;
 	public static String AddBundleContainerSelectionPage_1;
 	public static String AddBundleContainerSelectionPage_10;
 	public static String AddBundleContainerSelectionPage_2;
 	public static String AddBundleContainerSelectionPage_3;
 	public static String AddBundleContainerSelectionPage_4;
+	public static String AddBundleContainerSelectionPage_5;
 	public static String AddBundleContainerSelectionPage_6;
 	public static String AddBundleContainerSelectionPage_7;
 	public static String AddBundleContainerSelectionPage_9;
@@ -45,6 +47,8 @@ public class Messages extends NLS {
 	public static String BundleContainerTable_6;
 	public static String BundleContainerTable_7;
 	public static String BundleContainerTable_8;
+	public static String Errors_CreationError;
+	public static String Errors_CreationError_NoWizard;
 	public static String FeatureImportWizard_DetailedPage_problemsLoading;
 	public static String FeatureImportWizardPage_importHasInvalid;
 	public static String RestrictionsListSelectionDialog_0;

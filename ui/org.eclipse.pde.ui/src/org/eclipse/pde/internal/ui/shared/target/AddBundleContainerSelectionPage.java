@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
@@ -136,7 +137,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		List choices = new ArrayList();
 		choices.addAll(getStandardChoices());
 		choices.addAll(getProvisionerExtensionChoices());
-		wizardSelectionViewer.setInput((IWizardNode[]) choices.toArray(new IWizardNode[choices.size()]));
+		wizardSelectionViewer.setInput(choices.toArray(new IWizardNode[choices.size()]));
 	}
 
 	/**
@@ -316,7 +317,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							fWizard = (IProvisionerWizard) element.createExecutableExtension();
 						} catch (CoreException e) {
 							PDEPlugin.log(e);
-							MessageDialog.openError(getContainer().getShell(), PDEUIMessages.Errors_CreationError, PDEUIMessages.Errors_CreationError_NoWizard);
+							MessageDialog.openError(getContainer().getShell(), Messages.Errors_CreationError, Messages.Errors_CreationError_NoWizard);
 						}
 						fWizard.setContainer(getContainer());
 						fWizard.addPages();
@@ -333,7 +334,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							File[] dirs = fWizard.getLocations();
 							for (int i = 0; i < dirs.length; i++) {
 								if (dirs[i] == null || !dirs[i].isDirectory()) {
-									setErrorMessage(Messages.AddDirectoryContainerPage_6);
+									ErrorDialog.openError(getShell(), Messages.AddBundleContainerSelectionPage_0, Messages.AddBundleContainerSelectionPage_5, new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.AddDirectoryContainerPage_6));
 									return false;
 								}
 								try {
@@ -342,11 +343,14 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 									container.resolve(fTarget, null);
 									IResolvedBundle[] resolved = container.getBundles();
 									if (resolved.length == 0) {
-										IBundleContainer pluginContainer = getTargetPlatformService().newDirectoryContainer(new File(dirs[i], "plugins").getPath()); //$NON-NLS-1$
-										pluginContainer.resolve(fTarget, null);
-										resolved = pluginContainer.getBundles();
-										if (resolved.length > 0) {
-											container = pluginContainer;
+										File pluginsDir = new File(dirs[i], "plugins"); //$NON-NLS-1$
+										if (pluginsDir.isDirectory()) {
+											IBundleContainer pluginContainer = getTargetPlatformService().newDirectoryContainer(pluginsDir.getPath());
+											pluginContainer.resolve(fTarget, null);
+											resolved = pluginContainer.getBundles();
+											if (resolved.length > 0) {
+												container = pluginContainer;
+											}
 										}
 									}
 									IBundleContainer[] oldContainers = fTarget.getBundleContainers();
@@ -359,7 +363,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 										fTarget.setBundleContainers(newContainers);
 									}
 								} catch (CoreException ex) {
-									setErrorMessage(ex.getMessage());
+									ErrorDialog.openError(getShell(), Messages.AddBundleContainerSelectionPage_0, Messages.AddBundleContainerSelectionPage_5, ex.getStatus());
 									return false;
 								}
 							}
