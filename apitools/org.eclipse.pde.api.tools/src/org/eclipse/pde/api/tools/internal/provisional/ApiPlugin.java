@@ -81,6 +81,11 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	public static final int ERROR = 121;
 	
 	/**
+	 * Status code indicating a resolution error
+	 */
+	public static final int REPORT_RESOLUTION_ERRORS = 122;
+	
+	/**
 	 * Constant representing severity levels for error/warning preferences
 	 * Value is: <code>0</code>
 	 */
@@ -236,6 +241,17 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	private HashSet savelisteners = new HashSet();
 	
 	/**
+	 * This is used to log resolution errors only once per session
+	 */
+	private boolean logResolutionError = true;
+	
+	/**
+	 * This is used to log resolution errors only once per session. This is used outside the
+	 * workbench.
+	 */
+	private static boolean LogResolutionErrors = true;
+
+	/**
 	 * Constructor
 	 */
 	public ApiPlugin() {
@@ -256,13 +272,18 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
-		if (getDefault() == null) {
-			Throwable exception = status.getException();
-			if (exception != null) {
-				exception.printStackTrace();
+		ApiPlugin getDefault = getDefault();
+		if (getDefault == null) {
+			if (LogResolutionErrors) {
+				Throwable exception = status.getException();
+				if (exception != null) {
+					exception.printStackTrace();
+				}
+				LogResolutionErrors = false;
 			}
-		} else {
-			getDefault().getLog().log(status);
+		} else if (getDefault.logResolutionError) {
+			getDefault.getLog().log(status);
+			getDefault.logResolutionError = false;
 		}
 	}
 	

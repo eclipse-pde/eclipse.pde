@@ -257,8 +257,13 @@ public class ApiType extends ApiMember implements IApiType {
 			for (int i = 0; i < interfaces.length; i++) {
 				interfaces[i] = resolveType(names[i]);
 				if (interfaces[i] == null) {
-					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
-							MessageFormat.format(Messages.ApiType_0, new String[]{names[i], getName()})));
+					throw new CoreException(
+						new Status(
+								IStatus.ERROR,
+								ApiPlugin.PLUGIN_ID,
+								ApiPlugin.REPORT_RESOLUTION_ERRORS,
+								MessageFormat.format(Messages.ApiType_0, new String[]{names[i], getName()}),
+								null));
 				}
 			}
 			fSuperInterfaces = interfaces;
@@ -277,8 +282,12 @@ public class ApiType extends ApiMember implements IApiType {
 		if (fSuperclass == null) {
 			fSuperclass = resolveType(name);
 			if (fSuperclass == null) {
-				throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
-					MessageFormat.format(Messages.ApiType_1, new String[]{name, getName()})));
+				throw new CoreException(new Status(
+					IStatus.ERROR,
+					ApiPlugin.PLUGIN_ID,
+					ApiPlugin.REPORT_RESOLUTION_ERRORS,
+					MessageFormat.format(Messages.ApiType_1, new String[]{name, getName()}),
+					null));
 			}
 		}
 		return fSuperclass;
