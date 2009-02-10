@@ -42,6 +42,7 @@
 					<include name="plugins/org.eclipse.osgi*.jar"/>
 					<include name="plugins/org.eclipse.jdt.core*.jar"/>
 					<include name="plugins/org.eclipse.core.resources*.jar"/>
+					<include name="plugins/org.eclipse.jdt.launching*.jar"/>
 					<include name="plugins/com.ibm.icu*.jar"/>
 					<include name="plugins/org.eclipse.pde.core*.jar"/>
 				</fileset>
