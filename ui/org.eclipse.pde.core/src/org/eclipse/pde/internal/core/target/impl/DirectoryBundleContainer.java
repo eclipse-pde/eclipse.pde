@@ -78,7 +78,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	 */
 	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		File dir = getDirectory();
-		if (dir.exists() && dir.isDirectory()) {
+		if (dir.isDirectory()) {
 			try {
 				File[] files = dir.listFiles();
 				SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);

@@ -89,7 +89,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		String home = resolveHomeLocation().toOSString();
 		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
 		if (infos == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
+			infos = new BundleInfo[0];
 		}
 		BundleInfo[] source = P2Utils.readSourceBundles(home, configUrl);
 		if (source == null) {
