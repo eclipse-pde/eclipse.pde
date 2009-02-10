@@ -29,6 +29,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 	Set deltas;
 	IApiBaseline referenceBaseline;
 	int visibilityModifiers;
+	boolean containsErrors = false;
 
 	public CompareApiScopeVisitor(final Set deltas, final IApiBaseline baseline, final int visibilityModifiers) {
 		this.deltas = deltas;
@@ -38,13 +39,17 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 	
 	public boolean visit(IApiBaseline baseline) throws CoreException {
 		IDelta delta = ApiComparator.compare(this.referenceBaseline, baseline, this.visibilityModifiers);
-		delta.accept(new DeltaVisitor() {
-			public void endVisit(IDelta localDelta) {
-				if (localDelta.getChildren().length == 0) {
-					CompareApiScopeVisitor.this.deltas.add(localDelta);
+		if (delta != null) {
+			delta.accept(new DeltaVisitor() {
+				public void endVisit(IDelta localDelta) {
+					if (localDelta.getChildren().length == 0) {
+						CompareApiScopeVisitor.this.deltas.add(localDelta);
+					}
 				}
-			}
-		});
+			});
+		} else {
+			this.containsErrors = true;
+		}
 		return false;
 	}
 
@@ -62,23 +67,45 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 	}
 
 	public boolean visit(IApiComponent component) throws CoreException {
+		if (component.getErrors() != null) {
+			this.containsErrors = true;
+			return false;
+		}
 		IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(component.getId());
+		if (referenceComponent.getErrors() != null) {
+			this.containsErrors = true;
+			return false;
+		}
 		IDelta delta = ApiComparator.compare(referenceComponent, component, this.visibilityModifiers);
-		delta.accept(new DeltaVisitor() {
-			public void endVisit(IDelta localDelta) {
-				if (localDelta.getChildren().length == 0) {
-					CompareApiScopeVisitor.this.deltas.add(localDelta);
+		if (delta != null) {
+			delta.accept(new DeltaVisitor() {
+				public void endVisit(IDelta localDelta) {
+					if (localDelta.getChildren().length == 0) {
+						CompareApiScopeVisitor.this.deltas.add(localDelta);
+					}
 				}
-			}
-		});
+			});
+		} else {
+			this.containsErrors = true;
+		}
 		return false;
 	}
 	
 	public void visit(IApiTypeRoot root) throws CoreException {
 		IApiComponent apiComponent = root.getApiComponent();
-		if (apiComponent == null) return;
+		if (apiComponent == null) {
+			return;
+		}
+		if (apiComponent.getErrors() != null) {
+			this.containsErrors = true;
+			return;
+		}
 		IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(apiComponent.getId());
 		if (referenceComponent == null) return;
+		if (referenceComponent.getErrors() != null) {
+			this.containsErrors = true;
+			return;
+		}
 		IApiBaseline baseline = referenceComponent.getBaseline();
 		IDelta delta = ApiComparator.compare(
 				root,
@@ -87,12 +114,20 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 				this.referenceBaseline,
 				baseline,
 				this.visibilityModifiers);
-		delta.accept(new DeltaVisitor() {
-			public void endVisit(IDelta localDelta) {
-				if (localDelta.getChildren().length == 0) {
-					CompareApiScopeVisitor.this.deltas.add(localDelta);
+		if (delta != null) {
+			delta.accept(new DeltaVisitor() {
+				public void endVisit(IDelta localDelta) {
+					if (localDelta.getChildren().length == 0) {
+						CompareApiScopeVisitor.this.deltas.add(localDelta);
+					}
 				}
-			}
-		});
+			});
+		} else {
+			this.containsErrors = true;
+		}
+	}
+	
+	public boolean containsError() {
+		return this.containsErrors;
 	}
 }

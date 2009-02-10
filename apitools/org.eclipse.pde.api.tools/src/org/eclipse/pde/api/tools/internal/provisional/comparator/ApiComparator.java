@@ -24,7 +24,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
-import org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -662,8 +661,11 @@ public class ApiComparator {
 				throw new IllegalArgumentException("None of the scope or the baseline must be null"); //$NON-NLS-1$
 			}
 			final Set deltas = new HashSet();
-			final ApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, visibilityModifiers);
+			final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, visibilityModifiers);
 			scope.accept(visitor);
+			if (visitor.containsError()) {
+				return null;
+			}
 			if (deltas.isEmpty()) {
 				return NO_DELTA;
 			}

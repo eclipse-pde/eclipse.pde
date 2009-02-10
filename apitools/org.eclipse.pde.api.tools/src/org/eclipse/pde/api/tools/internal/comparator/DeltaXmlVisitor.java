@@ -77,6 +77,7 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 		if (apiComponentID != null) {
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_COMPONENT_ID, apiComponentID);
 		}
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_MESSAGE, delta.getMessage());
 		String[] messageArguments = delta.getArguments();
 		int length = messageArguments.length;
 		if(length > 0) {

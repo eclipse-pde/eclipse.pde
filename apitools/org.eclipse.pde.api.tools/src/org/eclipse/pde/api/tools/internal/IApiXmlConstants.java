@@ -100,7 +100,7 @@ public interface IApiXmlConstants {
 	 */
 	static final String ATTR_LOCATION = "location"; //$NON-NLS-1$
 	/**
-	 * Constant representing the message attribute of an {@link IApiProblem} in xml.
+	 * Constant representing the message attribute of an {@link IApiProblem problem}  or a {@link Delta delta} in xml.
 	 * Value is: <code>message</code>
 	 */
 	public static final String ATTR_MESSAGE = "message"; //$NON-NLS-1$
