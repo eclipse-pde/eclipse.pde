@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,15 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.core.util;
+package org.eclipse.pde.ui.tests.util;
 
 import java.io.IOException;
 import java.io.Writer;
 
-/**
- * PDEPerformanceTester
- *
- */
 public class PDEPerfTesterUtil {
 
 	private String fTag;
