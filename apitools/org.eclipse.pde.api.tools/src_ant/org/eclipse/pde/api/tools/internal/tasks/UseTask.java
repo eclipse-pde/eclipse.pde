@@ -170,7 +170,7 @@ public class UseTask extends CommonUtilsTask {
 		long time = 0;
 		if (this.debug) {
 			time = System.currentTimeMillis();
-			System.out.println("Preparing baseline installation..."); //$NON-NLS-1$
+			System.out.println("Preparing target baseline installation..."); //$NON-NLS-1$
 		}
 		File baselineInstallDir = extractSDK(CURRENT, this.currentBaselineLocation);
 		if (this.debug) {
@@ -180,7 +180,7 @@ public class UseTask extends CommonUtilsTask {
 		//create the baseline to examine
 		if(this.debug) {
 			time = System.currentTimeMillis();
-			System.out.println("Creating API baseline..."); //$NON-NLS-1$
+			System.out.println("Creating target baseline..."); //$NON-NLS-1$
 		}
 		IApiBaseline baseline = createBaseline(CURRENT_PROFILE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
 		if (this.debug) {
@@ -203,7 +203,7 @@ public class UseTask extends CommonUtilsTask {
 		if(this.scopeLocation != null) {
 			if (this.debug) {
 				time = System.currentTimeMillis();
-				System.out.println("Preparing scope..."); //$NON-NLS-1$
+				System.out.println("Preparing scope baseline installation..."); //$NON-NLS-1$
 			}
 			scopeInstallDir = extractSDK(SCOPE, this.scopeLocation);
 			if (this.debug) {
