@@ -646,14 +646,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 		return null;
 	}
-	
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline#hasResolutionErrors()
-	 */
-	public boolean hasResolutionErrors() {
-		return getErrors() != null;
-	}
-	
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.model.ApiElement#setName(java.lang.String)
 	 */
