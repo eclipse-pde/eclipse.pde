@@ -885,6 +885,9 @@ public class ApiComparator {
 					final String currentComponentID = Util.getDeltaComponentVersionsId(component);
 					String descriptionID = description.getId();
 					IApiComponent currentRequiredApiComponent = referenceBaseline.getApiComponent(descriptionID);
+					if (currentRequiredApiComponent == null) {
+						continue;
+					}
 					final IApiDescription reexportedApiDescription = currentRequiredApiComponent.getApiDescription();
 					IApiTypeContainer[] apiTypeContainers = currentRequiredApiComponent.getApiTypeContainers();
 					if (apiTypeContainers != null) {
@@ -1052,6 +1055,9 @@ public class ApiComparator {
 					final String currentComponentID = Util.getDeltaComponentVersionsId(component);
 					String descriptionID = description.getId();
 					IApiComponent currentRequiredApiComponent = baseline.getApiComponent(descriptionID);
+					if (currentRequiredApiComponent == null) {
+						continue;
+					}
 					IApiTypeContainer[] apiTypeContainers = currentRequiredApiComponent.getApiTypeContainers();
 					final IApiDescription reexportedApiDescription = currentRequiredApiComponent.getApiDescription();
 					if (apiTypeContainers != null) {

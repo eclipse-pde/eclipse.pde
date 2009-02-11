@@ -334,7 +334,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			int charEnd = 1;
 			if (fJavaProject != null) {
 				try {
-					type = fJavaProject.findType(problem.getTypeName().replace('$', '.'));
+					String typeName = problem.getTypeName();
+					if (typeName != null) {
+						type = fJavaProject.findType(typeName.replace('$', '.'));
+					}
 					IProject project = fJavaProject.getProject();
 					if (type == null) {
 						IResource manifestFile = Util.getManifestFile(project);
