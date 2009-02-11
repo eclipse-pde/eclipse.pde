@@ -318,4 +318,25 @@ public class ProductTests extends PDETestCase {
 		assertEquals(((FeatureEntry) i.next()).getVersion(), "2.3.4");
 		assertEquals(((FeatureEntry) i.next()).getVersion(), "1.2.1");
 	}
+
+	public void testBug262324() throws Exception {
+		IFolder buildFolder = newTest("262324");
+
+		IFile product = buildFolder.getFile("foo.product");
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<product name=\"foo\" useFeatures=\"false\">         \n");
+		buffer.append("   <plugins>                                         \n");
+		buffer.append("      <plugin id=\"org.eclipse.equinox.util\"/>      \n");
+		buffer.append("      <plugin id=\"org.eclipse.osgi\"/>              \n");
+		buffer.append("   </plugins>                                        \n");
+		buffer.append("</product>                                           \n");
+		Utils.writeBuffer(product, buffer);
+		
+		Utils.generateFeature(buildFolder, "container", null, new String [] { "org.eclipse.osgi", "org.eclipse.equinox.util"});
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "container");
+		properties.put("product", product.getLocation().toOSString());
+		properties.put("includeLaunchers", "false");
+		properties.put("configs", "win32,win32,x86");
+		generateScripts(buildFolder, properties);
+	}
 }

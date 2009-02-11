@@ -333,10 +333,12 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (properties.size() == 0)
 			return;
 
-		BundleDescription bundle = getSite(false).getRegistry().getResolvedBundle(getBrandingPlugin());
-		if (bundle != null)
-			properties.put(VERSION, bundle.getVersion().toString());
-
+		String branding = getBrandingPlugin();
+		if (branding != null) {
+			BundleDescription bundle = getSite(false).getRegistry().getResolvedBundle(branding);
+			if (bundle != null)
+				properties.put(VERSION, bundle.getVersion().toString());
+		}
 		OutputStream stream = null;
 		try {
 			File file = new File(dir, ".eclipseproduct"); //$NON-NLS-1$
