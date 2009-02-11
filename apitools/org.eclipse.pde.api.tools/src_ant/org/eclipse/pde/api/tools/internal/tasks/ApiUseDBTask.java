@@ -10,21 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
-import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
-import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
-import org.eclipse.pde.api.tools.internal.search.ApiUseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.DBUseReporter;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 
@@ -35,11 +25,6 @@ import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ApiUseDBTask extends DatabaseTask {
-
-	private boolean considerapi;
-	private boolean considerinternal;
-	private Set excludeset;
-	private TreeSet notsearched;
 	
 	/**
 	 * Set the flag to indicate if the usage scan should try to proceed when an error is encountered
@@ -59,7 +44,7 @@ public class ApiUseDBTask extends DatabaseTask {
 	 * <p>
 	 * The default value is <code>false</code>.
 	 * </p>
-	 * @param include if system libraries should be considered in the search scope nad baseline. Valid values 
+	 * @param include if system libraries should be considered in the search scope and baseline. Valid values 
 	 * are <code>true</code> or <code>false</code>.
 	 */
 	public void setIncludeSystemLibraries(String include) {
@@ -246,136 +231,22 @@ public class ApiUseDBTask extends DatabaseTask {
 	 */
 	public void execute() throws BuildException {
 		validateDBConnectionParameters();
-		if (this.currentBaselineLocation == null) {
-			StringWriter out = new StringWriter();
-			PrintWriter writer = new PrintWriter(out);
-			writer.println(Messages.bind(
-					Messages.ApiUseTask_missing_arguments, 
-					new String[] {this.currentBaselineLocation}));
-			writer.flush();
-			writer.close();
-			throw new BuildException(String.valueOf(out.getBuffer()));
-		}
-		if (this.debug) {
-			System.out.println("baseline to examine : " + this.currentBaselineLocation); //$NON-NLS-1$
-			System.out.println("report location : " + this.reportLocation); //$NON-NLS-1$
-			System.out.println("search for API references : " + this.considerapi); //$NON-NLS-1$
-			System.out.println("search for internal references : " + this.considerinternal); //$NON-NLS-1$
-			if(this.scopeLocation == null) {
-				System.out.println("scope to search against : " + this.scopeLocation); //$NON-NLS-1$
-			}
-			else {
-				System.out.println("no scope specified : baseline will act as scope"); //$NON-NLS-1$
-			}
-			if (this.excludeListLocation != null) {
-				System.out.println("exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
-			} else {
-				System.out.println("No exclude list location"); //$NON-NLS-1$
-			}
-			if(this.eeFileLocation != null) {
-				System.out.println("EE file location : " + this.eeFileLocation); //$NON-NLS-1$
-			}
-			else {
-				System.out.println("No EE file location given: using default"); //$NON-NLS-1$
-			}
-		}
-		//stop if we don't want to see anything
-		if(!considerapi && !considerinternal) {
-			return;
-		}
-		//initialize the exclude list
-		if (this.excludeListLocation != null) {
-			this.excludeset = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation);
-		}
+		writeDebugHeader();
 		
-		this.notsearched = new TreeSet(componentsorter);
-		for(Iterator iter = this.excludeset.iterator(); iter.hasNext();) {
-			this.notsearched.add(new SkippedComponent((String) iter.next(), false, true, false));
-		}
-		
-		//extract the baseline to examine
-		long time = 0;
-		if (this.debug) {
-			time = System.currentTimeMillis();
-			System.out.println("Preparing baseline installation..."); //$NON-NLS-1$
-		}
-		File baselineInstallDir = extractSDK(CURRENT, this.currentBaselineLocation);
-		if (this.debug) {
-			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-			time = System.currentTimeMillis();
-		}
-		
-		//extract the scope to examine
-		File scopeInstallDir = null;
-		if(this.scopeLocation != null) {
-			if (this.debug) {
-				time = System.currentTimeMillis();
-				System.out.println("Preparing scope..."); //$NON-NLS-1$
-			}
-			scopeInstallDir = extractSDK("scope", this.scopeLocation); //$NON-NLS-1$
-			if (this.debug) {
-				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				time = System.currentTimeMillis();
-			}
-		}
-		
-		//create the baseline to examine
-		if(this.debug) {
-			time = System.currentTimeMillis();
-			System.out.println("Creating API baseline..."); //$NON-NLS-1$
-		}
-		IApiBaseline baseline = createBaseline(CURRENT_PROFILE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
-		if (this.debug) {
-			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-			time = System.currentTimeMillis();
-		}
-		//create the scope baseline
-		IApiBaseline scopebaseline = null;
-		if(scopeInstallDir != null) {
-			if(this.debug) {
-				time = System.currentTimeMillis();
-				System.out.println("Creating scope baseline..."); //$NON-NLS-1$
-			}
-			scopebaseline = createBaseline("scope_baseline", getInstallDir(scopeInstallDir), this.eeFileLocation); //$NON-NLS-1$
-			if (this.debug) {
-				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				time = System.currentTimeMillis();
-			}
-		}
+		IApiBaseline baseline = getBaseline();
+		IApiBaseline scope = getScope();
+		initializeExcludeSet(scope);
 		try {
 			Connection connection = doConnection();
 			if(connection == null) {
 				throw new BuildException(Messages.ApiUseDBTask_connection_could_not_be_established);
 			}
-			ApiSearchEngine engine = new ApiSearchEngine();
-			IApiSearchRequestor requestor = new ApiUseSearchRequestor(
-					getBaselineIds(baseline),
-					getScope(scopebaseline == null ? baseline : scopebaseline), 
-					getSearchFlags(), 
-					(String[]) this.excludeset.toArray(new String[this.excludeset.size()]));
 			DBUseReporter reporter = new DBUseReporter(connection, this.debug);
-			if(this.debug) {
-				System.out.println("Searching for API references: "+requestor.includesAPI()); //$NON-NLS-1$
-				System.out.println("Searching for internal references: "+requestor.includesInternal()); //$NON-NLS-1$
-				System.out.println("-----------------------------------------------------------------------------------------------------"); //$NON-NLS-1$
-			}
-			ApiSearchEngine.setDebug(this.debug);
-			engine.search(baseline, requestor, reporter, null);
+			doSearch(baseline, scope, reporter);
 			reporter.reportNotSearched((SkippedComponent[]) this.notsearched.toArray(new SkippedComponent[this.notsearched.size()]));
 		}
 		catch(CoreException ce) {
 			throw new BuildException(Messages.ApiUseTask_search_engine_problem, ce);
-		}
-		catch(ClassNotFoundException cnf) {
-			throw new BuildException(Messages.ApiUseDBTask_driver_class_not_found, cnf);
-		}
-		catch (IllegalAccessException iae) {
-			throw new BuildException(Messages.ApiUseDBTask_illegal_access_loading_driver, iae);
-		}
-		catch (SQLException sqle) {
-			throw new BuildException(Messages.ApiUseDBTask_sql_connection_exception, sqle);
-		} catch (InstantiationException ie) {
-			throw new BuildException(Messages.ApiUseDBTask_driver_instantiation_exception, ie);
 		}
 	}
 }

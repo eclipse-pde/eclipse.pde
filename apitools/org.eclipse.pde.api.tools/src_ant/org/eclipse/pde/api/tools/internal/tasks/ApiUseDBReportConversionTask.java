@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.internal.tasks;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
@@ -31,8 +30,6 @@ import org.w3c.dom.NodeList;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ApiUseDBReportConversionTask extends DatabaseTask {
-
-	private String xmlReportsLocation = null;
 	
 	/**
 	 * Set the debug value.
@@ -130,7 +127,7 @@ public class ApiUseDBReportConversionTask extends DatabaseTask {
 	 * @param xmlFilesLocation the given location to retrieve the xml reports
 	 */
 	public void setXmlFiles(String xmlFilesLocation) {
-		this.xmlReportsLocation = xmlFilesLocation;
+		this.reportLocation = xmlFilesLocation;
 	}
 	
 	/* (non-Javadoc)
@@ -138,40 +135,26 @@ public class ApiUseDBReportConversionTask extends DatabaseTask {
 	 */
 	public void execute() throws BuildException {
 		validateDBConnectionParameters();
-		if (this.xmlReportsLocation == null) {
+		if (this.reportLocation == null) {
 			throw new BuildException(Messages.missing_xml_files_location);
 		}
-		try {
-			Connection connection = doConnection();
-			if(connection == null) {
-				throw new BuildException(Messages.ApiUseDBTask_connection_could_not_be_established);
-			}
-			File reportroot = new File(this.xmlReportsLocation);
-			if (!reportroot.exists() || !reportroot.isDirectory()) {
-				throw new BuildException(Messages.bind(Messages.invalid_directory_name, this.xmlReportsLocation));
-			}
-			long start = 0;
-			DBUseReporter reporter = new DBUseReporter(connection, this.debug);
-			if(this.debug) {
-				System.out.println("Reporting components that were not searched..."); //$NON-NLS-1$
-				start = System.currentTimeMillis();
-			}
-			reportNotSearched(reporter, reportroot);
-			if(this.debug) {
-				System.out.println("done in: "+(System.currentTimeMillis()-start)+" ms"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+		Connection connection = doConnection();
+		if(connection == null) {
+			throw new BuildException(Messages.ApiUseDBTask_connection_could_not_be_established);
 		}
-		catch(ClassNotFoundException cnf) {
-			throw new BuildException(Messages.ApiUseDBTask_driver_class_not_found, cnf);
+		File reportroot = new File(this.reportLocation);
+		if (!reportroot.exists() || !reportroot.isDirectory()) {
+			throw new BuildException(Messages.bind(Messages.invalid_directory_name, this.reportLocation));
 		}
-		catch (IllegalAccessException iae) {
-			throw new BuildException(Messages.ApiUseDBTask_illegal_access_loading_driver, iae);
+		long start = 0;
+		DBUseReporter reporter = new DBUseReporter(connection, this.debug);
+		if(this.debug) {
+			System.out.println("Reporting components that were not searched..."); //$NON-NLS-1$
+			start = System.currentTimeMillis();
 		}
-		catch (SQLException sqle) {
-			throw new BuildException(Messages.ApiUseDBTask_sql_connection_exception, sqle);
-		} 
-		catch (InstantiationException ie) {
-			throw new BuildException(Messages.ApiUseDBTask_driver_instantiation_exception, ie);
+		reportNotSearched(reporter, reportroot);
+		if(this.debug) {
+			System.out.println("done in: "+(System.currentTimeMillis()-start)+" ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

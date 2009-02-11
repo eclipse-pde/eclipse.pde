@@ -59,6 +59,7 @@ public abstract class DatabaseTask extends UseTask {
 		if(buffer.length() > 0) {
 			throw new BuildException(MessageFormat.format(Messages.DatabaseTask_missing_db_connect_arguments, new String[] {buffer.toString()}));
 		}
+		assertParameters();
 	}
 	
 	/**
@@ -105,11 +106,25 @@ public abstract class DatabaseTask extends UseTask {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	protected Connection doConnection() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-		String clazz = getDriverClass(this.dbDriverName);
-		if(clazz != null) {
-			Class.forName(clazz).newInstance();
-			return DriverManager.getConnection(getDBUrl());
+	protected Connection doConnection() {
+		try {
+			String clazz = getDriverClass(this.dbDriverName);
+			if(clazz != null) {
+				Class.forName(clazz).newInstance();
+				return DriverManager.getConnection(getDBUrl());
+			}
+		}
+		catch(SQLException sqle) {
+			throw new BuildException(Messages.ApiUseDBTask_sql_connection_exception, sqle);
+		}
+		catch(InstantiationException ie) {
+			throw new BuildException(Messages.ApiUseDBTask_driver_instantiation_exception, ie);
+		}
+		catch(IllegalAccessException iae) {
+			throw new BuildException(Messages.ApiUseDBTask_illegal_access_loading_driver, iae);
+		}
+		catch(ClassNotFoundException cnfe) {
+			throw new BuildException(Messages.ApiUseDBTask_driver_class_not_found, cnfe);
 		}
 		return null;
 	}

@@ -10,14 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
+import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
+import org.eclipse.pde.api.tools.internal.search.ApiUseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -128,5 +136,178 @@ public class UseTask extends CommonUtilsTask {
 		flags |= (this.considerinternal ? IApiSearchRequestor.INCLUDE_INTERNAL : 0);
 		flags |= (this.includenonapi ? IApiSearchRequestor.INCLUDE_NON_API_ENABLED_PROJECTS : 0);
 		return flags;
+	}
+	
+	/**
+	 * Ensures that required task parameters are present
+	 * @throws BuildException
+	 */
+	protected void assertParameters() throws BuildException {
+		if (this.currentBaselineLocation == null) {
+			StringWriter out = new StringWriter();
+			PrintWriter writer = new PrintWriter(out);
+			writer.println(Messages.bind(
+					Messages.ApiUseTask_missing_baseline_argument, 
+					new String[] {this.currentBaselineLocation}));
+			writer.flush();
+			writer.close();
+			throw new BuildException(String.valueOf(out.getBuffer()));
+		}
+		//stop if we don't want to see anything
+		if(!considerapi && !considerinternal) {
+			throw new BuildException(Messages.UseTask_no_scan_both_types_not_searched_for);
+		}
+	}
+	
+	/**
+	 * Returns the {@link IApiBaseline} to use for the search.
+	 * Debugging information is written out if the debug flag is set.
+	 * 
+	 * @return the target baseline
+	 */
+	protected IApiBaseline getBaseline() {
+		//extract the baseline to examine
+		long time = 0;
+		if (this.debug) {
+			time = System.currentTimeMillis();
+			System.out.println("Preparing baseline installation..."); //$NON-NLS-1$
+		}
+		File baselineInstallDir = extractSDK(CURRENT, this.currentBaselineLocation);
+		if (this.debug) {
+			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			time = System.currentTimeMillis();
+		}
+		//create the baseline to examine
+		if(this.debug) {
+			time = System.currentTimeMillis();
+			System.out.println("Creating API baseline..."); //$NON-NLS-1$
+		}
+		IApiBaseline baseline = createBaseline(CURRENT_PROFILE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
+		if (this.debug) {
+			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			time = System.currentTimeMillis();
+		}
+		return baseline;
+	}
+	
+	/**
+	 * Returns the search scope {@link IApiBaseline} to use for the search
+	 * Debugging information is written out if the debug flag is set.
+	 * 
+	 * @return the scope baseline
+	 */
+	protected IApiBaseline getScope() {
+		//extract the scope to examine
+		File scopeInstallDir = null;
+		long time = 0;
+		if(this.scopeLocation != null) {
+			if (this.debug) {
+				time = System.currentTimeMillis();
+				System.out.println("Preparing scope..."); //$NON-NLS-1$
+			}
+			scopeInstallDir = extractSDK(SCOPE, this.scopeLocation);
+			if (this.debug) {
+				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				time = System.currentTimeMillis();
+			}
+		}
+		//create the scope baseline
+		IApiBaseline scopebaseline = null;
+		if(scopeInstallDir != null) {
+			if(this.debug) {
+				time = System.currentTimeMillis();
+				System.out.println("Creating scope baseline..."); //$NON-NLS-1$
+			}
+			scopebaseline = createBaseline("scope_baseline", getInstallDir(scopeInstallDir), this.eeFileLocation); //$NON-NLS-1$
+			if (this.debug) {
+				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				time = System.currentTimeMillis();
+			}
+		}
+		return scopebaseline;
+	}
+	
+	/**
+	 * Performs the search
+	 * @param baseline the baseline target
+	 * @param scope the scope to search
+	 * @param reporter the reporter to report to
+	 * @throws CoreException
+	 */
+	protected void doSearch(IApiBaseline baseline, IApiBaseline scope, IApiSearchReporter reporter) throws CoreException {
+		ApiSearchEngine engine = new ApiSearchEngine();
+		IApiSearchRequestor requestor = new ApiUseSearchRequestor(
+				getBaselineIds(baseline),
+				getScope(scope == null ? baseline : scope), 
+				getSearchFlags(), 
+				(String[]) this.excludeset.toArray(new String[this.excludeset.size()]));
+		ApiSearchEngine.setDebug(this.debug);
+		engine.search(baseline, requestor, reporter, null);
+	}
+	
+	/**
+	 * Initializes the exclude set
+	 * @param baseline
+	 */
+	protected void initializeExcludeSet(IApiBaseline baseline) {
+		//initialize the exclude list
+		this.excludeset = CommonUtilsTask.initializeRegexExcludeList(this.excludeListLocation, baseline);
+		this.notsearched = new TreeSet(componentsorter);
+		if(this.excludeset != null) {
+			for(Iterator iter = this.excludeset.iterator(); iter.hasNext();) {
+				this.notsearched.add(new SkippedComponent((String) iter.next(), false, true, false));
+			}
+		}
+	}
+	
+	/**
+	 * Cleans the report location specified by the parameter {@link CommonUtilsTask#reportLocation}
+	 */
+	protected void cleanReportLocation() {
+		if(this.reportLocation == null) {
+			return;
+		}
+		long time = 0;
+		if(this.debug) {
+			time = System.currentTimeMillis();
+			System.out.println("Cleaning report location..."); //$NON-NLS-1$
+		}
+		File file = new File(this.reportLocation);
+		if(file.exists()) {
+			scrubReportLocation(file);
+		}
+		if(this.debug) {
+			System.out.println("done in: "+ (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	/**
+	 * Writes a general header of debug information iff the debug flag is set to true
+	 */
+	protected void writeDebugHeader() {
+		if (this.debug) {
+			System.out.println("Baseline to collect references to : " + this.currentBaselineLocation); //$NON-NLS-1$
+			System.out.println("Report location : " + this.reportLocation); //$NON-NLS-1$
+			System.out.println("Searching for API references : " + this.considerapi); //$NON-NLS-1$
+			System.out.println("Searching for internal references : " + this.considerinternal); //$NON-NLS-1$
+			if(this.scopeLocation == null) {
+				System.out.println("No scope specified : baseline will act as scope"); //$NON-NLS-1$
+			}
+			else {
+				System.out.println("Scope to search against : " + this.scopeLocation); //$NON-NLS-1$
+			}
+			if (this.excludeListLocation != null) {
+				System.out.println("Exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
+			} else {
+				System.out.println("No exclude list location"); //$NON-NLS-1$
+			}
+			if(this.eeFileLocation != null) {
+				System.out.println("EE file location : " + this.eeFileLocation); //$NON-NLS-1$
+			}
+			else {
+				System.out.println("No EE file location given: using default"); //$NON-NLS-1$
+			}
+			System.out.println("-----------------------------------------------------------------------------------------------------"); //$NON-NLS-1$
+		}
 	}
 }
