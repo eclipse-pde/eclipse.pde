@@ -388,9 +388,16 @@ public class AntScript implements IAntScript {
 	 * @param line
 	 */
 	protected void printArg(String line) {
+		printArg(line, false);
+	}
+
+	protected void printArg(String line, boolean value) {
 		printTab();
 		output.print("<arg"); //$NON-NLS-1$
-		printAttribute("line", line, false); //$NON-NLS-1$
+		if (value)
+			printAttribute("value", line, false); //$NON-NLS-1$
+		else
+			printAttribute("line", line, false); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
 	}
 
@@ -534,6 +541,18 @@ public class AntScript implements IAntScript {
 	 * @param lineArgs the arguments for the executable
 	 */
 	public void printExecTask(String executable, String dir, List lineArgs, String os) {
+		printExecTask(executable, dir, lineArgs, os, false);
+	}
+
+	/**
+	 * Print an <code>exec</code> task to the Ant script.
+	 * @param executable
+	 * @param dir
+	 * @param lineArgs
+	 * @param os
+	 * @param useValue Use value arguments if there is no space in the arg
+	 */
+	public void printExecTask(String executable, String dir, List lineArgs, String os, boolean useValue) {
 		printTab();
 		output.print("<exec"); //$NON-NLS-1$
 		printAttribute("executable", executable, true); //$NON-NLS-1$
@@ -544,8 +563,10 @@ public class AntScript implements IAntScript {
 		else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			for (int i = 0; i < lineArgs.size(); i++)
-				printArg((String) lineArgs.get(i));
+			for (int i = 0; i < lineArgs.size(); i++) {
+				String arg = (String) lineArgs.get(i);
+				printArg(arg, useValue && arg.indexOf(' ') == -1);
+			}
 			indent--;
 			printTab();
 			output.println("</exec>"); //$NON-NLS-1$
