@@ -405,7 +405,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		List containers = new ArrayList(5);
 		try {
@@ -774,7 +776,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		return fBundleDescription.getExecutionEnvironments();
 	}
@@ -788,7 +792,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		return fBundleDescription.getSymbolicName();
 	}
@@ -802,7 +808,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		BundleSpecification[] requiredBundles = fBundleDescription.getRequiredBundles();
 		IRequiredComponentDescription[] req = new IRequiredComponentDescription[requiredBundles.length];
@@ -825,7 +833,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		return fBundleDescription.getVersion().toString();
 	}
@@ -841,7 +851,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		return fBundleDescription;
 	}
@@ -895,7 +907,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		ManifestElement[] sourceBundle = null;
 		try {
@@ -974,7 +988,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		return fBundleDescription.getHost() != null;
 	}
@@ -988,7 +1004,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		return fBundleDescription.getFragments().length != 0;
 	}
@@ -1106,7 +1124,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		IApiElement ancestor = getAncestor(IApiElement.BASELINE);
 		if (ancestor != null) {

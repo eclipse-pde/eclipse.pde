@@ -84,7 +84,12 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * Status code indicating a resolution error
 	 */
 	public static final int REPORT_RESOLUTION_ERRORS = 122;
-	
+
+	/**
+	 * Status code indicating that a baseline is disposed
+	 */
+	public static final int REPORT_BASELINE_IS_DISPOSED = 123;
+
 	/**
 	 * Constant representing severity levels for error/warning preferences
 	 * Value is: <code>0</code>
@@ -243,13 +248,16 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	/**
 	 * This is used to log resolution errors only once per session
 	 */
-	private boolean logResolutionError = true;
+	private int logBits = 0;
 	
 	/**
-	 * This is used to log resolution errors only once per session. This is used outside the
-	 * workbench.
+	 * This is used to log resolution errors only once per session.
+	 * This is used outside the workbench.
 	 */
-	private static boolean LogResolutionErrors = true;
+	private static int LogBits= 0;
+
+	private static final int RESOLUTION_LOG_BIT = 1;
+	private static final int BASELINE_DISPOSED_LOG_BIT = 2;
 
 	/**
 	 * Constructor
@@ -274,19 +282,51 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	public static void log(IStatus status) {
 		ApiPlugin getDefault = getDefault();
 		if (getDefault == null) {
-			if (LogResolutionErrors) {
-				Throwable exception = status.getException();
-				if (exception != null) {
-					exception.printStackTrace();
-				}
-				LogResolutionErrors = false;
+			switch(status.getCode()) {
+				case REPORT_RESOLUTION_ERRORS :
+					if ((LogBits & RESOLUTION_LOG_BIT) == 0) {
+						Throwable exception = status.getException();
+						if (exception != null) {
+							exception.printStackTrace();
+						}
+						LogBits |= RESOLUTION_LOG_BIT;
+					}
+					break;
+				case REPORT_BASELINE_IS_DISPOSED :
+					if ((LogBits & BASELINE_DISPOSED_LOG_BIT) == 0) {
+						Throwable exception = status.getException();
+						if (exception != null) {
+							exception.printStackTrace();
+						}
+						LogBits |= BASELINE_DISPOSED_LOG_BIT;
+					}
+					break;
+				default:
+					Throwable exception = status.getException();
+					if (exception != null) {
+						exception.printStackTrace();
+					}
 			}
-		} else if (getDefault.logResolutionError) {
-			getDefault.getLog().log(status);
-			getDefault.logResolutionError = false;
+		} else {
+			switch(status.getCode()) {
+				case REPORT_RESOLUTION_ERRORS :
+					if ((getDefault.logBits & RESOLUTION_LOG_BIT) == 0) {
+						getDefault.getLog().log(status);
+						getDefault.logBits |= RESOLUTION_LOG_BIT;
+					}
+					break;
+				case REPORT_BASELINE_IS_DISPOSED :
+					if ((getDefault.logBits & BASELINE_DISPOSED_LOG_BIT) == 0) {
+						getDefault.getLog().log(status);
+						getDefault.logBits |= BASELINE_DISPOSED_LOG_BIT;
+					}
+					break;
+				default:
+					getDefault.getLog().log(status);
+			}
 		}
 	}
-	
+
 	/**
 	 * Logs the specified throwable with this plug-in's log.
 	 * 

@@ -664,9 +664,10 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			}
 		} catch(CoreException e) {
 			IStatus status = e.getStatus();
-			if (status == null || status.getMessage() != ApiPlugin.BASELINE_IS_DISPOSED) {
+			if (status == null || status.getCode() != ApiPlugin.REPORT_BASELINE_IS_DISPOSED) {
 				throw new BuildException(e);
 			}
+			ApiPlugin.log(e);
 		} finally {
 			if (this.debug) {
 				System.out.println("API tools verification check : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$

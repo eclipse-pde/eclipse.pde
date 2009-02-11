@@ -293,7 +293,9 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		IApiTypeContainer container = (IApiTypeContainer) fPathToOutputContainers.get(path);
 		if (container == null) {
@@ -337,7 +339,9 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 					new Status(
 							IStatus.ERROR,
 							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.BASELINE_IS_DISPOSED));
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
 		}
 		IResource res = fProject.getProject().findMember(new Path(location));
 		if (res != null) {
