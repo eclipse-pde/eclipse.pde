@@ -168,9 +168,6 @@ public final class ApiSearchEngine {
 				if(member == null) {
 					continue;
 				}
-				else {
-					System.out.println();
-				}
 				localmonitor.setTaskName(MessageFormat.format(SearchMessages.ApiSearchEngine_searching_for_use_from, new String[] {fRequestorContext, type.getName()}));
 				if(requestor.acceptReference(ref)) {
 					refs.add(ref);

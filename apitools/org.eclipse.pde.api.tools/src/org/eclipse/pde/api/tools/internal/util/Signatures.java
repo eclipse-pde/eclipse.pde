@@ -277,22 +277,27 @@ public final class Signatures {
 			char currentChar = chars[i];
 			switch(currentChar) {
 				case 'L' : {
-					buffer.append('Q');
-					// read reference type
-					int lastDotPosition = i;
-					i++;
-					while(i < chars.length && currentChar != ';' && currentChar != '<' ) {
-						switch(currentChar) {
-							case '/' :
-							case '.' :
-								lastDotPosition = i;
-								break;
-						}
+					if(chars[i+1] != ';') {
+						buffer.append('Q');
+						// read reference type
+						int lastDotPosition = i;
 						i++;
-						currentChar = chars[i];
+						while(i < chars.length && currentChar != ';' && currentChar != '<' ) {
+							switch(currentChar) {
+								case '/' :
+								case '.' :
+									lastDotPosition = i;
+									break;
+							}
+							i++;
+							currentChar = chars[i];
+						}
+						buffer.append(chars, lastDotPosition + 1, i - lastDotPosition - 1);
+						buffer.append(currentChar);
 					}
-					buffer.append(chars, lastDotPosition + 1, i - lastDotPosition - 1);
-					buffer.append(currentChar);
+					else {
+						buffer.append(currentChar);
+					}
 					break;
 				}
 				case 'Q': {

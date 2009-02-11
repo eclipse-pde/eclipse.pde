@@ -36,7 +36,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
  */
 public class CompareTask extends CommonUtilsTask {
 	
-	private static final String REGULAR_EXPRESSION_START = "R:"; //$NON-NLS-1$
 	private static final String VISIBILITY_ALL = "ALL"; //$NON-NLS-1$
 	private static final String VISIBILITY_API = "API"; //$NON-NLS-1$
 	private static final String REPORT_XML_FILE_NAME = "compare.xml"; //$NON-NLS-1$
@@ -141,7 +140,7 @@ public class CompareTask extends CommonUtilsTask {
 			deleteBaseline(this.currentBaselineLocation, baselineInstallDir);
 		}
 		if (delta == null) {
-			// an error occured during the comparison
+			// an error occurred during the comparison
 			throw new BuildException(Messages.errorInComparison);
 		}
 		// dump the report in the appropriate folder

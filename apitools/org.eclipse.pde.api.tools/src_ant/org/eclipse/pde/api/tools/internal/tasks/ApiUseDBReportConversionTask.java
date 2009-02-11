@@ -191,14 +191,18 @@ public class ApiUseDBReportConversionTask extends DatabaseTask {
 			Element root = Util.parseDocument(Util.getFileContentAsString(file));
 			NodeList components = root.getElementsByTagName(IApiXmlConstants.ELEMENT_COMPONENT);
 			Element component = null;
-			String id = null, nodesc = null, excluded = null;
+			String id = null, nodesc = null, excluded = null, resolutionerrors = null;
 			SkippedComponent[] skipped = new SkippedComponent[components.getLength()];
 			for (int i = 0; i < components.getLength(); i++) {
 				component = (Element) components.item(i);
 				id = component.getAttribute(IApiXmlConstants.ATTR_ID);
 				nodesc = component.getAttribute(ApiUseTask.NO_API_DESCRIPTION);
 				excluded = component.getAttribute(ApiUseTask.EXCLUDED);
-				skipped[i] = new SkippedComponent(id, Boolean.valueOf(nodesc).booleanValue(), Boolean.valueOf(excluded).booleanValue());
+				resolutionerrors = component.getAttribute(ApiUseTask.RESOLUTION_ERRORS);
+				skipped[i] = new SkippedComponent(id, 
+						Boolean.valueOf(nodesc).booleanValue(), 
+						Boolean.valueOf(excluded).booleanValue(), 
+						Boolean.valueOf(resolutionerrors).booleanValue());
 			}
 			reporter.reportNotSearched(skipped);
 		}

@@ -131,4 +131,10 @@ public interface IApiBaseline extends IApiElement {
 	 */
 	public IApiComponent[] getPrerequisiteComponents(IApiComponent[] components) throws CoreException;
 	
+	/**
+	 * Returns if the baseline has resolution errors.
+	 * 
+	 * @return true if the baseline has resolution errors, false otherwise
+	 */
+	public boolean hasResolutionErrors();
 }

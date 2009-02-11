@@ -27,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -95,7 +96,7 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 				writeXML(parent);
 			} 
 			catch (Exception e) {
-				e.printStackTrace();
+				ApiPlugin.log(e);
 			}
 			finally {
 				if(fReferenceMap != null) {
@@ -359,6 +360,9 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 	 * @return
 	 */
 	private Element findTypeElement(Element root, String tname) {
+		if(tname == null) {
+			return null;
+		}
 		Element kelement = null;
 		NodeList nodes = root.getElementsByTagName(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 		for (int i = 0; i < nodes.getLength(); i++) {

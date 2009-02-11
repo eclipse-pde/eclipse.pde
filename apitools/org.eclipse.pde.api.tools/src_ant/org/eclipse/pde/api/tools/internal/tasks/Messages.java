@@ -143,10 +143,6 @@ public class Messages extends NLS {
 
 	public static String ApiUseTask_missing_arguments;
 
-	public static String ApiUseTask_resolution_errors_aborting;
-
-	public static String ApiUseTask_resolution_errors_continuing;
-
 	public static String ApiUseTask_search_engine_problem;
 
 	public static String comparison_invalidRegularExpression;

@@ -24,7 +24,6 @@ import java.util.TreeSet;
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
-import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
@@ -35,8 +34,6 @@ import org.eclipse.pde.api.tools.internal.search.XMLApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Ant task for performing the API use analysis of a given Eclipse SDK
@@ -64,6 +61,18 @@ public class ApiUseTask extends UseTask {
 	}
 	
 	/**
+	 * Set the flag to indicate if the usage search should include system libraries in the scope and baseline.
+	 * <p>
+	 * The default value is <code>false</code>.
+	 * </p>
+	 * @param include if system libraries should be considered in the search scope and baseline. Valid values 
+	 * are <code>true</code> or <code>false</code>.
+	 */
+	public void setIncludeSystemLibraries(String include) {
+		this.includesystemlibraries = Boolean.valueOf(include).booleanValue();
+	}
+	
+	/**
 	 * Set the location of the current product or baseline that you want to search.
 	 * 
 	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to 
@@ -82,7 +91,7 @@ public class ApiUseTask extends UseTask {
 	 * will act a both a scope and a baseline: i.e. the baseline will be searched for a complete reference graph.
 	 * 
 	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to
-	 * a location of bundles
+	 * a location of bundles that make a complete resolved baseline (i.e. bundles and all of their dependencies).
 	 * </p>
 	 * 
 	 * @param scopeLocation the given location for the scope to search against
@@ -247,16 +256,6 @@ public class ApiUseTask extends UseTask {
 		if(this.debug) {
 			System.out.println("done in: "+ (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
-		//initialize the exclude list
-		this.excludeset = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation);
-		
-		notsearched = new TreeSet(componentsorter);
-		if(this.excludeset != null) {
-			for(Iterator iter = this.excludeset.iterator(); iter.hasNext();) {
-				notsearched.add(new SkippedComponent((String) iter.next(), false, true));
-			}
-		}
 
 		//extract the baseline to examine
 		if (this.debug) {
@@ -293,14 +292,6 @@ public class ApiUseTask extends UseTask {
 			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
-		if(((ApiBaseline)baseline).getErrors() != null) {
-			if(!this.proceedonerror) {
-				throw new BuildException(MessageFormat.format(Messages.ApiUseTask_resolution_errors_aborting, new String[] {baseline.getName()}));
-			}
-			else if(this.debug){
-				System.out.println(MessageFormat.format(Messages.ApiUseTask_resolution_errors_continuing, new String[] {baseline.getName()}));
-			}
-		}
 		//create the scope baseline
 		IApiBaseline scopebaseline = null;
 		if(scopeInstallDir != null) {
@@ -313,19 +304,20 @@ public class ApiUseTask extends UseTask {
 				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				time = System.currentTimeMillis();
 			}
-			if(((ApiBaseline)scopebaseline).getErrors() != null) {
-				if(!this.proceedonerror) {
-					throw new BuildException(MessageFormat.format(Messages.ApiUseTask_resolution_errors_aborting, new String[] {scopebaseline.getName()}));
-				}
-				else if(this.debug) {
-					System.out.println(MessageFormat.format(Messages.ApiUseTask_resolution_errors_continuing, new String[] {scopebaseline.getName()}));
-				}
+		}
+		//initialize the exclude list
+		this.excludeset = CommonUtilsTask.initializeRegexExcludeList(this.excludeListLocation, scopebaseline);
+		
+		notsearched = new TreeSet(componentsorter);
+		if(this.excludeset != null) {
+			for(Iterator iter = this.excludeset.iterator(); iter.hasNext();) {
+				notsearched.add(new SkippedComponent((String) iter.next(), false, true, false));
 			}
 		}
 		try {
 			ApiSearchEngine engine = new ApiSearchEngine();
 			IApiSearchRequestor requestor = new ApiUseSearchRequestor(
-					baseline.getApiComponents(),
+					getBaselineIds(baseline),
 					getScope(scopebaseline == null ? baseline : scopebaseline), 
 					getSearchFlags(), 
 					(String[]) this.excludeset.toArray(new String[this.excludeset.size()]));
@@ -342,8 +334,12 @@ public class ApiUseTask extends UseTask {
 			throw new BuildException(Messages.ApiUseTask_search_engine_problem, ce);
 		}
 		finally {
-			baseline.dispose();
-			scopebaseline.dispose();
+			if(baseline != null) {
+				baseline.dispose();
+			}
+			if(scopebaseline != null) {
+				scopebaseline.dispose();
+			}
 		}
 		writeNotSearched();
 	}
@@ -376,6 +372,7 @@ public class ApiUseTask extends UseTask {
 				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getComponentId());
 				comp.setAttribute(NO_API_DESCRIPTION, Boolean.toString(component.hasNoApiDescription()));
 				comp.setAttribute(EXCLUDED, Boolean.toString(component.wasExcluded()));
+				comp.setAttribute(RESOLUTION_ERRORS, Boolean.toString(component.hasResolutionErrors()));
 				root.appendChild(comp);
 			}
 			writer = new BufferedWriter(new FileWriter(file));

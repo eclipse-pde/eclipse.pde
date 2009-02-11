@@ -21,15 +21,12 @@ import java.util.TreeSet;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.ApiUseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.DBUseReporter;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Api usage reporting task that reports to a database.
@@ -55,6 +52,18 @@ public class ApiUseDBTask extends DatabaseTask {
 	 */
 	public void setProceedOnError(String proceed) {
 		this.proceedonerror = Boolean.valueOf(proceed).booleanValue();
+	}
+	
+	/**
+	 * Set the flag to indicate if the usage search should include system libraries in the scope and baseline.
+	 * <p>
+	 * The default value is <code>false</code>.
+	 * </p>
+	 * @param include if system libraries should be considered in the search scope nad baseline. Valid values 
+	 * are <code>true</code> or <code>false</code>.
+	 */
+	public void setIncludeSystemLibraries(String include) {
+		this.includesystemlibraries = Boolean.valueOf(include).booleanValue();
 	}
 	
 	/**
@@ -281,7 +290,7 @@ public class ApiUseDBTask extends DatabaseTask {
 		
 		this.notsearched = new TreeSet(componentsorter);
 		for(Iterator iter = this.excludeset.iterator(); iter.hasNext();) {
-			this.notsearched.add(new SkippedComponent((String) iter.next(), false, true));
+			this.notsearched.add(new SkippedComponent((String) iter.next(), false, true, false));
 		}
 		
 		//extract the baseline to examine
@@ -320,14 +329,6 @@ public class ApiUseDBTask extends DatabaseTask {
 			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
-		if(((ApiBaseline)baseline).getErrors() != null) {
-			if(!this.proceedonerror) {
-				throw new BuildException(MessageFormat.format(Messages.ApiUseTask_resolution_errors_aborting, new String[] {baseline.getName()}));
-			}
-			else if(this.debug){
-				System.out.println(MessageFormat.format(Messages.ApiUseTask_resolution_errors_continuing, new String[] {baseline.getName()}));
-			}
-		}
 		//create the scope baseline
 		IApiBaseline scopebaseline = null;
 		if(scopeInstallDir != null) {
@@ -340,14 +341,6 @@ public class ApiUseDBTask extends DatabaseTask {
 				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				time = System.currentTimeMillis();
 			}
-			if(((ApiBaseline)scopebaseline).getErrors() != null) {
-				if(!this.proceedonerror) {
-					throw new BuildException(MessageFormat.format(Messages.ApiUseTask_resolution_errors_aborting, new String[] {scopebaseline.getName()}));
-				}
-				else if(this.debug) {
-					System.out.println(MessageFormat.format(Messages.ApiUseTask_resolution_errors_continuing, new String[] {scopebaseline.getName()}));
-				}
-			}
 		}
 		try {
 			Connection connection = doConnection();
@@ -356,7 +349,7 @@ public class ApiUseDBTask extends DatabaseTask {
 			}
 			ApiSearchEngine engine = new ApiSearchEngine();
 			IApiSearchRequestor requestor = new ApiUseSearchRequestor(
-					baseline.getApiComponents(),
+					getBaselineIds(baseline),
 					getScope(scopebaseline == null ? baseline : scopebaseline), 
 					getSearchFlags(), 
 					(String[]) this.excludeset.toArray(new String[this.excludeset.size()]));

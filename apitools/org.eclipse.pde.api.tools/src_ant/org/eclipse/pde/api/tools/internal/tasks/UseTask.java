@@ -28,6 +28,7 @@ public class UseTask extends CommonUtilsTask {
 	
 	protected static final String NO_API_DESCRIPTION = "no_description"; //$NON-NLS-1$
 	protected static final String EXCLUDED = "excluded"; //$NON-NLS-1$
+	protected static final String RESOLUTION_ERRORS = "resolution_errors"; //$NON-NLS-1$
 	protected static final String SCOPE = "scope_baseline"; //$NON-NLS-1$
 	
 	/**
@@ -50,9 +51,14 @@ public class UseTask extends CommonUtilsTask {
 	protected String scopeLocation = null;
 	
 	/**
-	 * if non- API enabled projects should be allowed in the search scope
+	 * If non- API enabled projects should be considered during the search
 	 */
 	protected boolean includenonapi = false;
+	
+	/**
+	 * If system libraries should be included in the search scope and baseline
+	 */
+	protected boolean includesystemlibraries = false;
 	
 	/**
 	 * If the scan should proceed if there are errors encountered
@@ -75,17 +81,41 @@ public class UseTask extends CommonUtilsTask {
 		TreeSet scope = new TreeSet(CommonUtilsTask.componentsorter);
 		boolean isapibundle = false;
 		boolean excluded = false;
+		boolean resolveerrors = false;
 		for(int i = 0; i < components.length; i++) {
 			isapibundle = Util.isApiToolsComponent(components[i]);
 			excluded = this.excludeset.contains(components[i].getId());
-			if((isapibundle || this.includenonapi) && !excluded) {
+			resolveerrors = components[i].getErrors() != null;
+			if((isapibundle || this.includenonapi) && !excluded && !components[i].isSystemComponent() && (!resolveerrors || this.proceedonerror)) {
 				scope.add(components[i]);
 			}
 			else {
-				notsearched.add(new SkippedComponent(components[i].getId(), !isapibundle, excluded));
+				notsearched.add(new SkippedComponent(components[i].getId(), !isapibundle, excluded, resolveerrors));
 			}
 		}
 		return (IApiElement[]) scope.toArray(new IApiElement[scope.size()]);
+	}
+	
+	/**
+	 * Allows the raw list of components returned from the baseline to be altered as needed
+	 * 
+	 * @param baseline
+	 * @return the accepted list of {@link IApiComponent}s from the given baseline
+	 */
+	protected Set getBaselineIds(IApiBaseline baseline) throws CoreException {
+		IApiComponent[] components = baseline.getApiComponents();
+		TreeSet comps = new TreeSet(componentsorter);
+		for (int i = 0; i < components.length; i++) {
+			if(!components[i].isSystemComponent()) {
+				if(Util.isApiToolsComponent(components[i]) || this.includenonapi) {
+					comps.add(components[i].getId());
+				}
+			}
+			if(components[i].isSystemComponent() && this.includesystemlibraries) {
+				comps.add(components[i].getId());
+			}
+		}
+		return comps;
 	}
 	
 	/**

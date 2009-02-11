@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,7 +43,7 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * The backing elements to search with
 	 */
-	private ArrayList fElements = null;
+	private Set fComponentIds = null;
 
 	/**
 	 * The mask to use while searching
@@ -87,35 +86,28 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	 * </ol>
 	 * @param excludelist an array of component ids that should be excluded from the search
 	 */
-	public ApiUseSearchRequestor(IApiElement[] elements, IApiElement[] scope, int searchkinds, String[] excludelist) {
+	public ApiUseSearchRequestor(Set/*<String>*/ elementnames, IApiElement[] scope, int searchkinds, String[] excludelist) {
 		fSearchMask = searchkinds;
-		fElements = new ArrayList(elements.length);
-		for(int i = 0; i < elements.length; i++) {
-			fElements.add(elements[i]);
-		}
+		fComponentIds = elementnames;
 		fExcludeList = new HashSet(excludelist.length);
 		for (int i = 0; i < excludelist.length; i++) {
 			fExcludeList.add(excludelist[i]);
 		}
-		prepareScope((scope == null ? elements : scope));
+		prepareScope(scope);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptComponent(org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent)
 	 */
 	public boolean acceptComponent(IApiComponent component) {
-		return true; //fElements.contains(component);
+		return true; //fComponentIds.contains(component);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptMember(org.eclipse.pde.api.tools.internal.provisional.model.IApiMember)
 	 */
 	public boolean acceptMember(IApiMember member) {
-		try {
-			return fScope != null && fScope.encloses(member);
-		}
-		catch(CoreException ce) {}
-		return false;
+		return true;
 	}
 	
 	/* (non-Javadoc)
@@ -126,7 +118,7 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 			IApiMember member = reference.getResolvedReference();
 			if(member != null) {
 				IApiComponent component = member.getApiComponent();
-				if(!fElements.contains(component)) {
+				if(!fComponentIds.contains(component.getId())) {
 					return false;
 				}
 				if(component.equals(reference.getMember().getApiComponent())) {
@@ -147,6 +139,9 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 						}
 					}
 				}
+			}
+			else {
+				System.out.println(reference.toString());
 			}
 		}
 		catch(CoreException ce) {
@@ -173,23 +168,15 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 				TreeSet comps = new TreeSet(componentsorter);
 				IApiComponent[] components = null;
 				IApiComponent component = null;
-				ApiBaseline baseline = null;
 				for(int i = 0; i < elements.length; i++) {
 					component = elements[i].getApiComponent();
 					if(component.isSystemComponent()) {
 						continue;
 					}
-					baseline = (ApiBaseline) component.getBaseline();
-					if(baseline.getErrors() != null) {
-						//we need to include the bundle and not ask for dependents
-						comps.add(component);
-					}
-					else {
-						components = ((ApiBaseline)component.getBaseline()).getVisibleDependentComponents(new IApiComponent[] {component});
-						for (int j = 0; j < components.length; j++) {
-							if(acceptComponent0(components[j])) {
-								comps.add(components[j]);
-							}
+					components = ((ApiBaseline)component.getBaseline()).getVisibleDependentComponents(new IApiComponent[] {component});
+					for (int j = 0; j < components.length; j++) {
+						if(acceptComponent0(components[j])) {
+							comps.add(components[j]);
 						}
 					}
 				}

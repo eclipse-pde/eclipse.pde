@@ -13,13 +13,17 @@ package org.eclipse.pde.api.tools.internal.search;
 
 public class SkippedComponent {
 	/**
-	 * if the skipped component has no .api_description
+	 * If the skipped component has no .api_description
 	 */
-	private boolean noapidescription;
+	private boolean noapidescription = false;
 	/**
-	 * if the skipped component was skipped because it was found in an exclude list
+	 * If the skipped component was skipped because it was found in an exclude list
 	 */
-	private boolean inexcludelist;
+	private boolean inexcludelist = false;
+	/**
+	 * If the skipped component has resolution errors
+	 */
+	private boolean resolveerrors = false;
 	/**
 	 * the id of of the skipped component
 	 */
@@ -31,9 +35,10 @@ public class SkippedComponent {
 	 * @param inexcludelist
 	 * @param componentid
 	 */
-	public SkippedComponent(String componentid, boolean noapidescription, boolean inexcludelist) {
+	public SkippedComponent(String componentid, boolean noapidescription, boolean inexcludelist, boolean resolveerrors) {
 		this.noapidescription = noapidescription;
 		this.inexcludelist = inexcludelist;
+		this.resolveerrors = resolveerrors;
 		this.componentid = componentid;
 	}
 	
@@ -73,5 +78,12 @@ public class SkippedComponent {
 	 */
 	public boolean wasExcluded() {
 		return this.inexcludelist;
+	}
+	
+	/**
+	 * @return true if the the component had resolution errors
+	 */
+	public boolean hasResolutionErrors() {
+		return this.resolveerrors;
 	}
 }
