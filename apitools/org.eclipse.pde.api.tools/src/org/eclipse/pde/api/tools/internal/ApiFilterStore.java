@@ -175,6 +175,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			}
 		};
 		job.setSystem(true);
+		job.setPriority(Job.INTERACTIVE);
 		job.schedule();
 	}
 
