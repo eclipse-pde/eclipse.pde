@@ -179,10 +179,10 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		setExpectedProblemIds(getDefaultProblemIdSet(1));
 		setExpectedMessageArgs(new String[][] {{"testUF2.m1() has non-API return type internal"}});
 		deployReplacementTest(
-				getBeforePath(testname), 
-				null, 
-				getFilterFilePath(testname), 
-				sourcename, 
+				getBeforePath(testname),
+				null,
+				getFilterFilePath(testname),
+				sourcename,
 				inc);
 	}
 
