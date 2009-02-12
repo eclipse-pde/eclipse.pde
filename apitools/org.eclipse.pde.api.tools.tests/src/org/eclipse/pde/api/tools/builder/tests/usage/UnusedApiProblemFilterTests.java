@@ -161,7 +161,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	}
 	
 	public void testUnusedFilter2F() {
-		x2(false);
+//		x2(false);
 	}
 	
 	public void testUnusedFilter2I() {
