@@ -164,6 +164,11 @@ public class Utils {
 			buffer.append(id);
 			buffer.append("\"");
 		}
+		if (version != null) {
+			buffer.append(" version=\"");
+			buffer.append(version);
+			buffer.append("\"");
+		}
 		if (application != null) {
 			buffer.append(" application=\"");
 			buffer.append(application);

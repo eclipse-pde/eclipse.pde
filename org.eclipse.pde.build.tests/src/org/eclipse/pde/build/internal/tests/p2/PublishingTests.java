@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: IBM - Initial API and implementation
  ******************************************************************************/
@@ -96,15 +96,15 @@ public class PublishingTests extends P2TestCase {
 		executableFeature.refreshLocal(IResource.DEPTH_INFINITE, null);
 		return features[0];
 	}
-	
+
 	public void testPublishFeature_ExecutableFeature() throws Exception {
 		IFolder buildFolder = newTest("PublishBundle_Executable");
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
-		
+
 		IFolder executableFeature = buildFolder.getFolder("features/org.eclipse.equinox.executable");
 		File originalExecutable = copyExecutableFeature(delta, executableFeature);
-		
+
 		Properties properties = Utils.loadProperties(executableFeature.getFile("build.properties"));
 		properties.remove("custom");
 		Utils.storeBuildProperties(executableFeature, properties);
@@ -196,27 +196,27 @@ public class PublishingTests extends P2TestCase {
 		contents.add(".api_description");
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar", contents);
 	}
-	
+
 	public void testPublish_Packaging_1() throws Exception {
 		IFolder buildFolder = newTest("packaging_1");
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
-		Utils.generateFeature(buildFolder, "F", new String [] { "org.eclipse.cvs" }, new String [] { "a" } );
+		Utils.generateFeature(buildFolder, "F", new String[] {"org.eclipse.cvs"}, new String[] {"a"});
 		Utils.generateBundle(a, "a");
 		Utils.writeBuffer(a.getFile("src/A.java"), new StringBuffer("public class A { int i; }"));
-		
+
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "F");
 		Utils.storeBuildProperties(buildFolder, properties);
-		
+
 		try {
 			BuildDirector.p2Gathering = true;
 			runBuild(buildFolder);
 		} finally {
 			BuildDirector.p2Gathering = false;
 		}
-		
+
 		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
-		
+
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		assertNotNull(repository);
 
@@ -225,48 +225,48 @@ public class PublishingTests extends P2TestCase {
 
 		iu = getIU(repository, "org.eclipse.team.cvs.ssh");
 		assertNotNull(iu);
-		IFile file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.ssh_" + iu.getVersion()+ ".jar");
+		IFile file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.ssh_" + iu.getVersion() + ".jar");
 		assertTrue(file.exists());
 		assertJarVerifies(file.getLocation().toFile());
-	
+
 		iu = getIU(repository, "org.eclipse.team.cvs.core");
 		assertNotNull(iu);
-		file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.core_" + iu.getVersion()+ ".jar");
+		file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.core_" + iu.getVersion() + ".jar");
 		assertTrue(file.exists());
 		assertJarVerifies(file.getLocation().toFile());
-		
+
 		iu = getIU(repository, "org.eclipse.cvs");
 		assertNotNull(iu);
-		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.cvs_" + iu.getVersion()+ ".jar");
-		
+		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.cvs_" + iu.getVersion() + ".jar");
+
 		iu = getIU(repository, "org.eclipse.team.cvs.ui");
 		assertNotNull(iu);
-		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.team.cvs.ui_" + iu.getVersion()+ ".jar");
-		
+		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.team.cvs.ui_" + iu.getVersion() + ".jar");
+
 		iu = getIU(repository, "org.eclipse.team.cvs.ssh2");
 		assertNotNull(iu);
-		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.team.cvs.ssh2_" + iu.getVersion()+ ".jar");
-		
+		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.team.cvs.ssh2_" + iu.getVersion() + ".jar");
+
 		iu = getIU(repository, "org.eclipse.cvs.feature.jar");
 		file = buildFolder.getFile("buildRepo/features/org.eclipse.cvs_" + iu.getVersion() + ".jar");
 		assertTrue(file.exists());
 		assertJarVerifies(file.getLocation().toFile());
 	}
-	
+
 	public void testPublish_Source_1() throws Exception {
 		IFolder buildFolder = newTest("source_1");
-		
+
 		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
 		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); public void Bar(){}}"));
 		Utils.writeBuffer(bundle.getFile("src/b/B.java"), new StringBuffer("package b; public class B { public int i = 0; public void Foo(){}}"));
 		Utils.generateBundle(bundle, "bundle");
-		
-		Utils.generateFeature(buildFolder, "F", null, new String [] { "bundle", "bundle.source" } );
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"bundle", "bundle.source"});
 		Properties properties = new Properties();
 		properties.put("generate.plugin@bundle.source", "bundle");
 		properties.put("individualSourceBundles", "true");
 		Utils.storeBuildProperties(buildFolder.getFolder("features/F"), properties);
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "F");
 		Utils.storeBuildProperties(buildFolder, properties);
@@ -275,28 +275,28 @@ public class PublishingTests extends P2TestCase {
 			runBuild(buildFolder);
 		} finally {
 			BuildDirector.p2Gathering = false;
-		}		
-		
+		}
+
 		assertResourceFile(buildFolder, "buildRepo/plugins/bundle.source_1.0.0.jar");
 		Set entries = new HashSet();
 		entries.add("A.java");
 		entries.add("b/B.java");
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle.source_1.0.0.jar", entries);
 	}
-	
+
 	public void testPublish_Brand_1() throws Exception {
 		IFolder buildFolder = newTest("brand_1");
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
-		
+
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
-		
+
 		IFolder executableFeature = buildFolder.getFolder("features/org.eclipse.equinox.executable");
-		File originalExecutable = copyExecutableFeature(delta, executableFeature);
+		copyExecutableFeature(delta, executableFeature);
 		Properties properties = Utils.loadProperties(executableFeature.getFile("build.properties"));
 		properties.remove("custom");
 		Utils.storeBuildProperties(executableFeature, properties);
-		
+
 		IFile product = rcp.getFile("rcp.product");
 		StringBuffer branding = new StringBuffer();
 		branding.append("<launcher name=\"branded\">           \n");
@@ -306,47 +306,48 @@ public class PublishingTests extends P2TestCase {
 		branding.append("      <bmp/>                          \n");
 		branding.append("   </win>                             \n");
 		branding.append("</launcher>                           \n");
-		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String [] { "org.eclipse.osgi"}, false, branding);
-		
+		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {"org.eclipse.osgi"}, false, branding);
+
 		//steal the icons from test 237922
 		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/237922/rcp/icons/mail.ico"), null);
 		IFile icoFile = rcp.getFile("mail.ico");
 		icoFile.create(ico.openStream(), IResource.FORCE, null);
-		
+
 		//cheat and spoof a icns file for mac
 		Utils.copy(icoFile.getLocation().toFile(), new File(rcp.getLocation().toFile(), "mail.icns"));
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", product.getLocation().toOSString());
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath() + "/plugins");
 		properties.put("configs", "win32,win32,x86 & macosx, carbon, ppc");
 		Utils.storeBuildProperties(buildFolder, properties);
-		
+
 		try {
 			BuildDirector.p2Gathering = true;
 			runProductBuild(buildFolder);
 		} finally {
 			BuildDirector.p2Gathering = false;
 		}
-		
-		String branded = "org.example.rcp";
-		String fileName = originalExecutable.getName();
-		String version = fileName.substring(fileName.indexOf('_') + 1);
-		
+
 		Set entries = new HashSet();
 		entries.add("branded.app/Contents/Info.plist");
 		entries.add("branded.app/Contents/MacOS/branded.ini");
 		entries.add("branded.app/Contents/MacOS/branded");
 		entries.add("branded.app/Contents/Resources/mail.icns");
-		assertZipContents(buildFolder.getFolder("buildRepo/binary"), branded + "_root.macosx.carbon.ppc_" + version, entries);
-		
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.macosx.carbon.ppc_1.0.0", entries);
+
 		entries.clear();
 		entries.add("branded.exe");
-		assertZipContents(buildFolder.getFolder("buildRepo/binary"), branded + "_root.win32.win32.x86_" + version, entries);
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.win32.win32.x86_1.0.0", entries);
 
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		assertNotNull(repository);
+
+		IInstallableUnit iu = getIU(repository, "org.example.rcp");
+		assertEquals(iu.getId(), "org.example.rcp");
+		assertEquals(iu.getVersion().toString(), "1.0.0");
+		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.osgi");
 
 	}
 }

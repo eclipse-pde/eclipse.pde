@@ -40,10 +40,12 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		generateMainBegin();
 		generateGatherCalls();
 		generateBrandingCalls();
+		generateMetadataCalls();
 		generateMainEnd();
 
 		generateGatherBinPartsTarget();
 		generateCustomAssemblyTarget();
+		generateMetadataTarget();
 		generateEpilogue();
 		closeScript();
 	}
@@ -71,8 +73,8 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		if (product != null) {
 			script.printProperty(PROPERTY_LAUNCHER_NAME, product.getLauncherName());
 			script.printProperty(PROPERTY_LAUNCHER_PROVIDER, FEATURE_EQUINOX_EXECUTABLE);
-			script.printProperty(PROPERTY_P2_BUILD_REPO, "file:" + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/buildRepo"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		script.printProperty(PROPERTY_P2_BUILD_REPO, "file:" + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/buildRepo"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printProperty(PROPERTY_ASSEMBLY_TMP, Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/tmp"); //$NON-NLS-1$
 		script.println();
 		generateCustomGatherMacro();
@@ -81,6 +83,10 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	protected void generateMainEnd() {
 		script.printTargetEnd();
 		script.println();
+	}
+
+	protected void generateMetadataCalls() {
+		script.printAntCallTask(TARGET_P2_METADATA, true, null);
 	}
 
 	protected void generateBrandingCalls() {
@@ -104,6 +110,21 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			}
 		}
 		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + "/p2.branding", null, null); //$NON-NLS-1$
+	}
+
+	protected void generateMetadataTarget() {
+		script.printTargetDeclaration(TARGET_P2_METADATA, null, null, null, null);
+
+		ProductFile product = getProductFile();
+		if (product != null) {
+			script.printTab();
+			script.print("<p2.publish.product "); //$NON-NLS-1$
+			script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
+			script.printAttribute("repository", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$ 
+			script.printAttribute("productFile", product.getLocation(), true); //$NON-NLS-1$
+			script.println("/>"); //$NON-NLS-1$
+		}
+		script.printTargetEnd();
 	}
 
 	protected void generateEpilogue() {
