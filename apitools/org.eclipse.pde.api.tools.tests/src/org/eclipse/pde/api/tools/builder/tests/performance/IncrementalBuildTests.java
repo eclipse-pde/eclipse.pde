@@ -131,7 +131,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * 
 	 * @throws Exception if something bad happens, or if unexpected problems are found after a build
 	 */
-	public void testIncrementalBuildCompat() throws Exception {
+	public void _testIncrementalBuildCompat() throws Exception {
 		int[] problems = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY, 
@@ -155,7 +155,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * 
 	 * @throws Exception if something bad happens, or if unexpected problems are found after a build
 	 */
-	public void testIncremetalBuildClassCompat() throws Exception {
+	public void _testIncremetalBuildClassCompat() throws Exception {
 		int[] problems = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY, 
@@ -179,7 +179,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * 
 	 * @throws Exception if something bad happens, or if unexpected problems are found after a build
 	 */
-	public void testIncrementalBuildUsage() throws Exception {
+	public void _testIncrementalBuildUsage() throws Exception {
 		int[] problems = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_USAGE, 
@@ -203,7 +203,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * 
 	 * @throws Exception if something bad happens, or if unexpected problems are found after a build
 	 */
-	public void testIncrementalBuildLeak() throws Exception {
+	public void _testIncrementalBuildLeak() throws Exception {
 		int[] problems = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_USAGE, 
@@ -228,7 +228,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * 
 	 * @throws Exception if something bad happens, or if unexpected problems are found after a build
 	 */
-	public void testIncrementalBuildTags() throws Exception {
+	public void _testIncrementalBuildTags() throws Exception {
 		int[] problems = new int[] {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, 
 						IElementDescriptor.TYPE, 
@@ -291,7 +291,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 		IProject proj = getEnv().getWorkspace().getRoot().getProject(projectname);
 		IType type = JavaCore.create(proj).findType(typename);
 		IPath file = type.getPath();
-		for(int i = 0; i < 300; i++) {
+		for(int i = 0; i < 500; i++) {
 			startMeasuring();
 			updateWorkspaceFile(proj, file, getUpdateFilePath(testname, file.lastSegment()));
 			stopMeasuring();
