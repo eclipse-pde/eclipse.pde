@@ -867,7 +867,11 @@ public final class Util {
 				ITextFileBufferManager bufferManager= FileBuffers.getTextFileBufferManager();
 				IPath path= cu.getPath();
 				bufferManager.connect(path, LocationKind.IFILE, new NullProgressMonitor());
-				return bufferManager.getTextFileBuffer(path, LocationKind.IFILE).getDocument();
+				try {
+					return bufferManager.getTextFileBuffer(path, LocationKind.IFILE).getDocument();
+				} finally {
+					bufferManager.disconnect(path, LocationKind.IFILE, null);
+				}
 			}
 		}
 		return new org.eclipse.jface.text.Document(cu.getSource());
