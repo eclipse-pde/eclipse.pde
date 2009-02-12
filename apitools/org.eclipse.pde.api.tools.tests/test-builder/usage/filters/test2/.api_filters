@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><component id="usagetests" version="2">
-    <resource path="src/x/y/z/testUF2.java" type="x.y.z.testUF2">
+<?xml version="1.0" encoding="UTF-8"?>
+<component id="usagetests" version="2">
+    <resource path="/META-INF/MANIFEST.MF" type="x.y.z.testUF2">
         <filter id="643842064">
             <message_arguments>
                 <message_argument value="internal"/>
