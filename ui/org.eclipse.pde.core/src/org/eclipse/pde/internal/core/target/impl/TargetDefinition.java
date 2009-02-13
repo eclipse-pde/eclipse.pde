@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -182,18 +183,33 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#resolve(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStatus resolve(IProgressMonitor monitor) throws CoreException {
+	public IStatus resolve(IProgressMonitor monitor) {
 		IBundleContainer[] containers = getBundleContainers();
-		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, "Target Resolution", null);
-		if (containers != null) {
-			for (int i = 0; i < containers.length; i++) {
-				IStatus s = containers[i].resolve(this, monitor);
-				if (!s.isOK()) {
-					status.add(s);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetDefinition_1, containers.length * 10);
+		try {
+			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_2, null);
+			if (containers != null) {
+				for (int i = 0; i < containers.length; i++) {
+					if (subMonitor.isCanceled()) {
+						return Status.CANCEL_STATUS;
+					}
+					subMonitor.subTask(MessageFormat.format(Messages.TargetDefinition_4, new String[] {Integer.toString(i), Integer.toString(containers.length)}));
+					IStatus s = containers[i].resolve(this, subMonitor.newChild(10));
+					if (!s.isOK()) {
+						status.add(s);
+					}
 				}
 			}
+			if (status.isOK()) {
+				return Status.OK_STATUS;
+			}
+			return status;
+		} finally {
+			subMonitor.done();
+			if (monitor != null) {
+				monitor.done();
+			}
 		}
-		return status;
 	}
 
 	/* (non-Javadoc)
@@ -210,6 +226,32 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 		}
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getBundleStatus()
+	 */
+	public IStatus getBundleStatus() {
+		if (isResolved()) {
+			IBundleContainer[] containers = getBundleContainers();
+			if (containers != null) {
+				MultiStatus result = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_5, null);
+				for (int i = 0; i < containers.length; i++) {
+					IBundleContainer container = containers[i];
+					IStatus containerStatus = container.getBundleStatus();
+					if (containerStatus != null) {
+						result.add(containerStatus);
+					}
+				}
+				if (result.isOK()) {
+					// Return generic ok status instead of problem multi-status with no children
+					return Status.OK_STATUS;
+				}
+				return result;
+			}
+			return Status.OK_STATUS;
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)

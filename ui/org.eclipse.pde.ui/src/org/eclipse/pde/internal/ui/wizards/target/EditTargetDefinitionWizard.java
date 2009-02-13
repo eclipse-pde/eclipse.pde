@@ -57,6 +57,7 @@ public class EditTargetDefinitionWizard extends Wizard {
 	 */
 	public EditTargetDefinitionWizard(ITargetDefinition definition) {
 		setTargetDefinition(definition);
+		setNeedsProgressMonitor(true);
 	}
 
 	/* (non-Javadoc)
@@ -79,7 +80,6 @@ public class EditTargetDefinitionWizard extends Wizard {
 			fDefinition = service.newTarget();
 			try {
 				service.copyTargetDefinition(definition, fDefinition);
-				fDefinition.resolve(null); // TODO: show progress
 				IWizardPage[] pages = getPages();
 				for (int i = 0; i < pages.length; i++) {
 					((TargetDefinitionPage) pages[i]).targetChanged(fDefinition);

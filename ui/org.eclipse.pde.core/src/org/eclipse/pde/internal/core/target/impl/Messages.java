@@ -17,6 +17,12 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.core.target.impl.Messages"; //$NON-NLS-1$
+	public static String AbstractBundleContainer_0;
+	public static String AbstractBundleContainer_1;
+	public static String AbstractBundleContainer_2;
+	public static String AbstractBundleContainer_3;
+	public static String AbstractBundleContainer_4;
+	public static String AbstractBundleContainer_5;
 	public static String DirectoryBundleContainer_0;
 	public static String DirectoryBundleContainer_1;
 	public static String DirectoryBundleContainer_2;
@@ -41,13 +47,24 @@ public class Messages extends NLS {
 	public static String LocalTargetHandle_3;
 	public static String LocalTargetHandle_4;
 	public static String LocalTargetHandle_5;
+	public static String ProfileBundleContainer_0;
 	public static String ProfileBundleContainer_1;
 	public static String TargetDefinition_0;
+	public static String TargetDefinition_1;
+	public static String TargetDefinition_2;
 	public static String TargetDefinition_3;
+	public static String TargetDefinition_4;
+	public static String TargetDefinition_5;
 	public static String TargetDefinitionPersistenceHelper_0;
 	public static String TargetDefinitionPersistenceHelper_1;
 	public static String TargetPlatformService_0;
 	public static String TargetPlatformService_1;
+	public static String TargetPlatformService_2;
+	public static String TargetPlatformService_3;
+	public static String TargetPlatformService_4;
+	public static String TargetPlatformService_5;
+	public static String TargetPlatformService_6;
+	public static String TargetPlatformService_7;
 	public static String WorkspaceFileTargetHandle_0;
 	static {
 		// initialize resource bundle

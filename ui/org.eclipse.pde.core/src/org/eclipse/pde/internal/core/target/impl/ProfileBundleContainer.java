@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.impl;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.runtime.*;
@@ -87,6 +88,9 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		URL configUrl = getConfigurationArea();
 		String home = resolveHomeLocation().toOSString();
+		if (!new File(home).isDirectory()) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
+		}
 		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
 		if (infos == null) {
 			infos = new BundleInfo[0];

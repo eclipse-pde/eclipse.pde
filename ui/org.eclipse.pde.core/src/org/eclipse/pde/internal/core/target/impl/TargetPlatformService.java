@@ -225,7 +225,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	public void loadTargetDefinition(ITargetDefinition definition, String targetExtensionId) throws CoreException {
 		IConfigurationElement elem = PDECore.getDefault().getTargetProfileManager().getTarget(targetExtensionId);
 		if (elem == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind("Target extension does not exist: {0}", targetExtensionId)));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_2, targetExtensionId)));
 		}
 		String path = elem.getAttribute("definition"); //$NON-NLS-1$
 		String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
@@ -234,10 +234,10 @@ public class TargetPlatformService implements ITargetPlatformService {
 			try {
 				((TargetDefinition) definition).setContents(new BufferedInputStream(url.openStream()));
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind("Error reading target extension file: {0}", path), e));
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_3, path), e));
 			}
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind("Target extension file does not exist: {0}", path)));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_4, path)));
 		}
 	}
 
@@ -345,7 +345,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 			String location = ((AbstractBundleContainer) primary).getLocation(true);
 			target.setName(location);
 		} catch (CoreException e) {
-			target.setName("Restored Target Platform");
+			target.setName(Messages.TargetPlatformService_5);
 		}
 		target.setBundleContainers(new IBundleContainer[] {primary});
 	}
@@ -431,9 +431,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 		target.setBundleContainers(new IBundleContainer[] {container});
 		try {
 			String location = ((AbstractBundleContainer) container).getLocation(true);
-			target.setName(NLS.bind("Running Platform ({0})", location));
+			target.setName(NLS.bind(Messages.TargetPlatformService_6, location));
 		} catch (CoreException e) {
-			target.setName("Running Platform (Default)");
+			target.setName(Messages.TargetPlatformService_7);
 		}
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 

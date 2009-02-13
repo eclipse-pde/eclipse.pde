@@ -28,6 +28,7 @@ public class NewTargetDefinitionWizard2 extends Wizard {
 		super();
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);
 		setWindowTitle(PDEUIMessages.NewTargetProfileWizard_title);
+		setNeedsProgressMonitor(true);
 	}
 
 	public void addPages() {

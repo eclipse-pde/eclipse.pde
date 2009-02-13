@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
+import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.shared.target.BundleContainerTable;
+import org.eclipse.pde.internal.ui.shared.target.IBundleContainerTableReporter;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.SectionPart;
@@ -61,8 +67,29 @@ public class ContentSection extends SectionPart {
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		client.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));
 
-		fTable = BundleContainerTable.createTableInForm(client, toolkit, this);
-		fTable.setInput(getTarget());
+		fTable = BundleContainerTable.createTableInForm(client, toolkit, new IBundleContainerTableReporter() {
+			public void runResolveOperation(final IRunnableWithProgress operation) {
+				Job job = new Job(PDEUIMessages.TargetDefinitionContentPage_0) {
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+
+							operation.run(monitor);
+							return Status.OK_STATUS;
+						} catch (InvocationTargetException e) {
+							return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.TargetDefinitionContentPage_5, e);
+						} catch (InterruptedException e) {
+							return Status.CANCEL_STATUS;
+						}
+					}
+				};
+				job.setUser(true);
+				job.schedule();
+			}
+
+			public void contentsChanged() {
+				markDirty();
+			}
+		});
 
 		toolkit.paintBordersFor(client);
 

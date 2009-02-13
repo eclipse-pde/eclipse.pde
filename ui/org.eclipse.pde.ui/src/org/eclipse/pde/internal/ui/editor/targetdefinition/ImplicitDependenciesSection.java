@@ -239,9 +239,8 @@ public class ImplicitDependenciesSection extends SectionPart {
 		}
 
 		List targetBundles = new ArrayList();
-		getTarget().resolve(null);
 		IResolvedBundle[] allTargetBundles = getTarget().getBundles();
-		if (allTargetBundles.length == 0) {
+		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
 		}
 		for (int i = 0; i < allTargetBundles.length; i++) {

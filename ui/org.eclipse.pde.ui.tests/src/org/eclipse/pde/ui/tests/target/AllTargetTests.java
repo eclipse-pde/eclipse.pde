@@ -22,6 +22,7 @@ public class AllTargetTests {
 		suite.addTest(TargetDefinitionTests.suite());
 		suite.addTest(WorkspaceTargetDefinitionTests.suite());
 		suite.addTest(TargetDefinitionPersistenceTests.suite());
+		suite.addTest(TargetDefinitionResolutionTests.suite());
 		return suite;
 	}
 

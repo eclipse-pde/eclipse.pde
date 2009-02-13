@@ -42,6 +42,11 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	private IResolvedBundle[] fBundles;
 
 	/**
+	 * Status generated when this container was resolved, possibly <code>null</code>
+	 */
+	private IStatus fResolutionStatus;
+
+	/**
 	 * Bundle restrictions (subset) this container is restricted to or <code>null</code> if
 	 * no restrictions.
 	 */
@@ -69,27 +74,54 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#isResolved()
 	 */
 	public final boolean isResolved() {
-		return fBundles != null;
+		return fResolutionStatus != null && fResolutionStatus.getSeverity() != IStatus.CANCEL;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#resolve(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public final IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
-		fBundles = resolveBundles(definition, monitor);
-		// build status
-		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, "Target Resolution", null);
-		for (int i = 0; i < fBundles.length; i++) {
-			IResolvedBundle bundle = fBundles[i];
-			if (!bundle.getStatus().isOK()) {
-				status.add(bundle.getStatus());
+	public final IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor) {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 10);
+		try {
+			fBundles = resolveBundles(definition, subMonitor.newChild(10));
+			fResolutionStatus = Status.OK_STATUS;
+			if (subMonitor.isCanceled()) {
+				fBundles = null;
+				fResolutionStatus = Status.CANCEL_STATUS;
+			}
+		} catch (CoreException e) {
+			fBundles = new IResolvedBundle[0];
+			fResolutionStatus = e.getStatus();
+		} finally {
+			subMonitor.done();
+			if (monitor != null) {
+				monitor.done();
+			}
+		}
+		return fResolutionStatus;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getBundleStatus()
+	 */
+	public IStatus getBundleStatus() {
+		if (!isResolved()) {
+			return null;
+		}
+		if (!fResolutionStatus.isOK()) {
+			return fResolutionStatus;
+		}
+		// build status from bundle list
+		IResolvedBundle[] bundles = getBundles();
+		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.AbstractBundleContainer_0, null);
+		for (int i = 0; i < bundles.length; i++) {
+			if (!bundles[i].getStatus().isOK()) {
+				status.add(bundles[i].getStatus());
 			}
 		}
 		if (status.isOK()) {
+			// return the generic ok status vs a problem multi-status with no children
 			return Status.OK_STATUS;
-		}
-		if (status.getChildren().length == 1) {
-			return status.getChildren()[0];
 		}
 		return status;
 	}
@@ -108,6 +140,8 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * Resolves all source and executable bundles in this container regardless of any bundle restrictions.
 	 * <p>
 	 * Subclasses must implement this method.
+	 * </p><p>
+	 * <code>beginTask()</code> and <code>done()</code> will be called on the given monitor by the caller. 
 	 * </p>
 	 * @param definition target context
 	 * @param monitor progress monitor
@@ -155,7 +189,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			}
 			list.add(resolved);
 		}
-		List resolved = new ArrayList(included.length);
+		List resolved = new ArrayList();
 		if (included == null) {
 			for (int i = 0; i < collection.length; i++) {
 				resolved.add(collection[i]);
@@ -226,19 +260,19 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			}
 			// VERSION DOES NOT EXIST
 			int sev = IStatus.ERROR;
-			String message = NLS.bind("Missing required version {0} of plug-in: {1}", new Object[] {info.getVersion(), info.getSymbolicName()});
+			String message = NLS.bind(Messages.AbstractBundleContainer_1, new Object[] {info.getVersion(), info.getSymbolicName()});
 			if (optional) {
 				sev = IStatus.INFO;
-				message = NLS.bind("Missing version {0} of optional plug-in: {1}", new Object[] {info.getVersion(), info.getSymbolicName()});
+				message = NLS.bind(Messages.AbstractBundleContainer_2, new Object[] {info.getVersion(), info.getSymbolicName()});
 			}
 			return new ResolvedBundle(info, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, message, null), false, optional, false);
 		}
 		// DOES NOT EXIST
 		int sev = IStatus.ERROR;
-		String message = NLS.bind("Missing required plug-in: {0}", info.getSymbolicName());
+		String message = NLS.bind(Messages.AbstractBundleContainer_3, info.getSymbolicName());
 		if (optional) {
 			sev = IStatus.INFO;
-			message = NLS.bind("Missing optional plug-in: {0}", info.getSymbolicName());
+			message = NLS.bind(Messages.AbstractBundleContainer_4, info.getSymbolicName());
 		}
 		return new ResolvedBundle(info, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_DOES_NOT_EXIST, message, null), false, optional, false);
 	}
@@ -337,9 +371,9 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			}
 			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
 		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, "Error reading bundle manifest", e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, Messages.AbstractBundleContainer_5, e));
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, "Error reading bundle manifest", e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, Messages.AbstractBundleContainer_5, e));
 		} finally {
 			closeZipFileAndStream(manifestStream, jarFile);
 		}
@@ -427,7 +461,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		boolean fragment = false;
 		IStatus status = null;
 		try {
-			File file = URIUtil.toFile(info.getLocation());
+			File file = new File(info.getLocation());
 			Map manifest = loadManifest(file);
 			fragment = manifest.containsKey(Constants.FRAGMENT_HOST);
 		} catch (CoreException e) {

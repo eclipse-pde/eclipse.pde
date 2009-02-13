@@ -131,8 +131,8 @@ public class AddDirectoryContainerPage extends WizardPage {
 			fTable.getControl().setEnabled(false);
 			setPageComplete(false);
 		} else {
-			try {
-				fContainer.resolve(fTarget, null);
+			IStatus result = fContainer.resolve(fTarget, null);
+			if (result.isOK() || result.isMultiStatus()) {
 				IResolvedBundle[] bundles = fContainer.getBundles();
 				if (bundles == null || bundles.length == 0) {
 					fTable.setInput(new String[] {Messages.AddDirectoryContainerPage_7});
@@ -142,8 +142,8 @@ public class AddDirectoryContainerPage extends WizardPage {
 					fTable.setInput(bundles);
 				}
 				setPageComplete(true);
-			} catch (CoreException e) {
-				setErrorMessage(e.getMessage());
+			} else {
+				setErrorMessage(result.getMessage());
 				setPageComplete(false);
 			}
 		}

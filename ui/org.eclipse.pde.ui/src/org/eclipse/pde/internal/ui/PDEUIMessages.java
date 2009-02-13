@@ -2495,6 +2495,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ArgumentsSection_variableButtonTitle;
 
+	public static String TargetDefinitionContentPage_0;
+
 	public static String TargetDefinitionContentPage_1;
 
 	public static String TargetDefinitionContentPage_2;
@@ -2502,6 +2504,8 @@ public class PDEUIMessages extends NLS {
 	public static String TargetDefinitionContentPage_3;
 
 	public static String TargetDefinitionContentPage_4;
+
+	public static String TargetDefinitionContentPage_5;
 
 	public static String TargetDefinitionContentPage_6;
 
@@ -2780,7 +2784,11 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPlatformPreferencePage2_1;
 
+	public static String TargetPlatformPreferencePage2_10;
+
 	public static String TargetPlatformPreferencePage2_11;
+
+	public static String TargetPlatformPreferencePage2_12;
 
 	public static String TargetPlatformPreferencePage2_2;
 

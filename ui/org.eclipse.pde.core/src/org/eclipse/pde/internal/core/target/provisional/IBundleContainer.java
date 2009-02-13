@@ -24,25 +24,51 @@ public interface IBundleContainer {
 	/**
 	 * Resolves all bundles in this container in the context of the specified
 	 * target and returns a status describing the resolution.
-	 * 
+	 * <p>
+	 * If there is an error preventing the resolution a status detailing
+	 * the error will be returned.  If resolution is successful an OK status is 
+	 * returned. If the progress monitor is canceled a CANCEL status will be returned.
+	 * </p><p>
+	 * Note that the returned status may differ from the result of calling 
+	 * {@link #getBundleStatus()}
+	 * </p>
 	 * @param definition target being resolved for
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return resolution status
 	 * @exception CoreException if unable to resolve this container
 	 */
-	public IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException;
+	public IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor);
+
+	/**
+	 * Returns the status of the bundles in this container or <code>null</code> if 
+	 * this container has not been resolved.  If there was a problem during the 
+	 * resolution, a single status explaining the problem will be returned, see
+	 * {@link #resolve(ITargetDefinition, IProgressMonitor)}.  Otherwise a multi-status
+	 * will be returned containing all non-OK statuses on the bundles in this container
+	 * (the bundles in this container can be retrieved by calling {@link #getBundles()}. 
+	 * 	 
+	 * @see IBundleContainer#getBundles()
+	 * @return single resolution status, bundle multi-status or <code>null</code>
+	 */
+	public IStatus getBundleStatus();
 
 	/**
 	 * Returns whether this container has resolved all of its contained bundles.
 	 * 
+	 * @see #resolve(ITargetDefinition, IProgressMonitor)
 	 * @return whether this container has resolved all of its contained bundles
 	 */
 	public boolean isResolved();
 
 	/**
-	 * Returns all bundles in this container or <code>null</code> if this container is
-	 * not resolved.
-	 * 
+	 * Returns the bundles in this container or <code>null</code> if this container is
+	 * not resolved.  The returned list of bundles will be filtered if included bundles
+	 * {@link #setIncludedBundles(BundleInfo[])} or optional bundles
+	 * {@link #setOptionalBundles(BundleInfo[])} have been set.
+	 * <p>
+	 * If there are any problems with the bundles in this container, the associated
+	 * statuses can be accessed by calling {@link #getBundleStatus()} 
+	 * </p>
 	 * @return resolved bundles or <code>null</code>
 	 */
 	public IResolvedBundle[] getBundles();

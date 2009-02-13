@@ -144,23 +144,37 @@ public interface ITargetDefinition {
 	public void setBundleContainers(IBundleContainer[] containers);
 
 	/**
-	 * Returns all resolved bundles in this target definition or <code>null</code>
-	 * if this container is not resolved.
-	 * 
+	 * Returns all bundles in this target definition or <code>null</code>
+	 * if this container is not resolved.  Equivalent to collecting the result
+	 * of {@link IBundleContainer#getBundles()} on each of the bundle containers
+	 * in this target.
+	 * <p>
+	 * If there are any problems with the bundles in this target, the associated
+	 * statuses can be accessed by calling {@link #getBundleStatus()} 
+	 * </p>
+	 * @see #getBundleStatus()
 	 * @return resolved bundles or <code>null</code>
 	 */
 	public IResolvedBundle[] getBundles();
 
 	/**
-	 * Resolves all bundles in this target definition by resolving
-	 * each bundle container in this target definition and returns a status describing
-	 * the result of the resolution.
-	 * 
+	 * Resolves all bundles in this target definition by resolving each
+	 * bundle container in this target definition.
+	 * <p>
+	 * Returns a multi-status containing any non-OK statuses produced when
+	 * resolving each bundle container in this target.  An OK status will be
+	 * returned if the resolution was successful.  A CANCEL status will be 
+	 * returned if the monitor is canceled. For more information on the contents
+	 * of the status see {@link IBundleContainer#resolve(ITargetDefinition, IProgressMonitor)}
+	 * </p><p>
+	 * Note that the returned status may be different than the result of 
+	 * calling {@link #getBundleStatus()}.
+	 * </p>
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return resolution status
 	 * @throws CoreException if unable to resolve
 	 */
-	public IStatus resolve(IProgressMonitor monitor) throws CoreException;
+	public IStatus resolve(IProgressMonitor monitor);
 
 	/**
 	 * Returns whether this target's bundle containers are currently in
@@ -170,6 +184,17 @@ public interface ITargetDefinition {
 	 * a resolved state
 	 */
 	public boolean isResolved();
+
+	/**
+	 * Returns a multi-status containing the bundle status of all bundle containers
+	 * in this target or <code>null</code> if this target has not been resolved.  For
+	 * information on the statuses collected from the bundle containers see
+	 * {@link IBundleContainer#getBundleStatus()}.
+	 * 
+	 * @see #getBundles()
+	 * @return multi-status containing status for each bundle container or <code>null</code>
+	 */
+	public IStatus getBundleStatus();
 
 	/**
 	 * Returns any program arguments that should be used when launching this target

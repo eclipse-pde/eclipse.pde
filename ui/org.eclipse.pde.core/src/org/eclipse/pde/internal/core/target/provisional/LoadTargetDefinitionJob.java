@@ -273,98 +273,120 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	}
 
 	private void handleReload(String targetLocation, List additionalLocations, Preferences pref, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(Messages.LoadTargetOperation_reloadTaskName, 85);
+		SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_reloadTaskName, 100);
+		try {
+			Set included = new HashSet();
+			List infos = new ArrayList();
 
-		Set included = new HashSet();
-		List infos = new ArrayList();
-		fTarget.resolve(null);
-		// TODO: report any errors in resolution status
-		IResolvedBundle[] resolved = fTarget.getBundles();
-		for (int i = 0; i < resolved.length; i++) {
-			if (resolved[i].getStatus().isOK()) {
+			if (!fTarget.isResolved()) {
+				fTarget.resolve(subMon.newChild(20));
+			} else {
+				subMon.worked(20);
+			}
+
+			if (subMon.isCanceled()) {
+				// TODO Support cancellation?
+			}
+
+			IStatus status = fTarget.getBundleStatus();
+
+			if (status == null) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LoadTargetDefinitionJob_1));
+			}
+			if (!status.isOK()) {
+				// TODO Support prompting for differing levels of errors/warnings/info
+				throw new CoreException(status);
+			}
+
+			IResolvedBundle[] resolved = fTarget.getBundles();
+			for (int i = 0; i < resolved.length; i++) {
 				infos.add(resolved[i].getBundleInfo());
 				included.add(resolved[i].getBundleInfo());
 			}
-		}
 
-		// Compute missing bundles (preference need to know disabled/missing bundles)
-		List missing = new ArrayList();
-		IBundleContainer[] containers = fTarget.getBundleContainers();
-		if (containers != null) {
-			for (int i = 0; i < containers.length; i++) {
-				IBundleContainer container = containers[i];
-				BundleInfo[] restrictions = container.getIncludedBundles();
-				if (restrictions != null) {
-					try {
-						container.setIncludedBundles(null);
-						IResolvedBundle[] all = container.getBundles();
-						for (int j = 0; j < all.length; j++) {
-							IResolvedBundle bi = all[j];
-							if (!included.contains(bi.getBundleInfo())) {
-								missing.add(bi.getBundleInfo());
+			// Compute missing bundles (preference need to know disabled/missing bundles)
+			List missing = new ArrayList();
+			IBundleContainer[] containers = fTarget.getBundleContainers();
+			if (containers != null) {
+				for (int i = 0; i < containers.length; i++) {
+					IBundleContainer container = containers[i];
+					BundleInfo[] restrictions = container.getIncludedBundles();
+					if (restrictions != null) {
+						try {
+							container.setIncludedBundles(null);
+							IResolvedBundle[] all = container.getBundles();
+							for (int j = 0; j < all.length; j++) {
+								IResolvedBundle bi = all[j];
+								if (!included.contains(bi.getBundleInfo())) {
+									missing.add(bi.getBundleInfo());
+								}
 							}
+						} finally {
+							container.setIncludedBundles(restrictions);
 						}
-					} finally {
-						container.setIncludedBundles(restrictions);
 					}
 				}
 			}
-		}
 
-		List paths = new ArrayList(infos.size() + missing.size());
-		Iterator iterator = infos.iterator();
-		while (iterator.hasNext()) {
-			BundleInfo info = (BundleInfo) iterator.next();
+			List paths = new ArrayList(infos.size() + missing.size());
+			Iterator iterator = infos.iterator();
+			while (iterator.hasNext()) {
+				BundleInfo info = (BundleInfo) iterator.next();
+				try {
+					paths.add(new File(info.getLocation()).toURL());
+				} catch (MalformedURLException e) {
+					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LoadTargetDefinitionJob_1, e));
+				}
+			}
+
+			// generate URLs and save CHECKED_PLUGINS (which are missing), and add to master list of paths
+			StringBuffer checked = new StringBuffer();
+			int i = 0;
+			iterator = missing.iterator();
+			Set missingIds = new HashSet(missing.size());
+			while (iterator.hasNext()) {
+				BundleInfo bi = (BundleInfo) iterator.next();
+				missingIds.add(bi.getSymbolicName());
+				try {
+					paths.add(new File(bi.getLocation()).toURL());
+				} catch (MalformedURLException e) {
+					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LoadTargetDefinitionJob_1, e));
+				}
+				if (i > 0) {
+					checked.append(" "); //$NON-NLS-1$
+				}
+				checked.append(bi.getSymbolicName());
+				i++;
+			}
+
+			URL[] urls = (URL[]) paths.toArray(new URL[paths.size()]);
+			PDEState state = new PDEState(urls, true, new SubProgressMonitor(monitor, 45));
+			IPluginModelBase[] models = state.getTargetModels();
+			for (i = 0; i < models.length; i++) {
+				models[i].setEnabled(!missingIds.contains(models[i].getPluginBase().getId()));
+			}
+			// save CHECKED_PLUGINS
+			if (urls.length == 0) {
+				pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
+			} else if (missing.size() == 0) {
+				pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
+			} else {
+				pref.setValue(ICoreConstants.CHECKED_PLUGINS, checked.toString());
+			}
+
+			Job job = new TargetPlatformResetJob(state);
+			job.schedule();
 			try {
-				paths.add(new File(info.getLocation()).toURL());
-			} catch (MalformedURLException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LoadTargetDefinitionJob_1, e));
+				job.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
 			}
-		}
-
-		// generate URLs and save CHECKED_PLUGINS (which are missing), and add to master list of paths
-		StringBuffer checked = new StringBuffer();
-		int i = 0;
-		iterator = missing.iterator();
-		Set missingIds = new HashSet(missing.size());
-		while (iterator.hasNext()) {
-			BundleInfo bi = (BundleInfo) iterator.next();
-			missingIds.add(bi.getSymbolicName());
-			try {
-				paths.add(new File(bi.getLocation()).toURL());
-			} catch (MalformedURLException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LoadTargetDefinitionJob_1, e));
+		} finally {
+			if (monitor != null) {
+				monitor.done();
 			}
-			if (i > 0) {
-				checked.append(" "); //$NON-NLS-1$
-			}
-			checked.append(bi.getSymbolicName());
-			i++;
+			subMon.done();
 		}
-
-		URL[] urls = (URL[]) paths.toArray(new URL[paths.size()]);
-		PDEState state = new PDEState(urls, true, new SubProgressMonitor(monitor, 45));
-		IPluginModelBase[] models = state.getTargetModels();
-		for (i = 0; i < models.length; i++) {
-			models[i].setEnabled(!missingIds.contains(models[i].getPluginBase().getId()));
-		}
-		// save CHECKED_PLUGINS
-		if (urls.length == 0) {
-			pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
-		} else if (missing.size() == 0) {
-			pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
-		} else {
-			pref.setValue(ICoreConstants.CHECKED_PLUGINS, checked.toString());
-		}
-
-		Job job = new TargetPlatformResetJob(state);
-		job.schedule();
-		try {
-			job.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-		}
-		monitor.done();
 	}
 
 }

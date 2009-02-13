@@ -13,10 +13,12 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.*;
@@ -28,7 +30,7 @@ import org.eclipse.ui.forms.widgets.*;
  */
 public class InformationSection extends SectionPart {
 
-	private FormEntry fNameEntry;
+	private Text fNameText;
 	private TargetEditor fEditor;
 
 	public InformationSection(FormPage page, Composite parent) {
@@ -64,12 +66,13 @@ public class InformationSection extends SectionPart {
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		client.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.TargetDefinitionSection_name, null, false);
-		fNameEntry.setValue(getTarget().getName());
-		fNameEntry.setFormEntryListener(new SimpleFormEntryAdapter(this) {
-			public void textValueChanged(FormEntry entry) {
-				String value = entry.getValue();
+		fNameText = toolkit.createText(client, getTarget().getName());
+		fNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fNameText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				String value = fNameText.getText().trim();
 				getTarget().setName(value.length() > 0 ? value : null);
+				markDirty();
 			}
 		});
 
@@ -78,18 +81,10 @@ public class InformationSection extends SectionPart {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
-	public void commit(boolean onSave) {
-		fNameEntry.commit();
-		super.commit(onSave);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
 	public void refresh() {
-		fNameEntry.setValue(getTarget().getName(), true);
+		fNameText.setText(getTarget().getName() != null ? getTarget().getName() : ""); //$NON-NLS-1$
 		super.refresh();
 	}
 

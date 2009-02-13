@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
@@ -17,6 +18,7 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -29,6 +31,7 @@ import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.shared.target.BundleContainerTable;
+import org.eclipse.pde.internal.ui.shared.target.IBundleContainerTableReporter;
 import org.eclipse.pde.internal.ui.util.LocaleUtil;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -37,6 +40,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * Wizard page for editing the content of a target platform using a tab layout
@@ -118,7 +122,37 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		SWTFactory.createWrapLabel(pluginTabContainer, PDEUIMessages.ContentSection_1, 2);
 
-		fTable = BundleContainerTable.createTableInDialog(pluginTabContainer);
+		fTable = BundleContainerTable.createTableInDialog(pluginTabContainer, new IBundleContainerTableReporter() {
+			public void runResolveOperation(final IRunnableWithProgress operation) {
+				if (isControlCreated()) {
+					try {
+						getContainer().run(true, false, operation);
+					} catch (InvocationTargetException e) {
+						PDEPlugin.log(e);
+					} catch (InterruptedException e) {
+						// TODO Cancel the wizard?
+					}
+				} else {
+					// If the page isn't open yet, try running a UI job so the dialog has time to finish opening
+					new UIJob(PDEUIMessages.TargetDefinitionContentPage_0) {
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							try {
+								getContainer().run(true, false, operation);
+								return Status.OK_STATUS;
+							} catch (InvocationTargetException e) {
+								return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.TargetDefinitionContentPage_5, e);
+							} catch (InterruptedException e) {
+								return Status.CANCEL_STATUS;
+							}
+						}
+					}.schedule();
+				}
+			}
+
+			public void contentsChanged() {
+				// Do nothing, as wizard will always save when finish is pressed
+			}
+		});
 		pluginsTab.setControl(pluginTabContainer);
 
 		TabItem envTab = new TabItem(tabs, SWT.NONE);
@@ -138,8 +172,8 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		depTab.setText(PDEUIMessages.TargetDefinitionEnvironmentPage_5);
 		depTab.setControl(createImplicitTabContents(tabs));
 
-		setControl(comp);
 		targetChanged(getTargetDefinition());
+		setControl(comp);
 	}
 
 	/* (non-Javadoc)
@@ -263,11 +297,11 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	/**
-	 * Returns the given string or <code>null</code> if empty to set a value in the
-	 * target definition.
+	 * Returns the given string or <code>null</code> if the string is empty.
+	 * Used when setting a value in the target definition.
 	 * 
 	 * @param value
-	 * @return
+	 * @return given string or <code>null</code>
 	 */
 	private String getModelValue(String value) {
 		if (value != null) {

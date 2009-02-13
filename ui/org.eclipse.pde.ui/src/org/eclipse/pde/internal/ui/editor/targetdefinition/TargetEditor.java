@@ -12,8 +12,10 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
 import java.util.*;
 import java.util.List;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.pde.internal.core.PDECore;
@@ -41,6 +43,7 @@ public class TargetEditor extends FormEditor {
 
 	private ITargetDefinition fTarget;
 	private List fManagedFormPages = new ArrayList(2);
+	private FileInputListener fInputListener;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
@@ -97,6 +100,28 @@ public class TargetEditor extends FormEditor {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormEditor#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
+	 */
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		super.init(site, input);
+		if (input instanceof IFileEditorInput) {
+			fInputListener = new FileInputListener(((IFileEditorInput) input).getFile());
+			PDEPlugin.getWorkspace().addResourceChangeListener(fInputListener);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormEditor#dispose()
+	 */
+	public void dispose() {
+		if (fInputListener != null) {
+			PDEPlugin.getWorkspace().removeResourceChangeListener(fInputListener);
+			fInputListener = null;
+		}
+		super.dispose();
+	}
+
 	/**
 	 * Returns the target model backing this editor
 	 * @return target model
@@ -114,7 +139,16 @@ public class TargetEditor extends FormEditor {
 					} catch (CoreException e) {
 						PDEPlugin.log(e);
 					}
-				}
+				} /*else if (input instanceof IURIEditorInput){
+						IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
+						store.
+						is = store.openInputStream(EFS.CACHE, new NullProgressMonitor());
+						model = createStorageModel(is);
+					}
+					ResourcesPlugin.getPlugin().getWorkspace().getRoot().findFilesForLocationURI(URI)
+					
+					ITargetHandle fileHandle = service.getTarget(file)
+				}*/
 				// TODO Support storage editor input?
 				if (fTarget == null) {
 					fTarget = service.newTarget();
@@ -150,7 +184,7 @@ public class TargetEditor extends FormEditor {
 				hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
 				hyperlink.addHyperlinkListener(new IHyperlinkListener() {
 					public void linkActivated(HyperlinkEvent e) {
-						LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(getTarget());
+						Job job = new LoadTargetDefinitionJob(getTarget());
 						job.schedule();
 					}
 
@@ -188,6 +222,47 @@ public class TargetEditor extends FormEditor {
 	 */
 	public void addForm(IManagedForm managedForm) {
 		fManagedFormPages.add(managedForm);
+	}
+
+	/**
+	 * Resource change listener for the file input to this editor in case it is deleted. 
+	 */
+	class FileInputListener implements IResourceChangeListener, IResourceDeltaVisitor {
+		IFile fInput;
+
+		public FileInputListener(IFile input) {
+			fInput = input;
+		}
+
+		public void resourceChanged(IResourceChangeEvent event) {
+			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+				IResourceDelta delta = event.getDelta();
+				try {
+					delta.accept(this);
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		}
+
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			IResource resource = delta.getResource();
+			if (resource instanceof IFile) {
+				IFile file = (IFile) resource;
+				if (file.equals(fInput)) {
+					if (delta.getKind() == IResourceDelta.REMOVED || delta.getKind() == IResourceDelta.REPLACED) {
+						Display display = getSite().getShell().getDisplay();
+						display.asyncExec(new Runnable() {
+							public void run() {
+								getSite().getPage().closeEditor(TargetEditor.this, false);
+							}
+						});
+					}
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
 }

@@ -11,9 +11,13 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import com.ibm.icu.text.MessageFormat;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -22,6 +26,7 @@ import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,8 +36,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * UI part that can be added to a dialog or to a form editor.  Contains a table displaying
@@ -50,19 +55,25 @@ public class BundleContainerTable {
 	private Button fEditButton;
 	private Button fRemoveButton;
 	private Button fRemoveAllButton;
+	private Label fShowLabel;
+	private Button fShowPluginsButton;
+	private Button fShowSourceButton;
+	private ViewerFilter fPluginFilter;
+	private ViewerFilter fSourceFilter;
+
 	private ITargetDefinition fTarget;
-	private AbstractFormPart fFormPart; // TODO Remove when proper model/editor listening is done
+	private IBundleContainerTableReporter fReporter; // TODO Remove when proper model/editor listening is done
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given composite.
 	 * 
 	 * @param parent parent composite
 	 * @param toolkit toolkit to create the widgets with
-	 * @param tempPart form part used to mark the editor dirty or <code>null</code>
+	 * @param reporter reporter implementation that will handle resolving and changes to the containers
 	 * @return generated instance of the table part
 	 */
-	public static BundleContainerTable createTableInForm(Composite parent, FormToolkit toolkit, AbstractFormPart tempPart) {
-		BundleContainerTable contentTable = new BundleContainerTable(tempPart);
+	public static BundleContainerTable createTableInForm(Composite parent, FormToolkit toolkit, IBundleContainerTableReporter reporter) {
+		BundleContainerTable contentTable = new BundleContainerTable(reporter);
 		contentTable.createFormContents(parent, toolkit);
 		return contentTable;
 	}
@@ -71,20 +82,23 @@ public class BundleContainerTable {
 	 * Creates this part using standard dialog widgets and adds it to the given composite.
 	 * 
 	 * @param parent parent composite
+	 * @param reporter reporter implementation that will handle resolving and changes to the containers
 	 * @return generated instance of the table part
 	 */
-	public static BundleContainerTable createTableInDialog(Composite parent) {
-		BundleContainerTable contentTable = new BundleContainerTable(null);
+	public static BundleContainerTable createTableInDialog(Composite parent, IBundleContainerTableReporter reporter) {
+		BundleContainerTable contentTable = new BundleContainerTable(reporter);
 		contentTable.createDialogContents(parent);
 		return contentTable;
 	}
 
 	/**
-	 * Constructor
-	 * @param tempPart form part used to mark an editor dirty or <code>null</code>
+	 * Private constructor, use one of {@link #createTableInDialog(Composite, IBundleContainerTableReporter)}
+	 * or {@link #createTableInForm(Composite, FormToolkit, IBundleContainerTableReporter)}.
+	 * 
+	 * @param reporter reporter implementation that will handle resolving and changes to the containers
 	 */
-	private BundleContainerTable(AbstractFormPart tempPart) {
-		fFormPart = tempPart;
+	private BundleContainerTable(IBundleContainerTableReporter reporter) {
+		fReporter = reporter;
 	}
 
 	/**
@@ -102,8 +116,6 @@ public class BundleContainerTable {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		atree.setLayoutData(gd);
 
-		initializeTreeViewer(atree);
-
 		Composite buttonComp = toolkit.createComposite(comp);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
@@ -115,7 +127,19 @@ public class BundleContainerTable {
 		fRemoveButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_2, SWT.PUSH);
 		fRemoveAllButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_3, SWT.PUSH);
 
+		Composite filterComp = toolkit.createComposite(buttonComp);
+		layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		filterComp.setLayout(layout);
+		filterComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
+
+		fShowLabel = toolkit.createLabel(filterComp, Messages.BundleContainerTable_9);
+		fShowPluginsButton = toolkit.createButton(filterComp, Messages.BundleContainerTable_14, SWT.CHECK);
+		fShowSourceButton = toolkit.createButton(filterComp, Messages.BundleContainerTable_15, SWT.CHECK);
+
+		initializeTreeViewer(atree);
 		initializeButtons();
+		initializeFilters();
 
 		toolkit.paintBordersFor(comp);
 	}
@@ -133,8 +157,6 @@ public class BundleContainerTable {
 		gd.widthHint = 200;
 		atree.setLayoutData(gd);
 
-		initializeTreeViewer(atree);
-
 		Composite buttonComp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -147,7 +169,16 @@ public class BundleContainerTable {
 		fRemoveButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_2, null);
 		fRemoveAllButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_3, null);
 
+		Composite filterComp = SWTFactory.createComposite(buttonComp, 1, 1, GridData.BEGINNING, 0, 0);
+		filterComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
+
+		fShowLabel = SWTFactory.createLabel(filterComp, Messages.BundleContainerTable_9, 1);
+		fShowPluginsButton = SWTFactory.createCheckButton(filterComp, Messages.BundleContainerTable_14, null, true, 1);
+		fShowSourceButton = SWTFactory.createCheckButton(filterComp, Messages.BundleContainerTable_15, null, true, 1);
+
+		initializeTreeViewer(atree);
 		initializeButtons();
+		initializeFilters();
 	}
 
 	/**
@@ -164,6 +195,15 @@ public class BundleContainerTable {
 				updateButtons();
 			}
 		});
+		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				if (!event.getSelection().isEmpty()) {
+					Object selectedElement = ((IStructuredSelection) event.getSelection()).getFirstElement();
+					fTreeViewer.setExpandedState(selectedElement, !fTreeViewer.getExpandedState(selectedElement));
+				}
+			}
+		});
+		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 	}
 
 	/**
@@ -175,7 +215,7 @@ public class BundleContainerTable {
 				handleAdd();
 			}
 		});
-		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		fAddButton.setLayoutData(new GridData());
 		SWTFactory.setButtonDimensionHint(fAddButton);
 
 		fEditButton.addSelectionListener(new SelectionAdapter() {
@@ -183,7 +223,7 @@ public class BundleContainerTable {
 				handleEdit();
 			}
 		});
-		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		fEditButton.setLayoutData(new GridData());
 		SWTFactory.setButtonDimensionHint(fEditButton);
 
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
@@ -191,7 +231,7 @@ public class BundleContainerTable {
 				handleRemove();
 			}
 		});
-		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		fRemoveButton.setLayoutData(new GridData());
 		SWTFactory.setButtonDimensionHint(fRemoveButton);
 
 		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
@@ -199,13 +239,64 @@ public class BundleContainerTable {
 				handleRemoveAll();
 			}
 		});
-		fRemoveAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		fRemoveAllButton.setLayoutData(new GridData());
 		SWTFactory.setButtonDimensionHint(fRemoveAllButton);
+
+		fShowPluginsButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (!fShowPluginsButton.getSelection()) {
+					fTreeViewer.addFilter(fPluginFilter);
+				} else {
+					fTreeViewer.removeFilter(fPluginFilter);
+				}
+			}
+		});
+		fShowPluginsButton.setSelection(true);
+		GridData gd = new GridData();
+		gd.horizontalIndent = 10;
+		fShowPluginsButton.setLayoutData(gd);
+
+		fShowSourceButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (!fShowSourceButton.getSelection()) {
+					fTreeViewer.addFilter(fSourceFilter);
+				} else {
+					fTreeViewer.removeFilter(fSourceFilter);
+				}
+			}
+		});
+		fShowSourceButton.setSelection(true);
+		gd = new GridData();
+		gd.horizontalIndent = 10;
+		fShowSourceButton.setLayoutData(gd);
+	}
+
+	private void initializeFilters() {
+		fSourceFilter = new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof IResolvedBundle) {
+					if (((IResolvedBundle) element).isSourceBundle()) {
+						return false;
+					}
+				}
+				return true;
+			}
+		};
+		fPluginFilter = new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof IResolvedBundle) {
+					if (!((IResolvedBundle) element).isSourceBundle()) {
+						return false;
+					}
+				}
+				return true;
+			}
+		};
 	}
 
 	/**
 	 * Sets the target definition model to use as input for the tree, can be called with different
-	 * models to change the tree's input
+	 * models to change the tree's input.
 	 * @param target target model
 	 */
 	public void setInput(ITargetDefinition target) {
@@ -213,10 +304,28 @@ public class BundleContainerTable {
 		refresh();
 	}
 
+	/**
+	 * Refreshes the contents of the table
+	 */
 	public void refresh() {
-		fTreeViewer.setInput(fTarget);
-		fTreeViewer.refresh();
-		updateButtons();
+		if (!fTarget.isResolved()) {
+			fReporter.runResolveOperation(new ResolveContainersOperation());
+		} else {
+			fTreeViewer.setInput(fTarget);
+			fTreeViewer.refresh();
+			updateButtons();
+		}
+	}
+
+	private void setEnabled(boolean enablement) {
+		fTreeViewer.getControl().setEnabled(enablement);
+		fAddButton.setEnabled(enablement);
+		fRemoveButton.setEnabled(enablement);
+		fRemoveAllButton.setEnabled(enablement);
+		fEditButton.setEnabled(enablement);
+		fShowLabel.setEnabled(enablement);
+		fShowPluginsButton.setEnabled(enablement);
+		fShowSourceButton.setEnabled(enablement);
 	}
 
 	private void handleAdd() {
@@ -225,7 +334,7 @@ public class BundleContainerTable {
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		if (dialog.open() != Window.CANCEL) {
 			refresh();
-			markDirty();
+			contentsChanged();
 		}
 	}
 
@@ -257,7 +366,7 @@ public class BundleContainerTable {
 						if (result.length == resolvedBundles.length) {
 							container.setIncludedBundles(null);
 							if (oldRestrictions != null) {
-								markDirty();
+								contentsChanged();
 								refresh();
 							}
 						} else {
@@ -271,7 +380,7 @@ public class BundleContainerTable {
 								newRestrictions[i] = new BundleInfo(selectedRestrictions[i].getSymbolicName(), dialog.isUseVersion() ? selectedRestrictions[i].getVersion() : null, null, BundleInfo.NO_LEVEL, false);
 							}
 							container.setIncludedBundles(newRestrictions);
-							markDirty();
+							contentsChanged();
 							refresh();
 						}
 					}
@@ -298,14 +407,14 @@ public class BundleContainerTable {
 				}
 			}
 			fTarget.setBundleContainers((IBundleContainer[]) newBundleContainers.toArray(new IBundleContainer[newBundleContainers.size()]));
-			markDirty();
+			contentsChanged();
 			refresh();
 		}
 	}
 
 	private void handleRemoveAll() {
 		fTarget.setBundleContainers(null);
-		markDirty();
+		contentsChanged();
 		refresh();
 	}
 
@@ -317,9 +426,47 @@ public class BundleContainerTable {
 		fRemoveAllButton.setEnabled(fTarget.getBundleContainers() != null && fTarget.getBundleContainers().length > 0);
 	}
 
-	private void markDirty() {
-		if (fFormPart != null) {
-			fFormPart.markDirty();
+	private void contentsChanged() {
+		fReporter.contentsChanged();
+	}
+
+	/**
+	 * Runnable that resolves the target.  Disables the table while running
+	 */
+	class ResolveContainersOperation implements IRunnableWithProgress {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			Job job = new UIJob(Messages.BundleContainerTable_16) {
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					if (!fTreeViewer.getControl().isDisposed()) {
+						setEnabled(false);
+						fTreeViewer.setInput(Messages.BundleContainerTable_17);
+						fTreeViewer.refresh();
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.setSystem(true);
+			job.schedule();
+			fTarget.resolve(monitor);
+			if (!monitor.isCanceled()) {
+				job = new UIJob(Messages.BundleContainerTable_18) {
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						if (!fTreeViewer.getControl().isDisposed()) {
+							setEnabled(true);
+							fTreeViewer.setInput(fTarget);
+							fTreeViewer.refresh();
+							updateButtons();
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.setSystem(true);
+				job.schedule();
+			}
 		}
 	}
 
@@ -334,26 +481,31 @@ public class BundleContainerTable {
 				return containers != null ? containers : new Object[0];
 			} else if (parentElement instanceof IBundleContainer) {
 				IBundleContainer container = (IBundleContainer) parentElement;
-				return container.getBundles();
+				if (container.isResolved()) {
+					IStatus status = container.getBundleStatus();
+					if (!status.isOK() && !status.isMultiStatus()) {
+						return new Object[] {status};
+					}
+					return container.getBundles();
+				}
+				// We should only be populating the table if the containers are resolved, but just in case
+				return new Object[] {new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.BundleContainerTable_19)};
+			} else if (parentElement instanceof IResolvedBundle) {
+				IStatus status = ((IResolvedBundle) parentElement).getStatus();
+				if (!status.isOK()) {
+					return new Object[] {status};
+				}
 			}
 			return new Object[0];
 		}
 
 		public Object getParent(Object element) {
-			if (element instanceof IBundleContainer) {
-			}
 			return null;
 		}
 
 		public boolean hasChildren(Object element) {
-			if (element instanceof ITargetDefinition) {
-				IBundleContainer[] containers = ((ITargetDefinition) element).getBundleContainers();
-				return containers != null && containers.length > 0;
-			}
-			if (element instanceof IBundleContainer) {
-				return true;
-			}
-			return false;
+			// Since we are already resolved we can't be more efficient
+			return getChildren(element).length > 0;
 		}
 
 		public Object[] getElements(Object inputElement) {
@@ -362,6 +514,8 @@ public class BundleContainerTable {
 				if (containers != null) {
 					return containers;
 				}
+			} else if (inputElement instanceof String) {
+				return new Object[] {inputElement};
 			}
 			return new Object[0];
 		}
@@ -384,46 +538,90 @@ public class BundleContainerTable {
 					FeatureBundleContainer container = (FeatureBundleContainer) element;
 					String version = container.getFeatureVersion();
 					if (version != null) {
-						return MessageFormat.format(Messages.BundleContainerTable_5, new String[] {container.getFeatureId(), version, container.getLocation(false), getRestrictionLabel(container)});
-					} else {
-						return MessageFormat.format(Messages.BundleContainerTable_6, new String[] {container.getFeatureId(), container.getLocation(false), getRestrictionLabel(container)});
+						return MessageFormat.format(Messages.BundleContainerTable_5, new String[] {container.getFeatureId(), version, container.getLocation(false), getIncludedBundlesLabel(container)});
 					}
+					return MessageFormat.format(Messages.BundleContainerTable_6, new String[] {container.getFeatureId(), container.getLocation(false), getIncludedBundlesLabel(container)});
 				} else if (element instanceof DirectoryBundleContainer) {
 					DirectoryBundleContainer container = (DirectoryBundleContainer) element;
-					return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getRestrictionLabel(container)});
+					return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getIncludedBundlesLabel(container)});
 				} else if (element instanceof ProfileBundleContainer) {
 					ProfileBundleContainer container = (ProfileBundleContainer) element;
 					String config = container.getConfigurationLocation();
 					if (config != null) {
-						return MessageFormat.format(Messages.BundleContainerTable_8, new String[] {container.getLocation(false), config, getRestrictionLabel(container)});
-					} else {
-						return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getRestrictionLabel(container)});
+						return MessageFormat.format(Messages.BundleContainerTable_8, new String[] {container.getLocation(false), config, getIncludedBundlesLabel(container)});
 					}
+					return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getIncludedBundlesLabel(container)});
 				}
 			} catch (CoreException e) {
 				return MessageFormat.format(Messages.BundleContainerTable_4, new String[] {e.getMessage()});
+			}
+			if (element instanceof IStatus) {
+				return ((IStatus) element).getMessage();
 			}
 			return super.getText(element);
 		}
 
 		public Image getImage(Object element) {
-			if (element instanceof FeatureBundleContainer) {
-				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ);
-			} else if (element instanceof DirectoryBundleContainer) {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-			} else if (element instanceof ProfileBundleContainer) {
-				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION);
+			if (element instanceof IBundleContainer) {
+				int flag = 0;
+				IBundleContainer container = (IBundleContainer) element;
+				if (container.isResolved()) {
+					IStatus status = container.getBundleStatus();
+					if (status.getSeverity() == IStatus.WARNING) {
+						flag = SharedLabelProvider.F_WARNING;
+					} else if (status.getSeverity() == IStatus.ERROR) {
+						flag = SharedLabelProvider.F_ERROR;
+					}
+				}
+				if (element instanceof FeatureBundleContainer) {
+					return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ, flag);
+				} else if (element instanceof DirectoryBundleContainer) {
+					ImageDescriptor image = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+					return PDEPlugin.getDefault().getLabelProvider().get(image, flag);
+				} else if (element instanceof ProfileBundleContainer) {
+					return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION, flag);
+				}
+			} else if (element instanceof IStatus) {
+				int severity = ((IStatus) element).getSeverity();
+				if (severity == IStatus.WARNING) {
+					return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
+				} else if (severity == IStatus.ERROR) {
+					return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
+				}
 			}
+
 			return super.getImage(element);
 		}
 
-		private String getRestrictionLabel(IBundleContainer container) {
+		/**
+		 * Returns a label describing the number of bundles included (ex. 5 of 10 plug-ins)
+		 * or an empty string if there is a problem determining the number of bundles
+		 * @param container bundle container to check for inclusions
+		 * @return string label
+		 */
+		private String getIncludedBundlesLabel(IBundleContainer container) {
+			// TODO Provide convenience methods in IBundleContainer to access all bundles?
+			if (!container.isResolved() || (!container.getBundleStatus().isOK() && !container.getBundleStatus().isMultiStatus()) || container.getBundles() == null) {
+				return ""; //$NON-NLS-1$
+			}
+
 			BundleInfo[] restrictions = container.getIncludedBundles();
 			if (restrictions != null) {
-				return MessageFormat.format(Messages.BundleContainerTable_10, new String[] {Integer.toString(restrictions.length)});
-			} else {
-				return Messages.BundleContainerTable_11;
+				container.setIncludedBundles(null);
 			}
+			int bundleCount = container.getBundles().length;
+			String bundleCountString = Integer.toString(bundleCount);
+			if (restrictions != null) {
+				container.setIncludedBundles(restrictions);
+			}
+
+			if (restrictions != null && restrictions.length > bundleCount) {
+				// If some bundles are missing, the bundleCount is likely wrong, just do the best we can
+				return ""; //$NON-NLS-1$
+			}
+
+			return MessageFormat.format(Messages.BundleContainerTable_10, new String[] {restrictions != null ? Integer.toString(restrictions.length) : bundleCountString, bundleCountString});
+
 		}
 	}
 
