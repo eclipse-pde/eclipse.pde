@@ -32,7 +32,10 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.runtime.registry.model.local.RegistryBackend#connect()
 	 */
-	public void connect() {
+	public void connect(IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			return;
+
 		PDERuntimePlugin.getDefault().getBundleContext().addBundleListener(this);
 		Platform.getExtensionRegistry().addListener(this);
 		PDERuntimePlugin.getDefault().getBundleContext().addServiceListener(this);
@@ -99,9 +102,15 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		return problems;
 	}
 
-	public void initializeBundles() {
+	public void initializeBundles(IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			return;
+
 		org.osgi.framework.Bundle[] newBundles = PDERuntimePlugin.getDefault().getBundleContext().getBundles();
 		for (int i = 0; i < newBundles.length; i++) {
+			if (monitor.isCanceled())
+				return;
+
 			if (newBundles[i].getHeaders().get(Constants.FRAGMENT_HOST) == null) {
 				Bundle ba = createBundleAdapter(newBundles[i]);
 				listener.addBundle(ba);
@@ -109,16 +118,25 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		}
 	}
 
-	public void initializeExtensionPoints() {
+	public void initializeExtensionPoints(IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			return;
+
 		IExtensionPoint[] extPoints = Platform.getExtensionRegistry().getExtensionPoints();
 		ExtensionPoint[] extPts = new ExtensionPoint[extPoints.length];
 		for (int i = 0; i < extPoints.length; i++) {
+			if (monitor.isCanceled())
+				return;
+
 			extPts[i] = createExtensionPointAdapter(extPoints[i]);
 		}
 		listener.addExtensionPoints(extPts);
 	}
 
-	public void initializeServices() {
+	public void initializeServices(IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			return;
+
 		ServiceReference[] references = null;
 		try {
 			references = PDERuntimePlugin.getDefault().getBundleContext().getAllServiceReferences(null, null);
@@ -130,6 +148,9 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		}
 
 		for (int i = 0; i < references.length; i++) {
+			if (monitor.isCanceled())
+				return;
+
 			ServiceRegistration service = createServiceReferenceAdapter(references[i]);
 			listener.addService(service);
 		}

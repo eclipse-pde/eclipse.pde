@@ -69,6 +69,7 @@ public class RegistryBrowser extends ViewPart {
 
 	private RegistryModel model;
 	private ModelChangeListener listener;
+	private Job initializeModelJob;
 
 	private RegistryBrowserContentProvider fContentProvider;
 	private RegistryBrowserLabelProvider fLabelProvider;
@@ -155,13 +156,14 @@ public class RegistryBrowser extends ViewPart {
 		listener = new RegistryBrowserModelChangeListener(RegistryBrowser.this);
 		model.addModelChangeListener(listener);
 
-		Job job = new Job(PDERuntimeMessages.RegistryBrowser_InitializingView) {
+		initializeModelJob = new Job(PDERuntimeMessages.RegistryBrowser_InitializingView) {
 			public IStatus run(IProgressMonitor monitor) {
-				model.connect();
-				return Status.OK_STATUS;
+				model.connect(monitor);
+				initializeModelJob = null;
+				return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 			}
 		};
-		job.schedule();
+		initializeModelJob.schedule();
 	}
 
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
@@ -188,6 +190,10 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	public void dispose() {
+		if (initializeModelJob != null) {
+			initializeModelJob.cancel();
+		}
+
 		model.disconnect();
 		model.removeModelChangeListener(listener);
 		if (fClipboard != null) {
@@ -294,7 +300,7 @@ public class RegistryBrowser extends ViewPart {
 
 	}
 
-	public void fillContextMenu(IMenuManager manager) {
+	private void fillContextMenu(IMenuManager manager) {
 		manager.add(fRefreshAction);
 		manager.add(new Separator());
 		manager.add(fCopyAction);
@@ -345,7 +351,7 @@ public class RegistryBrowser extends ViewPart {
 	/*
 	 * toolbar and context menu actions
 	 */
-	public void makeActions() {
+	private void makeActions() {
 		fRefreshAction = new Action("refresh") { //$NON-NLS-1$
 			public void run() {
 				BusyIndicator.showWhile(fTreeViewer.getTree().getDisplay(), new Runnable() {
@@ -620,6 +626,9 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	protected void add(Object parent, Object object) {
+		if (fTreeViewer.getTree().isDisposed())
+			return;
+
 		if (fDrillDownAdapter.canGoHome())
 			return;
 		fTreeViewer.add(parent, object);
@@ -627,23 +636,23 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	public void remove(Object object) {
+		if (fTreeViewer.getTree().isDisposed())
+			return;
+
 		if (fDrillDownAdapter.canGoHome())
 			return;
 		fTreeViewer.remove(object);
 		updateTitle();
 	}
 
-	public void update(Object object) {
-		fTreeViewer.update(object, null);
-	}
-
-	public static int count = 0;
-
 	private boolean filtersEnabled() {
 		return fTreeViewer.getFilters().length > 0;
 	}
 
 	void refresh(Object[] objects) {
+		if (fTreeViewer.getTree().isDisposed())
+			return;
+
 		if (filtersEnabled()) {
 			fTreeViewer.refresh();
 		} else {
@@ -655,6 +664,9 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	void refresh(Object object) {
+		if (fTreeViewer.getTree().isDisposed())
+			return;
+
 		if (filtersEnabled()) {
 			fTreeViewer.refresh();
 		} else {

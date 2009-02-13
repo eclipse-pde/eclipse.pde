@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.runtime.registry.model;
 
 import java.util.*;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Model entry point for Eclipse runtime. Provides information about runtime bundles, services and extension points.
@@ -179,12 +180,12 @@ public class RegistryModel {
 		backend.setRegistryListener(backendListener);
 	}
 
-	public void connect() {
-		backend.connect();
+	public void connect(IProgressMonitor monitor) {
+		backend.connect(monitor);
 
-		backend.initializeBundles();
-		backend.initializeServices();
-		backend.initializeExtensionPoints();
+		backend.initializeBundles(monitor);
+		backend.initializeServices(monitor);
+		backend.initializeExtensionPoints(monitor);
 	}
 
 	public void disconnect() {

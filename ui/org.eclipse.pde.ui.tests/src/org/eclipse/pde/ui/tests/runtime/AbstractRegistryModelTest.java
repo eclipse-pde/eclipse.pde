@@ -12,6 +12,7 @@ package org.eclipse.pde.ui.tests.runtime;
 
 import java.util.*;
 import junit.framework.TestCase;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.pde.internal.runtime.registry.model.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.BundleException;
@@ -65,7 +66,7 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 	
 	protected void setUp() {
 		f = createModel();
-		f.connect();
+		f.connect(new NullProgressMonitor());
 	}
 	
 	protected void tearDown() {

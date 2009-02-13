@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry.model;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.osgi.framework.BundleException;
 
 public interface RegistryBackend {
 
-	public void connect();
+	public void connect(IProgressMonitor monitor);
 
 	public void disconnect();
 
@@ -27,12 +28,12 @@ public interface RegistryBackend {
 
 	public MultiStatus diagnose(long id);
 
-	public void initializeBundles();
+	public void initializeBundles(IProgressMonitor monitor);
 
-	public void initializeExtensionPoints();
+	public void initializeExtensionPoints(IProgressMonitor monitor);
 
 	public void setRegistryListener(BackendChangeListener listener);
 
-	public void initializeServices();
+	public void initializeServices(IProgressMonitor monitor);
 
 }
