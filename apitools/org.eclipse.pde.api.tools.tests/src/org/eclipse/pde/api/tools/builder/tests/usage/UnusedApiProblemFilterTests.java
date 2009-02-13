@@ -173,7 +173,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	 * problem filter
 	 * @param inc
 	 */
-	private void x2(boolean inc) {
+	void x2(boolean inc) {
 		String testname = "test2";
 		String sourcename = "testUF2";
 		setExpectedProblemIds(getDefaultProblemIdSet(1));
