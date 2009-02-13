@@ -105,7 +105,7 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 			Object[] array = (Object[]) topLevelElement;
 			fRegistryBrowser.refresh(array);
 		} else {
-			fRegistryBrowser.refresh(object);
+			fRegistryBrowser.refresh(topLevelElement);
 		}
 	}
 

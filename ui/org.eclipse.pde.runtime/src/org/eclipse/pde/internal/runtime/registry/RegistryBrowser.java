@@ -47,10 +47,12 @@ public class RegistryBrowser extends ViewPart {
 		}
 
 		public void run() {
-			fMemento.putInteger(GROUP_BY, actionGroupBy);
-			// refreshAction takes into account checked state of fShowExtensionsOnlyAction
-			// (via updateItems(true)
-			fRefreshAction.run();
+			if (isChecked()) {
+				fMemento.putInteger(GROUP_BY, actionGroupBy);
+				// refreshAction takes into account checked state of fShowExtensionsOnlyAction
+				// (via updateItems(true)
+				fRefreshAction.run();
+			}
 		}
 	}
 
@@ -73,6 +75,10 @@ public class RegistryBrowser extends ViewPart {
 
 	private RegistryBrowserContentProvider fContentProvider;
 	private RegistryBrowserLabelProvider fLabelProvider;
+
+	private static final int REFRESH_DELAY = 50;
+	private long lastRefresh = 0;
+	private Thread refreshThread;
 
 	// menus and action items
 	private Action fRefreshAction;
@@ -649,12 +655,46 @@ public class RegistryBrowser extends ViewPart {
 		return fTreeViewer.getFilters().length > 0;
 	}
 
+	private void deferredRefresh() {
+		if (refreshThread != null)
+			return;
+
+		long now = System.currentTimeMillis();
+		if (now - lastRefresh > REFRESH_DELAY) {
+			fTreeViewer.refresh();
+			updateTitle();
+			lastRefresh = now;
+		} else {
+			Runnable runnable = new Runnable() {
+				public void run() {
+					try {
+						Thread.sleep(REFRESH_DELAY);
+					} catch (InterruptedException e) {
+						return;
+					}
+					refreshThread = null;
+					if (fTreeViewer.getTree().isDisposed())
+						return;
+
+					fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							fTreeViewer.refresh();
+							updateTitle();
+						}
+					});
+				}
+			};
+			refreshThread = new Thread(runnable);
+			refreshThread.start();
+		}
+	}
+
 	void refresh(Object[] objects) {
 		if (fTreeViewer.getTree().isDisposed())
 			return;
 
 		if (filtersEnabled()) {
-			fTreeViewer.refresh();
+			deferredRefresh();
 		} else {
 			for (int i = 0; i < objects.length; i++) {
 				fTreeViewer.refresh(objects[i]);
@@ -668,11 +708,11 @@ public class RegistryBrowser extends ViewPart {
 			return;
 
 		if (filtersEnabled()) {
-			fTreeViewer.refresh();
+			deferredRefresh();
 		} else {
 			fTreeViewer.refresh(object);
+			updateTitle();
 		}
-		updateTitle();
 	}
 
 	public Object getAdapter(Class clazz) {
