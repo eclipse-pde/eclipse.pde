@@ -21,16 +21,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 
 public class BuildState {
-	private IDelta[] EMPTY_DELTAS = new IDelta[0];
-	private static final int VERSION = 0x04;
+	private static final IDelta[] EMPTY_DELTAS = new IDelta[0];
+	private static final String[] NO_REEXPORTED_COMPONENTS = new String[0];
+	private static final int VERSION = 0x06;
 	
 	private Map compatibleChanges;
 	private Map breakingChanges;
+	private String[] reexportedComponents;
 	
 	public static BuildState read(DataInputStream in) throws IOException {
 		String pluginID= in.readUTF();
@@ -56,6 +60,13 @@ public class BuildState {
 			for (int i = 0; i < numberOfBreakingDeltas; i++) {
 				state.addBreakingChange(readDelta(in));
 			}
+			int numberOfReexportedComponents = in.readInt();
+			// read all reexported component names
+			String[] components = new String[numberOfReexportedComponents];
+			for (int i = 0; i < numberOfReexportedComponents; i++) {
+				components[i] = in.readUTF();
+			}
+			state.reexportedComponents = components;
 			return state;
 		}
 		return null;
@@ -72,10 +83,16 @@ public class BuildState {
 			writeDelta(compatibleChangesDeltas[i], out);
 		}
 		IDelta[] breakingChangesDeltas = state.getBreakingChanges();
-		int length2 = breakingChangesDeltas.length;
-		out.writeInt(length2);
-		for (int i = 0; i < length2; i++) {
+		length = breakingChangesDeltas.length;
+		out.writeInt(length);
+		for (int i = 0; i < length; i++) {
 			writeDelta(breakingChangesDeltas[i], out);
+		}
+		String[] reexportedComponents = state.getReexportedComponents();
+		length = reexportedComponents.length;
+		out.writeInt(length);
+		for (int i = 0; i < length; i++) {
+			out.writeUTF(reexportedComponents[i]);
 		}
 	}
 	private static IDelta readDelta(DataInputStream in) throws IOException {
@@ -189,6 +206,12 @@ public class BuildState {
 		return (IDelta[]) collector.toArray(new IDelta[collector.size()]);
 	}
 
+	public String[] getReexportedComponents() {
+		if (this.reexportedComponents == null) {
+			return NO_REEXPORTED_COMPONENTS;
+		}
+		return this.reexportedComponents;
+	}
 	/**
 	 * Remove all entries for the given type name.
 	 *
@@ -197,5 +220,22 @@ public class BuildState {
 	public void cleanup(String typeName) {
 		this.breakingChanges.remove(typeName);
 		this.compatibleChanges.remove(typeName);
+		this.reexportedComponents = null;;
+	}
+
+	public void setReexportedComponents(IApiComponent[] components) {
+		if (components == null) return;
+		try {
+			if (this.reexportedComponents == null) {
+				final int length = components.length;
+				String[] result = new String[length];
+				for (int i = 0; i < length; i++) {
+					result[i] = components[i].getId();
+				}
+				this.reexportedComponents = result;
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
 	}
 }

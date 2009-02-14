@@ -226,9 +226,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							updateMonitor(localMonitor);
 						}
 					} else {
+						// store re-exported bundle into the build state
 						checkCompatibility(reference, component);
 						updateMonitor(localMonitor);
 					}
+					this.fBuildState.setReexportedComponents(Util.getReexportedComponents(component));
 				} else {
 					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {component.getId(), baseline.getName()}));
 					checkCompatibility(reference, component);

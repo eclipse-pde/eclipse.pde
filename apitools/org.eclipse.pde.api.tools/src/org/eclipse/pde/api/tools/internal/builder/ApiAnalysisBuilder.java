@@ -86,8 +86,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * - modification to the manifest file
 	 * - removal of the .api_filter file
 	 */
-	private class ResourceDeltaVisitor implements IResourceDeltaVisitor {
-
+	class ResourceDeltaVisitor implements IResourceDeltaVisitor {
+		IProject[] projects;
+		public ResourceDeltaVisitor(IProject[] projects) {
+			this.projects = projects;
+		}
 		private boolean fRequireFullBuild = false;
 
 		/**
@@ -119,13 +122,19 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					if (Util.isClassFile(fileName)) {
 						findAffectedSourceFiles(delta);
 					} else if (Util.isJavaFileName(fileName)) {
-						if (fCurrentProject.equals(resource.getProject())) {
+						IProject project = resource.getProject();
+						if (fCurrentProject.equals(project)) {
 							if (delta.getKind() == IResourceDelta.ADDED) {
 								fAddedRemovedDeltas.add(delta);
 							}
 							fTypesToCheck.add(resource);
-						} else {
-							fTypesToCheckFromDependendProjects.add(resource);
+						} else if (this.projects != null) {
+							loop: for (int i = 0, max = this.projects.length; i < max; i++) {
+								if (this.projects[i].equals(project)) {
+									fTypesToCheck.add(resource);
+									break loop;
+								}
+							}
 						}
 					} else if (!fRequireFullBuild && IApiCoreConstants.API_FILTERS_XML_NAME.equals(fileName)) {
 						switch(delta.getKind()) {
@@ -195,10 +204,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * The type that we want to check for API problems
 	 */
 	private HashSet fTypesToCheck = new HashSet();
-	/**
-	 * The type that we want to check for API problems. These types come from dependent projects only.
-	 */
-	private HashSet fTypesToCheckFromDependendProjects = new HashSet();
 	/**
 	 * The set of added/removed deltas that come directly from the builder resource delta 
 	 */
@@ -306,7 +311,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 		updateMonitor(monitor, 0);
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 2);
-		IProject[] projects = getRequiredProjects(true);
+		final IProject[] projects = getRequiredProjects(true);
 		try {
 			switch(kind) {
 				case FULL_BUILD : {
@@ -320,31 +325,48 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				case INCREMENTAL_BUILD : {
 					IResourceDelta[] deltas = getDeltas(projects);
 					boolean shouldRunFullBuild = false;
-					ResourceDeltaVisitor visitor = new ResourceDeltaVisitor();
-					for (int i = 0; i < deltas.length; i++) {
-						deltas[i].accept(visitor);
-						if (visitor.shouldRunFullBuild()) {
-							shouldRunFullBuild = true;
-							break;
-						}
-					}
-					if (shouldRunFullBuild) {
-						if (DEBUG) {
-							System.out.println("Performing full build since MANIFEST.MF was modified"); //$NON-NLS-1$
-						}
-						buildAll(localMonitor.newChild(1));
-					} else if (deltas.length == 0) {
-						if (DEBUG) {
-							System.out.println("Performing full build since deltas are missing after incremental request"); //$NON-NLS-1$
-						}
+					fBuildState = getLastBuiltState(fCurrentProject);
+					if (fBuildState == null) {
 						buildAll(localMonitor.newChild(1));
 					} else {
-						State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(fCurrentProject, new NullProgressMonitor());
-						if (state == null) {
+						IProject[] reexportedProjects = null;
+						String[] projectNames = this.fBuildState.getReexportedComponents();
+						int length = projectNames.length;
+						if (length != 0) {
+							List allProjects = new ArrayList();
+							IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+							for (int i = 0, max = projectNames.length; i < max; i++) {
+								IProject project = root.getProject(projectNames[i]);
+								if (project.isAccessible()) {
+									allProjects.add(project);
+								}
+							}
+							if (allProjects.size() != 0) {
+								reexportedProjects = new IProject[allProjects.size()];
+								allProjects.toArray(reexportedProjects);
+							}
+						}
+						ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(reexportedProjects);
+						for (int i = 0; i < deltas.length; i++) {
+							deltas[i].accept(visitor);
+							if (visitor.shouldRunFullBuild()) {
+								shouldRunFullBuild = true;
+								break;
+							}
+						}
+						if (shouldRunFullBuild) {
+							if (DEBUG) {
+								System.out.println("Performing full build since MANIFEST.MF was modified"); //$NON-NLS-1$
+							}
+							buildAll(localMonitor.newChild(1));
+						} else if (deltas.length == 0) {
+							if (DEBUG) {
+								System.out.println("Performing full build since deltas are missing after incremental request"); //$NON-NLS-1$
+							}
 							buildAll(localMonitor.newChild(1));
 						} else {
-							fBuildState = getLastBuiltState(fCurrentProject);
-							if (fBuildState == null) {
+							State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(fCurrentProject, new NullProgressMonitor());
+							if (state == null) {
 								buildAll(localMonitor.newChild(1));
 							} else {
 								build(state, localMonitor.newChild(1));
@@ -365,7 +387,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			fTypes.clear();
 			fPackages.clear();
 			fTypesToCheck.clear();
-			fTypesToCheckFromDependendProjects.clear();
 			fAddedRemovedDeltas.clear();
 			fProjectToOutputLocations.clear();
 			updateMonitor(monitor, 0);
@@ -622,8 +643,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			clearLastState(); // so if the build fails, a full build will be triggered
 			int typesToCheckSize = fTypesToCheck.size();
-			int typesToCheckFromDependentsSize = fTypesToCheckFromDependendProjects.size();
-			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 2 + (typesToCheckSize != 0 ? 3 : 0) + (typesToCheckFromDependentsSize != 0 ? 3 : 0));
+			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 2 + (typesToCheckSize != 0 ? 3 : 0));
 			localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, fCurrentProject.getName()));
 			updateMonitor(localMonitor, 0);
 			collectAffectedSourceFiles(state, fTypesToCheck);
@@ -645,44 +665,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					}
 					List tnames = new ArrayList(typesToCheckSize),
 						 cnames = new ArrayList(typesToCheckSize);
-					collectAllQualifiedNames(fTypesToCheck, tnames, cnames, false, localMonitor.newChild(1));
-					updateMonitor(localMonitor, 1);
-					IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
-					fAnalyzer.analyzeComponent(fBuildState, 
-							null, 
-							null, 
-							profile, 
-							apiComponent, 
-							(String[])tnames.toArray(new String[tnames.size()]), 
-							(String[])cnames.toArray(new String[cnames.size()]), 
-							localMonitor.newChild(1));
-					updateMonitor(localMonitor, 1);
-					createMarkers();
-					updateMonitor(localMonitor, 1);
-				}
-			}
-			collectAffectedSourceFiles(state, fTypesToCheckFromDependendProjects);
-			typesToCheckFromDependentsSize = fTypesToCheckFromDependendProjects.size();
-			if (typesToCheckFromDependentsSize != 0) {
-				fAnalyzer.dispose();
-				fAnalyzer = getAnalyzer();
-				IPluginModelBase currentModel = getCurrentModel();
-				if (currentModel != null) {
-					wsprofile = getWorkspaceProfile();
-					if (wsprofile == null) {
-						if (DEBUG) {
-							System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
-						}
-						return;
-					}
-					String id = currentModel.getBundleDescription().getSymbolicName();
-					IApiComponent apiComponent = wsprofile.getApiComponent(id);
-					if(apiComponent == null) {
-						return;
-					}
-					List tnames = new ArrayList(typesToCheckFromDependentsSize),
-						 cnames = new ArrayList(typesToCheckFromDependentsSize);
-					collectAllQualifiedNames(fTypesToCheckFromDependendProjects, tnames, cnames, true, localMonitor.newChild(1));
+					collectAllQualifiedNames(fTypesToCheck, tnames, cnames, localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
 					IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 					fAnalyzer.analyzeComponent(fBuildState, 
@@ -717,7 +700,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param cnames the list to collect the changed type names into
 	 * @param monitor
 	 */
-	private void collectAllQualifiedNames(final HashSet alltypes, List tnames, List cnames, boolean cleanupManifestMarkers, final IProgressMonitor monitor) {
+	private void collectAllQualifiedNames(final HashSet alltypes, List tnames, List cnames, final IProgressMonitor monitor) {
 		IType[] types = null;
 		IFile file = null;
 		for (Iterator iterator = alltypes.iterator(); iterator.hasNext(); ) {
@@ -828,37 +811,35 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 			}
 		}
-		if (cleanupManifestMarkers) {
-			IResource resource = fCurrentProject.findMember(MANIFEST_PATH);
-			if (resource != null) {
-				try {
-					IMarker[] markers = resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-					loop: for (int i = 0, max = markers.length; i < max; i++) {
-						IMarker marker = markers[i];
-						String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
-						for (Iterator iterator = tnames.iterator(); iterator.hasNext(); ) {
-							String typeName = (String) iterator.next();
-							if (typeName.equals(typeNameFromMarker)) {
-								marker.delete();
-								continue loop;
-							}
+		IResource resource = fCurrentProject.findMember(MANIFEST_PATH);
+		if (resource != null) {
+			try {
+				IMarker[] markers = resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+				loop: for (int i = 0, max = markers.length; i < max; i++) {
+					IMarker marker = markers[i];
+					String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
+					for (Iterator iterator = tnames.iterator(); iterator.hasNext(); ) {
+						String typeName = (String) iterator.next();
+						if (typeName.equals(typeNameFromMarker)) {
+							marker.delete();
+							continue loop;
 						}
 					}
-					markers = resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-					loop: for (int i = 0, max = markers.length; i < max; i++) {
-						IMarker marker = markers[i];
-						String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
-						for (Iterator iterator = tnames.iterator(); iterator.hasNext(); ) {
-							String typeName = (String) iterator.next();
-							if (typeName.equals(typeNameFromMarker)) {
-								marker.delete();
-								continue loop;
-							}
-						}
-					}
-				} catch (CoreException e) {
-					ApiPlugin.log(e);
 				}
+				markers = resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+				loop: for (int i = 0, max = markers.length; i < max; i++) {
+					IMarker marker = markers[i];
+					String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
+					for (Iterator iterator = tnames.iterator(); iterator.hasNext(); ) {
+						String typeName = (String) iterator.next();
+						if (typeName.equals(typeNameFromMarker)) {
+							marker.delete();
+							continue loop;
+						}
+					}
+				}
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
 			}
 		}
 	}

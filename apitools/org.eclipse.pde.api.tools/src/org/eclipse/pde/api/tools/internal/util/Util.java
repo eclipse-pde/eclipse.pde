@@ -106,6 +106,7 @@ import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
@@ -114,6 +115,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -2627,9 +2629,9 @@ public final class Util {
 					if (findType != null) {
 						ICompilationUnit compilationUnit = findType.getCompilationUnit();
 						if (compilationUnit != null) {
-							IResource UIResource = compilationUnit.getResource();
-							if (UIResource != null) {
-								UIResource.touch(null);
+							IResource cuResource = compilationUnit.getResource();
+							if (cuResource != null) {
+								cuResource.touch(null);
 							}
 						}
 					}
@@ -2649,5 +2651,36 @@ public final class Util {
 	}
 	public static String getTypeNameFromMarker(IMarker marker) {
 		return marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_TYPE_NAME, null);
+	}
+	
+	public static IApiComponent[] getReexportedComponents(IApiComponent component) {
+		try {
+			IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
+			int length = requiredComponents.length;
+			if (length != 0) {
+				List reexportedComponents = null;
+				IApiBaseline baseline = component.getBaseline();
+				for (int i = 0; i < length; i++) {
+					IRequiredComponentDescription description = requiredComponents[i];
+					if (description.isExported()) {
+						String id = description.getId();
+						IApiComponent reexportedComponent = baseline.getApiComponent(id);
+						if (reexportedComponent != null) {
+							if (reexportedComponents == null) {
+								reexportedComponents = new ArrayList();
+							}
+							reexportedComponents.add(reexportedComponent);
+						}
+					}
+				}
+				if (reexportedComponents == null || reexportedComponents.size() == 0) {
+					return null;
+				}
+				return (IApiComponent[]) reexportedComponents.toArray(new IApiComponent[reexportedComponents.size()]);
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+		return null;
 	}
 }
