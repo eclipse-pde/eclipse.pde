@@ -1313,6 +1313,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							IApiTypeRoot typeRoot = null;
 							try {
 								typeRoot = component.findTypeRoot(typeName);
+								if (typeRoot == null) {
+									return;
+								}
 								if (Util.isFinal(typeRoot.getStructure().getModifiers())) {
 									// no @since tag to report for new protected methods inside a final class
 									return;
