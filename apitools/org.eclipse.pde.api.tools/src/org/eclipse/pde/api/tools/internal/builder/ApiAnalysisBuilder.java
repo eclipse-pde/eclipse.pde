@@ -128,14 +128,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 								fAddedRemovedDeltas.add(delta);
 							}
 							fTypesToCheck.add(resource);
-						} else if (this.projects != null) {
+						} /*else if (this.projects != null) {
 							loop: for (int i = 0, max = this.projects.length; i < max; i++) {
 								if (this.projects[i].equals(project)) {
 									fTypesToCheck.add(resource);
 									break loop;
 								}
 							}
-						}
+						}*/
 					} else if (!fRequireFullBuild && IApiCoreConstants.API_FILTERS_XML_NAME.equals(fileName)) {
 						switch(delta.getKind()) {
 							case IResourceDelta.REMOVED :
