@@ -33,7 +33,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.Inst
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
 import org.eclipse.equinox.p2.internal.repository.tools.Repo2Runnable;
-import org.eclipse.equinox.p2.internal.repository.tools.tasks.IUTask;
+import org.eclipse.equinox.p2.internal.repository.tools.tasks.IUDescription;
 import org.eclipse.equinox.p2.internal.repository.tools.tasks.Repo2RunnableTask;
 import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.osgi.util.NLS;
@@ -54,11 +54,11 @@ public class BrandP2Task extends Repo2RunnableTask {
 	private List ius = null;
 
 	public BrandP2Task() {
-		super(new Repo2Runnable() {
+		application = new Repo2Runnable() {
 			protected PhaseSet getPhaseSet() {
 				return new PhaseSet(new Phase[] {new Collect(100), new Install(100)}) { /* nothing to override */};
 			}
-		});
+		};
 	}
 
 	public void execute() {
@@ -130,9 +130,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 		return launcherProvider + "_root." + config.toString("."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	protected List prepareIUs() throws URISyntaxException {
+	protected List prepareIUs() {
 		String iuName = getProviderIUName();
-		IUTask task = (IUTask) super.createIu();
+		IUDescription task = (IUDescription) super.createIu();
 		task.setId(iuName);
 
 		ius = super.prepareIUs();
