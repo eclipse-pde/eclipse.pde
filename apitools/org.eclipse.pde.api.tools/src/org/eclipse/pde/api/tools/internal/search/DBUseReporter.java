@@ -15,7 +15,10 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 
@@ -48,18 +51,48 @@ public class DBUseReporter implements IApiSearchReporter {
 		if(this.connection == null) {
 			return;
 		}
-		executeStatement(getInsertQuery(element, references));
+		executeStatement(getBundleTableInsertQuery(element.getApiComponent()));
 	}
 
+	/**
+	 * Executes a collection of queries in one transaction
+	 * @param queries
+	 */
+	protected void executeBatchStatement(String[] queries) {
+		if(queries != null && queries.length > 0) {
+			try {
+				if(this.connection.isClosed()) {
+					return;
+				}
+				Statement statement = this.connection.createStatement();
+				for (int i = 0; i < queries.length; i++) {
+					statement.addBatch(queries[i]);
+				}
+				int[] values = statement.executeBatch();
+				if(this.debug) {
+					for (int i = 0; i < values.length; i++) {
+						if(values[i] < 1) {
+							System.out.println("The executed statement: "+queries[i]+"did not cause any updates"); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+					}
+					SQLWarning warning = statement.getWarnings();
+					if(warning != null) {
+						System.out.println("The executed statement: "+statement.toString()+" had the following warning(s): "+warning); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				}
+			}
+			catch (SQLException sqle) {
+				ApiPlugin.log(sqle);
+			}
+		}
+	}
+	
 	/**
 	 * Executes a given query
 	 * @param query
 	 */
-	private void executeStatement(String query) {
+	protected void executeStatement(String query) {
 		if(query == null) {
-			if(this.debug) {
-				System.out.println("A null query was attempted to be executed"); //$NON-NLS-1$
-			}
 			return;
 		}
 		try {
@@ -79,18 +112,40 @@ public class DBUseReporter implements IApiSearchReporter {
 				}
 			}
 		}
-		catch(SQLException sqe) {}
+		catch(SQLException sqe) {
+			ApiPlugin.log(sqe);
+		}
 	}
 	
 	/**
-	 * Creates the INSERT query to add the results to the given database connection
-	 * @param element
-	 * @param references
-	 * @return the complete INSERT query string
+	 * Returns the INSERT query to add new entries to the BUILDS table
+	 * @param version
+	 * @return the INSERT query for the BUILDS table
 	 */
-	protected String getInsertQuery(IApiElement element, IReference[] references) {
-		if(references.length > 0) {
-			
+	protected String getBuildVersionInsertQuery(String version) {
+		return "INSERT INTO BUILDS (VERSION_ID) VALUES ('"+version+"')"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	/**
+	 * Returns the query to use to insert into the BUNDLES table
+	 * @param element
+	 * @return the query to run or <code>null</code> if the given element is <code>null</code> or an exception occurs getting
+	 * the {@link IApiComponent} information from the given {@link IApiElement}
+	 * @throws CoreException
+	 */
+	protected String getBundleTableInsertQuery(IApiElement element) {
+		if(element == null) {
+			return null;
+		}
+		IApiComponent component = element.getApiComponent();
+		if(component == null) {
+			return null;
+		}
+		try {
+			return "INSERT INTO BUNDLES (BUNDLE_ID, VERSION) VALUES('"+component.getId()+"', '"+component.getVersion()+"')"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		catch(CoreException ce) {
+			ApiPlugin.log(ce);
 		}
 		return null;
 	}
