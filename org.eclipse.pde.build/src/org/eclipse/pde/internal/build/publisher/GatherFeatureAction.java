@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.publisher;
 
 import java.io.File;
@@ -65,10 +73,10 @@ public class GatherFeatureAction extends FeaturesAction {
 		return ius;
 	}
 
-	protected IInstallableUnit generateFeatureJarIU(Feature feature, ArrayList childIUs, IPublisherInfo info) {
+	protected IInstallableUnit generateFeatureJarIU(Feature feature, IPublisherInfo info) {
 		if (computer == null)
 			return null;
-		return FeaturesAction.createFeatureJarIU(feature, childIUs, info);
+		return createFeatureJarIU(feature, info);
 	}
 
 	protected void publishFeatureArtifacts(Feature feature, IInstallableUnit featureIU, IPublisherInfo info) {
