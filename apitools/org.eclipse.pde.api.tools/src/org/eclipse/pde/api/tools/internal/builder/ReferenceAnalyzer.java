@@ -170,7 +170,9 @@ public class ReferenceAnalyzer {
 			}
 			// 3. resolve problematic references
 			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
-			ReferenceResolver.resolveReferences(fReferences, localMonitor);
+			if (fReferences.size() != 0) {
+				ReferenceResolver.resolveReferences(fReferences, localMonitor);
+			}
 			localMonitor.worked(1);
 			if (localMonitor.isCanceled()) {
 				return EMPTY_RESULT;

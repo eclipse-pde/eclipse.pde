@@ -662,14 +662,66 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * method is called.
 	 * @return the listing of currently unused filters or an empty list, never <code>null</code>
 	 */
-	public IApiProblemFilter[] getUnusedFilters(IResource resource) {
+	public IApiProblemFilter[] getUnusedFilters(IResource resource, String typeName) {
 		if(fUnusedFilters != null) {
 			Set unused = new HashSet();
 			Set set = null;
 			if(resource != null) {
-				set = (Set)fUnusedFilters.get(resource);
-				if(set != null) {
-					unused.addAll(set);
+				// incremental build
+				set = (Set) fUnusedFilters.get(resource);
+				if (!Util.isManifest(resource.getProjectRelativePath())) {
+					if(set != null) {
+						unused.addAll(set);
+					}
+					IProject project = resource.getProject();
+					if (project != null) {
+						IResource manifestFile = project.findMember(Util.MANIFEST_PROJECT_RELATIVE_PATH);
+						if (manifestFile != null) {
+							set = (Set) fUnusedFilters.get(manifestFile);
+							if (set != null) {
+								for (Iterator iterator = set.iterator(); iterator.hasNext();) {
+									ApiProblemFilter filter = (ApiProblemFilter) iterator.next();
+									IApiProblem underlyingProblem = filter.getUnderlyingProblem();
+									if (underlyingProblem != null) {
+										String underlyingTypeName = underlyingProblem.getTypeName();
+										if (underlyingTypeName != null && (typeName == null || underlyingProblem.equals(typeName))) {
+											unused.add(filter);
+										}
+									}
+								}
+							}
+						}
+					}
+				} else if (set != null) {
+					for (Iterator iterator = set.iterator(); iterator.hasNext();) {
+						ApiProblemFilter filter = (ApiProblemFilter) iterator.next();
+						IApiProblem underlyingProblem = filter.getUnderlyingProblem();
+						if (underlyingProblem != null) {
+							String underlyingTypeName = underlyingProblem.getTypeName();
+							if (underlyingTypeName != null && (typeName == null || underlyingTypeName.equals(typeName))) {
+								unused.add(filter);
+							}
+						}
+					}
+				} else {
+					/*
+					 * This is the manifest file and no filters have been found for the corresponding type name - incremental build case
+					 * This might correspond to a case where a type contained some filtered problem and the type has been removed
+					 */
+					Collection values = fUnusedFilters.values();
+					for (Iterator iterator = values.iterator(); iterator.hasNext();) {
+						Set allFilters = (Set) iterator.next();
+						for (Iterator iterator2 = allFilters.iterator(); iterator2.hasNext();) {
+							ApiProblemFilter filter = (ApiProblemFilter) iterator2.next();
+							IApiProblem underlyingProblem = filter.getUnderlyingProblem();
+							if (underlyingProblem != null) {
+								String underlyingTypeName = underlyingProblem.getTypeName();
+								if (underlyingTypeName != null && (typeName == null || underlyingTypeName.equals(typeName))) {
+									unused.add(filter);
+								}
+							}
+						}
+					}
 				}
 			}
 			else {

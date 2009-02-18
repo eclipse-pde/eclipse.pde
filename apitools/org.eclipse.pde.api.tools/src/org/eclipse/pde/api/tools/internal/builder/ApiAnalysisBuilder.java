@@ -128,14 +128,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 								fAddedRemovedDeltas.add(delta);
 							}
 							fTypesToCheck.add(resource);
-						} /*else if (this.projects != null) {
+						} else if (this.projects != null) {
 							loop: for (int i = 0, max = this.projects.length; i < max; i++) {
 								if (this.projects[i].equals(project)) {
 									fTypesToCheck.add(resource);
 									break loop;
 								}
 							}
-						}*/
+						}
 					} else if (!fRequireFullBuild && IApiCoreConstants.API_FILTERS_XML_NAME.equals(fileName)) {
 						switch(delta.getKind()) {
 							case IResourceDelta.REMOVED :
@@ -146,7 +146,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			return false;
 		}
-
 	}
 	/**
 	 * Constant used for controlling tracing in the API tool builder
@@ -312,13 +311,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		updateMonitor(monitor, 0);
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 2);
 		final IProject[] projects = getRequiredProjects(true);
+		IApiBaseline baseline = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 		try {
 			switch(kind) {
 				case FULL_BUILD : {
 					if (DEBUG) {
 						System.out.println("Performing full build as requested by user"); //$NON-NLS-1$
 					}
-					buildAll(localMonitor.newChild(1));
+					buildAll(baseline, localMonitor.newChild(1));
 					break;
 				}
 				case AUTO_BUILD :
@@ -327,7 +327,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					boolean shouldRunFullBuild = false;
 					fBuildState = getLastBuiltState(fCurrentProject);
 					if (fBuildState == null) {
-						buildAll(localMonitor.newChild(1));
+						buildAll(baseline, localMonitor.newChild(1));
 					} else {
 						IProject[] reexportedProjects = null;
 						String[] projectNames = this.fBuildState.getReexportedComponents();
@@ -336,9 +336,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							List allProjects = new ArrayList();
 							IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 							for (int i = 0, max = projectNames.length; i < max; i++) {
-								IProject project = root.getProject(projectNames[i]);
+								String projectName = projectNames[i];
+								IProject project = root.getProject(projectName);
 								if (project.isAccessible()) {
-									allProjects.add(project);
+									// select only projects that don't exist in the reference baseline
+									if (baseline != null && baseline.getApiComponent(projectName) == null) {
+										allProjects.add(project);
+									}
 								}
 							}
 							if (allProjects.size() != 0) {
@@ -358,18 +362,18 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							if (DEBUG) {
 								System.out.println("Performing full build since MANIFEST.MF was modified"); //$NON-NLS-1$
 							}
-							buildAll(localMonitor.newChild(1));
+							buildAll(baseline, localMonitor.newChild(1));
 						} else if (deltas.length == 0) {
 							if (DEBUG) {
 								System.out.println("Performing full build since deltas are missing after incremental request"); //$NON-NLS-1$
 							}
-							buildAll(localMonitor.newChild(1));
+							buildAll(baseline, localMonitor.newChild(1));
 						} else {
 							State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(fCurrentProject, new NullProgressMonitor());
 							if (state == null) {
-								buildAll(localMonitor.newChild(1));
+								buildAll(baseline, localMonitor.newChild(1));
 							} else {
-								build(state, localMonitor.newChild(1));
+								build(state, baseline, localMonitor.newChild(1));
 							}
 						}
 					}
@@ -409,7 +413,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * Performs a full build for the project
 	 * @param monitor
 	 */
-	private void buildAll(IProgressMonitor monitor) throws CoreException {
+	private void buildAll(IApiBaseline baseline, IProgressMonitor monitor) throws CoreException {
 		IApiBaseline wsprofile = null;
 		try {
 			clearLastState();
@@ -417,7 +421,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
 			localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_initializing_analyzer, fCurrentProject.getName()));
 			cleanupMarkers(fCurrentProject);
-			IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 			IPluginModelBase currentModel = getCurrentModel();
 			if (currentModel != null) {
 				localMonitor.subTask(BuilderMessages.building_workspace_profile);
@@ -433,7 +436,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				// Compatibility checks
 				IApiComponent apiComponent = wsprofile.getApiComponent(id);
 				if(apiComponent != null) {
-					fAnalyzer.analyzeComponent(fBuildState, null, null, profile, apiComponent, null, null, localMonitor.newChild(1));
+					fAnalyzer.analyzeComponent(fBuildState, null, null, baseline, apiComponent, null, null, localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
 					createMarkers();
 					updateMonitor(localMonitor, 1);
@@ -638,7 +641,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param state
 	 * @param monitor
 	 */
-	private void build(final State state, IProgressMonitor monitor) throws CoreException {
+	private void build(final State state, IApiBaseline baseline, IProgressMonitor monitor) throws CoreException {
 		IApiBaseline wsprofile = null;
 		try {
 			clearLastState(); // so if the build fails, a full build will be triggered
@@ -667,11 +670,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						 cnames = new ArrayList(typesToCheckSize);
 					collectAllQualifiedNames(fTypesToCheck, tnames, cnames, localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
-					IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 					fAnalyzer.analyzeComponent(fBuildState, 
 							null, 
 							null, 
-							profile, 
+							baseline, 
 							apiComponent, 
 							(String[])tnames.toArray(new String[tnames.size()]), 
 							(String[])cnames.toArray(new String[cnames.size()]), 

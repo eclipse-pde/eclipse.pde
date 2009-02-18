@@ -18,13 +18,16 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -254,9 +257,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			updateMonitor(localMonitor);
 			if(checkfilters) {
 				//check for unused filters only if the scans have been done
-				checkUnusedProblemFilters(component, typenames, localMonitor.newChild(1));
+				checkUnusedProblemFilters(component, typenames, changedtypes, localMonitor.newChild(1));
 			}
-				updateMonitor(localMonitor);
+			updateMonitor(localMonitor);
 		} catch(CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -273,7 +276,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param typenames
 	 * @param monitor
 	 */
-	private void checkUnusedProblemFilters(IApiComponent reference, String[] typenames, IProgressMonitor monitor) {
+	private void checkUnusedProblemFilters(IApiComponent reference, String[] typenames, String[] changedTypes, IProgressMonitor monitor) {
 		if(ignoreUnusedProblemFilterCheck()) {
 			if(DEBUG) {
 				System.out.println("Ignoring unused problem filter check"); //$NON-NLS-1$
@@ -283,25 +286,31 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		try {
 			ApiFilterStore store = (ApiFilterStore)reference.getFilterStore();
-			IJavaElement element = null;
-			if(typenames != null) {
+			IProject project = fJavaProject.getProject();
+			if(typenames != null || changedTypes != null) {
 				//incremental
-				IResource resource = null;
-				for (int i = 0; i < typenames.length; i++) {
-					element = fJavaProject.findType(typenames[i]);
-					if(element != null) {
-						resource = element.getUnderlyingResource();
-						if(resource != null) {
-							resource.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-							createUnusedApiFilterProblems(store.getUnusedFilters(element.getResource()));
+				Set typeNamesSet = null;
+				if (typenames != null) {
+					typeNamesSet = new HashSet();
+					for (int i = 0; i < typenames.length; i++) {
+						String typeName = typenames[i];
+						typeNamesSet.add(typeName);
+						checkUnusedProblemFilters(store, project, typeName);
+					}
+				}
+				if (changedTypes != null) {
+					// check the ones not already checked as part of typenames check
+					for (int i = 0; i < changedTypes.length; i++) {
+						String typeName = changedTypes[i];
+						if (typeNamesSet == null || !typeNamesSet.remove(typeName)) {
+							checkUnusedProblemFilters(store, project, typeName);
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				//full build, clean up all old markers
-				fJavaProject.getProject().deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-				createUnusedApiFilterProblems(store.getUnusedFilters(null));
+				project.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				createUnusedApiFilterProblems(store.getUnusedFilters(null, null));
 			}
 		}
 		catch(CoreException ce) {
@@ -309,6 +318,51 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		finally {
 			updateMonitor(monitor, 1);
+		}
+	}
+
+	private void checkUnusedProblemFilters(ApiFilterStore store,
+			IProject project, String typeName) throws JavaModelException,
+			CoreException {
+		IType element;
+		IResource resource;
+		element = fJavaProject.findType(typeName);
+		resource = Util.getResource(project, element);
+		if(resource != null) {
+			if (!Util.isManifest(resource.getProjectRelativePath())) {
+				resource.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				IResource manifestFile = project.findMember(Util.MANIFEST_PROJECT_RELATIVE_PATH);
+				if (manifestFile != null) {
+					try {
+						IMarker[] markers = manifestFile.findMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+						loop: for (int j = 0, max = markers.length; j < max; j++) {
+							IMarker marker = markers[j];
+							String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
+							if (typeName.equals(typeNameFromMarker)) {
+								marker.delete();
+								continue loop;
+							}
+						}
+					} catch (CoreException e) {
+						ApiPlugin.log(e.getStatus());
+					}
+				}
+			} else {
+				try {
+					IMarker[] markers = resource.findMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+					loop: for (int j = 0, max = markers.length; j < max; j++) {
+						IMarker marker = markers[j];
+						String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
+						if (typeName.equals(typeNameFromMarker)) {
+							marker.delete();
+							continue loop;
+						}
+					}
+				} catch (CoreException e) {
+					ApiPlugin.log(e.getStatus());
+				}
+			}
+			createUnusedApiFilterProblems(store.getUnusedFilters(resource, typeName));
 		}
 	}
 
@@ -341,46 +395,19 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						type = fJavaProject.findType(typeName.replace('$', '.'));
 					}
 					IProject project = fJavaProject.getProject();
-					if (type == null) {
-						IResource manifestFile = Util.getManifestFile(project);
-						if (manifestFile == null) {
-							// Cannot retrieve the manifest.mf file
-							return;
-						}
-						resource = manifestFile;
-					} else {
-						ICompilationUnit unit = type.getCompilationUnit();
-						if (unit != null) {
-							resource = unit.getCorrespondingResource();
-							if (resource == null) {
-								return;
-							}
-							if (project.findMember(resource.getProjectRelativePath()) == null) {
-								resource = null;
-								IResource manifestFile = Util.getManifestFile(project);
-								if (manifestFile == null) {
-									// Cannot retrieve the manifest.mf file
-									return;
-								}
-								resource = manifestFile;
-							} else if (!type.isBinary()) {
-								ISourceRange range = type.getNameRange();
-								charStart = range.getOffset();
-								charEnd = charStart + range.getLength();
-								try {
-									IDocument document = Util.getDocument(type.getCompilationUnit());
-									lineNumber = document.getLineOfOffset(charStart);
-								} catch (BadLocationException e) {
-									// ignore
-								}
-							}
-						} else {
-							IResource manifestFile = Util.getManifestFile(project);
-							if (manifestFile == null) {
-								// Cannot retrieve the manifest.mf file
-								return;
-							}
-							resource = manifestFile;
+					resource = Util.getResource(project, type);
+					if (resource == null) {
+						return;
+					}
+					if (!Util.isManifest(resource.getProjectRelativePath()) && !type.isBinary()) {
+						ISourceRange range = type.getNameRange();
+						charStart = range.getOffset();
+						charEnd = charStart + range.getLength();
+						try {
+							IDocument document = Util.getDocument(type.getCompilationUnit());
+							lineNumber = document.getLineOfOffset(charStart);
+						} catch (BadLocationException e) {
+							// ignore
 						}
 					}
 				} catch (JavaModelException e) {
@@ -393,15 +420,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (resource != null) {
 				path = resource.getProjectRelativePath().toPortableString();
 			}
-			addProblem(ApiProblemFactory.newApiUsageProblem(path, 
-					problem.getTypeName(), 
+			addProblem(ApiProblemFactory.newApiUsageProblem(path,
+					problem.getTypeName(),
 					new String[] {filter.getUnderlyingProblem().getMessage()}, //message args
-					new String[] {IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-					new Object[] {((ApiProblemFilter)filter).getHandle(), new Integer(IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID)}, 
-					lineNumber, 
-					charStart, 
-					charEnd, 
-					problem.getElementKind(), 
+					new String[] {IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID},
+					new Object[] {((ApiProblemFilter)filter).getHandle(), new Integer(IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID)},
+					lineNumber,
+					charStart,
+					charEnd,
+					problem.getElementKind(),
 					IApiProblem.UNUSED_PROBLEM_FILTERS));
 		}
 	}

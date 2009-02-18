@@ -268,7 +268,7 @@ public final class Util {
 	 */
 	private static int DELETE_MAX_WAIT = 10000;
 
-	private static final IPath MANIFEST_PROJECT_RELATIVE_PATH = new Path(JarFile.MANIFEST_NAME);
+	public static final IPath MANIFEST_PROJECT_RELATIVE_PATH = new Path(JarFile.MANIFEST_NAME);
 	static {
 		String property = System.getProperty("DEBUG"); //$NON-NLS-1$
 		DEBUG = property != null && property.equalsIgnoreCase("TRUE"); //$NON-NLS-1$
@@ -2682,5 +2682,46 @@ public final class Util {
 			ApiPlugin.log(e);
 		}
 		return null;
+	}
+
+	public static IResource getResource(IProject project, IType type) {
+		IResource resource = null;
+		try {
+			if (type == null) {
+				IResource manifestFile = Util.getManifestFile(project);
+				if (manifestFile == null) {
+					// Cannot retrieve the manifest.mf file
+					return null;
+				}
+				resource = manifestFile;
+			} else {
+				ICompilationUnit unit = type.getCompilationUnit();
+				if (unit != null) {
+					resource = unit.getCorrespondingResource();
+					if (resource == null) {
+						return null;
+					}
+					if (project.findMember(resource.getProjectRelativePath()) == null) {
+						resource = null;
+						IResource manifestFile = Util.getManifestFile(project);
+						if (manifestFile == null) {
+							// Cannot retrieve the manifest.mf file
+							return null;
+						}
+						resource = manifestFile;
+					}
+				} else {
+					IResource manifestFile = Util.getManifestFile(project);
+					if (manifestFile == null) {
+						// Cannot retrieve the manifest.mf file
+						return null;
+					}
+					resource = manifestFile;
+				}
+			}
+		} catch (JavaModelException e) {
+			ApiPlugin.log(e);
+		}
+		return resource;
 	}
 }
