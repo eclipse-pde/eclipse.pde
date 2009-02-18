@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,9 +77,23 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	public IPath addProject(String projectName, String compliance) throws UnsupportedOperationException {
 		IJavaProject javaProject = createProject(projectName);
 		IProject project  = javaProject.getProject();
+		setProjectCompliance(javaProject, compliance);
+		return project != null ? project.getFullPath() : Path.EMPTY;
+	}
+	
+	/**
+	 * Sets the given compliance on the given project.
+	 * @param project
+	 * @param compliance
+	 */
+	public void setProjectCompliance(IJavaProject project, String compliance) {
 		int requiredComplianceFlag = 0;
 		String compilerVersion = null;
-		if (CompilerOptions.VERSION_1_5.equals(compliance)) {
+		if(CompilerOptions.VERSION_1_4.equals(compliance)) {
+			requiredComplianceFlag = AbstractCompilerTest.F_1_4;
+			compilerVersion = CompilerOptions.VERSION_1_4;
+		}
+		else if (CompilerOptions.VERSION_1_5.equals(compliance)) {
 			requiredComplianceFlag = AbstractCompilerTest.F_1_5;
 			compilerVersion = CompilerOptions.VERSION_1_5;
 		}
@@ -102,9 +116,8 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			options.put(CompilerOptions.OPTION_Compliance, compilerVersion);
 			options.put(CompilerOptions.OPTION_Source, compilerVersion);
 			options.put(CompilerOptions.OPTION_TargetPlatform, compilerVersion);
-			javaProject.setOptions(options);
+			project.setOptions(options);
 		}
-		return project != null ? project.getFullPath() : Path.EMPTY;
 	}
 	
 	/**

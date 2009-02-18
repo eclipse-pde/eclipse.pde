@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,7 +152,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
 		if (projects.length == 0) {
 			// populate the workspace with initial plug-ins/projects
-			createExistingProjects(BASELINE, true);
+			createExistingProjects(BASELINE, true, true, false);
 		} else {
 			// build after revert
 			incrementalBuild();

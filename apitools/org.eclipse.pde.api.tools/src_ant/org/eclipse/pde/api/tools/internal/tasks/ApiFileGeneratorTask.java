@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,9 +20,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Set;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -98,6 +99,7 @@ public class ApiFileGeneratorTask extends Task {
 	String projectName;
 	String projectLocation;
 	String targetFolder;
+	Set apiPackages = new HashSet(0);
 
 	/**
 	 * Set the project name.
@@ -205,11 +207,6 @@ public class ApiFileGeneratorTask extends Task {
 			Util.copy(apiDescriptionFile, new File(targetProjectFolder, IApiCoreConstants.API_DESCRIPTION_XML_NAME));
 			return;
 		}
-		File[] allFiles = Util.getAllFiles(root, new FileFilter() {
-			public boolean accept(File path) {
-				return (path.isFile() && Util.isJavaFileName(path.getName())) || path.isDirectory();
-			}
-		});
 		File manifestFile = null;
 		Map manifestMap = null;
 		if (targetProjectFolder.exists() && targetProjectFolder.isDirectory()) {
@@ -222,6 +219,7 @@ public class ApiFileGeneratorTask extends Task {
 				try {
 					inputStream = new BufferedInputStream(new FileInputStream(manifestFile));
 					manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
+					this.apiPackages = collectApiPackageNames(manifestMap);
 				} catch (FileNotFoundException e) {
 					ApiPlugin.log(e);
 				} catch (IOException e) {
@@ -239,19 +237,26 @@ public class ApiFileGeneratorTask extends Task {
 				}
 			}
 		}
+		File[] allFiles = Util.getAllFiles(root, new FileFilter() {
+			public boolean accept(File path) {
+				if(isApi(path.getParent())) {
+					return (path.isFile() && Util.isJavaFileName(path.getName())) || path.isDirectory();
+				}
+				return false;
+			}
+		});
 		ApiDescription apiDescription = new ApiDescription(this.projectName);
 		TagScanner tagScanner = TagScanner.newScanner();
 		if (allFiles != null) {
+			Map options = JavaCore.getOptions();
+			options.put(JavaCore.COMPILER_COMPLIANCE, resolveCompliance(manifestMap));
+			CompilationUnit unit = null;
 			for (int i = 0, max = allFiles.length; i < max; i++) {
-				CompilationUnit unit = new CompilationUnit(allFiles[i].getAbsolutePath());
+				unit = new CompilationUnit(allFiles[i].getAbsolutePath());
 				if (this.debug) {
 					System.out.println("Unit name[" + i + "] : " + unit.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
-					//default to highest, since we have no EE context
-					//TODO should use EE context to resolve a compliance level
-					Map options = JavaCore.getOptions();
-					options.put(JavaCore.COMPILER_COMPLIANCE, resolveCompliance(manifestMap));
 					tagScanner.scan(unit, apiDescription, classFileContainer, options);
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
@@ -261,51 +266,6 @@ public class ApiFileGeneratorTask extends Task {
 		// check the manifest file
 		String componentName = this.projectName;
 		String componentID = this.projectName;
-		if (this.debug) {
-			if (manifestMap != null) {
-				for (Iterator iterator = manifestMap.keySet().iterator(); iterator.hasNext();) {
-					Object key = iterator.next();
-					System.out.print("key = " + key); //$NON-NLS-1$
-					System.out.println(" value = " + manifestMap.get(key)); //$NON-NLS-1$
-				}
-				String localization = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_LOCALIZATION);
-				String name = (String) manifestMap.get(org.osgi.framework.Constants.BUNDLE_NAME);
-				String nameKey = (name != null && name.startsWith("%")) ? name.substring(1) : null; //$NON-NLS-1$;
-				if (nameKey != null) {
-					Properties properties= new Properties();
-					BufferedInputStream inputStream = null;
-					try {
-						inputStream = new BufferedInputStream(new FileInputStream(new File(targetProjectFolder, localization + ".properties"))); //$NON-NLS-1$
-						properties.load(inputStream);
-					} catch (IOException e) {
-						ApiPlugin.log(e);
-					} finally {
-						if (inputStream != null) {
-							try {
-								inputStream.close();
-							} catch (IOException e) {
-								// ignore
-							}
-						}
-					}
-					String property = properties.getProperty(nameKey);
-					if (property != null) {
-						componentName = property.trim();
-					}
-				} else {
-					componentName= name;
-				}
-				String symbolicName = (String)manifestMap.get(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME);
-				if (symbolicName != null) {
-					int indexOf = symbolicName.indexOf(';');
-					if (indexOf == -1) {
-						componentID = symbolicName.trim();
-					} else {
-						componentID = symbolicName.substring(0, indexOf).trim();
-					}
-				}
-			}
-		}
 		try {
 			ApiSettingsXmlVisitor xmlVisitor = new ApiSettingsXmlVisitor(componentName, componentID);
 			apiDescription.accept(xmlVisitor);
@@ -319,6 +279,39 @@ public class ApiFileGeneratorTask extends Task {
 		}
 	}
 
+	/**
+	 * Returns if the given path ends with one of the collected API path names
+	 * @param path
+	 * @return true if the given path name ends with one of the collected API package names 
+	 */
+	private boolean isApi(String path) {
+		String pkg = null;
+		for(Iterator iter = this.apiPackages.iterator(); iter.hasNext();) {
+			pkg = (String) iter.next();
+			if(path.endsWith(pkg.replace('.', File.separatorChar))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Collects the names of the packages that are API for the bundle the api description is being created for
+	 * @param manifestmap
+	 * @return the names of the packages that are API for the bundle the api description is being created for
+	 * @throws BundleException if parsing the manifest map to get API package names fail for some reason
+	 */
+	private Set/*<String>*/ collectApiPackageNames(Map manifestmap) throws BundleException {
+		HashSet set = new HashSet();
+		ManifestElement[] packages = ManifestElement.parseHeader(Constants.EXPORT_PACKAGE, (String) manifestmap.get(Constants.EXPORT_PACKAGE));
+		for (int i = 0; i < packages.length; i++) {
+			if(packages[i].getDirectiveKeys() == null) {
+				set.add(packages[i].getValue());
+			}
+		}
+		return set;
+	}
+	
 	/**
 	 * Resolves the compiler compliance based on the BREE entry in the MANIFEST.MF file
 	 * @param manifestmap

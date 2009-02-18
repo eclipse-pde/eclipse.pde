@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -25,7 +26,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 public class ClassUsageTests extends UsageTest {
 
 	protected static final String CLASS_NAME = "ClassUsageClass";
-	protected static final String GENERIC_CLASS_NAME = "GenericClassUsageClass";
+	
 	
 	/**
 	 * Constructor
@@ -320,37 +321,6 @@ public class ClassUsageTests extends UsageTest {
 	}
 	
 	/**
-	 * Tests a local type defined in a method illegally extending a
-	 * restricted type using a full build.
-	 * 
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
-	 */
-	public void testAnonymousClassExtends1F() {
-		x10(false);
-	}
-	
-	/**
-	 * Tests a local type defined in a method illegally extending a
-	 * restricted type using an incremental build.
-	 * 
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
-	 */
-	public void testAnonymousClassExtends1I() {
-		x10(true);
-	}
-	
-	private void x10(boolean inc) {
-		setExpectedProblemIds(new int[] {
-				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
-		});
-		String typename = "testA1";
-		setExpectedMessageArgs(new String[][] {
-				{"inner", "x.y.z.testA1.m1()", CLASS_NAME}	
-		});
-		deployTest(typename, inc);
-	}
-	
-	/**
 	 * Tests an anonymous type defined in the return statement of a method illegally extending a
 	 * restricted type using a full build.
 	 * 
@@ -444,37 +414,6 @@ public class ClassUsageTests extends UsageTest {
 	}
 	
 	/**
-	 * Tests a local type defined in a constructor illegally extending a
-	 * restricted type using a full build.
-	 * 
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
-	 */
-	public void testAnonymousClassExtends5F() {
-		x14(false);
-	}
-	
-	/**
-	 * Tests a local type defined in a constructor illegally extending a
-	 * restricted type using an incremental build.
-	 * 
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
-	 */
-	public void testAnonymousClassExtends5I() {
-		x14(true);
-	}
-	
-	private void x14(boolean inc) {
-		setExpectedProblemIds(new int[] {
-				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
-		});
-		String typename = "testA5";
-		setExpectedMessageArgs(new String[][] {
-				{"inner", "x.y.z.testA5.testA5()", CLASS_NAME}	
-		});
-		deployTest(typename, inc);
-	}
-	
-	/**
 	 * Tests a local anonymous field defined in a constructor illegally extending a
 	 * restricted type using a full build.
 	 * 
@@ -501,6 +440,133 @@ public class ClassUsageTests extends UsageTest {
 		String typename = "testA6";
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testA6.testA6()", CLASS_NAME}	
+		});
+		deployTest(typename, inc);
+	}
+	
+	public void testLocalClassExtends1F() {
+		x16(false);
+	}
+	
+	public void testLocalClassExtends1I() {
+		x16(true);
+	}
+	
+	/**
+	 * Tests that local types with the same name in different methods are correctly found
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=258101
+	 * @param inc
+	 */
+	private void x16(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE),
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE),
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
+		});
+		getEnv().getJavaProject(getTestingProjectName()).getOption(JavaCore.COMPILER_COMPLIANCE, true);
+		setExpectedMessageArgs(new String[][] {
+				{"inner", "x.y.z.testA7.m1()", CLASS_NAME},
+				{"inner", "x.y.z.testA7.m2()", CLASS_NAME},
+				{"inner", "x.y.z.testA7.m3()", CLASS_NAME}
+		});
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(21, getExpectedProblemIds()[0], getExpectedMessageArgs()[0]),
+				new LineMapping(28, getExpectedProblemIds()[1], getExpectedMessageArgs()[1]),
+				new LineMapping(35, getExpectedProblemIds()[2], getExpectedMessageArgs()[2])
+		});
+		String typename = "testA7";
+		deployTest(typename, inc);
+	}
+	
+	/**
+	 * Tests a local type defined in a constructor illegally extending a
+	 * restricted type using a full build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testLocalClassExtends2F() {
+		x14(false);
+	}
+	
+	/**
+	 * Tests a local type defined in a constructor illegally extending a
+	 * restricted type using an incremental build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testLocalClassExtends2I() {
+		x14(true);
+	}
+	
+	private void x14(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
+		});
+		String typename = "testA5";
+		setExpectedMessageArgs(new String[][] {
+				{"inner", "x.y.z.testA5.testA5()", CLASS_NAME}	
+		});
+		deployTest(typename, inc);
+	}
+	
+	/**
+	 * Tests a local type defined in a constructor illegally extending a
+	 * restricted type using a full build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testLocalClassExtends3F() {
+		x17(false);
+	}
+	
+	/**
+	 * Tests a local type defined in a constructor illegally extending a
+	 * restricted type using an incremental build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testLocalClassExtends3I() {
+		x17(true);
+	}
+	
+	private void x17(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
+		});
+		String typename = "testA8";
+		setExpectedMessageArgs(new String[][] {
+				{"inner", "x.y.z.testA8.m1()", CLASS_NAME}	
+		});
+		deployTest(typename, inc);
+	}
+	
+	/**
+	 * Tests a local type defined in a method illegally extending a
+	 * restricted type using a full build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testLocalClassExtends4F() {
+		x10(false);
+	}
+	
+	/**
+	 * Tests a local type defined in a method illegally extending a
+	 * restricted type using an incremental build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testLocalClassExtends4I() {
+		x10(true);
+	}
+	
+	private void x10(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
+		});
+		String typename = "testA1";
+		setExpectedMessageArgs(new String[][] {
+				{"inner", "x.y.z.testA1.m1()", CLASS_NAME}	
 		});
 		deployTest(typename, inc);
 	}

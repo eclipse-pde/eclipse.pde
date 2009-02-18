@@ -218,7 +218,11 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	public IApiMethod getMethod(String name, String signature) {
 		if (fMethods != null) {
-			return (IApiMethod) fMethods.get(new MethodKey(name, signature));
+			String resolvedName = name;
+			if(this.getSimpleName().equals(name)) {
+				resolvedName = "<init>"; //$NON-NLS-1$
+			}
+			return (IApiMethod) fMethods.get(new MethodKey(resolvedName, signature));
 		}
 		return null;
 	}
@@ -636,11 +640,21 @@ public class ApiType extends ApiMember implements IApiType {
 			return fEnclosingType;
 		}
 		if(fEnclosingTypeName != null) {
-			IApiTypeRoot root = getApiComponent().findTypeRoot(fEnclosingTypeName);
+			IApiTypeRoot root = getApiComponent().findTypeRoot(processEnclosingTypeName());
 			if(root != null) {
 				fEnclosingType = root.getStructure();
 			}
 		}
 		return fEnclosingType;
+	}
+	
+	private String processEnclosingTypeName() {
+		if(isLocal() || isAnonymous()) {
+			int idx = fEnclosingTypeName.lastIndexOf('$');
+			if(Character.isDigit(fEnclosingTypeName.charAt(idx + 1))) {
+				return fEnclosingTypeName.substring(0, idx);
+			}
+		}
+		return fEnclosingTypeName;
 	}
 }

@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
@@ -27,6 +26,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Tests usage scanning in source
@@ -87,6 +87,16 @@ public abstract class UsageTest extends ApiBuilderTest {
 	}
 	
 	/**
+	 * Returns the path into the {@link ApiBuilderTest#TEST_SOURCE_ROOT} location 
+	 * with the given path ending
+	 * @param path
+	 * @return the {@link IPath} to {@link ApiBuilderTest#TEST_SOURCE_ROOT} with the given path appended
+	 */
+	protected IPath getTestSourcePath(String path) {
+		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("usageprojects").append(path);
+	}
+	
+	/**
 	 * Deploys a usage test
 	 * @param typename
 	 * @param inc
@@ -133,47 +143,20 @@ public abstract class UsageTest extends ApiBuilderTest {
 		}
 	}
 	
-	protected void replaceSource(IPath sourcepath, IProject project, String packagename, String sourcename) {
-		IPath ppath = project.getFullPath();
-		assertTrue("The path for '"+project.getName()+"' must exist", !ppath.isEmpty());
-		IPath frpath = getEnv().getPackageFragmentRootPath(ppath, SRC_ROOT);
-		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
-		IPath packpath = getEnv().getPackagePath(frpath, packagename);
-		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
-		if(sourcepath == null) {
-			//delete source requested
-			getEnv().removeClass(packpath, sourcename);
-		}
-		else {
-			String contents = getSourceContents(sourcepath, sourcename);
-			assertNotNull("the source contents for '"+sourcename+"' must exist", contents);
-			IPath cpath = getEnv().addClass(packpath, sourcename, contents);
-			assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
-		}
-	}
-	
-	/**
-	 * Ensures that the .settings folder is available
-	 * @param project
-	 * @throws CoreException
-	 */
-	protected IPath assertSettingsFolder(IProject project) throws CoreException {
-		IFolder folder = project.getFolder(".settings");
-		assertNotNull("the settings folder must exist", folder);
-		if(!folder.isAccessible()) {
-			folder.create(true, true, null); 
-		}
-		assertTrue("the .settings folder must be accessible", folder.isAccessible());
-		return folder.getFullPath();
-	}
-	
 	/**
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
 	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		createExistingProjects("usageprojects", false);
+		IProject[] pjs = getEnv().getWorkspace().getRoot().getProjects();
+		File file = null;
+		if(pjs.length == 0) {
+			file = getTestSourcePath("refproject").toFile();
+			createExistingProject(file, true, false);
+		}
+		file = getTestSourcePath("usagetests").toFile();
+		createExistingProject(file, true, true);
 	}
 	
 	/**
@@ -222,9 +205,12 @@ public abstract class UsageTest extends ApiBuilderTest {
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
 				FieldUsageTests.class,
+				Java5FieldUsageTests.class,
 				MethodUsageTests.class,
+				Java5MethodUsageTests.class,
 				ConstructorUsageTests.class,
 				ClassUsageTests.class,
+				Java5ClassUsageTests.class,
 				InterfaceUsageTests.class,
 				UnusedApiProblemFilterTests.class
 		};

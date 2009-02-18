@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public class FieldUsageTests extends UsageTest {
 	
-	private static final String FIELD_CLASS_NAME = "FieldUsageClass";
-	private static final String FIELD_ENUM_NAME = "FieldUsageEnum";
+	protected static final String FIELD_CLASS_NAME = "FieldUsageClass";
 	
 	private int pid = -1;
 	
@@ -193,60 +192,6 @@ public class FieldUsageTests extends UsageTest {
 	private void x5(boolean inc) {
 		expectingNoProblems();
 		String typename = "testF5";
-		deployTest(typename, inc);
-	}
-	
-	/**
-	 * Tests that an enum field tagged with a noreference tag that is being accessed from a dependent plug-in 
-	 * is flagged as a problem using a full build
-	 */
-	public void testFieldUsage6F() {
-		x6(false);
-	}
-	
-	/**
-	 * Tests that an enum field tagged with a noreference tag that is being accessed from a dependent plug-in 
-	 * is flagged as a problem using a full build
-	 */
-	public void testFieldUsage6I() {
-		x6(true);
-	}
-	
-	private void x6(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testF6";
-		setExpectedMessageArgs(new String[][] {
-				{FIELD_ENUM_NAME, typename, "f3"},
-				{FIELD_ENUM_NAME, typename, "f2"},
-				{FIELD_ENUM_NAME, INNER_NAME1, "f3"},
-				{FIELD_ENUM_NAME, INNER_NAME1, "f2"},
-				{FIELD_ENUM_NAME, INNER_NAME2, "f3"},
-				{FIELD_ENUM_NAME, INNER_NAME2, "f2"},
-				{FIELD_ENUM_NAME, OUTER_NAME, "f3"},
-				{FIELD_ENUM_NAME, OUTER_NAME, "f2"}
-		});
-		deployTest(typename, inc);
-	}
-	
-	/**
-	 * Tests that a static final and final enum field tagged with a noreference tag that is being accessed from a dependent plug-in 
-	 * is not flagged as a problem using a full build
-	 */
-	public void testFieldUsage7F() {
-		x7(false);
-	}
-	
-	/**
-	 * Tests that a static final and final enum field tagged with a noreference tag that is being accessed from a dependent plug-in 
-	 * is not flagged as a problem using a full build
-	 */
-	public void testFieldUsage7I() {
-		x7(true);
-	}
-	
-	private void x7(boolean inc) {
-		expectingNoProblems();
-		String typename = "testF7";
 		deployTest(typename, inc);
 	}
 }

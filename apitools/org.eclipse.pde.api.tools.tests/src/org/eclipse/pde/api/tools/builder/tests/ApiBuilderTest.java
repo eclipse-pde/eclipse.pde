@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.Test;
@@ -84,8 +85,63 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	public static final String BIN_ROOT = "bin";
 	protected final int[] NO_PROBLEM_IDS = new int[0];
 	
+	/**
+	 * Describes a line number mapped to the problem id with the given args we expect to see there
+	 */
+	protected class LineMapping {
+		private int linenumber = 0;
+		private int problemid = 0;
+		private String message = null;
+		
+		public LineMapping(int linenumber, int problemid, String[] messageargs) {
+			this.linenumber = linenumber;
+			this.problemid = problemid;
+			this.message = ApiProblemFactory.getLocalizedMessage(ApiProblemFactory.getProblemMessageId(this.problemid), messageargs);
+		}
+		public LineMapping(ApiProblem problem) {
+			this.linenumber = problem.getLineNumber();
+			this.problemid = problem.getProblemId();
+			this.message = problem.getMessage();
+		}
+		/**
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			if(obj instanceof LineMapping) {
+				LineMapping lm = (LineMapping) obj;
+				return lm.linenumber == this.linenumber &&
+						lm.problemid == this.problemid &&
+						(this.message == null ? lm.message == null : this.message.equals(lm.message));
+			}
+			return super.equals(obj);
+		}
+		/**
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+			return this.linenumber | this.problemid | (this.message == null ? 0 : this.message.hashCode());
+		}
+		/**
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("Line mapping: ");
+			buffer.append("[line ").append(this.linenumber).append("]");
+			buffer.append("[problemid: ").append(problemid).append("]");
+			if(this.message != null) {
+				buffer.append("[message: ").append(this.message).append("]");
+			}
+			else {
+				buffer.append("[no message]");
+			}
+			return super.toString();
+		}
+	}
+	
 	private int[] fProblems = null;
 	private String[][] fMessageArgs = null;
+	private LineMapping[] fLineMappings = null;
 	
 	/**
 	 * Constructor
@@ -155,7 +211,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 					System.err.println("workspace file : " + resource.toOSString());
 					System.err.println(jdtMarkers[i].getAttribute(IMarker.MESSAGE));
 				}
-				assertFalse("Should not be a JDT error", condition);
+				assertFalse("Should not be a JDT error: "+jdtMarkers[i].getAttribute(IMarker.MESSAGE), condition);
 			}
 		}
 	}
@@ -264,6 +320,21 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		IPath cpath = getEnv().addClass(packpath, sourcename, contents);
 		assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
 		return ppath;
+	}
+	
+	/**
+	 * Ensures that the .settings folder is available
+	 * @param project
+	 * @throws CoreException
+	 */
+	protected IPath assertSettingsFolder(IProject project) throws CoreException {
+		IFolder folder = project.getFolder(".settings");
+		assertNotNull("the settings folder must exist", folder);
+		if(!folder.isAccessible()) {
+			folder.create(true, true, null); 
+		}
+		assertTrue("the .settings folder must be accessible", folder.isAccessible());
+		return folder.getFullPath();
 	}
 	
 	/**
@@ -449,9 +520,11 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 *  
 	 * @param projectsdir the directory to load projects from
 	 * @param buildimmediately if a build should be run immediately following the import
+	 * @param importfiles
+	 * @param usetestcompliance
 	 * @throws Exception
 	 */
-	protected void createExistingProjects(String projectsdir, boolean buildimmediately) throws Exception {
+	protected void createExistingProjects(String projectsdir, boolean buildimmediately, boolean importfiles, boolean usetestcompliance) throws Exception {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(projectsdir);
 		File dir = path.toFile();
 		assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists());
@@ -459,7 +532,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		for (int i = 0; i < files.length; i++) {
 			File file = files[i];
 			if (file.isDirectory() && !file.getName().equals("CVS")) {
-				createExistingProject(file);
+				createExistingProject(file, importfiles, usetestcompliance);
 			}
 		}
 		if(buildimmediately) {
@@ -529,6 +602,32 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	}
 	
 	/**
+	 * Replace the given source path in the given project
+	 * @param sourcepath
+	 * @param project
+	 * @param packagename
+	 * @param sourcename
+	 */
+	protected void replaceSource(IPath sourcepath, IProject project, String packagename, String sourcename) {
+		IPath ppath = project.getFullPath();
+		assertTrue("The path for '"+project.getName()+"' must exist", !ppath.isEmpty());
+		IPath frpath = getEnv().getPackageFragmentRootPath(ppath, SRC_ROOT);
+		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
+		IPath packpath = getEnv().getPackagePath(frpath, packagename);
+		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
+		if(sourcepath == null) {
+			//delete source requested
+			getEnv().removeClass(packpath, sourcename);
+		}
+		else {
+			String contents = getSourceContents(sourcepath, sourcename);
+			assertNotNull("the source contents for '"+sourcename+"' must exist", contents);
+			IPath cpath = getEnv().addClass(packpath, sourcename, contents);
+			assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
+		}
+	}
+	
+	/**
 	 * Copies the given file to the given directory.
 	 * 
 	 * @param dir
@@ -549,25 +648,22 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * Create the project described in record. If it is successful return true.
 	 * 
 	 * @param projectDir directory containing existing project
+	 * @param importfiles
+	 * @param usetestcompliance
 	 */
-	protected void createExistingProject(File projectDir) throws Exception {
+	protected void createExistingProject(File projectDir, boolean importfiles, boolean usetestcompliance) throws Exception {
 		String projectName = projectDir.getName();
 		final IWorkspace workspace = getEnv().getWorkspace();
 		IPath ppath = getEnv().addProject(projectName, getTestCompliance());
-		final IProject project = getEnv().getProject(ppath);
+		IProject project = getEnv().getProject(ppath);
 		IProjectDescription description = workspace.newProjectDescription(projectName);
 		IPath locationPath = new Path(projectDir.getAbsolutePath());
 		description.setLocation(locationPath);
-		
-		// import from file system
-		File importSource = null;
-		// import project from location copying files - use default project
-		// location for this workspace
+
 		URI locationURI = description.getLocationURI();
 		// if location is null, project already exists in this location or
 		// some error condition occurred.
 		assertNotNull("project description location is null", locationURI);
-		importSource = new File(locationURI);
 		
 		IProjectDescription desc = workspace.newProjectDescription(projectName);
 		desc.setBuildSpec(description.getBuildSpec());
@@ -580,18 +676,31 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		project.setDescription(description, new NullProgressMonitor());
 		project.open(null);
 		
-		// import operation to import project files
-		List filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
-		ImportOperation operation = new ImportOperation(
-				project.getFullPath(), importSource,
-				FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
-					public String queryOverwrite(String pathString) {
-						return IOverwriteQuery.ALL;
-					}
-				}, filesToImport);
-		operation.setOverwriteResources(true);
-		operation.setCreateContainerStructure(false);
-		operation.run(new NullProgressMonitor());
+		//only import the files if we want them
+		if(importfiles) {
+			// import operation to import project files
+			File importSource = new File(locationURI);
+			List filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
+			for (Iterator iterator = filesToImport.iterator(); iterator.hasNext();) {
+				if(((File)iterator.next()).getName().equals("CVS")) {
+					iterator.remove();
+				}
+			}
+			ImportOperation operation = new ImportOperation(project.getFullPath(), importSource,
+					FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
+						public String queryOverwrite(String pathString) {
+							return IOverwriteQuery.ALL;
+						}
+					}, filesToImport);
+			operation.setOverwriteResources(true);
+			operation.setCreateContainerStructure(false);
+			operation.run(new NullProgressMonitor());
+		}
+		
+		//force the use of the test compliance
+		if(usetestcompliance) {
+			getEnv().setProjectCompliance(getEnv().getJavaProject(ppath), getTestCompliance());
+		}
 	}
 	
 	/**
@@ -738,6 +847,21 @@ public abstract class ApiBuilderTest extends BuilderTests {
 				assertTrue("Missing expected problem: " + expectedProblemIds[i], messages.remove(new Integer(expectedProblemIds[i])));
 			}
 		}
+		if(fLineMappings != null) {
+			ArrayList<LineMapping> mappings = new ArrayList(Arrays.asList(fLineMappings));
+			for(int i = 0; i < problems.length; i++) {
+				assertTrue("Missing expected problem line mapping: "+problems[i], mappings.remove(new LineMapping(problems[i])));
+			}
+			if(mappings.size() > 0) {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append('[');
+				for(LineMapping mapping: mappings) {
+					buffer.append(mapping).append(',');
+				}
+				buffer.append(']');
+				fail("There was no problems that matched the line mappings: "+buffer.toString());
+			}
+		}
 	}
 	
 	/**
@@ -746,6 +870,14 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	protected void setExpectedProblemIds(int[] problemids) {
 		fProblems = problemids;
+	}
+	
+	/**
+	 * Sets the line mappings that problems are expected on
+	 * @param linenumbers
+	 */
+	protected void setExpectedLineMappings(LineMapping[] linemappings) {
+		fLineMappings = linemappings;
 	}
 	
 	/**

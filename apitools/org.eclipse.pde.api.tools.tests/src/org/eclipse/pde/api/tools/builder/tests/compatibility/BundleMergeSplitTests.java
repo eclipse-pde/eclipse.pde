@@ -543,7 +543,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		String referenceBaselineLocation = getReferenceBaselineLocation(testName);
 
 		// import baseline projects
-		createExistingProjects(referenceBaselineLocation, true);
+		createExistingProjects(referenceBaselineLocation, true, true, false);
 		// create the API baseline
 		this.profile = manager.getWorkspaceBaseline();
 		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
@@ -572,7 +572,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		}
 		// populate the workspace with initial plug-ins/projects
 		String currentBaselineLocation = getCurrentBaselineLocation(testName);
-		createExistingProjects(currentBaselineLocation, true);
+		createExistingProjects(currentBaselineLocation, true, true, false);
 	}
 
 	private String getCurrentBaselineLocation(String testName) {

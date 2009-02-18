@@ -255,7 +255,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		File[] projects = root.listFiles();
 		for (int i = 0; i < projects.length; i++) {
 			System.out.println("\t" + projects[i].getName());
-			createExistingProject(projects[i]);
+			createExistingProject(projects[i], true, false);
 		}
 		System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");
 	}		

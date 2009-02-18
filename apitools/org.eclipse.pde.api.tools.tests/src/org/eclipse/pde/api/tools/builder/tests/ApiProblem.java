@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 public class ApiProblem extends Problem {
 
 	private int problemid = 0;
+	private int linenumber = 0;
 	
 	/**
 	 * Constructor
@@ -31,6 +32,7 @@ public class ApiProblem extends Problem {
 	public ApiProblem(IMarker marker) {
 		super(marker);
 		this.problemid = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0);
+		this.linenumber = marker.getAttribute(IMarker.LINE_NUMBER, -1);
 	}
 
 	/**
@@ -47,6 +49,13 @@ public class ApiProblem extends Problem {
 	public ApiProblem(String location, String message, IPath resourcePath, int start, int end, int categoryId, int severity, int problemid) {
 		super(location, message, resourcePath, start, end, categoryId, severity);
 		this.problemid = problemid;
+	}
+	
+	/**
+	 * @return the line number from the problem
+	 */
+	public int getLineNumber() {
+		return this.linenumber;
 	}
 	
 	/**
