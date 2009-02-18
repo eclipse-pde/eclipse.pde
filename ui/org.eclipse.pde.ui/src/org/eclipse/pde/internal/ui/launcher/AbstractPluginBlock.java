@@ -416,10 +416,10 @@ public abstract class AbstractPluginBlock {
 
 				// Identify the selected row
 				final TreeItem item = (TreeItem) e.item;
-				if (!isEditable(item))
+				if (item != null && !isEditable(item))
 					return;
 
-				if (!isFragment(item)) { // only display editing controls if we're not a fragment
+				if (item != null && !isFragment(item)) { // only display editing controls if we're not a fragment
 					final Spinner spinner = new Spinner(tree, SWT.BORDER);
 					spinner.setMinimum(0);
 					String level = item.getText(1);
