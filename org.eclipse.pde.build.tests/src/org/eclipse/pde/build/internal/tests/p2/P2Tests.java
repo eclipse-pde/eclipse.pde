@@ -2,6 +2,7 @@ package org.eclipse.pde.build.internal.tests.p2;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -9,7 +10,7 @@ import junit.framework.AssertionFailedError;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.pde.build.internal.tests.Utils;
@@ -329,5 +330,41 @@ public class P2Tests extends P2TestCase {
 		IMetadataRepository repository = loadMetadataRepository(repoLocation);
 		IInstallableUnit iu = getIU(repository, "rcp.product");
 		assertTouchpoint(iu, "configure", "addRepository");
+	}
+	
+	public void testBug265526() throws Exception {
+		IFolder buildFolder= newTest("265526");
+		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
+		IFolder b = Utils.createFolder(buildFolder, "plugins/b");
+		
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=false", "b;unpack=true"});
+		Utils.generateBundle(a, "a");
+		Utils.writeBuffer(a.getFile("src/a.java"), new StringBuffer("class A {}"));
+		Utils.generateBundle(b, "b");
+		Utils.writeBuffer(b.getFile("src/b.java"), new StringBuffer("class B {}"));
+		
+		IFolder repo = Utils.createFolder(buildFolder, "repo/r1");
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "F");
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.flavor", "tooling");
+		properties.put("p2.publish.artifacts", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runBuild(buildFolder);
+		
+		properties.put("repoBaseLocation", buildFolder.getFolder("repo").getLocation().toOSString());
+		properties.put("transformedRepoLocation", buildFolder.getFolder("outRepo").getLocation().toOSString());
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"transformRepos"}, buildFolder.getLocation().toOSString(), properties);
+		
+		assertResourceFile(buildFolder, "outRepo/plugins/b_1.0.0/B.class");
+		assertResourceFile(buildFolder, "outRepo/plugins/a_1.0.0.jar");
+		assertResourceFile(buildFolder, "outRepo/artifacts.xml");
+		assertResourceFile(buildFolder, "outRepo/content.xml");
 	}
 }
