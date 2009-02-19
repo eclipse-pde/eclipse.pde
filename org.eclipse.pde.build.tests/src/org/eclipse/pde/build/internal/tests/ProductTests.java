@@ -290,6 +290,35 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info"), bundleString);
 	}
 
+	public void testBug265438() throws Exception {
+		IFolder buildFolder = newTest("265438");
+
+		IFile product = buildFolder.getFile("foo.product");
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<product name=\"foo\" version=\"1.0.0\" useFeatures=\"false\">         \n");
+		buffer.append("   <plugins>                                                           \n");
+		buffer.append("      <plugin id=\"A\" version=\"1.0.0.v1\"  />                        \n");
+		buffer.append("   </plugins>                                                          \n");
+		buffer.append("</product>                                                             \n");
+		Utils.writeBuffer(product, buffer);
+
+		IFolder A1 = Utils.createFolder(buildFolder, "plugins/A1");
+		IFolder A2 = Utils.createFolder(buildFolder, "plugins/A2");
+
+		Utils.generateBundleManifest(A1, "A", "1.0.0.v1", null);
+		Utils.generateBundleManifest(A2, "A", "1.0.0.v2", null);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		properties.put("includeLaunchers", "false");
+		properties.put("baseLocation", "");
+		properties.put("archivesFormat", "*,*,*-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		assertResourceFile(buildFolder, "tmp/eclipse/plugins/A_1.0.0.v1.jar");
+	}
 	public void testBug246060() throws Exception {
 		IFolder buildFolder = newTest("246060");
 

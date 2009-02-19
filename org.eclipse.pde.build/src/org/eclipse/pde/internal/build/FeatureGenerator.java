@@ -17,39 +17,35 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.PDEState;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
 public class FeatureGenerator extends AbstractScriptGenerator {
 
 	private static class Entry {
 		private final String id;
+		private String version = "0.0.0"; //$NON-NLS-1$
 		private Map attributes;
 
 		public Entry(String id) {
 			this.id = id;
 		}
 
+		public Entry(String id, String version) {
+			this.id = id;
+			this.version = version;
+		}
+
 		public boolean equals(Object obj) {
 			if (obj instanceof Entry) {
 				Entry objEntry = (Entry) obj;
-				String objVersion = "0.0.0"; //$NON-NLS-1$
-				if (objEntry.attributes != null && objEntry.attributes.containsKey(VERSION))
-					objVersion = (String) objEntry.attributes.get(VERSION);
-
-				String version = "0.0.0"; //$NON-NLS-1$
-				if (attributes != null && attributes.containsKey(VERSION))
-					version = (String) attributes.get(VERSION);
-
-				return id.equals(((Entry) obj).id) && version.equals(objVersion);
+				return id.equals(((Entry) obj).id) && version.equals(objEntry.version);
 			}
 
 			return id.equals(obj);
 		}
 
 		public int hashCode() {
-			String version = "0.0.0"; //$NON-NLS-1$
-			if (attributes != null && attributes.containsKey(VERSION))
-				version = (String) attributes.get(VERSION);
 			return id.hashCode() + version.hashCode();
 		}
 
@@ -60,6 +56,11 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		}
 
 		public void addAttribute(String key, String value) {
+			if (VERSION.equals(key)) {
+				if (value != null && value.length() > 0)
+					version = value;
+				return;
+			}
 			if (attributes == null)
 				attributes = new LinkedHashMap();
 			attributes.put(key, value);
@@ -67,6 +68,14 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 		public String getId() {
 			return id;
+		}
+
+		public String getVersion() {
+			return version;
+		}
+
+		public String toString() {
+			return id + '_' + version;
 		}
 	}
 
@@ -85,15 +94,6 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 	private Properties antProperties;
 	private Properties buildProperties;
-
-	/*
-	 * Create and return a new Set of Entry objects with the given contents. If the arg
-	 * is null then return an empty set.
-	 */
-	private static Set createSet(List list) {
-		String[] array = new String[list.size()];
-		return createSet((String[]) list.toArray(array));
-	}
 
 	private static Set createSet(String[] contents) {
 		if (contents == null)
@@ -129,11 +129,18 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			Set features = createSet(featureList);
 			Set fragments = createSet(fragmentList);
 			if (product != null) {
-				if (product.useFeatures()) {
-					features.addAll(createSet(product.getFeatures()));
-				} else {
-					plugins.addAll(createSet(product.getPlugins(false)));
-					fragments.addAll(createSet(product.getFragments()));
+				List entries = product.getProductEntries();
+				for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
+					FeatureEntry featureEntry = (FeatureEntry) iterator.next();
+					Entry newEntry = new Entry(featureEntry.getId(), featureEntry.getVersion());
+					if (featureEntry.unpackSet())
+						newEntry.addAttribute(Utils.EXTRA_UNPACK, String.valueOf(featureEntry.isUnpack()));
+					if (featureEntry.isFragment())
+						fragments.add(newEntry);
+					else if (featureEntry.isPlugin())
+						plugins.add(newEntry);
+					else
+						features.add(newEntry);
 				}
 			}
 			try {
@@ -316,10 +323,11 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				for (; listIter.hasNext();) {
 					Entry entry = (Entry) listIter.next();
 					String name = entry.getId();
+					String bundleVersion = entry.getVersion();
 					boolean guessedUnpack = true;
 					boolean writeBundle = !verify;
 					if (verify) {
-						BundleDescription bundle = state.getResolvedBundle(name);
+						BundleDescription bundle = state.getResolvedBundle(name, bundleVersion);
 						if (bundle != null) {
 							//Bundle resolved, write it out if it matches the current config
 							String filterSpec = bundle.getPlatformFilter();
@@ -356,7 +364,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 						parameters.clear();
 
 						parameters.put(ID, name);
-						parameters.put(VERSION, "0.0.0"); //$NON-NLS-1$
+						parameters.put(VERSION, bundleVersion);
 						parameters.put("unpack", guessedUnpack ? "true" : "false"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						if (!currentConfig.equals(Config.genericConfig())) {
 							parameters.put("os", currentConfig.getOs()); //$NON-NLS-1$
@@ -391,13 +399,14 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			for (Iterator iter = features.iterator(); iter.hasNext();) {
 				Entry entry = (Entry) iter.next();
 				String name = entry.getId();
+				String featureVersion = entry.getVersion();
 				if (verify) {
 					//this will throw an exception if the feature is not found.
-					getSite(false).findFeature(name, null, true);
+					getSite(false).findFeature(name, featureVersion, true);
 				}
 				parameters.clear();
 				parameters.put(ID, name);
-				parameters.put(VERSION, "0.0.0"); //$NON-NLS-1$
+				parameters.put(VERSION, featureVersion);
 				parameters.putAll(entry.getAttributes());
 				writer.printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 			}
