@@ -607,8 +607,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		generateAPIToolsCall(getCompiledLocations(), Utils.isStringIn(splitIncludes, EXPANDED_DOT + '/') != -1, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
 
 		script.println("<eclipse.gatherBundle "); //$NON-NLS-1$
-		script.println("   metadataRepository=\"file:${buildDirectory}/buildRepo\""); //$NON-NLS-1$
-		script.println("   artifactRepository=\"file:${buildDirectory}/buildRepo\""); //$NON-NLS-1$
+		script.println("   metadataRepository=\"" + Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("   artifactRepository=\"" + Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("   buildResultFolder=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
 		if (associatedEntry != null && associatedEntry.unpackSet())
@@ -856,6 +856,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProjectDeclaration(model.getSymbolicName(), TARGET_BUILD_JARS, DOT);
 		script.println();
 
+		script.printProperty(PROPERTY_P2_BUILD_REPO, "file:" + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/buildRepo"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printProperty(PROPERTY_BASE_WS, Utils.getPropertyFormat(PROPERTY_WS));
 		script.printProperty(PROPERTY_BASE_OS, Utils.getPropertyFormat(PROPERTY_OS));
 		script.printProperty(PROPERTY_BASE_ARCH, Utils.getPropertyFormat(PROPERTY_ARCH));

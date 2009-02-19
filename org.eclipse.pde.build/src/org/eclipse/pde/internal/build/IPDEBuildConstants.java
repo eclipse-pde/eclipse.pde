@@ -39,6 +39,7 @@ public interface IPDEBuildConstants {
 	public final static String MANIFEST = "MANIFEST.MF"; //$NON-NLS-1$
 
 	// default values
+	public final static String PROPERTY_GENERIC_TARGETS = "genericTargets"; //$NON-NLS-1$
 	public final static String DEFAULT_BUILD_SCRIPT_FILENAME = "build.xml"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURE_LOCATION = "features"; //$NON-NLS-1$
 	public final static String DEFAULT_FETCH_SCRIPT_FILENAME = "fetch.xml"; //$NON-NLS-1$

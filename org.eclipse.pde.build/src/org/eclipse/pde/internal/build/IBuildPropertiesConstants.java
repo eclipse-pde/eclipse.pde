@@ -96,9 +96,15 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_COMPRESS = "p2.compress"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_METADATA_REPO_NAME = "p2.metadata.repo.name"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ARTIFACT_REPO_NAME = "p2.artifact.repo.name"; //$NON-NLS-1$
-	public static final String PROPERTY_P2_BUILD_REPO = "p2.build.repo"; //$NON-NLS-1$
+
 	//Internal usage only
+	public static final String PROPERTY_P2_BUILD_REPO = "p2.build.repo"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_GENERATION_MODE = "p2.generation.mode"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_REPO = "p2.repo"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_DIRECTOR_IU = "p2.director.iu"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_DIRECTOR_VERSION = "p2.director.version"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_DIRECTOR_INSTALLPATH = "p2.director.installPath"; //$NON-NLS-1$
+
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 
 	public static final String PROPERTY_PACKAGER_MODE = "packagerMode"; //$NON-NLS-1$

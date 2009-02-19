@@ -47,7 +47,18 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	}
 
 	protected void generateP2ConfigFileTargetCall() {
-		//empty
+		P2ConfigScriptGenerator p2ConfigGenerator = new P2ConfigScriptGenerator(assemblageInformation, false);
+		p2ConfigGenerator.setProduct(productLocation);
+		p2ConfigGenerator.initialize(directory, featureId);
+		p2ConfigGenerator.generate();
+
+		script.printTab();
+		script.print("<assemble "); //$NON-NLS-1$
+		script.printAttribute("config", "p2", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printAttribute("element", p2ConfigGenerator.getTargetElement(), true); //$NON-NLS-1$
+		script.printAttribute("dot", ".", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printAttribute("scriptPrefix", "package", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("/>"); //$NON-NLS-1$
 	}
 
 	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
@@ -59,6 +70,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		configScriptGenerator.setBuildSiteFactory(siteFactory);
 		configScriptGenerator.generate();
 
+		script.printTab();
 		script.print("<assemble "); //$NON-NLS-1$
 		String config = configScriptGenerator.getTargetConfig();
 		script.printAttribute("config", config, true); //$NON-NLS-1$

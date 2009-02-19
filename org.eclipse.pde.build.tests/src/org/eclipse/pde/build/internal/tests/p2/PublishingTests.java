@@ -349,5 +349,7 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.osgi");
 
+		assertResourceFile(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip");
+		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip");
 	}
 }

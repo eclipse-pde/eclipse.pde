@@ -183,6 +183,14 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		super.generateTarGZTasks(false);
 	}
 
+	protected void generateDirectorTarget(boolean assembling) {
+		super.generateDirectorTarget(false);
+	}
+
+	protected void generateArchivingTarget(boolean assembling) {
+		super.generateArchivingTarget(false);
+	}
+
 	protected Object[] getFinalShape(BundleDescription bundle) {
 		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == true) {
 			String shape = isFolder(new Path(bundle.getLocation())) ? ShapeAdvisor.FOLDER : ShapeAdvisor.FILE;

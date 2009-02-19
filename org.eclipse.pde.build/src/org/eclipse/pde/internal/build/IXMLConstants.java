@@ -65,6 +65,8 @@ public interface IXMLConstants {
 	public static final String TARGET_ROOT_TARGET = "rootTarget"; //$NON-NLS-1$
 	public static final String TARGET_CUSTOM_ASSEMBLY = "customAssembly"; //$NON-NLS-1$
 	public static final String TARGET_P2_METADATA = "generate.p2.metadata"; //$NON-NLS-1$
+	public static final String TARGET_RUN_DIRECTOR = "runDirector"; //$NON-NLS-1$
+
 	// properties
 	public static final String PROPERTY_ARCH = "arch"; //$NON-NLS-1$
 	public static final String PROPERTY_BASE_ARCH = "basearch"; //$NON-NLS-1$
@@ -153,6 +155,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_OMIT_ROOTFILES = "updateJar.omitRootfiles"; //$NON-NLS-1$
 	public static final String PROPERTY_GENERATE_API_DESCRIPTION = "generateAPIDescription"; //$NON-NLS-1$
 	public static final String PROPERTY_BINARY_FOLDERS = "binary.folders"; //$NON-NLS-1$
+	public static final String PROPERTY_LAUNCHER_JAR = "equinoxLauncherJar"; //$NON-NLS-1$
 
 	//Jar processor properties
 	public static final String PROPERTY_SIGN_ALIAS = "sign.alias"; //$NON-NLS-1$

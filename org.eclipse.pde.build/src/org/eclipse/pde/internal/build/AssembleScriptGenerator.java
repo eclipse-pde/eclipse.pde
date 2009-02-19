@@ -110,7 +110,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 				basicGenerateAssembleConfigFileTargetCall(current, configInfo[0], configInfo[1], configInfo[2], configInfo[3]);
 			}
 		}
-		if (configScriptGenerator.haveP2Bundles())
+		if (configScriptGenerator.haveP2Bundles() && !BuildDirector.p2Gathering)
 			script.printAntCallTask(TARGET_P2_METADATA, true, null);
 		script.printTargetEnd();
 	}
@@ -125,6 +125,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		p2ConfigGenerator.initialize(directory, featureId);
 		p2ConfigGenerator.generate();
 
+		script.printTab();
 		script.print("<assemble "); //$NON-NLS-1$
 		script.printAttribute("config", "p2", true); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printAttribute("element", p2ConfigGenerator.getTargetElement(), true); //$NON-NLS-1$
@@ -141,6 +142,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		configScriptGenerator.setGroupConfigs(groupConfigs);
 		configScriptGenerator.generate();
 
+		script.printTab();
 		script.print("<assemble "); //$NON-NLS-1$
 		String config = configScriptGenerator.getTargetConfig();
 		script.printAttribute("config", config, true); //$NON-NLS-1$
@@ -151,6 +153,8 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateMetadataTarget() {
+		if (BuildDirector.p2Gathering)
+			return;
 		if (configScriptGenerator.haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, PROPERTY_RUN_PACKAGER, null);
 

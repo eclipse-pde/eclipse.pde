@@ -102,6 +102,7 @@ public class AntScript implements IAntScript {
 			bundles[i].printAs("bundles", this); //$NON-NLS-1$
 		}
 		indent--;
+		printTab();
 		output.println("</eclipse.publish.featuresAndBundles>"); //$NON-NLS-1$
 	}
 
