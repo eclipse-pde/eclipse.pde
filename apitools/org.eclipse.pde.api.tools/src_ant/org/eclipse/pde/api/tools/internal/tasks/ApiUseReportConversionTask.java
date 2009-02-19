@@ -172,6 +172,26 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 						}
 						break;
 					}
+					case VisibilityModifiers.FRAGMENT_PERMISSIBLE: {
+						switch(type) {
+						case IReference.T_TYPE_REFERENCE: {
+							counts.total_fragment_permissible_type_count = count;
+							lreport.counts.total_fragment_permissible_type_count += count;
+							break;
+						}
+						case IReference.T_METHOD_REFERENCE: {
+							counts.total_fragment_permissible_method_count = count;
+							lreport.counts.total_fragment_permissible_method_count += count;
+							break;
+						}
+						case IReference.T_FIELD_REFERENCE: {
+							counts.total_fragment_permissible_field_count = count;
+							lreport.counts.total_fragment_permissible_field_count += count;
+							break;
+						}
+					}
+						break;
+					}
 				}
 			}
 		}
@@ -184,14 +204,17 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 		private int total_api_field_count = 0;
 		private int total_private_field_count = 0;
 		private int total_permissable_field_count = 0;
+		private int total_fragment_permissible_field_count = 0;
 		private int total_other_field_count = 0;
 		private int total_api_method_count = 0;
 		private int total_private_method_count = 0;
 		private int total_permissable_method_count = 0;
+		private int total_fragment_permissible_method_count = 0;
 		private int total_other_method_count = 0;
 		private int total_api_type_count = 0;
 		private int total_private_type_count = 0;
 		private int total_permissable_type_count = 0;
+		private int total_fragment_permissible_type_count = 0;
 		private int total_other_type_count = 0;
 		
 		public int getTotalRefCount() {
@@ -206,7 +229,10 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 					total_private_type_count +
 					total_permissable_field_count +
 					total_permissable_method_count + 
-					total_permissable_type_count;
+					total_permissable_type_count +
+					total_fragment_permissible_field_count +
+					total_fragment_permissible_method_count +
+					total_fragment_permissible_type_count;
 		}
 		
 		public int getTotalApiRefCount() {
@@ -223,6 +249,10 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 		
 		public int getTotalPermissableRefCount() {
 			return total_permissable_field_count + total_permissable_method_count + total_permissable_type_count;
+		}
+		
+		public int getTotalFragmentPermissibleRefCount() {
+			return total_fragment_permissible_field_count + total_fragment_permissible_method_count + total_fragment_permissible_type_count;
 		}
 	}
 	
@@ -555,6 +585,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 						Integer.toString(counts.getTotalApiRefCount()),
 						Integer.toString(counts.getTotalInternalRefCount()),
 						Integer.toString(counts.getTotalPermissableRefCount()),
+						Integer.toString(counts.getTotalFragmentPermissibleRefCount()),
 						Integer.toString(counts.getTotalOtherRefCount())}));
 		}
 	}
@@ -648,6 +679,13 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 				counts.total_permissable_field_count);
 		writeOriginSummaryEntry(writer, 
 				origin, 
+				Messages.ApiUseReportConversionTask_fragment_permissible, 
+				VisibilityModifiers.FRAGMENT_PERMISSIBLE,
+				counts.total_fragment_permissible_type_count, 
+				counts.total_fragment_permissible_method_count, 
+				counts.total_fragment_permissible_field_count);
+		writeOriginSummaryEntry(writer, 
+				origin, 
 				Messages.ApiUseReportConversionTask_other, 
 				VisibilityModifiers.ALL_VISIBILITIES,
 				counts.total_other_type_count, 
@@ -687,7 +725,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 		if(count == 0) {
 			return Integer.toString(count);
 		}
-		String vname = Util.getVisibilityKind(vis);
+		String vname = VisibilityModifiers.getVisibilityName(vis);
 		File linked = new File(origin, vname+File.separator+type+"_references.html"); //$NON-NLS-1$
 		String link = extractLinkFrom(origin, linked.getAbsolutePath());
 		return MessageFormat.format(Messages.ApiUseReportConversionTask_origin_summary_count_link, 
@@ -890,6 +928,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 					Integer.toString(report.counts.getTotalApiRefCount()),
 					Integer.toString(report.counts.getTotalInternalRefCount()),
 					Integer.toString(report.counts.getTotalPermissableRefCount()),
+					Integer.toString(report.counts.getTotalFragmentPermissibleRefCount()),
 					Integer.toString(report.counts.getTotalOtherRefCount())}));
 	}
 	

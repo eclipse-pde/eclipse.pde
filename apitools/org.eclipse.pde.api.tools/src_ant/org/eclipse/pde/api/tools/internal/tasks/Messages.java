@@ -99,6 +99,8 @@ public class Messages extends NLS {
 
 	public static String ApiUseReportConversionTask_field;
 
+	public static String ApiUseReportConversionTask_fragment_permissible;
+
 	public static String ApiUseReportConversionTask_internal;
 
 	public static String ApiUseReportConversionTask_internal_permissable;

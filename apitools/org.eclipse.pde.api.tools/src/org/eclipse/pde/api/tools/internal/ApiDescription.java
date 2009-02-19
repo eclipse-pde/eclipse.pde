@@ -136,8 +136,8 @@ public class ApiDescription implements IApiDescription {
 			}
 			StringBuffer buffer = new StringBuffer();
 			buffer.append(type == null ? "Unknown" : type).append(" Node: ").append(name == null ? "Unknown Name" : name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			buffer.append("\nVisibility: ").append(Util.getVisibilityKind(visibility)); //$NON-NLS-1$
-			buffer.append("\nRestrictions: ").append(Util.getRestrictionKind(restrictions)); //$NON-NLS-1$
+			buffer.append("\nVisibility: ").append(VisibilityModifiers.getVisibilityName(visibility)); //$NON-NLS-1$
+			buffer.append("\nRestrictions: ").append(RestrictionModifiers.getRestrictionText(restrictions)); //$NON-NLS-1$
 			if(parent != null) {
 				String pname = parent.element.getElementType() == IElementDescriptor.PACKAGE ? 
 						((IPackageDescriptor)parent.element).getName() : ((IMemberDescriptor)parent.element).getName();

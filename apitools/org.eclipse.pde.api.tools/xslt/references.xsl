@@ -9,52 +9,46 @@
 <xsl:output method="html" encoding="iso-8859-1" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 <xsl:template match="/">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>Reference Details</title>
-<style type="text/css">
-	.main{		font-family:Arial, Helvetica, sans-serif;}
-	.main h3 {	font-family:Arial, Helvetica, sans-serif;
-				background-color:#FFFFFF;
-				font-size:14px;
-				margin:0.1em;}
-	.main h4 { 	background-color:#CCCCCC;
-				margin:0.15em;}
-	a.typeslnk{	font-family:Arial, Helvetica, sans-serif;
-			   	text-decoration:none;
-			   	color:#000000;
-			   	margin-left:0.25em;}
-	a.typeslnk:hover{text-decoration:underline;}
-	a.kindslnk{	font-family:Arial, Helvetica, sans-serif;
-			  	text-decoration:none;
-			   	margin-left:0.25em;}
-	.types{	display:none;
-			margin-bottom:0.25em;
-			margin-top:0.25em;
-			margin-right:0.25em;
-		   	margin-left:0.75em;} 
-</style>
-<script type="text/javascript">
-	function expand(loc){
-	   if(document.getElementById){
-		  var foc = loc.firstChild;
-		  foc = loc.firstChild.innerHTML ? loc.firstChild : loc.firstChild.nextSibling;
-		  foc = loc.parentNode.nextSibling.style ? loc.parentNode.nextSibling : loc.parentNode.nextSibling.nextSibling;
-		  foc.style.display = foc.style.display == 'block' ? 'none' : 'block';
-		}
-	}  
-	if(!document.getElementById)
-	   document.write('<style type="text/css"><!--\n'+
-		  '.types{display:block;\n'+
-		  '.kinds{display:block;}\n'+
-		  '//--></style>');
-</script>
-<noscript>
-<style type="text/css">
-	.types{display:block;}
-	.kinds{display:block;}
-</style>
-</noscript>
-</head>
+	<head>
+	<title>Reference Details</title>
+		<style type="text/css">
+			.main{		font-family:Arial, Helvetica, sans-serif;}
+			.main h3 {	font-family:Arial, Helvetica, sans-serif;
+						background-color:#FFFFFF;
+						font-size:14px;
+						margin:0.1em;}
+			.main h4 { 	background-color:#CCCCCC;
+						margin:0.15em;}
+			a.typeslnk{	font-family:Arial, Helvetica, sans-serif;
+					   	text-decoration:none;
+					   	margin-left:0.25em;}
+			a.typeslnk:hover{text-decoration:underline;}
+			a.kindslnk{	font-family:Arial, Helvetica, sans-serif;
+					  	text-decoration:none;
+					   	margin-left:0.25em;}
+			.types{	display:none;
+					margin-bottom:0.25em;
+					margin-top:0.25em;
+					margin-right:0.25em;
+				   	margin-left:0.75em;} 
+		</style>
+		<script type="text/javascript">
+			function expand(loc){
+			   if(document.getElementById){
+				  var foc = loc.firstChild;
+				  foc = loc.firstChild.innerHTML ? loc.firstChild : loc.firstChild.nextSibling;
+				  foc = loc.parentNode.nextSibling.style ? loc.parentNode.nextSibling : loc.parentNode.nextSibling.nextSibling;
+				  foc.style.display = foc.style.display == 'block' ? 'none' : 'block';
+				}
+			}  
+		</script>
+		<noscript>
+			<style type="text/css">
+				.types{display:block;}
+				.kinds{display:block;}
+			</style>
+		</noscript>
+	</head>
 	<body>
 		<xsl:variable name="originbundle" select="references/@origin"/>
 		<h3>

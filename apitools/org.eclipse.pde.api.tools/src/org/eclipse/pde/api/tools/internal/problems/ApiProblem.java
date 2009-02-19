@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.internal.problems;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -308,13 +309,13 @@ public class ApiProblem implements IApiProblem {
 		buffer.append("\tseverity: "); //$NON-NLS-1$
 		buffer.append(Util.getSeverity(getSeverity())).append("\n"); //$NON-NLS-1$
 		buffer.append("\tcategory: "); //$NON-NLS-1$
-		buffer.append(Util.getProblemCategory(getCategory())).append("\n"); //$NON-NLS-1$
+		buffer.append(ApiProblem.getProblemCategory(getCategory())).append("\n"); //$NON-NLS-1$
 		buffer.append("\telement kind: "); //$NON-NLS-1$
-		buffer.append(Util.getProblemElementKind(getCategory(), getElementKind())).append("\n"); //$NON-NLS-1$
+		buffer.append(ApiProblem.getProblemElementKind(getCategory(), getElementKind())).append("\n"); //$NON-NLS-1$
 		buffer.append("\tkind: "); //$NON-NLS-1$
-		buffer.append(Util.getProblemKind(getCategory(), getKind())).append("\n"); //$NON-NLS-1$
+		buffer.append(ApiProblem.getProblemKind(getCategory(), getKind())).append("\n"); //$NON-NLS-1$
 		buffer.append("\tflags: "); //$NON-NLS-1$
-		buffer.append(Util.getProblemFlagsName(getCategory(), getFlags())).append("\n"); //$NON-NLS-1$
+		buffer.append(ApiProblem.getProblemFlagsName(getCategory(), getFlags())).append("\n"); //$NON-NLS-1$
 		buffer.append("\tmessage id: "); //$NON-NLS-1$
 		buffer.append(getMessageid());
 		buffer.append("\n\tmessage:"); //$NON-NLS-1$
@@ -334,5 +335,245 @@ public class ApiProblem implements IApiProblem {
 
 	public String getTypeName() {
 		return this.fTypeName;
+	}
+
+	/**
+	 * Returns the string representation of an element descriptor type or <code>null</code>
+	 * if the kind is unknown
+	 * @param kind
+	 * @return the string of the kind or <code>null</code>
+	 */
+	public static String getDescriptorKind(int kind) {
+		switch(kind) {
+			case IElementDescriptor.PACKAGE: {
+				return "PACKAGE";	 //$NON-NLS-1$
+			}
+			case IElementDescriptor.FIELD: {
+				return "FIELD"; //$NON-NLS-1$
+			}
+			case IElementDescriptor.METHOD: {
+				return "METHOD"; //$NON-NLS-1$
+			}
+			case IElementDescriptor.TYPE: {
+				return "REFERENCE_TYPE"; //$NON-NLS-1$
+			}
+			case IElementDescriptor.RESOURCE: {
+				return "RESOURCE"; //$NON-NLS-1$
+			}
+		}
+		return "UNKOWN_ELEMENT_KIND"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the string representation of the kind of since tab
+	 * api problem
+	 * @param kind
+	 * @return the string for the since tag api problem kind
+	 */
+	public static String getTagsProblemKindName(int kind) {
+		switch(kind) {
+			case IApiProblem.SINCE_TAG_INVALID: return "INVALID_SINCE_TAGS"; //$NON-NLS-1$
+			case IApiProblem.SINCE_TAG_MALFORMED: return "MALFORMED_SINCE_TAGS"; //$NON-NLS-1$
+			case IApiProblem.SINCE_TAG_MISSING: return "MISSING_SINCE_TAGS"; //$NON-NLS-1$
+		}
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the string representation of the kind of usage problem for 
+	 * an {@link IApiProblem} kind
+	 * @param kind
+	 * @return the string for the usage api problem kind
+	 */
+	public static String getUsageProblemKindName(int kind) {
+		switch(kind) {
+			case IApiProblem.ILLEGAL_EXTEND: return "ILLEGAL_EXTEND"; //$NON-NLS-1$
+			case IApiProblem.ILLEGAL_IMPLEMENT: return "ILLEGAL_IMPLEMENT"; //$NON-NLS-1$
+			case IApiProblem.ILLEGAL_INSTANTIATE: return "ILLEGAL_INSTANTIATE"; //$NON-NLS-1$
+			case IApiProblem.ILLEGAL_REFERENCE: return "ILLEGAL_REFERENCE"; //$NON-NLS-1$
+			case IApiProblem.ILLEGAL_OVERRIDE: return "ILLEGAL_OVERRIDE"; //$NON-NLS-1$
+			case IApiProblem.API_LEAK: return "API_LEAK"; //$NON-NLS-1$
+			case IApiProblem.UNSUPPORTED_TAG_USE: return "UNSUPPORTED_TAG_USE"; //$NON-NLS-1$
+			case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES: return "INVALID_REFERENCE_IN_SYSTEM_LIBRARIES"; //$NON-NLS-1$
+			case IApiProblem.UNUSED_PROBLEM_FILTERS: return "UNUSED_PROBLEM_FILTERS"; //$NON-NLS-1$
+		}
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the string representation of the version problem kind.
+	 * @param kind
+	 * @return the string of the version API problem kind
+	 */
+	public static String getVersionProblemKindName(int kind) {
+		switch(kind) {
+			case IApiProblem.MINOR_VERSION_CHANGE: return "MINOR_VERSION_CHANGE"; //$NON-NLS-1$
+			case IApiProblem.MAJOR_VERSION_CHANGE: return "MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
+			case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE: return "MAJOR_VERSION_CHANGE_NO_BREAKAGE"; //$NON-NLS-1$
+			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API: return "MINOR_VERSION_CHANGE_NO_NEW_API"; //$NON-NLS-1$
+			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE: return "REEXPORTED_MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
+			case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE: return "REEXPORTED_MINOR_VERSION_CHANGE"; //$NON-NLS-1$
+		}
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the string representation of the API profile problem kind
+	 * @param kind
+	 * @return the string of the API profile problem kind
+	 */
+	public static String getApiComponentResolutionProblemKindName(int kind) {
+		switch(kind) {
+			case IApiProblem.API_COMPONENT_RESOLUTION: {
+				return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
+			}
+		}
+		return "UNKOWN_KIND"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the string representation of the API profile problem kind
+	 * @param kind
+	 * @return the string of the API profile problem kind
+	 */
+	public static String getApiBaselineProblemKindName(int kind) {
+		switch(kind) {
+			case IApiProblem.API_PROFILE_MISSING: return "API_PROFILE_MISSING"; //$NON-NLS-1$
+		}
+		return "UNKOWN_KIND"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the string representation of the kind of an
+	 * {@link IApiProblem}, given its category
+	 * @param category
+	 * @param kind
+	 * @return the string of the {@link IApiProblem} kind
+	 */
+	public static String getProblemKind(int category, int kind) {
+		switch(category) {
+			case IApiProblem.CATEGORY_COMPATIBILITY: {
+				return Util.getDeltaKindName(kind);
+			}
+			case IApiProblem.CATEGORY_SINCETAGS: {
+				return ApiProblem.getTagsProblemKindName(kind);
+			}
+			case IApiProblem.CATEGORY_USAGE: {
+				return ApiProblem.getUsageProblemKindName(kind);
+			}
+			case IApiProblem.CATEGORY_VERSION: {
+				return ApiProblem.getVersionProblemKindName(kind);
+			}
+			case IApiProblem.CATEGORY_API_PROFILE: {
+				return ApiProblem.getApiBaselineProblemKindName(kind);
+			}
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
+				return ApiProblem.getApiComponentResolutionProblemKindName(kind);
+			}
+		}
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Return the string representation of the flags for a problem
+	 * @param category
+	 * @param flags
+	 * @return the string for the problem flags
+	 */
+	public static String getProblemFlagsName(int category, int flags) {
+		switch(category) {
+			case IApiProblem.CATEGORY_COMPATIBILITY:  {
+				return Util.getDeltaFlagsName(flags);
+			}
+			case IApiProblem.CATEGORY_SINCETAGS:
+			case IApiProblem.CATEGORY_USAGE:
+			case IApiProblem.CATEGORY_VERSION:
+			case IApiProblem.CATEGORY_API_PROFILE:
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
+				switch(flags) {
+					case IApiProblem.LEAK_EXTENDS: {
+						return "LEAK_EXTENDS"; //$NON-NLS-1$
+					}
+					case IApiProblem.LEAK_FIELD: {
+						return "LEAK_FIELD"; //$NON-NLS-1$
+					}
+					case IApiProblem.LEAK_IMPLEMENTS: {
+						return "LEAK_IMPLEMENTS"; //$NON-NLS-1$
+					}
+					case IApiProblem.LEAK_METHOD_PARAMETER: {
+						return "LEAK_METHOD_PARAMETER"; //$NON-NLS-1$
+					}
+					case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: {
+						return "LEAK_CONSTRUCTOR_PARAMETER"; //$NON-NLS-1$
+					}
+					case IApiProblem.LEAK_RETURN_TYPE: {
+						return "LEAK_RETURN_TYPE"; //$NON-NLS-1$
+					}
+					case IApiProblem.CONSTRUCTOR_METHOD: {
+						return "CONSTRUCTOR_METHOD"; //$NON-NLS-1$
+					}
+					case IApiProblem.NO_FLAGS: {
+						return "NO_FLAGS"; //$NON-NLS-1$
+					}
+					case IApiProblem.INDIRECT_REFERENCE: {
+						return "INDIRECT_REFERENCE"; //$NON-NLS-1$
+					}
+					case IApiProblem.METHOD: {
+						return "METHOD"; //$NON-NLS-1$
+					}
+					case IApiProblem.FIELD: {
+						return "FIELD"; //$NON-NLS-1$
+					}
+				}
+			}
+		}
+		return "UNKNOWN_FLAG"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the string representation of the element kind of an
+	 * {@link IApiProblem}, given its category
+	 * @param category
+	 * @param kind
+	 * @return the string of the {@link IApiProblem} element kind 
+	 */
+	public static String getProblemElementKind(int category, int kind) {
+		switch(category) {
+			case IApiProblem.CATEGORY_COMPATIBILITY:
+			case IApiProblem.CATEGORY_SINCETAGS: {
+				return Util.getDeltaElementType(kind);
+			}
+			case IApiProblem.CATEGORY_USAGE:
+			case IApiProblem.CATEGORY_VERSION:
+			case IApiProblem.CATEGORY_API_PROFILE:
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
+				return ApiProblem.getDescriptorKind(kind);
+			}
+		}
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns a string representation of the category of an api problem
+	 * @param category
+	 * @return the string of the api problem category
+	 */
+	public static String getProblemCategory(int category) {
+		switch(category) {
+			case IApiProblem.CATEGORY_COMPATIBILITY :
+				return "COMPATIBILITY"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_SINCETAGS :
+				return "SINCETAGS"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_USAGE :
+				return "USAGE"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_VERSION :
+				return "VERSION"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_API_PROFILE :
+				return "API_PROFILE"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION :
+				return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
+			default :
+				return "UNKNOWN_CATEGORY"; //$NON-NLS-1$
+		}
 	}
 }

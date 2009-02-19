@@ -79,7 +79,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 		// run the comparison
 		// create baseline for the reference
 		IApiBaseline referenceBaseline = createBaseline(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
-		IApiBaseline currentBaseline = createBaseline(CURRENT_PROFILE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
+		IApiBaseline currentBaseline = createBaseline(CURRENT_BASELINE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
 		
 		IDelta delta = null;
 		if (this.debug) {

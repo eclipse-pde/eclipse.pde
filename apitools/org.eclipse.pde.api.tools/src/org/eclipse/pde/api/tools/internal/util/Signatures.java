@@ -19,8 +19,13 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.ArrayType;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedType;
@@ -335,7 +340,7 @@ public final class Signatures {
 				}
 			}
 			else {
-				Util.collectSyntheticParam(node, rparams);
+				Signatures.collectSyntheticParam(node, rparams);
 				return Signature.createMethodSignature((String[]) rparams.toArray(new String[rparams.size()]), Signature.SIG_VOID);
 			}
 		}
@@ -495,5 +500,79 @@ public final class Signatures {
 	public static String getPackageName(String typeName) {
 		int index = typeName.lastIndexOf('.');
 		return index == -1 ? Util.DEFAULT_PACKAGE_NAME : typeName.substring(0, index);
+	}
+
+	/**
+	 * Collects the synthetic parameter of the fully qualified name of the enclosing context for a constructor of an inner type 
+	 * @param method the constructor declaration
+	 * @param rparams the listing of parameters to add to
+	 */
+	static void collectSyntheticParam(final MethodDeclaration method, List rparams) {
+		Assert.isNotNull(method);
+		if(Signatures.isInTopLevelType(method)) {
+			return;
+		}
+		ASTNode parent = method.getParent();
+		AbstractTypeDeclaration type = (AbstractTypeDeclaration) parent;
+		if (Signatures.isStatic(type)) {
+			// if the type is static it doesn't need the enclosing type
+			return;
+		}
+		StringBuffer name = new StringBuffer();
+		while(parent != null) {
+			parent = parent.getParent();
+			if(parent instanceof AbstractTypeDeclaration) {
+				type = (AbstractTypeDeclaration) parent;
+				name.insert(0, type.getName().getFullyQualifiedName());
+				if(type.isMemberTypeDeclaration()) {
+					name.insert(0, '$');
+				}
+				continue;
+			}
+			if(parent instanceof CompilationUnit) {
+				CompilationUnit cunit = (CompilationUnit) parent;
+				PackageDeclaration pdec = cunit.getPackage();
+				if(pdec != null) {
+					name.insert(0, '.');
+					name.insert(0, cunit.getPackage().getName().getFullyQualifiedName());
+				}
+			}
+		}
+		name.insert(0, "L"); //$NON-NLS-1$
+		name.append(';');
+		if(name.length() > 2) {
+			rparams.add(0, name.toString());
+		}
+	}
+
+	/**
+	 * Returns if the {@link AbstractTypeDeclaration} is static or not (has the static
+	 * keyword or not)
+	 * 
+	 * @param typeDeclaration
+	 * @return true if it is static, false otherwise
+	 */
+	static boolean isStatic(AbstractTypeDeclaration typeDeclaration) {
+		List modifiers = typeDeclaration.modifiers();
+		if (modifiers.isEmpty()) return false;
+		for (Iterator iterator = modifiers.iterator(); iterator.hasNext(); ) {
+			IExtendedModifier modifier = (IExtendedModifier) iterator.next();
+			if (!modifier.isModifier()) {
+				continue;
+			}
+			Modifier modifier2 = (Modifier) modifier;
+			if (modifier2.isStatic()) return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Determines if the given {@link MethodDeclaration} is present in a top level type
+	 * @param method the given method
+	 * @return true if the given {@link MethodDeclaration} is present in a top level type, false otherwise
+	 */
+	static boolean isInTopLevelType(final MethodDeclaration method) {
+		AbstractTypeDeclaration type = (AbstractTypeDeclaration) method.getParent();
+		return type != null && type.isPackageMemberTypeDeclaration();
 	}
 }

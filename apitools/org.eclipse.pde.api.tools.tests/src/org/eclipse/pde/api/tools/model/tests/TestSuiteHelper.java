@@ -208,6 +208,9 @@ public class TestSuiteHelper {
 			public IElementDescriptor getHandle() throws CoreException {
 				return null;
 			}
+			public IApiComponent getHost() throws CoreException {
+				return null;
+			}
 		};
 	}
 	

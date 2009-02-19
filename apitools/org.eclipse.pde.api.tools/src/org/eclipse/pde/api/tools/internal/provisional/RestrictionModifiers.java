@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
+
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Class containing constants and utility methods for restriction modifiers
@@ -105,5 +107,62 @@ public final class RestrictionModifiers {
 	 */
 	public static final boolean isUnrestricted(int modifiers) {
 		return modifiers == NO_RESTRICTIONS;
+	}
+
+	/**
+	 * Returns the string representation of the specified restriction(s) or <code>UNKNOWN_KIND</code>
+	 * if the kind is unknown.
+	 * 
+	 * @param restrictions the restrictions to get the display string for
+	 * @return the string representation for the given restrictions or <code>UNKNOWN_KIND</code>
+	 * @since 1.0.1
+	 */
+	public static String getRestrictionText(int restrictions) {
+		StringBuffer buffer = new StringBuffer();
+		if(restrictions == NO_RESTRICTIONS) {
+			return "NO_RESTRICTIONS"; //$NON-NLS-1$
+		}
+		if(restrictions == ALL_RESTRICTIONS) {
+			buffer.append("ALL_RESTRICTIONS"); //$NON-NLS-1$
+		}
+		else {
+			if((restrictions & NO_EXTEND) > 0) {
+				buffer.append("NO_EXTEND"); //$NON-NLS-1$
+			}
+			if((restrictions & NO_IMPLEMENT) > 0) {
+				if(buffer.length() > 0) {
+					buffer.append(" | "); //$NON-NLS-1$
+				}
+				buffer.append("NO_IMPLEMENT"); //$NON-NLS-1$
+			}
+			if((restrictions & NO_INSTANTIATE) > 0) {
+				if(buffer.length() > 0) {
+					buffer.append(" | "); //$NON-NLS-1$
+				}
+				buffer.append("NO_INSTANTIATE"); //$NON-NLS-1$
+			}
+			if((restrictions & NO_REFERENCE) > 0) {
+				if(buffer.length() > 0) {
+					buffer.append(" | "); //$NON-NLS-1$
+				}
+				buffer.append("NO_REFERENCE"); //$NON-NLS-1$
+			}
+			if((restrictions & NO_RESTRICTIONS) > 0) {
+				if(buffer.length() > 0) {
+					buffer.append(" | "); //$NON-NLS-1$
+				}
+				buffer.append("NO_RESTRICTIONS"); //$NON-NLS-1$
+			}
+			if((restrictions & NO_OVERRIDE) > 0) {
+				if(buffer.length() > 0) {
+					buffer.append(" | "); //$NON-NLS-1$
+				}
+				buffer.append("NO_OVERRIDE"); //$NON-NLS-1$
+			}
+		}
+		if(buffer.length() == 0) {
+			return Util.UNKNOWN_KIND;
+		}
+		return buffer.toString();
 	}
 }

@@ -54,7 +54,7 @@ public abstract class CommonUtilsTask extends Task {
 	protected static final String REGULAR_EXPRESSION_START = "R:"; //$NON-NLS-1$
 
 	protected static final String CURRENT = "currentBaseline"; //$NON-NLS-1$
-	protected static final String CURRENT_PROFILE_NAME = "current_baseline"; //$NON-NLS-1$
+	protected static final String CURRENT_BASELINE_NAME = "current_baseline"; //$NON-NLS-1$
 	protected static final String REFERENCE = "referenceBaseline"; //$NON-NLS-1$
 	protected static final String REFERENCE_PROFILE_NAME = "reference_baseline"; //$NON-NLS-1$
 
@@ -322,11 +322,13 @@ public abstract class CommonUtilsTask extends Task {
 					String line = null;
 					try {
 						while ((line = reader.readLine()) != null) {
-							if (line.startsWith("#")) { //$NON-NLS-1$
+							if (line.startsWith("#") || line.length() == 0) { //$NON-NLS-1$
 								continue; 
 							}
-							if(baseline != null && line.startsWith(REGULAR_EXPRESSION_START)) {
-								collectRegexIds(line, list, baseline.getApiComponents());
+							if(line.startsWith(REGULAR_EXPRESSION_START)) {
+								if(baseline != null) {
+									collectRegexIds(line, list, baseline.getApiComponents());
+								}
 							}
 							else {
 								list.add(line);

@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.internal.search;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -86,13 +85,10 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	 * </ol>
 	 * @param excludelist an array of component ids that should be excluded from the search
 	 */
-	public ApiUseSearchRequestor(Set/*<String>*/ elementnames, IApiElement[] scope, int searchkinds, String[] excludelist) {
+	public ApiUseSearchRequestor(Set/*<String>*/ elementnames, IApiElement[] scope, int searchkinds, Set excludelist) {
 		fSearchMask = searchkinds;
 		fComponentIds = elementnames;
-		fExcludeList = new HashSet(excludelist.length);
-		for (int i = 0; i < excludelist.length; i++) {
-			fExcludeList.add(excludelist[i]);
-		}
+		fExcludeList = excludelist;
 		prepareScope(scope);
 	}
 	
@@ -173,6 +169,7 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 					if(component.isSystemComponent()) {
 						continue;
 					}
+					comps.add(component);
 					components = ((ApiBaseline)component.getBaseline()).getVisibleDependentComponents(new IApiComponent[] {component});
 					for (int j = 0; j < components.length; j++) {
 						if(acceptComponent0(components[j])) {

@@ -218,8 +218,11 @@ public class ApiUseTask extends UseTask {
 		writeDebugHeader();
 		cleanReportLocation();
 		
-		IApiBaseline baseline = getBaseline();
-		IApiBaseline scope = getScope();
+		IApiBaseline baseline = getBaseline(CURRENT_BASELINE_NAME, this.currentBaselineLocation);
+		IApiBaseline scope = getBaseline(SCOPE_BASELINE_NAME, this.scopeLocation);
+		if(scope == null) {
+			scope = baseline;
+		}
 		initializeExcludeSet(scope);
 		try {
 			doSearch(baseline, scope, new XMLApiSearchReporter(this.reportLocation));
@@ -263,7 +266,7 @@ public class ApiUseTask extends UseTask {
 			doc.appendChild(root);
 			Element comp = null;
 			SkippedComponent component = null;
-			for(Iterator iter = notsearched.iterator(); iter.hasNext();) {
+			for(Iterator iter = this.notsearched.iterator(); iter.hasNext();) {
 				component = (SkippedComponent) iter.next();
 				comp = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getComponentId());

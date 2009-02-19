@@ -37,7 +37,7 @@ public class UseTask extends CommonUtilsTask {
 	protected static final String NO_API_DESCRIPTION = "no_description"; //$NON-NLS-1$
 	protected static final String EXCLUDED = "excluded"; //$NON-NLS-1$
 	protected static final String RESOLUTION_ERRORS = "resolution_errors"; //$NON-NLS-1$
-	protected static final String SCOPE = "scope_baseline"; //$NON-NLS-1$
+	protected static final String SCOPE_BASELINE_NAME = "scope_baseline"; //$NON-NLS-1$
 	
 	/**
 	 * The listing of component names to exclude from scanning
@@ -85,20 +85,22 @@ public class UseTask extends CommonUtilsTask {
 	 * @throws CoreException
 	 */
 	protected IApiElement[] getScope(IApiBaseline baseline) throws CoreException {
-		IApiComponent[] components = baseline.getApiComponents();
 		TreeSet scope = new TreeSet(CommonUtilsTask.componentsorter);
-		boolean isapibundle = false;
-		boolean excluded = false;
-		boolean resolveerrors = false;
-		for(int i = 0; i < components.length; i++) {
-			isapibundle = Util.isApiToolsComponent(components[i]);
-			excluded = this.excludeset.contains(components[i].getId());
-			resolveerrors = components[i].getErrors() != null;
-			if((isapibundle || this.includenonapi) && !excluded && !components[i].isSystemComponent() && (!resolveerrors || this.proceedonerror)) {
-				scope.add(components[i]);
-			}
-			else {
-				notsearched.add(new SkippedComponent(components[i].getId(), !isapibundle, excluded, resolveerrors));
+		if(baseline != null) {
+			IApiComponent[] components = baseline.getApiComponents();
+			boolean isapibundle = false;
+			boolean excluded = false;
+			boolean resolveerrors = false;
+			for(int i = 0; i < components.length; i++) {
+				isapibundle = Util.isApiToolsComponent(components[i]);
+				excluded = this.excludeset.contains(components[i].getId());
+				resolveerrors = components[i].getErrors() != null;
+				if((isapibundle || this.includenonapi) && !excluded && !components[i].isSystemComponent() && (!resolveerrors || this.proceedonerror)) {
+					scope.add(components[i]);
+				}
+				else {
+					notsearched.add(new SkippedComponent(components[i].getId(), !isapibundle, excluded, resolveerrors));
+				}
 			}
 		}
 		return (IApiElement[]) scope.toArray(new IApiElement[scope.size()]);
@@ -160,19 +162,27 @@ public class UseTask extends CommonUtilsTask {
 	}
 	
 	/**
-	 * Returns the {@link IApiBaseline} to use for the search.
-	 * Debugging information is written out if the debug flag is set.
+	 * Prepares and creates and new baseline with the given name from the given location. The
+	 * returned {@link IApiBaseline} is not checked for resolution errors or consistency. If <code>null</code>
+	 * is passed in as a location <code>null</code> is returned.
 	 * 
-	 * @return the target baseline
+	 * @param name the name to give to the baseline
+	 * @param location the location the baseline should be prepared from. If <code>null</code> is passed in, <code>null</code>
+	 * is returned
+	 * @return a new {@link IApiBaseline} with the given name from the given location or <code>null</code> if the given location
+	 * is <code>null</code>
 	 */
-	protected IApiBaseline getBaseline() {
+	protected IApiBaseline getBaseline(String name, String location) {
+		if(location == null) {
+			return null;
+		}
 		//extract the baseline to examine
 		long time = 0;
 		if (this.debug) {
 			time = System.currentTimeMillis();
-			System.out.println("Preparing target baseline installation..."); //$NON-NLS-1$
+			System.out.println("Preparing '"+name+"' baseline installation..."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		File baselineInstallDir = extractSDK(CURRENT, this.currentBaselineLocation);
+		File installdir = extractSDK(name, location);
 		if (this.debug) {
 			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
@@ -180,51 +190,13 @@ public class UseTask extends CommonUtilsTask {
 		//create the baseline to examine
 		if(this.debug) {
 			time = System.currentTimeMillis();
-			System.out.println("Creating target baseline..."); //$NON-NLS-1$
+			System.out.println("Creating '"+name+"' baseline..."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		IApiBaseline baseline = createBaseline(CURRENT_PROFILE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
+		IApiBaseline baseline = createBaseline(name, getInstallDir(installdir), this.eeFileLocation);
 		if (this.debug) {
 			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-			time = System.currentTimeMillis();
 		}
 		return baseline;
-	}
-	
-	/**
-	 * Returns the search scope {@link IApiBaseline} to use for the search
-	 * Debugging information is written out if the debug flag is set.
-	 * 
-	 * @return the scope baseline
-	 */
-	protected IApiBaseline getScope() {
-		//extract the scope to examine
-		File scopeInstallDir = null;
-		long time = 0;
-		if(this.scopeLocation != null) {
-			if (this.debug) {
-				time = System.currentTimeMillis();
-				System.out.println("Preparing scope baseline installation..."); //$NON-NLS-1$
-			}
-			scopeInstallDir = extractSDK(SCOPE, this.scopeLocation);
-			if (this.debug) {
-				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				time = System.currentTimeMillis();
-			}
-		}
-		//create the scope baseline
-		IApiBaseline scopebaseline = null;
-		if(scopeInstallDir != null) {
-			if(this.debug) {
-				time = System.currentTimeMillis();
-				System.out.println("Creating scope baseline..."); //$NON-NLS-1$
-			}
-			scopebaseline = createBaseline("scope_baseline", getInstallDir(scopeInstallDir), this.eeFileLocation); //$NON-NLS-1$
-			if (this.debug) {
-				System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				time = System.currentTimeMillis();
-			}
-		}
-		return scopebaseline;
 	}
 	
 	/**
@@ -238,9 +210,9 @@ public class UseTask extends CommonUtilsTask {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		IApiSearchRequestor requestor = new ApiUseSearchRequestor(
 				getBaselineIds(baseline),
-				getScope(scope == null ? baseline : scope), 
+				getScope(scope), 
 				getSearchFlags(), 
-				(String[]) this.excludeset.toArray(new String[this.excludeset.size()]));
+				this.excludeset);
 		ApiSearchEngine.setDebug(this.debug);
 		engine.search(baseline, requestor, reporter, null);
 	}
@@ -251,12 +223,20 @@ public class UseTask extends CommonUtilsTask {
 	 */
 	protected void initializeExcludeSet(IApiBaseline baseline) {
 		//initialize the exclude list
+		long start = 0;
+		if(this.debug) {
+			start = System.currentTimeMillis();
+			System.out.println("Preparing exclude set..."); //$NON-NLS-1$
+		}
 		this.excludeset = CommonUtilsTask.initializeRegexExcludeList(this.excludeListLocation, baseline);
 		this.notsearched = new TreeSet(componentsorter);
 		if(this.excludeset != null) {
 			for(Iterator iter = this.excludeset.iterator(); iter.hasNext();) {
 				this.notsearched.add(new SkippedComponent((String) iter.next(), false, true, false));
 			}
+		}
+		if(this.debug) {
+			System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

@@ -17,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class SearchMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.search.searchmessages"; //$NON-NLS-1$
+	public static String ApiSearchEngine_anonymous_type;
 	public static String ApiSearchEngine_api;
 	public static String ApiSearchEngine_api_internal;
 	public static String ApiSearchEngine_extracting_refs_from;

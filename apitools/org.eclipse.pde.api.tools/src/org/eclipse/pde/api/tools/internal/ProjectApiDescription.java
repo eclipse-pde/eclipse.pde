@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,8 +156,8 @@ public class ProjectApiDescription extends ApiDescription {
 			StringBuffer buffer = new StringBuffer();
 			String name = ((IPackageDescriptor)element).getName();
 			buffer.append("Package Node: ").append(name.equals("") ? "<default package>" : name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			buffer.append("\nVisibility: ").append(Util.getVisibilityKind(visibility)); //$NON-NLS-1$
-			buffer.append("\nRestrictions: ").append(Util.getRestrictionKind(restrictions)); //$NON-NLS-1$
+			buffer.append("\nVisibility: ").append(VisibilityModifiers.getVisibilityName(visibility)); //$NON-NLS-1$
+			buffer.append("\nRestrictions: ").append(RestrictionModifiers.getRestrictionText(restrictions)); //$NON-NLS-1$
 			if(fFragments != null) {
 				buffer.append("\nFragments:"); //$NON-NLS-1$
 				IPackageFragment fragment = null;
@@ -269,8 +269,8 @@ public class ProjectApiDescription extends ApiDescription {
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Type Node: ").append(fType.getFullyQualifiedName()); //$NON-NLS-1$
-			buffer.append("\nVisibility: ").append(Util.getVisibilityKind(visibility)); //$NON-NLS-1$
-			buffer.append("\nRestrictions: ").append(Util.getRestrictionKind(restrictions)); //$NON-NLS-1$
+			buffer.append("\nVisibility: ").append(VisibilityModifiers.getVisibilityName(visibility)); //$NON-NLS-1$
+			buffer.append("\nRestrictions: ").append(RestrictionModifiers.getRestrictionText(restrictions)); //$NON-NLS-1$
 			if(parent != null) {
 				String pname = parent.element.getElementType() == IElementDescriptor.PACKAGE ?
 						((IPackageDescriptor)parent.element).getName() : ((IReferenceTypeDescriptor)parent.element).getQualifiedName();

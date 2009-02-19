@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
+
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Class containing constants and utility methods for visibility modifiers
@@ -39,6 +41,14 @@ public final class VisibilityModifiers {
 	public static final int PRIVATE_PERMISSIBLE = 0x0008;
 	
 	/**
+	 * Visibility constant indicating an element has host-fragment level of visibility.
+	 *  i.e. fragments have {@link #PRIVATE_PERMISSIBLE}-like access to the internals of their host.
+	 *  
+	 *  @since 1.0.1
+	 */
+	public static final int FRAGMENT_PERMISSIBLE = 0x0016;
+	
+	/**
 	 * Bit mask of all visibilities.
 	 */
 	public static final int ALL_VISIBILITIES = 0xFFFF;
@@ -51,6 +61,7 @@ public final class VisibilityModifiers {
 	
 	/**
 	 * Returns if the modifier is 'API'
+	 * 
 	 * @param modifiers the modifiers to resolve
 	 * @return if the modifier is 'API'
 	 */
@@ -60,6 +71,7 @@ public final class VisibilityModifiers {
 	
 	/**
 	 * Returns if the modifier is 'SPI'
+	 * 
 	 * @param modifiers the modifiers to resolve
 	 * @return if the modifier is 'SPI'
 	 */
@@ -69,6 +81,7 @@ public final class VisibilityModifiers {
 	
 	/**
 	 * Returns if the modifier is 'Private'
+	 * 
 	 * @param modifiers the modifiers to resolve
 	 * @return if the modifier is 'Private'
 	 */
@@ -78,10 +91,57 @@ public final class VisibilityModifiers {
 	
 	/**
 	 * Returns if the modifier is 'Private Permissible'
+	 * 
 	 * @param modifiers the modifiers to resolve
 	 * @return if the modifier is 'Private Permissible'
 	 */
 	public static final boolean isPermissiblePrivate(int modifiers) {
 		return (modifiers & PRIVATE_PERMISSIBLE) > 0;
 	}	
+	
+	/**
+	 * Returns if the modifiers is 'Fragment Permissible'
+	 * 
+	 * @param modifiers the modifiers to resolve
+	 * @return if the modifiers is 'Fragment Permissible'
+	 * @since 1.0.1
+	 */
+	public static final boolean isFragmentPermissible(int modifiers) {
+		return (modifiers & FRAGMENT_PERMISSIBLE) > 0;
+	}
+
+	/**
+	 * Returns the string representation of the specified visibility modifier or <code>UNKNOWN_VISIBILITY</code>
+	 * if the modifier is unknown.
+	 * 
+	 * @param visibility
+	 * @return the string representation of the visibility or <code>UNKNOWN_VISIBILITY</code>
+	 * @since 1.0.1
+	 */
+	public static String getVisibilityName(int visibility) {
+		switch(visibility) {
+			case ALL_VISIBILITIES: {
+				return "ALL_VISIBILITIES"; //$NON-NLS-1$
+			}
+			case API: {
+				return "API"; //$NON-NLS-1$
+			}
+			case PRIVATE: {
+				return "PRIVATE"; //$NON-NLS-1$
+			}
+			case PRIVATE_PERMISSIBLE: {
+				return "PRIVATE_PERMISSIBLE"; //$NON-NLS-1$
+			}
+			case FRAGMENT_PERMISSIBLE: {
+				return "RAGMENT_PERMISSIBLE"; //$NON-NLS-1$
+			}
+			case SPI: {
+				return "SPI"; //$NON-NLS-1$
+			}
+			case 0: {
+				return "INHERITED"; //$NON-NLS-1$
+			}
+		}
+		return Util.UNKNOWN_VISIBILITY;
+	}
 }

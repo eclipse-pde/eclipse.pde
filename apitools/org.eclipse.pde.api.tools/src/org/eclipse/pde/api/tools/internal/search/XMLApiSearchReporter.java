@@ -27,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
+import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
@@ -147,11 +148,17 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 			if(annot != null) {
 				visibility = new Integer(annot.getVisibility());
 				if(annot.getVisibility() == VisibilityModifiers.PRIVATE) {
-					IApiAccess access = fDescription.resolveAccessLevel(
-							mcomponent.getHandle(), 
-							getPackageDescriptor(references[i].getResolvedReference()));
-					if(access != null && access.getAccessLevel() == IApiAccess.FRIEND) {
-						visibility = new Integer(VisibilityModifiers.PRIVATE_PERMISSIBLE);
+					IApiComponent host = mcomponent.getHost();
+					if(host != null && host.getId().equals(rcomponent.getId())) {
+						visibility = new Integer(VisibilityModifiers.FRAGMENT_PERMISSIBLE);
+					}
+					else {
+						IApiAccess access = fDescription.resolveAccessLevel(
+								mcomponent.getHandle(), 
+								getPackageDescriptor(references[i].getResolvedReference()));
+						if(access != null && access.getAccessLevel() == IApiAccess.FRIEND) {
+							visibility = new Integer(VisibilityModifiers.PRIVATE_PERMISSIBLE);
+						}
 					}
 				}
 			}
@@ -170,7 +177,6 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 				tmap = new HashMap();
 				vmap.put(type, tmap);
 			}
-			//kind = new Integer(references[i].getReferenceKind());
 			tname = getText(references[i].getResolvedReference());
 			reflist = (HashSet) tmap.get(tname);
 			if(reflist == null) {
@@ -266,7 +272,7 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 				mmap = (HashMap) rmap.get(id);
 				for(Iterator iter4 = mmap.keySet().iterator(); iter4.hasNext();) {
 					vis = (Integer) iter4.next();
-					location = new File(root, Util.getVisibilityKind(vis.intValue()));
+					location = new File(root, VisibilityModifiers.getVisibilityName(vis.intValue()));
 					if(!location.exists()) {
 						location.mkdir();
 					}
@@ -406,7 +412,7 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 		kelement = findKindElement(parent, kind);
 		if(kelement == null) {
 			kelement = document.createElement(IApiXmlConstants.REFERENCE_KIND);
-			kelement.setAttribute(IApiXmlConstants.ATTR_REFERENCE_KIND_NAME, Util.getReferenceKind(kind.intValue()));
+			kelement.setAttribute(IApiXmlConstants.ATTR_REFERENCE_KIND_NAME, Reference.getReferenceText(kind.intValue()));
 			kelement.setAttribute(IApiXmlConstants.ATTR_KIND, kind.toString());
 			parent.appendChild(kelement);
 		}

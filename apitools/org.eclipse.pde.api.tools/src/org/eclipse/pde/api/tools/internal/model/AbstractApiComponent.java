@@ -61,6 +61,13 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 	}	
 		
 	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getHost()
+	 */
+	public IApiComponent getHost() throws CoreException {
+		return null;
+	}
+	
+	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#getBaseline()
 	 */
 	public IApiBaseline getBaseline() {

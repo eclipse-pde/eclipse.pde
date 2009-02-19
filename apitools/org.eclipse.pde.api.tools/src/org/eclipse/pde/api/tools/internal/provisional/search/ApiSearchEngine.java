@@ -132,8 +132,9 @@ public final class ApiSearchEngine {
 	 * @throws CoreException
 	 */
 	private List getResolvedReferences(IApiSearchRequestor requestor, IApiType type, IProgressMonitor monitor) throws CoreException {
+		String name = type.getSimpleName();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 
-				MessageFormat.format(SearchMessages.ApiSearchEngine_extracting_refs_from, new String[] {type.getSimpleName()}), 2);
+				MessageFormat.format(SearchMessages.ApiSearchEngine_extracting_refs_from, new String[] {(name == null ? SearchMessages.ApiSearchEngine_anonymous_type : name)}), 2);
 		try {
 			List refs = type.extractReferences(requestor.getReferenceKinds(), localmonitor.newChild(1));
 			ReferenceResolver.resolveReferences(refs, localmonitor.newChild(1));
@@ -265,29 +266,29 @@ public final class ApiSearchEngine {
 		if(requestor.includesInternal() && !requestor.includesAPI()) {
 			fRequestorContext = SearchMessages.ApiSearchEngine_internal;
 		}
-		IApiElement[] elements = scope.getScope();
+		IApiElement[] scopeelements = scope.getScope();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 
-				MessageFormat.format(SearchMessages.ApiSearchEngine_searching_projects, new String[] {fRequestorContext}), elements.length*2+1);
+				MessageFormat.format(SearchMessages.ApiSearchEngine_searching_projects, new String[] {fRequestorContext}), scopeelements.length*2+1);
 		try {
 			long start = System.currentTimeMillis();
 			long loopstart = 0;
 			String taskname = null;
-			for (int i = 0; i < elements.length; i++) {
-				taskname = MessageFormat.format(SearchMessages.ApiSearchEngine_searching_project, new String[] {elements[i].getApiComponent().getId(), fRequestorContext});
+			for (int i = 0; i < scopeelements.length; i++) {
+				taskname = MessageFormat.format(SearchMessages.ApiSearchEngine_searching_project, new String[] {scopeelements[i].getApiComponent().getId(), fRequestorContext});
 				localmonitor.setTaskName(taskname);
 				if(DEBUG) {
 					loopstart = System.currentTimeMillis();
-					System.out.println("Searching "+elements[i].getApiComponent().getId()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println("Searching "+scopeelements[i].getApiComponent().getId()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				searchReferences(requestor, elements[i], reporter, localmonitor.newChild(1));
+				searchReferences(requestor, scopeelements[i], reporter, localmonitor.newChild(1));
 				localmonitor.setTaskName(taskname);
 				if(localmonitor.isCanceled()) {
-					reporter.reportResults(elements[i], NO_REFERENCES);
+					reporter.reportResults(scopeelements[i], NO_REFERENCES);
 					return;
 				}
 				localmonitor.worked(1);
 				if(DEBUG) {
-					System.out.println(Math.round((((float)(i+1))/elements.length)*100)+"% done in "+(System.currentTimeMillis()-loopstart)+" ms"); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println(Math.round((((float)(i+1))/scopeelements.length)*100)+"% done in "+(System.currentTimeMillis()-loopstart)+" ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			if(DEBUG) {

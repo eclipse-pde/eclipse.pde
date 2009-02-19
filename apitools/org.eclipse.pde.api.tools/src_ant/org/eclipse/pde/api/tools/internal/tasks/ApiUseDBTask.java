@@ -233,8 +233,8 @@ public class ApiUseDBTask extends DatabaseTask {
 		validateDBConnectionParameters();
 		writeDebugHeader();
 		
-		IApiBaseline baseline = getBaseline();
-		IApiBaseline scope = getScope();
+		IApiBaseline baseline = getBaseline(CURRENT_BASELINE_NAME, this.currentBaselineLocation);
+		IApiBaseline scope = getBaseline(SCOPE_BASELINE_NAME, this.scopeLocation);
 		initializeExcludeSet(scope);
 		try {
 			Connection connection = doConnection();

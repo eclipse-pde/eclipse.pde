@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,8 @@
 package org.eclipse.pde.api.tools.internal;
 
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Base implementation of the {@linkplain IApiAnnotations} interface
@@ -51,31 +51,10 @@ public class ApiAnnotations implements IApiAnnotations {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		String visibility = null;
-		switch (getVisibility()) {
-			case VisibilityModifiers.API:
-				visibility = "API"; //$NON-NLS-1$
-				break;
-			case VisibilityModifiers.SPI:
-				visibility = "SPI"; //$NON-NLS-1$
-				break;
-			case VisibilityModifiers.PRIVATE_PERMISSIBLE:
-				visibility = "PRIVATE PERMISSIBLE"; //$NON-NLS-1$
-				break;
-			case VisibilityModifiers.PRIVATE:
-				visibility = "PRIVATE"; //$NON-NLS-1$
-				break;
-			case 0:
-				visibility = "INHERITED"; //$NON-NLS-1$
-				break;
-			default:
-				visibility = "<unknown visibility>"; //$NON-NLS-1$
-				break;
-		}
-		buffer.append(visibility);
+		buffer.append(VisibilityModifiers.getVisibilityName(getVisibility()));
 		buffer.append(" / "); //$NON-NLS-1$
 		int restrictions = getRestrictions();
-		buffer.append(Util.getRestrictionKind(restrictions));
+		buffer.append(RestrictionModifiers.getRestrictionText(restrictions));
 		return buffer.toString();
 	}
 

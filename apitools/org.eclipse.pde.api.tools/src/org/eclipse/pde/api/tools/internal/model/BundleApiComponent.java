@@ -863,7 +863,17 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public String toString() {
 		if (fBundleDescription != null) {
-			return fBundleDescription.toString();
+			try {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(fBundleDescription.toString());
+				buffer.append(" - "); //$NON-NLS-1$
+				buffer.append("[fragment: ").append(isFragment()).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append("[host: ").append(fBundleDescription.getFragments().length > 0).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append("[system bundle: ").append(isSystemComponent()).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append("[source bundle: ").append(isSourceComponent()).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
+				return buffer.toString();
+			}
+			catch(CoreException ce) {} 
 		}
 		return super.toString();
 	}
@@ -995,6 +1005,26 @@ public class BundleApiComponent extends AbstractApiComponent {
 		return fBundleDescription.getHost() != null;
 	}
 
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getHost()
+	 */
+	public IApiComponent getHost() throws CoreException {
+		if (this.fBundleDescription == null) {
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							ApiPlugin.PLUGIN_ID,
+							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+							ApiPlugin.BASELINE_IS_DISPOSED,
+							null));
+		}
+		HostSpecification host = fBundleDescription.getHost();
+		if(host != null) {
+			return getBaseline().getApiComponent(host.getName());
+		}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiComponent#hasFragments()
 	 */

@@ -181,6 +181,15 @@ public interface IApiComponent extends IApiTypeContainer {
 	public boolean isFragment() throws CoreException;
 	
 	/**
+	 * Returns the host {@link IApiComponent} for this component iff this component is a fragment. Otherwise
+	 * <code>null</code> is returned.
+	 * 
+	 * @return the host {@link IApiComponent} for this component or <code>null</code>.
+	 * @throws CoreException if the baseline is disposed
+	 */
+	public IApiComponent getHost() throws CoreException;
+	
+	/**
 	 * Returns whether this API component is the host of one or more fragments.
 	 * 
 	 * @return whether this API component is the host of one or more fragments
