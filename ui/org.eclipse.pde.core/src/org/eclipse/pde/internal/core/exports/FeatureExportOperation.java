@@ -20,6 +20,8 @@ import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -253,7 +255,12 @@ public class FeatureExportOperation extends Job {
 			generator.generate();
 			monitor.worked(1);
 			monitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningBuildScript);
-			runScript(getBuildScriptName(featureLocation), getBuildExecutionTargets(), properties, new SubProgressMonitor(monitor, 2));
+			// compile the classes
+			runScript(featureLocation + IPath.SEPARATOR + "compile." + featureID + ".xml", new String[] {"main"}, properties, new SubProgressMonitor(monitor, 1)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			// grab the source if needed
+			if (fInfo.exportSource && !fInfo.exportSourceBundle)
+				runScript(getBuildScriptName(featureLocation), new String[] {"build.sources"}, properties, new SubProgressMonitor(monitor, 1)); //$NON-NLS-1$
+
 			monitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningAssemblyScript);
 			runScript(getAssemblyScriptName(featureID, os, ws, arch, featureLocation), new String[] {"main"}, //$NON-NLS-1$
 					properties, new SubProgressMonitor(monitor, 2));
@@ -328,12 +335,6 @@ public class FeatureExportOperation extends Job {
 				+ featureID + "." + os + "." //$NON-NLS-1$ //$NON-NLS-2$
 				+ ws + "." + arch //$NON-NLS-1$
 				+ ".xml"; //$NON-NLS-1$
-	}
-
-	private String[] getBuildExecutionTargets() {
-		if (fInfo.exportSource && !fInfo.exportSourceBundle)
-			return new String[] {"build.jars", "build.sources"}; //$NON-NLS-1$ //$NON-NLS-2$ 
-		return new String[] {"build.jars"}; //$NON-NLS-1$ 
 	}
 
 	/**
@@ -426,10 +427,10 @@ public class FeatureExportOperation extends Job {
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$ 
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "false"); //$NON-NLS-1$
 
-			Preferences pref = JavaCore.getPlugin().getPluginPreferences();
-			String source = pref.getString(JavaCore.COMPILER_SOURCE);
+			IEclipsePreferences prefs = new InstanceScope().getNode(JavaCore.PLUGIN_ID);
+			String source = prefs.get(JavaCore.COMPILER_SOURCE, null);
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, source);
-			String target = pref.getString(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM);
+			String target = prefs.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, null);
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, target);
 
 			// for the assembler...
@@ -541,6 +542,7 @@ public class FeatureExportOperation extends Job {
 		generator.setIgnoreMissingPropertiesFile(true);
 		generator.setSignJars(fInfo.signingInfo != null);
 		generator.setGenerateJnlp(fInfo.jnlpInfo != null);
+		generator.setFlattenDependencies(true);
 
 		String config = os + ',' + ws + ',' + arch;
 		AbstractScriptGenerator.setConfigInfo(config); //This needs to be set before we set the format
@@ -597,7 +599,7 @@ public class FeatureExportOperation extends Job {
 
 	protected void copyState(State state) {
 		fStateCopy = state.getFactory().createState(state);
-		fStateCopy.setResolver(Platform.getPlatformAdmin().getResolver());
+		fStateCopy.setResolver(Platform.getPlatformAdmin().createResolver());
 		fStateCopy.setPlatformProperties(state.getPlatformProperties());
 	}
 
