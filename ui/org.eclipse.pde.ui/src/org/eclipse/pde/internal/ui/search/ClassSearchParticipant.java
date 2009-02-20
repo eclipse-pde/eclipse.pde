@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-technologies.com> - bug 261404, 262353
+ *     Benjamin Cabe <benjamin.cabe@anyware-technologies.com> - bug 261404, 262353, 264176
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
@@ -169,11 +169,11 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		String value = null;
 		Matcher matcher = null;
 		if (fSearchFor == S_FOR_TYPES) {
-			value = attr.getValue().replaceAll("\\$", "."); //$NON-NLS-1$ //$NON-NLS-2$
+			value = removeInitializationData(attr.getValue()).replaceAll("\\$", "."); //$NON-NLS-1$ //$NON-NLS-2$
 			matcher = getMatcher(value);
 		}
 		if (value == null || (matcher != null && !matcher.matches())) {
-			value = getProperValue(attr.getValue()).replaceAll("\\$", "."); //$NON-NLS-1$ //$NON-NLS-2$
+			value = removeInitializationData(getProperValue(attr.getValue())).replaceAll("\\$", "."); //$NON-NLS-1$ //$NON-NLS-2$
 			matcher = getMatcher(value);
 		}
 		if (matcher.matches()) {
@@ -185,6 +185,13 @@ public class ClassSearchParticipant implements IQueryParticipant {
 			int length = group.length();
 			fSearchRequestor.reportMatch(new Match(file, Match.UNIT_CHARACTER, offset, length));
 		}
+	}
+
+	private String removeInitializationData(String attrValue) {
+		int i = attrValue.indexOf(':');
+		if (i != -1)
+			return attrValue.substring(0, i).trim();
+		return attrValue;
 	}
 
 	private void inspectBundle(IBundle bundle) {
