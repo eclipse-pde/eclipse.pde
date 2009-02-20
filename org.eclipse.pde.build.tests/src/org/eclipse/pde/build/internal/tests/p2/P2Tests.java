@@ -1,16 +1,16 @@
 package org.eclipse.pde.build.internal.tests.p2;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.util.*;
+import java.util.zip.ZipOutputStream;
 
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.pde.build.internal.tests.Utils;
@@ -257,10 +257,10 @@ public class P2Tests extends P2TestCase {
 
 	public void testBug258126() throws Exception {
 		IFolder buildFolder = newTest("258126");
-		
+
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
-		
+
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
 		Utils.generateFeature(buildFolder, "F", null, new String[] {"org.eclipse.osgi;unpack=false", "org.eclipse.core.runtime;unpack=false"});
@@ -276,10 +276,10 @@ public class P2Tests extends P2TestCase {
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
-		properties.put("configs", "win32,win32,x86");		
+		properties.put("configs", "win32,win32,x86");
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
-		
+
 		properties.put("archivesFormat", "win32,win32,x86-folder");
 		properties.put("generate.p2.metadata", "true");
 		properties.put("p2.metadata.repo", repoLocation);
@@ -301,18 +301,18 @@ public class P2Tests extends P2TestCase {
 			assertEquals(e.getMessage(), "Action not found:addProgramArg(programArg:-vmargs);");
 		}
 	}
-	
+
 	public void testBug262421() throws Exception {
 		IFolder buildFolder = newTest("262421");
-		
+
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String [] {"org.eclipse.osgi"}, false);
-		
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.eclipse.osgi"}, false);
+
 		IFile p2Inf = buildFolder.getFile("p2.inf");
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("instructions.configure=addRepository(type:0,location:http${#58}//download.eclipse.org/eclipse/updates/3.4);");
 		Utils.writeBuffer(p2Inf, buffer);
-		
+
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
@@ -326,23 +326,23 @@ public class P2Tests extends P2TestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
-		
+
 		IMetadataRepository repository = loadMetadataRepository(repoLocation);
 		IInstallableUnit iu = getIU(repository, "rcp.product");
 		assertTouchpoint(iu, "configure", "addRepository");
 	}
-	
-	public void testBug265526() throws Exception {
-		IFolder buildFolder= newTest("265526");
+
+	public void testBug265526_265524() throws Exception {
+		IFolder buildFolder = newTest("265526");
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
 		IFolder b = Utils.createFolder(buildFolder, "plugins/b");
-		
+
 		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=false", "b;unpack=true"});
 		Utils.generateBundle(a, "a");
 		Utils.writeBuffer(a.getFile("src/a.java"), new StringBuffer("class A {}"));
 		Utils.generateBundle(b, "b");
 		Utils.writeBuffer(b.getFile("src/b.java"), new StringBuffer("class B {}"));
-		
+
 		IFolder repo = Utils.createFolder(buildFolder, "repo/r1");
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
@@ -355,16 +355,34 @@ public class P2Tests extends P2TestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runBuild(buildFolder);
-		
+
 		properties.put("repoBaseLocation", buildFolder.getFolder("repo").getLocation().toOSString());
 		properties.put("transformedRepoLocation", buildFolder.getFolder("outRepo").getLocation().toOSString());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] {"transformRepos"}, buildFolder.getLocation().toOSString(), properties);
-		
+
 		assertResourceFile(buildFolder, "outRepo/plugins/b_1.0.0/B.class");
 		assertResourceFile(buildFolder, "outRepo/plugins/a_1.0.0.jar");
 		assertResourceFile(buildFolder, "outRepo/artifacts.xml");
 		assertResourceFile(buildFolder, "outRepo/content.xml");
+
+		//part 2, zipped repos
+		IFolder zipped = Utils.createFolder(buildFolder, "zipped");
+		ZipOutputStream output = new ZipOutputStream(new FileOutputStream(new File(zipped.getLocation().toFile(), "zipped repo.zip")));
+		File root = buildFolder.getFolder("repo/r1").getLocation().toFile();
+		FileUtils.zip(output, root, Collections.EMPTY_SET, FileUtils.createRootPathComputer(root));
+		org.eclipse.pde.internal.build.Utils.close(output);
+		
+		IFolder outRepo2 = Utils.createFolder(buildFolder, "outRepo2");		
+		properties.put("repoBaseLocation", zipped.getLocation().toOSString());
+		properties.put("transformedRepoLocation", outRepo2.getLocation().toOSString());
+		runAntScript(buildXMLPath, new String[] {"transformRepos"}, buildFolder.getLocation().toOSString(), properties);
+		
+		assertResourceFile(outRepo2, "plugins/b_1.0.0/B.class");
+		assertResourceFile(outRepo2, "plugins/a_1.0.0.jar");
+		assertResourceFile(outRepo2, "artifacts.xml");
+		assertResourceFile(outRepo2, "content.xml");
 	}
+
 }
