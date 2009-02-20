@@ -257,9 +257,7 @@ public class AnalysisReportConversionTask extends Task {
 					MessageFormat.format(
 						Messages.fullReportTask_indexheader,
 						new String[] {
-							Messages.bind(
-								Messages.fullReportTask_nonApiBundleSummary,
-								allNonApiBundleSummary.link)
+							Messages.bind(Messages.fullReportTask_nonApiBundleSummary, allNonApiBundleSummary.link)
 						}));
 			} else {
 				writer.println(
