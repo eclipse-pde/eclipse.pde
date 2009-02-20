@@ -1338,17 +1338,40 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						String typeName = delta.getTypeName();
 						if (typeName != null) {
 							IApiTypeRoot typeRoot = null;
+							IApiType type = null;
 							try {
-								typeRoot = component.findTypeRoot(typeName);
+								if ("org.eclipse.swt".equals(component.getId())) { //$NON-NLS-1$
+									typeRoot = component.findTypeRoot(typeName);
+								} else {
+									typeRoot = component.findTypeRoot(typeName, component.getId());
+								}
+								if (typeRoot == null) {
+									String packageName = Util.getPackageName(typeName);
+									// check if the type is provided by a required component (it could have been moved/re-exported)
+									IApiComponent[] providers = component.getBaseline().resolvePackage(component, packageName);
+									int index = 0;
+									while (typeRoot == null && index < providers.length) {
+										IApiComponent p = providers[index];
+										if (!p.equals(component)) {
+											if ("org.eclipse.swt".equals(p.getId())) { //$NON-NLS-1$
+												typeRoot = p.findTypeRoot(typeName);
+											} else {
+												typeRoot = p.findTypeRoot(typeName, p.getId());
+											}
+										}
+										index++;
+									}
+								}
 								if (typeRoot == null) {
 									return;
 								}
-								if (Util.isFinal(typeRoot.getStructure().getModifiers())) {
-									// no @since tag to report for new protected methods inside a final class
-									return;
-								}
+								type = typeRoot.getStructure();
 							} catch (CoreException e) {
 								// ignore
+							}
+							if (type == null || Util.isFinal(type.getModifiers())) {
+								// no @since tag to report for new protected methods inside a final class
+								return;
 							}
 						}
 					}
