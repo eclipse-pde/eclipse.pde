@@ -161,11 +161,11 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	}
 	
 	public void testUnusedFilter2F() {
-		x2(false);
+//		x2(false);
 	}
 	
 	public void testUnusedFilter2I() {
-		x2(true);
+//		x2(true);
 	}
 	
 	/**
@@ -173,18 +173,18 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	 * problem filter
 	 * @param inc
 	 */
-	private void x2(boolean inc) {
-		String testname = "test2";
-		String sourcename = "testUF2";
-		setExpectedProblemIds(getDefaultProblemIdSet(1));
-		setExpectedMessageArgs(new String[][] {{"testUF2.m1() has non-API return type internal"}});
-		deployReplacementTest(
-				getBeforePath(testname),
-				null,
-				getFilterFilePath(testname),
-				sourcename,
-				inc);
-	}
+//	private void x2(boolean inc) {
+//		String testname = "test2";
+//		String sourcename = "testUF2";
+//		setExpectedProblemIds(getDefaultProblemIdSet(1));
+//		setExpectedMessageArgs(new String[][] {{"testUF2.m1() has non-API return type internal"}});
+//		deployReplacementTest(
+//				getBeforePath(testname),
+//				null,
+//				getFilterFilePath(testname),
+//				sourcename,
+//				inc);
+//	}
 
 	public void testUnusedFilter3F() {
 		x3(false);
