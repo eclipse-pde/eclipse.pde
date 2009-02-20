@@ -1114,7 +1114,9 @@ public class ReferenceExtractor extends ClassAdapter {
 				if(type.isAnonymous() || type.isLocal()) {
 					//visit the class files for the dependent anonymous and local inner types
 					refs = processInnerClass(type, ReferenceModifiers.REF_EXTENDS);
-					fAnonymousTypes.put(pname, refs.iterator().next());
+					if(refs.iterator().hasNext()) {
+						fAnonymousTypes.put(pname, refs.iterator().next());
+					}
 				}
 				else {
 					refs = processInnerClass(type, fReferenceKinds);
