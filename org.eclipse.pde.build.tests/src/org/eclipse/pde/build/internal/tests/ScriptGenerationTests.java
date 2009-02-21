@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -989,12 +989,12 @@ public class ScriptGenerationTests extends PDETestCase {
 
 	public void testBug262294() throws Exception {
 		IFolder buildFolder = newTest("262294");
-		
+
 		IFolder cdc = Utils.createFolder(buildFolder, "plugins/cdc");
 		Attributes additionalAttributes = new Attributes();
 		additionalAttributes.put(new Attributes.Name("Bundle-RequiredExecutionEnvironment"), "CDC-1.1/Foundation-1.1");
 		Utils.generateBundleManifest(cdc, "cdc", "1.0.0", additionalAttributes);
-		
+
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new org.eclipse.core.runtime.Path("/scripts/productBuild/productBuild.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 
@@ -1008,7 +1008,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateProperties.put("pluginList", "cdc");
 		runAntScript(buildXMLPath, new String[] {"generateFeature"}, buildFolder.getLocation().toOSString(), generateProperties);
 	}
-	
+
 	public void testRootFiles_1() throws Exception {
 		IFolder buildFolder = newTest("RootFiles_1");
 		IFolder f = Utils.createFolder(buildFolder, "features/F");
@@ -1091,16 +1091,16 @@ public class ScriptGenerationTests extends PDETestCase {
 			jar.close();
 		}
 	}
-	
+
 	public void testBug217005() throws Exception {
 		IFolder buildFolder = newTest("217005");
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
 		IFolder shape = Utils.createFolder(buildFolder, "plugins/shape");
-		
+
 		Attributes additionalAttributes = new Attributes();
 		additionalAttributes.put(new Attributes.Name("Eclipse-BundleShape"), "jar");
 		Utils.generateBundleManifest(shape, "shape", "1.0.0", additionalAttributes);
-		
+
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<feature id=\"f\" version=\"1.0.0\">             \n");
 		buffer.append("  <plugin version=\"0.0.0\" id=\"shape\" />      \n");
@@ -1111,14 +1111,113 @@ public class ScriptGenerationTests extends PDETestCase {
 		Properties properties = new Properties();
 		properties.put("bin.includes", "feature.xml");
 		Utils.storeBuildProperties(f, properties);
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		properties.put("configs", "*,*,*");
 		properties.put("archivesFormat", "*,*,*-folder");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-		
+
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/shape_1.0.0.jar");
+	}
+
+	public void testBug219832() throws Exception {
+		IFolder buildFolder = newTest("219832");
+
+		IFolder p1 = Utils.createFolder(buildFolder, "plugins/p1");
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"p1;unpack=false"});
+
+		Utils.generateBundle(p1, "p1");
+		Utils.writeBuffer(p1.getFile("src/a.java"), new StringBuffer("class A {}"));
+
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new org.eclipse.core.runtime.Path("/resources/keystore/keystore"), null);
+		assertNotNull(resource);
+		String keystorePath = FileLocator.toFileURL(resource).getPath();
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("configs", "*,*,*");
+		properties.put("archivesFormat", "*,*,*-folder");
+		properties.put("signJars", "true");
+		properties.put("sign.alias", "pde.build");
+		properties.put("sign.keystore", keystorePath);
+		properties.put("sign.storepass", "storepass");
+		properties.put("sign.keypass", "keypass");
+
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		IFile result = buildFolder.getFile("tmp/eclipse/plugins/p1_1.0.0.jar");
+		assertResourceFile(result);
+		assertJarVerifies(result.getLocation().toFile(), true);
+	}
+
+	public void testBug190041() throws Exception {
+		IFolder buildFolder = newTest("190041");
+
+		IFolder p1 = Utils.createFolder(buildFolder, "plugins/p1");
+		IFolder p2 = Utils.createFolder(buildFolder, "plugins/p2");
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"p1;unpack=false", "p2;unpack=false"});
+
+		Utils.generateBundle(p1, "p1");
+		Utils.writeBuffer(p1.getFile("src/a.java"), new StringBuffer("class A {}"));
+		Utils.generateBundle(p2, "p2");
+		Utils.writeBuffer(p2.getFile("src/b.java"), new StringBuffer("class B {}"));
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("configs", "*,*,*");
+		properties.put("archivePrefix", "");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		Set zipEntries = new HashSet();
+		zipEntries.add("plugins/p1_1.0.0.jar");
+		zipEntries.add("plugins/p2_1.0.0.jar");
+		assertZipContents(buildFolder, "I.TestBuild/f-TestBuild.zip", zipEntries);
+
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new org.eclipse.core.runtime.Path("/resources/keystore/keystore"), null);
+		assertNotNull(resource);
+		String keystorePath = FileLocator.toFileURL(resource).getPath();
+
+		File zipFile = buildFolder.getFile("I.TestBuild/f-TestBuild.zip").getLocation().toFile();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>               \n");
+		buffer.append("<project name=\"project\" default=\"default\">           \n");
+		buffer.append("    <target name=\"default\">                            \n");
+		buffer.append("    	<eclipse.jarProcessor                               \n");
+		buffer.append("             sign=\"true\"                               \n");
+		buffer.append("            	pack=\"true\"                              \n");
+		buffer.append("    	        jar=\"" + zipFile.toString() + "\"          \n");
+		buffer.append("    			keypass=\"keypass\"                         \n");
+		buffer.append("    			storepass=\"storepass\"                     \n");
+		buffer.append("    			keystore=\"" + keystorePath + "\"          \n");
+		buffer.append("    			alias=\"pde.build\"    />                   \n");
+		buffer.append("    </target>                                            \n");
+		buffer.append("</project>                                               \n");
+
+		final IFile buildXML = buildFolder.getFile("build.xml");
+		Utils.writeBuffer(buildXML, buffer);
+
+		runAntScript(buildXML.getLocation().toOSString(), new String[] {"default"}, buildFolder.getLocation().toOSString(), null);
+		
+		zipEntries.add("plugins/p1_1.0.0.jar.pack.gz");
+		zipEntries.add("plugins/p2_1.0.0.jar.pack.gz");
+		assertZipContents(buildFolder, "I.TestBuild/f-TestBuild.zip", zipEntries);
+
+		java.util.zip.ZipFile zip = null;
+		File tempJar = new File(zipFile.getParentFile(), "temp.jar");
+		try {
+			zip = new java.util.zip.ZipFile(zipFile);
+			ZipEntry entry = zip.getEntry("plugins/p1_1.0.0.jar");
+			OutputStream output = new BufferedOutputStream(new FileOutputStream(tempJar));
+			Utils.transferStreams(zip.getInputStream(entry), true, output, true);
+		} finally {
+			zip.close();
+		}
+		assertJarVerifies(tempJar, true);
 	}
 }

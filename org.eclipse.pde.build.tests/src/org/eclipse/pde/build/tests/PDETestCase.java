@@ -224,6 +224,13 @@ public abstract class PDETestCase extends TestCase {
 		assertTrue(ioFile.length() > 0);
 	}
 
+	public static void assertResourceFile(IFile file) throws Exception {
+		file.getParent().refreshLocal(IResource.DEPTH_INFINITE, null);
+		assertTrue(file.exists());
+		File ioFile = file.getLocation().toFile();
+		assertTrue(ioFile.length() > 0);
+	}
+	
 	/**
 	 * Assert that the given log file contains the given message
 	 * The message is expected to be contained on a single line
@@ -296,6 +303,10 @@ public abstract class PDETestCase extends TestCase {
 	}
 
 	public static void assertJarVerifies(File jarFile) throws Exception {
+		assertJarVerifies(jarFile, false);
+	}
+	
+	public static void assertJarVerifies(File jarFile, boolean throwIfNotSigned) throws Exception {
 		BundleContext context = Activator.getDefault().getContext();
 
 		ServiceReference certRef = context.getServiceReference(CertificateVerifierFactory.class.getName());
@@ -306,6 +317,8 @@ public abstract class PDETestCase extends TestCase {
 			CertificateVerifier verifier = certFactory.getVerifier(jarFile);
 			if (verifier.isSigned())
 				verifier.checkContent();
+			else if (throwIfNotSigned)
+				throw new AssertionFailedException(jarFile.toString() + " is not signed.");
 		} finally {
 			context.ungetService(certRef);
 		}

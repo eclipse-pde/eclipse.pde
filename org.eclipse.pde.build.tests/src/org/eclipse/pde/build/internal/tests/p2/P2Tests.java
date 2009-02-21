@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM - Initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.pde.build.internal.tests.p2;
 
 import java.io.*;
@@ -11,6 +22,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
+import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactDescriptor;
+import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepository;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.pde.build.internal.tests.Utils;
@@ -383,6 +397,69 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(outRepo2, "plugins/a_1.0.0.jar");
 		assertResourceFile(outRepo2, "artifacts.xml");
 		assertResourceFile(outRepo2, "content.xml");
+	}
+	
+	public void testBug265564() throws Exception {
+		IFolder buildFolder = newTest("265564");
+		
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		
+		Utils.generateFeature(buildFolder, "F", new String[] {"org.eclipse.cvs"}, null);
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "F");
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.publish.artifacts", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runBuild(buildFolder);
+		
+		assertResourceFile(buildFolder, "repo/artifacts.xml");
+		
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new Path("/resources/keystore/keystore"), null);
+		assertNotNull(resource);
+		String keystorePath = FileLocator.toFileURL(resource).getPath();
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>               \n");
+		buffer.append("<project name=\"project\" default=\"default\">           \n");
+		buffer.append("    <target name=\"default\">                            \n");
+		buffer.append("    	<p2.process.artifacts  repositoryPath=\"" + repoLocation + "\" pack=\"true\">  \n");
+		buffer.append("    	   <sign keystore=\"" + keystorePath  + "\"         \n");
+		buffer.append("    			 keypass=\"keypass\"                        \n");
+		buffer.append("    			 storepass=\"storepass\"                    \n");
+		buffer.append("    			 alias=\"pde.build\"                        \n");
+		buffer.append("    			 unsign=\"true\" />                         \n");
+		buffer.append("    	</p2.process.artifacts>                             \n");
+		buffer.append("    </target>                                            \n");
+		buffer.append("</project>                                               \n");
+		
+		final IFile buildXML = buildFolder.getFile("build.xml");
+		Utils.writeBuffer(buildXML, buffer);
+
+		runAntScript(buildXML.getLocation().toOSString(), new String[] {"default"}, buildFolder.getLocation().toOSString(), null);
+
+		IFolder repoFolder = buildFolder.getFolder("repo");
+		IArtifactRepository repository = loadArtifactRepository(repoLocation);
+		final String PACKED_FORMAT = "packed"; //$NON-NLS-1$
+		IArtifactKey [] keys = repository.getArtifactKeys();
+		for (int i = 0; i < keys.length; i++) {
+			IArtifactDescriptor[] descriptors = repository.getArtifactDescriptors(keys[i]);
+			assertEquals(descriptors.length, 2);
+			
+			if( PACKED_FORMAT.equals(descriptors[0].getProperty(IArtifactDescriptor.FORMAT))){
+				assertMD5(repoFolder, descriptors[1]);
+			} else if( PACKED_FORMAT.equals(descriptors[1].getProperty(IArtifactDescriptor.FORMAT))){
+				assertMD5(repoFolder, descriptors[0]);
+			} else {
+				fail("No pack.gz desriptor");
+			}
+			
+			assertResourceFile(repoFolder, getArtifactLocation(descriptors[0]));
+			assertResourceFile(repoFolder, getArtifactLocation(descriptors[1]));
+		}
 	}
 
 }

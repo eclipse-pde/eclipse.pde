@@ -76,12 +76,6 @@
             class="org.eclipse.pde.internal.build.tasks.GenericVersionReplacer">
       </antTask>
       <antTask
-            class="org.eclipse.pde.internal.build.jarprocessor.JarProcessorTask"
-            headless="true"
-            library="lib/pdebuild-ant.jar"
-            name="eclipse.jarProcessor">
-      </antTask>
-      <antTask
             class="org.eclipse.pde.internal.build.publisher.FeaturesAndBundlesTask"
             library="lib/pdebuild-ant.jar"
             name="eclipse.publish.featuresAndBundles">
