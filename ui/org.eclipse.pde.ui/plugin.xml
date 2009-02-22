@@ -513,6 +513,11 @@
             description="%pluginsearch.action.desc"
             id="org.eclipse.pde.ui.openPluginArtifact"
             name="%pluginsearch.action.name">
+      </command>
+      <command
+            description="%addpluginstojavasearch.action.desc"
+            id="org.eclipse.pde.ui.addAllPluginsToJavaSearch"
+            name="%addpluginstojavasearch.action.name">
       </command>   
    </extension>
    <extension
@@ -1908,6 +1913,10 @@
                 class="org.eclipse.pde.internal.ui.search.dialogs.PluginArtifactSearchHandler"
                 commandId="org.eclipse.pde.ui.openPluginArtifact">
           </handler>
+          <handler
+                class="org.eclipse.pde.internal.ui.views.plugins.AddAllPluginsToJavaSearchHandler"
+                commandId="org.eclipse.pde.ui.addAllPluginsToJavaSearch">
+          </handler>
        </extension>
        <extension
              point="org.eclipse.ui.menus">
@@ -1940,6 +1949,19 @@
                    </with>
                </or>
                 </visibleWhen>
+             </command>
+          </menuContribution>
+          <menuContribution
+                locationURI="toolbar:org.eclipse.pde.ui.PluginsView">
+             <separator
+                   name="org.eclipse.pde.ui.addAllPluginsToJavaSearchSeparator"
+                   visible="true">
+             </separator>
+             <command
+                   commandId="org.eclipse.pde.ui.addAllPluginsToJavaSearch"
+                   icon="$nl$/icons/obj16/plugin_javasearch.gif"
+                   label="%addpluginstojavasearch.action.name"
+                   style="push">
              </command>
           </menuContribution>
           <!--
