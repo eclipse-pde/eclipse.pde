@@ -381,39 +381,42 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		// set workspace target if required
 		if (load) {
 
-			final ITargetDefinition targetToLoad = toLoad;
 			// TODO: prompt to warn of build? (like JRE page)
 
-			if (!toLoad.isResolved()) {
-				// Resolve the target in a progress dialog so if there are any errors we can keep the preference page open
-				try {
-					new ProgressMonitorDialog(getShell()).run(true, true, new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							if (!targetToLoad.isResolved()) {
-								targetToLoad.resolve(monitor);
+			if (toLoad != null) {
+				final ITargetDefinition targetToLoad = toLoad;
+
+				if (!toLoad.isResolved()) {
+					// Resolve the target in a progress dialog so if there are any errors we can keep the preference page open
+					try {
+						new ProgressMonitorDialog(getShell()).run(true, true, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								if (!targetToLoad.isResolved()) {
+									targetToLoad.resolve(monitor);
+								}
+								if (monitor.isCanceled()) {
+									throw new InterruptedException();
+								}
 							}
-							if (monitor.isCanceled()) {
-								throw new InterruptedException();
-							}
-						}
-					});
-				} catch (InterruptedException e) {
-					return false;
-				} catch (InvocationTargetException e) {
-					// Completely unexpected error
-					PDECore.log(e);
+						});
+					} catch (InterruptedException e) {
+						return false;
+					} catch (InvocationTargetException e) {
+						// Completely unexpected error
+						PDECore.log(e);
+						return false;
+					}
+				}
+				IStatus status = targetToLoad.getBundleStatus();
+				if (status == null) {
+					ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_10, PDEUIMessages.TargetPlatformPreferencePage2_12, new Status(IStatus.ERROR, PDEPlugin.getPluginId(), "")); //$NON-NLS-1$
 					return false;
 				}
-			}
-			IStatus status = targetToLoad.getBundleStatus();
-			if (status == null) {
-				ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_10, PDEUIMessages.TargetPlatformPreferencePage2_12, new Status(IStatus.ERROR, PDEPlugin.getPluginId(), "")); //$NON-NLS-1$
-				return false;
-			}
-			if (!status.isOK()) {
-				// TODO Support prompting for differing levels of errors/warnings/info
-				ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_10, PDEUIMessages.TargetPlatformPreferencePage2_12, status);
-				return false;
+				if (!status.isOK()) {
+					// TODO Support prompting for differing levels of errors/warnings/info
+					ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_10, PDEUIMessages.TargetPlatformPreferencePage2_12, status);
+					return false;
+				}
 			}
 
 			// Resolution was successful, good to go
