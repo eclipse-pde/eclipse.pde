@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
+ * Contributors: IBM - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.pde.build.internal.tests.p2;
@@ -14,6 +12,7 @@ package org.eclipse.pde.build.internal.tests.p2;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.jar.Attributes;
 import java.util.zip.ZipOutputStream;
 
 import junit.framework.AssertionFailedError;
@@ -387,24 +386,24 @@ public class P2Tests extends P2TestCase {
 		File root = buildFolder.getFolder("repo/r1").getLocation().toFile();
 		FileUtils.zip(output, root, Collections.EMPTY_SET, FileUtils.createRootPathComputer(root));
 		org.eclipse.pde.internal.build.Utils.close(output);
-		
-		IFolder outRepo2 = Utils.createFolder(buildFolder, "outRepo2");		
+
+		IFolder outRepo2 = Utils.createFolder(buildFolder, "outRepo2");
 		properties.put("repoBaseLocation", zipped.getLocation().toOSString());
 		properties.put("transformedRepoLocation", outRepo2.getLocation().toOSString());
 		runAntScript(buildXMLPath, new String[] {"transformRepos"}, buildFolder.getLocation().toOSString(), properties);
-		
+
 		assertResourceFile(outRepo2, "plugins/b_1.0.0/B.class");
 		assertResourceFile(outRepo2, "plugins/a_1.0.0.jar");
 		assertResourceFile(outRepo2, "artifacts.xml");
 		assertResourceFile(outRepo2, "content.xml");
 	}
-	
+
 	public void testBug265564() throws Exception {
 		IFolder buildFolder = newTest("265564");
-		
+
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 		String repoLocation = "file:" + repo.getLocation().toOSString();
-		
+
 		Utils.generateFeature(buildFolder, "F", new String[] {"org.eclipse.cvs"}, null);
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "F");
@@ -415,19 +414,19 @@ public class P2Tests extends P2TestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runBuild(buildFolder);
-		
+
 		assertResourceFile(buildFolder, "repo/artifacts.xml");
-		
+
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new Path("/resources/keystore/keystore"), null);
 		assertNotNull(resource);
 		String keystorePath = FileLocator.toFileURL(resource).getPath();
-		
+
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>               \n");
 		buffer.append("<project name=\"project\" default=\"default\">           \n");
 		buffer.append("    <target name=\"default\">                            \n");
 		buffer.append("    	<p2.process.artifacts  repositoryPath=\"" + repoLocation + "\" pack=\"true\">  \n");
-		buffer.append("    	   <sign keystore=\"" + keystorePath  + "\"         \n");
+		buffer.append("    	   <sign keystore=\"" + keystorePath + "\"         \n");
 		buffer.append("    			 keypass=\"keypass\"                        \n");
 		buffer.append("    			 storepass=\"storepass\"                    \n");
 		buffer.append("    			 alias=\"pde.build\"                        \n");
@@ -435,7 +434,7 @@ public class P2Tests extends P2TestCase {
 		buffer.append("    	</p2.process.artifacts>                             \n");
 		buffer.append("    </target>                                            \n");
 		buffer.append("</project>                                               \n");
-		
+
 		final IFile buildXML = buildFolder.getFile("build.xml");
 		Utils.writeBuffer(buildXML, buffer);
 
@@ -444,22 +443,123 @@ public class P2Tests extends P2TestCase {
 		IFolder repoFolder = buildFolder.getFolder("repo");
 		IArtifactRepository repository = loadArtifactRepository(repoLocation);
 		final String PACKED_FORMAT = "packed"; //$NON-NLS-1$
-		IArtifactKey [] keys = repository.getArtifactKeys();
+		IArtifactKey[] keys = repository.getArtifactKeys();
 		for (int i = 0; i < keys.length; i++) {
 			IArtifactDescriptor[] descriptors = repository.getArtifactDescriptors(keys[i]);
 			assertEquals(descriptors.length, 2);
-			
-			if( PACKED_FORMAT.equals(descriptors[0].getProperty(IArtifactDescriptor.FORMAT))){
+
+			if (PACKED_FORMAT.equals(descriptors[0].getProperty(IArtifactDescriptor.FORMAT))) {
 				assertMD5(repoFolder, descriptors[1]);
-			} else if( PACKED_FORMAT.equals(descriptors[1].getProperty(IArtifactDescriptor.FORMAT))){
+			} else if (PACKED_FORMAT.equals(descriptors[1].getProperty(IArtifactDescriptor.FORMAT))) {
 				assertMD5(repoFolder, descriptors[0]);
 			} else {
 				fail("No pack.gz desriptor");
 			}
-			
+
 			assertResourceFile(repoFolder, getArtifactLocation(descriptors[0]));
 			assertResourceFile(repoFolder, getArtifactLocation(descriptors[1]));
 		}
 	}
 
+	public void testBug263272() throws Exception {
+		IFolder buildFolder = newTest("263272");
+
+		IFolder repo1 = Utils.createFolder(buildFolder, "repo1");
+		String repo1Location = "file:" + repo1.getLocation().toOSString();
+		IFolder repo2 = Utils.createFolder(buildFolder, "repo2");
+		String repo2Location = "file:" + repo2.getLocation().toOSString();
+		IFolder finalRepo = Utils.createFolder(buildFolder, "final");
+		String finalLocation = "file:" + finalRepo.getLocation().toOSString();
+
+		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
+		IFolder b = Utils.createFolder(buildFolder, "plugins/b");
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=false", "b;unpack=false"});
+
+		Attributes additionalAttributes = new Attributes();
+		additionalAttributes = new Attributes();
+		additionalAttributes.put(new Attributes.Name("Export-Package"), "a");
+		Utils.generateBundleManifest(a, "a", "1.0.0.qualifier", additionalAttributes);
+		Utils.generatePluginBuildProperties(a, null);
+		StringBuffer code = new StringBuffer();
+		code.append("package a;                                   \n");
+		code.append("public class A {                             \n");
+		code.append("  public void f(Object o) {                  \n");
+		code.append("    System.out.println(o.toString());        \n");
+		code.append("  }                                          \n");
+		code.append("}                                            \n");
+		Utils.writeBuffer(a.getFile("src/a/A.java"), code);
+
+		additionalAttributes = new Attributes();
+		additionalAttributes.put(new Attributes.Name("Import-Package"), "a");
+		Utils.generateBundleManifest(b, "b", "1.0.0", additionalAttributes);
+		Utils.generatePluginBuildProperties(b, null);
+		code = new StringBuffer();
+		code.append("import a.A;                                  \n");
+		code.append("class B {                                    \n");
+		code.append("  void f() {                                 \n");
+		code.append("    A a = new A();                           \n");
+		code.append("    a.f(\"foo\");                            \n");
+		code.append("  }                                          \n");
+		code.append("}                                            \n");
+		Utils.writeBuffer(b.getFile("src/b.java"), code);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "F");
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repo1Location);
+		properties.put("p2.artifact.repo", repo1Location);
+		properties.put("p2.publish.artifacts", "true");
+		properties.put("forceContextQualifier", "v1");
+		properties.put("baseLocation", "");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runBuild(buildFolder);
+
+		//now change A and recompile
+		code = new StringBuffer();
+		code.append("package a;                                   \n");
+		code.append("public class A {                             \n");
+		code.append("  public void f(Object o) {                  \n");
+		code.append("    System.out.println(o.toString());        \n");
+		code.append("  }                                          \n");
+		code.append("  public void f(String o) {                  \n");
+		code.append("    System.out.println(o);                   \n");
+		code.append("  }                                          \n");
+		code.append("}                                            \n");
+		Utils.writeBuffer(a.getFile("src/a/A.java"), code);
+
+		properties.put("p2.metadata.repo", repo2Location);
+		properties.put("p2.artifact.repo", repo2Location);
+		properties.put("forceContextQualifier", "v2");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		assertResourceFile(buildFolder, "repo1/plugins/a_1.0.0.v1.jar");
+		assertResourceFile(buildFolder, "repo1/plugins/b_1.0.0.jar");
+		assertResourceFile(buildFolder, "repo2/plugins/a_1.0.0.v2.jar");
+		assertResourceFile(buildFolder, "repo2/plugins/b_1.0.0.jar");
+
+		StringBuffer test = new StringBuffer();
+		test.append("<project default=\"mirror\">                                                                    \n");
+		test.append("  <target name=\"mirror\">                                                                      \n");
+		test.append("    <p2.artifact.mirror baseLine=\"${compareAgainst}\"                                          \n");
+		test.append("                        source=\"${compareFrom}\"                                               \n");
+		test.append("                        destination=\"${newLocation}\"                                          \n");
+		test.append("                        comparatorId=\"org.eclipse.equinox.p2.repository.tools.jar.comparator\" \n");
+		test.append("    />                                                                                          \n");
+		test.append("  </target>                                                                                     \n");
+		test.append("</project>                                                                                      \n");
+		
+		IFile testXML = buildFolder.getFile("test.xml");
+		Utils.writeBuffer(testXML, test);
+
+		properties = new Properties();
+		properties.put("compareAgainst", repo1Location);
+		properties.put("compareFrom", repo2Location);
+		properties.put("newLocation", finalLocation);
+		runAntScript(testXML.getLocation().toOSString(), new String[] {"mirror"}, buildFolder.getLocation().toOSString(), properties);
+		
+		assertLogContainsLine(buildFolder.getFile("log.log"), "Mirroring completed with warnings and/or errors.");
+	}
 }
