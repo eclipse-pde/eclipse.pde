@@ -107,6 +107,10 @@ public class BuildScriptGeneratorTask extends Task {
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
 		if (Boolean.valueOf(value).booleanValue())
 			properties.put(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES, "true"); //$NON-NLS-1$
+
+		value = getProject().getProperty("p2.gathering"); //$NON-NLS-1$
+		if (Boolean.valueOf(value).booleanValue())
+			properties.put("p2.gathering", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void setEEProfileProperties(Properties antProperties) {

@@ -452,6 +452,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		this.reportResolutionErrors = value;
 	}
 
+	public void setP2Gathering(boolean value) {
+		BuildDirector.p2Gathering = value;
+	}
+
 	/**
 	 * @param value The ignoreMissingPropertiesFile to set.
 	 */
