@@ -327,9 +327,11 @@ public class ApiFileGenerationTask extends Task {
 	private Set/*<String>*/ collectApiPackageNames(Map manifestmap) throws BundleException {
 		HashSet set = new HashSet();
 		ManifestElement[] packages = ManifestElement.parseHeader(Constants.EXPORT_PACKAGE, (String) manifestmap.get(Constants.EXPORT_PACKAGE));
-		for (int i = 0; i < packages.length; i++) {
-			if(packages[i].getDirectiveKeys() == null) {
-				set.add(packages[i].getValue());
+		if (packages != null) {
+			for (int i = 0; i < packages.length; i++) {
+				if(packages[i].getDirectiveKeys() == null) {
+					set.add(packages[i].getValue());
+				}
 			}
 		}
 		return set;
