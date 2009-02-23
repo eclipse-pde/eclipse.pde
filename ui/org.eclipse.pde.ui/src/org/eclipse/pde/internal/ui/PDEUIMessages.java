@@ -77,6 +77,7 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_exportTooltip;
 
 	public static String JavaArgumentsTab_appendLauncherIni;
+	public static String JavaArgumentsTab_addVMArgs;
 
 	public static String OrganizeManifestsProcessor_invalidParam;
 
@@ -2494,6 +2495,8 @@ public class PDEUIMessages extends NLS {
 	public static String ArgumentsSection_argumentsTextLabel;
 
 	public static String ArgumentsSection_variableButtonTitle;
+
+	public static String ArgumentsSection_argumentsButtonTitle;
 
 	public static String TargetDefinitionContentPage_0;
 

@@ -18,6 +18,7 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -30,8 +31,7 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
-import org.eclipse.pde.internal.ui.shared.target.BundleContainerTable;
-import org.eclipse.pde.internal.ui.shared.target.IBundleContainerTableReporter;
+import org.eclipse.pde.internal.ui.shared.target.*;
 import org.eclipse.pde.internal.ui.util.LocaleUtil;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -76,7 +76,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	// argument controls
 	private Text fProgramArgs;
 	private Text fVMArgs;
-	private Button fAppendLauncherArgs;
 
 	// implicit dependencies tab
 	private TableViewer fElementViewer;
@@ -462,10 +461,10 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		Button programVars = new Button(programGroup, SWT.NONE);
 		programVars.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		programVars.setText(PDEUIMessages.JavaArgumentsTab_programVariables);
-		programVars.addSelectionListener(getListener(fProgramArgs));
+		programVars.addSelectionListener(getVariablesListener(fProgramArgs));
 
 		Group vmGroup = new Group(container, SWT.NONE);
-		vmGroup.setLayout(new GridLayout(2, false));
+		vmGroup.setLayout(new GridLayout(1, false));
 		vmGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		vmGroup.setText(PDEUIMessages.JavaArgumentsTab_vmArgsGroup);
 
@@ -473,7 +472,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
 		gd.heightHint = 60;
-		gd.horizontalSpan = 2;
 		fVMArgs.setLayoutData(gd);
 		fVMArgs.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -481,18 +479,55 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 		});
 
-		fAppendLauncherArgs = new Button(vmGroup, SWT.CHECK);
-		fAppendLauncherArgs.setText(PDEUIMessages.JavaArgumentsTab_appendLauncherIni);
+		Composite buttons = new Composite(vmGroup, SWT.NONE);
+		buttons.setLayout(new GridLayout(2, false));
+		buttons.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-		Button vmVars = new Button(vmGroup, SWT.NONE);
-		vmVars.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		vmVars.setText(PDEUIMessages.JavaArgumentsTab_vmVariables);
-		vmVars.addSelectionListener(getListener(fVMArgs));
+		Button vmArgs = SWTFactory.createPushButton(buttons, PDEUIMessages.JavaArgumentsTab_addVMArgs, null, GridData.HORIZONTAL_ALIGN_END);
+		vmArgs.addSelectionListener(getVMArgsListener(fVMArgs));
+
+		Button vmVars = SWTFactory.createPushButton(buttons, PDEUIMessages.JavaArgumentsTab_vmVariables, null, GridData.HORIZONTAL_ALIGN_END);
+		vmVars.addSelectionListener(getVariablesListener(fVMArgs));
+
 		return container;
 	}
 
-	protected SelectionListener getListener(final Text textControl) {
-		return new SelectionListener() {
+	/**
+	 * Provide a listener for the Add VM Arguments button.
+	 * The listener invokes the <code>VMArgumentsSelectionDialog</code> and 
+	 * updates the selected VM Arguments back in the VM Arguments Text Box
+	 * 
+	 * @param textControl
+	 * @return	<code>SelectionListener</code> for the Add VM Arguments button
+	 */
+	private SelectionListener getVMArgsListener(final Text textControl) {
+		return new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				ArgumentsFromContainerSelectionDialog dialog = new ArgumentsFromContainerSelectionDialog(getShell(), getTargetDefinition());
+				if (dialog.open() == Dialog.OK) {
+					String[] args = dialog.getSelectedArguments();
+					if (args != null && args.length > 0) {
+						StringBuffer resultBuffer = new StringBuffer();
+						for (int index = 0; index < args.length; ++index) {
+							resultBuffer.append(args[index] + " "); //$NON-NLS-1$
+						}
+						fVMArgs.insert(resultBuffer.toString());
+					}
+				}
+			}
+		};
+	}
+
+	/**
+	 * Provide a listener for the Variables button.
+	 * The listener invokes the <code>StringVariableSelectionDialog</code> and 
+	 * updates the selected Variables back in the VM Arguments Text Box
+	 * 
+	 * @param textControl
+	 * @return	<code>SelectionListener</code> for the Variables button
+	 */
+	private SelectionListener getVariablesListener(final Text textControl) {
+		return new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				dialog.open();
@@ -500,9 +535,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				if (variable != null) {
 					textControl.insert(variable);
 				}
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		};
 	}

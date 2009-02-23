@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.impl.TargetDefinition;
 import org.eclipse.pde.internal.core.target.impl.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.provisional.*;
+import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.ServiceReference;
 
@@ -954,5 +955,50 @@ public class TargetDefinitionTests extends TestCase {
 		assertEquals("Wrong bundles", 0, set.size());
 		
 	}	
+	
+	/**
+	 * Tests the ability to add arguments to a target platform and have them show up on new configs
+	 * 
+	 * @throws Exception
+	 */
+	public void testArguments() throws Exception {
+		ITargetDefinition definition = getNewTarget();
+		
+		// test bundle containers for known arguments
+		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
+		assertNull("Directory containers should not have arguments", directoryContainer.getVMArguments());
+		
+		IBundleContainer featureContainer = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "DOES NOT EXIST", "DOES NOT EXIST");
+		assertNull("Feature containers should not have arguments", featureContainer.getVMArguments());
+		
+		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		String[] arguments = profileContainer.getVMArguments();
+		assertNotNull("Profile containers should have arguments", arguments);
+		assertTrue("Profile containers should have arguments", arguments.length > 0);
+		
+		// Add program arguments
+		String programArgs = "-testProgramArgument -testProgramArgument2";
+		definition.setProgramArguments(programArgs);
+		assertEquals(programArgs, definition.getProgramArguments());
+		
+		// Add VM arguments
+		String vmArgs = "-testVMArgument -testVMArgument2"; 
+		definition.setVMArguments(vmArgs);
+		assertEquals(vmArgs, definition.getVMArguments());
+		
+		try {
+			getTargetService().saveTargetDefinition(definition);
+			setTargetPlatform(definition);
+		
+			// Check that new launch configs will be prepopulated from target
+			assertEquals(vmArgs, LaunchArgumentsHelper.getInitialVMArguments());
+			assertEquals("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} ".concat(programArgs), LaunchArgumentsHelper.getInitialProgramArguments());
+		
+		} finally {
+			getTargetService().deleteTarget(definition.getHandle());
+			resetTargetPlatform();
+		}
+		
+	}
 	
 }

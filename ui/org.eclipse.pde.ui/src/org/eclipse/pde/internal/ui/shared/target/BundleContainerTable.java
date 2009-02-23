@@ -10,32 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import com.ibm.icu.text.MessageFormat;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
-import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.progress.UIJob;
 
@@ -187,8 +181,8 @@ public class BundleContainerTable {
 	 */
 	private void initializeTreeViewer(Tree tree) {
 		fTreeViewer = new TreeViewer(tree);
-		fTreeViewer.setContentProvider(new TargetContentProvider());
-		fTreeViewer.setLabelProvider(new TargetLabelProvider());
+		fTreeViewer.setContentProvider(new BundleContainerContentProvider());
+		fTreeViewer.setLabelProvider(new BundleContainerLabelProvider());
 		fTreeViewer.setComparator(new ViewerComparator());
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -473,7 +467,7 @@ public class BundleContainerTable {
 	/**
 	 * Content provider for the tree, primary input is a ITargetDefinition, children are IBundleContainers
 	 */
-	class TargetContentProvider implements ITreeContentProvider {
+	class BundleContainerContentProvider implements ITreeContentProvider {
 
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof ITargetDefinition) {
@@ -526,103 +520,6 @@ public class BundleContainerTable {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
-	}
-
-	/**
-	 * Label provider for the tree
-	 */
-	class TargetLabelProvider extends BundleInfoLabelProvider {
-		public String getText(Object element) {
-			try {
-				if (element instanceof FeatureBundleContainer) {
-					FeatureBundleContainer container = (FeatureBundleContainer) element;
-					String version = container.getFeatureVersion();
-					if (version != null) {
-						return MessageFormat.format(Messages.BundleContainerTable_5, new String[] {container.getFeatureId(), version, container.getLocation(false), getIncludedBundlesLabel(container)});
-					}
-					return MessageFormat.format(Messages.BundleContainerTable_6, new String[] {container.getFeatureId(), container.getLocation(false), getIncludedBundlesLabel(container)});
-				} else if (element instanceof DirectoryBundleContainer) {
-					DirectoryBundleContainer container = (DirectoryBundleContainer) element;
-					return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getIncludedBundlesLabel(container)});
-				} else if (element instanceof ProfileBundleContainer) {
-					ProfileBundleContainer container = (ProfileBundleContainer) element;
-					String config = container.getConfigurationLocation();
-					if (config != null) {
-						return MessageFormat.format(Messages.BundleContainerTable_8, new String[] {container.getLocation(false), config, getIncludedBundlesLabel(container)});
-					}
-					return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getIncludedBundlesLabel(container)});
-				}
-			} catch (CoreException e) {
-				return MessageFormat.format(Messages.BundleContainerTable_4, new String[] {e.getMessage()});
-			}
-			if (element instanceof IStatus) {
-				return ((IStatus) element).getMessage();
-			}
-			return super.getText(element);
-		}
-
-		public Image getImage(Object element) {
-			if (element instanceof IBundleContainer) {
-				int flag = 0;
-				IBundleContainer container = (IBundleContainer) element;
-				if (container.isResolved()) {
-					IStatus status = container.getBundleStatus();
-					if (status.getSeverity() == IStatus.WARNING) {
-						flag = SharedLabelProvider.F_WARNING;
-					} else if (status.getSeverity() == IStatus.ERROR) {
-						flag = SharedLabelProvider.F_ERROR;
-					}
-				}
-				if (element instanceof FeatureBundleContainer) {
-					return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ, flag);
-				} else if (element instanceof DirectoryBundleContainer) {
-					ImageDescriptor image = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
-					return PDEPlugin.getDefault().getLabelProvider().get(image, flag);
-				} else if (element instanceof ProfileBundleContainer) {
-					return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION, flag);
-				}
-			} else if (element instanceof IStatus) {
-				int severity = ((IStatus) element).getSeverity();
-				if (severity == IStatus.WARNING) {
-					return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
-				} else if (severity == IStatus.ERROR) {
-					return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
-				}
-			}
-
-			return super.getImage(element);
-		}
-
-		/**
-		 * Returns a label describing the number of bundles included (ex. 5 of 10 plug-ins)
-		 * or an empty string if there is a problem determining the number of bundles
-		 * @param container bundle container to check for inclusions
-		 * @return string label
-		 */
-		private String getIncludedBundlesLabel(IBundleContainer container) {
-			// TODO Provide convenience methods in IBundleContainer to access all bundles?
-			if (!container.isResolved() || (!container.getBundleStatus().isOK() && !container.getBundleStatus().isMultiStatus()) || container.getBundles() == null) {
-				return ""; //$NON-NLS-1$
-			}
-
-			BundleInfo[] restrictions = container.getIncludedBundles();
-			if (restrictions != null) {
-				container.setIncludedBundles(null);
-			}
-			int bundleCount = container.getBundles().length;
-			String bundleCountString = Integer.toString(bundleCount);
-			if (restrictions != null) {
-				container.setIncludedBundles(restrictions);
-			}
-
-			if (restrictions != null && restrictions.length > bundleCount) {
-				// If some bundles are missing, the bundleCount is likely wrong, just do the best we can
-				return ""; //$NON-NLS-1$
-			}
-
-			return MessageFormat.format(Messages.BundleContainerTable_10, new String[] {restrictions != null ? Integer.toString(restrictions.length) : bundleCountString, bundleCountString});
-
-		}
 	}
 
 }

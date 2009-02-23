@@ -11,11 +11,13 @@
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ui.shared.target.ArgumentsFromContainerSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -126,7 +128,29 @@ public class ArgumentsSection extends SectionPart {
 				getTarget().setVMArguments(value.length() > 0 ? value : null);
 			}
 		});
-		variables = toolkit.createButton(vmComp, PDEUIMessages.ArgumentsSection_variableButtonTitle, SWT.NONE);
+
+		Composite buttons = new Composite(vmComp, SWT.NONE);
+		buttons.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		buttons.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		Button vmArgs = toolkit.createButton(buttons, PDEUIMessages.ArgumentsSection_argumentsButtonTitle, SWT.NONE);
+		vmArgs.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		vmArgs.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				ArgumentsFromContainerSelectionDialog dialog = new ArgumentsFromContainerSelectionDialog(getSection().getShell(), getTarget());
+				if (dialog.open() == Dialog.OK) {
+					String[] args = dialog.getSelectedArguments();
+					if (args != null && args.length > 0) {
+						StringBuffer resultBuffer = new StringBuffer();
+						for (int index = 0; index < args.length; ++index) {
+							resultBuffer.append(args[index] + " "); //$NON-NLS-1$
+						}
+						fVMArguments.getText().insert(resultBuffer.toString());
+					}
+				}
+			}
+		});
+
+		variables = toolkit.createButton(buttons, PDEUIMessages.ArgumentsSection_variableButtonTitle, SWT.NONE);
 		variables.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		variables.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

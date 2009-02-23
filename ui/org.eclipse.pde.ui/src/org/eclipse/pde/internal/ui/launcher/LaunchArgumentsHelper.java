@@ -26,6 +26,8 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
+import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.osgi.framework.Bundle;
@@ -105,7 +107,24 @@ public class LaunchArgumentsHelper {
 		return args == null ? "" : getSubstitutedString(args); //$NON-NLS-1$
 	}
 
+	/**
+	 * Fetches the VM Arguments from the current Target Platform
+	 *  
+	 * @return	VM Arguments from the current Target Platform or empty string if none found
+	 */
 	public static String getInitialVMArguments() {
+
+		ITargetHandle target;
+		try {
+			target = TargetPlatformService.getDefault().getWorkspaceTargetHandle();
+			if (target != null) {
+				String result = target.getTargetDefinition().getVMArguments();
+				result = result != null ? result : ""; //$NON-NLS-1$
+				return result;
+			}
+		} catch (CoreException e) {
+		}
+
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		StringBuffer result = new StringBuffer(preferences.getString(ICoreConstants.VM_ARGS));
 
@@ -251,7 +270,7 @@ public class LaunchArgumentsHelper {
 					if (kind == IClasspathEntry.CPE_SOURCE || kind == IClasspathEntry.CPE_LIBRARY) {
 						IPackageFragmentRoot[] roots = jProject.findPackageFragmentRoots(entries[i]);
 						for (int j = 0; j < roots.length; j++) {
-							if (roots[j].getPackageFragment(packageName).exists()) { 
+							if (roots[j].getPackageFragment(packageName).exists()) {
 								// if source folder, find the output folder
 								if (kind == IClasspathEntry.CPE_SOURCE) {
 									IPath path = entries[i].getOutputLocation();

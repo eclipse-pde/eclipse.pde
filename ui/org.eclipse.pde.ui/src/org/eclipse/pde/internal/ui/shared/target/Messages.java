@@ -36,6 +36,12 @@ public class Messages extends NLS {
 	public static String AddProfileContainerPage_5;
 	public static String AddProfileContainerPage_6;
 	public static String AddProfileContainerPage_8;
+	public static String ArgumentsFromContainerSelectionDialog_0;
+	public static String ArgumentsFromContainerSelectionDialog_1;
+	public static String ArgumentsFromContainerSelectionDialog_2;
+	public static String ArgumentsFromContainerSelectionDialog_3;
+	public static String ArgumentsFromContainerSelectionDialog_4;
+	public static String ArgumentsFromContainerSelectionDialog_5;
 	public static String BundleContainerTable_0;
 	public static String BundleContainerTable_1;
 	public static String BundleContainerTable_10;
