@@ -924,15 +924,15 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		IResource resource = binaryDelta.getResource();
 		if(resource.getType() == IResource.FILE) {
 			if (Util.isClassFile(resource.getName())) {
-				IPath typePath = resolveJavaPathFromResource(resource);
-				if(typePath == null) {
-					return;
-				}
 				switch (binaryDelta.getKind()) {
 					case IResourceDelta.REMOVED :
 						fAddedRemovedDeltas.add(binaryDelta);
 						//$FALL-THROUGH$
 					case IResourceDelta.ADDED : {
+						IPath typePath = resolveJavaPathFromResource(resource);
+						if(typePath == null) {
+							return;
+						}
 						if (DEBUG) {
 							System.out.println("Found added/removed class file " + typePath); //$NON-NLS-1$
 						}
@@ -942,6 +942,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					case IResourceDelta.CHANGED : {
 						if ((binaryDelta.getFlags() & IResourceDelta.CONTENT) == 0) {
 							return; // skip it since it really isn't changed
+						}
+						IPath typePath = resolveJavaPathFromResource(resource);
+						if(typePath == null) {
+							return;
 						}
 						if (DEBUG) {
 							System.out.println("Found changed class file " + typePath); //$NON-NLS-1$
