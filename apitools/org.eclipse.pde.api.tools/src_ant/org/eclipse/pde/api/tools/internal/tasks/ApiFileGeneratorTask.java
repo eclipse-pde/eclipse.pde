@@ -239,10 +239,7 @@ public class ApiFileGeneratorTask extends Task {
 		}
 		File[] allFiles = Util.getAllFiles(root, new FileFilter() {
 			public boolean accept(File path) {
-				if(isApi(path.getParent())) {
-					return (path.isFile() && Util.isJavaFileName(path.getName())) || path.isDirectory();
-				}
-				return false;
+				return (path.isFile() && Util.isJavaFileName(path.getName()) && isApi(path.getParent())) || path.isDirectory();
 			}
 		});
 		ApiDescription apiDescription = new ApiDescription(this.projectName);
