@@ -30,6 +30,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * API tooling UI plug-in class.
@@ -70,6 +71,11 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	 * Maps Image descriptors to images for composite images
 	 */
 	private static Map fCompositeImages = new HashMap();
+	
+	/**
+	 * This bundle's OSGi context
+	 */
+	private BundleContext fBundleContext = null;
 	
 	/**
 	 * Constructor
@@ -273,8 +279,28 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 			image.dispose();
 		}
 		fCompositeImages.clear();
+		fBundleContext = null;
 		super.stop(context);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		fBundleContext = context;
+		super.start(context);
+	}
 	
+	/**
+	 * Returns a service with the specified name or <code>null</code> if none.
+	 * 
+	 * @param serviceName name of service
+	 * @return service object or <code>null</code> if none
+	 */
+	public Object acquireService(String serviceName) {
+		ServiceReference reference = fBundleContext.getServiceReference(serviceName);
+		if (reference == null)
+			return null;
+		return fBundleContext.getService(reference);
+	}
 }

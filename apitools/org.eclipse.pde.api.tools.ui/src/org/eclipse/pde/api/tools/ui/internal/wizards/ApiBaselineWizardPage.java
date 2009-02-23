@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.Dialog;
@@ -55,6 +56,10 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiBaselinePreferencePage;
+import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -172,27 +177,57 @@ public class ApiBaselineWizardPage extends WizardPage {
 			monitor.beginTask(WizardMessages.ApiProfileWizardPage_0, 10);
 			Path path = new Path(location);
 			File plugins = path.append("plugins").toFile(); //$NON-NLS-1$
-			if (!plugins.exists() || !plugins.isDirectory()) {
-				plugins = path.toFile();
-			}
-			File[] files = scanLocation(plugins);
-			monitor.worked(1);
-			fProfile = ApiModelFactory.newApiBaseline(name);
-			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 8);
-			subMonitor.beginTask(IApiToolsConstants.EMPTY_STRING, files.length); 
-			List components = new ArrayList();
-			for (int i = 0; i < files.length; i++) {
-				try {
-					IApiComponent component = ApiModelFactory.newApiComponent(fProfile, files[i].getPath());
-					if (component != null) {
-						components.add(component);
-					}
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-				subMonitor.worked(1);
-			}
+			ITargetPlatformService service = (ITargetPlatformService) ApiUIPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
+			IBundleContainer container = service.newProfileContainer(path.toOSString(), null);
+			// treat as an installation, if that fails, try plug-ins directory
+			ITargetDefinition definition = service.newTarget();
+			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+			container.resolve(definition, subMonitor);
 			subMonitor.done();
+			monitor.worked(1);
+			IResolvedBundle[] bundles = container.getBundles();
+			List components = new ArrayList();
+			fProfile = ApiModelFactory.newApiBaseline(name);
+			if (bundles.length > 0) {
+				// an installation
+				subMonitor = new SubProgressMonitor(monitor, 8);
+				subMonitor.beginTask(IApiToolsConstants.EMPTY_STRING, bundles.length); 
+				for (int i = 0; i < bundles.length; i++) {
+					try {
+						if (!bundles[i].isSourceBundle()) {
+							IApiComponent component = ApiModelFactory.newApiComponent(fProfile, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
+							if (component != null) {
+								components.add(component);
+							}
+						}
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+					subMonitor.worked(1);
+				}
+				subMonitor.done();
+			} else {
+				// scan directory
+				if (!plugins.exists() || !plugins.isDirectory()) {
+					plugins = path.toFile();
+				}
+				File[] files = scanLocation(plugins);
+				monitor.worked(1);
+				subMonitor = new SubProgressMonitor(monitor, 7);
+				subMonitor.beginTask(IApiToolsConstants.EMPTY_STRING, files.length); 
+				for (int i = 0; i < files.length; i++) {
+					try {
+						IApiComponent component = ApiModelFactory.newApiComponent(fProfile, files[i].getPath());
+						if (component != null) {
+							components.add(component);
+						}
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+					subMonitor.worked(1);
+				}
+				subMonitor.done();
+			}
 			try {
 				fProfile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
 			} catch (CoreException e) {
