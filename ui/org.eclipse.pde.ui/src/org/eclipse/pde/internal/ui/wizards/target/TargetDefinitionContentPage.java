@@ -119,7 +119,10 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		pluginTabContainer.setLayout(new GridLayout());
 		pluginTabContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		SWTFactory.createWrapLabel(pluginTabContainer, PDEUIMessages.ContentSection_1, 2);
+		Label label = SWTFactory.createWrapLabel(pluginTabContainer, PDEUIMessages.ContentSection_1, 2);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 400;
+		label.setLayoutData(gd);
 
 		fTable = BundleContainerTable.createTableInDialog(pluginTabContainer, new IBundleContainerTableReporter() {
 			public void runResolveOperation(final IRunnableWithProgress operation) {
