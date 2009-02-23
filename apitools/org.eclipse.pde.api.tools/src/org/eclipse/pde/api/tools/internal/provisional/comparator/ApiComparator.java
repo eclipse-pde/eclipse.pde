@@ -367,7 +367,7 @@ public class ApiComparator {
 						IDelta.API_COMPONENT,
 						null,
 						component2.getId(),
-						Util.getDeltaComponentVersionsId(component2));
+						Util.getComponentVersionsId(component2));
 			} else if (component2 == null) {
 				String referenceComponentId = referenceComponent.getId();
 				return new Delta(
@@ -377,7 +377,7 @@ public class ApiComparator {
 						IDelta.API_COMPONENT,
 						null,
 						referenceComponentId,
-						Util.getDeltaComponentVersionsId(referenceComponent));
+						Util.getComponentVersionsId(referenceComponent));
 			}
 			String referenceComponentId = referenceComponent.getId();
 			final Delta globalDelta = new Delta();
@@ -399,7 +399,7 @@ public class ApiComparator {
 									0,
 									null,
 									referenceComponentId,
-									new String[] { currentEE, Util.getDeltaComponentVersionsId(referenceComponent)}));
+									new String[] { currentEE, Util.getComponentVersionsId(referenceComponent)}));
 				}
 			}
 			for (Iterator iterator = componentsEEs.iterator(); iterator.hasNext(); ) {
@@ -414,7 +414,7 @@ public class ApiComparator {
 								0,
 								null,
 								referenceComponentId,
-								new String[] { currentEE, Util.getDeltaComponentVersionsId(referenceComponent)}));
+								new String[] { currentEE, Util.getComponentVersionsId(referenceComponent)}));
 			}
 			return internalCompare(referenceComponent, component2, referenceBaseline, baseline, visibilityModifiers, globalDelta);
 		} catch(CoreException e) {
@@ -513,7 +513,7 @@ public class ApiComparator {
 							typeDescriptor2.getModifiers(),
 							typeName,
 							typeName,
-							new String[] { typeName, deltaComponentID});
+							new String[] { typeName, Util.getComponentVersionsId(component2)});
 				}
 				return NO_DELTA;
 			}
@@ -533,7 +533,7 @@ public class ApiComparator {
 							typeDescriptor2.getModifiers(),
 							typeName,
 							typeName,
-							new String[] { typeName, deltaComponentID});
+							new String[] { typeName, Util.getComponentVersionsId(component2)});
 				}
 			} else if (!isAPI(refVisibility, typeDescriptor)
 					&& isAPI(visibility, typeDescriptor2)) {
@@ -546,7 +546,7 @@ public class ApiComparator {
 						typeDescriptor2.getModifiers(),
 						typeName,
 						typeName,
-						new String[] { typeName, deltaComponentID});
+						new String[] { typeName, Util.getComponentVersionsId(component2)});
 			}
 			if (visibilityModifiers == VisibilityModifiers.API) {
 				// if the visibility is API, we only consider public and protected types
@@ -564,7 +564,7 @@ public class ApiComparator {
 							typeDescriptor2.getModifiers(),
 							typeName,
 							typeName,
-							new String[] { typeName, deltaComponentID});
+							new String[] { typeName, Util.getComponentVersionsId(component2)});
 					} else {
 						return NO_DELTA;
 					}
@@ -806,7 +806,7 @@ public class ApiComparator {
 													typeDescriptor.getModifiers(),
 													typeName,
 													typeName,
-													new String[] { typeName, deltaComponentID }));
+													new String[] { typeName, Util.getComponentVersionsId(component2) }));
 								} else {
 									if ((visibility & visibilityModifiers) == 0) {
 										// we skip the class file according to their visibility
@@ -837,7 +837,7 @@ public class ApiComparator {
 													typeDescriptor2.getModifiers(),
 													typeName,
 													typeName,
-													new String[] { typeName, deltaComponentID }));
+													new String[] { typeName, Util.getComponentVersionsId(component2) }));
 											return;
 										}
 									}
@@ -853,7 +853,7 @@ public class ApiComparator {
 														typeDescriptor2.getModifiers(),
 														typeName,
 														typeName,
-														new String[] { typeName, deltaComponentID}));
+														new String[] { typeName, Util.getComponentVersionsId(component2)}));
 									}
 									typeRootBaseLineNames.add(typeName);
 									ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, typeRoot2, component, provider, referenceBaseline, baseline, visibilityModifiers);
@@ -958,7 +958,7 @@ public class ApiComparator {
 																typeDescriptor.getModifiers(),
 																typeName,
 																typeName,
-																new String[] { typeName, currentComponentID }));
+																new String[] { typeName, Util.getComponentVersionsId(component) }));
 											} else {
 												typeRootBaseLineNames.add(typeName);
 												IApiType typeDescriptor2 = typeRoot2.getStructure();
@@ -984,7 +984,7 @@ public class ApiComparator {
 																typeDescriptor2.getModifiers(),
 																typeName,
 																typeName,
-																new String[] { typeName, currentComponentID }));
+																new String[] { typeName, Util.getComponentVersionsId(component) }));
 														return;
 													}
 												}
@@ -1035,7 +1035,7 @@ public class ApiComparator {
 												type.getModifiers(),
 												typeName,
 												typeName,
-												new String[] { typeName, deltaComponentID }));
+												new String[] { typeName, Util.getComponentVersionsId(component2) }));
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
 							}
@@ -1092,7 +1092,7 @@ public class ApiComparator {
 															typeDescriptor.getModifiers(),
 															typeName,
 															typeName,
-															new String[] { typeName, currentComponentID }));
+															new String[] { typeName, Util.getComponentVersionsId(component) }));
 										} catch (CoreException e) {
 											ApiPlugin.log(e);
 										}

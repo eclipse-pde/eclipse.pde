@@ -471,7 +471,7 @@ public class ClassFileComparator {
 								typeMember.getModifiers(),
 								this.type1,
 								typeMember.getName(),
-								new String[] { typeMember.getName().replace('$', '.'), Util.getDeltaComponentVersionsId(component2)});
+								new String[] { typeMember.getName().replace('$', '.'), Util.getComponentVersionsId(component2)});
 					} catch (CoreException e) {
 						reportStatus(e);
 					}
@@ -586,7 +586,7 @@ public class ClassFileComparator {
 							typeMember.getModifiers(),
 							this.type1,
 							typeMember.getName(),
-							new String[] { typeMember.getName().replace('$', '.'), Util.getDeltaComponentVersionsId(component2)});
+							new String[] { typeMember.getName().replace('$', '.'), Util.getComponentVersionsId(component2)});
 				} catch (CoreException e) {
 					reportStatus(e);
 				}

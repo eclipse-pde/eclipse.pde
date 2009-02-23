@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 public class BuildState {
 	private static final IDelta[] EMPTY_DELTAS = new IDelta[0];
 	private static final String[] NO_REEXPORTED_COMPONENTS = new String[0];
-	private static final int VERSION = 0x06;
+	private static final int VERSION = 0x07;
 	
 	private Map compatibleChanges;
 	private Map breakingChanges;

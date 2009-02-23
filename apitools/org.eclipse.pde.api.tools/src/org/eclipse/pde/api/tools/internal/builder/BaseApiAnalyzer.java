@@ -925,7 +925,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									type.getModifiers(),
 									typeName,
 									typeName,
-									new String[] { typeName, deltaComponentID});
+									new String[] { typeName, Util.getComponentVersionsId(reference)});
 						}
 					}
 				} catch (CoreException e) {
@@ -1056,7 +1056,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			SinceTagChecker visitor = new SinceTagChecker(offset);
 			comp.accept(visitor);
-			String componentVersionString = component.getVersion();
+			// we must retrieve the component version from the delta component id
+			String componentVersionId = delta.getComponentVersionId();
+			String componentVersionString = null;
+			if (componentVersionId == null) {
+				componentVersionString = component.getVersion();
+			} else {
+				componentVersionString = extractVersion(componentVersionId);
+			}
 			try {
 				if (visitor.hasNoComment() || visitor.isMissing()) {
 					if(ignoreSinceTagCheck(IApiProblemTypes.MISSING_SINCE_TAG)) {
@@ -1137,6 +1144,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 	
+	private String extractVersion(String componentVersionId) {
+		// extract the version from the delta component id. It is located between parenthesis
+		int indexOfOpen = componentVersionId.lastIndexOf('(');
+		return componentVersionId.substring(indexOfOpen + 1, componentVersionId.length() - 1);
+	}
+
 	/**
 	 * Creates a marker to denote a problem with the since tag (existence or correctness) for a member
 	 * and returns it, or <code>null</code>
@@ -1150,41 +1163,50 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	private IApiProblem createSinceTagProblem(int kind, final String[] messageargs, final Delta info, final IMember member, final String version) {
 		try {
 			// create a marker on the member for missing @since tag
-			IResource resource = null;
-			ICompilationUnit unit = null;
-			try {
-				unit = member.getCompilationUnit();
-				if (unit != null) {
-					resource = unit.getCorrespondingResource();
-				}
-			} catch (JavaModelException e) {
-				ApiPlugin.log(e);
-			}
+			IResource resource = Util.getResource(this.fJavaProject.getProject(), member.getDeclaringType());
 			if (resource == null) {
 				return null;
 			}
 			int lineNumber = 1;
 			int charStart = 0;
 			int charEnd = 1;
-			ISourceRange range = member.getNameRange();
-			charStart = range.getOffset();
-			charEnd = charStart + range.getLength();
-			try {
-				// unit cannot be null
-				IDocument document = Util.getDocument(unit);
-				lineNumber = document.getLineOfOffset(charStart);
-			} catch (BadLocationException e) {
-				ApiPlugin.log(e);
-			}
 			String qtn = null;
 			if (member instanceof IType) {
 				qtn = ((IType)member).getFullyQualifiedName();
 			} else {
 				qtn = member.getDeclaringType().getFullyQualifiedName();
 			}
+			String[] messageArguments = null;
+			if (!Util.isManifest(resource.getProjectRelativePath())) {
+				messageArguments = messageargs;
+				ICompilationUnit unit = member.getCompilationUnit();
+				ISourceRange range = member.getNameRange();
+				charStart = range.getOffset();
+				charEnd = charStart + range.getLength();
+				try {
+					// unit cannot be null
+					IDocument document = Util.getDocument(unit);
+					lineNumber = document.getLineOfOffset(charStart);
+				} catch (BadLocationException e) {
+					ApiPlugin.log(e);
+				}
+			} else {
+				// update the last entry in the message arguments 
+				if (!(member instanceof IType)) {
+					// insert the declaring type
+					int length = messageargs.length;
+					messageArguments = new String[length];
+					System.arraycopy(messageargs, 0, messageArguments, 0, length);
+					StringBuffer buffer = new StringBuffer();
+					buffer.append(qtn).append('.').append(messageargs[length - 1]);
+					messageArguments[length - 1] = String.valueOf(buffer);
+				} else {
+					messageArguments = messageargs;
+				}
+			}
 			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(),
 					qtn,
-					messageargs,
+					messageArguments,
 					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID, IApiMarkerConstants.MARKER_ATTR_HANDLE_ID},
 					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID), member.getHandleIdentifier()},
 					lineNumber,
@@ -1230,39 +1252,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					ApiPlugin.log(e);
 				}
 				IProject project = fJavaProject.getProject();
-				if (type == null) {
-					IResource manifestFile = Util.getManifestFile(project);
-					if (manifestFile == null) {
-						// Cannot retrieve the manifest.mf file
-						return null;
-					}
-					resource = manifestFile;
-				} else {
-					ICompilationUnit unit = type.getCompilationUnit();
-					if (unit != null) {
-						resource = unit.getCorrespondingResource();
-						if (resource == null) {
-							return null;
-						}
-						if (project.findMember(resource.getProjectRelativePath()) == null) {
-							resource = null;
-							IResource manifestFile = Util.getManifestFile(project);
-							if (manifestFile == null) {
-								// Cannot retrieve the manifest.mf file
-								return null;
-							}
-							resource = manifestFile;
-						} else {
-							member = Util.getIMember(delta, fJavaProject);
-						}
-					} else {
-						IResource manifestFile = Util.getManifestFile(project);
-						if (manifestFile == null) {
-							// Cannot retrieve the manifest.mf file
-							return null;
-						}
-						resource = manifestFile;
-					}
+				resource = Util.getResource(project, type);
+				if (resource == null) {
+					return null;
+				}
+				if (!Util.isManifest(resource.getProjectRelativePath())) {
+					member = Util.getIMember(delta, fJavaProject);
 				}
 				if (member != null && !member.isBinary()) {
 					ISourceRange range = member.getNameRange();

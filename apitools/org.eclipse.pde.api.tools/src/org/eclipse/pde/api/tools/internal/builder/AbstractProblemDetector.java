@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -94,13 +95,14 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return problem or <code>null</code> if none
 	 * @exception CoreException if something goes wrong
 	 */
-	protected IApiProblem createProblem(IReference reference, IJavaProject project) {
-		if (ApiPlugin.getDefault().getSeverityLevel(getSeverityKey(), project.getProject()) == ApiPlugin.SEVERITY_IGNORE) {
+	protected IApiProblem createProblem(IReference reference, IJavaProject javaProject) {
+		IProject project = javaProject.getProject();
+		if (ApiPlugin.getDefault().getSeverityLevel(getSeverityKey(), project) == ApiPlugin.SEVERITY_IGNORE) {
 			return null;
 		}		
 		try {
 			String lookupName = getTypeName(reference.getMember()).replace('$', '.');
-			IType type = project.findType(lookupName, new NullProgressMonitor());
+			IType type = javaProject.findType(lookupName, new NullProgressMonitor());
 			if (type == null) {
 				return null;
 			}
@@ -108,39 +110,41 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			if (compilationUnit == null) {
 				return null;
 			}
-			IResource resource = compilationUnit.getCorrespondingResource();
+			IResource resource = Util.getResource(project, type);
 			if (resource == null) {
 				return null;
 			}
-			IDocument document = Util.getDocument(compilationUnit);
-			// retrieve line number, char start and char end
-			int lineNumber = reference.getLineNumber();
-			if (lineNumber > 0) {
-				lineNumber--;
-			}
 			int charStart = -1;
 			int charEnd = -1;
-			// get the source range for the problem
-			try {
-				Position pos = getSourceRange(type, document, reference);
-				if (pos != null) {
-					charStart = pos.getOffset();
-					if (charStart != -1) {
-						charEnd = charStart + pos.getLength();
-						lineNumber = document.getLineOfOffset(charStart);
-					}
-				}
-			} catch (CoreException e) {
-				ApiPlugin.log(e);
-				return null;
-			}
-			catch (BadLocationException e) {
-				ApiPlugin.log(e);
-				return null;
-			}
+			int lineNumber = reference.getLineNumber();
 			IJavaElement element = compilationUnit;
-			if(charStart > -1) {
-				element = compilationUnit.getElementAt(charStart);
+			if (!Util.isManifest(resource.getProjectRelativePath()) && !type.isBinary()) {
+				IDocument document = Util.getDocument(compilationUnit);
+				// retrieve line number, char start and char end
+				if (lineNumber > 0) {
+					lineNumber--;
+				}
+				// get the source range for the problem
+				try {
+					Position pos = getSourceRange(type, document, reference);
+					if (pos != null) {
+						charStart = pos.getOffset();
+						if (charStart != -1) {
+							charEnd = charStart + pos.getLength();
+							lineNumber = document.getLineOfOffset(charStart);
+						}
+					}
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+					return null;
+				}
+				catch (BadLocationException e) {
+					ApiPlugin.log(e);
+					return null;
+				}
+				if(charStart > -1) {
+					element = compilationUnit.getElementAt(charStart);
+				}
 			}
 			return ApiProblemFactory.newApiUsageProblem(resource.getProjectRelativePath().toPortableString(),
 					type.getFullyQualifiedName(),

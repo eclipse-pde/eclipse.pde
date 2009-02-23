@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -32,6 +34,7 @@ import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.text.edits.TextEdit;
@@ -54,9 +57,24 @@ public class UpdateSinceTagOperation {
 			monitor.beginTask(MarkerMessages.UpdateSinceTagOperation_title, 3);
 		}
 		// retrieve the AST node compilation unit
-		IResource resource = this.fMarker.getResource();
-		IJavaElement javaElement = JavaCore.create(resource);
 		try {
+			Integer charStartAttribute = (Integer) this.fMarker.getAttribute(IMarker.CHAR_START);
+			int intValue = charStartAttribute.intValue();
+			IJavaElement javaElement = null;
+			IJavaElement handleElement = null;
+			if (intValue > 0) {
+				IResource resource = this.fMarker.getResource();
+				javaElement = JavaCore.create(resource);
+			} else {
+				// this is a case where the marker is reported against the MANIFEST.MF file
+				String handle = (String) fMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_HANDLE_ID);
+				if(handle != null) {
+					handleElement = JavaCore.create(handle);
+				}
+				if (handleElement != null && handleElement.exists()) {
+					javaElement = handleElement.getAncestor(IJavaElement.COMPILATION_UNIT);
+				}
+			}
 			if (javaElement != null && javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
 				ICompilationUnit compilationUnit = (ICompilationUnit) javaElement;
 				if (!compilationUnit.isWorkingCopy()) {
@@ -65,21 +83,38 @@ public class UpdateSinceTagOperation {
 				}
 				ASTParser parser = ASTParser.newParser(AST.JLS3);
 				parser.setSource(compilationUnit);
-				Integer charStartAttribute = null;
-				charStartAttribute = (Integer) this.fMarker.getAttribute(IMarker.CHAR_START);
-				int intValue = charStartAttribute.intValue();
+				if (intValue <= 0) {
+					// try to use the name range of the corresponding element
+					if (handleElement instanceof IMember) {
+						IMember member = (IMember) handleElement;
+						ISourceRange range = member.getNameRange();
+						if (range != null) {
+							intValue = range.getOffset();
+						} else {
+							range = member.getSourceRange();
+							if (range != null && range.getOffset() > 0) {
+								intValue = range.getOffset();
+							} else {
+								return;
+							}
+						}
+					} else {
+						return;
+					}
+				}
 				parser.setFocalPosition(intValue);
 				parser.setResolveBindings(true);
 				Map options = compilationUnit.getJavaProject().getOptions(true);
 				options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 				parser.setCompilerOptions(options);
 				final CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
+				BodyDeclaration node = null;
 				NodeFinder nodeFinder = new NodeFinder(intValue);
 				unit.accept(nodeFinder);
 				if (monitor != null) {
 					monitor.worked(1);
 				}
-				BodyDeclaration node = nodeFinder.getNode();
+				node = nodeFinder.getNode();
 				if (node != null) {
 					unit.recordModifications();
 					AST ast = unit.getAST();

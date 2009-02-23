@@ -1921,6 +1921,40 @@ public final class Util {
 			String version = component.getVersion();
 			// remove the qualifier part
 			if (version != null) {
+				buffer.append('(');
+				try {
+					Version version2 = new Version(version);
+					buffer
+						.append(version2.getMajor())
+						.append('.')
+						.append(version2.getMinor())
+						.append('.')
+						.append(version2.getMicro());
+				} catch (IllegalArgumentException e) {
+					// the version string doesn't follow the Eclipse pattern
+					// we keep the version as is
+					buffer.append(version);
+				}
+				buffer.append(')');
+			}
+			return String.valueOf(buffer);
+		} catch (CoreException e) {
+			return EMPTY_STRING;
+		}
+	}
+	/**
+	 * Returns an identifier for the given API component including its version identifier
+	 * (component id + _ + major + _ + minor + _ + micro)
+	 *  
+	 * @param component API component
+	 * @return API component + version identifier
+	 */
+	public static String getComponentVersionsId(IApiComponent component) {
+		try {
+			StringBuffer buffer = new StringBuffer(component.getId());
+			String version = component.getVersion();
+			// remove the qualifier part
+			if (version != null) {
 				buffer.append('_');
 				try {
 					Version version2 = new Version(version);
@@ -1941,7 +1975,6 @@ public final class Util {
 			return EMPTY_STRING;
 		}
 	}
-	
 	public static String getDescriptorName(IApiType descriptor) {
 		String typeName = descriptor.getName();
 		int index = typeName.lastIndexOf('$');
