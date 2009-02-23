@@ -80,7 +80,8 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	private Button newbutton = null, 
 				   removebutton = null, 
 				   editbutton = null,
-				   setdefault = null;
+				   setdefault = null,
+				   removedefault = null;
 	protected static int rebuildcount = 0;
 	private String origdefault = null;
 	private boolean dirty = false;
@@ -117,7 +118,9 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 				IApiBaseline[] state = getCurrentSelection();
 				removebutton.setEnabled(state.length > 0);
 				editbutton.setEnabled(state.length == 1);
-				setdefault.setEnabled(state.length == 1 && !isDefault(state[0]));
+				boolean def = isDefault(state[0]);
+				setdefault.setEnabled(state.length == 1 && !def);
+				removedefault.setEnabled(state.length == 1 && def);
 			}
 		});
 		tableviewer.setComparator(new ViewerComparator() {
@@ -187,6 +190,8 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 				IApiBaseline[] states = getCurrentSelection();
 				if(states.length == 1){
 					newdefault = states[0].getName();
+					setdefault.setEnabled(false);
+					removedefault.setEnabled(true);
 					rebuildcount = 0;
 					tableviewer.refresh(true);
 					dirty = true;
@@ -194,6 +199,23 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 			}
 		});
 		setdefault.setEnabled(false);
+		
+		removedefault = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiBaselinePreferencePage_remove_as_default, null);
+		removedefault.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				IApiBaseline[] states = getCurrentSelection();
+				if(states.length == 1){
+					newdefault = null;
+					manager.setDefaultApiBaseline(null);
+					removedefault.setEnabled(false);
+					setdefault.setEnabled(true);
+					rebuildcount = 0;
+					tableviewer.refresh(true);
+					dirty = true;
+				}
+			}
+		});
+		removedefault.setEnabled(false);
 		
 		IApiBaseline baseline = manager.getDefaultApiBaseline();
 		origdefault = newdefault = (baseline == null ? null : baseline.getName());
