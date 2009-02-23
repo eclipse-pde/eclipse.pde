@@ -218,4 +218,11 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	public String toString() {
 		return new StringBuffer().append("Directory ").append(fPath).append(' ').append(getIncludedBundles() == null ? "All" : Integer.toString(getIncludedBundles().length)).append(" included").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getVMArguments()
+	 */
+	public String[] getVMArguments() {
+		return null;
+	}
 }

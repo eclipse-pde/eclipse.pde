@@ -237,4 +237,10 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 		return new StringBuffer().append("Feature ").append(fId).append(' ').append(fVersion).append(' ').append(fHome).append(' ').append(getIncludedBundles() == null ? "All" : Integer.toString(getIncludedBundles().length)).append(" included").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getVMArguments()
+	 */
+	public String[] getVMArguments() {
+		return null;
+	}
 }

@@ -113,4 +113,10 @@ public interface IBundleContainer {
 	 */
 	public BundleInfo[] getOptionalBundles();
 
+	/**
+	 * Returns VM Arguments that are specified in the bundle container or <code>null</code> if none.
+	 * 
+	 * @return list of VM Arguments or <code>null</code> if none available
+	 */
+	public String[] getVMArguments();
 }
