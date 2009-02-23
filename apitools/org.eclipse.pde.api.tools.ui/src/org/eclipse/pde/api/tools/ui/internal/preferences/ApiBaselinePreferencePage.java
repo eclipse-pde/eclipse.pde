@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,15 +21,13 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -57,20 +55,18 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
- * This preference page allows {@link IApiProfile}s to be created/removed/edited
+ * This preference page allows {@link IApiBaseline}s to be created/removed/edited
+ * 
  * @since 1.0.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	/**
 	 * Override to tell the label provider about uncommitted {@link IApiProfile}s that might have been set to 
 	 * be the new default
 	 */
-	class ProfileLabelProvider extends ApiToolsLabelProvider {
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.ui.internal.ApiToolsLabelProvider#isDefaultProfile(java.lang.Object)
-		 */
-		protected boolean isDefaultProfile(Object element) {
+	class BaselineLabelProvider extends ApiToolsLabelProvider {
+		protected boolean isDefaultBaseline(Object element) {
 			return isDefault(element);
 		}
 	}
@@ -78,12 +74,13 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	private IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 
 	private static HashSet removed = new HashSet(8);
-	private CheckboxTableViewer tableviewer = null;
+	private TableViewer tableviewer = null;
 	private ArrayList backingcollection = new ArrayList(8);
 	private String newdefault = null;
 	private Button newbutton = null, 
 				   removebutton = null, 
-				   editbutton = null;
+				   editbutton = null,
+				   setdefault = null;
 	protected static int rebuildcount = 0;
 	private String origdefault = null;
 	private boolean dirty = false;
@@ -104,10 +101,10 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		
 		Composite lcomp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH, 0, 0);
 		SWTFactory.createWrapLabel(lcomp, PreferenceMessages.ApiProfilesPreferencePage_1, 2);
-		Table table = new Table(lcomp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK);
+		Table table = new Table(lcomp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		tableviewer = new CheckboxTableViewer(table);
-		tableviewer.setLabelProvider(new ProfileLabelProvider());
+		tableviewer = new TableViewer(table);
+		tableviewer.setLabelProvider(new BaselineLabelProvider());
 		tableviewer.setContentProvider(new ArrayContentProvider());
 		tableviewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
@@ -115,27 +112,12 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 				doEdit((IApiBaseline) ss.getFirstElement());
 			}
 		});
-		tableviewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				IApiBaseline profile = (IApiBaseline) event.getElement();
-				if(event.getChecked()) {
-					tableviewer.setCheckedElements(new Object[] {profile});
-					newdefault = profile.getName();
-				}
-				else {
-					newdefault = null;
-					manager.setDefaultApiBaseline(null);
-				}
-				rebuildcount = 0;
-				tableviewer.refresh(true);
-				dirty = true;
-			}
-		});
 		tableviewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IApiBaseline[] state = getCurrentSelection();
 				removebutton.setEnabled(state.length > 0);
 				editbutton.setEnabled(state.length == 1);
+				setdefault.setEnabled(state.length == 1 && !isDefault(state[0]));
 			}
 		});
 		tableviewer.setComparator(new ViewerComparator() {
@@ -163,7 +145,6 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 						tableviewer.setSelection(new StructuredSelection(profile), true);
 						if(backingcollection.size() == 1) {
 							newdefault = profile.getName();
-							tableviewer.setCheckedElements(new Object[] {profile});
 							tableviewer.refresh(profile);
 						}
 						
@@ -197,10 +178,26 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 			}
 		});
 		removebutton.setEnabled(false);
-		IApiBaseline profile = manager.getDefaultApiBaseline();
-		origdefault = newdefault = (profile == null ? null : profile.getName());
-		initialize();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.APIPROFILES_PREF_PAGE);
+		
+		SWTFactory.createVerticalSpacer(bcomp, 1);
+		
+		setdefault = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiBaselinePreferencePage_set_as_default, null);
+		setdefault.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				IApiBaseline[] states = getCurrentSelection();
+				if(states.length == 1){
+					newdefault = states[0].getName();
+					rebuildcount = 0;
+					tableviewer.refresh(true);
+					dirty = true;
+				}
+			}
+		});
+		setdefault.setEnabled(false);
+		
+		IApiBaseline baseline = manager.getDefaultApiBaseline();
+		origdefault = newdefault = (baseline == null ? null : baseline.getName());
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.APIBASELINE_PREF_PAGE);
 
 		block = new ApiBaselinesConfigurationBlock((IWorkbenchPreferenceContainer)getContainer());
 		block.createControl(comp, this);
@@ -234,7 +231,6 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 				backingcollection.add(newprofile);
 				tableviewer.refresh();
 				if(isDefault(profile)) {
-					tableviewer.setCheckedElements(new Object[] {newprofile});
 					tableviewer.setSelection(new StructuredSelection(newprofile), true);
 					newdefault = newprofile.getName();
 					rebuildcount = 0;
@@ -243,16 +239,6 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 				}
 				dirty = true;
 			}
-		}
-	}
-	
-	/**
-	 * updates the buttons on the page
-	 */
-	protected void initialize() {
-		IApiBaseline def = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
-		if(def != null) {
-			tableviewer.setCheckedElements(new Object[] {def});
 		}
 	}
 	

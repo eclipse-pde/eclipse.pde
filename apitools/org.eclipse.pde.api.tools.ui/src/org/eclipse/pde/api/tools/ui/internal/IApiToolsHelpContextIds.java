@@ -22,7 +22,7 @@ public interface IApiToolsHelpContextIds {
 	/**
 	 * Constant representing the help id for the {@link ApiProfilesPreferencePage}.
 	 */
-	public static final String APIPROFILES_PREF_PAGE = PREFIX + "apiprofiles_preference_page"; //$NON-NLS-1$
+	public static final String APIBASELINE_PREF_PAGE = PREFIX + "apiprofiles_preference_page"; //$NON-NLS-1$
 	
 	/**
 	 * Constant representing the help id for the {@link ApiProfileWizardPage}

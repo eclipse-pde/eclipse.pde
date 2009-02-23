@@ -18,6 +18,8 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.messages"; //$NON-NLS-1$
 	public static String ApiToolsLabelProvider_0;
+	public static String ApiToolsLabelProvider_default_baseline;
+	public static String ApiToolsLabelProvider_default_baseline_place_holder;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

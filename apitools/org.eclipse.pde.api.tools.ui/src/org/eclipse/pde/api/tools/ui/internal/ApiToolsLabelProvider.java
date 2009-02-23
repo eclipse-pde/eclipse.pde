@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -191,8 +192,13 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 				}
 			}
 			if(element instanceof IApiBaseline) {
-				IApiBaseline profile  = (IApiBaseline) element;
-				return profile.getName();
+				IApiBaseline baseline  = (IApiBaseline) element;
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(baseline.getName());
+				if(isDefaultBaseline(baseline)) {
+					buffer.append(NLS.bind(Messages.ApiToolsLabelProvider_default_baseline_place_holder, Messages.ApiToolsLabelProvider_default_baseline));
+				}
+				return buffer.toString();
 			}
 			if(element instanceof EEEntry) {
 				return ((EEEntry)element).toString();
@@ -222,7 +228,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	 * @param element
 	 * @return if the profile is the default or not
 	 */
-	protected boolean isDefaultProfile(Object element) {
+	protected boolean isDefaultBaseline(Object element) {
 		if(element instanceof IApiBaseline) {
 			IApiBaseline profile = (IApiBaseline) element;
 			IApiBaseline def = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
@@ -237,7 +243,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 	 */
 	public Font getFont(Object element) {
-		if(isDefaultProfile(element)) {
+		if(isDefaultBaseline(element)) {
 			if (font == null) {
 	            Font dialogFont = JFaceResources.getDialogFont();
 				FontData[] fontData = dialogFont.getFontData();
