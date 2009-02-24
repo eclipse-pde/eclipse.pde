@@ -69,12 +69,17 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 	private HashMap fReferenceMap = null;
 	private IApiDescription fDescription = null;
 	private DocumentBuilder parser = null;
+	private boolean debug = false;
 	
 	/**
 	 * Constructor
+	 * 
+	 * @param location the absolute path in the local file system to the folder to write the reports to 
+	 * @param debug if debugging infos should be written out to the console
 	 */
-	public XMLApiSearchReporter(String location) {
+	public XMLApiSearchReporter(String location, boolean debug) {
 		fLocation = location;
+		this.debug = debug;
 		try {
 			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
@@ -444,5 +449,54 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 			case IApiElement.FIELD: return Signatures.getQualifiedFieldSignature((IApiField) member);
 		}
 		return null;
+	}
+
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportNotSearched(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement[])
+	 */
+	public void reportNotSearched(IApiElement[] elements) {
+		if(elements == null) {
+			return;
+		}
+		BufferedWriter writer = null;
+		try {
+			if(this.debug) {
+				System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
+			}
+			File rootfile = new File(fLocation);
+			if(!rootfile.exists()) {
+				rootfile.mkdirs();
+			}
+			File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+			Document doc = Util.newDocument();
+			Element root = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENTS);
+			doc.appendChild(root);
+			Element comp = null;
+			SkippedComponent component = null;
+			for(int i = 0; i < elements.length; i++) {
+				component = (SkippedComponent)elements[i];
+				comp = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
+				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getComponentId());
+				comp.setAttribute(IApiXmlConstants.NO_API_DESCRIPTION, Boolean.toString(component.hasNoApiDescription()));
+				comp.setAttribute(IApiXmlConstants.EXCLUDED, Boolean.toString(component.wasExcluded()));
+				comp.setAttribute(IApiXmlConstants.RESOLUTION_ERRORS, Boolean.toString(component.hasResolutionErrors()));
+				root.appendChild(comp);
+			}
+			writer = new BufferedWriter(new FileWriter(file));
+			writer.write(Util.serializeDocument(doc));
+			writer.flush();
+		}
+		catch(FileNotFoundException fnfe) {}
+		catch(IOException ioe) {}
+		catch(CoreException ce) {}
+		finally {
+			try {
+				writer.close();
+			} 
+			catch (IOException e) {}
+		}
 	}
 }

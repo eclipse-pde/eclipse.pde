@@ -11,24 +11,14 @@
 
 package org.eclipse.pde.api.tools.internal.tasks;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Iterator;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
-import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.search.XMLApiSearchReporter;
-import org.eclipse.pde.api.tools.internal.util.Util;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Ant task for performing the API use analysis of a given Eclipse SDK
@@ -224,8 +214,9 @@ public class ApiUseTask extends UseTask {
 			scope = baseline;
 		}
 		initializeExcludeSet(scope);
+		this.reporter = new XMLApiSearchReporter(this.reportLocation, this.debug);
 		try {
-			doSearch(baseline, scope, new XMLApiSearchReporter(this.reportLocation));
+			doSearch(baseline, scope, this.reporter);
 		}
 		catch(CoreException ce) {
 			throw new BuildException(Messages.ApiUseTask_search_engine_problem, ce);
@@ -237,56 +228,7 @@ public class ApiUseTask extends UseTask {
 			if(scope != null) {
 				scope.dispose();
 			}
-			writeNotSearched();
-		}
-	}
-	
-	/**
-	 * Writes out the listing of components that were not searched at all
-	 */
-	private void writeNotSearched() {
-		if(this.notsearched == null) {
-			return;
-		}
-		BufferedWriter writer = null;
-		try {
-			if(this.debug) {
-				System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
-			}
-			File rootfile = new File(this.reportLocation);
-			if(!rootfile.exists()) {
-				rootfile.mkdirs();
-			}
-			File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
-			if(!file.exists()) {
-				file.createNewFile();
-			}
-			Document doc = Util.newDocument();
-			Element root = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENTS);
-			doc.appendChild(root);
-			Element comp = null;
-			SkippedComponent component = null;
-			for(Iterator iter = this.notsearched.iterator(); iter.hasNext();) {
-				component = (SkippedComponent) iter.next();
-				comp = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
-				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getComponentId());
-				comp.setAttribute(NO_API_DESCRIPTION, Boolean.toString(component.hasNoApiDescription()));
-				comp.setAttribute(EXCLUDED, Boolean.toString(component.wasExcluded()));
-				comp.setAttribute(RESOLUTION_ERRORS, Boolean.toString(component.hasResolutionErrors()));
-				root.appendChild(comp);
-			}
-			writer = new BufferedWriter(new FileWriter(file));
-			writer.write(Util.serializeDocument(doc));
-			writer.flush();
-		}
-		catch(FileNotFoundException fnfe) {}
-		catch(IOException ioe) {}
-		catch(CoreException ce) {}
-		finally {
-			try {
-				writer.close();
-			} 
-			catch (IOException e) {}
+			this.reporter.reportNotSearched((IApiElement[]) this.notsearched.toArray(new IApiElement[this.notsearched.size()]));
 		}
 	}
 }

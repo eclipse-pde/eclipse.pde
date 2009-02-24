@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 
-public class SkippedComponent {
+
+public class SkippedComponent implements IApiElement{
 	/**
 	 * If the skipped component has no .api_description
 	 */
@@ -85,5 +88,40 @@ public class SkippedComponent {
 	 */
 	public boolean hasResolutionErrors() {
 		return this.resolveerrors;
+	}
+
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getAncestor(int)
+	 */
+	public IApiElement getAncestor(int ancestorType) {
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getApiComponent()
+	 */
+	public IApiComponent getApiComponent() {
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getName()
+	 */
+	public String getName() {
+		return this.componentid;
+	}
+
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getParent()
+	 */
+	public IApiElement getParent() {
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getType()
+	 */
+	public int getType() {
+		return IApiElement.COMPONENT;
 	}
 }

@@ -513,9 +513,9 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 			for (int i = 0; i < components.getLength(); i++) {
 				component = (Element) components.item(i);
 				id = component.getAttribute(IApiXmlConstants.ATTR_ID);
-				nodesc = component.getAttribute(ApiUseTask.NO_API_DESCRIPTION);
-				excluded = component.getAttribute(ApiUseTask.EXCLUDED);
-				resolveerrors = component.getAttribute(ApiUseTask.RESOLUTION_ERRORS);
+				nodesc = component.getAttribute(IApiXmlConstants.NO_API_DESCRIPTION);
+				excluded = component.getAttribute(IApiXmlConstants.EXCLUDED);
+				resolveerrors = component.getAttribute(IApiXmlConstants.RESOLUTION_ERRORS);
 				if(!"".equals(id)) { //$NON-NLS-1$
 					writer.println(MessageFormat.format(Messages.ApiUseReportConversionTask_not_searched_component_list, 
 									new String[] {id, nodesc, excluded, resolveerrors}));

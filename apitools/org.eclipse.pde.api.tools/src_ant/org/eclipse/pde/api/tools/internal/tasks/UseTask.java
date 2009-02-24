@@ -34,9 +34,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public class UseTask extends CommonUtilsTask {
 	
-	protected static final String NO_API_DESCRIPTION = "no_description"; //$NON-NLS-1$
-	protected static final String EXCLUDED = "excluded"; //$NON-NLS-1$
-	protected static final String RESOLUTION_ERRORS = "resolution_errors"; //$NON-NLS-1$
 	protected static final String SCOPE_BASELINE_NAME = "scope_baseline"; //$NON-NLS-1$
 	
 	/**
@@ -77,6 +74,16 @@ public class UseTask extends CommonUtilsTask {
 	 * Set of project names that were not searched
 	 */
 	protected TreeSet notsearched = null;
+	
+	/**
+	 * The fully qualified name of the class to report results to
+	 */
+	protected String reporterclazz = null;
+	
+	/**
+	 * the actual instantiated {@link IApiSearchReporter} instance that will be reported to 
+	 */
+	protected IApiSearchReporter reporter = null;
 	
 	/**
 	 * Returns the search scope to use

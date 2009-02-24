@@ -79,6 +79,12 @@ public class Messages extends NLS {
 	public static String api_generation_targetFolderNotADirectory;
 	public static String api_generation_invalidBinaryLocation;
 
+	public static String ApiUseDBTask_access_denied_to_class;
+
+	public static String ApiUseDBTask_class_could_not_be_instantaited;
+
+	public static String ApiUseDBTask_class_could_not_be_loaded;
+
 	public static String ApiUseDBTask_connection_could_not_be_established;
 
 	public static String ApiUseDBTask_driver_class_not_found;
@@ -86,6 +92,8 @@ public class Messages extends NLS {
 	public static String ApiUseDBTask_driver_instantiation_exception;
 
 	public static String ApiUseDBTask_illegal_access_loading_driver;
+
+	public static String ApiUseDBTask_must_provide_reporter_class;
 
 	public static String ApiUseDBTask_sql_connection_exception;
 

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
-import java.sql.Connection;
-
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
-import org.eclipse.pde.api.tools.internal.search.DBUseReporter;
+import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Api usage reporting task that reports to a database.
@@ -24,7 +24,18 @@ import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
  * @since 1.0.1
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ApiUseDBTask extends DatabaseTask {
+public class PluggableApiUseTask extends UseTask {
+	
+	/**
+	 * Sets the class to use to report search results to. 
+	 * <p>
+	 * This class must implement <code>IApiSearchReporter</code>.
+	 * </p> 
+	 * @param clazz
+	 */
+	public void setReporterClass(String clazz) {
+		this.reporterclazz = clazz;
+	}
 	
 	/**
 	 * Set the flag to indicate if the usage scan should try to proceed when an error is encountered
@@ -60,83 +71,6 @@ public class ApiUseDBTask extends DatabaseTask {
 	 */
 	public void setDebug(String debugValue) {
 		this.debug = Boolean.toString(true).equals(debugValue); 
-	}
-	
-	/**
-	 * Set the name of the database to connect to
-	 *
-	 * <p>For example <code>mydatabase</code>, as it would appear in the driver URL:<br><br>
-	 * <code>jdbc:[driver name]://[domain]:[port]/mydatabase?user=[username]&password=[password]</code>
-	 * 
-	 * @param dbname the name of the database to connect to
-	 */
-	public void setDBName(String dbname) {
-		this.dbName = dbname;
-	}
-	
-	/**
-	 * Set the kind of database to connect to as it would appear in the driver connection URL.
-	 * 
-	 * <p>For example <code>mysql</code>, as it would appear in the driver URL:<br><br>
-	 * <code>jdbc:mysql://[domain]:[port]/[dbname]?user=[username]&password=[password]</code>
-	 * 
-	 * @param drivername the name of the driver to use to connect
-	 */
-	public void setDBDriverName(String drivername) {
-		this.dbDriverName = drivername;
-	}
-	
-	/**
-	 * Sets the domain name of the database to connect to as it would appear in the driver connection URL.
-	 * 
-	 * <p>For example <code>my.domain.com</code>, as it would appear in the driver URL:<br><br>
-	 * <code>jdbc:[driver name]://my.domain.com:[port]/[dbname]?user=[username]&password=[password]</code>
-	 * 
-	 * @param domain the domain hosting the database
-	 */
-	public void setDBDomainName(String domain) {
-		this.dbDomainName = domain;	
-	}
-	
-	/**
-	 * Set the port number of the database to connect to as it would appear in the driver connection URL.
-	 * If the given port number is not a valid integer the default port number is used. (i.e. the port number is 
-	 * left off the driver connection URL)
-	 * 
-	 * <p>For example <code>3308</code>, as it would appear in the driver URL:<br><br>
-	 * <code>jdbc:[driver name]://[domain]:3308/[dbname]?user=[username]&password=[password]</code>
-	 * 
-	 * @param port the port the database is available on
-	 */
-	public void setDBPort(String port) {
-		try {
-			this.dbPort = Integer.parseInt(port);
-		}
-		catch(NumberFormatException nfe) {}
-	}
-	
-	/**
-	 * Set the user name to use when connecting to the database as it would appear in the driver connection URL.
-	 * 
-	 * <p>For example <code>myusername</code>, as it would appear in the driver URL:<br><br>
-	 * <code>jdbc:[driver name]://[domain]:[port]/[dbname]?user=myusername&password=[password]</code>
-	 * 
-	 * @param username the user name to use when connecting
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	
-	/**
-	 * Set the password to use when connecting to the database as it would appear in the driver connection URL.
-	 * 
-	 * <p>For example <code>mypassword</code>, as it would appear in the driver URL:<br><br>
-	 * <code>jdbc:[driver name]://[domain]:[port]/[dbname]?user=[username]&password=mypassword</code>
-	 * 
-	 * @param password the password to use when connecting
-	 */
-	public void setPassword(String password) {
-		this.password = password;
 	}
 	
 	/**
@@ -226,24 +160,51 @@ public class ApiUseDBTask extends DatabaseTask {
 		this.includenonapi = Boolean.valueOf(includenonapi).booleanValue();
 	}
 	
+	/**
+	 * @see org.eclipse.pde.api.tools.internal.tasks.UseTask#assertParameters()
+	 */
+	protected void assertParameters() throws BuildException {
+		super.assertParameters();
+		if(this.reporterclazz == null) {
+			throw new BuildException(Messages.ApiUseDBTask_must_provide_reporter_class);
+		}
+		Object clazz = null;
+		try {
+			clazz = Class.forName(this.reporterclazz).newInstance();
+		} catch (ClassNotFoundException e) {
+			throw new BuildException(
+					MessageFormat.format(Messages.ApiUseDBTask_class_could_not_be_loaded, 
+							new String[] {this.reporterclazz, e.getMessage()}));
+		} catch (InstantiationException e) {
+			throw new BuildException(
+					MessageFormat.format(Messages.ApiUseDBTask_class_could_not_be_instantaited, 
+							new String[] {this.reporterclazz, e.getMessage()}));
+		} catch (IllegalAccessException e) {
+			throw new BuildException(
+					MessageFormat.format(Messages.ApiUseDBTask_access_denied_to_class, 
+							new String[] {this.reporterclazz, e.getMessage()}));
+		}
+		if(clazz instanceof IApiSearchReporter) {
+			this.reporter = (IApiSearchReporter) clazz;
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
 	public void execute() throws BuildException {
-		validateDBConnectionParameters();
 		writeDebugHeader();
+		assertParameters();
 		
 		IApiBaseline baseline = getBaseline(CURRENT_BASELINE_NAME, this.currentBaselineLocation);
 		IApiBaseline scope = getBaseline(SCOPE_BASELINE_NAME, this.scopeLocation);
+		if(scope == null) {
+			scope = baseline;
+		}
 		initializeExcludeSet(scope);
 		try {
-			Connection connection = doConnection();
-			if(connection == null) {
-				throw new BuildException(Messages.ApiUseDBTask_connection_could_not_be_established);
-			}
-			DBUseReporter reporter = new DBUseReporter(connection, this.debug);
-			doSearch(baseline, scope, reporter);
-			reporter.reportNotSearched((SkippedComponent[]) this.notsearched.toArray(new SkippedComponent[this.notsearched.size()]));
+			doSearch(baseline, scope, this.reporter);
+			this.reporter.reportNotSearched((SkippedComponent[]) this.notsearched.toArray(new SkippedComponent[this.notsearched.size()]));
 		}
 		catch(CoreException ce) {
 			throw new BuildException(Messages.ApiUseTask_search_engine_problem, ce);

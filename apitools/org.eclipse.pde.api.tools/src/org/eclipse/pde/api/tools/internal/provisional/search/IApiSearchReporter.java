@@ -29,4 +29,9 @@ public interface IApiSearchReporter {
 	 */
 	public void reportResults(IApiElement element, final IReference[] references);
 	
+	/**
+	 * Reports the current listing of objects that were not searched for whatever reason. 
+	 * @param notsearched array of elements not searched 
+	 */
+	public void reportNotSearched(final IApiElement[] elements);
 }
